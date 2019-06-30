@@ -1,14 +1,31 @@
+# frozen_string_literal: true
+
 # Copyright 2019 OpenTelemetry Authors
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# SPDX-License-Identifier: Apache-2.0
 
+module OpenTelemetry
+  # The Context module provides per-thread storage.
+  module Context
+    extend self
+
+    def get(key)
+      storage[key]
+    end
+
+    def with(key, value)
+      store = storage
+      previous = store[key]
+      store[key] = value
+      yield value
+    ensure
+      store[key] = previous
+    end
+
+    private
+
+    def storage
+      Thread.current[:__opentelemetry__]
+    end
+  end
+end
