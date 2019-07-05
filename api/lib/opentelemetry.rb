@@ -11,22 +11,22 @@ require 'opentelemetry/resources'
 require 'opentelemetry/trace'
 require 'opentelemetry/version'
 
-# OpenTelemetry provides global accessors for telemetry objects @see Tracer, @see Meter
-# and @see DistributedContextManager.
+# OpenTelemetry provides global accessors for telemetry objects @see Trace::Tracer, @see Metrics::Meter
+# and @see DistributedContext::Manager.
 module OpenTelemetry
   extend self
 
   attr_writer :tracer, :meter, :distributed_context_manager
 
   def tracer
-    @tracer || Tracer
+    @tracer || Trace::Tracer
   end
 
   def meter
-    @meter || Meter
+    @meter || Metrics::Meter
   end
 
   def distributed_context_manager
-    @distributed_context_manager || DistributedContextManager
+    @distributed_context_manager || DistributedContext::Manager
   end
 end

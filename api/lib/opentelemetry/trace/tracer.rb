@@ -6,7 +6,7 @@
 
 module OpenTelemetry
   module Trace
-    # No-op implementations of Tracer.
+    # No-op implementation of Tracer.
     module Tracer
       extend self
 
