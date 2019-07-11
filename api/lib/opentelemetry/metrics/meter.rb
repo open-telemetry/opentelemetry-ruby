@@ -16,7 +16,6 @@ module OpenTelemetry
       private_constant(:NOOP_DOUBLE_MEASURE, :NOOP_LONG_MEASURE)
 
       def record(*measurements, distributed_context: nil, exemplar: nil)
-        raise ArgumentError if measurements.empty?
       end
 
       def create_measure(name, description: nil, unit: nil, type: :double)
@@ -41,7 +40,6 @@ module OpenTelemetry
         DoubleGauge.new(label_keys_size: label_keys&.size || 0)
       end
 
-      # TODO: I'm not sure how I feel about these "typed" method names. Would it be preferable to pass 'type:' as an argument?
       def create_long_gauge(name, description: nil, unit: nil, component: nil, resource: nil, label_keys: nil, constant_labels: nil)
         raise ArgumentError if name.nil?
         raise ArgumentError if label_keys&.any?(nil)
