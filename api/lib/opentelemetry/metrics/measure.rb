@@ -20,17 +20,10 @@ module OpenTelemetry
       end
     end
 
-    # TODO: Do we want the type-specific class?
     # DoubleMeasure is a Measure creating double measurements.
     class DoubleMeasure < Measure
-      def create_measurement(value)
-        raise ArgumentError if value.integer?
-
-        super
-      end
     end
 
-    # TODO: Do we want the type-specific class?
     # LongMeasure is a Measure creating long measurements.
     class LongMeasure < Measure
       def create_measurement(value)
