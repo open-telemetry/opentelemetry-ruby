@@ -11,8 +11,8 @@ require 'opentelemetry/version'
 Gem::Specification.new do |spec|
   spec.name        = 'opentelemetry'
   spec.version     = OpenTelemetry::VERSION
-  spec.authors     = ['Francis Bogsanyi']
-  spec.email       = ['francis.bogsanyi@shopify.com']
+  spec.authors     = ['OpenTelemetry Authors']
+  spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
   spec.summary     = 'A stats collection and distributed tracing framework'
   spec.description = 'A stats collection and distributed tracing framework'
