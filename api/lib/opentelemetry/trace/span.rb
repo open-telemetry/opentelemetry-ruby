@@ -18,30 +18,30 @@ module OpenTelemetry
         false
       end
 
-      # TODO: API suggests set_attribute(key:, value:), but this feels more idiomatic?
-      def []=(key, value)
-        check_not_nil(key, 'key')
-        check_not_nil(value, 'value')
+      def set_attribute(key, value)
+        raise ArgumentError unless key.instance_of?(String) || key.instance_of?(Symbol)
+        raise ArgumentError unless value.instance_of?(String) || value.instance_of?(Symbol) || value == false || value == true || value.is_a?(Numeric)
       end
+      alias []= set_attribute
 
       def add_event(name, **attrs)
-        check_not_nil(name, 'name')
+        raise ArgumentError if name.nil?
       end
 
       def add_link(span_context_or_link, **attrs)
-        check_not_nil(span_context_or_link, 'span_context_or_link')
-        check_empty(attrs, 'attrs') unless span_context_or_link.instance_of?(SpanContext)
+        raise ArgumentError if span_context_or_link.nil?
+        raise ArgumentError unless span_context_or_link.instance_of?(SpanContext) || attrs.empty?
       end
 
       def status=(status)
-        check_not_nil(status, 'status')
+        raise ArgumentError if status.nil?
       end
 
       def name=(new_name)
-        check_not_nil(new_name, 'new_name')
+        raise ArgumentError if new_name.nil?
       end
 
-      def end; end
+      def finish; end
     end
   end
 end
