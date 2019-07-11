@@ -33,7 +33,7 @@ module OpenTelemetry
       # end
 
       def valid?
-        @trace_id.nonzero? && @span_id.nonzero?
+        !(@trace_id.zero? || @span_id.zero?)
       end
     end
   end

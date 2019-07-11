@@ -25,7 +25,7 @@ module OpenTelemetry
     private
 
     def storage
-      Thread.current[:__opentelemetry__]
+      Thread.current[:__opentelemetry__] ||= {}
     end
   end
 end
