@@ -10,7 +10,7 @@ module OpenTelemetry
     # It contains the identifiers (a @see TraceId and @see SpanId) associated with the @see Span and a set of
     # @see TraceOptions.
     class SpanContext
-      attr_reader :trace_id, :span_id, :trace_options
+      attr_reader :trace_id, :span_id, :trace_options, :tracestate
 
       def initialize(
         trace_id: generate_trace_id,
@@ -27,9 +27,10 @@ module OpenTelemetry
         @tracestate = tracestate # TODO: if tracestate
       end
 
-      def tracestate
-        @tracestate # TODO: || Tracestate::DEFAULT
-      end
+      # TODO: optimization
+      # def tracestate
+      #   @tracestate || Tracestate::DEFAULT
+      # end
 
       def valid?
         @trace_id.nonzero? && @span_id.nonzero?

@@ -16,8 +16,11 @@ module OpenTelemetry
         @labels = kvs.to_h { |k, v| [k.to_s.clone.freeze, v.to_s.clone.freeze] }.freeze
       end
 
+      # TODO: Already set labels MUST NOT be overwritten unless they are empty string.
       def merge(other)
-        new(labels.merge(other.labels))
+        raise ArgumentError unless other.is_a?(Resource)
+
+        self.class.new(labels.merge(other.labels))
       end
     end
   end
