@@ -19,8 +19,8 @@ module OpenTelemetry
       end
 
       def set_attribute(key, value)
-        raise ArgumentError unless key.instance_of?(String) || key.instance_of?(Symbol)
-        raise ArgumentError unless value.instance_of?(String) || value.instance_of?(Symbol) || value == false || value == true || value.is_a?(Numeric)
+        raise ArgumentError unless valid_key?(key)
+        raise ArgumentError unless valid_value?(value)
       end
       alias []= set_attribute
 
@@ -42,6 +42,16 @@ module OpenTelemetry
       end
 
       def finish; end
+
+      private
+
+      def valid_key?(key)
+        key.instance_of?(String) || key.instance_of?(Symbol)
+      end
+
+      def valid_value?(value)
+        value.instance_of?(String) || value.instance_of?(Symbol) || value == false || value == true || value.is_a?(Numeric)
+      end
     end
   end
 end
