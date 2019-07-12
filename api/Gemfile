@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+# Copyright 2019 OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+source 'https://rubygems.org'
+
+# Specify your gem's dependencies in opentelemetry.gemspec
+gemspec
