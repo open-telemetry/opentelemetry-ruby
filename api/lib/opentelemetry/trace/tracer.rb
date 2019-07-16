@@ -7,9 +7,7 @@
 module OpenTelemetry
   module Trace
     # No-op implementation of Tracer.
-    module Tracer
-      extend self
-
+    class Tracer
       CONTEXT_SPAN_KEY = :__span__
       HTTP_TEXT_FORMAT = nil # TODO: implement HttpTraceContext
 

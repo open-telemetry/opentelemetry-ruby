@@ -9,9 +9,13 @@ describe OpenTelemetry do
       OpenTelemetry.tracer = nil
     end
 
-    it 'returns Trace::Tracer by default' do
+    it 'returns instance of Trace::Tracer by default' do
       tracer = OpenTelemetry.tracer
-      tracer.must_equal(OpenTelemetry::Trace::Tracer)
+      tracer.must_be_instance_of(OpenTelemetry::Trace::Tracer)
+    end
+
+    it 'returns the same instance when accessed multiple times' do
+      OpenTelemetry.tracer.must_equal(OpenTelemetry.tracer)
     end
 
     it 'returns user specified tracer' do
@@ -27,9 +31,13 @@ describe OpenTelemetry do
       OpenTelemetry.meter = nil
     end
 
-    it 'returns Metrics::Meter by default' do
+    it 'returns instance of Metrics::Meter by default' do
       meter = OpenTelemetry.meter
-      meter.must_equal(OpenTelemetry::Metrics::Meter)
+      meter.must_be_instance_of(OpenTelemetry::Metrics::Meter)
+    end
+
+    it 'returns the same instance when accessed multiple times' do
+      OpenTelemetry.meter.must_equal(OpenTelemetry.meter)
     end
 
     it 'returns user specified meter' do
@@ -45,9 +53,15 @@ describe OpenTelemetry do
       OpenTelemetry.distributed_context_manager = nil
     end
 
-    it 'returns DistributedContext::Manager by default' do
+    it 'returns instance of DistributedContext::Manager by default' do
       manager = OpenTelemetry.distributed_context_manager
-      manager.must_equal(OpenTelemetry::DistributedContext::Manager)
+      manager.must_be_instance_of(OpenTelemetry::DistributedContext::Manager)
+    end
+
+    it 'returns the same instance when accessed multiple times' do
+      OpenTelemetry.distributed_context_manager.must_equal(
+        OpenTelemetry.distributed_context_manager
+      )
     end
 
     it 'returns user specified distributed_context_manager' do

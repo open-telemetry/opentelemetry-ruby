@@ -19,14 +19,14 @@ module OpenTelemetry
   attr_writer :tracer, :meter, :distributed_context_manager
 
   def tracer
-    @tracer || Trace::Tracer
+    @tracer ||= Trace::Tracer.new
   end
 
   def meter
-    @meter || Metrics::Meter
+    @meter ||= Metrics::Meter.new
   end
 
   def distributed_context_manager
-    @distributed_context_manager || DistributedContext::Manager
+    @distributed_context_manager ||= DistributedContext::Manager.new
   end
 end
