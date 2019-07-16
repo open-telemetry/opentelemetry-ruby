@@ -11,26 +11,10 @@ module OpenTelemetry
       extend self
 
       CONTEXT_SPAN_KEY = :__span__
-      HTTP_TEXT_FORMAT = nil # TODO: implement HttpTraceContext
+      HTTP_TEXT_FORMAT = DistributedContext::Propagation::HTTPTextFormat.new
+      BINARY_FORMAT = DistributedContext::Propagation::BinaryFormat.new
 
-      # Formatter for serializing and deserializing a SpanContext into a binary format.
-      module NoopBinaryFormat
-        extend self
-
-        def to_bytes(span_context)
-          raise ArgumentError if span_context.nil?
-
-          []
-        end
-
-        def from_bytes(bytes)
-          raise ArgumentError if bytes.nil?
-
-          SpanContext.INVALID
-        end
-      end
-
-      private_constant(:CONTEXT_SPAN_KEY, :HTTP_TEXT_FORMAT, :NoopBinaryFormat)
+      private_constant(:CONTEXT_SPAN_KEY, :HTTP_TEXT_FORMAT, :BINARY_FORMAT)
 
       def current_span
         Context.get(CONTEXT_SPAN_KEY) || Span.INVALID
@@ -80,7 +64,7 @@ module OpenTelemetry
       end
 
       def binary_format
-        NoopBinaryFormat
+        BINARY_FORMAT
       end
 
       def http_text_format
