@@ -4,4 +4,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/distributed_context/manager'
+module OpenTelemetry
+  module DistributedContext
+    class Manager
+    end
+  end
+end
