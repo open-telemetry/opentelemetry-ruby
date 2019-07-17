@@ -16,7 +16,7 @@ module OpenTelemetry
       def record(*measurements, distributed_context: nil, exemplar: nil); end
 
       def create_measure(name, description: nil, unit: nil, type: :double)
-        raise ArgumentError if name.nil? # TODO: The Java implementation also constrains the name to be printable and 255 chars or less.
+        raise ArgumentError unless Internal.printable_ascii?(name) && name.length <= 255
 
         case type
         when :double

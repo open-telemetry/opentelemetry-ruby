@@ -21,8 +21,7 @@ module OpenTelemetry
         attr_reader :name
 
         def initialize(name)
-          # TODO: name should be printable ascii (32..126), not just ascii.
-          raise ArgumentError unless name&.ascii_compatible? && (1..255).include?(name.length)
+          raise ArgumentError unless Internal.printable_ascii?(name) && (1..255).include?(name.length)
 
           @name = -name
         end
@@ -31,8 +30,7 @@ module OpenTelemetry
       # Entry::Value wraps a string. It MUST contain only printable ASCII (codes between 32 and 126).
       class Value
         def initialize(value)
-          # TODO: value should be printable ascii (32..126), not just ascii.
-          raise ArgumentError unless value&.ascii_compatible?
+          raise ArgumentError unless Internal.printable_ascii?(value)
 
           @value = -value
         end
