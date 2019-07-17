@@ -7,9 +7,7 @@
 module OpenTelemetry
   module Trace
     # No-op implementation of Tracer.
-    module Tracer
-      extend self
-
+    class Tracer
       CONTEXT_SPAN_KEY = :__span__
       HTTP_TEXT_FORMAT = DistributedContext::Propagation::HTTPTextFormat.new
       BINARY_FORMAT = DistributedContext::Propagation::BinaryFormat.new
