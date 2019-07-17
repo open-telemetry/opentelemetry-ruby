@@ -7,9 +7,7 @@
 module OpenTelemetry
   module Metrics
     # No-op implementation of Meter.
-    module Meter
-      extend self
-
+    class Meter
       NOOP_DOUBLE_MEASURE = DoubleMeasure.new
       NOOP_LONG_MEASURE = LongMeasure.new
 
