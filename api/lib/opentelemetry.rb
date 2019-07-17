@@ -6,6 +6,7 @@
 
 require 'opentelemetry/context'
 require 'opentelemetry/distributed_context'
+require 'opentelemetry/internal'
 require 'opentelemetry/metrics'
 require 'opentelemetry/resources'
 require 'opentelemetry/trace'
