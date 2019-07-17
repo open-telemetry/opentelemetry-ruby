@@ -58,7 +58,7 @@ module OpenTelemetry
         UNLIMITED_PROPAGATION = -1
 
         def initialize(entry_ttl)
-          raise ArgumentError unless entry_ttl&.integer?
+          raise ArgumentError unless entry_ttl.is_a?(Integer)
 
           @entry_ttl = entry_ttl
         end
