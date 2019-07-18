@@ -6,16 +6,33 @@
 
 module OpenTelemetry
   module Trace
-    # A SpanContext contains the state that must propagate to child @see Spans and across process boundaries.
-    # It contains the identifiers (a @see TraceId and @see SpanId) associated with the @see Span and a set of
-    # @see TraceOptions.
+    # A SpanContext represents the portion of a {Span} which must be serialized
+    # and propagated along side of a distributed context. SpanContexts are
+    # immutable. SpanContext MUST be a final (sealed) class.
+    #
+    # The OpenTelemetry SpanContext representation conforms to the w3c
+    # TraceContext {https://www.w3.org/TR/trace-context/ specification}. It
+    # contains two identifiers - a trace id and a span id - along with a set of
+    # common trace options and system-specific TraceState values. SpanContext
+    # is represented as an interface, in order to be serializable into a wider
+    # variety of trace context wire formats.
     class SpanContext
-      attr_reader :trace_id, :span_id, :trace_options, :tracestate
+      # Returns the trace identifier
+      #
+      # @return [TraceId]
+      attr_reader :trace_id
+
+      # Returns the span identifier
+      #
+      # @return [SpanId]
+      attr_reader :span_id
+
+      attr_reader :trace_options, :tracestate
 
       def initialize(
-        trace_id: generate_trace_id,
-        span_id: generate_span_id,
-        trace_options: TraceOptions::DEFAULT,
+        trace_id: TraceId.generate,
+        span_id: SpanId.generate,
+        trace_options: nil, # Use TraceOptions::DEFAULT when added to API
         tracestate: nil
       )
         @trace_id = trace_id
@@ -32,8 +49,13 @@ module OpenTelemetry
       #   @tracestate || Tracestate::DEFAULT
       # end
 
+      # Checks if the SpanContext is valid
+      #
+      # A valid SpanContext has a valid {TraceId} and a valid {SpanId}.
+      #
+      # @return [Boolean] true if the span context is valid
       def valid?
-        !(@trace_id.zero? || @span_id.zero?)
+        @trace_id.valid? && @span_id.valid?
       end
     end
   end
