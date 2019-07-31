@@ -9,10 +9,14 @@ module OpenTelemetry
     module Propagation
       # Formatter for serializing and deserializing a SpanContext into a binary format.
       class BinaryFormat
+        EMPTY_BYTE_ARRAY = [].freeze
+
+        private_constant(:EMPTY_BYTE_ARRAY)
+
         def to_bytes(span_context)
           raise ArgumentError if span_context.nil?
 
-          []
+          EMPTY_BYTE_ARRAY
         end
 
         def from_bytes(bytes)

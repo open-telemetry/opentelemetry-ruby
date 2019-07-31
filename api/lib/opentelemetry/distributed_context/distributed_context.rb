@@ -8,8 +8,12 @@ module OpenTelemetry
   module DistributedContext
     # An immutable implementation of the DistributedContext that does not contain any entries.
     class DistributedContext
+      EMPTY_ENTRIES = [].freeze
+
+      private_constant(:EMPTY_ENTRIES)
+
       def entries
-        []
+        EMPTY_ENTRIES
       end
 
       def [](_key)
