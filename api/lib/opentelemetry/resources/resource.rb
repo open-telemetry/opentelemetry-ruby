@@ -18,11 +18,17 @@ module OpenTelemetry
         end
       end
 
-      # TODO: Already set labels MUST NOT be overwritten unless they are empty string.
       def merge(other)
         raise ArgumentError unless other.is_a?(Resource)
 
-        self.class.new(labels.merge(other.labels))
+        merged_labels = \
+          other.labels.each_with_object(labels.dup) do |(k, v), memo|
+            next if (current = memo[k]) && !current.empty?
+
+            memo[k] = v
+          end
+
+        self.class.new(merged_labels)
       end
     end
   end

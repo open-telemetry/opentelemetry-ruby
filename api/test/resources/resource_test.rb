@@ -22,5 +22,25 @@ describe OpenTelemetry::Resources::Resource do
       res1.labels.must_equal('k1' => 'v1', 'k2' => 'v2')
       res2.labels.must_equal('k3' => 'v3', 'k4' => 'v4')
     end
+
+    it 'does not overwrite receiver\'s keys when value is non-empty' do
+      res1 = OpenTelemetry::Resources::Resource.new('k1' => 'v1',
+                                                    'k2' => 'v2')
+      res2 = OpenTelemetry::Resources::Resource.new('k2' => '2v2',
+                                                    'k3' => '2v3')
+      res3 = res1.merge(res2)
+
+      res3.labels.must_equal('k1' => 'v1', 'k2' => 'v2', 'k3' => '2v3')
+    end
+
+    it 'overwrites receiver\'s key when value is empty' do
+      res1 = OpenTelemetry::Resources::Resource.new('k1' => 'v1',
+                                                    'k2' => '')
+      res2 = OpenTelemetry::Resources::Resource.new('k2' => '2v2',
+                                                    'k3' => '2v3')
+      res3 = res1.merge(res2)
+
+      res3.labels.must_equal('k1' => 'v1', 'k2' => '2v2', 'k3' => '2v3')
+    end
   end
 end
