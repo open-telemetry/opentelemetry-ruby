@@ -11,9 +11,11 @@ module OpenTelemetry
     class Resource
       attr_reader :labels
 
-      def initialize(**kvs)
+      def initialize(kvs)
         # TODO: how defensive should we be here?
-        @labels = kvs.to_h { |k, v| [k.to_s.clone.freeze, v.to_s.clone.freeze] }.freeze
+        @labels = kvs.each_with_object({}) do |(k, v), memo|
+          memo[-k] = -v
+        end
       end
 
       # TODO: Already set labels MUST NOT be overwritten unless they are empty string.
