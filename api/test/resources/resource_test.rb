@@ -7,11 +7,16 @@
 require 'test_helper'
 
 describe OpenTelemetry::Resources::Resource do
-  describe '#labels' do
-    it 'returns a hash of labels' do
+  describe '#initialize' do
+    it 'can be initialized with labels' do
       expected_labels = { 'k1' => 'v1', 'k2' => 'v2' }
       resource = OpenTelemetry::Resources::Resource.new(expected_labels)
       resource.labels.must_equal(expected_labels)
+    end
+
+    it 'can be empty' do
+      resource = OpenTelemetry::Resources::Resource.new
+      resource.labels.must_be_empty
     end
   end
 

@@ -19,7 +19,7 @@ module OpenTelemetry
       # @param [Hash<String, String>] kvs Hash of key-value pairs to be used
       #   as labels for this resource
       # @return [Resource]
-      def initialize(kvs)
+      def initialize(kvs = {})
         # TODO: how defensive should we be here?
         @labels = kvs.each_with_object({}) do |(k, v), memo|
           memo[-k] = -v
