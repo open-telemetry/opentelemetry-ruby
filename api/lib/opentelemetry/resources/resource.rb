@@ -19,11 +19,8 @@ module OpenTelemetry
       # @param [Hash<String, String>] kvs Hash of key-value pairs to be used
       #   as labels for this resource
       # @return [Resource]
-      def initialize(kvs = {})
-        # TODO: how defensive should we be here?
-        @labels = kvs.each_with_object({}) do |(k, v), memo|
-          memo[-k] = -v
-        end
+      def initialize(raw_labels = {})
+        @labels = check_and_freeze_labels(raw_labels)
       end
 
       # Returns a new, merged {Resource} by merging the current {Resource} with
@@ -44,6 +41,16 @@ module OpenTelemetry
           end
 
         self.class.new(merged_labels)
+      end
+
+      private
+
+      def check_and_freeze_labels(raw_labels)
+        raw_labels.each_with_object({}) do |(k, v), memo|
+          raise ArgumentError, 'label keys and values must be strings' unless k.is_a?(String) && v.is_a?(String)
+
+          memo[-k] = -v
+        end.freeze
       end
     end
   end

@@ -18,6 +18,16 @@ describe OpenTelemetry::Resources::Resource do
       resource = OpenTelemetry::Resources::Resource.new
       resource.labels.must_be_empty
     end
+
+    it 'enforces keys are strings' do
+      -> { OpenTelemetry::Resources::Resource.new(k1: 'v1', k2: 'v2') }\
+        .must_raise(ArgumentError)
+    end
+
+    it 'enforces values are strings' do
+      -> { OpenTelemetry::Resources::Resource.new('k1' => :v1, 'k2' => :v2) }\
+        .must_raise(ArgumentError)
+    end
   end
 
   describe '#merge' do
