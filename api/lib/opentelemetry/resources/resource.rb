@@ -32,10 +32,6 @@ module OpenTelemetry
           end.freeze
         end
       end
-      # Returns the labels for this {Resource}
-      #
-      # @return [Hash<String, String>]
-      attr_reader :labels
 
       # @api private
       # The constructor is private and only for use internally by the class.
@@ -47,6 +43,13 @@ module OpenTelemetry
       # @return [Resource]
       def initialize(frozen_labels)
         @labels = frozen_labels
+      end
+
+      # Returns an enumerator for labels of this {Resource}
+      #
+      # @return [Enumerator]
+      def label_enumerator
+        @label_enumerator ||= labels.to_enum
       end
 
       # Returns a new, merged {Resource} by merging the current {Resource} with
@@ -65,6 +68,10 @@ module OpenTelemetry
 
         self.class.send(:new, merged_labels.freeze)
       end
+
+      protected
+
+      attr_reader :labels
     end
   end
 end
