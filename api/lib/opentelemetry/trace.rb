@@ -5,7 +5,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry/trace/span_context'
-require 'opentelemetry/trace/span_data'
 require 'opentelemetry/trace/span_kind'
 require 'opentelemetry/trace/span'
 require 'opentelemetry/trace/tracer'
