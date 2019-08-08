@@ -49,8 +49,8 @@ module OpenTelemetry
       # documents} certain "standard attributes" that have prescribed semantic
       # meanings.
       #
-      # @param [String, Symbol] key
-      # @param [String, Symbol, Boolean, Numeric] value
+      # @param [String] key
+      # @param [String, Boolean, Numeric] value
       #
       # @return [self] returns itself
       def set_attribute(key, value)
@@ -74,8 +74,9 @@ module OpenTelemetry
       #   numeric type.
       #
       # @return [self] returns itself
-      def add_event(name, **attrs)
+      def add_event(name, attrs = nil)
         raise ArgumentError if name.nil?
+        raise ArgumentError unless valid_attributes?(attrs)
 
         self
       end
@@ -91,9 +92,10 @@ module OpenTelemetry
       #   value is one of string, boolean or numeric type.
       #
       # @return [self] returns itself
-      def add_link(span_context_or_link, **attrs)
+      def add_link(span_context_or_link, attrs = nil)
         raise ArgumentError if span_context_or_link.nil?
-        raise ArgumentError unless span_context_or_link.instance_of?(SpanContext) || attrs.empty?
+        raise ArgumentError unless span_context_or_link.instance_of?(SpanContext) || attrs.nil? || attrs.empty?
+        raise ArgumentError unless valid_attributes?(attrs)
 
         self
       end
@@ -145,11 +147,15 @@ module OpenTelemetry
       private
 
       def valid_key?(key)
-        key.instance_of?(String) || key.instance_of?(Symbol)
+        key.instance_of?(String)
       end
 
       def valid_value?(value)
-        value.instance_of?(String) || value.instance_of?(Symbol) || value == false || value == true || value.is_a?(Numeric)
+        value.instance_of?(String) || value == false || value == true || value.is_a?(Numeric)
+      end
+
+      def valid_attributes?(attrs)
+        attrs.nil? || attrs.all? { |k, v| valid_key?(k) && valid_value?(v) }
       end
     end
   end
