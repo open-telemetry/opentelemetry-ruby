@@ -57,10 +57,6 @@ module OpenTelemetry
         end
       end
 
-      def record_span_data(span_data)
-        raise ArgumentError if span_data.nil?
-      end
-
       def binary_format
         BINARY_FORMAT
       end
