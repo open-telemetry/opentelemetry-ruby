@@ -11,10 +11,10 @@ module OpenTelemetry
     module Samplers
       # The Decision class represents an arbitrary sampling decision. It can
       # have a boolean value as a sampling decision and a collection of
-      # attributes to be attached to a sampled root span
+      # attributes to be attached to a sampled root span.
       class Decision < BasicDecision
         # Returns a new decision with the specified sampling decision and
-        # attributes
+        # attributes.
         #
         # @param [Boolean] decision Whether or not a span should be sampled
         # @param [Hash<String, Object>] attributes Attributes to be attached

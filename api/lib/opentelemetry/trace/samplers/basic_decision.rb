@@ -9,8 +9,8 @@ module OpenTelemetry
     module Samplers
       # This class represents a BasicDecision, which is a utility class used
       # by the {AlwaysSampleSampler} and the {NeverSampleSampler}. A
-      # BasicDecision can have boolean sampling decision and will always return
-      # an empty set of attributes
+      # BasicDecision can have a boolean sampling decision and will always
+      # return an empty set of attributes.
       class BasicDecision
         # Returns a new decision with the specified sampling decision and
         # and empty attributes
@@ -29,7 +29,7 @@ module OpenTelemetry
 
         # Always returns an empty set of attributes
         #
-        # @return [Hash<String,String>]
+        # @return [Hash<String, Object>]
         def attributes
           {}
         end

@@ -9,7 +9,7 @@ require 'opentelemetry/trace/samplers/basic_decision'
 module OpenTelemetry
   module Trace
     module Samplers
-      # The {AlwaysSampleSampler} always returns a true sampling decision
+      # The {AlwaysSampleSampler} always returns a true sampling decision.
       class AlwaysSampleSampler
         ALWAYS_SAMPLE_DECISION = BasicDecision.new(decision: true)
 

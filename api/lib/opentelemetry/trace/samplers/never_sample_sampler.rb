@@ -9,11 +9,11 @@ require 'opentelemetry/trace/samplers/basic_decision'
 module OpenTelemetry
   module Trace
     module Samplers
-      # The {NeverSampleSampler} always returns a false sampling decision
+      # The {NeverSampleSampler} always returns a false sampling decision.
       class NeverSampleSampler
         NEVER_SAMPLE_DECISION = BasicDecision.new(decision: false)
 
-        # Returns the sampling {Decision} for a {Span} to be created
+        # Returns the sampling {Decision} for a {Span} to be created.
         #
         # @param [SpanContext] span_context The {SpanContext} of a parent span,
         #   typically extracted from the wire. Can be nil.
@@ -34,7 +34,7 @@ module OpenTelemetry
           NEVER_SAMPLE_DECISION
         end
 
-        # Returns a description of the sampler
+        # Returns a description of the sampler.
         #
         # @return [String]
         def description
