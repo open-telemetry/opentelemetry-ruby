@@ -11,7 +11,9 @@ require 'opentelemetry/trace/samplers/decision'
 
 module OpenTelemetry
   module Trace
-    # @todo: docs
+    # The Samplers module contains the sampling logic for OpenTelemetry. The
+    # minimal implementation provides a {AlwaysSampleSampler} and a
+    # {NeverSampleSampler}.
     module Samplers
     end
   end
