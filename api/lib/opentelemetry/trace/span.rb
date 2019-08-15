@@ -107,12 +107,12 @@ module OpenTelemetry
       # Only the value of the last call will be recorded, and implementations
       # are free to ignore previous calls.
       #
-      # @param [Object] status - TODO: Change Object to actual Status enum when
-      #   introduced to the api
+      # @param [Status] status The new status, which overrides the default Span
+      #   status, which is OK.
       #
       # @return [void]
       def status=(status)
-        raise ArgumentError if status.nil?
+        raise ArgumentError unless status.is_a?(Status)
       end
 
       # Updates the Span name
