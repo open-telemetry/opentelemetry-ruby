@@ -16,5 +16,9 @@ module OpenTelemetry
       string.each_codepoint { |c| return false unless r.include?(c) }
       true
     end
+
+    def boolean?(value)
+      value.is_a?(TrueClass) || value.is_a?(FalseClass)
+    end
   end
 end
