@@ -4,13 +4,14 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/trace/samplers/sampler'
 require 'opentelemetry/trace/samplers/basic_decision'
 
 module OpenTelemetry
   module Trace
     module Samplers
       # The {AlwaysSampleSampler} always returns a true sampling decision.
-      class AlwaysSampleSampler
+      class AlwaysSampleSampler < Sampler
         ALWAYS_SAMPLE_DECISION = BasicDecision.new(decision: true)
 
         # Returns the sampling {Decision} for a {Span} to be created
@@ -31,6 +32,14 @@ module OpenTelemetry
                           span_id:,
                           span_name:,
                           links: nil)
+          check_arguments(
+            span_context: span_context,
+            extracted_context: extracted_context,
+            trace_id: trace_id,
+            span_id: span_id,
+            span_name: span_name,
+            links: links
+          )
           ALWAYS_SAMPLE_DECISION
         end
 
