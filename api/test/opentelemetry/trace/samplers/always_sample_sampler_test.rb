@@ -13,9 +13,9 @@ describe OpenTelemetry::Trace::Samplers::AlwaysSampleSampler do
       sampler.description.must_equal('AlwaysSampleSampler')
     end
   end
-  describe '.should_sample' do
+  describe '.decision' do
     it 'returns a true decision' do
-      decision = sampler.should_sample(
+      decision = sampler.decision(
         span_context: nil,
         extracted_context: nil,
         trace_id: 344,

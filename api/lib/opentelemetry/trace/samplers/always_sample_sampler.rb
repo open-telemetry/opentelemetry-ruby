@@ -26,12 +26,12 @@ module OpenTelemetry
         # @param [Enumerable<Link>] links A collection of links to be associated
         #   with the {Span} to be created. Can be nil.
         # @return [Decision] The sampling decision
-        def should_sample(span_context: nil,
-                          extracted_context: nil,
-                          trace_id:,
-                          span_id:,
-                          span_name:,
-                          links: nil)
+        def decision(span_context: nil,
+                     extracted_context: nil,
+                     trace_id:,
+                     span_id:,
+                     span_name:,
+                     links: nil)
           super
           ALWAYS_SAMPLE_DECISION
         end

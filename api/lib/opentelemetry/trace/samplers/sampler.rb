@@ -24,12 +24,12 @@ module OpenTelemetry
         # @return [Decision] The sampling decision
 
         # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-        def should_sample(span_context: nil,
-                          extracted_context: nil,
-                          trace_id:,
-                          span_id:,
-                          span_name:,
-                          links: nil)
+        def decision(span_context: nil,
+                     extracted_context: nil,
+                     trace_id:,
+                     span_id:,
+                     span_name:,
+                     links: nil)
           raise ArgumentError, "expected span_context to be a SpanContext, not #{span_context.class}" if span_context && !span_context.is_a?(SpanContext)
           raise ArgumentError, "expected extracted_context to be a Boolean, not #{extracted_context.class}" if !extracted_context.nil? && !Internal.boolean?(extracted_context)
           raise ArgumentError, "expected trace_id to be an Integer, not #{trace_id.class}" unless trace_id.is_a?(Integer)

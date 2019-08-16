@@ -10,12 +10,12 @@ describe OpenTelemetry::Trace::Samplers::Sampler do
   class BasicSampler < OpenTelemetry::Trace::Samplers::Sampler
     DECISION = OpenTelemetry::Trace::Samplers::Decision.new(decision: true)
     # rubocop:disable Metrics/ParameterLists
-    def should_sample(span_context: nil,
-                      extracted_context: nil,
-                      trace_id:,
-                      span_id:,
-                      span_name:,
-                      links: nil)
+    def decision(span_context: nil,
+                 extracted_context: nil,
+                 trace_id:,
+                 span_id:,
+                 span_name:,
+                 links: nil)
       super
       DECISION
     end
@@ -27,9 +27,9 @@ describe OpenTelemetry::Trace::Samplers::Sampler do
   end
 
   let(:sampler) { BasicSampler.new }
-  describe '.should_sample' do
+  describe '.decision' do
     it 'returns a decision with required arguments' do
-      decision = sampler.should_sample(
+      decision = sampler.decision(
         span_context: nil,
         extracted_context: nil,
         trace_id: 344,
@@ -42,7 +42,7 @@ describe OpenTelemetry::Trace::Samplers::Sampler do
 
     it 'checks span_context for type' do
       proc do
-        sampler.should_sample(
+        sampler.decision(
           span_context: Object.new,
           extracted_context: nil,
           trace_id: 344,
@@ -55,7 +55,7 @@ describe OpenTelemetry::Trace::Samplers::Sampler do
 
     it 'checks extracted_context for type' do
       proc do
-        sampler.should_sample(
+        sampler.decision(
           span_context: nil,
           extracted_context: Object.new,
           trace_id: 344,
@@ -68,7 +68,7 @@ describe OpenTelemetry::Trace::Samplers::Sampler do
 
     it 'checks trace_id for type' do
       proc do
-        sampler.should_sample(
+        sampler.decision(
           span_context: nil,
           extracted_context: nil,
           trace_id: Object.new,
@@ -81,7 +81,7 @@ describe OpenTelemetry::Trace::Samplers::Sampler do
 
     it 'checks span_id for type' do
       proc do
-        sampler.should_sample(
+        sampler.decision(
           span_context: nil,
           extracted_context: nil,
           trace_id: 344,
@@ -94,7 +94,7 @@ describe OpenTelemetry::Trace::Samplers::Sampler do
 
     it 'checks span_name for type' do
       proc do
-        sampler.should_sample(
+        sampler.decision(
           span_context: nil,
           extracted_context: nil,
           trace_id: 344,
@@ -107,7 +107,7 @@ describe OpenTelemetry::Trace::Samplers::Sampler do
 
     it 'checks that links are enumerable' do
       proc do
-        sampler.should_sample(
+        sampler.decision(
           span_context: nil,
           extracted_context: nil,
           trace_id: 344,

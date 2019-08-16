@@ -13,9 +13,9 @@ describe OpenTelemetry::Trace::Samplers::NeverSampleSampler do
       sampler.description.must_equal('NeverSampleSampler')
     end
   end
-  describe '.should_sample' do
+  describe '.decision' do
     it 'returns a false decision' do
-      decision = sampler.should_sample(
+      decision = sampler.decision(
         span_context: nil,
         extracted_context: nil,
         trace_id: 344,
