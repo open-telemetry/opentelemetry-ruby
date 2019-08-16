@@ -9,10 +9,17 @@ require 'test_helper'
 describe OpenTelemetry::Trace::Samplers::Sampler do
   class BasicSampler < OpenTelemetry::Trace::Samplers::Sampler
     DECISION = OpenTelemetry::Trace::Samplers::Decision.new(decision: true)
-    def should_sample(**kwargs)
-      check_arguments(**kwargs)
+    # rubocop:disable Metrics/ParameterLists
+    def should_sample(span_context: nil,
+                      extracted_context: nil,
+                      trace_id:,
+                      span_id:,
+                      span_name:,
+                      links: nil)
+      super
       DECISION
     end
+    # rubocop:enable Metrics/ParameterLists
 
     def description
       'BasicSampler'

@@ -22,31 +22,14 @@ module OpenTelemetry
         # @param [Enumerable<Link>] links A collection of links to be associated
         #   with the {Span} to be created. Can be nil.
         # @return [Decision] The sampling decision
+
+        # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         def should_sample(span_context: nil,
                           extracted_context: nil,
                           trace_id:,
                           span_id:,
                           span_name:,
                           links: nil)
-          raise NotImplementedError, 'subclasses must implement a `should_sample` method'
-        end
-
-        # Returns a description of the sampler
-        #
-        # @return [String]
-        def description
-          raise NotImplementedError, 'subclasses must implement a `description` method'
-        end
-
-        private
-
-        # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-        def check_arguments(span_context: nil,
-                            extracted_context: nil,
-                            trace_id:,
-                            span_id:,
-                            span_name:,
-                            links: nil)
           raise ArgumentError, "expected span_context to be a SpanContext, not #{span_context.class}" if span_context && !span_context.is_a?(SpanContext)
           raise ArgumentError, "expected extracted_context to be a Boolean, not #{extracted_context.class}" if !extracted_context.nil? && !Internal.boolean?(extracted_context)
           raise ArgumentError, "expected trace_id to be an Integer, not #{trace_id.class}" unless trace_id.is_a?(Integer)
@@ -55,6 +38,13 @@ module OpenTelemetry
           raise ArgumentError, 'expected links to be an Enumerable' if links && !links.class.include?(Enumerable)
         end
         # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+        # Returns a description of the sampler
+        #
+        # @return [String]
+        def description
+          raise NotImplementedError, 'subclasses must implement a `description` method'
+        end
       end
     end
   end
