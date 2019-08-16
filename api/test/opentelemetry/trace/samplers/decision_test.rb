@@ -28,6 +28,13 @@ describe OpenTelemetry::Trace::Samplers::Decision do
       )
       decision.attributes.must_equal({})
     end
+    it 'is an empty hash when initialized with nil' do
+      decision = OpenTelemetry::Trace::Samplers::Decision.new(
+        decision: true,
+        attributes: nil
+      )
+      decision.attributes.must_equal({})
+    end
     it 'reflects values passed in' do
       attributes = {
         'foo' => 'bar',
