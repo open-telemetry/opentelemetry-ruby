@@ -7,7 +7,6 @@
 require 'opentelemetry/trace/samplers/sampler'
 require 'opentelemetry/trace/samplers/always_sample_sampler'
 require 'opentelemetry/trace/samplers/never_sample_sampler'
-require 'opentelemetry/trace/samplers/basic_decision'
 require 'opentelemetry/trace/samplers/decision'
 
 module OpenTelemetry

@@ -5,14 +5,14 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry/trace/samplers/sampler'
-require 'opentelemetry/trace/samplers/basic_decision'
+require 'opentelemetry/trace/samplers/decision'
 
 module OpenTelemetry
   module Trace
     module Samplers
       # The {NeverSampleSampler} always returns a false sampling decision.
       class NeverSampleSampler < Sampler
-        NEVER_SAMPLE_DECISION = BasicDecision.new(decision: false)
+        NEVER_SAMPLE_DECISION = Decision.new(decision: false)
 
         # Returns the sampling {Decision} for a {Span} to be created.
         #

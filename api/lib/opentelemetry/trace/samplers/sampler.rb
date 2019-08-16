@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/trace/samplers/basic_decision'
-
 module OpenTelemetry
   module Trace
     module Samplers
