@@ -21,7 +21,7 @@ describe OpenTelemetry::Trace::Samplers::NeverSampleSampler do
         trace_id: 344,
         span_id: 178,
         span_name: 'test_span',
-        links: []
+        links: nil
       )
       decision.sampled?.must_equal false
     end
