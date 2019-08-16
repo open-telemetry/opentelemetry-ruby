@@ -49,9 +49,9 @@ module OpenTelemetry
                             links: nil)
           raise ArgumentError, "expected span_context to be a SpanContext, not #{span_context.class}" if span_context && !span_context.is_a?(SpanContext)
           raise ArgumentError, "expected extracted_context to be a Boolean, not #{extracted_context.class}" if !extracted_context.nil? && !Internal.boolean?(extracted_context)
-          raise ArgumentError, "expected trace_id to be an Integer, not #{trace_id.class}" unless trace_id.is_a? Integer
-          raise ArgumentError, "expected span_id to be an Integer, not #{span_id.class}" unless span_id.is_a? Integer
-          raise ArgumentError, "expected span_name to be a String, not #{span_name.class}" unless span_name.is_a? String
+          raise ArgumentError, "expected trace_id to be an Integer, not #{trace_id.class}" unless trace_id.is_a?(Integer)
+          raise ArgumentError, "expected span_id to be an Integer, not #{span_id.class}" unless span_id.is_a?(Integer)
+          raise ArgumentError, "expected span_name to be a String, not #{span_name.class}" unless span_name.is_a?(String)
           raise ArgumentError, 'expected links to be an Enumerable' if links && !links.class.include?(Enumerable)
         end
         # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity

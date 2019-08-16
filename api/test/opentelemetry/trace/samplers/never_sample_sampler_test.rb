@@ -10,7 +10,7 @@ describe OpenTelemetry::Trace::Samplers::NeverSampleSampler do
   let(:sampler) { OpenTelemetry::Trace::Samplers::NeverSampleSampler.new }
   describe '.description' do
     it 'returns a description' do
-      sampler.description.must_equal 'NeverSampleSampler'
+      sampler.description.must_equal('NeverSampleSampler')
     end
   end
   describe '.should_sample' do
@@ -23,7 +23,7 @@ describe OpenTelemetry::Trace::Samplers::NeverSampleSampler do
         span_name: 'test_span',
         links: nil
       )
-      decision.sampled?.must_equal false
+      decision.sampled?.must_equal(false)
     end
   end
 end

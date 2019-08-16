@@ -10,7 +10,7 @@ describe OpenTelemetry::Trace::Samplers::AlwaysSampleSampler do
   let(:sampler) { OpenTelemetry::Trace::Samplers::AlwaysSampleSampler.new }
   describe '.description' do
     it 'returns a description' do
-      sampler.description.must_equal 'AlwaysSampleSampler'
+      sampler.description.must_equal('AlwaysSampleSampler')
     end
   end
   describe '.should_sample' do
@@ -23,7 +23,7 @@ describe OpenTelemetry::Trace::Samplers::AlwaysSampleSampler do
         span_name: 'test_span',
         links: nil
       )
-      decision.sampled?.must_equal true
+      decision.sampled?.must_equal(true)
     end
   end
 end
