@@ -17,9 +17,9 @@ module OpenTelemetry
         # Returns the sampling {Decision} for a {Span} to be created
         #
         # @param [SpanContext] span_context The {SpanContext} of a parent span,
-        #   typically extracted from the wire. Can be nil.
+        #   typically extracted from the wire. Can be nil for a root span.
         # @param [Boolean] extracted_context True if span_context was extracted
-        #   from the wire. Can be nil.
+        #   from the wire. Can be nil for a root span.
         # @param [Integer] trace_id The trace_id of the {Span} to be created
         # @param [Integer] span_id The span_id of the {Span} to be created
         # @param [String] span_name Name of the {Span} to be created
