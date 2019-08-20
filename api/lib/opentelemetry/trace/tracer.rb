@@ -31,8 +31,8 @@ module OpenTelemetry
       #
       # With this helper:
       # OpenTelemetry.tracer.in_span('do-the-thing') do ... end
-      def in_span(name, sampler: nil, links: nil, recording_events: nil, kind: nil)
-        span = start_span(name, sampler: sampler, links: links, recording_events: recording_events, kind: kind)
+      def in_span(name, attributes: nil, links: nil, events: nil, resource: nil, span_id: nil, start_timestamp: nil)
+        span = start_span(name, attributes: attributes, links: links, events: events, resource: resource, span_id: span_id, start_timestamp: start_timestamp)
         with_span(span) { |s| yield s }
       end
 
@@ -40,13 +40,13 @@ module OpenTelemetry
         Context.with(CONTEXT_SPAN_KEY, span) { |s| yield s }
       end
 
-      def start_root_span(name, sampler: nil, links: nil, recording_events: nil, kind: nil)
+      def start_root_span(name, attributes: nil, links: nil, events: nil, resource: nil, span_id: nil, start_timestamp: nil)
         raise ArgumentError if name.nil?
 
         Span.create_random
       end
 
-      def start_span(name, with_parent: nil, with_parent_context: nil, sampler: nil, links: nil, recording_events: nil, kind: nil)
+      def start_span(name, with_parent: nil, with_parent_context: nil, attributes: nil, links: nil, events: nil, resource: nil, span_id: nil, start_timestamp: nil)
         raise ArgumentError if name.nil?
 
         span_context = with_parent&.context || with_parent_context || current_span.context
