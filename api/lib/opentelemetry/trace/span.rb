@@ -101,6 +101,19 @@ module OpenTelemetry
         self
       end
 
+      # Adds a link to another Span from this Span. Linked Span can be from the
+      # same or different trace. See Links description.
+      #
+      # @param [Link] link A to another span whose attributes are lazily
+      #   accessed
+      #
+      # @return [self] returns itself
+      def add_lazy_link(link)
+        raise ArgumentError if link.nil? || !link.is_a?(Link)
+
+        self
+      end
+
       # Sets the Status to the Span
       #
       # If used, this will override the default Span status. Default is OK.

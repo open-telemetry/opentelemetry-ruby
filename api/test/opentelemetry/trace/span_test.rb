@@ -3,7 +3,11 @@
 require 'test_helper'
 
 describe OpenTelemetry::Trace::Span do
-  let(:span_context) { Object.new }
+  let(:span_context) do
+    OpenTelemetry::Trace::SpanContext.new(trace_id: 123,
+                                          span_id: 456,
+                                          trace_options: 0x0)
+  end
   let(:span) { build_span(span_context: span_context) }
 
   describe '#context' do
@@ -33,6 +37,13 @@ describe OpenTelemetry::Trace::Span do
   describe '#finish' do
     it 'returns self' do
       span.finish.must_equal(span)
+    end
+  end
+
+  describe '#add_lazy_link' do
+    it 'returns self' do
+      link = OpenTelemetry::Trace::Link.new(span_context: span_context)
+      span.add_lazy_link(link).must_equal(span)
     end
   end
 
