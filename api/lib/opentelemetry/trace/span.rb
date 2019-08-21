@@ -82,8 +82,8 @@ module OpenTelemetry
         self
       end
 
-      # Adds a link to another Span from this Span. Linked Span can be from the
-      # same or different trace. See {Link} for a description.
+      # Adds a link to another Span from this Span. The linked Span can be from
+      # the same or different trace. See {Link} for a description.
       #
       # @param [SpanContext] span_context SpanContext of the Span to link with
       #   Span
@@ -100,10 +100,10 @@ module OpenTelemetry
         self
       end
 
-      # Adds a link to another Span from this Span. Linked Span can be from the
-      # same or different trace. See Links description.
+      # Adds a link to another Span from this Span. The linked Span can be from
+      # the same or different trace. See {Link} for a description.
       #
-      # @param [Link] link A to another span whose attributes are lazily
+      # @param [Link] link A link to another span whose attributes are lazily
       #   accessed
       #
       # @return [self] returns itself
