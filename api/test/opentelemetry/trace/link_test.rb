@@ -15,7 +15,7 @@ describe OpenTelemetry::Trace::Link do
   describe '.new' do
     it 'has a span_context' do
       link = OpenTelemetry::Trace::Link.new(span_context: span_context)
-      link.span_context.must_equal(span_context)
+      link.context.must_equal(span_context)
     end
     it 'has empty attributes by default' do
       link = OpenTelemetry::Trace::Link.new(span_context: span_context)

@@ -16,7 +16,7 @@ module OpenTelemetry
       # Returns the {SpanContext} for this link
       #
       # @return [SpanContext]
-      attr_reader :span_context
+      attr_reader :context
 
       # Returns the attributes for this link
       #
@@ -32,7 +32,7 @@ module OpenTelemetry
         raise ArgumentError unless span_context.instance_of?(SpanContext)
         raise ArgumentError unless attributes.nil? || attributes.is_a?(Hash)
 
-        @span_context = span_context
+        @context = span_context
         @attributes = attributes || EMPTY_ATTRIBUTES
       end
     end
