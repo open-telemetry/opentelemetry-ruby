@@ -83,19 +83,18 @@ module OpenTelemetry
       end
 
       # Adds a link to another Span from this Span. Linked Span can be from the
-      # same or different trace. See Links description.
+      # same or different trace. See {Link} for a description.
       #
-      # @param [SpanContext, Link] span_context_or_link SpanContext of the Span
-      #   to link to or a Link which allows allows instrumentation to supply a
-      #   lazily calculated Link.
+      # @param [SpanContext] span_context SpanContext of the Span to link with
+      #   Span
       # @param [Hash<String, Object>] attrs Map of attributes associated with
       #   this link. Attributes are key:value pairs where key is a string and
       #   value is one of string, boolean or numeric type.
       #
       # @return [self] returns itself
-      def add_link(span_context_or_link, attrs = nil)
-        raise ArgumentError if span_context_or_link.nil?
-        raise ArgumentError unless span_context_or_link.instance_of?(SpanContext) || attrs.nil? || attrs.empty?
+      def add_link(span_context, attrs = nil)
+        raise ArgumentError if span_context.nil?
+        raise ArgumentError unless span_context.instance_of?(SpanContext) || attrs.nil? || attrs.empty?
         raise ArgumentError unless valid_attributes?(attrs)
 
         self
