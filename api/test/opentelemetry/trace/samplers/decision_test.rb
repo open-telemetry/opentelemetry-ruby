@@ -46,5 +46,12 @@ describe OpenTelemetry::Trace::Samplers::Decision do
       )
       decision.attributes.must_equal(attributes)
     end
+    it 'returns a frozen hash' do
+      decision = OpenTelemetry::Trace::Samplers::Decision.new(
+        decision: true,
+        attributes: { 'foo' => 'bar' }
+      )
+      decision.attributes.must_be(:frozen?)
+    end
   end
 end
