@@ -13,19 +13,41 @@ describe OpenTelemetry::Trace::Link do
                                           trace_options: 0x0)
   end
   describe '.new' do
-    it 'has a span_context' do
+    it 'accepts a span_context' do
       link = OpenTelemetry::Trace::Link.new(span_context: span_context)
       link.context.must_equal(span_context)
     end
-    it 'has empty attributes by default' do
+  end
+  describe '.attributes' do
+    it 'returns an empty hash by default' do
       link = OpenTelemetry::Trace::Link.new(span_context: span_context)
       link.attributes.must_equal({})
     end
-    it 'reflects attributes passed in' do
+    it 'returns and freezes attributes passed in' do
       attributes = { 'foo' => 'bar', 'bar' => 'baz' }.freeze
       link = OpenTelemetry::Trace::Link.new(span_context: span_context,
                                             attributes: attributes)
       link.attributes.must_equal(attributes)
+      link.attributes.must_be(:frozen?)
+    end
+    it 'lazily formats and freezes attributes' do
+      attributes_formatted = false
+      link = OpenTelemetry::Trace::Link.new(span_context: span_context) do
+        attributes_formatted = true
+        { 'foo' => 'bar', 'bar' => 'baz' }
+      end
+      attributes_formatted.must_equal(false)
+      link.attributes.must_equal('foo' => 'bar', 'bar' => 'baz')
+      link.attributes.must_be(:frozen?)
+      attributes_formatted.must_equal(true)
+    end
+    it 'raises an exception if both attributes and a formatter are passed in' do
+      proc do
+        OpenTelemetry::Trace::Link.new(span_context: span_context,
+                                       attributes: { 'foo' => 'bar' }) do
+          { 'bar' => 'baz' }
+        end
+      end.must_raise(ArgumentError)
     end
   end
 end

@@ -18,22 +18,42 @@ module OpenTelemetry
       # @return [SpanContext]
       attr_reader :context
 
-      # Returns the attributes for this link
-      #
-      # @return [Hash<String, Object>]
-      attr_reader :attributes
-
       # Returns a new link.
       #
       # @param [SpanContext] span_context The context of the linked {Span}.
-      # @param [optional Hash<String, Object>] attributes The attributes of the {Link}.
+      # @param [optional Hash<String, Object>] attributes A hash of attributes
+      #   for this link. Attributes will be frozen during Link initialization.
+      #   If both attributes and a link_formatter are provided, an ArgumentError
+      #   will be raised.
+      # @yieldreturn [optional Hash<String, Object>] attribute_formatter A
+      #   callable that returns a hash of attributes for this link. Will be
+      #   called lazily and its return value will be frozen when attributes are
+      #   first accessed. If both attributes and a link_formatter are provided,
+      #   an ArgumentError will be raised.
       # @return [Link]
-      def initialize(span_context:, attributes: nil)
+      # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+      def initialize(span_context:, attributes: nil, &attribute_formatter)
         raise ArgumentError unless span_context.instance_of?(SpanContext)
         raise ArgumentError unless attributes.nil? || attributes.is_a?(Hash)
+        raise ArgumentError, 'Expected attributes or block, but received both' if attributes && attribute_formatter
 
         @context = span_context
-        @attributes = attributes || EMPTY_ATTRIBUTES
+
+        if attribute_formatter
+          @attribute_formatter = attribute_formatter
+        else
+          @attributes = attributes.freeze || EMPTY_ATTRIBUTES
+        end
+      end
+      # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+      # Returns the attributes for this link. If an attribute_formatter was
+      # was provided when creating the link, it will be called lazily when
+      # attributes are first accessed.
+      #
+      # @return [Hash<String, Object>]
+      def attributes
+        @attributes ||= @attribute_formatter.call.freeze
       end
     end
   end
