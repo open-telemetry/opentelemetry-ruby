@@ -25,7 +25,7 @@ module OpenTelemetry
         # attributes.
         #
         # @param [Boolean] decision Whether or not a span should be sampled
-        # @param [Hash<String, Object>] attributes A frozen or freezable hash
+        # @param [optional Hash<String, Object>] attributes A frozen or freezable hash
         #   containing attributes to be attached to a root span
         def initialize(decision:, attributes: nil)
           @decision = decision

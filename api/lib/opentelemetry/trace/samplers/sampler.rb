@@ -22,7 +22,6 @@ module OpenTelemetry
         # @param [Enumerable<Link>] links A collection of links to be associated
         #   with the {Span} to be created. Can be nil.
         # @return [Decision] The sampling decision
-
         # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         def decision(span_context: nil,
                      extracted_context: nil,
