@@ -54,8 +54,8 @@ module OpenTelemetry
       #
       # @return [self] returns itself
       def set_attribute(key, value)
-        raise ArgumentError unless valid_key?(key)
-        raise ArgumentError unless valid_value?(value)
+        raise ArgumentError unless Internal.valid_key?(key)
+        raise ArgumentError unless Internal.valid_value?(value)
 
         self
       end
@@ -77,7 +77,7 @@ module OpenTelemetry
       # @return [self] returns itself
       def add_event(name, attrs = nil, timestamp: nil)
         raise ArgumentError if name.nil?
-        raise ArgumentError unless valid_attributes?(attrs)
+        raise ArgumentError unless Internal.valid_attributes?(attrs)
 
         self
       end
@@ -95,7 +95,7 @@ module OpenTelemetry
       def add_link(span_context, attrs = nil)
         raise ArgumentError if span_context.nil?
         raise ArgumentError unless span_context.instance_of?(SpanContext) || attrs.nil? || attrs.empty?
-        raise ArgumentError unless valid_attributes?(attrs)
+        raise ArgumentError unless Internal.valid_attributes?(attrs)
 
         self
       end
@@ -157,20 +157,6 @@ module OpenTelemetry
       # @return [self] returns itself
       def finish(end_timestamp: nil)
         self
-      end
-
-      private
-
-      def valid_key?(key)
-        key.instance_of?(String)
-      end
-
-      def valid_value?(value)
-        value.instance_of?(String) || value == false || value == true || value.is_a?(Numeric)
-      end
-
-      def valid_attributes?(attrs)
-        attrs.nil? || attrs.all? { |k, v| valid_key?(k) && valid_value?(v) }
       end
     end
   end
