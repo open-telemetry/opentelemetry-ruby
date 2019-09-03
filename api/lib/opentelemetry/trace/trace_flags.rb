@@ -41,7 +41,7 @@ module OpenTelemetry
       #
       # @return [Boolean]
       def sampled?
-        @flags.anybits?(1)
+        (@flags & 1) != 0
       end
 
       DEFAULT = from_byte(0)
