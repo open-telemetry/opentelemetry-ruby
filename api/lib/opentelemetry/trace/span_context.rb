@@ -28,17 +28,23 @@ module OpenTelemetry
 
       private
 
-      SPAN_ID_RANGE = (1..(2**64 - 1)).freeze
-      TRACE_ID_RANGE = (1..(2**128 - 1)).freeze
+      INVALID_TRACE_ID = '0' * 32
+      INVALID_SPAN_ID = '0' * 16
 
-      private_constant(:SPAN_ID_RANGE, :TRACE_ID_RANGE)
+      private_constant(:INVALID_TRACE_ID, :INVALID_SPAN_ID)
 
       def generate_trace_id
-        rand(TRACE_ID_RANGE)
+        loop do
+          id = Random::DEFAULT.bytes(16).unpack1('H*')
+          return id unless id == INVALID_TRACE_ID
+        end
       end
 
       def generate_span_id
-        rand(SPAN_ID_RANGE)
+        loop do
+          id = Random::DEFAULT.bytes(8).unpack1('H*')
+          return id unless id == INVALID_SPAN_ID
+        end
       end
     end
   end

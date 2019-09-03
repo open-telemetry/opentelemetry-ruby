@@ -27,7 +27,7 @@ module OpenTelemetry
 
       # @api private
       # The constructor is private and only for use internally by the class.
-      # Users should use the {fromByte} factory method to obtain a {TraceFlags}
+      # Users should use the {from_byte} factory method to obtain a {TraceFlags}
       # instance.
       #
       # @param [Integer] flags 8-bit byte of bit flags
