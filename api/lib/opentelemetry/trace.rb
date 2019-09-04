@@ -11,11 +11,11 @@ module OpenTelemetry
   module Trace
     # An invalid trace identifier, a 16-byte array with all zero bytes, encoded
     # as a hexadecimal string.
-    INVALID_TRACE_ID = '0' * 32
+    INVALID_TRACE_ID = ('0' * 32).freeze
 
     # An invalid span identifier, an 8-byte array with all zero bytes, encoded
     # as a hexadecimal string.
-    INVALID_SPAN_ID = '0' * 16
+    INVALID_SPAN_ID = ('0' * 16).freeze
 
     # Generates a valid trace identifier, a 16-byte array with at least one
     # non-zero byte, encoded as a hexadecimal string.

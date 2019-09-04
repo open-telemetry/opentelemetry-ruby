@@ -19,7 +19,7 @@ module OpenTelemetry
         # @raise [ArgumentError] If flags is not an 8-bit byte
         # @return [TraceFlags]
         def from_byte(flags)
-          raise ArgumentError, 'flags must be an 8-bit byte' unless (0..255).include?(flags)
+          raise ArgumentError, 'flags must be an 8-bit byte' unless flags & ~0xFF == 0
 
           new(flags)
         end
