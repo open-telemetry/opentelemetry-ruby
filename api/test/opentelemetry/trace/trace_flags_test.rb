@@ -9,7 +9,7 @@ describe OpenTelemetry::Trace::TraceFlags do
         .must_raise(NoMethodError)
     end
   end
-  describe '.fromByte' do
+  describe '.from_byte' do
     it 'can be initialized with a byte' do
       flags = OpenTelemetry::Trace::TraceFlags.from_byte(0)
       flags.sampled?.must_equal(false)

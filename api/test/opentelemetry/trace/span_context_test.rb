@@ -4,7 +4,7 @@ require 'test_helper'
 
 describe OpenTelemetry::Trace::SpanContext do
   let(:span_context) { OpenTelemetry::Trace::SpanContext.new }
-  let(:invalid_context) { OpenTelemetry::Trace::SpanContext.invalid }
+  let(:invalid_context) { OpenTelemetry::Trace::SpanContext::INVALID }
 
   describe '#initialize' do
     it 'must generate valid span_id and trace_id by default' do
