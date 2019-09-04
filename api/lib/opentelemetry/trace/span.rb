@@ -89,29 +89,26 @@ module OpenTelemetry
       #   Span
       # @param [Hash<String, Object>] attrs Map of attributes associated with
       #   this link. Attributes are key:value pairs where key is a string and
-      #   value is one of string, boolean or numeric type.
+      #   value is one of string, boolean or numeric type. If both attributes
+      #   and a link_formatter are provided, an ArgumentError will be raised.
+      #
+      # @yieldreturn [optional Hash<String, Object>] attribute_formatter A
+      #   callable that returns a hash of attributes for this link. Will be
+      #   called lazily and its return value will be frozen when attributes are
+      #   first accessed. If both attributes and a link_formatter are provided,
+      #   an ArgumentError will be raised.
       #
       # @return [self] returns itself
-      def add_link(span_context, attrs = nil)
-        raise ArgumentError if span_context.nil?
-        raise ArgumentError unless span_context.instance_of?(SpanContext) || attrs.nil? || attrs.empty?
-        raise ArgumentError unless Internal.valid_attributes?(attrs)
+      #
+      # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+      def add_link(span_context_or_link, attrs = nil, &attribute_formatter)
+        raise ArgumentError unless span_context_or_link.instance_of?(SpanContext) || span_context_or_link.is_a?(Link)
+        raise ArgumentError if span_context_or_link.instance_of?(SpanContext) && attrs.nil? && attribute_formatter.nil?
+        raise ArgumentError if attrs && !Internal.valid_attributes?(attrs)
 
         self
       end
-
-      # Adds a link to another Span from this Span. The linked Span can be from
-      # the same or different trace. See {Link} for a description.
-      #
-      # @param [Link] link A link to another span whose attributes are lazily
-      #   accessed
-      #
-      # @return [self] returns itself
-      def add_lazy_link(link)
-        raise ArgumentError if link.nil? || !link.is_a?(Link)
-
-        self
-      end
+      # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
       # Sets the Status to the Span
       #

@@ -40,10 +40,16 @@ describe OpenTelemetry::Trace::Span do
     end
   end
 
-  describe '#add_lazy_link' do
-    it 'returns self' do
+  describe '#add_link' do
+    it 'accepts a link' do
       link = OpenTelemetry::Trace::Link.new(span_context: span_context)
-      span.add_lazy_link(link).must_equal(span)
+      span.add_link(link).must_equal(span)
+    end
+    it 'accepts a span context and attributes' do
+      span.add_link(span_context, 'foo' => 'bar').must_equal(span)
+    end
+    it 'accepts a span context and attribute_formatter' do
+      span.add_link(span_context) { { 'foo' => 'bar' } }.must_equal(span)
     end
   end
 
