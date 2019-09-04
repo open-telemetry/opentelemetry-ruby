@@ -35,11 +35,13 @@ module OpenTelemetry
       def initialize(span_context:, attributes: nil, &attribute_formatter)
         raise ArgumentError unless span_context.instance_of?(SpanContext)
         raise ArgumentError unless attributes.nil? || attributes.is_a?(Hash)
+        raise ArgumentError unless attributes.nil? || Internal.valid_attributes?(attributes)
         raise ArgumentError, 'Expected attributes or block, but received both' if attributes && attribute_formatter
 
         @context = span_context
 
         if attribute_formatter
+          @attributes = nil
           @attribute_formatter = attribute_formatter
         else
           @attributes = attributes.freeze || EMPTY_ATTRIBUTES
@@ -53,7 +55,14 @@ module OpenTelemetry
       #
       # @return [Hash<String, Object>]
       def attributes
-        @attributes ||= @attribute_formatter.call.freeze
+        if @attributes
+          @attributes
+        else
+          attributes = @attribute_formatter.call
+          raise 'Attribute formatter returned invalid attributes' unless Internal.valid_attributes?(attributes)
+
+          @attributes = attributes.freeze
+        end
       end
     end
   end

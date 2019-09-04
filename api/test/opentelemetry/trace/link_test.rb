@@ -49,5 +49,13 @@ describe OpenTelemetry::Trace::Link do
         end
       end.must_raise(ArgumentError)
     end
+    it 'raises an exception if formatter returns invalid attributes' do
+      proc do
+        link = OpenTelemetry::Trace::Link.new(span_context: span_context) do
+          { 'bar' => Object.new }
+        end
+        link.attributes
+      end.must_raise(RuntimeError)
+    end
   end
 end
