@@ -140,6 +140,8 @@ module OpenTelemetry
       #
       # This API MUST be non-blocking.
       #
+      # @param [Time] end_timestamp optional end timestamp for the span.
+      #
       # @return [self] returns itself
       def finish(end_timestamp: nil)
         self
