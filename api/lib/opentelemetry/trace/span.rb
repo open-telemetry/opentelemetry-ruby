@@ -72,9 +72,10 @@ module OpenTelemetry
       # @param [Hash<String, Object>] attrs One or more key:value pairs, where
       #   the keys must be strings and the values may be string, boolean or
       #   numeric type.
+      # @param [Time] timestamp optional timestamp for the event.
       #
       # @return [self] returns itself
-      def add_event(name, attrs = nil)
+      def add_event(name, attrs = nil, timestamp: nil)
         raise ArgumentError if name.nil?
         raise ArgumentError unless valid_attributes?(attrs)
 
@@ -139,8 +140,10 @@ module OpenTelemetry
       #
       # This API MUST be non-blocking.
       #
+      # @param [Time] end_timestamp optional end timestamp for the span.
+      #
       # @return [self] returns itself
-      def finish
+      def finish(end_timestamp: nil)
         self
       end
 
