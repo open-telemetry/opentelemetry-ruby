@@ -13,9 +13,9 @@ module OpenTelemetry
       attr_reader :trace_id, :span_id, :trace_flags
 
       def initialize(
-        trace_id: generate_trace_id,
-        span_id: generate_span_id,
-        trace_flags: TraceFlags::DEFAULT
+        trace_id: OpenTelemetry::Trace.generate_trace_id,
+        span_id: OpenTelemetry::Trace.generate_span_id,
+        trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT
       )
         @trace_id = trace_id
         @span_id = span_id
@@ -23,7 +23,15 @@ module OpenTelemetry
       end
 
       def valid?
-        !(@trace_id.zero? || @span_id.zero?)
+        @trace_id != OpenTelemetry::Trace::INVALID_TRACE_ID &&
+          @span_id != OpenTelemetry::Trace::INVALID_SPAN_ID
+      end
+
+      def self.invalid
+        @invalid ||= new(
+          trace_id: OpenTelemetry::Trace::INVALID_TRACE_ID,
+          span_id: OpenTelemetry::Trace::INVALID_SPAN_ID
+        )
       end
     end
   end
