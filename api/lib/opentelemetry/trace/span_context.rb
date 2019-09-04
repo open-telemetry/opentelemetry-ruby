@@ -25,27 +25,6 @@ module OpenTelemetry
       def valid?
         !(@trace_id.zero? || @span_id.zero?)
       end
-
-      private
-
-      INVALID_TRACE_ID = '0' * 32
-      INVALID_SPAN_ID = '0' * 16
-
-      private_constant(:INVALID_TRACE_ID, :INVALID_SPAN_ID)
-
-      def generate_trace_id
-        loop do
-          id = Random::DEFAULT.bytes(16).unpack1('H*')
-          return id unless id == INVALID_TRACE_ID
-        end
-      end
-
-      def generate_span_id
-        loop do
-          id = Random::DEFAULT.bytes(8).unpack1('H*')
-          return id unless id == INVALID_SPAN_ID
-        end
-      end
     end
   end
 end
