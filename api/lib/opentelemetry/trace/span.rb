@@ -85,35 +85,22 @@ module OpenTelemetry
       # Adds a link to another Span from this Span. The linked Span can be from
       # the same or different trace. See {Link} for a description.
       #
-      # @param [SpanContext, Link] span_context_or_link SpanContext of the Span to link with
-      #   Span or a Link instance
-      # @param [Hash<String, Object>] attrs Map of attributes associated with
+      # @param [SpanContext, Link] span_context_or_link_formatter The
+      #   SpanContext context of the Span to link with Span or a LinkFormatter,
+      #   a callable that returns a Link instance when called.
+      # @param [optional Hash<String, Object>] attrs Map of attributes associated with
       #   this link. Attributes are key:value pairs where key is a string and
       #   value is one of string, boolean or numeric type. This argument should
-      #   only be used when passing in a span context, not a link. If this
-      #   argument is passed in with a link or if both attributes and a
-      #   link_formatter are provided, an ArgumentError will be raised.
+      #   only be used when passing in a span context, not a link formatter.
       #
-      # @yieldreturn [optional Hash<String, Object>] attribute_formatter A
-      #   callable that returns a hash of attributes for this link. Will be
-      #   called lazily and its return value will be frozen when attributes are
-      #   first accessed. This argument should only be used when passing in a
-      #   span context, not a link. If this argument is passed in with a link or
-      #   if both attributes and a link_formatter are provided, an ArgumentError
-      #   will be raised.
-
       # @return [self] returns itself
-      #
-      # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
-      def add_link(span_context_or_link, attrs = nil, &attribute_formatter)
-        raise ArgumentError unless span_context_or_link.instance_of?(SpanContext) || span_context_or_link.is_a?(Link)
+      def add_link(span_context_or_link_formatter, attrs = nil, &attribute_formatter)
+        raise ArgumentError unless span_context_or_link_formatter.instance_of?(SpanContext) || span_context_or_link_formatter.is_a?(Proc)
         raise ArgumentError unless Internal.valid_attributes?(attrs)
-        raise ArgumentError unless attrs.nil? || attribute_formatter.nil?
-        raise ArgumentError if span_context_or_link.is_a?(Link) && (!attrs.nil? || !attribute_formatter.nil?)
+        raise ArgumentError if span_context_or_link_formatter.is_a?(Proc) && !attrs.nil?
 
         self
       end
-      # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
 
       # Sets the Status to the Span
       #

@@ -41,38 +41,22 @@ describe OpenTelemetry::Trace::Span do
   end
 
   describe '#add_link' do
-    it 'accepts a link' do
-      link = OpenTelemetry::Trace::Link.new(span_context: span_context)
-      span.add_link(link).must_equal(span)
-    end
     it 'accepts a span context' do
       span.add_link(span_context).must_equal(span)
     end
     it 'accepts a span context and attributes' do
       span.add_link(span_context, 'foo' => 'bar').must_equal(span)
     end
-    it 'accepts a span context and attribute_formatter' do
-      span.add_link(span_context) { { 'foo' => 'bar' } }.must_equal(span)
+    it 'accepts a link formatter' do
+      link_formatter =
+        -> { OpenTelemetry::Trace::Link.new(span_context: span_context) }
+      span.add_link(link_formatter).must_equal(span)
     end
     it 'raises if both attributes and formatter are passed in' do
       proc do
-        span.add_link(span_context, 'foo' => 'bar') do
-          { 'foo' => 'bar' }
-        end
-      end.must_raise(ArgumentError)
-    end
-    it 'raises if a link and attributes are passed in' do
-      proc do
-        link = OpenTelemetry::Trace::Link.new(span_context: span_context)
-        span.add_link(link, 'foo' => 'bar')
-      end.must_raise(ArgumentError)
-    end
-    it 'raises if a link and formatter are passed in' do
-      proc do
-        link = OpenTelemetry::Trace::Link.new(span_context: span_context)
-        span.add_link(link) do
-          { 'foo' => 'bar' }
-        end
+        link_formatter =
+          -> { OpenTelemetry::Trace::Link.new(span_context: span_context) }
+        span.add_link(link_formatter, 'foo' => 'bar')
       end.must_raise(ArgumentError)
     end
   end
