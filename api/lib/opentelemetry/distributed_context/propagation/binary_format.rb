@@ -22,7 +22,7 @@ module OpenTelemetry
         def from_bytes(bytes)
           raise ArgumentError if bytes.nil?
 
-          SpanContext.INVALID
+          Trace::SpanContext::INVALID
         end
       end
     end

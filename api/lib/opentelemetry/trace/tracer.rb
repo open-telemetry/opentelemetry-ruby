@@ -50,10 +50,10 @@ module OpenTelemetry
         raise ArgumentError if name.nil?
 
         span_context = with_parent&.context || with_parent_context || current_span.context
-        if SpanContext.INVALID == span_context
-          Span.create_random
-        else
+        if span_context.valid?
           Span.new(span_context)
+        else
+          Span.create_random
         end
       end
 
