@@ -94,7 +94,7 @@ module OpenTelemetry
       #   only be used when passing in a span context, not a link formatter.
       #
       # @return [self] returns itself
-      def add_link(span_context_or_link_formatter, attrs = nil, &attribute_formatter)
+      def add_link(span_context_or_link_formatter, attrs = nil)
         raise ArgumentError unless span_context_or_link_formatter.instance_of?(SpanContext) || span_context_or_link_formatter.is_a?(Proc)
         raise ArgumentError unless Internal.valid_attributes?(attrs)
         raise ArgumentError if span_context_or_link_formatter.is_a?(Proc) && !attrs.nil?
