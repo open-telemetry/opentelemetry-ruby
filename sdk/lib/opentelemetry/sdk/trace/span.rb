@@ -4,6 +4,12 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-source 'https://rubygems.org'
-
-gemspec
+module OpenTelemetry
+  module SDK
+    module Trace
+      class Span
+        # TODO
+      end
+    end
+  end
+end
