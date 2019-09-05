@@ -85,13 +85,14 @@ module OpenTelemetry
       # Adds a link to another Span from this Span. The linked Span can be from
       # the same or different trace. See {Link} for a description.
       #
-      # @param [SpanContext, Link] span_context_or_link_formatter The
-      #   SpanContext context of the Span to link with Span or a LinkFormatter,
-      #   a callable that returns a Link instance when called.
+      # @param [SpanContext, Callable] span_context_or_link_formatter The
+      #   SpanContext context of the Span to link with this Span or a
+      #   LinkFormatter, a lazily evaluated callable that returns a Link
+      #   instance.
       # @param [optional Hash<String, Object>] attrs Map of attributes associated with
       #   this link. Attributes are key:value pairs where key is a string and
       #   value is one of string, boolean or numeric type. This argument should
-      #   only be used when passing in a span context, not a link formatter.
+      #   only be used when passing in a SpanContext, not a LinkFormatter.
       #
       # @return [self] returns itself
       def add_link(span_context_or_link_formatter, attrs = nil)
