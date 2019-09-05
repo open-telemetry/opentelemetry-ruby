@@ -19,7 +19,7 @@ module OpenTelemetry
         # @raise [ArgumentError] If flags is not an 8-bit byte
         # @return [TraceFlags]
         def from_byte(flags)
-          raise ArgumentError, 'flags must be an 8-bit byte' unless (flags & ~0xFF).zero?
+          raise ArgumentError, 'flags must be an 8-bit byte' unless flags & ~0xFF == 0 # rubocop:disable Style/NumericPredicate
 
           new(flags)
         end
