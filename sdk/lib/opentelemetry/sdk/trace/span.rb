@@ -7,7 +7,7 @@
 module OpenTelemetry
   module SDK
     module Trace
-      class Span
+      class Span < OpenTelemetry::Trace::Span
         # TODO
       end
     end

@@ -19,14 +19,29 @@ module OpenTelemetry
           @span_processors = span_processors.to_a.freeze
         end
 
+        # Called when a {Span} is started, if the {Span#recording_events?}
+        # returns true.
+        #
+        # This method is called synchronously on the execution thread, should
+        # not throw or block the execution thread.
+        #
+        # @param [Span] span the {Span} that just started.
         def on_start(span)
           @span_processors.each { |processor| processor.on_start(span) }
         end
 
+        # Called when a {Span} is ended, if the {Span#recording_events?}
+        # returns true.
+        #
+        # This method is called synchronously on the execution thread, should
+        # not throw or block the execution thread.
+        #
+        # @param [Span] span the {Span} that just ended.
         def on_end(span)
           @span_processors.each { |processor| processor.on_end(span) }
         end
 
+        # Called when {Tracer#shutdown} is called.
         def shutdown
           @span_processors.each(&:shutdown)
         end

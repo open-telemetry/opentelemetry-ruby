@@ -30,3 +30,4 @@ end
 require 'opentelemetry/sdk/trace/export/in_memory_span_exporter'
 require 'opentelemetry/sdk/trace/export/multi_span_exporter'
 require 'opentelemetry/sdk/trace/export/noop_span_exporter'
+require 'opentelemetry/sdk/trace/export/simple_sampled_span_processor'
