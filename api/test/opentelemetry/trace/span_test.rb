@@ -8,9 +8,7 @@ require 'test_helper'
 
 describe OpenTelemetry::Trace::Span do
   let(:span_context) do
-    OpenTelemetry::Trace::SpanContext.new(trace_id: 123,
-                                          span_id: 456,
-                                          trace_options: 0x0)
+    OpenTelemetry::Trace::SpanContext.new
   end
   let(:span) { build_span(span_context: span_context) }
 
