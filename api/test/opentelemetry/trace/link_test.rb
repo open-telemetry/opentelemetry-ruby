@@ -8,9 +8,7 @@ require 'test_helper'
 
 describe OpenTelemetry::Trace::Link do
   let(:span_context) do
-    OpenTelemetry::Trace::SpanContext.new(trace_id: 123,
-                                          span_id: 456,
-                                          trace_options: 0x0)
+    OpenTelemetry::Trace::SpanContext.new
   end
   describe '.new' do
     it 'accepts a span_context' do
