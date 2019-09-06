@@ -7,7 +7,11 @@
 require 'test_helper'
 
 describe OpenTelemetry::Trace::Span do
-  let(:span_context) { Object.new }
+  let(:span_context) do
+    OpenTelemetry::Trace::SpanContext.new(trace_id: 123,
+                                          span_id: 456,
+                                          trace_options: 0x0)
+  end
   let(:span) { build_span(span_context: span_context) }
 
   describe '#context' do
@@ -37,6 +41,27 @@ describe OpenTelemetry::Trace::Span do
   describe '#finish' do
     it 'returns self' do
       span.finish.must_equal(span)
+    end
+  end
+
+  describe '#add_link' do
+    it 'accepts a span context' do
+      span.add_link(span_context).must_equal(span)
+    end
+    it 'accepts a span context and attributes' do
+      span.add_link(span_context, 'foo' => 'bar').must_equal(span)
+    end
+    it 'accepts a link formatter' do
+      link_formatter =
+        -> { OpenTelemetry::Trace::Link.new(span_context: span_context) }
+      span.add_link(link_formatter).must_equal(span)
+    end
+    it 'raises if both attributes and formatter are passed in' do
+      proc do
+        link_formatter =
+          -> { OpenTelemetry::Trace::Link.new(span_context: span_context) }
+        span.add_link(link_formatter, 'foo' => 'bar')
+      end.must_raise(ArgumentError)
     end
   end
 
