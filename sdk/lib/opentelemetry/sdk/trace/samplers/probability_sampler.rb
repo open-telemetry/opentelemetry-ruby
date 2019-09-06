@@ -76,9 +76,9 @@ module OpenTelemetry
             elsif links&.any? { |link| link.context.trace_flags.sampled? }
               # If any parent link is sampled keep the sampling decision.
               SAMPLE_DECISION
+            elsif rand < @probability
+              SAMPLE_DECISION
             else
-              # TODO: what should we assume about the distribution of trace_id
-              # bits? How best to compare against @probability?
               DONT_SAMPLE_DECISION
             end
           end
