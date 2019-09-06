@@ -1,0 +1,34 @@
+# frozen_string_literal: true
+
+# Copyright 2019 OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+require 'bundler/gem_tasks'
+require 'rake/testtask'
+require 'yard'
+
+require 'rubocop/rake_task'
+RuboCop::RakeTask.new
+
+Rake::TestTask.new :test do |t|
+  t.libs << 'test'
+  t.libs << 'lib'
+  t.test_files = FileList['test/**/*_test.rb']
+end
+
+YARD::Rake::YardocTask.new do |t|
+  files = Dir.glob('./lib/**/*.rb')
+
+  # Move ./lib/opentelemetry/sdk.rb to the end of the array. Otherwise other
+  # files will overwrite the OpenTelemetry module comments with the license
+  # information.
+  sdk_index = files.index('./lib/opentelemetry/sdk.rb')
+  files = files.insert(-1, files.delete_at(sdk_index))
+
+  t.files = files # optional
+  t.options = ['--output-dir', 'docs/sdk'] # optional
+  t.stats_options = ['--list-undoc'] # optional
+end
+
+task default: %i[test rubocop yard]

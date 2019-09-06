@@ -4,6 +4,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-source 'https://rubygems.org'
-
-gemspec
+module OpenTelemetry
+  module SDK
+    ## Current OpenTelemetry version
+    VERSION = '0.0.0'
+  end
+end

@@ -1,0 +1,50 @@
+PATH
+  remote: .
+  specs:
+    opentelemetry-sdk (0.0.0)
+      opentelemetry-api (~> 0.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    ast (2.4.0)
+    faraday (0.15.4)
+      multipart-post (>= 1.2, < 3)
+    jaro_winkler (1.5.3)
+    minitest (5.11.3)
+    multipart-post (2.1.1)
+    opentelemetry-api (0.0.0)
+    parallel (1.17.0)
+    parser (2.6.4.0)
+      ast (~> 2.4.0)
+    rainbow (3.0.0)
+    rake (12.3.3)
+    rubocop (0.73.0)
+      jaro_winkler (~> 1.5.1)
+      parallel (~> 1.10)
+      parser (>= 2.6)
+      rainbow (>= 2.2.2, < 4.0)
+      ruby-progressbar (~> 1.7)
+      unicode-display_width (>= 1.4.0, < 1.7)
+    ruby-progressbar (1.10.1)
+    unicode-display_width (1.6.0)
+    yard (0.9.20)
+    yard-doctest (0.1.16)
+      minitest
+      yard
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bundler (>= 1.17)
+  faraday (~> 0.13)
+  minitest (~> 5.0)
+  opentelemetry-sdk!
+  rake (~> 12.0)
+  rubocop (~> 0.73.0)
+  yard (~> 0.9)
+  yard-doctest (~> 0.1.6)
+
+BUNDLED WITH
+   1.17.3
