@@ -54,8 +54,8 @@ module OpenTelemetry
       #
       # @return [self] returns itself
       def set_attribute(key, value)
-        raise ArgumentError unless valid_key?(key)
-        raise ArgumentError unless valid_value?(value)
+        raise ArgumentError unless Internal.valid_key?(key)
+        raise ArgumentError unless Internal.valid_value?(value)
 
         self
       end
@@ -77,26 +77,28 @@ module OpenTelemetry
       # @return [self] returns itself
       def add_event(name, attrs = nil, timestamp: nil)
         raise ArgumentError if name.nil?
-        raise ArgumentError unless valid_attributes?(attrs)
+        raise ArgumentError unless Internal.valid_attributes?(attrs)
 
         self
       end
 
-      # Adds a link to another Span from this Span. Linked Span can be from the
-      # same or different trace. See Links description.
+      # Adds a link to another Span from this Span. The linked Span can be from
+      # the same or different trace. See {Link} for a description.
       #
-      # @param [SpanContext, Link] span_context_or_link SpanContext of the Span
-      #   to link to or a Link which allows allows instrumentation to supply a
-      #   lazily calculated Link.
-      # @param [Hash<String, Object>] attrs Map of attributes associated with
+      # @param [SpanContext, Callable] span_context_or_link_formatter The
+      #   SpanContext context of the Span to link with this Span or a
+      #   LinkFormatter, a lazily evaluated callable that returns a Link
+      #   instance.
+      # @param [optional Hash<String, Object>] attrs Map of attributes associated with
       #   this link. Attributes are key:value pairs where key is a string and
-      #   value is one of string, boolean or numeric type.
+      #   value is one of string, boolean or numeric type. This argument should
+      #   only be used when passing in a SpanContext, not a LinkFormatter.
       #
       # @return [self] returns itself
-      def add_link(span_context_or_link, attrs = nil)
-        raise ArgumentError if span_context_or_link.nil?
-        raise ArgumentError unless span_context_or_link.instance_of?(SpanContext) || attrs.nil? || attrs.empty?
-        raise ArgumentError unless valid_attributes?(attrs)
+      def add_link(span_context_or_link_formatter, attrs = nil)
+        raise ArgumentError unless span_context_or_link_formatter.instance_of?(SpanContext) || span_context_or_link_formatter.is_a?(Proc)
+        raise ArgumentError unless Internal.valid_attributes?(attrs)
+        raise ArgumentError if span_context_or_link_formatter.is_a?(Proc) && !attrs.nil?
 
         self
       end
@@ -145,20 +147,6 @@ module OpenTelemetry
       # @return [self] returns itself
       def finish(end_timestamp: nil)
         self
-      end
-
-      private
-
-      def valid_key?(key)
-        key.instance_of?(String)
-      end
-
-      def valid_value?(value)
-        value.instance_of?(String) || value == false || value == true || value.is_a?(Numeric)
-      end
-
-      def valid_attributes?(attrs)
-        attrs.nil? || attrs.all? { |k, v| valid_key?(k) && valid_value?(v) }
       end
     end
   end
