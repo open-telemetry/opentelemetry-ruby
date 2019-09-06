@@ -13,7 +13,7 @@ module OpenTelemetry
         # recorded data for sampled spans in their own format.
         #
         # To export data an exporter MUST be registered to the {Tracer} using
-        # a {SimpleSampledSpansProcessor} or a {BatchSampledSpansProcessor}.
+        # a {SimpleSampledSpanProcessor} or a {BatchSampledSpanProcessor}.
         class NoopSpanExporter
           # Called to export sampled {Span}s.
           #
