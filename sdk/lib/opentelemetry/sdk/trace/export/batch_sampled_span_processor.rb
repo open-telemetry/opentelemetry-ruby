@@ -20,7 +20,7 @@ module OpenTelemetry
         # If the queue gets half full a preemptive notification is sent to the
         # worker thread that exports the spans to wake up and start a new
         # export cycle.
-        class BatchSampledSpansProcessor
+        class BatchSampledSpanProcessor
           # TODO
         end
       end

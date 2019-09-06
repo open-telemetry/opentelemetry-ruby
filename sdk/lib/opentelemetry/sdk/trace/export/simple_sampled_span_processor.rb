@@ -13,15 +13,15 @@ module OpenTelemetry
         # configured exporter.
         #
         # Only spans that are sampled are converted, {TraceFlags#sampled?} must
-        # return {true}.
-        class SimpleSampledSpansProcessor
-          # Returns a new {SimpleSampledSpansProcessor} that converts spans to
-          # proto and forwards them to the given {span_exporter}.
+        # return true.
+        class SimpleSampledSpanProcessor
+          # Returns a new {SimpleSampledSpanProcessor} that converts spans to
+          # proto and forwards them to the given span_exporter.
           #
           # @param span_exporter the (duck type) SpanExporter to where the
           #   sampled Spans are pushed.
-          # @return [SimpleSampledSpansProcessor]
-          # @raise ArgumentError if the {span_exporter} is {nil}.
+          # @return [SimpleSampledSpanProcessor]
+          # @raise ArgumentError if the span_exporter is nil.
           def initialize(span_exporter)
             raise ArgumentError, 'span_exporter' if span_exporter.nil?
 

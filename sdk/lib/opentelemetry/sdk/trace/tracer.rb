@@ -20,7 +20,7 @@ module OpenTelemetry
         end
 
         # Attempts to stop all the activity for this {Tracer}. Calls
-        # {SpanProcessor#shutdown} for all registered {SpanProcessor}s.
+        # SpanProcessor#shutdown for all registered SpanProcessors.
         #
         # This operation may block until all the Spans are processed. Must be
         # called before turning off the main application to ensure all data are
@@ -39,15 +39,14 @@ module OpenTelemetry
           end
         end
 
-        # Adds a new {SpanProcessor} to this {Tracer}.
+        # Adds a new SpanProcessor to this {Tracer}.
         #
         # Any registered processor causes overhead, consider to use an
         # async/batch processor especially for span exporting, and export to
         # multiple backends using the
         # {io.opentelemetry.sdk.trace.export.MultiSpanExporter}.
         #
-        # @param [SpanProcessor] span_processor the new {SpanProcessor} to be
-        #   added.
+        # @param span_processor the new SpanProcessor to be added.
         def add_span_processor(span_processor)
           @mutex.synchronize do
             @registered_span_processors << span_processor

@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry'
+
 module OpenTelemetry
   # SDK provides the reference implementation of the OpenTelemetry API.
   module SDK
