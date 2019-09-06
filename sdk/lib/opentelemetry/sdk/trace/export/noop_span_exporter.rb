@@ -20,7 +20,9 @@ module OpenTelemetry
           # @param [Enumerable<Span>] spans the list of sampled {Span}s to be
           #   exported.
           # @return [Integer] the result of the export.
-          def export(spans); end
+          def export(spans)
+            SUCCESS
+          end
 
           # Called when {Tracer#shutdown} is called, if this exporter is
           # registered to a {Tracer} object.
