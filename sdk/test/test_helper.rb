@@ -6,7 +6,6 @@
 
 require 'simplecov'
 SimpleCov.start
-SimpleCov.minimum_coverage 85
 
-require 'opentelemetry'
+require 'opentelemetry/sdk'
 require 'minitest/autorun'
