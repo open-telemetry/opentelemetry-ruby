@@ -29,7 +29,6 @@ module OpenTelemetry
               return OpenTelemetry::Trace::Samplers::AlwaysSampleSampler.new if probability == 1.0
 
               new(probability)
-              # idUpperBound = (long) (probability * Long.MAX_VALUE);
             end
           end
 
