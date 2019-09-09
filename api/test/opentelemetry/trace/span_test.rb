@@ -34,6 +34,24 @@ describe OpenTelemetry::Trace::Span do
     it 'returns self' do
       span.add_event('event-name').must_equal(span)
     end
+    it 'accepts a name and attributes' do
+      span.add_event('event-name', 'foo' => 'bar').must_equal(span)
+    end
+    it 'accepts a timestamp' do
+      span.add_event('event-name', timestamp: Time.now).must_equal(span)
+    end
+    it 'accepts an event formatter' do
+      event_formatter =
+        -> { OpenTelemetry::Trace::Event.new(name: 'event-name') }
+      span.add_event(event_formatter).must_equal(span)
+    end
+    it 'raises if both attributes and formatter are passed in' do
+      proc do
+        event_formatter =
+          -> { OpenTelemetry::Trace::Event.new(name: 'event-name') }
+        span.add_event(event_formatter, 'foo' => 'bar')
+      end.must_raise(ArgumentError)
+    end
   end
 
   describe '#finish' do
