@@ -16,7 +16,15 @@ module OpenTelemetry
       # Propagation is usually implemented via library-specific request interceptors, where the client-side injects values
       # and the server-side extracts them.
       class HTTPTextFormat
-        def extract(carrier, &block)
+
+        # extract will return a SpanContext from the supplied carrier
+        # invalid headers will result in a new SpanContext
+        # @param [Carrier] the carrier to get the header from
+        # @yield [Carrier, String] the header key
+        # {SpanContext}
+        def extract(carrier)
+          raise Error, 'block must be supplied' unless block_given?
+
           header = yield carrier, TraceParent::TRACE_PARENT_HEADER
           tp = TraceParent.from_string(header)
 
@@ -25,7 +33,13 @@ module OpenTelemetry
           SpanContext.new
         end
 
-        def inject(context, carrier, &block)
+        # inject will set the span context on the supplied carrier
+        # @param [Context] the carrier
+        # @yield [Carrier, String, String] carrier, header key, header value
+        # {SpanContext}
+        def inject(context, carrier)
+          raise Error, 'block must be supplied' unless block_given?
+
           yield carrier, TraceParent::TRACE_PARENT_HEADER, TraceParent.from_context(context)
         end
 
