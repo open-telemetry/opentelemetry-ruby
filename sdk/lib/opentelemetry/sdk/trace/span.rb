@@ -74,7 +74,7 @@ module OpenTelemetry
         end
 
         # Adds a link to another Span from this Span. The linked Span can be from
-        # the same or different trace. See {Link} for a description.
+        # the same or different trace. See {OpenTelemetry::Trace::Link} for a description.
         #
         # @param [SpanContext, Callable] span_context_or_link_formatter The
         #   SpanContext context of the Span to link with this Span or a

@@ -44,8 +44,8 @@ module OpenTelemetry
 
           # Returns a {TraceConfig} with the desired values.
           #
-          # @return a {TraceConfig} with the desired values.
-          # @raises [ArgumentError] if any of the max numbers are not positive.
+          # @return [TraceConfig] with the desired values.
+          # @raise [ArgumentError] if any of the max numbers are not positive.
           def initialize(sampler: DEFAULT_SAMPLER,
                          max_attributes_count: DEFAULT_MAX_ATTRIBUTES_COUNT,
                          max_events_count: DEFAULT_MAX_EVENTS_COUNT,
