@@ -10,6 +10,8 @@ module OpenTelemetry
     class Event
       EMPTY_ATTRIBUTES = {}.freeze
 
+      private_constant :EMPTY_ATTRIBUTES
+
       # Returns the name of this event
       #
       # @return [String]
