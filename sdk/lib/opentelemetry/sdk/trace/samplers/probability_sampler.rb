@@ -25,7 +25,6 @@ module OpenTelemetry
             def create(probability)
               raise ArgumentError, 'probability must be in range [0.0, 1.0]' unless (0.0..1.0).include?(probability)
 
-              return OpenTelemetry::Trace::Samplers::NeverSampleSampler.new if probability == 0.0
               return OpenTelemetry::Trace::Samplers::AlwaysSampleSampler.new if probability == 1.0
 
               new(probability)
