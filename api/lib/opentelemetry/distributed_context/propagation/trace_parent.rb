@@ -7,6 +7,7 @@ module OpenTelemetry
   module DistributedContext
     module Propagation
       # A TraceParent is an implemenation of the W3C trace context specification
+      # https://www.w3.org/TR/trace-context/
       # {SpanContext}
       class TraceParent
         InvalidFormatError = Class.new(Error)
