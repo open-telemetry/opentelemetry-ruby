@@ -22,7 +22,7 @@ module OpenTelemetry
         # @yield [Carrier, String] the header key
         # {SpanContext}
         def extract(carrier)
-          raise Error, 'block must be supplied' unless block_given?
+          raise ArgumentError, 'block must be supplied' unless block_given?
 
           header = yield carrier, TraceParent::TRACE_PARENT_HEADER
           tp = TraceParent.from_string(header)
@@ -37,7 +37,7 @@ module OpenTelemetry
         # @yield [Carrier, String, String] carrier, header key, header value
         # {SpanContext}
         def inject(context, carrier)
-          raise Error, 'block must be supplied' unless block_given?
+          raise ArgumentError, 'block must be supplied' unless block_given?
 
           yield carrier, TraceParent::TRACE_PARENT_HEADER, TraceParent.from_context(context).to_s
         end
