@@ -126,7 +126,6 @@ module OpenTelemetry
               @status = status
             end
           end
-          nil
         end
 
         # Updates the Span name
@@ -147,7 +146,6 @@ module OpenTelemetry
               @name = name
             end
           end
-          nil
         end
 
         # Finishes the Span

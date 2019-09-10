@@ -10,19 +10,19 @@ module OpenTelemetry
       module Config
         # Class that holds global trace parameters.
         class TraceConfig
-          DEFAULT_SAMPLER = OpenTelemetry::Trace::Samplers::AlwaysSamplerSampler.new
+          DEFAULT_SAMPLER = OpenTelemetry::Trace::Samplers::AlwaysSampleSampler.new
           DEFAULT_MAX_ATTRIBUTES_COUNT = 32
           DEFAULT_MAX_EVENTS_COUNT = 128
           DEFAULT_MAX_LINKS_COUNT = 32
           DEFAULT_MAX_ATTRIBUTES_PER_EVENT = 32
           DEFAULT_MAX_ATTRIBUTES_PER_LINK = 32
 
-          private_constant %i[DEFAULT_SAMPLER
-            DEFAULT_MAX_ATTRIBUTES_COUNT
-            DEFAULT_MAX_EVENTS_COUNT
-            DEFAULT_MAX_LINKS_COUNT
-            DEFAULT_MAX_ATTRIBUTES_PER_EVENT
-            DEFAULT_MAX_ATTRIBUTES_PER_LINK]
+          private_constant(:DEFAULT_SAMPLER,
+                           :DEFAULT_MAX_ATTRIBUTES_COUNT,
+                           :DEFAULT_MAX_EVENTS_COUNT,
+                           :DEFAULT_MAX_LINKS_COUNT,
+                           :DEFAULT_MAX_ATTRIBUTES_PER_EVENT,
+                           :DEFAULT_MAX_ATTRIBUTES_PER_LINK)
 
           # The global default {OpenTelemetry::Trace::Sampler}.
           attr_reader :sampler
@@ -47,16 +47,16 @@ module OpenTelemetry
           # @return a {TraceConfig} with the desired values.
           # @raises [ArgumentError] if any of the max numbers are not positive.
           def initialize(sampler: DEFAULT_SAMPLER,
-                        max_attributes_count: DEFAULT_MAX_ATTRIBUTES_COUNT,
-                        max_events_count: DEFAULT_MAX_EVENTS_COUNT,
-                        max_links_count: DEFAULT_MAX_LINKS_COUNT,
-                        max_attributes_per_event: DEFAULT_MAX_ATTRIBUTES_PER_EVENT,
-                        max_attributes_per_link: DEFAULT_MAX_ATTRIBUTES_PER_LINK)
-            raise ArgumentError, 'max_attributes_count' unless max_attributes_count > 0
-            raise ArgumentError, 'max_events_count' unless max_events_count > 0
-            raise ArgumentError, 'max_links_count' unless max_links_count > 0
-            raise ArgumentError, 'max_attributes_per_event' unless max_attributes_per_event > 0
-            raise ArgumentError, 'max_links_per_event' unless max_links_per_event > 0
+                         max_attributes_count: DEFAULT_MAX_ATTRIBUTES_COUNT,
+                         max_events_count: DEFAULT_MAX_EVENTS_COUNT,
+                         max_links_count: DEFAULT_MAX_LINKS_COUNT,
+                         max_attributes_per_event: DEFAULT_MAX_ATTRIBUTES_PER_EVENT,
+                         max_attributes_per_link: DEFAULT_MAX_ATTRIBUTES_PER_LINK)
+            raise ArgumentError, 'max_attributes_count' unless max_attributes_count.positive?
+            raise ArgumentError, 'max_events_count' unless max_events_count.positive?
+            raise ArgumentError, 'max_links_count' unless max_links_count.positive?
+            raise ArgumentError, 'max_attributes_per_event' unless max_attributes_per_event.positive?
+            raise ArgumentError, 'max_attributes_per_link' unless max_attributes_per_link.positive?
 
             @sampler = sampler
             @max_attributes_count = max_attributes_count
