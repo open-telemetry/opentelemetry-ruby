@@ -20,7 +20,7 @@ module OpenTelemetry
             #
             # @param [Numeric] probability The desired probability of sampling.
             #   Must be within [0.0, 1.0].
-            # @raise [ArgumentError] if {probability} is out of range
+            # @raise [ArgumentError] if probability is out of range
             # @return [OpenTelemetry::Trace::Samplers::Sampler]
             def create(probability)
               raise ArgumentError, 'probability must be in range [0.0, 1.0]' unless (0.0..1.0).include?(probability)
@@ -49,10 +49,12 @@ module OpenTelemetry
 
           private_constant(:SAMPLE_DECISION, :DONT_SAMPLE_DECISION)
 
-          # Returns the sampling {Decision} for a {Span} to be created
+          # Returns the sampling {OpenTelemetry::Trace::Samplers::Decision} for a
+          # {Span} to be created
           #
-          # @param [SpanContext] span_context The {SpanContext} of a parent span,
-          #   typically extracted from the wire. Can be nil for a root span.
+          # @param [SpanContext] span_context The
+          #   {OpenTelemetry::Trace::SpanContext} of a parent span, typically
+          #   extracted from the wire. Can be nil for a root span.
           # @param [Boolean] extracted_context True if span_context was extracted
           #   from the wire. Can be nil for a root span.
           # @param [Integer] trace_id The trace_id of the {Span} to be created
