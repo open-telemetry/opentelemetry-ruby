@@ -16,7 +16,6 @@ module OpenTelemetry
       # Propagation is usually implemented via library-specific request interceptors, where the client-side injects values
       # and the server-side extracts them.
       class HTTPTextFormat
-
         # extract will return a SpanContext from the supplied carrier
         # invalid headers will result in a new SpanContext
         # @param [Carrier] the carrier to get the header from
