@@ -126,6 +126,7 @@ module OpenTelemetry
               @status = status
             end
           end
+          nil
         end
 
         # Updates the Span name
@@ -146,6 +147,7 @@ module OpenTelemetry
               @name = name
             end
           end
+          nil
         end
 
         # Finishes the Span
@@ -172,6 +174,7 @@ module OpenTelemetry
             end
           end
           @span_processor.on_end(self)
+          self
         end
 
         # TODO: to_proto
