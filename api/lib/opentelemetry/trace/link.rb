@@ -13,6 +13,8 @@ module OpenTelemetry
     class Link
       EMPTY_ATTRIBUTES = {}.freeze
 
+      private_constant :EMPTY_ATTRIBUTES
+
       # Returns the {SpanContext} for this link
       #
       # @return [SpanContext]
