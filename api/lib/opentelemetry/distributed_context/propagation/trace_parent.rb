@@ -79,7 +79,6 @@ module OpenTelemetry
           def parse_version(string)
             v = string.to_i(16)
             raise InvalidFormatError, string unless v
-
             raise InvalidVersionError, v if v > MAX_VERSION
 
             v
