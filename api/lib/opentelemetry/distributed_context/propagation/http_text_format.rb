@@ -40,7 +40,7 @@ module OpenTelemetry
         def inject(context, carrier)
           raise Error, 'block must be supplied' unless block_given?
 
-          yield carrier, TraceParent::TRACE_PARENT_HEADER, TraceParent.from_context(context)
+          yield carrier, TraceParent::TRACE_PARENT_HEADER, TraceParent.from_context(context).to_s
         end
 
         def fields
