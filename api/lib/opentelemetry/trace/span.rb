@@ -68,16 +68,20 @@ module OpenTelemetry
       # documents} certain "standard event names and keys" which have
       # prescribed semantic meanings.
       #
-      # @param [String] name name of the event
-      # @param [Hash<String, Object>] attrs One or more key:value pairs, where
+      # @param [String, Callable] name_or_event_formatter The name of the event
+      #   or an EventFormatter, a lazily evaluated callable that returns an
+      #   {Event} instance.
+      # @param [optional Hash<String, Object>] attrs One or more key:value pairs, where
       #   the keys must be strings and the values may be string, boolean or
-      #   numeric type.
+      #   numeric type. This argument should only be used when passing in a
+      #   name, not an EventFormatter.
       # @param [Time] timestamp optional timestamp for the event.
       #
       # @return [self] returns itself
-      def add_event(name, attrs = nil, timestamp: nil)
-        raise ArgumentError if name.nil?
+      def add_event(name_or_event_formatter, attrs = nil, timestamp: nil)
+        raise ArgumentError unless name_or_event_formatter.is_a?(String) || name_or_event_formatter.is_a?(Proc)
         raise ArgumentError unless Internal.valid_attributes?(attrs)
+        raise ArgumentError if name_or_event_formatter.is_a?(Proc) && !attrs.nil?
 
         self
       end
@@ -86,13 +90,13 @@ module OpenTelemetry
       # the same or different trace. See {Link} for a description.
       #
       # @param [SpanContext, Callable] span_context_or_link_formatter The
-      #   SpanContext context of the Span to link with this Span or a
-      #   LinkFormatter, a lazily evaluated callable that returns a Link
+      #   {SpanContext} context of the Span to link with this Span or a
+      #   LinkFormatter, a lazily evaluated callable that returns a {Link}
       #   instance.
       # @param [optional Hash<String, Object>] attrs Map of attributes associated with
       #   this link. Attributes are key:value pairs where key is a string and
       #   value is one of string, boolean or numeric type. This argument should
-      #   only be used when passing in a SpanContext, not a LinkFormatter.
+      #   only be used when passing in a {SpanContext}, not a LinkFormatter.
       #
       # @return [self] returns itself
       def add_link(span_context_or_link_formatter, attrs = nil)
