@@ -32,7 +32,7 @@ module OpenTelemetry
         end
 
         def to_s
-          "00-#{trace_id}-#{span_id}-#{flags}"
+          "00-#{trace_id}-#{span_id}-#{flag_string}"
         end
 
         def self.from_context(ctx)
@@ -53,6 +53,10 @@ module OpenTelemetry
         end
 
         private
+
+        def flag_string
+          flags.sampled? ? '01' : '00'
+        end
 
         def initialize(trace_id: nil, span_id: nil, version: SUPPORTED_VERSION, flags: Trace::TraceFlags::DEFAULT)
           raise ArgumentError, 'flags must be a TraceFlags' unless flags.is_a?(Trace::TraceFlags)

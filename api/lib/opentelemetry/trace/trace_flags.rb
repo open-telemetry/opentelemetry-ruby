@@ -25,10 +25,6 @@ module OpenTelemetry
         end
       end
 
-      def to_s
-        sampled? ? '01' : '00'
-      end
-
       # @api private
       # The constructor is private and only for use internally by the class.
       # Users should use the {from_byte} factory method to obtain a {TraceFlags}
