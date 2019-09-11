@@ -43,7 +43,7 @@ module OpenTelemetry
       def start_root_span(name, attributes: nil, links: nil, events: nil, start_timestamp: nil, kind: nil)
         raise ArgumentError if name.nil?
 
-        Span.create_random
+        Span.new
       end
 
       def start_span(name, with_parent: nil, with_parent_context: nil, attributes: nil, links: nil, events: nil, start_timestamp: nil, kind: nil)
@@ -51,9 +51,9 @@ module OpenTelemetry
 
         span_context = with_parent&.context || with_parent_context || current_span.context
         if span_context.valid?
-          Span.new(span_context)
+          Span.new(span_context: span_context)
         else
-          Span.create_random
+          Span.new
         end
       end
 

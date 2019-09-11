@@ -70,7 +70,7 @@ module OpenTelemetry
       #
       # @param [String, Callable] name_or_event_formatter The name of the event
       #   or an EventFormatter, a lazily evaluated callable that returns an
-      #   {Event} instance.
+      #   Event instance.
       # @param [optional Hash<String, Object>] attrs One or more key:value pairs, where
       #   the keys must be strings and the values may be string, boolean or
       #   numeric type. This argument should only be used when passing in a

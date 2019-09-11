@@ -52,15 +52,24 @@ module OpenTelemetry
         # documents} certain "standard event names and keys" which have
         # prescribed semantic meanings.
         #
-        # @param [String] name name of the event
-        # @param [Hash<String, Object>] attrs One or more key:value pairs, where
+        # @param [String, Callable] name_or_event_formatter The name of the event
+        #   or an EventFormatter, a lazily evaluated callable that returns an
+        #   Event instance.
+        # @param [optional Hash<String, Object>] attrs One or more key:value pairs, where
         #   the keys must be strings and the values may be string, boolean or
-        #   numeric type.
+        #   numeric type. This argument should only be used when passing in a
+        #   name, not an EventFormatter.
         # @param [Time] timestamp optional timestamp for the event.
         #
         # @return [self] returns itself
-        def add_event(name, attrs = nil, timestamp: nil)
-          timed_event = TimedEvent.new(name, attrs, timestamp || Time.now)
+        def add_event(name_or_event_formatter, attrs = nil, timestamp: nil)
+          super
+          timed_event =
+            if name_or_event_formatter.instance_of?(String)
+              TimedEvent.new(name_or_event_formatter, attrs, timestamp || Time.now)
+            else
+              name_or_event_formatter.call
+            end
           @mutex.synchronize do
             if @ended
               # TODO: logger.log(Logger::DEBUG, 'Calling add_event on an ended Span.')
