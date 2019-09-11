@@ -66,6 +66,22 @@ module OpenTelemetry
             @max_attributes_per_link = max_attributes_per_link
           end
 
+          # @api private
+          # Removes oldest entries from a Hash whose size exceeds a limit.
+          #
+          # @param [Hash] attrs This is modified in-place.
+          # @param [Symbol, Integer] limit The maximum number of entries
+          #   allowed in attrs. May be expressed as a number or a symbol
+          #   representing one of the limits in this class.
+          def trim_attributes(attrs, limit)
+            return if attrs.nil?
+
+            limit = public_send(limit) if limit.instance_of?(Symbol)
+            excess = attrs.size - limit
+            excess.times { attrs.shift } if excess.positive?
+            nil
+          end
+
           # TODO: from_proto
 
           # The default {TraceConfig}.

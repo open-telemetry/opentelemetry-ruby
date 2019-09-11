@@ -97,8 +97,9 @@ module OpenTelemetry
         # @param [optional Time] timestamp Optional timestamp for the event.
         # @return a new Event.
         def create_event(name, attrs = nil, timestamp: nil)
-          attrs = trim_attributes(attrs, active_trace_config.max_attributes_per_event)
-          TimedEvent.new(name: name, attributes: attrs, timestamp: timestamp)
+          super
+          active_trace_config.trim_attributes(attrs, :max_attributes_per_event)
+          TimedEvent.new(name: name, attributes: attrs, timestamp: timestamp || Time.now)
         end
 
         # Returns a new Link. This should be called by a LinkFormatter, a
@@ -116,16 +117,9 @@ module OpenTelemetry
         #   for this link. Attributes will be frozen during Link initialization.
         # @return [Link]
         def create_link(span_context, attrs = nil)
-          attrs = trim_attributes(attrs, active_trace_config.max_attributes_per_link)
+          super
+          active_trace_config.trim_attributes(attrs, :max_attributes_per_link)
           Link.new(span_context: span_context, attributes: attrs)
-        end
-
-        private
-
-        def trim_attributes(attrs, limit)
-          excess = attrs.size - limit
-          excess.times { attrs.shift } if excess.positive?
-          attrs
         end
       end
     end

@@ -6,25 +6,23 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::Trace::Link do
-  let(:span_context) do
-    OpenTelemetry::Trace::SpanContext.new
-  end
+describe OpenTelemetry::SDK::Trace::Link do
+  Link = OpenTelemetry::SDK::Trace::Link
+  let(:span_context) { OpenTelemetry::Trace::SpanContext.new }
   describe '.new' do
     it 'accepts a span_context' do
-      link = OpenTelemetry::Trace::Link.new(span_context: span_context)
+      link = Link.new(span_context: span_context, attributes: nil)
       link.context.must_equal(span_context)
     end
   end
   describe '.attributes' do
     it 'returns an empty hash by default' do
-      link = OpenTelemetry::Trace::Link.new(span_context: span_context)
+      link = Link.new(span_context: span_context, attributes: nil)
       link.attributes.must_equal({})
     end
     it 'returns and freezes attributes passed in' do
       attributes = { 'foo' => 'bar', 'bar' => 'baz' }
-      link = OpenTelemetry::Trace::Link.new(span_context: span_context,
-                                            attributes: attributes)
+      link = Link.new(span_context: span_context, attributes: attributes)
       link.attributes.must_equal(attributes)
       link.attributes.must_be(:frozen?)
     end

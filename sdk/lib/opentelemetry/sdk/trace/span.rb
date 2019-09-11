@@ -8,6 +8,8 @@ module OpenTelemetry
   module SDK
     module Trace
       # Implementation of {OpenTelemetry::Trace::Span} that records trace events.
+      #
+      # rubocop:disable Metrics/ClassLength
       class Span < OpenTelemetry::Trace::Span
         # TODO: does this need synchronization? I don't think so...
         attr_reader :name
@@ -38,8 +40,10 @@ module OpenTelemetry
             if @ended
               # TODO: logger.log(Logger::DEBUG, 'Calling set_attribute on an ended Span.')
             else
-              @attributes ||= Attributes.new(trace_config.max_attributes)
+              @attributes ||= {}
               @attributes[key] = value
+              trace_config.trim_attributes(@attributes, :max_attributes_count)
+              @total_recorded_attributes += 1
             end
           end
           self
@@ -74,8 +78,9 @@ module OpenTelemetry
             if @ended
               # TODO: logger.log(Logger::DEBUG, 'Calling add_event on an ended Span.')
             else
-              @events ||= EvictingQueue.new(trace_config.max_events)
+              @events ||= []
               @events << timed_event
+              @events.shift if @events.size > trace_config.max_events_count
               @total_recorded_events += 1
             end
           end
@@ -107,8 +112,9 @@ module OpenTelemetry
             if @ended
               # TODO: logger.log(Logger::DEBUG, 'Calling add_link on an ended Span.')
             else
-              @links ||= EvictingQueue.new(trace_config.max_links)
+              @links ||= []
               @links << link
+              @links.shift if @links.size > trace_config.max_links_count
               @total_recorded_links += 1
             end
           end
@@ -199,16 +205,16 @@ module OpenTelemetry
           @child_count = 0
           @total_recorded_events = 0
           @total_recorded_links = 0
+          @total_recorded_attributes = attributes&.size || 0
           @start_timestamp = Time.now
-          unless attributes.nil? || attributes.empty?
-            @attributes = Attributes.new(trace_config.max_attributes)
-            @attributes.merge!(attributes)
-          end
+          @attributes = attributes
+          trace_config.trim_attributes(@attributes, :max_attributes_count)
           @span_processor.on_start(self)
         end
 
         # TODO: Java implementation overrides finalize to log if a span isn't finished.
       end
+      # rubocop:enable Metrics/ClassLength
     end
   end
 end
