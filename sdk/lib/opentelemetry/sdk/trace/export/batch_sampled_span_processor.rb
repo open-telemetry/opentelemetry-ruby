@@ -70,6 +70,7 @@ module OpenTelemetry
           def work
             loop do
               keep_running = nil
+              batch = nil
               lock do
                 if  spans.size < max_queue_size
                   loop do
@@ -78,9 +79,10 @@ module OpenTelemetry
                   end
                 end
                 keep_running = @keep_running
+                batch = fetch_batch
               end
               # this is done outside the lock to unblock the producers
-              @exporter.export(fetch_batch)
+              @exporter.export(batch)
               break unless keep_running
             end
             flush
@@ -96,7 +98,7 @@ module OpenTelemetry
             batch = []
             loop do
               break if batch.size >= @batch_size || spans.empty?
-              batch << spans.shift
+              batch << spans.shift.to_span_proto
             end
             batch
           end
