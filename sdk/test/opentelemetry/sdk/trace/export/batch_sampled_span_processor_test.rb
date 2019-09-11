@@ -62,6 +62,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSampledSpanProcessor do
           0.upto(9) do |j|
             bsp.on_end(x + j)
           end
+          sleep(rand 0.01)
         end
       end
       producers.each(&:join)
