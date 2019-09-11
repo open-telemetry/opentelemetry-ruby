@@ -27,6 +27,7 @@ module OpenTelemetry
           MAX_EXPORT_BATCH_SIZE = 512
 
           def initialize(exporter:, schedule_delay: SCHEDULE_DELAY_MILLIS, max_queue_size: MAX_QUEUE_SIZE, max_export_batch_size: MAX_EXPORT_BATCH_SIZE)
+            @exporter = exporter
             @mutex = Mutex.new
             @condition = ConditionVariable.new
             @keep_running = true
@@ -34,59 +35,71 @@ module OpenTelemetry
             @max_queue_size = max_queue_size
             @batch_size = max_batch_size
             @spans = []
-            @thread = Thread.new do
-              work
-            end
+            @thread = Thread.new { work }
           end
 
+          # does nothing for this processor
+          def on_start(span)
+            # noop
+          end
+
+          # adds a span to the batcher, threadsafe may block on lock
           def on_end(span)
             lock do
               spans.shift if spans.size >= max_queue_size
               spans << span
               @condition.signal if spans.size > queue_size/2
-              spans.shift
             end
           end
 
+          # shuts the consumer thread down and flushes the current accumulated buffer
+          # will block until the thread is finished
           def shutdown
             lock do
               return unless @keep_running
               @keep_running = false
               @condition.signal
             end
+
+            @thread.wait
           end
 
           private
 
-          def max_queue_size
-            @max_queue_size
-          end
-
-          def spans
-            @spans
-          end
+          attr_reader :spans, :max_queue_size, :batch_size
 
           def work
-            lock do
-              while @keep_running
+            loop do
+              keep_running = nil
+              lock do
                 if  spans.size < max_queue_size
                   loop do
-                    @condition.wait(@delay)
-                    break unless spans.empty?
+                    @condition.wait(@mutex, @delay)
+                    break if !spans.empty? || !@keep_running
                   end
                 end
-                export_batches
+                keep_running = @keep_running
               end
+              # this is done outside the lock to unblock the producers
+              @exporter.export(fetch_batch)
+              break unless keep_running
+            end
+            flush
+          end
 
-              flush
+          def flush
+            until spans.empty? do
+              @exporter.export(fetch_batch)
             end
           end
 
-          def export_batches
-          end
-
-          def max(a, b)
-            a > b ? a : b
+          def fetch_batch
+            batch = []
+            loop do
+              break if batch.size >= @batch_size || spans.empty?
+              batch << spans.shift
+            end
+            batch
           end
 
           def lock
