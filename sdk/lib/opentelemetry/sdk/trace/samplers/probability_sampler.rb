@@ -40,7 +40,8 @@ module OpenTelemetry
           #   Must be within [0.0, 1.0].
           # @return [ProbabilitySampler]
           def initialize(probability)
-            @probability = probability
+            @description = format('ProbabilitySampler{%.6f}', probability)
+            @id_upper_bound = format('%016x', (probability * (2**64 - 1)).ceil)
           end
 
           SAMPLE_DECISION = OpenTelemetry::Trace::Samplers::Decision.new(decision: true)
@@ -56,8 +57,8 @@ module OpenTelemetry
           #   extracted from the wire. Can be nil for a root span.
           # @param [Boolean] extracted_context True if span_context was extracted
           #   from the wire. Can be nil for a root span.
-          # @param [Integer] trace_id The trace_id of the {Span} to be created
-          # @param [Integer] span_id The span_id of the {Span} to be created
+          # @param [String] trace_id The trace_id of the {Span} to be created
+          # @param [String] span_id The span_id of the {Span} to be created
           # @param [String] span_name Name of the {Span} to be created
           # @param [Enumerable<Link>] links A collection of links to be associated
           #   with the {Span} to be created. Can be nil.
@@ -76,7 +77,7 @@ module OpenTelemetry
             elsif links&.any? { |link| link.context.trace_flags.sampled? }
               # If any parent link is sampled keep the sampling decision.
               SAMPLE_DECISION
-            elsif rand < @probability
+            elsif trace_id[16, 16] < @id_upper_bound
               SAMPLE_DECISION
             else
               DONT_SAMPLE_DECISION
@@ -86,9 +87,7 @@ module OpenTelemetry
           # Returns a description of the sampler
           #
           # @return [String]
-          def description
-            format('ProbabilitySampler{%.6f}', @probability)
-          end
+          attr_reader :description
         end
       end
     end

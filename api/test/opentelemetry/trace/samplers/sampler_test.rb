@@ -32,8 +32,8 @@ describe OpenTelemetry::Trace::Samplers::Sampler do
       decision = sampler.decision(
         span_context: nil,
         extracted_context: nil,
-        trace_id: 344,
-        span_id: 178,
+        trace_id: '344',
+        span_id: '178',
         span_name: 'test_span',
         links: nil
       )
@@ -45,8 +45,8 @@ describe OpenTelemetry::Trace::Samplers::Sampler do
         sampler.decision(
           span_context: Object.new,
           extracted_context: nil,
-          trace_id: 344,
-          span_id: 178,
+          trace_id: '344',
+          span_id: '178',
           span_name: 'test_span',
           links: nil
         )
@@ -58,8 +58,8 @@ describe OpenTelemetry::Trace::Samplers::Sampler do
         sampler.decision(
           span_context: nil,
           extracted_context: Object.new,
-          trace_id: 344,
-          span_id: 178,
+          trace_id: '344',
+          span_id: '178',
           span_name: 'test_span',
           links: nil
         )
@@ -72,7 +72,7 @@ describe OpenTelemetry::Trace::Samplers::Sampler do
           span_context: nil,
           extracted_context: nil,
           trace_id: Object.new,
-          span_id: 178,
+          span_id: '178',
           span_name: 'test_span',
           links: nil
         )
@@ -84,7 +84,7 @@ describe OpenTelemetry::Trace::Samplers::Sampler do
         sampler.decision(
           span_context: nil,
           extracted_context: nil,
-          trace_id: 344,
+          trace_id: '344',
           span_id: Object.new,
           span_name: 'test_span',
           links: nil
@@ -97,8 +97,8 @@ describe OpenTelemetry::Trace::Samplers::Sampler do
         sampler.decision(
           span_context: nil,
           extracted_context: nil,
-          trace_id: 344,
-          span_id: 178,
+          trace_id: '344',
+          span_id: '178',
           span_name: Object.new,
           links: nil
         )
@@ -110,8 +110,8 @@ describe OpenTelemetry::Trace::Samplers::Sampler do
         sampler.decision(
           span_context: nil,
           extracted_context: nil,
-          trace_id: 344,
-          span_id: 178,
+          trace_id: '344',
+          span_id: '178',
           span_name: 'test_span',
           links: Object.new
         )
