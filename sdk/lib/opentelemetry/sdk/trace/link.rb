@@ -16,7 +16,7 @@ module OpenTelemetry
 
         private_constant :EMPTY_ATTRIBUTES
 
-        # Returns the {SpanContext} for this link
+        # Returns the {OpenTelemetry::Trace::SpanContext} for this link
         #
         # @return [SpanContext]
         attr_reader :context

@@ -82,7 +82,7 @@ module OpenTelemetry
 
         # Returns a new Event. This should be called by an EventFormatter, a
         # lazily evaluated callable that returns an Event that is passed to
-        # {Span#add_event}, or to pass Events to {Tracer#in_span},
+        # {Span#add_event}, or to pass Events to {OpenTelemetry::Trace::Tracer#in_span},
         # {Tracer#start_span} or {Tracer#start_root_span}.
         #
         # Example use:
@@ -104,7 +104,7 @@ module OpenTelemetry
 
         # Returns a new Link. This should be called by a LinkFormatter, a
         # lazily evaluated callable that returns a Link that is passed to
-        # {Span#add_link}, or to pass Links to {Tracer#in_span},
+        # {Span#add_link}, or to pass Links to {OpenTelemetry::Trace::Tracer#in_span},
         # {Tracer#start_span} or {Tracer#start_root_span}.
         #
         # Example use:

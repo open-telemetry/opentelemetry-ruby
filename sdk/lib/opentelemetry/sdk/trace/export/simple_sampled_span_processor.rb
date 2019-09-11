@@ -12,7 +12,7 @@ module OpenTelemetry
         # {Span} to {io.opentelemetry.proto.trace.v1.Span} and passes it to the
         # configured exporter.
         #
-        # Only spans that are sampled are converted, {TraceFlags#sampled?} must
+        # Only spans that are sampled are converted, {OpenTelemetry::Trace::TraceFlags#sampled?} must
         # return true.
         class SimpleSampledSpanProcessor
           # Returns a new {SimpleSampledSpanProcessor} that converts spans to
