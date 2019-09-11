@@ -50,4 +50,28 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSampledSpanProcessor do
       te.batches[0].size.must_equal(3)
     end
   end
+
+  describe 'stress test' do
+    it 'shouldnt blow up with a lot of things' do
+      te = TestExporter.new
+
+      bsp = BatchSampledSpanProcessor.new(exporter: te)
+      producers = 0.upto(9).map do |i|
+        Thread.new do
+          x = i * 10
+          0.upto(9) do |j|
+            bsp.on_end(x + j)
+          end
+        end
+      end
+      producers.each(&:join)
+      bsp.shutdown
+
+      out = te.batches.flatten.sort
+
+      expected = 0.upto(99).map { |i| i }
+
+      out.must_equal(expected)
+    end
+  end
 end
