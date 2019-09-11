@@ -33,7 +33,7 @@ module OpenTelemetry
             @keep_running = true
             @delay = schedule_delay
             @max_queue_size = max_queue_size
-            @batch_size = max_batch_size
+            @batch_size = max_export_batch_size
             @spans = []
             @thread = Thread.new { work }
           end
@@ -48,7 +48,7 @@ module OpenTelemetry
             lock do
               spans.shift if spans.size >= max_queue_size
               spans << span
-              @condition.signal if spans.size > queue_size/2
+              @condition.signal if spans.size > max_queue_size/2
             end
           end
 
@@ -56,12 +56,11 @@ module OpenTelemetry
           # will block until the thread is finished
           def shutdown
             lock do
-              return unless @keep_running
               @keep_running = false
               @condition.signal
             end
 
-            @thread.wait
+            @thread.join
           end
 
           private
@@ -74,8 +73,8 @@ module OpenTelemetry
               lock do
                 if  spans.size < max_queue_size
                   loop do
-                    @condition.wait(@mutex, @delay)
                     break if !spans.empty? || !@keep_running
+                    @condition.wait(@mutex, @delay)
                   end
                 end
                 keep_running = @keep_running
