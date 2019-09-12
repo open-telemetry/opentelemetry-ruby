@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 require 'logger'
 
+require 'opentelemetry/error'
 require 'opentelemetry/context'
 require 'opentelemetry/distributed_context'
 require 'opentelemetry/internal'
