@@ -10,7 +10,7 @@ module OpenTelemetry
     # It contains the identifiers (a trace ID and span ID) associated with the {Span}, a set of
     # {TraceFlags}, and a boolean indicating that the SpanContext was extracted from the wire.
     class SpanContext
-      attr_reader :trace_id, :span_id, :trace_flags, :remote
+      attr_reader :trace_id, :span_id, :trace_flags
 
       # Returns a new {SpanContext}.
       #
@@ -41,7 +41,9 @@ module OpenTelemetry
       # Returns true if the {SpanContext} was propagated from a remote parent.
       #
       # @return [Boolean]
-      alias remote? remote
+      def remote?
+        @remote
+      end
 
       # Represents an invalid {SpanContext}, with an invalid trace ID and an invalid span ID.
       INVALID = new(trace_id: INVALID_TRACE_ID, span_id: INVALID_SPAN_ID)
