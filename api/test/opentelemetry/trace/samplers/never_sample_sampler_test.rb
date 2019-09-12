@@ -18,8 +18,8 @@ describe OpenTelemetry::Trace::Samplers::NeverSampleSampler do
       decision = sampler.decision(
         span_context: nil,
         extracted_context: nil,
-        trace_id: 344,
-        span_id: 178,
+        trace_id: '344',
+        span_id: '178',
         span_name: 'test_span',
         links: nil
       )

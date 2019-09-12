@@ -20,8 +20,8 @@ module OpenTelemetry
         #   typically extracted from the wire. Can be nil for a root span.
         # @param [Boolean] extracted_context True if span_context was extracted
         #   from the wire. Can be nil for a root span.
-        # @param [Integer] trace_id The trace_id of the {Span} to be created
-        # @param [Integer] span_id The span_id of the {Span} to be created
+        # @param [String] trace_id The trace_id of the {Span} to be created
+        # @param [String] span_id The span_id of the {Span} to be created
         # @param [String] span_name Name of the {Span} to be created
         # @param [Enumerable<Link>] links A collection of links to be associated
         #   with the {Span} to be created. Can be nil.
