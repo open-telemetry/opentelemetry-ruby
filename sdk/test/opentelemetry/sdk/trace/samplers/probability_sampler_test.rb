@@ -56,6 +56,29 @@ describe OpenTelemetry::SDK::Trace::Samplers::ProbabilitySampler do
                                    span_name: '')
       decision.wont_be :sampled?
     end
+    it 'samples the smallest probability larger than the smallest trace_id' do
+      probability = 2.0 / (2**64 - 1)
+      sampler = ProbabilitySampler.create(probability)
+      decision = sampler.decision(trace_id: trace_id(1),
+                                  span_id: '456',
+                                  span_name: '')
+      decision.must_be :sampled?
+    end
+    it 'does not sample the largest trace_id with probability less than 1' do
+      probability = 1.0.prev_float
+      sampler = ProbabilitySampler.create(probability)
+      decision = sampler.decision(trace_id: trace_id(0xffff_ffff_ffff_ffff),
+                                  span_id: '456',
+                                  span_name: '')
+      decision.wont_be :sampled?
+    end
+    it 'ignores the high bits of the trace_id for sampling' do
+      sampler = ProbabilitySampler.create(0.5)
+      decision = sampler.decision(trace_id: trace_id(0x1_0000_0000_0000_0001),
+                                  span_id: '456',
+                                  span_name: '')
+      decision.must_be :sampled?
+    end
   end
 
   describe '#description' do
