@@ -1,8 +1,11 @@
 language: ruby
+env:
+  global:
+    - JRUBY_OPTS=--debug
 rvm:
- - 2.4
- - 2.5
- - 2.6
- - jruby
+  - 2.4
+  - 2.5
+  - 2.6
+  - jruby
 install: ( cd api && bundle install --jobs=3 --retry=3 )
 script: ( cd api && rake )
