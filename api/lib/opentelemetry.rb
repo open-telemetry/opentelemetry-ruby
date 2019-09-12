@@ -3,6 +3,7 @@
 # Copyright 2019 OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
+require 'logger'
 
 require 'opentelemetry/context'
 require 'opentelemetry/distributed_context'
@@ -18,6 +19,7 @@ module OpenTelemetry
 
   attr_writer :tracer, :meter, :distributed_context_manager
 
+  attr_accessor :logger
   # @return [Object, Trace::Tracer] registered tracer or a default no-op
   #   implementation of the tracer
   def tracer
@@ -35,4 +37,6 @@ module OpenTelemetry
   def distributed_context_manager
     @distributed_context_manager ||= DistributedContext::Manager.new
   end
+
+  self.logger = Logger.new(STDOUT)
 end

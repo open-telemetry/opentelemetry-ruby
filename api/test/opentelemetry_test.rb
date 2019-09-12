@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'test_helper'
+require 'tempfile'
 
 describe OpenTelemetry do
   describe '.tracer' do
@@ -26,6 +27,20 @@ describe OpenTelemetry do
       custom_tracer = 'a custom tracer'
       OpenTelemetry.tracer = custom_tracer
       OpenTelemetry.tracer.must_equal(custom_tracer)
+    end
+  end
+
+  describe '.logger' do
+    it 'should log things' do
+      t = Tempfile.new('logger')
+      begin
+        OpenTelemetry.logger = Logger.new(t.path)
+        OpenTelemetry.logger.info('stuff')
+        t.rewind
+        t.read.must_match(/INFO -- : stuff/)
+      ensure
+        t.unlink
+      end
     end
   end
 
