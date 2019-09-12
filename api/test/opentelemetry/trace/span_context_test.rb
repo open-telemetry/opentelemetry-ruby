@@ -23,6 +23,17 @@ describe OpenTelemetry::Trace::SpanContext do
     end
   end
 
+  describe '#remote?' do
+    it 'is false by default' do
+      span_context.wont_be(:remote?)
+    end
+
+    it 'reflects the value passed in' do
+      context = OpenTelemetry::Trace::SpanContext.new(remote: true)
+      context.must_be(:remote?)
+    end
+  end
+
   describe '#trace_id' do
     it 'reflects the value passed in' do
       trace_id = OpenTelemetry::Trace.generate_trace_id
