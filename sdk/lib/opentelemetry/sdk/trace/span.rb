@@ -181,33 +181,55 @@ module OpenTelemetry
           @mutex.synchronize do
             if @ended
               logger.debug('Calling finish on an ended Span.')
-            else
-              @end_timestamp = end_timestamp || Time.now
-              @ended = true
+              return self
             end
+            @end_timestamp = end_timestamp || Time.now
+            @ended = true
           end
           @span_processor.on_end(self)
           self
         end
 
-        # TODO: to_proto
+        # TODO: return a real proto
+        def to_proto
+          {
+            name: @name,
+            kind: @kind,
+            status: @status,
+            parent_span_id: @parent_span_id,
+            child_count: @child_count,
+            total_recorded_attributes: @total_recorded_attributes,
+            total_recorded_events: @total_recorded_events,
+            total_recorded_links: @total_recorded_links,
+            start_timestamp: @start_timestamp,
+            end_timestamp: @end_timestamp,
+            attributes: @attributes.freeze,
+            links: @links&.map { |link| link.to_proto }.freeze,
+            events: @events&.map { |event| event.to_proto }.freeze,
+            span_id: context.span_id,
+            trace_id: context.trace_id,
+            trace_flags: context.trace_flags
+          }
+        end
 
         # @api private
-        def initialize(context, name, kind, parent_span_id, trace_config, span_processor, attributes)
+        def initialize(context, name, kind, parent_span_id, trace_config, span_processor, attributes, links, events, start_timestamp)
           super(span_context: context)
           @mutex = Mutex.new
           @name = name
           @kind = kind
-          @parent_span_id = parent_span_id
+          @parent_span_id = parent_span_id || OpenTelemetry::Trace::INVALID_SPAN_ID
           @trace_config = trace_config
           @span_processor = span_processor
           @ended = false
           @child_count = 0
-          @total_recorded_events = 0
-          @total_recorded_links = 0
+          @total_recorded_events = events&.size || 0
+          @total_recorded_links = links&.size || 0
           @total_recorded_attributes = attributes&.size || 0
-          @start_timestamp = Time.now
+          @start_timestamp = start_timestamp
           @attributes = attributes
+          @links = links
+          @events = events
           trace_config.trim_attributes(@attributes, :max_attributes_count)
           @span_processor.on_start(self)
         end

@@ -61,7 +61,7 @@ module OpenTelemetry
           decision = active_trace_config.sampler.decision(trace_id: trace_id, span_id: span_id, span_name: name, links: links)
           if decision.sampled?
             context = SpanContext.new(trace_id: trace_id, trace_flags: TraceFlags::SAMPLED)
-            Span.new(context, name, kind, nil, active_trace_config, active_span_processor, attributes)
+            Span.new(context, name, kind, nil, active_trace_config, active_span_processor, attributes, links, events, start_timestamp || Time.now)
           else
             OpenTelemetry::Trace::Span.new(span_context: SpanContext.new(trace_id: trace_id))
           end
@@ -73,7 +73,7 @@ module OpenTelemetry
           parent_span_context = with_parent&.context || with_parent_context || current_span.context
           if parent_span_context.valid?
             context = SpanContext.new(trace_id: parent_span_context.trace_id, trace_flags: parent_span_context.trace_flags)
-            Span.new(context, name, kind, parent_span_context.span_id, active_trace_config, active_span_processor, attributes)
+            Span.new(context, name, kind, parent_span_context.span_id, active_trace_config, active_span_processor, attributes, links, events, start_timestamp || Time.now)
           else
             start_root_span(name, attributes: attributes, links: links, events: events, start_timestamp: start_timestamp, kind: kind)
           end
