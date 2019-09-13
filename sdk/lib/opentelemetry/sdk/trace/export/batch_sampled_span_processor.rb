@@ -3,7 +3,6 @@
 # Copyright 2019 OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
-require 'thread'
 
 module OpenTelemetry
   module SDK
@@ -45,10 +44,12 @@ module OpenTelemetry
 
           # adds a span to the batcher, threadsafe may block on lock
           def on_end(span)
+            return unless span.recorded?
+
             lock do
               spans.shift if spans.size >= max_queue_size
               spans << span
-              @condition.signal if spans.size > max_queue_size/2
+              @condition.signal if spans.size > max_queue_size / 2
             end
           end
 
@@ -72,13 +73,10 @@ module OpenTelemetry
               keep_running = nil
               batch = nil
               lock do
-                if  spans.size < max_queue_size
-                  loop do
-                    break if !spans.empty? || !@keep_running
-                    @condition.wait(@mutex, @delay)
-                  end
+                if spans.size < max_queue_size
+                  @condition.wait(@mutex, @delay) while spans.empty? && @keep_running
+                  keep_running = @keep_running
                 end
-                keep_running = @keep_running
                 batch = fetch_batch
               end
               # this is done outside the lock to unblock the producers
@@ -89,15 +87,14 @@ module OpenTelemetry
           end
 
           def flush
-            until spans.empty? do
-              @exporter.export(fetch_batch)
-            end
+            @exporter.export(fetch_batch) until spans.empty?
           end
 
           def fetch_batch
             batch = []
             loop do
               break if batch.size >= @batch_size || spans.empty?
+
               batch << spans.shift.to_span_proto
             end
             batch
