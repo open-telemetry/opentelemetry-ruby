@@ -38,7 +38,7 @@ module OpenTelemetry
           super
           @mutex.synchronize do
             if @ended
-              # TODO: logger.log(Logger::DEBUG, 'Calling set_attribute on an ended Span.')
+              logger.debug('Calling set_attribute on an ended Span.')
             else
               @attributes ||= {}
               @attributes[key] = value
@@ -76,7 +76,7 @@ module OpenTelemetry
             end
           @mutex.synchronize do
             if @ended
-              # TODO: logger.log(Logger::DEBUG, 'Calling add_event on an ended Span.')
+              logger.debug('Calling add_event on an ended Span.')
             else
               @events ||= []
               @events << timed_event
@@ -110,7 +110,7 @@ module OpenTelemetry
             end
           @mutex.synchronize do
             if @ended
-              # TODO: logger.log(Logger::DEBUG, 'Calling add_link on an ended Span.')
+              logger.debug('Calling add_link on an ended Span.')
             else
               @links ||= []
               @links << link
@@ -136,7 +136,7 @@ module OpenTelemetry
           super
           @mutex.synchronize do
             if @ended
-              # TODO: logger.log(Logger::DEBUG, 'Calling status= on an ended Span.')
+              logger.debug('Calling status= on an ended Span.')
             else
               @status = status
             end
@@ -156,7 +156,7 @@ module OpenTelemetry
           super
           @mutex.synchronize do
             if @ended
-              # TODO: logger.log(Logger::DEBUG, 'Calling name= on an ended Span.')
+              logger.debug('Calling name= on an ended Span.')
             else
               @name = name
             end
@@ -180,7 +180,7 @@ module OpenTelemetry
         def finish(end_timestamp: nil)
           @mutex.synchronize do
             if @ended
-              # TODO: logger.log(Logger::DEBUG, 'Calling finish on an ended Span.')
+              logger.debug('Calling finish on an ended Span.')
             else
               @end_timestamp = end_timestamp || Time.now
               @ended = true

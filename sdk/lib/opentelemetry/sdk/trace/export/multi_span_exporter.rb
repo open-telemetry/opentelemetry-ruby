@@ -29,8 +29,7 @@ module OpenTelemetry
               begin
                 merge_result_code(result_code, span_exporter.export(spans))
               rescue => e # rubocop:disable Style/RescueStandardError
-                # TODO: log instead of puts
-                puts "WARNING: exception thrown by export - #{e}"
+                logger.warn("exception raised by export - #{e}")
                 FAILED_NOT_RETRYABLE
               end
             end

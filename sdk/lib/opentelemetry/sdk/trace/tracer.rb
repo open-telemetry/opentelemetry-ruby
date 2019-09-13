@@ -30,8 +30,7 @@ module OpenTelemetry
         def shutdown
           @mutex.synchronize do
             if @stopped
-              # TODO: log instead of puts
-              puts 'WARNING: calling Tracer#shutdown multiple times.'
+              logger.warn('calling Tracer#shutdown multiple times.')
             else
               @active_span_processor.shutdown
               @stopped = true
