@@ -8,7 +8,6 @@ require 'test_helper'
 
 describe OpenTelemetry::SDK::Trace::Samplers::ProbabilitySampler do
   ProbabilitySampler = OpenTelemetry::SDK::Trace::Samplers::ProbabilitySampler
-  Sampler = OpenTelemetry::SDK::Trace::Samplers::Sampler
   SpanContext = OpenTelemetry::Trace::SpanContext
   TraceFlags = OpenTelemetry::Trace::TraceFlags
   Link = OpenTelemetry::Trace::Link
@@ -95,11 +94,6 @@ describe OpenTelemetry::SDK::Trace::Samplers::ProbabilitySampler do
       ProbabilitySampler.create(0.5).wont_be_nil
       ProbabilitySampler.create(1).wont_be_nil
       proc { ProbabilitySampler.create(2) }.must_raise(ArgumentError)
-    end
-    it 'returns a Sampler' do
-      ProbabilitySampler.create(0).must_be_kind_of(Sampler)
-      ProbabilitySampler.create(0.5).must_be_kind_of(Sampler)
-      ProbabilitySampler.create(1).must_be_kind_of(Sampler)
     end
   end
 

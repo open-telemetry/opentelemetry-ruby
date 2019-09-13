@@ -10,7 +10,7 @@ module OpenTelemetry
       module Samplers
         # Hints to influence sampling decisions. The default option for span
         # creation is to not provide any suggestion.
-        module SamplingHints
+        module Hint
           # Suggest to not record events and not propagate.
           NOT_RECORD = :__not_record__
 

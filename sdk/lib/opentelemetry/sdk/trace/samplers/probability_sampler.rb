@@ -10,7 +10,7 @@ module OpenTelemetry
       module Samplers
         # A {OpenTelemetry::Trace::Samplers::Sampler} where the probability of
         # sampling a trace is equal to that of the specified probability.
-        class ProbabilitySampler < Sampler
+        class ProbabilitySampler
           class << self
             private :new # rubocop:disable Style/AccessModifierDeclarations
 
@@ -44,8 +44,8 @@ module OpenTelemetry
             @id_upper_bound = format('%016x', (probability * (2**64 - 1)).ceil)
           end
 
-          SAMPLE_DECISION = Decision.new(decision: true)
-          DONT_SAMPLE_DECISION = Decision.new(decision: false)
+          SAMPLE_DECISION = Result.new(decision: Decision::RECORD_AND_PROPAGATE)
+          DONT_SAMPLE_DECISION = Result.new(decision: Decision::NOT_RECORD)
 
           private_constant(:SAMPLE_DECISION, :DONT_SAMPLE_DECISION)
 
@@ -63,14 +63,7 @@ module OpenTelemetry
           # @param [Enumerable<Link>] links A collection of links to be associated
           #   with the {Span} to be created. Can be nil.
           # @return [Decision] The sampling decision
-          def decision(span_context: nil,
-                       extracted_context: nil,
-                       trace_id:,
-                       span_id:,
-                       span_name:,
-                       links: nil)
-            super
-
+          def call(trace_id:, span_id:, parent_context:, hint:, links:, name:, kind:, attributes:)
             # If the parent is sampled keep the sampling decision.
             if span_context&.trace_flags&.sampled?
               SAMPLE_DECISION
