@@ -15,4 +15,10 @@ module OpenTelemetry
   end
 end
 
+require 'opentelemetry/sdk/trace/samplers/decision'
+require 'opentelemetry/sdk/trace/samplers/sampler'
+require 'opentelemetry/sdk/trace/samplers/sampling_hint'
+
+require 'opentelemetry/sdk/trace/samplers/always_sample_sampler'
+require 'opentelemetry/sdk/trace/samplers/never_sample_sampler'
 require 'opentelemetry/sdk/trace/samplers/probability_sampler'

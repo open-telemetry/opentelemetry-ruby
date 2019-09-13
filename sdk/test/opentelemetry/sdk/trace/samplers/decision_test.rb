@@ -6,16 +6,17 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::Trace::Samplers::Decision do
+describe OpenTelemetry::SDK::Trace::Samplers::Decision do
+  Decision = OpenTelemetry::SDK::Trace::Samplers::Decision
   describe '.sampled?' do
     it 'reflects decision when true' do
-      decision = OpenTelemetry::Trace::Samplers::Decision.new(
+      decision = Decision.new(
         decision: true
       )
       decision.sampled?.must_equal(true)
     end
     it 'reflects decision when false' do
-      decision = OpenTelemetry::Trace::Samplers::Decision.new(
+      decision = Decision.new(
         decision: false
       )
       decision.sampled?.must_equal(false)
@@ -23,13 +24,13 @@ describe OpenTelemetry::Trace::Samplers::Decision do
   end
   describe '.attributes' do
     it 'is empty by default' do
-      decision = OpenTelemetry::Trace::Samplers::Decision.new(
+      decision = Decision.new(
         decision: true
       )
       decision.attributes.must_equal({})
     end
     it 'is an empty hash when initialized with nil' do
-      decision = OpenTelemetry::Trace::Samplers::Decision.new(
+      decision = Decision.new(
         decision: true,
         attributes: nil
       )
@@ -40,14 +41,14 @@ describe OpenTelemetry::Trace::Samplers::Decision do
         'foo' => 'bar',
         'bar' => 'baz'
       }
-      decision = OpenTelemetry::Trace::Samplers::Decision.new(
+      decision = Decision.new(
         decision: true,
         attributes: attributes
       )
       decision.attributes.must_equal(attributes)
     end
     it 'returns a frozen hash' do
-      decision = OpenTelemetry::Trace::Samplers::Decision.new(
+      decision = Decision.new(
         decision: true,
         attributes: { 'foo' => 'bar' }
       )

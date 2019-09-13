@@ -10,7 +10,7 @@ module OpenTelemetry
       module Samplers
         # A {OpenTelemetry::Trace::Samplers::Sampler} where the probability of
         # sampling a trace is equal to that of the specified probability.
-        class ProbabilitySampler < OpenTelemetry::Trace::Samplers::Sampler
+        class ProbabilitySampler < Sampler
           class << self
             private :new # rubocop:disable Style/AccessModifierDeclarations
 
@@ -25,7 +25,7 @@ module OpenTelemetry
             def create(probability)
               raise ArgumentError, 'probability must be in range [0.0, 1.0]' unless (0.0..1.0).include?(probability)
 
-              return OpenTelemetry::Trace::Samplers::AlwaysSampleSampler.new if probability == 1.0
+              return AlwaysSampleSampler.new if probability == 1.0
 
               new(probability)
             end
@@ -44,8 +44,8 @@ module OpenTelemetry
             @id_upper_bound = format('%016x', (probability * (2**64 - 1)).ceil)
           end
 
-          SAMPLE_DECISION = OpenTelemetry::Trace::Samplers::Decision.new(decision: true)
-          DONT_SAMPLE_DECISION = OpenTelemetry::Trace::Samplers::Decision.new(decision: false)
+          SAMPLE_DECISION = Decision.new(decision: true)
+          DONT_SAMPLE_DECISION = Decision.new(decision: false)
 
           private_constant(:SAMPLE_DECISION, :DONT_SAMPLE_DECISION)
 

@@ -8,10 +8,11 @@ require 'test_helper'
 
 describe OpenTelemetry::SDK::Trace::Samplers::ProbabilitySampler do
   ProbabilitySampler = OpenTelemetry::SDK::Trace::Samplers::ProbabilitySampler
-  Sampler = OpenTelemetry::Trace::Samplers::Sampler
+  Sampler = OpenTelemetry::SDK::Trace::Samplers::Sampler
   SpanContext = OpenTelemetry::Trace::SpanContext
   TraceFlags = OpenTelemetry::Trace::TraceFlags
-  Decision = OpenTelemetry::Trace::Samplers::Decision
+  Link = OpenTelemetry::Trace::Link
+  Decision = OpenTelemetry::SDK::Trace::Samplers::Decision
 
   describe '#decision' do
     let(:context) { SpanContext.new(trace_flags: TraceFlags.from_byte(1)) }

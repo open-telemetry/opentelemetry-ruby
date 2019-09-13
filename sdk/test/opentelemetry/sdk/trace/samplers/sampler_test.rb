@@ -6,9 +6,12 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::Trace::Samplers::Sampler do
-  class BasicSampler < OpenTelemetry::Trace::Samplers::Sampler
-    DECISION = OpenTelemetry::Trace::Samplers::Decision.new(decision: true)
+describe OpenTelemetry::SDK::Trace::Samplers::Sampler do
+  Decision = OpenTelemetry::SDK::Trace::Samplers::Decision
+
+  class BasicSampler < OpenTelemetry::SDK::Trace::Samplers::Sampler
+    DECISION = Decision.new(decision: true)
+    # rubocop:disable Metrics/ParameterLists
     def decision(span_context: nil,
                  extracted_context: nil,
                  trace_id:,
@@ -35,7 +38,7 @@ describe OpenTelemetry::Trace::Samplers::Sampler do
         span_name: 'test_span',
         links: nil
       )
-      decision.must_be_instance_of(OpenTelemetry::Trace::Samplers::Decision)
+      decision.must_be_instance_of(Decision)
     end
 
     it 'checks span_context for type' do

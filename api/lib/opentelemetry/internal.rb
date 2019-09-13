@@ -5,6 +5,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
+  # @api private
+  #
   # Internal contains helpers used by the no-op API implementation.
   module Internal
     extend self
@@ -15,10 +17,6 @@ module OpenTelemetry
       r = 32..126
       string.each_codepoint { |c| return false unless r.include?(c) }
       true
-    end
-
-    def boolean?(value)
-      value.is_a?(TrueClass) || value.is_a?(FalseClass)
     end
 
     def valid_key?(key)

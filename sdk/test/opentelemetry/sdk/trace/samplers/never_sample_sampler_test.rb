@@ -6,8 +6,8 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::Trace::Samplers::NeverSampleSampler do
-  let(:sampler) { OpenTelemetry::Trace::Samplers::NeverSampleSampler.new }
+describe OpenTelemetry::SDK::Trace::Samplers::NeverSampleSampler do
+  let(:sampler) { OpenTelemetry::SDK::Trace::Samplers::NeverSampleSampler.new }
   describe '.description' do
     it 'returns a description' do
       sampler.description.must_equal('NeverSampleSampler')
