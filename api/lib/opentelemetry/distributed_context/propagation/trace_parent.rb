@@ -8,7 +8,7 @@ module OpenTelemetry
     module Propagation
       # A TraceParent is an implementation of the W3C trace context specification
       # https://www.w3.org/TR/trace-context/
-      # {SpanContext}
+      # {Trace::SpanContext}
       class TraceParent
         InvalidFormatError = Class.new(Error)
         InvalidVersionError = Class.new(Error)
@@ -25,15 +25,15 @@ module OpenTelemetry
         private_constant :REGEXP
 
         class << self
-          # Creates a new {TraceParent} from a supplied {SpanContext}
-          # @param [SpanContext] the context
+          # Creates a new {TraceParent} from a supplied {Trace::SpanContext}
+          # @param [SpanContext] ctx The context
           # @return [TraceParent] a trace parent
           def from_context(ctx)
             new(trace_id: ctx.trace_id, span_id: ctx.span_id, flags: ctx.trace_flags)
           end
 
           # Deserializes the {TraceParent} from the string representation
-          # @param [String] the serialized trace parent
+          # @param [String] string The serialized trace parent
           # @return [TraceParent] a trace_parent
           # @raise [InvalidFormatError] on an invalid format
           # @raise [InvalidVerionError] on an invalid version

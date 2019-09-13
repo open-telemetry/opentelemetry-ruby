@@ -16,25 +16,27 @@ module OpenTelemetry
       # Propagation is usually implemented via library-specific request interceptors, where the client-side injects values
       # and the server-side extracts them.
       class HTTPTextFormat
-        # extract will return a SpanContext from the supplied carrier
-        # invalid headers will result in a new SpanContext
-        # @param [Carrier] the carrier to get the header from
-        # @yield [Carrier, String] the header key
-        # @return [SpanContext] the span context from the header, or a new one if parsing fails
+        # Return a remote {Trace::SpanContext} extracted from the supplied carrier.
+        # Invalid headers will result in a new, valid, non-remote {Trace::SpanContext}.
+        #
+        # @param [Carrier] carrier The carrier to get the header from.
+        # @yield [Carrier, String] the carrier and the header key.
+        # @return [SpanContext] the span context from the header, or a new one if parsing fails.
         def extract(carrier)
           raise ArgumentError, 'block must be supplied' unless block_given?
 
           header = yield carrier, TraceParent::TRACE_PARENT_HEADER
           tp = TraceParent.from_string(header)
 
-          SpanContext.new(trace_id: tp.trace_id, span_id: tp.span_id, flags: tp.flags)
+          Trace::SpanContext.new(trace_id: tp.trace_id, span_id: tp.span_id, trace_flags: tp.flags, remote: true)
         rescue OpenTelemetry::Error
-          SpanContext.new
+          Trace::SpanContext.new
         end
 
-        # inject will set the span context on the supplied carrier
-        # @param [Context] the carrier
-        # @yield [Carrier, String, String] carrier, header key, header value
+        # Set the span context on the supplied carrier.
+        #
+        # @param [SpanContext] context The active {Trace::SpanContext}.
+        # @yield [Carrier, String, String] carrier, header key, header value.
         def inject(context, carrier)
           raise ArgumentError, 'block must be supplied' unless block_given?
 
