@@ -8,12 +8,14 @@ module OpenTelemetry
   module SDK
     module Trace
       module Samplers
-        # The Result class represents an arbitrary sampling decision. It can
-        # have a boolean value as a sampling decision and a collection of
-        # attributes to be attached to a sampled root span.
+        # The Result class represents an arbitrary sampling result. It has
+        # boolean values for the sampling decision and whether to record
+        # events, and a collection of attributes to be attached to a sampled
+        # root span.
         class Result
           EMPTY_HASH = {}.freeze
-          private_constant :EMPTY_HASH
+          DECISIONS = [Decision::RECORD, Decision::NOT_RECORD, Decision::RECORD_AND_PROPAGATE].freeze
+          private_constant(:EMPTY_HASH, :DECISIONS)
 
           # Returns a frozen hash of attributes to be attached span. These
           # attributes should be added to the span only for root span or when
@@ -22,22 +24,32 @@ module OpenTelemetry
           # @return [Hash<String, Object>]
           attr_reader :attributes
 
-          # Returns a new decision with the specified sampling decision and
+          # Returns a new sampling result with the specified decision and
           # attributes.
           #
-          # @param [Boolean] decision Whether or not a span should be sampled
+          # @param [Symbol] decision Whether or not a span should be sampled
+          #   and/or record events.
           # @param [optional Hash<String, Object>] attributes A frozen or freezable hash
           #   containing attributes to be attached to a root span
           def initialize(decision:, attributes: nil)
+            raise ArgumentError, 'decision' unless DECISIONS.include?(decision)
+
             @decision = decision
             @attributes = attributes.freeze || EMPTY_HASH
           end
 
-          # Returns a sampling decision of whether this span should be sampled
+          # Returns true if this span should be sampled.
           #
           # @return [Boolean] sampling decision
           def sampled?
-            @decision
+            @decision == Decision::RECORD_AND_PROPAGATE
+          end
+
+          # Returns true if this span should record events.
+          #
+          # @return [Boolean] recording decision
+          def record_events?
+            @decision != Decision::NOT_RECORD
           end
         end
       end

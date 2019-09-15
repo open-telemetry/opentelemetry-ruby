@@ -16,67 +16,53 @@ describe OpenTelemetry::SDK::Trace::Samplers::ProbabilitySampler do
   describe '#decision' do
     let(:context) { SpanContext.new(trace_flags: TraceFlags.from_byte(1)) }
     let(:sampler) { ProbabilitySampler.create(Float::MIN) }
-    it 'respects parent sample decision' do
-      decision = sampler.decision(
-        trace_id: '123',
-        span_id: '456',
-        span_name: '',
-        span_context: context
-      )
-      decision.must_be :sampled?
+
+    it 'respects parent sampling' do
+      result = call_sampler(sampler, parent_context: context)
+      result.must_be :sampled?
     end
-    it 'respects link sample decisions' do
-      link = Link.new(span_context: context, attributes: nil)
-      decision = sampler.decision(
-        trace_id: '123',
-        span_id: '456',
-        span_name: '',
-        links: [link]
-      )
-      decision.must_be :sampled?
+
+    it 'respects link sampling' do
+      link = OpenTelemetry::Trace::Link.new(span_context: context)
+      result = call_sampler(sampler, links: [link])
+      result.must_be :sampled?
     end
-    it 'returns a decision' do
-      decision = sampler.decision(trace_id: trace_id(123),
-                                  span_id: '456',
-                                  span_name: '')
-      decision.must_be_instance_of(Decision)
+
+    it 'returns a result' do
+      result = call_sampler(sampler, trace_id: trace_id(123))
+      result.must_be_instance_of(Result)
     end
+
     it 'returns a true decision if probability is 1' do
       positive = ProbabilitySampler.create(1)
-      decision = positive.decision(trace_id: 'f' * 32,
-                                   span_id: '456',
-                                   span_name: '')
-      decision.must_be :sampled?
+      result = call_sampler(positive, trace_id: 'f' * 32)
+      result.must_be :sampled?
     end
+
     it 'returns a false decision if probability is 0' do
       negative = ProbabilitySampler.create(0)
-      decision = negative.decision(trace_id: trace_id(1),
-                                   span_id: '456',
-                                   span_name: '')
-      decision.wont_be :sampled?
+      result = call_sampler(negative, trace_id: trace_id(1))
+      result.wont_be :sampled?
     end
+
     it 'samples the smallest probability larger than the smallest trace_id' do
       probability = 2.0 / (2**64 - 1)
       sampler = ProbabilitySampler.create(probability)
-      decision = sampler.decision(trace_id: trace_id(1),
-                                  span_id: '456',
-                                  span_name: '')
-      decision.must_be :sampled?
+      result = call_sampler(sampler, trace_id: trace_id(1))
+      result.must_be :sampled?
     end
+
     it 'does not sample the largest trace_id with probability less than 1' do
       probability = 1.0.prev_float
       sampler = ProbabilitySampler.create(probability)
-      decision = sampler.decision(trace_id: trace_id(0xffff_ffff_ffff_ffff),
-                                  span_id: '456',
-                                  span_name: '')
-      decision.wont_be :sampled?
+      result = call_sampler(sampler, trace_id: trace_id(0xffff_ffff_ffff_ffff))
+      result.wont_be :sampled?
     end
+
     it 'ignores the high bits of the trace_id for sampling' do
       sampler = ProbabilitySampler.create(0.5)
-      decision = sampler.decision(trace_id: trace_id(0x1_0000_0000_0000_0001),
-                                  span_id: '456',
-                                  span_name: '')
-      decision.must_be :sampled?
+      result = call_sampler(sampler, trace_id: trace_id(0x1_0000_0000_0000_0001))
+      result.must_be :sampled?
     end
   end
 
@@ -99,5 +85,18 @@ describe OpenTelemetry::SDK::Trace::Samplers::ProbabilitySampler do
 
   def trace_id(id)
     format('%032x', id)
+  end
+
+  def call_sampler(sampler, trace_id: nil, span_id: nil, parent_context: nil, hint: nil, links: nil, name: nil, kind: nil, attributes: nil)
+    sampler.call(
+      trace_id: trace_id,
+      span_id: span_id,
+      parent_context: parent_context,
+      hint: hint,
+      links: links,
+      name: name,
+      kind: kind,
+      attributes: attributes
+    )
   end
 end

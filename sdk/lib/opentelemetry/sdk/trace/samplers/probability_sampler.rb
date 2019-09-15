@@ -25,7 +25,7 @@ module OpenTelemetry
             def create(probability)
               raise ArgumentError, 'probability must be in range [0.0, 1.0]' unless (0.0..1.0).include?(probability)
 
-              return AlwaysSampleSampler.new if probability == 1.0
+              return ALWAYS_ON if probability == 1.0
 
               new(probability)
             end
@@ -49,23 +49,26 @@ module OpenTelemetry
 
           private_constant(:SAMPLE_DECISION, :DONT_SAMPLE_DECISION)
 
-          # Returns the sampling {OpenTelemetry::Trace::Samplers::Decision} for a
-          # {Span} to be created
+          # Returns the sampling {Result} for a {Span} to be created.
           #
-          # @param [SpanContext] span_context The
+          # @param [String] trace_id The trace_id of the {Span} to be created.
+          # @param [String] span_id The span_id of the {Span} to be created.
+          # @param [OpenTelemetry::Trace::SpanContext] parent_context The
           #   {OpenTelemetry::Trace::SpanContext} of a parent span, typically
           #   extracted from the wire. Can be nil for a root span.
-          # @param [Boolean] extracted_context True if span_context was extracted
-          #   from the wire. Can be nil for a root span.
-          # @param [String] trace_id The trace_id of the {Span} to be created
-          # @param [String] span_id The span_id of the {Span} to be created
-          # @param [String] span_name Name of the {Span} to be created
+          # @param [Symbol] hint A {OpenTelemetry::Trace::SamplingHint} about
+          #   whether the {Span} should be sampled and/or record events.
           # @param [Enumerable<Link>] links A collection of links to be associated
           #   with the {Span} to be created. Can be nil.
-          # @return [Decision] The sampling decision
+          # @param [String] name Name of the {Span} to be created.
+          # @param [Symbol] kind The {OpenTelemetry::Trace::SpanKind} of the {Span}
+          #   to be created. Can be nil.
+          # @param [Hash<String, Object>] attributes Attributes to be attached
+          #   to the {Span} to be created. Can be nil.
+          # @return [Result] The sampling result.
           def call(trace_id:, span_id:, parent_context:, hint:, links:, name:, kind:, attributes:)
             # If the parent is sampled keep the sampling decision.
-            if span_context&.trace_flags&.sampled?
+            if parent_context&.trace_flags&.sampled?
               SAMPLE_DECISION
             elsif links&.any? { |link| link.context.trace_flags.sampled? }
               # If any parent link is sampled keep the sampling decision.
