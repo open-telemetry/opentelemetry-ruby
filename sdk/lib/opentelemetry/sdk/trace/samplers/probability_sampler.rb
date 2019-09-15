@@ -8,82 +8,61 @@ module OpenTelemetry
   module SDK
     module Trace
       module Samplers
-        # A {OpenTelemetry::Trace::Samplers::Sampler} where the probability of
-        # sampling a trace is equal to that of the specified probability.
+        # @api internal
         class ProbabilitySampler
-          class << self
-            private :new # rubocop:disable Style/AccessModifierDeclarations
-
-            # Returns a new {OpenTelemetry::Trace::Samplers::Sampler}. The
-            # probability of sampling a trace is equal to that of the specified
-            # probability.
-            #
-            # @param [Numeric] probability The desired probability of sampling.
-            #   Must be within [0.0, 1.0].
-            # @raise [ArgumentError] if probability is out of range
-            # @return [OpenTelemetry::Trace::Samplers::Sampler]
-            def create(probability)
-              raise ArgumentError, 'probability must be in range [0.0, 1.0]' unless (0.0..1.0).include?(probability)
-
-              return ALWAYS_ON if probability == 1.0
-
-              new(probability)
-            end
-          end
-
-          # @api private
-          # The constructor is private and only for use internally by the
-          # class. Users should use the {create} factory method to obtain a
-          # {ProbabilitySampler} instance.
-          #
-          # @param [Numeric] probability The desired probability of sampling.
-          #   Must be within [0.0, 1.0].
-          # @return [ProbabilitySampler]
-          def initialize(probability)
-            @description = format('ProbabilitySampler{%.6f}', probability)
+          def initialize(probability, result_from_hint:, ignore_parent:, apply_to_root_spans:, apply_to_remote_parent:, apply_to_all_spans:)
+            @probability = probability
             @id_upper_bound = format('%016x', (probability * (2**64 - 1)).ceil)
+            @result_from_hint = result_from_hint
+            @ignore_parent = ignore_parent
+            @apply_to_root_spans = apply_to_root_spans
+            @apply_to_remote_parent = apply_to_remote_parent
+            @apply_to_all_spans = apply_to_all_spans
           end
 
-          SAMPLE_DECISION = Result.new(decision: Decision::RECORD_AND_PROPAGATE)
-          DONT_SAMPLE_DECISION = Result.new(decision: Decision::NOT_RECORD)
-
-          private_constant(:SAMPLE_DECISION, :DONT_SAMPLE_DECISION)
-
-          # Returns the sampling {Result} for a {Span} to be created.
-          #
-          # @param [String] trace_id The trace_id of the {Span} to be created.
-          # @param [String] span_id The span_id of the {Span} to be created.
-          # @param [OpenTelemetry::Trace::SpanContext] parent_context The
-          #   {OpenTelemetry::Trace::SpanContext} of a parent span, typically
-          #   extracted from the wire. Can be nil for a root span.
-          # @param [Symbol] hint A {OpenTelemetry::Trace::SamplingHint} about
-          #   whether the {Span} should be sampled and/or record events.
-          # @param [Enumerable<Link>] links A collection of links to be associated
-          #   with the {Span} to be created. Can be nil.
-          # @param [String] name Name of the {Span} to be created.
-          # @param [Symbol] kind The {OpenTelemetry::Trace::SpanKind} of the {Span}
-          #   to be created. Can be nil.
-          # @param [Hash<String, Object>] attributes Attributes to be attached
-          #   to the {Span} to be created. Can be nil.
-          # @return [Result] The sampling result.
           def call(trace_id:, span_id:, parent_context:, hint:, links:, name:, kind:, attributes:)
-            # If the parent is sampled keep the sampling decision.
-            if parent_context&.trace_flags&.sampled?
-              SAMPLE_DECISION
-            elsif links&.any? { |link| link.context.trace_flags.sampled? }
-              # If any parent link is sampled keep the sampling decision.
-              SAMPLE_DECISION
-            elsif trace_id[16, 16] < @id_upper_bound
-              SAMPLE_DECISION
-            else
-              DONT_SAMPLE_DECISION
-            end
+            take_hint(hint) ||
+              use_parent_sampling(parent_context) ||
+              use_link_sampling(links) ||
+              dont_apply_to_root_span(parent_context) ||
+              dont_apply_to_remote_parent(parent_context) ||
+              dont_apply_to_local_child(parent_context) ||
+              use_probability_sampling(trace_id) ||
+              NOT_RECORD
           end
 
-          # Returns a description of the sampler
-          #
-          # @return [String]
-          attr_reader :description
+          private
+
+          # Take the hint if one is provided and we're not ignoring it.
+          def take_hint(hint)
+            @result_from_hint[hint] if hint
+          end
+
+          # If the parent is sampled and we're not ignoring it keep the sampling decision.
+          def use_parent_sampling(parent_context)
+            RECORD_AND_PROPAGATE if !@ignore_parent && parent_context&.trace_flags&.sampled?
+          end
+
+          # If any link is sampled keep the sampling decision.
+          def use_link_sampling(links)
+            RECORD_AND_PROPAGATE if links&.any? { |link| link.context.trace_flags.sampled? }
+          end
+
+          def dont_apply_to_root_span(parent_context)
+            NOT_RECORD if !@apply_to_root_spans && parent_context.nil?
+          end
+
+          def dont_apply_to_remote_parent(parent_context)
+            NOT_RECORD if !@apply_to_remote_parent && parent_context&.remote?
+          end
+
+          def dont_apply_to_local_child(parent_context)
+            NOT_RECORD if !@apply_to_all_spans && parent_context && !parent_context.remote?
+          end
+
+          def use_probability_sampling(trace_id)
+            RECORD_AND_PROPAGATE if @probability == 1.0 || trace_id[16, 16] < @id_upper_bound
+          end
         end
       end
     end

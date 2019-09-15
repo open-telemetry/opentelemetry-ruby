@@ -6,19 +6,17 @@
 
 module OpenTelemetry
   module Trace
-    module Samplers
-      # Hints to influence sampling decisions. The default option for span
-      # creation is to not provide any suggestion.
-      module SamplingHint
-        # Suggest to not record events and not propagate.
-        NOT_RECORD = :__not_record__
+    # Hints to influence sampling decisions. The default option for span
+    # creation is to not provide any suggestion.
+    module SamplingHint
+      # Suggest to not record events and not propagate.
+      NOT_RECORD = :__not_record__
 
-        # Suggest to record events and not propagate.
-        RECORD = :__record__
+      # Suggest to record events and not propagate.
+      RECORD = :__record__
 
-        # Suggest to record events and propagate.
-        RECORD_AND_PROPAGATE = :__record_and_propagate__
-      end
+      # Suggest to record events and propagate.
+      RECORD_AND_PROPAGATE = :__record_and_propagate__
     end
   end
 end

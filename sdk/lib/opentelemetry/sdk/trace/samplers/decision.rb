@@ -13,13 +13,13 @@ module OpenTelemetry
         # attributes to be attached to a sampled root span.
         module Decision
           # Decision to not record events and not propagate.
-          NOT_RECORD = :__not_record__
+          NOT_RECORD = OpenTelemetry::Trace::SamplingHint::NOT_RECORD
 
           # Decision to record events and not propagate.
-          RECORD = :__record__
+          RECORD = OpenTelemetry::Trace::SamplingHint::RECORD
 
           # Decision to record events and propagate.
-          RECORD_AND_PROPAGATE = :__record_and_propagate__
+          RECORD_AND_PROPAGATE = OpenTelemetry::Trace::SamplingHint::RECORD_AND_PROPAGATE
         end
       end
     end
