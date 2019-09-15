@@ -8,14 +8,14 @@ require 'test_helper'
 
 describe OpenTelemetry::SDK::Trace::Samplers::ProbabilitySampler do
   ProbabilitySampler = OpenTelemetry::SDK::Trace::Samplers::ProbabilitySampler
-  SpanContext = OpenTelemetry::Trace::SpanContext
-  TraceFlags = OpenTelemetry::Trace::TraceFlags
-  Link = OpenTelemetry::Trace::Link
-  Decision = OpenTelemetry::SDK::Trace::Samplers::Decision
 
   describe '#decision' do
-    let(:context) { SpanContext.new(trace_flags: TraceFlags.from_byte(1)) }
     let(:sampler) { ProbabilitySampler.create(Float::MIN) }
+    let(:context) do
+      OpenTelemetry::Trace::SpanContext.new(
+        trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(1)
+      )
+    end
 
     it 'respects parent sampling' do
       result = call_sampler(sampler, parent_context: context)
