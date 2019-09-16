@@ -38,7 +38,7 @@ module OpenTelemetry
           super
           @mutex.synchronize do
             if @ended
-              logger.debug('Calling set_attribute on an ended Span.')
+              logger.warn('Calling set_attribute on an ended Span.')
             else
               @attributes ||= {}
               @attributes[key] = value
@@ -63,20 +63,20 @@ module OpenTelemetry
         #   the keys must be strings and the values may be string, boolean or
         #   numeric type. This argument should only be used when passing in a
         #   name, not an EventFormatter.
-        # @param [Time] timestamp optional timestamp for the event.
+        # @param [optional Time] timestamp Timestamp for the event.
         #
         # @return [self] returns itself
         def add_event(name_or_event_formatter, attrs = nil, timestamp: nil)
           super
           timed_event =
             if name_or_event_formatter.instance_of?(String)
-              TimedEvent.new(name_or_event_formatter, attrs, timestamp || Time.now)
+              Event.new(name: name_or_event_formatter, attributes: attrs, timestamp: timestamp || Time.now)
             else
               name_or_event_formatter.call
             end
           @mutex.synchronize do
             if @ended
-              logger.debug('Calling add_event on an ended Span.')
+              logger.warn('Calling add_event on an ended Span.')
             else
               @events ||= []
               @events << timed_event
@@ -110,7 +110,7 @@ module OpenTelemetry
             end
           @mutex.synchronize do
             if @ended
-              logger.debug('Calling add_link on an ended Span.')
+              logger.warn('Calling add_link on an ended Span.')
             else
               @links ||= []
               @links << link
@@ -136,7 +136,7 @@ module OpenTelemetry
           super
           @mutex.synchronize do
             if @ended
-              logger.debug('Calling status= on an ended Span.')
+              logger.warn('Calling status= on an ended Span.')
             else
               @status = status
             end
@@ -156,7 +156,7 @@ module OpenTelemetry
           super
           @mutex.synchronize do
             if @ended
-              logger.debug('Calling name= on an ended Span.')
+              logger.warn('Calling name= on an ended Span.')
             else
               @name = name
             end
@@ -172,7 +172,9 @@ module OpenTelemetry
         # Call to {#finish} MUST not have any effects on child spans. Those may
         # still be running and can be ended later.
         #
-        # This API MUST be non-blocking.
+        # This API MUST be non-blocking*.
+        #
+        # (*) not actually non-blocking.
         #
         # @param [Time] end_timestamp optional end timestamp for the span.
         #
@@ -180,7 +182,7 @@ module OpenTelemetry
         def finish(end_timestamp: nil)
           @mutex.synchronize do
             if @ended
-              logger.debug('Calling finish on an ended Span.')
+              logger.warn('Calling finish on an ended Span.')
               return self
             end
             @end_timestamp = end_timestamp || Time.now

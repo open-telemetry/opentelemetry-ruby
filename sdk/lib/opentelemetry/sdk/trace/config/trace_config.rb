@@ -52,11 +52,11 @@ module OpenTelemetry
                          max_links_count: DEFAULT_MAX_LINKS_COUNT,
                          max_attributes_per_event: DEFAULT_MAX_ATTRIBUTES_PER_EVENT,
                          max_attributes_per_link: DEFAULT_MAX_ATTRIBUTES_PER_LINK)
-            raise ArgumentError, 'max_attributes_count' unless max_attributes_count.positive?
-            raise ArgumentError, 'max_events_count' unless max_events_count.positive?
-            raise ArgumentError, 'max_links_count' unless max_links_count.positive?
-            raise ArgumentError, 'max_attributes_per_event' unless max_attributes_per_event.positive?
-            raise ArgumentError, 'max_attributes_per_link' unless max_attributes_per_link.positive?
+            raise ArgumentError, 'max_attributes_count must be positive' unless max_attributes_count.positive?
+            raise ArgumentError, 'max_events_count must be positive' unless max_events_count.positive?
+            raise ArgumentError, 'max_links_count must be positive' unless max_links_count.positive?
+            raise ArgumentError, 'max_attributes_per_event must be positive' unless max_attributes_per_event.positive?
+            raise ArgumentError, 'max_attributes_per_link must be positive' unless max_attributes_per_link.positive?
 
             @sampler = sampler
             @max_attributes_count = max_attributes_count
