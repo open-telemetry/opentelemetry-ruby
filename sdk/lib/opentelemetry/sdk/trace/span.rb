@@ -26,8 +26,7 @@ module OpenTelemetry
         # Set attribute
         #
         # Note that the OpenTelemetry project
-        # TODO: This doc link is broken
-        # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/semantic-conventions.md
+        # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-semantic-conventions.md
         # documents} certain "standard attributes" that have prescribed semantic
         # meanings.
         #
@@ -53,7 +52,7 @@ module OpenTelemetry
         # Add an Event to Span
         #
         # Note that the OpenTelemetry project
-        # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/semantic-conventions.md
+        # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-semantic-conventions.md
         # documents} certain "standard event names and keys" which have
         # prescribed semantic meanings.
         #
@@ -67,7 +66,7 @@ module OpenTelemetry
         # @param [optional Time] timestamp Timestamp for the event.
         #
         # @return [self] returns itself
-        def add_event(name_or_event_formatter, attrs = nil, timestamp: nil)
+        def add_event(name_or_event_formatter, attrs = nil, timestamp = nil)
           super
           timed_event =
             if name_or_event_formatter.instance_of?(String)

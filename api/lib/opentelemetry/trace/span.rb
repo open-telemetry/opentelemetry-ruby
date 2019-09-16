@@ -78,7 +78,7 @@ module OpenTelemetry
       # @param [Time] timestamp optional timestamp for the event.
       #
       # @return [self] returns itself
-      def add_event(name_or_event_formatter, attrs = nil, timestamp: nil)
+      def add_event(name_or_event_formatter, attrs = nil, timestamp = nil)
         raise ArgumentError unless name_or_event_formatter.is_a?(String) || name_or_event_formatter.is_a?(Proc)
         raise ArgumentError unless Internal.valid_attributes?(attrs)
         raise ArgumentError if name_or_event_formatter.is_a?(Proc) && !attrs.nil?

@@ -63,18 +63,42 @@ describe OpenTelemetry::SDK::Trace::Span do
 
   describe '#add_event' do
     it 'add a named event' do
-    end
-
-    it 'add an event as event formatter' do
+      span.add_event('added')
+      span.instance_variable_get(:@events).size.must_equal(1)
+      span.instance_variable_get(:@events)[0]
+          .instance_variable_get(:@name).must_equal('added')
     end
 
     it 'add event with attributes' do
+      attrs = { 'foo' => 'bar' }
+      span.add_event('added', attrs)
+      span.instance_variable_get(:@events).size.must_equal(1)
+      span.instance_variable_get(:@events)[0]
+          .instance_variable_get(:@attributes).must_equal(attrs)
     end
 
-    it 'add event with tiemstamp' do
+    it 'add event with timestamp' do
+      ts = Time.now
+      span.add_event('added', nil, ts)
+      span.instance_variable_get(:@events).size.must_equal(1)
+      span.instance_variable_get(:@events)[0]
+          .instance_variable_get(:@timestamp).must_equal(ts)
+    end
+
+    it 'add an event as event formatter' do
+      formatter = lambda do
+        Event.new(name: 'c', attributes: nil, timestamp: Time.now)
+      end
+      span.add_event(formatter)
+      span.instance_variable_get(:@events).size.must_equal(1)
+      span.instance_variable_get(:@events)[0]
+          .instance_variable_get(:@name).must_equal('c')
     end
 
     it 'does not add an event if span is ended' do
+      span.finish
+      span.add_event('will_not_be_added')
+      span.instance_variable_get(:@events).must_be_nil
     end
   end
 

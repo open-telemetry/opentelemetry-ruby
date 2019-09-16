@@ -40,7 +40,7 @@ describe OpenTelemetry::Trace::Span do
     end
 
     it 'accepts a timestamp' do
-      span.add_event('event-name', timestamp: Time.now).must_equal(span)
+      span.add_event('event-name', nil, Time.now).must_equal(span)
     end
 
     it 'accepts an event formatter' do
