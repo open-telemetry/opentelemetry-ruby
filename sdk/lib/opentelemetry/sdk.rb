@@ -13,5 +13,6 @@ module OpenTelemetry
 end
 
 require 'opentelemetry/sdk/internal'
+require 'opentelemetry/sdk/resources'
 require 'opentelemetry/sdk/trace'
 require 'opentelemetry/sdk/version'
