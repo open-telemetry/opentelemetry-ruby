@@ -8,25 +8,28 @@ module OpenTelemetry
   module SDK
     module Trace
       module Samplers
-        # @api internal
+        # @api private
+        #
+        # Implements sampling based on a probability.
         class ProbabilitySampler
-          def initialize(probability, result_from_hint:, ignore_parent:, apply_to_root_spans:, apply_to_remote_parent:, apply_to_all_spans:)
+          def initialize(probability, hints:, ignore_parent:, apply_to_root_spans:, apply_to_remote_parent:, apply_to_all_spans:)
             @probability = probability
             @id_upper_bound = format('%016x', (probability * (2**64 - 1)).ceil)
-            @result_from_hint = result_from_hint
+            @result_from_hint = hints.map { |hint| [hint, Result.new(decision: hint)] }.to_h.freeze
             @ignore_parent = ignore_parent
             @apply_to_root_spans = apply_to_root_spans
             @apply_to_remote_parent = apply_to_remote_parent
             @apply_to_all_spans = apply_to_all_spans
           end
 
+          # @api private
+          #
+          # Callable interface for probability sampler. See {Samplers}.
           def call(trace_id:, span_id:, parent_context:, hint:, links:, name:, kind:, attributes:)
             take_hint(hint) ||
               use_parent_sampling(parent_context) ||
               use_link_sampling(links) ||
-              dont_apply_to_root_span(parent_context) ||
-              dont_apply_to_remote_parent(parent_context) ||
-              dont_apply_to_local_child(parent_context) ||
+              maybe_dont_apply(parent_context) ||
               use_probability_sampling(trace_id) ||
               NOT_RECORD
           end
@@ -46,6 +49,12 @@ module OpenTelemetry
           # If any link is sampled keep the sampling decision.
           def use_link_sampling(links)
             RECORD_AND_PROPAGATE if links&.any? { |link| link.context.trace_flags.sampled? }
+          end
+
+          def maybe_dont_apply(parent_context)
+            dont_apply_to_root_span(parent_context) ||
+              dont_apply_to_remote_parent(parent_context) ||
+              dont_apply_to_local_child(parent_context)
           end
 
           def dont_apply_to_root_span(parent_context)

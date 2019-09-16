@@ -67,8 +67,8 @@ module OpenTelemetry
         end
         # rubocop:enable Style/Lambda
 
-        # Returns a new sampling closure. The probability of sampling a trace
-        # is equal to that of the specified probability.
+        # Returns a new sampler. The probability of sampling a trace is equal
+        # to that of the specified probability.
         #
         # @param [Numeric] probability The desired probability of sampling.
         #   Must be within [0.0, 1.0].
@@ -83,6 +83,9 @@ module OpenTelemetry
         # @param [optional Boolean] apply_to_all_spans Whether to apply
         #   probability sampling to all spans. Defaults to false.
         # @raise [ArgumentError] if probability is out of range
+        # @raise [ArgumentError] if ignore_hints contains invalid hints
+        # @raise [ArgumentError] unless apply_to_all_spans implies apply_to_root_spans
+        #   and apply_to_remote_parent
         # @return [OpenTelemetry::Trace::Samplers::Sampler]
         def self.probability(probability,
                              ignore_hints: [OpenTelemetry::Trace::SamplingHint::RECORD],
@@ -94,10 +97,8 @@ module OpenTelemetry
           raise ArgumentError, 'ignore_hints' unless (ignore_hints.to_a - SAMPLING_HINTS).empty?
           raise ArgumentError if apply_to_all_spans && (!apply_to_root_spans || !apply_to_remote_parent)
 
-          hints = SAMPLING_HINTS - ignore_hints.to_a
-          result_from_hint = hints.map { |hint| [hint, Result.new(decision: hint)] }.to_h.freeze
           ProbabilitySampler.new(probability,
-                                 result_from_hint: result_from_hint,
+                                 hints: SAMPLING_HINTS - ignore_hints.to_a,
                                  ignore_parent: ignore_parent,
                                  apply_to_root_spans: apply_to_root_spans,
                                  apply_to_remote_parent: apply_to_remote_parent,
