@@ -9,3 +9,5 @@ SimpleCov.start
 
 require 'opentelemetry/sdk'
 require 'minitest/autorun'
+
+OpenTelemetry.logger = Logger.new('/dev/null')

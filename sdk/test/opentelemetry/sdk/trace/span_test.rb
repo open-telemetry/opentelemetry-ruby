@@ -11,17 +11,21 @@ describe OpenTelemetry::SDK::Trace::Span do
   TraceConfig = OpenTelemetry::SDK::Trace::Config::TraceConfig
   NoopSpanProcessor = OpenTelemetry::SDK::Trace::NoopSpanProcessor
   SpanKind = OpenTelemetry::Trace::SpanKind
+  Status = OpenTelemetry::Trace::Status
 
-  let(:span) do
-    context = SpanContext.new
-    trace_config = TraceConfig.new(
+  let(:context) { SpanContext.new }
+  let(:span_processor) { NoopSpanProcessor.instance }
+  let(:mock_span_processor) { Minitest::Mock.new }
+  let(:trace_config) do
+    TraceConfig.new(
       max_attributes_count: 1,
       max_events_count: 1,
       max_links_count: 1,
       max_attributes_per_event: 1,
       max_attributes_per_link: 1
     )
-    span_processor = NoopSpanProcessor.instance
+  end
+  let(:span) do
     Span.new(context, 'name', SpanKind::INTERNAL, nil, trace_config,
              span_processor, nil, nil, nil, Time.now)
   end
@@ -34,80 +38,172 @@ describe OpenTelemetry::SDK::Trace::Span do
 
   describe '#set_attribute' do
     it 'sets an attribute' do
+      span.set_attribute('foo', 'bar')
+      span.instance_variable_get(:@attributes).must_equal('foo' => 'bar')
     end
 
     it 'trims the oldest attribute' do
+      span.set_attribute('old', 'oldbar')
+      span.set_attribute('foo', 'bar')
+      span.instance_variable_get(:@attributes).must_equal('foo' => 'bar')
     end
 
     it 'does not set an attribute if span is ended' do
+      span.finish
+      span.set_attribute('no', 'set')
+      span.instance_variable_get(:@attributes).must_be_nil
     end
 
     it 'counts attributes' do
+      span.set_attribute('old', 'oldbar')
+      span.set_attribute('foo', 'bar')
+      span.instance_variable_get(:@total_recorded_attributes).must_equal(2)
     end
   end
 
   describe '#add_event' do
+    it 'add a named event' do
+    end
+
+    it 'add an event as event formatter' do
+    end
+
+    it 'add event with attributes' do
+    end
+
+    it 'add event with tiemstamp' do
+    end
+
+    it 'does not add an event if span is ended' do
+    end
   end
 
+  # No tests as this is going away
   describe '#add_link' do
   end
 
   describe '#status=' do
     it 'sets the status' do
+      span.status = Status.new(1, description: 'cancelled')
+      span.instance_variable_get(:@status).description.must_equal('cancelled')
     end
 
     it 'does not set the status if span is ended' do
+      span.finish
+      span.status = Status.new(1, description: 'cancelled')
+      span.instance_variable_get(:@status).must_be_nil
     end
   end
 
   describe '#name=' do
     it 'sets the name' do
+      span.name = 'new_name'
+      span.instance_variable_get(:@name).must_equal('new_name')
     end
 
     it 'does not set the name if span is ended' do
+      span.finish
+      span.name = 'new_name'
+      span.instance_variable_get(:@name).must_equal('name')
     end
   end
 
   describe '#finish' do
     it 'returns itself' do
+      span.finish.must_equal(span)
     end
 
     it 'sets the end timestamp' do
+      span.finish
+      span.instance_variable_get(:@end_timestamp).wont_be_nil
     end
 
     it 'calls the span processor #on_end callback' do
+      mock_span_processor.expect(:on_start, nil) do |_|
+        true
+      end
+      span = Span.new(context, 'name', SpanKind::INTERNAL, nil, trace_config,
+                      mock_span_processor, nil, nil, nil, Time.now)
+      mock_span_processor.expect :on_end, nil, [span]
+      span.finish
+      mock_span_processor.verify
     end
 
     it 'marks the span as ended' do
+      span.finish
+      span.instance_variable_get(:@ended).must_equal(true)
     end
 
     it 'does not allow ending more than once' do
+      span.finish
+      span.instance_variable_get(:@ended).must_equal(true)
+      ts = span.instance_variable_get(:@end_timestamp)
+      span.finish
+      span.instance_variable_get(:@end_timestamp).must_equal(ts)
     end
   end
 
   describe '#initialize' do
     it 'installs the span processor' do
+      span.instance_variable_get(:@span_processor).must_equal(span_processor)
     end
 
     it 'calls the span processor #on_start callback' do
+      mock_span_processor.expect(:on_start, nil) do |_|
+        true
+      end
+      Span.new(context, 'name', SpanKind::INTERNAL, nil, trace_config,
+               mock_span_processor, nil, nil, nil, Time.now)
+      mock_span_processor.verify
     end
 
     it 'trims excess attributes' do
-    end
-
-    it 'counts events' do
-    end
-
-    it 'counts links' do
+      attributes = { 'foo': 'bar', 'other': 'attr' }
+      span = Span.new(context, 'name', SpanKind::INTERNAL, nil, trace_config,
+                      span_processor, attributes, nil, nil, Time.now)
+      span.instance_variable_get(:@total_recorded_attributes).must_equal(2)
+      span.instance_variable_get(:@attributes).length.must_equal(1)
     end
 
     it 'counts attributes' do
+      attributes = { 'foo': 'bar', 'other': 'attr' }
+      span = Span.new(context, 'name', SpanKind::INTERNAL, nil, trace_config,
+                      span_processor, attributes, nil, nil, Time.now)
+      span.instance_variable_get(:@total_recorded_attributes).must_equal(2)
+      span.set_attribute('he', 'llo')
+      span.instance_variable_get(:@total_recorded_attributes).must_equal(3)
     end
 
-    it 'trims excess links' do
+    it 'counts events' do
+      events = %w[foo bar]
+      span = Span.new(context, 'name', SpanKind::INTERNAL, nil, trace_config,
+                      span_processor, nil, nil, events, Time.now)
+      span.instance_variable_get(:@total_recorded_events).must_equal(2)
+      span.add_event('added')
+      span.instance_variable_get(:@total_recorded_events).must_equal(3)
     end
 
     it 'trims excess events' do
+      events = %w[foo bar]
+      span = Span.new(context, 'name', SpanKind::INTERNAL, nil, trace_config,
+                      span_processor, nil, nil, events, Time.now)
+      span.instance_variable_get(:@events).size.must_equal(1)
+      span.add_event('added')
+      span.instance_variable_get(:@events).size.must_equal(1)
+    end
+
+    it 'counts links' do
+      links = %w[foo bar]
+      span = Span.new(context, 'name', SpanKind::INTERNAL, nil, trace_config,
+                      span_processor, nil, links, nil, Time.now)
+      span.instance_variable_get(:@total_recorded_links).must_equal(2)
+    end
+
+    it 'trims excess links' do
+      links = %w[foo bar]
+      span = Span.new(context, 'name', SpanKind::INTERNAL, nil, trace_config,
+                      span_processor, nil, links, nil, Time.now)
+      span.instance_variable_get(:@links).size.must_equal(1)
     end
   end
 end

@@ -26,6 +26,7 @@ module OpenTelemetry
         # Set attribute
         #
         # Note that the OpenTelemetry project
+        # TODO: This doc link is broken
         # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/semantic-conventions.md
         # documents} certain "standard attributes" that have prescribed semantic
         # meanings.
@@ -38,11 +39,11 @@ module OpenTelemetry
           super
           @mutex.synchronize do
             if @ended
-              logger.warn('Calling set_attribute on an ended Span.')
+              OpenTelemetry.logger.warn('Calling set_attribute on an ended Span.')
             else
               @attributes ||= {}
               @attributes[key] = value
-              trace_config.trim_attributes(@attributes, :max_attributes_count)
+              @trace_config.trim_attributes(@attributes, :max_attributes_count)
               @total_recorded_attributes += 1
             end
           end
@@ -76,11 +77,11 @@ module OpenTelemetry
             end
           @mutex.synchronize do
             if @ended
-              logger.warn('Calling add_event on an ended Span.')
+              OpenTelemetry.logger.warn('Calling add_event on an ended Span.')
             else
               @events ||= []
               @events << timed_event
-              @events.shift if @events.size > trace_config.max_events_count
+              @events.shift if @events.size > @trace_config.max_events_count
               @total_recorded_events += 1
             end
           end
@@ -110,7 +111,7 @@ module OpenTelemetry
             end
           @mutex.synchronize do
             if @ended
-              logger.warn('Calling add_link on an ended Span.')
+              OpenTelemetry.logger.warn('Calling add_link on an ended Span.')
             else
               @links ||= []
               @links << link
@@ -136,7 +137,7 @@ module OpenTelemetry
           super
           @mutex.synchronize do
             if @ended
-              logger.warn('Calling status= on an ended Span.')
+              OpenTelemetry.logger.warn('Calling status= on an ended Span.')
             else
               @status = status
             end
@@ -156,9 +157,9 @@ module OpenTelemetry
           super
           @mutex.synchronize do
             if @ended
-              logger.warn('Calling name= on an ended Span.')
+              OpenTelemetry.logger.warn('Calling name= on an ended Span.')
             else
-              @name = name
+              @name = new_name
             end
           end
         end
@@ -182,7 +183,7 @@ module OpenTelemetry
         def finish(end_timestamp: nil)
           @mutex.synchronize do
             if @ended
-              logger.warn('Calling finish on an ended Span.')
+              OpenTelemetry.logger.warn('Calling finish on an ended Span.')
               return self
             end
             @end_timestamp = end_timestamp || Time.now
@@ -233,6 +234,8 @@ module OpenTelemetry
           @links = links
           @events = events
           trace_config.trim_attributes(@attributes, :max_attributes_count)
+          trace_config.trim_links_or_events(@links, :max_links_count)
+          trace_config.trim_links_or_events(@events, :max_events_count)
           @span_processor.on_start(self)
         end
 

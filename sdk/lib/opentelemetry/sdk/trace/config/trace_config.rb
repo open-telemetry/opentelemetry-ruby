@@ -82,6 +82,22 @@ module OpenTelemetry
             nil
           end
 
+          # @api private
+          # Removes oldest entries from an Array whose size exceeds a limit.
+          #
+          # @param [Array] arr Array of links or events that is modified in-place.
+          # @param [Symbol, Integer] limit The maximum number of entries
+          #   allowed in the array. May be expressed as a number or a symbol
+          #   representing one of the limits in this class.
+          def trim_links_or_events(arr, limit)
+            return if arr.nil?
+
+            limit = public_send(limit) if limit.instance_of?(Symbol)
+            excess = arr.size - limit
+            arr.shift(excess) if excess.positive?
+            nil
+          end
+
           # TODO: from_proto
 
           # The default {TraceConfig}.
