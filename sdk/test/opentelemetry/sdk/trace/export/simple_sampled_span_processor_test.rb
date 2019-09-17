@@ -7,4 +7,95 @@
 require 'test_helper'
 
 describe OpenTelemetry::SDK::Trace::Export::SimpleSampledSpanProcessor do
+  export = OpenTelemetry::SDK::Trace::Export
+
+  let :mock_span_exporter do
+    mock = Minitest::Mock.new
+    def mock.nil?
+      false
+    end
+
+    mock
+  end
+
+  let :stub_span_unsampled do
+    span = OpenStruct.new
+    span.context = OpenStruct.new
+    span.context.trace_flags = OpenStruct.new(sampled?: false)
+
+    span
+  end
+
+  let :stub_span_sampled do
+    span = OpenStruct.new
+    span.context = OpenStruct.new
+    span.context.trace_flags = OpenStruct.new(sampled?: true)
+
+    span
+  end
+
+  let(:subject) { export::SimpleSampledSpanProcessor.new(mock_span_exporter) }
+
+  it 'requires a span_exporter to be passed to #initialize' do
+    proc do
+      export::SimpleSampledSpanProcessor.new(nil)
+    end.must_raise ArgumentError
+  end
+
+  it 'accepts calls to #on_start' do
+    subject.on_start(stub_span_sampled)
+  end
+
+  it 'forwards sampled spans from #on_end' do
+    mock_span_exporter.expect :export, export::SUCCESS, [Array]
+
+    subject.on_start(stub_span_sampled)
+    subject.on_end(stub_span_sampled)
+    mock_span_exporter.verify
+  end
+
+  it 'ignores unsampled spans in #on_end' do
+    subject.on_start(stub_span_unsampled)
+    subject.on_end(stub_span_unsampled)
+    mock_span_exporter.verify
+  end
+
+  it 'calls #to_span_proto on sampled spans in #on_end' do
+    subject_noop = export::SimpleSampledSpanProcessor.new(
+      export::NoopSpanExporter.new
+    )
+
+    mock_span = Minitest::Mock.new
+    mock_span.expect :context, stub_span_sampled.context
+    mock_span.expect :to_span_proto, nil
+
+    subject_noop.on_start(mock_span)
+    subject_noop.on_end(mock_span)
+    mock_span.verify
+  end
+
+  it 'catches and logs exporter exceptions in #on_end' do
+    raising_exporter = export::NoopSpanExporter.new
+
+    def raising_exporter.export(_)
+      raise ArgumentError
+    end
+
+    subject_with_raising_exporter = export::SimpleSampledSpanProcessor.new(
+      raising_exporter
+    )
+
+    subject_with_raising_exporter.on_start(stub_span_sampled)
+
+    proc do
+      subject_with_raising_exporter.on_end(stub_span_sampled)
+    end.must_output(/ArgumentError/)
+  end
+
+  it 'forwards calls to #shutdown to the exporter' do
+    mock_span_exporter.expect :shutdown, nil
+
+    subject.shutdown
+    mock_span_exporter.verify
+  end
 end
