@@ -154,9 +154,9 @@ describe OpenTelemetry::SDK::Trace::Span do
     it 'does not allow ending more than once' do
       span.finish
       span.instance_variable_get(:@ended).must_equal(true)
-      ts = span.instance_variable_get(:@end_timestamp)
+      ts = span.to_proto[:end_timestamp]
       span.finish
-      span.instance_variable_get(:@end_timestamp).must_equal(ts)
+      span.to_proto[:end_timestamp].must_equal(ts)
     end
   end
 
@@ -178,8 +178,8 @@ describe OpenTelemetry::SDK::Trace::Span do
       attributes = { 'foo': 'bar', 'other': 'attr' }
       span = Span.new(context, 'name', SpanKind::INTERNAL, nil, trace_config,
                       span_processor, attributes, nil, nil, Time.now)
-      span.instance_variable_get(:@total_recorded_attributes).must_equal(2)
-      span.instance_variable_get(:@attributes).length.must_equal(1)
+      span.to_proto[:total_recorded_attributes].must_equal(2)
+      span.to_proto[:attributes].length.must_equal(1)
     end
 
     it 'counts attributes' do
@@ -188,7 +188,7 @@ describe OpenTelemetry::SDK::Trace::Span do
                       span_processor, attributes, nil, nil, Time.now)
       span.instance_variable_get(:@total_recorded_attributes).must_equal(2)
       span.set_attribute('he', 'llo')
-      span.instance_variable_get(:@total_recorded_attributes).must_equal(3)
+      span.to_proto[:total_recorded_attributes].must_equal(3)
     end
 
     it 'counts events' do
@@ -197,7 +197,7 @@ describe OpenTelemetry::SDK::Trace::Span do
                       span_processor, nil, nil, events, Time.now)
       span.instance_variable_get(:@total_recorded_events).must_equal(2)
       span.add_event(name: 'added')
-      span.instance_variable_get(:@total_recorded_events).must_equal(3)
+      span.to_proto[:total_recorded_events].must_equal(3)
     end
 
     it 'trims excess events' do
@@ -206,21 +206,21 @@ describe OpenTelemetry::SDK::Trace::Span do
                       span_processor, nil, nil, events, Time.now)
       span.instance_variable_get(:@events).size.must_equal(1)
       span.add_event(name: 'added')
-      span.instance_variable_get(:@events).size.must_equal(1)
+      span.to_proto[:events].size.must_equal(1)
     end
 
     it 'counts links' do
       links = %w[foo bar]
       span = Span.new(context, 'name', SpanKind::INTERNAL, nil, trace_config,
                       span_processor, nil, links, nil, Time.now)
-      span.instance_variable_get(:@total_recorded_links).must_equal(2)
+      span.to_proto[:total_recorded_links].must_equal(2)
     end
 
     it 'trims excess links' do
       links = %w[foo bar]
       span = Span.new(context, 'name', SpanKind::INTERNAL, nil, trace_config,
                       span_processor, nil, links, nil, Time.now)
-      span.instance_variable_get(:@links).size.must_equal(1)
+      span.to_proto[:links].size.must_equal(1)
     end
   end
 end
