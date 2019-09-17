@@ -9,10 +9,38 @@ module OpenTelemetry
     module Trace
       # Implementation of {OpenTelemetry::Trace::Span} that records trace events.
       #
+      # This implementation includes reader methods intended to allow access to
+      # internal state by SpanProcessors (see {NoopSpanProcessor} for the interface).
+      # Instrumentation should use the API provided by {OpenTelemetry::Trace::Span}
+      # and should consider {Span} to be write-only.
+      #
       # rubocop:disable Metrics/ClassLength
       class Span < OpenTelemetry::Trace::Span
-        # TODO: does this need synchronization? I don't think so...
-        attr_reader :name
+        # The following readers are intended for the use of SpanProcessors and
+        # should not be considered part of the public interface for instrumentation.
+        attr_reader :name, :status, :kind, :parent_span_id, :start_timestamp, :end_timestamp, :links
+
+        # Return a frozen copy of the current attributes. This is intended for
+        # use of SpanProcesses and should not be considered part of the public
+        # interface for instrumentation.
+        #
+        # @return [Hash<String, Object>] may be nil.
+        def attributes
+          # Don't bother synchronizing. Access by SpanProcessors is expected to
+          # be serialized.
+          @attributes.clone.freeze
+        end
+
+        # Return a frozen copy of the current events. This is intended for use
+        # of SpanProcessors and should not be considered part of the public
+        # interface for instrumentation.
+        #
+        # @return [Array<Event>] may be nil.
+        def events
+          # Don't bother synchronizing. Access by SpanProcessors is expected to
+          # be serialized.
+          @events.clone.freeze
+        end
 
         # Return the flag whether this span is recording events
         #
@@ -145,7 +173,10 @@ module OpenTelemetry
         #
         # This API MUST be non-blocking*.
         #
-        # (*) not actually non-blocking.
+        # (*) not actually non-blocking. In particular, it synchronizes on an
+        # internal mutex, which will typically be uncontended, and
+        # {BatchSpanProcessor} will also synchronize on a mutex, if that
+        # processor is used.
         #
         # @param [Time] end_timestamp optional end timestamp for the span.
         #
@@ -157,15 +188,26 @@ module OpenTelemetry
               return self
             end
             @end_timestamp = end_timestamp || Time.now
+            @attributes.freeze
+            @events.freeze
             @ended = true
           end
           @span_processor.on_end(self)
           self
         end
 
-        # TODO: return a real proto
-        def to_proto
-          {
+        # @api private
+        #
+        # Returns a SpanData containing a snapshot of the Span fields. It is
+        # assumed that the Span has been finished, and that no further
+        # modifications will be made to the Span.
+        #
+        # This method should be called *only* from a SpanProcessor prior to
+        # calling the SpanExporter.
+        #
+        # @return [SpanData]
+        def to_span_data
+          SpanData.new(
             name: @name,
             kind: @kind,
             status: @status,
@@ -176,13 +218,13 @@ module OpenTelemetry
             total_recorded_links: @total_recorded_links,
             start_timestamp: @start_timestamp,
             end_timestamp: @end_timestamp,
-            attributes: @attributes.freeze,
-            links: @links.freeze,
-            events: @events.freeze,
+            attributes: @attributes,
+            links: @links,
+            events: @events,
             span_id: context.span_id,
             trace_id: context.trace_id,
             trace_flags: context.trace_flags
-          }
+          )
         end
 
         # @api private
@@ -191,7 +233,7 @@ module OpenTelemetry
           @mutex = Mutex.new
           @name = name
           @kind = kind
-          @parent_span_id = parent_span_id || OpenTelemetry::Trace::INVALID_SPAN_ID
+          @parent_span_id = parent_span_id.freeze || OpenTelemetry::Trace::INVALID_SPAN_ID
           @trace_config = trace_config
           @span_processor = span_processor
           @ended = false
@@ -202,12 +244,13 @@ module OpenTelemetry
           @total_recorded_attributes = attributes&.size || 0
           @start_timestamp = start_timestamp
           @end_timestamp = nil
-          @attributes = attributes
-          @links = links
-          @events = events
+          @attributes = attributes.clone
+          @events = events.clone
+          @links = links.clone
           trace_config.trim_span_attributes(@attributes)
-          trace_config.trim_links(@links)
           trace_config.trim_events(@events)
+          trace_config.trim_links(@links)
+          @links.freeze
           @span_processor.on_start(self)
         end
 

@@ -80,7 +80,7 @@ module OpenTelemetry
       #
       # @param [optional String] name Optional name of the event. This is
       #   required if a block is not given.
-      # @param [optional Hash<String, Object>] attrs One or more key:value
+      # @param [optional Hash<String, Object>] attributes One or more key:value
       #   pairs, where the keys must be strings and the values may be string,
       #   boolean or numeric type. This argument should only be used when
       #   passing in a name.
