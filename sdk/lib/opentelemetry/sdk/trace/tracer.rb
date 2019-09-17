@@ -101,15 +101,13 @@ module OpenTelemetry
           Event.new(name: name, attributes: attrs, timestamp: timestamp || Time.now)
         end
 
-        # Returns a new Link. This should be called by a LinkFormatter, a
-        # lazily evaluated callable that returns a Link that is passed to
-        # {Span#add_link}, or to pass Links to {OpenTelemetry::Trace::Tracer#in_span},
-        # {Tracer#start_span} or {Tracer#start_root_span}.
+        # Returns a new Link. This should be called to pass Links to
+        # {OpenTelemetry::Trace::Tracer#in_span}, {Tracer#start_span} or
+        # {Tracer#start_root_span}.
         #
         # Example use:
         #
         #   span = tracer.in_span('op', links: [tracer.create_link(SpanContext.new)])
-        #   span.add_link { tracer.create_link(SpanContext.new, {'a' => 3}) }
         #
         # @param [SpanContext] span_context The context of the linked {Span}.
         # @param [optional Hash<String, Object>] attrs A hash of attributes

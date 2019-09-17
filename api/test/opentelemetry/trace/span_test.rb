@@ -32,28 +32,24 @@ describe OpenTelemetry::Trace::Span do
 
   describe '#add_event' do
     it 'returns self' do
-      span.add_event('event-name').must_equal(span)
+      span.add_event(name: 'event-name').must_equal(span)
     end
 
     it 'accepts a name and attributes' do
-      span.add_event('event-name', 'foo' => 'bar').must_equal(span)
+      span.add_event(name: 'event-name', attributes: { 'foo' => 'bar' }).must_equal(span)
     end
 
     it 'accepts a timestamp' do
-      span.add_event('event-name', nil, Time.now).must_equal(span)
+      span.add_event(name: 'event-name', timestamp: Time.now).must_equal(span)
     end
 
     it 'accepts an event formatter' do
-      event_formatter =
-        -> { OpenTelemetry::Trace::Event.new(name: 'event-name') }
-      span.add_event(event_formatter).must_equal(span)
+      span.add_event { Object.new }.must_equal(span)
     end
 
     it 'raises if both attributes and formatter are passed in' do
       proc do
-        event_formatter =
-          -> { OpenTelemetry::Trace::Event.new(name: 'event-name') }
-        span.add_event(event_formatter, 'foo' => 'bar')
+        span.add_event(attributes: { 'foo' => 'bar' }) { Object.new }
       end.must_raise(ArgumentError)
     end
   end
@@ -61,30 +57,6 @@ describe OpenTelemetry::Trace::Span do
   describe '#finish' do
     it 'returns self' do
       span.finish.must_equal(span)
-    end
-  end
-
-  describe '#add_link' do
-    it 'accepts a span context' do
-      span.add_link(span_context).must_equal(span)
-    end
-
-    it 'accepts a span context and attributes' do
-      span.add_link(span_context, 'foo' => 'bar').must_equal(span)
-    end
-
-    it 'accepts a link formatter' do
-      link_formatter =
-        -> { OpenTelemetry::Trace::Link.new(span_context: span_context) }
-      span.add_link(link_formatter).must_equal(span)
-    end
-
-    it 'raises if both attributes and formatter are passed in' do
-      proc do
-        link_formatter =
-          -> { OpenTelemetry::Trace::Link.new(span_context: span_context) }
-        span.add_link(link_formatter, 'foo' => 'bar')
-      end.must_raise(ArgumentError)
     end
   end
 

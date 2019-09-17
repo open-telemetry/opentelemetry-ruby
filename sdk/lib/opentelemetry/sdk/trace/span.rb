@@ -42,80 +42,51 @@ module OpenTelemetry
             else
               @attributes ||= {}
               @attributes[key] = value
-              @trace_config.trim_attributes(@attributes, :max_attributes_count)
+              @trace_config.trim_span_attributes(@attributes)
               @total_recorded_attributes += 1
             end
           end
           self
         end
 
-        # Add an Event to Span
+        # Add an Event to a {Span}. This can be accomplished eagerly or lazily.
+        # Lazy evaluation is useful when the event attributes are expensive to
+        # build and where the cost can be avoided for an unsampled {Span}.
+        #
+        # Eager example:
+        #
+        #   span.add_event(name: 'event', attributes: {'eager' => true})
+        #
+        # Lazy example:
+        #
+        #   span.add_event { tracer.create_event(name: 'event', attributes: {'eager' => false}) }
         #
         # Note that the OpenTelemetry project
-        # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-semantic-conventions.md
+        # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/semantic-conventions.md
         # documents} certain "standard event names and keys" which have
         # prescribed semantic meanings.
         #
-        # @param [String, Callable] name_or_event_formatter The name of the event
-        #   or an EventFormatter, a lazily evaluated callable that returns an
-        #   Event instance.
-        # @param [optional Hash<String, Object>] attrs One or more key:value pairs, where
-        #   the keys must be strings and the values may be string, boolean or
-        #   numeric type. This argument should only be used when passing in a
-        #   name, not an EventFormatter.
-        # @param [optional Time] timestamp Timestamp for the event.
+        # @param [optional String] name Optional name of the event. This is
+        #   required if a block is not given.
+        # @param [optional Hash<String, Object>] attributes One or more key:value
+        #   pairs, where the keys must be strings and the values may be string,
+        #   boolean or numeric type. This argument should only be used when
+        #   passing in a name.
+        # @param [optional Time] timestamp Optional timestamp for the event.
+        #   This argument should only be used when passing in a name.
         #
         # @return [self] returns itself
-        def add_event(name_or_event_formatter, attrs = nil, timestamp = nil)
+        def add_event(name: nil, attributes: nil, timestamp: nil)
           super
-          timed_event =
-            if name_or_event_formatter.instance_of?(String)
-              Event.new(name: name_or_event_formatter, attributes: attrs, timestamp: timestamp || Time.now)
-            else
-              name_or_event_formatter.call
-            end
+          event = block_given? ? yield : Event.new(name: name, attributes: attributes, timestamp: timestamp || Time.now)
           @mutex.synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling add_event on an ended Span.')
             else
               @events ||= []
-              @events << timed_event
-              @events.shift if @events.size > @trace_config.max_events_count
+              @events << event
+              @trace_config.trim_events(@events)
               @total_recorded_events += 1
-            end
-          end
-          self
-        end
-
-        # Adds a link to another Span from this Span. The linked Span can be from
-        # the same or different trace. See {OpenTelemetry::Trace::Link} for a description.
-        #
-        # @param [SpanContext, Callable] span_context_or_link_formatter The
-        #   SpanContext context of the Span to link with this Span or a
-        #   LinkFormatter, a lazily evaluated callable that returns a Link
-        #   instance.
-        # @param [optional Hash<String, Object>] attrs Map of attributes associated with
-        #   this link. Attributes are key:value pairs where key is a string and
-        #   value is one of string, boolean or numeric type. This argument should
-        #   only be used when passing in a SpanContext, not a LinkFormatter.
-        #
-        # @return [self] returns itself
-        def add_link(span_context_or_link_formatter, attrs = nil)
-          super
-          link =
-            if span_context_or_link_formatter.instance_of?(SpanContext)
-              OpenTelemetry::Trace::Link.new(span_context_or_link_formatter, attrs)
-            else
-              span_context_or_link_formatter.call
-            end
-          @mutex.synchronize do
-            if @ended
-              OpenTelemetry.logger.warn('Calling add_link on an ended Span.')
-            else
-              @links ||= []
-              @links << link
-              @links.shift if @links.size > trace_config.max_links_count
-              @total_recorded_links += 1
             end
           end
           self
@@ -206,8 +177,8 @@ module OpenTelemetry
             start_timestamp: @start_timestamp,
             end_timestamp: @end_timestamp,
             attributes: @attributes.freeze,
-            links: @links&.map { |link| link.to_proto }.freeze,
-            events: @events&.map { |event| event.to_proto }.freeze,
+            links: @links.freeze,
+            events: @events.freeze,
             span_id: context.span_id,
             trace_id: context.trace_id,
             trace_flags: context.trace_flags
@@ -215,7 +186,7 @@ module OpenTelemetry
         end
 
         # @api private
-        def initialize(context, name, kind, parent_span_id, trace_config, span_processor, attributes, links, events, start_timestamp)
+        def initialize(context, name, kind, parent_span_id, trace_config, span_processor, attributes, links, events, start_timestamp) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
           super(span_context: context)
           @mutex = Mutex.new
           @name = name
@@ -224,17 +195,19 @@ module OpenTelemetry
           @trace_config = trace_config
           @span_processor = span_processor
           @ended = false
+          @status = nil
           @child_count = 0
           @total_recorded_events = events&.size || 0
           @total_recorded_links = links&.size || 0
           @total_recorded_attributes = attributes&.size || 0
           @start_timestamp = start_timestamp
+          @end_timestamp = nil
           @attributes = attributes
           @links = links
           @events = events
-          trace_config.trim_attributes(@attributes, :max_attributes_count)
-          trace_config.trim_links_or_events(@links, :max_links_count)
-          trace_config.trim_links_or_events(@events, :max_events_count)
+          trace_config.trim_span_attributes(@attributes)
+          trace_config.trim_links(@links)
+          trace_config.trim_events(@events)
           @span_processor.on_start(self)
         end
 

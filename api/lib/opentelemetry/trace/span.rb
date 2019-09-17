@@ -61,48 +61,37 @@ module OpenTelemetry
       end
       alias []= set_attribute
 
-      # Add an Event to Span
+      # Add an Event to a {Span}. This can be accomplished eagerly or lazily.
+      # Lazy evaluation is useful when the event attributes are expensive to
+      # build and where the cost can be avoided for an unsampled {Span}.
+      #
+      # Eager example:
+      #
+      #   span.add_event(name: 'event', attributes: {'eager' => true})
+      #
+      # Lazy example:
+      #
+      #   span.add_event { tracer.create_event(name: 'event', attributes: {'eager' => false}) }
       #
       # Note that the OpenTelemetry project
       # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/semantic-conventions.md
       # documents} certain "standard event names and keys" which have
       # prescribed semantic meanings.
       #
-      # @param [String, Callable] name_or_event_formatter The name of the event
-      #   or an EventFormatter, a lazily evaluated callable that returns an
-      #   Event instance.
-      # @param [optional Hash<String, Object>] attrs One or more key:value pairs, where
-      #   the keys must be strings and the values may be string, boolean or
-      #   numeric type. This argument should only be used when passing in a
-      #   name, not an EventFormatter.
-      # @param [Time] timestamp optional timestamp for the event.
+      # @param [optional String] name Optional name of the event. This is
+      #   required if a block is not given.
+      # @param [optional Hash<String, Object>] attrs One or more key:value
+      #   pairs, where the keys must be strings and the values may be string,
+      #   boolean or numeric type. This argument should only be used when
+      #   passing in a name.
+      # @param [optional Time] timestamp Optional timestamp for the event.
+      #   This argument should only be used when passing in a name.
       #
       # @return [self] returns itself
-      def add_event(name_or_event_formatter, attrs = nil, timestamp = nil)
-        raise ArgumentError unless name_or_event_formatter.is_a?(String) || name_or_event_formatter.is_a?(Proc)
-        raise ArgumentError unless Internal.valid_attributes?(attrs)
-        raise ArgumentError if name_or_event_formatter.is_a?(Proc) && !attrs.nil?
-
-        self
-      end
-
-      # Adds a link to another Span from this Span. The linked Span can be from
-      # the same or different trace. See {Link} for a description.
-      #
-      # @param [SpanContext, Callable] span_context_or_link_formatter The
-      #   {SpanContext} context of the Span to link with this Span or a
-      #   LinkFormatter, a lazily evaluated callable that returns a {Link}
-      #   instance.
-      # @param [optional Hash<String, Object>] attrs Map of attributes associated with
-      #   this link. Attributes are key:value pairs where key is a string and
-      #   value is one of string, boolean or numeric type. This argument should
-      #   only be used when passing in a {SpanContext}, not a LinkFormatter.
-      #
-      # @return [self] returns itself
-      def add_link(span_context_or_link_formatter, attrs = nil)
-        raise ArgumentError unless span_context_or_link_formatter.instance_of?(SpanContext) || span_context_or_link_formatter.is_a?(Proc)
-        raise ArgumentError unless Internal.valid_attributes?(attrs)
-        raise ArgumentError if span_context_or_link_formatter.is_a?(Proc) && !attrs.nil?
+      def add_event(name: nil, attributes: nil, timestamp: nil) # rubocop:disable Metrics/CyclomaticComplexity
+        raise ArgumentError unless block_given? == (name.nil? && attributes.nil? && timestamp.nil?)
+        raise ArgumentError unless block_given? || name.is_a?(String)
+        raise ArgumentError unless Internal.valid_attributes?(attributes)
 
         self
       end

@@ -39,96 +39,89 @@ describe OpenTelemetry::SDK::Trace::Span do
   describe '#set_attribute' do
     it 'sets an attribute' do
       span.set_attribute('foo', 'bar')
-      span.instance_variable_get(:@attributes).must_equal('foo' => 'bar')
+      span.to_proto[:attributes].must_equal('foo' => 'bar')
     end
 
     it 'trims the oldest attribute' do
       span.set_attribute('old', 'oldbar')
       span.set_attribute('foo', 'bar')
-      span.instance_variable_get(:@attributes).must_equal('foo' => 'bar')
+      span.to_proto[:attributes].must_equal('foo' => 'bar')
     end
 
     it 'does not set an attribute if span is ended' do
       span.finish
       span.set_attribute('no', 'set')
-      span.instance_variable_get(:@attributes).must_be_nil
+      span.to_proto[:attributes].must_be_nil
     end
 
     it 'counts attributes' do
       span.set_attribute('old', 'oldbar')
       span.set_attribute('foo', 'bar')
-      span.instance_variable_get(:@total_recorded_attributes).must_equal(2)
+      span.to_proto[:total_recorded_attributes].must_equal(2)
     end
   end
 
   describe '#add_event' do
     it 'add a named event' do
-      span.add_event('added')
-      span.instance_variable_get(:@events).size.must_equal(1)
-      span.instance_variable_get(:@events)[0]
-          .instance_variable_get(:@name).must_equal('added')
+      span.add_event(name: 'added')
+      events = span.to_proto[:events]
+      events.size.must_equal(1)
+      events.first.name.must_equal('added')
     end
 
     it 'add event with attributes' do
       attrs = { 'foo' => 'bar' }
-      span.add_event('added', attrs)
-      span.instance_variable_get(:@events).size.must_equal(1)
-      span.instance_variable_get(:@events)[0]
-          .instance_variable_get(:@attributes).must_equal(attrs)
+      span.add_event(name: 'added', attributes: attrs)
+      events = span.to_proto[:events]
+      events.size.must_equal(1)
+      events.first.attributes.must_equal(attrs)
     end
 
     it 'add event with timestamp' do
       ts = Time.now
-      span.add_event('added', nil, ts)
-      span.instance_variable_get(:@events).size.must_equal(1)
-      span.instance_variable_get(:@events)[0]
-          .instance_variable_get(:@timestamp).must_equal(ts)
+      span.add_event(name: 'added', timestamp: ts)
+      events = span.to_proto[:events]
+      events.size.must_equal(1)
+      events.first.timestamp.must_equal(ts)
     end
 
     it 'add an event as event formatter' do
-      formatter = lambda do
-        Event.new(name: 'c', attributes: nil, timestamp: Time.now)
-      end
-      span.add_event(formatter)
-      span.instance_variable_get(:@events).size.must_equal(1)
-      span.instance_variable_get(:@events)[0]
-          .instance_variable_get(:@name).must_equal('c')
+      span.add_event { Event.new(name: 'c', attributes: nil, timestamp: Time.now) }
+      events = span.to_proto[:events]
+      events.size.must_equal(1)
+      events.first.name.must_equal('c')
     end
 
     it 'does not add an event if span is ended' do
       span.finish
-      span.add_event('will_not_be_added')
-      span.instance_variable_get(:@events).must_be_nil
+      span.add_event(name: 'will_not_be_added')
+      span.to_proto[:events].must_be_nil
     end
-  end
-
-  # No tests as this is going away
-  describe '#add_link' do
   end
 
   describe '#status=' do
     it 'sets the status' do
       span.status = Status.new(1, description: 'cancelled')
-      span.instance_variable_get(:@status).description.must_equal('cancelled')
+      span.to_proto[:status].description.must_equal('cancelled')
     end
 
     it 'does not set the status if span is ended' do
       span.finish
       span.status = Status.new(1, description: 'cancelled')
-      span.instance_variable_get(:@status).must_be_nil
+      span.to_proto[:status].must_be_nil
     end
   end
 
   describe '#name=' do
     it 'sets the name' do
       span.name = 'new_name'
-      span.instance_variable_get(:@name).must_equal('new_name')
+      span.to_proto[:name].must_equal('new_name')
     end
 
     it 'does not set the name if span is ended' do
       span.finish
       span.name = 'new_name'
-      span.instance_variable_get(:@name).must_equal('name')
+      span.to_proto[:name].must_equal('name')
     end
   end
 
@@ -139,7 +132,7 @@ describe OpenTelemetry::SDK::Trace::Span do
 
     it 'sets the end timestamp' do
       span.finish
-      span.instance_variable_get(:@end_timestamp).wont_be_nil
+      span.to_proto[:end_timestamp].wont_be_nil
     end
 
     it 'calls the span processor #on_end callback' do
@@ -203,7 +196,7 @@ describe OpenTelemetry::SDK::Trace::Span do
       span = Span.new(context, 'name', SpanKind::INTERNAL, nil, trace_config,
                       span_processor, nil, nil, events, Time.now)
       span.instance_variable_get(:@total_recorded_events).must_equal(2)
-      span.add_event('added')
+      span.add_event(name: 'added')
       span.instance_variable_get(:@total_recorded_events).must_equal(3)
     end
 
@@ -212,7 +205,7 @@ describe OpenTelemetry::SDK::Trace::Span do
       span = Span.new(context, 'name', SpanKind::INTERNAL, nil, trace_config,
                       span_processor, nil, nil, events, Time.now)
       span.instance_variable_get(:@events).size.must_equal(1)
-      span.add_event('added')
+      span.add_event(name: 'added')
       span.instance_variable_get(:@events).size.must_equal(1)
     end
 

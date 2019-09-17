@@ -67,34 +67,60 @@ module OpenTelemetry
           end
 
           # @api private
-          # Removes oldest entries from a Hash whose size exceeds a limit.
           #
-          # @param [Hash] attrs This is modified in-place.
-          # @param [Symbol, Integer] limit The maximum number of entries
-          #   allowed in attrs. May be expressed as a number or a symbol
-          #   representing one of the limits in this class.
-          def trim_attributes(attrs, limit)
-            return if attrs.nil?
+          # Removes oldest entries from {Event} attributes Hash whose size
+          # exceeds {max_attributes_per_event}.
+          #
+          # @param [Hash] attrs This is modified in place.
+          def trim_event_attributes(attrs)
+            trim_attributes(attrs, @max_attributes_per_event)
+          end
 
-            limit = public_send(limit) if limit.instance_of?(Symbol)
-            excess = attrs.size - limit
-            excess.times { attrs.shift } if excess.positive?
+          # @api private
+          #
+          # Removes oldest entries from {Link} attributes Hash whose size
+          # exceeds {max_attributes_per_link}.
+          #
+          # @param [Hash] attrs This is modified in place.
+          def trim_link_attributes(attrs)
+            trim_attributes(attrs, @max_attributes_per_link)
+          end
+
+          # @api private
+          #
+          # Removes oldest entries from {Span} attributes Hash whose size
+          # exceeds {max_attributes_count}.
+          #
+          # @param [Hash] attrs This is modified in place.
+          def trim_span_attributes(attrs)
+            trim_attributes(attrs, @max_attributes_count)
+          end
+
+          # @api private
+          #
+          # Removes oldest entries from {Link}s Array whose size exceeds
+          # {max_links_count}.
+          #
+          # @param [Array<Link>] links This is modified in-place
+          def trim_links(links)
+            return if links.nil?
+
+            excess = links.size - @max_links_count
+            links.shift(excess) if excess.positive?
             nil
           end
 
           # @api private
-          # Removes oldest entries from an Array whose size exceeds a limit.
           #
-          # @param [Array] arr Array of links or events that is modified in-place.
-          # @param [Symbol, Integer] limit The maximum number of entries
-          #   allowed in the array. May be expressed as a number or a symbol
-          #   representing one of the limits in this class.
-          def trim_links_or_events(arr, limit)
-            return if arr.nil?
+          # Removes oldest entries from {Event}s Array whose size exceeds
+          # {max_events_count}.
+          #
+          # @param [Array<Event>] events This is modified in-place
+          def trim_events(events)
+            return if events.nil?
 
-            limit = public_send(limit) if limit.instance_of?(Symbol)
-            excess = arr.size - limit
-            arr.shift(excess) if excess.positive?
+            excess = events.size - @max_events_count
+            events.shift(excess) if excess.positive?
             nil
           end
 
@@ -102,6 +128,18 @@ module OpenTelemetry
 
           # The default {TraceConfig}.
           DEFAULT = new
+
+          private
+
+          def trim_attributes(attrs, limit)
+            return if attrs.nil?
+
+            excess = attrs.size - limit
+            # TODO: with Ruby 2.5, replace with the more efficient
+            # attrs.shift(excess) if excess.positive?
+            excess.times { attrs.shift } if excess.positive?
+            nil
+          end
         end
       end
     end
