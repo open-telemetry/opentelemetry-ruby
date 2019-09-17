@@ -66,6 +66,7 @@ module OpenTelemetry
             @mutex.synchronize do
               return FAILED_NOT_RETRYABLE if @stopped
 
+              spans = spans.entries unless spans.is_a? Array
               @finished_spans.concat(spans)
             end
             SUCCESS
