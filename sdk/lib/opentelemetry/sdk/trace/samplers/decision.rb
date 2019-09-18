@@ -8,9 +8,8 @@ module OpenTelemetry
   module SDK
     module Trace
       module Samplers
-        # The Decision class represents an arbitrary sampling decision. It can
-        # have a boolean value as a sampling decision and a collection of
-        # attributes to be attached to a sampled root span.
+        # The Decision module contains a set of constants to be used in the
+        # decision part of a sampling {Result}.
         module Decision
           # Decision to not record events and not propagate.
           NOT_RECORD = OpenTelemetry::Trace::SamplingHint::NOT_RECORD
