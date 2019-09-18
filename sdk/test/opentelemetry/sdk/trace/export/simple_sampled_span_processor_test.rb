@@ -60,14 +60,14 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSampledSpanProcessor do
     mock_span_exporter.verify
   end
 
-  it 'calls #to_span_proto on sampled spans in #on_end' do
+  it 'calls #to_span_data on sampled spans in #on_end' do
     subject_noop = export::SimpleSampledSpanProcessor.new(
       export::NoopSpanExporter.new
     )
 
     mock_span = Minitest::Mock.new
     mock_span.expect :context, stub_span_sampled.context
-    mock_span.expect :to_span_proto, nil
+    mock_span.expect :to_span_data, nil
 
     subject_noop.on_start(mock_span)
     subject_noop.on_end(mock_span)
