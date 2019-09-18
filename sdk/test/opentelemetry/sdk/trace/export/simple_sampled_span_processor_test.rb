@@ -87,9 +87,13 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSampledSpanProcessor do
 
     subject_with_raising_exporter.on_start(stub_span_sampled)
 
-    proc do
+    logger_mock = Minitest::Mock.new
+    logger_mock.expect :error, nil, [/ArgumentError/]
+    OpenTelemetry.stub :logger, logger_mock do
       subject_with_raising_exporter.on_end(stub_span_sampled)
-    end.must_output(/ArgumentError/)
+    end
+
+    logger_mock.verify
   end
 
   it 'forwards calls to #shutdown to the exporter' do

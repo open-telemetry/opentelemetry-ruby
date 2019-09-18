@@ -99,9 +99,13 @@ describe OpenTelemetry::SDK::Trace::Export::MultiSpanExporter do
       raise ArgumentError
     end
 
-    proc do
+    logger_mock = Minitest::Mock.new
+    logger_mock.expect :warn, nil, [/ArgumentError/]
+    OpenTelemetry.stub :logger, logger_mock do
       subject.export(spans).must_equal export::FAILED_NOT_RETRYABLE
-    end.must_output(/ArgumentError/)
+    end
+
+    logger_mock.verify
   end
 
   it 'forwards a #shutdown call to all exporters' do
