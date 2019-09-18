@@ -51,7 +51,7 @@ module OpenTelemetry
 
             @span_exporter.export([span.to_span_data])
           rescue => e # rubocop:disable Style/RescueStandardError
-            logger.error("unexpected error in span.on_end - #{e}")
+            OpenTelemetry.logger.error("unexpected error in span.on_end - #{e}")
           end
 
           # Called when {Tracer#shutdown} is called.
