@@ -12,7 +12,7 @@ module OpenTelemetry
         # {Span} to {io.opentelemetry.proto.trace.v1.Span} and passes it to the
         # configured exporter.
         #
-        # Only spans that are sampled are converted, {TraceFlags#sampled?} must
+        # Only spans that are sampled are converted, {OpenTelemetry::Trace::TraceFlags#sampled?} must
         # return true.
         class SimpleSampledSpanProcessor
           # Returns a new {SimpleSampledSpanProcessor} that converts spans to
@@ -51,8 +51,7 @@ module OpenTelemetry
 
             @span_exporter.export([span.to_span_proto])
           rescue => e # rubocop:disable Style/RescueStandardError
-            # TODO: log e
-            puts e.to_s
+            logger.error("unexpected error in span.on_end - #{e}")
           end
 
           # Called when {Tracer#shutdown} is called.

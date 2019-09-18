@@ -45,6 +45,7 @@ module OpenTelemetry
       end
 
       DEFAULT = from_byte(0)
+      SAMPLED = from_byte(1)
     end
   end
 end
