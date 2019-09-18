@@ -6,6 +6,16 @@
 
 require 'test_helper'
 
+def stub_span_builder(sampled: false)
+  ctx = OpenTelemetry::Trace::SpanContext.new(
+    trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(sampled ? 1 : 0)
+  )
+  span = OpenTelemetry::Trace::Span.new(span_context: ctx)
+  def span.to_span_data; end
+
+  span
+end
+
 describe OpenTelemetry::SDK::Trace::Export::SimpleSampledSpanProcessor do
   export = OpenTelemetry::SDK::Trace::Export
 
@@ -18,22 +28,8 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSampledSpanProcessor do
     mock
   end
 
-  let :stub_span_unsampled do
-    span = OpenStruct.new
-    span.context = OpenStruct.new
-    span.context.trace_flags = OpenStruct.new(sampled?: false)
-
-    span
-  end
-
-  let :stub_span_sampled do
-    span = OpenStruct.new
-    span.context = OpenStruct.new
-    span.context.trace_flags = OpenStruct.new(sampled?: true)
-
-    span
-  end
-
+  let(:stub_span_unsampled) { stub_span_builder(sampled: false) }
+  let(:stub_span_sampled)   { stub_span_builder(sampled: true) }
   let(:subject) { export::SimpleSampledSpanProcessor.new(mock_span_exporter) }
 
   it 'requires a span_exporter to be passed to #initialize' do
