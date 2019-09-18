@@ -7,16 +7,12 @@
 require 'test_helper'
 
 describe OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter do
-  InMemorySpanExporter = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter
-  Span = OpenTelemetry::SDK::Trace::Span
+  export = OpenTelemetry::SDK::Trace::Export
 
-  SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
-  FAILED_NOT_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_NOT_RETRYABLE
+  let(:span1)   { OpenTelemetry::Trace::Span.new }
+  let(:span2)   { OpenTelemetry::Trace::Span.new }
 
-  let(:span1)   { Span.new }
-  let(:span2)   { Span.new }
-
-  let(:subject) { InMemorySpanExporter.new }
+  let(:subject) { export::InMemorySpanExporter.new }
 
   it 'accepts an Array of Spans as argument to #export' do
     subject.export([span1, span2])
@@ -58,14 +54,14 @@ describe OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter do
   end
 
   it 'returns success from #export' do
-    subject.export([span1]).must_equal SUCCESS
+    subject.export([span1]).must_equal export::SUCCESS
   end
 
   it 'returns error from #export after #shutdown called' do
     subject.export([span1])
     subject.shutdown
 
-    subject.export([span2]).must_equal FAILED_NOT_RETRYABLE
+    subject.export([span2]).must_equal export::FAILED_NOT_RETRYABLE
   end
 
   it 'returns an empty array from #export after #shutdown called' do

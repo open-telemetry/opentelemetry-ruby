@@ -7,10 +7,9 @@
 require 'test_helper'
 
 describe OpenTelemetry::SDK::Trace::Export::MultiSpanExporter do
-  sdk = OpenTelemetry::SDK
   export = OpenTelemetry::SDK::Trace::Export
 
-  let(:spans)               { [sdk::Trace::Span.new, sdk::Trace::Span.new] }
+  let(:spans)               { [OpenTelemetry::Trace::Span.new, OpenTelemetry::Trace::Span.new] }
 
   let(:mock_span_exporter)  { Minitest::Mock.new }
   let(:mock_span_exporter2) { Minitest::Mock.new }
