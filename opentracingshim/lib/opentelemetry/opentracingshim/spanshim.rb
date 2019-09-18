@@ -6,42 +6,55 @@
 
 module OpenTelemetry
   module OpenTracingShim
+    # SpanShim provides a means of accessing an OpenTelemetry Span
+    # as one would an OpenTracing span
     class SpanShim < OpenTracing::Span
-      NOOP_INSTANCE = Span.new.freeze
+      attr_reader :span
+      attr_reader :context
 
-      def context
-        # TODO
-        SpanContext::NOOP_INSTANCE
+      def initialize(span)
+        @span = span
+        @context = SpanContextShim.new(span)
+        @baggage = {}
       end
 
+      # Set the name of the operation
+      #
+      # @param [String] name
+      def operation_name=(name)
+        @span.name = name
+      end
+
+
+      # Set attribute on the underlying OpenTelemetry Span
+      # @param key [String] the key of the tag
+      # @param value [String, Numeric, Boolean] the value of the tag. If it's not
+      # a String, Numeric, or Boolean it will be encoded with to_s
       def set_tag(key, value)
-        # TODO
+        @span.set_attribute(key, value)
         self
       end
 
+      # Finish the underlying {Span}
+      # @param end_time [Time] custom end time, if not now
+      def finish(end_time: Time.now)
+        @span.finish(end_timestamp: end_time)
+      end
+
+      # The following have no OpenTelemetry Equivalent and are left noop
       def set_baggage_item(key, value)
-        # TODO
         self
       end
 
       def get_baggage_item(key)
-        # TODO
         nil
       end
 
       def log(event: nil, timestamp: Time.now, **fields)
-        # TODO
-        warn 'Span#log is deprecated.  Please use Span#log_kv instead.'
         nil
       end
 
       def log_kv(timestamp: Time.now, **fields)
-        # TODO
-        nil
-      end
-
-      def finish(end_time: Time.now)
-        # TODO
         nil
       end
     end
