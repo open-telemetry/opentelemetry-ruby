@@ -7,9 +7,12 @@
 module OpenTelemetry
   module SDK
     module Trace
-      class TimedEvent
-        # TODO
+      # The Config module contains the configuration logic for the
+      # OpenTelemetry SDK.
+      module Config
       end
     end
   end
 end
+
+require 'opentelemetry/sdk/trace/config/trace_config'

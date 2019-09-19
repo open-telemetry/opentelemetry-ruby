@@ -11,7 +11,6 @@ describe OpenTelemetry::SDK::Trace::Samplers::ProbabilitySampler do
   Sampler = OpenTelemetry::Trace::Samplers::Sampler
   SpanContext = OpenTelemetry::Trace::SpanContext
   TraceFlags = OpenTelemetry::Trace::TraceFlags
-  Link = OpenTelemetry::Trace::Link
   Decision = OpenTelemetry::Trace::Samplers::Decision
 
   describe '#decision' do
@@ -27,7 +26,7 @@ describe OpenTelemetry::SDK::Trace::Samplers::ProbabilitySampler do
       decision.must_be :sampled?
     end
     it 'respects link sample decisions' do
-      link = OpenTelemetry::Trace::Link.new(span_context: context)
+      link = Link.new(span_context: context, attributes: nil)
       decision = sampler.decision(
         trace_id: '123',
         span_id: '456',
