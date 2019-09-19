@@ -44,7 +44,7 @@ module OpenTelemetry
 
           # adds a span to the batcher, threadsafe may block on lock
           def on_end(span)
-            return unless span.recorded?
+            return unless span.recording_events?
 
             lock do
               spans.shift if spans.size >= max_queue_size
@@ -71,13 +71,12 @@ module OpenTelemetry
           def work
             loop do
               keep_running = nil
-              batch = nil
-              lock do
+              batch = lock do
                 if spans.size < max_queue_size
                   @condition.wait(@mutex, @delay) while spans.empty? && @keep_running
                   keep_running = @keep_running
                 end
-                batch = fetch_batch
+                fetch_batch
               end
               # this is done outside the lock to unblock the producers
               @exporter.export(batch)
@@ -87,17 +86,14 @@ module OpenTelemetry
           end
 
           def flush
-            @exporter.export(fetch_batch) until spans.empty?
+            until spans.empty?
+              batch = lock { fetch_batch }
+              @exporter.export(batch)
+            end
           end
 
           def fetch_batch
-            batch = []
-            loop do
-              break if batch.size >= @batch_size || spans.empty?
-
-              batch << spans.shift.to_span_proto
-            end
-            batch
+            spans.shift(@batch_size).map!(&:to_span_proto)
           end
 
           def lock
