@@ -22,7 +22,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
   describe '#create_link' do
     it 'trims link attributes' do
       tracer.active_trace_config = TraceConfig.new(max_attributes_per_link: 1)
-      link = tracer.create_link(SpanContext.new, '1' => 1, '2' => 2)
+      link = tracer.create_link(OpenTelemetry::Trace::SpanContext.new, '1' => 1, '2' => 2)
       link.attributes.size.must_equal(1)
     end
   end

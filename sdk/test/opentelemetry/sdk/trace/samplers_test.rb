@@ -61,7 +61,7 @@ describe OpenTelemetry::SDK::Trace::Samplers do
     end
 
     it 'respects link sampling' do
-      link = OpenTelemetry::Trace::Link.new(span_context: context)
+      link = OpenTelemetry::SDK::Trace::Link.new(span_context: context, attributes: nil)
       result = call_sampler(sampler, links: [link])
       result.must_be :sampled?
     end
