@@ -10,6 +10,7 @@ module OpenTelemetry
       # {Tracer} is the SDK implementation of {OpenTelemetry::Trace::Tracer}.
       class Tracer < OpenTelemetry::Trace::Tracer
         attr_accessor :active_trace_config
+        attr_accessor :resource # TODO: should this be read-only? If not, how should exporters know when it is updated?
 
         # Returns a new {Tracer} instance.
         #
@@ -20,6 +21,7 @@ module OpenTelemetry
           @registered_span_processors = []
           @mutex = Mutex.new
           @stopped = false
+          @resource = Resources::Resource.create # TODO: should this initialize from env vars instead?
         end
 
         # Attempts to stop all the activity for this {Tracer}. Calls
