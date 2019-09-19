@@ -56,17 +56,18 @@ module OpenTelemetry
           end
         end
 
-        def start_root_span(name, attributes: nil, links: nil, events: nil, start_timestamp: nil, kind: nil)
+        def start_root_span(name, attributes: nil, links: nil, events: nil, start_timestamp: nil, kind: nil, hint: nil)
           raise ArgumentError if name.nil?
 
           trace_id = OpenTelemetry::Trace.generate_trace_id
           span_id = OpenTelemetry::Trace.generate_span_id
-          decision = @active_trace_config.sampler.decision(trace_id: trace_id, span_id: span_id, span_name: name, links: links)
-          if decision.sampled?
-            context = SpanContext.new(trace_id: trace_id, trace_flags: TraceFlags::SAMPLED)
+          result = @active_trace_config.sampler.call(trace_id: trace_id, span_id: span_id, parent_context: nil, hint: hint, links: links, name: name, kind: kind, attributes: attributes)
+          if result.record_events?
+            trace_flags = result.sampled? ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
+            context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, trace_flags: trace_flags)
             Span.new(context, name, kind, nil, @active_trace_config, @active_span_processor, attributes, links, events, start_timestamp || Time.now)
           else
-            OpenTelemetry::Trace::Span.new(span_context: SpanContext.new(trace_id: trace_id))
+            OpenTelemetry::Trace::Span.new(span_context: OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id))
           end
         end
 

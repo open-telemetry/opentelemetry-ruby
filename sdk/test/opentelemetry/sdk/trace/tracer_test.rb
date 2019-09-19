@@ -40,6 +40,34 @@ describe OpenTelemetry::SDK::Trace::Tracer do
   end
 
   describe '#start_root_span' do
+    it 'requires a name' do
+      proc { tracer.start_root_span(nil) }.must_raise(ArgumentError)
+    end
+
+    it 'returns a valid span' do
+      span = tracer.start_root_span('root')
+      span.context.must_be :valid?
+    end
+
+    it 'returns a no-op span if sampler says do not record events' do
+      tracer.active_trace_config = TraceConfig.new(sampler: Samplers::ALWAYS_OFF)
+      span = tracer.start_root_span('root')
+      span.context.trace_flags.wont_be :sampled?
+      span.wont_be :recording_events?
+    end
+
+    it 'returns an unsampled span if sampler says record, but do not sample' do
+      # TODO
+    end
+
+    it 'returns a sampled span if sampler says sample' do
+      # TODO
+    end
+
+    it 'calls the sampler with all parameters except parent_context' do
+      # TODO
+    end
+
     # TODO
   end
 
