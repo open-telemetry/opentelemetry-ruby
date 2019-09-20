@@ -20,7 +20,7 @@ module OpenTelemetry
         # If the queue gets half full a preemptive notification is sent to the
         # worker thread that exports the spans to wake up and start a new
         # export cycle.
-        class BatchSampledSpanProcessor
+        class BatchSpanProcessor
           SCHEDULE_DELAY_MILLIS = 5000
           MAX_QUEUE_SIZE = 2048
           MAX_EXPORT_BATCH_SIZE = 512

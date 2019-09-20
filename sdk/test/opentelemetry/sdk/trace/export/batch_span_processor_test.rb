@@ -6,8 +6,8 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::SDK::Trace::Export::BatchSampledSpanProcessor do
-  BatchSampledSpanProcessor = OpenTelemetry::SDK::Trace::Export::BatchSampledSpanProcessor
+describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
+  BatchSpanProcessor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
 
   class TestExporter
     def export(batch)
@@ -38,13 +38,13 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSampledSpanProcessor do
 
   describe 'lifecycle' do
     it 'should stop and start correctly' do
-      bsp = BatchSampledSpanProcessor.new(exporter: TestExporter.new)
+      bsp = BatchSpanProcessor.new(exporter: TestExporter.new)
       bsp.shutdown
     end
 
     it 'should flush everything on shutdown' do
       te = TestExporter.new
-      bsp = BatchSampledSpanProcessor.new(exporter: te, max_queue_size: 3)
+      bsp = BatchSpanProcessor.new(exporter: te, max_queue_size: 3)
       ts = TestSpan.new
       bsp.on_end(ts)
 
@@ -58,7 +58,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSampledSpanProcessor do
     it 'should batch up to but not over the max_batch' do
       te = TestExporter.new
 
-      bsp = BatchSampledSpanProcessor.new(exporter: te, max_queue_size: 6, max_export_batch_size: 3)
+      bsp = BatchSpanProcessor.new(exporter: te, max_queue_size: 6, max_export_batch_size: 3)
 
       tss = [[TestSpan.new, TestSpan.new, TestSpan.new, TestSpan.new]]
       bsp.on_end(tss[0][0])
@@ -74,7 +74,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSampledSpanProcessor do
     it 'should batch only recording_events samples' do
       te = TestExporter.new
 
-      bsp = BatchSampledSpanProcessor.new(exporter: te, max_queue_size: 6, max_export_batch_size: 3)
+      bsp = BatchSpanProcessor.new(exporter: te, max_queue_size: 6, max_export_batch_size: 3)
 
       tss = [[TestSpan.new, TestSpan.new(nil, false)]]
       bsp.on_end(tss[0][0])
@@ -89,7 +89,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSampledSpanProcessor do
     it 'shouldnt blow up with a lot of things' do
       te = TestExporter.new
 
-      bsp = BatchSampledSpanProcessor.new(exporter: te)
+      bsp = BatchSpanProcessor.new(exporter: te)
       producers = 0.upto(9).map do |i|
         Thread.new do
           x = i * 10
