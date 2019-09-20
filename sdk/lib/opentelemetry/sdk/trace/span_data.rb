@@ -6,6 +6,8 @@
 
 module OpenTelemetry
   module SDK
+    # The Trace module contains the OpenTelemetry tracing reference
+    # implementation.
     module Trace
       # SpanData is a Struct containing {Span} data for export.
       SpanData = Struct.new(:name,
@@ -23,8 +25,7 @@ module OpenTelemetry
                             :events,
                             :span_id,
                             :trace_id,
-                            :trace_flags,
-                            keyword_init: true)
+                            :trace_flags)
     end
   end
 end

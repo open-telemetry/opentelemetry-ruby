@@ -28,7 +28,7 @@ module OpenTelemetry
         def attributes
           # Don't bother synchronizing. Access by SpanProcessors is expected to
           # be serialized.
-          @attributes.clone.freeze
+          @attributes&.clone.freeze
         end
 
         # Return a frozen copy of the current events. This is intended for use
@@ -39,7 +39,7 @@ module OpenTelemetry
         def events
           # Don't bother synchronizing. Access by SpanProcessors is expected to
           # be serialized.
-          @events.clone.freeze
+          @events&.clone.freeze
         end
 
         # Return the flag whether this span is recording events
@@ -208,22 +208,22 @@ module OpenTelemetry
         # @return [SpanData]
         def to_span_data
           SpanData.new(
-            name: @name,
-            kind: @kind,
-            status: @status,
-            parent_span_id: @parent_span_id,
-            child_count: @child_count,
-            total_recorded_attributes: @total_recorded_attributes,
-            total_recorded_events: @total_recorded_events,
-            total_recorded_links: @total_recorded_links,
-            start_timestamp: @start_timestamp,
-            end_timestamp: @end_timestamp,
-            attributes: @attributes,
-            links: @links,
-            events: @events,
-            span_id: context.span_id,
-            trace_id: context.trace_id,
-            trace_flags: context.trace_flags
+            @name,
+            @kind,
+            @status,
+            @parent_span_id,
+            @child_count,
+            @total_recorded_attributes,
+            @total_recorded_events,
+            @total_recorded_links,
+            @start_timestamp,
+            @end_timestamp,
+            @attributes,
+            @links,
+            @events,
+            context.span_id,
+            context.trace_id,
+            context.trace_flags
           )
         end
 
@@ -244,9 +244,9 @@ module OpenTelemetry
           @total_recorded_attributes = attributes&.size || 0
           @start_timestamp = start_timestamp
           @end_timestamp = nil
-          @attributes = attributes.clone
-          @events = events.clone
-          @links = links.clone
+          @attributes = attributes&.clone
+          @events = events&.clone
+          @links = links&.clone
           trace_config.trim_span_attributes(@attributes)
           trace_config.trim_events(@events)
           trace_config.trim_links(@links)

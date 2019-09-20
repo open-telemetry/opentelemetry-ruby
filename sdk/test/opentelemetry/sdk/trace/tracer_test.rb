@@ -10,6 +10,9 @@ describe OpenTelemetry::SDK::Trace::Tracer do
   Tracer = OpenTelemetry::SDK::Trace::Tracer
 
   let(:tracer) { Tracer.new }
+  let(:record_sampler) do
+    ->(trace_id:, span_id:, parent_context:, hint:, links:, name:, kind:, attributes:) { Result.new(decision: Decision::RECORD) } # rubocop:disable Lint/UnusedBlockArgument
+  end
 
   describe '#create_event' do
     it 'trims event attributes' do
@@ -57,11 +60,17 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     end
 
     it 'returns an unsampled span if sampler says record, but do not sample' do
-      # TODO
+      tracer.active_trace_config = TraceConfig.new(sampler: record_sampler)
+      span = tracer.start_root_span('root')
+      span.context.trace_flags.wont_be :sampled?
+      span.must_be :recording_events?
     end
 
     it 'returns a sampled span if sampler says sample' do
-      # TODO
+      tracer.active_trace_config = TraceConfig.new(sampler: Samplers::ALWAYS_ON)
+      span = tracer.start_root_span('root')
+      span.context.trace_flags.must_be :sampled?
+      span.must_be :recording_events?
     end
 
     it 'calls the sampler with all parameters except parent_context' do
