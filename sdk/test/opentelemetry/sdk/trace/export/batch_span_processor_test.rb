@@ -8,14 +8,34 @@ require 'test_helper'
 
 describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
   BatchSpanProcessor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
+  SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
+  FAILED_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_RETRYABLE
+  FAILED_NOT_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_NOT_RETRYABLE
 
   class TestExporter
-    def export(batch)
-      batches << batch
+    def initialize(status_codes: nil)
+      @status_codes = if status_codes.nil?
+                        []
+                      else
+                        status_codes
+                      end
+
+      @batches = []
+      @failed_batches = []
     end
 
-    def batches
-      @batches ||= []
+    attr_reader :batches
+    attr_reader :failed_batches
+
+    def export(batch)
+      s = @status_codes.shift
+      if s.nil? || s == SUCCESS
+        @batches << batch
+        SUCCESS
+      else
+        @failed_batches << batch
+        s
+      end
     end
   end
 
@@ -78,6 +98,16 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       bsp.shutdown
 
       te.batches[0].size.must_equal(1)
+    end
+  end
+
+  describe 'export retry' do
+    it 'should retry on FAILED_RETRYABLE exports' do
+      # TODO:
+    end
+
+    it 'should not retry on FAILED_NOT_RETRYABLE exports' do
+      # TODO:
     end
   end
 

@@ -83,7 +83,8 @@ module OpenTelemetry
               break unless @keep_running
 
               # this is done outside the lock to unblock the producers
-              @exporter.export(batch)
+              result_code = FAILED_RETRYABLE
+              result_code = @exporter.export(batch) while result_code == FAILED_RETRYABLE
             end
             flush
           end
