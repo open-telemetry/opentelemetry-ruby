@@ -47,7 +47,10 @@ module OpenTelemetry
             return unless span.recording_events?
 
             lock do
-              spans.shift if spans.size >= max_queue_size
+              if spans.size > max_queue_size
+                n = spans.size - max_queue_size - 1
+                spans.shift(n)
+              end
               spans << span
               @condition.signal if spans.size > max_queue_size / 2
             end
@@ -70,30 +73,28 @@ module OpenTelemetry
 
           def work
             loop do
-              keep_running = nil
               batch = lock do
                 if spans.size < max_queue_size
                   @condition.wait(@mutex, @delay) while spans.empty? && @keep_running
-                  keep_running = @keep_running
+                  break unless @keep_running
                 end
                 fetch_batch
               end
+              break unless @keep_running
+
               # this is done outside the lock to unblock the producers
               @exporter.export(batch)
-              break unless keep_running
             end
             flush
           end
 
           def flush
-            until spans.empty?
-              batch = lock { fetch_batch }
-              @exporter.export(batch)
-            end
+            snapshot = lock { spans.shift(spans.size) }
+            @exporter.export(snapshot.shift(@batch_size).map!(&:to_span_data)) until snapshot.empty?
           end
 
           def fetch_batch
-            spans.shift(@batch_size).map!(&:to_span_proto)
+            spans.shift(@batch_size).map!(&:to_span_data)
           end
 
           def lock

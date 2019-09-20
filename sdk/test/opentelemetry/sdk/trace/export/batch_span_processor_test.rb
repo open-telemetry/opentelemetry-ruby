@@ -31,7 +31,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       @recording_events
     end
 
-    def to_span_proto
+    def to_span_data
       self
     end
   end
@@ -60,11 +60,8 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
       bsp = BatchSpanProcessor.new(exporter: te, max_queue_size: 6, max_export_batch_size: 3)
 
-      tss = [[TestSpan.new, TestSpan.new, TestSpan.new, TestSpan.new]]
-      bsp.on_end(tss[0][0])
-      bsp.on_end(tss[0][1])
-      bsp.on_end(tss[0][2])
-      bsp.on_end(tss[0][3])
+      tss = [TestSpan.new, TestSpan.new, TestSpan.new, TestSpan.new]
+      tss.each { |ts| bsp.on_end(ts) }
       bsp.shutdown
 
       te.batches[0].size.must_equal(3)
@@ -76,9 +73,8 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
       bsp = BatchSpanProcessor.new(exporter: te, max_queue_size: 6, max_export_batch_size: 3)
 
-      tss = [[TestSpan.new, TestSpan.new(nil, false)]]
-      bsp.on_end(tss[0][0])
-      bsp.on_end(tss[0][1])
+      tss = [TestSpan.new, TestSpan.new(nil, false)]
+      tss.each { |ts| bsp.on_end(ts) }
       bsp.shutdown
 
       te.batches[0].size.must_equal(1)
@@ -90,10 +86,10 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       te = TestExporter.new
 
       bsp = BatchSpanProcessor.new(exporter: te)
-      producers = 0.upto(9).map do |i|
+      producers = 10.times.map do |i|
         Thread.new do
           x = i * 10
-          0.upto(9) do |j|
+          10.times do |j|
             bsp.on_end(TestSpan.new(x + j))
           end
           sleep(rand(0.01))
@@ -104,7 +100,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
       out = te.batches.flatten.map(&:id).sort
 
-      expected = 0.upto(99).map { |i| i }
+      expected = 100.times.map { |i| i }
 
       out.must_equal(expected)
     end
