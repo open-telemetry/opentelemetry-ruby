@@ -28,6 +28,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     attr_reader :failed_batches
 
     def export(batch)
+      # If status codes is empty, its a success for less verbose testing
       s = @status_codes.shift
       if s.nil? || s == SUCCESS
         @batches << batch
@@ -103,11 +104,48 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
   describe 'export retry' do
     it 'should retry on FAILED_RETRYABLE exports' do
-      # TODO:
+      te = TestExporter.new(status_codes: [FAILED_RETRYABLE, SUCCESS])
+
+      bsp = BatchSpanProcessor.new(schedule_delay: 999,
+                                   exporter: te,
+                                   max_queue_size: 6,
+                                   max_export_batch_size: 3)
+
+      tss = [TestSpan.new, TestSpan.new, TestSpan.new, TestSpan.new]
+      tss.each { |ts| bsp.on_end(ts) }
+
+      # Ensure that our work thread has time to loop
+      sleep(1)
+      bsp.shutdown
+
+      te.batches.size.must_equal(2)
+      te.batches[0].size.must_equal(3)
+      te.batches[1].size.must_equal(1)
+
+      te.failed_batches.size.must_equal(1)
+      te.failed_batches[0].size.must_equal(3)
     end
 
     it 'should not retry on FAILED_NOT_RETRYABLE exports' do
-      # TODO:
+      te = TestExporter.new(status_codes: [FAILED_NOT_RETRYABLE, SUCCESS])
+
+      bsp = BatchSpanProcessor.new(schedule_delay: 999,
+                                   exporter: te,
+                                   max_queue_size: 6,
+                                   max_export_batch_size: 3)
+
+      tss = [TestSpan.new, TestSpan.new, TestSpan.new, TestSpan.new]
+      tss.each { |ts| bsp.on_end(ts) }
+
+      # Ensure that our work thread has time to loop
+      sleep(1)
+      bsp.shutdown
+
+      te.batches.size.must_equal(1)
+      te.batches[0].size.must_equal(1)
+
+      te.failed_batches.size.must_equal(1)
+      te.failed_batches[0].size.must_equal(3)
     end
   end
 
