@@ -141,6 +141,8 @@ module OpenTelemetry
       def finish(end_timestamp: nil)
         self
       end
+
+      INVALID = new(span_context: SpanContext::INVALID)
     end
   end
 end

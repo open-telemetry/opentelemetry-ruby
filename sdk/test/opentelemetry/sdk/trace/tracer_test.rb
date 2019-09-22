@@ -20,6 +20,24 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       event = tracer.create_event(name: 'event', attributes: { '1' => 1, '2' => 2 })
       event.attributes.size.must_equal(1)
     end
+
+    it 'returns an event with the given name, attributes, timestamp' do
+      ts = Time.now
+      event = tracer.create_event(name: 'event', attributes: { '1' => 1 }, timestamp: ts)
+      event.attributes.must_equal('1' => 1)
+      event.name.must_equal('event')
+      event.timestamp.must_equal(ts)
+    end
+
+    it 'returns an event with no attributes by default' do
+      event = tracer.create_event(name: 'event')
+      event.attributes.must_equal({})
+    end
+
+    it 'returns an event with a default timestamp' do
+      event = tracer.create_event(name: 'event')
+      event.timestamp.wont_be_nil
+    end
   end
 
   describe '#create_link' do
@@ -28,14 +46,57 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       link = tracer.create_link(OpenTelemetry::Trace::SpanContext.new, '1' => 1, '2' => 2)
       link.attributes.size.must_equal(1)
     end
+
+    it 'returns a link with the given span context and attributes' do
+      context = OpenTelemetry::Trace::SpanContext.new
+      link = tracer.create_link(context, '1' => 1)
+      link.attributes.must_equal('1' => 1)
+      link.context.must_equal(context)
+    end
+
+    it 'returns a link with no attributes by default' do
+      link = tracer.create_link(OpenTelemetry::Trace::SpanContext.new)
+      link.attributes.must_equal({})
+    end
   end
 
   describe '#initialize' do
-    # TODO
+    it 'installs a Resource' do
+      Tracer.new.resource.wont_be_nil
+    end
+
+    it 'activates a default TraceConfig' do
+      Tracer.new.active_trace_config.must_equal(TraceConfig::DEFAULT)
+    end
   end
 
   describe '#shutdown' do
-    # TODO
+    let(:mock_span_processor) { Minitest::Mock.new }
+
+    it 'notifies the span processor' do
+      mock_span_processor.expect(:shutdown, nil)
+      tracer.add_span_processor(mock_span_processor)
+      tracer.shutdown
+      mock_span_processor.verify
+    end
+
+    it 'warns if called more than once' do
+      mock_logger = Minitest::Mock.new
+      mock_logger.expect(:warn, nil, [String])
+      OpenTelemetry.stub :logger, mock_logger do
+        tracer.shutdown
+        tracer.shutdown
+      end
+      mock_logger.verify
+    end
+
+    it 'only notifies the span processor once' do
+      mock_span_processor.expect(:shutdown, nil)
+      tracer.add_span_processor(mock_span_processor)
+      tracer.shutdown
+      tracer.shutdown
+      mock_span_processor.verify
+    end
   end
 
   describe '#add_span_processor' do
@@ -77,10 +138,104 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       # TODO
     end
 
-    # TODO
+    it 'returns a no-op span if tracer has shutdown' do
+      tracer.shutdown
+      span = tracer.start_root_span('root')
+      span.context.trace_flags.wont_be :sampled?
+      span.wont_be :recording_events?
+    end
+
+    it 'creates a span with all supplied parameters' do
+      # TODO
+    end
+
+    it 'ignores the implicit current span context' do
+      root = nil
+      span = nil
+      tracer.in_span('root') do |s|
+        root = s
+        span = tracer.start_root_span('also root')
+      end
+      span.parent_span_id.must_equal(OpenTelemetry::Trace::INVALID_SPAN_ID)
+      span.context.trace_id.wont_equal(root.context.trace_id)
+    end
   end
 
   describe '#start_span' do
-    # TODO
+    let(:context) { OpenTelemetry::Trace::SpanContext.new }
+
+    it 'requires a name' do
+      proc { tracer.start_span(nil, with_parent_context: context) }.must_raise(ArgumentError)
+    end
+
+    it 'returns a valid span' do
+      span = tracer.start_span('op', with_parent_context: context)
+      span.context.must_be :valid?
+    end
+
+    it 'returns a span with the same trace ID as the parent context' do
+      span = tracer.start_span('op', with_parent_context: context)
+      span.context.trace_id.must_equal(context.trace_id)
+    end
+
+    it 'returns a span with the parent context span ID' do
+      span = tracer.start_span('op', with_parent_context: context)
+      span.parent_span_id.must_equal(context.span_id)
+    end
+
+    it 'returns a no-op span if sampler says do not record events' do
+      tracer.active_trace_config = TraceConfig.new(sampler: Samplers::ALWAYS_OFF)
+      span = tracer.start_span('op', with_parent_context: context)
+      span.context.trace_flags.wont_be :sampled?
+      span.wont_be :recording_events?
+    end
+
+    it 'returns an unsampled span if sampler says record, but do not sample' do
+      tracer.active_trace_config = TraceConfig.new(sampler: record_sampler)
+      span = tracer.start_span('op', with_parent_context: context)
+      span.context.trace_flags.wont_be :sampled?
+      span.must_be :recording_events?
+    end
+
+    it 'returns a sampled span if sampler says sample' do
+      tracer.active_trace_config = TraceConfig.new(sampler: Samplers::ALWAYS_ON)
+      span = tracer.start_span('op', with_parent_context: context)
+      span.context.trace_flags.must_be :sampled?
+      span.must_be :recording_events?
+    end
+
+    it 'calls the sampler with all parameters except parent_context' do
+      # TODO
+    end
+
+    it 'returns a no-op span with parent trace ID if tracer has shutdown' do
+      tracer.shutdown
+      span = tracer.start_span('op', with_parent_context: context)
+      span.context.trace_flags.wont_be :sampled?
+      span.wont_be :recording_events?
+      span.context.trace_id.must_equal(context.trace_id)
+    end
+
+    it 'creates a span with all supplied parameters' do
+      # TODO
+    end
+
+    it 'uses the context from parent span if supplied' do
+      parent = tracer.start_root_span('root')
+      span = tracer.start_span('child', with_parent: parent)
+      span.parent_span_id.must_equal(parent.context.span_id)
+      span.context.trace_id.must_equal(parent.context.trace_id)
+    end
+
+    it 'uses the implicit current span context by default' do
+      root = nil
+      span = nil
+      tracer.in_span('root') do |s|
+        root = s
+        span = tracer.start_span('child')
+      end
+      span.parent_span_id.must_equal(root.context.span_id)
+      span.context.trace_id.must_equal(root.context.trace_id)
+    end
   end
 end

@@ -16,7 +16,7 @@ module OpenTelemetry
       private_constant(:CONTEXT_SPAN_KEY, :HTTP_TEXT_FORMAT, :BINARY_FORMAT, :EVENT_OR_LINK)
 
       def current_span
-        Context.get(CONTEXT_SPAN_KEY) || Span.INVALID
+        Context.get(CONTEXT_SPAN_KEY) || Span::INVALID
       end
 
       # This is a helper for the default use-case of extending the current trace with a span.
