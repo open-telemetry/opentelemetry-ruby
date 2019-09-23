@@ -77,15 +77,10 @@ module OpenTelemetry
 
           attr_reader :spans, :max_queue_size, :batch_size
 
-          # rubocop:disable CyclomaticComplexity
           def work
             loop do
               batch = lock do
-                # rubocop:disable IfUnlessModifier
-                if spans.size < batch_size
-                  @condition.wait(@mutex, @delay) while spans.empty? && @keep_running
-                end
-                # rubocop:enable IfUnlessModifier
+                @condition.wait(@mutex, @delay) while spans.empty? && @keep_running
                 break unless @keep_running
 
                 fetch_batch
@@ -99,7 +94,6 @@ module OpenTelemetry
             end
             flush
           end
-          # rubocop:enable CyclomaticComplexity
 
           def export_batch(batch)
             retries = 1
