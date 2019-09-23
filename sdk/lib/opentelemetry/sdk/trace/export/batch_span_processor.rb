@@ -47,10 +47,8 @@ module OpenTelemetry
             return unless span.recording_events?
 
             lock do
-              if spans.size > max_queue_size
-                n = spans.size - max_queue_size - 1
-                spans.shift(n)
-              end
+              n = spans.size + 1 - max_queue_size
+              spans.shift(n) if n.positive?
               spans << span
               @condition.signal if spans.size > max_queue_size / 2
             end
@@ -65,29 +63,37 @@ module OpenTelemetry
             end
 
             @thread.join
+            @exporter.shutdown
           end
 
           private
 
           attr_reader :spans, :max_queue_size, :batch_size
 
+          # rubocop:disable CyclomaticComplexity
+          # rubocop:disable PerceivedComplexity
           def work
             loop do
               batch = lock do
-                if spans.size < max_queue_size
+                if spans.size < batch_size
                   @condition.wait(@mutex, @delay) while spans.empty? && @keep_running
-                  break unless @keep_running
                 end
+                break unless @keep_running
+
                 fetch_batch
               end
-              break unless @keep_running
 
-              # this is done outside the lock to unblock the producers
-              result_code = FAILED_RETRYABLE
-              result_code = @exporter.export(batch) while result_code == FAILED_RETRYABLE
+              if batch
+                # this is done outside the lock to unblock the producers
+                result_code = FAILED_RETRYABLE
+                result_code = @exporter.export(batch) while result_code == FAILED_RETRYABLE
+              end
+              break unless @keep_running
             end
             flush
           end
+          # rubocop:enable CyclomaticComplexity
+          # rubocop:enable PerceivedComplexity
 
           def flush
             snapshot = lock { spans.shift(spans.size) }

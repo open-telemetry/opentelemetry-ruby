@@ -14,12 +14,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
   class TestExporter
     def initialize(status_codes: nil)
-      @status_codes = if status_codes.nil?
-                        []
-                      else
-                        status_codes
-                      end
-
+      @status_codes = status_codes || []
       @batches = []
       @failed_batches = []
     end
@@ -38,6 +33,8 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
         s
       end
     end
+
+    def shutdown; end
   end
 
   class TestSpan
