@@ -100,7 +100,21 @@ describe OpenTelemetry::SDK::Trace::Tracer do
   end
 
   describe '#add_span_processor' do
-    # TODO
+    it 'does not add the processor if stopped' do
+      mock_span_processor = Minitest::Mock.new
+      tracer.shutdown
+      tracer.add_span_processor(mock_span_processor)
+      tracer.in_span('span') {}
+      mock_span_processor.verify
+    end
+
+    it 'adds the span processor to the active span processors' do
+      mock_span_processor = Minitest::Mock.new
+      mock_span_processor.expect(:on_start, nil, [Span])
+      tracer.add_span_processor(mock_span_processor)
+      tracer.in_span('span') {}
+      mock_span_processor.verify
+    end
   end
 
   describe '#start_root_span' do
@@ -135,7 +149,23 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     end
 
     it 'calls the sampler with all parameters except parent_context' do
-      # TODO
+      hint = Minitest::Mock.new
+      links = Minitest::Mock.new
+      name = 'span'
+      span_id = OpenTelemetry::Trace.generate_span_id
+      trace_id = OpenTelemetry::Trace.generate_trace_id
+      kind = Minitest::Mock.new
+      attributes = Minitest::Mock.new
+      result = Result.new(decision: Decision::NOT_RECORD)
+      mock_sampler = Minitest::Mock.new
+      mock_sampler.expect(:call, result, [{ trace_id: trace_id, span_id: span_id, parent_context: nil, hint: hint, links: links, name: name, kind: kind, attributes: attributes }])
+      tracer.active_trace_config = TraceConfig.new(sampler: mock_sampler)
+      OpenTelemetry::Trace.stub :generate_trace_id, trace_id do
+        OpenTelemetry::Trace.stub :generate_span_id, span_id do
+          tracer.start_root_span(name, attributes: attributes, links: links, kind: kind, sampling_hint: hint)
+        end
+      end
+      mock_sampler.verify
     end
 
     it 'returns a no-op span if tracer has shutdown' do
@@ -204,8 +234,21 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       span.must_be :recording_events?
     end
 
-    it 'calls the sampler with all parameters except parent_context' do
-      # TODO
+    it 'calls the sampler with all parameters' do
+      hint = Minitest::Mock.new
+      links = Minitest::Mock.new
+      name = 'span'
+      span_id = OpenTelemetry::Trace.generate_span_id
+      kind = Minitest::Mock.new
+      attributes = Minitest::Mock.new
+      result = Result.new(decision: Decision::NOT_RECORD)
+      mock_sampler = Minitest::Mock.new
+      mock_sampler.expect(:call, result, [{ trace_id: context.trace_id, span_id: span_id, parent_context: context, hint: hint, links: links, name: name, kind: kind, attributes: attributes }])
+      tracer.active_trace_config = TraceConfig.new(sampler: mock_sampler)
+      OpenTelemetry::Trace.stub :generate_span_id, span_id do
+        tracer.start_span(name, with_parent_context: context, attributes: attributes, links: links, kind: kind, sampling_hint: hint)
+      end
+      mock_sampler.verify
     end
 
     it 'returns a no-op span with parent trace ID if tracer has shutdown' do
