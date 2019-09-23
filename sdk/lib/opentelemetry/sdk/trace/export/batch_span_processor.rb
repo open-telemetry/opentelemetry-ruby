@@ -14,29 +14,32 @@ module OpenTelemetry
         # All spans reported by the SDK implementation are first added to a
         # synchronized queue (with a {max_queue_size} maximum size, after the
         # size is reached spans are dropped) and exported every
-        # {schedule_delay_millis} to the exporter pipeline in batches of
-        # {max_export_batch_size}.
+        # {SCHEDULE_DELAY_MILLIS} to the exporter pipeline in batches of
+        # {MAX_EXPORT_BATCH_SIZE}.
         #
         # If the queue gets half full a preemptive notification is sent to the
         # worker thread that exports the spans to wake up and start a new
         # export cycle.
+        #
+        # Exports failed with {FAILED_RETRYABLE} will be retried, backing off
+        # linearly up to {MAX_EXPORT_RETRY_ATTEMPTS} in 100ms increments.
         class BatchSpanProcessor
           SCHEDULE_DELAY_MILLIS = 5000
           MAX_QUEUE_SIZE = 2048
           MAX_EXPORT_BATCH_SIZE = 512
+          MAX_EXPORT_RETRY_ATTEMPTS = 5
 
-          def initialize(exporter:, schedule_delay: SCHEDULE_DELAY_MILLIS, max_queue_size: MAX_QUEUE_SIZE, max_export_batch_size: MAX_EXPORT_BATCH_SIZE)
+          def initialize(exporter:, schedule_delay: SCHEDULE_DELAY_MILLIS, max_queue_size: MAX_QUEUE_SIZE, max_export_batch_size: MAX_EXPORT_BATCH_SIZE, max_export_retry_attempts: MAX_EXPORT_RETRY_ATTEMPTS)
+            raise(ArgumentError) if max_export_batch_size > max_queue_size
+
             @exporter = exporter
             @mutex = Mutex.new
             @condition = ConditionVariable.new
             @keep_running = true
             @delay = schedule_delay
-            if max_export_batch_size > max_queue_size
-              OpenTelemetry.logger.warn("Batch Size: #{max_export_batch_size} is greater than queue size: #{max_queue_size}. Defaulting to max queue size")
-              max_export_batch_size = max_queue_size
-            end
             @max_queue_size = max_queue_size
             @batch_size = max_export_batch_size
+            @export_retry_attempts = max_export_retry_attempts
             @spans = []
             @thread = Thread.new { work }
           end
@@ -75,7 +78,6 @@ module OpenTelemetry
           attr_reader :spans, :max_queue_size, :batch_size
 
           # rubocop:disable CyclomaticComplexity
-          # rubocop:disable PerceivedComplexity
           def work
             loop do
               batch = lock do
@@ -91,15 +93,23 @@ module OpenTelemetry
 
               if batch
                 # this is done outside the lock to unblock the producers
-                result_code = FAILED_RETRYABLE
-                result_code = @exporter.export(batch) while result_code == FAILED_RETRYABLE
+                export_batch(batch)
               end
               break unless @keep_running
             end
             flush
           end
           # rubocop:enable CyclomaticComplexity
-          # rubocop:enable PerceivedComplexity
+
+          def export_batch(batch)
+            retries = 1
+            result_code = @exporter.export(batch)
+            while result_code == FAILED_RETRYABLE && retries < @export_retry_attempts
+              sleep(0.1 * retries)
+              result_code = @exporter.export(batch)
+              retries += 1
+            end
+          end
 
           def flush
             snapshot = lock { spans.shift(spans.size) }

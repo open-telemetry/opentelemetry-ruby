@@ -55,9 +55,10 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
   end
 
   describe 'initialization' do
-    it 'if max batch size is gt max queue size default to max queue size' do
-      bsp = BatchSpanProcessor.new(exporter: TestExporter.new, max_queue_size: 6, max_export_batch_size: 999)
-      bsp.instance_variable_get(:@batch_size).must_equal(6)
+    it 'if max batch size is gt max queue size raise' do
+      assert_raises ArgumentError do
+        BatchSpanProcessor.new(exporter: TestExporter.new, max_queue_size: 6, max_export_batch_size: 999)
+      end
     end
   end
 
@@ -69,7 +70,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
     it 'should flush everything on shutdown' do
       te = TestExporter.new
-      bsp = BatchSpanProcessor.new(exporter: te, max_queue_size: 3)
+      bsp = BatchSpanProcessor.new(exporter: te)
       ts = TestSpan.new
       bsp.on_end(ts)
 
