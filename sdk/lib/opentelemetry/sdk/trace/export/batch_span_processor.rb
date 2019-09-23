@@ -31,6 +31,10 @@ module OpenTelemetry
             @condition = ConditionVariable.new
             @keep_running = true
             @delay = schedule_delay
+            if max_export_batch_size > max_queue_size
+              OpenTelemetry.logger.warn("Batch Size: #{max_export_batch_size} is greater than queue size: #{max_queue_size}. Defaulting to max queue size")
+              max_export_batch_size = max_queue_size
+            end
             @max_queue_size = max_queue_size
             @batch_size = max_export_batch_size
             @spans = []
@@ -75,9 +79,11 @@ module OpenTelemetry
           def work
             loop do
               batch = lock do
+                # rubocop:disable IfUnlessModifier
                 if spans.size < batch_size
                   @condition.wait(@mutex, @delay) while spans.empty? && @keep_running
                 end
+                # rubocop:enable IfUnlessModifier
                 break unless @keep_running
 
                 fetch_batch

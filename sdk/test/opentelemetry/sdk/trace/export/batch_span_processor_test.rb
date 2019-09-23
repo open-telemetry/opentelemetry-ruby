@@ -54,6 +54,13 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
   end
 
+  describe 'initialization' do
+    it 'if max batch size is gt max queue size default to max queue size' do
+      bsp = BatchSpanProcessor.new(exporter: TestExporter.new, max_queue_size: 6, max_export_batch_size: 999)
+      bsp.instance_variable_get(:@batch_size).must_equal(6)
+    end
+  end
+
   describe 'lifecycle' do
     it 'should stop and start correctly' do
       bsp = BatchSpanProcessor.new(exporter: TestExporter.new)
