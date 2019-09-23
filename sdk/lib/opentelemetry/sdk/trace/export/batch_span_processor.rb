@@ -29,7 +29,11 @@ module OpenTelemetry
           MAX_EXPORT_BATCH_SIZE = 512
           MAX_EXPORT_RETRY_ATTEMPTS = 5
 
-          def initialize(exporter:, schedule_delay: SCHEDULE_DELAY_MILLIS, max_queue_size: MAX_QUEUE_SIZE, max_export_batch_size: MAX_EXPORT_BATCH_SIZE, max_export_retry_attempts: MAX_EXPORT_RETRY_ATTEMPTS)
+          def initialize(exporter:,
+                         schedule_delay: SCHEDULE_DELAY_MILLIS,
+                         max_queue_size: MAX_QUEUE_SIZE,
+                         max_export_batch_size: MAX_EXPORT_BATCH_SIZE,
+                         max_export_retry_attempts: MAX_EXPORT_RETRY_ATTEMPTS)
             raise(ArgumentError) if max_export_batch_size > max_queue_size
 
             @exporter = exporter
