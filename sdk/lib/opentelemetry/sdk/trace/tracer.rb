@@ -64,12 +64,21 @@ module OpenTelemetry
 
         def start_root_span(name, attributes: nil, links: nil, events: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
           parent_span_context = OpenTelemetry::Trace::SpanContext::INVALID
-          internal_start_span(name, parent_span_context, attributes, links, events, start_timestamp, kind, sampling_hint)
+          start_span(name, with_parent_context: parent_span_context, attributes: attributes, links: links, events: events, start_timestamp: start_timestamp, kind: kind, sampling_hint: sampling_hint)
         end
 
         def start_span(name, with_parent: nil, with_parent_context: nil, attributes: nil, links: nil, events: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
+          raise ArgumentError if name.nil?
+
           parent_span_context = with_parent&.context || with_parent_context || current_span.context
-          internal_start_span(name, parent_span_context, attributes, links, events, start_timestamp, kind, sampling_hint)
+          parent_span_context = nil unless parent_span_context.valid?
+          parent_span_id = parent_span_context&.span_id
+          trace_id = parent_span_context&.trace_id
+          trace_id ||= OpenTelemetry::Trace.generate_trace_id
+          span_id = OpenTelemetry::Trace.generate_span_id
+          result = @active_trace_config.sampler.call(trace_id: trace_id, span_id: span_id, parent_context: parent_span_context, hint: sampling_hint, links: links, name: name, kind: kind, attributes: attributes)
+
+          internal_create_span(result, name, kind, trace_id, span_id, parent_span_id, attributes, links, events, start_timestamp)
         end
 
         # Returns a new Event. This should be called in a block passed to
@@ -112,19 +121,6 @@ module OpenTelemetry
         end
 
         private
-
-        def internal_start_span(name, parent_span_context, attributes, links, events, start_timestamp, kind, sampling_hint)
-          raise ArgumentError if name.nil?
-
-          span_id = OpenTelemetry::Trace.generate_span_id
-          parent_span_context = nil unless parent_span_context.valid?
-          parent_span_id = parent_span_context&.span_id
-          trace_id = parent_span_context&.trace_id
-          trace_id ||= OpenTelemetry::Trace.generate_trace_id
-          result = @active_trace_config.sampler.call(trace_id: trace_id, span_id: span_id, parent_context: parent_span_context, hint: sampling_hint, links: links, name: name, kind: kind, attributes: attributes)
-
-          internal_create_span(result, name, kind, trace_id, span_id, parent_span_id, attributes, links, events, start_timestamp)
-        end
 
         def internal_create_span(result, name, kind, trace_id, span_id, parent_span_id, attributes, links, events, start_timestamp)
           if result.record_events? && !@stopped
