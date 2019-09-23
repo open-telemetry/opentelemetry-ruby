@@ -13,7 +13,7 @@ describe OpenTelemetry::SDK::Trace::Span do
   SpanKind = OpenTelemetry::Trace::SpanKind
   Status = OpenTelemetry::Trace::Status
 
-  let(:context) { SpanContext.new }
+  let(:context) { OpenTelemetry::Trace::SpanContext.new }
   let(:span_processor) { NoopSpanProcessor.instance }
   let(:mock_span_processor) { Minitest::Mock.new }
   let(:trace_config) do

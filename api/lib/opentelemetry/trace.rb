@@ -42,9 +42,9 @@ module OpenTelemetry
 end
 
 require 'opentelemetry/trace/trace_flags'
-require 'opentelemetry/trace/samplers'
 require 'opentelemetry/trace/span_context'
 require 'opentelemetry/trace/span_kind'
 require 'opentelemetry/trace/span'
+require 'opentelemetry/trace/sampling_hint'
 require 'opentelemetry/trace/status'
 require 'opentelemetry/trace/tracer'

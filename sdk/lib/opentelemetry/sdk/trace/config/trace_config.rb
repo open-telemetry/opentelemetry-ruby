@@ -10,7 +10,7 @@ module OpenTelemetry
       module Config
         # Class that holds global trace parameters.
         class TraceConfig
-          DEFAULT_SAMPLER = OpenTelemetry::Trace::Samplers::AlwaysSampleSampler.new
+          DEFAULT_SAMPLER = Samplers::ALWAYS_ON
           DEFAULT_MAX_ATTRIBUTES_COUNT = 32
           DEFAULT_MAX_EVENTS_COUNT = 128
           DEFAULT_MAX_LINKS_COUNT = 32
@@ -24,7 +24,7 @@ module OpenTelemetry
                            :DEFAULT_MAX_ATTRIBUTES_PER_EVENT,
                            :DEFAULT_MAX_ATTRIBUTES_PER_LINK)
 
-          # The global default {OpenTelemetry::Trace::Sampler}.
+          # The global default sampler (see {Samplers}).
           attr_reader :sampler
 
           # The global default max number of attributes per {Span}.
@@ -33,13 +33,13 @@ module OpenTelemetry
           # The global default max number of {Event}s per {Span}.
           attr_reader :max_events_count
 
-          # The global default max number of {OpenTelemetry::Trace::Link} entries per {Span}.
+          # The global default max number of {Link} entries per {Span}.
           attr_reader :max_links_count
 
           # The global default max number of attributes per {Event}.
           attr_reader :max_attributes_per_event
 
-          # The global default max number of attributes per {OpenTelemetry::Trace::Link}.
+          # The global default max number of attributes per {Link}.
           attr_reader :max_attributes_per_link
 
           # Returns a {TraceConfig} with the desired values.
