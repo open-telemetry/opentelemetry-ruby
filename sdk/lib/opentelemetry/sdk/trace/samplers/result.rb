@@ -17,9 +17,7 @@ module OpenTelemetry
           DECISIONS = [Decision::RECORD, Decision::NOT_RECORD, Decision::RECORD_AND_PROPAGATE].freeze
           private_constant(:EMPTY_HASH, :DECISIONS)
 
-          # Returns a frozen hash of attributes to be attached span. These
-          # attributes should be added to the span only for root span or when
-          # sampling decision {sampled?} changes from false to true.
+          # Returns a frozen hash of attributes to be attached span.
           #
           # @return [Hash<String, Object>]
           attr_reader :attributes
@@ -30,7 +28,7 @@ module OpenTelemetry
           # @param [Symbol] decision Whether or not a span should be sampled
           #   and/or record events.
           # @param [optional Hash<String, Object>] attributes A frozen or freezable hash
-          #   containing attributes to be attached to a root span
+          #   containing attributes to be attached to the span.
           def initialize(decision:, attributes: nil)
             raise ArgumentError, 'decision' unless DECISIONS.include?(decision)
 
