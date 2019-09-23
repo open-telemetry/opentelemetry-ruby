@@ -176,7 +176,28 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     end
 
     it 'creates a span with all supplied parameters' do
-      # TODO
+      context = OpenTelemetry::Trace::SpanContext.new
+      links = [Link.new(span_context: context, attributes: nil)]
+      name = 'span'
+      kind = OpenTelemetry::Trace::SpanKind::INTERNAL
+      attributes = { '1' => 1 }
+      start_timestamp = Time.now
+      span = tracer.start_root_span(name, attributes: attributes, links: links, kind: kind, start_timestamp: start_timestamp)
+      span.links.must_equal(links)
+      span.name.must_equal(name)
+      span.kind.must_equal(kind)
+      span.attributes.must_equal(attributes)
+      span.start_timestamp.must_equal(start_timestamp)
+    end
+
+    it 'creates a span with sampler attributes added after supplied attributes' do
+      sampler_attributes = { '1' => 1 }
+      mock_sampler = Minitest::Mock.new
+      result = Result.new(decision: Decision::RECORD, attributes: sampler_attributes)
+      mock_sampler.expect(:call, result, [Hash])
+      tracer.active_trace_config = TraceConfig.new(sampler: mock_sampler)
+      span = tracer.start_root_span('op', attributes: { '1' => 0, '2' => 2 })
+      span.attributes.must_equal('1' => 1, '2' => 2)
     end
 
     it 'ignores the implicit current span context' do
@@ -260,7 +281,29 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     end
 
     it 'creates a span with all supplied parameters' do
-      # TODO
+      links = [Link.new(span_context: context, attributes: nil)]
+      name = 'span'
+      kind = OpenTelemetry::Trace::SpanKind::INTERNAL
+      attributes = { '1' => 1 }
+      start_timestamp = Time.now
+      span = tracer.start_span(name, with_parent_context: context, attributes: attributes, links: links, kind: kind, start_timestamp: start_timestamp)
+      span.links.must_equal(links)
+      span.name.must_equal(name)
+      span.kind.must_equal(kind)
+      span.attributes.must_equal(attributes)
+      span.parent_span_id.must_equal(context.span_id)
+      span.context.trace_id.must_equal(context.trace_id)
+      span.start_timestamp.must_equal(start_timestamp)
+    end
+
+    it 'creates a span with sampler attributes added after supplied attributes' do
+      sampler_attributes = { '1' => 1 }
+      mock_sampler = Minitest::Mock.new
+      result = Result.new(decision: Decision::RECORD, attributes: sampler_attributes)
+      mock_sampler.expect(:call, result, [Hash])
+      tracer.active_trace_config = TraceConfig.new(sampler: mock_sampler)
+      span = tracer.start_span('op', with_parent_context: context, attributes: { '1' => 0, '2' => 2 })
+      span.attributes.must_equal('1' => 1, '2' => 2)
     end
 
     it 'uses the context from parent span if supplied' do

@@ -82,7 +82,7 @@ module OpenTelemetry
         end
 
         # Returns a new Event. This should be called in a block passed to
-        # {Span#add_event}, or to pass Events to {Tracer#in_span},
+        # {Span#add_event}, or to pass Events to {OpenTelemetry::Trace::Tracer#in_span},
         # {Tracer#start_span} or {Tracer#start_root_span}.
         #
         # Example use:
@@ -126,6 +126,7 @@ module OpenTelemetry
           if result.record_events? && !@stopped
             trace_flags = result.sampled? ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
             context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, trace_flags: trace_flags)
+            attributes = attributes&.merge(result.attributes) || result.attributes
             Span.new(context, name, kind, parent_span_id, @active_trace_config, @active_span_processor, attributes, links, events, start_timestamp || Time.now)
           else
             OpenTelemetry::Trace::Span.new(span_context: OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id))
