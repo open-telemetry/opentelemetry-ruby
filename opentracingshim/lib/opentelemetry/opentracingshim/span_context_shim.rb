@@ -8,7 +8,7 @@ module OpenTelemetry
   module OpenTracingShim
     # A SpanContextShim provides a means of treating an OpenTelemetry::Trace::SpanContext
     # as an OpenTracing::SpanContext
-    class SpanContextShim < OpenTracing::SpanContext
+    class SpanContextShim
       attr_reader :context
 
       # Returns a new {SpanContextShim}
@@ -27,6 +27,7 @@ module OpenTelemetry
         context.span_id
       end
 
+      # Currently unimplemented
       def baggage
         nil
       end

@@ -13,6 +13,9 @@ module OpenTelemetry
   end
 end
 
-# require 'opentelemetry/opentracingshim/internal'
-# require 'opentelemetry/opentracingshim/trace'
-# require 'opentelemetry/opentracingshim/version'
+require 'opentelemetry/opentracingshim/scope_manager_shim'
+require 'opentelemetry/opentracingshim/scope_shim'
+require 'opentelemetry/opentracingshim/span_context_shim'
+require 'opentelemetry/opentracingshim/span_shim'
+require 'opentelemetry/opentracingshim/tracer_shim'
+require 'opentelemetry/opentracingshim/version'

@@ -22,10 +22,10 @@ YARD::Rake::YardocTask.new do |t|
   files = Dir.glob('./lib/**/*.rb')
 
   # Move ./lib/opentelemetry/opentracingshim.rb to the end of the array.
-  # Otherwise other files will overwrite the OpenTelemetry module
+  # Otherwise other files will overwrite the OpenTelemetryShim module
   # comments with the license information.
-  sdk_index = files.index('./lib/opentelemetry/opentracingshim.rb')
-  files = files.insert(-1, files.delete_at(sdk_index))
+  ots_index = files.index('./lib/opentelemetry/opentracingshim.rb')
+  files = files.insert(-1, files.delete_at(ots_index))
 
   t.files = files # optional
   t.options = ['--output-dir', 'docs/opentracingshim'] # optional

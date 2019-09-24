@@ -8,7 +8,7 @@ module OpenTelemetry
   module OpenTracingShim
     # SpanShim provides a means of accessing an OpenTelemetry Span
     # as one would an OpenTracing span
-    class SpanShim < OpenTracing::Span
+    class SpanShim
       attr_reader :span
       attr_reader :context
 
@@ -24,7 +24,6 @@ module OpenTelemetry
       def operation_name=(name)
         @span.name = name
       end
-
 
       # Set attribute on the underlying OpenTelemetry Span
       # @param key [String] the key of the tag

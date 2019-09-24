@@ -5,6 +5,7 @@ env:
   matrix:
     - TEST_DIR=api
     - TEST_DIR=sdk
+    - TEST_DIR=opentracing-shim
 rvm:
   - 2.4
   - 2.5
