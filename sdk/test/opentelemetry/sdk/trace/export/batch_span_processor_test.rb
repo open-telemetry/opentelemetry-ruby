@@ -111,7 +111,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     it 'should retry on FAILED_RETRYABLE exports' do
       te = TestExporter.new(status_codes: [FAILED_RETRYABLE, SUCCESS])
 
-      bsp = BatchSpanProcessor.new(schedule_delay: 999,
+      bsp = BatchSpanProcessor.new(schedule_delay_millis: 999,
                                    exporter: te,
                                    max_queue_size: 6,
                                    max_export_batch_size: 3)
@@ -134,7 +134,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     it 'should not retry on FAILED_NOT_RETRYABLE exports' do
       te = TestExporter.new(status_codes: [FAILED_NOT_RETRYABLE, SUCCESS])
 
-      bsp = BatchSpanProcessor.new(schedule_delay: 999,
+      bsp = BatchSpanProcessor.new(schedule_delay_millis: 999,
                                    exporter: te,
                                    max_queue_size: 6,
                                    max_export_batch_size: 3)
