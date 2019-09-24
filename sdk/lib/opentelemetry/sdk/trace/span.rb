@@ -87,7 +87,7 @@ module OpenTelemetry
         #
         # Lazy example:
         #
-        #   span.add_event { tracer.create_event(name: 'event', attributes: {'eager' => false}) }
+        #   span.add_event { OpenTelemetry::Trace::Event.new(name: 'event', attributes: {'eager' => false}) }
         #
         # Note that the OpenTelemetry project
         # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/semantic-conventions.md
@@ -106,14 +106,13 @@ module OpenTelemetry
         # @return [self] returns itself
         def add_event(name: nil, attributes: nil, timestamp: nil)
           super
-          event = block_given? ? yield : Event.new(name: name, attributes: attributes, timestamp: timestamp || Time.now)
+          event = block_given? ? yield : OpenTelemetry::Trace::Event.new(name: name, attributes: attributes, timestamp: timestamp || Time.now)
           @mutex.synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling add_event on an ended Span.')
             else
               @events ||= []
-              @events << event
-              @trace_config.trim_events(@events)
+              @events = @trace_config.append_event(@events, event)
               @total_recorded_events += 1
             end
           end

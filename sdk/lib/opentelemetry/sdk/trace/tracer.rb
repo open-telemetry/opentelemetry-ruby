@@ -81,43 +81,6 @@ module OpenTelemetry
           internal_create_span(result, name, kind, trace_id, span_id, parent_span_id, attributes, links, start_timestamp)
         end
 
-        # Returns a new Event. This should be called in a block passed to
-        # {Span#add_event}.
-        #
-        # Example use:
-        #
-        #   span.add_event { tracer.create_event(name: 'e2', attributes: {'a' => 3}) }
-        #
-        # @param [String] name The name of the event.
-        # @param [optional Hash<String, Object>] attributes One or more key:value
-        #   pairs, where the keys must be strings and the values may be string,
-        #   boolean or numeric type.
-        # @param [optional Time] timestamp Optional timestamp for the event.
-        # @return a new Event.
-        def create_event(name:, attributes: nil, timestamp: nil)
-          super
-          @active_trace_config.trim_event_attributes(attributes)
-          Event.new(name: name, attributes: attributes, timestamp: timestamp || Time.now)
-        end
-
-        # Returns a new Link. This should be called to pass Links to
-        # {OpenTelemetry::Trace::Tracer#in_span}, {Tracer#start_span} or
-        # {Tracer#start_root_span}.
-        #
-        # Example use:
-        #
-        #   span = tracer.in_span('op', links: [tracer.create_link(SpanContext.new)])
-        #
-        # @param [SpanContext] span_context The context of the linked {Span}.
-        # @param [optional Hash<String, Object>] attrs A hash of attributes
-        #   for this link. Attributes will be frozen during Link initialization.
-        # @return [Link]
-        def create_link(span_context, attrs = nil)
-          super
-          @active_trace_config.trim_link_attributes(attrs)
-          Link.new(span_context: span_context, attributes: attrs)
-        end
-
         private
 
         def internal_create_span(result, name, kind, trace_id, span_id, parent_span_id, attributes, links, start_timestamp)

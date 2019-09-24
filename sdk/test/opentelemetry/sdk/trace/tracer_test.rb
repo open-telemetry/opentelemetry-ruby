@@ -14,52 +14,6 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     ->(trace_id:, span_id:, parent_context:, hint:, links:, name:, kind:, attributes:) { Result.new(decision: Decision::RECORD) } # rubocop:disable Lint/UnusedBlockArgument
   end
 
-  describe '#create_event' do
-    it 'trims event attributes' do
-      tracer.active_trace_config = TraceConfig.new(max_attributes_per_event: 1)
-      event = tracer.create_event(name: 'event', attributes: { '1' => 1, '2' => 2 })
-      event.attributes.size.must_equal(1)
-    end
-
-    it 'returns an event with the given name, attributes, timestamp' do
-      ts = Time.now
-      event = tracer.create_event(name: 'event', attributes: { '1' => 1 }, timestamp: ts)
-      event.attributes.must_equal('1' => 1)
-      event.name.must_equal('event')
-      event.timestamp.must_equal(ts)
-    end
-
-    it 'returns an event with no attributes by default' do
-      event = tracer.create_event(name: 'event')
-      event.attributes.must_equal({})
-    end
-
-    it 'returns an event with a default timestamp' do
-      event = tracer.create_event(name: 'event')
-      event.timestamp.wont_be_nil
-    end
-  end
-
-  describe '#create_link' do
-    it 'trims link attributes' do
-      tracer.active_trace_config = TraceConfig.new(max_attributes_per_link: 1)
-      link = tracer.create_link(OpenTelemetry::Trace::SpanContext.new, '1' => 1, '2' => 2)
-      link.attributes.size.must_equal(1)
-    end
-
-    it 'returns a link with the given span context and attributes' do
-      context = OpenTelemetry::Trace::SpanContext.new
-      link = tracer.create_link(context, '1' => 1)
-      link.attributes.must_equal('1' => 1)
-      link.context.must_equal(context)
-    end
-
-    it 'returns a link with no attributes by default' do
-      link = tracer.create_link(OpenTelemetry::Trace::SpanContext.new)
-      link.attributes.must_equal({})
-    end
-  end
-
   describe '#initialize' do
     it 'installs a Resource' do
       Tracer.new.resource.wont_be_nil
@@ -177,7 +131,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
 
     it 'creates a span with all supplied parameters' do
       context = OpenTelemetry::Trace::SpanContext.new
-      links = [Link.new(span_context: context, attributes: nil)]
+      links = [OpenTelemetry::Trace::Link.new(context)]
       name = 'span'
       kind = OpenTelemetry::Trace::SpanKind::INTERNAL
       attributes = { '1' => 1 }
@@ -209,6 +163,22 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       end
       span.parent_span_id.must_equal(OpenTelemetry::Trace::INVALID_SPAN_ID)
       span.context.trace_id.wont_equal(root.context.trace_id)
+    end
+
+    it 'trims link attributes' do
+      tracer.active_trace_config = TraceConfig.new(max_attributes_per_link: 1)
+      link = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '1' => 1, '2' => 2)
+      span = tracer.start_root_span('root', links: [link])
+      span.links.first.attributes.size.must_equal(1)
+    end
+
+    it 'trims links' do
+      tracer.active_trace_config = TraceConfig.new(max_links_count: 1)
+      link1 = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '1' => 1)
+      link2 = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '2' => 2)
+      span = tracer.start_root_span('root', links: [link1, link2])
+      span.links.size.must_equal(1)
+      span.links.first.must_equal(link2)
     end
   end
 
@@ -281,7 +251,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     end
 
     it 'creates a span with all supplied parameters' do
-      links = [Link.new(span_context: context, attributes: nil)]
+      links = [OpenTelemetry::Trace::Link.new(context)]
       name = 'span'
       kind = OpenTelemetry::Trace::SpanKind::INTERNAL
       attributes = { '1' => 1 }
@@ -322,6 +292,22 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       end
       span.parent_span_id.must_equal(root.context.span_id)
       span.context.trace_id.must_equal(root.context.trace_id)
+    end
+
+    it 'trims link attributes' do
+      tracer.active_trace_config = TraceConfig.new(max_attributes_per_link: 1)
+      link = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '1' => 1, '2' => 2)
+      span = tracer.start_span('op', with_parent_context: context, links: [link])
+      span.links.first.attributes.size.must_equal(1)
+    end
+
+    it 'trims links' do
+      tracer.active_trace_config = TraceConfig.new(max_links_count: 1)
+      link1 = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '1' => 1)
+      link2 = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '2' => 2)
+      span = tracer.start_span('op', with_parent_context: context, links: [link1, link2])
+      span.links.size.must_equal(1)
+      span.links.first.must_equal(link2)
     end
   end
 end
