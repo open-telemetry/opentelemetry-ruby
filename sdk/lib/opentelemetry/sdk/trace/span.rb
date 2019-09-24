@@ -247,7 +247,7 @@ module OpenTelemetry
           @attributes = attributes.nil? ? nil : Hash[attributes] # We need a mutable copy of attributes.
           trace_config.trim_span_attributes(@attributes)
           @events = nil
-          @links = trace_config.trim_links(links).freeze
+          @links = trace_config.trim_links(links)
           @span_processor.on_start(self)
         end
 
