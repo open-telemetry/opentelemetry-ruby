@@ -38,6 +38,7 @@ module OpenTelemetry
       # @param end_time [Time] custom end time, if not now
       def finish(end_time: Time.now)
         @span.finish(end_timestamp: end_time)
+        self
       end
 
       # The following have no OpenTelemetry Equivalent and are left noop
