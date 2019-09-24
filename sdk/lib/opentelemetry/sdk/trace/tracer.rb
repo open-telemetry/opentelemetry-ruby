@@ -62,12 +62,12 @@ module OpenTelemetry
           end
         end
 
-        def start_root_span(name, attributes: nil, links: nil, events: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
+        def start_root_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
           parent_span_context = OpenTelemetry::Trace::SpanContext::INVALID
-          start_span(name, with_parent_context: parent_span_context, attributes: attributes, links: links, events: events, start_timestamp: start_timestamp, kind: kind, sampling_hint: sampling_hint)
+          start_span(name, with_parent_context: parent_span_context, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind, sampling_hint: sampling_hint)
         end
 
-        def start_span(name, with_parent: nil, with_parent_context: nil, attributes: nil, links: nil, events: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
+        def start_span(name, with_parent: nil, with_parent_context: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
           raise ArgumentError if name.nil?
 
           parent_span_context = with_parent&.context || with_parent_context || current_span.context
@@ -78,16 +78,14 @@ module OpenTelemetry
           span_id = OpenTelemetry::Trace.generate_span_id
           result = @active_trace_config.sampler.call(trace_id: trace_id, span_id: span_id, parent_context: parent_span_context, hint: sampling_hint, links: links, name: name, kind: kind, attributes: attributes)
 
-          internal_create_span(result, name, kind, trace_id, span_id, parent_span_id, attributes, links, events, start_timestamp)
+          internal_create_span(result, name, kind, trace_id, span_id, parent_span_id, attributes, links, start_timestamp)
         end
 
         # Returns a new Event. This should be called in a block passed to
-        # {Span#add_event}, or to pass Events to {OpenTelemetry::Trace::Tracer#in_span},
-        # {Tracer#start_span} or {Tracer#start_root_span}.
+        # {Span#add_event}.
         #
         # Example use:
         #
-        #   span = tracer.in_span('op', events: [tracer.create_event(name: 'e1')])
         #   span.add_event { tracer.create_event(name: 'e2', attributes: {'a' => 3}) }
         #
         # @param [String] name The name of the event.
@@ -122,12 +120,12 @@ module OpenTelemetry
 
         private
 
-        def internal_create_span(result, name, kind, trace_id, span_id, parent_span_id, attributes, links, events, start_timestamp)
+        def internal_create_span(result, name, kind, trace_id, span_id, parent_span_id, attributes, links, start_timestamp)
           if result.record_events? && !@stopped
             trace_flags = result.sampled? ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
             context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, trace_flags: trace_flags)
             attributes = attributes&.merge(result.attributes) || result.attributes
-            Span.new(context, name, kind, parent_span_id, @active_trace_config, @active_span_processor, attributes, links, events, start_timestamp || Time.now)
+            Span.new(context, name, kind, parent_span_id, @active_trace_config, @active_span_processor, attributes, links, start_timestamp || Time.now)
           else
             OpenTelemetry::Trace::Span.new(span_context: OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id))
           end

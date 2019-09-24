@@ -228,7 +228,7 @@ module OpenTelemetry
         end
 
         # @api private
-        def initialize(context, name, kind, parent_span_id, trace_config, span_processor, attributes, links, events, start_timestamp) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        def initialize(context, name, kind, parent_span_id, trace_config, span_processor, attributes, links, start_timestamp) # rubocop:disable Metrics/AbcSize
           super(span_context: context)
           @mutex = Mutex.new
           @name = name
@@ -239,18 +239,15 @@ module OpenTelemetry
           @ended = false
           @status = nil
           @child_count = 0
-          @total_recorded_events = events&.size || 0
+          @total_recorded_events = 0
           @total_recorded_links = links&.size || 0
           @total_recorded_attributes = attributes&.size || 0
           @start_timestamp = start_timestamp
           @end_timestamp = nil
-          @attributes = attributes&.clone
-          @events = events&.clone
-          @links = links&.clone
+          @attributes = attributes.nil? ? nil : Hash[attributes] # We need a mutable copy of attributes.
           trace_config.trim_span_attributes(@attributes)
-          trace_config.trim_events(@events)
-          trace_config.trim_links(@links)
-          @links.freeze
+          @events = nil
+          @links = trace_config.trim_links(links).freeze
           @span_processor.on_start(self)
         end
 

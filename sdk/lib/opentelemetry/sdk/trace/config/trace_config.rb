@@ -98,16 +98,23 @@ module OpenTelemetry
 
           # @api private
           #
-          # Removes oldest entries from {Link}s Array whose size exceeds
-          # {max_links_count}.
+          # Returns a slice of a {Link}s array of no more than {max_links_count}
+          # entries. If links is larger than {max_links_count}, the excess
+          # entries will be removed from the front of the array. They are
+          # presumed to be the oldest entries.
           #
-          # @param [Array<Link>] links This is modified in-place
+          # @param [Array<Link>] links Array of {Link}s to trim. May be nil.
+          # @return [Array<Link>] frozen slice of links param. May be nil.
           def trim_links(links)
-            return if links.nil?
-
-            excess = links.size - @max_links_count
-            links.shift(excess) if excess.positive?
-            nil
+            if links.nil?
+              nil
+            elsif links.size > @max_links_count
+              links.last(@max_links_count).freeze
+            elsif links.frozen?
+              links
+            else
+              links.clone.freeze
+            end
           end
 
           # @api private

@@ -28,8 +28,8 @@ module OpenTelemetry
       # Equivalent without helper:
       #
       #   OpenTelemetry.tracer.with_span(OpenTelemetry.tracer.start_span('do-the-thing')) do ... end
-      def in_span(name, attributes: nil, links: nil, events: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
-        span = start_span(name, attributes: attributes, links: links, events: events, start_timestamp: start_timestamp, kind: kind, sampling_hint: sampling_hint)
+      def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
+        span = start_span(name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind, sampling_hint: sampling_hint)
         with_span(span) { |s| yield s }
       end
 
@@ -37,13 +37,13 @@ module OpenTelemetry
         Context.with(CONTEXT_SPAN_KEY, span) { |s| yield s }
       end
 
-      def start_root_span(name, attributes: nil, links: nil, events: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
+      def start_root_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
         raise ArgumentError if name.nil?
 
         Span.new
       end
 
-      def start_span(name, with_parent: nil, with_parent_context: nil, attributes: nil, links: nil, events: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
+      def start_span(name, with_parent: nil, with_parent_context: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
         raise ArgumentError if name.nil?
 
         span_context = with_parent&.context || with_parent_context || current_span.context
@@ -54,13 +54,10 @@ module OpenTelemetry
         end
       end
 
-      # Returns a new Event. This should be called in a block passed to
-      # {Span#add_event}, or to pass Events to {Tracer#in_span},
-      # {Tracer#start_span} or {Tracer#start_root_span}.
+      # Returns a new Event. This should be called in a block passed to {Span#add_event}.
       #
       # Example use:
       #
-      #   span = tracer.in_span('op', events: [tracer.create_event(name: 'e1')])
       #   span.add_event { tracer.create_event(name: 'e2', attributes: {'a' => 3}) }
       #
       # @param [String] name The name of the event.
@@ -76,9 +73,8 @@ module OpenTelemetry
         EVENT_OR_LINK
       end
 
-      # Returns a new Link. This should be called to pass Links to
-      # {OpenTelemetry::Trace::Tracer#in_span}, {Tracer#start_span} or
-      # {Tracer#start_root_span}.
+      # Returns a new Link. This should be called to pass Links to {Tracer#in_span},
+      # {Tracer#start_span} or {Tracer#start_root_span}.
       #
       # Example use:
       #
