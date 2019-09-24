@@ -7,4 +7,9 @@
 require 'test_helper'
 
 describe OpenTelemetry::OpenTracingShim::SpanContextShim do
+  describe '#trace_id' do
+  end
+
+  describe '#span_id' do
+  end
 end

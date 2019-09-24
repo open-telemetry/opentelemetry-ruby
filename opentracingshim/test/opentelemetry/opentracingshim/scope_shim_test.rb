@@ -7,4 +7,9 @@
 require 'test_helper'
 
 describe OpenTelemetry::OpenTracingShim::ScopeShim do
+  describe '#span' do
+  end
+
+  describe '#close' do
+  end
 end

@@ -7,4 +7,12 @@
 require 'test_helper'
 
 describe OpenTelemetry::OpenTracingShim::SpanShim do
+  describe '#operation_name=' do
+  end
+
+  describe '#set_tag' do
+  end
+
+  describe '#finish' do
+  end
 end

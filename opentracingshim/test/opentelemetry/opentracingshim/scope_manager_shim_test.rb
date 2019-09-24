@@ -7,4 +7,9 @@
 require 'test_helper'
 
 describe OpenTelemetry::OpenTracingShim::ScopeManagerShim do
+  describe '#activate' do
+  end
+
+  describe '#active' do
+  end
 end
