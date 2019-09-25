@@ -8,7 +8,7 @@ module OpenTelemetry
   module OpenTracingShim
     # TracerShim provides a means of referencing
     # an OpenTelemetry::Tracer as a OpenTracing::Tracer
-    class TracerShim
+    class TracerShim < OpenTracing::Tracer
       HTTP_TEXT_FORMAT = OpenTelemetry::DistributedContext::Propagation::HTTPTextFormat.new
       BINARY_FORMAT = OpenTelemetry::DistributedContext::Propagation::BinaryFormat.new
       attr_reader :scope_manager

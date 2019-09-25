@@ -8,7 +8,7 @@ module OpenTelemetry
   module OpenTracingShim
     # SpanShim provides a means of accessing an OpenTelemetry Span
     # as one would an OpenTracing span
-    class SpanShim
+    class SpanShim < OpenTracing::Span
       attr_reader :span
       attr_reader :context
 

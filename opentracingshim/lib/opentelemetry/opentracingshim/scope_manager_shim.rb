@@ -8,7 +8,7 @@ module OpenTelemetry
   module OpenTracingShim
     # A ScopeManagerShim provides an API for interfacing with
     # OpenTelemetry Tracers and Spans as OpenTracing objects
-    class ScopeManagerShim
+    class ScopeManagerShim < OpenTracing::ScopeManager
       def initialize(tracer)
         @tracer = tracer
       end
