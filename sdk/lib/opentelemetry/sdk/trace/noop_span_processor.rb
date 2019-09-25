@@ -29,7 +29,7 @@ module OpenTelemetry
         # not throw or block the execution thread.
         #
         # @param [Span] span the {Span} that just ended.
-        def on_end(span); end
+        def on_finish(span); end
 
         # Called when {Tracer#shutdown} is called.
         def shutdown; end

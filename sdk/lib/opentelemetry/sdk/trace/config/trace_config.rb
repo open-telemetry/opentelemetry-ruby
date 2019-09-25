@@ -30,16 +30,16 @@ module OpenTelemetry
           # The global default max number of attributes per {Span}.
           attr_reader :max_attributes_count
 
-          # The global default max number of {Event}s per {Span}.
+          # The global default max number of {OpenTelemetry::Trace::Event}s per {Span}.
           attr_reader :max_events_count
 
-          # The global default max number of {Link} entries per {Span}.
+          # The global default max number of {OpenTelemetry::Trace::Link} entries per {Span}.
           attr_reader :max_links_count
 
-          # The global default max number of attributes per {Event}.
+          # The global default max number of attributes per {OpenTelemetry::Trace::Event}.
           attr_reader :max_attributes_per_event
 
-          # The global default max number of attributes per {Link}.
+          # The global default max number of attributes per {OpenTelemetry::Trace::Link}.
           attr_reader :max_attributes_per_link
 
           # Returns a {TraceConfig} with the desired values.
@@ -66,80 +66,10 @@ module OpenTelemetry
             @max_attributes_per_link = max_attributes_per_link
           end
 
-          # @api private
-          #
-          # Removes oldest entries from {Event} attributes Hash whose size
-          # exceeds {max_attributes_per_event}.
-          #
-          # @param [Hash] attrs This is modified in place.
-          def trim_event_attributes(attrs)
-            trim_attributes(attrs, @max_attributes_per_event)
-          end
-
-          # @api private
-          #
-          # Removes oldest entries from {Link} attributes Hash whose size
-          # exceeds {max_attributes_per_link}.
-          #
-          # @param [Hash] attrs This is modified in place.
-          def trim_link_attributes(attrs)
-            trim_attributes(attrs, @max_attributes_per_link)
-          end
-
-          # @api private
-          #
-          # Removes oldest entries from {Span} attributes Hash whose size
-          # exceeds {max_attributes_count}.
-          #
-          # @param [Hash] attrs This is modified in place.
-          def trim_span_attributes(attrs)
-            trim_attributes(attrs, @max_attributes_count)
-          end
-
-          # @api private
-          #
-          # Removes oldest entries from {Link}s Array whose size exceeds
-          # {max_links_count}.
-          #
-          # @param [Array<Link>] links This is modified in-place
-          def trim_links(links)
-            return if links.nil?
-
-            excess = links.size - @max_links_count
-            links.shift(excess) if excess.positive?
-            nil
-          end
-
-          # @api private
-          #
-          # Removes oldest entries from {Event}s Array whose size exceeds
-          # {max_events_count}.
-          #
-          # @param [Array<Event>] events This is modified in-place
-          def trim_events(events)
-            return if events.nil?
-
-            excess = events.size - @max_events_count
-            events.shift(excess) if excess.positive?
-            nil
-          end
-
           # TODO: from_proto
 
           # The default {TraceConfig}.
           DEFAULT = new
-
-          private
-
-          def trim_attributes(attrs, limit)
-            return if attrs.nil?
-
-            excess = attrs.size - limit
-            # TODO: with Ruby 2.5, replace with the more efficient
-            # attrs.shift(excess) if excess.positive?
-            excess.times { attrs.shift } if excess.positive?
-            nil
-          end
         end
       end
     end

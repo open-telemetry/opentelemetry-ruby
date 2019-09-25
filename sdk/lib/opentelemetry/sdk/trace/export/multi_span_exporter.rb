@@ -13,7 +13,7 @@ module OpenTelemetry
         #
         # Can be used to export to multiple backends using the same
         # SpanProcessor like a {SimpleSampledSpanProcessor} or a
-        # {BatchSampledSpanProcessor}.
+        # {BatchSpanProcessor}.
         class MultiSpanExporter
           def initialize(span_exporters)
             @span_exporters = span_exporters.clone.freeze
