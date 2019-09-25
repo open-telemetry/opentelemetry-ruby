@@ -6,16 +6,19 @@
 
 module OpenTelemetry
   module OpenTracingShim
-    # Scope Shim provides a means of referencing an OTelemetry Context as
+    # Scope Shim provides a means of referencing an OTelemetry Tracer's Context as
     # an OTracing scope
     class ScopeShim
+      def initialize(tracer = nil)
+        @tracer = tracer || OpenTelemetry::Trace::Tracer.new
+      end
+
       def span
-        t = OpenTelemetry::Trace::Trace.new
-        t.current_span
+        @tracer.current_span
       end
 
       def close
-        nil
+        @tracer.current_span.finish
       end
     end
   end

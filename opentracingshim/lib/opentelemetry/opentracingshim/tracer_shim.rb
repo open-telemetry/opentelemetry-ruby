@@ -29,11 +29,12 @@ module OpenTelemetry
                             tags: nil,
                             ignore_active_scope: false,
                             finish_on_close: true)
-        @tracer.start_span(name,
-                           with_parent: child_of,
-                           attributes: tags,
-                           links: references,
-                           start_timestamp: start_time)
+        span = @tracer.start_span(operation_name,
+                                  with_parent: child_of,
+                                  attributes: tags,
+                                  links: references,
+                                  start_timestamp: start_time)
+        @tracer.with_span(span)
       end
 
       def start_span(operation_name,
@@ -42,7 +43,7 @@ module OpenTelemetry
                      start_time: Time.now,
                      tags: nil,
                      ignore_active_scope: false)
-        @tracer.start_span(name,
+        @tracer.start_span(operation_name,
                            with_parent: child_of,
                            attributes: tags,
                            links: references,
@@ -55,6 +56,7 @@ module OpenTelemetry
           context = span_context.context
           HTTP_TEXT_FORMAT.inject(context, carrier)
         when OpenTracing::FORMAT_BINARY
+          # TODO: I don't think this is right
           yield carrier, BINARY_FORMAT.to_bytes(span_context)
         else
           warn 'Unknown inject format'
@@ -66,6 +68,7 @@ module OpenTelemetry
         when OpenTracing::FORMAT_TEXT_MAP, OpenTracing::FORMAT_RACK
           HTTP_TEXT_FORMAT.extract(carrier)
         when OpenTracing::FORMAT_BINARY
+          # TODO: I don't think this is right
           BINARY_FORMAT.from_bytes(carrier)
         else
           warn 'Unknown extract format'
