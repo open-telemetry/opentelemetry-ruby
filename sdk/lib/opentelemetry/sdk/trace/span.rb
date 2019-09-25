@@ -174,7 +174,7 @@ module OpenTelemetry
         #
         # (*) not actually non-blocking. In particular, it synchronizes on an
         # internal mutex, which will typically be uncontended, and
-        # {BatchSpanProcessor} will also synchronize on a mutex, if that
+        # {Export::BatchSpanProcessor} will also synchronize on a mutex, if that
         # processor is used.
         #
         # @param [Time] end_timestamp optional end timestamp for the span.
@@ -191,7 +191,7 @@ module OpenTelemetry
             @events.freeze
             @ended = true
           end
-          @span_processor.on_end(self)
+          @span_processor.on_finish(self)
           self
         end
 

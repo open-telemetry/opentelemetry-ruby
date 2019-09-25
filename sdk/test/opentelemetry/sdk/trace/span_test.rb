@@ -167,11 +167,11 @@ describe OpenTelemetry::SDK::Trace::Span do
       span.to_span_data.end_timestamp.wont_be_nil
     end
 
-    it 'calls the span processor #on_end callback' do
+    it 'calls the span processor #on_finish callback' do
       mock_span_processor.expect(:on_start, nil) { |_| true }
       span = Span.new(context, 'name', SpanKind::INTERNAL, nil, trace_config,
                       mock_span_processor, nil, nil, Time.now)
-      mock_span_processor.expect(:on_end, nil, [span])
+      mock_span_processor.expect(:on_finish, nil, [span])
       span.finish
       mock_span_processor.verify
     end
