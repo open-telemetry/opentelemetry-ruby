@@ -37,8 +37,8 @@ module OpenTelemetry
         # not throw or block the execution thread.
         #
         # @param [Span] span the {Span} that just ended.
-        def on_end(span)
-          @span_processors.each { |processor| processor.on_end(span) }
+        def on_finish(span)
+          @span_processors.each { |processor| processor.on_finish(span) }
         end
 
         # Called when {Tracer#shutdown} is called.

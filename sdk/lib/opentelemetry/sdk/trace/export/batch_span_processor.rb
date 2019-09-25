@@ -56,7 +56,7 @@ module OpenTelemetry
           end
 
           # adds a span to the batcher, threadsafe may block on lock
-          def on_end(span)
+          def on_finish(span)
             return unless span.recording_events?
 
             lock do
@@ -94,24 +94,32 @@ module OpenTelemetry
                 fetch_batch
               end
 
-              export_batch(batch) # TODO: log or count errors
+              export_batch(batch)
             end
           end
 
           def export_batch(batch)
-            @export_attempts.times do |retries|
+            result_code = nil
+            @export_attempts.times do |attempts|
               result_code = @exporter.export(batch)
-              return result_code unless result_code == FAILED_RETRYABLE
+              break unless result_code == FAILED_RETRYABLE
 
-              sleep(0.1 * retries)
+              sleep(0.1 * attempts)
             end
-            FAILED_RETRYABLE
+            report_result(result_code, batch)
+          end
+
+          def report_result(result_code, batch)
+            OpenTelemetry.logger.error("Unable to export #{batch.size} spans") unless result_code == SUCCESS
           end
 
           def flush
             snapshot = lock { spans.shift(spans.size) }
-            # TODO: should this call export_batch or just blindly attempt to export and ignore failures?
-            @exporter.export(snapshot.shift(@batch_size).map!(&:to_span_data)) until snapshot.empty?
+            until snapshot.empty?
+              batch = snapshot.shift(@batch_size).map!(&:to_span_data)
+              result_code = @exporter.export(batch)
+              report_result(result_code, batch)
+            end
           end
 
           def fetch_batch

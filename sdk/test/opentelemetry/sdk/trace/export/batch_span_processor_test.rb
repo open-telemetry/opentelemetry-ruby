@@ -72,7 +72,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       te = TestExporter.new
       bsp = BatchSpanProcessor.new(exporter: te)
       ts = TestSpan.new
-      bsp.on_end(ts)
+      bsp.on_finish(ts)
 
       bsp.shutdown
 
@@ -87,7 +87,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       bsp = BatchSpanProcessor.new(exporter: te, max_queue_size: 6, max_export_batch_size: 3)
 
       tss = [TestSpan.new, TestSpan.new, TestSpan.new, TestSpan.new]
-      tss.each { |ts| bsp.on_end(ts) }
+      tss.each { |ts| bsp.on_finish(ts) }
       bsp.shutdown
 
       te.batches[0].size.must_equal(3)
@@ -100,7 +100,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       bsp = BatchSpanProcessor.new(exporter: te, max_queue_size: 6, max_export_batch_size: 3)
 
       tss = [TestSpan.new, TestSpan.new(nil, false)]
-      tss.each { |ts| bsp.on_end(ts) }
+      tss.each { |ts| bsp.on_finish(ts) }
       bsp.shutdown
 
       te.batches[0].size.must_equal(1)
@@ -117,7 +117,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
                                    max_export_batch_size: 3)
 
       tss = [TestSpan.new, TestSpan.new, TestSpan.new, TestSpan.new]
-      tss.each { |ts| bsp.on_end(ts) }
+      tss.each { |ts| bsp.on_finish(ts) }
 
       # Ensure that our work thread has time to loop
       sleep(1)
@@ -140,7 +140,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
                                    max_export_batch_size: 3)
 
       tss = [TestSpan.new, TestSpan.new, TestSpan.new, TestSpan.new]
-      tss.each { |ts| bsp.on_end(ts) }
+      tss.each { |ts| bsp.on_finish(ts) }
 
       # Ensure that our work thread has time to loop
       sleep(1)
@@ -163,7 +163,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
         Thread.new do
           x = i * 10
           10.times do |j|
-            bsp.on_end(TestSpan.new(x + j))
+            bsp.on_finish(TestSpan.new(x + j))
           end
           sleep(rand(0.01))
         end

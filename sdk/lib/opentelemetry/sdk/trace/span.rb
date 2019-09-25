@@ -192,7 +192,7 @@ module OpenTelemetry
             @events.freeze
             @ended = true
           end
-          @span_processor.on_end(self)
+          @span_processor.on_finish(self)
           self
         end
 
