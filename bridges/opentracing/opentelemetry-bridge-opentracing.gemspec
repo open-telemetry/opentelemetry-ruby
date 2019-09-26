@@ -6,11 +6,11 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'opentelemetry/opentracingbridge/version'
+require 'opentelemetry/bridge/opentracing/version'
 
 Gem::Specification.new do |spec|
-  spec.name        = 'opentelemetry-opentracingbridge'
-  spec.version     = OpenTelemetry::OpenTracingBridge::VERSION
+  spec.name        = 'opentelemetry-bridge-opentracing'
+  spec.version     = OpenTelemetry::Bridge::OpenTracing::VERSION
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 

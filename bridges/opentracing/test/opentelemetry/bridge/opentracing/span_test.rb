@@ -6,8 +6,8 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::OpenTracingBridge::Span do
-  SpanBridge = OpenTelemetry::OpenTracingBridge::Span
+describe OpenTelemetry::Bridge::OpenTracing::Span do
+  SpanBridge = OpenTelemetry::Bridge::OpenTracing::Span
 
   class TestSpan
     attr_reader :name

@@ -6,9 +6,9 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::OpenTracingBridge::Scope do
+describe OpenTelemetry::Bridge::OpenTracing::Scope do
   let(:mock_tracer) { Minitest::Mock.new }
-  let(:scope_bridge) { OpenTelemetry::OpenTracingBridge::Scope.new mock_tracer }
+  let(:scope_bridge) { OpenTelemetry::Bridge::OpenTracing::Scope.new mock_tracer }
   describe '#span' do
     it 'gets the current span' do
       mock_tracer.expect(:current_span, 'an_active_span')

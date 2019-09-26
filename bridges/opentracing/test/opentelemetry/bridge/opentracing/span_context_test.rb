@@ -6,9 +6,9 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::OpenTracingBridge::SpanContext do
+describe OpenTelemetry::Bridge::OpenTracing::SpanContext do
   let(:span_context) { OpenTelemetry::Trace::SpanContext.new }
-  let(:span_context_bridge) { OpenTelemetry::OpenTracingBridge::SpanContext.new span_context }
+  let(:span_context_bridge) { OpenTelemetry::Bridge::OpenTracing::SpanContext.new span_context }
   describe '#trace_id' do
     it 'returns the trace_id of the underlying context' do
       span_context_bridge.trace_id.must_equal span_context.trace_id

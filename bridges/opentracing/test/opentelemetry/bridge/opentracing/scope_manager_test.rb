@@ -6,9 +6,9 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::OpenTracingBridge::ScopeManager do
+describe OpenTelemetry::Bridge::OpenTracing::ScopeManager do
   let(:mock_tracer) { Minitest::Mock.new }
-  let(:scope_manager_bridge) { OpenTelemetry::OpenTracingBridge::ScopeManager.new mock_tracer }
+  let(:scope_manager_bridge) { OpenTelemetry::Bridge::OpenTracing::ScopeManager.new mock_tracer }
   describe '#activate' do
     it 'marks the current span as active' do
     end

@@ -7,5 +7,5 @@
 require 'simplecov'
 SimpleCov.start
 
-require 'opentelemetry/opentracingbridge'
+require 'opentelemetry/bridge/opentracing'
 require 'minitest/autorun'

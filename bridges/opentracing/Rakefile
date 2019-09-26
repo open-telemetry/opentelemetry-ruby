@@ -14,17 +14,17 @@ RuboCop::RakeTask.new
 Rake::TestTask.new :test do |t|
   t.libs << 'test'
   t.libs << 'lib'
-  t.libs << '../api/lib'
+  t.libs << '../../api/lib'
   t.test_files = FileList['test/**/*_test.rb']
 end
 
 YARD::Rake::YardocTask.new do |t|
   files = Dir.glob('./lib/**/*.rb')
 
-  # Move ./lib/opentelemetry/opentracingbridge.rb to the end of the array.
+  # Move ./lib/opentelemetry/bridge/opentracing.rb to the end of the array.
   # Otherwise other files will overwrite the OpenTelemetryBridge module
   # comments with the license information.
-  ots_index = files.index('./lib/opentelemetry/opentracingbridge.rb')
+  ots_index = files.index('./lib/opentelemetry/bridge/opentracing.rb')
   files = files.insert(-1, files.delete_at(ots_index))
 
   t.files = files # optional
