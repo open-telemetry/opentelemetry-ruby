@@ -5,16 +5,16 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  module OpenTracingShim
-    # SpanShim provides a means of accessing an OpenTelemetry Span
+  module OpenTracingBridge
+    # Span provides a means of accessing an OpenTelemetry Span
     # as one would an OpenTracing span
-    class SpanShim < OpenTracing::Span
+    class Span < OpenTracing::Span
       attr_reader :span
       attr_reader :context
 
       def initialize(span)
         @span = span
-        @context = SpanContextShim.new(span)
+        @context = SpanContext.new(span)
         @baggage = {}
       end
 

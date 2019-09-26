@@ -5,16 +5,16 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  module OpenTracingShim
-    # A SpanContextShim provides a means of treating an OpenTelemetry::Trace::SpanContext
+  module OpenTracingBridge
+    # A SpanContext provides a means of treating an OpenTelemetry::Trace::SpanContext
     # as an OpenTracing::SpanContext
-    class SpanContextShim < OpenTracing::SpanContext
+    class SpanContext < OpenTracing::SpanContext
       attr_reader :context
 
-      # Returns a new {SpanContextShim}
+      # Returns a new {SpanContext}
       #
       # @param [SpanContext] context the OpenTelemetry SpanContext to shim
-      # @return [SpanContextShim]
+      # @return [SpanContext]
       def initialize(context)
         @context = context
       end

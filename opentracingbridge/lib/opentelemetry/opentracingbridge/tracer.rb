@@ -5,17 +5,17 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  module OpenTracingShim
-    # TracerShim provides a means of referencing
+  module OpenTracingBridge
+    # Tracer provides a means of referencing
     # an OpenTelemetry::Tracer as a OpenTracing::Tracer
-    class TracerShim < OpenTracing::Tracer
+    class Tracer < OpenTracing::Tracer
       HTTP_TEXT_FORMAT = OpenTelemetry::DistributedContext::Propagation::HTTPTextFormat.new
       BINARY_FORMAT = OpenTelemetry::DistributedContext::Propagation::BinaryFormat.new
       attr_reader :scope_manager
 
       def initialize(tracer)
         @tracer = tracer
-        @scope_manager = ScopeManagerShim.new tracer
+        @scope_manager = ScopeManager.new tracer
       end
 
       def active_span

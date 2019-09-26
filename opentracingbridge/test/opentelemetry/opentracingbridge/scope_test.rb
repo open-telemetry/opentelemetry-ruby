@@ -6,13 +6,13 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::OpenTracingShim::ScopeShim do
+describe OpenTelemetry::OpenTracingBridge::Scope do
   let(:mock_tracer) { Minitest::Mock.new }
-  let(:scope_shim) { OpenTelemetry::OpenTracingShim::ScopeShim.new mock_tracer }
+  let(:scope_bridge) { OpenTelemetry::OpenTracingBridge::Scope.new mock_tracer }
   describe '#span' do
     it 'gets the current span' do
       mock_tracer.expect(:current_span, 'an_active_span')
-      as = scope_shim.span
+      as = scope_bridge.span
       as.must_equal 'an_active_span'
       mock_tracer.verify
     end
@@ -23,7 +23,7 @@ describe OpenTelemetry::OpenTracingShim::ScopeShim do
       mock_span = Minitest::Mock.new
       mock_tracer.expect(:current_span, mock_span)
       mock_span.expect(:finish, nil)
-      scope_shim.close
+      scope_bridge.close
       mock_tracer.verify
       mock_span.verify
     end

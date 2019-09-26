@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  module OpenTracingShim
+  module OpenTracingBridge
     ## Current OpenTelemetry version
     VERSION = '0.0.0'
   end

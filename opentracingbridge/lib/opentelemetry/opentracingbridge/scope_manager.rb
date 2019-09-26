@@ -5,27 +5,27 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  module OpenTracingShim
-    # A ScopeManagerShim provides an API for interfacing with
+  module OpenTracingBridge
+    # A ScopeManager provides an API for interfacing with
     # OpenTelemetry Tracers and Spans as OpenTracing objects
-    class ScopeManagerShim < OpenTracing::ScopeManager
+    class ScopeManager < OpenTracing::ScopeManager
       def initialize(tracer)
         @tracer = tracer
       end
 
       # Activate the given span
       #
-      # @param [Span] span An OpenTelemetrySpan
-      # @return [SpanShim]
+      # @param [Span] span An OpenTelemetry Span
+      # @return [Span]
       def activate(span, finish_on_close: true)
-        SpanShim.new(@tracer.with_span(span))
+        Span.new(@tracer.with_span(span))
       end
 
-      # Get the active span as a SpanShim
+      # Get the active span as a OpenTracingBridge::Span
       #
-      # @return [SpanShim]
+      # @return [Span]
       def active
-        SpanShim.new(@tracer.current_span)
+        Span.new(@tracer.current_span)
       end
     end
   end
