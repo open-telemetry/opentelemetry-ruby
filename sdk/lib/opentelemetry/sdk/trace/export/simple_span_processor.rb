@@ -14,13 +14,13 @@ module OpenTelemetry
         #
         # Only spans that are sampled are converted, {OpenTelemetry::Trace::TraceFlags#sampled?} must
         # return true.
-        class SimpleSampledSpanProcessor
-          # Returns a new {SimpleSampledSpanProcessor} that converts spans to
+        class SimpleSpanProcessor
+          # Returns a new {SimpleSpanProcessor} that converts spans to
           # proto and forwards them to the given span_exporter.
           #
           # @param span_exporter the (duck type) SpanExporter to where the
           #   sampled Spans are pushed.
-          # @return [SimpleSampledSpanProcessor]
+          # @return [SimpleSpanProcessor]
           # @raise ArgumentError if the span_exporter is nil.
           def initialize(span_exporter)
             raise ArgumentError, 'span_exporter' if span_exporter.nil?
@@ -47,7 +47,7 @@ module OpenTelemetry
           #
           # @param [Span] span the {Span} that just ended.
           def on_finish(span)
-            return unless span.context.trace_flags.sampled?
+            return unless span.recording_events?
 
             @span_exporter.export([span.to_span_data])
           rescue => e # rubocop:disable Style/RescueStandardError

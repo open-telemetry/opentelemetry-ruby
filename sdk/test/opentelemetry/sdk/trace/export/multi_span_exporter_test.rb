@@ -84,7 +84,7 @@ describe OpenTelemetry::SDK::Trace::Export::MultiSpanExporter do
     mock_span_exporter2.verify
   end
 
-  it 'returns the worst error from #export (reveresed order)' do
+  it 'returns the worst error from #export (reversed order)' do
     # non-retryable error first
     mock_span_exporter.expect :export, export::FAILED_NOT_RETRYABLE, [Object]
     mock_span_exporter2.expect :export, export::FAILED_RETRYABLE, [Object]

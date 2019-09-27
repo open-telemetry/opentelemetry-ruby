@@ -7,16 +7,18 @@
 require 'test_helper'
 
 def stub_span_builder(sampled: false)
-  ctx = OpenTelemetry::Trace::SpanContext.new(
-    trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(sampled ? 1 : 0)
-  )
+  ctx = OpenTelemetry::Trace::SpanContext.new
   span = OpenTelemetry::Trace::Span.new(span_context: ctx)
   def span.to_span_data; end
-
+  if sampled
+    def span.recording_events?
+      true
+    end
+  end
   span
 end
 
-describe OpenTelemetry::SDK::Trace::Export::SimpleSampledSpanProcessor do
+describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
   export = OpenTelemetry::SDK::Trace::Export
 
   let :mock_span_exporter do
@@ -30,11 +32,11 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSampledSpanProcessor do
 
   let(:stub_span_unsampled) { stub_span_builder(sampled: false) }
   let(:stub_span_sampled)   { stub_span_builder(sampled: true) }
-  let(:processor) { export::SimpleSampledSpanProcessor.new(mock_span_exporter) }
+  let(:processor) { export::SimpleSpanProcessor.new(mock_span_exporter) }
 
   it 'requires a span_exporter to be passed to #initialize' do
     proc do
-      export::SimpleSampledSpanProcessor.new(nil)
+      export::SimpleSpanProcessor.new(nil)
     end.must_raise ArgumentError
   end
 
@@ -57,12 +59,12 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSampledSpanProcessor do
   end
 
   it 'calls #to_span_data on sampled spans in #on_finish' do
-    processor_noop = export::SimpleSampledSpanProcessor.new(
+    processor_noop = export::SimpleSpanProcessor.new(
       export::NoopSpanExporter.new
     )
 
     mock_span = Minitest::Mock.new
-    mock_span.expect :context, stub_span_sampled.context
+    mock_span.expect :recording_events?, true
     mock_span.expect :to_span_data, nil
 
     processor_noop.on_start(mock_span)
@@ -77,7 +79,7 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSampledSpanProcessor do
       raise ArgumentError
     end
 
-    processor_with_raising_exporter = export::SimpleSampledSpanProcessor.new(
+    processor_with_raising_exporter = export::SimpleSpanProcessor.new(
       raising_exporter
     )
 
