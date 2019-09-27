@@ -37,7 +37,7 @@ describe OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter do
 
   it 'freezes the return of #finished_spans' do
     exporter.export([span_data1])
-    exporter.finished_spans.frozen?.must_equal true
+    exporter.finished_spans.must_be :frozen?
   end
 
   it 'allows additional calls to #export after #finished_spans' do
