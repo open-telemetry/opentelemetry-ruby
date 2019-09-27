@@ -9,43 +9,43 @@ require 'test_helper'
 describe OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter do
   export = OpenTelemetry::SDK::Trace::Export
 
-  let(:span1)   { OpenTelemetry::Trace::Span.new }
-  let(:span2)   { OpenTelemetry::Trace::Span.new }
+  let(:span_data1)   { OpenTelemetry::SDK::Trace::SpanData.new(name: 'name1') }
+  let(:span_data2)   { OpenTelemetry::SDK::Trace::SpanData.new(name: 'name2') }
 
-  let(:subject) { export::InMemorySpanExporter.new }
+  let(:exporter) { export::InMemorySpanExporter.new }
 
-  it 'accepts an Array of Spans as argument to #export' do
-    subject.export([span1, span2])
+  it 'accepts an Array of SpanDatas as argument to #export' do
+    exporter.export([span_data1, span_data2])
 
-    finished_spans = subject.finished_spans
-    finished_spans[0].must_equal span1
-    finished_spans[1].must_equal span2
+    finished_spans = exporter.finished_spans
+    finished_spans[0].must_equal span_data1
+    finished_spans[1].must_equal span_data2
   end
 
-  it 'accepts an Enumerable of Spans as argument to #export' do
+  it 'accepts an Enumerable of SpanDatas as argument to #export' do
     # An anonymous Struct serves as a handy implementor of Enumerable
-    enumerable = Struct.new(:span1, :span2).new
-    enumerable.span1 = span1
-    enumerable.span2 = span2
+    enumerable = Struct.new(:span_data1, :span_data2).new
+    enumerable.span_data1 = span_data1
+    enumerable.span_data2 = span_data2
 
-    subject.export(enumerable)
+    exporter.export(enumerable)
 
-    finished_spans = subject.finished_spans
-    finished_spans[0].must_equal span1
-    finished_spans[1].must_equal span2
+    finished_spans = exporter.finished_spans
+    finished_spans[0].must_equal span_data1
+    finished_spans[1].must_equal span_data2
   end
 
   it 'freezes the return of #finished_spans' do
-    subject.export([span1])
-    subject.finished_spans.frozen?.must_equal true
+    exporter.export([span_data1])
+    exporter.finished_spans.frozen?.must_equal true
   end
 
   it 'allows additional calls to #export after #finished_spans' do
-    subject.export([span1])
-    finished_spans1 = subject.finished_spans
+    exporter.export([span_data1])
+    finished_spans1 = exporter.finished_spans
 
-    subject.export([span2])
-    finished_spans2 = subject.finished_spans
+    exporter.export([span_data2])
+    finished_spans2 = exporter.finished_spans
 
     finished_spans1.length.must_equal 1
     finished_spans2.length.must_equal 2
@@ -54,20 +54,20 @@ describe OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter do
   end
 
   it 'returns success from #export' do
-    subject.export([span1]).must_equal export::SUCCESS
+    exporter.export([span_data1]).must_equal export::SUCCESS
   end
 
   it 'returns error from #export after #shutdown called' do
-    subject.export([span1])
-    subject.shutdown
+    exporter.export([span_data1])
+    exporter.shutdown
 
-    subject.export([span2]).must_equal export::FAILED_NOT_RETRYABLE
+    exporter.export([span_data2]).must_equal export::FAILED_NOT_RETRYABLE
   end
 
   it 'returns an empty array from #export after #shutdown called' do
-    subject.export([span1])
-    subject.shutdown
+    exporter.export([span_data1])
+    exporter.shutdown
 
-    subject.finished_spans.length.must_equal 0
+    exporter.finished_spans.length.must_equal 0
   end
 end
