@@ -42,21 +42,21 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSampledSpanProcessor do
     subject.on_start(stub_span_sampled)
   end
 
-  it 'forwards sampled spans from #on_end' do
+  it 'forwards sampled spans from #on_finish' do
     mock_span_exporter.expect :export, export::SUCCESS, [Array]
 
     subject.on_start(stub_span_sampled)
-    subject.on_end(stub_span_sampled)
+    subject.on_finish(stub_span_sampled)
     mock_span_exporter.verify
   end
 
-  it 'ignores unsampled spans in #on_end' do
+  it 'ignores unsampled spans in #on_finish' do
     subject.on_start(stub_span_unsampled)
-    subject.on_end(stub_span_unsampled)
+    subject.on_finish(stub_span_unsampled)
     mock_span_exporter.verify
   end
 
-  it 'calls #to_span_data on sampled spans in #on_end' do
+  it 'calls #to_span_data on sampled spans in #on_finish' do
     subject_noop = export::SimpleSampledSpanProcessor.new(
       export::NoopSpanExporter.new
     )
@@ -66,11 +66,11 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSampledSpanProcessor do
     mock_span.expect :to_span_data, nil
 
     subject_noop.on_start(mock_span)
-    subject_noop.on_end(mock_span)
+    subject_noop.on_finish(mock_span)
     mock_span.verify
   end
 
-  it 'catches and logs exporter exceptions in #on_end' do
+  it 'catches and logs exporter exceptions in #on_finish' do
     raising_exporter = export::NoopSpanExporter.new
 
     def raising_exporter.export(_)
@@ -86,7 +86,7 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSampledSpanProcessor do
     logger_mock = Minitest::Mock.new
     logger_mock.expect :error, nil, [/ArgumentError/]
     OpenTelemetry.stub :logger, logger_mock do
-      subject_with_raising_exporter.on_end(stub_span_sampled)
+      subject_with_raising_exporter.on_finish(stub_span_sampled)
     end
 
     logger_mock.verify

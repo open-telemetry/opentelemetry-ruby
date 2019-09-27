@@ -14,8 +14,8 @@ describe OpenTelemetry::SDK::Trace::NoopSpanProcessor do
     subject.on_start(span)
   end
 
-  it 'implements #on_end' do
-    subject.on_end(span)
+  it 'implements #on_finish' do
+    subject.on_finish(span)
   end
 
   it 'implements #shutdown' do

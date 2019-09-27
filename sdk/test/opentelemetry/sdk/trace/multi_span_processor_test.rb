@@ -27,11 +27,11 @@ describe OpenTelemetry::SDK::Trace::MultiSpanProcessor do
     mock_processor2.verify
   end
 
-  it 'implements #on_end' do
-    mock_processor1.expect :on_end, nil, [span]
-    mock_processor2.expect :on_end, nil, [span]
+  it 'implements #on_finish' do
+    mock_processor1.expect :on_finish, nil, [span]
+    mock_processor2.expect :on_finish, nil, [span]
 
-    subject.on_end(span)
+    subject.on_finish(span)
 
     mock_processor1.verify
     mock_processor2.verify
