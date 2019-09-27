@@ -2,11 +2,15 @@ language: ruby
 env:
   global:
     - JRUBY_OPTS=--debug
+  matrix:
+    - TEST_DIR=api
+    - TEST_DIR=sdk
 rvm:
   - 2.4
   - 2.5
   - 2.6
   - jruby
   - truffleruby
+
 install: ( cd api && bundle install --jobs=3 --retry=3 )
-script: ( cd api && rake )
+script: ( cd $TEST_DIR && rake )

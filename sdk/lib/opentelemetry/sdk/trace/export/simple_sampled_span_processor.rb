@@ -46,12 +46,12 @@ module OpenTelemetry
           # not throw or block the execution thread.
           #
           # @param [Span] span the {Span} that just ended.
-          def on_end(span)
+          def on_finish(span)
             return unless span.context.trace_flags.sampled?
 
             @span_exporter.export([span.to_span_data])
           rescue => e # rubocop:disable Style/RescueStandardError
-            OpenTelemetry.logger.error("unexpected error in span.on_end - #{e}")
+            OpenTelemetry.logger.error("unexpected error in span.on_finish - #{e}")
           end
 
           # Called when {Tracer#shutdown} is called.
