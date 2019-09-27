@@ -14,24 +14,24 @@ describe OpenTelemetry::SDK::Trace::Export::MultiSpanExporter do
   let(:mock_span_exporter)  { Minitest::Mock.new }
   let(:mock_span_exporter2) { Minitest::Mock.new }
 
-  let(:subject) do
+  let(:exporter) do
     export::MultiSpanExporter.new([mock_span_exporter])
   end
 
-  let(:subject_multi) do
+  let(:exporter_multi) do
     export::MultiSpanExporter.new(
       [mock_span_exporter, mock_span_exporter2]
     )
   end
 
-  let(:subject_empty) do
+  let(:exporter_empty) do
     export::MultiSpanExporter.new([])
   end
 
   it 'accepts an Array of Spans as arg to #export and forwards them' do
     mock_span_exporter.expect(:export, export::SUCCESS) { |a| a.to_a == spans }
 
-    subject.export(spans).must_equal export::SUCCESS
+    exporter.export(spans).must_equal export::SUCCESS
     mock_span_exporter.verify
   end
 
@@ -43,7 +43,7 @@ describe OpenTelemetry::SDK::Trace::Export::MultiSpanExporter do
 
     mock_span_exporter.expect(:export, export::SUCCESS) { |a| a.to_a == spans }
 
-    subject.export(enumerable).must_equal export::SUCCESS
+    exporter.export(enumerable).must_equal export::SUCCESS
     mock_span_exporter.verify
   end
 
@@ -51,7 +51,7 @@ describe OpenTelemetry::SDK::Trace::Export::MultiSpanExporter do
     mock_span_exporter.expect(:export, export::SUCCESS) { |a| a.to_a == spans }
     mock_span_exporter2.expect(:export, export::SUCCESS) { |a| a.to_a == spans }
 
-    subject_multi.export(spans).must_equal export::SUCCESS
+    exporter_multi.export(spans).must_equal export::SUCCESS
     mock_span_exporter.verify
     mock_span_exporter2.verify
   end
@@ -60,7 +60,7 @@ describe OpenTelemetry::SDK::Trace::Export::MultiSpanExporter do
     mock_span_exporter.expect :export, export::SUCCESS, [Object]
     mock_span_exporter2.expect :export, export::FAILED_RETRYABLE, [Object]
 
-    subject_multi.export(spans).must_equal export::FAILED_RETRYABLE
+    exporter_multi.export(spans).must_equal export::FAILED_RETRYABLE
     mock_span_exporter.verify
     mock_span_exporter2.verify
   end
@@ -69,7 +69,7 @@ describe OpenTelemetry::SDK::Trace::Export::MultiSpanExporter do
     mock_span_exporter.expect :export, export::SUCCESS, [Object]
     mock_span_exporter2.expect :export, export::FAILED_NOT_RETRYABLE, [Object]
 
-    subject_multi.export(spans).must_equal export::FAILED_NOT_RETRYABLE
+    exporter_multi.export(spans).must_equal export::FAILED_NOT_RETRYABLE
     mock_span_exporter.verify
     mock_span_exporter2.verify
   end
@@ -79,7 +79,7 @@ describe OpenTelemetry::SDK::Trace::Export::MultiSpanExporter do
     mock_span_exporter.expect :export, export::FAILED_RETRYABLE, [Object]
     mock_span_exporter2.expect :export, export::FAILED_NOT_RETRYABLE, [Object]
 
-    subject_multi.export(spans).must_equal export::FAILED_NOT_RETRYABLE
+    exporter_multi.export(spans).must_equal export::FAILED_NOT_RETRYABLE
     mock_span_exporter.verify
     mock_span_exporter2.verify
   end
@@ -89,7 +89,7 @@ describe OpenTelemetry::SDK::Trace::Export::MultiSpanExporter do
     mock_span_exporter.expect :export, export::FAILED_NOT_RETRYABLE, [Object]
     mock_span_exporter2.expect :export, export::FAILED_RETRYABLE, [Object]
 
-    subject_multi.export(spans).must_equal export::FAILED_NOT_RETRYABLE
+    exporter_multi.export(spans).must_equal export::FAILED_NOT_RETRYABLE
     mock_span_exporter.verify
     mock_span_exporter2.verify
   end
@@ -102,7 +102,7 @@ describe OpenTelemetry::SDK::Trace::Export::MultiSpanExporter do
     logger_mock = Minitest::Mock.new
     logger_mock.expect :warn, nil, [/ArgumentError/]
     OpenTelemetry.stub :logger, logger_mock do
-      subject.export(spans).must_equal export::FAILED_NOT_RETRYABLE
+      exporter.export(spans).must_equal export::FAILED_NOT_RETRYABLE
     end
 
     logger_mock.verify
@@ -112,16 +112,16 @@ describe OpenTelemetry::SDK::Trace::Export::MultiSpanExporter do
     mock_span_exporter.expect :shutdown, nil
     mock_span_exporter2.expect :shutdown, nil
 
-    subject_multi.shutdown
+    exporter_multi.shutdown
     mock_span_exporter.verify
     mock_span_exporter2.verify
   end
 
   it 'returns success on #export with empty exporter list' do
-    subject_empty.export(spans).must_equal export::SUCCESS
+    exporter_empty.export(spans).must_equal export::SUCCESS
   end
 
   it 'accepts calls to #shutdown with empty exporter list' do
-    subject_empty.shutdown
+    exporter_empty.shutdown
   end
 end

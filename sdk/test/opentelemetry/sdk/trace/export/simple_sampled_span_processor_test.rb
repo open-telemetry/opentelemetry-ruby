@@ -30,7 +30,7 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSampledSpanProcessor do
 
   let(:stub_span_unsampled) { stub_span_builder(sampled: false) }
   let(:stub_span_sampled)   { stub_span_builder(sampled: true) }
-  let(:subject) { export::SimpleSampledSpanProcessor.new(mock_span_exporter) }
+  let(:processor) { export::SimpleSampledSpanProcessor.new(mock_span_exporter) }
 
   it 'requires a span_exporter to be passed to #initialize' do
     proc do
@@ -39,25 +39,25 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSampledSpanProcessor do
   end
 
   it 'accepts calls to #on_start' do
-    subject.on_start(stub_span_sampled)
+    processor.on_start(stub_span_sampled)
   end
 
   it 'forwards sampled spans from #on_finish' do
     mock_span_exporter.expect :export, export::SUCCESS, [Array]
 
-    subject.on_start(stub_span_sampled)
-    subject.on_finish(stub_span_sampled)
+    processor.on_start(stub_span_sampled)
+    processor.on_finish(stub_span_sampled)
     mock_span_exporter.verify
   end
 
   it 'ignores unsampled spans in #on_finish' do
-    subject.on_start(stub_span_unsampled)
-    subject.on_finish(stub_span_unsampled)
+    processor.on_start(stub_span_unsampled)
+    processor.on_finish(stub_span_unsampled)
     mock_span_exporter.verify
   end
 
   it 'calls #to_span_data on sampled spans in #on_finish' do
-    subject_noop = export::SimpleSampledSpanProcessor.new(
+    processor_noop = export::SimpleSampledSpanProcessor.new(
       export::NoopSpanExporter.new
     )
 
@@ -65,8 +65,8 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSampledSpanProcessor do
     mock_span.expect :context, stub_span_sampled.context
     mock_span.expect :to_span_data, nil
 
-    subject_noop.on_start(mock_span)
-    subject_noop.on_finish(mock_span)
+    processor_noop.on_start(mock_span)
+    processor_noop.on_finish(mock_span)
     mock_span.verify
   end
 
@@ -77,16 +77,16 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSampledSpanProcessor do
       raise ArgumentError
     end
 
-    subject_with_raising_exporter = export::SimpleSampledSpanProcessor.new(
+    processor_with_raising_exporter = export::SimpleSampledSpanProcessor.new(
       raising_exporter
     )
 
-    subject_with_raising_exporter.on_start(stub_span_sampled)
+    processor_with_raising_exporter.on_start(stub_span_sampled)
 
     logger_mock = Minitest::Mock.new
     logger_mock.expect :error, nil, [/ArgumentError/]
     OpenTelemetry.stub :logger, logger_mock do
-      subject_with_raising_exporter.on_finish(stub_span_sampled)
+      processor_with_raising_exporter.on_finish(stub_span_sampled)
     end
 
     logger_mock.verify
@@ -95,7 +95,7 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSampledSpanProcessor do
   it 'forwards calls to #shutdown to the exporter' do
     mock_span_exporter.expect :shutdown, nil
 
-    subject.shutdown
+    processor.shutdown
     mock_span_exporter.verify
   end
 end
