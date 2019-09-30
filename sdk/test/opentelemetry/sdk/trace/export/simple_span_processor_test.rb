@@ -6,14 +6,13 @@
 
 require 'test_helper'
 
-def stub_span_builder(sampled: false)
+def stub_span_builder(recording: false)
   ctx = OpenTelemetry::Trace::SpanContext.new
   span = OpenTelemetry::Trace::Span.new(span_context: ctx)
   def span.to_span_data; end
-  if sampled
-    def span.recording_events?
-      true
-    end
+
+  def span.recording_events?
+    ->(recording) {}
   end
   span
 end
@@ -30,8 +29,8 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
     mock
   end
 
-  let(:stub_span_unsampled) { stub_span_builder(sampled: false) }
-  let(:stub_span_sampled)   { stub_span_builder(sampled: true) }
+  let(:stub_span_unrecorded) { stub_span_builder(recording: false) }
+  let(:stub_span_recorded)   { stub_span_builder(recording: true) }
   let(:processor) { export::SimpleSpanProcessor.new(mock_span_exporter) }
 
   it 'requires a span_exporter to be passed to #initialize' do
@@ -41,24 +40,24 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
   end
 
   it 'accepts calls to #on_start' do
-    processor.on_start(stub_span_sampled)
+    processor.on_start(stub_span_recorded)
   end
 
-  it 'forwards sampled spans from #on_finish' do
+  it 'forwards recorded spans from #on_finish' do
     mock_span_exporter.expect :export, export::SUCCESS, [Array]
 
-    processor.on_start(stub_span_sampled)
-    processor.on_finish(stub_span_sampled)
+    processor.on_start(stub_span_recorded)
+    processor.on_finish(stub_span_recorded)
     mock_span_exporter.verify
   end
 
-  it 'ignores unsampled spans in #on_finish' do
-    processor.on_start(stub_span_unsampled)
-    processor.on_finish(stub_span_unsampled)
+  it 'ignores unrecorded spans in #on_finish' do
+    processor.on_start(stub_span_unrecorded)
+    processor.on_finish(stub_span_unrecorded)
     mock_span_exporter.verify
   end
 
-  it 'calls #to_span_data on sampled spans in #on_finish' do
+  it 'calls #to_span_data on recorded spans in #on_finish' do
     processor_noop = export::SimpleSpanProcessor.new(
       export::NoopSpanExporter.new
     )
@@ -83,12 +82,12 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
       raising_exporter
     )
 
-    processor_with_raising_exporter.on_start(stub_span_sampled)
+    processor_with_raising_exporter.on_start(stub_span_recorded)
 
     logger_mock = Minitest::Mock.new
     logger_mock.expect :error, nil, [/ArgumentError/]
     OpenTelemetry.stub :logger, logger_mock do
-      processor_with_raising_exporter.on_finish(stub_span_sampled)
+      processor_with_raising_exporter.on_finish(stub_span_recorded)
     end
 
     logger_mock.verify
