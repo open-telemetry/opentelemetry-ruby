@@ -28,4 +28,9 @@ describe OpenTelemetry::SDK::Trace::Export::NoopSpanExporter do
   it 'accepts calls to #shutdown' do
     exporter.shutdown
   end
+
+  it 'fails to export after shutdown' do
+    exporter.shutdown
+    exporter.export(spans).must_equal export::FAILED_NOT_RETRYABLE
+  end
 end

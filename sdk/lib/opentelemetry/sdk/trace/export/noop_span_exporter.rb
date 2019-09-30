@@ -15,18 +15,31 @@ module OpenTelemetry
         # To export data an exporter MUST be registered to the {Tracer} using
         # a {SimpleSpanProcessor} or a {BatchSpanProcessor}.
         class NoopSpanExporter
+          def initialize
+            @stopped = false
+            @mutex = Mutex.new
+          end
+
           # Called to export sampled {Span}s.
           #
           # @param [Enumerable<Span>] spans the list of sampled {Span}s to be
           #   exported.
           # @return [Integer] the result of the export.
           def export(spans)
-            SUCCESS
+            @mutex.synchronize do
+              return SUCCESS unless @stopped
+            end
+
+            FAILED_NOT_RETRYABLE
           end
 
           # Called when {Tracer#shutdown} is called, if this exporter is
           # registered to a {Tracer} object.
-          def shutdown; end
+          def shutdown
+            @mutex.synchronize do
+              @stopped = true
+            end
+          end
         end
       end
     end
