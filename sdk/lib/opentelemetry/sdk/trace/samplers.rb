@@ -40,9 +40,11 @@ module OpenTelemetry
       module Samplers
         RECORD_AND_PROPAGATE = Result.new(decision: Decision::RECORD_AND_PROPAGATE)
         NOT_RECORD = Result.new(decision: Decision::NOT_RECORD)
+        RECORD = Result.new(decision: Decision::RECORD)
         SAMPLING_HINTS = [Decision::NOT_RECORD, Decision::RECORD, Decision::RECORD_AND_PROPAGATE].freeze
+        APPLY_PROBABILITY_TO_SYMBOLS = %i[root_spans root_spans_and_remote_parent all_spans].freeze
 
-        private_constant(:RECORD_AND_PROPAGATE, :NOT_RECORD, :SAMPLING_HINTS)
+        private_constant(:RECORD_AND_PROPAGATE, :NOT_RECORD, :RECORD, :SAMPLING_HINTS, :APPLY_PROBABILITY_TO_SYMBOLS)
 
         # rubocop:disable Lint/UnusedBlockArgument
 
@@ -66,6 +68,7 @@ module OpenTelemetry
           end
         end
         # rubocop:enable Style/Lambda
+        # rubocop:enable Lint/UnusedBlockArgument
 
         # Returns a new sampler. The probability of sampling a trace is equal
         # to that of the specified probability.
@@ -76,35 +79,27 @@ module OpenTelemetry
         #   ignore. Defaults to ignore {OpenTelemetry::Trace::SamplingHint::RECORD}.
         # @param [optional Boolean] ignore_parent Whether to ignore parent
         #   sampling. Defaults to not ignore parent sampling.
-        # @param [optional Boolean] apply_to_root_spans Whether to apply
-        #   probability sampling to root spans. Defaults to true.
-        # @param [optional Boolean] apply_to_remote_parent Whether to apply
-        #   probability sampling to remote parent. Defaults to true.
-        # @param [optional Boolean] apply_to_all_spans Whether to apply
-        #   probability sampling to all spans. Defaults to false.
+        # @param [optional Symbol] apply_probability_to Whether to apply
+        #   probability sampling to root spans, root spans and remote parents,
+        #   or all spans. Allowed values include :root_spans, :root_spans_and_remote_parent,
+        #   and :all_spans. Defaults to :root_spans_and_remote_parent.
         # @raise [ArgumentError] if probability is out of range
         # @raise [ArgumentError] if ignore_hints contains invalid hints
-        # @raise [ArgumentError] unless apply_to_all_spans implies apply_to_root_spans
-        #   and apply_to_remote_parent
-        # @return [OpenTelemetry::Trace::Samplers::Sampler]
+        # @raise [ArgumentError] if apply_probability_to is not one of the allowed symbols
         def self.probability(probability,
                              ignore_hints: [OpenTelemetry::Trace::SamplingHint::RECORD],
                              ignore_parent: false,
-                             apply_to_root_spans: true,
-                             apply_to_remote_parent: true,
-                             apply_to_all_spans: false)
+                             apply_probability_to: :root_spans_and_remote_parent)
           raise ArgumentError, 'probability must be in range [0.0, 1.0]' unless (0.0..1.0).include?(probability)
           raise ArgumentError, 'ignore_hints' unless (ignore_hints.to_a - SAMPLING_HINTS).empty?
-          raise ArgumentError if apply_to_all_spans && (!apply_to_root_spans || !apply_to_remote_parent)
+          raise ArgumentError, 'apply_probability_to' unless APPLY_PROBABILITY_TO_SYMBOLS.include?(apply_probability_to)
 
           ProbabilitySampler.new(probability,
-                                 hints: SAMPLING_HINTS - ignore_hints.to_a,
+                                 ignore_hints: ignore_hints.to_a,
                                  ignore_parent: ignore_parent,
-                                 apply_to_root_spans: apply_to_root_spans,
-                                 apply_to_remote_parent: apply_to_remote_parent,
-                                 apply_to_all_spans: apply_to_all_spans)
+                                 apply_to_remote_parent: apply_probability_to != :root_spans,
+                                 apply_to_all_spans: apply_probability_to == :all_spans)
         end
-        # rubocop:enable Lint/UnusedBlockArgument
       end
     end
   end
