@@ -9,7 +9,7 @@ module OpenTelemetry
     module OpenTracing
       # Span provides a means of accessing an OpenTelemetry Span
       # as one would an OpenTracing span
-      class Span < OT::Span
+      class Span
         attr_reader :span
         attr_reader :context
 

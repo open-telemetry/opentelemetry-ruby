@@ -9,33 +9,33 @@ require 'test_helper'
 describe OpenTelemetry::Bridge::OpenTracing::Tracer do
   SpanContext = OpenTelemetry::Trace::SpanContext
   SpanContextBridge = OpenTelemetry::Bridge::OpenTracing::SpanContext
-  let(:mock_tracer) { Minitest::Mock.new }
-  let(:tracer_bridge) { OpenTelemetry::Bridge::OpenTracing::Tracer.new mock_tracer }
+  OpenTelemetry.tracer = Minitest::Mock.new
+  let(:tracer_bridge) { OpenTelemetry::Bridge::OpenTracing::Tracer.new }
   describe '#active_span' do
     it 'gets the tracers active span' do
-      mock_tracer.expect(:current_span, 'an_active_span')
+      OpenTelemetry.tracer.expect(:current_span, 'an_active_span')
       as = tracer_bridge.active_span
       as.must_equal 'an_active_span'
-      mock_tracer.verify
+      OpenTelemetry.tracer.verify
     end
   end
 
   describe '#start_span' do
     it 'calls start span on the tracer' do
       args = ['name', { with_parent: 'parent', attributes: 'tag', links: 'refs', start_timestamp: 'now' }]
-      mock_tracer.expect(:start_span, 'an_active_span', args)
+      OpenTelemetry.tracer.expect(:start_span, 'an_active_span', args)
       tracer_bridge.start_span('name', child_of: 'parent', references: 'refs', tags: 'tag', start_time: 'now')
-      mock_tracer.verify
+      OpenTelemetry.tracer.verify
     end
   end
 
   describe '#start_active_span' do
     it 'calls start span on the tracer and with_span to make active' do
       args = ['name', { with_parent: 'parent', attributes: 'tag', links: 'refs', start_timestamp: 'now' }]
-      mock_tracer.expect(:start_span, 'an_active_span', args)
-      mock_tracer.expect(:with_span, nil, ['an_active_span'])
+      OpenTelemetry.tracer.expect(:start_span, 'an_active_span', args)
+      OpenTelemetry.tracer.expect(:with_span, nil, ['an_active_span'])
       tracer_bridge.start_active_span('name', child_of: 'parent', references: 'refs', tags: 'tag', start_time: 'now')
-      mock_tracer.verify
+      OpenTelemetry.tracer.verify
     end
   end
 
@@ -43,7 +43,7 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
     # TODO: leaving tbd as binary_format case needs to be worked out and needs to call super
     it 'requires a block' do
       span_context = SpanContextBridge.new SpanContext.new
-      proc { tracer_bridge.inject(span_context, OpenTracing::FORMAT_TEXT_MAP, {}) }.must_raise(ArgumentError)
+      proc { tracer_bridge.inject(span_context, ::OpenTracing::FORMAT_TEXT_MAP, {}) }.must_raise(ArgumentError)
     end
 
     it 'injects TEXT_MAP format as HTTP_TEXT_FORMAT' do
@@ -51,7 +51,7 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
       span_context = SpanContextBridge.new context
       yielded = false
       carrier = {}
-      tracer_bridge.inject(span_context, OpenTracing::FORMAT_TEXT_MAP, carrier) do |c, k, v|
+      tracer_bridge.inject(span_context, ::OpenTracing::FORMAT_TEXT_MAP, carrier) do |c, k, v|
         c.must_equal(carrier)
         k.must_equal('traceparent')
         v.must_equal('00-ffffffffffffffffffffffffffffffff-1111111111111111-00')
@@ -66,7 +66,7 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
       span_context = SpanContextBridge.new context
       yielded = false
       carrier = {}
-      tracer_bridge.inject(span_context, OpenTracing::FORMAT_RACK, carrier) do |c, k, v|
+      tracer_bridge.inject(span_context, ::OpenTracing::FORMAT_RACK, carrier) do |c, k, v|
         c.must_equal(carrier)
         k.must_equal('traceparent')
         v.must_equal('00-ffffffffffffffffffffffffffffffff-1111111111111111-00')
@@ -82,13 +82,13 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
 
   describe '#extract' do
     it 'requires a block' do
-      proc { tracer_bridge.extract(OpenTracing::FORMAT_TEXT_MAP, {}) }.must_raise(ArgumentError)
+      proc { tracer_bridge.extract(::OpenTracing::FORMAT_TEXT_MAP, {}) }.must_raise(ArgumentError)
     end
 
     it 'extracts HTTP format from the context' do
       carrier = {}
       yielded = false
-      tracer_bridge.extract(OpenTracing::FORMAT_TEXT_MAP, carrier) do |c, key|
+      tracer_bridge.extract(::OpenTracing::FORMAT_TEXT_MAP, carrier) do |c, key|
         c.must_equal(carrier)
         key.must_equal('traceparent')
         yielded = true
@@ -100,7 +100,7 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
     it 'extracts rack format from the context' do
       carrier = {}
       yielded = false
-      tracer_bridge.extract(OpenTracing::FORMAT_RACK, carrier) do |c, key|
+      tracer_bridge.extract(::OpenTracing::FORMAT_RACK, carrier) do |c, key|
         c.must_equal(carrier)
         key.must_equal('traceparent')
         yielded = true

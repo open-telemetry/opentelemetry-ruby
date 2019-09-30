@@ -9,7 +9,7 @@ module OpenTelemetry
     module OpenTracing
       # A SpanContext provides a means of treating an OpenTelemetry::Trace::SpanContext
       # as an OpenTracing::SpanContext
-      class SpanContext < OT::SpanContext
+      class SpanContext
         attr_reader :context
 
         # Returns a new {SpanContext}

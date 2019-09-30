@@ -9,7 +9,7 @@ module OpenTelemetry
     module OpenTracing
       # A ScopeManager provides an API for interfacing with
       # OpenTelemetry Tracers and Spans as OpenTracing objects
-      class ScopeManager < OT::ScopeManager
+      class ScopeManager
         def initialize(tracer)
           @tracer = tracer
         end

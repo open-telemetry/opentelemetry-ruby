@@ -9,17 +9,13 @@ module OpenTelemetry
     module OpenTracing
       # Scope provides a means of referencing an OTelemetry Tracer's Context as
       # an OTracing scope
-      class Scope < OT::Scope
-        def initialize(tracer = nil)
-          @tracer = tracer || OpenTelemetry::Trace::Tracer.new
-        end
-
+      class Scope
         def span
-          @tracer.current_span
+          OpenTelemetry.tracer.current_span
         end
 
         def close
-          @tracer.current_span.finish
+          OpenTelemetry.tracer.current_span.finish
         end
       end
     end

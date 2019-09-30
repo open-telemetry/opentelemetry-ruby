@@ -11,10 +11,7 @@ module OpenTelemetry
   module Bridge
     # OpenTracing Bridge provides a means of converting
     # from OpenTelemetry to OpenTracing objects
-    OT = OpenTracing
     module OpenTracing
-      FORMAT_TEXT_MAP = OT::FORMAT_TEXT_MAP
-      FORMAT_RACK = OT::FORMAT_RACK
     end
   end
 end
