@@ -95,12 +95,11 @@ describe OpenTelemetry::SDK::Trace::Samplers do
 
     it 'returns result with hint if supplied' do
       sampler = Samplers.probability(0, ignore_hints: nil)
-      # TODO: Resolve the contradiction in OTEP 6.
-      # not_record_result = call_sampler(sampler, hint: OpenTelemetry::Trace::SamplingHint::NOT_RECORD)
+      not_record_result = call_sampler(sampler, hint: OpenTelemetry::Trace::SamplingHint::NOT_RECORD)
       record_result = call_sampler(sampler, hint: OpenTelemetry::Trace::SamplingHint::RECORD)
       record_and_propagate_result = call_sampler(sampler, hint: OpenTelemetry::Trace::SamplingHint::RECORD_AND_PROPAGATE)
-      # not_record_result.wont_be :sampled?
-      # not_record_result.wont_be :record_events?
+      not_record_result.wont_be :sampled?
+      not_record_result.wont_be :record_events?
       record_result.wont_be :sampled?
       record_result.must_be :record_events?
       record_and_propagate_result.must_be :sampled?
