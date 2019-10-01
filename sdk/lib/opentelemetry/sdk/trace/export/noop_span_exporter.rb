@@ -17,7 +17,6 @@ module OpenTelemetry
         class NoopSpanExporter
           def initialize
             @stopped = false
-            @mutex = Mutex.new
           end
 
           # Called to export sampled {Span}s.
@@ -26,9 +25,7 @@ module OpenTelemetry
           #   exported.
           # @return [Integer] the result of the export.
           def export(spans)
-            @mutex.synchronize do
-              return SUCCESS unless @stopped
-            end
+            return SUCCESS unless @stopped
 
             FAILED_NOT_RETRYABLE
           end
@@ -36,9 +33,7 @@ module OpenTelemetry
           # Called when {Tracer#shutdown} is called, if this exporter is
           # registered to a {Tracer} object.
           def shutdown
-            @mutex.synchronize do
-              @stopped = true
-            end
+            @stopped = true
           end
         end
       end
