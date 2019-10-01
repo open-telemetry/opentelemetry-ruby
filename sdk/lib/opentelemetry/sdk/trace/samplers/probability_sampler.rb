@@ -31,8 +31,15 @@ module OpenTelemetry
           # Callable interface for probability sampler. See {Samplers}.
           def call(trace_id:, span_id:, parent_context:, hint:, links:, name:, kind:, attributes:)
             ignore(links, name, kind, attributes)
-            hint = filter_hint(hint)
+            hint = nil if @ignored_hints.include?(hint)
 
+            # TODO: this or that?
+            # Alternative (optimized?) form
+            # sampled_flag = @use_parent_sampled_flag && parent_context&.trace_flags&.sampled?
+            # sampled_flag ||= hint == HINT_RECORD_AND_PROPAGATE
+            # sampled_flag ||= (parent_context.nil? || @apply_to_all_spans || (@apply_to_remote_parent && parent_context.remote?)) && probably(trace_id)
+            #
+            # More factored (readable?) form
             sampled_flag = sample(hint, trace_id, parent_context)
             record_events = hint == HINT_RECORD || sampled_flag
 
@@ -49,10 +56,6 @@ module OpenTelemetry
 
           # Explicitly ignore these parameters.
           def ignore(_links, _name, _kind, _attributes); end
-
-          def filter_hint(hint)
-            hint unless @ignored_hints.include?(hint)
-          end
 
           def sample(hint, trace_id, parent_context)
             if parent_context.nil?
