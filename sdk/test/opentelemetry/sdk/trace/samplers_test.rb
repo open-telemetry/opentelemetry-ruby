@@ -93,6 +93,30 @@ describe OpenTelemetry::SDK::Trace::Samplers do
       result.must_be :sampled?
     end
 
+    it 'samples a remote parent if apply_probability_to == :root_spans_and_remote_parent' do
+      context = OpenTelemetry::Trace::SpanContext.new(
+        trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(0),
+        remote: true
+      )
+      sampler = Samplers.probability(1, apply_probability_to: :root_spans_and_remote_parent)
+      result = call_sampler(sampler, parent_context: context)
+      result.must_be :sampled?
+    end
+
+    it 'does not sample a local child span if apply_probability_to == :root_spans_and_remote_parent' do
+      context = OpenTelemetry::Trace::SpanContext.new(trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(0))
+      sampler = Samplers.probability(1, apply_probability_to: :root_spans_and_remote_parent)
+      result = call_sampler(sampler, parent_context: context, trace_id: trace_id(1))
+      result.wont_be :sampled?
+    end
+
+    it 'does not sample a local child span if apply_probability_to == :root_spans' do
+      context = OpenTelemetry::Trace::SpanContext.new(trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(0))
+      sampler = Samplers.probability(1, apply_probability_to: :root_spans)
+      result = call_sampler(sampler, parent_context: context, trace_id: trace_id(1))
+      result.wont_be :sampled?
+    end
+
     it 'returns result with hint if supplied' do
       sampler = Samplers.probability(0, ignore_hints: nil)
       not_record_result = call_sampler(sampler, hint: OpenTelemetry::Trace::SamplingHint::NOT_RECORD)
@@ -110,9 +134,8 @@ describe OpenTelemetry::SDK::Trace::Samplers do
       proc { Samplers.probability(1, ignore_hints: [:hint]) }.must_raise(ArgumentError)
     end
 
-    it 'apply_to_all_spans implies apply_to_root_spans and apply_to_remote_parent' do
-      proc { Samplers.probability(1, apply_to_root_spans: false, apply_to_all_spans: true) }.must_raise(ArgumentError)
-      proc { Samplers.probability(1, apply_to_remote_parent: false, apply_to_all_spans: true) }.must_raise(ArgumentError)
+    it 'does not allow invalid symbols in apply_probability_to' do
+      proc { Samplers.probability(1, apply_probability_to: :foo) }.must_raise(ArgumentError)
     end
 
     it 'samples the smallest probability larger than the smallest trace_id' do
