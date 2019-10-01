@@ -12,11 +12,6 @@ module OpenTelemetry
       class Tracer
         HTTP_TEXT_FORMAT = OpenTelemetry::DistributedContext::Propagation::HTTPTextFormat.new
         BINARY_FORMAT = OpenTelemetry::DistributedContext::Propagation::BinaryFormat.new
-        attr_reader :scope_manager
-
-        def initialize
-          @scope_manager = ScopeManager.new OpenTelemetry.tracer
-        end
 
         def active_span
           OpenTelemetry.tracer.current_span

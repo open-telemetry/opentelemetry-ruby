@@ -7,15 +7,20 @@
 module OpenTelemetry
   module Bridge
     module OpenTracing
-      # Scope provides a means of referencing an OTelemetry Tracer's Context as
-      # an OTracing scope
+      # Scope represents an OpenTracing Scope
       class Scope
-        def span
-          OpenTelemetry.tracer.current_span
+        attr_reader :span
+
+        def initialize(manager, span, finish_on_close)
+          @manager = manager
+          @parent = manager.active
+          @span = span
+          @finish_on_close = finish_on_close
         end
 
         def close
-          OpenTelemetry.tracer.current_span.finish
+          @span.finish if @finish_on_close
+          @manager.active = @parent
         end
       end
     end

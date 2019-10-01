@@ -10,23 +10,19 @@ module OpenTelemetry
       # A ScopeManager provides an API for interfacing with
       # OpenTelemetry Tracers and Spans as OpenTracing objects
       class ScopeManager
-        def initialize(tracer)
-          @tracer = tracer
-        end
+        KEY = :__opentelemetry_opentracing_scope__
+        private_constant :KEY
 
-        # Activate the given span
-        #
-        # @param [Span] span An OpenTelemetry Span
-        # @return [Span]
-        def activate(span, finish_on_close: true)
-          Span.new(@tracer.with_span(span))
-        end
-
-        # Get the active span as a OpenTracingBridge::Span
-        #
-        # @return [Span]
         def active
-          Span.new(@tracer.current_span)
+          Thread.current[KEY]
+        end
+
+        def active=(scope)
+          Thread.current[KEY] = scope
+        end
+
+        def activate(span, finish_on_close: true)
+          self.active = Scope.new(self, span, finish_on_close)
         end
       end
     end

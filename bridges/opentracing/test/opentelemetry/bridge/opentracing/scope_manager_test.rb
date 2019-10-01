@@ -7,20 +7,36 @@
 require 'test_helper'
 
 describe OpenTelemetry::Bridge::OpenTracing::ScopeManager do
-  let(:mock_tracer) { Minitest::Mock.new }
-  let(:scope_manager_bridge) { OpenTelemetry::Bridge::OpenTracing::ScopeManager.new mock_tracer }
+  let(:scope_manager_bridge) { OpenTelemetry::Bridge::OpenTracing::ScopeManager.new }
   describe '#activate' do
-    it 'marks the current span as active' do
+    before do
+      scope_manager_bridge.active = nil
+    end
+
+    it 'marks the given span as active' do
+      span = 'span'
+      scope_manager_bridge.activate(span, finish_on_close: true)
+      scope_manager_bridge.active.must_be_instance_of OpenTelemetry::Bridge::OpenTracing::Scope
+      scope_manager_bridge.active.span.must_equal span
     end
   end
 
   describe '#active' do
-    it 'returns the tracers current_span' do
-      span = 'span'
-      mock_tracer.expect(:current_span, span)
-      span_bridge = scope_manager_bridge.active
-      span_bridge.span.must_equal(span)
-      mock_tracer.verify
+    before do
+      scope_manager_bridge.active = nil
+    end
+
+    it 'returns nil if not set' do
+      scope_manager_bridge.active.must_be_nil
+      scope_manager_bridge.active = nil
+    end
+
+    it 'sets and returns a given scope' do
+      scope = 'scope'
+      scope_manager_bridge.active.must_be_nil
+      scope_manager_bridge.active = scope
+      scope_manager_bridge.active.must_equal scope
+      scope_manager_bridge.active = nil
     end
   end
 end
