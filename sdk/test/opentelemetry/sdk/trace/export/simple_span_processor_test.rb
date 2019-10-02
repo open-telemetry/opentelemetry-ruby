@@ -11,9 +11,7 @@ def stub_span_builder(recording: false)
   span = OpenTelemetry::Trace::Span.new(span_context: ctx)
   def span.to_span_data; end
 
-  def span.recording_events?
-    ->(recording) {}
-  end
+  span.define_singleton_method(:recording_events?) { recording }
   span
 end
 
