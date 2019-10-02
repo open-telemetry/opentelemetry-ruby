@@ -71,76 +71,48 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
   end
 
   describe '#inject' do
-    # TODO: leaving tbd as binary_format case needs to be worked out and needs to call super
-    it 'requires a block' do
-      span_context = SpanContextBridge.new SpanContext.new
-      proc { tracer_bridge.inject(span_context, ::OpenTracing::FORMAT_TEXT_MAP, {}) }.must_raise(ArgumentError)
-    end
-
     it 'injects TEXT_MAP format as HTTP_TEXT_FORMAT' do
       context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16)
       span_context = SpanContextBridge.new context
-      yielded = false
       carrier = {}
-      tracer_bridge.inject(span_context, ::OpenTracing::FORMAT_TEXT_MAP, carrier) do |c, k, v|
-        c.must_equal(carrier)
-        k.must_equal('traceparent')
-        v.must_equal('00-ffffffffffffffffffffffffffffffff-1111111111111111-00')
-        yielded = true
-        c
-      end
-      yielded.must_equal(true)
+      carried, key, value = tracer_bridge.inject(span_context, ::OpenTracing::FORMAT_TEXT_MAP, carrier)
+      key.must_equal 'traceparent'
+      value.must_equal '00-ffffffffffffffffffffffffffffffff-1111111111111111-00'
+      carrier.must_equal carried
     end
 
     it 'injects RACK format as HTTP_TEXT_FORMAT' do
       context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16)
       span_context = SpanContextBridge.new context
-      yielded = false
       carrier = {}
-      tracer_bridge.inject(span_context, ::OpenTracing::FORMAT_RACK, carrier) do |c, k, v|
-        c.must_equal(carrier)
-        k.must_equal('traceparent')
-        v.must_equal('00-ffffffffffffffffffffffffffffffff-1111111111111111-00')
-        yielded = true
-        c
-      end
-      yielded.must_equal(true)
+      carried, key, value = tracer_bridge.inject(span_context, ::OpenTracing::FORMAT_RACK, carrier)
+      key.must_equal 'traceparent'
+      value.must_equal '00-ffffffffffffffffffffffffffffffff-1111111111111111-00'
+      carrier.must_equal carried
     end
 
     it 'injects binary format onto the context' do
+      # TODO: write this
     end
   end
 
   describe '#extract' do
-    it 'requires a block' do
-      proc { tracer_bridge.extract(::OpenTracing::FORMAT_TEXT_MAP, {}) }.must_raise(ArgumentError)
-    end
-
     it 'extracts HTTP format from the context' do
       carrier = {}
-      yielded = false
-      tracer_bridge.extract(::OpenTracing::FORMAT_TEXT_MAP, carrier) do |c, key|
-        c.must_equal(carrier)
-        key.must_equal('traceparent')
-        yielded = true
-        'a header'
-      end
-      yielded.must_equal(true)
+      span_context = tracer_bridge.extract(::OpenTracing::FORMAT_TEXT_MAP, carrier)
+      span_context.wont_be_nil
+      span_context.must_be_instance_of OpenTelemetry::Trace::SpanContext
     end
 
     it 'extracts rack format from the context' do
       carrier = {}
-      yielded = false
-      tracer_bridge.extract(::OpenTracing::FORMAT_RACK, carrier) do |c, key|
-        c.must_equal(carrier)
-        key.must_equal('traceparent')
-        yielded = true
-        'a header'
-      end
-      yielded.must_equal(true)
+      span_context = tracer_bridge.extract(::OpenTracing::FORMAT_RACK, carrier)
+      span_context.wont_be_nil
+      span_context.must_be_instance_of OpenTelemetry::Trace::SpanContext
     end
 
     it 'extracts binary format from the context' do
+      # TODO: write this
     end
   end
 end

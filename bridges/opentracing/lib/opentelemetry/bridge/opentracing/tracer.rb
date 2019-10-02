@@ -50,11 +50,11 @@ module OpenTelemetry
           span
         end
 
-        def inject(span_context, format, carrier, &block)
+        def inject(span_context, format, carrier)
           case format
           when ::OpenTracing::FORMAT_TEXT_MAP, ::OpenTracing::FORMAT_RACK
             context = span_context.context
-            HTTP_TEXT_FORMAT.inject(context, carrier, &block)
+            HTTP_TEXT_FORMAT.inject(context, carrier) { |c, k, v| return c, k, v }
           when ::OpenTracing::FORMAT_BINARY
             # TODO: I don't think this is right
             yield carrier, TraceParent::TRACE_PARENT_HEADER, BINARY_FORMAT.to_bytes(span_context)
@@ -63,12 +63,11 @@ module OpenTelemetry
           end
         end
 
-        def extract(format, carrier, &block)
+        def extract(format, carrier)
           case format
           when ::OpenTracing::FORMAT_TEXT_MAP, ::OpenTracing::FORMAT_RACK
-            HTTP_TEXT_FORMAT.extract(carrier, &block)
+            HTTP_TEXT_FORMAT.extract(carrier) {}
           when ::OpenTracing::FORMAT_BINARY
-            # TODO: I don't think this is right
             BINARY_FORMAT.from_bytes(carrier)
           else
             warn 'Unknown extract format'
