@@ -23,13 +23,15 @@ module OpenTelemetry
                               start_time: Time.now,
                               tags: nil,
                               ignore_active_scope: false,
-                              finish_on_close: true)
+                              finish_on_close: true,
+                              &block)
           span = OpenTelemetry.tracer.start_span(operation_name,
                                                  with_parent: child_of,
                                                  attributes: tags,
                                                  links: references,
                                                  start_timestamp: start_time)
-          OpenTelemetry.tracer.with_span(span)
+          OpenTelemetry.tracer.with_span(span, &block) if block_given?
+          Scope.new(ScopeManager.new, span, finish_on_close)
         end
 
         def start_span(operation_name,
@@ -37,12 +39,15 @@ module OpenTelemetry
                        references: nil,
                        start_time: Time.now,
                        tags: nil,
-                       ignore_active_scope: false)
-          OpenTelemetry.tracer.start_span(operation_name,
-                                          with_parent: child_of,
-                                          attributes: tags,
-                                          links: references,
-                                          start_timestamp: start_time)
+                       ignore_active_scope: false,
+                       &block)
+          span = OpenTelemetry.tracer.start_span(operation_name,
+                                                 with_parent: child_of,
+                                                 attributes: tags,
+                                                 links: references,
+                                                 start_timestamp: start_time)
+          OpenTelemetry.tracer.with_span(span, &block) if block_given?
+          span
         end
 
         def inject(span_context, format, carrier, &block)

@@ -14,4 +14,4 @@ rvm:
   - truffleruby
 
 install: ( cd $TEST_DIR && bundle install --jobs=3 --retry=3 )
-script: (  cd $TEST_DIR && rake )
+script: ( cd $TEST_DIR && rake )

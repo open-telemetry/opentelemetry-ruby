@@ -2,3 +2,4 @@ api/Gemfile.lock
 **/.yardoc
 **/docs
 **/coverage
+**/.byebug_history
