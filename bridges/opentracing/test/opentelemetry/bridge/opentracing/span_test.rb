@@ -9,58 +9,90 @@ require 'test_helper'
 describe OpenTelemetry::Bridge::OpenTracing::Span do
   SpanBridge = OpenTelemetry::Bridge::OpenTracing::Span
 
-  class TestSpan
-    attr_reader :name
-    attr_writer :name
-    attr_reader :attributes
-    attr_reader :end_timestamp
-
-    def initialize
-      @name = nil
-      @attributes = {}
-      @end_timestamp = nil
-    end
-
-    def set_attribute(key, val)
-      @attributes[key] = val
-    end
-
-    def finish(end_timestamp: Time.now)
-      @end_timestamp = end_timestamp
-    end
-  end
-
-  let(:span_bridge) { SpanBridge.new(TestSpan.new) }
+  let(:span_mock) { Minitest::Mock.new }
+  let(:span_bridge) { SpanBridge.new span_mock }
   describe '#operation_name=' do
     it 'sets the operation name on the underlying span' do
+      span_mock.expect(:name=, nil, ['operation'])
       span_bridge.operation_name = 'operation'
-      span_bridge.span.name.must_equal 'operation'
+      span_mock.verify
     end
   end
 
   describe '#set_tag' do
     it 'sets the tag as attribute on underlying span' do
+      span_mock.expect(:set_attribute, nil, %w[k v])
       span_bridge.set_tag('k', 'v')
-      span_bridge.span.attributes['k'].must_equal 'v'
+      span_mock.verify
     end
   end
 
   describe '#finish' do
     it 'sets end timestamp' do
-      span_bridge.span.end_timestamp.must_be_nil
+      span_mock.expect :finish, nil do |_|
+        true
+      end
       span_bridge.finish
-      span_bridge.span.end_timestamp.wont_be_nil
+      span_mock.verify
     end
 
     it 'sets end timestamp passed in' do
-      # TODO: uh make this pass
-      # ts = Time.now
-      # span_bridge.finish
-      # span_bridge.span.end_timestamp.must_equal(ts)
+      ts = Time.now
+      span_mock.expect :finish, nil do |end_timestamp:|
+        end_timestamp == ts
+      end
+      span_bridge.finish(end_time: ts)
+      span_mock.verify
     end
 
     it 'returns itself' do
+      span_mock.expect :finish, nil do |_|
+        true
+      end
       span_bridge.finish.must_equal(span_bridge)
+      span_mock.verify
+    end
+  end
+
+  describe '#log' do
+    it 'adds the event to the span' do
+      span_mock.expect :add_event, nil do |args|
+        args[:name] == 'an_event' &&
+          args[:attributes] == { foo: 'bar' }
+      end
+      span_bridge.log(event: 'an_event', foo: 'bar')
+      span_mock.verify
+    end
+
+    it 'adds the event with a passed in timestamp' do
+      ts = Time.now
+      span_mock.expect :add_event, nil do |args|
+        args[:name] == 'an_event' &&
+          args[:timestamp] == ts &&
+          args[:attributes] == { foo: 'bar' }
+      end
+      span_bridge.log(event: 'an_event', timestamp: ts, foo: 'bar')
+      span_mock.verify
+    end
+  end
+
+  describe '#log_kv' do
+    it 'adds the event with the default name' do
+      span_mock.expect :add_event, nil do |args|
+        args[:name] == 'log' &&
+          args[:attributes] == { foo: 'bar' }
+      end
+      span_bridge.log_kv(foo: 'bar')
+      span_mock.verify
+    end
+
+    it 'adds the event with the name from fields' do
+      span_mock.expect :add_event, nil do |args|
+        args[:name] == 'not default' &&
+          args[:attributes] == { event: 'not default', foo: 'bar' }
+      end
+      span_bridge.log_kv(event: 'not default', foo: 'bar')
+      span_mock.verify
     end
   end
 end

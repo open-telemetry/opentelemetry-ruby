@@ -10,6 +10,8 @@ module OpenTelemetry
       # Span provides a means of accessing an OpenTelemetry Span
       # as one would an OpenTracing span
       class Span
+        DEFAULT_EVENT_NAME = 'log'
+
         attr_reader :span
         attr_reader :context
 
@@ -42,9 +44,11 @@ module OpenTelemetry
           self
         end
 
-        # The following have no OpenTelemetry Equivalent and are left noop
         def set_baggage_item(key, value)
-          self
+          # if key.is_nil? || value.is_nil?
+          #   return self
+          # end
+          # TODO: needs to be fleshed out along with span context refactor based on java implementation
         end
 
         def get_baggage_item(key)
@@ -52,11 +56,18 @@ module OpenTelemetry
         end
 
         def log(event: nil, timestamp: Time.now, **fields)
-          nil
+          span.add_event(name: event, timestamp: timestamp, attributes: fields)
         end
 
         def log_kv(timestamp: Time.now, **fields)
-          nil
+          event = event_name_from_fields(fields)
+          span.add_event(name: event, timestamp: timestamp, attributes: fields)
+        end
+
+        def event_name_from_fields(fields)
+          return fields.fetch(:event, DEFAULT_EVENT_NAME) unless fields.nil?
+
+          DEFAULT_EVENT_NAME
         end
       end
     end
