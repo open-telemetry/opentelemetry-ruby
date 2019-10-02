@@ -30,17 +30,11 @@ module OpenTelemetry
           #
           # Callable interface for probability sampler. See {Samplers}.
           def call(trace_id:, span_id:, parent_context:, hint:, links:, name:, kind:, attributes:)
-            ignore(links, name, kind, attributes)
+            # Ignored for sampling decision: links, name, kind, attributes.
+
             hint = nil if @ignored_hints.include?(hint)
 
-            # TODO: this or that?
-            # Alternative (optimized?) form
-            # sampled_flag = @use_parent_sampled_flag && parent_context&.trace_flags&.sampled?
-            # sampled_flag ||= hint == HINT_RECORD_AND_PROPAGATE
-            # sampled_flag ||= (parent_context.nil? || @apply_to_all_spans || (@apply_to_remote_parent && parent_context.remote?)) && probably(trace_id)
-            #
-            # More factored (readable?) form
-            sampled_flag = sample(hint, trace_id, parent_context)
+            sampled_flag = sample?(hint, trace_id, parent_context)
             record_events = hint == HINT_RECORD || sampled_flag
 
             if sampled_flag && record_events
@@ -54,26 +48,23 @@ module OpenTelemetry
 
           private
 
-          # Explicitly ignore these parameters.
-          def ignore(_links, _name, _kind, _attributes); end
-
-          def sample(hint, trace_id, parent_context)
+          def sample?(hint, trace_id, parent_context)
             if parent_context.nil?
-              hint == HINT_RECORD_AND_PROPAGATE || probably(trace_id)
+              hint == HINT_RECORD_AND_PROPAGATE || sample_trace_id?(trace_id)
             else
-              parent_sampled_flag(parent_context) || hint == HINT_RECORD_AND_PROPAGATE || probably_for_child(parent_context, trace_id)
+              parent_sampled?(parent_context) || hint == HINT_RECORD_AND_PROPAGATE || sample_trace_id_for_child?(parent_context, trace_id)
             end
           end
 
-          def parent_sampled_flag(parent_context)
+          def parent_sampled?(parent_context)
             @use_parent_sampled_flag && parent_context.trace_flags.sampled?
           end
 
-          def probably_for_child(parent_context, trace_id)
-            (@apply_to_all_spans || (@apply_to_remote_parent && parent_context.remote?)) && probably(trace_id)
+          def sample_trace_id_for_child?(parent_context, trace_id)
+            (@apply_to_all_spans || (@apply_to_remote_parent && parent_context.remote?)) && sample_trace_id?(trace_id)
           end
 
-          def probably(trace_id)
+          def sample_trace_id?(trace_id)
             @probability == 1.0 || trace_id[16, 16] < @id_upper_bound
           end
         end
