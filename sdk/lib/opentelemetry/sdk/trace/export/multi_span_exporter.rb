@@ -12,7 +12,7 @@ module OpenTelemetry
         # received spans to a collection of SpanExporters.
         #
         # Can be used to export to multiple backends using the same
-        # SpanProcessor like a {SimpleSampledSpanProcessor} or a
+        # SpanProcessor like a {SimpleSpanProcessor} or a
         # {BatchSpanProcessor}.
         class MultiSpanExporter
           def initialize(span_exporters)
@@ -29,7 +29,7 @@ module OpenTelemetry
               begin
                 merge_result_code(result_code, span_exporter.export(spans))
               rescue => e # rubocop:disable Style/RescueStandardError
-                logger.warn("exception raised by export - #{e}")
+                OpenTelemetry.logger.warn("exception raised by export - #{e}")
                 FAILED_NOT_RETRYABLE
               end
             end
