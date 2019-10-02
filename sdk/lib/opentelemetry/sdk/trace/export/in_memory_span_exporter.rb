@@ -37,10 +37,10 @@ module OpenTelemetry
             @mutex = Mutex.new
           end
 
-          # Returns a frozen array of the finished {Span}s, represented by
+          # Returns a frozen array of the finished {SpanData}s, represented by
           # {io.opentelemetry.proto.trace.v1.Span}.
           #
-          # @return [Array<Span>] a frozen array of the finished {Span}s.
+          # @return [Array<SpanData>] a frozen array of the finished {SpanData}s.
           def finished_spans
             @mutex.synchronize do
               @finished_spans.clone.freeze
@@ -56,17 +56,17 @@ module OpenTelemetry
             end
           end
 
-          # Called to export sampled {Span}s.
+          # Called to export sampled {SpanData}s.
           #
-          # @param [Enumerable<Span>] spans the list of sampled {Span}s to be
+          # @param [Enumerable<SpanData>] span_datas the list of sampled {SpanData}s to be
           #   exported.
           # @return [Integer] the result of the export, SUCCESS or
           #   FAILED_NOT_RETRYABLE
-          def export(spans)
+          def export(span_datas)
             @mutex.synchronize do
               return FAILED_NOT_RETRYABLE if @stopped
 
-              @finished_spans.concat(spans)
+              @finished_spans.concat(span_datas.to_a)
             end
             SUCCESS
           end
