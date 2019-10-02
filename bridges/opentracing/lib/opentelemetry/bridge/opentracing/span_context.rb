@@ -15,9 +15,12 @@ module OpenTelemetry
         # Returns a new {SpanContext}
         #
         # @param [SpanContext] context the OpenTelemetry SpanContext to shim
+        # @param [DistributedContext] where the baggage is stored
         # @return [SpanContext]
-        def initialize(context)
+        def initialize(context, dist_context: nil)
           @context = context
+          dist_context ||= OpenTelemetry::DistributedContext::DistributedContext.new
+          @dist_context = dist_context
         end
 
         def trace_id
@@ -28,9 +31,8 @@ module OpenTelemetry
           context.span_id
         end
 
-        # Currently unimplemented
         def baggage
-          nil
+          @dist_context
         end
       end
     end

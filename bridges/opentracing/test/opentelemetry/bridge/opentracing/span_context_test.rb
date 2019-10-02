@@ -20,4 +20,10 @@ describe OpenTelemetry::Bridge::OpenTracing::SpanContext do
       span_context_bridge.span_id.must_equal span_context.span_id
     end
   end
+
+  describe '#baggage' do
+    it 'returns the distributed context' do
+      span_context_bridge.baggage.entries.must_equal []
+    end
+  end
 end

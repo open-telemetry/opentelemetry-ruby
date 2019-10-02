@@ -15,10 +15,9 @@ module OpenTelemetry
         attr_reader :span
         attr_reader :context
 
-        def initialize(span)
+        def initialize(span, dist_context: nil)
           @span = span
-          @context = SpanContext.new(span)
-          @baggage = {}
+          @context = SpanContext.new(span, dist_context: dist_context)
         end
 
         # Set the name of the operation
@@ -45,14 +44,13 @@ module OpenTelemetry
         end
 
         def set_baggage_item(key, value)
-          # if key.is_nil? || value.is_nil?
-          #   return self
-          # end
-          # TODO: needs to be fleshed out along with span context refactor based on java implementation
+          return self if key.nil? || value.nil?
+
+          @context.baggage[key] = value
         end
 
         def get_baggage_item(key)
-          nil
+          @context.baggage[key]
         end
 
         def log(event: nil, timestamp: Time.now, **fields)

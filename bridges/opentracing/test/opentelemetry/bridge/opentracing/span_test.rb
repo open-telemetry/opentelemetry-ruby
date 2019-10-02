@@ -10,7 +10,8 @@ describe OpenTelemetry::Bridge::OpenTracing::Span do
   SpanBridge = OpenTelemetry::Bridge::OpenTracing::Span
 
   let(:span_mock) { Minitest::Mock.new }
-  let(:span_bridge) { SpanBridge.new span_mock }
+  let(:dist_context_mock) { Minitest::Mock.new }
+  let(:span_bridge) { SpanBridge.new(span_mock, dist_context: dist_context_mock) }
   describe '#operation_name=' do
     it 'sets the operation name on the underlying span' do
       span_mock.expect(:name=, nil, ['operation'])
@@ -93,6 +94,32 @@ describe OpenTelemetry::Bridge::OpenTracing::Span do
       end
       span_bridge.log_kv(event: 'not default', foo: 'bar')
       span_mock.verify
+    end
+  end
+
+  describe '#set_baggage_item' do
+    it 'does not call set baggage item with nil key' do
+      span_bridge.set_baggage_item(nil, 'val')
+      dist_context_mock.verify
+    end
+
+    it 'does not call set baggage item with nil value' do
+      span_bridge.set_baggage_item('key', nil)
+      dist_context_mock.verify
+    end
+
+    it 'calls set baggage with key and value' do
+      dist_context_mock.expect(:[]=, nil, %w[key val])
+      span_bridge.set_baggage_item('key', 'val')
+      dist_context_mock.verify
+    end
+  end
+
+  describe '#get_baggage_item' do
+    it 'calls get baggage on the context' do
+      dist_context_mock.expect(:[], 'val', %w[key])
+      span_bridge.get_baggage_item('key').must_equal 'val'
+      dist_context_mock.verify
     end
   end
 end

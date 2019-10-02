@@ -19,6 +19,8 @@ module OpenTelemetry
       def [](_key)
         nil
       end
+
+      def []=(_key, _value) end
     end
   end
 end
