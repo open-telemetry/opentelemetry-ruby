@@ -28,11 +28,14 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
       OpenTelemetry.tracer.verify
     end
 
-    it 'calls with_span if a block is given' do
+    it 'calls with_span if a block is given, yielding the span and returning the blocks value' do
       args = ['name', { with_parent: 'parent', attributes: 'tag', links: 'refs', start_timestamp: 'now' }]
       OpenTelemetry.tracer.expect(:start_span, 'an_active_span', args)
-      OpenTelemetry.tracer.expect(:with_span, nil, ['an_active_span'])
-      tracer_bridge.start_span('name', child_of: 'parent', references: 'refs', tags: 'tag', start_time: 'now') {}
+      OpenTelemetry.tracer.expect(:with_span, 'block_value', ['an_active_span'])
+      ret = tracer_bridge.start_span('name', child_of: 'parent', references: 'refs', tags: 'tag', start_time: 'now') do |span|
+        span.must_equal 'an_active_span'
+      end
+      ret.must_equal 'block_value'
       OpenTelemetry.tracer.verify
     end
 
@@ -53,11 +56,14 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
       OpenTelemetry.tracer.verify
     end
 
-    it 'calls with_span if a block is given' do
+    it 'calls with_span if a block is given, yielding the scope and returning the blocks value' do
       args = ['name', { with_parent: 'parent', attributes: 'tag', links: 'refs', start_timestamp: 'now' }]
       OpenTelemetry.tracer.expect(:start_span, 'an_active_span', args)
-      OpenTelemetry.tracer.expect(:with_span, nil, ['an_active_span'])
-      tracer_bridge.start_active_span('name', child_of: 'parent', references: 'refs', tags: 'tag', start_time: 'now') {}
+      OpenTelemetry.tracer.expect(:with_span, 'block_value', ['an_active_span'])
+      ret = tracer_bridge.start_active_span('name', child_of: 'parent', references: 'refs', tags: 'tag', start_time: 'now') do |scope|
+        scope.span.must_equal 'an_active_span'
+      end
+      ret.must_equal 'block_value'
       OpenTelemetry.tracer.verify
     end
 

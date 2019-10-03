@@ -30,8 +30,13 @@ module OpenTelemetry
                                                  attributes: tags,
                                                  links: references,
                                                  start_timestamp: start_time)
-          OpenTelemetry.tracer.with_span(span, &block) if block_given?
-          Scope.new(ScopeManager.new, span, finish_on_close)
+          scope = Scope.new(ScopeManager.new, span, finish_on_close)
+          if block_given?
+            yield scope
+            return OpenTelemetry.tracer.with_span(span, &block)
+          end
+
+          scope
         end
 
         def start_span(operation_name,
@@ -46,7 +51,10 @@ module OpenTelemetry
                                                  attributes: tags,
                                                  links: references,
                                                  start_timestamp: start_time)
-          OpenTelemetry.tracer.with_span(span, &block) if block_given?
+          if block_given?
+            yield span
+            return OpenTelemetry.tracer.with_span(span, &block)
+          end
           span
         end
 
