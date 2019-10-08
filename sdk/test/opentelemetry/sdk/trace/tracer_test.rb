@@ -9,18 +9,30 @@ require 'test_helper'
 describe OpenTelemetry::SDK::Trace::Tracer do
   Tracer = OpenTelemetry::SDK::Trace::Tracer
 
-  let(:tracer) { Tracer.new }
+  let(:tracer) { Tracer.new('', '') }
   let(:record_sampler) do
     ->(trace_id:, span_id:, parent_context:, hint:, links:, name:, kind:, attributes:) { Result.new(decision: Decision::RECORD) } # rubocop:disable Lint/UnusedBlockArgument
   end
 
   describe '#initialize' do
     it 'installs a Resource' do
-      Tracer.new.resource.wont_be_nil
+      _(Tracer.new(nil, nil).resource).wont_be_nil
     end
 
     it 'activates a default TraceConfig' do
-      Tracer.new.active_trace_config.must_equal(TraceConfig::DEFAULT)
+      _(Tracer.new(nil, nil).active_trace_config).must_equal(TraceConfig::DEFAULT)
+    end
+  end
+
+  describe '#name' do
+    it 'reflects the name passed in' do
+      _(Tracer.new('component', nil).name).must_equal('component')
+    end
+  end
+
+  describe '#version' do
+    it 'reflects the version passed in' do
+      _(Tracer.new(nil, 'semver:1.0').version).must_equal('semver:1.0')
     end
   end
 
