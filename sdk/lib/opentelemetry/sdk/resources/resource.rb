@@ -21,7 +21,7 @@ module OpenTelemetry
           # @return [Resource]
           def create(labels = {})
             frozen_labels = labels.each_with_object({}) do |(k, v), memo|
-              raise ArgumentError, 'label keys and values must be strings' unless k.is_a?(String) && v.is_a?(String)
+              return new({}.freeze) unless k.is_a?(String) && v.is_a?(String)
 
               memo[-k] = -v
             end.freeze
@@ -57,7 +57,7 @@ module OpenTelemetry
         # @return [Resource] A new resource formed by merging the current resource
         #   with other
         def merge(other)
-          raise ArgumentError unless other.is_a?(Resource)
+          return self unless other.is_a?(Resource)
 
           merged_labels = labels.merge(other.labels) do |_, old_v, new_v|
             old_v.empty? ? new_v : old_v

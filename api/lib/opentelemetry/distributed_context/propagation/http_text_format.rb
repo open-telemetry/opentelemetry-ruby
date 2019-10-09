@@ -23,8 +23,6 @@ module OpenTelemetry
         # @yield [Carrier, String] the carrier and the header key.
         # @return [SpanContext] the span context from the header, or a new one if parsing fails.
         def extract(carrier)
-          raise ArgumentError, 'block must be supplied' unless block_given?
-
           header = yield carrier, TraceParent::TRACE_PARENT_HEADER
           tp = TraceParent.from_string(header)
 
@@ -38,8 +36,6 @@ module OpenTelemetry
         # @param [SpanContext] context The active {Trace::SpanContext}.
         # @yield [Carrier, String, String] carrier, header key, header value.
         def inject(context, carrier)
-          raise ArgumentError, 'block must be supplied' unless block_given?
-
           yield carrier, TraceParent::TRACE_PARENT_HEADER, TraceParent.from_context(context).to_s
         end
 

@@ -68,7 +68,7 @@ module OpenTelemetry
         end
 
         def start_span(name, with_parent: nil, with_parent_context: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
-          raise ArgumentError if name.nil?
+          name ||= 'empty'
 
           parent_span_context = with_parent&.context || with_parent_context || current_span.context
           parent_span_context = nil unless parent_span_context.valid?

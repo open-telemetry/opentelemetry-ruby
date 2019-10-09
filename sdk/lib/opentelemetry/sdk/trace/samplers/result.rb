@@ -30,8 +30,6 @@ module OpenTelemetry
           # @param [optional Hash<String, Object>] attributes A frozen or freezable hash
           #   containing attributes to be attached to the span.
           def initialize(decision:, attributes: nil)
-            raise ArgumentError, 'decision' unless DECISIONS.include?(decision)
-
             @decision = decision
             @attributes = attributes.freeze || EMPTY_HASH
           end

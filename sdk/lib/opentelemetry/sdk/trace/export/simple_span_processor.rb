@@ -23,8 +23,6 @@ module OpenTelemetry
           # @return [SimpleSpanProcessor]
           # @raise ArgumentError if the span_exporter is nil.
           def initialize(span_exporter)
-            raise ArgumentError, 'span_exporter' if span_exporter.nil?
-
             @span_exporter = span_exporter
           end
 
@@ -49,14 +47,14 @@ module OpenTelemetry
           def on_finish(span)
             return unless span.recording_events?
 
-            @span_exporter.export([span.to_span_data])
+            @span_exporter&.export([span.to_span_data])
           rescue => e # rubocop:disable Style/RescueStandardError
             OpenTelemetry.logger.error("unexpected error in span.on_finish - #{e}")
           end
 
           # Called when {Tracer#shutdown} is called.
           def shutdown
-            @span_exporter.shutdown
+            @span_exporter&.shutdown
           end
         end
       end

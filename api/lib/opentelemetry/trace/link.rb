@@ -32,8 +32,7 @@ module OpenTelemetry
       #   this link. Attributes will be frozen during Link initialization.
       # @return [Link]
       def initialize(span_context, attributes = nil)
-        raise ArgumentError unless span_context.instance_of?(SpanContext)
-        raise ArgumentError unless Internal.valid_attributes?(attributes)
+        attributes = nil unless Internal.valid_attributes?(attributes)
 
         @context = span_context
         @attributes = attributes.freeze || EMPTY_ATTRIBUTES
