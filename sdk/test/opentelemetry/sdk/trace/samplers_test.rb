@@ -60,12 +60,6 @@ describe OpenTelemetry::SDK::Trace::Samplers do
       result.wont_be :sampled?
     end
 
-    it 'respects link sampling' do
-      link = OpenTelemetry::Trace::Link.new(context)
-      result = call_sampler(sampler, links: [link])
-      result.must_be :sampled?
-    end
-
     it 'returns a result' do
       result = call_sampler(sampler, trace_id: trace_id(123))
       result.must_be_instance_of(Result)
@@ -83,33 +77,51 @@ describe OpenTelemetry::SDK::Trace::Samplers do
       result.wont_be :sampled?
     end
 
-    it 'does not sample a root span unless apply_to_root_spans' do
-      sampler = Samplers.probability(1, apply_to_root_spans: false)
-      result = call_sampler(sampler, parent_context: nil)
-      result.wont_be :sampled?
-    end
-
-    it 'does not sample a remote parent unless apply_to_remote_parent' do
+    it 'does not sample a remote parent if apply_probability_to == :root_spans' do
       context = OpenTelemetry::Trace::SpanContext.new(
         trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(0),
         remote: true
       )
-      sampler = Samplers.probability(1, apply_to_remote_parent: false)
+      sampler = Samplers.probability(1, apply_probability_to: :root_spans)
       result = call_sampler(sampler, parent_context: context)
       result.wont_be :sampled?
     end
 
-    it 'samples a local child span if apply_to_all_spans' do
-      sampler = Samplers.probability(1, apply_to_all_spans: true)
+    it 'samples a local child span if apply_probability_to == :all_spans' do
+      sampler = Samplers.probability(1, apply_probability_to: :all_spans)
       result = call_sampler(sampler, parent_context: context, trace_id: trace_id(1))
       result.must_be :sampled?
     end
 
+    it 'samples a remote parent if apply_probability_to == :root_spans_and_remote_parent' do
+      context = OpenTelemetry::Trace::SpanContext.new(
+        trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(0),
+        remote: true
+      )
+      sampler = Samplers.probability(1, apply_probability_to: :root_spans_and_remote_parent)
+      result = call_sampler(sampler, parent_context: context)
+      result.must_be :sampled?
+    end
+
+    it 'does not sample a local child span if apply_probability_to == :root_spans_and_remote_parent' do
+      context = OpenTelemetry::Trace::SpanContext.new(trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(0))
+      sampler = Samplers.probability(1, apply_probability_to: :root_spans_and_remote_parent)
+      result = call_sampler(sampler, parent_context: context, trace_id: trace_id(1))
+      result.wont_be :sampled?
+    end
+
+    it 'does not sample a local child span if apply_probability_to == :root_spans' do
+      context = OpenTelemetry::Trace::SpanContext.new(trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(0))
+      sampler = Samplers.probability(1, apply_probability_to: :root_spans)
+      result = call_sampler(sampler, parent_context: context, trace_id: trace_id(1))
+      result.wont_be :sampled?
+    end
+
     it 'returns result with hint if supplied' do
-      sampler = Samplers.probability(1, ignore_hints: nil)
-      not_record_result = call_sampler(sampler, hint: Decision::NOT_RECORD)
-      record_result = call_sampler(sampler, hint: Decision::RECORD)
-      record_and_propagate_result = call_sampler(sampler, hint: Decision::RECORD_AND_PROPAGATE)
+      sampler = Samplers.probability(0, ignore_hints: nil)
+      not_record_result = call_sampler(sampler, hint: OpenTelemetry::Trace::SamplingHint::NOT_RECORD)
+      record_result = call_sampler(sampler, hint: OpenTelemetry::Trace::SamplingHint::RECORD)
+      record_and_propagate_result = call_sampler(sampler, hint: OpenTelemetry::Trace::SamplingHint::RECORD_AND_PROPAGATE)
       not_record_result.wont_be :sampled?
       not_record_result.wont_be :record_events?
       record_result.wont_be :sampled?
@@ -122,9 +134,8 @@ describe OpenTelemetry::SDK::Trace::Samplers do
       proc { Samplers.probability(1, ignore_hints: [:hint]) }.must_raise(ArgumentError)
     end
 
-    it 'apply_to_all_spans implies apply_to_root_spans and apply_to_remote_parent' do
-      proc { Samplers.probability(1, apply_to_root_spans: false, apply_to_all_spans: true) }.must_raise(ArgumentError)
-      proc { Samplers.probability(1, apply_to_remote_parent: false, apply_to_all_spans: true) }.must_raise(ArgumentError)
+    it 'does not allow invalid symbols in apply_probability_to' do
+      proc { Samplers.probability(1, apply_probability_to: :foo) }.must_raise(ArgumentError)
     end
 
     it 'samples the smallest probability larger than the smallest trace_id' do
@@ -162,8 +173,8 @@ describe OpenTelemetry::SDK::Trace::Samplers do
 
   def call_sampler(sampler, trace_id: nil, span_id: nil, parent_context: nil, hint: nil, links: nil, name: nil, kind: nil, attributes: nil)
     sampler.call(
-      trace_id: trace_id,
-      span_id: span_id,
+      trace_id: trace_id || OpenTelemetry::Trace.generate_trace_id,
+      span_id: span_id || OpenTelemetry::Trace.generate_span_id,
       parent_context: parent_context,
       hint: hint,
       links: links,
