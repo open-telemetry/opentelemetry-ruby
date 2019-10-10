@@ -11,11 +11,20 @@ module OpenTelemetry
       class Tracer < OpenTelemetry::Trace::Tracer
         attr_accessor :active_trace_config
         attr_accessor :resource # TODO: should this be read-only? If not, how should exporters know when it is updated?
+        attr_reader :name
+        attr_reader :version
 
+        # @api private
+        #
         # Returns a new {Tracer} instance.
         #
+        # @param [String] name Instrumentation package name
+        # @param [String] version Instrumentation package version
+        #
         # @return [Tracer]
-        def initialize
+        def initialize(name, version)
+          @name = name
+          @version = version
           @active_span_processor = NoopSpanProcessor.instance
           @active_trace_config = Config::TraceConfig::DEFAULT
           @registered_span_processors = []

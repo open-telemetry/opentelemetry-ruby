@@ -8,25 +8,25 @@ require 'test_helper'
 require 'tempfile'
 
 describe OpenTelemetry do
-  describe '.tracer' do
+  describe '.tracer_factory' do
     after do
-      # Ensure we don't leak custom tracers to other tests
-      OpenTelemetry.tracer = nil
+      # Ensure we don't leak custom tracer factories and tracers to other tests
+      OpenTelemetry.tracer_factory = nil
     end
 
-    it 'returns instance of Trace::Tracer by default' do
-      tracer = OpenTelemetry.tracer
-      tracer.must_be_instance_of(OpenTelemetry::Trace::Tracer)
+    it 'returns instance of Trace::TracerFactory by default' do
+      tracer_factory = OpenTelemetry.tracer_factory
+      _(tracer_factory).must_be_instance_of(OpenTelemetry::Trace::TracerFactory)
     end
 
     it 'returns the same instance when accessed multiple times' do
-      OpenTelemetry.tracer.must_equal(OpenTelemetry.tracer)
+      _(OpenTelemetry.tracer_factory).must_equal(OpenTelemetry.tracer_factory)
     end
 
-    it 'returns user specified tracer' do
-      custom_tracer = 'a custom tracer'
-      OpenTelemetry.tracer = custom_tracer
-      OpenTelemetry.tracer.must_equal(custom_tracer)
+    it 'returns user specified tracer factory' do
+      custom_tracer_factory = 'a custom tracer factory'
+      OpenTelemetry.tracer_factory = custom_tracer_factory
+      _(OpenTelemetry.tracer_factory).must_equal(custom_tracer_factory)
     end
   end
 
