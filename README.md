@@ -14,6 +14,34 @@ We'd love your help! Use tags [good first issue][issues-good-first-issue] and
 The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 [community page][ruby-sig] repo for information on this and other language SIGs.
 
+## Developer Setup
+
+1. Install Docker and Docker Compose for your operating system
+1. Get the latest code for the project
+1. Build the `opentelemetry/opentelemetry-ruby` image
+    * `docker-compose build`
+    * This makes the image available locally
+1. API:
+    1. Install dependencies
+        * `docker-compose run api bundle install`
+    1. Run the tests
+        * `docker-compose run api bundle exec rake test`
+1. SDK:
+    1. Install dependencies
+        * `docker-compose run sdk bundle install`
+    1. Run the tests for the sdk
+        * `docker-compose run sdk bundle exec rake test`
+
+### Docker Services
+
+We use Docker Compose to configure and build services used in development
+and testing. See `docker-compose.yml` for specific configuration details.
+
+The services provided are:
+
+* `app` - main container environment scoped to the `/app` directory. Used primarily to build and tag the `opentelemetry/opentelemetry-ruby:latest` image.
+* `api` - convenience environment scoped to the `api` gem in the `/app/api` directory.
+* `sdk` - convenience environment scoped to the `sdk` gem in the `/app/sdk` directory.
 
 ## Release Schedule
 
