@@ -54,8 +54,8 @@ module OpenTelemetry
       #
       # @return [self] returns itself
       def set_attribute(key, value)
-        raise ArgumentError unless Internal.valid_key?(key)
-        raise ArgumentError unless Internal.valid_value?(value)
+        raise ArgumentError, 'invalid key' unless Internal.valid_key?(key)
+        raise ArgumentError, 'invalid value' unless Internal.valid_value?(value)
 
         self
       end

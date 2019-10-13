@@ -25,6 +25,18 @@ describe OpenTelemetry::Trace::Span do
   end
 
   describe '#set_attribute' do
+    it 'returns an error when the key is invalid' do
+      proc { span.set_attribute(:foo, 'bar') }
+        .must_raise(ArgumentError)
+        .message.must_equal('invalid key')
+    end
+
+    it 'returns an error when the value is invalid' do
+      proc { span.set_attribute('foo', :bar) }
+        .must_raise(ArgumentError)
+        .message.must_equal('invalid value')
+    end
+
     it 'returns self' do
       span.set_attribute('foo', 'bar').must_equal(span)
     end
