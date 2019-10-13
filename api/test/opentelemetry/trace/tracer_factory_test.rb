@@ -16,4 +16,20 @@ describe OpenTelemetry::Trace::TracerFactory do
       _(tracer1).must_equal(tracer2)
     end
   end
+
+  describe '#binary_format' do
+    it 'returns an instance of BinaryFormat' do
+      _(tracer_factory.binary_format).must_be_instance_of(
+        Propagation::BinaryFormat
+      )
+    end
+  end
+
+  describe '#http_text_format' do
+    it 'returns an instance of HTTPTextFormat' do
+      _(tracer_factory.http_text_format).must_be_instance_of(
+        Propagation::HTTPTextFormat
+      )
+    end
+  end
 end
