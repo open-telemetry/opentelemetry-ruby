@@ -32,18 +32,6 @@ describe OpenTelemetry::Trace::Status do
       status.canonical_code.must_equal(0)
       status.description.must_equal('this is ok')
     end
-
-    it 'checks canonical_code for type' do
-      proc do
-        OpenTelemetry::Trace::Status.new(:OK)
-      end.must_raise(ArgumentError)
-    end
-
-    it 'checks description for type' do
-      proc do
-        OpenTelemetry::Trace::Status.new(0, description: :ok)
-      end.must_raise(ArgumentError)
-    end
   end
 
   describe '.ok?' do
