@@ -97,21 +97,21 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       tracer.active_trace_config = TraceConfig.new(sampler: Samplers::ALWAYS_OFF)
       span = tracer.start_root_span('root')
       span.context.trace_flags.wont_be :sampled?
-      span.wont_be :recording_events?
+      span.wont_be :recording?
     end
 
     it 'returns an unsampled span if sampler says record, but do not sample' do
       tracer.active_trace_config = TraceConfig.new(sampler: record_sampler)
       span = tracer.start_root_span('root')
       span.context.trace_flags.wont_be :sampled?
-      span.must_be :recording_events?
+      span.must_be :recording?
     end
 
     it 'returns a sampled span if sampler says sample' do
       tracer.active_trace_config = TraceConfig.new(sampler: Samplers::ALWAYS_ON)
       span = tracer.start_root_span('root')
       span.context.trace_flags.must_be :sampled?
-      span.must_be :recording_events?
+      span.must_be :recording?
     end
 
     it 'calls the sampler with all parameters except parent_context' do
@@ -138,7 +138,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       tracer.shutdown
       span = tracer.start_root_span('root')
       span.context.trace_flags.wont_be :sampled?
-      span.wont_be :recording_events?
+      span.wont_be :recording?
     end
 
     it 'creates a span with all supplied parameters' do
@@ -220,21 +220,21 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       tracer.active_trace_config = TraceConfig.new(sampler: Samplers::ALWAYS_OFF)
       span = tracer.start_span('op', with_parent_context: context)
       span.context.trace_flags.wont_be :sampled?
-      span.wont_be :recording_events?
+      span.wont_be :recording?
     end
 
     it 'returns an unsampled span if sampler says record, but do not sample' do
       tracer.active_trace_config = TraceConfig.new(sampler: record_sampler)
       span = tracer.start_span('op', with_parent_context: context)
       span.context.trace_flags.wont_be :sampled?
-      span.must_be :recording_events?
+      span.must_be :recording?
     end
 
     it 'returns a sampled span if sampler says sample' do
       tracer.active_trace_config = TraceConfig.new(sampler: Samplers::ALWAYS_ON)
       span = tracer.start_span('op', with_parent_context: context)
       span.context.trace_flags.must_be :sampled?
-      span.must_be :recording_events?
+      span.must_be :recording?
     end
 
     it 'calls the sampler with all parameters' do
@@ -258,7 +258,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       tracer.shutdown
       span = tracer.start_span('op', with_parent_context: context)
       span.context.trace_flags.wont_be :sampled?
-      span.wont_be :recording_events?
+      span.wont_be :recording?
       span.context.trace_id.must_equal(context.trace_id)
     end
 

@@ -18,9 +18,9 @@ describe OpenTelemetry::Trace::Span do
     end
   end
 
-  describe '#recording_events?' do
+  describe '#recording?' do
     it 'returns false' do
-      span.recording_events?.must_equal(false)
+      span.recording?.must_equal(false)
     end
   end
 

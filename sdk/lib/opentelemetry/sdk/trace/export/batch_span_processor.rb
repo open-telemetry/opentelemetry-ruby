@@ -57,7 +57,7 @@ module OpenTelemetry
 
           # adds a span to the batcher, threadsafe may block on lock
           def on_finish(span)
-            return unless span.recording_events?
+            return unless span.recording?
 
             lock do
               n = spans.size + 1 - max_queue_size
