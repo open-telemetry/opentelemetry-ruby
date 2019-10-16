@@ -11,7 +11,7 @@ def stub_span_builder(recording: false)
   span = OpenTelemetry::Trace::Span.new(span_context: ctx)
   def span.to_span_data; end
 
-  span.define_singleton_method(:recording_events?) { recording }
+  span.define_singleton_method(:recording?) { recording }
   span
 end
 
@@ -61,7 +61,7 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
     )
 
     mock_span = Minitest::Mock.new
-    mock_span.expect :recording_events?, true
+    mock_span.expect :recording?, true
     mock_span.expect :to_span_data, nil
 
     processor_noop.on_start(mock_span)
