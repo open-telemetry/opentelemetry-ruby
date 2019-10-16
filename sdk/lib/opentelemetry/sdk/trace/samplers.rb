@@ -38,31 +38,31 @@ module OpenTelemetry
       #   to the {Span} to be created. Can be nil.
       # @return [Result] The sampling result.
       module Samplers
-        RECORD_AND_PROPAGATE = Result.new(decision: Decision::RECORD_AND_PROPAGATE)
+        RECORD_AND_SAMPLED = Result.new(decision: Decision::RECORD_AND_SAMPLED)
         NOT_RECORD = Result.new(decision: Decision::NOT_RECORD)
         RECORD = Result.new(decision: Decision::RECORD)
-        SAMPLING_HINTS = [Decision::NOT_RECORD, Decision::RECORD, Decision::RECORD_AND_PROPAGATE].freeze
+        SAMPLING_HINTS = [Decision::NOT_RECORD, Decision::RECORD, Decision::RECORD_AND_SAMPLED].freeze
         APPLY_PROBABILITY_TO_SYMBOLS = %i[root_spans root_spans_and_remote_parent all_spans].freeze
 
-        private_constant(:RECORD_AND_PROPAGATE, :NOT_RECORD, :RECORD, :SAMPLING_HINTS, :APPLY_PROBABILITY_TO_SYMBOLS)
+        private_constant(:RECORD_AND_SAMPLED, :NOT_RECORD, :RECORD, :SAMPLING_HINTS, :APPLY_PROBABILITY_TO_SYMBOLS)
 
         # rubocop:disable Lint/UnusedBlockArgument
 
         # Ignores all values in hint and returns a {Result} with
-        # {Decision::RECORD_AND_PROPAGATE}.
-        ALWAYS_ON = ->(trace_id:, span_id:, parent_context:, hint:, links:, name:, kind:, attributes:) { RECORD_AND_PROPAGATE }
+        # {Decision::RECORD_AND_SAMPLED}.
+        ALWAYS_ON = ->(trace_id:, span_id:, parent_context:, hint:, links:, name:, kind:, attributes:) { RECORD_AND_SAMPLED }
 
         # Ignores all values in hint and returns a {Result} with
         # {Decision::NOT_RECORD}.
         ALWAYS_OFF = ->(trace_id:, span_id:, parent_context:, hint:, links:, name:, kind:, attributes:) { NOT_RECORD }
 
         # Ignores all values in hint and returns a {Result} with
-        # {Decision::RECORD_AND_PROPAGATE} if the parent context is sampled or
+        # {Decision::RECORD_AND_SAMPLED} if the parent context is sampled or
         # {Decision::NOT_RECORD} otherwise, or if there is no parent context.
         # rubocop:disable Style/Lambda
         ALWAYS_PARENT = ->(trace_id:, span_id:, parent_context:, hint:, links:, name:, kind:, attributes:) do
           if parent_context&.trace_flags&.sampled?
-            RECORD_AND_PROPAGATE
+            RECORD_AND_SAMPLED
           else
             NOT_RECORD
           end

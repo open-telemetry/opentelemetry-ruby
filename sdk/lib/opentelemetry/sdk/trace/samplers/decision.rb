@@ -18,7 +18,7 @@ module OpenTelemetry
           RECORD = OpenTelemetry::Trace::SamplingHint::RECORD
 
           # Decision to record events and propagate.
-          RECORD_AND_PROPAGATE = OpenTelemetry::Trace::SamplingHint::RECORD_AND_PROPAGATE
+          RECORD_AND_SAMPLED = OpenTelemetry::Trace::SamplingHint::RECORD_AND_SAMPLED
         end
       end
     end

@@ -16,7 +16,7 @@ module OpenTelemetry
       RECORD = :__record__
 
       # Suggest to record events and propagate.
-      RECORD_AND_PROPAGATE = :__record_and_propagate__
+      RECORD_AND_SAMPLED = :__record_and_propagate__
     end
   end
 end
