@@ -1,7 +1,7 @@
 # OpenTelemetry Ruby
 
 [![Gitter chat][gitter-image]][gitter-url]
-[![Travis CI][ci-image]][ci-url]
+[![CircleCI][ci-image]][ci-url]
 [![Apache License][license-image]][license-image]
 
 The Ruby [OpenTelemetry](https://opentelemetry.io/) client.
@@ -43,8 +43,8 @@ release.
 
 Apache 2.0 - See [LICENSE][license-url] for more information.
 
-[ci-image]: https://travis-ci.org/open-telemetry/opentelemetry-ruby.svg?branch=master
-[ci-url]: https://travis-ci.org/open-telemetry/opentelemetry-ruby
+[ci-image]: https://circleci.com/gh/open-telemetry/opentelemetry-ruby.svg?style=svg
+[ci-url]: https://circleci.com/gh/open-telemetry/opentelemetry-ruby
 [gitter-image]: https://badges.gitter.im/open-telemetry/opentelemetry-ruby.svg
 [gitter-url]: https://gitter.im/open-telemetry/opentelemetry-ruby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 [issues-good-first-issue]: https://github.com/open-telemetry/opentelemetry-ruby/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22

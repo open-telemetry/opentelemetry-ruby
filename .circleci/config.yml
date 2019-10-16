@@ -1,0 +1,73 @@
+version: 2.1
+executors:
+  ruby24:
+    docker:
+      - image: "circleci/ruby:2.4-stretch"
+  ruby25:
+    docker:
+      - image: "circleci/ruby:2.5-stretch"
+  ruby26:
+    docker:
+      - image: "circleci/ruby:2.6-stretch"
+  jruby:
+    docker:
+      - image: "circleci/jruby:latest"
+    environment:
+      JRUBY_OPTS: "--debug"
+commands:
+  rake:
+    parameters:
+      dir: {type: string}
+    steps:
+      - checkout
+      - run:
+          name: Bundle
+          command: "cd << parameters.dir >> && gem install --no-document bundler && bundle install --jobs=3 --retry=3"
+      - run:
+          name: CI
+          command: "cd << parameters.dir >> && bundle exec rake"
+jobs:
+  test-api-ruby24:
+    executor: ruby24
+    steps:
+      - rake: {dir: api}
+  test-api-ruby25:
+    executor: ruby25
+    steps:
+      - rake: {dir: api}
+  test-api-ruby26:
+    executor: ruby26
+    steps:
+      - rake: {dir: api}
+  test-api-jruby:
+    executor: jruby
+    steps:
+      - rake: {dir: api}
+  test-sdk-ruby24:
+    executor: ruby24
+    steps:
+      - rake: {dir: sdk}
+  test-sdk-ruby25:
+    executor: ruby25
+    steps:
+      - rake: {dir: sdk}
+  test-sdk-ruby26:
+    executor: ruby26
+    steps:
+      - rake: {dir: sdk}
+  test-sdk-jruby:
+    executor: jruby
+    steps:
+      - rake: {dir: sdk}
+workflows:
+  version: 2
+  test-all:
+    jobs:
+      - test-api-ruby24
+      - test-api-ruby25
+      - test-api-ruby26
+      - test-api-jruby
+      - test-sdk-ruby24
+      - test-sdk-ruby25
+      - test-sdk-ruby26
+      - test-sdk-jruby
