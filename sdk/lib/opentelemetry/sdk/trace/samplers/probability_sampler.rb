@@ -34,12 +34,12 @@ module OpenTelemetry
 
             hint = nil if @ignored_hints.include?(hint)
 
-            sampled_flag = sample?(hint, trace_id, parent_context)
-            record_events = hint == HINT_RECORD || sampled_flag
+            sampled = sample?(hint, trace_id, parent_context)
+            recording = hint == HINT_RECORD || sampled
 
-            if sampled_flag && record_events
+            if sampled && recording
               RECORD_AND_PROPAGATE
-            elsif record_events
+            elsif recording
               RECORD
             else
               NOT_RECORD

@@ -60,17 +60,17 @@ describe OpenTelemetry::SDK::Trace::Samplers::Result do
     end
   end
 
-  describe '#record_events?' do
+  describe '#recording?' do
     it 'returns true when decision is RECORD_AND_PROPAGATE' do
-      Result.new(decision: Decision::RECORD_AND_PROPAGATE).must_be :record_events?
+      Result.new(decision: Decision::RECORD_AND_PROPAGATE).must_be :recording?
     end
 
     it 'returns true when decision is RECORD' do
-      Result.new(decision: Decision::RECORD).must_be :record_events?
+      Result.new(decision: Decision::RECORD).must_be :recording?
     end
 
     it 'returns false when decision is NOT_RECORD' do
-      Result.new(decision: Decision::NOT_RECORD).wont_be :record_events?
+      Result.new(decision: Decision::NOT_RECORD).wont_be :recording?
     end
   end
 end

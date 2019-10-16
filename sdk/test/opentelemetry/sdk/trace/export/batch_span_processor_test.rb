@@ -39,11 +39,13 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
   class TestSpan
     def initialize(id = nil, recording = true)
+      trace_flags = recording ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
+      @context = OpenTelemetry::Trace::SpanContext.new(trace_flags: trace_flags)
       @id = id
       @recording = recording
     end
 
-    attr_reader :id
+    attr_reader :id, :context
 
     def recording?
       @recording

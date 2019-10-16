@@ -43,10 +43,10 @@ module OpenTelemetry
             @decision == Decision::RECORD_AND_PROPAGATE
           end
 
-          # Returns true if this span should record events.
+          # Returns true if this span should record events, attributes, status, etc.
           #
           # @return [Boolean] recording decision
-          def record_events?
+          def recording?
             @decision != Decision::NOT_RECORD
           end
         end
