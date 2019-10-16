@@ -30,7 +30,7 @@ module OpenTelemetry
           @registered_span_processors = []
           @mutex = Mutex.new
           @stopped = false
-          @resource = Resources::Resource.create # TODO: should this initialize from env vars instead?
+          @resource = Resources::Resource.create('name' => name, 'version' => version) # TODO: should this initialize from env vars instead?
         end
 
         # Attempts to stop all the activity for this {Tracer}. Calls
@@ -97,7 +97,7 @@ module OpenTelemetry
             trace_flags = result.sampled? ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
             context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, trace_flags: trace_flags)
             attributes = attributes&.merge(result.attributes) || result.attributes
-            Span.new(context, name, kind, parent_span_id, @active_trace_config, @active_span_processor, attributes, links, start_timestamp || Time.now)
+            Span.new(context, name, kind, parent_span_id, @active_trace_config, @active_span_processor, attributes, links, start_timestamp || Time.now, @resource)
           else
             OpenTelemetry::Trace::Span.new(span_context: OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id))
           end

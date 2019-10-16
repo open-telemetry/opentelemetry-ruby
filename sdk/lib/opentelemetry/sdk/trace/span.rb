@@ -18,7 +18,7 @@ module OpenTelemetry
       class Span < OpenTelemetry::Trace::Span
         # The following readers are intended for the use of SpanProcessors and
         # should not be considered part of the public interface for instrumentation.
-        attr_reader :name, :status, :kind, :parent_span_id, :start_timestamp, :end_timestamp, :links
+        attr_reader :name, :status, :kind, :parent_span_id, :start_timestamp, :end_timestamp, :links, :library_resource
 
         # Return a frozen copy of the current attributes. This is intended for
         # use of SpanProcesses and should not be considered part of the public
@@ -220,6 +220,7 @@ module OpenTelemetry
             @attributes,
             @links,
             @events,
+            @library_resource,
             context.span_id,
             context.trace_id,
             context.trace_flags
@@ -227,7 +228,7 @@ module OpenTelemetry
         end
 
         # @api private
-        def initialize(context, name, kind, parent_span_id, trace_config, span_processor, attributes, links, start_timestamp) # rubocop:disable Metrics/AbcSize
+        def initialize(context, name, kind, parent_span_id, trace_config, span_processor, attributes, links, start_timestamp, library_resource) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
           super(span_context: context)
           @mutex = Mutex.new
           @name = name
@@ -235,6 +236,7 @@ module OpenTelemetry
           @parent_span_id = parent_span_id.freeze || OpenTelemetry::Trace::INVALID_SPAN_ID
           @trace_config = trace_config
           @span_processor = span_processor
+          @library_resource = library_resource
           @ended = false
           @status = nil
           @child_count = 0

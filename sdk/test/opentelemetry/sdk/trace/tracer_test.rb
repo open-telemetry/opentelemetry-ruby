@@ -16,23 +16,23 @@ describe OpenTelemetry::SDK::Trace::Tracer do
 
   describe '#initialize' do
     it 'installs a Resource' do
-      _(Tracer.new(nil, nil).resource).wont_be_nil
+      _(Tracer.new('component', 'semver:1.0').resource).wont_be_nil
     end
 
     it 'activates a default TraceConfig' do
-      _(Tracer.new(nil, nil).active_trace_config).must_equal(TraceConfig::DEFAULT)
+      _(Tracer.new('component', 'semver:1.0').active_trace_config).must_equal(TraceConfig::DEFAULT)
     end
   end
 
   describe '#name' do
     it 'reflects the name passed in' do
-      _(Tracer.new('component', nil).name).must_equal('component')
+      _(Tracer.new('component', 'semver:1.0').name).must_equal('component')
     end
   end
 
   describe '#version' do
     it 'reflects the version passed in' do
-      _(Tracer.new(nil, 'semver:1.0').version).must_equal('semver:1.0')
+      _(Tracer.new('component', 'semver:1.0').version).must_equal('semver:1.0')
     end
   end
 
