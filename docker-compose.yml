@@ -24,6 +24,17 @@ services:
       context: .
     working_dir: /app
 
+  # docker-compose run --rm ex-grape bundle install
+  # docker-compose run --rm --service-ports ex-grape
+  ex-grape:
+    <<: *base
+    command: bundle exec rackup --host 0.0.0.0 --port 4568 --debug
+    environment:
+      BUNDLE_GEMFILE: Gemfile
+    ports:
+      - 4568:4568
+    working_dir: /app/examples/http/server/grape
+
   sdk:
     <<: *base
     working_dir: /app/sdk
