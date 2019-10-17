@@ -19,7 +19,7 @@ module OpenTelemetry
           @span_processors = span_processors.to_a.freeze
         end
 
-        # Called when a {Span} is started, if the {Span#recording_events?}
+        # Called when a {Span} is started, if the {Span#recording?}
         # returns true.
         #
         # This method is called synchronously on the execution thread, should
@@ -30,7 +30,7 @@ module OpenTelemetry
           @span_processors.each { |processor| processor.on_start(span) }
         end
 
-        # Called when a {Span} is ended, if the {Span#recording_events?}
+        # Called when a {Span} is ended, if the {Span#recording?}
         # returns true.
         #
         # This method is called synchronously on the execution thread, should

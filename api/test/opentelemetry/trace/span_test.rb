@@ -18,9 +18,9 @@ describe OpenTelemetry::Trace::Span do
     end
   end
 
-  describe '#recording_events?' do
+  describe '#recording?' do
     it 'returns false' do
-      span.recording_events?.must_equal(false)
+      span.recording?.must_equal(false)
     end
   end
 
@@ -45,12 +45,6 @@ describe OpenTelemetry::Trace::Span do
 
     it 'accepts an event formatter' do
       span.add_event { Object.new }.must_equal(span)
-    end
-
-    it 'raises if both attributes and formatter are passed in' do
-      proc do
-        span.add_event(attributes: { 'foo' => 'bar' }) { Object.new }
-      end.must_raise(ArgumentError)
     end
   end
 

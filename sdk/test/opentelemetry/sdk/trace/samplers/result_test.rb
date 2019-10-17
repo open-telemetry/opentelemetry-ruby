@@ -35,20 +35,20 @@ describe OpenTelemetry::SDK::Trace::Samplers::Result do
   describe '#initialize' do
     it 'accepts Decision constants' do
       Result.new(decision: Decision::RECORD).wont_be_nil
-      Result.new(decision: Decision::RECORD_AND_PROPAGATE).wont_be_nil
+      Result.new(decision: Decision::RECORD_AND_SAMPLED).wont_be_nil
       Result.new(decision: Decision::NOT_RECORD).wont_be_nil
     end
 
-    it 'rejects invalid decisions' do
-      proc { Result.new(decision: nil) }.must_raise(ArgumentError)
-      proc { Result.new(decision: true) }.must_raise(ArgumentError)
-      proc { Result.new(decision: :ok) }.must_raise(ArgumentError)
+    it 'replaces invalid decisions with default' do
+      _(Result.new(decision: nil)).wont_be_nil
+      _(Result.new(decision: true)).wont_be_nil
+      _(Result.new(decision: :ok)).wont_be_nil
     end
   end
 
   describe '#sampled?' do
-    it 'returns true when decision is RECORD_AND_PROPAGATE' do
-      Result.new(decision: Decision::RECORD_AND_PROPAGATE).must_be :sampled?
+    it 'returns true when decision is RECORD_AND_SAMPLED' do
+      Result.new(decision: Decision::RECORD_AND_SAMPLED).must_be :sampled?
     end
 
     it 'returns false when decision is RECORD' do
@@ -60,17 +60,17 @@ describe OpenTelemetry::SDK::Trace::Samplers::Result do
     end
   end
 
-  describe '#record_events?' do
-    it 'returns true when decision is RECORD_AND_PROPAGATE' do
-      Result.new(decision: Decision::RECORD_AND_PROPAGATE).must_be :record_events?
+  describe '#recording?' do
+    it 'returns true when decision is RECORD_AND_SAMPLED' do
+      Result.new(decision: Decision::RECORD_AND_SAMPLED).must_be :recording?
     end
 
     it 'returns true when decision is RECORD' do
-      Result.new(decision: Decision::RECORD).must_be :record_events?
+      Result.new(decision: Decision::RECORD).must_be :recording?
     end
 
     it 'returns false when decision is NOT_RECORD' do
-      Result.new(decision: Decision::NOT_RECORD).wont_be :record_events?
+      Result.new(decision: Decision::NOT_RECORD).wont_be :recording?
     end
   end
 end

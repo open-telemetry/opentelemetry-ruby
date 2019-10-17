@@ -24,9 +24,6 @@ module OpenTelemetry
       # @param [Integer] canonical_code One of the standard GRPC codes: https://github.com/grpc/grpc/blob/master/doc/statuscodes.md
       # @param [String] description
       def initialize(canonical_code, description: '')
-        raise ArgumentError unless canonical_code.is_a?(Integer)
-        raise ArgumentError unless description.is_a?(String)
-
         @canonical_code = canonical_code
         @description = description
       end

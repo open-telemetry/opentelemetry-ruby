@@ -42,9 +42,9 @@ describe OpenTelemetry::SDK::Trace::Span do
     end
   end
 
-  describe '#recording_events?' do
+  describe '#recording?' do
     it 'returns true' do
-      span.must_be :recording_events?
+      span.must_be :recording?
     end
   end
 

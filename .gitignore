@@ -1,4 +1,5 @@
 api/Gemfile.lock
+sdk/Gemfile.lock
 **/.yardoc
 **/docs
 **/coverage

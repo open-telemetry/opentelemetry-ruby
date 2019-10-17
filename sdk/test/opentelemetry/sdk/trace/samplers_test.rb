@@ -121,13 +121,13 @@ describe OpenTelemetry::SDK::Trace::Samplers do
       sampler = Samplers.probability(0, ignore_hints: nil)
       not_record_result = call_sampler(sampler, hint: OpenTelemetry::Trace::SamplingHint::NOT_RECORD)
       record_result = call_sampler(sampler, hint: OpenTelemetry::Trace::SamplingHint::RECORD)
-      record_and_propagate_result = call_sampler(sampler, hint: OpenTelemetry::Trace::SamplingHint::RECORD_AND_PROPAGATE)
+      record_and_sampled_result = call_sampler(sampler, hint: OpenTelemetry::Trace::SamplingHint::RECORD_AND_SAMPLED)
       not_record_result.wont_be :sampled?
-      not_record_result.wont_be :record_events?
+      not_record_result.wont_be :recording?
       record_result.wont_be :sampled?
-      record_result.must_be :record_events?
-      record_and_propagate_result.must_be :sampled?
-      record_and_propagate_result.must_be :record_events?
+      record_result.must_be :recording?
+      record_and_sampled_result.must_be :sampled?
+      record_and_sampled_result.must_be :recording?
     end
 
     it 'does not allow invalid hints in ignore_hints' do
