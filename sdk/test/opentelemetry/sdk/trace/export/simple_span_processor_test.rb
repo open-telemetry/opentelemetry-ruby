@@ -32,12 +32,6 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
   let(:stub_span_recorded)   { stub_span_builder(recording: true) }
   let(:processor) { export::SimpleSpanProcessor.new(mock_span_exporter) }
 
-  it 'requires a span_exporter to be passed to #initialize' do
-    proc do
-      export::SimpleSpanProcessor.new(nil)
-    end.must_raise ArgumentError
-  end
-
   it 'accepts calls to #on_start' do
     processor.on_start(stub_span_recorded)
   end

@@ -39,10 +39,10 @@ describe OpenTelemetry::SDK::Trace::Samplers::Result do
       Result.new(decision: Decision::NOT_RECORD).wont_be_nil
     end
 
-    it 'rejects invalid decisions' do
-      proc { Result.new(decision: nil) }.must_raise(ArgumentError)
-      proc { Result.new(decision: true) }.must_raise(ArgumentError)
-      proc { Result.new(decision: :ok) }.must_raise(ArgumentError)
+    it 'replaces invalid decisions with default' do
+      _(Result.new(decision: nil)).wont_be_nil
+      _(Result.new(decision: true)).wont_be_nil
+      _(Result.new(decision: :ok)).wont_be_nil
     end
   end
 

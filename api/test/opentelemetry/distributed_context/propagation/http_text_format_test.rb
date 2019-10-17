@@ -20,10 +20,6 @@ describe OpenTelemetry::DistributedContext::Propagation::HTTPTextFormat do
   end
 
   describe '#extract' do
-    it 'requires a block' do
-      proc { formatter.extract({}) }.must_raise(ArgumentError)
-    end
-
     it 'yields the carrier and the header key' do
       carrier = {}
       yielded = false
@@ -52,10 +48,6 @@ describe OpenTelemetry::DistributedContext::Propagation::HTTPTextFormat do
   end
 
   describe '#inject' do
-    it 'requires a block' do
-      proc { formatter.inject(SpanContext.new, {}) }.must_raise(ArgumentError)
-    end
-
     it 'yields the carrier, key, and traceparent value from the context' do
       context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16)
       carrier = {}

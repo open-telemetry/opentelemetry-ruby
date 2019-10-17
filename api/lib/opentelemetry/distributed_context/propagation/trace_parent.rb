@@ -113,8 +113,6 @@ module OpenTelemetry
         end
 
         def initialize(trace_id: nil, span_id: nil, version: SUPPORTED_VERSION, flags: Trace::TraceFlags::DEFAULT)
-          raise ArgumentError, 'flags must be a TraceFlags' unless flags.is_a?(Trace::TraceFlags)
-
           @trace_id = trace_id
           @span_id = span_id
           @version = version

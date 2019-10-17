@@ -15,9 +15,9 @@ describe OpenTelemetry::Trace::TraceFlags do
       flags.sampled?.must_equal(false)
     end
 
-    it 'enforces flags is an 8-bit byte' do
-      -> { OpenTelemetry::Trace::TraceFlags.from_byte(256) }\
-        .must_raise(ArgumentError)
+    it 'defaults if flags is not an 8-bit byte' do
+      flags = OpenTelemetry::Trace::TraceFlags.from_byte(256)
+      _(flags.sampled?).must_equal(false)
     end
   end
 

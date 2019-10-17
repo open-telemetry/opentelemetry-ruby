@@ -84,8 +84,8 @@ describe OpenTelemetry::SDK::Trace::Tracer do
   end
 
   describe '#start_root_span' do
-    it 'requires a name' do
-      proc { tracer.start_root_span(nil) }.must_raise(ArgumentError)
+    it 'provides a default name' do
+      _(tracer.start_root_span(nil).name).wont_be_nil
     end
 
     it 'returns a valid span' do
@@ -197,8 +197,8 @@ describe OpenTelemetry::SDK::Trace::Tracer do
   describe '#start_span' do
     let(:context) { OpenTelemetry::Trace::SpanContext.new }
 
-    it 'requires a name' do
-      proc { tracer.start_span(nil, with_parent_context: context) }.must_raise(ArgumentError)
+    it 'provides a default name' do
+      _(tracer.start_span(nil, with_parent_context: context).name).wont_be_nil
     end
 
     it 'returns a valid span' do
