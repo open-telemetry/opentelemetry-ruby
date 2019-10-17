@@ -7,11 +7,12 @@
 require 'test_helper'
 
 def stub_span_builder(recording: false)
-  ctx = OpenTelemetry::Trace::SpanContext.new
+  trace_flags = recording ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
+  ctx = OpenTelemetry::Trace::SpanContext.new(trace_flags: trace_flags)
   span = OpenTelemetry::Trace::Span.new(span_context: ctx)
   def span.to_span_data; end
 
-  span.define_singleton_method(:recording_events?) { recording }
+  span.define_singleton_method(:recording?) { recording }
   span
 end
 
@@ -49,13 +50,17 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
     mock_span_exporter.verify
   end
 
-  it 'calls #to_span_data on recorded spans in #on_finish' do
+  it 'calls #to_span_data on sampled spans in #on_finish' do
     processor_noop = export::SimpleSpanProcessor.new(
       export::NoopSpanExporter.new
     )
 
+    mock_trace_flags = Minitest::Mock.new
+    mock_trace_flags.expect :sampled?, true
+    mock_span_context = Minitest::Mock.new
+    mock_span_context.expect :trace_flags, mock_trace_flags
     mock_span = Minitest::Mock.new
-    mock_span.expect :recording_events?, true
+    mock_span.expect :context, mock_span_context
     mock_span.expect :to_span_data, nil
 
     processor_noop.on_start(mock_span)

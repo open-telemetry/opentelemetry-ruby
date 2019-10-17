@@ -38,15 +38,17 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
   end
 
   class TestSpan
-    def initialize(id = nil, recording_events = true)
+    def initialize(id = nil, recording = true)
+      trace_flags = recording ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
+      @context = OpenTelemetry::Trace::SpanContext.new(trace_flags: trace_flags)
       @id = id
-      @recording_events = recording_events
+      @recording = recording
     end
 
-    attr_reader :id
+    attr_reader :id, :context
 
-    def recording_events?
-      @recording_events
+    def recording?
+      @recording
     end
 
     def to_span_data
@@ -94,7 +96,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       te.batches[1].size.must_equal(1)
     end
 
-    it 'should batch only recording_events samples' do
+    it 'should batch only recording samples' do
       te = TestExporter.new
 
       bsp = BatchSpanProcessor.new(exporter: te, max_queue_size: 6, max_export_batch_size: 3)

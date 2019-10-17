@@ -26,7 +26,7 @@ module OpenTelemetry
             @span_exporter = span_exporter
           end
 
-          # Called when a {Span} is started, if the {Span#recording_events?}
+          # Called when a {Span} is started, if the {Span#recording?}
           # returns true.
           #
           # This method is called synchronously on the execution thread, should
@@ -37,7 +37,7 @@ module OpenTelemetry
             # Do nothing.
           end
 
-          # Called when a {Span} is ended, if the {Span#recording_events?}
+          # Called when a {Span} is ended, if the {Span#recording?}
           # returns true.
           #
           # This method is called synchronously on the execution thread, should
@@ -45,7 +45,7 @@ module OpenTelemetry
           #
           # @param [Span] span the {Span} that just ended.
           def on_finish(span)
-            return unless span.recording_events?
+            return unless span.context.trace_flags.sampled?
 
             @span_exporter&.export([span.to_span_data])
           rescue => e # rubocop:disable Style/RescueStandardError

@@ -12,10 +12,10 @@ module OpenTelemetry
         #
         # Implements sampling based on a probability.
         class ProbabilitySampler
-          HINT_RECORD_AND_PROPAGATE = OpenTelemetry::Trace::SamplingHint::RECORD_AND_PROPAGATE
+          HINT_RECORD_AND_SAMPLED = OpenTelemetry::Trace::SamplingHint::RECORD_AND_SAMPLED
           HINT_RECORD = OpenTelemetry::Trace::SamplingHint::RECORD
 
-          private_constant(:HINT_RECORD_AND_PROPAGATE, :HINT_RECORD)
+          private_constant(:HINT_RECORD_AND_SAMPLED, :HINT_RECORD)
 
           def initialize(probability, ignore_hints:, ignore_parent:, apply_to_remote_parent:, apply_to_all_spans:)
             @probability = probability
@@ -34,12 +34,12 @@ module OpenTelemetry
 
             hint = nil if @ignored_hints.include?(hint)
 
-            sampled_flag = sample?(hint, trace_id, parent_context)
-            record_events = hint == HINT_RECORD || sampled_flag
+            sampled = sample?(hint, trace_id, parent_context)
+            recording = hint == HINT_RECORD || sampled
 
-            if sampled_flag && record_events
-              RECORD_AND_PROPAGATE
-            elsif record_events
+            if sampled && recording
+              RECORD_AND_SAMPLED
+            elsif recording
               RECORD
             else
               NOT_RECORD
@@ -50,9 +50,9 @@ module OpenTelemetry
 
           def sample?(hint, trace_id, parent_context)
             if parent_context.nil?
-              hint == HINT_RECORD_AND_PROPAGATE || sample_trace_id?(trace_id)
+              hint == HINT_RECORD_AND_SAMPLED || sample_trace_id?(trace_id)
             else
-              parent_sampled?(parent_context) || hint == HINT_RECORD_AND_PROPAGATE || sample_trace_id_for_child?(parent_context, trace_id)
+              parent_sampled?(parent_context) || hint == HINT_RECORD_AND_SAMPLED || sample_trace_id_for_child?(parent_context, trace_id)
             end
           end
 

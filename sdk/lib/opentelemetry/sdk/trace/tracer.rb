@@ -93,7 +93,7 @@ module OpenTelemetry
         private
 
         def internal_create_span(result, name, kind, trace_id, span_id, parent_span_id, attributes, links, start_timestamp)
-          if result.record_events? && !@stopped
+          if result.recording? && !@stopped
             trace_flags = result.sampled? ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
             context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, trace_flags: trace_flags)
             attributes = attributes&.merge(result.attributes) || result.attributes

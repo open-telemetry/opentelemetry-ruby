@@ -47,7 +47,7 @@ module OpenTelemetry
         # @return [Boolean] true if this Span is active and recording information
         #   like events with the #add_event operation and attributes using
         #   #set_attribute.
-        def recording_events?
+        def recording?
           true
         end
 
