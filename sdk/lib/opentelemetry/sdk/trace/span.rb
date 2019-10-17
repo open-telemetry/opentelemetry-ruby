@@ -264,39 +264,46 @@ module OpenTelemetry
           nil
         end
 
-        def trim_links(links, max_links_count, max_attributes_per_link) # rubocop:disable Metrics/AbcSize
+        def trim_links(links, max_links_count, max_attributes_per_link) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           # Fast path (likely) common cases.
           return nil if links.nil?
 
-          unless links.size > max_links_count || links.any? { |link| link.attributes.size > max_attributes_per_link }
+          if links.size <= max_links_count &&
+             links.all? { |link| link.attributes.size <= max_attributes_per_link && Internal.valid_attributes?(link.attributes) }
             return links.frozen? ? links : links.clone.freeze
           end
 
-          # Trim attributes for each Link.
+          # Slow path: trim attributes for each Link.
           links.last(max_links_count).map! do |link|
-            excess = link.attributes.size - max_attributes_per_link
-            if excess.positive?
-              attrs = Hash[link.attributes] # link.attributes is frozen, so we need an unfrozen copy to adjust.
-              excess.times { attrs.shift }
-              link = OpenTelemetry::Trace::Link.new(link.context, attrs)
-            end
-            link
+            attrs = Hash[link.attributes] # link.attributes is frozen, so we need an unfrozen copy to adjust.
+            attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
+            excess = attrs.size - max_attributes_per_link
+            excess.times { attrs.shift } if excess.positive?
+            OpenTelemetry::Trace::Link.new(link.context, attrs)
           end.freeze
         end
 
-        def append_event(events, event) # rubocop:disable Metrics/AbcSize
+        def append_event(events, event) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           max_events_count = @trace_config.max_events_count
           max_attributes_per_event = @trace_config.max_attributes_per_event
 
           # Fast path (likely) common case.
-          return events << event if events.size < max_events_count && event.attributes.size <= max_attributes_per_event
+          if events.size < max_events_count &&
+             event.attributes.size <= max_attributes_per_event &&
+             Internal.valid_attributes?(event.attributes)
+            return events << event
+          end
 
+          # Slow path.
           excess = events.size + 1 - max_events_count
           events.shift(excess) if excess.positive?
+
           excess = event.attributes.size - max_attributes_per_event
-          if excess.positive?
+          if excess.positive? || !Internal.valid_attributes?(event.attributes)
             attrs = Hash[event.attributes] # event.attributes is frozen, so we need an unfrozen copy to adjust.
-            excess.times { attrs.shift }
+            attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
+            excess = attrs.size - max_attributes_per_event
+            excess.times { attrs.shift } if excess.positive?
             event = OpenTelemetry::Trace::Event.new(name: event.name, attributes: attrs, timestamp: event.timestamp)
           end
           events << event

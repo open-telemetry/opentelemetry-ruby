@@ -27,14 +27,12 @@ describe OpenTelemetry::SDK::Resources::Resource do
       resource.label_enumerator.to_h.must_be_empty
     end
 
-    it 'creates a resource with empty attributes when a key is invalid' do
-      resource = Resource.create(k1: 'v1')
-      resource.label_enumerator.to_h.must_be_empty
+    it 'enforces keys are strings' do
+      proc { Resource.create(k1: 'v1') }.must_raise(ArgumentError)
     end
 
-    it 'creates a resource with empty attributes when a value is invalid' do
-      resource = Resource.create('k1' => :v1)
-      resource.label_enumerator.to_h.must_be_empty
+    it 'enforces values are strings' do
+      proc { Resource.create('k1' => :v1) }.must_raise(ArgumentError)
     end
   end
 

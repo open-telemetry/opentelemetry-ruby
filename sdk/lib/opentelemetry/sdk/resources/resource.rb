@@ -21,7 +21,7 @@ module OpenTelemetry
           # @return [Resource]
           def create(labels = {})
             frozen_labels = labels.each_with_object({}) do |(k, v), memo|
-              return new({}.freeze) unless k.is_a?(String) && v.is_a?(String)
+              raise ArgumentError, 'label keys and values must be strings' unless k.is_a?(String) && v.is_a?(String)
 
               memo[-k] = -v
             end.freeze
