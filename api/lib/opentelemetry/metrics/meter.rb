@@ -8,57 +8,101 @@ module OpenTelemetry
   module Metrics
     # No-op implementation of Meter.
     class Meter
-      NOOP_DOUBLE_MEASURE = DoubleMeasure.new
-      NOOP_LONG_MEASURE = LongMeasure.new
+      NOOP_LABEL_SET = Object.new
+      private_constant(:NOOP_LABEL_SET)
 
-      private_constant(:NOOP_DOUBLE_MEASURE, :NOOP_LONG_MEASURE)
+      def record_batch(*measurements, label_set: nil); end
 
-      def record(*measurements, distributed_context: nil, exemplar: nil); end
-
-      def create_measure(name, description: nil, unit: nil, type: :double)
-        raise ArgumentError unless Internal.printable_ascii?(name) && name.length <= 255
-
-        case type
-        when :double
-          NOOP_DOUBLE_MEASURE
-        when :long
-          NOOP_LONG_MEASURE
-        else
-          raise ArgumentError
-        end
+      # Canonicalizes labels, returning an opaque {LabelSet} object.
+      #
+      # @param [Hash<String, String>] labels
+      # @return [LabelSet]
+      def labels(labels)
+        NOOP_LABEL_SET
       end
 
-      # TODO: I contemplated using '..., **constant_labels)' here instead of the optional named arg, but that allocates an empty hash if no additional args are passed.
-      def create_double_gauge(name, description: nil, unit: nil, component: nil, resource: nil, label_keys: nil, constant_labels: nil)
+      # Create and return a floating point gauge.
+      #
+      # @param [String] name Name of the metric. See {Meter} for required metric name syntax.
+      # @param [optional String] description Descriptive text documenting the instrument.
+      # @param [optional String] unit Unit specified according to http://unitsofmeasure.org/ucum.html.
+      # @param [optional Enumerable<String>] recommended_label_keys Recommended grouping keys for this instrument.
+      # @param [optional Boolean] monotonic Whether the gauge accepts only monotonic updates. Defaults to false.
+      # @return [FloatGauge]
+      def create_float_gauge(name, description: nil, unit: nil, recommended_label_keys: nil, monotonic: false)
         raise ArgumentError if name.nil?
-        raise ArgumentError if label_keys&.any?(nil)
-        raise ArgumentError if constant_labels&.any? { |k, v| k.nil? || v.nil? }
 
-        DoubleGauge.new(label_keys_size: label_keys&.size || 0)
+        FloatGauge.new
       end
 
-      def create_long_gauge(name, description: nil, unit: nil, component: nil, resource: nil, label_keys: nil, constant_labels: nil)
+      # Create and return an integer gauge.
+      #
+      # @param [String] name Name of the metric. See {Meter} for required metric name syntax.
+      # @param [optional String] description Descriptive text documenting the instrument.
+      # @param [optional String] unit Unit specified according to http://unitsofmeasure.org/ucum.html.
+      # @param [optional Enumerable<String>] recommended_label_keys Recommended grouping keys for this instrument.
+      # @param [optional Boolean] monotonic Whether the gauge accepts only monotonic updates. Defaults to false.
+      # @return [IntegerGauge]
+      def create_integer_gauge(name, description: nil, unit: nil, recommended_label_keys: nil, monotonic: false)
         raise ArgumentError if name.nil?
-        raise ArgumentError if label_keys&.any?(nil)
-        raise ArgumentError if constant_labels&.any? { |k, v| k.nil? || v.nil? }
 
-        LongGauge.new(label_keys_size: label_keys&.size || 0)
+        IntegerGauge.new
       end
 
-      def create_double_counter(name, description: nil, unit: nil, component: nil, resource: nil, label_keys: nil, constant_labels: nil)
+      # Create and return a floating point counter.
+      #
+      # @param [String] name Name of the metric. See {Meter} for required metric name syntax.
+      # @param [optional String] description Descriptive text documenting the instrument.
+      # @param [optional String] unit Unit specified according to http://unitsofmeasure.org/ucum.html.
+      # @param [optional Enumerable<String>] recommended_label_keys Recommended grouping keys for this instrument.
+      # @param [optional Boolean] monotonic Whether the counter accepts only monotonic updates. Defaults to true.
+      # @return [FloatCounter]
+      def create_float_counter(name, description: nil, unit: nil, recommended_label_keys: nil, monotonic: true)
         raise ArgumentError if name.nil?
-        raise ArgumentError if label_keys&.any?(nil)
-        raise ArgumentError if constant_labels&.any? { |k, v| k.nil? || v.nil? }
 
-        DoubleCounter.new(label_keys_size: label_keys&.size || 0)
+        FloatCounter.new
       end
 
-      def create_long_counter(name, description: nil, unit: nil, component: nil, resource: nil, label_keys: nil, constant_labels: nil)
+      # Create and return an integer counter.
+      #
+      # @param [String] name Name of the metric. See {Meter} for required metric name syntax.
+      # @param [optional String] description Descriptive text documenting the instrument.
+      # @param [optional String] unit Unit specified according to http://unitsofmeasure.org/ucum.html.
+      # @param [optional Enumerable<String>] recommended_label_keys Recommended grouping keys for this instrument.
+      # @param [optional Boolean] monotonic Whether the counter accepts only monotonic updates. Defaults to true.
+      # @return [IntegerCounter]
+      def create_integer_counter(name, description: nil, unit: nil, recommended_label_keys: nil, monotonic: true)
         raise ArgumentError if name.nil?
-        raise ArgumentError if label_keys&.any?(nil)
-        raise ArgumentError if constant_labels&.any? { |k, v| k.nil? || v.nil? }
 
-        LongCounter.new(label_keys_size: label_keys&.size || 0)
+        IntegerCounter.new
+      end
+
+      # Create and return a floating point measure.
+      #
+      # @param [String] name Name of the metric. See {Meter} for required metric name syntax.
+      # @param [optional String] description Descriptive text documenting the instrument.
+      # @param [optional String] unit Unit specified according to http://unitsofmeasure.org/ucum.html.
+      # @param [optional Enumerable<String>] recommended_label_keys Recommended grouping keys for this instrument.
+      # @param [optional Boolean] absolute Whether the measure accepts only non-negative updates. Defaults to true.
+      # @return [FloatMeasure]
+      def create_float_measure(name, description: nil, unit: nil, recommended_label_keys: nil, absolute: true)
+        raise ArgumentError if name.nil?
+
+        FloatMeasure.new
+      end
+
+      # Create and return an integer measure.
+      #
+      # @param [String] name Name of the metric. See {Meter} for required metric name syntax.
+      # @param [optional String] description Descriptive text documenting the instrument.
+      # @param [optional String] unit Unit specified according to http://unitsofmeasure.org/ucum.html.
+      # @param [optional Enumerable<String>] recommended_label_keys Recommended grouping keys for this instrument.
+      # @param [optional Boolean] absolute Whether the measure accepts only non-negative updates. Defaults to true.
+      # @return [IntegerMeasure]
+      def create_integer_measure(name, description: nil, unit: nil, recommended_label_keys: nil, absolute: true)
+        raise ArgumentError if name.nil?
+
+        IntegerMeasure.new
       end
     end
   end

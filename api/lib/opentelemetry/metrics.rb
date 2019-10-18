@@ -4,10 +4,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/metrics/measure'
+require 'opentelemetry/metrics/handles'
+require 'opentelemetry/metrics/instruments'
 require 'opentelemetry/metrics/meter'
-require 'opentelemetry/metrics/metric'
-require 'opentelemetry/metrics/time_series'
+require 'opentelemetry/metrics/meter_factory'
 
 module OpenTelemetry
   # The Metrics API allows reporting raw measurements as well as metrics with known aggregation and labels.
