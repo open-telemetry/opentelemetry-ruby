@@ -31,7 +31,7 @@ module OpenTelemetry
         # @param [Span] span the {Span} that just ended.
         def on_finish(span); end
 
-        # Called when {Tracer#shutdown} is called.
+        # Called when {TracerFactory#shutdown} is called.
         def shutdown; end
       end
     end

@@ -52,7 +52,7 @@ module OpenTelemetry
             OpenTelemetry.logger.error("unexpected error in span.on_finish - #{e}")
           end
 
-          # Called when {Tracer#shutdown} is called.
+          # Called when {TracerFactory#shutdown} is called.
           def shutdown
             @span_exporter&.shutdown
           end

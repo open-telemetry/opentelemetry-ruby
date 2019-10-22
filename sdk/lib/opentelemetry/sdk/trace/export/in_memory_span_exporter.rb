@@ -14,13 +14,13 @@ module OpenTelemetry
         #
         # class MyClassTest
         #   def setup
-        #     @tracer = Tracer.new
+        #     @tracer_factory = TracerFactory.new
         #     @exporter = InMemorySpanExporter.new
-        #     @tracer.add_span_processor(SimpleSampledSpansProcessor.new(@exporter))
+        #     @tracer_factory.add_span_processor(SimpleSampledSpansProcessor.new(@exporter))
         #   end
         #
         #   def test_finished_spans
-        #     @tracer.in_span("span") {}
+        #     @tracer_factory.tracer.in_span("span") {}
         #
         #     spans = @exporter.finished_spans
         #     spans.wont_be_nil
@@ -71,8 +71,8 @@ module OpenTelemetry
             SUCCESS
           end
 
-          # Called when {Tracer#shutdown} is called, if this exporter is
-          # registered to a {Tracer} object.
+          # Called when {TracerFactory#shutdown} is called, if this exporter is
+          # registered to a {TracerFactory} object.
           def shutdown
             @mutex.synchronize do
               @finished_spans.clear

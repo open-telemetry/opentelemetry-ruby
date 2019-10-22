@@ -9,10 +9,7 @@ module OpenTelemetry
     # No-op implementation of Tracer.
     class Tracer
       CONTEXT_SPAN_KEY = :__span__
-      HTTP_TEXT_FORMAT = DistributedContext::Propagation::HTTPTextFormat.new
-      BINARY_FORMAT = DistributedContext::Propagation::BinaryFormat.new
-
-      private_constant(:CONTEXT_SPAN_KEY, :HTTP_TEXT_FORMAT, :BINARY_FORMAT)
+      private_constant(:CONTEXT_SPAN_KEY)
 
       def current_span
         Context.get(CONTEXT_SPAN_KEY) || Span::INVALID
@@ -47,14 +44,6 @@ module OpenTelemetry
         else
           Span.new
         end
-      end
-
-      def binary_format
-        BINARY_FORMAT
-      end
-
-      def http_text_format
-        HTTP_TEXT_FORMAT
       end
     end
   end
