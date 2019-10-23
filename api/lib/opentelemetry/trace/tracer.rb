@@ -27,11 +27,17 @@ module OpenTelemetry
       # Equivalent without helper:
       #
       #   OpenTelemetry.tracer.with_span(OpenTelemetry.tracer.start_span('do-the-thing')) do ... end
+      #
+      # On exit, the Span that was active before calling this method will be reactivated.
       def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
         span = start_span(name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind, sampling_hint: sampling_hint)
         with_span(span) { |s| yield s }
       end
 
+      # Activates/deactivates the Span within the current Context, which makes the "current span"
+      # available implicitly.
+      #
+      # On exit, the Span that was active before calling this method will be reactivated.
       def with_span(span)
         Context.with(CONTEXT_SPAN_KEY, span) { |s| yield s }
       end
@@ -40,6 +46,17 @@ module OpenTelemetry
         Span.new
       end
 
+      # Used when a caller wants to manage the activation/deactivation and lifecycle of
+      # the Span and its parent manually.
+      #
+      # Parent context can be either passed explicitly, or inferred from currently activated span.
+      #
+      # @param [optional Span] with_parent Explicitly managed parent Span, overrides
+      #   +with_parent_context+.
+      # @param [optional SpanContext] with_parent_context Explicitly managed. Overridden by
+      #   +with_parent+.
+      #
+      # @return [Span]
       def start_span(name, with_parent: nil, with_parent_context: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
         span_context = with_parent&.context || with_parent_context || current_span.context
         if span_context.valid?
