@@ -37,6 +37,12 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     def shutdown; end
   end
 
+  class TestTimeoutExporter < TestExporter
+    def export(batch)
+      raise Timeout::Error
+    end
+  end
+
   class TestSpan
     def initialize(id = nil, recording = true)
       trace_flags = recording ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
@@ -178,6 +184,24 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       expected = 100.times.map { |i| i }
 
       out.must_equal(expected)
+    end
+  end
+
+  describe 'export timeout' do
+    it 'accepts initializer param' do
+      bsp = BatchSpanProcessor.new(exporter: nil, export_timeout_millis: 12_345)
+
+      bsp.send(:export_timeout_seconds).must_equal(12.345)
+    end
+
+    it 'returns FAILED_NOT_RETRYABLE when timeout occurs' do
+      te = TestTimeoutExporter.new
+      bsp = BatchSpanProcessor.new(exporter: te)
+      tss = [TestSpan.new, TestSpan.new]
+      tss.each { |ts| bsp.on_finish(ts) }
+      batch = bsp.send(:fetch_batch)
+
+      bsp.send(:export_with_timeout, batch).must_equal(FAILED_NOT_RETRYABLE)
     end
   end
 end
