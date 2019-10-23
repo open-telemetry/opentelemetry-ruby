@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'timeout'
+
 module OpenTelemetry
   module SDK
     module Trace
@@ -85,7 +87,7 @@ module OpenTelemetry
 
           private
 
-          attr_reader :spans, :max_queue_size, :batch_size
+          attr_reader :spans, :max_queue_size, :batch_size, :export_timeout_seconds
 
           def work
             loop do
@@ -104,12 +106,19 @@ module OpenTelemetry
           def export_batch(batch)
             result_code = nil
             @export_attempts.times do |attempts|
-              result_code = @exporter.export(batch)
+              result_code = export_with_timeout(batch)
               break unless result_code == FAILED_RETRYABLE
 
               sleep(0.1 * attempts)
             end
             report_result(result_code, batch)
+          end
+
+          def export_with_timeout(batch)
+            Timeout.timeout(export_timeout_seconds) { @exporter.export(batch) }
+          rescue Timeout::Error
+            # TODO: tell exporter that it timed out? (e.g., cleanup network connections)
+            FAILED_NOT_RETRYABLE
           end
 
           def report_result(result_code, batch)
