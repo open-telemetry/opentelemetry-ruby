@@ -87,7 +87,7 @@ module OpenTelemetry
 
           private
 
-          attr_reader :spans, :max_queue_size, :batch_size, :export_timeout_seconds
+          attr_reader :spans, :max_queue_size, :batch_size
 
           def work
             loop do
@@ -115,7 +115,7 @@ module OpenTelemetry
           end
 
           def export_with_timeout(batch)
-            Timeout.timeout(exporter_timeout_seconds) { @exporter.export(batch) }
+            Timeout.timeout(@exporter_timeout_seconds) { @exporter.export(batch) }
           rescue Timeout::Error
             FAILED_NOT_RETRYABLE
           end
