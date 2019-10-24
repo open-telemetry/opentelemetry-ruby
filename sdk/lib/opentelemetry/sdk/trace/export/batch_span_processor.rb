@@ -27,7 +27,7 @@ module OpenTelemetry
         # export fails with {FAILED_RETRYABLE}, backing off linearly in 100ms
         # increments.
         class BatchSpanProcessor
-          EXPORT_TIMEOUT_MILLIS = 30_000
+          EXPORTER_TIMEOUT_MILLIS = 30_000
           SCHEDULE_DELAY_MILLIS = 5_000
           MAX_QUEUE_SIZE = 2048
           MAX_EXPORT_BATCH_SIZE = 512
@@ -35,7 +35,7 @@ module OpenTelemetry
           private_constant(:SCHEDULE_DELAY_MILLIS, :MAX_QUEUE_SIZE, :MAX_EXPORT_BATCH_SIZE, :MAX_EXPORT_ATTEMPTS)
 
           def initialize(exporter:,
-                         export_timeout_millis: EXPORT_TIMEOUT_MILLIS,
+                         exporter_timeout_millis: EXPORTER_TIMEOUT_MILLIS,
                          schedule_delay_millis: SCHEDULE_DELAY_MILLIS,
                          max_queue_size: MAX_QUEUE_SIZE,
                          max_export_batch_size: MAX_EXPORT_BATCH_SIZE,
@@ -43,7 +43,7 @@ module OpenTelemetry
             raise ArgumentError if max_export_batch_size > max_queue_size
 
             @exporter = exporter
-            @export_timeout_seconds = export_timeout_millis / 1000.0
+            @exporter_timeout_seconds = exporter_timeout_millis / 1000.0
             @mutex = Mutex.new
             @condition = ConditionVariable.new
             @keep_running = true
@@ -115,7 +115,7 @@ module OpenTelemetry
           end
 
           def export_with_timeout(batch)
-            Timeout.timeout(export_timeout_seconds) { @exporter.export(batch) }
+            Timeout.timeout(exporter_timeout_seconds) { @exporter.export(batch) }
           rescue Timeout::Error
             # TODO: tell exporter that it timed out? (e.g., cleanup network connections)
             FAILED_NOT_RETRYABLE
