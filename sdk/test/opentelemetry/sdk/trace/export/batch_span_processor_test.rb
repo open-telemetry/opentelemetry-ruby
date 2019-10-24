@@ -38,8 +38,19 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
   end
 
   class TestTimeoutExporter < TestExporter
+    attr_reader :state
+
+    def initialize(sleep_for_millis: 0, **args)
+      @sleep_for_seconds = sleep_for_millis / 1000.0
+      super(args)
+    end
+
     def export(batch)
-      raise Timeout::Error
+      @state = :called
+      # long enough to cause a timeout:
+      sleep @sleep_for_seconds
+      @state = :not_interrupted
+      super
     end
   end
 
@@ -188,20 +199,41 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
   end
 
   describe 'export timeout' do
-    it 'accepts initializer param' do
-      bsp = BatchSpanProcessor.new(exporter: nil, export_timeout_millis: 12_345)
+    let(:exporter) do
+      TestTimeoutExporter.new(status_codes: [SUCCESS],
+                              sleep_for_millis: exporter_sleeps_for_millis)
+    end
+    let(:processor) do
+      BatchSpanProcessor.new(exporter: exporter,
+                             exporter_timeout_millis: exporter_timeout_millis,
+                             schedule_delay_millis: schedule_delay_millis)
+    end
+    let(:schedule_delay_millis) { 50 }
+    let(:exporter_timeout_millis) { 100 }
+    let(:spans) { [TestSpan.new, TestSpan.new] }
 
-      bsp.send(:export_timeout_seconds).must_equal(12.345)
+    before do
+      spans.each { |ts| processor.on_finish(ts) }
+
+      # Ensure that work thread loops (longer than 'schedule_delay_millis'):
+      sleep((schedule_delay_millis + 100) / 1000.0)
+      processor.shutdown
     end
 
-    it 'returns FAILED_NOT_RETRYABLE when timeout occurs' do
-      te = TestTimeoutExporter.new
-      bsp = BatchSpanProcessor.new(exporter: te)
-      tss = [TestSpan.new, TestSpan.new]
-      tss.each { |ts| bsp.on_finish(ts) }
-      batch = bsp.send(:fetch_batch)
+    describe 'normally' do
+      let(:exporter_sleeps_for_millis) { exporter_timeout_millis - 1 }
 
-      bsp.send(:export_with_timeout, batch).must_equal(FAILED_NOT_RETRYABLE)
+      it 'exporter is not interrupted' do
+        exporter.state.must_equal(:not_interrupted)
+      end
+    end
+
+    describe 'when exporter runs too long' do
+      let(:exporter_sleeps_for_millis) { exporter_timeout_millis + 1 }
+
+      it 'is interrupted by a timeout' do
+        exporter.state.must_equal(:called)
+      end
     end
   end
 end
