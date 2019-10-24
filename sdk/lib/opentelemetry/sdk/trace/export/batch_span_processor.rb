@@ -28,7 +28,7 @@ module OpenTelemetry
         # increments.
         class BatchSpanProcessor
           EXPORT_TIMEOUT_MILLIS = 30_000
-          SCHEDULE_DELAY_MILLIS = 5
+          SCHEDULE_DELAY_MILLIS = 5_000
           MAX_QUEUE_SIZE = 2048
           MAX_EXPORT_BATCH_SIZE = 512
           MAX_EXPORT_ATTEMPTS = 5
