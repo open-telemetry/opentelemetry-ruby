@@ -117,7 +117,6 @@ module OpenTelemetry
           def export_with_timeout(batch)
             Timeout.timeout(exporter_timeout_seconds) { @exporter.export(batch) }
           rescue Timeout::Error
-            # TODO: tell exporter that it timed out? (e.g., cleanup network connections)
             FAILED_NOT_RETRYABLE
           end
 
