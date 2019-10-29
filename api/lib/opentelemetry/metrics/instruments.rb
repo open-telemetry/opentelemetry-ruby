@@ -17,9 +17,19 @@ module OpenTelemetry
     module Instruments
       # A float gauge instrument.
       class FloatGauge
-        def set(value, label_set_or_label = nil, *labels); end
+        # Set the value of the gauge.
+        #
+        # @param [Float] value The value to set.
+        # @param [optional LabelSet, Hash<String, String>] labels_or_label_set
+        #   A {LabelSet} returned from {Meter#labels} or a Hash of Strings.
+        def set(value, labels_or_label_set = {}); end
 
-        def handle(label_set_or_label = nil, *labels)
+        # Obtain a handle from the instrument and label set.
+        #
+        # @param [optional LabelSet, Hash<String, String>] labels_or_label_set
+        #   A {LabelSet} returned from {Meter#labels} or a Hash of Strings.
+        # @return [Handles::FloatGauge]
+        def handle(labels_or_label_set = {})
           Handles::FloatGauge.new
         end
 
@@ -34,9 +44,14 @@ module OpenTelemetry
 
       # An integer gauge instrument.
       class IntegerGauge
-        def set(value, label_set_or_label = nil, *labels); end
+        def set(value, labels_or_label_set = {}); end
 
-        def handle(label_set_or_label = nil, *labels)
+        # Obtain a handle from the instrument and label set.
+        #
+        # @param [optional LabelSet, Hash<String, String>] labels_or_label_set
+        #   A {LabelSet} returned from {Meter#labels} or a Hash of Strings.
+        # @return [Handles::IntegerGauge]
+        def handle(labels_or_label_set = {})
           Handles::IntegerGauge.new
         end
 
@@ -51,9 +66,14 @@ module OpenTelemetry
 
       # A float counter instrument.
       class FloatCounter
-        def add(value, label_set_or_label = nil, *labels); end
+        def add(value, labels_or_label_set = {}); end
 
-        def handle(label_set_or_label = nil, *labels)
+        # Obtain a handle from the instrument and label set.
+        #
+        # @param [optional LabelSet, Hash<String, String>] labels_or_label_set
+        #   A {LabelSet} returned from {Meter#labels} or a Hash of Strings.
+        # @return [Handles::FloatCounter]
+        def handle(labels_or_label_set = {})
           Handles::FloatCounter.new
         end
 
@@ -68,9 +88,14 @@ module OpenTelemetry
 
       # An integer counter instrument.
       class IntegerCounter
-        def add(value, label_set_or_label = nil, *labels); end
+        def add(value, labels_or_label_set = {}); end
 
-        def handle(label_set_or_label = nil, *labels)
+        # Obtain a handle from the instrument and label set.
+        #
+        # @param [optional LabelSet, Hash<String, String>] labels_or_label_set
+        #   A {LabelSet} returned from {Meter#labels} or a Hash of Strings.
+        # @return [Handles::IntegerCounter]
+        def handle(labels_or_label_set = {})
           Handles::IntegerCounter.new
         end
 
@@ -85,9 +110,14 @@ module OpenTelemetry
 
       # A float measure instrument.
       class FloatMeasure
-        def record(value, label_set_or_label = nil, *labels); end
+        def record(value, labels_or_label_set = {}); end
 
-        def handle(label_set_or_label = nil, *labels)
+        # Obtain a handle from the instrument and label set.
+        #
+        # @param [optional LabelSet, Hash<String, String>] labels_or_label_set
+        #   A {LabelSet} returned from {Meter#labels} or a Hash of Strings.
+        # @return [Handles::FloatMeasure]
+        def handle(labels_or_label_set = {})
           Handles::FloatMeasure.new
         end
 
@@ -102,9 +132,14 @@ module OpenTelemetry
 
       # An integer measure instrument.
       class IntegerMeasure
-        def record(value, label_set_or_label = nil, *labels); end
+        def record(value, labels_or_label_set = {}); end
 
-        def handle(label_set_or_label = nil, *labels)
+        # Obtain a handle from the instrument and label set.
+        #
+        # @param [optional LabelSet, Hash<String, String>] labels_or_label_set
+        #   A {LabelSet} returned from {Meter#labels} or a Hash of Strings.
+        # @return [Handles::IntegerMeasure]
+        def handle(labels_or_label_set = {})
           Handles::IntegerMeasure.new
         end
 
