@@ -26,7 +26,9 @@ module OpenTelemetry
           header = yield carrier, TraceParent::TRACE_PARENT_HEADER
           tp = TraceParent.from_string(header)
 
-          Trace::SpanContext.new(trace_id: tp.trace_id, span_id: tp.span_id, trace_flags: tp.flags, remote: true)
+          tracestate = yield carrier, 'tracestate'
+
+          Trace::SpanContext.new(trace_id: tp.trace_id, span_id: tp.span_id, trace_flags: tp.flags, tracestate: tracestate, remote: true)
         rescue OpenTelemetry::Error
           Trace::SpanContext.new
         end
@@ -37,6 +39,7 @@ module OpenTelemetry
         # @yield [Carrier, String, String] carrier, header key, header value.
         def inject(context, carrier)
           yield carrier, TraceParent::TRACE_PARENT_HEADER, TraceParent.from_context(context).to_s
+          yield carrier, 'tracestate', context.tracestate
         end
 
         def fields
