@@ -142,7 +142,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
   end
 
   describe '#start_span' do
-    let(:context) { OpenTelemetry::Trace::SpanContext.new }
+    let(:context) { OpenTelemetry::Trace::SpanContext.new(tracestate: 'vendorname=opaquevalue') }
 
     it 'provides a default name' do
       _(tracer.start_span(nil, with_parent_context: context).name).wont_be_nil
@@ -161,6 +161,11 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     it 'returns a span with the parent context span ID' do
       span = tracer.start_span('op', with_parent_context: context)
       _(span.parent_span_id).must_equal(context.span_id)
+    end
+
+    it 'returns a span with the parent context tracestate' do
+      span = tracer.start_span('op', with_parent_context: context)
+      _(span.context.tracestate).must_equal(context.tracestate)
     end
 
     it 'returns a no-op span if sampler says do not record events' do
