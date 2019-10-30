@@ -54,8 +54,7 @@ SDK = OpenTelemetry::SDK
 factory = OpenTelemetry.tracer_factory = SDK::Trace::TracerFactory.new
 factory.add_span_processor(
   SDK::Trace::Export::SimpleSpanProcessor.new(
-    # TODO: opentelemetry-python uses ConsoleSpanExporter:
-    SDK::Trace::Export::InMemorySpanExporter.new
+    SDK::Trace::Export::ConsoleSpanExporter.new
   )
 )
 
