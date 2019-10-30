@@ -37,7 +37,7 @@ describe OpenTelemetry do
         OpenTelemetry.logger = Logger.new(t.path)
         OpenTelemetry.logger.info('stuff')
         t.rewind
-        t.read.must_match(/INFO -- : stuff/)
+        _(t.read).must_match(/INFO -- : stuff/)
       ensure
         t.unlink
       end
@@ -52,17 +52,17 @@ describe OpenTelemetry do
 
     it 'returns instance of Metrics::Meter by default' do
       meter = OpenTelemetry.meter
-      meter.must_be_instance_of(OpenTelemetry::Metrics::Meter)
+      _(meter).must_be_instance_of(OpenTelemetry::Metrics::Meter)
     end
 
     it 'returns the same instance when accessed multiple times' do
-      OpenTelemetry.meter.must_equal(OpenTelemetry.meter)
+      _(OpenTelemetry.meter).must_equal(OpenTelemetry.meter)
     end
 
     it 'returns user specified meter' do
       custom_meter = 'a custom meter'
       OpenTelemetry.meter = custom_meter
-      OpenTelemetry.meter.must_equal(custom_meter)
+      _(OpenTelemetry.meter).must_equal(custom_meter)
     end
   end
 
@@ -74,11 +74,11 @@ describe OpenTelemetry do
 
     it 'returns instance of DistributedContext::Manager by default' do
       manager = OpenTelemetry.distributed_context_manager
-      manager.must_be_instance_of(OpenTelemetry::DistributedContext::Manager)
+      _(manager).must_be_instance_of(OpenTelemetry::DistributedContext::Manager)
     end
 
     it 'returns the same instance when accessed multiple times' do
-      OpenTelemetry.distributed_context_manager.must_equal(
+      _(OpenTelemetry.distributed_context_manager).must_equal(
         OpenTelemetry.distributed_context_manager
       )
     end
@@ -86,7 +86,7 @@ describe OpenTelemetry do
     it 'returns user specified distributed_context_manager' do
       custom_manager = 'a custom distributed_context_manager'
       OpenTelemetry.distributed_context_manager = custom_manager
-      OpenTelemetry.distributed_context_manager.must_equal(custom_manager)
+      _(OpenTelemetry.distributed_context_manager).must_equal(custom_manager)
     end
   end
 end

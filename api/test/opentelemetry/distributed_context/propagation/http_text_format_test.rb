@@ -50,8 +50,8 @@ describe OpenTelemetry::DistributedContext::Propagation::HTTPTextFormat do
 
     it 'returns a valid non-remote SpanContext on error' do
       context = formatter.extract({}) { invalid_traceparent_header }
-      context.wont_be :remote?
-      context.must_be :valid?
+      _(context).wont_be :remote?
+      _(context).must_be :valid?
     end
   end
 
@@ -61,13 +61,13 @@ describe OpenTelemetry::DistributedContext::Propagation::HTTPTextFormat do
       carrier = {}
       yielded = false
       formatter.inject(context, carrier) do |c, k, v|
-        c.must_equal(carrier)
-        k.must_equal('traceparent')
-        v.must_equal('00-ffffffffffffffffffffffffffffffff-1111111111111111-00')
+        _(c).must_equal(carrier)
+        _(k).must_equal('traceparent')
+        _(v).must_equal('00-ffffffffffffffffffffffffffffffff-1111111111111111-00')
         yielded = true
         c
       end
-      yielded.must_equal(true)
+      _(yielded).must_equal(true)
     end
 
     it 'does not yield the tracestate from the context, if nil' do
