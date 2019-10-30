@@ -12,18 +12,18 @@ describe OpenTelemetry::Trace::Link do
   describe '.new' do
     it 'accepts a span_context' do
       link = Link.new(span_context)
-      link.context.must_equal(span_context)
+      _(link.context).must_equal(span_context)
     end
 
     it 'returns a link with the given span context and attributes' do
       link = Link.new(span_context, '1' => 1)
-      link.attributes.must_equal('1' => 1)
-      link.context.must_equal(span_context)
+      _(link.attributes).must_equal('1' => 1)
+      _(link.context).must_equal(span_context)
     end
 
     it 'returns a link with no attributes by default' do
       link = Link.new(span_context)
-      link.attributes.must_equal({})
+      _(link.attributes).must_equal({})
     end
   end
 
@@ -31,8 +31,8 @@ describe OpenTelemetry::Trace::Link do
     it 'returns and freezes attributes passed in' do
       attributes = { 'foo' => 'bar', 'bar' => 'baz' }
       link = Link.new(span_context, attributes)
-      link.attributes.must_equal(attributes)
-      link.attributes.must_be(:frozen?)
+      _(link.attributes).must_equal(attributes)
+      _(link.attributes).must_be(:frozen?)
     end
   end
 end
