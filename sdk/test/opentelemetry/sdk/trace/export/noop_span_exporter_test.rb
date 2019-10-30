@@ -13,7 +13,7 @@ describe OpenTelemetry::SDK::Trace::Export::NoopSpanExporter do
   let(:exporter) { export::NoopSpanExporter.new }
 
   it 'accepts an Array of Spans as arg to #export and succeeds' do
-    exporter.export(spans).must_equal export::SUCCESS
+    _(exporter.export(spans)).must_equal export::SUCCESS
   end
 
   it 'accepts an Enumerable of Spans as arg to #export and succeeds' do
@@ -22,7 +22,7 @@ describe OpenTelemetry::SDK::Trace::Export::NoopSpanExporter do
     enumerable.span0 = spans[0]
     enumerable.span1 = spans[1]
 
-    exporter.export(enumerable).must_equal export::SUCCESS
+    _(exporter.export(enumerable)).must_equal export::SUCCESS
   end
 
   it 'accepts calls to #shutdown' do
@@ -31,6 +31,6 @@ describe OpenTelemetry::SDK::Trace::Export::NoopSpanExporter do
 
   it 'fails to export after shutdown' do
     exporter.shutdown
-    exporter.export(spans).must_equal export::FAILED_NOT_RETRYABLE
+    _(exporter.export(spans)).must_equal export::FAILED_NOT_RETRYABLE
   end
 end
