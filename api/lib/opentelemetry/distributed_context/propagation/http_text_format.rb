@@ -17,7 +17,8 @@ module OpenTelemetry
       # and the server-side extracts them.
       class HTTPTextFormat
         TRACESTATE_HEADER = 'tracestate'
-        private_constant(:TRACESTATE_HEADER)
+        FIELDS = [TraceParent::TRACE_PARENT_HEADER, TRACESTATE_HEADER].freeze
+        private_constant(:TRACESTATE_HEADER, :FIELDS)
 
         # Return a remote {Trace::SpanContext} extracted from the supplied carrier.
         # Invalid headers will result in a new, valid, non-remote {Trace::SpanContext}.
@@ -46,7 +47,7 @@ module OpenTelemetry
         end
 
         def fields
-          [TraceParent::TRACE_PARENT_HEADER, TRACESTATE_HEADER]
+          FIELDS
         end
       end
     end
