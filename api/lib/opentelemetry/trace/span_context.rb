@@ -8,26 +8,30 @@ module OpenTelemetry
   module Trace
     # A SpanContext contains the state that must propagate to child {Span}s and across process boundaries.
     # It contains the identifiers (a trace ID and span ID) associated with the {Span}, a set of
-    # {TraceFlags}, and a boolean indicating that the SpanContext was extracted from the wire.
+    # {TraceFlags}, a system-specific tracestate, and a boolean indicating that the SpanContext was
+    # extracted from the wire.
     class SpanContext
-      attr_reader :trace_id, :span_id, :trace_flags
+      attr_reader :trace_id, :span_id, :trace_flags, :tracestate
 
       # Returns a new {SpanContext}.
       #
       # @param [optional String] trace_id The trace ID associated with a {Span}.
       # @param [optional String] span_id The span ID associated with a {Span}.
       # @param [optional TraceFlags] trace_flags The trace flags associated with a {Span}.
+      # @param [optional String] tracestate The tracestate associated with a {Span}. May be nil.
       # @param [optional Boolean] remote Whether the {SpanContext} was extracted from the wire.
       # @return [SpanContext]
       def initialize(
         trace_id: Trace.generate_trace_id,
         span_id: Trace.generate_span_id,
         trace_flags: TraceFlags::DEFAULT,
+        tracestate: nil,
         remote: false
       )
         @trace_id = trace_id
         @span_id = span_id
         @trace_flags = trace_flags
+        @tracestate = tracestate
         @remote = remote
       end
 

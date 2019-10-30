@@ -12,36 +12,44 @@ describe OpenTelemetry::DistributedContext::Propagation::HTTPTextFormat do
     OpenTelemetry::DistributedContext::Propagation::HTTPTextFormat
 
   let(:formatter) { HTTPTextFormat.new }
-  let(:valid_header) do
+  let(:valid_traceparent_header) do
     '00-000000000000000000000000000000AA-00000000000000ea-01'
   end
-  let(:invalid_header) do
+  let(:invalid_traceparent_header) do
     'FF-000000000000000000000000000000AA-00000000000000ea-01'
   end
+  let(:tracestate_header) { 'vendorname=opaquevalue' }
 
   describe '#extract' do
     it 'yields the carrier and the header key' do
-      carrier = {}
-      yielded = false
+      carrier = {
+        'traceparent' => valid_traceparent_header,
+        'tracestate' => tracestate_header
+      }
+      yielded_keys = []
       formatter.extract(carrier) do |c, key|
         _(c).must_equal(carrier)
-        _(key).must_equal('traceparent')
-        yielded = true
-        valid_header
+        yielded_keys << key
+        c[key]
       end
-      _(yielded).must_equal(true)
+      _(yielded_keys.sort).must_equal(%w[traceparent tracestate])
     end
 
-    it 'returns a remote SpanContext with fields from the traceparent header' do
-      context = formatter.extract({}) { valid_header }
+    it 'returns a remote SpanContext with fields from the traceparent and tracestate headers' do
+      carrier = {
+        'traceparent' => valid_traceparent_header,
+        'tracestate' => tracestate_header
+      }
+      context = formatter.extract(carrier) { |c, k| c[k] }
       _(context).must_be :remote?
       _(context.trace_id).must_equal('000000000000000000000000000000aa')
       _(context.span_id).must_equal('00000000000000ea')
       _(context.trace_flags).must_be :sampled?
+      _(context.tracestate).must_equal('vendorname=opaquevalue')
     end
 
     it 'returns a valid non-remote SpanContext on error' do
-      context = formatter.extract({}) { invalid_header }
+      context = formatter.extract({}) { invalid_traceparent_header }
       _(context).wont_be :remote?
       _(context).must_be :valid?
     end
@@ -61,11 +69,25 @@ describe OpenTelemetry::DistributedContext::Propagation::HTTPTextFormat do
       end
       _(yielded).must_equal(true)
     end
+
+    it 'does not yield the tracestate from the context, if nil' do
+      context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16, tracestate: nil)
+      carrier = {}
+      formatter.inject(context, carrier) { |c, k, v| c[k] = v }
+      _(carrier).wont_include('tracestate')
+    end
+
+    it 'yields the tracestate from the context, if provided' do
+      context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16, tracestate: tracestate_header)
+      carrier = {}
+      formatter.inject(context, carrier) { |c, k, v| c[k] = v }
+      _(carrier).must_include('tracestate')
+    end
   end
 
   describe '#fields' do
     it 'returns an array with the W3C traceparent header' do
-      _(formatter.fields).must_equal(['traceparent'])
+      _(formatter.fields.sort).must_equal(%w[traceparent tracestate])
     end
   end
 end
