@@ -37,6 +37,23 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     def shutdown; end
   end
 
+  class TestTimeoutExporter < TestExporter
+    attr_reader :state
+
+    def initialize(sleep_for_millis: 0, **args)
+      @sleep_for_seconds = sleep_for_millis / 1000.0
+      super(args)
+    end
+
+    def export(batch)
+      @state = :called
+      # long enough to cause a timeout:
+      sleep @sleep_for_seconds
+      @state = :not_interrupted
+      super
+    end
+  end
+
   class TestSpan
     def initialize(id = nil, recording = true)
       trace_flags = recording ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
@@ -178,6 +195,45 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       expected = 100.times.map { |i| i }
 
       _(out).must_equal(expected)
+    end
+  end
+
+  describe 'export timeout' do
+    let(:exporter) do
+      TestTimeoutExporter.new(status_codes: [SUCCESS],
+                              sleep_for_millis: exporter_sleeps_for_millis)
+    end
+    let(:processor) do
+      BatchSpanProcessor.new(exporter: exporter,
+                             exporter_timeout_millis: exporter_timeout_millis,
+                             schedule_delay_millis: schedule_delay_millis)
+    end
+    let(:schedule_delay_millis) { 50 }
+    let(:exporter_timeout_millis) { 100 }
+    let(:spans) { [TestSpan.new, TestSpan.new] }
+
+    before do
+      spans.each { |ts| processor.on_finish(ts) }
+
+      # Ensure that work thread loops (longer than 'schedule_delay_millis'):
+      sleep((schedule_delay_millis + 100) / 1000.0)
+      processor.shutdown
+    end
+
+    describe 'normally' do
+      let(:exporter_sleeps_for_millis) { exporter_timeout_millis - 1 }
+
+      it 'exporter is not interrupted' do
+        exporter.state.must_equal(:not_interrupted)
+      end
+    end
+
+    describe 'when exporter runs too long' do
+      let(:exporter_sleeps_for_millis) { exporter_timeout_millis + 1 }
+
+      it 'is interrupted by a timeout' do
+        exporter.state.must_equal(:called)
+      end
     end
   end
 end
