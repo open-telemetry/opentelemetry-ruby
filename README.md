@@ -59,7 +59,7 @@ factory.add_span_processor(
   )
 )
 
-tracer = factory.tracer('trace_name', _version = 'semver:1.0')
+tracer = factory.tracer('my_app_or_gem', Gem.loaded_specs['my_app_or_gem']&.version.to_s)
 tracer.in_span('foo') do |foo_span|
   tracer.in_span('bar') do |bar_span|
     tracer.in_span('baz') do |baz_span|
