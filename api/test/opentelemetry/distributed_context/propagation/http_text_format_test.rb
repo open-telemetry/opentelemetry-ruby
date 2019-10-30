@@ -32,7 +32,7 @@ describe OpenTelemetry::DistributedContext::Propagation::HTTPTextFormat do
         yielded_keys << key
         c[key]
       end
-      _(yielded_keys.sort).must_equal(['traceparent', 'tracestate'])
+      _(yielded_keys.sort).must_equal(%w[traceparent tracestate])
     end
 
     it 'returns a remote SpanContext with fields from the traceparent and tracestate headers' do
@@ -49,7 +49,7 @@ describe OpenTelemetry::DistributedContext::Propagation::HTTPTextFormat do
     end
 
     it 'returns a valid non-remote SpanContext on error' do
-      context = formatter.extract({}) { invalid_header }
+      context = formatter.extract({}) { invalid_traceparent_header }
       context.wont_be :remote?
       context.must_be :valid?
     end
@@ -87,7 +87,7 @@ describe OpenTelemetry::DistributedContext::Propagation::HTTPTextFormat do
 
   describe '#fields' do
     it 'returns an array with the W3C traceparent header' do
-      _(formatter.fields.sort).must_equal(['traceparent', 'tracestate'])
+      _(formatter.fields.sort).must_equal(%w[traceparent tracestate])
     end
   end
 end

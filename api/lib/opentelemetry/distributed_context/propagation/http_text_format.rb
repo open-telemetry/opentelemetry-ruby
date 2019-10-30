@@ -42,7 +42,7 @@ module OpenTelemetry
         # @yield [Carrier, String, String] carrier, header key, header value.
         def inject(context, carrier)
           yield carrier, TraceParent::TRACE_PARENT_HEADER, TraceParent.from_context(context).to_s
-          yield carrier, TRACESTATE_HEADER, context.tracestate
+          yield carrier, TRACESTATE_HEADER, context.tracestate unless context.tracestate.nil?
         end
 
         def fields
