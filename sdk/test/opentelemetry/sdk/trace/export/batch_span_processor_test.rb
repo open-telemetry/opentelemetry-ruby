@@ -78,7 +78,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
       bsp.shutdown
 
-      te.batches.must_equal [[ts]]
+      _(te.batches).must_equal [[ts]]
     end
   end
 
@@ -92,8 +92,8 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       tss.each { |ts| bsp.on_finish(ts) }
       bsp.shutdown
 
-      te.batches[0].size.must_equal(3)
-      te.batches[1].size.must_equal(1)
+      _(te.batches[0].size).must_equal(3)
+      _(te.batches[1].size).must_equal(1)
     end
 
     it 'should batch only recording samples' do
@@ -105,7 +105,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       tss.each { |ts| bsp.on_finish(ts) }
       bsp.shutdown
 
-      te.batches[0].size.must_equal(1)
+      _(te.batches[0].size).must_equal(1)
     end
   end
 
@@ -125,12 +125,12 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       sleep(1)
       bsp.shutdown
 
-      te.batches.size.must_equal(2)
-      te.batches[0].size.must_equal(3)
-      te.batches[1].size.must_equal(1)
+      _(te.batches.size).must_equal(2)
+      _(te.batches[0].size).must_equal(3)
+      _(te.batches[1].size).must_equal(1)
 
-      te.failed_batches.size.must_equal(1)
-      te.failed_batches[0].size.must_equal(3)
+      _(te.failed_batches.size).must_equal(1)
+      _(te.failed_batches[0].size).must_equal(3)
     end
 
     it 'should not retry on FAILED_NOT_RETRYABLE exports' do
@@ -148,11 +148,11 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       sleep(1)
       bsp.shutdown
 
-      te.batches.size.must_equal(1)
-      te.batches[0].size.must_equal(1)
+      _(te.batches.size).must_equal(1)
+      _(te.batches[0].size).must_equal(1)
 
-      te.failed_batches.size.must_equal(1)
-      te.failed_batches[0].size.must_equal(3)
+      _(te.failed_batches.size).must_equal(1)
+      _(te.failed_batches[0].size).must_equal(3)
     end
   end
 
@@ -177,7 +177,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
       expected = 100.times.map { |i| i }
 
-      out.must_equal(expected)
+      _(out).must_equal(expected)
     end
   end
 end
