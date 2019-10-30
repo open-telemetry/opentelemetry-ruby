@@ -16,6 +16,9 @@ module OpenTelemetry
       # Propagation is usually implemented via library-specific request interceptors, where the client-side injects values
       # and the server-side extracts them.
       class HTTPTextFormat
+        TRACESTATE_HEADER = 'tracestate'
+        private_constant(:TRACESTATE_HEADER)
+
         # Return a remote {Trace::SpanContext} extracted from the supplied carrier.
         # Invalid headers will result in a new, valid, non-remote {Trace::SpanContext}.
         #
@@ -26,7 +29,7 @@ module OpenTelemetry
           header = yield carrier, TraceParent::TRACE_PARENT_HEADER
           tp = TraceParent.from_string(header)
 
-          tracestate = yield carrier, 'tracestate'
+          tracestate = yield carrier, TRACESTATE_HEADER
 
           Trace::SpanContext.new(trace_id: tp.trace_id, span_id: tp.span_id, trace_flags: tp.flags, tracestate: tracestate, remote: true)
         rescue OpenTelemetry::Error
@@ -39,11 +42,11 @@ module OpenTelemetry
         # @yield [Carrier, String, String] carrier, header key, header value.
         def inject(context, carrier)
           yield carrier, TraceParent::TRACE_PARENT_HEADER, TraceParent.from_context(context).to_s
-          yield carrier, 'tracestate', context.tracestate
+          yield carrier, TRACESTATE_HEADER, context.tracestate
         end
 
         def fields
-          [TraceParent::TRACE_PARENT_HEADER]
+          [TraceParent::TRACE_PARENT_HEADER, TRACESTATE_HEADER]
         end
       end
     end
