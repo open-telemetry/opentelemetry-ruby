@@ -21,12 +21,13 @@ module OpenTelemetry
         FAILED_NOT_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_NOT_RETRYABLE
         private_constant(:SUCCESS, :FAILED_RETRYABLE, :FAILED_NOT_RETRYABLE)
 
-        def initialize(host:, port:, max_packet_size: 65_000)
+        def initialize(service_name:, host:, port:, max_packet_size: 65_000)
           transport = Transport.new(host, port)
           protocol = ::Thrift::CompactProtocol.new(transport)
           @client = Thrift::Agent::Client.new(protocol)
           @max_packet_size = max_packet_size
           @shutdown = false
+          @service_name = service_name
         end
 
         # Called to export sampled {OpenTelemetry::SDK::Trace::SpanData} structs.
@@ -217,7 +218,7 @@ module OpenTelemetry
             # tags = OpenTelemetry.tracer.resource.label_enumerator.map do |key, value|
             #   Thrift::Tag.new('key' => key, 'vType' => Thrift::TagType::STRING, 'vStr' => value)
             # end
-            Thrift::Process.new('serviceName' => 'TODO: extract from resource?', 'tags' => tags)
+            Thrift::Process.new('serviceName' => @service_name, 'tags' => tags)
           end
         end
       end

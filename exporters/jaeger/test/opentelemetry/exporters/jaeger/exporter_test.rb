@@ -12,13 +12,13 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter do
 
   describe '#initialize' do
     it 'initializes' do
-      exporter = OpenTelemetry::Exporters::Jaeger::Exporter.new(host: '127.0.0.1', port: 6831)
+      exporter = OpenTelemetry::Exporters::Jaeger::Exporter.new(service_name: 'test', host: '127.0.0.1', port: 6831)
       _(exporter).wont_be_nil
     end
   end
 
   describe '#export' do
-    let(:exporter) { OpenTelemetry::Exporters::Jaeger::Exporter.new(host: '127.0.0.1', port: 6831) }
+    let(:exporter) { OpenTelemetry::Exporters::Jaeger::Exporter.new(service_name: 'test', host: '127.0.0.1', port: 6831) }
 
     before do
       OpenTelemetry.tracer_factory = OpenTelemetry::SDK::Trace::TracerFactory.new
@@ -31,7 +31,7 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter do
     end
 
     it 'returns FAILED_NOT_RETRYABLE if an encoded span is too large' do
-      exporter = OpenTelemetry::Exporters::Jaeger::Exporter.new(host: '127.0.0.1', port: 6831, max_packet_size: 10)
+      exporter = OpenTelemetry::Exporters::Jaeger::Exporter.new(service_name: 'test', host: '127.0.0.1', port: 6831, max_packet_size: 10)
       span_data = create_span_data
       result = exporter.export([span_data])
       _(result).must_equal(FAILED_NOT_RETRYABLE)
@@ -40,7 +40,7 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter do
     it 'exports a span_data' do
       socket = UDPSocket.new
       socket.bind('127.0.0.1', 0)
-      exporter = OpenTelemetry::Exporters::Jaeger::Exporter.new(host: '127.0.0.1', port: socket.addr[1])
+      exporter = OpenTelemetry::Exporters::Jaeger::Exporter.new(service_name: 'test', host: '127.0.0.1', port: socket.addr[1])
       span_data = create_span_data
       result = exporter.export([span_data])
       packet = socket.recvfrom(65_000)
@@ -52,7 +52,7 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter do
     it 'exports a span from a tracer' do
       socket = UDPSocket.new
       socket.bind('127.0.0.1', 0)
-      exporter = OpenTelemetry::Exporters::Jaeger::Exporter.new(host: '127.0.0.1', port: socket.addr[1])
+      exporter = OpenTelemetry::Exporters::Jaeger::Exporter.new(service_name: 'test', host: '127.0.0.1', port: socket.addr[1])
       processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter: exporter, max_queue_size: 1, max_export_batch_size: 1, max_export_attempts: 1)
       OpenTelemetry.tracer_factory.add_span_processor(processor)
       OpenTelemetry.tracer_factory.tracer.start_root_span('foo').finish
@@ -65,7 +65,7 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter do
     it 'limits packet sizes' do
       socket = UDPSocket.new
       socket.bind('127.0.0.1', 0)
-      exporter = OpenTelemetry::Exporters::Jaeger::Exporter.new(host: '127.0.0.1', port: socket.addr[1], max_packet_size: 128)
+      exporter = OpenTelemetry::Exporters::Jaeger::Exporter.new(service_name: 'test', host: '127.0.0.1', port: socket.addr[1], max_packet_size: 128)
       span_data = 3.times.map { create_span_data }
       result = exporter.export(span_data)
       packet1 = socket.recvfrom(65_000)
