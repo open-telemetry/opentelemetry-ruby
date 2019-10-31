@@ -16,6 +16,8 @@ module OpenTelemetry
         class ConsoleSpanExporter
           ResultCodes = OpenTelemetry::SDK::Trace::Export
 
+          private_constant(:ResultCodes)
+
           def initialize
             @stopped = false
           end
