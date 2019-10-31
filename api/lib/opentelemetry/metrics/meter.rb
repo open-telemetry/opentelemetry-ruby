@@ -32,7 +32,7 @@ module OpenTelemetry
       def create_float_gauge(name, description: nil, unit: nil, recommended_label_keys: nil, monotonic: false)
         raise ArgumentError if name.nil?
 
-        FloatGauge.new
+        Instruments::FloatGauge.new
       end
 
       # Create and return an integer gauge.
@@ -46,7 +46,7 @@ module OpenTelemetry
       def create_integer_gauge(name, description: nil, unit: nil, recommended_label_keys: nil, monotonic: false)
         raise ArgumentError if name.nil?
 
-        IntegerGauge.new
+        Instruments::IntegerGauge.new
       end
 
       # Create and return a floating point counter.
@@ -60,7 +60,7 @@ module OpenTelemetry
       def create_float_counter(name, description: nil, unit: nil, recommended_label_keys: nil, monotonic: true)
         raise ArgumentError if name.nil?
 
-        FloatCounter.new
+        Instruments::FloatCounter.new
       end
 
       # Create and return an integer counter.
@@ -74,7 +74,7 @@ module OpenTelemetry
       def create_integer_counter(name, description: nil, unit: nil, recommended_label_keys: nil, monotonic: true)
         raise ArgumentError if name.nil?
 
-        IntegerCounter.new
+        Instruments::IntegerCounter.new
       end
 
       # Create and return a floating point measure.
@@ -88,7 +88,7 @@ module OpenTelemetry
       def create_float_measure(name, description: nil, unit: nil, recommended_label_keys: nil, absolute: true)
         raise ArgumentError if name.nil?
 
-        FloatMeasure.new
+        Instruments::FloatMeasure.new
       end
 
       # Create and return an integer measure.
@@ -102,7 +102,7 @@ module OpenTelemetry
       def create_integer_measure(name, description: nil, unit: nil, recommended_label_keys: nil, absolute: true)
         raise ArgumentError if name.nil?
 
-        IntegerMeasure.new
+        Instruments::IntegerMeasure.new
       end
     end
   end
