@@ -17,10 +17,7 @@ describe OpenTelemetry::SDK::Trace::Export::NoopSpanExporter do
   end
 
   it 'accepts an Enumerable of Spans as arg to #export and succeeds' do
-    # An anonymous Struct serves as a handy implementor of Enumerable
-    enumerable = Struct.new(:span0, :span1).new
-    enumerable.span0 = spans[0]
-    enumerable.span1 = spans[1]
+    enumerable = Struct.new(:span0, :span1).new(spans[0], spans[1])
 
     _(exporter.export(enumerable)).must_equal export::SUCCESS
   end

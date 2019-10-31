@@ -37,9 +37,7 @@ describe OpenTelemetry::SDK::Trace::Export::MultiSpanExporter do
 
   it 'accepts an Enumerable of Spans as arg to #export and forwards them' do
     # An anonymous Struct serves as a handy implementor of Enumerable
-    enumerable = Struct.new(:span0, :span1).new
-    enumerable.span0 = spans[0]
-    enumerable.span1 = spans[1]
+    enumerable = Struct.new(:span0, :span1).new(spans[0], spans[1])
 
     mock_span_exporter.expect(:export, export::SUCCESS) { |a| a.to_a == spans }
 
