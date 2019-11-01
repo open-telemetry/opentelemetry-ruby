@@ -224,7 +224,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       let(:exporter_sleeps_for_millis) { exporter_timeout_millis - 1 }
 
       it 'exporter is not interrupted' do
-        exporter.state.must_equal(:not_interrupted)
+        _(exporter.state).must_equal(:not_interrupted)
       end
     end
 
@@ -232,7 +232,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       let(:exporter_sleeps_for_millis) { exporter_timeout_millis + 1 }
 
       it 'is interrupted by a timeout' do
-        exporter.state.must_equal(:called)
+        _(exporter.state).must_equal(:called)
       end
     end
   end
