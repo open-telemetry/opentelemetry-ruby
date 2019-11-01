@@ -14,6 +14,22 @@ We'd love your help! Use tags [good first issue][issues-good-first-issue] and
 The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 [community page][ruby-sig] repo for information on this and other language SIGs.
 
+Approvers ([@open-telemetry/ruby-approvers](https://github.com/orgs/open-telemetry/teams/ruby-approvers)):
+
+- [Vlad Gorodetsky](https://github.com/bai), Shopify
+- [Yoshinori Kawasaki](https://github.com/luvtechno), Wantedly
+- [Don Morrison](https://github.com/elskwid), Mutations
+
+*Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#approver).*
+
+Maintainers ([@open-telemetry/ruby-maintainers](https://github.com/orgs/open-telemetry/teams/ruby-maintainers)):
+
+- [Francis Bogsanyi](https://github.com/fbogsany), Shopify
+- [Matthew Wear](https://github.com/mwear), LightStep
+- [Daniel Azuma](https://github.com/dazuma), Google
+
+*Find more about the maintainer role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#maintainer).*
+
 ## Developer Setup
 
 1. Install Docker and Docker Compose for your operating system
@@ -42,6 +58,36 @@ The services provided are:
 * `app` - main container environment scoped to the `/app` directory. Used primarily to build and tag the `opentelemetry/opentelemetry-ruby:latest` image.
 * `api` - convenience environment scoped to the `api` gem in the `/app/api` directory.
 * `sdk` - convenience environment scoped to the `sdk` gem in the `/app/sdk` directory.
+
+## Quick Start
+
+```ruby
+require 'opentelemetry/sdk'
+
+# Set preferred tracer implementation:
+SDK = OpenTelemetry::SDK
+
+factory = OpenTelemetry.tracer_factory = SDK::Trace::TracerFactory.new
+factory.add_span_processor(
+  SDK::Trace::Export::SimpleSpanProcessor.new(
+    SDK::Trace::Export::ConsoleSpanExporter.new
+  )
+)
+
+tracer = factory.tracer('my_app_or_gem', Gem.loaded_specs['my_app_or_gem']&.version.to_s)
+tracer.in_span('foo') do |foo_span|
+  tracer.in_span('bar') do |bar_span|
+    tracer.in_span('baz') do |baz_span|
+      pp baz_span
+    end
+  end
+end
+```
+
+See the [API Documentation](https://open-telemetry.github.io/opentelemetry-ruby/) for more
+detail, and the
+[opentelemetry examples](./examples/README.md)
+for a complete example.
 
 ## Release Schedule
 
