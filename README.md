@@ -59,6 +59,36 @@ The services provided are:
 * `api` - convenience environment scoped to the `api` gem in the `/app/api` directory.
 * `sdk` - convenience environment scoped to the `sdk` gem in the `/app/sdk` directory.
 
+## Quick Start
+
+```ruby
+require 'opentelemetry/sdk'
+
+# Set preferred tracer implementation:
+SDK = OpenTelemetry::SDK
+
+factory = OpenTelemetry.tracer_factory = SDK::Trace::TracerFactory.new
+factory.add_span_processor(
+  SDK::Trace::Export::SimpleSpanProcessor.new(
+    SDK::Trace::Export::ConsoleSpanExporter.new
+  )
+)
+
+tracer = factory.tracer('my_app_or_gem', Gem.loaded_specs['my_app_or_gem']&.version.to_s)
+tracer.in_span('foo') do |foo_span|
+  tracer.in_span('bar') do |bar_span|
+    tracer.in_span('baz') do |baz_span|
+      pp baz_span
+    end
+  end
+end
+```
+
+See the [API Documentation](https://open-telemetry.github.io/opentelemetry-ruby/) for more
+detail, and the
+[opentelemetry examples](./examples/README.md)
+for a complete example.
+
 ## Release Schedule
 
 OpenTelemetry Ruby is under active development. Our goal is to release an

@@ -58,6 +58,7 @@ describe OpenTelemetry::SDK::Trace::TracerFactory do
     it 'adds the span processor to the active span processors' do
       mock_span_processor = Minitest::Mock.new
       mock_span_processor.expect(:on_start, nil, [Span])
+      mock_span_processor.expect(:on_finish, nil, [Span])
       tracer_factory.add_span_processor(mock_span_processor)
       tracer_factory.tracer.in_span('span') {}
       mock_span_processor.verify
