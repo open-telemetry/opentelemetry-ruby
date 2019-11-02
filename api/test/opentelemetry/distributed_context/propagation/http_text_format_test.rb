@@ -48,6 +48,20 @@ describe OpenTelemetry::DistributedContext::Propagation::HTTPTextFormat do
       _(context.tracestate).must_equal('vendorname=opaquevalue')
     end
 
+    it 'uses a default getter if one is not provided' do
+      carrier = {
+        'traceparent' => valid_traceparent_header,
+        'tracestate' => tracestate_header
+      }
+
+      context = formatter.extract(carrier)
+      _(context).must_be :remote?
+      _(context.trace_id).must_equal('000000000000000000000000000000aa')
+      _(context.span_id).must_equal('00000000000000ea')
+      _(context.trace_flags).must_be :sampled?
+      _(context.tracestate).must_equal('vendorname=opaquevalue')
+    end
+
     it 'returns a valid non-remote SpanContext on error' do
       context = formatter.extract({}) { invalid_traceparent_header }
       _(context).wont_be :remote?

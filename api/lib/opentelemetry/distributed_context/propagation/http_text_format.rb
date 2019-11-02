@@ -18,19 +18,25 @@ module OpenTelemetry
       class HTTPTextFormat
         TRACESTATE_HEADER = 'tracestate'
         FIELDS = [TraceParent::TRACE_PARENT_HEADER, TRACESTATE_HEADER].freeze
-        private_constant(:TRACESTATE_HEADER, :FIELDS)
+        DEFAULT_GETTER = ->(carrier, key) { carrier[key] }
+        private_constant(:TRACESTATE_HEADER, :FIELDS, :DEFAULT_GETTER)
 
         # Return a remote {Trace::SpanContext} extracted from the supplied carrier.
         # Invalid headers will result in a new, valid, non-remote {Trace::SpanContext}.
         #
         # @param [Carrier] carrier The carrier to get the header from.
-        # @yield [Carrier, String] the carrier and the header key.
+        # @param [optional Callable] getter An optional callable that takes a carrier and a key and
+        #   returns the value associated with the key. If not passed in the default getter will be
+        #   used which expects the carrier to respond to [] and []=.
+        # @yield [Carrier, String] if an optional getter is provided, extract will yield the carrier
+        #   and the header key to the getter.
         # @return [SpanContext] the span context from the header, or a new one if parsing fails.
-        def extract(carrier)
-          header = yield carrier, TraceParent::TRACE_PARENT_HEADER
+        def extract(carrier, &getter)
+          getter ||= DEFAULT_GETTER
+          header = getter.call(carrier, TraceParent::TRACE_PARENT_HEADER)
           tp = TraceParent.from_string(header)
 
-          tracestate = yield carrier, TRACESTATE_HEADER
+          tracestate = getter.call(carrier, TRACESTATE_HEADER)
 
           Trace::SpanContext.new(trace_id: tp.trace_id, span_id: tp.span_id, trace_flags: tp.flags, tracestate: tracestate, remote: true)
         rescue OpenTelemetry::Error
