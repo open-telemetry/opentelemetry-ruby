@@ -97,6 +97,14 @@ describe OpenTelemetry::DistributedContext::Propagation::HTTPTextFormat do
       formatter.inject(context, carrier) { |c, k, v| c[k] = v }
       _(carrier).must_include('tracestate')
     end
+
+    it 'uses the default setter if one is not provided' do
+      context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16, tracestate: tracestate_header)
+      carrier = {}
+      formatter.inject(context, carrier)
+      _(carrier['traceparent']).must_equal('00-ffffffffffffffffffffffffffffffff-1111111111111111-00')
+      _(carrier['tracestate']).must_equal(tracestate_header)
+    end
   end
 
   describe '#fields' do
