@@ -70,11 +70,18 @@ describe OpenTelemetry::DistributedContext::Propagation::HTTPTextFormat do
   end
 
   describe '#inject' do
+    let(:span_context) do
+      SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16)
+    end
+
+    let(:span_context_with_tracestate) do
+      SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16, tracestate: tracestate_header)
+    end
+
     it 'yields the carrier, key, and traceparent value from the context' do
-      context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16)
       carrier = {}
       yielded = false
-      formatter.inject(context, carrier) do |c, k, v|
+      formatter.inject(span_context, carrier) do |c, k, v|
         _(c).must_equal(carrier)
         _(k).must_equal('traceparent')
         _(v).must_equal('00-ffffffffffffffffffffffffffffffff-1111111111111111-00')
@@ -85,23 +92,20 @@ describe OpenTelemetry::DistributedContext::Propagation::HTTPTextFormat do
     end
 
     it 'does not yield the tracestate from the context, if nil' do
-      context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16, tracestate: nil)
       carrier = {}
-      formatter.inject(context, carrier) { |c, k, v| c[k] = v }
+      formatter.inject(span_context, carrier) { |c, k, v| c[k] = v }
       _(carrier).wont_include('tracestate')
     end
 
     it 'yields the tracestate from the context, if provided' do
-      context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16, tracestate: tracestate_header)
       carrier = {}
-      formatter.inject(context, carrier) { |c, k, v| c[k] = v }
+      formatter.inject(span_context_with_tracestate, carrier) { |c, k, v| c[k] = v }
       _(carrier).must_include('tracestate')
     end
 
     it 'uses the default setter if one is not provided' do
-      context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16, tracestate: tracestate_header)
       carrier = {}
-      formatter.inject(context, carrier)
+      formatter.inject(span_context_with_tracestate, carrier)
       _(carrier['traceparent']).must_equal('00-ffffffffffffffffffffffffffffffff-1111111111111111-00')
       _(carrier['tracestate']).must_equal(tracestate_header)
     end
