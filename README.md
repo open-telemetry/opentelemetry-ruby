@@ -108,6 +108,31 @@ release.
 | OpenTracing Bridge          | Alpha   | Unknown           |
 | OpenCensus Bridge           | Alpha   | Unknown           |
 
+## Release Process
+
+To perform a release of one of the OpenTelemetry Rubygems, follow these steps.
+Only a maintainer may perform a release.
+
+1. Make sure the library's `VERSION` constant matches the version to be
+   released. This constant is defined in the library's `version.rb` file.
+2. Add an entry to the library's `CHANGELOG.md`.
+3. Tag the commit to be released. The tag must be of the form:
+   `{library-name}/v{version}`. For example, to release `opentelemetry-api`
+   version `1.2.3`, create the tag `opentelemetry-api/v1.2.3`.
+4. Push the tag directly to Github.
+
+After the tag is pushed, CircleCI will run the release workflow. This workflow
+includes one final run of the unit tests, followed by the release script itself.
+
+The [CircleCI project](https://circleci.com/gh/open-telemetry/opentelemetry-ruby)
+includes two environment variables that control the release process.
+
+* `OPENTELEMETRY_RUBYGEMS_API_KEY` contains the API key used to authenticate
+  with Rubygems for release.
+* `OPENTELEMETRY_RELEASES_ENABLED` controls whether releases are enabled. If set
+  to `true`, releases are performed normally. If set to `false` or unset, the
+  release pipeline will execute, but the final `gem push` is disabled.
+
 ## Useful links
 
 - For more information on OpenTelemetry, visit: <https://opentelemetry.io/>

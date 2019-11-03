@@ -2,3 +2,5 @@
 **/.yardoc
 **/docs
 **/coverage
+**/*.gem
+**/.bundle
