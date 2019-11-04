@@ -25,18 +25,20 @@ module OpenTelemetry
         Thread.current[KEY] = ctx
       end
 
+      # Executes a block with ctx as the current context. It restores
+      # the previous context upon exiting.
+      #
+      # @param [Context] ctx The context to be made active
+      def with_current(ctx)
+        prev = ctx.attach
+        yield
+      ensure
+        ctx.detach(prev)
+      end
+
       def empty
         new(nil, EMPTY_ENTRIES)
       end
-
-      # def with_context
-      #   parent_ctx = current
-      #   child_ctx = Context.new(parent_ctx)
-      #   self.current = child_ctx
-      #   yield(child_ctx)
-      # ensure
-      #   self.current = parent_ctx
-      # end
     end
 
     def initialize(parent = nil, entries = {})

@@ -19,6 +19,34 @@ describe OpenTelemetry::Context do
     end
   end
 
+  describe '.with_current' do
+    it 'handles nested contexts' do
+      c1 = Context.new(nil, 'foo' => 'bar')
+      Context.with_current(c1) do
+        _(Context.current).must_equal(c1)
+        c2 = Context.current.update('bar', 'baz')
+        Context.with_current(c2) do
+          _(Context.current).must_equal(c2)
+        end
+        _(Context.current).must_equal(c1)
+      end
+    end
+
+    it 'resets context when an exception is raised' do
+      c1 = Context.new(nil, 'foo' => 'bar')
+      Context.current = c1
+
+      _(proc do
+        c2 = Context.current.update('bar', 'baz')
+        Context.with_current(c2) do
+          raise 'oops'
+        end
+      end).must_raise(StandardError)
+
+      _(Context.current).must_equal(c1)
+    end
+  end
+
   describe '#get' do
     it 'returns corresponding value for key' do
       ctx = Context.new(nil, 'foo' => 'bar')
