@@ -7,6 +7,7 @@
 require 'bundler/gem_tasks'
 require 'rake/testtask'
 require 'yard'
+require 'fileutils'
 
 require 'rubocop/rake_task'
 RuboCop::RakeTask.new
@@ -30,6 +31,56 @@ YARD::Rake::YardocTask.new do |t|
   t.files = files # optional
   t.options = ['--output-dir', 'docs/sdk'] # optional
   t.stats_options = ['--list-undoc'] # optional
+end
+
+task 'push_release' do
+  version = check_version
+  using_api_key do
+    run_command('gem build opentelemetry-sdk.gemspec')
+    if ENV['OPENTELEMETRY_RELEASES_ENABLED'] == 'true'
+      run_command("gem push opentelemetry-sdk-#{version}.gem")
+      puts("Released opentelemetry-sdk #{version}")
+    else
+      run_command("test -f opentelemetry-sdk-#{version}.gem")
+      puts("Mock release of opentelemetry-sdk #{version}")
+    end
+  end
+end
+
+def check_version
+  tag = ENV['CIRCLE_TAG']
+  match = %r{^opentelemetry-sdk/v(.*)$}.match(tag)
+  abort_release("Unexpected tag: #{tag.inspect}") unless match
+  version = match[1]
+  require_relative 'lib/opentelemetry/sdk/version.rb'
+  unless version == OpenTelemetry::SDK::VERSION
+    abort_release("Tagged version #{version.inspect} doesn't match" \
+                  " library version #{OpenTelemetry::SDK::VERSION.inspect}")
+  end
+  version
+end
+
+def using_api_key
+  api_key = ENV['OPENTELEMETRY_RUBYGEMS_API_KEY']
+  abort_release('OPENTELEMETRY_RUBYGEMS_API_KEY not found') unless api_key
+  home_dir = ENV['HOME']
+  FileUtils.mkdir_p("#{home_dir}/.gem")
+  File.open("#{home_dir}/.gem/credentials", 'w', 0o600) do |file|
+    file.puts("---\n:rubygems_api_key: #{api_key}")
+  end
+  puts('Using OPENTELEMETRY_RUBYGEMS_API_KEY')
+  yield
+ensure
+  system("shred -u #{home_dir}/.gem/credentials")
+end
+
+def run_command(cmd)
+  puts(cmd)
+  abort_release('Last command failed') unless system(cmd)
+end
+
+def abort_release(message)
+  abort("!!!! Aborting opentelemetry-sdk release !!!!\n#{message}")
 end
 
 if RUBY_ENGINE == 'truffleruby'
