@@ -17,7 +17,7 @@ require 'opentelemetry/version'
 module OpenTelemetry
   extend self
 
-  attr_writer :tracer_factory, :meter, :distributed_context_manager
+  attr_writer :tracer_factory, :meter_factory, :distributed_context_manager
 
   attr_accessor :logger
 
@@ -27,10 +27,10 @@ module OpenTelemetry
     @tracer_factory ||= Trace::TracerFactory.new
   end
 
-  # @return [Object, Metrics::Meter] registered meter or a default no-op
-  #   implementation of the meter
-  def meter
-    @meter ||= Metrics::Meter.new
+  # @return [Object, Metrics::MeterFactory] registered meter factory or a
+  #   default no-op implementation of the meter factory.
+  def meter_factory
+    @meter_factory ||= Metrics::MeterFactory.new
   end
 
   # @return [Object, DistributedContext::Manager] registered distributed
