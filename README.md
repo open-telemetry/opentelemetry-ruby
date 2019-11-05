@@ -30,6 +30,30 @@ Maintainers ([@open-telemetry/ruby-maintainers](https://github.com/orgs/open-tel
 
 *Find more about the maintainer role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#maintainer).*
 
+## Installation
+
+This repository includes multiple installable packages. The `opentelemetry-api`
+package includes abstract classes and no-op implementations that comprise the OpenTelemetry API following
+[the
+specification](https://github.com/open-telemetry/opentelemetry-specification).
+The `opentelemetry-sdk` package is the reference implementation of the API.
+
+Libraries that produce telemetry data should only depend on `opentelemetry-api`,
+and defer the choice of the SDK to the application developer. Applications may
+depend on `opentelemetry-sdk` or another package that implements the API.
+
+**Please note** that this library is currently in _alpha_, and shouldn't be
+used in production environments.
+
+The API and SDK packages are available on RubyGems.org, and can be installed via `bundle`:
+
+```sh
+bundle install opentelemetry-api
+bundle install opentelemetry-sdk
+```
+
+To install development versions of these packages, follow the "Developer Setup" section (below).
+
 ## Developer Setup
 
 1. Install Docker and Docker Compose for your operating system
