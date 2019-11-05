@@ -10,7 +10,7 @@ describe OpenTelemetry::Context do
   Context = OpenTelemetry::Context
 
   before do
-    Context.current = nil
+    Context.clear
   end
 
   describe '.current' do

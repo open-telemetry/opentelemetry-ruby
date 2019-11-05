@@ -57,6 +57,10 @@ module OpenTelemetry
         current.get(key)
       end
 
+      def clear
+        self.current = ROOT
+      end
+
       def empty
         new(nil, EMPTY_ENTRIES)
       end
