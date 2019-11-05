@@ -62,6 +62,29 @@ module OpenTelemetry
       Context.new(self, new_entries)
     end
 
+    # Makes the this context the currently active context and returns the
+    # previously active context
+    #
+    # @return [Context]
+    def attach
+      prev = self.class.current
+      self.class.current = self
+      prev
+    end
+
+    # Detaches this context making ctx_to_attach the current context. If this
+    # context is not the current context, a warning will be logged, but
+    # ctx_to_attach will stil be made the current context.
+    #
+    # @param ctx_to_attach The ctx to be attached when this context is detached
+    def detach(ctx_to_attach = @parent)
+      if self.class.current != self
+        # @todo: log warning
+      end
+
+      ctx_to_attach.attach
+    end
+
     ROOT = empty.freeze
   end
 end

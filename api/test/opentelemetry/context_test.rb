@@ -34,4 +34,39 @@ describe OpenTelemetry::Context do
       _(c2.get('foo')).must_equal('bar')
     end
   end
+
+  describe '#attach' do
+    it 'sets context to current' do
+      orig_ctx = Context.current
+      new_ctx = Context.current.set('foo', 'bar')
+      prev_ctx = new_ctx.attach
+      _(Context.current).must_equal(new_ctx)
+      _(prev_ctx).must_equal(orig_ctx)
+    end
+  end
+
+  describe '#detach' do
+    it 'restores parent context by default' do
+      new_ctx = Context.current.set('foo', 'bar')
+      prev_ctx = new_ctx.attach
+      _(Context.current).must_equal(new_ctx)
+
+      new_ctx.detach
+      _(Context.current).must_equal(prev_ctx)
+    end
+
+    it 'restores ctx passed in' do
+      orig_ctx = Context.current
+      ctx1 = orig_ctx.set('foo', 'bar')
+      ctx2 = ctx1.set('bar', 'baz')
+
+      ctx1.attach
+      prev_ctx = ctx2.attach
+      _(Context.current).must_equal(ctx2)
+
+      ctx2.detach(orig_ctx)
+      _(Context.current).must_equal(orig_ctx)
+      _(Context.current).wont_equal(prev_ctx)
+    end
+  end
 end
