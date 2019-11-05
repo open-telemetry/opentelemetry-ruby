@@ -26,10 +26,10 @@ describe OpenTelemetry::Context do
     end
   end
 
-  describe '#set' do
+  describe '#update' do
     it 'returns new context with entry' do
       c1 = Context.current
-      c2 = c1.set('foo', 'bar')
+      c2 = c1.update('foo', 'bar')
       _(c1.get('foo')).must_be_nil
       _(c2.get('foo')).must_equal('bar')
     end
@@ -38,7 +38,7 @@ describe OpenTelemetry::Context do
   describe '#attach' do
     it 'sets context to current' do
       orig_ctx = Context.current
-      new_ctx = Context.current.set('foo', 'bar')
+      new_ctx = Context.current.update('foo', 'bar')
       prev_ctx = new_ctx.attach
       _(Context.current).must_equal(new_ctx)
       _(prev_ctx).must_equal(orig_ctx)
@@ -47,7 +47,7 @@ describe OpenTelemetry::Context do
 
   describe '#detach' do
     it 'restores parent context by default' do
-      new_ctx = Context.current.set('foo', 'bar')
+      new_ctx = Context.current.update('foo', 'bar')
       prev_ctx = new_ctx.attach
       _(Context.current).must_equal(new_ctx)
 
@@ -57,8 +57,8 @@ describe OpenTelemetry::Context do
 
     it 'restores ctx passed in' do
       orig_ctx = Context.current
-      ctx1 = orig_ctx.set('foo', 'bar')
-      ctx2 = ctx1.set('bar', 'baz')
+      ctx1 = orig_ctx.update('foo', 'bar')
+      ctx2 = ctx1.update('bar', 'baz')
 
       ctx1.attach
       prev_ctx = ctx2.attach

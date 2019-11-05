@@ -41,7 +41,7 @@ module OpenTelemetry
 
     def initialize(parent = nil, entries = {})
       @parent = parent
-      @entries = entries
+      @entries = entries.freeze
     end
 
     # Returns the corresponding value (or nil) for key
@@ -56,7 +56,7 @@ module OpenTelemetry
     #
     # @param [String] key The key to store this value under
     # @param [Object] value Object to be stored under key
-    def set(key, value)
+    def update(key, value)
       new_entries = @entries.dup
       new_entries[key] = value
       Context.new(self, new_entries)
