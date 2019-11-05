@@ -8,6 +8,7 @@ require 'logger'
 
 require 'opentelemetry/error'
 require 'opentelemetry/context'
+require 'opentelemetry/baggage'
 require 'opentelemetry/distributed_context'
 require 'opentelemetry/internal'
 require 'opentelemetry/instrumentation'
