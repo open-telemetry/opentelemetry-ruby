@@ -47,6 +47,23 @@ describe OpenTelemetry::Context do
     end
   end
 
+  describe '.with' do
+    it 'executes block within new context' do
+      orig_ctx = Context.current
+
+      block_called = false
+
+      Context.with('foo', 'bar') do |value|
+        _(Context.current.get('foo')).must_equal('bar')
+        _(value).must_equal('bar')
+        block_called = true
+      end
+
+      _(Context.current).must_equal(orig_ctx)
+      _(block_called).must_equal(true)
+    end
+  end
+
   describe '#get' do
     it 'returns corresponding value for key' do
       ctx = Context.new(nil, 'foo' => 'bar')

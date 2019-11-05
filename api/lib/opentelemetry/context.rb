@@ -36,6 +36,27 @@ module OpenTelemetry
         ctx.detach(prev)
       end
 
+      # Execute a block in a new context with key set to value. Restores the
+      # previous context after the block executes.
+
+      # @param [String] key The lookup key
+      # @param [Object] value The object stored under key
+      # @param [Callable] blk The block to execute in a new context
+      def with(key, value, &blk)
+        ctx = current.update(key, value)
+        prev = ctx.attach
+        yield value
+      ensure
+        ctx.detach(prev)
+      end
+
+      # Returns the value associated with key in the current context
+      #
+      # @param [String] key The lookup key
+      def get(key)
+        current.get(key)
+      end
+
       def empty
         new(nil, EMPTY_ENTRIES)
       end

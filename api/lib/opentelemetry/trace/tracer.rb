@@ -8,7 +8,7 @@ module OpenTelemetry
   module Trace
     # No-op implementation of Tracer.
     class Tracer
-      CONTEXT_SPAN_KEY = :__span__
+      CONTEXT_SPAN_KEY = '__span__'
       private_constant(:CONTEXT_SPAN_KEY)
 
       def current_span
