@@ -43,7 +43,7 @@ module OpenTelemetry
       # @param [Object] value The object stored under key
       # @param [Callable] blk The block to execute in a new context
       def with(key, value, &blk)
-        ctx = current.update(key, value)
+        ctx = current.set(key, value)
         prev = ctx.attach
         yield value
       ensure
@@ -79,7 +79,7 @@ module OpenTelemetry
     #
     # @param [String] key The key to store this value under
     # @param [Object] value Object to be stored under key
-    def update(key, value)
+    def set(key, value)
       new_entries = @entries.dup
       new_entries[key] = value
       Context.new(self, new_entries)
