@@ -77,7 +77,8 @@ module OpenTelemetry
     # ctx_to_attach will stil be made the current context.
     #
     # @param ctx_to_attach The ctx to be attached when this context is detached
-    def detach(ctx_to_attach = @parent)
+    def detach(ctx_to_attach = nil)
+      ctx_to_attach ||= @parent || ROOT
       if self.class.current != self
         # @todo: log warning
       end

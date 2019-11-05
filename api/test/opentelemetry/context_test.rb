@@ -68,5 +68,11 @@ describe OpenTelemetry::Context do
       _(Context.current).must_equal(orig_ctx)
       _(Context.current).wont_equal(prev_ctx)
     end
+
+    it 'restores root for ctx without parent' do
+      ctx = Context.new(nil, 'foo' => 'bar')
+      ctx.detach
+      _(Context.current).must_equal(Context::ROOT)
+    end
   end
 end
