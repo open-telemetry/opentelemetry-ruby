@@ -10,9 +10,6 @@ module TextFormatterSharedTestCases
   end
 
   TESTS = proc do
-    let(:formatter) { subject.new }
-    let(:traceparent_key) { subject::TRACE_PARENT_HEADER_KEY }
-    let(:tracestate_key) { subject::TRACE_STATE_HEADER_KEY }
     let(:valid_traceparent_header) do
       '00-000000000000000000000000000000AA-00000000000000ea-01'
     end
