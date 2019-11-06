@@ -32,4 +32,12 @@ describe OpenTelemetry::Trace::TracerFactory do
       )
     end
   end
+
+  describe '#rack_http_text_format' do
+    it 'returns an instance of RackHTTPTextFormat' do
+      _(tracer_factory.rack_http_text_format).must_be_instance_of(
+        Propagation::RackHTTPTextFormat
+      )
+    end
+  end
 end

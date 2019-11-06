@@ -9,6 +9,7 @@ module OpenTelemetry
     # No-op implementation of a tracer factory.
     class TracerFactory
       HTTP_TEXT_FORMAT = DistributedContext::Propagation::HTTPTextFormat.new
+      RACK_HTTP_TEXT_FORMAT = DistributedContext::Propagation::RackHTTPTextFormat.new
       BINARY_FORMAT = DistributedContext::Propagation::BinaryFormat.new
       private_constant(:HTTP_TEXT_FORMAT, :BINARY_FORMAT)
 
@@ -28,6 +29,10 @@ module OpenTelemetry
 
       def http_text_format
         HTTP_TEXT_FORMAT
+      end
+
+      def rack_http_text_format
+        RACK_HTTP_TEXT_FORMAT
       end
     end
   end
