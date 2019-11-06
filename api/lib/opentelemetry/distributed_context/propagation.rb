@@ -6,8 +6,7 @@
 
 require 'opentelemetry/distributed_context/propagation/binary_format'
 require 'opentelemetry/distributed_context/propagation/trace_parent'
-require 'opentelemetry/distributed_context/propagation/http_text_format'
-require 'opentelemetry/distributed_context/propagation/rack_http_text_format'
+require 'opentelemetry/distributed_context/propagation/text_format'
 
 module OpenTelemetry
   module DistributedContext
