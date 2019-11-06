@@ -19,8 +19,15 @@ module OpenTelemetry
         DEFAULT_SETTER = ->(carrier, key, value) { carrier[key] = value }
         private_constant(:DEFAULT_GETTER, :DEFAULT_SETTER)
 
+        # Returns an array with the trace context header keys used by this formatter
         attr_reader :fields
 
+        # Returns a new TextFormat that injects and extracts using the specified trace context
+        # header keys
+        #
+        # @param [String] traceparent_header_key The traceparent header key used in the carrier
+        # @param [String] tracestate_header_key The tracestate header key used in the carrier
+        # @return [TextFormatter]
         def initialize(traceparent_header_key:, tracestate_header_key:)
           @traceparent_header_key = traceparent_header_key
           @tracestate_header_key = tracestate_header_key
