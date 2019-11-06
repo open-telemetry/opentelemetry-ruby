@@ -11,7 +11,7 @@ module OpenTelemetry
       HTTP_TEXT_FORMAT = DistributedContext::Propagation::HTTPTextFormat.new
       RACK_HTTP_TEXT_FORMAT = DistributedContext::Propagation::RackHTTPTextFormat.new
       BINARY_FORMAT = DistributedContext::Propagation::BinaryFormat.new
-      private_constant(:HTTP_TEXT_FORMAT, :BINARY_FORMAT)
+      private_constant(:HTTP_TEXT_FORMAT, :RACK_HTTP_TEXT_FORMAT, :BINARY_FORMAT)
 
       # Returns a {Tracer} instance.
       #
