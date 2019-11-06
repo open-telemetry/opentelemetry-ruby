@@ -26,8 +26,8 @@ module OpenTelemetry
       #   OpenTelemetry.tracer.with_span(OpenTelemetry.tracer.start_span('do-the-thing')) do ... end
       #
       # On exit, the Span that was active before calling this method will be reactivated.
-      def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
-        span = start_span(name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind, sampling_hint: sampling_hint)
+      def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil, with_parent: nil, with_parent_context: nil)
+        span = start_span(name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind, sampling_hint: sampling_hint, with_parent: with_parent, with_parent_context: with_parent_context)
         with_span(span) { |s| yield s }
       ensure
         span.finish

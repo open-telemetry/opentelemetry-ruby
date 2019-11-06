@@ -38,6 +38,9 @@ describe OpenTelemetry::Trace::Tracer do
   end
 
   describe '#in_span' do
+    let(:parent) { tracer.start_span('parent') }
+    let(:parent_context) { OpenTelemetry::Trace::SpanContext.new }
+
     it 'yields the new span' do
       tracer.in_span('wrapper') do |span|
         _(span).wont_equal(invalid_span)
@@ -55,6 +58,20 @@ describe OpenTelemetry::Trace::Tracer do
       mock_span = nil
       finish_tracer.in_span('wrapper') { |span| mock_span = span }
       mock_span.verify
+    end
+
+    it 'yields a span with the same context as the parent' do
+      tracer.in_span('op', with_parent: parent) do |span|
+        _(span.context).must_be :valid?
+        _(span.context).must_equal(parent.context)
+      end
+    end
+
+    it 'yields a span with the parent context' do
+      tracer.in_span('op', with_parent_context: parent_context) do |span|
+        _(span.context).must_be :valid?
+        _(span.context).must_equal(parent_context)
+      end
     end
   end
 
@@ -91,27 +108,31 @@ describe OpenTelemetry::Trace::Tracer do
   end
 
   describe '#start_span' do
-    let(:context) { OpenTelemetry::Trace::SpanContext.new }
     let(:invalid_context) { OpenTelemetry::Trace::SpanContext::INVALID }
     let(:parent) { tracer.start_span('parent') }
+    let(:parent_context) { OpenTelemetry::Trace::SpanContext.new }
 
-    it 'returns a valid span' do
-      span = tracer.start_span('op', with_parent_context: context)
+    it 'returns a valid span with the parent context' do
+      span = tracer.start_span('op', with_parent_context: parent_context)
       _(span.context).must_be :valid?
+      _(span.context).must_equal(parent_context)
     end
 
     it 'returns a span with a new context by default' do
       span = tracer.start_span('op')
+      _(span.context).must_be :valid?
       _(span.context).wont_equal(tracer.current_span.context)
     end
 
     it 'returns a span with the same context as the parent' do
       span = tracer.start_span('op', with_parent: parent)
+      _(span.context).must_be :valid?
       _(span.context).must_equal(parent.context)
     end
 
     it 'returns a span with a new context when passed an invalid context' do
       span = tracer.start_span('op', with_parent_context: invalid_context)
+      _(span.context).must_be :valid?
       _(span.context).wont_equal(invalid_context)
     end
   end
