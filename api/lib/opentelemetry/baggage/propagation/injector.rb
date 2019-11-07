@@ -5,8 +5,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  module DistributedContext
-    class Manager
+  module Baggage
+    module Propagation
+      class Injector
+        def inject(context, carrier, &setter)
+          # TODO
+        end
+      end
     end
   end
 end

@@ -6,8 +6,8 @@
 
 module OpenTelemetry
   module DistributedContext
-    # An immutable implementation of the DistributedContext that does not contain any entries.
-    class DistributedContext
+    # An immutable implementation of the CorrelationContext that does not contain any entries.
+    class CorrelationContext
       EMPTY_ENTRIES = [].freeze
 
       private_constant(:EMPTY_ENTRIES)
