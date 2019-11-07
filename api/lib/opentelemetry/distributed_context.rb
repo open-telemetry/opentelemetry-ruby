@@ -4,9 +4,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/distributed_context/distributed_context'
-require 'opentelemetry/distributed_context/entry'
-require 'opentelemetry/distributed_context/manager'
+require 'opentelemetry/distributed_context/correlation_context'
+require 'opentelemetry/distributed_context/correlation_context_manager'
+require 'opentelemetry/distributed_context/label'
 require 'opentelemetry/distributed_context/propagation'
 
 module OpenTelemetry

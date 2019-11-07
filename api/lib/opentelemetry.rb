@@ -7,6 +7,7 @@
 require 'logger'
 
 require 'opentelemetry/error'
+require 'opentelemetry/baggage'
 require 'opentelemetry/context'
 require 'opentelemetry/baggage'
 require 'opentelemetry/distributed_context'
@@ -24,7 +25,7 @@ require 'opentelemetry/version'
 module OpenTelemetry
   extend self
 
-  attr_writer :tracer_factory, :meter_factory, :distributed_context_manager
+  attr_writer :tracer_factory, :meter_factory, :correlation_context_manager
 
   attr_accessor :logger
 
@@ -40,10 +41,10 @@ module OpenTelemetry
     @meter_factory ||= Metrics::MeterFactory.new
   end
 
-  # @return [Object, DistributedContext::Manager] registered distributed
-  #   context manager or a default no-op implementation of the manager
-  def distributed_context_manager
-    @distributed_context_manager ||= DistributedContext::Manager.new
+  # @return [Object, DistributedContext::CorrelationContextManager] registered
+  #   correlation context manager or a default no-op implementation of the manager.
+  def correlation_context_manager
+    @correlation_context_manager ||= DistributedContext::CorrelationContextManager.new
   end
 
   # @return [Instrumentation::Registry] registry containing all known

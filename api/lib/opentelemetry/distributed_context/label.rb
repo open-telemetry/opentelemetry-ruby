@@ -6,11 +6,11 @@
 
 module OpenTelemetry
   module DistributedContext
-    # An Entry consists of Entry::Metadata, Entry::Key, and Entry::Value.
-    class Entry
+    # A Label consists of Label::Metadata, Label::Key, and Label::Value.
+    class Label
       attr_reader :metadata, :key, :value
 
-      # Entry::Key is the name of the Entry. Entry::Key along with Entry::Value can be used to aggregate and group stats,
+      # Label::Key is the name of the Label. Label::Key along with Label::Value can be used to aggregate and group stats,
       # annotate traces and logs, etc.
       #
       # Restrictions
@@ -27,7 +27,7 @@ module OpenTelemetry
         end
       end
 
-      # Entry::Value wraps a string. It MUST contain only printable ASCII (codes between 32 and 126).
+      # Label::Value wraps a string. It MUST contain only printable ASCII (codes between 32 and 126).
       class Value
         def initialize(value)
           raise ArgumentError unless Internal.printable_ascii?(value)
@@ -40,25 +40,25 @@ module OpenTelemetry
         end
       end
 
-      # Entry::Metadata contains properties associated with an Entry. For now only the property entry_ttl is defined.
+      # Label::Metadata contains properties associated with an Label. For now only the property hop_limit is defined.
       # In future, additional properties may be added to address specific situations.
       #
       # The creator of entries determines metadata of an entry it creates.
       class Metadata
-        attr_reader :entry_ttl
+        attr_reader :hop_limit
 
-        # An @see Entry with NO_PROPAGATION is considered to have local scope and is used within the process
+        # An @see Label with NO_PROPAGATION is considered to have local scope and is used within the process
         # where it is created.
         NO_PROPAGATION = 0
 
-        # An @see Entry with UNLIMITED_PROPAGATION can propagate unlimited hops. However, it is still subject
+        # An @see Label with UNLIMITED_PROPAGATION can propagate unlimited hops. However, it is still subject
         # to outgoing and incoming (on remote side) filter criteria.
         UNLIMITED_PROPAGATION = -1
 
-        def initialize(entry_ttl)
-          raise ArgumentError unless entry_ttl.is_a?(Integer)
+        def initialize(hop_limit)
+          raise ArgumentError unless hop_limit.is_a?(Integer)
 
-          @entry_ttl = entry_ttl
+          @hop_limit = hop_limit
         end
       end
     end
