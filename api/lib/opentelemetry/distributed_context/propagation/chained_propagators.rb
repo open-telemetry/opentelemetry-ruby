@@ -7,7 +7,9 @@
 module OpenTelemetry
   module DistributedContext
     module Propagation
+      # @todo add module documentation
       module ChainedPropagators
+        # @todo add class documentation
         class Injector
           def initialize(injector1, injector2)
             @injector1 = injector1
@@ -20,6 +22,7 @@ module OpenTelemetry
           end
         end
 
+        # @todo add class documentation
         class Extractor
           def initialize(extractor1, extractor2)
             @extractor1 = extractor1

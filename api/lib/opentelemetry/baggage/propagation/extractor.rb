@@ -7,6 +7,7 @@
 module OpenTelemetry
   module Baggage
     module Propagation
+      # @todo add class documentation
       class Extractor
         def extract(context, carrier, &getter)
           # TODO

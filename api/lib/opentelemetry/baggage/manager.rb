@@ -6,6 +6,7 @@
 
 module OpenTelemetry
   module Baggage
+    # @todo add module documentation
     module Manager
       extend self
 

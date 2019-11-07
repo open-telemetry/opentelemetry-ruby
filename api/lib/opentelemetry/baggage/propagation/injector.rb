@@ -7,6 +7,7 @@
 module OpenTelemetry
   module Baggage
     module Propagation
+      # @todo add class documentation
       class Injector
         def inject(context, carrier, &setter)
           # TODO

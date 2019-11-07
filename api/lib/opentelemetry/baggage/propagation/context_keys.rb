@@ -7,6 +7,7 @@
 module OpenTelemetry
   module Baggage
     module Propagation
+      # @todo add module documentation
       module ContextKeys
         extend self
 
