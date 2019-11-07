@@ -13,15 +13,15 @@ describe OpenTelemetry::SDK::Baggage::Manager do
     OpenTelemetry::Context.clear
   end
 
-  describe '.set' do
+  describe '.set_value' do
     it 'sets key/value in baggage' do
-      _(Manager.get('foo')).must_be_nil
+      _(Manager.value('foo')).must_be_nil
 
-      Manager.set('foo', 'bar') do
-        _(Manager.get('foo')).must_equal('bar')
+      Manager.set_value('foo', 'bar') do
+        _(Manager.value('foo')).must_equal('bar')
       end
 
-      _(Manager.get('foo')).must_be_nil
+      _(Manager.value('foo')).must_be_nil
     end
   end
 
@@ -53,13 +53,13 @@ describe OpenTelemetry::SDK::Baggage::Manager do
     end
   end
 
-  describe '.remove' do
+  describe '.remove_value' do
     it 'excutes block with baggage with key removed' do
       _(current_baggage).must_be_nil
 
       Manager.with('foo' => 'bar', 'bar' => 'baz') do
         _(current_baggage).must_equal('foo' => 'bar', 'bar' => 'baz')
-        Manager.remove('foo') do
+        Manager.remove_value('foo') do
           _(current_baggage).must_equal('bar' => 'baz')
         end
         _(current_baggage).must_equal('foo' => 'bar', 'bar' => 'baz')

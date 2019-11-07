@@ -38,7 +38,7 @@ module OpenTelemetry
         #
         # @param [String] key The lookup key
         # @return [Object]
-        def get(key)
+        def value(key)
           current_baggage[key]
         end
 
@@ -48,7 +48,7 @@ module OpenTelemetry
         # @param [String] key The key to store this value under
         # @param [Object] value Object to be stored under key
         # @param [Callable] blk Block to execute
-        def set(key, value, &blk)
+        def set_value(key, value, &blk)
           new_baggage = current_baggage.dup
           new_baggage[key] = value
           with(new_baggage, &blk)
@@ -59,10 +59,20 @@ module OpenTelemetry
         #
         # @param [String] key The key to remove
         # @param [Callable] blk Block to execute
-        def remove(key, &blk)
+        def remove_value(key, &blk)
           new_baggage = current_baggage.dup
           new_baggage.delete(key)
           with(new_baggage, &blk)
+        end
+
+        # @todo
+        def http_injector
+          raise NotImplementedError
+        end
+
+        # @todo
+        def http_extractor
+          raise NotImplementedError
         end
 
         private
