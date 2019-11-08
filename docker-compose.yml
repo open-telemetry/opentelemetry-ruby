@@ -24,6 +24,10 @@ services:
       context: .
     working_dir: /app
 
+  ex-adapter-faraday:
+    <<: *base
+    working_dir: /app/adapters/faraday/example
+
   sdk:
     <<: *base
     working_dir: /app/sdk
