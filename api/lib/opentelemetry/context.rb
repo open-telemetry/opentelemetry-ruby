@@ -42,8 +42,8 @@ module OpenTelemetry
       # @param [String] key The lookup key
       # @param [Object] value The object stored under key
       # @param [Callable] blk The block to execute in a new context
-      def with(key, value, &blk)
-        ctx = current.set(key, value)
+      def with_value(key, value, &blk)
+        ctx = current.set_value(key, value)
         prev = ctx.attach
         yield value
       ensure
@@ -53,8 +53,8 @@ module OpenTelemetry
       # Returns the value associated with key in the current context
       #
       # @param [String] key The lookup key
-      def get(key)
-        current.get(key)
+      def value(key)
+        current.value(key)
       end
 
       def clear
@@ -75,7 +75,7 @@ module OpenTelemetry
     #
     # @param [String] key The lookup key
     # @return [Object]
-    def get(key)
+    def value(key)
       @entries[key]
     end
 
@@ -83,7 +83,7 @@ module OpenTelemetry
     #
     # @param [String] key The key to store this value under
     # @param [Object] value Object to be stored under key
-    def set(key, value)
+    def set_value(key, value)
       new_entries = @entries.dup
       new_entries[key] = value
       Context.new(self, new_entries)

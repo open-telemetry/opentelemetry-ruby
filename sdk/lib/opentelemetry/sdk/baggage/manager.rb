@@ -19,7 +19,7 @@ module OpenTelemetry
         # @param [Context] context
         # @return [Context]
         def clear(context)
-          context.set(CONTEXT_BAGGAGE_KEY, EMPTY_BAGGAGE)
+          context.set_value(CONTEXT_BAGGAGE_KEY, EMPTY_BAGGAGE)
         end
 
         # Returns the corresponding baggage value (or nil) for key
@@ -40,7 +40,7 @@ module OpenTelemetry
         def set_value(context, key, value)
           new_baggage = baggage_for(context).dup
           new_baggage[key] = value
-          context.set(CONTEXT_BAGGAGE_KEY, new_baggage)
+          context.set_value(CONTEXT_BAGGAGE_KEY, new_baggage)
         end
 
         # Returns a new context with value at key removed
@@ -54,7 +54,7 @@ module OpenTelemetry
 
           new_baggage = baggage.dup
           new_baggage.delete(key)
-          context.set(CONTEXT_BAGGAGE_KEY, new_baggage)
+          context.set_value(CONTEXT_BAGGAGE_KEY, new_baggage)
         end
 
         # @todo
@@ -70,7 +70,7 @@ module OpenTelemetry
         private
 
         def baggage_for(context)
-          context.get(CONTEXT_BAGGAGE_KEY) || EMPTY_BAGGAGE
+          context.value(CONTEXT_BAGGAGE_KEY) || EMPTY_BAGGAGE
         end
       end
     end
