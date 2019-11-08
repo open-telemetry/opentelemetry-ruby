@@ -7,86 +7,99 @@
 require 'test_helper'
 
 describe OpenTelemetry::SDK, 'API_trace' do
-  let(:span_processor) { sdk::Trace::Export::SimpleSpanProcessor.new(exporter) }
-  let(:exporter) { sdk::Trace::Export::InMemorySpanExporter.new }
-  let(:tracer) { factory.tracer(__FILE__, sdk::VERSION) }
-  let(:factory) { OpenTelemetry.tracer_factory = sdk::Trace::TracerFactory.new }
   let(:sdk) { OpenTelemetry::SDK }
-  let(:links) do
-    Array.new(3) do
-      OpenTelemetry::Trace::Link.new(
-        OpenTelemetry::Trace::SpanContext.new,
-        attributes
-      )
+  let(:exporter) { sdk::Trace::Export::InMemorySpanExporter.new }
+  let(:span_processor) { sdk::Trace::Export::SimpleSpanProcessor.new(exporter) }
+  let(:factory) do
+    OpenTelemetry.tracer_factory = sdk::Trace::TracerFactory.new.tap do |factory|
+      factory.add_span_processor(span_processor)
     end
   end
-  let(:attributes) do
-    { 'component' => 'rack',
-      'span.kind' => 'server',
-      'http.method' => 'GET',
-      'http.url' => 'blogs/index' }
-  end
+  let(:tracer) { factory.tracer(__FILE__, sdk::VERSION) }
   let(:remote_span_context) do
     OpenTelemetry::Trace::SpanContext.new(remote: true)
   end
 
-  def trace_some_operations(tracer)
-    tracer.in_span('root') do
-      tracer.in_span('child1') do
-      end
-      tracer.in_span('child2_with_links', links: links) do
-      end
-    end
-  end
-
-  def trace_child_of_remote_spans(tracer)
-    tracer.start_span('remote', with_parent_context: remote_span_context) do
-      tracer.in_span('child1') do
-      end
-    end
-  end
-
-  before do
-    factory.add_span_processor(span_processor)
-  end
-
-  describe 'tracing operations' do
+  describe 'tracing root spans' do
     before do
-      trace_some_operations(tracer)
+      @root_span = tracer.start_root_span('root')
+
+      tracer.with_span(@root_span) do
+        tracer.in_span('child of root') do |span|
+          @child_of_root = span
+        end
+      end
     end
 
     it 'traces root spans' do
-      tracer.in_span('root') do |root_span|
-        _(root_span.name).must_equal 'root'
-        _(root_span.to_span_data.child_count).must_equal 2
+      _(@root_span.name).must_equal 'root'
+    end
+
+    it 'root has a child' do
+      _(@child_of_root.to_span_data.parent_span_id).must_equal @root_span.to_span_data.span_id
+    end
+
+    it 'root has accurate child_count' do
+      # TODO: is child_count maintained by an exporter or processor?
+      _(@root_span.to_span_data.child_count).must_equal 1
+    end
+
+    it "doesn't have links" do
+      _(@child_of_root.links.size).must_equal nil
+    end
+  end
+
+  describe 'tracing child-of-remote spans' do
+    before do
+      @remote_span = tracer.start_span('remote', with_parent_context: remote_span_context)
+      @child_of_remote = tracer.start_span('child1', with_parent: @remote_span)
+    end
+
+    it 'has a child' do
+      _(@child_of_remote.to_span_data.parent_span_id).must_equal @remote_span.to_span_data.span_id
+    end
+  end
+
+  describe 'tracing child-of-local spans' do
+    before do
+      @local_parent_span = tracer.start_span('local')
+
+      tracer.in_span('child1', with_parent: @local_parent_span) do |span|
+        @child_of_local = span
       end
     end
 
     it 'traces child-of-local spans' do
-      skip 'TODO'
-    end
-
-    it 'traces without links' do
-      tracer.in_span('child1') do |span|
-        _(span.links.size).must_equal 0
-      end
-    end
-
-    it 'traces with links' do
-      tracer.in_span('child2_with_links') do |span|
-        _(span.links.size).must_equal 3
-      end
+      _(@child_of_local.to_span_data.parent_span_id).must_equal @local_parent_span.to_span_data.span_id
     end
   end
 
-  describe 'child-of-remote spans' do
-    before { trace_child_of_remote_spans(tracer) }
-
-    it 'traces spans' do
-      tracer.in_span('remote') do |span|
-        _(span.name).must_equal 'remote'
-        _(span.context.remote?).must_equal true
+  describe 'tracing with links' do
+    let(:attributes) do
+      { 'component' => 'rack',
+        'span.kind' => 'server',
+        'http.method' => 'GET',
+        'http.url' => 'blogs/index' }
+    end
+    let(:number_of_links) { 3 }
+    let(:links) do
+      Array.new(number_of_links) do
+        OpenTelemetry::Trace::Link.new(remote_span_context, attributes)
       end
+    end
+
+    before do
+      tracer.in_span('root') do |s|
+        tracer.in_span('child_with_links', links: links) do |span|
+          @child_with_links = span.to_span_data
+        end
+      end
+    end
+
+    it 'span has links' do
+      # TODO: is there a way to retrieve an arbitrary span, by name?
+      #       e.g., tracer.get_span(name)
+      _(@child_with_links.links.size).must_equal number_of_links
     end
   end
 end
