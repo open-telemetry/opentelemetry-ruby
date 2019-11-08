@@ -14,55 +14,47 @@ module OpenTelemetry
         EMPTY_BAGGAGE = {}.freeze
         private_constant(:CONTEXT_BAGGAGE_KEY, :EMPTY_BAGGAGE)
 
-        # Executes block with the specified baggage. Restores previous baggage
-        # after executing the block.
+        # Returns a new context with empty baggage
         #
-        # @param [String] key The lookup key
-        # @param [Callable] blk The block to execute
-        def with(baggage)
-          ctx = context.set(CONTEXT_BAGGAGE_KEY, baggage)
-          prev = ctx.attach
-          yield
-        ensure
-          ctx.detach(prev)
-        end
-
-        # Executes block in a context with baggage cleared
-        #
-        # @blk [Callable] blk Block to execute
-        def clear(&blk)
-          with(EMPTY_BAGGAGE, &blk)
+        # @param [Context] context
+        # @return [Context]
+        def clear(context)
+          context.set(CONTEXT_BAGGAGE_KEY, EMPTY_BAGGAGE)
         end
 
         # Returns the corresponding baggage value (or nil) for key
         #
+        # @param [Context] context The context use to retrieve key
         # @param [String] key The lookup key
         # @return [Object]
-        def value(key)
-          current_baggage[key]
+        def value(context, key)
+          baggage_for(context)[key]
         end
 
-        # Executes block in a newly attached Context with updated baggage containing
-        # key and value. Restores previous baggage after executing the block.
+        # Returns a new context with new key-value pair
         #
+        # @param [Context] context The context to update with new value
         # @param [String] key The key to store this value under
         # @param [Object] value Object to be stored under key
-        # @param [Callable] blk Block to execute
-        def set_value(key, value, &blk)
-          new_baggage = current_baggage.dup
+        # @return [Context]
+        def set_value(context, key, value)
+          new_baggage = baggage_for(context).dup
           new_baggage[key] = value
-          with(new_baggage, &blk)
+          context.set(CONTEXT_BAGGAGE_KEY, new_baggage)
         end
 
-        # Executes block in a newly attached Context with updated baggage with
-        # key removed. Restores previous baggage after executing the block.
+        # Returns a new context with value at key removed
         #
+        # @param [Context] context The context to remove value from
         # @param [String] key The key to remove
-        # @param [Callable] blk Block to execute
-        def remove_value(key, &blk)
-          new_baggage = current_baggage.dup
+        # @return [Context]
+        def remove_value(context, key)
+          baggage = baggage_for(context)
+          return context unless baggage.key?(key)
+
+          new_baggage = baggage.dup
           new_baggage.delete(key)
-          with(new_baggage, &blk)
+          context.set(CONTEXT_BAGGAGE_KEY, new_baggage)
         end
 
         # @todo
@@ -77,12 +69,8 @@ module OpenTelemetry
 
         private
 
-        def current_baggage
+        def baggage_for(context)
           context.get(CONTEXT_BAGGAGE_KEY) || EMPTY_BAGGAGE
-        end
-
-        def context
-          Context.current
         end
       end
     end

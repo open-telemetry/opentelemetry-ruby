@@ -9,67 +9,43 @@ require 'test_helper'
 describe OpenTelemetry::SDK::Baggage::Manager do
   Manager = OpenTelemetry::SDK::Baggage::Manager
 
-  before do
-    OpenTelemetry::Context.clear
-  end
-
   describe '.set_value' do
     it 'sets key/value in baggage' do
-      _(Manager.value('foo')).must_be_nil
+      ctx = OpenTelemetry::Context.empty
+      _(Manager.value(ctx, 'foo')).must_be_nil
 
-      Manager.set_value('foo', 'bar') do
-        _(Manager.value('foo')).must_equal('bar')
-      end
+      ctx2 = Manager.set_value(ctx, 'foo', 'bar')
+      _(Manager.value(ctx2, 'foo')).must_equal('bar')
 
-      _(Manager.value('foo')).must_be_nil
-    end
-  end
-
-  describe '.with' do
-    it 'excutes block with argument as baggage' do
-      _(current_baggage).must_be_nil
-
-      Manager.with('foo' => 'bar', 'bar' => 'baz') do
-        _(current_baggage).must_equal('foo' => 'bar', 'bar' => 'baz')
-      end
-
-      _(current_baggage).must_be_nil
+      _(Manager.value(ctx, 'foo')).must_be_nil
     end
   end
 
   describe '.clear' do
-    it 'excutes block with empty baggage' do
-      _(current_baggage).must_be_nil
+    it 'returns context with empty baggage' do
+      ctx = Manager.set_value(OpenTelemetry::Context.empty, 'foo', 'bar')
+      _(Manager.value(ctx, 'foo')).must_equal('bar')
 
-      Manager.with('foo' => 'bar', 'bar' => 'baz') do
-        _(current_baggage).must_equal('foo' => 'bar', 'bar' => 'baz')
-        Manager.clear do
-          _(current_baggage).must_be(:empty?)
-        end
-        _(current_baggage).must_equal('foo' => 'bar', 'bar' => 'baz')
-      end
-
-      _(current_baggage).must_be_nil
+      ctx2 = Manager.clear(ctx)
+      _(Manager.value(ctx2, 'foo')).must_be_nil
     end
   end
 
   describe '.remove_value' do
-    it 'excutes block with baggage with key removed' do
-      _(current_baggage).must_be_nil
+    it 'returns context with key removed from baggage' do
+      ctx = Manager.set_value(OpenTelemetry::Context.empty, 'foo', 'bar')
+      _(Manager.value(ctx, 'foo')).must_equal('bar')
 
-      Manager.with('foo' => 'bar', 'bar' => 'baz') do
-        _(current_baggage).must_equal('foo' => 'bar', 'bar' => 'baz')
-        Manager.remove_value('foo') do
-          _(current_baggage).must_equal('bar' => 'baz')
-        end
-        _(current_baggage).must_equal('foo' => 'bar', 'bar' => 'baz')
-      end
-
-      _(current_baggage).must_be_nil
+      ctx2 = Manager.remove_value(ctx, 'foo')
+      _(Manager.value(ctx2, 'foo')).must_be_nil
     end
-  end
 
-  def current_baggage
-    OpenTelemetry::Context.get('__baggage__')
+    it 'returns same context if key does not exist' do
+      ctx = Manager.set_value(OpenTelemetry::Context.empty, 'foo', 'bar')
+      _(Manager.value(ctx, 'foo')).must_equal('bar')
+
+      ctx2 = Manager.remove_value(ctx, 'nonexistant-key')
+      _(ctx2).must_equal(ctx)
+    end
   end
 end
