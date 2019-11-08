@@ -66,6 +66,30 @@ describe OpenTelemetry do
     end
   end
 
+  describe '.baggage_manager' do
+    after do
+      # Ensure we don't leak custom baggage_manager to other tests
+      OpenTelemetry.baggage_manager = nil
+    end
+
+    it 'returns Baggage::Manager by default' do
+      manager = OpenTelemetry.baggage_manager
+      _(manager).must_equal(OpenTelemetry::Baggage::Manager)
+    end
+
+    it 'returns the same instance when accessed multiple times' do
+      _(OpenTelemetry.baggage_manager).must_equal(
+        OpenTelemetry.baggage_manager
+      )
+    end
+
+    it 'returns user specified baggage_manager' do
+      custom_manager = 'a custom baggage_manager'
+      OpenTelemetry.baggage_manager = custom_manager
+      _(OpenTelemetry.baggage_manager).must_equal(custom_manager)
+    end
+  end
+
   # describe '.distributed_context_manager' do
   #   after do
   #     # Ensure we don't leak custom distributed_context_manager to other tests
