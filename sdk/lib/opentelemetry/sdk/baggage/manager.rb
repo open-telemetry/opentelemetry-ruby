@@ -10,7 +10,7 @@ module OpenTelemetry
       # Manages baggage context
       module Manager
         extend self
-        CONTEXT_BAGGAGE_KEY = '__baggage__'
+        CONTEXT_BAGGAGE_KEY = OpenTelemetry::Baggage::Propagation::ContextKeys.span_context_key
         EMPTY_BAGGAGE = {}.freeze
         private_constant(:CONTEXT_BAGGAGE_KEY, :EMPTY_BAGGAGE)
 

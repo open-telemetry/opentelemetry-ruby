@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry/baggage/manager'
+require 'opentelemetry/baggage/propagation/context_keys'
 
 module OpenTelemetry
   # @todo: write module documentation
