@@ -4,10 +4,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/distributed_context/propagation'
 require 'opentelemetry/distributed_context/correlation_context'
 require 'opentelemetry/distributed_context/correlation_context_manager'
 require 'opentelemetry/distributed_context/label'
-require 'opentelemetry/distributed_context/propagation'
 
 module OpenTelemetry
   # DistributedContext is an abstract data type that represents a collection of entries. Each key of a DistributedContext is
