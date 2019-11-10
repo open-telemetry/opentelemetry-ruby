@@ -24,6 +24,10 @@ services:
       context: .
     working_dir: /app
 
+  ex-adapter-sinatra:
+    <<: *base
+    working_dir: /app/adapters/sinatra/example
+
   sdk:
     <<: *base
     working_dir: /app/sdk
