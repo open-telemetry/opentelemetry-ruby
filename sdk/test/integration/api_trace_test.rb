@@ -44,8 +44,12 @@ describe OpenTelemetry::SDK, 'API_trace' do
       _(@root_span.to_span_data.child_count).must_equal 1
     end
 
+    it 'root has accurate total_recorded_links' do
+      _(@root_span.to_span_data.total_recorded_links).must_equal 0
+    end
+
     it "doesn't have links" do
-      _(@child_of_root.links.size).must_equal nil
+      assert_nil @child_of_root.links
     end
   end
 
