@@ -33,12 +33,12 @@ module OpenTelemetry
         @context = span_context || SpanContext.new
       end
 
-      # Return the flag whether this span is recording events
+      # Return whether this span is recording.
       #
       # @return [Boolean] true if this Span is active and recording information
       #   like events with the #add_event operation and attributes using
       #   #set_attribute.
-      def recording_events?
+      def recording?
         false
       end
 
@@ -54,9 +54,6 @@ module OpenTelemetry
       #
       # @return [self] returns itself
       def set_attribute(key, value)
-        raise ArgumentError unless Internal.valid_key?(key)
-        raise ArgumentError unless Internal.valid_value?(value)
-
         self
       end
       alias []= set_attribute
@@ -88,11 +85,7 @@ module OpenTelemetry
       #   This argument should only be used when passing in a name.
       #
       # @return [self] returns itself
-      def add_event(name: nil, attributes: nil, timestamp: nil) # rubocop:disable Metrics/CyclomaticComplexity
-        raise ArgumentError unless block_given? == (name.nil? && attributes.nil? && timestamp.nil?)
-        raise ArgumentError unless block_given? || name.is_a?(String)
-        raise ArgumentError unless Internal.valid_attributes?(attributes)
-
+      def add_event(name: nil, attributes: nil, timestamp: nil)
         self
       end
 
@@ -107,9 +100,7 @@ module OpenTelemetry
       #   status, which is OK.
       #
       # @return [void]
-      def status=(status)
-        raise ArgumentError unless status.is_a?(Status)
-      end
+      def status=(status); end
 
       # Updates the Span name
       #
@@ -120,9 +111,7 @@ module OpenTelemetry
       #   whatever was passed in when the Span was started
       #
       # @return [void]
-      def name=(new_name)
-        raise ArgumentError if new_name.nil?
-      end
+      def name=(new_name); end
 
       # Finishes the Span
       #

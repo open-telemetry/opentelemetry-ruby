@@ -57,7 +57,7 @@ module OpenTelemetry
         # @return [Resource] A new resource formed by merging the current resource
         #   with other
         def merge(other)
-          raise ArgumentError unless other.is_a?(Resource)
+          return self unless other.is_a?(Resource)
 
           merged_labels = labels.merge(other.labels) do |_, old_v, new_v|
             old_v.empty? ? new_v : old_v

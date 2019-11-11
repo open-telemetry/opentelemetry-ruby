@@ -36,9 +36,6 @@ module OpenTelemetry
       #   Defaults to Time.now.
       # @return [Event]
       def initialize(name:, attributes: nil, timestamp: nil)
-        raise ArgumentError unless name.is_a?(String)
-        raise ArgumentError unless Internal.valid_attributes?(attributes)
-
         @name = name
         @attributes = attributes.freeze || EMPTY_ATTRIBUTES
         @timestamp = timestamp || Time.now

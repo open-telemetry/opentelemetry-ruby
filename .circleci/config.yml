@@ -1,0 +1,103 @@
+# Copyright 2019 OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+version: 2.1
+executors:
+  ruby24:
+    docker:
+      - image: "circleci/ruby:2.4-stretch"
+  ruby25:
+    docker:
+      - image: "circleci/ruby:2.5-stretch"
+  ruby26:
+    docker:
+      - image: "circleci/ruby:2.6-stretch"
+  jruby:
+    docker:
+      - image: "circleci/jruby:latest"
+    environment:
+      JRUBY_OPTS: "--debug"
+commands:
+  rake-test:
+    steps:
+      - checkout
+      - run:
+          name: Bundle (API)
+          command: "cd api && gem install --no-document bundler && bundle install --jobs=3 --retry=3"
+      - run:
+          name: Bundle (SDK)
+          command: "cd sdk && gem install --no-document bundler && bundle install --jobs=3 --retry=3"
+      - run:
+          name: Bundle (Jaeger)
+          command: "cd exporters/jaeger && gem install --no-document bundler && bundle install --jobs=3 --retry=3"
+      - run:
+          name: CI (API)
+          command: "cd api && bundle exec rake"
+      - run:
+          name: CI (SDK)
+          command: "cd sdk && bundle exec rake"
+      - run:
+          name: CI (Jaeger)
+          command: "cd exporters/jaeger && bundle exec rake"
+  rake-release:
+    steps:
+      - checkout
+      - run:
+          name: Install rake
+          command: "gem install --no-document rake"
+      - run:
+          name: Release
+          command: "rake push_release"
+jobs:
+  test-ruby24:
+    executor: ruby24
+    steps:
+      - rake-test
+  test-ruby25:
+    executor: ruby25
+    steps:
+      - rake-test
+  test-ruby26:
+    executor: ruby26
+    steps:
+      - rake-test
+  test-jruby:
+    executor: jruby
+    steps:
+      - rake-test
+  release:
+    executor: ruby26
+    steps:
+      - rake-release
+workflows:
+  version: 2
+  builds:
+    jobs:
+      - test-ruby24:
+          filters:
+            tags:
+              only: /^opentelemetry-.+\/v\d.*$/
+      - test-ruby25:
+          filters:
+            tags:
+              only: /^opentelemetry-.+\/v\d.*$/
+      - test-ruby26:
+          filters:
+            tags:
+              only: /^opentelemetry-.+\/v\d.*$/
+      - test-jruby:
+          filters:
+            tags:
+              only: /^opentelemetry-.+\/v\d.*$/
+      - release:
+          requires:
+            - test-ruby24
+            - test-ruby25
+            - test-ruby26
+            - test-jruby
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^opentelemetry-.+\/v\d.*$/

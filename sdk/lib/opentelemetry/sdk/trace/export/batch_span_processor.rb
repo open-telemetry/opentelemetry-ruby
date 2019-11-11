@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'timeout'
+
 module OpenTelemetry
   module SDK
     module Trace
@@ -25,13 +27,15 @@ module OpenTelemetry
         # export fails with {FAILED_RETRYABLE}, backing off linearly in 100ms
         # increments.
         class BatchSpanProcessor
-          SCHEDULE_DELAY_MILLIS = 5
+          EXPORTER_TIMEOUT_MILLIS = 30_000
+          SCHEDULE_DELAY_MILLIS = 5_000
           MAX_QUEUE_SIZE = 2048
           MAX_EXPORT_BATCH_SIZE = 512
           MAX_EXPORT_ATTEMPTS = 5
           private_constant(:SCHEDULE_DELAY_MILLIS, :MAX_QUEUE_SIZE, :MAX_EXPORT_BATCH_SIZE, :MAX_EXPORT_ATTEMPTS)
 
           def initialize(exporter:,
+                         exporter_timeout_millis: EXPORTER_TIMEOUT_MILLIS,
                          schedule_delay_millis: SCHEDULE_DELAY_MILLIS,
                          max_queue_size: MAX_QUEUE_SIZE,
                          max_export_batch_size: MAX_EXPORT_BATCH_SIZE,
@@ -39,6 +43,7 @@ module OpenTelemetry
             raise ArgumentError if max_export_batch_size > max_queue_size
 
             @exporter = exporter
+            @exporter_timeout_seconds = exporter_timeout_millis / 1000.0
             @mutex = Mutex.new
             @condition = ConditionVariable.new
             @keep_running = true
@@ -56,8 +61,8 @@ module OpenTelemetry
           end
 
           # adds a span to the batcher, threadsafe may block on lock
-          def on_finish(span)
-            return unless span.recording_events?
+          def on_finish(span) # rubocop:disable Metrics/AbcSize
+            return unless span.context.trace_flags.sampled?
 
             lock do
               n = spans.size + 1 - max_queue_size
@@ -101,12 +106,18 @@ module OpenTelemetry
           def export_batch(batch)
             result_code = nil
             @export_attempts.times do |attempts|
-              result_code = @exporter.export(batch)
+              result_code = export_with_timeout(batch)
               break unless result_code == FAILED_RETRYABLE
 
               sleep(0.1 * attempts)
             end
             report_result(result_code, batch)
+          end
+
+          def export_with_timeout(batch)
+            Timeout.timeout(@exporter_timeout_seconds) { @exporter.export(batch) }
+          rescue Timeout::Error
+            FAILED_NOT_RETRYABLE
           end
 
           def report_result(result_code, batch)

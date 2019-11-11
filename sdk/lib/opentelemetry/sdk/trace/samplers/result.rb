@@ -14,7 +14,7 @@ module OpenTelemetry
         # root span.
         class Result
           EMPTY_HASH = {}.freeze
-          DECISIONS = [Decision::RECORD, Decision::NOT_RECORD, Decision::RECORD_AND_PROPAGATE].freeze
+          DECISIONS = [Decision::RECORD, Decision::NOT_RECORD, Decision::RECORD_AND_SAMPLED].freeze
           private_constant(:EMPTY_HASH, :DECISIONS)
 
           # Returns a frozen hash of attributes to be attached span.
@@ -30,8 +30,6 @@ module OpenTelemetry
           # @param [optional Hash<String, Object>] attributes A frozen or freezable hash
           #   containing attributes to be attached to the span.
           def initialize(decision:, attributes: nil)
-            raise ArgumentError, 'decision' unless DECISIONS.include?(decision)
-
             @decision = decision
             @attributes = attributes.freeze || EMPTY_HASH
           end
@@ -40,13 +38,13 @@ module OpenTelemetry
           #
           # @return [Boolean] sampling decision
           def sampled?
-            @decision == Decision::RECORD_AND_PROPAGATE
+            @decision == Decision::RECORD_AND_SAMPLED
           end
 
-          # Returns true if this span should record events.
+          # Returns true if this span should record events, attributes, status, etc.
           #
           # @return [Boolean] recording decision
-          def record_events?
+          def recording?
             @decision != Decision::NOT_RECORD
           end
         end

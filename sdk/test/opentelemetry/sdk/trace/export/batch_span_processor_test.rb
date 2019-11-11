@@ -37,16 +37,35 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     def shutdown; end
   end
 
-  class TestSpan
-    def initialize(id = nil, recording_events = true)
-      @id = id
-      @recording_events = recording_events
+  class TestTimeoutExporter < TestExporter
+    attr_reader :state
+
+    def initialize(sleep_for_millis: 0, **args)
+      @sleep_for_seconds = sleep_for_millis / 1000.0
+      super(args)
     end
 
-    attr_reader :id
+    def export(batch)
+      @state = :called
+      # long enough to cause a timeout:
+      sleep @sleep_for_seconds
+      @state = :not_interrupted
+      super
+    end
+  end
 
-    def recording_events?
-      @recording_events
+  class TestSpan
+    def initialize(id = nil, recording = true)
+      trace_flags = recording ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
+      @context = OpenTelemetry::Trace::SpanContext.new(trace_flags: trace_flags)
+      @id = id
+      @recording = recording
+    end
+
+    attr_reader :id, :context
+
+    def recording?
+      @recording
     end
 
     def to_span_data
@@ -76,7 +95,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
       bsp.shutdown
 
-      te.batches.must_equal [[ts]]
+      _(te.batches).must_equal [[ts]]
     end
   end
 
@@ -90,11 +109,11 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       tss.each { |ts| bsp.on_finish(ts) }
       bsp.shutdown
 
-      te.batches[0].size.must_equal(3)
-      te.batches[1].size.must_equal(1)
+      _(te.batches[0].size).must_equal(3)
+      _(te.batches[1].size).must_equal(1)
     end
 
-    it 'should batch only recording_events samples' do
+    it 'should batch only recording samples' do
       te = TestExporter.new
 
       bsp = BatchSpanProcessor.new(exporter: te, max_queue_size: 6, max_export_batch_size: 3)
@@ -103,7 +122,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       tss.each { |ts| bsp.on_finish(ts) }
       bsp.shutdown
 
-      te.batches[0].size.must_equal(1)
+      _(te.batches[0].size).must_equal(1)
     end
   end
 
@@ -123,12 +142,12 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       sleep(1)
       bsp.shutdown
 
-      te.batches.size.must_equal(2)
-      te.batches[0].size.must_equal(3)
-      te.batches[1].size.must_equal(1)
+      _(te.batches.size).must_equal(2)
+      _(te.batches[0].size).must_equal(3)
+      _(te.batches[1].size).must_equal(1)
 
-      te.failed_batches.size.must_equal(1)
-      te.failed_batches[0].size.must_equal(3)
+      _(te.failed_batches.size).must_equal(1)
+      _(te.failed_batches[0].size).must_equal(3)
     end
 
     it 'should not retry on FAILED_NOT_RETRYABLE exports' do
@@ -146,11 +165,11 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       sleep(1)
       bsp.shutdown
 
-      te.batches.size.must_equal(1)
-      te.batches[0].size.must_equal(1)
+      _(te.batches.size).must_equal(1)
+      _(te.batches[0].size).must_equal(1)
 
-      te.failed_batches.size.must_equal(1)
-      te.failed_batches[0].size.must_equal(3)
+      _(te.failed_batches.size).must_equal(1)
+      _(te.failed_batches[0].size).must_equal(3)
     end
   end
 
@@ -175,7 +194,46 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
       expected = 100.times.map { |i| i }
 
-      out.must_equal(expected)
+      _(out).must_equal(expected)
+    end
+  end
+
+  describe 'export timeout' do
+    let(:exporter) do
+      TestTimeoutExporter.new(status_codes: [SUCCESS],
+                              sleep_for_millis: exporter_sleeps_for_millis)
+    end
+    let(:processor) do
+      BatchSpanProcessor.new(exporter: exporter,
+                             exporter_timeout_millis: exporter_timeout_millis,
+                             schedule_delay_millis: schedule_delay_millis)
+    end
+    let(:schedule_delay_millis) { 50 }
+    let(:exporter_timeout_millis) { 100 }
+    let(:spans) { [TestSpan.new, TestSpan.new] }
+
+    before do
+      spans.each { |ts| processor.on_finish(ts) }
+
+      # Ensure that work thread loops (longer than 'schedule_delay_millis'):
+      sleep((schedule_delay_millis + 100) / 1000.0)
+      processor.shutdown
+    end
+
+    describe 'normally' do
+      let(:exporter_sleeps_for_millis) { exporter_timeout_millis - 1 }
+
+      it 'exporter is not interrupted' do
+        _(exporter.state).must_equal(:not_interrupted)
+      end
+    end
+
+    describe 'when exporter runs too long' do
+      let(:exporter_sleeps_for_millis) { exporter_timeout_millis + 1 }
+
+      it 'is interrupted by a timeout' do
+        _(exporter.state).must_equal(:called)
+      end
     end
   end
 end

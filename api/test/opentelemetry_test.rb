@@ -8,25 +8,25 @@ require 'test_helper'
 require 'tempfile'
 
 describe OpenTelemetry do
-  describe '.tracer' do
+  describe '.tracer_factory' do
     after do
-      # Ensure we don't leak custom tracers to other tests
-      OpenTelemetry.tracer = nil
+      # Ensure we don't leak custom tracer factories and tracers to other tests
+      OpenTelemetry.tracer_factory = nil
     end
 
-    it 'returns instance of Trace::Tracer by default' do
-      tracer = OpenTelemetry.tracer
-      tracer.must_be_instance_of(OpenTelemetry::Trace::Tracer)
+    it 'returns instance of Trace::TracerFactory by default' do
+      tracer_factory = OpenTelemetry.tracer_factory
+      _(tracer_factory).must_be_instance_of(OpenTelemetry::Trace::TracerFactory)
     end
 
     it 'returns the same instance when accessed multiple times' do
-      OpenTelemetry.tracer.must_equal(OpenTelemetry.tracer)
+      _(OpenTelemetry.tracer_factory).must_equal(OpenTelemetry.tracer_factory)
     end
 
-    it 'returns user specified tracer' do
-      custom_tracer = 'a custom tracer'
-      OpenTelemetry.tracer = custom_tracer
-      OpenTelemetry.tracer.must_equal(custom_tracer)
+    it 'returns user specified tracer factory' do
+      custom_tracer_factory = 'a custom tracer factory'
+      OpenTelemetry.tracer_factory = custom_tracer_factory
+      _(OpenTelemetry.tracer_factory).must_equal(custom_tracer_factory)
     end
   end
 
@@ -37,32 +37,32 @@ describe OpenTelemetry do
         OpenTelemetry.logger = Logger.new(t.path)
         OpenTelemetry.logger.info('stuff')
         t.rewind
-        t.read.must_match(/INFO -- : stuff/)
+        _(t.read).must_match(/INFO -- : stuff/)
       ensure
         t.unlink
       end
     end
   end
 
-  describe '.meter' do
+  describe '.meter_factory' do
     after do
-      # Ensure we don't leak custom meter to other tests
-      OpenTelemetry.meter = nil
+      # Ensure we don't leak custom meter factories and meters to other tests
+      OpenTelemetry.meter_factory = nil
     end
 
-    it 'returns instance of Metrics::Meter by default' do
-      meter = OpenTelemetry.meter
-      meter.must_be_instance_of(OpenTelemetry::Metrics::Meter)
+    it 'returns instance of Metrics::MeterFactory by default' do
+      meter_factory = OpenTelemetry.meter_factory
+      _(meter_factory).must_be_instance_of(OpenTelemetry::Metrics::MeterFactory)
     end
 
     it 'returns the same instance when accessed multiple times' do
-      OpenTelemetry.meter.must_equal(OpenTelemetry.meter)
+      _(OpenTelemetry.meter_factory).must_equal(OpenTelemetry.meter_factory)
     end
 
-    it 'returns user specified meter' do
-      custom_meter = 'a custom meter'
-      OpenTelemetry.meter = custom_meter
-      OpenTelemetry.meter.must_equal(custom_meter)
+    it 'returns user specified meter factory' do
+      custom_meter_factory = 'a custom meter factory'
+      OpenTelemetry.meter_factory = custom_meter_factory
+      _(OpenTelemetry.meter_factory).must_equal(custom_meter_factory)
     end
   end
 
@@ -74,11 +74,11 @@ describe OpenTelemetry do
 
     it 'returns instance of DistributedContext::Manager by default' do
       manager = OpenTelemetry.distributed_context_manager
-      manager.must_be_instance_of(OpenTelemetry::DistributedContext::Manager)
+      _(manager).must_be_instance_of(OpenTelemetry::DistributedContext::Manager)
     end
 
     it 'returns the same instance when accessed multiple times' do
-      OpenTelemetry.distributed_context_manager.must_equal(
+      _(OpenTelemetry.distributed_context_manager).must_equal(
         OpenTelemetry.distributed_context_manager
       )
     end
@@ -86,7 +86,7 @@ describe OpenTelemetry do
     it 'returns user specified distributed_context_manager' do
       custom_manager = 'a custom distributed_context_manager'
       OpenTelemetry.distributed_context_manager = custom_manager
-      OpenTelemetry.distributed_context_manager.must_equal(custom_manager)
+      _(OpenTelemetry.distributed_context_manager).must_equal(custom_manager)
     end
   end
 end
