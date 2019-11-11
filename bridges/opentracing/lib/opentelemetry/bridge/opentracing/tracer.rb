@@ -10,8 +10,8 @@ module OpenTelemetry
       # Tracer provides a means of referencing
       # an OpenTelemetry::Tracer as a OpenTracing::Tracer
       class Tracer
-        HTTP_TEXT_FORMAT = OpenTelemetry::DistributedContext::Propagation::HTTPTextFormat.new
-        BINARY_FORMAT = OpenTelemetry::DistributedContext::Propagation::BinaryFormat.new
+        # TEXT_FORMAT = OpenTelemetry::DistributedContext::Propagation::TextFormat.new
+        # BINARY_FORMAT = OpenTelemetry::DistributedContext::Propagation::BinaryFormat.new
 
         def active_span
           OpenTelemetry.tracer.current_span
@@ -59,27 +59,11 @@ module OpenTelemetry
         end
 
         def inject(span_context, format, carrier)
-          case format
-          when ::OpenTracing::FORMAT_TEXT_MAP, ::OpenTracing::FORMAT_RACK
-            context = span_context.context
-            HTTP_TEXT_FORMAT.inject(context, carrier) { |c, k, v| return c, k, v }
-          when ::OpenTracing::FORMAT_BINARY
-            # TODO: I don't think this is right
-            yield carrier, TraceParent::TRACE_PARENT_HEADER, BINARY_FORMAT.to_bytes(span_context)
-          else
-            warn 'Unknown inject format'
-          end
+          # TODO
         end
 
         def extract(format, carrier)
-          case format
-          when ::OpenTracing::FORMAT_TEXT_MAP, ::OpenTracing::FORMAT_RACK
-            HTTP_TEXT_FORMAT.extract(carrier) {}
-          when ::OpenTracing::FORMAT_BINARY
-            BINARY_FORMAT.from_bytes(carrier)
-          else
-            warn 'Unknown extract format'
-          end
+          # TODO
         end
       end
     end

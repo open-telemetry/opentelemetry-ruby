@@ -32,6 +32,9 @@ commands:
           name: Bundle (Jaeger)
           command: "cd exporters/jaeger && gem install --no-document bundler && bundle install --jobs=3 --retry=3"
       - run:
+          name: Bundle (OpenTracing Bridge)
+          command: "cd bridges/opentracing && gem install --no-document bundler && bundle install --jobs=3 --retry=3"
+      - run:
           name: CI (API)
           command: "cd api && bundle exec rake"
       - run:
@@ -40,6 +43,9 @@ commands:
       - run:
           name: CI (Jaeger)
           command: "cd exporters/jaeger && bundle exec rake"
+      - run:
+          name: CI (OpenTracing Bridge)
+          command: "cd bridges/opentracing && bundle exec rake"
   rake-release:
     steps:
       - checkout
