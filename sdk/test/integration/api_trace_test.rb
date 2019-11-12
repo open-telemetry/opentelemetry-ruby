@@ -95,15 +95,13 @@ describe OpenTelemetry::SDK, 'API_trace' do
     before do
       tracer.in_span('root') do |s|
         tracer.in_span('child_with_links', links: links) do |span|
-          @child_with_links = span.to_span_data
+          @child_span_with_links = span
         end
       end
     end
 
     it 'span has links' do
-      # TODO: is there a way to retrieve an arbitrary span, by name?
-      #       e.g., tracer.get_span(name)
-      _(@child_with_links.links.size).must_equal number_of_links
+      _(@child_span_with_links.to_span_data.links.size).must_equal number_of_links
     end
   end
 end
