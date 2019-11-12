@@ -10,7 +10,7 @@ describe OpenTelemetry::DistributedContext::CorrelationContextManager do
   CorrelationContext = OpenTelemetry::DistributedContext::CorrelationContext
   let(:manager) { OpenTelemetry::DistributedContext::CorrelationContextManager.new }
 
-  before do
+  after do
     Context.clear
   end
 

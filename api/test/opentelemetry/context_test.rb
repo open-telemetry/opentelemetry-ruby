@@ -9,7 +9,7 @@ require 'test_helper'
 describe OpenTelemetry::Context do
   Context = OpenTelemetry::Context
 
-  before do
+  after do
     Context.clear
   end
 
