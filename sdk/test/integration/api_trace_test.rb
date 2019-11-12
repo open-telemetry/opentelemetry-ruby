@@ -40,7 +40,7 @@ describe OpenTelemetry::SDK, 'API_trace' do
     end
 
     it 'root has accurate child_count' do
-      # TODO: is child_count maintained by an exporter or processor?
+      # TODO: child_count should be maintained by Span in coordination with Tracer
       _(@root_span.to_span_data.child_count).must_equal 1
     end
 
