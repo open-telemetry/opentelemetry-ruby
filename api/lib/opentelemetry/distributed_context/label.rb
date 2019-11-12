@@ -10,6 +10,17 @@ module OpenTelemetry
     class Label
       attr_reader :metadata, :key, :value
 
+      # Returns a new label
+      #
+      # @param [Key] key The name of the label
+      # @param [Value] value The value associated with key
+      # @param [Metadata] metadata Properties associated with the label
+      def initialize(key:, value:, metadata:)
+        @key = key
+        @value = value
+        @metadata = metadata
+      end
+
       # Label::Key is the name of the Label. Label::Key along with Label::Value can be used to aggregate and group stats,
       # annotate traces and logs, etc.
       #
