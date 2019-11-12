@@ -56,7 +56,7 @@ describe OpenTelemetry::SDK, 'API_trace' do
   describe 'tracing child-of-remote spans' do
     before do
       @remote_span = tracer.start_span('remote', with_parent_context: remote_span_context)
-      @child_of_remote = tracer.start_span('child1', with_parent: @remote_span)
+      @child_of_remote = tracer.start_span('child1', with_parent_context: @remote_span.context)
     end
 
     it 'has a child' do
