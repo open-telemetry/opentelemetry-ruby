@@ -15,6 +15,8 @@ module OpenTelemetry
                                         'http.method' => env.method,
                                         'http.url' => env.url.to_s },
                           kind: :client) do |span|
+              propagate_context(span, env)
+
               app.call(env).on_complete { |resp| trace_response(span, resp) }
             end
           end
@@ -22,6 +24,15 @@ module OpenTelemetry
           private
 
           attr_reader :app
+
+          def propagate_context(span, env)
+            formatter.extract(env)
+            formatter.inject(span.context, env.request_headers)
+          end
+
+          def formatter
+            Faraday::Adapter.http_formatter
+          end
 
           def tracer
             Faraday::Adapter.tracer

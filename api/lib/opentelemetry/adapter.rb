@@ -15,6 +15,10 @@ module OpenTelemetry
         new.install
       end
 
+      def http_formatter
+        OpenTelemetry.tracer_factory.http_text_format
+      end
+
       def tracer
         OpenTelemetry.tracer_factory.tracer(config[:name], config[:version])
       end
