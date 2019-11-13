@@ -39,11 +39,6 @@ describe OpenTelemetry::SDK, 'API_trace' do
       _(@child_of_root.to_span_data.parent_span_id).must_equal @root_span.to_span_data.span_id
     end
 
-    it 'root has accurate child_count' do
-      # TODO: child_count should be maintained by Span in coordination with Tracer
-      _(@root_span.to_span_data.child_count).must_equal 1
-    end
-
     it 'root has accurate total_recorded_links' do
       _(@root_span.to_span_data.total_recorded_links).must_equal 0
     end
