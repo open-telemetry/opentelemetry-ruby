@@ -88,7 +88,7 @@ describe OpenTelemetry::SDK, 'API_trace' do
     end
 
     before do
-      tracer.in_span('root') do |s|
+      tracer.in_span('root') do
         tracer.in_span('child_with_links', links: links) do |span|
           @child_span_with_links = span
         end
