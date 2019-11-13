@@ -18,7 +18,6 @@ module OpenTelemetry
               def render(engine, data, *)
                 Sinatra::Adapter.tracer.in_span(
                   'sinatra.render_template',
-                  kind: :server,
                   with_parent: Sinatra::Adapter.tracer.current_span
                 ) do |span|
                   template_name = data.is_a?(Symbol) ? data : :literal
