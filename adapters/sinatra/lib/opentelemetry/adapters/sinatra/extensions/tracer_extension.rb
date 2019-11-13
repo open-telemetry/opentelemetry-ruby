@@ -15,13 +15,14 @@ module OpenTelemetry
           def self.registered(app)
             # Create tracing `render` method
             ::Sinatra::Base.module_eval do
-              def render(engine, data, *)
+              def render(_engine, data, *)
                 Sinatra::Adapter.tracer.in_span(
                   'sinatra.render_template'
                 ) do |span|
                   template_name = data.is_a?(Symbol) ? data : :literal
                   span.set_attribute('sinatra.template_name', template_name.to_s)
-                  output = super
+
+                  super
                 end
               end
             end
