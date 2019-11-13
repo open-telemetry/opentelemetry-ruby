@@ -16,13 +16,12 @@ module OpenTelemetry
           def call(env)
             tracer.in_span(
               env['PATH_INFO'],
-              attributes: { 'component': 'http',
-                            'http.method': env['REQUEST_METHOD'] },
+              attributes: { 'component' => 'http',
+                            'http.method' => env['REQUEST_METHOD'],
+                            'http.url' => env['PATH_INFO'] },
               kind: :server,
               with_parent_context: parent_context(env)
             ) do |span|
-              trace_request(span, env)
-
               app.call(env).tap { |resp| trace_response(span, env, resp) }
             end
           end
@@ -37,10 +36,6 @@ module OpenTelemetry
 
           def tracer
             OpenTelemetry::Adapters::Sinatra::Adapter.tracer
-          end
-
-          def trace_request(span, env)
-            span.set_attribute('http.url', env['PATH_INFO'])
           end
 
           def trace_response(span, env, resp)
