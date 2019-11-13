@@ -4,6 +4,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+# TODO: General Question: should adapters explicitly load the libraries they depend on?
+# Or, should adapters assume that the libraries are already loaded by the caller/user?
+require 'faraday'
+require 'opentelemetry/adapter'
+
 require_relative 'middlewares/tracer_middleware'
 require_relative 'patches/rack_builder'
 
