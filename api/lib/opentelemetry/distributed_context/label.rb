@@ -15,7 +15,7 @@ module OpenTelemetry
       # @param [Key] key The name of the label
       # @param [Value] value The value associated with key
       # @param [Metadata] metadata Properties associated with the label
-      def initialize(key:, value:, metadata:)
+      def initialize(key:, value:, metadata: Metadata::NO_PROPAGATION)
         @key = key
         @value = value
         @metadata = metadata
