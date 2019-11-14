@@ -25,8 +25,8 @@ module OpenTelemetry
 
           attr_reader :app
 
+          # Outbound requests should only need to inject the current span.
           def propagate_context(span, env)
-            formatter.extract(env)
             formatter.inject(span.context, env.request_headers)
           end
 
