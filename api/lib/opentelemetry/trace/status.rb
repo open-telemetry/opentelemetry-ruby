@@ -19,9 +19,56 @@ module OpenTelemetry
       # @return [String]
       attr_reader :description
 
+      # Implemented according to
+      # https://cloud.google.com/apis/design/errors#handling_errors
+      #
+      # Note that some HTTP status do not map 1-to-1 to a gRPC status.
+      #
+      # @param code Numeric HTTP status
+      #
+      # @return Status
+      def self.from_http_status(code) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+        case code.to_i
+        when 200
+          new(OK)
+        when 400
+          new(INVALID_ARGUMENT)
+          # or, possibly (no one-to-one mapping):
+          # new(FAILED_PRECONDITION)
+          # new(OUT_OF_RANGE)
+        when 401
+          new(UNAUTHENTICATED)
+        when 403
+          new(PERMISSION_DENIED)
+        when 404
+          new(NOT_FOUND)
+        when 409
+          new(ABORTED)
+          # or, possibly (no one-to-one mapping):
+          # new(ALREADY_EXISTS)
+        when 429
+          new(RESOURCE_EXHAUSTED)
+        when 499
+          new(CANCELLED)
+        when 500
+          new(DATA_LOSS)
+          # or, possibly (no one-to-one mapping):
+          # new(UNKNOWN_ERROR)
+          # new(INTERNAL_ERROR)
+        when 501
+          new(UNIMPLEMENTED)
+        when 503
+          new(UNAVAILABLE)
+        when 504
+          new(DEADLINE_EXCEEDED)
+        else
+          new(UNKNOWN_ERROR)
+        end
+      end
+
       # Initialize a Status.
       #
-      # @param [Integer] canonical_code One of the standard GRPC codes: https://github.com/grpc/grpc/blob/master/doc/statuscodes.md
+      # @param [Integer] canonical_code One of the standard gRPC codes: https://github.com/grpc/grpc/blob/master/doc/statuscodes.md
       # @param [String] description
       def initialize(canonical_code, description: '')
         @canonical_code = canonical_code
@@ -36,7 +83,7 @@ module OpenTelemetry
       end
 
       # The following represents the canonical set of status codes of a
-      # finished {Span}, following the standard GRPC codes:
+      # finished {Span}, following the standard gRPC codes:
       # https://github.com/grpc/grpc/blob/master/doc/statuscodes.md
 
       # The operation completed successfully.
