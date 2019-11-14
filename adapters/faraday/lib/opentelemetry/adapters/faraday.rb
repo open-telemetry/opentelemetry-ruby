@@ -10,12 +10,17 @@ module OpenTelemetry
       module_function
 
       TRACER_NAME = 'faraday'
-      TRACER_VERSION = Gem.loaded_specs[TRACER_NAME]&.version.to_s
 
-      def install(config = {name: TRACER_NAME, version: TRACER_VERSION})
+      def install(config = {name: TRACER_NAME,
+                            version: tracer_version})
         require_relative 'faraday/adapter'
         Faraday::Adapter.install(config)
       end
+
+      def tracer_version
+        Gem.loaded_specs[TRACER_NAME]&.version.to_s
+      end
+      private_class_method(:tracer_version)
     end
   end
 end
