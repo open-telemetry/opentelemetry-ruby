@@ -7,7 +7,20 @@
 require 'opentelemetry'
 
 module OpenTelemetry
-  # The basic interface for Adapter objects
+  # The basic interface for Adapter objects.
+  #
+  # Adapter class is intended to be subclassed, e.g.,
+  #
+  #   module Adapters
+  #     module Faraday
+  #       class Adapter < OpenTelemetry::Adapter
+  #       end
+  #     end
+  #   end
+  #
+  # then,
+  #
+  #   Adapters::Faraday.install(name: ..., version: ...)
   class Adapter
     class << self
       attr_reader :config,
