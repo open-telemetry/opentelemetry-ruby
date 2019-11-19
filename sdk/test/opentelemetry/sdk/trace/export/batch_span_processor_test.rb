@@ -229,7 +229,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
 
     describe 'when exporter runs too long' do
-      let(:exporter_sleeps_for_millis) { exporter_timeout_millis + 100 }
+      let(:exporter_sleeps_for_millis) { exporter_timeout_millis + 700 }
 
       it 'is interrupted by a timeout' do
         _(exporter.state).must_equal(:called)
