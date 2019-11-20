@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry'
-
 module OpenTelemetry
   # The basic interface for Adapter objects
   class Adapter
