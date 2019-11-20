@@ -22,13 +22,19 @@ module OpenTelemetry
   class Adapter
     class << self
       attr_reader :config,
-                  :http_formatter,
+                  :meter,
+                  :propagation_format,
                   :tracer
 
-      def install(config = {})
-        @config = config
-        @http_formatter = config[:http_formatter] || default_http_formatter
-        @tracer = config[:tracer] || default_tracer
+      def install(config: nil,
+                  meter: nil,
+                  propagation_format: nil,
+                  tracer: nil)
+        @config = config || {}
+        @meter = meter
+        @propagation_format = propagation_format || default_http_formatter
+        @tracer = tracer || default_tracer
+
         new.install
       end
 
