@@ -9,35 +9,47 @@ require 'test_helper'
 describe OpenTelemetry::Trace::Status do
   let(:trace_status) { OpenTelemetry::Trace::Status }
 
-  describe '.from_http_status' do
+  describe '.http_to_status' do
     it 'returns Status' do
-      _(trace_status.from_http_status(400)).must_be_kind_of trace_status
+      _(trace_status.http_to_status(200)).must_be_kind_of trace_status
     end
 
     def assert_http_to_status(http_code, trace_status_code)
-      _(trace_status.from_http_status(http_code).canonical_code).must_equal trace_status_code
+      _(trace_status.http_to_status(http_code).canonical_code).must_equal trace_status_code
     end
 
-    it 'maps http 200' do
+    it 'maps http 1xx codes' do
+      assert_http_to_status(100, trace_status::OK)
+      assert_http_to_status(199, trace_status::OK)
+    end
+
+    it 'maps http 2xx codes' do
       assert_http_to_status(200, trace_status::OK)
+      assert_http_to_status(299, trace_status::OK)
     end
 
-    it 'maps common 4xx http codes' do
+    it 'maps http 3xx codes' do
+      assert_http_to_status(300, trace_status::OK)
+      assert_http_to_status(399, trace_status::OK)
+    end
+
+    it 'maps http 4xx codes' do
       assert_http_to_status(400, trace_status::INVALID_ARGUMENT)
       assert_http_to_status(401, trace_status::UNAUTHENTICATED)
       assert_http_to_status(403, trace_status::PERMISSION_DENIED)
       assert_http_to_status(404, trace_status::NOT_FOUND)
-      assert_http_to_status(409, trace_status::ABORTED)
+      assert_http_to_status(409, trace_status::INVALID_ARGUMENT)
       assert_http_to_status(429, trace_status::RESOURCE_EXHAUSTED)
-      assert_http_to_status(499, trace_status::CANCELLED)
+      assert_http_to_status(499, trace_status::INVALID_ARGUMENT)
     end
 
-    it 'maps common 5xx http codes' do
-      assert_http_to_status(500, trace_status::DATA_LOSS)
+    it 'maps http 5xx codes' do
+      assert_http_to_status(500, trace_status::INTERNAL_ERROR)
       assert_http_to_status(501, trace_status::UNIMPLEMENTED)
-      assert_http_to_status(502, trace_status::UNKNOWN_ERROR)
+      assert_http_to_status(502, trace_status::INTERNAL_ERROR)
       assert_http_to_status(503, trace_status::UNAVAILABLE)
       assert_http_to_status(504, trace_status::DEADLINE_EXCEEDED)
+      assert_http_to_status(599, trace_status::INTERNAL_ERROR)
     end
   end
 
