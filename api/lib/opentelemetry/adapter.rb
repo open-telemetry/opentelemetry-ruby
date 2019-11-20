@@ -10,7 +10,7 @@ module OpenTelemetry
   # Adapter class is intended to be subclassed, e.g.,
   #
   #   module Adapters
-  #     module Faraday
+  #     module SomeLibrary
   #       class Adapter < OpenTelemetry::Adapter
   #       end
   #     end
@@ -18,7 +18,7 @@ module OpenTelemetry
   #
   # then,
   #
-  #   Adapters::Faraday.install(name: ..., version: ...)
+  #   Adapters::SomeLibrary.install(name: ..., version: ...)
   class Adapter
     class << self
       attr_reader :config,
