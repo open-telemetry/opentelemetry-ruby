@@ -8,7 +8,7 @@ module OpenTelemetry
   module SDK
     module Trace
       # {TracerFactory} is the SDK implementation of {OpenTelemetry::Trace::TracerFactory}.
-      class TracerFactory
+      class TracerFactory < OpenTelemetry::Trace::TracerFactory
         Key = Struct.new(:name, :version)
         private_constant(:Key)
 

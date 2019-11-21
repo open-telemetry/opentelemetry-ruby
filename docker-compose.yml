@@ -24,6 +24,11 @@ services:
       context: .
     working_dir: /app
 
+  ex-http:
+    <<: *base
+    command: ./start_server.sh
+    working_dir: /app/examples/http
+
   sdk:
     <<: *base
     working_dir: /app/sdk
