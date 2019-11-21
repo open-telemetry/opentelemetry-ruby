@@ -9,29 +9,24 @@ require 'test_helper'
 describe OpenTelemetry::SDK::DistributedContext::CorrelationContext do
   CorrelationContext = OpenTelemetry::SDK::DistributedContext::CorrelationContext
   Label = OpenTelemetry::DistributedContext::Label
-  Key = OpenTelemetry::DistributedContext::Label::Key
-  Value = OpenTelemetry::DistributedContext::Label::Value
   Metadata = OpenTelemetry::DistributedContext::Label::Metadata
 
-  let(:foo_key) { Key.new('foo') }
-  let(:bar_key) { Key.new('bar') }
-  let(:baz_key) { Key.new('baz') }
   let(:foo_label) do
     Label.new(
-      key: foo_key,
-      value: Value.new('bar')
+      key: 'foo',
+      value: 'bar'
     )
   end
   let(:bar_label) do
     Label.new(
-      key: bar_key,
-      value: Value.new('baz')
+      key: 'bar',
+      value: 'baz'
     )
   end
   let(:baz_label) do
     Label.new(
-      key: baz_key,
-      value: Value.new('quux')
+      key: 'baz',
+      value: 'quux'
     )
   end
 
@@ -43,8 +38,8 @@ describe OpenTelemetry::SDK::DistributedContext::CorrelationContext do
 
     it 'reflects entries passed in' do
       entries = {
-        foo_key => foo_label,
-        bar_key => bar_label
+        'foo' => foo_label,
+        'bar' => bar_label
       }
 
       ctx = CorrelationContext.new(entries: entries)
@@ -54,18 +49,18 @@ describe OpenTelemetry::SDK::DistributedContext::CorrelationContext do
 
     it 'removes keys specified' do
       entries = {
-        foo_key => foo_label,
-        bar_key => bar_label
+        'foo' => foo_label,
+        'bar' => bar_label
       }
 
-      ctx = CorrelationContext.new(entries: entries, remove_keys: [bar_key])
+      ctx = CorrelationContext.new(entries: entries, remove_keys: ['bar'])
 
-      _(ctx.entries).must_equal(foo_key => foo_label)
+      _(ctx.entries).must_equal('foo' => foo_label)
     end
 
     describe 'with parent' do
       let(:parent_ctx) do
-        CorrelationContext.new(entries: { baz_key => baz_label })
+        CorrelationContext.new(entries: { 'baz' => baz_label })
       end
 
       it 'inherits entries' do
@@ -77,14 +72,14 @@ describe OpenTelemetry::SDK::DistributedContext::CorrelationContext do
         ctx = CorrelationContext.new(
           parent: parent_ctx,
           entries: {
-            foo_key => foo_label,
-            bar_key => bar_label
+            'foo' => foo_label,
+            'bar' => bar_label
           }
         )
         _(ctx.entries).must_equal(
-          foo_key => foo_label,
-          bar_key => bar_label,
-          baz_key => baz_label
+          'foo' => foo_label,
+          'bar' => bar_label,
+          'baz' => baz_label
         )
       end
 
@@ -92,13 +87,13 @@ describe OpenTelemetry::SDK::DistributedContext::CorrelationContext do
         ctx = CorrelationContext.new(
           parent: parent_ctx,
           entries: {
-            foo_key => foo_label,
-            baz_key => bar_label
+            'foo' => foo_label,
+            'baz' => bar_label
           }
         )
         _(ctx.entries).must_equal(
-          foo_key => foo_label,
-          baz_key => bar_label
+          'foo' => foo_label,
+          'baz' => bar_label
         )
       end
 
@@ -106,14 +101,14 @@ describe OpenTelemetry::SDK::DistributedContext::CorrelationContext do
         ctx = CorrelationContext.new(
           parent: parent_ctx,
           entries: {
-            foo_key => foo_label,
-            bar_key => bar_label
+            'foo' => foo_label,
+            'bar' => bar_label
           },
-          remove_keys: [baz_key]
+          remove_keys: ['baz']
         )
         _(ctx.entries).must_equal(
-          foo_key => foo_label,
-          bar_key => bar_label
+          'foo' => foo_label,
+          'bar' => bar_label
         )
       end
     end

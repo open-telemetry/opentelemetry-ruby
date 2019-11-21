@@ -6,49 +6,25 @@
 
 module OpenTelemetry
   module DistributedContext
-    # A Label consists of Label::Metadata, Label::Key, and Label::Value.
+    # A Label consists of key, value and Label::Metadata
     class Label
       attr_reader :metadata, :key, :value
 
       # Returns a new label
       #
-      # @param [Key] key The name of the label
-      # @param [Value] value The value associated with key
+      # @param [String] key The name of the label. Key along with Value can be
+      #   used to aggregate and group stats, annotate traces and logs, etc. Must
+      #   contain printable ASCII and a length between 0 and 256 (non-inclusive)
+      # @param [String] value The value associated with key. Must contain
+      #   printable ASCII.
       # @param [Metadata] metadata Properties associated with the label
       def initialize(key:, value:, metadata: Metadata::NO_PROPAGATION)
-        @key = key
-        @value = value
+        raise ArgumentError unless Internal.printable_ascii?(key) && (1..255).include?(key.length)
+        raise ArgumentError unless Internal.printable_ascii?(value)
+
+        @key = -key
+        @value = -value
         @metadata = metadata
-      end
-
-      # Label::Key is the name of the Label. Label::Key along with Label::Value can be used to aggregate and group stats,
-      # annotate traces and logs, etc.
-      #
-      # Restrictions
-      # - Must contain only printable ASCII (codes between 32 and 126 inclusive)
-      # - Must have length greater than zero and less than 256.
-      # - Must not be empty.
-      class Key
-        attr_reader :name
-
-        def initialize(name)
-          raise ArgumentError unless Internal.printable_ascii?(name) && (1..255).include?(name.length)
-
-          @name = -name
-        end
-      end
-
-      # Label::Value wraps a string. It MUST contain only printable ASCII (codes between 32 and 126).
-      class Value
-        def initialize(value)
-          raise ArgumentError unless Internal.printable_ascii?(value)
-
-          @value = -value
-        end
-
-        def to_s
-          @value
-        end
       end
 
       # Label::Metadata contains properties associated with an Label. For now only the property hop_limit is defined.

@@ -8,20 +8,26 @@ require 'test_helper'
 
 describe OpenTelemetry::DistributedContext::Label do
   Label = OpenTelemetry::DistributedContext::Label
-  Key = OpenTelemetry::DistributedContext::Label::Key
-  Value = OpenTelemetry::DistributedContext::Label::Value
   Metadata = OpenTelemetry::DistributedContext::Label::Metadata
 
   describe '.new' do
-    it 'returns new label' do
-      label = Label.new(
-        key: Key.new('k'),
-        value: Value.new('v'),
+    let(:label) do
+      Label.new(
+        key: 'k',
+        value: 'v',
         metadata: Metadata.new(Metadata::UNLIMITED_PROPAGATION)
       )
-      _(label.key.name).must_equal('k')
-      _(label.value.to_s).must_equal('v')
+    end
+
+    it 'returns new label' do
+      _(label.key).must_equal('k')
+      _(label.value).must_equal('v')
       _(label.metadata.hop_limit).must_equal(Metadata::UNLIMITED_PROPAGATION)
+    end
+
+    it 'freezes key and value' do
+      _(label.key).must_be(:frozen?)
+      _(label.value).must_be(:frozen?)
     end
   end
 end

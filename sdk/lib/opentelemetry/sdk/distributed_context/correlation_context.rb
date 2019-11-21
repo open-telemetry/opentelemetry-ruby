@@ -16,9 +16,9 @@ module OpenTelemetry
         # by specifiying +entries+ or +remove_keys+.
         #
         # @param [optional CorrelationContext] parent An optional parent context
-        # @param [optional Hash<Label::key,Label>] entries A hash of
-        #   Label::Key-Label pairs for this context
-        # @param [optional Array<Label::Key>] remove_keys Keys to be removed
+        # @param [optional Hash<String,Label>] entries A hash of
+        #   String-Label pairs for this context
+        # @param [optional Array<String>] remove_keys Keys to be removed
         #   from this context
         def initialize(parent: nil, entries: {}, remove_keys: nil)
           @parent = parent
