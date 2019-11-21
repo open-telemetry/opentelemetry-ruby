@@ -17,11 +17,8 @@ module OpenTelemetry
         # @return Status
         def http_to_status(code) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
           case code.to_i
-          when 100..299
+          when 100..399
             new(const_get(:OK))
-          when 300..399
-            new(const_get(:OK))
-            # TODO: or DEADLINE_EXCEEDED in case of a loop
           when 401
             new(const_get(:UNAUTHENTICATED))
           when 403
