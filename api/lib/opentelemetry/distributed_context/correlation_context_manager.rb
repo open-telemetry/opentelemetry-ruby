@@ -26,7 +26,7 @@ module OpenTelemetry
         Context.with_value(CORRELATION_CONTEXT_KEY, correlation_context) { |c| yield c }
       end
 
-      def create_context(parent: nil, entries: nil, remove_keys: nil)
+      def create_context(parent: nil, labels: nil, remove_keys: nil)
         EMPTY_CORRELATION_CONTEXT
       end
 

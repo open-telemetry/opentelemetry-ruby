@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry/sdk/distributed_context/correlation_context'
+require 'opentelemetry/sdk/distributed_context/correlation_context_manager'
 
 module OpenTelemetry
   module SDK
