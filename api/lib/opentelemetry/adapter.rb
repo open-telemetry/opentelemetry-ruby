@@ -18,7 +18,7 @@ module OpenTelemetry
   #
   # then,
   #
-  #   Adapters::SomeLibrary.install(name: ..., version: ...)
+  #   Adapters::SomeLibrary.install(config: { name: ..., version: ... })
   class Adapter
     class << self
       attr_reader :config,
