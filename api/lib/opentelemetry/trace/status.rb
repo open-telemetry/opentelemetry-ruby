@@ -4,11 +4,16 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/trace/util/http_to_status'
+
 module OpenTelemetry
   module Trace
     # Status represents the status of a finished {Span}. It is composed of a
     # canonical code in conjunction with an optional descriptive message.
     class Status
+      # Convenience utility, not in API spec:
+      extend Util::HttpToStatus
+
       # Retrieve the canonical code of this Status.
       #
       # @return [Integer]
@@ -21,7 +26,7 @@ module OpenTelemetry
 
       # Initialize a Status.
       #
-      # @param [Integer] canonical_code One of the standard GRPC codes: https://github.com/grpc/grpc/blob/master/doc/statuscodes.md
+      # @param [Integer] canonical_code One of the standard gRPC codes: https://github.com/grpc/grpc/blob/master/doc/statuscodes.md
       # @param [String] description
       def initialize(canonical_code, description: '')
         @canonical_code = canonical_code
@@ -36,7 +41,7 @@ module OpenTelemetry
       end
 
       # The following represents the canonical set of status codes of a
-      # finished {Span}, following the standard GRPC codes:
+      # finished {Span}, following the standard gRPC codes:
       # https://github.com/grpc/grpc/blob/master/doc/statuscodes.md
 
       # The operation completed successfully.
