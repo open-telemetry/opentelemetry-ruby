@@ -7,40 +7,6 @@
 require 'test_helper'
 
 describe OpenTelemetry::Trace::Status do
-  let(:trace_status) { OpenTelemetry::Trace::Status }
-
-  describe '.from_http_status' do
-    it 'returns Status' do
-      _(trace_status.from_http_status(400)).must_be_kind_of trace_status
-    end
-
-    def assert_http_to_status(http_code, trace_status_code)
-      _(trace_status.from_http_status(http_code).canonical_code).must_equal trace_status_code
-    end
-
-    it 'maps http 200' do
-      assert_http_to_status(200, trace_status::OK)
-    end
-
-    it 'maps common 4xx http codes' do
-      assert_http_to_status(400, trace_status::INVALID_ARGUMENT)
-      assert_http_to_status(401, trace_status::UNAUTHENTICATED)
-      assert_http_to_status(403, trace_status::PERMISSION_DENIED)
-      assert_http_to_status(404, trace_status::NOT_FOUND)
-      assert_http_to_status(409, trace_status::ABORTED)
-      assert_http_to_status(429, trace_status::RESOURCE_EXHAUSTED)
-      assert_http_to_status(499, trace_status::CANCELLED)
-    end
-
-    it 'maps common 5xx http codes' do
-      assert_http_to_status(500, trace_status::DATA_LOSS)
-      assert_http_to_status(501, trace_status::UNIMPLEMENTED)
-      assert_http_to_status(502, trace_status::UNKNOWN_ERROR)
-      assert_http_to_status(503, trace_status::UNAVAILABLE)
-      assert_http_to_status(504, trace_status::DEADLINE_EXCEEDED)
-    end
-  end
-
   describe '.canonical_code' do
     it 'reflects the value passed in' do
       status = OpenTelemetry::Trace::Status.new(0)
