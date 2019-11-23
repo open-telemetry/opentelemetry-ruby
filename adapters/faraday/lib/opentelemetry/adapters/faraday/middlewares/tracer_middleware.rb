@@ -27,11 +27,11 @@ module OpenTelemetry
 
           # Outbound requests should only need to inject the current span.
           def propagate_context(span, env)
-            formatter.inject(span.context, env.request_headers)
+            propagator.inject(span.context, env.request_headers)
           end
 
-          def formatter
-            Faraday::Adapter.http_formatter
+          def propagator
+            Faraday::Adapter.propagator
           end
 
           def tracer

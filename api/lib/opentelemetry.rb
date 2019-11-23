@@ -6,7 +6,6 @@
 require 'logger'
 
 require 'opentelemetry/error'
-require 'opentelemetry/adapter'
 require 'opentelemetry/context'
 require 'opentelemetry/distributed_context'
 require 'opentelemetry/internal'

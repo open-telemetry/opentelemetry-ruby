@@ -4,10 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# TODO: General Question: should adapters explicitly load the libraries they depend on?
-# Or, should adapters assume that the libraries are already loaded by the caller/user?
 require 'faraday'
-require 'opentelemetry/adapter'
+require 'opentelemetry'
 
 require_relative 'middlewares/tracer_middleware'
 require_relative 'patches/rack_builder'
@@ -15,7 +13,28 @@ require_relative 'patches/rack_builder'
 module OpenTelemetry
   module Adapters
     module Faraday
-      class Adapter < OpenTelemetry::Adapter
+      class Adapter
+        class << self
+          attr_reader :config,
+                      :propagator,
+                      :tracer
+
+          def install(config = {})
+            @config = config
+            @propagator = OpenTelemetry.tracer_factory.rack_http_text_format
+            @tracer = config[:tracer] || default_tracer
+
+            new.install
+          end
+
+          private
+
+          def default_tracer
+            OpenTelemetry.tracer_factory.tracer(config[:name],
+                                                config[:version])
+          end
+        end
+
         def install
           register_tracer_middleware
           use_middleware_by_default
