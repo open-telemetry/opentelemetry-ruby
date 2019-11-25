@@ -77,8 +77,43 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
   end
 
   describe '#inject' do
+    it 'injects TEXT_MAP format as HTTP_TEXT_FORMAT' do
+      context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16)
+      span_context = SpanContextBridge.new context
+      carrier = {}
+      carried, key, value = tracer_bridge.inject(span_context, ::OpenTracing::FORMAT_TEXT_MAP, carrier)
+      key.must_equal 'traceparent'
+      value.must_equal '00-ffffffffffffffffffffffffffffffff-1111111111111111-00'
+      carrier.must_equal carried
+    end
+
+    it 'injects RACK format as HTTP_TEXT_FORMAT' do
+      context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16)
+      span_context = SpanContextBridge.new context
+      carrier = {}
+      carried, key, value = tracer_bridge.inject(span_context, ::OpenTracing::FORMAT_RACK, carrier)
+      key.must_equal 'HTTP_TRACEPARENT'
+      value.must_equal '00-ffffffffffffffffffffffffffffffff-1111111111111111-00'
+      carrier.must_equal carried
+    end
   end
 
   describe '#extract' do
+    it 'extracts HTTP format from the context' do
+      carrier = {}
+      span_context = tracer_bridge.extract(::OpenTracing::FORMAT_TEXT_MAP, carrier)
+      span_context.wont_be_nil
+      span_context.must_be_instance_of OpenTelemetry::Trace::SpanContext
+    end
+
+    it 'extracts rack format from the context' do
+      carrier = {}
+      span_context = tracer_bridge.extract(::OpenTracing::FORMAT_RACK, carrier)
+      span_context.wont_be_nil
+      span_context.must_be_instance_of OpenTelemetry::Trace::SpanContext
+    end
+
+    it 'extracts binary format from the context' do
+    end
   end
 end
