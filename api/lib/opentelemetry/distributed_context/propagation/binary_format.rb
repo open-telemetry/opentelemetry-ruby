@@ -18,7 +18,7 @@ module OpenTelemetry
         end
 
         def from_bytes(bytes)
-          Trace::SpanContext.invalid
+          Trace::SpanContext::INVALID
         end
       end
     end

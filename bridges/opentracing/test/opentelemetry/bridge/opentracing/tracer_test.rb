@@ -77,6 +77,16 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
   end
 
   describe '#inject' do
+    it 'does nothing with unknown format' do
+      context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16)
+      span_context = SpanContextBridge.new context
+      carrier = {}
+      carried, key, value = tracer_bridge.inject(span_context, '4mat', carrier)
+      carried.must_be_nil
+      key.must_be_nil
+      value.must_be_nil
+    end
+
     it 'injects TEXT_MAP format as HTTP_TEXT_FORMAT' do
       context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16)
       span_context = SpanContextBridge.new context
@@ -87,7 +97,7 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
       carrier.must_equal carried
     end
 
-    it 'injects RACK format as HTTP_TEXT_FORMAT' do
+    it 'injects RACK format as RACK_HTTP_TEXT_FORMAT' do
       context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16)
       span_context = SpanContextBridge.new context
       carrier = {}
@@ -96,14 +106,29 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
       value.must_equal '00-ffffffffffffffffffffffffffffffff-1111111111111111-00'
       carrier.must_equal carried
     end
+
+    it 'injects BINARY format as BINARY_FORMAT' do
+      context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16)
+      span_context = SpanContextBridge.new context
+      carrier = {}
+      array = tracer_bridge.inject(span_context, ::OpenTracing::FORMAT_BINARY, carrier)
+      array.must_equal []
+    end
   end
 
   describe '#extract' do
+    it 'does nothing with unknown format' do
+      carrier = {}
+      span_context = tracer_bridge.extract('4mat', carrier)
+      span_context.must_be_nil
+    end
+
     it 'extracts HTTP format from the context' do
       carrier = {}
       span_context = tracer_bridge.extract(::OpenTracing::FORMAT_TEXT_MAP, carrier)
       span_context.wont_be_nil
       span_context.must_be_instance_of OpenTelemetry::Trace::SpanContext
+      span_context.valid?.must_equal true
     end
 
     it 'extracts rack format from the context' do
@@ -111,9 +136,15 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
       span_context = tracer_bridge.extract(::OpenTracing::FORMAT_RACK, carrier)
       span_context.wont_be_nil
       span_context.must_be_instance_of OpenTelemetry::Trace::SpanContext
+      span_context.valid?.must_equal true
     end
 
     it 'extracts binary format from the context' do
+      carrier = {}
+      span_context = tracer_bridge.extract(::OpenTracing::FORMAT_BINARY, carrier)
+      span_context.wont_be_nil
+      span_context.must_be_instance_of OpenTelemetry::Trace::SpanContext
+      span_context.valid?.must_equal false
     end
   end
 end
