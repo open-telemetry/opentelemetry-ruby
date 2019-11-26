@@ -31,7 +31,7 @@ module OpenTelemetry
           attr_reader :app
 
           def parent_context(env)
-            OpenTelemetry.tracer_factory.http_text_format.extract(env)
+            OpenTelemetry::Adapters::Sinatra::Adapter.propagator.extract(env)
           end
 
           def tracer
