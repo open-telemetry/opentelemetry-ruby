@@ -40,6 +40,13 @@ commands:
       - run:
           name: CI (Jaeger)
           command: "cd exporters/jaeger && bundle exec rake"
+      - run:
+          name: Bundle + CI (Adapters - Sinatra)
+          command: |
+            cd adapters/sinatra
+            gem install --no-document bundler && bundle install --jobs=3 --retry=3
+            bundle exec appraisal install
+            bundle exec appraisal rake test
   rake-release:
     steps:
       - checkout
