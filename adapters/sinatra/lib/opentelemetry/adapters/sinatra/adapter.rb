@@ -26,6 +26,10 @@ module OpenTelemetry
             new.install
           end
 
+          def registry
+            @registry ||= {}
+          end
+
           private
 
           def default_tracer
@@ -45,7 +49,17 @@ module OpenTelemetry
         private
 
         def register_tracer_extension
-          ::Sinatra::Base.send(:register, Extensions::TracerExtension)
+          register_once(__method__) do
+            ::Sinatra::Base.register Extensions::TracerExtension
+          end
+        end
+
+        def register_once(label, &blk)
+          return :registered_already if self.class.registry[label]
+
+          yield
+
+          self.class.registry[label] = true
         end
       end
     end
