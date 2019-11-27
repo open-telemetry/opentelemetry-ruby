@@ -15,13 +15,11 @@ module OpenTelemetry
       class Adapter
         class << self
           attr_reader :config,
-                      :propagator,
-                      :tracer
+                      :propagator
 
           def install(config = {})
             @config = config
-            @propagator = tracer_factory.rack_http_text_format
-            @tracer = config[:tracer] || default_tracer
+            @propagator = tracer_factory.http_text_format
 
             new.install
           end
@@ -30,12 +28,14 @@ module OpenTelemetry
             @registry ||= {}
           end
 
-          private
-
-          def default_tracer
-            tracer_factory.tracer(config[:name],
-                                  config[:version])
+          def tracer
+            @tracer ||= OpenTelemetry.tracer_factory.tracer(
+              Sinatra.name,
+              Sinatra.version
+            )
           end
+
+          private
 
           def tracer_factory
             OpenTelemetry.tracer_factory

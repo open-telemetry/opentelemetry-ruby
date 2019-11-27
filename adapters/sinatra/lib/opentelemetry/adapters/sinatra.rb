@@ -9,18 +9,22 @@ module OpenTelemetry
     module Sinatra
       module_function
 
-      TRACER_NAME = 'sinatra'
-
-      def install(config = {name: TRACER_NAME,
-                            version: tracer_version})
+      def install(config = {})
         require_relative 'sinatra/adapter'
         Sinatra::Adapter.install(config)
       end
 
-      def tracer_version
-        Gem.loaded_specs[TRACER_NAME]&.version.to_s
+      # Convenience method to access the nested module name
+      def name
+        Module.nesting[0].to_s
       end
-      private_class_method(:tracer_version)
+
+      # Convenience method to access the adapter version
+      def version
+        VERSION
+      end
     end
   end
 end
+
+require_relative './sinatra/version'
