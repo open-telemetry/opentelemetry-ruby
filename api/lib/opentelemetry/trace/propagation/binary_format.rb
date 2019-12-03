@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  module DistributedContext
+  module Trace
     module Propagation
       # Formatter for serializing and deserializing a SpanContext into a binary format.
       class BinaryFormat

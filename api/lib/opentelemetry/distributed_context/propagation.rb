@@ -4,16 +4,14 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/distributed_context/propagation/binary_format'
-require 'opentelemetry/distributed_context/propagation/trace_parent'
-require 'opentelemetry/distributed_context/propagation/text_format'
 require 'opentelemetry/distributed_context/propagation/context_keys'
+require 'opentelemetry/distributed_context/propagation/http_injector'
+require 'opentelemetry/distributed_context/propagation/http_extractor'
 
 module OpenTelemetry
   module DistributedContext
-    # Propagation API consists of two main formats:
-    # - @see BinaryFormat is used to serialize and deserialize a value into a binary representation.
-    # - @see TextFormat is used to inject and extract a value as text into carriers that travel in-band across process boundaries.
+    # The DistributedContext::Propagation module contains injectors and
+    # extractors for sending and receiving correlation context over the wire
     module Propagation
     end
   end

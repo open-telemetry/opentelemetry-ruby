@@ -6,11 +6,11 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::DistributedContext::Propagation::TextFormat do
+describe OpenTelemetry::Trace::Propagation::TextFormat do
   let(:traceparent_header_key) { 'traceparent' }
   let(:tracestate_header_key) { 'tracestate' }
   let(:formatter) do
-    OpenTelemetry::DistributedContext::Propagation::TextFormat.new(
+    OpenTelemetry::Trace::Propagation::TextFormat.new(
       traceparent_header_key: traceparent_header_key,
       tracestate_header_key: tracestate_header_key
     )

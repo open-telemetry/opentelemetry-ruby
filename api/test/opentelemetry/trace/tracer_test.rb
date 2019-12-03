@@ -7,7 +7,7 @@
 require 'test_helper'
 
 describe OpenTelemetry::Trace::Tracer do
-  Propagation = OpenTelemetry::DistributedContext::Propagation
+  Propagation = OpenTelemetry::Trace::Propagation
   Tracer = OpenTelemetry::Trace::Tracer
 
   # Tracer to verify expectation that `Span#finish` is called

@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 module OpenTelemetry
-  module DistributedContext
+  module Trace
     module Propagation
       # TextFormat is a formatter that injects and extracts a value as text into carriers that travel in-band across
       # process boundaries.

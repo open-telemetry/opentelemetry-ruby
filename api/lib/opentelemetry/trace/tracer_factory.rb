@@ -8,15 +8,15 @@ module OpenTelemetry
   module Trace
     # No-op implementation of a tracer factory.
     class TracerFactory
-      HTTP_TEXT_FORMAT = DistributedContext::Propagation::TextFormat.new(
+      HTTP_TEXT_FORMAT = Propagation::TextFormat.new(
         traceparent_header_key: 'traceparent',
         tracestate_header_key: 'tracestate'
       )
-      RACK_HTTP_TEXT_FORMAT = DistributedContext::Propagation::TextFormat.new(
+      RACK_HTTP_TEXT_FORMAT = Propagation::TextFormat.new(
         traceparent_header_key: 'HTTP_TRACEPARENT',
         tracestate_header_key: 'HTTP_TRACESTATE'
       )
-      BINARY_FORMAT = DistributedContext::Propagation::BinaryFormat.new
+      BINARY_FORMAT = Propagation::BinaryFormat.new
       private_constant(:HTTP_TEXT_FORMAT, :RACK_HTTP_TEXT_FORMAT, :BINARY_FORMAT)
 
       # Returns a {Tracer} instance.
