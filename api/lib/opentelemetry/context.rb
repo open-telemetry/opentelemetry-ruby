@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/context/propagation'
+
 module OpenTelemetry
   # Manages context on a per-thread basis
   class Context
@@ -78,6 +80,8 @@ module OpenTelemetry
     def value(key)
       @entries[key]
     end
+
+    alias [] value
 
     # Returns a new Context where entries contains the newly added key and value
     #

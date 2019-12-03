@@ -121,4 +121,18 @@ describe OpenTelemetry do
       )
     end
   end
+
+  describe '.propagation' do
+    it 'returns instance of Context::Propagation::Propagation by default' do
+      _(OpenTelemetry.propagation).must_be_instance_of(
+        OpenTelemetry::Context::Propagation::Propagation
+      )
+    end
+
+    it 'returns the same instance when accessed multiple times' do
+      _(OpenTelemetry.propagation).must_equal(
+        OpenTelemetry.propagation
+      )
+    end
+  end
 end
