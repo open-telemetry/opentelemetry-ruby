@@ -20,7 +20,7 @@ module OpenTelemetry
 
           def install(config = {})
             @config = config
-            @propagator = OpenTelemetry.tracer_factory.rack_http_text_format
+            @propagator = OpenTelemetry.tracer_factory.http_text_format
 
             new.install
           end
