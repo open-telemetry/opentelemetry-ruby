@@ -16,22 +16,20 @@ module OpenTelemetry
       class Adapter
         class << self
           attr_reader :config,
-                      :propagator,
-                      :tracer
+                      :propagator
 
           def install(config = {})
             @config = config
             @propagator = OpenTelemetry.tracer_factory.rack_http_text_format
-            @tracer = config[:tracer] || default_tracer
 
             new.install
           end
 
-          private
-
-          def default_tracer
-            OpenTelemetry.tracer_factory.tracer(config[:name],
-                                                config[:version])
+          def tracer
+            @tracer ||= OpenTelemetry.tracer_factory.tracer(
+              Faraday.name,
+              Faraday.version
+            )
           end
         end
 
