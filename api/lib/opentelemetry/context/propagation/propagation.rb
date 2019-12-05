@@ -13,6 +13,27 @@ module OpenTelemetry
         EMPTY_ARRAY = [].freeze
         private_constant :EMPTY_ARRAY
 
+        # Get or set global http_extractors
+        #
+        # @param [Array<#extract>] extractors When setting, provide an array
+        #   of extractors
+        #
+        # @return Array<#extract>
+        attr_accessor :http_extractors
+
+        # Get or set global http_injectors
+        #
+        # @param [Array<#inject>] injectors When setting, provide an array
+        #   of injectors
+        #
+        # @return Array<#inject>
+        attr_accessor :http_injectors
+
+        def initialize
+          @http_extractors = EMPTY_ARRAY
+          @http_injectors = EMPTY_ARRAY
+        end
+
         # Injects context into carrier to be propagated across process
         # boundaries
         #
@@ -23,7 +44,7 @@ module OpenTelemetry
         #   injector will be invoked once with given context and carrier
         #
         # @return [Object] carrier
-        def inject(context, carrier, http_injectors = EMPTY_ARRAY)
+        def inject(context, carrier, http_injectors = self.http_injectors)
           http_injectors.inject(carrier) do |memo, injector|
             injector.inject(context, memo)
           end
@@ -40,7 +61,7 @@ module OpenTelemetry
         #
         # @return [Context] a new context updated with state extracted from the
         #   carrier
-        def extract(context, carrier, http_extractors = EMPTY_ARRAY)
+        def extract(context, carrier, http_extractors = self.http_extractors)
           http_extractors.inject(context) do |ctx, extractor|
             extractor.extract(ctx, carrier)
           end
