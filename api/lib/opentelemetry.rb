@@ -56,8 +56,7 @@ module OpenTelemetry
   # @return [Object, Baggage::Manager] registered
   #   baggage manager or a default no-op implementation of the manager.
   def baggage_manager
-    # @todo: consider making Baggage::Manager a class (not a module)
-    @baggage_manager ||= Baggage::Manager
+    @baggage_manager ||= Baggage::Manager.new
   end
 
   # @return [Context::Propagation::Propagation] an instance of the propagation API

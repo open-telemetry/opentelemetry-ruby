@@ -6,10 +6,8 @@
 
 module OpenTelemetry
   module Baggage
-    # @todo add module documentation
-    module Manager
-      extend self
-
+    # No op implementation of BaggageManager
+    class Manager
       def set_value(context, key, value)
         context
       end
