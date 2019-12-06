@@ -71,6 +71,41 @@ describe OpenTelemetry::Context do
     end
   end
 
+  describe '.with_values' do
+    it 'executes block within new context' do
+      orig_ctx = Context.current
+
+      block_called = false
+
+      Context.with_values('foo' => 'bar', 'bar' => 'baz') do |values|
+        _(Context.current.value('foo')).must_equal('bar')
+        _(Context.current.value('bar')).must_equal('baz')
+        _(values).must_equal('foo' => 'bar', 'bar' => 'baz')
+        block_called = true
+      end
+
+      _(Context.current).must_equal(orig_ctx)
+      _(block_called).must_equal(true)
+    end
+  end
+
+  describe '#set_values' do
+    it 'assigns multiple values' do
+      ctx = Context.new(nil, 'foo' => 'bar')
+      ctx2 = ctx.set_values('bar' => 'baz', 'baz' => 'quux')
+      _(ctx2.value('foo')).must_equal('bar')
+      _(ctx2.value('bar')).must_equal('baz')
+      _(ctx2.value('baz')).must_equal('quux')
+    end
+
+    it 'merges new values' do
+      ctx = Context.new(nil, 'foo' => 'bar')
+      ctx2 = ctx.set_values('foo' => 'foobar', 'bar' => 'baz')
+      _(ctx2.value('foo')).must_equal('foobar')
+      _(ctx2.value('bar')).must_equal('baz')
+    end
+  end
+
   describe '#update' do
     it 'returns new context with entry' do
       c1 = Context.current

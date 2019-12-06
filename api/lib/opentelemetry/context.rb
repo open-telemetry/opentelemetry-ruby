@@ -52,6 +52,22 @@ module OpenTelemetry
         ctx.detach(prev)
       end
 
+      # Execute a block in a new context where its values are merged with the
+      # incoming values. Restores the previous context after the block executes.
+
+      # @param [String] key The lookup key
+      # @param [Hash] values Will be merged with values of the current context
+      #  and returned in a new context
+      #
+      # @param [Callable] blk The block to execute in a new context
+      def with_values(values, &blk)
+        ctx = current.set_values(values)
+        prev = ctx.attach
+        yield values
+      ensure
+        ctx.detach(prev)
+      end
+
       # Returns the value associated with key in the current context
       #
       # @param [String] key The lookup key
@@ -87,10 +103,22 @@ module OpenTelemetry
     #
     # @param [String] key The key to store this value under
     # @param [Object] value Object to be stored under key
+    # @return [Context]
     def set_value(key, value)
       new_entries = @entries.dup
       new_entries[key] = value
       Context.new(self, new_entries)
+    end
+
+    # Returns a new Context with the current context's entries merged with the
+    #   new entries
+    #
+    # @param [Hash] values The values to be merged with the current context's
+    #   entries.
+    # @param [Object] value Object to be stored under key
+    # @return [Context]
+    def set_values(values) # rubocop:disable Naming/AccessorMethodName:
+      Context.new(self, @entries.merge(values))
     end
 
     # Makes the this context the currently active context and returns the
