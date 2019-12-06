@@ -14,11 +14,14 @@ describe OpenTelemetry::Trace::Tracer do
   class TestInSpanFinishTracer < Tracer
     # Override `start_span` to return mock span
     def start_span(*)
-      Minitest::Mock.new.expect(:finish, nil)
+      Minitest::Mock.new
+                    .expect(:finish, nil)
+                    .expect(:context, Object.new)
     end
   end
 
   let(:invalid_span) { OpenTelemetry::Trace::Span::INVALID }
+  let(:invalid_span_context) { OpenTelemetry::Trace::SpanContext::INVALID }
   let(:tracer) { Tracer.new }
 
   describe '#current_span' do
@@ -33,6 +36,22 @@ describe OpenTelemetry::Trace::Tracer do
 
       tracer.with_span(wrapper_span) do
         _(tracer.current_span).must_equal(wrapper_span)
+      end
+    end
+  end
+
+  describe '#current_span_context' do
+    let(:current_span) { tracer.start_span('current') }
+
+    it 'returns an invalid span context by default' do
+      _(tracer.current_span_context).must_equal(invalid_span_context)
+    end
+
+    it 'returns the current span context' do
+      wrapper_span = tracer.start_span('wrapper')
+
+      tracer.with_span(wrapper_span) do
+        _(tracer.current_span_context).must_equal(wrapper_span.context)
       end
     end
   end
@@ -96,6 +115,21 @@ describe OpenTelemetry::Trace::Tracer do
         end
 
         _(tracer.current_span).must_equal(outer)
+      end
+    end
+
+    it 'should reactive the span context after the block' do
+      outer = tracer.start_span('outer')
+      inner = tracer.start_span('inner')
+
+      tracer.with_span(outer) do
+        _(tracer.current_span_context).must_equal(outer.context)
+
+        tracer.with_span(inner) do
+          _(tracer.current_span_context).must_equal(inner.context)
+        end
+
+        _(tracer.current_span_context).must_equal(outer.context)
       end
     end
   end

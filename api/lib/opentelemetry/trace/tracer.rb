@@ -8,11 +8,17 @@ module OpenTelemetry
   module Trace
     # No-op implementation of Tracer.
     class Tracer
-      CONTEXT_SPAN_KEY = Propagation::ContextKeys.span_context_key
-      private_constant(:CONTEXT_SPAN_KEY)
+      SPAN_CONTEXT_KEY = Propagation::ContextKeys.span_context_key
+      CURRENT_SPAN_KEY = 'current-span'
+
+      private_constant(:SPAN_CONTEXT_KEY, :CURRENT_SPAN_KEY)
 
       def current_span
-        Context.value(CONTEXT_SPAN_KEY) || Span::INVALID
+        Context.value(CURRENT_SPAN_KEY) || Span::INVALID
+      end
+
+      def current_span_context
+        Context.value(SPAN_CONTEXT_KEY) || SpanContext::INVALID
       end
 
       # This is a helper for the default use-case of extending the current trace with a span.
@@ -38,7 +44,9 @@ module OpenTelemetry
       #
       # On exit, the Span that was active before calling this method will be reactivated.
       def with_span(span)
-        Context.with_value(CONTEXT_SPAN_KEY, span) { |s| yield s }
+        Context.with_value(SPAN_CONTEXT_KEY, span.context) do
+          Context.with_value(CURRENT_SPAN_KEY, span) { |s| yield s }
+        end
       end
 
       def start_root_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
@@ -57,7 +65,7 @@ module OpenTelemetry
       #
       # @return [Span]
       def start_span(name, with_parent: nil, with_parent_context: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
-        span_context = with_parent&.context || with_parent_context || current_span.context
+        span_context = with_parent&.context || with_parent_context || current_span_context
         if span_context.valid?
           Span.new(span_context: span_context)
         else
