@@ -8,6 +8,9 @@ module OpenTelemetry
     module Propagation
       # Injects context into carriers using the W3C Trace Context format
       class HttpTraceContextInjector
+        DEFAULT_SETTER = ->(carrier, key, value) { carrier[key] = value }
+        private_constant :DEFAULT_SETTER
+
         # Returns a new HttpTraceContextInjector that injects context using the
         # specified header keys
         #
@@ -15,8 +18,8 @@ module OpenTelemetry
         # @param [String] tracestate_header_key The tracestate header key used in the carrier
         # @return [HttpTraceContextInjector]
         def initialize(traceparent_header_key:, tracestate_header_key:)
-          @text_format = TextFormat.new(traceparent_header_key: traceparent_header_key,
-                                        tracestate_header_key: tracestate_header_key)
+          @traceparent_header_key = traceparent_header_key
+          @tracestate_header_key = tracestate_header_key
         end
 
         # Set the span context on the supplied carrier.
@@ -29,8 +32,12 @@ module OpenTelemetry
         #   carrier, header key, header value to the setter.
         # @return [Object] the carrier with context injected
         def inject(context, carrier, &setter)
-          span_context = context[ContextKeys.span_context_key]
-          @text_format.inject(span_context, carrier, &setter)
+          return carrier unless (span_context = context[ContextKeys.span_context_key])
+
+          setter ||= DEFAULT_SETTER
+          setter.call(carrier, @traceparent_header_key, TraceParent.from_context(span_context).to_s)
+          setter.call(carrier, @tracestate_header_key, span_context.tracestate) unless span_context.tracestate.nil?
+
           carrier
         end
       end
