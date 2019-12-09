@@ -6,7 +6,6 @@
 
 require 'opentelemetry/trace/propagation/binary_format'
 require 'opentelemetry/trace/propagation/trace_parent'
-require 'opentelemetry/trace/propagation/text_format'
 require 'opentelemetry/trace/propagation/context_keys'
 require 'opentelemetry/trace/propagation/http_trace_context_extractor'
 require 'opentelemetry/trace/propagation/http_trace_context_injector'

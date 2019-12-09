@@ -24,24 +24,4 @@ describe OpenTelemetry::Trace::TracerFactory do
       )
     end
   end
-
-  describe '#http_text_format' do
-    it 'returns a formatter for lowercase trace context keys' do
-      formatter = tracer_factory.http_text_format
-      _(formatter).must_be_instance_of(
-        Propagation::TextFormat
-      )
-      _(formatter.fields).must_equal(%w[traceparent tracestate])
-    end
-  end
-
-  describe '#rack_http_text_format' do
-    it 'returns a formatter for Rack normalized trace context keys' do
-      formatter = tracer_factory.rack_http_text_format
-      _(formatter).must_be_instance_of(
-        Propagation::TextFormat
-      )
-      _(formatter.fields).must_equal(%w[HTTP_TRACEPARENT HTTP_TRACESTATE])
-    end
-  end
 end
