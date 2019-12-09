@@ -16,12 +16,4 @@ describe OpenTelemetry::Trace::TracerFactory do
       _(tracer1).must_equal(tracer2)
     end
   end
-
-  describe '#binary_format' do
-    it 'returns an instance of BinaryFormat' do
-      _(tracer_factory.binary_format).must_be_instance_of(
-        Propagation::BinaryFormat
-      )
-    end
-  end
 end

@@ -8,9 +8,6 @@ module OpenTelemetry
   module Trace
     # No-op implementation of a tracer factory.
     class TracerFactory
-      BINARY_FORMAT = Propagation::BinaryFormat.new
-      private_constant :BINARY_FORMAT
-
       # Returns a {Tracer} instance.
       #
       # @param [optional String] name Instrumentation package name
@@ -19,10 +16,6 @@ module OpenTelemetry
       # @return [Tracer]
       def tracer(name = nil, version = nil)
         @tracer ||= Tracer.new
-      end
-
-      def binary_format
-        BINARY_FORMAT
       end
     end
   end
