@@ -15,6 +15,8 @@ describe OpenTelemetry::Context do
     Context.clear
   end
 
+  let(:new_context) { Context.new(nil, 'foo', 'bar') }
+
   describe '.current' do
     it 'defaults to the root context' do
       _(Context.current).must_equal(Context::ROOT)
@@ -23,7 +25,7 @@ describe OpenTelemetry::Context do
 
   describe '.with_current' do
     it 'handles nested contexts' do
-      c1 = Context.new(nil, 'foo' => 'bar')
+      c1 = new_context
       Context.with_current(c1) do
         _(Context.current).must_equal(c1)
         c2 = Context.current.set_value('bar', 'baz')
@@ -35,7 +37,7 @@ describe OpenTelemetry::Context do
     end
 
     it 'resets context when an exception is raised' do
-      c1 = Context.new(nil, 'foo' => 'bar')
+      c1 = new_context
       Context.current = c1
 
       _(proc do
@@ -68,7 +70,7 @@ describe OpenTelemetry::Context do
 
   describe '#value' do
     it 'returns corresponding value for key' do
-      ctx = Context.new(nil, 'foo' => 'bar')
+      ctx = new_context
       _(ctx.value('foo')).must_equal('bar')
     end
   end
@@ -93,7 +95,7 @@ describe OpenTelemetry::Context do
 
   describe '#set_values' do
     it 'assigns multiple values' do
-      ctx = Context.new(nil, 'foo' => 'bar')
+      ctx = new_context
       ctx2 = ctx.set_values('bar' => 'baz', 'baz' => 'quux')
       _(ctx2.value('foo')).must_equal('bar')
       _(ctx2.value('bar')).must_equal('baz')
@@ -101,7 +103,7 @@ describe OpenTelemetry::Context do
     end
 
     it 'merges new values' do
-      ctx = Context.new(nil, 'foo' => 'bar')
+      ctx = new_context
       ctx2 = ctx.set_values('foo' => 'foobar', 'bar' => 'baz')
       _(ctx2.value('foo')).must_equal('foobar')
       _(ctx2.value('bar')).must_equal('baz')
@@ -152,7 +154,7 @@ describe OpenTelemetry::Context do
     end
 
     it 'restores root for ctx without parent' do
-      ctx = Context.new(nil, 'foo' => 'bar')
+      ctx = new_context
       ctx.detach
       _(Context.current).must_equal(Context::ROOT)
     end
@@ -184,7 +186,7 @@ describe OpenTelemetry::Context do
 
   describe 'threading' do
     it 'unwinds the stack on each thread' do
-      ctx = Context.new(nil, 'foo' => 'bar')
+      ctx = new_context
       t1_ctx_before = Context.current
       Context.with_current(ctx) do
         Thread.new do
@@ -204,7 +206,7 @@ describe OpenTelemetry::Context do
     end
 
     it 'scopes changes to the current thread' do
-      ctx = Context.new(nil, 'foo' => 'bar')
+      ctx = new_context
       Context.with_current(ctx) do
         Thread.new do
           Context.with_current(ctx) do
