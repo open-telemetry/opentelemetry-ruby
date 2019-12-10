@@ -90,30 +90,6 @@ describe OpenTelemetry do
     end
   end
 
-  describe '.correlation_context_manager' do
-    after do
-      # Ensure we don't leak custom correlation_context_manager to other tests
-      OpenTelemetry.correlation_context_manager = nil
-    end
-
-    it 'returns instance of DistributedContext::CorrelationContextManager by default' do
-      manager = OpenTelemetry.correlation_context_manager
-      _(manager).must_be_instance_of(OpenTelemetry::DistributedContext::CorrelationContextManager)
-    end
-
-    it 'returns the same instance when accessed multiple times' do
-      _(OpenTelemetry.correlation_context_manager).must_equal(
-        OpenTelemetry.correlation_context_manager
-      )
-    end
-
-    it 'returns user specified correlation_context_manager' do
-      custom_manager = 'a custom correlation_context_manager'
-      OpenTelemetry.correlation_context_manager = custom_manager
-      _(OpenTelemetry.correlation_context_manager).must_equal(custom_manager)
-    end
-  end
-
   describe '.instrumentation_registry' do
     it 'returns an instance of Instrumentation::Registry' do
       _(OpenTelemetry.instrumentation_registry).must_be_instance_of(

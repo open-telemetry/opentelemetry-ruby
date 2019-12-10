@@ -9,7 +9,6 @@ require 'logger'
 require 'opentelemetry/error'
 require 'opentelemetry/context'
 require 'opentelemetry/baggage'
-require 'opentelemetry/distributed_context'
 require 'opentelemetry/internal'
 require 'opentelemetry/instrumentation'
 require 'opentelemetry/metrics'
@@ -39,12 +38,6 @@ module OpenTelemetry
   #   default no-op implementation of the meter factory.
   def meter_factory
     @meter_factory ||= Metrics::MeterFactory.new
-  end
-
-  # @return [Object, DistributedContext::CorrelationContextManager] registered
-  #   correlation context manager or a default noop implementation of the manager.
-  def correlation_context_manager
-    @correlation_context_manager ||= DistributedContext::CorrelationContextManager.new
   end
 
   # @return [Instrumentation::Registry] registry containing all known

@@ -5,6 +5,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'test_helper'
+require 'opentelemetry/distributed_context'
+require 'opentelemetry/sdk/distributed_context'
 
 describe OpenTelemetry::SDK::DistributedContext::CorrelationContext do
   CorrelationContext = OpenTelemetry::SDK::DistributedContext::CorrelationContext
