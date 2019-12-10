@@ -155,4 +155,48 @@ describe OpenTelemetry::Context do
       _(Context.current).must_equal(Context::ROOT)
     end
   end
+
+  describe 'threading' do
+    it 'unwinds the stack on each thread' do
+      ctx = Context.new(nil, 'foo' => 'bar')
+      t1_ctx_before = Context.current
+      Context.with_current(ctx) do
+        Thread.new do
+          t2_ctx_before = Context.current
+          Context.with_current(ctx) do
+            Context.with_value('bar', 'foobar') do
+              _(Context.current).wont_equal(t2_ctx_before)
+            end
+          end
+          _(Context.current).must_equal(t2_ctx_before)
+        end.join
+        Context.with_value('bar', 'baz') do
+          _(Context.current).wont_equal(t1_ctx_before)
+        end
+      end
+      _(Context.current).must_equal(t1_ctx_before)
+    end
+
+    it 'scopes changes to the current thread' do
+      ctx = Context.new(nil, 'foo' => 'bar')
+      Context.with_current(ctx) do
+        Thread.new do
+          Context.with_current(ctx) do
+            Context.with_value('bar', 'foobar') do
+              Thread.pass
+              _(Context.current['foo']).must_equal('bar')
+              _(Context.current['bar']).must_equal('foobar')
+            end
+            _(Context.current['bar']).must_be_nil
+          end
+        end.join
+        Context.with_value('bar', 'baz') do
+          Thread.pass
+          _(Context.current['foo']).must_equal('bar')
+          _(Context.current['bar']).must_equal('baz')
+        end
+        _(Context.current['bar']).must_be_nil
+      end
+    end
+  end
 end
