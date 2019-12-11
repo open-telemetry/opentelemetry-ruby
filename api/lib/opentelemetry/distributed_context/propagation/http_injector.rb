@@ -8,7 +8,7 @@ module OpenTelemetry
   module DistributedContext
     module Propagation
       # @todo add module documentation
-      class HTTPInjector
+      class HttpInjector
         def inject(context, carrier, &setter); end
       end
     end

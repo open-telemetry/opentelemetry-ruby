@@ -8,7 +8,7 @@ module OpenTelemetry
   module DistributedContext
     module Propagation
       # @todo add class documentation
-      class HTTPExtractor
+      class HttpExtractor
         def extract(context, carrier, &getter)
           context
         end

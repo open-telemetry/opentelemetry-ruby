@@ -8,10 +8,9 @@ module OpenTelemetry
   module Baggage
     module Propagation
       # @todo add class documentation
-      class Extractor
-        def extract(context, carrier, &getter)
+      class HttpInjector
+        def inject(context, carrier, &setter)
           # TODO
-          context
         end
       end
     end
