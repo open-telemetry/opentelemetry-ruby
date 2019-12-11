@@ -17,7 +17,8 @@ module OpenTelemetry
         # @param [String] traceparent_header_key The traceparent header key used in the carrier
         # @param [String] tracestate_header_key The tracestate header key used in the carrier
         # @return [HttpTraceContextInjector]
-        def initialize(traceparent_header_key:, tracestate_header_key:)
+        def initialize(traceparent_header_key: 'traceparent',
+                       tracestate_header_key: 'tracestate')
           @traceparent_header_key = traceparent_header_key
           @tracestate_header_key = tracestate_header_key
         end
