@@ -13,14 +13,17 @@ describe OpenTelemetry::Adapters::Sinatra::Adapter do
   let(:instance) { adapter.new }
 
   before do
+    # need to call Adapter.install before Adapter.new.install:
     adapter.install
   end
 
   describe '#install' do
     it 'installs once' do
-      instance.install
+      # installation is only allowed once globally, so this test works
+      # in isolation, but not when run in a suite:
+      # _(instance.install).must_equal(:installed)
 
-      _(instance.install).must_equal(:registered_already)
+      _(instance.install).must_equal(:already_installed)
     end
   end
 end

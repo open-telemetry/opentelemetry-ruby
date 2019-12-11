@@ -18,14 +18,12 @@ module OpenTelemetry
                       :propagator
 
           def install(config = {})
+            return :already_installed if installed?
+
             @config = config
             @propagator = tracer_factory.http_text_format
 
             new.install
-          end
-
-          def registry
-            @registry ||= {}
           end
 
           def tracer
@@ -35,6 +33,9 @@ module OpenTelemetry
             )
           end
 
+          attr_accessor :installed
+          alias_method :installed?, :installed
+
           private
 
           def tracer_factory
@@ -43,23 +44,18 @@ module OpenTelemetry
         end
 
         def install
+          return :already_installed if self.class.installed?
+          self.class.installed = true
+
           register_tracer_extension
+
+          :installed
         end
 
         private
 
         def register_tracer_extension
-          register_once(__method__) do
-            ::Sinatra::Base.register Extensions::TracerExtension
-          end
-        end
-
-        def register_once(label, &blk)
-          return :registered_already if self.class.registry[label]
-
-          yield
-
-          self.class.registry[label] = true
+          ::Sinatra::Base.register Extensions::TracerExtension
         end
       end
     end
