@@ -7,7 +7,7 @@
 require 'test_helper'
 
 # require Adapter so .install method is found:
-require_relative '../../../../../lib/opentelemetry/adapters/faraday/adapter'
+require_relative '../../../../../lib/opentelemetry/adapters/faraday'
 require_relative '../../../../../lib/opentelemetry/adapters/faraday/middlewares/tracer_middleware'
 
 describe OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware do
@@ -48,6 +48,15 @@ describe OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware do
       _(span.attributes['http.method']).must_equal :get
       _(span.attributes['http.status_code']).must_equal 404
       _(span.attributes['http.url']).must_equal 'http://example.com/not_found'
+    end
+
+    it 'has http.status_code 500' do
+      client.get('/failure')
+
+      _(span.attributes['component']).must_equal 'http'
+      _(span.attributes['http.method']).must_equal :get
+      _(span.attributes['http.status_code']).must_equal 500
+      _(span.attributes['http.url']).must_equal 'http://example.com/failure'
     end
   end
 end
