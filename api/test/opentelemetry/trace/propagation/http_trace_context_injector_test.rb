@@ -7,9 +7,11 @@
 require 'test_helper'
 
 describe OpenTelemetry::Trace::Propagation::HttpTraceContextInjector do
+  Span = OpenTelemetry::Trace::Span
   SpanContext = OpenTelemetry::Trace::SpanContext
-  let(:span_context_key) do
-    OpenTelemetry::Trace::Propagation::ContextKeys.span_context_key
+
+  let(:current_span_key) do
+    OpenTelemetry::Trace::Propagation::ContextKeys.current_span_key
   end
   let(:traceparent_header_key) { 'traceparent' }
   let(:tracestate_header_key) { 'tracestate' }
@@ -28,12 +30,14 @@ describe OpenTelemetry::Trace::Propagation::HttpTraceContextInjector do
   let(:tracestate_header) { 'vendorname=opaquevalue' }
   let(:context) do
     span_context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16)
-    Context.empty.set_value(span_context_key, span_context)
+    span = Span.new(span_context: span_context)
+    Context.empty.set_value(current_span_key, span)
   end
   let(:context_with_tracestate) do
     span_context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16,
                                    tracestate: tracestate_header)
-    Context.empty.set_value(span_context_key, span_context)
+    span = Span.new(span_context: span_context)
+    Context.empty.set_value(current_span_key, span)
   end
 
   describe '#inject' do

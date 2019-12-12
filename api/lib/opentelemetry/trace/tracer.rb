@@ -8,17 +8,23 @@ module OpenTelemetry
   module Trace
     # No-op implementation of Tracer.
     class Tracer
-      SPAN_CONTEXT_KEY = Propagation::ContextKeys.span_context_key
-      CURRENT_SPAN_KEY = 'current-span'
+      REMOTE_SPAN_CONTEXT_KEY = Propagation::ContextKeys.remote_span_context_key
+      CURRENT_SPAN_KEY = Propagation::ContextKeys.current_span_key
 
-      private_constant(:SPAN_CONTEXT_KEY, :CURRENT_SPAN_KEY)
+      private_constant :REMOTE_SPAN_CONTEXT_KEY, :CURRENT_SPAN_KEY
 
       def current_span
         Context.value(CURRENT_SPAN_KEY) || Span::INVALID
       end
 
+      # Returns the span active of the currently active span. It's possible for
+      # the current span context to refer to a remote parent that has been
+      # extracted. If both a current span and an extracted, remote context
+      # exist, the context of the current span will be returned.
       def current_span_context
-        Context.value(SPAN_CONTEXT_KEY) || SpanContext::INVALID
+        Context.value(CURRENT_SPAN_KEY)&.context ||
+          Context.value(REMOTE_SPAN_CONTEXT_KEY) ||
+          SpanContext::INVALID
       end
 
       # This is a helper for the default use-case of extending the current trace with a span.
@@ -44,9 +50,7 @@ module OpenTelemetry
       #
       # On exit, the Span that was active before calling this method will be reactivated.
       def with_span(span)
-        Context.with_values(CURRENT_SPAN_KEY => span, SPAN_CONTEXT_KEY => span.context) do
-          yield span
-        end
+        Context.with_value(CURRENT_SPAN_KEY, span) { |s| yield s }
       end
 
       def start_root_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)

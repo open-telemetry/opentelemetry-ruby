@@ -11,11 +11,17 @@ module OpenTelemetry
       module ContextKeys
         extend self
 
-        SPAN_CONTEXT_KEY = 'span-context'
-        private_constant(:SPAN_CONTEXT_KEY)
+        REMOTE_SPAN_CONTEXT_KEY = 'remote-span-context'
+        CURRENT_SPAN_KEY = 'current-span'
 
-        def span_context_key
-          SPAN_CONTEXT_KEY
+        private_constant :REMOTE_SPAN_CONTEXT_KEY, :CURRENT_SPAN_KEY
+
+        def remote_span_context_key
+          REMOTE_SPAN_CONTEXT_KEY
+        end
+
+        def current_span_key
+          CURRENT_SPAN_KEY
         end
       end
     end
