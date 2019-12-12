@@ -6,11 +6,11 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::SDK::Baggage::Manager do
-  let(:manager) { OpenTelemetry::SDK::Baggage::Manager.new }
+describe OpenTelemetry::SDK::CorrelationContext::Manager do
+  let(:manager) { OpenTelemetry::SDK::CorrelationContext::Manager.new }
 
   describe '.set_value' do
-    it 'sets key/value in baggage' do
+    it 'sets key/value in correlation context' do
       ctx = OpenTelemetry::Context.empty
       _(manager.value(ctx, 'foo')).must_be_nil
 
@@ -22,7 +22,7 @@ describe OpenTelemetry::SDK::Baggage::Manager do
   end
 
   describe '.clear' do
-    it 'returns context with empty baggage' do
+    it 'returns context with empty correlation context' do
       ctx = manager.set_value(OpenTelemetry::Context.empty, 'foo', 'bar')
       _(manager.value(ctx, 'foo')).must_equal('bar')
 
@@ -32,7 +32,7 @@ describe OpenTelemetry::SDK::Baggage::Manager do
   end
 
   describe '.remove_value' do
-    it 'returns context with key removed from baggage' do
+    it 'returns context with key removed from correlation context' do
       ctx = manager.set_value(OpenTelemetry::Context.empty, 'foo', 'bar')
       _(manager.value(ctx, 'foo')).must_equal('bar')
 

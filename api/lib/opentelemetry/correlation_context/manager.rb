@@ -5,8 +5,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  module Baggage
-    # No op implementation of BaggageManager
+  module CorrelationContext
+    # No op implementation of CorrelationContext::Manager
     class Manager
       def set_value(context, key, value)
         context

@@ -6,28 +6,28 @@
 
 module OpenTelemetry
   module SDK
-    module Baggage
-      # Manages baggage context
+    module CorrelationContext
+      # Manages correlation context
       class Manager
-        CONTEXT_BAGGAGE_KEY = OpenTelemetry::Baggage::Propagation::ContextKeys.span_context_key
-        EMPTY_BAGGAGE = {}.freeze
-        private_constant(:CONTEXT_BAGGAGE_KEY, :EMPTY_BAGGAGE)
+        CORRELATION_CONTEXT_KEY = OpenTelemetry::CorrelationContext::Propagation::ContextKeys.span_context_key
+        EMPTY_CORRELATION_CONTEXT = {}.freeze
+        private_constant(:CORRELATION_CONTEXT_KEY, :EMPTY_CORRELATION_CONTEXT)
 
-        # Returns a new context with empty baggage
+        # Returns a new context with empty correlations
         #
         # @param [Context] context
         # @return [Context]
         def clear(context)
-          context.set_value(CONTEXT_BAGGAGE_KEY, EMPTY_BAGGAGE)
+          context.set_value(CORRELATION_CONTEXT_KEY, EMPTY_CORRELATION_CONTEXT)
         end
 
-        # Returns the corresponding baggage value (or nil) for key
+        # Returns the corresponding correlation value (or nil) for key
         #
         # @param [Context] context The context use to retrieve key
         # @param [String] key The lookup key
         # @return [Object]
         def value(context, key)
-          baggage_for(context)[key]
+          correlations_for(context)[key]
         end
 
         # Returns a new context with new key-value pair
@@ -37,9 +37,9 @@ module OpenTelemetry
         # @param [Object] value Object to be stored under key
         # @return [Context]
         def set_value(context, key, value)
-          new_baggage = baggage_for(context).dup
-          new_baggage[key] = value
-          context.set_value(CONTEXT_BAGGAGE_KEY, new_baggage)
+          new_correlations = correlations_for(context).dup
+          new_correlations[key] = value
+          context.set_value(CORRELATION_CONTEXT_KEY, new_correlations)
         end
 
         # Returns a new context with value at key removed
@@ -48,12 +48,12 @@ module OpenTelemetry
         # @param [String] key The key to remove
         # @return [Context]
         def remove_value(context, key)
-          baggage = baggage_for(context)
-          return context unless baggage.key?(key)
+          correlations = correlations_for(context)
+          return context unless correlations.key?(key)
 
-          new_baggage = baggage.dup
-          new_baggage.delete(key)
-          context.set_value(CONTEXT_BAGGAGE_KEY, new_baggage)
+          new_correlations = correlations.dup
+          new_correlations.delete(key)
+          context.set_value(CORRELATION_CONTEXT_KEY, new_correlations)
         end
 
         # @todo
@@ -68,8 +68,8 @@ module OpenTelemetry
 
         private
 
-        def baggage_for(context)
-          context.value(CONTEXT_BAGGAGE_KEY) || EMPTY_BAGGAGE
+        def correlations_for(context)
+          context.value(CORRELATION_CONTEXT_KEY) || EMPTY_CORRELATION_CONTEXT
         end
       end
     end

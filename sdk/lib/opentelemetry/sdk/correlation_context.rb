@@ -4,12 +4,12 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/sdk/baggage/manager'
+require 'opentelemetry/sdk/correlation_context/manager'
 
 module OpenTelemetry
   module SDK
     # @todo: write module documentation
-    module Baggage
+    module CorrelationContext
     end
   end
 end
