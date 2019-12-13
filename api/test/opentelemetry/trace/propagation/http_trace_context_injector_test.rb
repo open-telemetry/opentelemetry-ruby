@@ -13,6 +13,9 @@ describe OpenTelemetry::Trace::Propagation::HttpTraceContextInjector do
   let(:current_span_key) do
     OpenTelemetry::Trace::Propagation::ContextKeys.current_span_key
   end
+  let(:remote_span_context_key) do
+    OpenTelemetry::Trace::Propagation::ContextKeys.remote_span_context_key
+  end
   let(:traceparent_header_key) { 'traceparent' }
   let(:tracestate_header_key) { 'tracestate' }
   let(:injector) do
@@ -39,6 +42,11 @@ describe OpenTelemetry::Trace::Propagation::HttpTraceContextInjector do
     span = Span.new(span_context: span_context)
     Context.empty.set_value(current_span_key, span)
   end
+  let(:context_without_current_span) do
+    span_context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16,
+                                   tracestate: tracestate_header)
+    Context.empty.set_value(remote_span_context_key, span_context)
+  end
 
   describe '#inject' do
     it 'yields the carrier, key, and traceparent value from the context' do
@@ -64,6 +72,12 @@ describe OpenTelemetry::Trace::Propagation::HttpTraceContextInjector do
     end
 
     it 'uses the default setter if one is not provided' do
+      carrier = injector.inject(context_with_tracestate, {})
+      _(carrier[traceparent_header_key]).must_equal('00-ffffffffffffffffffffffffffffffff-1111111111111111-00')
+      _(carrier[tracestate_header_key]).must_equal(tracestate_header)
+    end
+
+    it 'propagates remote context without current span' do
       carrier = injector.inject(context_with_tracestate, {})
       _(carrier[traceparent_header_key]).must_equal('00-ffffffffffffffffffffffffffffffff-1111111111111111-00')
       _(carrier[tracestate_header_key]).must_equal(tracestate_header)
