@@ -13,8 +13,8 @@ describe OpenTelemetry::Trace::Propagation::HttpTraceContextInjector do
   let(:current_span_key) do
     OpenTelemetry::Trace::Propagation::ContextKeys.current_span_key
   end
-  let(:remote_span_context_key) do
-    OpenTelemetry::Trace::Propagation::ContextKeys.remote_span_context_key
+  let(:extracted_span_context_key) do
+    OpenTelemetry::Trace::Propagation::ContextKeys.extracted_span_context_key
   end
   let(:traceparent_header_key) { 'traceparent' }
   let(:tracestate_header_key) { 'tracestate' }
@@ -45,7 +45,7 @@ describe OpenTelemetry::Trace::Propagation::HttpTraceContextInjector do
   let(:context_without_current_span) do
     span_context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16,
                                    tracestate: tracestate_header)
-    Context.empty.set_value(remote_span_context_key, span_context)
+    Context.empty.set_value(extracted_span_context_key, span_context)
   end
 
   describe '#inject' do
