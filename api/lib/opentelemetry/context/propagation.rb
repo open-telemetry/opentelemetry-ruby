@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/trace/propagation'
 require 'opentelemetry/context/propagation/propagation'
 
 module OpenTelemetry

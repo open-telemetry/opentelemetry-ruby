@@ -23,14 +23,6 @@ module OpenTelemetry
       def clear(context)
         context
       end
-
-      def http_injector
-        nil
-      end
-
-      def http_extractor
-        nil
-      end
     end
   end
 end

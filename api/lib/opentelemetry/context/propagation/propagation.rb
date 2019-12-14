@@ -10,8 +10,22 @@ module OpenTelemetry
       # The Propagation class provides methods to inject and extract context
       # to pass across process boundaries
       class Propagation
+        HTTP_TRACE_CONTEXT_EXTRACTOR = Trace::Propagation::HttpTraceContextExtractor.new
+        HTTP_TRACE_CONTEXT_INJECTOR = Trace::Propagation::HttpTraceContextInjector.new
+        RACK_HTTP_TRACE_CONTEXT_EXTRACTOR = Trace::Propagation::HttpTraceContextExtractor.new(
+          traceparent_header_key: 'HTTP_TRACEPARENT',
+          tracestate_header_key: 'HTTP_TRACESTATE'
+        )
+        RACK_HTTP_TRACE_CONTEXT_INJECTOR = Trace::Propagation::HttpTraceContextInjector.new(
+          traceparent_header_key: 'HTTP_TRACEPARENT',
+          tracestate_header_key: 'HTTP_TRACESTATE'
+        )
+        BINARY_FORMAT = Trace::Propagation::BinaryFormat.new
         EMPTY_ARRAY = [].freeze
-        private_constant :EMPTY_ARRAY
+
+        private_constant :HTTP_TRACE_CONTEXT_INJECTOR, :HTTP_TRACE_CONTEXT_EXTRACTOR,
+                         :RACK_HTTP_TRACE_CONTEXT_INJECTOR, :RACK_HTTP_TRACE_CONTEXT_EXTRACTOR,
+                         :BINARY_FORMAT, :EMPTY_ARRAY
 
         # Get or set global http_extractors
         #
@@ -65,6 +79,47 @@ module OpenTelemetry
           http_extractors.inject(context) do |ctx, extractor|
             extractor.extract(ctx, carrier)
           end
+        end
+
+        # Returns an extractor that extracts context using the W3C Trace Context
+        # format for HTTP
+        def http_trace_context_extractor
+          HTTP_TRACE_CONTEXT_EXTRACTOR
+        end
+
+        # Returns an injector that injects context using the W3C Trace Context
+        # format for HTTP
+        def http_trace_context_injector
+          HTTP_TRACE_CONTEXT_INJECTOR
+        end
+
+        # Returns an extractor that extracts context using the W3C Trace Context
+        # format for HTTP with Rack normalized keys (upcased and prefixed with
+        # HTTP_)
+        def rack_http_trace_context_extractor
+          RACK_HTTP_TRACE_CONTEXT_EXTRACTOR
+        end
+
+        # Returns an injector that injects context using the W3C Trace Context
+        # format for HTTP with Rack normalized keys (upcased and prefixed with
+        # HTTP_)
+        def rack_http_trace_context_injector
+          RACK_HTTP_TRACE_CONTEXT_INJECTOR
+        end
+
+        # @todo
+        def http_correlation_context_injector
+          nil
+        end
+
+        # @todo
+        def http_correlation_context_extractor
+          nil
+        end
+
+        # Returns a propagator for the binary format
+        def binary_format
+          BINARY_FORMAT
         end
       end
     end
