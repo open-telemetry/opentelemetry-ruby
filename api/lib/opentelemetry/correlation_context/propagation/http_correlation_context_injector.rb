@@ -8,10 +8,9 @@ module OpenTelemetry
   module CorrelationContext
     module Propagation
       # @todo add class documentation
-      class HttpExtractor
-        def extract(context, carrier, &getter)
+      class HttpCorrelationContextInjector
+        def inject(context, carrier, &setter)
           # TODO
-          context
         end
       end
     end

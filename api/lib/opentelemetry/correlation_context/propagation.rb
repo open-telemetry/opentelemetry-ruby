@@ -5,8 +5,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry/correlation_context/propagation/context_keys'
-require 'opentelemetry/correlation_context/propagation/http_injector'
-require 'opentelemetry/correlation_context/propagation/http_extractor'
+require 'opentelemetry/correlation_context/propagation/http_correlation_context_injector'
+require 'opentelemetry/correlation_context/propagation/http_correlation_context_extractor'
 
 module OpenTelemetry
   module CorrelationContext
