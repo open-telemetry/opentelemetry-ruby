@@ -37,18 +37,19 @@ module OpenTelemetry
         #   and the header key to the getter.
         # @return [Context] context updated with extracted correlations, or the original context
         #   if extraction fails
-        def extract(context, carrier, &getter) # rubocop:disable Metrics/AbcSize
+        def extract(context, carrier, &getter)
           getter ||= DEFAULT_GETTER
           header = getter.call(carrier, @correlation_context_key)
 
           entries = header.gsub(/\s/, '').split(',')
 
           correlations = entries.each_with_object({}) do |entry, memo|
-            kv, *props = entry.split(';')
+            # The ignored variable below holds properties as per the W3C spec.
+            # OTel is not using them currently, but might they may be used for
+            # metadata in the future
+            kv, = entry.split(';')
             k, v = kv.split('=').map!(&CGI.method(:unescape))
-
-            # not sure what to do with properties, for now just add append to the value
-            memo[k] = props.empty? ? v : v << ';' << props.join(';')
+            memo[k] = v
           end
 
           context.set_value(ContextKeys.span_context_key, correlations)

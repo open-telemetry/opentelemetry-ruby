@@ -35,12 +35,12 @@ describe OpenTelemetry::CorrelationContext::Propagation::HttpCorrelationContextE
         _(correlations['key2']).must_equal('val2')
       end
 
-      it 'extracts entries with properties' do
+      it 'ignores properties' do
         carrier = { header_key => 'key1=val1,key2=val2;prop1=propval1;prop2=propval2' }
         context = extractor.extract(Context.empty, carrier)
         correlations = context[context_key]
         _(correlations['key1']).must_equal('val1')
-        _(correlations['key2']).must_equal('val2;prop1=propval1;prop2=propval2')
+        _(correlations['key2']).must_equal('val2')
       end
 
       it 'extracts urlencoded entries' do
