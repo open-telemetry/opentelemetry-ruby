@@ -17,13 +17,19 @@ module OpenTelemetry
         Context.value(CURRENT_SPAN_KEY) || Span::INVALID
       end
 
-      # Returns the span active of the currently active span. It's possible for
-      # the current span context to refer to a remote parent that has been
-      # extracted. If both a current span and an extracted, remote context
-      # exist, the context of the current span will be returned.
-      def current_span_context
-        Context.value(CURRENT_SPAN_KEY)&.context ||
-          Context.value(EXTRACTED_SPAN_CONTEXT_KEY) ||
+      # Returns the the active span context from the given {Context}, or current
+      # if one is not explicitly passed in. The active span context may refer to
+      # a {SpanContext} that has been extracted. If both a current {Span} and an
+      # extracted, {SpanContext} exist, the context of the current {Span} will be
+      # returned.
+      #
+      # @param [optional Context] context The context to lookup the active
+      #   {SpanContext} from.
+      #
+      def active_span_context(context = nil)
+        context ||= Context.current
+        context.value(CURRENT_SPAN_KEY)&.context ||
+          context.value(EXTRACTED_SPAN_CONTEXT_KEY) ||
           SpanContext::INVALID
       end
 
@@ -38,8 +44,8 @@ module OpenTelemetry
       #   OpenTelemetry.tracer.with_span(OpenTelemetry.tracer.start_span('do-the-thing')) do ... end
       #
       # On exit, the Span that was active before calling this method will be reactivated.
-      def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil, with_parent: nil, with_parent_context: nil)
-        span = start_span(name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind, sampling_hint: sampling_hint, with_parent: with_parent, with_parent_context: with_parent_context)
+      def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil, with_parent: nil, with_parent_context: nil, with_context: nil)
+        span = start_span(name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind, sampling_hint: sampling_hint, with_parent: with_parent, with_parent_context: with_parent_context, with_context: with_context)
         with_span(span) { |s| yield s }
       ensure
         span.finish
@@ -66,10 +72,12 @@ module OpenTelemetry
       #   +with_parent_context+.
       # @param [optional SpanContext] with_parent_context Explicitly managed. Overridden by
       #   +with_parent+.
+      ## @param [optional Context] with_context Explicitly managed context. Overridden by
+      #   +with_parent_context+ or +with_parent+
       #
       # @return [Span]
-      def start_span(name, with_parent: nil, with_parent_context: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
-        span_context = with_parent&.context || with_parent_context || current_span_context
+      def start_span(name, with_parent: nil, with_parent_context: nil, with_context: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
+        span_context = with_parent&.context || with_parent_context || active_span_context(with_context)
         if span_context.valid?
           Span.new(span_context: span_context)
         else
