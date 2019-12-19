@@ -11,7 +11,7 @@ describe OpenTelemetry::CorrelationContext::Propagation::HttpCorrelationContextI
     OpenTelemetry::CorrelationContext::Propagation::HttpCorrelationContextInjector.new
   end
   let(:header_key) do
-    'correlationcontext'
+    'Correlation-Context'
   end
   let(:context_key) do
     OpenTelemetry::CorrelationContext::Propagation::ContextKeys.span_context_key

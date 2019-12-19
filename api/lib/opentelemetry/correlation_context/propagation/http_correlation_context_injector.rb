@@ -20,7 +20,7 @@ module OpenTelemetry
         # @param [String] correlation_context_header_key The correlation context header
         #   key used in the carrier
         # @return [HttpCorrelationContextInjector]
-        def initialize(correlation_context_key: 'correlationcontext')
+        def initialize(correlation_context_key: 'Correlation-Context')
           @correlation_context_key = correlation_context_key
         end
 
