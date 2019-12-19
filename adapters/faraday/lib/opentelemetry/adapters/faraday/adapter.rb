@@ -20,6 +20,8 @@ module OpenTelemetry
 
           def install(config = {})
             @config = config
+            # allow custom middleware to override default implementation:
+            @config[:tracer_middleware] ||= Middlewares::TracerMiddleware
             @propagator = OpenTelemetry.tracer_factory.http_text_format
 
             new.install
@@ -42,7 +44,7 @@ module OpenTelemetry
 
         def register_tracer_middleware
           ::Faraday::Middleware.register_middleware(
-            open_telemetry: Middlewares::TracerMiddleware
+            open_telemetry: self.class.config[:tracer_middleware]
           )
         end
 

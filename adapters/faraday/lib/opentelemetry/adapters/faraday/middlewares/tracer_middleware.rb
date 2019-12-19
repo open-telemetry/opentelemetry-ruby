@@ -10,6 +10,8 @@ module OpenTelemetry
       module Middlewares
         class TracerMiddleware < ::Faraday::Middleware
           def call(env)
+            return app.call(env) if disable_span_reporting?(env)
+
             tracer.in_span(env.url.to_s,
                           attributes: { 'component' => 'http',
                                         'http.method' => env.method,
@@ -19,6 +21,12 @@ module OpenTelemetry
 
               app.call(env).on_complete { |resp| trace_response(span, resp) }
             end
+          end
+
+          # Override implementation (subclass) to determine per-connection
+          # span reporting rules.
+          def disable_span_reporting?(_env)
+            false
           end
 
           private

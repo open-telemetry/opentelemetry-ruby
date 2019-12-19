@@ -13,6 +13,7 @@ require_relative '../../../../../lib/opentelemetry/adapters/faraday/middlewares/
 describe OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware do
   let(:adapter) { OpenTelemetry::Adapters::Faraday }
   let(:exporter) { EXPORTER }
+  let(:span) { exporter.finished_spans.first }
 
   let(:client) do
     ::Faraday.new('http://example.com') do |builder|
@@ -30,8 +31,6 @@ describe OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware do
   end
 
   describe 'first span' do
-    let(:span) { exporter.finished_spans.first }
-
     it 'has http 200 attributes' do
       client.get('/success')
 
@@ -57,6 +56,24 @@ describe OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware do
       _(span.attributes['http.method']).must_equal :get
       _(span.attributes['http.status_code']).must_equal 500
       _(span.attributes['http.url']).must_equal 'http://example.com/failure'
+    end
+  end
+
+  describe 'overriding span reporting' do
+    class NoReportMiddleware < OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware
+      def disable_span_reporting?(_env)
+        true
+      end
+    end
+
+    before do
+      adapter.install(tracer_middleware: NoReportMiddleware)
+    end
+
+    it 'does not report' do
+      client.get('/success')
+
+      _(span).must_be_nil
     end
   end
 end

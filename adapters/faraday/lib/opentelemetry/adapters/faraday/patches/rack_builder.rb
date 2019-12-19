@@ -14,7 +14,7 @@ module OpenTelemetry
         module RackBuilder
           def adapter(*args)
             use(:open_telemetry) unless @handlers.any? do |handler|
-              handler.klass == Middlewares::TracerMiddleware
+              handler.klass == Faraday::Adapter.config[:tracer_middleware]
             end
 
             super

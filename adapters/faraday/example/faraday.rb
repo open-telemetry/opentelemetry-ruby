@@ -15,6 +15,16 @@ factory.add_span_processor(
   )
 )
 
+# Demonstrate disabling span reporting:
+#
+# require_relative '../lib/opentelemetry/adapters/faraday/middlewares/tracer_middleware'
+# class NoOp < OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware
+#   def disable_span_reporting?(env)
+#     env.url.to_s =~ /example.com/
+#   end
+# end
+# OpenTelemetry::Adapters::Faraday.install(tracer_middleware: NoOp)
+
 OpenTelemetry::Adapters::Faraday.install
 
 conn = Faraday.new('http://example.com')
