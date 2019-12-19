@@ -19,6 +19,14 @@ describe OpenTelemetry::SDK::CorrelationContext::Manager do
 
       _(manager.value(ctx, 'foo')).must_be_nil
     end
+
+    it 'coerces values to strings' do
+      ctx = OpenTelemetry::Context.empty
+      ctx = manager.set_value(ctx, 'k1', 1)
+      ctx = manager.set_value(ctx, 'k2', true)
+      _(manager.value(ctx, 'k1')).must_equal('1')
+      _(manager.value(ctx, 'k2')).must_equal('true')
+    end
   end
 
   describe '.clear' do

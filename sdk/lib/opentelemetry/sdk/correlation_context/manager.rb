@@ -25,7 +25,7 @@ module OpenTelemetry
         #
         # @param [Context] context The context use to retrieve key
         # @param [String] key The lookup key
-        # @return [Object]
+        # @return [String]
         def value(context, key)
           correlations_for(context)[key]
         end
@@ -34,11 +34,11 @@ module OpenTelemetry
         #
         # @param [Context] context The context to update with new value
         # @param [String] key The key to store this value under
-        # @param [Object] value Object to be stored under key
+        # @param [String] value String value to be stored under key
         # @return [Context]
         def set_value(context, key, value)
           new_correlations = correlations_for(context).dup
-          new_correlations[key] = value
+          new_correlations[key] = value.to_s
           context.set_value(CORRELATION_CONTEXT_KEY, new_correlations)
         end
 
