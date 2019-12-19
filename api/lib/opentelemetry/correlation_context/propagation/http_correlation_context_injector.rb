@@ -4,13 +4,51 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'cgi'
+
 module OpenTelemetry
   module CorrelationContext
     module Propagation
       # @todo add class documentation
       class HttpCorrelationContextInjector
+        DEFAULT_SETTER = ->(carrier, key, value) { carrier[key] = value }
+        private_constant :DEFAULT_SETTER
+
+        # Returns a new HttpCorrelationContextInjector that injects context using the
+        # specified header key
+        #
+        # @param [String] correlation_context_header_key The correlation context header
+        #   key used in the carrier
+        # @return [HttpCorrelationContextInjector]
+        def initialize(correlation_context_key: 'correlationcontext')
+          @correlation_context_key = correlation_context_key
+        end
+
+        # Inject in-process correlations into the supplied carrier.
+        #
+        # @param [Context] context The context to read correlations from
+        # @param [Carrier] carrier The carrier to inject correlations into
+        # @param [optional Callable] getter An optional callable that takes a carrier and a key and
+        #   returns the value associated with the key. If omitted the default getter will be used
+        #   which expects the carrier to respond to [] and []=.
+        # @yield [Carrier, String] if an optional getter is provided, inject will yield the carrier
+        #   and the header key to the getter.
+        # @return [Object] carrier with injected correlations
         def inject(context, carrier, &setter)
-          # TODO
+          return carrier unless (correlations = context[ContextKeys.span_context_key]) && !correlations.empty?
+
+          setter ||= DEFAULT_SETTER
+          setter.call(carrier, @correlation_context_key, encode(correlations))
+
+          carrier
+        end
+
+        private
+
+        def encode(correlations)
+          correlations.inject(+'') do |memo, (k, v)|
+            memo << CGI.escape(k.to_s) << '=' << CGI.escape(v.to_s) << ','
+          end.chop!
         end
       end
     end
