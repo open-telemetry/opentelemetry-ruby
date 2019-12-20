@@ -8,7 +8,7 @@ require 'opentelemetry/sdk/correlation_context/manager'
 
 module OpenTelemetry
   module SDK
-    # @todo: write module documentation
+    # Contains operational implementataions of the CorrelationContext::Manager
     module CorrelationContext
     end
   end

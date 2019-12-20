@@ -7,7 +7,8 @@
 module OpenTelemetry
   module Trace
     module Propagation
-      # @todo add module documentation
+      # Contains the keys used to store the current span, or extracted span
+      # context in a {Context} instance
       module ContextKeys
         extend self
 

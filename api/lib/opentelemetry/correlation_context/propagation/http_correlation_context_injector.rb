@@ -9,7 +9,7 @@ require 'cgi'
 module OpenTelemetry
   module CorrelationContext
     module Propagation
-      # @todo add class documentation
+      # Injects correlation context using the W3C Correlation Context format
       class HttpCorrelationContextInjector
         include Context::Propagation::DefaultSetter
 
