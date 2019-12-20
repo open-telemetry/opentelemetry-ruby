@@ -56,16 +56,6 @@ module OpenTelemetry
           context.set_value(CORRELATION_CONTEXT_KEY, new_correlations)
         end
 
-        # @todo
-        def http_injector
-          raise NotImplementedError
-        end
-
-        # @todo
-        def http_extractor
-          raise NotImplementedError
-        end
-
         private
 
         def correlations_for(context)

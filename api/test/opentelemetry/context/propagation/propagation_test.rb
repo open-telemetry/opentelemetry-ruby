@@ -137,6 +137,28 @@ describe OpenTelemetry::Context::Propagation::Propagation do
     end
   end
 
+  describe '#http_correlation_context_extractor, #rack_http_correlation_context_extractor' do
+    it 'returns an instance of HttpTraceContextExtractor' do
+      %i[http_correlation_context_extractor rack_http_correlation_context_extractor].each do |extractor_method|
+        extractor = propagation.send(extractor_method)
+        _(extractor).must_be_instance_of(
+          OpenTelemetry::CorrelationContext::Propagation::HttpCorrelationContextExtractor
+        )
+      end
+    end
+  end
+
+  describe '#http_correlation_context_injector, #rack_http_correlation_context_injector' do
+    it 'returns an instance of HttpTraceContextInjector' do
+      %i[http_correlation_context_injector rack_http_correlation_context_injector].each do |injector_method|
+        injector = propagation.send(injector_method)
+        _(injector).must_be_instance_of(
+          OpenTelemetry::CorrelationContext::Propagation::HttpCorrelationContextInjector
+        )
+      end
+    end
+  end
+
   describe '#binary_format' do
     it 'returns an instance of BinaryFormat' do
       _(propagation.binary_format).must_be_instance_of(

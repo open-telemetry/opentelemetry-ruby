@@ -20,6 +20,14 @@ module OpenTelemetry
           traceparent_header_key: 'HTTP_TRACEPARENT',
           tracestate_header_key: 'HTTP_TRACESTATE'
         )
+        HTTP_CORRELATION_CONTEXT_EXTRACTOR = CorrelationContext::Propagation::HttpCorrelationContextExtractor.new
+        HTTP_CORRELATION_CONTEXT_INJECTOR = CorrelationContext::Propagation::HttpCorrelationContextInjector.new
+        RACK_HTTP_CORRELATION_CONTEXT_EXTRACTOR = CorrelationContext::Propagation::HttpCorrelationContextExtractor.new(
+          correlation_context_key: 'HTTP_CORRELATION_CONTEXT'
+        )
+        RACK_HTTP_CORRELATION_CONTEXT_INJECTOR = CorrelationContext::Propagation::HttpCorrelationContextInjector.new(
+          correlation_context_key: 'HTTP_CORRELATION_CONTEXT'
+        )
         BINARY_FORMAT = Trace::Propagation::BinaryFormat.new
         EMPTY_ARRAY = [].freeze
 
@@ -107,14 +115,30 @@ module OpenTelemetry
           RACK_HTTP_TRACE_CONTEXT_INJECTOR
         end
 
-        # @todo
+        # Returns an extractor that extracts context using the W3C Correlation
+        # Context format for HTTP
         def http_correlation_context_injector
-          nil
+          HTTP_CORRELATION_CONTEXT_INJECTOR
         end
 
-        # @todo
+        # Returns an injector that injects context using the W3C Correlation
+        # Context format for HTTP
         def http_correlation_context_extractor
-          nil
+          HTTP_CORRELATION_CONTEXT_EXTRACTOR
+        end
+
+        # Returns an extractor that extracts context using the W3C Correlation
+        # Context format for HTTP with Rack normalized keys (upcased and
+        # prefixed with HTTP_)
+        def rack_http_correlation_context_injector
+          RACK_HTTP_CORRELATION_CONTEXT_INJECTOR
+        end
+
+        # Returns an injector that injects context using the W3C Correlation
+        # Context format for HTTP with Rack normalized keys (upcased and
+        # prefixed with HTTP_)
+        def rack_http_correlation_context_extractor
+          RACK_HTTP_CORRELATION_CONTEXT_EXTRACTOR
         end
 
         # Returns a propagator for the binary format
