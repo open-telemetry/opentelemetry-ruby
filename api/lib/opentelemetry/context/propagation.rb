@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/context/propagation/default_getter'
+require 'opentelemetry/context/propagation/default_setter'
 require 'opentelemetry/correlation_context/propagation'
 require 'opentelemetry/trace/propagation'
 require 'opentelemetry/context/propagation/propagation'

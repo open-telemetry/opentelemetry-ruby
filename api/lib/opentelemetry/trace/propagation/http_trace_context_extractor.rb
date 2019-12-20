@@ -8,8 +8,7 @@ module OpenTelemetry
     module Propagation
       # Extracts context from carriers in the W3C Trace Context format
       class HttpTraceContextExtractor
-        DEFAULT_GETTER = ->(carrier, key) { carrier[key] }
-        private_constant :DEFAULT_GETTER
+        include Context::Propagation::DefaultGetter
 
         # Returns a new HttpTraceContextExtractor that extracts context using the
         # specified header keys
@@ -36,7 +35,7 @@ module OpenTelemetry
         # @return [Context] Updated context with span context from the header, or a new one if
         #   parsing fails.
         def extract(context, carrier, &getter)
-          getter ||= DEFAULT_GETTER
+          getter ||= default_getter
           header = getter.call(carrier, @traceparent_header_key)
           tp = TraceParent.from_string(header)
 

@@ -11,8 +11,7 @@ module OpenTelemetry
     module Propagation
       # @todo add class documentation
       class HttpCorrelationContextInjector
-        DEFAULT_SETTER = ->(carrier, key, value) { carrier[key] = value }
-        private_constant :DEFAULT_SETTER
+        include Context::Propagation::DefaultSetter
 
         # Returns a new HttpCorrelationContextInjector that injects context using the
         # specified header key
@@ -37,7 +36,7 @@ module OpenTelemetry
         def inject(context, carrier, &setter)
           return carrier unless (correlations = context[ContextKeys.span_context_key]) && !correlations.empty?
 
-          setter ||= DEFAULT_SETTER
+          setter ||= default_setter
           setter.call(carrier, @correlation_context_key, encode(correlations))
 
           carrier

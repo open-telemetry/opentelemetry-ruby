@@ -8,8 +8,7 @@ module OpenTelemetry
     module Propagation
       # Injects context into carriers using the W3C Trace Context format
       class HttpTraceContextInjector
-        DEFAULT_SETTER = ->(carrier, key, value) { carrier[key] = value }
-        private_constant :DEFAULT_SETTER
+        include Context::Propagation::DefaultSetter
 
         # Returns a new HttpTraceContextInjector that injects context using the
         # specified header keys

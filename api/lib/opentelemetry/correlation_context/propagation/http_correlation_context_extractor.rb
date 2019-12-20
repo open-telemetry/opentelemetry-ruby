@@ -11,9 +11,7 @@ module OpenTelemetry
     module Propagation
       # Extracts correlations from carriers in the W3C Correlation Context format
       class HttpCorrelationContextExtractor
-        # @todo we need a common base class
-        DEFAULT_GETTER = ->(carrier, key) { carrier[key] }
-        private_constant :DEFAULT_GETTER
+        include Context::Propagation::DefaultGetter
 
         # Returns a new HttpCorrelationContextExtractor that extracts context using the
         # specified header key
@@ -37,8 +35,8 @@ module OpenTelemetry
         #   and the header key to the getter.
         # @return [Context] context updated with extracted correlations, or the original context
         #   if extraction fails
-        def extract(context, carrier, &getter)
-          getter ||= DEFAULT_GETTER
+        def extract(context, carrier, &getter) # rubocop:disable Metrics/AbcSize
+          getter ||= default_getter
           header = getter.call(carrier, @correlation_context_key)
 
           entries = header.gsub(/\s/, '').split(',')
