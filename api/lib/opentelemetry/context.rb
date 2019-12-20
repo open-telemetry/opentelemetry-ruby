@@ -137,11 +137,9 @@ module OpenTelemetry
     #
     # @param ctx_to_attach The ctx to be attached when this context is detached
     def detach(ctx_to_attach = nil)
-      ctx_to_attach ||= @parent || ROOT
-      if self.class.current != self
-        # @todo: log warning
-      end
+      OpenTelemetry.logger.warn 'Calls to detach should match corresponding calls to attach' if self.class.current != self
 
+      ctx_to_attach ||= @parent || ROOT
       ctx_to_attach.attach
     end
 

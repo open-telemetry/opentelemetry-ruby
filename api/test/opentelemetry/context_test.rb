@@ -5,6 +5,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'test_helper'
+require 'logger'
+require 'stringio'
 
 describe OpenTelemetry::Context do
   Context = OpenTelemetry::Context
@@ -153,6 +155,30 @@ describe OpenTelemetry::Context do
       ctx = Context.new(nil, 'foo' => 'bar')
       ctx.detach
       _(Context.current).must_equal(Context::ROOT)
+    end
+
+    it 'logs warning for non-matching attach / detache' do
+      # replace logger for test
+      orig_logger = OpenTelemetry.logger
+      logger_io = StringIO.new
+      OpenTelemetry.logger = Logger.new(logger_io)
+
+      orig_ctx = Context.current
+      ctx1 = orig_ctx.set_value('foo', 'bar')
+      ctx2 = ctx1.set_value('bar', 'baz')
+
+      ctx1.attach
+      ctx2.attach
+
+      _(Context.current).must_equal(ctx2)
+      _(logger_io.string).must_be(:empty?)
+
+      ctx1.detach
+      _(logger_io.string).must_match(/warn.*detach.*match.*attach/i)
+      _(Context.current).must_equal(orig_ctx)
+
+      # restore logger after
+      OpenTelemetry.logger = orig_logger
     end
   end
 
