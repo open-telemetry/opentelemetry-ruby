@@ -59,14 +59,16 @@ module OpenTelemetry
         # Injects context into carrier to be propagated across process
         # boundaries
         #
-        # @param [Context] context Context to be injected into carrier
         # @param [Object] carrier A carrier of HTTP headers to inject
         #   context into
-        # @param [Array<Object>] http_injectors An array of HTTP injectors. Each
-        #   injector will be invoked once with given context and carrier
+        # @param [optional Context] context Context to be injected into carrier. Defaults
+        #   to +Context.current+
+        # @param [optional Array<Object>] http_injectors An array of HTTP injectors. Each
+        #   injector will be invoked once with given context and carrier. Defaults to the
+        #   globally registered +http_injectors+
         #
         # @return [Object] carrier
-        def inject(context, carrier, http_injectors = self.http_injectors)
+        def inject(carrier, context: Context.current, http_injectors: self.http_injectors)
           http_injectors.inject(carrier) do |memo, injector|
             injector.inject(context, memo)
           end
@@ -74,16 +76,17 @@ module OpenTelemetry
 
         # Extracts context from a carrier
         #
-        # @param [Context] context Context to be updated with the state
-        #   extracted from the carrier
         # @param [Object] carrier A carrier of HTTP headers to extract context
         #   from
-        # @param [Array<Object>] http_extractors An array of HTTP extractors.
-        #   Each extractor will be invoked once with given context and carrier
+        # @param [optional Context] context Context to be updated with the state
+        #   extracted from the carrier. Defaults to +Context.current+
+        # @param [optional Array<Object>] http_extractors An array of HTTP extractors.
+        #   Each extractor will be invoked once with given context and carrier. Defaults
+        #   to the globally registered +http_extractors+
         #
         # @return [Context] a new context updated with state extracted from the
         #   carrier
-        def extract(context, carrier, http_extractors = self.http_extractors)
+        def extract(carrier, context: Context.current, http_extractors: self.http_extractors)
           http_extractors.inject(context) do |ctx, extractor|
             extractor.extract(ctx, carrier)
           end

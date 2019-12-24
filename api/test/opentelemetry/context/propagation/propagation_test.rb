@@ -34,6 +34,8 @@ describe OpenTelemetry::Context::Propagation::Propagation do
 
   after do
     Context.clear
+    propagation.http_injectors = []
+    propagation.http_extractors = []
   end
 
   describe '.http_injectors' do
@@ -58,7 +60,7 @@ describe OpenTelemetry::Context::Propagation::Propagation do
         Context.with_value('k2', 'v2') do
           Context.with_value('k3', 'v3') do
             carrier_before = {}
-            carrier_after = propagation.inject(Context.current, carrier_before)
+            carrier_after = propagation.inject(carrier_before)
             _(carrier_before).must_equal(carrier_after)
           end
         end
@@ -69,7 +71,7 @@ describe OpenTelemetry::Context::Propagation::Propagation do
       Context.with_value('k1', 'v1') do
         Context.with_value('k2', 'v2') do
           Context.with_value('k3', 'v3') do
-            carrier = propagation.inject(Context.current, {}, injectors)
+            carrier = propagation.inject({}, http_injectors: injectors)
             _(carrier).must_equal('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3')
           end
         end
@@ -81,7 +83,19 @@ describe OpenTelemetry::Context::Propagation::Propagation do
       Context.with_value('k1', 'v1') do
         Context.with_value('k2', 'v2') do
           Context.with_value('k3', 'v3') do
-            carrier = propagation.inject(Context.current, {})
+            carrier = propagation.inject({})
+            _(carrier).must_equal('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3')
+          end
+        end
+      end
+    end
+
+    it 'accepts explicit context' do
+      propagation.http_injectors = injectors
+      Context.with_value('k1', 'v1') do
+        Context.with_value('k2', 'v2') do
+          ctx = Context.current.set_value('k3', 'v3') do
+            carrier = propagation.inject({}, context: ctx)
             _(carrier).must_equal('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3')
           end
         end
@@ -93,13 +107,13 @@ describe OpenTelemetry::Context::Propagation::Propagation do
     it 'returns original context with empty extractors' do
       context_before = Context.current
       carrier = { 'k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3' }
-      context_after = propagation.extract(context_before, carrier)
+      context_after = propagation.extract(carrier)
       _(context_before).must_equal(context_after)
     end
 
     it 'extracts values from carrier into context' do
       carrier = { 'k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3' }
-      context = propagation.extract(Context.current, carrier, extractors)
+      context = propagation.extract(carrier, http_extractors: extractors)
       _(context['k1']).must_equal('v1')
       _(context['k2']).must_equal('v2')
       _(context['k3']).must_equal('v3')
@@ -108,7 +122,18 @@ describe OpenTelemetry::Context::Propagation::Propagation do
     it 'uses global extractors' do
       propagation.http_extractors = extractors
       carrier = { 'k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3' }
-      context = propagation.extract(Context.current, carrier)
+      context = propagation.extract(carrier)
+      _(context['k1']).must_equal('v1')
+      _(context['k2']).must_equal('v2')
+      _(context['k3']).must_equal('v3')
+    end
+
+    it 'accepts explicit context' do
+      ctx = Context.empty.set_value('k0', 'v0')
+      propagation.http_extractors = extractors
+      carrier = { 'k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3' }
+      context = propagation.extract(carrier, context: ctx)
+      _(context['k0']).must_equal('v0')
       _(context['k1']).must_equal('v1')
       _(context['k2']).must_equal('v2')
       _(context['k3']).must_equal('v3')
