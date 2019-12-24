@@ -7,53 +7,109 @@
 require 'test_helper'
 
 describe OpenTelemetry::SDK::CorrelationContext::Manager do
+  Context = OpenTelemetry::Context
   let(:manager) { OpenTelemetry::SDK::CorrelationContext::Manager.new }
 
+  after do
+    Context.clear
+  end
+
   describe '.set_value' do
-    it 'sets key/value in correlation context' do
-      ctx = OpenTelemetry::Context.empty
-      _(manager.value(ctx, 'foo')).must_be_nil
+    describe 'explicit context' do
+      it 'sets key/value in context' do
+        ctx = Context.empty
+        _(manager.value('foo', context: ctx)).must_be_nil
 
-      ctx2 = manager.set_value(ctx, 'foo', 'bar')
-      _(manager.value(ctx2, 'foo')).must_equal('bar')
+        ctx2 = manager.set_value('foo', 'bar', context: ctx)
+        _(manager.value('foo', context: ctx2)).must_equal('bar')
 
-      _(manager.value(ctx, 'foo')).must_be_nil
+        _(manager.value('foo', context: ctx)).must_be_nil
+      end
+    end
+
+    describe 'implicit context' do
+      it 'sets key/value in implicit context' do
+        _(manager.value('foo')).must_be_nil
+
+        Context.with_current(manager.set_value('foo', 'bar')) do
+          _(manager.value('foo')).must_equal('bar')
+        end
+
+        _(manager.value('foo')).must_be_nil
+      end
     end
 
     it 'coerces values to strings' do
-      ctx = OpenTelemetry::Context.empty
-      ctx = manager.set_value(ctx, 'k1', 1)
-      ctx = manager.set_value(ctx, 'k2', true)
-      _(manager.value(ctx, 'k1')).must_equal('1')
-      _(manager.value(ctx, 'k2')).must_equal('true')
+      ctx = manager.set_value('k1', 1)
+      ctx = manager.set_value('k2', true, context: ctx)
+
+      Context.with_current(ctx) do
+        _(manager.value('k1')).must_equal('1')
+        _(manager.value('k2')).must_equal('true')
+      end
     end
   end
 
   describe '.clear' do
-    it 'returns context with empty correlation context' do
-      ctx = manager.set_value(OpenTelemetry::Context.empty, 'foo', 'bar')
-      _(manager.value(ctx, 'foo')).must_equal('bar')
+    describe 'explicit context' do
+      it 'returns context with empty correlation context' do
+        ctx = manager.set_value('foo', 'bar', context: Context.empty)
+        _(manager.value('foo', context: ctx)).must_equal('bar')
 
-      ctx2 = manager.clear(ctx)
-      _(manager.value(ctx2, 'foo')).must_be_nil
+        ctx2 = manager.clear(context: ctx)
+        _(manager.value('foo', context: ctx2)).must_be_nil
+      end
+    end
+
+    describe 'implicit context' do
+      it 'returns context with empty correlation context' do
+        ctx = manager.set_value('foo', 'bar')
+        _(manager.value('foo', context: ctx)).must_equal('bar')
+
+        ctx2 = manager.clear
+        _(manager.value('foo', context: ctx2)).must_be_nil
+      end
     end
   end
 
   describe '.remove_value' do
-    it 'returns context with key removed from correlation context' do
-      ctx = manager.set_value(OpenTelemetry::Context.empty, 'foo', 'bar')
-      _(manager.value(ctx, 'foo')).must_equal('bar')
+    describe 'explicit context' do
+      it 'returns context with key removed from correlation context' do
+        ctx = manager.set_value('foo', 'bar', context: Context.empty)
+        _(manager.value('foo', context: ctx)).must_equal('bar')
 
-      ctx2 = manager.remove_value(ctx, 'foo')
-      _(manager.value(ctx2, 'foo')).must_be_nil
+        ctx2 = manager.remove_value('foo', context: ctx)
+        _(manager.value('foo', context: ctx2)).must_be_nil
+      end
+
+      it 'returns same context if key does not exist' do
+        ctx = manager.set_value('foo', 'bar', context: Context.empty)
+        _(manager.value('foo', context: ctx)).must_equal('bar')
+
+        ctx2 = manager.remove_value('nonexistant-key', context: ctx)
+        _(ctx2).must_equal(ctx)
+      end
     end
 
-    it 'returns same context if key does not exist' do
-      ctx = manager.set_value(OpenTelemetry::Context.empty, 'foo', 'bar')
-      _(manager.value(ctx, 'foo')).must_equal('bar')
+    describe 'implicit context' do
+      it 'returns context with key removed from correlation context' do
+        Context.with_current(manager.set_value('foo', 'bar')) do
+          _(manager.value('foo')).must_equal('bar')
 
-      ctx2 = manager.remove_value(ctx, 'nonexistant-key')
-      _(ctx2).must_equal(ctx)
+          ctx = manager.remove_value('foo')
+          _(manager.value('foo', context: ctx)).must_be_nil
+        end
+      end
+
+      it 'returns same context if key does not exist' do
+        Context.with_current(manager.set_value('foo', 'bar')) do
+          _(manager.value('foo')).must_equal('bar')
+          ctx_before = OpenTelemetry::Context.current
+
+          ctx = manager.remove_value('nonexistant-key')
+          _(ctx).must_equal(ctx_before)
+        end
+      end
     end
   end
 end

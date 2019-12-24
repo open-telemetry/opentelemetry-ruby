@@ -15,28 +15,31 @@ module OpenTelemetry
 
         # Returns a new context with empty correlations
         #
-        # @param [Context] context
+        # @param [optional Context] context Context to clear correlations from. Defaults
+        #   to +Context.current+
         # @return [Context]
-        def clear(context)
+        def clear(context: Context.current)
           context.set_value(CORRELATION_CONTEXT_KEY, EMPTY_CORRELATION_CONTEXT)
         end
 
         # Returns the corresponding correlation value (or nil) for key
         #
-        # @param [Context] context The context use to retrieve key
         # @param [String] key The lookup key
+        # @param [optional Context] context The context use to retrieve key.
+        #   Defaults to +Context.current+
         # @return [String]
-        def value(context, key)
+        def value(key, context: Context.current)
           correlations_for(context)[key]
         end
 
         # Returns a new context with new key-value pair
         #
-        # @param [Context] context The context to update with new value
         # @param [String] key The key to store this value under
         # @param [String] value String value to be stored under key
+        # @param [optional Context] context The context to update with new
+        #   value. Defaults to +Context.current+
         # @return [Context]
-        def set_value(context, key, value)
+        def set_value(key, value, context: Context.current)
           new_correlations = correlations_for(context).dup
           new_correlations[key] = value.to_s
           context.set_value(CORRELATION_CONTEXT_KEY, new_correlations)
@@ -44,10 +47,11 @@ module OpenTelemetry
 
         # Returns a new context with value at key removed
         #
-        # @param [Context] context The context to remove value from
         # @param [String] key The key to remove
+        # @param [optional Context] context The context to remove correlation
+        #   from. Defaults to +Context.current+
         # @return [Context]
-        def remove_value(context, key)
+        def remove_value(key, context: Context.current)
           correlations = correlations_for(context)
           return context unless correlations.key?(key)
 

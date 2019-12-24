@@ -8,19 +8,19 @@ module OpenTelemetry
   module CorrelationContext
     # No op implementation of CorrelationContext::Manager
     class Manager
-      def set_value(context, key, value)
+      def set_value(key, value, context: Context.current)
         context
       end
 
-      def value(context, key)
+      def value(key, context: Context.current)
         nil
       end
 
-      def remove_value(context, key)
+      def remove_value(key, context: Context.current)
         context
       end
 
-      def clear(context)
+      def clear(context: Context.current)
         context
       end
     end
