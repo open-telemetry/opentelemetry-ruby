@@ -8,6 +8,14 @@ module OpenTelemetry
   module CorrelationContext
     # No op implementation of CorrelationContext::Manager
     class Manager
+      NOOP_BUILDER = Builder.new
+      private_constant :NOOP_BUILDER
+
+      def build(context: Context.current)
+        yield NOOP_BUILDER
+        context
+      end
+
       def set_value(key, value, context: Context.current)
         context
       end

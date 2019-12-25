@@ -13,6 +13,21 @@ module OpenTelemetry
         EMPTY_CORRELATION_CONTEXT = {}.freeze
         private_constant(:CORRELATION_CONTEXT_KEY, :EMPTY_CORRELATION_CONTEXT)
 
+        # Used to chain modifications to correlation context. The result is a
+        # context with an updated correlation context. If only a single
+        # modification is being made to correlation context, use the other
+        # methods on +Manager+, if multiple modifications are being made, use
+        # this one.
+        #
+        # @param [optional Context] context The context to update with with new
+        #   modified correlation context. Defaults to +Context.current+
+        # @return [Context]
+        def build_context(context: Context.current)
+          builder = Builder.new(correlations_for(context).dup)
+          yield builder
+          context.set_value(CORRELATION_CONTEXT_KEY, builder.entries)
+        end
+
         # Returns a new context with empty correlations
         #
         # @param [optional Context] context Context to clear correlations from. Defaults

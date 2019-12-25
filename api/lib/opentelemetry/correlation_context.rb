@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/correlation_context/builder'
 require 'opentelemetry/correlation_context/manager'
 require 'opentelemetry/correlation_context/propagation'
 

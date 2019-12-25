@@ -112,4 +112,89 @@ describe OpenTelemetry::SDK::CorrelationContext::Manager do
       end
     end
   end
+
+  describe '.build_context' do
+    let(:initial_context) { manager.set_value('k1', 'v1') }
+
+    describe 'explicit context' do
+      it 'sets entries' do
+        ctx = initial_context
+        ctx = manager.build_context(context: ctx) do |correlations|
+          correlations.set_value('k2', 'v2')
+          correlations.set_value('k3', 'v3')
+        end
+        _(manager.value('k1', context: ctx)).must_equal('v1')
+        _(manager.value('k2', context: ctx)).must_equal('v2')
+        _(manager.value('k3', context: ctx)).must_equal('v3')
+      end
+
+      it 'removes entries' do
+        ctx = initial_context
+        ctx = manager.build_context(context: ctx) do |correlations|
+          correlations.remove_value('k1')
+          correlations.set_value('k2', 'v2')
+        end
+        _(manager.value('k1', context: ctx)).must_be_nil
+        _(manager.value('k2', context: ctx)).must_equal('v2')
+      end
+
+      it 'clears entries' do
+        ctx = initial_context
+        ctx = manager.build_context(context: ctx) do |correlations|
+          correlations.clear
+          correlations.set_value('k2', 'v2')
+        end
+        _(manager.value('k1', context: ctx)).must_be_nil
+        _(manager.value('k2', context: ctx)).must_equal('v2')
+      end
+    end
+
+    describe 'implicit context' do
+      it 'sets entries' do
+        Context.with_current(initial_context) do
+          ctx = manager.build_context do |correlations|
+            correlations.set_value('k2', 'v2')
+            correlations.set_value('k3', 'v3')
+          end
+          Context.with_current(ctx) do
+            _(manager.value('k1')).must_equal('v1')
+            _(manager.value('k2')).must_equal('v2')
+            _(manager.value('k3')).must_equal('v3')
+          end
+        end
+      end
+
+      it 'removes entries' do
+        Context.with_current(initial_context) do
+          _(manager.value('k1')).must_equal('v1')
+
+          ctx = manager.build_context do |correlations|
+            correlations.remove_value('k1')
+            correlations.set_value('k2', 'v2')
+          end
+
+          Context.with_current(ctx) do
+            _(manager.value('k1')).must_be_nil
+            _(manager.value('k2')).must_equal('v2')
+          end
+        end
+      end
+
+      it 'clears entries' do
+        Context.with_current(initial_context) do
+          _(manager.value('k1')).must_equal('v1')
+
+          ctx = manager.build_context do |correlations|
+            correlations.clear
+            correlations.set_value('k2', 'v2')
+          end
+
+          Context.with_current(ctx) do
+            _(manager.value('k1')).must_be_nil
+            _(manager.value('k2')).must_equal('v2')
+          end
+        end
+      end
+    end
+  end
 end
