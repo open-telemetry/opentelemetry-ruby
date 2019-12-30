@@ -16,7 +16,7 @@ factory.add_span_processor(
   )
 )
 
-OpenTelemetry::Adapters::Sinatra.install(name: 'sinatra-example', version: '1.0')
+OpenTelemetry::Adapters::Sinatra.install
 
 class App < Sinatra::Base
   set :bind, '0.0.0.0'
