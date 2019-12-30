@@ -21,7 +21,7 @@ module OpenTelemetry
             return :already_installed if installed?
 
             @config = config
-            @propagator = tracer_factory.http_text_format
+            @propagator = OpenTelemetry.tracer_factory.http_text_format
 
             new.install
           end
@@ -35,12 +35,6 @@ module OpenTelemetry
 
           attr_accessor :installed
           alias_method :installed?, :installed
-
-          private
-
-          def tracer_factory
-            OpenTelemetry.tracer_factory
-          end
         end
 
         def install
