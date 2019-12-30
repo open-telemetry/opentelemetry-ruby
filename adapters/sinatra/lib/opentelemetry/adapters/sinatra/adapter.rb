@@ -37,6 +37,8 @@ module OpenTelemetry
           alias_method :installed?, :installed
         end
 
+        # @return [Symbol] indicating whether the method has already
+        # been called or not (arbitrary, useful for testing purposes)
         def install
           return :already_installed if self.class.installed?
           self.class.installed = true
