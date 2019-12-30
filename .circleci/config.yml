@@ -15,7 +15,7 @@ executors:
       - image: "circleci/ruby:2.6-stretch"
   jruby:
     docker:
-      - image: "circleci/jruby:latest"
+      - image: "circleci/jruby:9.2.8-jre"
     environment:
       JRUBY_OPTS: "--debug"
 commands:
