@@ -144,4 +144,52 @@ describe OpenTelemetry::Instrumentation::Adapter do
       end
     end
   end
+
+  describe '#enabled?' do
+    describe 'with env var' do
+      it 'is disabled when false' do
+        with_env('TEST_ADAPTER_ENABLED' => 'false') do
+          _(adapter.instance.enabled?).must_equal(false)
+        end
+      end
+
+      it 'is enabled when true' do
+        with_env('TEST_ADAPTER_ENABLED' => 'true') do
+          _(adapter.instance.enabled?).must_equal(true)
+        end
+      end
+
+      it 'overrides local config value' do
+        with_env('TEST_ADAPTER_ENABLED' => 'false') do
+          adapter.instance.enabled?(enabled: true)
+          _(adapter.instance.enabled?).must_equal(false)
+        end
+      end
+
+      describe 'local config' do
+        it 'is disabled when false' do
+          _(adapter.instance.enabled?(enabled: false)).must_equal(false)
+        end
+
+        it 'is enabled when true' do
+          _(adapter.instance.enabled?(enabled: true)).must_equal(true)
+        end
+      end
+
+      describe 'without env var or config' do
+        it 'returns true' do
+          _(adapter.instance.enabled?).must_equal(true)
+        end
+      end
+    end
+  end
+
+  def with_env(new_env)
+    env_to_reset = ENV.select { |k, _| new_env.key?(k) }
+    keys_to_delete = new_env.keys - ENV.keys
+    new_env.each_pair { |k, v| ENV[k] = v }
+    yield
+    env_to_reset.each_pair { |k, v| ENV[k] = v }
+    keys_to_delete.each { |k| ENV.delete(k) }
+  end
 end
