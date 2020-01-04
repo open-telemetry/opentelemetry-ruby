@@ -65,15 +65,15 @@ describe OpenTelemetry::Instrumentation::Adapter do
     end
   end
 
-  describe '#adapter_name' do
+  describe '#name' do
     it 'returns adapter name' do
-      _(adapter.instance.adapter_name).must_equal('test_adapter')
+      _(adapter.instance.name).must_equal('test_adapter')
     end
   end
 
-  describe '#adapter_name' do
-    it 'returns adapter name' do
-      _(adapter.instance.adapter_name).must_equal('test_adapter')
+  describe '#version' do
+    it 'returns adapter version' do
+      _(adapter.instance.version).must_equal('0.1.1')
     end
   end
 
@@ -194,15 +194,15 @@ describe OpenTelemetry::Instrumentation::Adapter do
       Object.send(:remove_const, :MinimalAdapter)
     end
 
-    describe '#adapter_name' do
+    describe '#name' do
       it 'is the class name stringified' do
-        _(MinimalAdapter.instance.adapter_name).must_equal('MinimalAdapter')
+        _(MinimalAdapter.instance.name).must_equal('MinimalAdapter')
       end
     end
 
-    describe '#adapter_version' do
+    describe '#version' do
       it 'defaults to the adapters version constant' do
-        _(MinimalAdapter.instance.adapter_version).must_equal(MinimalAdapter::VERSION)
+        _(MinimalAdapter.instance.version).must_equal(MinimalAdapter::VERSION)
       end
     end
   end

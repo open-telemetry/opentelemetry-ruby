@@ -22,7 +22,7 @@ module OpenTelemetry
 
       def lookup(adapter_name)
         @lock.synchronize do
-          @adapters.detect { |a| a.instance.adapter_name == adapter_name }
+          @adapters.detect { |a| a.instance.name == adapter_name }
                    &.instance
         end
       end

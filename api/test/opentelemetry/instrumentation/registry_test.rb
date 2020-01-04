@@ -25,7 +25,7 @@ describe OpenTelemetry::Instrumentation::Registry do
   describe '#register, #lookup' do
     it 'registers and looks up adapters' do
       registry.register(adapter)
-      _(registry.lookup(adapter.instance.adapter_name)).must_equal(adapter.instance)
+      _(registry.lookup(adapter.instance.name)).must_equal(adapter.instance)
     end
   end
 end

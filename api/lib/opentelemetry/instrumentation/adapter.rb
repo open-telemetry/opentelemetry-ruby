@@ -61,12 +61,12 @@ module OpenTelemetry
         attr_reader :install_blk, :present_blk, :compatible_blk
       end
 
-      attr_reader :adapter_name, :adapter_version, :config
+      attr_reader :name, :version, :config
 
-      def initialize(adapter_name, adapter_version, install_blk, present_blk,
+      def initialize(name, version, install_blk, present_blk,
                      compatible_blk)
-        @adapter_name = adapter_name
-        @adapter_version = adapter_version
+        @name = name
+        @version = version
         @install_blk = install_blk
         @present_blk = present_blk
         @compatible_blk = compatible_blk
@@ -122,7 +122,7 @@ module OpenTelemetry
       # OPENTELEMETRY_ADAPTER_SINATRA_ENABLED. A value of 'false' will disable
       # the adapter, all other values will enable it.
       def enabled_by_env_var?
-        var_name = adapter_name.dup.tap do |n|
+        var_name = name.dup.tap do |n|
           n.upcase!
           n.gsub!('::', '_')
           n << '_ENABLED'
