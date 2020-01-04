@@ -20,11 +20,23 @@ module OpenTelemetry
         end
 
         def adapter_name(adapter_name = nil)
-          adapter_name ? @adapter_name = adapter_name : @adapter_name
+          if adapter_name
+            @adapter_name = adapter_name
+          else
+            @adapter_name ||= name
+          end
         end
 
         def adapter_version(adapter_version = nil)
-          adapter_version ? @adapter_version = adapter_version : @adapter_version
+          if adapter_version
+            @adapter_version = adapter_version
+          else
+            @adapter_version ||= begin
+                                   const_get(:VERSION)
+                                 rescue NameError
+                                   ''
+                                 end
+          end
         end
 
         def install(&blk)

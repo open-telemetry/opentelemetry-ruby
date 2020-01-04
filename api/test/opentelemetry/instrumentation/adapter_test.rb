@@ -184,6 +184,29 @@ describe OpenTelemetry::Instrumentation::Adapter do
     end
   end
 
+  describe 'minimal_adapter' do
+    before do
+      MinimalAdapter = Class.new(OpenTelemetry::Instrumentation::Adapter)
+      MinimalAdapter.const_set(:VERSION, '0.1.0')
+    end
+
+    after do
+      Object.send(:remove_const, :MinimalAdapter)
+    end
+
+    describe '#adapter_name' do
+      it 'is the class name stringified' do
+        _(MinimalAdapter.instance.adapter_name).must_equal('MinimalAdapter')
+      end
+    end
+
+    describe '#adapter_version' do
+      it 'defaults to the adapters version constant' do
+        _(MinimalAdapter.instance.adapter_version).must_equal(MinimalAdapter::VERSION)
+      end
+    end
+  end
+
   def with_env(new_env)
     env_to_reset = ENV.select { |k, _| new_env.key?(k) }
     keys_to_delete = new_env.keys - ENV.keys
