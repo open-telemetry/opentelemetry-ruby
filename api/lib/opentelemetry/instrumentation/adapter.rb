@@ -16,7 +16,7 @@ module OpenTelemetry
         private :new # rubocop:disable Style/AccessModifierDeclarations
 
         def inherited(subclass)
-          OpenTelemetry::Instrumentation.registry.register(subclass)
+          OpenTelemetry.instrumentation_registry.register(subclass)
         end
 
         def adapter_name(adapter_name = nil)

@@ -45,5 +45,11 @@ module OpenTelemetry
     @distributed_context_manager ||= DistributedContext::Manager.new
   end
 
+  # @return [Instrumentation::Registry] registry containing all known
+  #  instrumentation
+  def instrumentation_registry
+    @instrumentation_registry ||= Instrumentation::Registry.new
+  end
+
   self.logger = Logger.new(STDOUT)
 end

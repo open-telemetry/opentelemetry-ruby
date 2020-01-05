@@ -11,10 +11,5 @@ module OpenTelemetry
   # The instrumentation module contains functionality to register and install
   # instrumentation adapters
   module Instrumentation
-    extend self
-
-    def registry
-      @registry ||= Registry.new
-    end
   end
 end

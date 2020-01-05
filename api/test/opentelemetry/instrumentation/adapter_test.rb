@@ -8,7 +8,7 @@ require 'test_helper'
 
 describe OpenTelemetry::Instrumentation::Adapter do
   after do
-    OpenTelemetry::Instrumentation.registry.instance_variable_set(:@adapters, [])
+    OpenTelemetry.instance_variable_set(:@instrumentation_registry, nil)
   end
 
   let(:adapter) do
@@ -55,7 +55,7 @@ describe OpenTelemetry::Instrumentation::Adapter do
 
   it 'is auto-registered' do
     instance = adapter.instance
-    _(OpenTelemetry::Instrumentation.registry.lookup('test_adapter'))
+    _(OpenTelemetry.instrumentation_registry.lookup('test_adapter'))
       .must_equal(instance)
   end
 

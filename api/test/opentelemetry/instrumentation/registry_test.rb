@@ -7,6 +7,10 @@
 require 'test_helper'
 
 describe OpenTelemetry::Instrumentation::Registry do
+  after do
+    OpenTelemetry.instance_variable_set(:@instrumentation_registry, nil)
+  end
+
   let(:registry) do
     OpenTelemetry::Instrumentation::Registry.new
   end
@@ -16,10 +20,6 @@ describe OpenTelemetry::Instrumentation::Registry do
       adapter_name 'test_adapter'
       adapter_version '0.1.1'
     end
-  end
-
-  after do
-    OpenTelemetry::Instrumentation.registry.instance_variable_set(:@adapters, [])
   end
 
   describe '#register, #lookup' do
