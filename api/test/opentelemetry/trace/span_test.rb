@@ -54,7 +54,7 @@ describe OpenTelemetry::Trace::Span do
     end
   end
 
-  def build_span(*opts)
-    OpenTelemetry::Trace::Span.new(*opts)
+  def build_span(**opts)
+    OpenTelemetry::Trace::Span.new(**opts)
   end
 end
