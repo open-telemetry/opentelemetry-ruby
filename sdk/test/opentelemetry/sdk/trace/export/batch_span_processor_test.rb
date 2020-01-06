@@ -42,7 +42,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
     def initialize(sleep_for_millis: 0, **args)
       @sleep_for_seconds = sleep_for_millis / 1000.0
-      super(args)
+      super(**args)
     end
 
     def export(batch)
