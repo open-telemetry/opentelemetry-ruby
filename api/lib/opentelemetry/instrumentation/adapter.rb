@@ -61,7 +61,9 @@ module OpenTelemetry
         attr_reader :install_blk, :present_blk, :compatible_blk
       end
 
-      attr_reader :name, :version, :config
+      attr_reader :name, :version, :config, :installed
+
+      alias installed? installed
 
       def initialize(name, version, install_blk, present_blk,
                      compatible_blk)
@@ -70,19 +72,31 @@ module OpenTelemetry
         @install_blk = install_blk
         @present_blk = present_blk
         @compatible_blk = compatible_blk
+        @config = {}
+        @installed = false
       end
 
       # Install adapter with the given config. The present? and compatbile?
-      # will be run first, and install will return false if either faile. Will
+      # will be run first, and install will return false if either fail. Will
       # return true if install was completed successfully.
       #
       # @param [Hash] config The config for this adapter
       def install(config = {})
-        return false unless @install_blk && enabled?(config) && present? && compatible?
+        return true if installed?
+        return false unless installable?(config)
 
-        @config = config
+        @config = config unless config.nil?
         instance_exec(@config, &@install_blk)
-        true
+        @installed = true
+      end
+
+      # Whether or not this adapter is installable in the current process. Will
+      # be true when the adapter defines an install block, it's not disabled
+      # by enviroment or config, and the target library present and compatible.
+      #
+      # @param [Hash] config The config for this adapter
+      def installable?(config = {})
+        @install_blk && enabled?(config) && present? && compatible?
       end
 
       # Calls the present block of the Adapter subclasses, if no block is provided

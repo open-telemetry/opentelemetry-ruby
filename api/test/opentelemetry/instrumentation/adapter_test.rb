@@ -145,6 +145,15 @@ describe OpenTelemetry::Instrumentation::Adapter do
     end
   end
 
+  describe '#installed?' do
+    it 'reflects install state' do
+      instance = adapter_with_callbacks.instance
+      _(instance.installed?).must_equal(false)
+      _(instance.install).must_equal(true)
+      _(instance.installed?).must_equal(true)
+    end
+  end
+
   describe '#enabled?' do
     describe 'with env var' do
       it 'is disabled when false' do
