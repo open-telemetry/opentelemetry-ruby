@@ -196,7 +196,6 @@ describe OpenTelemetry::Instrumentation::Adapter do
   describe 'minimal_adapter' do
     before do
       MinimalAdapter = Class.new(OpenTelemetry::Instrumentation::Adapter)
-      MinimalAdapter.const_set(:VERSION, '0.1.0')
     end
 
     after do
@@ -210,8 +209,8 @@ describe OpenTelemetry::Instrumentation::Adapter do
     end
 
     describe '#version' do
-      it 'defaults to the adapters version constant' do
-        _(MinimalAdapter.instance.version).must_equal(MinimalAdapter::VERSION)
+      it 'defaults to 0.0.0' do
+        _(MinimalAdapter.instance.version).must_equal('0.0.0')
       end
     end
   end

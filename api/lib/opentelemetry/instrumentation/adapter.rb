@@ -31,11 +31,7 @@ module OpenTelemetry
           if adapter_version
             @adapter_version = adapter_version
           else
-            @adapter_version ||= begin
-                                   const_get(:VERSION)
-                                 rescue NameError
-                                   ''
-                                 end
+            @adapter_version ||= '0.0.0'
           end
         end
 
