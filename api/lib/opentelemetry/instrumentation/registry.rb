@@ -7,25 +7,40 @@
 module OpenTelemetry
   module Instrumentation
     # The instrumentation Registry contains information about instrumentation
-    # adapters available and facilitates their installation and configuration.
+    # adapters available and facilitates discovery, installation and
+    # configuration. This functonality is primarily useful for SDK
+    # impelementors.
     class Registry
       def initialize
         @lock = Mutex.new
         @adapters = []
       end
 
+      # @api private
       def register(adapter)
         @lock.synchronize do
           @adapters << adapter
         end
       end
 
+      # Lookup an adapter definition by name. Returns nil if +adapter_name+
+      # is not found.
+      #
+      # @param [String] adapter_name A stringified class name for an adapter
+      # @return [Adapter]
       def lookup(adapter_name)
         @lock.synchronize do
           find_adapter(adapter_name)
         end
       end
 
+      # Install the specified adapters with optionally specified configuration.
+      #
+      # @param [Array<String>] adapter_names An array of adapter names to
+      #   install
+      # @param [optional Hash<String, Hash>] adapter_config_map A map of
+      #   adapter_name to config. This argument is optional and config can be
+      #   passed for as many or as few adapters as desired.
       def install(adapter_names, adapter_config_map = {})
         @lock.synchronize do
           adapter_names.each do |adapter_name|
@@ -37,6 +52,11 @@ module OpenTelemetry
         end
       end
 
+      # Install all instrumentation available and installable in this process.
+      #
+      # @param [optional Hash<String, Hash>] adapter_config_map A map of
+      #   adapter_name to config. This argument is optional and config can be
+      #   passed for as many or as few adapters as desired.
       def install_all(adapter_config_map = {})
         @lock.synchronize do
           @adapters.map(&:instance).each do |adapter|
