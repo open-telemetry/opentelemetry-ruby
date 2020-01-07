@@ -79,15 +79,24 @@ module OpenTelemetry
       end
 
       # @api private
+      # The configure method is where we define the setup process. This allows
+      # us to make certain guarantees about which systems and globals are setup
+      # at each stage. Currently, the setup process is roughly:
+      #   - setup logging
+      #   - setup propagation
+      #   - setup tracer_factory and meter_factory
+      #   - install instrumentation
       def configure
         OpenTelemetry.logger = logger
+        # These exist in open or future PRs | | |
+        #                                   v v v
+        # OpenTelemetry.correlation_context_manager = correlation_context_manager
+        # OpenTelemetry.propagation = propagation
         @span_processors.each { |p| tracer_factory.add_span_processor(p) }
         OpenTelemetry.tracer_factory = tracer_factory
         # These exist in open or future PRs | | |
         #                                   v v v
         # OpenTelemetry.meter_factory = meter_factory
-        # OpenTelemetry.correlation_context_manager = correlation_context_manager
-        # OpenTelemetry.propagation = propagation
         # install_instrumentation
       end
 
