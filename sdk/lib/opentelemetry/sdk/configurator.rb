@@ -19,6 +19,7 @@ module OpenTelemetry
                   :propagation, :logger
 
       def initialize
+        @adapter_names = []
         @adapter_config_map = {}
         @span_processors = []
         @use_mode = USE_MODE_UNSPECIFIED
@@ -56,7 +57,8 @@ module OpenTelemetry
       # @param [optional Hash] config The config for this adapter
       def use(adapter_name, config = nil)
         check_use_mode!(USE_MODE_ONE)
-        @adapter_config_map[adapter_name] = config
+        @adapter_names << adapter_name
+        @adapter_config_map[adapter_name] = config if config
       end
 
       # Install all registered instrumentation. Configuration for specific
@@ -99,7 +101,7 @@ module OpenTelemetry
       def install_instrumentation
         case @use_mode
         when USE_MODE_ONE
-          OpenTelemetry.instrumentation_registry.install(@adapter_config_map)
+          OpenTelemetry.instrumentation_registry.install(@adapter_names, @adapter_config_map)
         when USE_MODE_ALL
           OpenTelemtry.instrumentation_registry.install_all(@adapter_config_map)
         end
