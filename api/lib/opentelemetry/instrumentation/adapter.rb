@@ -57,7 +57,7 @@ module OpenTelemetry
         attr_reader :install_blk, :present_blk, :compatible_blk
       end
 
-      attr_reader :name, :version, :config, :installed
+      attr_reader :name, :version, :config, :installed, :tracer
 
       alias installed? installed
 
@@ -83,6 +83,7 @@ module OpenTelemetry
 
         @config = config unless config.nil?
         instance_exec(@config, &@install_blk)
+        @tracer ||= OpenTelemetry.tracer_factory.tracer(name, version)
         @installed = true
       end
 

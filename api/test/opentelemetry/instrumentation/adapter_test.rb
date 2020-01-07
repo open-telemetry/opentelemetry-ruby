@@ -215,6 +215,18 @@ describe OpenTelemetry::Instrumentation::Adapter do
     end
   end
 
+  describe '#tracer' do
+    it 'returns nil if not installed' do
+      _(adapter_with_callbacks.instance.tracer).must_be_nil
+    end
+
+    it 'returns named tracer if installed' do
+      instance = adapter_with_callbacks.instance
+      instance.install
+      _(instance.tracer).must_be_instance_of(OpenTelemetry::Trace::Tracer)
+    end
+  end
+
   def with_env(new_env)
     env_to_reset = ENV.select { |k, _| new_env.key?(k) }
     keys_to_delete = new_env.keys - ENV.keys
