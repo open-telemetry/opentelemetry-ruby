@@ -47,10 +47,10 @@ describe OpenTelemetry::Instrumentation::Registry do
 
     describe '#install_all' do
       it 'installs all registered adapters by default' do
-        _(@adapters.map(&:instance).none?(:installed?))
+        _(@adapters.map(&:instance).none? { |a| a.installed? }) # rubocop:disable Style/SymbolProc
           .must_equal(true)
         registry.install_all
-        _(@adapters.map(&:instance).all?(&:installed?)).must_equal(true)
+        _(@adapters.map(&:instance).all? { |a| a.installed? }).must_equal(true) # rubocop:disable Style/SymbolProc
       end
 
       it 'passes config to adapters when installing' do
@@ -67,7 +67,7 @@ describe OpenTelemetry::Instrumentation::Registry do
 
     describe '#install' do
       it 'installs specified adapters' do
-        _(@adapters.map(&:instance).none?(:installed?))
+        _(@adapters.map(&:instance).none? { |a| a.installed? }) # rubocop:disable Style/SymbolProc
           .must_equal(true)
         registry.install(%w[TestAdapter1])
         _(TestAdapter1.instance.installed?).must_equal(true)
