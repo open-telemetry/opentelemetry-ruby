@@ -8,8 +8,8 @@ module OpenTelemetry
   module Instrumentation
     # The instrumentation Registry contains information about instrumentation
     # adapters available and facilitates discovery, installation and
-    # configuration. This functonality is primarily useful for SDK
-    # impelementors.
+    # configuration. This functionality is primarily useful for SDK
+    # implementors.
     class Registry
       def initialize
         @lock = Mutex.new

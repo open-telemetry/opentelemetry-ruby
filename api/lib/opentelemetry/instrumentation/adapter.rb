@@ -9,7 +9,7 @@ module OpenTelemetry
     # The Adapter class holds all metadata and configuration for an
     # instrumentation adapter. All instrumentation adapter packages should
     # include a subclass of +Instrumentation::Adapter+ that will register
-    # it with +OpenTelemetry.instrumentation_regsitry+ and make it available for
+    # it with +OpenTelemetry.instrumentation_registry+ and make it available for
     # discovery and installation by an SDK.
     #
     # A typical subclass of Adapter will provide the adapter_name,
@@ -20,8 +20,8 @@ module OpenTelemetry
     #   module Adapters
     #     module Sinatra
     #       class Adapter < OpenTelemetry::Instrumentation::Adapter
-    #         library_name 'OpenTelemetry::Adapters::Sinatra'
-    #         library_version OpenTelemetry::Adapters::Sinatra::VERSION
+    #         adapter_name 'OpenTelemetry::Adapters::Sinatra'
+    #         adapter_version OpenTelemetry::Adapters::Sinatra::VERSION
     #
     #         install do |config|
     #           # install instrumentation, either by library hook or applying
@@ -29,7 +29,7 @@ module OpenTelemetry
     #         end
     #
     #         # determine if the target library is present
-    #         present do |config|
+    #         present do
     #           Gem.loaded_specs.key?('sinatra')
     #         end
     #
@@ -47,14 +47,14 @@ module OpenTelemetry
     # SDKs for for instrumentation discovery and installation.
     #
     # Instrumentation libraries can use the adapter subclass to easily gain
-    # a referene to its named tracer. For example:
+    # a reference to its named tracer. For example:
     #
     # OpenTelemetry::Adapters::Sintatra.instance.tracer
     #
     # The adapter class establishes a convention for disabling an adapter
     # by environment variable and local configuration. An adapter disabled
-    # by environment variable will take precedent over local config. The
-    # convention for enviroment variable name is the library name, upcased with
+    # by environment variable will take precedence over local config. The
+    # convention for environment variable name is the library name, upcased with
     # '::' replaced by underscores, and '_ENABLED' appended. For example:
     # OPENTELEMETRY_ADAPTERS_SINATRA_ENABLED = false.
     class Adapter
