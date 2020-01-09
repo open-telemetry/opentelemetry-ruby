@@ -78,6 +78,9 @@ module OpenTelemetry
         else
           OpenTelemetry.logger.warn "Adapter: #{adapter.name} failed to install"
         end
+      rescue => e # rubocop:disable Style/RescueStandardError
+        OpenTelemetry.logger.warn "Adapter: #{adapter.name} unhandled exception" \
+                                  "during install #{e}: #{e.backtrace}"
       end
     end
   end

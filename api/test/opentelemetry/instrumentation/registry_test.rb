@@ -87,4 +87,35 @@ describe OpenTelemetry::Instrumentation::Registry do
       end
     end
   end
+
+  describe 'buggy adapters' do
+    before do
+      BuggyAdapter = Class.new(OpenTelemetry::Instrumentation::Adapter) do
+        install { raise 'oops' }
+      end
+      registry.register(BuggyAdapter)
+    end
+
+    after do
+      Object.send(:remove_const, :BuggyAdapter)
+    end
+
+    describe 'install' do
+      it 'handles exceptions during installation' do
+        instance = BuggyAdapter.instance
+        _(instance.installed?).must_equal(false)
+        registry.install(%w[BuggyAdapter])
+        _(instance.installed?).must_equal(false)
+      end
+    end
+
+    describe 'install_all' do
+      it 'handles exceptions during installation' do
+        instance = BuggyAdapter.instance
+        _(instance.installed?).must_equal(false)
+        registry.install_all
+        _(instance.installed?).must_equal(false)
+      end
+    end
+  end
 end
