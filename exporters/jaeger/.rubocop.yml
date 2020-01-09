@@ -3,15 +3,18 @@ AllCops:
   Exclude:
     - "thrift/**/*"
 
+Lint/UnusedMethodArgument:
+  Enabled: false
 Metrics/AbcSize:
   Max: 18
 Metrics/LineLength:
   Enabled: false
-Metrics/ParameterLists:
-  Enabled: false
 Metrics/MethodLength:
   Max: 20
-Style/ModuleFunction:
+Metrics/ParameterLists:
   Enabled: false
-Lint/UnusedMethodArgument:
+Naming/FileName:
+  Exclude:
+    - "lib/opentelemetry-exporters-jaeger.rb"
+Style/ModuleFunction:
   Enabled: false

@@ -3,6 +3,7 @@
 # Copyright 2019 OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
+
 require 'logger'
 
 require 'opentelemetry/error'
@@ -13,7 +14,11 @@ require 'opentelemetry/metrics'
 require 'opentelemetry/trace'
 require 'opentelemetry/version'
 
-# OpenTelemetry provides global accessors for telemetry objects
+# OpenTelemetry is an open source observability framework, providing a
+# general-purpose API, SDK, and related tools required for the instrumentation
+# of cloud-native software, frameworks, and libraries.
+#
+# The OpenTelemetry module provides global accessors for telemetry objects.
 module OpenTelemetry
   extend self
 
