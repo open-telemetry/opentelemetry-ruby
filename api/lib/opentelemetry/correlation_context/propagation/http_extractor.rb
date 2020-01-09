@@ -10,7 +10,7 @@ module OpenTelemetry
   module CorrelationContext
     module Propagation
       # Extracts correlations from carriers in the W3C Correlation Context format
-      class HttpCorrelationContextExtractor
+      class HttpExtractor
         include Context::Propagation::DefaultGetter
 
         # Returns a new HttpCorrelationContextExtractor that extracts context using the

@@ -12,7 +12,7 @@ describe OpenTelemetry::CorrelationContext::Propagation do
       %i[http_extractor rack_http_extractor].each do |extractor_method|
         extractor = OpenTelemetry::CorrelationContext::Propagation.send(extractor_method)
         _(extractor).must_be_instance_of(
-          OpenTelemetry::CorrelationContext::Propagation::HttpCorrelationContextExtractor
+          OpenTelemetry::CorrelationContext::Propagation::HttpExtractor
         )
       end
     end
@@ -23,7 +23,7 @@ describe OpenTelemetry::CorrelationContext::Propagation do
       %i[http_injector rack_http_injector].each do |injector_method|
         injector = OpenTelemetry::CorrelationContext::Propagation.send(injector_method)
         _(injector).must_be_instance_of(
-          OpenTelemetry::CorrelationContext::Propagation::HttpCorrelationContextInjector
+          OpenTelemetry::CorrelationContext::Propagation::HttpInjector
         )
       end
     end

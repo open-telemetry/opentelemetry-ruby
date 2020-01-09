@@ -10,7 +10,7 @@ module OpenTelemetry
   module CorrelationContext
     module Propagation
       # Injects correlation context using the W3C Correlation Context format
-      class HttpCorrelationContextInjector
+      class HttpInjector
         include Context::Propagation::DefaultSetter
 
         # Returns a new HttpCorrelationContextInjector that injects context using the

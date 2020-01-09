@@ -5,8 +5,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry/correlation_context/propagation/context_keys'
-require 'opentelemetry/correlation_context/propagation/http_correlation_context_injector'
-require 'opentelemetry/correlation_context/propagation/http_correlation_context_extractor'
+require 'opentelemetry/correlation_context/propagation/http_injector'
+require 'opentelemetry/correlation_context/propagation/http_extractor'
 
 module OpenTelemetry
   module CorrelationContext
@@ -15,12 +15,12 @@ module OpenTelemetry
     module Propagation
       extend self
 
-      HTTP_EXTRACTOR = HttpCorrelationContextExtractor.new
-      HTTP_INJECTOR = HttpCorrelationContextInjector.new
-      RACK_HTTP_EXTRACTOR = HttpCorrelationContextExtractor.new(
+      HTTP_EXTRACTOR = HttpExtractor.new
+      HTTP_INJECTOR = HttpInjector.new
+      RACK_HTTP_EXTRACTOR = HttpExtractor.new(
         correlation_context_key: 'HTTP_CORRELATION_CONTEXT'
       )
-      RACK_HTTP_INJECTOR = HttpCorrelationContextInjector.new(
+      RACK_HTTP_INJECTOR = HttpInjector.new(
         correlation_context_key: 'HTTP_CORRELATION_CONTEXT'
       )
 
