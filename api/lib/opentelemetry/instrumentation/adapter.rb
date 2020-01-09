@@ -12,17 +12,14 @@ module OpenTelemetry
     # it with +OpenTelemetry.instrumentation_registry+ and make it available for
     # discovery and installation by an SDK.
     #
-    # A typical subclass of Adapter will provide the adapter_name,
-    # adapter_version, an install block, a present block, and possibly
-    # a compatible block. Below is an example:
+    # A typical subclass of Adapter will provide an install block, a present
+    # block, and possibly a compatible block. Below is an
+    # example:
     #
     # module OpenTelemetry
     #   module Adapters
     #     module Sinatra
     #       class Adapter < OpenTelemetry::Instrumentation::Adapter
-    #         adapter_name 'OpenTelemetry::Adapters::Sinatra'
-    #         adapter_version OpenTelemetry::Adapters::Sinatra::VERSION
-    #
     #         install do |config|
     #           # install instrumentation, either by library hook or applying
     #           # a monkey patch
@@ -42,6 +39,11 @@ module OpenTelemetry
     #   end
     # end
     #
+    # The adapter name and version will inferred from the namespace of the
+    # class. In this example, they'd be 'OpenTelemetry::Adapters::Sinatra' and
+    # OpenTelemetry::Adapters::Sinatra::VERSION, but can be explicitly set using
+    # the +adapter_name+ and +adapter_version+ methods if necessary.
+    #
     # All subclasses of OpenTelemetry::Instrumentation::Adapter are automatically
     # registered with OpenTelemetry.instrumentation_registry which is used by
     # SDKs for for instrumentation discovery and installation.
@@ -59,35 +61,41 @@ module OpenTelemetry
     # OPENTELEMETRY_ADAPTERS_SINATRA_ENABLED = false.
     class Adapter
       class << self
+        NAME_REGEX = /^(?:(?<namespace>[a-zA-Z0-9_:]+):{2})?(?<classname>[a-zA-Z0-9_]+)$/.freeze
+        private_constant :NAME_REGEX
+
         private :new # rubocop:disable Style/AccessModifierDeclarations
 
         def inherited(subclass)
           OpenTelemetry.instrumentation_registry.register(subclass)
         end
 
-        # The name of this instrumentation adapter. Typically this is going
-        # to be the name of the instrumentation package. For example,
-        # 'OpenTelemetry::Adapters::Sinatra'
+        # Optionally set the name of this instrumentation adapter. If not
+        # explicitly set, the name will default to the namespace of the class,
+        # or the class name if it does not have a namespace. If there is not
+        # a namespace, or a class name, it will default to 'unknown'.
         #
         # @param [String] adapter_name The full name of the adapter package
         def adapter_name(adapter_name = nil)
           if adapter_name
             @adapter_name = adapter_name
           else
-            @adapter_name ||= name
+            @adapter_name ||= infer_name || 'unknown'
           end
         end
 
-        # The version of this adapter. Typically this will be the package
-        # version of the adapter. For example,
-        # OpenTelemetry::Adapters::Sintra::VERSION
+        # Optionally set the version of this adapter. If not explicitly set,
+        # the version will default to the version constant under namespace of
+        # the class, or the version constant under the class name if it does not
+        # have a namespace. If a version constant cannot be found, it defaults
+        # to '0.0.0'.
         #
         # @param [String] adapter_version The version of the adapter package
         def adapter_version(adapter_version = nil)
           if adapter_version
             @adapter_version = adapter_version
           else
-            @adapter_version ||= '0.0.0'
+            @adapter_version ||= infer_version || '0.0.0'
           end
         end
 
@@ -129,6 +137,23 @@ module OpenTelemetry
         private
 
         attr_reader :install_blk, :present_blk, :compatible_blk
+
+        def infer_name
+          @inferred_name ||= if (md = name.match(NAME_REGEX)) # rubocop:disable Naming/MemoizedInstanceVariableName
+                               md['namespace'] || md['classname']
+                             end
+        end
+
+        def infer_version
+          return unless (inferred_name = infer_name)
+
+          mod = inferred_name.split('::').map(&:to_sym).inject(Object) do |object, const|
+            object.const_get(const)
+          end
+          mod.const_get(:VERSION)
+        rescue NameError
+          nil
+        end
       end
 
       attr_reader :name, :version, :config, :installed, :tracer

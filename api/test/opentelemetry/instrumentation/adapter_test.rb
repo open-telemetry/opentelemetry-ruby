@@ -227,6 +227,42 @@ describe OpenTelemetry::Instrumentation::Adapter do
     end
   end
 
+  describe 'namespaced adapter' do
+    before do
+      define_adapter_subclass('OTel::Adapters::Sinatra::Adapter', '2.1.0')
+    end
+
+    after do
+      Object.send(:remove_const, :OTel)
+    end
+
+    describe '#name' do
+      it 'defaults to the namespace' do
+        instance = OTel::Adapters::Sinatra::Adapter.instance
+        _(instance.name).must_equal('OTel::Adapters::Sinatra')
+      end
+    end
+
+    describe '#version' do
+      it 'defaults to the version constant' do
+        instance = OTel::Adapters::Sinatra::Adapter.instance
+        _(instance.version).must_equal(OTel::Adapters::Sinatra::VERSION)
+      end
+    end
+  end
+
+  def define_adapter_subclass(name, version = nil)
+    names = name.split('::').map(&:to_sym)
+    names.inject(Object) do |object, const|
+      if const == names[-1]
+        object.const_set(:VERSION, version) if version
+        object.const_set(const, Class.new(OpenTelemetry::Instrumentation::Adapter))
+      else
+        object.const_set(const, Module.new)
+      end
+    end
+  end
+
   def with_env(new_env)
     env_to_reset = ENV.select { |k, _| new_env.key?(k) }
     keys_to_delete = new_env.keys - ENV.keys
