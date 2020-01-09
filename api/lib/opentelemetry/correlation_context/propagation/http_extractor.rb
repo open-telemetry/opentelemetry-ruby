@@ -50,7 +50,7 @@ module OpenTelemetry
             memo[k] = v
           end
 
-          context.set_value(ContextKeys.span_context_key, correlations)
+          context.set_value(ContextKeys.correlation_context_key, correlations)
         end
       end
     end

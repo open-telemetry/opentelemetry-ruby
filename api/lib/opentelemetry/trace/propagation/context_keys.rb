@@ -12,17 +12,18 @@ module OpenTelemetry
       module ContextKeys
         extend self
 
-        EXTRACTED_SPAN_CONTEXT_KEY = 'extracted-span-context'
-        CURRENT_SPAN_KEY = 'current-span'
-
-        private_constant :EXTRACTED_SPAN_CONTEXT_KEY, :CURRENT_SPAN_KEY
-
+        # Returns the context key that an extracted span context is stored under
+        #
+        # @return [String]
         def extracted_span_context_key
-          EXTRACTED_SPAN_CONTEXT_KEY
+          'extracted-span-context'
         end
 
+        # Returns the context key that the current span is stored under
+        #
+        # @return [String]
         def current_span_key
-          CURRENT_SPAN_KEY
+          'current-span'
         end
       end
     end

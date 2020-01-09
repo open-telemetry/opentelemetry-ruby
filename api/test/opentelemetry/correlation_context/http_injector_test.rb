@@ -14,7 +14,7 @@ describe OpenTelemetry::CorrelationContext::Propagation::HttpInjector do
     'Correlation-Context'
   end
   let(:context_key) do
-    OpenTelemetry::CorrelationContext::Propagation::ContextKeys.span_context_key
+    OpenTelemetry::CorrelationContext::Propagation::ContextKeys.correlation_context_key
   end
 
   describe '#inject' do

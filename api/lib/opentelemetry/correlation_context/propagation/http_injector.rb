@@ -34,7 +34,7 @@ module OpenTelemetry
         #   and the header key to the getter.
         # @return [Object] carrier with injected correlations
         def inject(context, carrier, &setter)
-          return carrier unless (correlations = context[ContextKeys.span_context_key]) && !correlations.empty?
+          return carrier unless (correlations = context[ContextKeys.correlation_context_key]) && !correlations.empty?
 
           setter ||= default_setter
           setter.call(carrier, @correlation_context_key, encode(correlations))

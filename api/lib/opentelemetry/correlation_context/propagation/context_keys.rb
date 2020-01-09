@@ -12,11 +12,11 @@ module OpenTelemetry
       module ContextKeys
         extend self
 
-        CORRELATION_CONTEXT_KEY = 'correlation-context'
-        private_constant(:CORRELATION_CONTEXT_KEY)
-
-        def span_context_key
-          CORRELATION_CONTEXT_KEY
+        # Returns the context key that correlations are stored under
+        #
+        # @return [String]
+        def correlation_context_key
+          'correlation-context'
         end
       end
     end
