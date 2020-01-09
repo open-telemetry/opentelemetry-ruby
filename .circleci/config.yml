@@ -21,6 +21,11 @@ executors:
       - image: "circleci/jruby:latest"
     environment:
       JRUBY_OPTS: "--debug"
+  jruby92:
+    docker:
+      - image: "circleci/jruby:9.2.8-jre"
+    environment:
+      JRUBY_OPTS: "--debug"
 commands:
   rake-test:
     steps:
@@ -43,13 +48,17 @@ commands:
       - run:
           name: CI (Jaeger)
           command: "cd exporters/jaeger && bundle exec rake"
+  rake-test-appraisal:
+    steps:
       - run:
           name: Bundle + CI (Adapters - Sinatra)
           command: |
             cd adapters/sinatra
-            gem install --no-document bundler
+            gem uninstall -aIx bundler
+            gem install --no-document bundler -v '~> 2.0.2'
             bundle install --jobs=3 --retry=3
-            bundle exec rake test
+            bundle exec appraisal install
+            bundle exec appraisal rake test
   rake-release:
     steps:
       - checkout
@@ -64,14 +73,17 @@ jobs:
     executor: ruby24
     steps:
       - rake-test
+      - rake-test-appraisal
   test-ruby25:
     executor: ruby25
     steps:
       - rake-test
+      - rake-test-appraisal
   test-ruby26:
     executor: ruby26
     steps:
       - rake-test
+      - rake-test-appraisal
   test-ruby27:
     executor: ruby27
     steps:
@@ -80,10 +92,16 @@ jobs:
     executor: jruby
     steps:
       - rake-test
+  test-jruby92:
+    executor: jruby92
+    steps:
+      - rake-test
+      - rake-test-appraisal
   release:
     executor: ruby26
     steps:
       - rake-release
+      - rake-test-appraisal
 workflows:
   version: 2
   builds:
@@ -105,6 +123,10 @@ workflows:
             tags:
               only: /^opentelemetry-.+\/v\d.*$/
       - test-jruby:
+          filters:
+            tags:
+              only: /^opentelemetry-.+\/v\d.*$/
+      - test-jruby92:
           filters:
             tags:
               only: /^opentelemetry-.+\/v\d.*$/
