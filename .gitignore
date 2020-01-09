@@ -5,3 +5,6 @@
 **/coverage
 **/*.gem
 **/.bundle
+
+# Appraisals
+adapters/**/*.gemfile.lock
