@@ -1,0 +1,9 @@
+--no-private
+--title=OpenTelemetry SDK
+--markup=markdown
+--main=OVERVIEW.md
+./lib/opentelemetry/sdk/**/*.rb
+./lib/opentelemetry/sdk.rb
+-
+OVERVIEW.md
+CHANGELOG.md
