@@ -51,7 +51,7 @@ module OpenTelemetry
     # Instrumentation libraries can use the adapter subclass to easily gain
     # a reference to its named tracer. For example:
     #
-    # OpenTelemetry::Adapters::Sintatra.instance.tracer
+    # OpenTelemetry::Adapters::Sinatra.instance.tracer
     #
     # The adapter class establishes a convention for disabling an adapter
     # by environment variable and local configuration. An adapter disabled
@@ -171,7 +171,7 @@ module OpenTelemetry
         @installed = false
       end
 
-      # Install adapter with the given config. The present? and compatbile?
+      # Install adapter with the given config. The present? and compatible?
       # will be run first, and install will return false if either fail. Will
       # return true if install was completed successfully.
       #
