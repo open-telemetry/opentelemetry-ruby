@@ -27,14 +27,13 @@ module OpenTelemetry
         end
 
         def start_root_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
-          parent_span_context = OpenTelemetry::Trace::SpanContext::INVALID
-          start_span(name, with_parent_context: parent_span_context, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind, sampling_hint: sampling_hint)
+          start_span(name, with_parent_context: Context.empty, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind, sampling_hint: sampling_hint)
         end
 
-        def start_span(name, with_parent: nil, with_parent_context: nil, with_context: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
+        def start_span(name, with_parent: nil, with_parent_context: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
           name ||= 'empty'
 
-          parent_span_context = with_parent&.context || with_parent_context || active_span_context(with_context)
+          parent_span_context = with_parent&.context || active_span_context(with_parent_context)
           parent_span_context = nil unless parent_span_context.valid?
           parent_span_id = parent_span_context&.span_id
           tracestate = parent_span_context&.tracestate

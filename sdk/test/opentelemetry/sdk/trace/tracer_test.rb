@@ -142,7 +142,15 @@ describe OpenTelemetry::SDK::Trace::Tracer do
   end
 
   describe '#start_span' do
-    let(:context) { OpenTelemetry::Trace::SpanContext.new(tracestate: 'vendorname=opaquevalue') }
+    let(:span_context) do
+      OpenTelemetry::Trace::SpanContext.new(tracestate: 'vendorname=opaquevalue')
+    end
+    let(:context) do
+      OpenTelemetry::Context.empty.set_value(
+        OpenTelemetry::Trace::Propagation::ContextKeys.extracted_span_context_key,
+        span_context
+      )
+    end
 
     it 'provides a default name' do
       _(tracer.start_span(nil, with_parent_context: context).name).wont_be_nil
@@ -155,17 +163,17 @@ describe OpenTelemetry::SDK::Trace::Tracer do
 
     it 'returns a span with the same trace ID as the parent context' do
       span = tracer.start_span('op', with_parent_context: context)
-      _(span.context.trace_id).must_equal(context.trace_id)
+      _(span.context.trace_id).must_equal(span_context.trace_id)
     end
 
     it 'returns a span with the parent context span ID' do
       span = tracer.start_span('op', with_parent_context: context)
-      _(span.parent_span_id).must_equal(context.span_id)
+      _(span.parent_span_id).must_equal(span_context.span_id)
     end
 
     it 'returns a span with the parent context tracestate' do
       span = tracer.start_span('op', with_parent_context: context)
-      _(span.context.tracestate).must_equal(context.tracestate)
+      _(span.context.tracestate).must_equal(span_context.tracestate)
     end
 
     it 'returns a no-op span if sampler says do not record events' do
@@ -198,7 +206,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       attributes = Minitest::Mock.new
       result = Result.new(decision: Decision::NOT_RECORD)
       mock_sampler = Minitest::Mock.new
-      mock_sampler.expect(:call, result, [{ trace_id: context.trace_id, span_id: span_id, parent_context: context, hint: hint, links: links, name: name, kind: kind, attributes: attributes }])
+      mock_sampler.expect(:call, result, [{ trace_id: span_context.trace_id, span_id: span_id, parent_context: span_context, hint: hint, links: links, name: name, kind: kind, attributes: attributes }])
       activate_trace_config TraceConfig.new(sampler: mock_sampler)
       OpenTelemetry::Trace.stub :generate_span_id, span_id do
         tracer.start_span(name, with_parent_context: context, attributes: attributes, links: links, kind: kind, sampling_hint: hint)
@@ -211,7 +219,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       span = tracer.start_span('op', with_parent_context: context)
       _(span.context.trace_flags).wont_be :sampled?
       _(span).wont_be :recording?
-      _(span.context.trace_id).must_equal(context.trace_id)
+      _(span.context.trace_id).must_equal(span_context.trace_id)
     end
 
     it 'creates a span with all supplied parameters' do
@@ -225,8 +233,8 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       _(span.name).must_equal(name)
       _(span.kind).must_equal(kind)
       _(span.attributes).must_equal(attributes)
-      _(span.parent_span_id).must_equal(context.span_id)
-      _(span.context.trace_id).must_equal(context.trace_id)
+      _(span.parent_span_id).must_equal(span_context.span_id)
+      _(span.context.trace_id).must_equal(span_context.trace_id)
       _(span.start_timestamp).must_equal(start_timestamp)
     end
 
