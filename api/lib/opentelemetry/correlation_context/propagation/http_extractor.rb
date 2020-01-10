@@ -13,12 +13,12 @@ module OpenTelemetry
       class HttpExtractor
         include Context::Propagation::DefaultGetter
 
-        # Returns a new HttpCorrelationContextExtractor that extracts context using the
-        # specified header key
+        # Returns a new HttpExtractor that extracts context using the specified
+        # header key
         #
-        # @param [String] correlation_context_header_key The correlation context header
+        # @param [String] correlation_context_key The correlation context header
         #   key used in the carrier
-        # @return [HttpCorrelationContextExtractor]
+        # @return [HttpExtractor]
         def initialize(correlation_context_key: 'Correlation-Context')
           @correlation_context_key = correlation_context_key
         end
@@ -43,9 +43,9 @@ module OpenTelemetry
 
           correlations = entries.each_with_object({}) do |entry, memo|
             # The ignored variable below holds properties as per the W3C spec.
-            # OTel is not using them currently, but might they may be used for
+            # OTel is not using them currently, but they might be used for
             # metadata in the future
-            kv, = entry.split(';')
+            kv, = entry.split(';', 2)
             k, v = kv.split('=').map!(&CGI.method(:unescape))
             memo[k] = v
           end

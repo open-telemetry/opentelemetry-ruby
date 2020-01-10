@@ -13,12 +13,12 @@ module OpenTelemetry
       class HttpInjector
         include Context::Propagation::DefaultSetter
 
-        # Returns a new HttpCorrelationContextInjector that injects context using the
-        # specified header key
+        # Returns a new HttpInjector that injects context using the specified
+        # header key
         #
         # @param [String] correlation_context_header_key The correlation context header
         #   key used in the carrier
-        # @return [HttpCorrelationContextInjector]
+        # @return [HttpInjector]
         def initialize(correlation_context_key: 'Correlation-Context')
           @correlation_context_key = correlation_context_key
         end

@@ -56,7 +56,7 @@ module OpenTelemetry
         # @return [Context]
         def set_value(key, value, context: Context.current)
           new_correlations = correlations_for(context).dup
-          new_correlations[key] = value.to_s
+          new_correlations[key] = value
           context.set_value(CORRELATION_CONTEXT_KEY, new_correlations)
         end
 

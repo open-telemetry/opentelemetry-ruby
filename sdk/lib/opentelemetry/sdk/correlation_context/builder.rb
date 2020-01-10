@@ -7,7 +7,7 @@
 module OpenTelemetry
   module SDK
     module CorrelationContext
-      # No op implementation of CorrelationContext::Builder
+      # SDK implementation of CorrelationContext::Builder
       class Builder
         attr_reader :entries
 
