@@ -76,6 +76,11 @@ describe OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware do
       adapter.install(tracer_middleware: NoReportMiddleware)
     end
 
+    after do
+      adapter.instance_variable_set(:@installed, false)
+      Faraday::Middleware.instance_variable_set(:@registered_middleware, {})
+    end
+
     it 'does not report' do
       client.get('/success')
 
