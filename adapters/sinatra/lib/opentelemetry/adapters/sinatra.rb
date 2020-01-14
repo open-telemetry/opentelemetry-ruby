@@ -7,22 +7,6 @@
 module OpenTelemetry
   module Adapters
     module Sinatra
-      module_function
-
-      def install(config = {})
-        require_relative 'sinatra/adapter'
-        Sinatra::Adapter.install(config)
-      end
-
-      # Convenience method to access the nested module name
-      def name
-        Module.nesting[0].to_s
-      end
-
-      # Convenience method to access the adapter version
-      def version
-        VERSION
-      end
     end
   end
 end
