@@ -7,22 +7,6 @@
 module OpenTelemetry
   module Adapters
     module Faraday
-      module_function
-
-      def install(config = {})
-        require_relative 'faraday/adapter'
-        Faraday::Adapter.install(config)
-      end
-
-      # Convenience method to access the nested module name
-      def name
-        Module.nesting[0].to_s
-      end
-
-      # Convenience method to access the adapter version
-      def version
-        VERSION
-      end
     end
   end
 end

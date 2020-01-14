@@ -6,10 +6,10 @@
 
 require 'test_helper'
 
-require_relative '../../../lib/opentelemetry/adapters/faraday'
+require_relative '../../../lib/opentelemetry/adapters/faraday/adapter'
 
 describe OpenTelemetry::Adapters::Faraday do
-  let(:adapter) { OpenTelemetry::Adapters::Faraday }
+  let(:adapter) { OpenTelemetry::Adapters::Faraday::Adapter.instance }
   let(:exporter) { EXPORTER }
 
   before do

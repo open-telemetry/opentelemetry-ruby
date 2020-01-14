@@ -11,7 +11,7 @@ require_relative '../../../../../lib/opentelemetry/adapters/faraday'
 require_relative '../../../../../lib/opentelemetry/adapters/faraday/middlewares/tracer_middleware'
 
 describe OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware do
-  let(:adapter) { OpenTelemetry::Adapters::Faraday }
+  let(:adapter) { OpenTelemetry::Adapters::Faraday::Adapter.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
 
@@ -26,11 +26,14 @@ describe OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware do
   end
 
   before do
-    adapter.install
     exporter.reset
   end
 
   describe 'first span' do
+    before do
+      adapter.install
+    end
+
     it 'has http 200 attributes' do
       client.get('/success')
 
@@ -67,6 +70,9 @@ describe OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware do
     end
 
     before do
+      # force a reinstall of instrumentation, note: this won't always work for
+      # all adapters
+      adapter.instance_variable_set(:@installed, false)
       adapter.install(tracer_middleware: NoReportMiddleware)
     end
 

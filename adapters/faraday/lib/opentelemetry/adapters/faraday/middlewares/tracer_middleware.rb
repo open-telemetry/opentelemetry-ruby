@@ -39,11 +39,11 @@ module OpenTelemetry
           end
 
           def propagator
-            Faraday::Adapter.propagator
+            OpenTelemetry.tracer_factory.http_text_format
           end
 
           def tracer
-            Faraday::Adapter.tracer
+            Faraday::Adapter.instance.tracer
           end
 
           def trace_response(span, response)
