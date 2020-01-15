@@ -16,12 +16,14 @@ module OpenTelemetry
       private_constant :USE_MODE_UNSPECIFIED, :USE_MODE_ONE, :USE_MODE_ALL
 
       attr_writer :tracer_factory, :meter_factory, :correlation_context_manager,
-                  :propagation, :logger
+                  :global_http_extractors, :global_http_injectors, :logger
 
       def initialize
         @adapter_names = []
         @adapter_config_map = {}
         @span_processors = []
+        # @global_http_extractors = default_http_extractors
+        # @global_http_injectors = default_http_injectors
         @use_mode = USE_MODE_UNSPECIFIED
       end
 
@@ -37,10 +39,6 @@ module OpenTelemetry
 
       # def correlation_context_manager
       #   @correlation_context_manager ||= CorrelationContext::Mangager.new
-      # end
-
-      # def propagation
-      #   @propagation ||= Propagation::Propagation.new
       # end
 
       def logger
@@ -91,7 +89,8 @@ module OpenTelemetry
         # These exist in open or future PRs | | |
         #                                   v v v
         # OpenTelemetry.correlation_context_manager = correlation_context_manager
-        # OpenTelemetry.propagation = propagation
+        # OpenTelemetry.propagation.http_injectors = @global_http_injectors
+        # OpenTelemetry.propagation.http_extractors = @global_http_extractors
         configure_span_processors
         OpenTelemetry.tracer_factory = tracer_factory
         # These exist in open or future PRs | | |
@@ -125,6 +124,20 @@ module OpenTelemetry
         Trace::Export::SimpleSpanProcessor.new(
           Trace::Export::ConsoleSpanExporter.new
         )
+      end
+
+      def default_http_injectors
+        [
+          Trace::Propagation.http_trace_context_injector,
+          CorrelationContext::Propagation.http_injector
+        ]
+      end
+
+      def default_http_extractors
+        [
+          Trace::Propagation.http_trace_context_extractor,
+          CorrelationContext::Propagation.http_extractor
+        ]
       end
     end
   end
