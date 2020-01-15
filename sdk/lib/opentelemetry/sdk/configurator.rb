@@ -92,7 +92,7 @@ module OpenTelemetry
         #                                   v v v
         # OpenTelemetry.correlation_context_manager = correlation_context_manager
         # OpenTelemetry.propagation = propagation
-        @span_processors.each { |p| tracer_factory.add_span_processor(p) }
+        configure_span_processors
         OpenTelemetry.tracer_factory = tracer_factory
         # These exist in open or future PRs | | |
         #                                   v v v
@@ -114,6 +114,17 @@ module OpenTelemetry
         when USE_MODE_ALL
           OpenTelemtry.instrumentation_registry.install_all(@adapter_config_map)
         end
+      end
+
+      def configure_span_processors
+        processors = @span_processors.empty? ? [default_span_processor] : @span_processors
+        processors.each { |p| tracer_factory.add_span_processor(p) }
+      end
+
+      def default_span_processor
+        Trace::Export::SimpleSpanProcessor.new(
+          Trace::Export::ConsoleSpanExporter.new
+        )
       end
     end
   end

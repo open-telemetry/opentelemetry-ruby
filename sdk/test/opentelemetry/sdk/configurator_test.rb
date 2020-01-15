@@ -44,4 +44,50 @@ describe OpenTelemetry::SDK::Configurator do
       end
     end
   end
+
+  describe '#configure' do
+    after do
+      reset_globals
+    end
+
+    describe 'span processors' do
+      it 'defaults to SimpleSpanProcessor w/ ConsoleSpanExporter' do
+        configurator.configure
+
+        processors = active_span_processors
+
+        _(processors.size).must_equal(1)
+        _(processors.first).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor
+        )
+      end
+
+      it 'reflects configured value' do
+        configurator.add_span_processor(
+          OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(
+            exporter: OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter.new
+          )
+        )
+
+        configurator.configure
+        processors = active_span_processors
+
+        _(processors.size).must_equal(1)
+        _(processors.first).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
+        )
+      end
+    end
+  end
+
+  def active_span_processors
+    OpenTelemetry.tracer_factory.active_span_processor.instance_variable_get(:@span_processors)
+  end
+
+  def reset_globals
+    OpenTelemetry.instance_variables.each do |iv|
+      OpenTelemetry.instance_variable_set(iv, nil)
+    end
+    OpenTelemetry.logger = Logger.new(STDOUT)
+  end
 end
