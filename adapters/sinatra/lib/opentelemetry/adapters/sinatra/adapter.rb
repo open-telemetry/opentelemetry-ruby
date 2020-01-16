@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
-# Copyright 2019 OpenTelemetry Authors
+# Copyright 2020 OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
 
 require 'sinatra'
-require 'opentelemetry'
 
 require_relative 'extensions/tracer_extension'
 
