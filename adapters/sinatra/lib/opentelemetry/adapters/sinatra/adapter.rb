@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'sinatra'
-
 require_relative 'extensions/tracer_extension'
 
 module OpenTelemetry
