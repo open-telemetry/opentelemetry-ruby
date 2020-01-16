@@ -87,9 +87,9 @@ describe OpenTelemetry::Instrumentation::Adapter do
     end
 
     describe 'without present block' do
-      it 'defaults to true' do
+      it 'defaults to false' do
         instance = adapter.instance
-        _(instance.present?).must_equal(true)
+        _(instance.present?).must_equal(false)
       end
     end
   end

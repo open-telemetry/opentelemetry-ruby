@@ -33,9 +33,11 @@ describe OpenTelemetry::Instrumentation::Registry do
     before do
       TestAdapter1 = Class.new(OpenTelemetry::Instrumentation::Adapter) do
         install { 1 + 1 }
+        present { true }
       end
       TestAdapter2 = Class.new(OpenTelemetry::Instrumentation::Adapter) do
         install { 2 + 2 }
+        present { true }
       end
       @adapters = [TestAdapter1, TestAdapter2]
       @adapters.each { |adapter| registry.register(adapter) }

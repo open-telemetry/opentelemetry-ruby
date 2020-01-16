@@ -196,9 +196,9 @@ module OpenTelemetry
       end
 
       # Calls the present block of the Adapter subclasses, if no block is provided
-      # it's assumed to be present
+      # it's assumed the adapter is not present
       def present?
-        return true unless @present_blk
+        return false unless @present_blk
 
         instance_exec(&@present_blk)
       end
