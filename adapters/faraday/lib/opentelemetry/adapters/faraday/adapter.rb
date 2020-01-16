@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry'
-
 require_relative 'middlewares/tracer_middleware'
 require_relative 'patches/rack_builder'
 
