@@ -4,9 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative 'middlewares/tracer_middleware'
-require_relative 'patches/rack_builder'
-
 module OpenTelemetry
   module Adapters
     module Faraday
@@ -14,6 +11,7 @@ module OpenTelemetry
         install do |config|
           config[:tracer_middleware] ||= Middlewares::TracerMiddleware
 
+          require_dependencies
           register_tracer_middleware
           use_middleware_by_default
         end
@@ -23,6 +21,11 @@ module OpenTelemetry
         end
 
         private
+
+        def require_dependencies
+          require_relative 'middlewares/tracer_middleware'
+          require_relative 'patches/rack_builder'
+        end
 
         def register_tracer_middleware
           ::Faraday::Middleware.register_middleware(

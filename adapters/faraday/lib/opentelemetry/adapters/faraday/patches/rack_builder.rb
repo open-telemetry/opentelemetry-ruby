@@ -3,7 +3,6 @@
 # Copyright 2019 OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
-require_relative '../middlewares/tracer_middleware'
 
 module OpenTelemetry
   module Adapters
