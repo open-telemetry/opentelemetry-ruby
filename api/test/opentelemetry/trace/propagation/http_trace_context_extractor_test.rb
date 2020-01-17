@@ -64,11 +64,11 @@ describe OpenTelemetry::Trace::Propagation::HttpTraceContextExtractor do
       _(span_context.tracestate).must_equal('vendorname=opaquevalue')
     end
 
-    it 'returns a valid non-remote SpanContext on error' do
+    it 'returns original context on error' do
       ctx = extractor.extract(context, {}) { invalid_traceparent_header }
+      _(ctx).must_equal(context)
       span_context = ctx[span_context_key]
-      _(span_context).wont_be :remote?
-      _(span_context).must_be :valid?
+      _(span_context).must_be_nil
     end
   end
 end

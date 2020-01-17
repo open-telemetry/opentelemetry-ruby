@@ -32,8 +32,8 @@ module OpenTelemetry
         #   which expects the carrier to respond to [] and []=.
         # @yield [Carrier, String] if an optional getter is provided, extract will yield the carrier
         #   and the header key to the getter.
-        # @return [Context] Updated context with span context from the header, or a new one if
-        #   parsing fails.
+        # @return [Context] Updated context with span context from the header, or the original
+        #   context if parsing fails.
         def extract(context, carrier, &getter)
           getter ||= default_getter
           header = getter.call(carrier, @traceparent_header_key)
@@ -48,7 +48,7 @@ module OpenTelemetry
                                                 remote: true)
           context.set_value(ContextKeys.extracted_span_context_key, span_context)
         rescue OpenTelemetry::Error
-          context.set_value(ContextKeys.extracted_span_context_key, Trace::SpanContext.new)
+          context
         end
       end
     end
