@@ -89,4 +89,12 @@ describe OpenTelemetry do
       _(OpenTelemetry.distributed_context_manager).must_equal(custom_manager)
     end
   end
+
+  describe '.instrumentation_registry' do
+    it 'returns an instance of Instrumentation::Registry' do
+      _(OpenTelemetry.instrumentation_registry).must_be_instance_of(
+        OpenTelemetry::Instrumentation::Registry
+      )
+    end
+  end
 end

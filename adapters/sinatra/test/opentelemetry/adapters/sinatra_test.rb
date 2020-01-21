@@ -6,12 +6,12 @@
 
 require 'test_helper'
 
-require_relative '../../../lib/opentelemetry/adapters/sinatra'
+require_relative '../../../lib/opentelemetry/adapters/sinatra/adapter'
 
 describe OpenTelemetry::Adapters::Sinatra do
   include Rack::Test::Methods
 
-  let(:adapter) { OpenTelemetry::Adapters::Sinatra }
+  let(:adapter) { OpenTelemetry::Adapters::Sinatra::Adapter.instance }
   let(:exporter) { EXPORTER }
 
   let(:app_one) do
