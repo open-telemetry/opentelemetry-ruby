@@ -16,7 +16,7 @@ module OpenTelemetry
 
           module_function
 
-          def get_request_start(env, now = Time.now.utc)
+          def get_request_start(env, now = nil)
             header = env[REQUEST_START] || env[QUEUE_START]
             return unless header
 
@@ -33,6 +33,7 @@ module OpenTelemetry
             # return the request_start only if it's lesser than
             # current time, to avoid significant clock skew
             request_start = Time.at(time_value)
+            now ||= Time.now.utc
             request_start.utc > now ? nil : request_start
           rescue StandardError => e
             # in case of an Exception we don't create a
