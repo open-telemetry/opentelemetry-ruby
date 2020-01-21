@@ -39,14 +39,14 @@ module OpenTelemetry
     #   end
     # end
     #
-    # The adapter name and version will inferred from the namespace of the
+    # The adapter name and version will be inferred from the namespace of the
     # class. In this example, they'd be 'OpenTelemetry::Adapters::Sinatra' and
     # OpenTelemetry::Adapters::Sinatra::VERSION, but can be explicitly set using
     # the +adapter_name+ and +adapter_version+ methods if necessary.
     #
     # All subclasses of OpenTelemetry::Instrumentation::Adapter are automatically
     # registered with OpenTelemetry.instrumentation_registry which is used by
-    # SDKs for for instrumentation discovery and installation.
+    # SDKs for instrumentation discovery and installation.
     #
     # Instrumentation libraries can use the adapter subclass to easily gain
     # a reference to its named tracer. For example:
@@ -85,9 +85,9 @@ module OpenTelemetry
         end
 
         # Optionally set the version of this adapter. If not explicitly set,
-        # the version will default to the version constant under namespace of
-        # the class, or the version constant under the class name if it does not
-        # have a namespace. If a version constant cannot be found, it defaults
+        # the version will default to the VERSION constant under namespace of
+        # the class, or the VERSION constant under the class name if it does not
+        # have a namespace. If a VERSION constant cannot be found, it defaults
         # to '0.0.0'.
         #
         # @param [String] adapter_version The version of the adapter package
@@ -187,8 +187,8 @@ module OpenTelemetry
       end
 
       # Whether or not this adapter is installable in the current process. Will
-      # be true when the adapter defines an install block, it's not disabled
-      # by enviroment or config, and the target library present and compatible.
+      # be true when the adapter defines an install block, is not disabled
+      # by environment or config, and the target library present and compatible.
       #
       # @param [Hash] config The config for this adapter
       def installable?(config = {})
