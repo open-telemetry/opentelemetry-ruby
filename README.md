@@ -115,17 +115,16 @@ for a complete example.
 
 ## Release Schedule
 
-OpenTelemetry Ruby is under active development. Our goal is to release an
-_alpha_ version of the library at the end of September 2019. This release isn't
-guaranteed to conform to a specific version of the specification, and future
-releases will not attempt to maintain backwards compatibility with the alpha
-release.
+OpenTelemetry Ruby is under active development. Below is the release schedule
+for the Ruby library. The first version of the release isn't guaranteed to
+conform  to a specific version of the specification, and future releases will
+not attempt to maintain backward compatibility with the alpha release.
 
 | Component                   | Version       | Target Date       | Release Date      |
 | --------------------------- | ------------- | ----------------- | ----------------- |
-| Tracing API                 | Alpha v0.2.0  | September 30 2019 | September 30 2019 |
-| Tracing SDK                 | Alpha v0.2.0  | September 30 2019 | September 30 2019 |
-| Jaeger Trace Exporter       | Alpha v0.2.0  | February 24 2020  | Unknown           |
+| Tracing API                 | Alpha v0.2.0  | September 30 2019 | November 13 2019  |
+| Tracing SDK                 | Alpha v0.2.0  | September 30 2019 | November 13 2019  |
+| Jaeger Trace Exporter       | Alpha v0.2.0  | September 30 2019 | November 13 2019           |
 | Metrics API                 | Alpha v0.3.0  | February 24 2020  | Unknown           |
 | Metrics SDK                 | Alpha v0.3.0  | February 24 2020  | Unknown           |
 | Prometheus Metrics Exporter | Alpha v0.3.0  | February 24 2020  | Unknown           |
