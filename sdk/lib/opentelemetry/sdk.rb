@@ -22,6 +22,36 @@ module OpenTelemetry
     # @yieldparam [Configurator] configurator Yields a configurator to the
     #   provided block
     #
+    # Example usage:
+    #   Without a block defaults are installed without any instrumentation
+    #
+    #     OpenTelemetry::SDK.configure
+    #
+    #   Install instrumentation individually with optional config
+    #
+    #     OpenTelemetry::SDK.configure do |c|
+    #       c.use 'OpenTelemetry::Adapters::Faraday', tracer_middleware: SomeMiddleware
+    #     end
+    #
+    #   Install all instrumentation with optional config
+    #
+    #     OpenTelemetry::SDK.configure do |c|
+    #       c.use_all 'OpenTelemetry::Adapters::Faraday' => { tracer_middleware: SomeMiddleware }
+    #     end
+    #
+    #   Add a span processor
+    #
+    #     OpenTelemetry::SDK.configure do |c|
+    #       c.add_span_processor SpanProcessor.new(SomeExporter.new)
+    #     end
+    #
+    #   Configure everything
+    #
+    #     OpenTelemetry::SDK.configure do |c|
+    #       c.tracer_factor = SomeTracerFactory.new
+    #       c.add_span_processor SpanProcessor.new(SomeExporter.new)
+    #       c.use_all
+    #     end
     def configure
       configurator = Configurator.new
       yield configurator if block_given?
