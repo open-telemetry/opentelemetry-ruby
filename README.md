@@ -120,16 +120,19 @@ for the Ruby library. The first version of the release isn't guaranteed to
 conform  to a specific version of the specification, and future releases will
 not attempt to maintain backward compatibility with the alpha release.
 
-| Component                   | Version       | Target Date       | Release Date      |
-| --------------------------- | ------------- | ----------------- | ----------------- |
-| Tracing API                 | Alpha v0.2.0  | September 30 2019 | November 13 2019  |
-| Tracing SDK                 | Alpha v0.2.0  | September 30 2019 | November 13 2019  |
-| Jaeger Trace Exporter       | Alpha v0.2.0  | September 30 2019 | November 13 2019           |
-| Metrics API                 | Alpha v0.3.0  | February 24 2020  | Unknown           |
-| Metrics SDK                 | Alpha v0.3.0  | February 24 2020  | Unknown           |
-| Prometheus Metrics Exporter | Alpha v0.3.0  | February 24 2020  | Unknown           |
-| OpenTracing Bridge          | Alpha v0.3.0  | February 24 2020  | Unknown           |
-| OpenCensus Bridge           | Unknown       | Unknown           | Unknown           |
+| Component                       | Version       | Target Date       | Release Date      |
+| ------------------------------- | ------------- | ----------------- | ----------------- |
+| Tracing API                     | Alpha v0.2.0  | September 30 2019 | November 13 2019  |
+| Tracing SDK                     | Alpha v0.2.0  | September 30 2019 | November 13 2019  |
+| Trace Context Propagation       | Alpha v0.2.0  | September 30 2019 | November 13 2019  |
+| Jaeger Trace Exporter           | Alpha v0.2.0  | September 30 2019 | November 13 2019  |
+| Metrics API                     | Alpha v0.3.0  | February 24 2020  | Unknown           |
+| Metrics SDK                     | Alpha v0.3.0  | February 24 2020  | Unknown           |
+| Prometheus Metrics Exporter     | Alpha v0.3.0  | February 24 2020  | Unknown           |
+| Correlation Context Propagation | Alpha v0.3.0  | February 24 2020  | Unknown           |
+| OpenTracing Bridge              | Alpha v0.3.0  | February 24 2020  | Unknown           |
+| Zipkin Trace Exporter           | Unknown       | Unknown           | Unknown           |
+| OpenCensus Bridge               | Unknown       | Unknown           | Unknown           |
 
 ## Release Process
 
