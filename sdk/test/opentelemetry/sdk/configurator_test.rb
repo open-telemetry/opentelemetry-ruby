@@ -78,6 +78,41 @@ describe OpenTelemetry::SDK::Configurator do
         )
       end
     end
+
+    describe 'instrumentation installation' do
+      before do
+        TestAdapter = Class.new(OpenTelemetry::Instrumentation::Adapter) do
+          install { 1 + 1 }
+          present { true }
+        end
+      end
+
+      after do
+        Object.send(:remove_const, :TestAdapter)
+      end
+
+      it 'installs single adapter' do
+        registry = OpenTelemetry.instrumentation_registry
+        adapter = registry.lookup('TestAdapter')
+        _(adapter).wont_be_nil
+        _(adapter).wont_be(:installed?)
+        configurator.use 'TestAdapter', opt: true
+        configurator.configure
+        _(adapter).must_be(:installed?)
+        _(adapter.config).must_equal(opt: true)
+      end
+
+      it 'installs all' do
+        registry = OpenTelemetry.instrumentation_registry
+        adapter = registry.lookup('TestAdapter')
+        _(adapter).wont_be_nil
+        _(adapter).wont_be(:installed?)
+        configurator.use_all 'TestAdapter' => { opt: true }
+        configurator.configure
+        _(adapter).must_be(:installed?)
+        _(adapter.config).must_equal(opt: true)
+      end
+    end
   end
 
   def active_span_processors

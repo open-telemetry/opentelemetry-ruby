@@ -90,7 +90,7 @@ module OpenTelemetry
         when USE_MODE_ONE
           OpenTelemetry.instrumentation_registry.install(@adapter_names, @adapter_config_map)
         when USE_MODE_ALL
-          OpenTelemtry.instrumentation_registry.install_all(@adapter_config_map)
+          OpenTelemetry.instrumentation_registry.install_all(@adapter_config_map)
         end
       end
 
