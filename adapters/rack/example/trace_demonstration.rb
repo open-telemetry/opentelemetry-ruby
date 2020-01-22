@@ -30,7 +30,7 @@ config = {}
 config[:retain_middleware_names] = true
 config[:application] = builder
 config[:record_frontend_span] = true
-OpenTelemetry::Adapters::Rack.install(config)
+OpenTelemetry::Adapters::Rack::Adapter.instance.install(config)
 
 # integrate/activate tracing middleware:
 builder.use OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware
