@@ -15,8 +15,7 @@ module OpenTelemetry
 
       private_constant :USE_MODE_UNSPECIFIED, :USE_MODE_ONE, :USE_MODE_ALL
 
-      attr_writer :tracer_factory, :meter_factory, :correlation_context_manager,
-                  :propagation, :logger
+      attr_writer :tracer_factory, :logger
 
       def initialize
         @adapter_names = []
@@ -28,20 +27,6 @@ module OpenTelemetry
       def tracer_factory
         @tracer_factory ||= Trace::TracerFactory.new
       end
-
-      # These exist in open or future PRs | | |
-      #                                   v v v
-      # def meter_factory
-      #   @meter_factory ||= Metrics::MeterFactory.new
-      # end
-
-      # def correlation_context_manager
-      #   @correlation_context_manager ||= CorrelationContext::Mangager.new
-      # end
-
-      # def propagation
-      #   @propagation ||= Propagation::Propagation.new
-      # end
 
       def logger
         @logger ||= Logger.new(STDOUT)
@@ -88,16 +73,9 @@ module OpenTelemetry
       #   - install instrumentation
       def configure
         OpenTelemetry.logger = logger
-        # These exist in open or future PRs | | |
-        #                                   v v v
-        # OpenTelemetry.correlation_context_manager = correlation_context_manager
-        # OpenTelemetry.propagation = propagation
         configure_span_processors
         OpenTelemetry.tracer_factory = tracer_factory
-        # These exist in open or future PRs | | |
-        #                                   v v v
-        # OpenTelemetry.meter_factory = meter_factory
-        # install_instrumentation
+        install_instrumentation
       end
 
       private
