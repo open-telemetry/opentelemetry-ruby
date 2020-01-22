@@ -59,6 +59,11 @@ module OpenTelemetry
         @adapter_config_map = adapter_config_map
       end
 
+      # Add a span processor to the export pipeline
+      #
+      # @param [#on_start, #on_finish, #shutdown] span_processor A span_processor
+      #   that satisfies the duck type #on_start, #on_finish, #shutdown. See
+      #   {SimpleSpanProcessor} for an example.
       def add_span_processor(span_processor)
         @span_processors << span_processor
       end
