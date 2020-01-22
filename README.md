@@ -121,16 +121,16 @@ guaranteed to conform to a specific version of the specification, and future
 releases will not attempt to maintain backwards compatibility with the alpha
 release.
 
-| Component                   | Version | Target Date       |
-| --------------------------- | ------- | ----------------- |
-| Tracing API                 | Alpha   | September 30 2019 |
-| Tracing SDK                 | Alpha   | September 30 2019 |
-| Metrics API                 | Alpha   | Unknown           |
-| Metrics SDK                 | Alpha   | Unknown           |
-| Jaeger Trace Exporter       | Alpha   | Unknown           |
-| Prometheus Metrics Exporter | Alpha   | Unknown           |
-| OpenTracing Bridge          | Alpha   | Unknown           |
-| OpenCensus Bridge           | Alpha   | Unknown           |
+| Component                   | Version       | Target Date       | Release Date      |
+| --------------------------- | ------------- | ----------------- | ----------------- |
+| Tracing API                 | Alpha v0.2.0  | September 30 2019 | September 30 2019 |
+| Tracing SDK                 | Alpha v0.2.0  | September 30 2019 | September 30 2019 |
+| Jaeger Trace Exporter       | Alpha v0.2.0  | February 24 2020  | Unknown           |
+| Metrics API                 | Alpha v0.3.0  | February 24 2020  | Unknown           |
+| Metrics SDK                 | Alpha v0.3.0  | February 24 2020  | Unknown           |
+| Prometheus Metrics Exporter | Alpha v0.3.0  | February 24 2020  | Unknown           |
+| OpenTracing Bridge          | Alpha v0.3.0  | February 24 2020  | Unknown           |
+| OpenCensus Bridge           | Unknown       | Unknown           | Unknown           |
 
 ## Release Process
 
