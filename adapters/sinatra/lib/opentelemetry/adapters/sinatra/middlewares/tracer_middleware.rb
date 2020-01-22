@@ -31,11 +31,11 @@ module OpenTelemetry
           attr_reader :app
 
           def parent_context(env)
-            OpenTelemetry::Adapters::Sinatra::Adapter.propagator.extract(env)
+            OpenTelemetry.tracer_factory.http_text_format.extract(env)
           end
 
           def tracer
-            OpenTelemetry::Adapters::Sinatra::Adapter.tracer
+            OpenTelemetry::Adapters::Sinatra::Adapter.instance.tracer
           end
 
           def trace_response(span, env, resp)
