@@ -13,7 +13,8 @@ require_relative '../../../../../lib/opentelemetry/adapters/rack/middlewares/tra
 
 describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
   let(:adapter_module) { OpenTelemetry::Adapters::Rack }
-  let(:adapter) { adapter_module::Adapter }
+  let(:adapter_class) { adapter_module::Adapter }
+  let(:adapter) { adapter_class.instance }
   let(:app) { lambda { |env| [200, {'Content-Type' => 'text/plain'}, ['OK']] } }
   let(:described_class) { OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware }
   let(:exporter) { EXPORTER }
@@ -27,10 +28,17 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
   let(:config) { default_config }
   let(:env) { Hash.new }
 
+  let(:registry) { OpenTelemetry::Instrumentation::Registry.new }
+
   before do
-    adapter_module.install(config)
+    # clear captured spans:
     exporter.reset
 
+    # simulate a fresh install:
+    adapter.instance_variable_set('@installed', false)
+    adapter.install(config)
+
+    # integrate tracer middleware:
     rack_builder.run app
     rack_builder.use described_class
   end
@@ -39,7 +47,6 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
     # installation is 'global', so it should be reset:
     adapter.instance_variable_set('@installed', false)
     adapter.install(default_config)
-    adapter.instance_variable_set('@installed', false)
   end
 
   describe '#call' do

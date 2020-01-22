@@ -9,39 +9,14 @@ require 'test_helper'
 require_relative '../../../../lib/opentelemetry/adapters/rack/adapter'
 
 describe OpenTelemetry::Adapters::Rack::Adapter do
-  let(:adapter) { OpenTelemetry::Adapters::Rack::Adapter }
+  let(:adapter_class) { OpenTelemetry::Adapters::Rack::Adapter }
+  let(:adapter) { adapter_class.instance }
+  let(:config) { Hash.new }
 
   after do
-    # installation is 'global', so reset as much as possible:
+    # simulate a fresh install:
     adapter.instance_variable_set('@installed', false)
-    adapter.install({})
-    adapter.instance_variable_set('@installed', false)
-  end
-
-  describe 'installation' do
-    it 'gets installed' do
-      _(adapter.install).must_equal true
-    end
-
-    it 'only installs once' do
-      adapter.install
-
-      _(adapter.install).must_equal :already_installed
-    end
-  end
-
-  describe 'defaults' do
-    before do
-      adapter.install
-    end
-
-    it 'has propagator' do
-      _(adapter.propagator).wont_be_nil
-    end
-
-    it 'has tracer' do
-      _(adapter.tracer).wont_be_nil
-    end
+    adapter.install(Hash.new)
   end
 
   describe 'config[:retain_middleware_names]' do
@@ -49,7 +24,10 @@ describe OpenTelemetry::Adapters::Rack::Adapter do
 
     describe 'without config[:application]' do
       it 'raises error' do
-        assert_raises adapter::MissingApplicationError do
+        # allow for re-installation with new config:
+        adapter.instance_variable_set('@installed', false)
+
+        assert_raises adapter_class::MissingApplicationError do
           adapter.install(config)
         end
       end
@@ -82,6 +60,9 @@ describe OpenTelemetry::Adapters::Rack::Adapter do
         end
 
         it 'retains RESPONSE_MIDDLEWARE after .call' do
+          # allow for re-installation with new config:
+          adapter.instance_variable_set('@installed', false)
+
           adapter.install(config)
           app.call({})
 

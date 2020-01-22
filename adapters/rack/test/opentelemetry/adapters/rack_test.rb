@@ -9,7 +9,7 @@ require 'test_helper'
 require_relative '../../../lib/opentelemetry/adapters/rack'
 
 describe OpenTelemetry::Adapters::Rack do
-  let(:adapter) { OpenTelemetry::Adapters::Rack }
+  let(:adapter) { OpenTelemetry::Adapters::Rack::Adapter.instance }
 
   it 'has #name' do
     _(adapter.name).must_equal 'OpenTelemetry::Adapters::Rack'

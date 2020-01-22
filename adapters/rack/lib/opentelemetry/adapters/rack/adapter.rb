@@ -7,46 +7,25 @@
 module OpenTelemetry
   module Adapters
     module Rack
-      class Adapter
-        class << self
-          attr_reader :config,
-                      :propagator
+      class Adapter < OpenTelemetry::Instrumentation::Adapter
 
-          def install(config = {})
-            @config = config
-            @propagator = OpenTelemetry.tracer_factory.http_text_format
-
-            new.install
-          end
-
-          def tracer
-            @tracer ||= OpenTelemetry::tracer_factory.tracer(
-              Rack.name,
-              Rack.version
-            )
-          end
-
-          attr_accessor :installed
-          alias_method :installed?, :installed
-        end
-
-        def install
-          return :already_installed if self.class.installed?
-
-          require_relative 'middlewares/tracer_middleware'
+        install do |config|
+          require_dependencies
 
           retain_middleware_names if config[:retain_middleware_names]
+        end
 
-          self.class.installed = true
+        present do
+          Gem.loaded_specs.include?('rack')
         end
 
         private
 
-        MissingApplicationError = Class.new(StandardError)
-
-        def config
-          self.class.config
+        def require_dependencies
+          require_relative 'middlewares/tracer_middleware'
         end
+
+        MissingApplicationError = Class.new(StandardError)
 
         # intercept all middleware-compatible calls, retain class name
         def retain_middleware_names

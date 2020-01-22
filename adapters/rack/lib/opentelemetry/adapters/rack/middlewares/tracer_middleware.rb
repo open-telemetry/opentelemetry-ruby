@@ -52,15 +52,15 @@ module OpenTelemetry
 
           def extract_parent_context?
             # TODO: compare to ':distributed_tracing' option name/semantics
-            Rack::Adapter.config[:extract_parent_context]
+            config[:extract_parent_context]
           end
 
           def extract_parent_context
-            @parent_context ||= OpenTelemetry::Adapters::Rack::Adapter.propagator.extract(env)
+            @parent_context ||= OpenTelemetry.tracer_factory.http_text_format.extract(env)
           end
 
           def tracer
-            OpenTelemetry::Adapters::Rack::Adapter.tracer
+            OpenTelemetry::Adapters::Rack::Adapter.instance.tracer
           end
 
           ### request_span
@@ -187,13 +187,13 @@ module OpenTelemetry
           end
 
           def config
-            Rack::Adapter.config
+            Rack::Adapter.instance.config
           end
 
           ### frontend span
 
           def record_frontend_span?
-            Rack::Adapter.config[:record_frontend_span] &&
+            Rack::Adapter.instance.config[:record_frontend_span] &&
               frontend_span.recordable?
           end
 
