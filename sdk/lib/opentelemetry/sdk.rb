@@ -48,7 +48,7 @@ module OpenTelemetry
     #   Configure everything
     #
     #     OpenTelemetry::SDK.configure do |c|
-    #       c.tracer_factor = SomeTracerFactory.new
+    #       c.logger = Logger.new('/dev/null')
     #       c.add_span_processor SpanProcessor.new(SomeExporter.new)
     #       c.use_all
     #     end

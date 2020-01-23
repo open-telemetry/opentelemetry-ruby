@@ -9,14 +9,6 @@ require 'test_helper'
 describe OpenTelemetry::SDK::Configurator do
   let(:configurator) { OpenTelemetry::SDK::Configurator.new }
 
-  describe '#tracer_factory' do
-    it 'defaults to SDK::Trace::TracerFactory' do
-      _(configurator.tracer_factory).must_be_instance_of(
-        OpenTelemetry::SDK::Trace::TracerFactory
-      )
-    end
-  end
-
   describe '#logger' do
     it 'returns a logger instance' do
       _(configurator.logger).must_be_instance_of(Logger)
@@ -48,6 +40,16 @@ describe OpenTelemetry::SDK::Configurator do
   describe '#configure' do
     after do
       reset_globals
+    end
+
+    describe 'tracer_factory' do
+      it 'is an instance of SDK::Trace::TracerFactory' do
+        configurator.configure
+
+        _(OpenTelemetry.tracer_factory).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::TracerFactory
+        )
+      end
     end
 
     describe 'span processors' do
