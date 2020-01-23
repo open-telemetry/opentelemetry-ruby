@@ -95,17 +95,39 @@ module OpenTelemetry
           end
 
           def full_http_request_url
-            # NOTE: dd-trace-rb has implemented 'quantization'? (which lowers url cardinality)
-            #       see Datadog::Quantization::HTTP.url
-
             rack_request.url
           end
 
           # https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-http.md#name
           #
+          # recommendation: span.name(s) should be low-cardinality (e.g.,
+          # strip off query param value, keep param name)
+          #
+          # see http://github.com/open-telemetry/opentelemetry-specification/pull/416/files
           def request_span_name
-            # uri_path_value:
-            env['PATH_INFO']
+            # NOTE: dd-trace-rb has implemented 'quantization' (which lowers url cardinality)
+            #       see Datadog::Quantization::HTTP.url
+
+            if (implementation = config[:url_quantization])
+              implementation.call(request_uri_or_path_info)
+            else
+              request_uri_or_path_info
+            end
+          end
+
+          # http://www.rubydoc.info/github/rack/rack/file/SPEC
+          # The source of truth in Rack is the PATH_INFO key that holds the
+          # URL for the current request; but some frameworks may override that
+          # value, especially during exception handling.
+          #
+          # Because of this, we prefer to use REQUEST_URI, if available, which is the
+          # relative path + query string, and doesn't mutate.
+          #
+          # REQUEST_URI is only available depending on what web server is running though.
+          # So when its not available, we want the original, unmutated PATH_INFO, which
+          # is just the relative path without query strings.
+          def request_uri_or_path_info
+            env['REQUEST_URI'] || original_env['PATH_INFO']
           end
 
           def base_url

@@ -140,6 +140,31 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
     end
   end
 
+  describe 'config[:quantization]' do
+
+    before do
+      Rack::MockRequest.new(rack_builder).get('/really_long_url', env)
+    end
+
+    describe 'without quantization' do
+      it 'span.name is uri path' do
+        _(first_span.name).must_equal '/really_long_url'
+      end
+    end
+
+    describe 'with quantization' do
+      let(:quantization_example) do
+        # demonstrate simple shortening of URL:
+        lambda { |url| url&.to_s[0..5] }
+      end
+      let(:config) { default_config.merge(url_quantization: quantization_example) }
+
+      it 'mutates url according to url_quantization' do
+        _(first_span.name).must_equal '/reall'
+      end
+    end
+  end
+
   describe '#call with error' do
     SimulatedError = Class.new(StandardError)
 
