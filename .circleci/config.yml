@@ -51,6 +51,15 @@ commands:
   rake-test-appraisal:
     steps:
       - run:
+          name: Bundle + CI (Adapters - excon)
+          command: |
+            cd adapters/excon
+            gem uninstall -aIx bundler
+            gem install --no-document bundler -v '~> 2.0.2'
+            bundle install --jobs=3 --retry=3
+            bundle exec appraisal install
+            bundle exec appraisal rake test
+      - run:
           name: Bundle + CI (Adapters - Faraday)
           command: |
             cd adapters/faraday

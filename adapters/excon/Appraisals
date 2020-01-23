@@ -1,0 +1,9 @@
+# frozen_string_literal: true
+
+appraise 'excon-0.71' do
+  gem 'excon', '~> 0.71.0'
+end
+
+appraise 'excon-0.64' do
+  gem 'excon', '~> 0.64.0'
+end
