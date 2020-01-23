@@ -10,7 +10,9 @@ module OpenTelemetry
   module Adapters
     module Rack
       module Middlewares
-        # TODO: implement 'resource name'
+        # Notable implementation differences from dd-trace-rb:
+        # * missing: 'span.resource', which is set to span.name
+        # * missing: config[:distributed_tracing]
         class TracerMiddleware
           def initialize(app)
             @app = app
