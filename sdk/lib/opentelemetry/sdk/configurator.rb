@@ -49,7 +49,7 @@ module OpenTelemetry
       # instrumentation. A call to +use+ after +use_all+ will result in an
       # exception.
       #
-      # @param [Hash<String,Hash>] adapter_config_map A map with string keys
+      # @param [optional Hash<String,Hash>] adapter_config_map A map with string keys
       #   representing the adapter name and values specifying the adapter config
       def use_all(adapter_config_map = {})
         check_use_mode!(USE_MODE_ALL)
