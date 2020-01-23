@@ -15,20 +15,19 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
   let(:adapter_module) { OpenTelemetry::Adapters::Rack }
   let(:adapter_class) { adapter_module::Adapter }
   let(:adapter) { adapter_class.instance }
-  let(:app) { lambda { |env| [200, {'Content-Type' => 'text/plain'}, ['OK']] } }
-  let(:described_class) { OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware }
-  let(:exporter) { EXPORTER }
 
+  let(:described_class) { OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware }
+
+  let(:app) { lambda { |env| [200, {'Content-Type' => 'text/plain'}, ['OK']] } }
+  let(:middleware) { described_class.new(app) }
   let(:rack_builder) { Rack::Builder.new }
 
-  let(:middleware) { described_class.new(app) }
+  let(:exporter) { EXPORTER }
   let(:first_span) { exporter.finished_spans.first }
 
   let(:default_config) { Hash.new }
   let(:config) { default_config }
   let(:env) { Hash.new }
-
-  let(:registry) { OpenTelemetry::Instrumentation::Registry.new }
 
   before do
     # clear captured spans:
@@ -138,6 +137,29 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
           _(exporter.finished_spans.last.name).must_equal 'http_server.queue'
         end
       end
+    end
+  end
+
+  describe '#call with error' do
+    SimulatedError = Class.new(StandardError)
+
+    let(:app) do
+      lambda { |env| raise SimulatedError }
+    end
+
+    it 'records error in span and then re-raises' do
+      assert_raises SimulatedError do
+        Rack::MockRequest.new(rack_builder).get('/', env)
+      end
+    end
+
+    it 'records error in span' do
+      begin
+        Rack::MockRequest.new(rack_builder).get('/', env)
+      rescue SimulatedError => _expected_and_ignored
+      end
+
+      _(first_span.status.canonical_code).must_equal OpenTelemetry::Trace::Status::INTERNAL_ERROR
     end
   end
 end

@@ -121,13 +121,17 @@ module OpenTelemetry
             @rack_request ||= ::Rack::Request.new(env)
           end
 
+          # catch exceptions that may be raised in the middleware chain
+          # Note: if a middleware catches an Exception without re raising,
+          # the Exception cannot be recorded here.
           def record_and_reraise_error(error)
-            # TODO: implement span.set_error?
+            request_span.status = OpenTelemetry::Trace::Status.new(
+              OpenTelemetry::Trace::Status::INTERNAL_ERROR,
+              description: error.to_s)
 
-            # catch exceptions that may be raised in the middleware chain
-            # Note: if a middleware catches an Exception without re raising,
-            # the Exception cannot be recorded here.
-            request_span.set_error(error) unless request_span.nil?
+            # TODO: implement span.set_error? (this is a specification-level issue):
+            # request_span.set_error(error) unless request_span.nil?
+            #
             raise error
           end
 
