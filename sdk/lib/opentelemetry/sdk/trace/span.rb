@@ -90,7 +90,7 @@ module OpenTelemetry
         #   span.add_event { OpenTelemetry::Trace::Event.new(name: 'event', attributes: {'eager' => false}) }
         #
         # Note that the OpenTelemetry project
-        # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/semantic-conventions.md
+        # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-semantic-conventions.md
         # documents} certain "standard event names and keys" which have
         # prescribed semantic meanings.
         #

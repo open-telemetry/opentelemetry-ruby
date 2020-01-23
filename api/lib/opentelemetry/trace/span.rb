@@ -45,7 +45,7 @@ module OpenTelemetry
       # Set attribute
       #
       # Note that the OpenTelemetry project
-      # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/semantic-conventions.md
+      # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-semantic-conventions.md
       # documents} certain "standard attributes" that have prescribed semantic
       # meanings.
       #
@@ -71,7 +71,7 @@ module OpenTelemetry
       #   span.add_event { tracer.create_event(name: 'event', attributes: {'eager' => false}) }
       #
       # Note that the OpenTelemetry project
-      # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/semantic-conventions.md
+      # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-semantic-conventions.md
       # documents} certain "standard event names and keys" which have
       # prescribed semantic meanings.
       #
