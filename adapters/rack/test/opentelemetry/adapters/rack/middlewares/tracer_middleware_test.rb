@@ -63,6 +63,10 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
       _(first_span.name).must_equal '/'
     end
 
+    it 'extracts parent context' do
+      _(first_span.parent_span_id).wont_equal '0000000000000000'
+    end
+
     describe 'config[:allowed_request_headers]' do
       let(:env) { Hash('HTTP_FOO_BAR' => 'http foo bar value') }
 
@@ -101,22 +105,6 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
           it 'returns attribute' do
             _(first_span.attributes['http.response.headers.foo_bar']).must_equal 'foo bar response header'
           end
-        end
-      end
-    end
-
-    describe 'config[:extract_parent_context]' do
-      describe 'default' do
-        it 'starts a trace without parent context' do
-          _(first_span.parent_span_id).must_equal '0000000000000000'
-        end
-      end
-
-      describe 'when true' do
-        let(:config) { default_config.merge(extract_parent_context: true) }
-
-        it 'extracts parent context' do
-          _(first_span.parent_span_id).wont_equal '0000000000000000'
         end
       end
     end

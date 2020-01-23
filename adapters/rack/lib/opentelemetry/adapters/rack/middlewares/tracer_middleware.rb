@@ -27,7 +27,7 @@ module OpenTelemetry
             @original_env = env.dup
 
             frontend_span.start if record_frontend_span?
-            extract_parent_context if extract_parent_context?
+            extract_parent_context
 
             start_request_span
             app.call(env).tap do |status, headers, response|
@@ -49,11 +49,6 @@ module OpenTelemetry
                       :request_span
 
           ### parent context
-
-          def extract_parent_context?
-            # TODO: compare to ':distributed_tracing' option name/semantics
-            config[:extract_parent_context]
-          end
 
           def extract_parent_context
             @parent_context ||= OpenTelemetry.tracer_factory.http_text_format.extract(env)
