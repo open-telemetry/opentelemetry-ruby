@@ -58,6 +58,7 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
       _(first_span.attributes['http.method']).must_equal 'GET'
       _(first_span.attributes['http.status_code']).must_equal 200
       _(first_span.attributes['http.status_text']).must_equal 'OK'
+      _(first_span.attributes['http.target']).must_equal '/'
       _(first_span.status.canonical_code).must_equal OpenTelemetry::Trace::Status::OK
       _(first_span.attributes['http.url']).must_equal 'http://example.org/'
       _(first_span.name).must_equal '/'

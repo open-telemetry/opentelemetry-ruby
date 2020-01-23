@@ -85,7 +85,8 @@ module OpenTelemetry
               'http.url' => full_http_request_url,
               'http.host' => env['HOST'],
               'http.scheme' => env['rack.url_scheme'],
-              'http.base_url' => base_url # TODO: check attribute naming/semantics
+              'http.target' => full_path,
+              'http.base_url' => base_url # NOTE: 'http.base_url' isn't officially defined
             }.merge(allowed_request_headers)
           end
 
@@ -132,6 +133,11 @@ module OpenTelemetry
               # Compatibility for older Rack versions
               rack_request.url.chomp(rack_request.fullpath)
             end
+          end
+
+          # e.g., "/webshop/articles/4?s=1"
+          def full_path
+            rack_request.fullpath
           end
 
           def rack_request
