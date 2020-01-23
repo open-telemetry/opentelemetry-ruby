@@ -232,17 +232,19 @@ module OpenTelemetry
           def frontend_span
             @frontend_span ||= FrontendSpan.new(env: env,
                                                 tracer: tracer,
-                                                parent_context: parent_context)
+                                                parent_context: parent_context,
+                                                web_service_name: config[:web_service_name])
           end
 
           class FrontendSpan
-            def initialize(env:, tracer:, parent_context:)
+            def initialize(env:, tracer:, parent_context:, web_service_name:)
               @env = env
               @tracer = tracer
               @parent_context = parent_context
 
               # NOTE: get_request_start may return nil
               @request_start_time = OpenTelemetry::Adapters::Rack::Util::QueueTime.get_request_start(env)
+              @web_service_name = web_service_name
             end
 
             def recordable?
@@ -250,13 +252,14 @@ module OpenTelemetry
             end
 
             def start
-              @span ||= tracer.start_span('http_server.queue', # TODO: check this name
-                                          with_parent_context: parent_context, # TODO: check for correct parent
+              @span ||= tracer.start_span('http_server.queue', # NOTE: span kind of 'proxy' is not defined
+                                          with_parent_context: parent_context,
                                           # NOTE: initialize with as many attributes as possible:
                                           attributes: {
                                             'component' => 'http',
-                                            # TODO: 'service' => config[:web_service_name]
-                                            # TODO: 'span_type' => PROXY
+                                            'service' => web_service_name,
+                                            # NOTE: dd-trace-rb differences:
+                                            # 'trace.span_type' => (http) 'proxy'
                                             'start_time' => request_start_time
                                           })
             end
@@ -271,7 +274,8 @@ module OpenTelemetry
                         :parent_context,
                         :request_start_time,
                         :span,
-                        :tracer
+                        :tracer,
+                        :web_service_name
           end
         end
       end

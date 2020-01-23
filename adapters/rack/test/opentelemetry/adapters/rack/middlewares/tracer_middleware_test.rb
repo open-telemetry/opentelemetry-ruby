@@ -120,10 +120,23 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
       describe 'when recordable' do
         let(:config) { default_config.merge(record_frontend_span: true)}
         let(:env) { Hash('HTTP_X_REQUEST_START' => Time.now.to_i) }
+        let(:frontend_span) { exporter.finished_spans.last }
 
         it 'records span' do
           _(exporter.finished_spans.size).must_equal 2
-          _(exporter.finished_spans.last.name).must_equal 'http_server.queue'
+          _(frontend_span.name).must_equal 'http_server.queue'
+          _(frontend_span.attributes['service']).must_be_nil
+        end
+
+        describe 'when config[:web_service_name]' do
+          let(:config) do
+            default_config.merge(record_frontend_span: true,
+                                 web_service_name: 'my_service_name')
+          end
+
+          it 'records "service" attribute' do
+            _(frontend_span.attributes['service']).must_equal 'my_service_name'
+          end
         end
       end
     end
