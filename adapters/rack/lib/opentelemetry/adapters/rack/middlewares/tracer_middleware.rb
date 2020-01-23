@@ -13,6 +13,7 @@ module OpenTelemetry
         # Notable implementation differences from dd-trace-rb:
         # * missing: 'span.resource', which is set to span.name
         # * missing: config[:distributed_tracing]
+        # * missing: span.set_error() -- spec level change
         class TracerMiddleware
           def initialize(app)
             @app = app
