@@ -164,7 +164,9 @@ module OpenTelemetry
             span.status = OpenTelemetry::Trace::Status.http_to_status(status)
             span.set_attribute('http.status_code', status)
 
-            # TODO: set_attribute('http.route', ... if it's available
+            # NOTE: if data is available, it would be good to do this:
+            # set_attribute('http.route', ...
+            # e.g., "/users/:userID?
             span.set_attribute('http.status_text', ::Rack::Utils::HTTP_STATUS_CODES[status])
 
             allowed_response_headers(headers).each { |k, v| span.set_attribute(k, v) }
