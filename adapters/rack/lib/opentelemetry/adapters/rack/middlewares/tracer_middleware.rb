@@ -29,6 +29,24 @@ module OpenTelemetry
               @allowed_request_header_names ||= Array(config[:allowed_request_headers])
             end
 
+            def allowed_response_headers
+              @allowed_response_headers ||= allowed_response_header_names.map do |header|
+                {
+                  header: header,
+                  attribute_name: build_attribute_name('http.response.headers.', header),
+                  search_for_keys: [header, header.to_s.upcase]
+                }
+              end
+            end
+
+            def allowed_response_header_names
+              @allowed_response_header_names ||= Array(config[:allowed_response_headers])
+            end
+
+            def build_attribute_name(prefix, suffix)
+              prefix + suffix.to_s.downcase.gsub(/[-\s]/, '_')
+            end
+
             def config
               Rack::Adapter.instance.config
             end
@@ -36,8 +54,11 @@ module OpenTelemetry
             private
 
             def clear_cached_config
-              @allowed_request_header_names = nil
               @allowed_rack_request_header_names = nil
+              @allowed_request_header_names = nil
+
+              @allowed_response_header_names = nil
+              @allowed_response_headers = nil
             end
           end
 
@@ -204,7 +225,7 @@ module OpenTelemetry
             {}.tap do |result|
               self.class.allowed_rack_request_headers.each do |hash|
                 if env.key?(hash[:rack_header])
-                  result[build_attribute_name('http.request.headers.', hash[:header])] = env[hash[:rack_header]]
+                  result[self.class.build_attribute_name('http.request.headers.', hash[:header])] = env[hash[:rack_header]]
                 end
               end
             end
@@ -215,28 +236,18 @@ module OpenTelemetry
             return {} if headers.nil?
 
             {}.tap do |result|
-              Array(allowed_response_header_names).each do |header|
-                new_key_name = build_attribute_name('http.response.headers.', header)
-                if headers.key?(header)
-                  result[new_key_name] = headers[header]
-                else
-                  # Try a case-insensitive lookup
-                  uppercased_header = header.to_s.upcase
-                  matching_header = headers.keys.find { |h| h.upcase == uppercased_header }
-                  if matching_header
-                    result[new_key_name] = headers[matching_header]
-                  end
+              self.class.allowed_response_headers.each do |hash|
+                key = headers.keys.find { |k| hash[:search_for_keys].find { |k2| k == k2 } } ||
+                  headers.keys.find { |k| hash[:search_for_keys].find { |k2| k.upcase == k2 } }
+
+                if key
+                  # cache string for next time:
+                  hash[:search_for_keys] |= [key]
+
+                  result[hash[:attribute_name]] = headers[key]
                 end
               end
             end
-          end
-
-          def allowed_response_header_names
-            Array(config[:allowed_response_headers])
-          end
-
-          def build_attribute_name(prefix, suffix)
-            prefix + suffix.to_s.downcase.gsub(/[-\s]/, '_')
           end
 
           def config
