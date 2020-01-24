@@ -62,6 +62,8 @@ module OpenTelemetry
             end
           end
 
+          EMPTY_HASH = {}.freeze
+
           def initialize(app)
             @app = app
           end
@@ -233,7 +235,7 @@ module OpenTelemetry
 
           # @return Hash
           def allowed_response_headers(headers)
-            return {} if headers.nil?
+            return EMPTY_HASH if headers.nil?
 
             {}.tap do |result|
               self.class.allowed_response_headers.each do |hash|
