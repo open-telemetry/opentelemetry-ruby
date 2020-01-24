@@ -37,6 +37,9 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
     adapter.instance_variable_set('@installed', false)
     adapter.install(config)
 
+    # clear out cached config:
+    described_class.send(:clear_cached_config)
+
     # integrate tracer middleware:
     rack_builder.run app
     rack_builder.use described_class
@@ -100,7 +103,7 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
           _(first_span.attributes['http.response.headers.foo_bar']).must_equal 'foo bar response header'
         end
 
-        describe "case-sensitively" do
+        describe 'case-sensitively' do
           let(:config) { default_config.merge(allowed_response_headers: ['fOO-bAR']) }
 
           it 'returns attribute' do
@@ -143,7 +146,6 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
   end
 
   describe 'config[:quantization]' do
-
     before do
       Rack::MockRequest.new(rack_builder).get('/really_long_url', env)
     end

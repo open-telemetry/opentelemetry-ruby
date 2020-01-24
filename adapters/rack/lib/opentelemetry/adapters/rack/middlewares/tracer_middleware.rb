@@ -15,6 +15,32 @@ module OpenTelemetry
         # * missing: config[:distributed_tracing]
         # * missing: span.set_error() -- spec level change
         class TracerMiddleware
+          class << self
+            def allowed_rack_request_headers
+              @allowed_rack_request_header_names ||= allowed_request_header_names.map do |header|
+                {
+                  header: header,
+                  rack_header: "HTTP_#{header.to_s.upcase.gsub(/[-\s]/, '_')}"
+                }
+              end
+            end
+
+            def allowed_request_header_names
+              @allowed_request_header_names ||= Array(config[:allowed_request_headers])
+            end
+
+            def config
+              Rack::Adapter.instance.config
+            end
+
+            private
+
+            def clear_cached_config
+              @allowed_request_header_names = nil
+              @allowed_rack_request_header_names = nil
+            end
+          end
+
           def initialize(app)
             @app = app
           end
@@ -176,17 +202,12 @@ module OpenTelemetry
           # @return Hash
           def allowed_request_headers
             {}.tap do |result|
-              Array(allowed_request_header_names).each do |header|
-                rack_header = "HTTP_#{header.to_s.upcase.gsub(/[-\s]/, '_')}"
-                if env.key?(rack_header)
-                  result[build_attribute_name('http.request.headers.', header)] = env[rack_header]
+              self.class.allowed_rack_request_headers.each do |hash|
+                if env.key?(hash[:rack_header])
+                  result[build_attribute_name('http.request.headers.', hash[:header])] = env[hash[:rack_header]]
                 end
               end
             end
-          end
-
-          def allowed_request_header_names
-            Array(config[:allowed_request_headers])
           end
 
           # @return Hash
