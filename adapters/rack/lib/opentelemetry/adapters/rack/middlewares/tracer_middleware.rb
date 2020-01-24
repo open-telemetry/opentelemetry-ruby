@@ -69,59 +69,81 @@ module OpenTelemetry
           end
 
           def call(env)
-            # since middleware may only be initialized once (memoized),
-            # but we want to be sure to have a clean slate on each request:
-            dup._call env
-          end
+            original_env = env.dup
 
-          def _call(env)
-            @env = env
-            @original_env = env.dup
+            parent_context = OpenTelemetry.tracer_factory.http_text_format.extract(env)
 
-            frontend_span.start if record_frontend_span?
-            extract_parent_context
+            ### frontend span
+            # NOTE: get_request_start may return nil
+            request_start_time = OpenTelemetry::Adapters::Rack::Util::QueueTime.get_request_start(env)
+            frontend_span = tracer.start_span('http_server.queue', # NOTE: span kind of 'proxy' is not defined
+                                              with_parent_context: parent_context,
+                                              # NOTE: initialize with as many attributes as possible:
+                                              attributes: {
+                                                'component' => 'http',
+                                                'service' => config[:web_service_name],
+                                                # NOTE: dd-trace-rb differences:
+                                                # 'trace.span_type' => (http) 'proxy'
+                                                'start_time' => request_start_time
+                                              })
 
-            start_request_span
-            app.call(env).tap do |status, headers, response|
+            record_frontend_span = config[:record_frontend_span] && !request_start_time.nil?
+            frontend_span = if record_frontend_span
+                              tracer.start_span('http_server.queue', # NOTE: span kind of 'proxy' is not defined
+                                                with_parent_context: parent_context,
+                                                # NOTE: initialize with as many attributes as possible:
+                                                attributes: {
+                                                  'component' => 'http',
+                                                  'service' => config[:web_service_name],
+                                                  # NOTE: dd-trace-rb differences:
+                                                  # 'trace.span_type' => (http) 'proxy'
+                                                  'start_time' => request_start_time
+                                                })
+                            end
+
+            # http://www.rubydoc.info/github/rack/rack/file/SPEC
+            # The source of truth in Rack is the PATH_INFO key that holds the
+            # URL for the current request; but some frameworks may override that
+            # value, especially during exception handling.
+            #
+            # Because of this, we prefer to use REQUEST_URI, if available, which is the
+            # relative path + query string, and doesn't mutate.
+            #
+            # REQUEST_URI is only available depending on what web server is running though.
+            # So when its not available, we want the original, unmutated PATH_INFO, which
+            # is just the relative path without query strings.
+            request_span_name = create_request_span_name(env['REQUEST_URI'] || original_env['PATH_INFO'])
+
+            rack_request = ::Rack::Request.new(env)
+            # Sets as many attributes as are available before control
+            # is handed off to next middleware.
+            request_span = tracer.start_span(request_span_name,
+                                             with_parent_context: parent_context,
+                                             # NOTE: try to set as many attributes via 'attributes' argument
+                                             #       instead of via span.set_attribute
+                                             attributes: request_span_attributes(env: env,
+                                                                                 full_http_request_url: full_http_request_url(rack_request),
+                                                                                 full_path: full_path(rack_request),
+                                                                                 base_url: base_url(rack_request)),
+                                             kind: :server)
+
+            @app.call(env).tap do |status, headers, response|
               set_attributes_after_request(request_span, status, headers, response)
             end
           rescue Exception => e
-            record_and_reraise_error(e)
+            record_and_reraise_error(e, request_span: request_span)
           ensure
             request_span.finish
-            frontend_span.finish if record_frontend_span?
+            frontend_span&.finish if record_frontend_span
           end
 
           private
-
-          attr_reader :app,
-                      :env,
-                      :original_env,
-                      :parent_context,
-                      :request_span
-
-          ### parent context
-
-          def extract_parent_context
-            @parent_context ||= OpenTelemetry.tracer_factory.http_text_format.extract(env)
-          end
 
           def tracer
             OpenTelemetry::Adapters::Rack::Adapter.instance.tracer
           end
 
           ### request_span
-
-          # Sets as many attributes as are available before control
-          # is handed off to next middleware.
-          def start_request_span
-            @request_span ||= tracer.start_span(request_span_name,
-                                                with_parent_context: parent_context,
-                                                # NOTE: try to set as many attributes via 'attributes' argument
-                                                #       instead of via span.set_attribute
-                                                attributes: request_span_attributes,
-                                                kind: :server)
-          end
 
           # Per https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-http.md#http-server-semantic-conventions
           #
@@ -130,7 +152,7 @@ module OpenTelemetry
           # * http.scheme, http.server_name, net.host.port, http.target
           # * http.scheme, net.host.name, net.host.port, http.target
           # * http.url
-          def request_span_attributes
+          def request_span_attributes(env:, full_http_request_url:, full_path:, base_url:)
             {
               'component' => 'http',
               'http.method' => env['REQUEST_METHOD'],
@@ -139,10 +161,10 @@ module OpenTelemetry
               'http.scheme' => env['rack.url_scheme'],
               'http.target' => full_path,
               'http.base_url' => base_url # NOTE: 'http.base_url' isn't officially defined
-            }.merge(allowed_request_headers)
+            }.merge(allowed_request_headers(env))
           end
 
-          def full_http_request_url
+          def full_http_request_url(rack_request)
             rack_request.url
           end
 
@@ -152,7 +174,7 @@ module OpenTelemetry
           # strip off query param value, keep param name)
           #
           # see http://github.com/open-telemetry/opentelemetry-specification/pull/416/files
-          def request_span_name
+          def create_request_span_name(request_uri_or_path_info)
             # NOTE: dd-trace-rb has implemented 'quantization' (which lowers url cardinality)
             #       see Datadog::Quantization::HTTP.url
 
@@ -163,22 +185,7 @@ module OpenTelemetry
             end
           end
 
-          # http://www.rubydoc.info/github/rack/rack/file/SPEC
-          # The source of truth in Rack is the PATH_INFO key that holds the
-          # URL for the current request; but some frameworks may override that
-          # value, especially during exception handling.
-          #
-          # Because of this, we prefer to use REQUEST_URI, if available, which is the
-          # relative path + query string, and doesn't mutate.
-          #
-          # REQUEST_URI is only available depending on what web server is running though.
-          # So when its not available, we want the original, unmutated PATH_INFO, which
-          # is just the relative path without query strings.
-          def request_uri_or_path_info
-            env['REQUEST_URI'] || original_env['PATH_INFO']
-          end
-
-          def base_url
+          def base_url(rack_request)
             if rack_request.respond_to?(:base_url)
               rack_request.base_url
             else
@@ -188,18 +195,14 @@ module OpenTelemetry
           end
 
           # e.g., "/webshop/articles/4?s=1"
-          def full_path
+          def full_path(rack_request)
             rack_request.fullpath
-          end
-
-          def rack_request
-            @rack_request ||= ::Rack::Request.new(env)
           end
 
           # catch exceptions that may be raised in the middleware chain
           # Note: if a middleware catches an Exception without re raising,
           # the Exception cannot be recorded here.
-          def record_and_reraise_error(error)
+          def record_and_reraise_error(error, request_span:)
             request_span.status = OpenTelemetry::Trace::Status.new(
               OpenTelemetry::Trace::Status::INTERNAL_ERROR,
               description: error.to_s)
@@ -223,7 +226,7 @@ module OpenTelemetry
           end
 
           # @return Hash
-          def allowed_request_headers
+          def allowed_request_headers(env)
             {}.tap do |result|
               self.class.allowed_rack_request_headers.each do |hash|
                 if env.key?(hash[:rack_header])
@@ -254,62 +257,6 @@ module OpenTelemetry
 
           def config
             Rack::Adapter.instance.config
-          end
-
-          ### frontend span
-
-          def record_frontend_span?
-            Rack::Adapter.instance.config[:record_frontend_span] &&
-              frontend_span.recordable?
-          end
-
-          def frontend_span
-            @frontend_span ||= FrontendSpan.new(env: env,
-                                                tracer: tracer,
-                                                parent_context: parent_context,
-                                                web_service_name: config[:web_service_name])
-          end
-
-          class FrontendSpan
-            def initialize(env:, tracer:, parent_context:, web_service_name:)
-              @env = env
-              @tracer = tracer
-              @parent_context = parent_context
-
-              # NOTE: get_request_start may return nil
-              @request_start_time = OpenTelemetry::Adapters::Rack::Util::QueueTime.get_request_start(env)
-              @web_service_name = web_service_name
-            end
-
-            def recordable?
-              !request_start_time.nil?
-            end
-
-            def start
-              @span ||= tracer.start_span('http_server.queue', # NOTE: span kind of 'proxy' is not defined
-                                          with_parent_context: parent_context,
-                                          # NOTE: initialize with as many attributes as possible:
-                                          attributes: {
-                                            'component' => 'http',
-                                            'service' => web_service_name,
-                                            # NOTE: dd-trace-rb differences:
-                                            # 'trace.span_type' => (http) 'proxy'
-                                            'start_time' => request_start_time
-                                          })
-            end
-
-            def finish
-              span&.finish
-            end
-
-            private
-
-            attr_reader :env,
-                        :parent_context,
-                        :request_start_time,
-                        :span,
-                        :tracer,
-                        :web_service_name
           end
         end
       end
