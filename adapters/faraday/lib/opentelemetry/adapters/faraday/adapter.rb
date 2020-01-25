@@ -16,7 +16,7 @@ module OpenTelemetry
         end
 
         present do
-          Gem.loaded_specs.include?('faraday')
+          defined?(::Faraday)
         end
 
         private
