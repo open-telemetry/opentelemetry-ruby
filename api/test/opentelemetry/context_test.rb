@@ -18,7 +18,7 @@ describe OpenTelemetry::Context do
   let(:foo_key) { Context.create_key('foo') }
   let(:bar_key) { Context.create_key('bar') }
   let(:baz_key) { Context.create_key('baz') }
-  let(:new_context) { Context.new(nil, foo_key, 'bar') }
+  let(:new_context) { Context.empty.set_value(foo_key, 'bar') }
 
   describe '.current' do
     it 'defaults to the root context' do

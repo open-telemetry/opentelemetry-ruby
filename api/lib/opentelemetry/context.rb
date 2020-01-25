@@ -11,6 +11,7 @@ module OpenTelemetry
   # Manages context on a per-thread basis
   class Context
     KEY = :__opentelemetry_context__
+    EMPTY_ENTRIES = {}.freeze
 
     class << self
       # Returns a key used to index a value in a Context
@@ -87,14 +88,13 @@ module OpenTelemetry
       end
 
       def empty
-        new(nil, nil, nil)
+        new(nil, EMPTY_ENTRIES)
       end
     end
 
-    def initialize(parent, key, value)
+    def initialize(parent, entries)
       @parent = parent
-      @key = key
-      @value = value
+      @entries = entries.freeze
     end
 
     # Returns the corresponding value (or nil) for key
@@ -102,11 +102,7 @@ module OpenTelemetry
     # @param [Key] key The lookup key
     # @return [Object]
     def value(key)
-      if key == @key
-        @value
-      elsif @parent
-        @parent.value(key)
-      end
+      @entries[key]
     end
 
     alias [] value
@@ -117,7 +113,9 @@ module OpenTelemetry
     # @param [Object] value Object to be stored under key
     # @return [Context]
     def set_value(key, value)
-      Context.new(self, key, value)
+      new_entries = @entries.dup
+      new_entries[key] = value
+      Context.new(self, new_entries)
     end
 
     # Returns a new Context with the current context's entries merged with the
@@ -128,7 +126,7 @@ module OpenTelemetry
     # @param [Object] value Object to be stored under key
     # @return [Context]
     def set_values(values) # rubocop:disable Naming/AccessorMethodName:
-      values.inject(self) { |parent, (k, v)| Context.new(parent, k, v) }
+      Context.new(self, @entries.merge(values))
     end
 
     # @api private
