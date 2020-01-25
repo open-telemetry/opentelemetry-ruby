@@ -2,21 +2,11 @@
 require 'rubygems'
 require 'bundler/setup'
 
-require 'sinatra/base'
-require 'opentelemetry/sdk'
-require_relative '../lib/opentelemetry/adapters/sinatra'
+Bundler.require
 
-# Set preferred tracer implementation:
-SDK = OpenTelemetry::SDK
-
-factory = OpenTelemetry.tracer_factory = SDK::Trace::TracerFactory.new
-factory.add_span_processor(
-  SDK::Trace::Export::SimpleSpanProcessor.new(
-    SDK::Trace::Export::ConsoleSpanExporter.new
-  )
-)
-
-OpenTelemetry::Adapters::Sinatra.install
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Adapters::Sinatra'
+end
 
 class App < Sinatra::Base
   set :bind, '0.0.0.0'
