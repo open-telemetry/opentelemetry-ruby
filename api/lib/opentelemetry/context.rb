@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/context/key'
 require 'opentelemetry/context/propagation'
 
 module OpenTelemetry
@@ -12,6 +13,14 @@ module OpenTelemetry
     KEY = :__opentelemetry_context__
 
     class << self
+      # Returns a key used to index a value in a Context
+      #
+      # @param [String] name The key name
+      # @return [Context::Key]
+      def create_key(name)
+        Key.new(name)
+      end
+
       # Returns current context, which is never nil
       #
       # @return [Context]
@@ -90,7 +99,7 @@ module OpenTelemetry
 
     # Returns the corresponding value (or nil) for key
     #
-    # @param [String] key The lookup key
+    # @param [Key] key The lookup key
     # @return [Object]
     def value(key)
       if key == @key
@@ -104,7 +113,7 @@ module OpenTelemetry
 
     # Returns a new Context where entries contains the newly added key and value
     #
-    # @param [String] key The key to store this value under
+    # @param [Key] key The key to store this value under
     # @param [Object] value Object to be stored under key
     # @return [Context]
     def set_value(key, value)

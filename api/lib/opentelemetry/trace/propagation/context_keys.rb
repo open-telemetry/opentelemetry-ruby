@@ -7,23 +7,27 @@
 module OpenTelemetry
   module Trace
     module Propagation
-      # Contains the keys used to store the current span, or extracted span
+      # Contains the keys used to index the current span, or extracted span
       # context in a {Context} instance
       module ContextKeys
         extend self
 
-        # Returns the context key that an extracted span context is stored under
+        EXTRACTED_SPAN_CONTEXT_KEY = Context.create_key('extracted-span-context')
+        CURRENT_SPAN_KEY = Context.create_key('current-span')
+        private_constant :EXTRACTED_SPAN_CONTEXT_KEY, :CURRENT_SPAN_KEY
+
+        # Returns the context key that an extracted span context is indexed by
         #
-        # @return [String]
+        # @return [Context::Key]
         def extracted_span_context_key
-          'extracted-span-context'
+          EXTRACTED_SPAN_CONTEXT_KEY
         end
 
-        # Returns the context key that the current span is stored under
+        # Returns the context key that the current span is indexed by
         #
-        # @return [String]
+        # @return [Context::Key]
         def current_span_key
-          'current-span'
+          CURRENT_SPAN_KEY
         end
       end
     end

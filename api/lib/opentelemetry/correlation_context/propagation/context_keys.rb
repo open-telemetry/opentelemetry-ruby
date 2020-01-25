@@ -7,16 +7,19 @@
 module OpenTelemetry
   module CorrelationContext
     module Propagation
-      # The ContextKeys module contains the keys used to store correlations
+      # The ContextKeys module contains the keys used to index correlations
       # in a {Context} instance
       module ContextKeys
         extend self
 
-        # Returns the context key that correlations are stored under
+        CORRELATION_CONTEXT_KEY = Context.create_key('correlation-context')
+        private_constant :CORRELATION_CONTEXT_KEY
+
+        # Returns the context key that correlations are indexed by
         #
-        # @return [String]
+        # @return [Context::Key]
         def correlation_context_key
-          'correlation-context'
+          CORRELATION_CONTEXT_KEY
         end
       end
     end
