@@ -119,6 +119,71 @@ describe OpenTelemetry::Context do
     end
   end
 
+  describe '#attach' do
+    it 'sets context to current' do
+      orig_ctx = Context.current
+      new_ctx = Context.current.set_value('foo', 'bar')
+      prev_ctx = new_ctx.attach
+      _(Context.current).must_equal(new_ctx)
+      _(prev_ctx).must_equal(orig_ctx)
+    end
+  end
+
+  describe '#detach' do
+    it 'restores parent context by default' do
+      new_ctx = Context.current.set_value('foo', 'bar')
+      prev_ctx = new_ctx.attach
+      _(Context.current).must_equal(new_ctx)
+
+      new_ctx.detach
+      _(Context.current).must_equal(prev_ctx)
+    end
+
+    it 'restores ctx passed in' do
+      orig_ctx = Context.current
+      ctx1 = orig_ctx.set_value('foo', 'bar')
+      ctx2 = ctx1.set_value('bar', 'baz')
+
+      ctx1.attach
+      prev_ctx = ctx2.attach
+      _(Context.current).must_equal(ctx2)
+
+      ctx2.detach(orig_ctx)
+      _(Context.current).must_equal(orig_ctx)
+      _(Context.current).wont_equal(prev_ctx)
+    end
+
+    it 'restores root for ctx without parent' do
+      ctx = new_context
+      ctx.detach
+      _(Context.current).must_equal(Context::ROOT)
+    end
+
+    it 'logs warning for non-matching attach / detache' do
+      # replace logger for test
+      orig_logger = OpenTelemetry.logger
+      logger_io = StringIO.new
+      OpenTelemetry.logger = Logger.new(logger_io)
+
+      orig_ctx = Context.current
+      ctx1 = orig_ctx.set_value('foo', 'bar')
+      ctx2 = ctx1.set_value('bar', 'baz')
+
+      ctx1.attach
+      ctx2.attach
+
+      _(Context.current).must_equal(ctx2)
+      _(logger_io.string).must_be(:empty?)
+
+      ctx1.detach
+      _(logger_io.string).must_match(/warn.*detach.*match.*attach/i)
+      _(Context.current).must_equal(orig_ctx)
+
+      # restore logger after
+      OpenTelemetry.logger = orig_logger
+    end
+  end
+
   describe 'threading' do
     it 'unwinds the stack on each thread' do
       ctx = new_context

@@ -30,32 +30,40 @@ module OpenTelemetry
       # the previous context upon exiting.
       #
       # @param [Context] ctx The context to be made active
-      # @param [Callable] blk Block to execute in a new context
-      def with_current(ctx, &blk)
-        attach(ctx, &blk)
+      def with_current(ctx)
+        prev = ctx.attach
+        yield
+      ensure
+        ctx.detach(prev)
       end
 
       # Execute a block in a new context with key set to value. Restores the
       # previous context after the block executes.
-      #
+
       # @param [String] key The lookup key
       # @param [Object] value The object stored under key
-      # @param [Callable] blk Block to execute in a new context
-      def with_value(key, value, &blk)
+      # @param [Callable] Block to execute in a new context
+      def with_value(key, value)
         ctx = current.set_value(key, value)
-        attach(ctx, value, &blk)
+        prev = ctx.attach
+        yield value
+      ensure
+        ctx.detach(prev)
       end
 
       # Execute a block in a new context where its values are merged with the
       # incoming values. Restores the previous context after the block executes.
-      #
+
       # @param [String] key The lookup key
       # @param [Hash] values Will be merged with values of the current context
       #  and returned in a new context
-      # @param [Callable] blk Block to execute in a new context
-      def with_values(values, &blk)
+      # @param [Callable] Block to execute in a new context
+      def with_values(values)
         ctx = current.set_values(values)
-        attach(ctx, values, &blk)
+        prev = ctx.attach
+        yield values
+      ensure
+        ctx.detach(prev)
       end
 
       # Returns the value associated with key in the current context
@@ -71,16 +79,6 @@ module OpenTelemetry
 
       def empty
         new(nil, nil, nil)
-      end
-
-      private
-
-      def attach(ctx, yield_value = nil, &blk)
-        prev = current
-        self.current = ctx
-        yield_value.nil? ? blk.call : blk.call(yield_value)
-      ensure
-        self.current = prev
       end
     end
 
@@ -122,6 +120,28 @@ module OpenTelemetry
     # @return [Context]
     def set_values(values) # rubocop:disable Naming/AccessorMethodName:
       values.inject(self) { |parent, (k, v)| Context.new(parent, k, v) }
+    end
+
+    # Makes the this context the currently active context and returns the
+    # previously active context
+    #
+    # @return [Context]
+    def attach
+      prev = self.class.current
+      self.class.current = self
+      prev
+    end
+
+    # Detaches this context making ctx_to_attach the current context. If this
+    # context is not the current context, a warning will be logged, but
+    # ctx_to_attach will stil be made the current context.
+    #
+    # @param ctx_to_attach The ctx to be attached when this context is detached
+    def detach(ctx_to_attach = nil)
+      OpenTelemetry.logger.warn 'Calls to detach should match corresponding calls to attach' if self.class.current != self
+
+      ctx_to_attach ||= @parent || ROOT
+      ctx_to_attach.attach
     end
 
     ROOT = empty.freeze

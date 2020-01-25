@@ -14,7 +14,7 @@ describe OpenTelemetry::Trace::Tracer do
   class TestInSpanFinishTracer < Tracer
     # Override `start_span` to return mock span
     def start_span(*)
-      Minitest::Mock.new.expect(:finish, nil).expect(:nil?, false)
+      Minitest::Mock.new.expect(:finish, nil)
     end
   end
 
