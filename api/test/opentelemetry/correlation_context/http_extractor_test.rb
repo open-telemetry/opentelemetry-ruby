@@ -50,6 +50,13 @@ describe OpenTelemetry::CorrelationContext::Propagation::HttpExtractor do
         _(correlations['key:1']).must_equal('val1,1')
         _(correlations['key:2']).must_equal('val2,2')
       end
+
+      it 'returns original context on failure' do
+        orig_context = Context.empty.set_value('k1', 'v1')
+        carrier = { header_key => 'key1=val1,key2=val2' }
+        context = extractor.extract(orig_context, carrier) { raise 'mwahaha' }
+        _(context).must_equal(orig_context)
+      end
     end
   end
 end

@@ -51,6 +51,8 @@ module OpenTelemetry
           end
 
           context.set_value(ContextKeys.correlation_context_key, correlations)
+        rescue StandardError
+          context
         end
       end
     end
