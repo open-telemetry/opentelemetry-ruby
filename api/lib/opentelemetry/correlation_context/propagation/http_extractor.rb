@@ -35,7 +35,7 @@ module OpenTelemetry
         #   and the header key to the getter.
         # @return [Context] context updated with extracted correlations, or the original context
         #   if extraction fails
-        def extract(context, carrier, &getter) # rubocop:disable Metrics/AbcSize
+        def extract(context, carrier, &getter)
           getter ||= default_getter
           header = getter.call(carrier, @correlation_context_key)
 
