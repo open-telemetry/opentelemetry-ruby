@@ -9,9 +9,8 @@ module OpenTelemetry
     module Faraday
       class Adapter < OpenTelemetry::Instrumentation::Adapter
         install do |config|
-          config[:tracer_middleware] ||= Middlewares::TracerMiddleware
-
           require_dependencies
+          config[:tracer_middleware] ||= Middlewares::TracerMiddleware
           register_tracer_middleware
           use_middleware_by_default
         end
