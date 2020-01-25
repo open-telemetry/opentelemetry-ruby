@@ -8,7 +8,7 @@ require 'opentelemetry/context/key'
 require 'opentelemetry/context/propagation'
 
 module OpenTelemetry
-  # Manages context on a per-thread basis
+  # Manages context on a per-fiber basis
   class Context
     KEY = :__opentelemetry_context__
     EMPTY_ENTRIES = {}.freeze

@@ -30,7 +30,7 @@ module OpenTelemetry
           @entries.delete(key)
         end
 
-        # Clears all correlations from the parent context
+        # Clears all correlations from the to-be-created correlation context
         def clear
           @entries.clear
         end

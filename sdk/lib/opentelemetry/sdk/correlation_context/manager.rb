@@ -40,7 +40,8 @@ module OpenTelemetry
         # Returns the corresponding correlation value (or nil) for key
         #
         # @param [String] key The lookup key
-        # @param [optional Context] context The context use to retrieve key.
+        # @param [optional Context] context The context from which to retrieve
+        #   the key.
         #   Defaults to +Context.current+
         # @return [String]
         def value(key, context: Context.current)
