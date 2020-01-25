@@ -122,21 +122,14 @@ module OpenTelemetry
       values.inject(self) { |parent, (k, v)| Context.new(parent, k, v) }
     end
 
-    # Makes the this context the currently active context and returns the
-    # previously active context
-    #
-    # @return [Context]
+    # @api private
     def attach
       prev = self.class.current
       self.class.current = self
       prev
     end
 
-    # Detaches this context making ctx_to_attach the current context. If this
-    # context is not the current context, a warning will be logged, but
-    # ctx_to_attach will stil be made the current context.
-    #
-    # @param ctx_to_attach The ctx to be attached when this context is detached
+    # @api private
     def detach(ctx_to_attach = nil)
       OpenTelemetry.logger.warn 'Calls to detach should match corresponding calls to attach' if self.class.current != self
 
