@@ -71,14 +71,6 @@ describe OpenTelemetry::SDK::CorrelationContext::Manager do
         ctx2 = manager.remove_value('foo', context: ctx)
         _(manager.value('foo', context: ctx2)).must_be_nil
       end
-
-      it 'returns same context if key does not exist' do
-        ctx = manager.set_value('foo', 'bar', context: Context.empty)
-        _(manager.value('foo', context: ctx)).must_equal('bar')
-
-        ctx2 = manager.remove_value('nonexistant-key', context: ctx)
-        _(ctx2).must_equal(ctx)
-      end
     end
 
     describe 'implicit context' do
@@ -88,16 +80,6 @@ describe OpenTelemetry::SDK::CorrelationContext::Manager do
 
           ctx = manager.remove_value('foo')
           _(manager.value('foo', context: ctx)).must_be_nil
-        end
-      end
-
-      it 'returns same context if key does not exist' do
-        Context.with_current(manager.set_value('foo', 'bar')) do
-          _(manager.value('foo')).must_equal('bar')
-          ctx_before = OpenTelemetry::Context.current
-
-          ctx = manager.remove_value('nonexistant-key')
-          _(ctx).must_equal(ctx_before)
         end
       end
     end
