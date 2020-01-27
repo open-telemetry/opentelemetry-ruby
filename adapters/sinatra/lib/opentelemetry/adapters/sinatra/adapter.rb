@@ -15,7 +15,7 @@ module OpenTelemetry
         end
 
         present do
-          Gem.loaded_specs.include?("sinatra")
+          defined?(::Sinatra)
         end
       end
     end
