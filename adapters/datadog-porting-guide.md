@@ -19,13 +19,19 @@ bash-5.0$ ruby trace_demonstration.rb
 ```
 * Rakefile
 * `tests/test_helper.rb`
+* Integrate rubocop (see https://github.com/open-telemetry/opentelemetry-ruby/pull/172#pullrequestreview-349183775)
+
+## Examples and template adapters
+
+* `adapters/faraday` and `adapters/sinatra` were the earliest, simplest implementations
 
 ## Implementation
 
 * It's ok to use `require_relative` for files that are internal to the project
-* `Span#status` can be set via helper `Tracer
+* `Span#status` can be set via helper `OpenTelemetry::Trace::Status.http_to_status`
 * Don't load integration implementation (require file) until `install` ('patch')-time
-* Most times, only want to run installation (via `#install`) once, but need to be able to `reset` for, e.g., testing
+* Most times, only want to run installation (via `#install`) once, but need to
+  consider being able to `reset` somehow for, e.g., testing
 
 ### otel: tracer
 
@@ -37,12 +43,20 @@ bash-5.0$ ruby trace_demonstration.rb
   * `Span.finish` should be called if using `tracer.start_span`
 * Span `:with_parent` defaults to `current_span`
 
+### otel: span.name (dd-trace-rb: 'resource')
+
+* Prefer "low-cardinality" names (see https://github.com/open-telemetry/opentelemetry-specification/pull/416)
+
 ### otel: span.attributes (dd-trace-rb: 'tags')
 
 * `Span` attribute keys should be strings, *not* symbols
+* `Span` attribute values should be strings, *not* symbols
 * Prefer to populate span attributes via method arguments (e.g., `tracer.in_span(attributes: ...`) instead of `span.set_attribute`
 * Some `Span` attribute naming is based on [semantic conventions](https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-http.md)
 * `Span` `:kind` defaults to `:internal` (other available options include `:client` or `:server`)
+
+### Runnable example
+* Gemfile should include "opentelemetry-adapters-#{adapter_name}"
 
 ## Testing
 
