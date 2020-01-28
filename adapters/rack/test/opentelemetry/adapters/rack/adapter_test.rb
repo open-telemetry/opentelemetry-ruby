@@ -37,6 +37,8 @@ describe OpenTelemetry::Adapters::Rack::Adapter do
       class MyAppClass
         attr_reader :env
 
+        def use(*); end
+
         def call(env)
           @env = env
           [200, { 'Content-Type' => 'text/plain' }, ['OK']]

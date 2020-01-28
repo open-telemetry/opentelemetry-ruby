@@ -14,10 +14,11 @@ module OpenTelemetry
           require_dependencies
 
           retain_middleware_names if config[:retain_middleware_names]
+          config[:application]&.use Middlewares::TracerMiddleware
         end
 
         present do
-          Gem.loaded_specs.include?('rack')
+          defined?(::Rack)
         end
 
         private
