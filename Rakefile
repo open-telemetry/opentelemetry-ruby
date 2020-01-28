@@ -56,6 +56,18 @@ GEM_INFO = {
       require './lib/opentelemetry/exporters/jaeger/version.rb'
       OpenTelemetry::Exporters::Jaeger::VERSION
     }
+  },
+  "opentelemetry-adapters-faraday" => {
+    version_getter: ->() {
+      require './lib/opentelemetry/adapters/faraday/version.rb'
+      OpenTelemetry::Adapters::Faraday::VERSION
+    }
+  },
+  "opentelemetry-adapters-sinatra" => {
+    version_getter: ->() {
+      require './lib/opentelemetry/adapters/sinatra/version.rb'
+      OpenTelemetry::Adapters::Sinatra::VERSION
+    }
   }
 }
 

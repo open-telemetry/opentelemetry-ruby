@@ -8,6 +8,7 @@ module OpenTelemetry
   module Adapters
     module Sinatra
       module Middlewares
+        # Middleware to trace Sinatra requests
         class TracerMiddleware
           def initialize(app)
             @app = app

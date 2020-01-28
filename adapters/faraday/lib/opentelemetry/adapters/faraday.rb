@@ -8,6 +8,7 @@ require 'opentelemetry'
 
 module OpenTelemetry
   module Adapters
+    # Contains the OpenTelemetry adapter for the Faraday gem
     module Faraday
     end
   end

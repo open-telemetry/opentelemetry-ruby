@@ -27,7 +27,7 @@ module OpenTelemetry
     #
     #         # determine if the target library is present
     #         present do
-    #           Gem.loaded_specs.key?('sinatra')
+    #           defined?(::Sinatra)
     #         end
     #
     #         # if the target library is present, is it compatible?
