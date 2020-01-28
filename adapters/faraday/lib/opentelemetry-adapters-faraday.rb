@@ -4,10 +4,4 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-appraise 'sinatra-2.0' do
-  gem 'sinatra', '2.0.7'
-end
-
-appraise 'sinatra-1.4' do
-  gem 'sinatra', '1.4.8'
-end
+require_relative './opentelemetry/adapters'

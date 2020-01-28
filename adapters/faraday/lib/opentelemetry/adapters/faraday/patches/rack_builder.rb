@@ -3,7 +3,6 @@
 # Copyright 2019 OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
-require_relative '../middlewares/tracer_middleware'
 
 module OpenTelemetry
   module Adapters
@@ -14,7 +13,7 @@ module OpenTelemetry
         module RackBuilder
           def adapter(*args)
             use(:open_telemetry) unless @handlers.any? do |handler|
-              handler.klass == Faraday::Adapter.config[:tracer_middleware]
+              handler.klass == Faraday::Adapter.instance.config[:tracer_middleware]
             end
 
             super

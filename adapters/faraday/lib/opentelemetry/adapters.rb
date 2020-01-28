@@ -12,3 +12,5 @@ module OpenTelemetry
   module Adapters
   end
 end
+
+require_relative './adapters/faraday'

@@ -1,23 +1,21 @@
 #!/usr/bin/env ruby
+
+# frozen_string_literal: true
+
+# Copyright 2020 OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
 require 'rubygems'
 require 'bundler/setup'
 
-require 'sinatra/base'
-require 'opentelemetry/sdk'
-require_relative '../lib/opentelemetry/adapters/sinatra'
+Bundler.require
 
-# Set preferred tracer implementation:
-SDK = OpenTelemetry::SDK
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Adapters::Sinatra'
+end
 
-factory = OpenTelemetry.tracer_factory = SDK::Trace::TracerFactory.new
-factory.add_span_processor(
-  SDK::Trace::Export::SimpleSpanProcessor.new(
-    SDK::Trace::Export::ConsoleSpanExporter.new
-  )
-)
-
-OpenTelemetry::Adapters::Sinatra.install
-
+# Example application for the Sinatra instrumentation adapter
 class App < Sinatra::Base
   set :bind, '0.0.0.0'
   set :show_exceptions, false
@@ -39,5 +37,5 @@ class App < Sinatra::Base
     'Thing 1'
   end
 
-  run! if app_file == $0
+  run! if app_file == $PROGRAM_NAME
 end

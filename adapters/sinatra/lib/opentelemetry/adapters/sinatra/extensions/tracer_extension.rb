@@ -10,6 +10,8 @@ module OpenTelemetry
   module Adapters
     module Sinatra
       module Extensions
+        # Sinatra extension that installs TracerMiddleware and provides
+        # tracing for template rendering
         module TracerExtension
           # Sinatra hook after extension is registered
           def self.registered(app)
@@ -18,7 +20,7 @@ module OpenTelemetry
               def render(_engine, data, *)
                 template_name = data.is_a?(Symbol) ? data : :literal
 
-                Sinatra::Adapter.tracer.in_span(
+                Sinatra::Adapter.instance.tracer.in_span(
                   'sinatra.render_template',
                   attributes: { 'sinatra.template_name' => template_name.to_s }
                 ) do

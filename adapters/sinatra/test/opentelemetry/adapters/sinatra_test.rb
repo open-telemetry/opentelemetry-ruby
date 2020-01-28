@@ -6,12 +6,12 @@
 
 require 'test_helper'
 
-require_relative '../../../lib/opentelemetry/adapters/sinatra'
+require_relative '../../../lib/opentelemetry/adapters/sinatra/adapter'
 
 describe OpenTelemetry::Adapters::Sinatra do
   include Rack::Test::Methods
 
-  let(:adapter) { OpenTelemetry::Adapters::Sinatra }
+  let(:adapter) { OpenTelemetry::Adapters::Sinatra::Adapter.instance }
   let(:exporter) { EXPORTER }
 
   let(:app_one) do
@@ -82,26 +82,27 @@ describe OpenTelemetry::Adapters::Sinatra do
     it 'records attributes' do
       get '/one/endpoint'
 
-      _(exporter.finished_spans.first.attributes).must_equal ({
-          "component" => "http",
-          "http.method"=>"GET",
-          "http.url"=>"/endpoint",
-          "http.status_code"=>200,
-          "http.status_text"=>"OK",
-          "http.route"=>"/endpoint" })
+      _(exporter.finished_spans.first.attributes).must_equal(
+        'component' => 'http',
+        'http.method' => 'GET',
+        'http.url' => '/endpoint',
+        'http.status_code' => 200,
+        'http.status_text' => 'OK',
+        'http.route' => '/endpoint'
+      )
     end
 
     it 'traces templates' do
       get '/one/with_template'
 
       _(exporter.finished_spans.size).must_equal 3
-      _(exporter.finished_spans.map(&:name)).
-        must_equal ['sinatra.render_template',
-                    'sinatra.render_template',
-                    '/with_template']
-      _(exporter.finished_spans[0..1].map(&:attributes).
-        map {|h| h['sinatra.template_name']}).
-        must_equal ['layout', 'foo_template']
+      _(exporter.finished_spans.map(&:name))
+        .must_equal %w[sinatra.render_template
+                       sinatra.render_template
+                       /with_template]
+      _(exporter.finished_spans[0..1].map(&:attributes)
+        .map { |h| h['sinatra.template_name'] })
+        .must_equal %w[layout foo_template]
     end
   end
 end
