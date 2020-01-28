@@ -10,6 +10,8 @@ module OpenTelemetry
   module Adapters
     module Sinatra
       module Extensions
+        # Sinatra extension that installs TracerMiddleware and provides
+        # tracing for template rendering
         module TracerExtension
           # Sinatra hook after extension is registered
           def self.registered(app)
