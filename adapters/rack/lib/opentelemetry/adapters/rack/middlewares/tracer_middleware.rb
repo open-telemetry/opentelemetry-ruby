@@ -10,14 +10,17 @@ module OpenTelemetry
   module Adapters
     module Rack
       module Middlewares
+        # TracerMiddleware propagates context and instruments Rack requests
+        # by way of its middleware system
+        #
         # Notable implementation differences from dd-trace-rb:
         # * missing: 'span.resource', which is set to span.name
         # * missing: config[:distributed_tracing]
         # * missing: span.set_error() -- spec level change
-        class TracerMiddleware
+        class TracerMiddleware # rubocop:disable Metrics/ClassLength
           class << self
             def allowed_rack_request_headers
-              @allowed_rack_request_header_names ||= allowed_request_header_names.map do |header|
+              @allowed_rack_request_headers ||= allowed_request_header_names.map do |header|
                 {
                   header: header,
                   rack_header: "HTTP_#{header.to_s.upcase.gsub(/[-\s]/, '_')}"
@@ -54,11 +57,11 @@ module OpenTelemetry
             private
 
             def clear_cached_config
-              @allowed_rack_request_header_names = nil
+              @allowed_rack_request_headers = nil
               @allowed_request_header_names = nil
 
-              @allowed_response_header_names = nil
               @allowed_response_headers = nil
+              @allowed_response_header_names = nil
             end
           end
 
@@ -68,7 +71,7 @@ module OpenTelemetry
             @app = app
           end
 
-          def call(env)
+          def call(env) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
             original_env = env.dup
 
             parent_context = OpenTelemetry.tracer_factory.http_text_format.extract(env)
@@ -130,7 +133,7 @@ module OpenTelemetry
             @app.call(env).tap do |status, headers, response|
               set_attributes_after_request(request_span, status, headers, response)
             end
-          rescue Exception => e
+          rescue StandardError => e
             record_and_reraise_error(e, request_span: request_span)
           ensure
             request_span.finish
@@ -205,7 +208,8 @@ module OpenTelemetry
           def record_and_reraise_error(error, request_span:)
             request_span.status = OpenTelemetry::Trace::Status.new(
               OpenTelemetry::Trace::Status::INTERNAL_ERROR,
-              description: error.to_s)
+              description: error.to_s
+            )
 
             # TODO: implement span.set_error? (this is a specification-level issue):
             # request_span.set_error(error) unless request_span.nil?
@@ -229,9 +233,7 @@ module OpenTelemetry
           def allowed_request_headers(env)
             {}.tap do |result|
               self.class.allowed_rack_request_headers.each do |hash|
-                if env.key?(hash[:rack_header])
-                  result[self.class.build_attribute_name('http.request.headers.', hash[:header])] = env[hash[:rack_header]]
-                end
+                result[self.class.build_attribute_name('http.request.headers.', hash[:header])] = env[hash[:rack_header]] if env.key?(hash[:rack_header])
               end
             end
           end
@@ -243,14 +245,14 @@ module OpenTelemetry
             {}.tap do |result|
               self.class.allowed_response_headers.each do |hash|
                 key = headers.keys.find { |k| hash[:search_for_keys].find { |k2| k == k2 } } ||
-                  headers.keys.find { |k| hash[:search_for_keys].find { |k2| k.upcase == k2 } }
+                      headers.keys.find { |k| hash[:search_for_keys].find { |k2| k.upcase == k2 } }
 
-                if key
-                  # cache string for next time:
-                  hash[:search_for_keys] |= [key]
+                next unless key
 
-                  result[hash[:attribute_name]] = headers[key]
-                end
+                # cache string for next time:
+                hash[:search_for_keys] |= [key]
+
+                result[hash[:attribute_name]] = headers[key]
               end
             end
           end

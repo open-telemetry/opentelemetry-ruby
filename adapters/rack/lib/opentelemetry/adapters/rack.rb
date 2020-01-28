@@ -8,6 +8,7 @@ require 'opentelemetry'
 
 module OpenTelemetry
   module Adapters
+    # Contains the OpenTelemetry adapter for the Rack gem
     module Rack
     end
   end

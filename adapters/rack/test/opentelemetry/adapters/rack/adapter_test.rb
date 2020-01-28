@@ -11,12 +11,12 @@ require_relative '../../../../lib/opentelemetry/adapters/rack/adapter'
 describe OpenTelemetry::Adapters::Rack::Adapter do
   let(:adapter_class) { OpenTelemetry::Adapters::Rack::Adapter }
   let(:adapter) { adapter_class.instance }
-  let(:config) { Hash.new }
+  let(:config) { {} }
 
   after do
     # simulate a fresh install:
     adapter.instance_variable_set('@installed', false)
-    adapter.install(Hash.new)
+    adapter.install({})
   end
 
   describe 'config[:retain_middleware_names]' do
@@ -39,7 +39,7 @@ describe OpenTelemetry::Adapters::Rack::Adapter do
 
         def call(env)
           @env = env
-          [200, {'Content-Type' => 'text/plain'}, ['OK']]
+          [200, { 'Content-Type' => 'text/plain' }, ['OK']]
         end
       end
 

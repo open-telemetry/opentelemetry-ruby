@@ -19,7 +19,7 @@ describe OpenTelemetry::Adapters::Rack::Util::QueueTime do
       describe 'milliseconds' do
         describe 'REQUEST_START' do
           let(:env) { { described_class::REQUEST_START => "t=#{expected}" } }
-          let(:expected) { 1512379167.574 }
+          let(:expected) { 1_512_379_167.574 }
           it { expect(request_start.to_f).must_equal(expected) }
 
           describe 'but does not start with t=' do
@@ -29,8 +29,8 @@ describe OpenTelemetry::Adapters::Rack::Util::QueueTime do
 
           describe 'without decimal places' do
             let(:env) { { described_class::REQUEST_START => expected } }
-            let(:expected) { 1512379167574 }
-            it { expect(request_start.to_f).must_equal(1512379167.574) }
+            let(:expected) { 1_512_379_167_574 }
+            it { expect(request_start.to_f).must_equal(1_512_379_167.574) }
           end
 
           describe 'but a malformed expected' do
@@ -46,7 +46,7 @@ describe OpenTelemetry::Adapters::Rack::Util::QueueTime do
 
         describe 'QUEUE_START' do
           let(:env) { { described_class::QUEUE_START => "t=#{expected}" } }
-          let(:expected) { 1512379167.574 }
+          let(:expected) { 1_512_379_167.574 }
           it { expect(request_start.to_f).must_equal(expected) }
         end
       end
@@ -54,7 +54,7 @@ describe OpenTelemetry::Adapters::Rack::Util::QueueTime do
       describe 'microseconds' do
         describe 'REQUEST_START' do
           let(:env) { { described_class::REQUEST_START => "t=#{expected}" } }
-          let(:expected) { 1570633834.463123 }
+          let(:expected) { 1_570_633_834.463123 }
           it { expect(request_start.to_f).must_equal(expected) }
 
           describe 'but does not start with t=' do
@@ -64,8 +64,8 @@ describe OpenTelemetry::Adapters::Rack::Util::QueueTime do
 
           describe 'without decimal places' do
             let(:env) { { described_class::REQUEST_START => expected } }
-            let(:expected) { 1570633834463123 }
-            it { expect(request_start.to_f).must_equal(1570633834.463123) }
+            let(:expected) { 1_570_633_834_463_123 }
+            it { expect(request_start.to_f).must_equal(1_570_633_834.463123) }
           end
 
           describe 'but a malformed expected' do
@@ -76,7 +76,7 @@ describe OpenTelemetry::Adapters::Rack::Util::QueueTime do
 
         describe 'QUEUE_START' do
           let(:env) { { described_class::QUEUE_START => "t=#{expected}" } }
-          let(:expected) { 1570633834.463123 }
+          let(:expected) { 1_570_633_834.463123 }
           it { expect(request_start.to_f).must_equal(expected) }
         end
       end

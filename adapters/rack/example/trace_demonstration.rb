@@ -1,3 +1,9 @@
+# frozen_string_literal: true
+
+# Copyright 2020 OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
 require 'rubygems'
 require 'bundler/setup'
 
@@ -20,9 +26,9 @@ factory.add_span_processor(
 # setup fake rack application:
 builder = Rack::Builder.new do
   # can't use TracerMiddleware constant before calling Adapters::Rack.install:
-  #use OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware
+  # use OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware
 end
-app = lambda { |env| [200, {'Content-Type' => 'text/plain'}, ['All responses are OK']] }
+app = ->(_env) { [200, { 'Content-Type' => 'text/plain' }, ['All responses are OK']] }
 builder.run app
 
 # demonstrate rack configuration options:

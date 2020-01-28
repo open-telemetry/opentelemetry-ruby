@@ -6,7 +6,7 @@
 
 require 'test_helper'
 
- #require Adapter so .install method is found:
+# require Adapter so .install method is found:
 require_relative '../../../../../lib/opentelemetry/adapters/rack'
 require_relative '../../../../../lib/opentelemetry/adapters/rack/adapter'
 require_relative '../../../../../lib/opentelemetry/adapters/rack/middlewares/tracer_middleware'
@@ -18,16 +18,16 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
 
   let(:described_class) { OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware }
 
-  let(:app) { lambda { |env| [200, {'Content-Type' => 'text/plain'}, ['OK']] } }
+  let(:app) { ->(_env) { [200, { 'Content-Type' => 'text/plain' }, ['OK']] } }
   let(:middleware) { described_class.new(app) }
   let(:rack_builder) { Rack::Builder.new }
 
   let(:exporter) { EXPORTER }
   let(:first_span) { exporter.finished_spans.first }
 
-  let(:default_config) { Hash.new }
+  let(:default_config) { {} }
   let(:config) { default_config }
-  let(:env) { Hash.new }
+  let(:env) { {} }
 
   before do
     # clear captured spans:
@@ -89,7 +89,7 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
 
     describe 'config[:allowed_response_headers]' do
       let(:app) do
-        lambda { |env| [200, {'Foo-Bar' => 'foo bar response header'}, ['OK']] }
+        ->(_env) { [200, { 'Foo-Bar' => 'foo bar response header' }, ['OK']] }
       end
 
       it 'defaults to nil' do
@@ -121,7 +121,7 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
       end
 
       describe 'when recordable' do
-        let(:config) { default_config.merge(record_frontend_span: true)}
+        let(:config) { default_config.merge(record_frontend_span: true) }
         let(:env) { Hash('HTTP_X_REQUEST_START' => Time.now.to_i) }
         let(:frontend_span) { exporter.finished_spans.last }
 
@@ -159,7 +159,7 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
     describe 'with quantization' do
       let(:quantization_example) do
         # demonstrate simple shortening of URL:
-        lambda { |url| url&.to_s[0..5] }
+        ->(url) { url.to_s[0..5] }
       end
       let(:config) { default_config.merge(url_quantization: quantization_example) }
 
@@ -173,21 +173,13 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
     SimulatedError = Class.new(StandardError)
 
     let(:app) do
-      lambda { |env| raise SimulatedError }
+      ->(_env) { raise SimulatedError }
     end
 
     it 'records error in span and then re-raises' do
       assert_raises SimulatedError do
         Rack::MockRequest.new(rack_builder).get('/', env)
       end
-    end
-
-    it 'records error in span' do
-      begin
-        Rack::MockRequest.new(rack_builder).get('/', env)
-      rescue SimulatedError => _expected_and_ignored
-      end
-
       _(first_span.status.canonical_code).must_equal OpenTelemetry::Trace::Status::INTERNAL_ERROR
     end
   end

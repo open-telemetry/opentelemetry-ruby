@@ -7,8 +7,9 @@
 module OpenTelemetry
   module Adapters
     module Rack
+      # The Adapter class contains logic to detect and install the Rack
+      # instrumentation adapter
       class Adapter < OpenTelemetry::Instrumentation::Adapter
-
         install do |config|
           require_dependencies
 
@@ -45,7 +46,7 @@ module OpenTelemetry
             end
 
             next_middleware = next_middleware.instance_variable_defined?('@app') &&
-              next_middleware.instance_variable_get('@app')
+                              next_middleware.instance_variable_get('@app')
           end
         end
       end

@@ -10,13 +10,13 @@ module OpenTelemetry
       module Util
         # QueueTime simply...
         module QueueTime
-          REQUEST_START = 'HTTP_X_REQUEST_START'.freeze
-          QUEUE_START = 'HTTP_X_QUEUE_START'.freeze
+          REQUEST_START = 'HTTP_X_REQUEST_START'
+          QUEUE_START = 'HTTP_X_QUEUE_START'
           MINIMUM_ACCEPTABLE_TIME_VALUE = 1_000_000_000
 
           module_function
 
-          def get_request_start(env, now = nil)
+          def get_request_start(env, now = nil) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
             header = env[REQUEST_START] || env[QUEUE_START]
             return unless header
 
