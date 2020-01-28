@@ -1,15 +1,21 @@
-appraise "faraday-1.0" do
-  gem "faraday", "~> 1.0.0"
+# frozen_string_literal: true
+
+# Copyright 2020 OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+appraise 'faraday-1.0' do
+  gem 'faraday', '~> 1.0.0'
 end
 
-appraise "faraday-0.17" do
-  gem "faraday", "0.17.0"
+appraise 'faraday-0.17' do
+  gem 'faraday', '0.17.0'
 end
 
-appraise "faraday-0.16" do
-  gem "faraday", "0.16.2"
+appraise 'faraday-0.16' do
+  gem 'faraday', '0.16.2'
 end
 
-appraise "faraday-0.13" do
-  gem "faraday", "0.13.1"
+appraise 'faraday-0.13' do
+  gem 'faraday', '0.13.1'
 end

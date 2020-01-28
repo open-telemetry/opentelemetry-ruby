@@ -7,6 +7,8 @@
 module OpenTelemetry
   module Adapters
     module Faraday
+      # The Adapter class contains logic to detect and install the Faraday
+      # instrumentation adapter
       class Adapter < OpenTelemetry::Instrumentation::Adapter
         install do |config|
           require_dependencies
