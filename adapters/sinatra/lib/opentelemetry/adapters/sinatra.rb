@@ -8,6 +8,7 @@ require 'opentelemetry'
 
 module OpenTelemetry
   module Adapters
+    # Contains the OpenTelemetry instrumentation adapter for the Sinatra gem
     module Sinatra
     end
   end

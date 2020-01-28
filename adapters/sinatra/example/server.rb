@@ -1,4 +1,11 @@
 #!/usr/bin/env ruby
+
+# frozen_string_literal: true
+
+# Copyright 2020 OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
 require 'rubygems'
 require 'bundler/setup'
 
@@ -8,6 +15,7 @@ OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Adapters::Sinatra'
 end
 
+# Example application for the Sinatra instrumentation adapter
 class App < Sinatra::Base
   set :bind, '0.0.0.0'
   set :show_exceptions, false
@@ -29,5 +37,5 @@ class App < Sinatra::Base
     'Thing 1'
   end
 
-  run! if app_file == $0
+  run! if app_file == $PROGRAM_NAME
 end
