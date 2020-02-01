@@ -66,27 +66,27 @@ describe OpenTelemetry do
     end
   end
 
-  describe '.correlation_context_manager' do
+  describe '.correlations' do
     after do
-      # Ensure we don't leak custom correlation_context_manager to other tests
-      OpenTelemetry.correlation_context_manager = nil
+      # Ensure we don't leak custom correlations to other tests
+      OpenTelemetry.correlations = nil
     end
 
     it 'returns CorrelationContext::Manager by default' do
-      manager = OpenTelemetry.correlation_context_manager
+      manager = OpenTelemetry.correlations
       _(manager).must_be_instance_of(OpenTelemetry::CorrelationContext::Manager)
     end
 
     it 'returns the same instance when accessed multiple times' do
-      _(OpenTelemetry.correlation_context_manager).must_equal(
-        OpenTelemetry.correlation_context_manager
+      _(OpenTelemetry.correlations).must_equal(
+        OpenTelemetry.correlations
       )
     end
 
-    it 'returns user specified correlation_context_manager' do
-      custom_manager = 'a custom correlation_context_manager'
-      OpenTelemetry.correlation_context_manager = custom_manager
-      _(OpenTelemetry.correlation_context_manager).must_equal(custom_manager)
+    it 'returns user specified correlations' do
+      custom_manager = 'a custom correlations'
+      OpenTelemetry.correlations = custom_manager
+      _(OpenTelemetry.correlations).must_equal(custom_manager)
     end
   end
 

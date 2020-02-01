@@ -23,7 +23,7 @@ require 'opentelemetry/version'
 module OpenTelemetry
   extend self
 
-  attr_writer :tracer_factory, :meter_factory, :correlation_context_manager
+  attr_writer :tracer_factory, :meter_factory, :correlations
 
   attr_accessor :logger
 
@@ -48,8 +48,8 @@ module OpenTelemetry
   # @return [Object, CorrelationContext::Manager] registered
   #   correlation context manager or a default no-op implementation of the
   #   manager.
-  def correlation_context_manager
-    @correlation_context_manager ||= CorrelationContext::Manager.new
+  def correlations
+    @correlations ||= CorrelationContext::Manager.new
   end
 
   # @return [Context::Propagation::Propagation] an instance of the propagation API
