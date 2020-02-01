@@ -14,7 +14,14 @@ module OpenTelemetry
           require_dependencies
 
           retain_middleware_names if config[:retain_middleware_names]
-          config[:application]&.use Middlewares::TracerMiddleware
+
+          if (app = config[:application])
+            app.use Middlewares::TracerMiddleware
+          else
+            # monkey patch Rack::Builder:
+            require_relative 'patches/rack_builder'
+            ::Rack::Builder.prepend Rack::Patches::RackBuilder
+          end
         end
 
         present do
