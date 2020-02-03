@@ -14,6 +14,7 @@ module OpenTelemetry
           require_dependencies
 
           retain_middleware_names if config[:retain_middleware_names]
+          configure_default_quantization
 
           if (app = config[:application])
             app.use Middlewares::TracerMiddleware
@@ -32,6 +33,7 @@ module OpenTelemetry
 
         def require_dependencies
           require_relative 'middlewares/tracer_middleware'
+          require_relative 'util/quantization'
         end
 
         MissingApplicationError = Class.new(StandardError)
@@ -56,6 +58,10 @@ module OpenTelemetry
             next_middleware = next_middleware.instance_variable_defined?('@app') &&
                               next_middleware.instance_variable_get('@app')
           end
+        end
+
+        def configure_default_quantization
+          config[:url_quantization] ||= ->(url) { Util::Quantization.url(url, config[:quantization_options]) }
         end
       end
     end

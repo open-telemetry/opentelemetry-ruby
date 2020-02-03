@@ -9,6 +9,7 @@ require 'test_helper'
 # require Adapter so .install method is found:
 require_relative '../../../../../lib/opentelemetry/adapters/rack'
 require_relative '../../../../../lib/opentelemetry/adapters/rack/adapter'
+require_relative '../../../../../lib/opentelemetry/adapters/rack/util/quantization'
 require_relative '../../../../../lib/opentelemetry/adapters/rack/middlewares/tracer_middleware'
 
 describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
@@ -146,7 +147,7 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
 
   describe 'config[:quantization]' do
     before do
-      Rack::MockRequest.new(rack_builder).get('/really_long_url', env)
+      Rack::MockRequest.new(rack_builder).get('/really_long_url?category_id=1&sort_by=asc#featured', env)
     end
 
     describe 'without quantization' do
@@ -164,6 +165,19 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
 
       it 'mutates url according to url_quantization' do
         _(first_span.name).must_equal '/reall'
+      end
+
+      describe 'with more complex quantization' do
+        let(:quantization_options) do
+          { query: { exclude: :all } }
+        end
+        let(:quantization_example) do
+          ->(url) { adapter_module::Util::Quantization.url(url, quantization_options) }
+        end
+
+        it 'mutates url' do
+          _(first_span.name).must_equal '/really_long_url'
+        end
       end
     end
   end
