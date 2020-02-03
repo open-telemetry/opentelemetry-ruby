@@ -1,19 +1,25 @@
 # frozen_string_literal: true
 
-# Copyright 2019 OpenTelemetry Authors
+# Copyright 2020 OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
+
 require 'logger'
 
 require 'opentelemetry/error'
 require 'opentelemetry/context'
 require 'opentelemetry/distributed_context'
 require 'opentelemetry/internal'
+require 'opentelemetry/instrumentation'
 require 'opentelemetry/metrics'
 require 'opentelemetry/trace'
 require 'opentelemetry/version'
 
-# OpenTelemetry provides global accessors for telemetry objects
+# OpenTelemetry is an open source observability framework, providing a
+# general-purpose API, SDK, and related tools required for the instrumentation
+# of cloud-native software, frameworks, and libraries.
+#
+# The OpenTelemetry module provides global accessors for telemetry objects.
 module OpenTelemetry
   extend self
 
@@ -37,6 +43,12 @@ module OpenTelemetry
   #   context manager or a default no-op implementation of the manager
   def distributed_context_manager
     @distributed_context_manager ||= DistributedContext::Manager.new
+  end
+
+  # @return [Instrumentation::Registry] registry containing all known
+  #  instrumentation
+  def instrumentation_registry
+    @instrumentation_registry ||= Instrumentation::Registry.new
   end
 
   self.logger = Logger.new(STDOUT)

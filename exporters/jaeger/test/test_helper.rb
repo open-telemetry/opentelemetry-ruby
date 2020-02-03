@@ -7,7 +7,7 @@
 require 'simplecov'
 SimpleCov.start
 
-require 'opentelemetry/exporters/jaeger/exporter'
+require 'opentelemetry/exporters/jaeger'
 require 'minitest/autorun'
 
 OpenTelemetry.logger = Logger.new('/dev/null')

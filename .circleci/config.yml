@@ -6,16 +6,24 @@ version: 2.1
 executors:
   ruby24:
     docker:
-      - image: "circleci/ruby:2.4-stretch"
+      - image: "circleci/ruby:2.4-buster"
   ruby25:
     docker:
-      - image: "circleci/ruby:2.5-stretch"
+      - image: "circleci/ruby:2.5-buster"
   ruby26:
     docker:
-      - image: "circleci/ruby:2.6-stretch"
+      - image: "circleci/ruby:2.6-buster"
+  ruby27:
+    docker:
+      - image: "circleci/ruby:2.7-buster"
   jruby:
     docker:
       - image: "circleci/jruby:latest"
+    environment:
+      JRUBY_OPTS: "--debug"
+  jruby92:
+    docker:
+      - image: "circleci/jruby:9.2.8-jre"
     environment:
       JRUBY_OPTS: "--debug"
 commands:
@@ -46,6 +54,26 @@ commands:
       - run:
           name: CI (OpenTracing Bridge)
           command: "cd bridges/opentracing && bundle exec rake"
+  rake-test-appraisal:
+    steps:
+      - run:
+          name: Bundle + CI (Adapters - Faraday)
+          command: |
+            cd adapters/faraday
+            gem uninstall -aIx bundler
+            gem install --no-document bundler -v '~> 2.0.2'
+            bundle install --jobs=3 --retry=3
+            bundle exec appraisal install
+            bundle exec appraisal rake test
+      - run:
+          name: Bundle + CI (Adapters - Sinatra)
+          command: |
+            cd adapters/sinatra
+            gem uninstall -aIx bundler
+            gem install --no-document bundler -v '~> 2.0.2'
+            bundle install --jobs=3 --retry=3
+            bundle exec appraisal install
+            bundle exec appraisal rake test
   rake-release:
     steps:
       - checkout
@@ -60,22 +88,35 @@ jobs:
     executor: ruby24
     steps:
       - rake-test
+      - rake-test-appraisal
   test-ruby25:
     executor: ruby25
     steps:
       - rake-test
+      - rake-test-appraisal
   test-ruby26:
     executor: ruby26
+    steps:
+      - rake-test
+      - rake-test-appraisal
+  test-ruby27:
+    executor: ruby27
     steps:
       - rake-test
   test-jruby:
     executor: jruby
     steps:
       - rake-test
+  test-jruby92:
+    executor: jruby92
+    steps:
+      - rake-test
+      - rake-test-appraisal
   release:
     executor: ruby26
     steps:
       - rake-release
+      - rake-test-appraisal
 workflows:
   version: 2
   builds:
@@ -92,7 +133,15 @@ workflows:
           filters:
             tags:
               only: /^opentelemetry-.+\/v\d.*$/
+      - test-ruby27:
+          filters:
+            tags:
+              only: /^opentelemetry-.+\/v\d.*$/
       - test-jruby:
+          filters:
+            tags:
+              only: /^opentelemetry-.+\/v\d.*$/
+      - test-jruby92:
           filters:
             tags:
               only: /^opentelemetry-.+\/v\d.*$/
@@ -101,6 +150,7 @@ workflows:
             - test-ruby24
             - test-ruby25
             - test-ruby26
+            - test-ruby27
             - test-jruby
           filters:
             branches:

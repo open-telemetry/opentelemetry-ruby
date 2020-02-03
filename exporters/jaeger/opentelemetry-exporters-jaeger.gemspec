@@ -20,8 +20,9 @@ Gem::Specification.new do |spec|
   spec.license     = 'Apache-2.0'
 
   spec.files = ::Dir.glob('lib/**/*.rb') +
+               ::Dir.glob('thrift/gen-rb/**/*.rb') +
                ::Dir.glob('*.md') +
-               ['LICENSE']
+               ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.4.0'
 

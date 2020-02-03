@@ -42,7 +42,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
     def initialize(sleep_for_millis: 0, **args)
       @sleep_for_seconds = sleep_for_millis / 1000.0
-      super(args)
+      super(**args)
     end
 
     def export(batch)
@@ -229,7 +229,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
 
     describe 'when exporter runs too long' do
-      let(:exporter_sleeps_for_millis) { exporter_timeout_millis + 1 }
+      let(:exporter_sleeps_for_millis) { exporter_timeout_millis + 700 }
 
       it 'is interrupted by a timeout' do
         _(exporter.state).must_equal(:called)

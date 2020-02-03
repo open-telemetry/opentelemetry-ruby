@@ -1,7 +1,11 @@
 **/Gemfile.lock
 **/.yardoc
+**/doc
 **/docs
 **/coverage
 **/.byebug_history
 **/*.gem
 **/.bundle
+
+# Appraisals
+adapters/**/*.gemfile.lock

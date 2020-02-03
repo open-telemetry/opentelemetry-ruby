@@ -9,7 +9,6 @@ $LOAD_PATH.push(File.dirname(__FILE__) + '/../../../../thrift/gen-rb')
 require 'agent'
 require 'opentelemetry/sdk'
 require 'socket'
-require_relative 'transport'
 
 module OpenTelemetry
   module Exporters
