@@ -18,7 +18,8 @@ module OpenTelemetry
         end
 
         def active_span
-          @tracer.current_span
+          scope = ScopeManager.current.active
+          scope.span if scope
         end
 
         def start_active_span(operation_name,
