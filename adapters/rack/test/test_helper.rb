@@ -20,28 +20,3 @@ OpenTelemetry.tracer_factory = sdk::Trace::TracerFactory.new.tap do |factory|
 end
 
 EXPORTER = exporter
-
-### "un-patch" Rack::Builder:
-#
-require 'rack/builder'
-UNTAINTED_RACK_BUILDER = ::Rack::Builder.dup
-
-module SafeRackBuilder
-  def after_setup
-    super
-    ::Rack.send(:remove_const, :Builder)
-    ::Rack.const_set(:Builder, UNTAINTED_RACK_BUILDER.dup)
-  end
-
-  def after_teardown
-    super
-    Rack.send(:remove_const, :Builder)
-    Rack.const_set(:Builder, UNTAINTED_RACK_BUILDER.dup)
-  end
-end
-
-module Minitest
-  class Test
-    include SafeRackBuilder
-  end
-end

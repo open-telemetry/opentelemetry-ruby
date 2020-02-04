@@ -41,8 +41,9 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
     # clear out cached config:
     described_class.send(:clear_cached_config)
 
-    # tracer middleware (automatically integrated):
+    # integrate tracer middleware:
     rack_builder.run app
+    rack_builder.use described_class
   end
 
   after do

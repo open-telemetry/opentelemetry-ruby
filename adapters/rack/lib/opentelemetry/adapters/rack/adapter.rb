@@ -16,13 +16,7 @@ module OpenTelemetry
           retain_middleware_names if config[:retain_middleware_names]
           configure_default_quantization
 
-          if (app = config[:application])
-            app.use Middlewares::TracerMiddleware
-          else
-            # monkey patch Rack::Builder:
-            require_relative 'patches/rack_builder'
-            ::Rack::Builder.prepend Rack::Patches::RackBuilder
-          end
+          config[:application]&.use Middlewares::TracerMiddleware
         end
 
         present do
