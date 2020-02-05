@@ -15,8 +15,6 @@ module OpenTelemetry
 
           retain_middleware_names if config[:retain_middleware_names]
           configure_default_quantization
-
-          config[:application]&.use Middlewares::TracerMiddleware
         end
 
         present do
