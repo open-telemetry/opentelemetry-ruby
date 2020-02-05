@@ -30,12 +30,17 @@ module OpenTelemetry
                               ignore_active_scope: false,
                               finish_on_close: true,
                               &block)
+          child_of = child_of.span unless child_of.instance_of? OpenTelemetry::Trace::Span
+          # TODO need a link ref implementation (wraps Otel link or coerces Otrace span bridge to link)
+          # TODO update tests to ensure context passed
+          # TODO update tests re getting OtelSpan or OtraceBridgeSpan passed in as child_of
           span = @tracer.start_span(operation_name,
                                     with_parent: child_of,
                                     attributes: tags,
                                     links: references,
                                     start_timestamp: start_time)
-          scope = Scope.new(ScopeManager.new, span, finish_on_close)
+          wrapped = Span.new(span, dist_context: span.context)
+          scope = Scope.new(ScopeManager.current, wrapped, finish_on_close)
           if block_given?
             yield scope
             return @tracer.with_span(span, &block)
@@ -51,16 +56,19 @@ module OpenTelemetry
                        tags: nil,
                        ignore_active_scope: false,
                        &block)
+          #  We then need to unwrap the OpenTelemetry context before passing it to @tracer.start_span(... with_parent:.
+          child_of = child_of.span unless child_of.instance_of? OpenTelemetry::Trace::Span
           span = @tracer.start_span(operation_name,
                                     with_parent: child_of,
                                     attributes: tags,
                                     links: references,
                                     start_timestamp: start_time)
+          wrapped = Span.new(span, dist_context: span.context)
           if block_given?
-            yield span
+            yield wrapped
             return @tracer.with_span(span, &block)
           end
-          span
+          wrapped
         end
 
         def inject(span_context, format, carrier)
