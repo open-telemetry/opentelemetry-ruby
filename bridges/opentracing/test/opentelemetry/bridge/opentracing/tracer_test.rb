@@ -34,6 +34,15 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
       tracer_mock.verify
     end
 
+    it 'calls start span on the tracer when parent is OTrace Bridge span' do
+      parent = OpenTelemetry::Bridge::OpenTracing::Span.new(OpenTelemetry::Trace::Span.new)
+      to_be_wrapped = OpenTelemetry::Trace::Span.new(span_context: 'foobar')
+      args = ['name', { with_parent: parent.span, attributes: 'tag', links: 'refs', start_timestamp: 'now' }]
+      tracer_mock.expect(:start_span, to_be_wrapped, args)
+      tracer_bridge.start_span('name', child_of: parent, references: 'refs', tags: 'tag', start_time: 'now')
+      tracer_mock.verify
+    end
+
     it 'calls with_span if a block is given, yielding the span and returning the blocks value' do
       parent = OpenTelemetry::Trace::Span.new
       to_be_wrapped = OpenTelemetry::Trace::Span.new(span_context: 'foobar')
@@ -61,11 +70,19 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
   end
 
   describe '#start_active_span' do
-    # TODO double up these tests for when passed an OT bridge span
     it 'calls start span on the tracer and with_span to make active' do
       parent = OpenTelemetry::Trace::Span.new
       to_be_wrapped = OpenTelemetry::Trace::Span.new(span_context: 'foobar')
       args = ['name', { with_parent: parent, attributes: 'tag', links: 'refs', start_timestamp: 'now' }]
+      tracer_mock.expect(:start_span, to_be_wrapped, args)
+      tracer_bridge.start_active_span('name', child_of: parent, references: 'refs', tags: 'tag', start_time: 'now')
+      tracer_mock.verify
+    end
+
+    it 'calls start span on the tracer and with_span to make active when parent is OTrace bridge span' do
+      parent = OpenTelemetry::Bridge::OpenTracing::Span.new(OpenTelemetry::Trace::Span.new)
+      to_be_wrapped = OpenTelemetry::Trace::Span.new(span_context: 'foobar')
+      args = ['name', { with_parent: parent.span, attributes: 'tag', links: 'refs', start_timestamp: 'now' }]
       tracer_mock.expect(:start_span, to_be_wrapped, args)
       tracer_bridge.start_active_span('name', child_of: parent, references: 'refs', tags: 'tag', start_time: 'now')
       tracer_mock.verify
