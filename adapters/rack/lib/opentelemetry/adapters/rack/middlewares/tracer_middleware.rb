@@ -20,11 +20,10 @@ module OpenTelemetry
         class TracerMiddleware # rubocop:disable Metrics/ClassLength
           class << self
             def allowed_rack_request_headers
-              @allowed_rack_request_headers ||= allowed_request_header_names.map do |header|
-                {
-                  header: header,
-                  rack_header: "HTTP_#{header.to_s.upcase.gsub(/[-\s]/, '_')}"
-                }
+              @allowed_rack_request_headers ||= {}.tap do |result|
+                allowed_request_header_names.each do |header|
+                  result["HTTP_#{header.to_s.upcase.gsub(/[-\s]/, '_')}"] = build_attribute_name('http.request.headers.', header)
+                end
               end
             end
 
@@ -232,8 +231,8 @@ module OpenTelemetry
           # @return Hash
           def allowed_request_headers(env)
             {}.tap do |result|
-              self.class.allowed_rack_request_headers.each do |hash|
-                result[self.class.build_attribute_name('http.request.headers.', hash[:header])] = env[hash[:rack_header]] if env.key?(hash[:rack_header])
+              self.class.allowed_rack_request_headers.each do |key, value|
+                result[value] = env[key] if env.key?(key)
               end
             end
           end
@@ -245,7 +244,7 @@ module OpenTelemetry
             {}.tap do |result|
               self.class.allowed_response_headers.each do |hash|
                 key = headers.keys.find { |k| hash[:search_for_keys].find { |k2| k == k2 } } ||
-                      headers.keys.find { |k| hash[:search_for_keys].find { |k2| k.upcase == k2 } }
+                  headers.keys.find { |k| hash[:search_for_keys].find { |k2| k.upcase == k2 } }
 
                 next unless key
 
