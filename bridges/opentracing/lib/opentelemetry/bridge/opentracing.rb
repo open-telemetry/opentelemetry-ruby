@@ -16,9 +16,10 @@ module OpenTelemetry
   end
 end
 
-require 'opentelemetry/bridge/opentracing/scope_manager'
+require 'opentelemetry/bridge/opentracing/reference'
 require 'opentelemetry/bridge/opentracing/scope'
-require 'opentelemetry/bridge/opentracing/span_context'
+require 'opentelemetry/bridge/opentracing/scope_manager'
 require 'opentelemetry/bridge/opentracing/span'
+require 'opentelemetry/bridge/opentracing/span_context'
 require 'opentelemetry/bridge/opentracing/tracer'
 require 'opentelemetry/bridge/opentracing/version'

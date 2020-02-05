@@ -8,7 +8,7 @@ module OpenTelemetry
   module Bridge
     module OpenTracing
       # Tracer provides a means of referencing
-      # an OpenTelemetry::Tracer as a OpenTracing::Tracer
+      # an OpenTelemetry::Tracer as an OpenTracing::Tracer
       class Tracer
         attr_reader :tracer
 
@@ -31,7 +31,6 @@ module OpenTelemetry
                               finish_on_close: true,
                               &block)
           child_of = child_of.span unless child_of.instance_of? OpenTelemetry::Trace::Span
-          # TODO need a link ref implementation (wraps Otel link or coerces Otrace span bridge to link)
           span = @tracer.start_span(operation_name,
                                     with_parent: child_of,
                                     attributes: tags,
@@ -54,7 +53,6 @@ module OpenTelemetry
                        tags: nil,
                        ignore_active_scope: false,
                        &block)
-          #  We then need to unwrap the OpenTelemetry context before passing it to @tracer.start_span(... with_parent:.
           child_of = child_of.span unless child_of.instance_of? OpenTelemetry::Trace::Span
           span = @tracer.start_span(operation_name,
                                     with_parent: child_of,
