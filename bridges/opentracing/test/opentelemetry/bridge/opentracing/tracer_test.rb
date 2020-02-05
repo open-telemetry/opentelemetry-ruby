@@ -27,21 +27,22 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
   describe '#start_span' do
     it 'calls start span on the tracer' do
       parent = OpenTelemetry::Trace::Span.new
-      wrapped = OpenTelemetry::Trace::Span.new
+      to_be_wrapped = OpenTelemetry::Trace::Span.new(span_context: 'foobar')
       args = ['name', { with_parent: parent, attributes: 'tag', links: 'refs', start_timestamp: 'now' }]
-      tracer_mock.expect(:start_span, wrapped, args)
+      tracer_mock.expect(:start_span, to_be_wrapped, args)
       tracer_bridge.start_span('name', child_of: parent, references: 'refs', tags: 'tag', start_time: 'now')
       tracer_mock.verify
     end
 
     it 'calls with_span if a block is given, yielding the span and returning the blocks value' do
       parent = OpenTelemetry::Trace::Span.new
-      wrapped = OpenTelemetry::Trace::Span.new
+      to_be_wrapped = OpenTelemetry::Trace::Span.new(span_context: 'foobar')
       args = ['name', { with_parent: parent, attributes: 'tag', links: 'refs', start_timestamp: 'now' }]
-      tracer_mock.expect(:start_span, wrapped, args)
-      tracer_mock.expect(:with_span, 'block_value', [wrapped])
-      ret = tracer_bridge.start_span('name', child_of: parent, references: 'refs', tags: 'tag', start_time: 'now') do |span|
-        span.span.must_equal wrapped
+      tracer_mock.expect(:start_span, to_be_wrapped, args)
+      tracer_mock.expect(:with_span, 'block_value', [to_be_wrapped])
+      ret = tracer_bridge.start_span('name', child_of: parent, references: 'refs', tags: 'tag', start_time: 'now') do |wrapped_span|
+        wrapped_span.span.must_equal to_be_wrapped
+        wrapped_span.context.context.must_equal to_be_wrapped.context
       end
       ret.must_equal 'block_value'
       tracer_mock.verify
@@ -49,12 +50,13 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
 
     it 'returns the span' do
       parent = OpenTelemetry::Trace::Span.new
-      wrapped = OpenTelemetry::Trace::Span.new
+      to_be_wrapped = OpenTelemetry::Trace::Span.new(span_context: 'foobar')
       args = ['name', { with_parent: parent, attributes: 'tag', links: 'refs', start_timestamp: 'now' }]
-      tracer_mock.expect(:start_span, wrapped, args)
+      tracer_mock.expect(:start_span, to_be_wrapped, args)
       span = tracer_bridge.start_span('name', child_of: parent, references: 'refs', tags: 'tag', start_time: 'now')
       tracer_mock.verify
-      span.span.must_equal wrapped
+      span.span.must_equal to_be_wrapped
+      span.context.context.must_equal to_be_wrapped.context
     end
   end
 
@@ -62,21 +64,22 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
     # TODO double up these tests for when passed an OT bridge span
     it 'calls start span on the tracer and with_span to make active' do
       parent = OpenTelemetry::Trace::Span.new
-      wrapped = OpenTelemetry::Trace::Span.new
+      to_be_wrapped = OpenTelemetry::Trace::Span.new(span_context: 'foobar')
       args = ['name', { with_parent: parent, attributes: 'tag', links: 'refs', start_timestamp: 'now' }]
-      tracer_mock.expect(:start_span, wrapped, args)
+      tracer_mock.expect(:start_span, to_be_wrapped, args)
       tracer_bridge.start_active_span('name', child_of: parent, references: 'refs', tags: 'tag', start_time: 'now')
       tracer_mock.verify
     end
 
     it 'calls with_span if a block is given, yielding the scope and returning the blocks value' do
       parent = OpenTelemetry::Trace::Span.new
-      wrapped = OpenTelemetry::Trace::Span.new
+      to_be_wrapped = OpenTelemetry::Trace::Span.new(span_context: 'foobar')
       args = ['name', { with_parent: parent, attributes: 'tag', links: 'refs', start_timestamp: 'now' }]
-      tracer_mock.expect(:start_span, wrapped, args)
-      tracer_mock.expect(:with_span, 'block_value', [wrapped])
+      tracer_mock.expect(:start_span, to_be_wrapped, args)
+      tracer_mock.expect(:with_span, 'block_value', [to_be_wrapped])
       ret = tracer_bridge.start_active_span('name', child_of: parent, references: 'refs', tags: 'tag', start_time: 'now') do |scope|
-        scope.span.span.must_equal wrapped
+        scope.span.span.must_equal to_be_wrapped
+        scope.span.context.context.must_equal to_be_wrapped.context
       end
       ret.must_equal 'block_value'
       tracer_mock.verify
@@ -84,12 +87,13 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
 
     it 'returns a scope' do
       parent = OpenTelemetry::Trace::Span.new
-      wrapped = OpenTelemetry::Trace::Span.new
+      to_be_wrapped = OpenTelemetry::Trace::Span.new(span_context: 'foobar')
       args = ['name', { with_parent: parent, attributes: 'tag', links: 'refs', start_timestamp: 'now' }]
-      tracer_mock.expect(:start_span, wrapped, args)
+      tracer_mock.expect(:start_span, to_be_wrapped, args)
       scope = tracer_bridge.start_active_span('name', child_of: parent, references: 'refs', tags: 'tag', start_time: 'now')
       tracer_mock.verify
-      scope.span.span.must_equal wrapped
+      scope.span.span.must_equal to_be_wrapped
+      scope.span.context.context.must_equal to_be_wrapped.context
     end
   end
 

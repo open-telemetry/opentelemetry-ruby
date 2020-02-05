@@ -32,7 +32,6 @@ module OpenTelemetry
                               &block)
           child_of = child_of.span unless child_of.instance_of? OpenTelemetry::Trace::Span
           # TODO need a link ref implementation (wraps Otel link or coerces Otrace span bridge to link)
-          # TODO update tests to ensure context passed
           # TODO update tests re getting OtelSpan or OtraceBridgeSpan passed in as child_of
           span = @tracer.start_span(operation_name,
                                     with_parent: child_of,

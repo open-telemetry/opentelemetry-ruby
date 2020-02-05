@@ -17,7 +17,7 @@ module OpenTelemetry
 
         def initialize(span, dist_context: nil)
           @span = span
-          @context = SpanContext.new(span, dist_context: dist_context)
+          @context = SpanContext.new(span.context, dist_context: dist_context)
         end
 
         # Set the name of the operation
