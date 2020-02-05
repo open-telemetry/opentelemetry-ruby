@@ -32,12 +32,11 @@ module OpenTelemetry
             end
 
             def allowed_response_headers
-              @allowed_response_headers ||= allowed_response_header_names.map do |header|
-                {
-                  header: header,
-                  attribute_name: build_attribute_name('http.response.headers.', header),
-                  search_for_keys: [header, header.to_s.upcase]
-                }
+              @allowed_response_headers ||= {}.tap do |result|
+                allowed_response_header_names.each do |header|
+                  result[header] = build_attribute_name('http.response.headers.', header)
+                  result[header.to_s.upcase] = build_attribute_name('http.response.headers.', header)
+                end
               end
             end
 
@@ -242,16 +241,13 @@ module OpenTelemetry
             return EMPTY_HASH if headers.nil?
 
             {}.tap do |result|
-              self.class.allowed_response_headers.each do |hash|
-                key = headers.keys.find { |k| hash[:search_for_keys].find { |k2| k == k2 } } ||
-                  headers.keys.find { |k| hash[:search_for_keys].find { |k2| k.upcase == k2 } }
-
-                next unless key
-
-                # cache string for next time:
-                hash[:search_for_keys] |= [key]
-
-                result[hash[:attribute_name]] = headers[key]
+              self.class.allowed_response_headers.each do |key, value|
+                if headers.key?(key)
+                  result[value] = headers[key]
+                else
+                  case_insensitive_entry = headers.detect { |h| h.first.upcase == key }
+                  result[value] = case_insensitive_entry&.last
+                end
               end
             end
           end
