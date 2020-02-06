@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry'
+
 module OpenTelemetry
   module Adapters
     module Rack
@@ -59,5 +61,3 @@ module OpenTelemetry
     end
   end
 end
-
-require_relative '../rack'
