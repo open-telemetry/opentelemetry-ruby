@@ -8,11 +8,29 @@ module OpenTelemetry
   module Trace
     # No-op implementation of Tracer.
     class Tracer
-      CONTEXT_SPAN_KEY = :__span__
-      private_constant(:CONTEXT_SPAN_KEY)
+      EXTRACTED_SPAN_CONTEXT_KEY = Propagation::ContextKeys.extracted_span_context_key
+      CURRENT_SPAN_KEY = Propagation::ContextKeys.current_span_key
+
+      private_constant :EXTRACTED_SPAN_CONTEXT_KEY, :CURRENT_SPAN_KEY
 
       def current_span
-        Context.get(CONTEXT_SPAN_KEY) || Span::INVALID
+        Context.value(CURRENT_SPAN_KEY) || Span::INVALID
+      end
+
+      # Returns the the active span context from the given {Context}, or current
+      # if one is not explicitly passed in. The active span context may refer to
+      # a {SpanContext} that has been extracted. If both a current {Span} and an
+      # extracted, {SpanContext} exist, the context of the current {Span} will be
+      # returned.
+      #
+      # @param [optional Context] context The context to lookup the active
+      #   {SpanContext} from.
+      #
+      def active_span_context(context = nil)
+        context ||= Context.current
+        context.value(CURRENT_SPAN_KEY)&.context ||
+          context.value(EXTRACTED_SPAN_CONTEXT_KEY) ||
+          SpanContext::INVALID
       end
 
       # This is a helper for the default use-case of extending the current trace with a span.
@@ -38,7 +56,7 @@ module OpenTelemetry
       #
       # On exit, the Span that was active before calling this method will be reactivated.
       def with_span(span)
-        Context.with(CONTEXT_SPAN_KEY, span) { |s| yield s }
+        Context.with_value(CURRENT_SPAN_KEY, span) { |s| yield s }
       end
 
       def start_root_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
@@ -52,12 +70,12 @@ module OpenTelemetry
       #
       # @param [optional Span] with_parent Explicitly managed parent Span, overrides
       #   +with_parent_context+.
-      # @param [optional SpanContext] with_parent_context Explicitly managed. Overridden by
+      # @param [optional Context] with_parent_context Explicitly managed. Overridden by
       #   +with_parent+.
       #
       # @return [Span]
       def start_span(name, with_parent: nil, with_parent_context: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
-        span_context = with_parent&.context || with_parent_context || current_span.context
+        span_context = with_parent&.context || active_span_context(with_parent_context)
         if span_context.valid?
           Span.new(span_context: span_context)
         else

@@ -7,7 +7,7 @@
 require 'test_helper'
 
 describe OpenTelemetry::Trace::Tracer do
-  Propagation = OpenTelemetry::DistributedContext::Propagation
+  Propagation = OpenTelemetry::Trace::Propagation
   Tracer = OpenTelemetry::Trace::Tracer
 
   # Tracer to verify expectation that `Span#finish` is called
@@ -19,7 +19,22 @@ describe OpenTelemetry::Trace::Tracer do
   end
 
   let(:invalid_span) { OpenTelemetry::Trace::Span::INVALID }
+  let(:invalid_span_context) { OpenTelemetry::Trace::SpanContext::INVALID }
+  let(:invalid_parent_context) do
+    OpenTelemetry::Context.empty.set_value(
+      OpenTelemetry::Trace::Propagation::ContextKeys.extracted_span_context_key,
+      invalid_span_context
+    )
+  end
   let(:tracer) { Tracer.new }
+  let(:context_key)
+  let(:parent_span_context) { OpenTelemetry::Trace::SpanContext.new }
+  let(:parent_context) do
+    OpenTelemetry::Context.empty.set_value(
+      OpenTelemetry::Trace::Propagation::ContextKeys.extracted_span_context_key,
+      parent_span_context
+    )
+  end
 
   describe '#current_span' do
     let(:current_span) { tracer.start_span('current') }
@@ -37,9 +52,40 @@ describe OpenTelemetry::Trace::Tracer do
     end
   end
 
+  describe '#active_span_context' do
+    let(:current_span) { tracer.start_span('current') }
+
+    it 'returns an invalid span context by default' do
+      _(tracer.active_span_context).must_equal(invalid_span_context)
+    end
+
+    it 'returns the span context from the current context by default' do
+      wrapper_span = tracer.start_span('wrapper')
+
+      tracer.with_span(wrapper_span) do
+        _(tracer.active_span_context).must_equal(wrapper_span.context)
+      end
+    end
+
+    it 'returns span context from implicit and explicit contexts' do
+      wrapper_span = tracer.start_span('wrapper')
+      wrapper_ctx = nil
+
+      tracer.with_span(wrapper_span) do
+        wrapper_ctx = Context.current
+      end
+
+      inner_span = tracer.start_span('inner')
+
+      tracer.with_span(inner_span) do
+        _(tracer.active_span_context).must_equal(inner_span.context)
+        _(tracer.active_span_context(wrapper_ctx)).must_equal(wrapper_span.context)
+      end
+    end
+  end
+
   describe '#in_span' do
     let(:parent) { tracer.start_span('parent') }
-    let(:parent_context) { OpenTelemetry::Trace::SpanContext.new }
 
     it 'yields the new span' do
       tracer.in_span('wrapper') do |span|
@@ -70,7 +116,7 @@ describe OpenTelemetry::Trace::Tracer do
     it 'yields a span with the parent context' do
       tracer.in_span('op', with_parent_context: parent_context) do |span|
         _(span.context).must_be :valid?
-        _(span.context).must_equal(parent_context)
+        _(span.context).must_equal(parent_span_context)
       end
     end
   end
@@ -98,6 +144,21 @@ describe OpenTelemetry::Trace::Tracer do
         _(tracer.current_span).must_equal(outer)
       end
     end
+
+    it 'should reactivate the span context after the block' do
+      outer = tracer.start_span('outer')
+      inner = tracer.start_span('inner')
+
+      tracer.with_span(outer) do
+        _(tracer.active_span_context).must_equal(outer.context)
+
+        tracer.with_span(inner) do
+          _(tracer.active_span_context).must_equal(inner.context)
+        end
+
+        _(tracer.active_span_context).must_equal(outer.context)
+      end
+    end
   end
 
   describe '#start_root_span' do
@@ -108,14 +169,12 @@ describe OpenTelemetry::Trace::Tracer do
   end
 
   describe '#start_span' do
-    let(:invalid_context) { OpenTelemetry::Trace::SpanContext::INVALID }
     let(:parent) { tracer.start_span('parent') }
-    let(:parent_context) { OpenTelemetry::Trace::SpanContext.new }
 
     it 'returns a valid span with the parent context' do
       span = tracer.start_span('op', with_parent_context: parent_context)
       _(span.context).must_be :valid?
-      _(span.context).must_equal(parent_context)
+      _(span.context).must_equal(parent_span_context)
     end
 
     it 'returns a span with a new context by default' do
@@ -131,9 +190,9 @@ describe OpenTelemetry::Trace::Tracer do
     end
 
     it 'returns a span with a new context when passed an invalid context' do
-      span = tracer.start_span('op', with_parent_context: invalid_context)
+      span = tracer.start_span('op', with_parent_context: invalid_parent_context)
       _(span.context).must_be :valid?
-      _(span.context).wont_equal(invalid_context)
+      _(span.context).wont_equal(invalid_span_context)
     end
   end
 end
