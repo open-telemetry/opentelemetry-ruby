@@ -10,7 +10,7 @@ describe OpenTelemetry::Bridge::OpenTracing::Scope do
   Scope = OpenTelemetry::Bridge::OpenTracing::Scope
   let(:span) { 'a_span' }
   let(:mock_span) { Minitest::Mock.new }
-  let(:manager) { OpenTelemetry::Bridge::OpenTracing::ScopeManager.new }
+  let(:manager) { OpenTelemetry::Bridge::OpenTracing::ScopeManager.instance }
   describe '#span' do
     it 'gets the current span' do
       scope = Scope.new(manager, span, true)

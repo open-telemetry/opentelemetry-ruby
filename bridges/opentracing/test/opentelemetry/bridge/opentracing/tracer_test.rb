@@ -13,7 +13,7 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
   let(:tracer_bridge) { OpenTelemetry::Bridge::OpenTracing::Tracer.new tracer_mock }
   describe '#active_span' do
     it 'gets the active span' do
-      scope_man = OpenTelemetry::Bridge::OpenTracing::ScopeManager.new
+      scope_man = OpenTelemetry::Bridge::OpenTracing::ScopeManager.instance
       scope_mock = Minitest::Mock.new
       scope_mock.expect(:span, 'an_active_span')
       scope_man.active = scope_mock

@@ -7,7 +7,7 @@
 require 'test_helper'
 
 describe OpenTelemetry::Bridge::OpenTracing::ScopeManager do
-  let(:scope_manager_bridge) { OpenTelemetry::Bridge::OpenTracing::ScopeManager.new }
+  let(:scope_manager_bridge) { OpenTelemetry::Bridge::OpenTracing::ScopeManager.instance }
   describe '#activate' do
     before do
       scope_manager_bridge.active = nil

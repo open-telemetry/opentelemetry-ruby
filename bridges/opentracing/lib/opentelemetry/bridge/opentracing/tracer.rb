@@ -18,7 +18,7 @@ module OpenTelemetry
         end
 
         def active_span
-          scope = ScopeManager.current.active
+          scope = ScopeManager.instance.active
           scope&.span
         end
 
@@ -37,7 +37,7 @@ module OpenTelemetry
                                     links: references,
                                     start_timestamp: start_time)
           wrapped = Span.new(span, dist_context: span.context)
-          scope = Scope.new(ScopeManager.current, wrapped, finish_on_close)
+          scope = Scope.new(ScopeManager.instance, wrapped, finish_on_close)
           if block_given?
             yield scope
             return @tracer.with_span(span, &block)
