@@ -1,19 +1,17 @@
+# frozen_string_literal: true
+
+# Copyright 2020 OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
 require 'rubygems'
 require 'bundler/setup'
 
-require 'faraday'
-require 'opentelemetry/sdk'
-require_relative '../lib/opentelemetry/adapters/faraday'
+Bundler.require
 
-# Set preferred tracer implementation:
-SDK = OpenTelemetry::SDK
-
-factory = OpenTelemetry.tracer_factory = SDK::Trace::TracerFactory.new
-factory.add_span_processor(
-  SDK::Trace::Export::SimpleSpanProcessor.new(
-    SDK::Trace::Export::ConsoleSpanExporter.new
-  )
-)
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Adapters::Faraday'
+end
 
 # Demonstrate disabling span reporting:
 #
@@ -24,8 +22,6 @@ factory.add_span_processor(
 #   end
 # end
 # OpenTelemetry::Adapters::Faraday.install(tracer_middleware: NoOp)
-
-OpenTelemetry::Adapters::Faraday.install
 
 conn = Faraday.new('http://example.com')
 conn.get '/'

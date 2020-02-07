@@ -9,13 +9,15 @@ require_relative 'extensions/tracer_extension'
 module OpenTelemetry
   module Adapters
     module Sinatra
+      # The Adapter class contains logic to detect and install the Sinatra
+      # instrumentation adapter
       class Adapter < OpenTelemetry::Instrumentation::Adapter
         install do |_|
           ::Sinatra::Base.register Extensions::TracerExtension
         end
 
         present do
-          Gem.loaded_specs.include?("sinatra")
+          defined?(::Sinatra)
         end
       end
     end

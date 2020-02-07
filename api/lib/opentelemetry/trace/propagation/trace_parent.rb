@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 module OpenTelemetry
-  module DistributedContext
+  module Trace
     module Propagation
       # A TraceParent is an implementation of the W3C trace context specification
       # https://www.w3.org/TR/trace-context/

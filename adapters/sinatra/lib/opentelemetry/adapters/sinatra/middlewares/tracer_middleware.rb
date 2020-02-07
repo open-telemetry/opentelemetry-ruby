@@ -8,6 +8,7 @@ module OpenTelemetry
   module Adapters
     module Sinatra
       module Middlewares
+        # Middleware to trace Sinatra requests
         class TracerMiddleware
           def initialize(app)
             @app = app
@@ -31,7 +32,7 @@ module OpenTelemetry
           attr_reader :app
 
           def parent_context(env)
-            OpenTelemetry.tracer_factory.http_text_format.extract(env)
+            OpenTelemetry.propagation.extract(env)
           end
 
           def tracer
