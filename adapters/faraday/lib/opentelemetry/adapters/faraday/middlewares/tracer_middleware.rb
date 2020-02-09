@@ -35,13 +35,8 @@ module OpenTelemetry
 
           attr_reader :app
 
-          # Outbound requests should only need to inject the current span.
           def propagate_context(span, env)
-            propagator.inject(span.context, env.request_headers)
-          end
-
-          def propagator
-            OpenTelemetry.tracer_factory.http_text_format
+            OpenTelemetry.propagation.inject(env.request_headers)
           end
 
           def tracer

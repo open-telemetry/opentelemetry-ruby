@@ -8,7 +8,7 @@ require 'logger'
 
 require 'opentelemetry/error'
 require 'opentelemetry/context'
-require 'opentelemetry/distributed_context'
+require 'opentelemetry/correlation_context'
 require 'opentelemetry/internal'
 require 'opentelemetry/instrumentation'
 require 'opentelemetry/metrics'
@@ -23,7 +23,7 @@ require 'opentelemetry/version'
 module OpenTelemetry
   extend self
 
-  attr_writer :tracer_factory, :meter_factory, :distributed_context_manager
+  attr_writer :tracer_factory, :meter_factory, :correlations
 
   attr_accessor :logger
 
@@ -39,16 +39,22 @@ module OpenTelemetry
     @meter_factory ||= Metrics::MeterFactory.new
   end
 
-  # @return [Object, DistributedContext::Manager] registered distributed
-  #   context manager or a default no-op implementation of the manager
-  def distributed_context_manager
-    @distributed_context_manager ||= DistributedContext::Manager.new
-  end
-
   # @return [Instrumentation::Registry] registry containing all known
   #  instrumentation
   def instrumentation_registry
     @instrumentation_registry ||= Instrumentation::Registry.new
+  end
+
+  # @return [Object, CorrelationContext::Manager] registered
+  #   correlation context manager or a default no-op implementation of the
+  #   manager.
+  def correlations
+    @correlations ||= CorrelationContext::Manager.new
+  end
+
+  # @return [Context::Propagation::Propagation] an instance of the propagation API
+  def propagation
+    @propagation ||= Context::Propagation::Propagation.new
   end
 
   self.logger = Logger.new(STDOUT)

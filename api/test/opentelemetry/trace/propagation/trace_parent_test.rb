@@ -5,8 +5,8 @@
 # SPDX-License-Identifier: Apache-2.0
 require 'test_helper'
 
-describe OpenTelemetry::DistributedContext::Propagation::TraceParent do
-  TraceParent = OpenTelemetry::DistributedContext::Propagation::TraceParent
+describe OpenTelemetry::Trace::Propagation::TraceParent do
+  TraceParent = OpenTelemetry::Trace::Propagation::TraceParent
   Trace = OpenTelemetry::Trace
   let(:good) do
     flags = Trace::TraceFlags.from_byte(1)
