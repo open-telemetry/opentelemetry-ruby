@@ -31,8 +31,13 @@ describe OpenTelemetry::SDK::Resources::Resource do
       _(proc { Resource.create(k1: 'v1') }).must_raise(ArgumentError)
     end
 
-    it 'enforces values are strings' do
+    it 'enforces values are strings, ints, floats, or booleans' do
       _(proc { Resource.create('k1' => :v1) }).must_raise(ArgumentError)
+      values = ['v1', 123, 456.78, false, true]
+      values.each do |value|
+        resource = Resource.create('k1' => value)
+        _(resource.label_enumerator.first.last).must_equal(value)
+      end
     end
   end
 
