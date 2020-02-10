@@ -14,7 +14,6 @@ module OpenTelemetry
 
         def initialize(tracer)
           @tracer = tracer
-          @tracer_factory = OpenTelemetry::Trace::TracerFactory.new
         end
 
         def active_span
@@ -68,28 +67,30 @@ module OpenTelemetry
         end
 
         def inject(span_context, format, carrier)
+          context = OpenTelemetry::Context.current
           case format
           when ::OpenTracing::FORMAT_TEXT_MAP
-            context = span_context.context
-            @tracer_factory.http_text_format.inject(context, carrier) { |c, k, v| return c, k, v }
+            # TODO busted
+            OpenTelemetry::Trace::Propagation.http_trace_context_injector.inject(context, carrier)
           when ::OpenTracing::FORMAT_RACK
-            context = span_context.context
-            @tracer_factory.rack_http_text_format.inject(context, carrier) { |c, k, v| return c, k, v }
+            # TODO busted
+            OpenTelemetry::Trace::Propagation.http_trace_context_injector.inject(context, carrier)
           when ::OpenTracing::FORMAT_BINARY
-            @tracer_factory.binary_format.to_bytes(span_context.context)
+            OpenTelemetry::Trace::Propagation.binary_format.to_bytes(context)
           else
             warn 'Unknown inject format'
           end
         end
 
         def extract(format, carrier)
+          context = OpenTelemetry::Context.current
           case format
           when ::OpenTracing::FORMAT_TEXT_MAP
-            @tracer_factory.http_text_format.extract(carrier)
+            OpenTelemetry::Trace::Propagation.http_trace_context_extractor.extract(context, carrier)
           when ::OpenTracing::FORMAT_RACK
-            @tracer_factory.rack_http_text_format.extract(carrier)
+            OpenTelemetry::Trace::Propagation.http_trace_context_extractor.extract(context, carrier)
           when ::OpenTracing::FORMAT_BINARY
-            @tracer_factory.binary_format.from_bytes(carrier)
+            OpenTelemetry::Trace::Propagation.binary_format.from_bytes(carrier)
           else
             warn 'Unknown extract format'
           end

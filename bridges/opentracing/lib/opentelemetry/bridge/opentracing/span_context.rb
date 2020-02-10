@@ -19,7 +19,7 @@ module OpenTelemetry
         # @return [SpanContext]
         def initialize(context, dist_context: nil)
           @context = context
-          dist_context ||= OpenTelemetry::DistributedContext::DistributedContext.new
+          dist_context ||= OpenTelemetry::Context.current
           @dist_context = dist_context
         end
 
