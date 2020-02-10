@@ -32,6 +32,10 @@ services:
     <<: *base
     working_dir: /app/adapters/faraday/example
 
+  ex-adapter-net-http:
+    <<: *base
+    working_dir: /app/adapters/net_http/example
+
   ex-adapter-redis:
     <<: *base
     environment:
