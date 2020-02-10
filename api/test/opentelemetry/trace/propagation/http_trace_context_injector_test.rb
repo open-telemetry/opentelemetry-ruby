@@ -42,11 +42,6 @@ describe OpenTelemetry::Trace::Propagation::HttpTraceContextInjector do
     span = Span.new(span_context: span_context)
     Context.empty.set_value(current_span_key, span)
   end
-  let(:context_without_current_span) do
-    span_context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16,
-                                   tracestate: tracestate_header)
-    Context.empty.set_value(extracted_span_context_key, span_context)
-  end
 
   describe '#inject' do
     it 'yields the carrier, key, and traceparent value from the context' do
