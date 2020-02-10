@@ -11,6 +11,7 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
   SpanContextBridge = OpenTelemetry::Bridge::OpenTracing::SpanContext
   let(:tracer_mock) { Minitest::Mock.new }
   let(:tracer_bridge) { OpenTelemetry::Bridge::OpenTracing::Tracer.new tracer_mock }
+  let(:tracestate_header) { 'vendorname=opaquevalue' }
   describe '#active_span' do
     it 'gets the active span' do
       scope_man = OpenTelemetry::Bridge::OpenTracing::ScopeManager.instance
@@ -139,10 +140,8 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
       context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16)
       span_context = SpanContextBridge.new context
       carrier = {}
-      require 'byebug'
-      byebug
       carried, key, value = tracer_bridge.inject(span_context, ::OpenTracing::FORMAT_RACK, carrier)
-      key.must_equal 'HTTP_TRACEPARENT'
+      key.must_equal 'traceparent'
       value.must_equal '00-ffffffffffffffffffffffffffffffff-1111111111111111-00'
       carrier.must_equal carried
     end
