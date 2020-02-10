@@ -9,26 +9,15 @@ module OpenTelemetry
     module OpenTracing
       # Reference provides a means of treating
       # an OpenTelemetry::Link as an OpenTracing::Reference
+      # and vice versa
       class Reference
-        def self.child_of(context)
-          ::OpenTracing::Reference.child_of(context)
+        def self.from_link(link)
+          ::OpenTracing::Reference.new(nil, link.context)
         end
 
-        def self.follows_from(context)
-          ::OpenTracing::Reference.follows_from(context)
+        def self.to_link(ref)
+          OpenTelemetry::Trace::Link.new ref.context
         end
-
-        def initialize(link, type: nil)
-          @type = type
-          @link = link
-          @context = link.context
-        end
-
-        # @return [String] reference type
-        attr_reader :type
-
-        # @return [SpanContext] the context of a span this reference is referencing
-        attr_reader :context
       end
     end
   end
