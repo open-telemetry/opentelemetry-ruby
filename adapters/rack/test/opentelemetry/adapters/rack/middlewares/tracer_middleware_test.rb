@@ -67,8 +67,8 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
       _(first_span.name).must_equal '/'
     end
 
-    it 'extracts parent context' do
-      _(first_span.parent_span_id).wont_equal '0000000000000000'
+    it 'has no parent' do
+      _(first_span.parent_span_id).must_equal '0000000000000000'
     end
 
     describe 'config[:allowed_request_headers]' do

@@ -60,73 +60,76 @@ module OpenTelemetry
           def call(env) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
             original_env = env.dup
 
-            parent_context = OpenTelemetry.tracer_factory.http_text_format.extract(env)
+            extracted_context = OpenTelemetry.propagation.extract(env)
 
-            ### frontend span
-            # NOTE: get_request_start may return nil
-            request_start_time = OpenTelemetry::Adapters::Rack::Util::QueueTime.get_request_start(env)
-            frontend_span = tracer.start_span('http_server.queue', # NOTE: span kind of 'proxy' is not defined
-                                              with_parent_context: parent_context,
-                                              # NOTE: initialize with as many attributes as possible:
-                                              attributes: {
-                                                'component' => 'http',
-                                                'service' => config[:web_service_name],
-                                                # NOTE: dd-trace-rb differences:
-                                                # 'trace.span_type' => (http) 'proxy'
-                                                'start_time' => request_start_time
-                                              })
+            # restore extracted context in this process:
+            OpenTelemetry::Context.with_current(extracted_context) do
+              frontend_span = create_frontend_span(env)
 
-            record_frontend_span = config[:record_frontend_span] && !request_start_time.nil?
-            frontend_span = if record_frontend_span
-                              tracer.start_span('http_server.queue', # NOTE: span kind of 'proxy' is not defined
-                                                with_parent_context: parent_context,
-                                                # NOTE: initialize with as many attributes as possible:
-                                                attributes: {
-                                                  'component' => 'http',
-                                                  'service' => config[:web_service_name],
-                                                  # NOTE: dd-trace-rb differences:
-                                                  # 'trace.span_type' => (http) 'proxy'
-                                                  'start_time' => request_start_time
-                                                })
-                            end
+              # http://www.rubydoc.info/github/rack/rack/file/SPEC
+              # The source of truth in Rack is the PATH_INFO key that holds the
+              # URL for the current request; but some frameworks may override that
+              # value, especially during exception handling.
+              #
+              # Because of this, we prefer to use REQUEST_URI, if available, which is the
+              # relative path + query string, and doesn't mutate.
+              #
+              # REQUEST_URI is only available depending on what web server is running though.
+              # So when its not available, we want the original, unmutated PATH_INFO, which
+              # is just the relative path without query strings.
+              request_span_name = create_request_span_name(env['REQUEST_URI'] || original_env['PATH_INFO'])
 
-            # http://www.rubydoc.info/github/rack/rack/file/SPEC
-            # The source of truth in Rack is the PATH_INFO key that holds the
-            # URL for the current request; but some frameworks may override that
-            # value, especially during exception handling.
-            #
-            # Because of this, we prefer to use REQUEST_URI, if available, which is the
-            # relative path + query string, and doesn't mutate.
-            #
-            # REQUEST_URI is only available depending on what web server is running though.
-            # So when its not available, we want the original, unmutated PATH_INFO, which
-            # is just the relative path without query strings.
-            request_span_name = create_request_span_name(env['REQUEST_URI'] || original_env['PATH_INFO'])
+              rack_request = ::Rack::Request.new(env)
+              # Sets as many attributes as are available before control
+              # is handed off to next middleware.
+              request_span = tracer.start_span(request_span_name,
+                                               # NOTE: try to set as many attributes via 'attributes' argument
+                                               #       instead of via span.set_attribute
+                                               attributes: request_span_attributes(env: env,
+                                                                                   full_http_request_url: full_http_request_url(rack_request),
+                                                                                   full_path: full_path(rack_request),
+                                                                                   base_url: base_url(rack_request)),
+                                               kind: :server)
 
-            rack_request = ::Rack::Request.new(env)
-            # Sets as many attributes as are available before control
-            # is handed off to next middleware.
-            request_span = tracer.start_span(request_span_name,
-                                             with_parent_context: parent_context,
-                                             # NOTE: try to set as many attributes via 'attributes' argument
-                                             #       instead of via span.set_attribute
-                                             attributes: request_span_attributes(env: env,
-                                                                                 full_http_request_url: full_http_request_url(rack_request),
-                                                                                 full_path: full_path(rack_request),
-                                                                                 base_url: base_url(rack_request)),
-                                             kind: :server)
-
-            @app.call(env).tap do |status, headers, response|
-              set_attributes_after_request(request_span, status, headers, response)
+              begin
+                @app.call(env).tap do |status, headers, response|
+                  set_attributes_after_request(request_span, status, headers, response)
+                end
+              rescue StandardError => e
+                record_and_reraise_error(e, request_span: request_span)
+              ensure
+                request_span.finish
+                frontend_span&.finish
+              end
             end
-          rescue StandardError => e
-            record_and_reraise_error(e, request_span: request_span)
-          ensure
-            request_span.finish
-            frontend_span&.finish if record_frontend_span
           end
 
           private
+
+          # return Context
+          def create_frontend_span(env)
+            # NOTE: get_request_start may return nil
+            request_start_time = OpenTelemetry::Adapters::Rack::Util::QueueTime.get_request_start(env)
+            record_frontend_span = config[:record_frontend_span] && !request_start_time.nil?
+
+            return unless record_frontend_span
+
+            span = tracer.start_span('http_server.queue', # NOTE: span kind of 'proxy' is not defined
+                                     # NOTE: initialize with as many attributes as possible:
+                                     attributes: {
+                                       'component' => 'http',
+                                       'service' => config[:web_service_name],
+                                       # NOTE: dd-trace-rb differences:
+                                       # 'trace.span_type' => (http) 'proxy'
+                                       'start_time' => request_start_time
+                                     })
+
+            span
+          end
+
+          def current_span_key
+            OpenTelemetry::Trace::Propagation::ContextKeys.current_span_key
+          end
 
           def tracer
             OpenTelemetry::Adapters::Rack::Adapter.instance.tracer
