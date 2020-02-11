@@ -20,28 +20,16 @@ module OpenTelemetry
         class TracerMiddleware # rubocop:disable Metrics/ClassLength
           class << self
             def allowed_rack_request_headers
-              @allowed_rack_request_headers ||= {}.tap do |result|
-                allowed_request_header_names.each do |header|
-                  result["HTTP_#{header.to_s.upcase.gsub(/[-\s]/, '_')}"] = build_attribute_name('http.request.headers.', header)
-                end
+              @allowed_rack_request_headers ||= Array(config[:allowed_request_headers]).each_with_object({}) do |header, memo|
+                memo["HTTP_#{header.to_s.upcase.gsub(/[-\s]/, '_')}"] = build_attribute_name('http.request.headers.', header)
               end
-            end
-
-            def allowed_request_header_names
-              @allowed_request_header_names ||= Array(config[:allowed_request_headers])
             end
 
             def allowed_response_headers
-              @allowed_response_headers ||= {}.tap do |result|
-                allowed_response_header_names.each do |header|
-                  result[header] = build_attribute_name('http.response.headers.', header)
-                  result[header.to_s.upcase] = build_attribute_name('http.response.headers.', header)
-                end
+              @allowed_response_headers ||= Array(config[:allowed_response_headers]).each_with_object({}) do |header, memo|
+                memo[header] = build_attribute_name('http.response.headers.', header)
+                memo[header.to_s.upcase] = build_attribute_name('http.response.headers.', header)
               end
-            end
-
-            def allowed_response_header_names
-              @allowed_response_header_names ||= Array(config[:allowed_response_headers])
             end
 
             def build_attribute_name(prefix, suffix)
