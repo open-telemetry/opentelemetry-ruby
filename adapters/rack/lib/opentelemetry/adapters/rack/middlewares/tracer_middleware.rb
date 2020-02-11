@@ -44,10 +44,7 @@ module OpenTelemetry
 
             def clear_cached_config
               @allowed_rack_request_headers = nil
-              @allowed_request_header_names = nil
-
               @allowed_response_headers = nil
-              @allowed_response_header_names = nil
             end
           end
 
