@@ -245,8 +245,13 @@ module OpenTelemetry
                 if headers.key?(key)
                   result[value] = headers[key]
                 else
-                  case_insensitive_entry = headers.detect { |h| h.first.upcase == key }
-                  result[value] = case_insensitive_entry&.last
+                  # do case-insensitive match:
+                  headers.each do |k, v|
+                    if k.upcase == key
+                      result[value] = v
+                      break
+                    end
+                  end
                 end
               end
             end
