@@ -61,6 +61,7 @@ module OpenTelemetry
 end
 
 require 'opentelemetry/sdk/configurator'
+require 'opentelemetry/sdk/correlation_context'
 require 'opentelemetry/sdk/internal'
 require 'opentelemetry/sdk/resources'
 require 'opentelemetry/sdk/trace'

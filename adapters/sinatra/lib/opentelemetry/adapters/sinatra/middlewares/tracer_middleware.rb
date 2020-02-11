@@ -32,7 +32,7 @@ module OpenTelemetry
           attr_reader :app
 
           def parent_context(env)
-            OpenTelemetry.tracer_factory.http_text_format.extract(env)
+            OpenTelemetry.propagation.extract(env)
           end
 
           def tracer

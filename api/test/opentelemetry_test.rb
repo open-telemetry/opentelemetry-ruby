@@ -66,27 +66,27 @@ describe OpenTelemetry do
     end
   end
 
-  describe '.distributed_context_manager' do
+  describe '.correlations' do
     after do
-      # Ensure we don't leak custom distributed_context_manager to other tests
-      OpenTelemetry.distributed_context_manager = nil
+      # Ensure we don't leak custom correlations to other tests
+      OpenTelemetry.correlations = nil
     end
 
-    it 'returns instance of DistributedContext::Manager by default' do
-      manager = OpenTelemetry.distributed_context_manager
-      _(manager).must_be_instance_of(OpenTelemetry::DistributedContext::Manager)
+    it 'returns CorrelationContext::Manager by default' do
+      manager = OpenTelemetry.correlations
+      _(manager).must_be_instance_of(OpenTelemetry::CorrelationContext::Manager)
     end
 
     it 'returns the same instance when accessed multiple times' do
-      _(OpenTelemetry.distributed_context_manager).must_equal(
-        OpenTelemetry.distributed_context_manager
+      _(OpenTelemetry.correlations).must_equal(
+        OpenTelemetry.correlations
       )
     end
 
-    it 'returns user specified distributed_context_manager' do
-      custom_manager = 'a custom distributed_context_manager'
-      OpenTelemetry.distributed_context_manager = custom_manager
-      _(OpenTelemetry.distributed_context_manager).must_equal(custom_manager)
+    it 'returns user specified correlations' do
+      custom_manager = 'a custom correlations'
+      OpenTelemetry.correlations = custom_manager
+      _(OpenTelemetry.correlations).must_equal(custom_manager)
     end
   end
 
@@ -94,6 +94,20 @@ describe OpenTelemetry do
     it 'returns an instance of Instrumentation::Registry' do
       _(OpenTelemetry.instrumentation_registry).must_be_instance_of(
         OpenTelemetry::Instrumentation::Registry
+      )
+    end
+  end
+
+  describe '.propagation' do
+    it 'returns instance of Context::Propagation::Propagation by default' do
+      _(OpenTelemetry.propagation).must_be_instance_of(
+        OpenTelemetry::Context::Propagation::Propagation
+      )
+    end
+
+    it 'returns the same instance when accessed multiple times' do
+      _(OpenTelemetry.propagation).must_equal(
+        OpenTelemetry.propagation
       )
     end
   end
