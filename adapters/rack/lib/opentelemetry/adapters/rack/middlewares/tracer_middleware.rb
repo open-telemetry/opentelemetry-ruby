@@ -116,10 +116,9 @@ module OpenTelemetry
                                      attributes: {
                                        'component' => 'http',
                                        'service' => config[:web_service_name],
-                                       # NOTE: dd-trace-rb differences:
-                                       # 'trace.span_type' => (http) 'proxy'
                                        'start_time' => request_start_time
-                                     })
+                                     },
+                                     kind: :server)
 
             span
           end
