@@ -14,7 +14,7 @@ builder = Rack::Builder.new
 app = ->(_env) { [200, { 'Content-Type' => 'text/plain' }, ['All responses are OK']] }
 builder.run app
 
-# demonstrate integration using config[:application] instead of 'builder.use':
+# demonstrate integration using 'retain_middlware_names' and 'application':
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Adapters::Rack', retain_middleware_names: true,
                                          application: builder,
