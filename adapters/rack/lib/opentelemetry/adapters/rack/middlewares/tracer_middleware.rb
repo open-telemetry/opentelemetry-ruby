@@ -217,6 +217,8 @@ module OpenTelemetry
 
           # @return Hash
           def allowed_request_headers(env)
+            return EMPTY_HASH if self.class.allowed_rack_request_headers.empty?
+
             {}.tap do |result|
               self.class.allowed_rack_request_headers.each do |key, value|
                 result[value] = env[key] if env.key?(key)
@@ -227,6 +229,7 @@ module OpenTelemetry
           # @return Hash
           def allowed_response_headers(headers)
             return EMPTY_HASH if headers.nil?
+            return EMPTY_HASH if self.class.allowed_response_headers.empty?
 
             {}.tap do |result|
               self.class.allowed_response_headers.each do |key, value|
