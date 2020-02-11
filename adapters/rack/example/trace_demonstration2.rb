@@ -21,5 +21,8 @@ OpenTelemetry::SDK.configure do |c|
                                          record_frontend_span: true
 end
 
+# integrate instrumentation explicitly:
+builder.use OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware
+
 # demonstrate tracing (span output to console):
 puts Rack::MockRequest.new(builder).get('/')
