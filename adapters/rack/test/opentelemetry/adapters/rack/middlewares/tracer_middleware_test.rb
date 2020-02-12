@@ -114,21 +114,32 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
     end
 
     describe 'config[:record_frontend_span]' do
+      let(:request_span) { exporter.finished_spans.first }
+
       describe 'default' do
         it 'does not record span' do
           _(exporter.finished_spans.size).must_equal 1
+        end
+
+        it 'does not parent the request_span' do
+          _(request_span.parent_span_id).must_equal '0000000000000000'
         end
       end
 
       describe 'when recordable' do
         let(:config) { default_config.merge(record_frontend_span: true) }
         let(:env) { Hash('HTTP_X_REQUEST_START' => Time.now.to_i) }
-        let(:frontend_span) { exporter.finished_spans.last }
+        let(:frontend_span) { exporter.finished_spans.first }
+        let(:request_span) { exporter.finished_spans[1] }
 
         it 'records span' do
           _(exporter.finished_spans.size).must_equal 2
           _(frontend_span.name).must_equal 'http_server.queue'
           _(frontend_span.attributes['service']).must_be_nil
+        end
+
+        it 'frontend_span parents request_span' do
+          _(request_span.parent_span_id).must_equal frontend_span.span_id
         end
 
         describe 'when config[:web_service_name]' do

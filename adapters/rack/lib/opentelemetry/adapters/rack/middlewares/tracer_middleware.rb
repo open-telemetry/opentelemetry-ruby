@@ -61,7 +61,7 @@ module OpenTelemetry
 
             # restore extracted context in this process:
             OpenTelemetry::Context.with_current(extracted_context) do
-              frontend_span = create_frontend_span(env)
+              frontend_context = create_frontend_span(env, extracted_context)
 
               # http://www.rubydoc.info/github/rack/rack/file/SPEC
               # The source of truth in Rack is the PATH_INFO key that holds the
@@ -79,39 +79,42 @@ module OpenTelemetry
               rack_request = ::Rack::Request.new(env)
               # Sets as many attributes as are available before control
               # is handed off to next middleware.
-              request_span = tracer.start_span(request_span_name,
-                                               # NOTE: try to set as many attributes via 'attributes' argument
-                                               #       instead of via span.set_attribute
-                                               attributes: request_span_attributes(env: env,
-                                                                                   full_http_request_url: full_http_request_url(rack_request),
-                                                                                   full_path: full_path(rack_request),
-                                                                                   base_url: base_url(rack_request)),
-                                               kind: :server)
-
-              begin
-                @app.call(env).tap do |status, headers, response|
-                  set_attributes_after_request(request_span, status, headers, response)
+              tracer.in_span(request_span_name,
+                             with_parent_context: frontend_context || extracted_context,
+                             # NOTE: try to set as many attributes via 'attributes' argument
+                             #       instead of via span.set_attribute
+                             attributes: request_span_attributes(env: env,
+                                                                 full_http_request_url: full_http_request_url(rack_request),
+                                                                 full_path: full_path(rack_request),
+                                                                 base_url: base_url(rack_request)),
+                             kind: :server) do |request_span|
+                begin
+                  @app.call(env).tap do |status, headers, response|
+                    set_attributes_after_request(request_span, status, headers, response)
+                  end
+                rescue StandardError => e
+                  record_and_reraise_error(e, request_span: request_span)
+                ensure
+                  finish_frontend_span(frontend_context)
                 end
-              rescue StandardError => e
-                record_and_reraise_error(e, request_span: request_span)
-              ensure
-                request_span.finish
-                frontend_span&.finish
               end
             end
           end
 
           private
 
-          # return Context
-          def create_frontend_span(env)
+          # return Context with the frontend span as the current span
+          def create_frontend_span(env, extracted_context)
             # NOTE: get_request_start may return nil
             request_start_time = OpenTelemetry::Adapters::Rack::Util::QueueTime.get_request_start(env)
             record_frontend_span = config[:record_frontend_span] && !request_start_time.nil?
 
             return unless record_frontend_span
 
+            # NOTE: start_span assumes context is managed explicitly,
+            #       while in_span and with_span activate span automatically
             span = tracer.start_span('http_server.queue', # NOTE: span kind of 'proxy' is not defined
+                                     with_parent_context: extracted_context,
                                      # NOTE: initialize with as many attributes as possible:
                                      attributes: {
                                        'component' => 'http',
@@ -120,7 +123,11 @@ module OpenTelemetry
                                      },
                                      kind: :server)
 
-            span
+            extracted_context.set_value(current_span_key, span)
+          end
+
+          def finish_frontend_span(context)
+            context[current_span_key]&.finish if context
           end
 
           def current_span_key
