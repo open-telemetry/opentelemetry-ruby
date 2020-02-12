@@ -55,53 +55,60 @@ module OpenTelemetry
           end
 
           def call(env) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-            original_env = env.dup
-
             extracted_context = OpenTelemetry.propagation.extract(env)
+            frontend_context = create_frontend_span(env, extracted_context)
+            request_context = create_request_span(env, frontend_context || extracted_context)
+            request_span = request_context[current_span_key]
 
             # restore extracted context in this process:
-            OpenTelemetry::Context.with_current(extracted_context) do
-              frontend_context = create_frontend_span(env, extracted_context)
-
-              # http://www.rubydoc.info/github/rack/rack/file/SPEC
-              # The source of truth in Rack is the PATH_INFO key that holds the
-              # URL for the current request; but some frameworks may override that
-              # value, especially during exception handling.
-              #
-              # Because of this, we prefer to use REQUEST_URI, if available, which is the
-              # relative path + query string, and doesn't mutate.
-              #
-              # REQUEST_URI is only available depending on what web server is running though.
-              # So when its not available, we want the original, unmutated PATH_INFO, which
-              # is just the relative path without query strings.
-              request_span_name = create_request_span_name(env['REQUEST_URI'] || original_env['PATH_INFO'])
-
-              rack_request = ::Rack::Request.new(env)
-              # Sets as many attributes as are available before control
-              # is handed off to next middleware.
-              tracer.in_span(request_span_name,
-                             with_parent_context: frontend_context || extracted_context,
-                             # NOTE: try to set as many attributes via 'attributes' argument
-                             #       instead of via span.set_attribute
-                             attributes: request_span_attributes(env: env,
-                                                                 full_http_request_url: full_http_request_url(rack_request),
-                                                                 full_path: full_path(rack_request),
-                                                                 base_url: base_url(rack_request)),
-                             kind: :server) do |request_span|
-                begin
-                  @app.call(env).tap do |status, headers, response|
-                    set_attributes_after_request(request_span, status, headers, response)
-                  end
-                rescue StandardError => e
-                  record_and_reraise_error(e, request_span: request_span)
-                ensure
-                  finish_frontend_span(frontend_context)
+            OpenTelemetry::Context.with_current(request_context) do
+              begin
+                @app.call(env).tap do |status, headers, response|
+                  set_attributes_after_request(request_span, status, headers, response)
                 end
+              rescue StandardError => e
+                record_and_reraise_error(e, request_span: request_span)
+              ensure
+                finish_span(frontend_context)
+                finish_span(request_context)
               end
             end
           end
 
           private
+
+          def create_request_span(env, context)
+            original_env = env.dup
+
+            # http://www.rubydoc.info/github/rack/rack/file/SPEC
+            # The source of truth in Rack is the PATH_INFO key that holds the
+            # URL for the current request; but some frameworks may override that
+            # value, especially during exception handling.
+            #
+            # Because of this, we prefer to use REQUEST_URI, if available, which is the
+            # relative path + query string, and doesn't mutate.
+            #
+            # REQUEST_URI is only available depending on what web server is running though.
+            # So when its not available, we want the original, unmutated PATH_INFO, which
+            # is just the relative path without query strings.
+            request_span_name = create_request_span_name(env['REQUEST_URI'] || original_env['PATH_INFO'])
+
+            rack_request = ::Rack::Request.new(env)
+
+            # Sets as many attributes as are available before control
+            # is handed off to next middleware.
+            span = tracer.start_span(request_span_name,
+                                     with_parent_context: context,
+                                     # NOTE: try to set as many attributes via 'attributes' argument
+                                     #       instead of via span.set_attribute
+                                     attributes: request_span_attributes(env: env,
+                                                                         full_http_request_url: full_http_request_url(rack_request),
+                                                                         full_path: full_path(rack_request),
+                                                                         base_url: base_url(rack_request)),
+                                     kind: :server)
+
+            context.set_value(current_span_key, span)
+          end
 
           # return Context with the frontend span as the current span
           def create_frontend_span(env, extracted_context)
@@ -126,7 +133,7 @@ module OpenTelemetry
             extracted_context.set_value(current_span_key, span)
           end
 
-          def finish_frontend_span(context)
+          def finish_span(context)
             context[current_span_key]&.finish if context
           end
 
