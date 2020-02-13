@@ -109,9 +109,8 @@ module OpenTelemetry
           def create_frontend_span(env, extracted_context)
             # NOTE: get_request_start may return nil
             request_start_time = OpenTelemetry::Adapters::Rack::Util::QueueTime.get_request_start(env)
-            record_frontend_span = config[:record_frontend_span] && !request_start_time.nil?
 
-            return unless record_frontend_span
+            return unless config[:record_frontend_span] && !request_start_time.nil?
 
             # NOTE: start_span assumes context is managed explicitly,
             #       while in_span and with_span activate span automatically
