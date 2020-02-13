@@ -61,7 +61,14 @@ bash-5.0$ ruby trace_demonstration.rb
 * `Span` `:kind` defaults to `:internal` (other available options include `:client` or `:server`)
 
 ### Runnable example
+
 * Gemfile should include "opentelemetry-adapters-#{adapter_name}"
+
+### Runtime performance considerations
+
+Watch for "low hanging fruit" performance improvements including:
+* reduce object allocations - move to a constant, or cache values that would be generated repeatedly 
+* look for "easy wins" vs. "complete redesigns"
 
 ## Testing
 
