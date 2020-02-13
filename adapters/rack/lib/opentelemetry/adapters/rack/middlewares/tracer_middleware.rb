@@ -54,7 +54,7 @@ module OpenTelemetry
             @app = app
           end
 
-          def call(env) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+          def call(env)
             extracted_context = OpenTelemetry.propagation.extract(env)
             frontend_context = create_frontend_span(env, extracted_context)
             request_context = create_request_span(env, frontend_context || extracted_context)
@@ -93,18 +93,13 @@ module OpenTelemetry
             # is just the relative path without query strings.
             request_span_name = create_request_span_name(env['REQUEST_URI'] || original_env['PATH_INFO'])
 
-            rack_request = ::Rack::Request.new(env)
-
             # Sets as many attributes as are available before control
             # is handed off to next middleware.
             span = tracer.start_span(request_span_name,
                                      with_parent_context: context,
                                      # NOTE: try to set as many attributes via 'attributes' argument
                                      #       instead of via span.set_attribute
-                                     attributes: request_span_attributes(env: env,
-                                                                         full_http_request_url: full_http_request_url(rack_request),
-                                                                         full_path: full_path(rack_request),
-                                                                         base_url: base_url(rack_request)),
+                                     attributes: request_span_attributes(env: env),
                                      kind: :server)
 
             context.set_value(current_span_key, span)
@@ -154,20 +149,19 @@ module OpenTelemetry
           # * http.scheme, http.server_name, net.host.port, http.target
           # * http.scheme, net.host.name, net.host.port, http.target
           # * http.url
-          def request_span_attributes(env:, full_http_request_url:, full_path:, base_url:)
+          def request_span_attributes(env:)
+            rack_request = ::Rack::Request.new(env)
+
             {
               'component' => 'http',
               'http.method' => env['REQUEST_METHOD'],
-              'http.url' => full_http_request_url,
+              'http.url' => rack_request.url,
               'http.host' => env['HOST'],
               'http.scheme' => env['rack.url_scheme'],
-              'http.target' => full_path,
-              'http.base_url' => base_url # NOTE: 'http.base_url' isn't officially defined
+              # e.g., "/webshop/articles/4?s=1":
+              'http.target' => rack_request.fullpath,
+              'http.base_url' => rack_request.base_url # NOTE: 'http.base_url' isn't officially defined
             }.merge(allowed_request_headers(env))
-          end
-
-          def full_http_request_url(rack_request)
-            rack_request.url
           end
 
           # https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-http.md#name
@@ -185,20 +179,6 @@ module OpenTelemetry
             else
               request_uri_or_path_info
             end
-          end
-
-          def base_url(rack_request)
-            if rack_request.respond_to?(:base_url)
-              rack_request.base_url
-            else
-              # Compatibility for older Rack versions
-              rack_request.url.chomp(rack_request.fullpath)
-            end
-          end
-
-          # e.g., "/webshop/articles/4?s=1"
-          def full_path(rack_request)
-            rack_request.fullpath
           end
 
           # catch exceptions that may be raised in the middleware chain
