@@ -149,16 +149,21 @@ module OpenTelemetry
           # * http.scheme, net.host.name, net.host.port, http.target
           # * http.url
           def request_span_attributes(env:)
-            rack_request = ::Rack::Request.new(env)
-
             {
               'component' => 'http',
               'http.method' => env['REQUEST_METHOD'],
               'http.host' => env['HOST'],
               'http.scheme' => env['rack.url_scheme'],
-              # e.g., "/webshop/articles/4?s=1":
-              'http.target' => rack_request.fullpath
+              'http.target' => fullpath(env)
             }.merge(allowed_request_headers(env))
+          end
+
+          # e.g., "/webshop/articles/4?s=1":
+          def fullpath(env)
+            query_string = env['QUERY_STRING']
+            path = env['SCRIPT_NAME'] + env['PATH_INFO']
+
+            query_string.empty? ? path : "#{path}?#{query_string}"
           end
 
           # https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-http.md#name
