@@ -154,12 +154,10 @@ module OpenTelemetry
             {
               'component' => 'http',
               'http.method' => env['REQUEST_METHOD'],
-              'http.url' => rack_request.url,
               'http.host' => env['HOST'],
               'http.scheme' => env['rack.url_scheme'],
               # e.g., "/webshop/articles/4?s=1":
-              'http.target' => rack_request.fullpath,
-              'http.base_url' => rack_request.base_url # NOTE: 'http.base_url' isn't officially defined
+              'http.target' => rack_request.fullpath
             }.merge(allowed_request_headers(env))
           end
 
