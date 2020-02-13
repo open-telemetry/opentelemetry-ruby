@@ -42,6 +42,56 @@ describe OpenTelemetry::SDK::Configurator do
       reset_globals
     end
 
+    describe 'correlations' do
+      it 'is an instance of SDK::CorrelationContext::Manager' do
+        configurator.configure
+
+        _(OpenTelemetry.correlations).must_be_instance_of(
+          OpenTelemetry::SDK::CorrelationContext::Manager
+        )
+      end
+    end
+
+    describe 'http_injectors' do
+      it 'defaults to trace context and correlation context' do
+        configurator.configure
+
+        expected_injectors = [
+          OpenTelemetry::Trace::Propagation.http_trace_context_injector,
+          OpenTelemetry::CorrelationContext::Propagation.http_injector
+        ]
+
+        _(OpenTelemetry.propagation.http_injectors).must_equal(expected_injectors)
+      end
+
+      it 'is user settable' do
+        configurator.http_injectors = []
+        configurator.configure
+
+        _(OpenTelemetry.propagation.http_injectors).must_equal([])
+      end
+    end
+
+    describe '#http_extractors' do
+      it 'defaults to trace context and correlation context' do
+        configurator.configure
+
+        expected_extractors = [
+          OpenTelemetry::Trace::Propagation.rack_http_trace_context_extractor,
+          OpenTelemetry::CorrelationContext::Propagation.rack_http_extractor
+        ]
+
+        _(OpenTelemetry.propagation.http_extractors).must_equal(expected_extractors)
+      end
+
+      it 'is user settable' do
+        configurator.http_extractors = []
+        configurator.configure
+
+        _(OpenTelemetry.propagation.http_extractors).must_equal([])
+      end
+    end
+
     describe 'tracer_provider' do
       it 'is an instance of SDK::Trace::TracerProvider' do
         configurator.configure
