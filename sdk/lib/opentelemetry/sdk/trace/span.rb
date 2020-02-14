@@ -107,6 +107,7 @@ module OpenTelemetry
         def add_event(name: nil, attributes: nil, timestamp: nil)
           super
           event = block_given? ? yield : OpenTelemetry::Trace::Event.new(name: name, attributes: attributes, timestamp: timestamp || Time.now)
+
           @mutex.synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling add_event on an ended Span.')
@@ -117,6 +118,21 @@ module OpenTelemetry
             end
           end
           self
+        end
+
+        # Record an error during the execution of this span. Multiple errors
+        # can be recorded on a span.
+        #
+        # @param [Exception] error The error to recorded
+        #
+        # @return [void]
+        def record_error(error)
+          add_event(name: 'error',
+                    attributes: {
+                      'error.type' => error.class.to_s,
+                      'error.message' => error.message,
+                      'error.stack' => error.backtrace.join("\n")
+                    })
         end
 
         # Sets the Status to the Span
