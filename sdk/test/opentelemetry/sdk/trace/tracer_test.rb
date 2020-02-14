@@ -283,6 +283,24 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     end
   end
 
+  describe '#in_span' do
+    it 'records and reraises exceptions' do
+      span = nil
+      _(proc do
+        tracer.in_span('op') do |s|
+          span = s
+          raise 'this is fine'
+        end
+      end).must_raise(RuntimeError)
+
+      _(span.events.size).must_equal(1)
+
+      _(span.events[0].name).must_equal('error')
+      _(span.events[0].attributes['error.message']).must_equal('this is fine')
+      _(span.status.canonical_code).must_equal(OpenTelemetry::Trace::Status::UNKNOWN_ERROR)
+    end
+  end
+
   def activate_trace_config(trace_config)
     tracer_factory.active_trace_config = trace_config
   end
