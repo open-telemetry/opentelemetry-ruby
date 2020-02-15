@@ -30,6 +30,11 @@ describe OpenTelemetry::SDK::Trace::Samplers::Result do
     it 'returns a frozen hash' do
       _(Result.new(decision: Decision::RECORD, attributes: { 'foo' => 'bar' }).attributes).must_be(:frozen?)
     end
+
+    it 'allows array-valued attributes' do
+      attributes = { 'foo' => [1, 2, 3] }
+      _(Result.new(decision: Decision::RECORD, attributes: attributes).attributes).must_equal(attributes)
+    end
   end
 
   describe '#initialize' do

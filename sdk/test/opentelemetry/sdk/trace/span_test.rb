@@ -71,6 +71,11 @@ describe OpenTelemetry::SDK::Trace::Span do
       span.set_attribute('foo', 'bar')
       _(span.to_span_data.total_recorded_attributes).must_equal(2)
     end
+
+    it 'accepts an array value' do
+      span.set_attribute('foo', [1, 2, 3])
+      _(span.attributes).must_equal('foo' => [1, 2, 3])
+    end
   end
 
   describe '#add_event' do
@@ -83,6 +88,38 @@ describe OpenTelemetry::SDK::Trace::Span do
 
     it 'add event with attributes' do
       attrs = { 'foo' => 'bar' }
+      span.add_event(name: 'added', attributes: attrs)
+      events = span.events
+      _(events.size).must_equal(1)
+      _(events.first.attributes).must_equal(attrs)
+    end
+
+    it 'accepts array-valued attributes' do
+      attrs = { 'foo' => [1, 2, 3] }
+      span.add_event(name: 'added', attributes: attrs)
+      events = span.events
+      _(events.size).must_equal(1)
+      _(events.first.attributes).must_equal(attrs)
+    end
+
+    it 'does not accept array-valued attributes if any elements are invalid' do
+      attrs = { 'foo' => [1, 2, :bar] }
+      span.add_event(name: 'added', attributes: attrs)
+      events = span.events
+      _(events.size).must_equal(1)
+      _(events.first.attributes).must_equal({})
+    end
+
+    it 'does not accept array-valued attributes if the elements are different types' do
+      attrs = { 'foo' => [1, 2, 'bar'] }
+      span.add_event(name: 'added', attributes: attrs)
+      events = span.events
+      _(events.size).must_equal(1)
+      _(events.first.attributes).must_equal({})
+    end
+
+    it 'accepts array-valued attributes if the elements are true and false' do
+      attrs = { 'foo' => [true, false] }
       span.add_event(name: 'added', attributes: attrs)
       events = span.events
       _(events.size).must_equal(1)
@@ -112,6 +149,11 @@ describe OpenTelemetry::SDK::Trace::Span do
 
     it 'trims event attributes' do
       span.add_event(name: 'event', attributes: { '1' => 1, '2' => 2 })
+      _(span.events.first.attributes.size).must_equal(1)
+    end
+
+    it 'trims event attributes with array values' do
+      span.add_event(name: 'event', attributes: { '1' => [1, 2], '2' => [3, 4] })
       _(span.events.first.attributes.size).must_equal(1)
     end
 

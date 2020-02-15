@@ -31,6 +31,12 @@ describe OpenTelemetry::Trace::Event do
       event = Event.new(name: 'event')
       _(event.timestamp).wont_be_nil
     end
+
+    it 'allows array-valued attributes' do
+      attributes = { 'foo' => [1, 2, 3] }
+      event = Event.new(name: 'event', attributes: attributes)
+      _(event.attributes).must_equal(attributes)
+    end
   end
   describe '.attributes' do
     it 'returns and freezes attributes passed in' do
