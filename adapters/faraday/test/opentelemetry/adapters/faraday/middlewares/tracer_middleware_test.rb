@@ -27,6 +27,16 @@ describe OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware do
 
   before do
     exporter.reset
+
+    # these are currently empty, but this will future proof the test
+    @orig_injectors = OpenTelemetry.propagation.http_injectors
+    OpenTelemetry.propagation.http_injectors = [
+      OpenTelemetry::Trace::Propagation.http_trace_context_injector
+    ]
+  end
+
+  after do
+    OpenTelemetry.propagation.http_injectors = @orig_injectors
   end
 
   describe 'first span' do
@@ -35,56 +45,42 @@ describe OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware do
     end
 
     it 'has http 200 attributes' do
-      client.get('/success')
+      response = client.get('/success')
 
+      _(span.name).must_equal 'HTTP GET'
       _(span.attributes['component']).must_equal 'http'
-      _(span.attributes['http.method']).must_equal :get
+      _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.url']).must_equal 'http://example.com/success'
+      _(response.env.request_headers['Traceparent']).must_equal(
+        "00-#{span.trace_id}-#{span.span_id}-01"
+      )
     end
 
     it 'has http.status_code 404' do
-      client.get('/not_found')
+      response = client.get('/not_found')
 
+      _(span.name).must_equal 'HTTP GET'
       _(span.attributes['component']).must_equal 'http'
-      _(span.attributes['http.method']).must_equal :get
+      _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.status_code']).must_equal 404
       _(span.attributes['http.url']).must_equal 'http://example.com/not_found'
+      _(response.env.request_headers['Traceparent']).must_equal(
+        "00-#{span.trace_id}-#{span.span_id}-01"
+      )
     end
 
     it 'has http.status_code 500' do
-      client.get('/failure')
+      response = client.get('/failure')
 
+      _(span.name).must_equal 'HTTP GET'
       _(span.attributes['component']).must_equal 'http'
-      _(span.attributes['http.method']).must_equal :get
+      _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.status_code']).must_equal 500
       _(span.attributes['http.url']).must_equal 'http://example.com/failure'
-    end
-  end
-
-  describe 'overriding span reporting' do
-    class NoReportMiddleware < OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware
-      def disable_span_reporting?(_env)
-        true
-      end
-    end
-
-    before do
-      # force a reinstall of instrumentation, note: this won't always work for
-      # all adapters
-      adapter.instance_variable_set(:@installed, false)
-      adapter.install(tracer_middleware: NoReportMiddleware)
-    end
-
-    after do
-      adapter.instance_variable_set(:@installed, false)
-      Faraday::Middleware.instance_variable_set(:@registered_middleware, {})
-    end
-
-    it 'does not report' do
-      client.get('/success')
-
-      _(span).must_be_nil
+      _(response.env.request_headers['Traceparent']).must_equal(
+        "00-#{span.trace_id}-#{span.span_id}-01"
+      )
     end
   end
 end

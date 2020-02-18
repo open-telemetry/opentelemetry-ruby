@@ -32,6 +32,10 @@ services:
     <<: *base
     working_dir: /app/adapters/rack/example
 
+  ex-adapter-restclient:
+    <<: *base
+    working_dir: /app/adapters/restclient/example
+
   ex-adapter-sinatra:
     <<: *base
     working_dir: /app/adapters/sinatra/example
