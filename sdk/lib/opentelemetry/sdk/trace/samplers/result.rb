@@ -19,7 +19,7 @@ module OpenTelemetry
 
           # Returns a frozen hash of attributes to be attached span.
           #
-          # @return [Hash<String, Object>]
+          # @return [Hash{String => String, Numeric, Boolean}]
           attr_reader :attributes
 
           # Returns a new sampling result with the specified decision and
@@ -27,8 +27,9 @@ module OpenTelemetry
           #
           # @param [Symbol] decision Whether or not a span should be sampled
           #   and/or record events.
-          # @param [optional Hash<String, Object>] attributes A frozen or freezable hash
-          #   containing attributes to be attached to the span.
+          # @param [optional Hash{String => String, Numeric, Boolean}]
+          #   attributes A frozen or freezable hash containing attributes to be
+          #   attached to the span.
           def initialize(decision:, attributes: nil)
             @decision = decision
             @attributes = attributes.freeze || EMPTY_HASH
