@@ -89,6 +89,14 @@ module OpenTelemetry
         self
       end
 
+      # Record an error during the execution of this span. Multiple errors
+      # can be recorded on a span.
+      #
+      # @param [Exception] error The error to recorded
+      #
+      # @return [void]
+      def record_error(error); end
+
       # Sets the Status to the Span
       #
       # If used, this will override the default Span status. Default is OK.
