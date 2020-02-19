@@ -43,10 +43,17 @@ module OpenTelemetry
       #
       #   OpenTelemetry.tracer.with_span(OpenTelemetry.tracer.start_span('do-the-thing')) do ... end
       #
-      # On exit, the Span that was active before calling this method will be reactivated.
+      # On exit, the Span that was active before calling this method will be reactivated. If an
+      # exception occurs during the execution of the provided block, it will be recorded on the
+      # span and reraised.
       def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil, with_parent: nil, with_parent_context: nil)
         span = start_span(name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind, sampling_hint: sampling_hint, with_parent: with_parent, with_parent_context: with_parent_context)
         with_span(span) { |s| yield s }
+      rescue Exception => e # rubocop:disable Lint/RescueException
+        span.record_error(e)
+        span.status = Status.new(Status::UNKNOWN_ERROR,
+                                 description: "Unhandled exception of type: #{e.class}")
+        raise e
       ensure
         span.finish
       end

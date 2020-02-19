@@ -57,6 +57,12 @@ GEM_INFO = {
       OpenTelemetry::Exporters::Jaeger::VERSION
     }
   },
+  "opentelemetry-adapters-excon" => {
+    version_getter: ->() {
+      require './lib/opentelemetry/adapters/excon/version.rb'
+      OpenTelemetry::Adapters::Excon::VERSION
+    }
+  },
   "opentelemetry-adapters-faraday" => {
     version_getter: ->() {
       require './lib/opentelemetry/adapters/faraday/version.rb'
@@ -69,7 +75,7 @@ GEM_INFO = {
       OpenTelemetry::Adapters::Rack::VERSION
     }
   },
-  "opentelemetry-adapters-rest-client" => {
+  "opentelemetry-adapters-restclient" => {
     version_getter: ->() {
       require './lib/opentelemetry/adapters/restclient/version.rb'
       OpenTelemetry::Adapters::RestClient::VERSION
