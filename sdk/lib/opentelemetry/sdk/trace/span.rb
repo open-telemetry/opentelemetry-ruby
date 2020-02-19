@@ -123,7 +123,7 @@ module OpenTelemetry
         # Record an error during the execution of this span. Multiple errors
         # can be recorded on a span.
         #
-        # @param [Exception] error The error to recorded
+        # @param [Exception] error The error to be recorded
         #
         # @return [void]
         def record_error(error)
