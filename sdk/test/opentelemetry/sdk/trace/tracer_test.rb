@@ -9,10 +9,10 @@ require 'test_helper'
 describe OpenTelemetry::SDK::Trace::Tracer do
   Tracer = OpenTelemetry::SDK::Trace::Tracer
 
-  let(:tracer_factory) { OpenTelemetry::SDK::Trace::TracerFactory.new }
+  let(:tracer_provider) { OpenTelemetry::SDK::Trace::TracerProvider.new }
   let(:tracer) do
-    OpenTelemetry.tracer_factory = tracer_factory
-    OpenTelemetry.tracer_factory.tracer
+    OpenTelemetry.tracer_provider = tracer_provider
+    OpenTelemetry.tracer_provider.tracer
   end
   let(:record_sampler) do
     ->(trace_id:, span_id:, parent_context:, hint:, links:, name:, kind:, attributes:) { Result.new(decision: Decision::RECORD) } # rubocop:disable Lint/UnusedBlockArgument
@@ -82,7 +82,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     end
 
     it 'returns a no-op span if tracer has shutdown' do
-      tracer_factory.shutdown
+      tracer_provider.shutdown
       span = tracer.start_root_span('root')
       _(span.context.trace_flags).wont_be :sampled?
       _(span).wont_be :recording?
@@ -215,7 +215,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     end
 
     it 'returns a no-op span with parent trace ID if tracer has shutdown' do
-      tracer_factory.shutdown
+      tracer_provider.shutdown
       span = tracer.start_span('op', with_parent_context: context)
       _(span.context.trace_flags).wont_be :sampled?
       _(span).wont_be :recording?
@@ -303,6 +303,6 @@ describe OpenTelemetry::SDK::Trace::Tracer do
   end
 
   def activate_trace_config(trace_config)
-    tracer_factory.active_trace_config = trace_config
+    tracer_provider.active_trace_config = trace_config
   end
 end

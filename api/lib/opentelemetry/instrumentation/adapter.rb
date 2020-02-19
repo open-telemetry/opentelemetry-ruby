@@ -182,7 +182,7 @@ module OpenTelemetry
 
         @config = config unless config.nil?
         instance_exec(@config, &@install_blk)
-        @tracer ||= OpenTelemetry.tracer_factory.tracer(name, version)
+        @tracer ||= OpenTelemetry.tracer_provider.tracer(name, version)
         @installed = true
       end
 

@@ -42,12 +42,12 @@ describe OpenTelemetry::SDK::Configurator do
       reset_globals
     end
 
-    describe 'tracer_factory' do
-      it 'is an instance of SDK::Trace::TracerFactory' do
+    describe 'tracer_provider' do
+      it 'is an instance of SDK::Trace::TracerProvider' do
         configurator.configure
 
-        _(OpenTelemetry.tracer_factory).must_be_instance_of(
-          OpenTelemetry::SDK::Trace::TracerFactory
+        _(OpenTelemetry.tracer_provider).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::TracerProvider
         )
       end
     end
@@ -118,7 +118,7 @@ describe OpenTelemetry::SDK::Configurator do
   end
 
   def active_span_processors
-    OpenTelemetry.tracer_factory.active_span_processor.instance_variable_get(:@span_processors)
+    OpenTelemetry.tracer_provider.active_span_processor.instance_variable_get(:@span_processors)
   end
 
   def reset_globals

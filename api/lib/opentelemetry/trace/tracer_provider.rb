@@ -6,8 +6,8 @@
 
 module OpenTelemetry
   module Trace
-    # No-op implementation of a tracer factory.
-    class TracerFactory
+    # No-op implementation of a tracer provider.
+    class TracerProvider
       # Returns a {Tracer} instance.
       #
       # @param [optional String] name Instrumentation package name
