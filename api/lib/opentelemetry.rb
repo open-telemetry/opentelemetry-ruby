@@ -23,7 +23,7 @@ require 'opentelemetry/version'
 module OpenTelemetry
   extend self
 
-  attr_writer :tracer_provider, :meter_factory, :correlations
+  attr_writer :tracer_provider, :meter_provider, :correlations
 
   attr_accessor :logger
 
@@ -33,10 +33,10 @@ module OpenTelemetry
     @tracer_provider ||= Trace::TracerProvider.new
   end
 
-  # @return [Object, Metrics::MeterFactory] registered meter factory or a
-  #   default no-op implementation of the meter factory.
-  def meter_factory
-    @meter_factory ||= Metrics::MeterFactory.new
+  # @return [Object, Metrics::MeterProvider] registered meter provider or a
+  #   default no-op implementation of the meter provider.
+  def meter_provider
+    @meter_provider ||= Metrics::MeterProvider.new
   end
 
   # @return [Instrumentation::Registry] registry containing all known

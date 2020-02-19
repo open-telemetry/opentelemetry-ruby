@@ -6,8 +6,8 @@
 
 module OpenTelemetry
   module Metrics
-    # No-op implementation of a meter factory.
-    class MeterFactory
+    # No-op implementation of a meter provider.
+    class MeterProvider
       # Returns a {Meter} instance.
       #
       # @param [optional String] name Instrumentation package name

@@ -44,25 +44,25 @@ describe OpenTelemetry do
     end
   end
 
-  describe '.meter_factory' do
+  describe '.meter_provider' do
     after do
       # Ensure we don't leak custom meter factories and meters to other tests
-      OpenTelemetry.meter_factory = nil
+      OpenTelemetry.meter_provider = nil
     end
 
-    it 'returns instance of Metrics::MeterFactory by default' do
-      meter_factory = OpenTelemetry.meter_factory
-      _(meter_factory).must_be_instance_of(OpenTelemetry::Metrics::MeterFactory)
+    it 'returns instance of Metrics::MeterProvider by default' do
+      meter_provider = OpenTelemetry.meter_provider
+      _(meter_provider).must_be_instance_of(OpenTelemetry::Metrics::MeterProvider)
     end
 
     it 'returns the same instance when accessed multiple times' do
-      _(OpenTelemetry.meter_factory).must_equal(OpenTelemetry.meter_factory)
+      _(OpenTelemetry.meter_provider).must_equal(OpenTelemetry.meter_provider)
     end
 
-    it 'returns user specified meter factory' do
-      custom_meter_factory = 'a custom meter factory'
-      OpenTelemetry.meter_factory = custom_meter_factory
-      _(OpenTelemetry.meter_factory).must_equal(custom_meter_factory)
+    it 'returns user specified meter provider' do
+      custom_meter_provider = 'a custom meter provider'
+      OpenTelemetry.meter_provider = custom_meter_provider
+      _(OpenTelemetry.meter_provider).must_equal(custom_meter_provider)
     end
   end
 

@@ -71,7 +71,7 @@ module OpenTelemetry
       # at each stage. Currently, the setup process is roughly:
       #   - setup logging
       #   - setup propagation
-      #   - setup tracer_provider and meter_factory
+      #   - setup tracer_provider and meter_provider
       #   - install instrumentation
       def configure
         OpenTelemetry.logger = logger
