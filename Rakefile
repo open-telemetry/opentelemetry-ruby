@@ -69,7 +69,7 @@ GEM_INFO = {
       OpenTelemetry::Adapters::Faraday::VERSION
     }
   },
-  "opentelemetry-adapters-rest-client" => {
+  "opentelemetry-adapters-restclient" => {
     version_getter: ->() {
       require './lib/opentelemetry/adapters/restclient/version.rb'
       OpenTelemetry::Adapters::RestClient::VERSION
