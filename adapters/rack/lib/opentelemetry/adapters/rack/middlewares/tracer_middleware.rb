@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/trace/status'
+
 require_relative '../util/queue_time'
 
 module OpenTelemetry
@@ -187,14 +189,12 @@ module OpenTelemetry
           # Note: if a middleware catches an Exception without re raising,
           # the Exception cannot be recorded here.
           def record_and_reraise_error(error, request_span:)
+            request_span.record_error(error)
             request_span.status = OpenTelemetry::Trace::Status.new(
-              OpenTelemetry::Trace::Status::INTERNAL_ERROR,
-              description: error.to_s
+              OpenTelemetry::Trace::Status::UNKNOWN_ERROR,
+              description: "Unhandled exception of type: #{error.class}"
             )
 
-            # TODO: implement span.set_error? (this is a specification-level issue):
-            # request_span.set_error(error) unless request_span.nil?
-            #
             raise error
           end
 
