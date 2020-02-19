@@ -11,33 +11,39 @@ module OpenTelemetry
         # TracerMiddleware propagates context and instruments Faraday requests
         # by way of its middlware system
         class TracerMiddleware < ::Faraday::Middleware
-          def call(env)
-            return app.call(env) if disable_span_reporting?(env)
+          HTTP_METHODS_SYMBOL_TO_STRING = {
+            connect: 'CONNECT',
+            delete: 'DELETE',
+            get: 'GET',
+            head: 'HEAD',
+            options: 'OPTIONS',
+            patch: 'PATCH',
+            post: 'POST',
+            put: 'PUT',
+            trace: 'TRACE'
+          }.freeze
 
-            tracer.in_span(env.url.to_s,
-                           attributes: { 'component' => 'http',
-                                         'http.method' => env.method,
-                                         'http.url' => env.url.to_s },
-                           kind: :client) do |span|
-              propagate_context(span, env)
+          def call(env)
+            http_method = HTTP_METHODS_SYMBOL_TO_STRING[env.method]
+
+            tracer.in_span(
+              "HTTP #{http_method}",
+              attributes: {
+                'component' => 'http',
+                'http.method' => http_method,
+                'http.url' => env.url.to_s
+              },
+              kind: :client
+            ) do |span|
+              OpenTelemetry.propagation.inject(env.request_headers)
 
               app.call(env).on_complete { |resp| trace_response(span, resp) }
             end
           end
 
-          # Override implementation (subclass) to determine per-connection
-          # span reporting rules.
-          def disable_span_reporting?(_env)
-            false
-          end
-
           private
 
           attr_reader :app
-
-          def propagate_context(span, env)
-            OpenTelemetry.propagation.inject(env.request_headers)
-          end
 
           def tracer
             Faraday::Adapter.instance.tracer
@@ -46,6 +52,9 @@ module OpenTelemetry
           def trace_response(span, response)
             span.set_attribute('http.status_code', response.status)
             span.set_attribute('http.status_text', response.reason_phrase)
+            span.status = OpenTelemetry::Trace::Status.http_to_status(
+              response.status
+            )
           end
         end
       end
