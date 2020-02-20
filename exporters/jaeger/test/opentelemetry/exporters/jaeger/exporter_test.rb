@@ -21,7 +21,7 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter do
     let(:exporter) { OpenTelemetry::Exporters::Jaeger::Exporter.new(service_name: 'test', host: '127.0.0.1', port: 6831) }
 
     before do
-      OpenTelemetry.tracer_factory = OpenTelemetry::SDK::Trace::TracerFactory.new
+      OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new
     end
 
     it 'returns FAILED_NOT_RETRYABLE when shutdown' do
@@ -54,9 +54,9 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter do
       socket.bind('127.0.0.1', 0)
       exporter = OpenTelemetry::Exporters::Jaeger::Exporter.new(service_name: 'test', host: '127.0.0.1', port: socket.addr[1])
       processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter: exporter, max_queue_size: 1, max_export_batch_size: 1, max_export_attempts: 1)
-      OpenTelemetry.tracer_factory.add_span_processor(processor)
-      OpenTelemetry.tracer_factory.tracer.start_root_span('foo').finish
-      OpenTelemetry.tracer_factory.shutdown
+      OpenTelemetry.tracer_provider.add_span_processor(processor)
+      OpenTelemetry.tracer_provider.tracer.start_root_span('foo').finish
+      OpenTelemetry.tracer_provider.shutdown
       packet = socket.recvfrom(65_000)
       socket.close
       _(packet).wont_be_nil

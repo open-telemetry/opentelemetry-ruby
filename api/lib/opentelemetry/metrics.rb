@@ -7,7 +7,7 @@
 require 'opentelemetry/metrics/handles'
 require 'opentelemetry/metrics/instruments'
 require 'opentelemetry/metrics/meter'
-require 'opentelemetry/metrics/meter_factory'
+require 'opentelemetry/metrics/meter_provider'
 
 module OpenTelemetry
   # The Metrics API allows reporting raw measurements as well as metrics with known aggregation and labels.
