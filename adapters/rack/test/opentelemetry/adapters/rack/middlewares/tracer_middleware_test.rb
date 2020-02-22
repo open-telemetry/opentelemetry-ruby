@@ -129,8 +129,8 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
       describe 'when recordable' do
         let(:config) { default_config.merge(record_frontend_span: true) }
         let(:env) { Hash('HTTP_X_REQUEST_START' => Time.now.to_i) }
-        let(:frontend_span) { exporter.finished_spans.first }
-        let(:request_span) { exporter.finished_spans[1] }
+        let(:frontend_span) { exporter.finished_spans[1] }
+        let(:request_span) { exporter.finished_spans[0] }
 
         it 'records span' do
           _(exporter.finished_spans.size).must_equal 2
