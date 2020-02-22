@@ -14,11 +14,6 @@ module OpenTelemetry
       module Middlewares
         # TracerMiddleware propagates context and instruments Rack requests
         # by way of its middleware system
-        #
-        # Notable implementation differences from dd-trace-rb:
-        # * missing: 'span.resource', which is set to span.name
-        # * missing: config[:distributed_tracing]
-        # * missing: span.set_error() -- spec level change
         class TracerMiddleware # rubocop:disable Metrics/ClassLength
           class << self
             def allowed_rack_request_headers
@@ -80,16 +75,12 @@ module OpenTelemetry
 
           # return Context with the frontend span as the current span
           def create_frontend_span(env, extracted_context)
-            # NOTE: get_request_start may return nil
             request_start_time = OpenTelemetry::Adapters::Rack::Util::QueueTime.get_request_start(env)
 
             return unless config[:record_frontend_span] && !request_start_time.nil?
 
-            # NOTE: start_span assumes context is managed explicitly,
-            #       while in_span and with_span activate span automatically
-            span = tracer.start_span('http_server.queue', # NOTE: span kind of 'proxy' is not defined
+            span = tracer.start_span('http_server.queue',
                                      with_parent_context: extracted_context,
-                                     # NOTE: initialize with as many attributes as possible:
                                      attributes: {
                                        'component' => 'http',
                                        'service' => config[:web_service_name],
@@ -114,13 +105,6 @@ module OpenTelemetry
 
           ### request_span
 
-          # Per https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-http.md#http-server-semantic-conventions
-          #
-          # One of the following sets is required, in descending preference:
-          # * http.scheme, http.host, http.target
-          # * http.scheme, http.server_name, net.host.port, http.target
-          # * http.scheme, net.host.name, net.host.port, http.target
-          # * http.url
           def request_span_attributes(env:)
             {
               'component' => 'http',
@@ -168,7 +152,6 @@ module OpenTelemetry
             allowed_response_headers(headers).each { |k, v| span.set_attribute(k, v) }
           end
 
-          # @return Hash
           def allowed_request_headers(env)
             return EMPTY_HASH if self.class.allowed_rack_request_headers.empty?
 
@@ -179,7 +162,6 @@ module OpenTelemetry
             end
           end
 
-          # @return Hash
           def allowed_response_headers(headers)
             return EMPTY_HASH if headers.nil?
             return EMPTY_HASH if self.class.allowed_response_headers.empty?
