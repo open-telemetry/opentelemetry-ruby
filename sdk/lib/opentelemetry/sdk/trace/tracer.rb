@@ -40,7 +40,7 @@ module OpenTelemetry
           trace_id = parent_span_context&.trace_id
           trace_id ||= OpenTelemetry::Trace.generate_trace_id
           span_id = OpenTelemetry::Trace.generate_span_id
-          sampler = OpenTelemetry.tracer_factory.active_trace_config.sampler
+          sampler = OpenTelemetry.tracer_provider.active_trace_config.sampler
           result = sampler.call(trace_id: trace_id, span_id: span_id, parent_context: parent_span_context, hint: sampling_hint, links: links, name: name, kind: kind, attributes: attributes)
 
           internal_create_span(result, name, kind, trace_id, span_id, parent_span_id, attributes, links, start_timestamp, tracestate)
@@ -49,12 +49,12 @@ module OpenTelemetry
         private
 
         def internal_create_span(result, name, kind, trace_id, span_id, parent_span_id, attributes, links, start_timestamp, tracestate) # rubocop:disable Metrics/AbcSize
-          if result.recording? && !OpenTelemetry.tracer_factory.stopped?
+          if result.recording? && !OpenTelemetry.tracer_provider.stopped?
             trace_flags = result.sampled? ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
             context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, trace_flags: trace_flags, tracestate: tracestate)
             attributes = attributes&.merge(result.attributes) || result.attributes
-            active_trace_config = OpenTelemetry.tracer_factory.active_trace_config
-            active_span_processor = OpenTelemetry.tracer_factory.active_span_processor
+            active_trace_config = OpenTelemetry.tracer_provider.active_trace_config
+            active_span_processor = OpenTelemetry.tracer_provider.active_span_processor
             Span.new(context, name, kind, parent_span_id, active_trace_config, active_span_processor, attributes, links, start_timestamp || Time.now, @resource)
           else
             OpenTelemetry::Trace::Span.new(span_context: OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id))

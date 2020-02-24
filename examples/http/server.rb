@@ -12,19 +12,19 @@ require 'sinatra/base'
 require 'opentelemetry/sdk'
 
 SDK = OpenTelemetry::SDK
-OpenTelemetry.tracer_factory = SDK::Trace::TracerFactory.new
+OpenTelemetry.tracer_provider = SDK::Trace::TracerProvider.new
 
 exporter = SDK::Trace::Export::ConsoleSpanExporter.new
 processor = SDK::Trace::Export::SimpleSpanProcessor.new(exporter)
-OpenTelemetry.tracer_factory.add_span_processor(processor)
+OpenTelemetry.tracer_provider.add_span_processor(processor)
 
 # Rack middleware to extract span context, create child span, and add
 # attributes/events to the span
 class OpenTelemetryMiddleware
   def initialize(app)
     @app = app
-    @formatter = OpenTelemetry.tracer_factory.http_text_format
-    @tracer = OpenTelemetry.tracer_factory.tracer('sinatra', 'semver:1.0')
+    @formatter = OpenTelemetry.tracer_provider.http_text_format
+    @tracer = OpenTelemetry.tracer_provider.tracer('sinatra', 'semver:1.0')
   end
 
   def call(env)
