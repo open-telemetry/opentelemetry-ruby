@@ -83,7 +83,6 @@ module OpenTelemetry
                                      with_parent_context: extracted_context,
                                      attributes: {
                                        'component' => 'http',
-                                       'service' => config[:web_service_name],
                                        'start_time' => request_start_time.to_f
                                      },
                                      kind: :server)

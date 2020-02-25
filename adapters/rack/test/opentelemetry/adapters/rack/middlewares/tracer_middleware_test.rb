@@ -141,17 +141,6 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
         it 'frontend_span parents request_span' do
           _(request_span.parent_span_id).must_equal frontend_span.span_id
         end
-
-        describe 'when config[:web_service_name]' do
-          let(:config) do
-            default_config.merge(record_frontend_span: true,
-                                 web_service_name: 'my_service_name')
-          end
-
-          it 'records "service" attribute' do
-            _(frontend_span.attributes['service']).must_equal 'my_service_name'
-          end
-        end
       end
     end
   end
