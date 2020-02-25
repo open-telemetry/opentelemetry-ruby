@@ -79,8 +79,8 @@ module OpenTelemetry
       #   required if a block is not given.
       # @param [optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}]
       #   attributes One or more key:value pairs, where the keys must be
-      #   strings and the values may be string, boolean or numeric type. This
-      #   argument should only be used when passing in a name.
+      #   strings and the values may be (array of) string, boolean or numeric
+      #   type. This argument should only be used when passing in a name.
       # @param [optional Time] timestamp Optional timestamp for the event.
       #   This argument should only be used when passing in a name.
       #
