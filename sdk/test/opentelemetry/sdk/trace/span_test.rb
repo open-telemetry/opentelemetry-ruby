@@ -126,6 +126,14 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(events.first.attributes).must_equal(attrs)
     end
 
+    it 'accepts array-valued attributes if the array is empty' do
+      attrs = { 'foo' => [] }
+      span.add_event(name: 'added', attributes: attrs)
+      events = span.events
+      _(events.size).must_equal(1)
+      _(events.first.attributes).must_equal(attrs)
+    end
+
     it 'add event with timestamp' do
       ts = Time.now
       span.add_event(name: 'added', timestamp: ts)
