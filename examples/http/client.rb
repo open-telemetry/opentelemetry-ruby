@@ -14,14 +14,14 @@ require 'opentelemetry/sdk'
 host = ENV.fetch('HTTP_EXAMPLE_HOST', '0.0.0.0')
 
 SDK = OpenTelemetry::SDK
-OpenTelemetry.tracer_factory = SDK::Trace::TracerFactory.new
+OpenTelemetry.tracer_provider = SDK::Trace::TracerProvider.new
 
 # Configure tracer
 exporter = SDK::Trace::Export::ConsoleSpanExporter.new
 processor = SDK::Trace::Export::SimpleSpanProcessor.new(exporter)
-OpenTelemetry.tracer_factory.add_span_processor(processor)
-tracer = OpenTelemetry.tracer_factory.tracer('faraday', 'semver:1.0')
-formatter = OpenTelemetry.tracer_factory.http_text_format
+OpenTelemetry.tracer_provider.add_span_processor(processor)
+tracer = OpenTelemetry.tracer_provider.tracer('faraday', 'semver:1.0')
+formatter = OpenTelemetry.tracer_provider.http_text_format
 
 connection = Faraday.new("http://#{host}:4567")
 url = '/hello'

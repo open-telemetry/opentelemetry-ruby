@@ -181,6 +181,49 @@ describe OpenTelemetry::SDK::Trace::Span do
     end
   end
 
+  describe '#record_error' do
+    let(:trace_config) do
+      TraceConfig.new(
+        max_attributes_count: 10,
+        max_events_count: 5,
+        max_attributes_per_event: 10
+      )
+    end
+
+    let(:error) do
+      begin
+        raise 'oops'
+      rescue StandardError => e
+        e
+      end
+    end
+
+    it 'records error as an event' do
+      span.record_error(error)
+      events = span.events
+      _(events.size).must_equal(1)
+
+      ev = events[0]
+
+      _(ev.name).must_equal('error')
+      _(ev.attributes['error.type']).must_equal(error.class.to_s)
+      _(ev.attributes['error.message']).must_equal(error.message)
+      _(ev.attributes['error.stack']).must_equal(error.backtrace.join("\n"))
+    end
+
+    it 'records multiple errors' do
+      3.times { span.record_error(error) }
+      events = span.events
+      _(events.size).must_equal(3)
+
+      events.each do |ev|
+        _(ev.attributes['error.type']).must_equal(error.class.to_s)
+        _(ev.attributes['error.message']).must_equal(error.message)
+        _(ev.attributes['error.stack']).must_equal(error.backtrace.join("\n"))
+      end
+    end
+  end
+
   describe '#status=' do
     it 'sets the status' do
       span.status = Status.new(1, description: 'cancelled')

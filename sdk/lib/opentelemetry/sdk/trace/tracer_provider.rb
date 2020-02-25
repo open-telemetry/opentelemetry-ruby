@@ -7,8 +7,8 @@
 module OpenTelemetry
   module SDK
     module Trace
-      # {TracerFactory} is the SDK implementation of {OpenTelemetry::Trace::TracerFactory}.
-      class TracerFactory < OpenTelemetry::Trace::TracerFactory
+      # {TracerProvider} is the SDK implementation of {OpenTelemetry::Trace::TracerProvider}.
+      class TracerProvider < OpenTelemetry::Trace::TracerProvider
         Key = Struct.new(:name, :version)
         private_constant(:Key)
 
@@ -17,9 +17,9 @@ module OpenTelemetry
         attr_reader :stopped
         alias stopped? stopped
 
-        # Returns a new {TracerFactory} instance.
+        # Returns a new {TracerProvider} instance.
         #
-        # @return [TracerFactory]
+        # @return [TracerProvider]
         def initialize
           @mutex = Mutex.new
           @registry = {}
@@ -75,7 +75,7 @@ module OpenTelemetry
               return
             end
             @registered_span_processors << span_processor
-            @active_span_processor = MultiSpanProcessor.new(@registered_span_processors)
+            @active_span_processor = MultiSpanProcessor.new(@registered_span_processors.dup)
           end
         end
       end

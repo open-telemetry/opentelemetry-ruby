@@ -10,9 +10,8 @@ module OpenTelemetry
       # The Adapter class contains logic to detect and install the Faraday
       # instrumentation adapter
       class Adapter < OpenTelemetry::Instrumentation::Adapter
-        install do |config|
+        install do |_config|
           require_dependencies
-          config[:tracer_middleware] ||= Middlewares::TracerMiddleware
           register_tracer_middleware
           use_middleware_by_default
         end
@@ -30,7 +29,7 @@ module OpenTelemetry
 
         def register_tracer_middleware
           ::Faraday::Middleware.register_middleware(
-            open_telemetry: config[:tracer_middleware]
+            open_telemetry: Middlewares::TracerMiddleware
           )
         end
 

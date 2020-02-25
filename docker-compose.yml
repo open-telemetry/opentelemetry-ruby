@@ -24,9 +24,17 @@ services:
       context: .
     working_dir: /app
 
+  ex-adapter-excon:
+    <<: *base
+    working_dir: /app/adapters/excon/example
+
   ex-adapter-faraday:
     <<: *base
     working_dir: /app/adapters/faraday/example
+
+  ex-adapter-restclient:
+    <<: *base
+    working_dir: /app/adapters/restclient/example
 
   ex-adapter-sinatra:
     <<: *base

@@ -35,8 +35,8 @@ module OpenTelemetry
             end
           end
 
-          # Called when {TracerFactory#shutdown} is called, if this exporter is
-          # registered to a {TracerFactory} object.
+          # Called when {TracerProvider#shutdown} is called, if this exporter is
+          # registered to a {TracerProvider} object.
           def shutdown
             @span_exporters.each(&:shutdown)
           end

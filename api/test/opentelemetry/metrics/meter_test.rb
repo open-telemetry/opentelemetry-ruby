@@ -7,7 +7,7 @@
 require 'test_helper'
 
 describe OpenTelemetry::Metrics::Meter do
-  let(:meter) { OpenTelemetry.meter_factory.meter }
+  let(:meter) { OpenTelemetry.meter_provider.meter }
   describe '.create_float_gauge' do
     it 'requires a name' do
       _(-> { meter.create_float_gauge(nil) }).must_raise(ArgumentError)

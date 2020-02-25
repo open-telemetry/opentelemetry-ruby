@@ -12,7 +12,7 @@ module OpenTelemetry
         # duck type. SpanExporter allows different tracing services to export
         # recorded data for sampled spans in their own format.
         #
-        # To export data an exporter MUST be registered to the {TracerFactory} using
+        # To export data an exporter MUST be registered to the {TracerProvider} using
         # a {SimpleSpanProcessor} or a {BatchSpanProcessor}.
         class NoopSpanExporter
           def initialize
@@ -30,8 +30,8 @@ module OpenTelemetry
             FAILED_NOT_RETRYABLE
           end
 
-          # Called when {TracerFactory#shutdown} is called, if this exporter is
-          # registered to a {TracerFactory} object.
+          # Called when {TracerProvider#shutdown} is called, if this exporter is
+          # registered to a {TracerProvider} object.
           def shutdown
             @stopped = true
           end
