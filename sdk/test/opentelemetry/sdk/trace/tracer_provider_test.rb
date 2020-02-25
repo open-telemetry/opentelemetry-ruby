@@ -63,6 +63,18 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
       tracer_provider.tracer.in_span('span') {}
       mock_span_processor.verify
     end
+
+    it 'adds multiple span processors to the active span processors' do
+      mock_processors = Array.new(2) { MiniTest::Mock.new }
+      mock_processors.each do |p|
+        p.expect(:on_start, nil, [Span])
+        p.expect(:on_finish, nil, [Span])
+        tracer_provider.add_span_processor(p)
+      end
+
+      tracer_provider.tracer.in_span('span') {}
+      mock_processors.each(&:verify)
+    end
   end
 
   describe '.tracer' do
