@@ -109,7 +109,7 @@ module OpenTelemetry
             {
               'component' => 'http',
               'http.method' => env['REQUEST_METHOD'],
-              'http.host' => env['HOST'],
+              'http.host' => env['HTTP_HOST'] || 'unknown',
               'http.scheme' => env['rack.url_scheme'],
               'http.target' => fullpath(env)
             }.merge(allowed_request_headers(env))
