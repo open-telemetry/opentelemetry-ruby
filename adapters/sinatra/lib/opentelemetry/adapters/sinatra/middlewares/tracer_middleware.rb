@@ -43,7 +43,7 @@ module OpenTelemetry
             status, _headers, _response_body = resp
 
             span.set_attribute('http.status_code', status)
-            span.set_attribute('http.status_text', Rack::Utils::HTTP_STATUS_CODES[status])
+            span.set_attribute('http.status_text', ::Rack::Utils::HTTP_STATUS_CODES[status])
             span.set_attribute('http.route', env['sinatra.route'].split.last)
             span.status = OpenTelemetry::Trace::Status.http_to_status(status)
           end
