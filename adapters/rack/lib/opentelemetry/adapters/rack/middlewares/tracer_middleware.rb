@@ -103,8 +103,6 @@ module OpenTelemetry
             OpenTelemetry::Adapters::Rack::Adapter.instance.tracer
           end
 
-          ### request_span
-
           def request_span_attributes(env:)
             {
               'component' => 'http',
