@@ -16,23 +16,6 @@ module OpenTelemetry
         value.is_a?(TrueClass) || value.is_a?(FalseClass)
       end
 
-      def homogenous_element_types?(value)
-        first_element_type = nil
-        value.each do |element|
-          element_type = case element
-                         when String then String
-                         when TrueClass, FalseClass then :boolean
-                         when Numeric then Numeric
-                         end
-          if !first_element_type
-            first_element_type = element_type
-          elsif element_type != first_element_type
-            return false
-          end
-        end
-        true
-      end
-
       def valid_key?(key)
         key.instance_of?(String)
       end
@@ -42,7 +25,19 @@ module OpenTelemetry
       end
 
       def valid_array_value?(value)
-        value.is_a?(Array) && value.all? { |elt| valid_primitive_value?(elt) } && homogenous_element_types?(value)
+        return false unless value.is_a?(Array)
+        return true if value.empty?
+
+        case value.first
+        when String
+          value.all? { |v| v.instance_of?(String) }
+        when TrueClass, FalseClass
+          value.all? { |v| boolean?(v) }
+        when Numeric
+          value.all? { |v| v.is_a?(Numeric) }
+        else
+          false
+        end
       end
 
       def valid_value?(value)
