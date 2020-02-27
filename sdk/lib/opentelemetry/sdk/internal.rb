@@ -20,7 +20,7 @@ module OpenTelemetry
         key.instance_of?(String)
       end
 
-      def valid_primitive_value?(value)
+      def valid_simple_value?(value)
         value.instance_of?(String) || value == false || value == true || value.is_a?(Numeric)
       end
 
@@ -41,7 +41,7 @@ module OpenTelemetry
       end
 
       def valid_value?(value)
-        valid_primitive_value?(value) || valid_array_value?(value)
+        valid_simple_value?(value) || valid_array_value?(value)
       end
 
       def valid_attributes?(attrs)
