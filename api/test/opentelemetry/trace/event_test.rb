@@ -33,7 +33,7 @@ describe OpenTelemetry::Trace::Event do
     end
 
     it 'allows array-valued attributes' do
-      attributes = { 'foo' => [1, 2, 3] }
+      attributes = { 'foo' => [4, 5, 6] }
       event = Event.new(name: 'event', attributes: attributes)
       _(event.attributes).must_equal(attributes)
     end
