@@ -75,6 +75,12 @@ GEM_INFO = {
       OpenTelemetry::Adapters::Rack::VERSION
     }
   },
+  "opentelemetry-adapters-redis" => {
+    version_getter: ->() {
+      require './lib/opentelemetry/adapters/redis/version.rb'
+      OpenTelemetry::Adapters::Redis::VERSION
+    }
+  },
   "opentelemetry-adapters-restclient" => {
     version_getter: ->() {
       require './lib/opentelemetry/adapters/restclient/version.rb'
