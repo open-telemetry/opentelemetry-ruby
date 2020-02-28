@@ -69,6 +69,12 @@ GEM_INFO = {
       OpenTelemetry::Adapters::Faraday::VERSION
     }
   },
+  "opentelemetry-adapters-net_http" => {
+    version_getter: ->() {
+      require './lib/opentelemetry/adapters/net/http/version.rb'
+      OpenTelemetry::Adapters::Net::HTTP::VERSION
+    }
+  },
   "opentelemetry-adapters-rack" => {
     version_getter: ->() {
       require './lib/opentelemetry/adapters/rack/version.rb'
