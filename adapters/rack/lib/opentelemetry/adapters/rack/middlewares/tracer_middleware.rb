@@ -59,9 +59,10 @@ module OpenTelemetry
             # restore extracted context in this process:
             OpenTelemetry::Context.with_current(frontend_context || extracted_context) do
               request_span_name = create_request_span_name(env['REQUEST_URI'] || original_env['PATH_INFO'])
+              request_span_kind = frontend_context.nil? ? :server : :internal
               tracer.in_span(request_span_name,
                              attributes: request_span_attributes(env: env),
-                             kind: :server) do |request_span|
+                             kind: request_span_kind) do |request_span|
                 @app.call(env).tap do |status, headers, response|
                   set_attributes_after_request(request_span, status, headers, response)
                 end
@@ -79,7 +80,7 @@ module OpenTelemetry
 
             return unless config[:record_frontend_span] && !request_start_time.nil?
 
-            span = tracer.start_span('http_server.queue',
+            span = tracer.start_span('http_server.proxy',
                                      with_parent_context: extracted_context,
                                      attributes: {
                                        'component' => 'http',

@@ -65,6 +65,7 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
       _(first_span.status.canonical_code).must_equal OpenTelemetry::Trace::Status::OK
       _(first_span.attributes['http.url']).must_be_nil
       _(first_span.name).must_equal '/'
+      _(first_span.kind).must_equal :server
     end
 
     it 'has no parent' do
@@ -134,8 +135,12 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
 
         it 'records span' do
           _(exporter.finished_spans.size).must_equal 2
-          _(frontend_span.name).must_equal 'http_server.queue'
+          _(frontend_span.name).must_equal 'http_server.proxy'
           _(frontend_span.attributes['service']).must_be_nil
+        end
+
+        it 'changes request_span kind' do
+          _(request_span.kind).must_equal :internal
         end
 
         it 'frontend_span parents request_span' do
