@@ -8,6 +8,7 @@ require 'logger'
 
 require 'opentelemetry/error'
 require 'opentelemetry/context'
+require 'opentelemetry/context_utils'
 require 'opentelemetry/correlation_context'
 require 'opentelemetry/internal'
 require 'opentelemetry/instrumentation'
