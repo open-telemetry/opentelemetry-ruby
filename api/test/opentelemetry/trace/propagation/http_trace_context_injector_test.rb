@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Copyright 2019 OpenTelemetry Authors
+# Copyright 2020 OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
 
@@ -10,12 +10,6 @@ describe OpenTelemetry::Trace::Propagation::HttpTraceContextInjector do
   Span = OpenTelemetry::Trace::Span
   SpanContext = OpenTelemetry::Trace::SpanContext
 
-  let(:current_span_key) do
-    OpenTelemetry::Trace::Propagation::ContextKeys.current_span_key
-  end
-  let(:extracted_span_context_key) do
-    OpenTelemetry::Trace::Propagation::ContextKeys.extracted_span_context_key
-  end
   let(:traceparent_header_key) { 'traceparent' }
   let(:tracestate_header_key) { 'tracestate' }
   let(:injector) do
@@ -34,18 +28,18 @@ describe OpenTelemetry::Trace::Propagation::HttpTraceContextInjector do
   let(:context) do
     span_context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16)
     span = Span.new(span_context: span_context)
-    Context.empty.set_value(current_span_key, span)
+    ContextUtils.set_span(span)
   end
   let(:context_with_tracestate) do
     span_context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16,
                                    tracestate: tracestate_header)
     span = Span.new(span_context: span_context)
-    Context.empty.set_value(current_span_key, span)
+    ContextUtils.set_span(span)
   end
   let(:context_without_current_span) do
     span_context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16,
                                    tracestate: tracestate_header)
-    Context.empty.set_value(extracted_span_context_key, span_context)
+    ContextUtils.set_span_context(span_context)
   end
 
   describe '#inject' do

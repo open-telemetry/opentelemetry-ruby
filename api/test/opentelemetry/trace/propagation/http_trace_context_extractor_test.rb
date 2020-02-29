@@ -1,15 +1,12 @@
 # frozen_string_literal: true
 
-# Copyright 2019 OpenTelemetry Authors
+# Copyright 2020 OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
 
 require 'test_helper'
 
 describe OpenTelemetry::Trace::Propagation::HttpTraceContextExtractor do
-  let(:span_context_key) do
-    OpenTelemetry::Trace::Propagation::ContextKeys.extracted_span_context_key
-  end
   let(:traceparent_header_key) { 'traceparent' }
   let(:tracestate_header_key) { 'tracestate' }
   let(:extractor) do
@@ -46,7 +43,7 @@ describe OpenTelemetry::Trace::Propagation::HttpTraceContextExtractor do
 
     it 'returns a remote SpanContext with fields from the traceparent and tracestate headers' do
       ctx = extractor.extract(context, carrier) { |c, k| c[k] }
-      span_context = ctx[span_context_key]
+      span_context = ContextUtils.span_context_from(ctx)
       _(span_context).must_be :remote?
       _(span_context.trace_id).must_equal('000000000000000000000000000000aa')
       _(span_context.span_id).must_equal('00000000000000ea')
@@ -56,7 +53,7 @@ describe OpenTelemetry::Trace::Propagation::HttpTraceContextExtractor do
 
     it 'uses a default getter if one is not provided' do
       ctx = extractor.extract(context, carrier)
-      span_context = ctx[span_context_key]
+      span_context = ContextUtils.span_context_from(ctx)
       _(span_context).must_be :remote?
       _(span_context.trace_id).must_equal('000000000000000000000000000000aa')
       _(span_context.span_id).must_equal('00000000000000ea')
@@ -67,7 +64,7 @@ describe OpenTelemetry::Trace::Propagation::HttpTraceContextExtractor do
     it 'returns original context on error' do
       ctx = extractor.extract(context, {}) { invalid_traceparent_header }
       _(ctx).must_equal(context)
-      span_context = ctx[span_context_key]
+      span_context = ContextUtils.span_context_from(ctx)
       _(span_context).must_be_nil
     end
   end

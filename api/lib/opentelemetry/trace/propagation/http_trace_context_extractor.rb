@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Copyright 2019 OpenTelemetry Authors
+# Copyright 2020 OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
 module OpenTelemetry
@@ -46,7 +46,7 @@ module OpenTelemetry
                                                 trace_flags: tp.flags,
                                                 tracestate: tracestate,
                                                 remote: true)
-          context.set_value(ContextKeys.extracted_span_context_key, span_context)
+          ContextUtils.set_span_context(span_context, parent: context)
         rescue OpenTelemetry::Error
           context
         end

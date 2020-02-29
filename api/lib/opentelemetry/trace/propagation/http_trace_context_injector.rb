@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Copyright 2019 OpenTelemetry Authors
+# Copyright 2020 OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
 module OpenTelemetry
@@ -44,8 +44,8 @@ module OpenTelemetry
         private
 
         def span_context_from(context)
-          context[ContextKeys.current_span_key]&.context ||
-            context[ContextKeys.extracted_span_context_key]
+          ContextUtils.span_from(context)&.context ||
+            ContextUtils.span_context_from(context)
         end
       end
     end
