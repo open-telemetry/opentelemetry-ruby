@@ -9,12 +9,13 @@ $LOAD_PATH.push(File.dirname(__FILE__) + '/../../../../thrift/gen-rb')
 require 'agent'
 require 'opentelemetry/sdk'
 require 'socket'
+require 'opentelemetry/exporters/jaeger/exporter/span_encoder'
 
 module OpenTelemetry
   module Exporters
     module Jaeger
       # An OpenTelemetry trace exporter that sends spans over UDP as Thrift Compact encoded Jaeger spans.
-      class Exporter # rubocop:disable Metrics/ClassLength
+      class Exporter
         SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
         FAILED_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_RETRYABLE
         FAILED_NOT_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_NOT_RETRYABLE
@@ -79,43 +80,9 @@ module OpenTelemetry
           SUCCESS
         end
 
-        def encoded_span(span_data) # rubocop:disable Metrics/AbcSize
-          start_time = (span_data.start_timestamp.to_f * 1_000_000).to_i
-          duration = (span_data.end_timestamp.to_f * 1_000_000).to_i - start_time
-
-          Thrift::Span.new(
-            'traceIdLow' => int64(span_data.trace_id[16, 16]),
-            'traceIdHigh' => int64(span_data.trace_id[0, 16]),
-            'spanId' => int64(span_data.span_id),
-            'parentSpanId' => int64(span_data.parent_span_id),
-            'operationName' => span_data.name,
-            'references' => encoded_references(span_data.links),
-            'flags' => span_data.trace_flags.sampled? ? 1 : 0,
-            'startTime' => start_time,
-            'duration' => duration,
-            'tags' => encoded_tags(span_data.attributes) + encoded_status(span_data.status) + encoded_kind(span_data.kind),
-            'logs' => encoded_logs(span_data.events)
-          )
-        end
-
-        def encoded_logs(events)
-          events&.map do |event|
-            Thrift::Log.new(
-              'timestamp' => (event.timestamp.to_f * 1_000_000).to_i,
-              'fields' => encoded_tags(event.attributes) + encoded_tags('name' => event.name)
-            )
-          end
-        end
-
-        def encoded_references(links)
-          links&.map do |link|
-            Thrift::SpanRef.new(
-              'refType' => Thrift::SpanRefType::CHILD_OF,
-              'traceIdLow' => int64(link.context.trace_id[16, 16]),
-              'traceIdHigh' => int64(link.context.trace_id[0, 16]),
-              'spanId' => int64(link.context.span_id)
-            )
-          end
+        def encoded_span(span_data)
+          @span_encoder ||= SpanEncoder.new
+          @span_encoder.encoded_span(span_data)
         end
 
         EMPTY_ARRAY = [].freeze
@@ -126,61 +93,6 @@ module OpenTelemetry
         KEY = Thrift::Tag::FIELDS[Thrift::Tag::KEY][:name]
         TYPE = Thrift::Tag::FIELDS[Thrift::Tag::VTYPE][:name]
         private_constant(:EMPTY_ARRAY, :LONG, :DOUBLE, :STRING, :BOOL, :KEY, :TYPE)
-
-        def encoded_tags(attributes)
-          @type_map ||= {
-            LONG => Thrift::TagType::LONG,
-            DOUBLE => Thrift::TagType::DOUBLE,
-            STRING => Thrift::TagType::STRING,
-            BOOL => Thrift::TagType::BOOL
-          }.freeze
-
-          attributes&.map do |key, value|
-            value_key = case value
-                        when Integer then LONG
-                        when Float then DOUBLE
-                        when String then STRING
-                        when false, true then BOOL
-                        end
-            Thrift::Tag.new(
-              KEY => key,
-              TYPE => @type_map[value_key],
-              value_key => value
-            )
-          end || EMPTY_ARRAY
-        end
-
-        def encoded_status(status)
-          # TODO: OpenTracing doesn't specify how to report non-HTTP (i.e. generic) status.
-          EMPTY_ARRAY
-        end
-
-        def encoded_kind(kind)
-          @kind_map ||= {
-            OpenTelemetry::Trace::SpanKind::SERVER => 'server',
-            OpenTelemetry::Trace::SpanKind::CLIENT => 'client',
-            OpenTelemetry::Trace::SpanKind::PRODUCER => 'producer',
-            OpenTelemetry::Trace::SpanKind::CONSUMER => 'consumer'
-          }.freeze
-
-          value = @kind_map[kind]
-          if value
-            Array(
-              Thrift::Tag.new(
-                KEY => 'span.kind',
-                TYPE => Thrift::TagType::STRING,
-                STRING => value
-              )
-            )
-          else
-            EMPTY_ARRAY
-          end
-        end
-
-        def int64(hex_string)
-          int = hex_string.to_i(16)
-          int < (1 << 63) ? int : int - (1 << 64)
-        end
 
         # @api private
         class SizingTransport
