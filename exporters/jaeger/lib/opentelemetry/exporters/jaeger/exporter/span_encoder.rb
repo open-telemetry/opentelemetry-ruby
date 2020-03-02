@@ -90,9 +90,10 @@ module OpenTelemetry
               value_key = case value
                           when Integer then LONG
                           when Float then DOUBLE
-                          when String then STRING
+                          when String, Array then STRING
                           when false, true then BOOL
                           end
+              value = value.to_json if value.is_a?(Array)
               Thrift::Tag.new(
                 KEY => key,
                 TYPE => @type_map[value_key],
