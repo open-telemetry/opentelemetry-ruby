@@ -6,13 +6,11 @@
 require 'test_helper'
 
 describe OpenTelemetry::Exporters::Jaeger::Exporter::SpanEncoder do
-  let(:span_encoder) {
-    OpenTelemetry::Exporters::Jaeger::Exporter::SpanEncoder.new
-  }
+  let(:span_encoder) { OpenTelemetry::Exporters::Jaeger::Exporter::SpanEncoder.new }
 
   it 'encodes a span_data' do
     encoded_span = span_encoder.encoded_span(create_span_data)
-    _(encoded_span.operationName).must_equal("")
+    _(encoded_span.operationName).must_equal('')
     _(encoded_span.tags).must_equal([])
   end
 
@@ -20,7 +18,7 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter::SpanEncoder do
     attributes = { 'akey' => 'avalue' }
     events = [
       OpenTelemetry::Trace::Event.new(
-        name: "event", attributes: { 'ekey' => 'evalue' }
+        name: 'event', attributes: { 'ekey' => 'evalue' }
       )
     ]
     span_data = create_span_data(attributes: attributes, events: events)
@@ -43,7 +41,7 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter::SpanEncoder do
     attributes = { 'akey' => ['avalue'] }
     events = [
       OpenTelemetry::Trace::Event.new(
-        name: "event", attributes: { 'ekey' => ['evalue'] }
+        name: 'event', attributes: { 'ekey' => ['evalue'] }
       )
     ]
     span_data = create_span_data(attributes: attributes, events: events)
