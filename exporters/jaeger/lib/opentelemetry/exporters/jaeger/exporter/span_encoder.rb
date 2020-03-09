@@ -79,6 +79,13 @@ module OpenTelemetry
           end
 
           def encoded_tags(attributes)
+            @type_map ||= {
+              LONG => Thrift::TagType::LONG,
+              DOUBLE => Thrift::TagType::DOUBLE,
+              STRING => Thrift::TagType::STRING,
+              BOOL => Thrift::TagType::BOOL
+            }.freeze
+
             attributes&.map do |key, value|
               value_key = case value
                           when Integer then LONG
@@ -86,23 +93,13 @@ module OpenTelemetry
                           when String, Array then STRING
                           when false, true then BOOL
                           end
-              encoded_tag(key: key, value_key: value_key, value: value)
+              value = value.to_json if value.is_a?(Array)
+              Thrift::Tag.new(
+                KEY => key,
+                TYPE => @type_map[value_key],
+                value_key => value
+              )
             end || EMPTY_ARRAY
-          end
-
-          def encoded_tag(key:, value_key:, value:)
-            @type_map ||= {
-              LONG => Thrift::TagType::LONG,
-              DOUBLE => Thrift::TagType::DOUBLE,
-              STRING => Thrift::TagType::STRING,
-              BOOL => Thrift::TagType::BOOL
-            }.freeze
-            value = value.to_json if value.is_a?(Array)
-            Thrift::Tag.new(
-              KEY => key,
-              TYPE => @type_map[value_key],
-              value_key => value
-            )
           end
 
           def int64(hex_string)

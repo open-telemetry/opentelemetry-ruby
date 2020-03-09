@@ -28,6 +28,7 @@ module OpenTelemetry
           @max_packet_size = max_packet_size
           @shutdown = false
           @service_name = service_name
+          @span_encoder = SpanEncoder.new
         end
 
         # Called to export sampled {OpenTelemetry::SDK::Trace::SpanData} structs.
@@ -81,7 +82,6 @@ module OpenTelemetry
         end
 
         def encoded_span(span_data)
-          @span_encoder ||= SpanEncoder.new
           @span_encoder.encoded_span(span_data)
         end
 
