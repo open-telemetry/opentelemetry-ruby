@@ -15,14 +15,16 @@ module OpenTelemetry
 
       private_constant :USE_MODE_UNSPECIFIED, :USE_MODE_ONE, :USE_MODE_ALL
 
-      attr_writer :logger
+      attr_writer :logger, :http_extractors, :http_injectors
 
       def initialize
         @adapter_names = []
         @adapter_config_map = {}
+        @http_extractors = nil
+        @http_injectors = nil
         @span_processors = []
         @use_mode = USE_MODE_UNSPECIFIED
-        @tracer_factory = Trace::TracerFactory.new
+        @tracer_provider = Trace::TracerProvider.new
       end
 
       def logger
@@ -68,15 +70,17 @@ module OpenTelemetry
       # @api private
       # The configure method is where we define the setup process. This allows
       # us to make certain guarantees about which systems and globals are setup
-      # at each stage. Currently, the setup process is roughly:
+      # at each stage. The setup process is:
       #   - setup logging
       #   - setup propagation
-      #   - setup tracer_factory and meter_factory
+      #   - setup tracer_provider and meter_provider
       #   - install instrumentation
       def configure
         OpenTelemetry.logger = logger
+        OpenTelemetry.correlations = CorrelationContext::Manager.new
+        configure_propagation
         configure_span_processors
-        OpenTelemetry.tracer_factory = @tracer_factory
+        OpenTelemetry.tracer_provider = @tracer_provider
         install_instrumentation
       end
 
@@ -98,13 +102,32 @@ module OpenTelemetry
 
       def configure_span_processors
         processors = @span_processors.empty? ? [default_span_processor] : @span_processors
-        processors.each { |p| @tracer_factory.add_span_processor(p) }
+        processors.each { |p| @tracer_provider.add_span_processor(p) }
       end
 
       def default_span_processor
         Trace::Export::SimpleSpanProcessor.new(
           Trace::Export::ConsoleSpanExporter.new
         )
+      end
+
+      def configure_propagation
+        OpenTelemetry.propagation.http_extractors = @http_extractors || default_http_extractors
+        OpenTelemetry.propagation.http_injectors = @http_injectors || default_http_injectors
+      end
+
+      def default_http_injectors
+        [
+          OpenTelemetry::Trace::Propagation.http_trace_context_injector,
+          OpenTelemetry::CorrelationContext::Propagation.http_injector
+        ]
+      end
+
+      def default_http_extractors
+        [
+          OpenTelemetry::Trace::Propagation.rack_http_trace_context_extractor,
+          OpenTelemetry::CorrelationContext::Propagation.rack_http_extractor
+        ]
       end
     end
   end

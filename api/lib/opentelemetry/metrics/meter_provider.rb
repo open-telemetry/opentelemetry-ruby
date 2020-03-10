@@ -5,17 +5,17 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  module Trace
-    # No-op implementation of a tracer factory.
-    class TracerFactory
-      # Returns a {Tracer} instance.
+  module Metrics
+    # No-op implementation of a meter provider.
+    class MeterProvider
+      # Returns a {Meter} instance.
       #
       # @param [optional String] name Instrumentation package name
       # @param [optional String] version Instrumentation package version
       #
-      # @return [Tracer]
-      def tracer(name = nil, version = nil)
-        @tracer ||= Tracer.new
+      # @return [Meter]
+      def meter(name = nil, version = nil)
+        @meter ||= Meter.new
       end
     end
   end

@@ -24,9 +24,33 @@ services:
       context: .
     working_dir: /app
 
+  ex-adapter-excon:
+    <<: *base
+    working_dir: /app/adapters/excon/example
+
   ex-adapter-faraday:
     <<: *base
     working_dir: /app/adapters/faraday/example
+
+  ex-adapter-net-http:
+    <<: *base
+    working_dir: /app/adapters/net_http/example
+
+  ex-adapter-rack:
+    <<: *base
+    working_dir: /app/adapters/rack/example
+
+  ex-adapter-redis:
+    <<: *base
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+    working_dir: /app/adapters/redis/example
+
+  ex-adapter-restclient:
+    <<: *base
+    working_dir: /app/adapters/restclient/example
 
   ex-adapter-sinatra:
     <<: *base
@@ -37,9 +61,15 @@ services:
     command: ./start_server.sh
     working_dir: /app/examples/http
 
+  redis:
+    image: redis:5.0-alpine
+    volumes:
+      - redis_data:/data
+
   sdk:
     <<: *base
     working_dir: /app/sdk
 
 volumes:
   bundle:
+  redis_data:

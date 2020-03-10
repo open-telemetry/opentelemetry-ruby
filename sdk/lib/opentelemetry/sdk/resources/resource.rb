@@ -15,15 +15,16 @@ module OpenTelemetry
 
           # Returns a newly created {Resource} with the specified labels
           #
-          # @param [Hash<String, String>] labels Hash of key-value pairs to be used
+          # @param [Hash{String => String, Numeric, Boolean} labels Hash of key-value pairs to be used
           #   as labels for this resource
           # @raise [ArgumentError] If label keys and values are not strings
           # @return [Resource]
           def create(labels = {})
             frozen_labels = labels.each_with_object({}) do |(k, v), memo|
-              raise ArgumentError, 'label keys and values must be strings' unless k.is_a?(String) && v.is_a?(String)
+              raise ArgumentError, 'label keys must be strings' unless k.is_a?(String)
+              raise ArgumentError, 'label values must be strings, integers, floats, or booleans' unless Internal.valid_value?(v)
 
-              memo[-k] = -v
+              memo[-k] = v.freeze
             end.freeze
 
             new(frozen_labels)

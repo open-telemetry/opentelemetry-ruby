@@ -22,14 +22,15 @@ module OpenTelemetry
 
       # Returns the frozen attributes for this link.
       #
-      # @return [Hash<String, Object>]
+      # @return [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}]
       attr_reader :attributes
 
       # Returns a new immutable {Link}.
       #
       # @param [SpanContext] span_context The context of the linked {Span}.
-      # @param [optional Hash<String, Object>] attributes A hash of attributes for
-      #   this link. Attributes will be frozen during Link initialization.
+      # @param [optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}]
+      #   attributes A hash of attributes for this link. Attributes will be
+      #   frozen during Link initialization.
       # @return [Link]
       def initialize(span_context, attributes = nil)
         @context = span_context

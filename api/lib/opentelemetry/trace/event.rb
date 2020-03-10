@@ -19,7 +19,7 @@ module OpenTelemetry
 
       # Returns the frozen attributes for this event
       #
-      # @return [Hash<String, Object>]
+      # @return [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}]
       attr_reader :attributes
 
       # Returns the timestamp for this event
@@ -30,8 +30,9 @@ module OpenTelemetry
       # Returns a new immutable {Event}.
       #
       # @param [String] name The name of this event
-      # @param [optional Hash<String, Object>] attributes A hash of attributes for this
-      #   event. Attributes will be frozen during Event initialization.
+      # @param [optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}]
+      #   attributes A hash of attributes for this event. Attributes will be
+      #   frozen during Event initialization.
       # @param [optional Time] timestamp The timestamp for this event.
       #   Defaults to Time.now.
       # @return [Event]

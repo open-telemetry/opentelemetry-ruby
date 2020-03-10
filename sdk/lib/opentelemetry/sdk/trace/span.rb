@@ -24,7 +24,7 @@ module OpenTelemetry
         # use of SpanProcesses and should not be considered part of the public
         # interface for instrumentation.
         #
-        # @return [Hash<String, Object>] may be nil.
+        # @return [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] may be nil.
         def attributes
           # Don't bother synchronizing. Access by SpanProcessors is expected to
           # be serialized.
@@ -96,10 +96,10 @@ module OpenTelemetry
         #
         # @param [optional String] name Optional name of the event. This is
         #   required if a block is not given.
-        # @param [optional Hash<String, Object>] attributes One or more key:value
-        #   pairs, where the keys must be strings and the values may be string,
-        #   boolean or numeric type. This argument should only be used when
-        #   passing in a name.
+        # @param [optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
+        #   One or more key:value pairs, where the keys must be strings and the
+        #   values may be string, boolean or numeric type. This argument should
+        #   only be used when passing in a name.
         # @param [optional Time] timestamp Optional timestamp for the event.
         #   This argument should only be used when passing in a name.
         #
@@ -107,6 +107,7 @@ module OpenTelemetry
         def add_event(name: nil, attributes: nil, timestamp: nil)
           super
           event = block_given? ? yield : OpenTelemetry::Trace::Event.new(name: name, attributes: attributes, timestamp: timestamp || Time.now)
+
           @mutex.synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling add_event on an ended Span.')
@@ -117,6 +118,21 @@ module OpenTelemetry
             end
           end
           self
+        end
+
+        # Record an error during the execution of this span. Multiple errors
+        # can be recorded on a span.
+        #
+        # @param [Exception] error The error to be recorded
+        #
+        # @return [void]
+        def record_error(error)
+          add_event(name: 'error',
+                    attributes: {
+                      'error.type' => error.class.to_s,
+                      'error.message' => error.message,
+                      'error.stack' => error.backtrace.join("\n")
+                    })
         end
 
         # Sets the Status to the Span

@@ -41,7 +41,7 @@ module OpenTelemetry
           @span_processors.each { |processor| processor.on_finish(span) }
         end
 
-        # Called when {TracerFactory#shutdown} is called.
+        # Called when {TracerProvider#shutdown} is called.
         def shutdown
           @span_processors.each(&:shutdown)
         end

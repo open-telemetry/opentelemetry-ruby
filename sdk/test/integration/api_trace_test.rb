@@ -10,12 +10,12 @@ describe OpenTelemetry::SDK, 'API_trace' do
   let(:sdk) { OpenTelemetry::SDK }
   let(:exporter) { sdk::Trace::Export::InMemorySpanExporter.new }
   let(:span_processor) { sdk::Trace::Export::SimpleSpanProcessor.new(exporter) }
-  let(:factory) do
-    OpenTelemetry.tracer_factory = sdk::Trace::TracerFactory.new.tap do |factory|
-      factory.add_span_processor(span_processor)
+  let(:provider) do
+    OpenTelemetry.tracer_provider = sdk::Trace::TracerProvider.new.tap do |provider|
+      provider.add_span_processor(span_processor)
     end
   end
-  let(:tracer) { factory.tracer(__FILE__, sdk::VERSION) }
+  let(:tracer) { provider.tracer(__FILE__, sdk::VERSION) }
   let(:remote_span_context) do
     OpenTelemetry::Trace::SpanContext.new(remote: true)
   end

@@ -71,6 +71,11 @@ describe OpenTelemetry::SDK::Trace::Span do
       span.set_attribute('foo', 'bar')
       _(span.to_span_data.total_recorded_attributes).must_equal(2)
     end
+
+    it 'accepts an array value' do
+      span.set_attribute('foo', [1, 2, 3])
+      _(span.attributes).must_equal('foo' => [1, 2, 3])
+    end
   end
 
   describe '#add_event' do
@@ -83,6 +88,46 @@ describe OpenTelemetry::SDK::Trace::Span do
 
     it 'add event with attributes' do
       attrs = { 'foo' => 'bar' }
+      span.add_event(name: 'added', attributes: attrs)
+      events = span.events
+      _(events.size).must_equal(1)
+      _(events.first.attributes).must_equal(attrs)
+    end
+
+    it 'accepts array-valued attributes' do
+      attrs = { 'foo' => [1, 2, 3] }
+      span.add_event(name: 'added', attributes: attrs)
+      events = span.events
+      _(events.size).must_equal(1)
+      _(events.first.attributes).must_equal(attrs)
+    end
+
+    it 'does not accept array-valued attributes if any elements are invalid' do
+      attrs = { 'foo' => [1, 2, :bar] }
+      span.add_event(name: 'added', attributes: attrs)
+      events = span.events
+      _(events.size).must_equal(1)
+      _(events.first.attributes).must_equal({})
+    end
+
+    it 'does not accept array-valued attributes if the elements are different types' do
+      attrs = { 'foo' => [1, 2, 'bar'] }
+      span.add_event(name: 'added', attributes: attrs)
+      events = span.events
+      _(events.size).must_equal(1)
+      _(events.first.attributes).must_equal({})
+    end
+
+    it 'accepts array-valued attributes if the elements are true and false' do
+      attrs = { 'foo' => [true, false] }
+      span.add_event(name: 'added', attributes: attrs)
+      events = span.events
+      _(events.size).must_equal(1)
+      _(events.first.attributes).must_equal(attrs)
+    end
+
+    it 'accepts array-valued attributes if the array is empty' do
+      attrs = { 'foo' => [] }
       span.add_event(name: 'added', attributes: attrs)
       events = span.events
       _(events.size).must_equal(1)
@@ -115,6 +160,11 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(span.events.first.attributes.size).must_equal(1)
     end
 
+    it 'trims event attributes with array values' do
+      span.add_event(name: 'event', attributes: { '1' => [1, 2], '2' => [3, 4] })
+      _(span.events.first.attributes.size).must_equal(1)
+    end
+
     it 'counts events' do
       span.add_event(name: '1')
       span.add_event(name: '2')
@@ -128,6 +178,49 @@ describe OpenTelemetry::SDK::Trace::Span do
       span.add_event(name: '2')
       span.add_event(name: '3')
       _(span.events.size).must_equal(1)
+    end
+  end
+
+  describe '#record_error' do
+    let(:trace_config) do
+      TraceConfig.new(
+        max_attributes_count: 10,
+        max_events_count: 5,
+        max_attributes_per_event: 10
+      )
+    end
+
+    let(:error) do
+      begin
+        raise 'oops'
+      rescue StandardError => e
+        e
+      end
+    end
+
+    it 'records error as an event' do
+      span.record_error(error)
+      events = span.events
+      _(events.size).must_equal(1)
+
+      ev = events[0]
+
+      _(ev.name).must_equal('error')
+      _(ev.attributes['error.type']).must_equal(error.class.to_s)
+      _(ev.attributes['error.message']).must_equal(error.message)
+      _(ev.attributes['error.stack']).must_equal(error.backtrace.join("\n"))
+    end
+
+    it 'records multiple errors' do
+      3.times { span.record_error(error) }
+      events = span.events
+      _(events.size).must_equal(3)
+
+      events.each do |ev|
+        _(ev.attributes['error.type']).must_equal(error.class.to_s)
+        _(ev.attributes['error.message']).must_equal(error.message)
+        _(ev.attributes['error.stack']).must_equal(error.backtrace.join("\n"))
+      end
     end
   end
 

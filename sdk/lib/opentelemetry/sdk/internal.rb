@@ -20,8 +20,28 @@ module OpenTelemetry
         key.instance_of?(String)
       end
 
-      def valid_value?(value)
+      def valid_simple_value?(value)
         value.instance_of?(String) || value == false || value == true || value.is_a?(Numeric)
+      end
+
+      def valid_array_value?(value)
+        return false unless value.is_a?(Array)
+        return true if value.empty?
+
+        case value.first
+        when String
+          value.all? { |v| v.instance_of?(String) }
+        when TrueClass, FalseClass
+          value.all? { |v| boolean?(v) }
+        when Numeric
+          value.all? { |v| v.is_a?(Numeric) }
+        else
+          false
+        end
+      end
+
+      def valid_value?(value)
+        valid_simple_value?(value) || valid_array_value?(value)
       end
 
       def valid_attributes?(attrs)
