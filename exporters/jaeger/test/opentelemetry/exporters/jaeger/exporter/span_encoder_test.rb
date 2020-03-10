@@ -37,6 +37,29 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter::SpanEncoder do
     )
   end
 
+  it 'encodes array attribute values in events and the span as JSON strings' do
+    attributes = { 'akey' => ['avalue'] }
+    events = [
+      OpenTelemetry::Trace::Event.new(
+        name: 'event', attributes: { 'ekey' => ['evalue'] }
+      )
+    ]
+    span_data = create_span_data(attributes: attributes, events: events)
+    encoded_span = span_encoder.encoded_span(span_data)
+    field0 = encoded_span.logs.first.fields.first
+    _(field0.key).must_equal('ekey')
+    _(field0.vType).must_equal(
+      OpenTelemetry::Exporters::Jaeger::Thrift::TagType::STRING
+    )
+    _(field0.vStr).must_equal('["evalue"]')
+    tag0 = encoded_span.tags.first
+    _(tag0.key).must_equal('akey')
+    _(tag0.vStr).must_equal('["avalue"]')
+    _(tag0.vType).must_equal(
+      OpenTelemetry::Exporters::Jaeger::Thrift::TagType::STRING
+    )
+  end
+
   def create_span_data(attributes: nil, events: nil, links: nil, trace_id: OpenTelemetry::Trace.generate_trace_id, trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT)
     OpenTelemetry::SDK::Trace::SpanData.new(
       '',

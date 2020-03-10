@@ -25,6 +25,12 @@ describe OpenTelemetry::Trace::Link do
       link = Link.new(span_context)
       _(link.attributes).must_equal({})
     end
+
+    it 'allows array-valued attributes' do
+      attributes = { 'foo' => [1, 2, 3] }
+      link = Link.new(span_context, attributes)
+      _(link.attributes).must_equal(attributes)
+    end
   end
 
   describe '.attributes' do

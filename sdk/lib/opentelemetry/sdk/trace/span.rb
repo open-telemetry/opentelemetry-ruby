@@ -24,7 +24,7 @@ module OpenTelemetry
         # use of SpanProcesses and should not be considered part of the public
         # interface for instrumentation.
         #
-        # @return [Hash{String => String, Numeric, Boolean}] may be nil.
+        # @return [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] may be nil.
         def attributes
           # Don't bother synchronizing. Access by SpanProcessors is expected to
           # be serialized.
@@ -96,7 +96,7 @@ module OpenTelemetry
         #
         # @param [optional String] name Optional name of the event. This is
         #   required if a block is not given.
-        # @param [optional Hash{String => String, Numeric, Boolean}] attributes
+        # @param [optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
         #   One or more key:value pairs, where the keys must be strings and the
         #   values may be string, boolean or numeric type. This argument should
         #   only be used when passing in a name.
