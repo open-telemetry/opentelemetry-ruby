@@ -57,6 +57,7 @@ describe OpenTelemetry::SDK::Trace::Span do
     it 'trims the oldest attribute' do
       span.set_attribute('old', 'oldbar')
       span.set_attribute('foo', 'bar')
+      span.finish
       _(span.attributes).must_equal('foo' => 'bar')
     end
 
@@ -105,6 +106,7 @@ describe OpenTelemetry::SDK::Trace::Span do
     it 'does not accept array-valued attributes if any elements are invalid' do
       attrs = { 'foo' => [1, 2, :bar] }
       span.add_event(name: 'added', attributes: attrs)
+      span.finish
       events = span.events
       _(events.size).must_equal(1)
       _(events.first.attributes).must_equal({})
@@ -113,6 +115,7 @@ describe OpenTelemetry::SDK::Trace::Span do
     it 'does not accept array-valued attributes if the elements are different types' do
       attrs = { 'foo' => [1, 2, 'bar'] }
       span.add_event(name: 'added', attributes: attrs)
+      span.finish
       events = span.events
       _(events.size).must_equal(1)
       _(events.first.attributes).must_equal({})
@@ -157,11 +160,13 @@ describe OpenTelemetry::SDK::Trace::Span do
 
     it 'trims event attributes' do
       span.add_event(name: 'event', attributes: { '1' => 1, '2' => 2 })
+      span.finish
       _(span.events.first.attributes.size).must_equal(1)
     end
 
     it 'trims event attributes with array values' do
       span.add_event(name: 'event', attributes: { '1' => [1, 2], '2' => [3, 4] })
+      span.finish
       _(span.events.first.attributes.size).must_equal(1)
     end
 
@@ -177,6 +182,7 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(span.events.size).must_equal(1)
       span.add_event(name: '2')
       span.add_event(name: '3')
+      span.finish
       _(span.events.size).must_equal(1)
     end
   end
@@ -298,15 +304,16 @@ describe OpenTelemetry::SDK::Trace::Span do
     end
 
     it 'trims excess attributes' do
-      attributes = { 'foo': 'bar', 'other': 'attr' }
+      attributes = { 'foo' => 'bar', 'other' => 'attr' }
       span = Span.new(context, 'name', SpanKind::INTERNAL, nil, trace_config,
                       span_processor, attributes, nil, Time.now, nil)
+      span.finish
       _(span.to_span_data.total_recorded_attributes).must_equal(2)
       _(span.attributes.length).must_equal(1)
     end
 
     it 'counts attributes' do
-      attributes = { 'foo': 'bar', 'other': 'attr' }
+      attributes = { 'foo' => 'bar', 'other' => 'attr' }
       span = Span.new(context, 'name', SpanKind::INTERNAL, nil, trace_config,
                       span_processor, attributes, nil, Time.now, nil)
       _(span.to_span_data.total_recorded_attributes).must_equal(2)
@@ -323,6 +330,7 @@ describe OpenTelemetry::SDK::Trace::Span do
       links = [OpenTelemetry::Trace::Link.new(context), OpenTelemetry::Trace::Link.new(context)]
       span = Span.new(context, 'name', SpanKind::INTERNAL, nil, trace_config,
                       span_processor, nil, links, Time.now, nil)
+      span.finish
       _(span.links.size).must_equal(1)
     end
   end

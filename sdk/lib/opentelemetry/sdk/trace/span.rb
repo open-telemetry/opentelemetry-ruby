@@ -70,7 +70,6 @@ module OpenTelemetry
             else
               @attributes ||= {}
               @attributes[key] = value
-              trim_span_attributes(@attributes)
               @total_recorded_attributes += 1
             end
           end
@@ -113,7 +112,7 @@ module OpenTelemetry
               OpenTelemetry.logger.warn('Calling add_event on an ended Span.')
             else
               @events ||= []
-              @events = append_event(@events, event)
+              @events << event
               @total_recorded_events += 1
             end
           end
@@ -203,8 +202,13 @@ module OpenTelemetry
               return self
             end
             @end_timestamp = end_timestamp || Time.now
-            @attributes.freeze
-            @events.freeze
+            if @attributes
+              @attributes = finished_component_attributes(
+                @attributes, @trace_config.max_attributes_count
+              )
+            end
+            @events = finished_events_for_processor
+            @links = finished_links_for_processor
             @ended = true
           end
           @span_processor.on_finish(self)
@@ -244,7 +248,7 @@ module OpenTelemetry
         end
 
         # @api private
-        def initialize(context, name, kind, parent_span_id, trace_config, span_processor, attributes, links, start_timestamp, library_resource) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        def initialize(context, name, kind, parent_span_id, trace_config, span_processor, attributes, links, start_timestamp, library_resource) # rubocop:disable Metrics/AbcSize
           super(span_context: context)
           @mutex = Mutex.new
           @name = name
@@ -262,9 +266,8 @@ module OpenTelemetry
           @start_timestamp = start_timestamp
           @end_timestamp = nil
           @attributes = attributes.nil? ? nil : Hash[attributes] # We need a mutable copy of attributes.
-          trim_span_attributes(@attributes)
           @events = nil
-          @links = trim_links(links, trace_config.max_links_count, trace_config.max_attributes_per_link)
+          @links = links
           @span_processor.on_start(self)
         end
 
@@ -272,59 +275,50 @@ module OpenTelemetry
 
         private
 
-        def trim_span_attributes(attrs)
-          return if attrs.nil?
-
-          excess = attrs.size - @trace_config.max_attributes_count
-          # TODO: with Ruby 2.5, replace with the more efficient
-          # attrs.shift(excess) if excess.positive?
-          excess.times { attrs.shift } if excess.positive?
-          nil
-        end
-
-        def trim_links(links, max_links_count, max_attributes_per_link) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def finished_links_for_processor # rubocop:disable Metrics/AbcSize
           # Fast path (likely) common cases.
-          return nil if links.nil?
+          return nil if @links.nil?
 
-          if links.size <= max_links_count &&
-             links.all? { |link| link.attributes.size <= max_attributes_per_link && Internal.valid_attributes?(link.attributes) }
-            return links.frozen? ? links : links.clone.freeze
+          max_links_count = @trace_config.max_links_count
+          max_attributes_per_link = @trace_config.max_attributes_per_link
+
+          if @links.size <= max_links_count &&
+             @links.all? { |link| link.attributes.size <= max_attributes_per_link && Internal.valid_attributes?(link.attributes) }
+            return @links.frozen? ? @links : @links.clone.freeze
           end
 
           # Slow path: trim attributes for each Link.
-          links.last(max_links_count).map! do |link|
-            attrs = Hash[link.attributes] # link.attributes is frozen, so we need an unfrozen copy to adjust.
-            attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
-            excess = attrs.size - max_attributes_per_link
-            excess.times { attrs.shift } if excess.positive?
+          @links.last(max_links_count).map! do |link|
+            attrs = finished_component_attributes(
+              link.attributes, max_attributes_per_link
+            )
             OpenTelemetry::Trace::Link.new(link.context, attrs)
           end.freeze
         end
 
-        def append_event(events, event) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def finished_component_attributes(original_attrs, max_attrs_count)
+          attrs = (original_attrs || {}).select do |key, value|
+            Internal.valid_key?(key) && Internal.valid_value?(value)
+          end
+          excess = attrs.size - max_attrs_count
+          excess.times { attrs.shift } if excess.positive?
+          attrs.freeze
+        end
+
+        def finished_events_for_processor
+          return nil if @events.nil?
+
           max_events_count = @trace_config.max_events_count
-          max_attributes_per_event = @trace_config.max_attributes_per_event
-
-          # Fast path (likely) common case.
-          if events.size < max_events_count &&
-             event.attributes.size <= max_attributes_per_event &&
-             Internal.valid_attributes?(event.attributes)
-            return events << event
-          end
-
-          # Slow path.
-          excess = events.size + 1 - max_events_count
-          events.shift(excess) if excess.positive?
-
-          excess = event.attributes.size - max_attributes_per_event
-          if excess.positive? || !Internal.valid_attributes?(event.attributes)
-            attrs = Hash[event.attributes] # event.attributes is frozen, so we need an unfrozen copy to adjust.
-            attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
-            excess = attrs.size - max_attributes_per_event
-            excess.times { attrs.shift } if excess.positive?
-            event = OpenTelemetry::Trace::Event.new(name: event.name, attributes: attrs, timestamp: event.timestamp)
-          end
-          events << event
+          (@events || [])[0..max_events_count - 1].map do |original_event|
+            attributes = finished_component_attributes(
+              original_event.attributes, @trace_config.max_attributes_per_event
+            )
+            OpenTelemetry::Trace::Event.new(
+              name: original_event.name,
+              attributes: attributes,
+              timestamp: original_event.timestamp
+            )
+          end.freeze
         end
       end
       # rubocop:enable Metrics/ClassLength

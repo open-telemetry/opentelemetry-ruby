@@ -131,7 +131,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     it 'trims link attributes' do
       activate_trace_config TraceConfig.new(max_attributes_per_link: 1)
       link = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '1' => 1, '2' => 2)
-      span = tracer.start_root_span('root', links: [link])
+      span = tracer.start_root_span('root', links: [link]).finish
       _(span.links.first.attributes.size).must_equal(1)
     end
 
@@ -139,7 +139,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       activate_trace_config TraceConfig.new(max_links_count: 1)
       link1 = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '1' => 1)
       link2 = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '2' => 2)
-      span = tracer.start_root_span('root', links: [link1, link2])
+      span = tracer.start_root_span('root', links: [link1, link2]).finish
       _(span.links.size).must_equal(1)
       _(span.links.first).must_equal(link2)
     end
@@ -273,7 +273,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     it 'trims link attributes' do
       activate_trace_config TraceConfig.new(max_attributes_per_link: 1)
       link = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '1' => 1, '2' => 2)
-      span = tracer.start_span('op', with_parent_context: context, links: [link])
+      span = tracer.start_span('op', with_parent_context: context, links: [link]).finish
       _(span.links.first.attributes.size).must_equal(1)
     end
 
@@ -281,7 +281,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       activate_trace_config TraceConfig.new(max_links_count: 1)
       link1 = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '1' => 1)
       link2 = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '2' => 2)
-      span = tracer.start_span('op', with_parent_context: context, links: [link1, link2])
+      span = tracer.start_span('op', with_parent_context: context, links: [link1, link2]).finish
       _(span.links.size).must_equal(1)
       _(span.links.first).must_equal(link2)
     end
