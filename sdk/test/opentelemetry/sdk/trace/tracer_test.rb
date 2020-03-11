@@ -7,7 +7,11 @@
 require 'test_helper'
 
 describe OpenTelemetry::SDK::Trace::Tracer do
+  Decision = OpenTelemetry::SDK::Trace::Samplers::Decision
+  Result = OpenTelemetry::SDK::Trace::Samplers::Result
+  Samplers = OpenTelemetry::SDK::Trace::Samplers
   Tracer = OpenTelemetry::SDK::Trace::Tracer
+  TraceConfig = OpenTelemetry::SDK::Trace::Config::TraceConfig
 
   let(:tracer_provider) { OpenTelemetry::SDK::Trace::TracerProvider.new }
   let(:tracer) do
