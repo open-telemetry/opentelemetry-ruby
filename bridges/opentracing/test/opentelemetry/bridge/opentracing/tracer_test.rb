@@ -44,6 +44,15 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
       tracer_mock.verify
     end
 
+    it 'calls start span on the tracer when parent is OTelemetry context' do
+      parent = OpenTelemetry::Context.new(nil, [])
+      to_be_wrapped = OpenTelemetry::Trace::Span.new(span_context: 'foobar')
+      args = ['name', { with_parent_context: parent, attributes: 'tag', links: 'refs', start_timestamp: 'now' }]
+      tracer_mock.expect(:start_span, to_be_wrapped, args)
+      tracer_bridge.start_span('name', child_of: parent, references: 'refs', tags: 'tag', start_time: 'now')
+      tracer_mock.verify
+    end
+
     it 'calls with_span if a block is given, yielding the span and returning the blocks value' do
       parent = OpenTelemetry::Trace::Span.new
       to_be_wrapped = OpenTelemetry::Trace::Span.new(span_context: 'foobar')
@@ -84,6 +93,15 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
       parent = OpenTelemetry::Bridge::OpenTracing::Span.new(OpenTelemetry::Trace::Span.new)
       to_be_wrapped = OpenTelemetry::Trace::Span.new(span_context: 'foobar')
       args = ['name', { with_parent: parent.span, attributes: 'tag', links: 'refs', start_timestamp: 'now' }]
+      tracer_mock.expect(:start_span, to_be_wrapped, args)
+      tracer_bridge.start_active_span('name', child_of: parent, references: 'refs', tags: 'tag', start_time: 'now')
+      tracer_mock.verify
+    end
+
+    it 'calls start span on the tracer and with_span when parent is OTelemetry context' do
+      parent = OpenTelemetry::Context.new(nil, [])
+      to_be_wrapped = OpenTelemetry::Trace::Span.new(span_context: 'foobar')
+      args = ['name', { with_parent_context: parent, attributes: 'tag', links: 'refs', start_timestamp: 'now' }]
       tracer_mock.expect(:start_span, to_be_wrapped, args)
       tracer_bridge.start_active_span('name', child_of: parent, references: 'refs', tags: 'tag', start_time: 'now')
       tracer_mock.verify
@@ -130,20 +148,18 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
       context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16)
       span_context = SpanContextBridge.new context
       carrier = {}
-      carried, key, value = tracer_bridge.inject(span_context, ::OpenTracing::FORMAT_TEXT_MAP, carrier)
-      key.must_equal 'traceparent'
-      value.must_equal '00-ffffffffffffffffffffffffffffffff-1111111111111111-00'
-      carrier.must_equal carried
+      expected = { 'traceparent' => '00-ffffffffffffffffffffffffffffffff-1111111111111111-00' }
+      carried = tracer_bridge.inject(span_context, ::OpenTracing::FORMAT_TEXT_MAP, carrier)
+      carried.must_equal expected
     end
 
     it 'injects RACK format as RACK_HTTP_TEXT_FORMAT' do
       context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16)
       span_context = SpanContextBridge.new context
       carrier = {}
-      carried, key, value = tracer_bridge.inject(span_context, ::OpenTracing::FORMAT_RACK, carrier)
-      key.must_equal 'traceparent'
-      value.must_equal '00-ffffffffffffffffffffffffffffffff-1111111111111111-00'
-      carrier.must_equal carried
+      expected = { 'HTTP_TRACEPARENT' => '00-ffffffffffffffffffffffffffffffff-1111111111111111-00' }
+      carried = tracer_bridge.inject(span_context, ::OpenTracing::FORMAT_RACK, carrier)
+      carried.must_equal expected
     end
 
     it 'injects BINARY format as BINARY_FORMAT' do
@@ -181,7 +197,6 @@ describe OpenTelemetry::Bridge::OpenTracing::Tracer do
       context = tracer_bridge.extract(::OpenTracing::FORMAT_BINARY, carrier)
       context.wont_be_nil
       context.must_be_instance_of OpenTelemetry::Trace::SpanContext
-      context.valid?.must_equal false
     end
   end
 end

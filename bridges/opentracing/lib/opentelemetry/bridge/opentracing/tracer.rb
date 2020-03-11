@@ -21,6 +21,28 @@ module OpenTelemetry
           scope&.span
         end
 
+        def start_from_child(operation_name,
+                             child_of,
+                             references,
+                             tags,
+                             start_timestamp)
+          if child_of.instance_of? OpenTelemetry::Context
+            span = @tracer.start_span(operation_name,
+                                      with_parent_context: child_of,
+                                      attributes: tags,
+                                      links: references,
+                                      start_timestamp: start_timestamp)
+          else
+            child_of = child_of.span unless child_of.instance_of? OpenTelemetry::Trace::Span
+            span = @tracer.start_span(operation_name,
+                                      with_parent: child_of,
+                                      attributes: tags,
+                                      links: references,
+                                      start_timestamp: start_timestamp)
+          end
+          span
+        end
+
         def start_active_span(operation_name,
                               child_of: nil,
                               references: nil,
@@ -29,12 +51,11 @@ module OpenTelemetry
                               ignore_active_scope: false,
                               finish_on_close: true,
                               &block)
-          child_of = child_of.span unless child_of.instance_of? OpenTelemetry::Trace::Span
-          span = @tracer.start_span(operation_name,
-                                    with_parent: child_of,
-                                    attributes: tags,
-                                    links: references,
-                                    start_timestamp: start_time)
+          span = start_from_child(operation_name,
+                                  child_of,
+                                  references,
+                                  tags,
+                                  start_time)
           wrapped = Span.new(span, dist_context: span.context)
           scope = Scope.new(ScopeManager.instance, wrapped, finish_on_close)
           if block_given?
@@ -52,12 +73,11 @@ module OpenTelemetry
                        tags: nil,
                        ignore_active_scope: false,
                        &block)
-          child_of = child_of.span unless child_of.instance_of? OpenTelemetry::Trace::Span
-          span = @tracer.start_span(operation_name,
-                                    with_parent: child_of,
-                                    attributes: tags,
-                                    links: references,
-                                    start_timestamp: start_time)
+          span = start_from_child(operation_name,
+                                  child_of,
+                                  references,
+                                  tags,
+                                  start_time)
           wrapped = Span.new(span, dist_context: span.context)
           if block_given?
             yield wrapped
@@ -72,13 +92,9 @@ module OpenTelemetry
           context = context.set_value(OpenTelemetry::Trace::Propagation::ContextKeys.current_span_key, span)
           case format
           when ::OpenTracing::FORMAT_TEXT_MAP
-            OpenTelemetry::Trace::Propagation.http_trace_context_injector.inject(context, carrier) do |c, k, v|
-              return c, k, v
-            end
+            OpenTelemetry.propagation.inject(carrier, context: context, http_injectors: [OpenTelemetry::Trace::Propagation.http_trace_context_injector])
           when ::OpenTracing::FORMAT_RACK
-            OpenTelemetry::Trace::Propagation.http_trace_context_injector.inject(context, carrier) do |c, k, v|
-              return c, k, v
-            end
+            OpenTelemetry.propagation.inject(carrier, context: context, http_injectors: [OpenTelemetry::Trace::Propagation.rack_http_trace_context_injector])
           when ::OpenTracing::FORMAT_BINARY
             OpenTelemetry::Trace::Propagation.binary_format.to_bytes(context)
           else
@@ -90,9 +106,9 @@ module OpenTelemetry
           context = OpenTelemetry::Context.current
           case format
           when ::OpenTracing::FORMAT_TEXT_MAP
-            OpenTelemetry::Trace::Propagation.http_trace_context_extractor.extract(context, carrier)
+            OpenTelemetry.propagation.extract(carrier, context: context, http_extractors: [OpenTelemetry::Trace::Propagation.http_trace_context_extractor])
           when ::OpenTracing::FORMAT_RACK
-            OpenTelemetry::Trace::Propagation.http_trace_context_extractor.extract(context, carrier)
+            OpenTelemetry.propagation.extract(carrier, context: context, http_extractors: [OpenTelemetry::Trace::Propagation.rack_http_trace_context_extractor])
           when ::OpenTracing::FORMAT_BINARY
             OpenTelemetry::Trace::Propagation.binary_format.from_bytes(carrier)
           else

@@ -1,10 +1,12 @@
 AllCops:
   TargetRubyVersion: '2.4.0'
 
-Metrics/LineLength:
+Layout/LineLength:
   Enabled: false
 Metrics/ParameterLists:
   Enabled: false
+Metrics/ClassLength:
+  Max: 110
 Metrics/MethodLength:
   Max: 20
 Style/ModuleFunction:
