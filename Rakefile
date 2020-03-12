@@ -105,6 +105,12 @@ GEM_INFO = {
       OpenTelemetry::Adapters::RestClient::VERSION
     }
   },
+  "opentelemetry-adapters-sidekiq" => {
+    version_getter: ->() {
+      require './lib/opentelemetry/adapters/sidekiq/version.rb'
+      OpenTelemetry::Adapters::Sidekiq::VERSION
+    }
+  },
   "opentelemetry-adapters-sinatra" => {
     version_getter: ->() {
       require './lib/opentelemetry/adapters/sinatra/version.rb'
