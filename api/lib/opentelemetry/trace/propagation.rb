@@ -4,7 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/trace/propagation/binary_format'
 require 'opentelemetry/trace/propagation/trace_parent'
 require 'opentelemetry/trace/propagation/context_keys'
 require 'opentelemetry/trace/propagation/http_trace_context_extractor'
@@ -27,11 +26,9 @@ module OpenTelemetry
         traceparent_header_key: 'HTTP_TRACEPARENT',
         tracestate_header_key: 'HTTP_TRACESTATE'
       )
-      BINARY_FORMAT = BinaryFormat.new
 
       private_constant :HTTP_TRACE_CONTEXT_INJECTOR, :HTTP_TRACE_CONTEXT_EXTRACTOR,
-                       :RACK_HTTP_TRACE_CONTEXT_INJECTOR, :RACK_HTTP_TRACE_CONTEXT_EXTRACTOR,
-                       :BINARY_FORMAT
+                       :RACK_HTTP_TRACE_CONTEXT_INJECTOR, :RACK_HTTP_TRACE_CONTEXT_EXTRACTOR
 
       # Returns an extractor that extracts context using the W3C Trace Context
       # format for HTTP
@@ -57,11 +54,6 @@ module OpenTelemetry
       # HTTP_)
       def rack_http_trace_context_injector
         RACK_HTTP_TRACE_CONTEXT_INJECTOR
-      end
-
-      # Returns a propagator for the binary format
-      def binary_format
-        BINARY_FORMAT
       end
     end
   end
