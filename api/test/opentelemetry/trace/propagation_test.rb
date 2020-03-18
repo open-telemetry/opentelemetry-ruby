@@ -28,12 +28,4 @@ describe OpenTelemetry::Trace::Propagation do
       end
     end
   end
-
-  describe '#binary_format' do
-    it 'returns an instance of BinaryFormat' do
-      _(OpenTelemetry::Trace::Propagation.binary_format).must_be_instance_of(
-        OpenTelemetry::Trace::Propagation::BinaryFormat
-      )
-    end
-  end
 end
