@@ -72,6 +72,23 @@ module OpenTelemetry
             end
           end
 
+          # TODO: test this explicitly.
+          # Export all ended spans to the configured `Exporter` that have not yet
+          # been exported.
+          #
+          # This method should only be called in cases where it is absolutely
+          # necessary, such as when using some FaaS providers that may suspend
+          # the process after an invocation, but before the `Processor` exports
+          # the completed spans.
+          def force_flush
+            snapshot = lock { spans.shift(spans.size) }
+            until snapshot.empty?
+              batch = snapshot.shift(@batch_size).map!(&:to_span_data)
+              result_code = @exporter.export(batch)
+              report_result(result_code, batch)
+            end
+          end
+
           # shuts the consumer thread down and flushes the current accumulated buffer
           # will block until the thread is finished
           def shutdown
@@ -81,7 +98,7 @@ module OpenTelemetry
             end
 
             @thread.join
-            flush
+            force_flush
             @exporter.shutdown
           end
 
@@ -122,15 +139,6 @@ module OpenTelemetry
 
           def report_result(result_code, batch)
             OpenTelemetry.logger.error("Unable to export #{batch.size} spans") unless result_code == SUCCESS
-          end
-
-          def flush
-            snapshot = lock { spans.shift(spans.size) }
-            until snapshot.empty?
-              batch = snapshot.shift(@batch_size).map!(&:to_span_data)
-              result_code = @exporter.export(batch)
-              report_result(result_code, batch)
-            end
           end
 
           def fetch_batch

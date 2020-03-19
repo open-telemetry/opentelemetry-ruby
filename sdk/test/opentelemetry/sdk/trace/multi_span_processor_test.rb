@@ -37,6 +37,16 @@ describe OpenTelemetry::SDK::Trace::MultiSpanProcessor do
     mock_processor2.verify
   end
 
+  it 'implements #force_flush' do
+    mock_processor1.expect :force_flush, nil
+    mock_processor2.expect :force_flush, nil
+
+    processor.force_flush
+
+    mock_processor1.verify
+    mock_processor2.verify
+  end
+
   it 'implements #shutdown' do
     mock_processor1.expect :shutdown, nil
     mock_processor2.expect :shutdown, nil
