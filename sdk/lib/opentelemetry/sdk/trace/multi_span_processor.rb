@@ -49,7 +49,7 @@ module OpenTelemetry
         # the process after an invocation, but before the `Processor` exports
         # the completed spans.
         def force_flush
-          @span_processors.each &:force_flush
+          @span_processors.each(&:force_flush)
         end
 
         # Called when {TracerProvider#shutdown} is called.
