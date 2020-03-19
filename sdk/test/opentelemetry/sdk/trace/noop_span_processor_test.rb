@@ -18,6 +18,10 @@ describe OpenTelemetry::SDK::Trace::NoopSpanProcessor do
     processor.on_finish(span)
   end
 
+  it 'implements #force_flush' do
+    processor.force_flush
+  end
+
   it 'implements #shutdown' do
     processor.shutdown
   end

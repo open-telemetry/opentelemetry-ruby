@@ -36,6 +36,10 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
     processor.on_start(stub_span_recorded)
   end
 
+  it 'accepts calls to #force_flush' do
+    processor.force_flush
+  end
+
   it 'forwards recorded spans from #on_finish' do
     mock_span_exporter.expect :export, export::SUCCESS, [Array]
 

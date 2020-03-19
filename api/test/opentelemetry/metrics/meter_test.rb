@@ -8,22 +8,6 @@ require 'test_helper'
 
 describe OpenTelemetry::Metrics::Meter do
   let(:meter) { OpenTelemetry.meter_provider.meter }
-  describe '.create_float_gauge' do
-    it 'requires a name' do
-      _(-> { meter.create_float_gauge(nil) }).must_raise(ArgumentError)
-    end
-    it 'returns a gauge' do
-      _(meter.create_float_gauge('g')).must_respond_to :set
-    end
-  end
-  describe '.create_integer_gauge' do
-    it 'requires a name' do
-      _(-> { meter.create_integer_gauge(nil) }).must_raise(ArgumentError)
-    end
-    it 'returns a gauge' do
-      _(meter.create_integer_gauge('g')).must_respond_to :set
-    end
-  end
   describe '.create_float_counter' do
     it 'requires a name' do
       _(-> { meter.create_float_counter(nil) }).must_raise(ArgumentError)
