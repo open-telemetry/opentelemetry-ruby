@@ -12,13 +12,13 @@ module OpenTelemetry
         # decision part of a sampling {Result}.
         module Decision
           # Decision to not record events and not sample.
-          NOT_RECORD = OpenTelemetry::Trace::SamplingHint::NOT_RECORD
+          NOT_RECORD = :__not_record__
 
           # Decision to record events and not sample.
-          RECORD = OpenTelemetry::Trace::SamplingHint::RECORD
+          RECORD = :__record__
 
           # Decision to record events and sample.
-          RECORD_AND_SAMPLED = OpenTelemetry::Trace::SamplingHint::RECORD_AND_SAMPLED
+          RECORD_AND_SAMPLED = :__record_and_sampled__
         end
       end
     end

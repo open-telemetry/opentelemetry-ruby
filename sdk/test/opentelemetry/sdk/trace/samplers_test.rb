@@ -117,23 +117,6 @@ describe OpenTelemetry::SDK::Trace::Samplers do
       _(result).wont_be :sampled?
     end
 
-    it 'returns result with hint if supplied' do
-      sampler = Samplers.probability(0, ignore_hints: nil)
-      not_record_result = call_sampler(sampler, hint: OpenTelemetry::Trace::SamplingHint::NOT_RECORD)
-      record_result = call_sampler(sampler, hint: OpenTelemetry::Trace::SamplingHint::RECORD)
-      record_and_sampled_result = call_sampler(sampler, hint: OpenTelemetry::Trace::SamplingHint::RECORD_AND_SAMPLED)
-      _(not_record_result).wont_be :sampled?
-      _(not_record_result).wont_be :recording?
-      _(record_result).wont_be :sampled?
-      _(record_result).must_be :recording?
-      _(record_and_sampled_result).must_be :sampled?
-      _(record_and_sampled_result).must_be :recording?
-    end
-
-    it 'does not allow invalid hints in ignore_hints' do
-      _(proc { Samplers.probability(1, ignore_hints: [:hint]) }).must_raise(ArgumentError)
-    end
-
     it 'does not allow invalid symbols in apply_probability_to' do
       _(proc { Samplers.probability(1, apply_probability_to: :foo) }).must_raise(ArgumentError)
     end
@@ -171,12 +154,11 @@ describe OpenTelemetry::SDK::Trace::Samplers do
     format('%032x', id)
   end
 
-  def call_sampler(sampler, trace_id: nil, span_id: nil, parent_context: nil, hint: nil, links: nil, name: nil, kind: nil, attributes: nil)
+  def call_sampler(sampler, trace_id: nil, span_id: nil, parent_context: nil, links: nil, name: nil, kind: nil, attributes: nil)
     sampler.call(
       trace_id: trace_id || OpenTelemetry::Trace.generate_trace_id,
       span_id: span_id || OpenTelemetry::Trace.generate_span_id,
       parent_context: parent_context,
-      hint: hint,
       links: links,
       name: name,
       kind: kind,
