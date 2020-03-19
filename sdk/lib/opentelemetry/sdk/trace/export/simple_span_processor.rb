@@ -52,6 +52,15 @@ module OpenTelemetry
             OpenTelemetry.logger.error("unexpected error in span.on_finish - #{e}")
           end
 
+          # Export all ended spans to the configured `Exporter` that have not yet
+          # been exported.
+          #
+          # This method should only be called in cases where it is absolutely
+          # necessary, such as when using some FaaS providers that may suspend
+          # the process after an invocation, but before the `Processor` exports
+          # the completed spans.
+          def force_flush; end
+
           # Called when {TracerProvider#shutdown} is called.
           def shutdown
             @span_exporter&.shutdown
