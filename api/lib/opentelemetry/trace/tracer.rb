@@ -46,8 +46,8 @@ module OpenTelemetry
       # On exit, the Span that was active before calling this method will be reactivated. If an
       # exception occurs during the execution of the provided block, it will be recorded on the
       # span and reraised.
-      def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil, with_parent: nil, with_parent_context: nil)
-        span = start_span(name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind, sampling_hint: sampling_hint, with_parent: with_parent, with_parent_context: with_parent_context)
+      def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, with_parent: nil, with_parent_context: nil)
+        span = start_span(name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind, with_parent: with_parent, with_parent_context: with_parent_context)
         with_span(span) { |s| yield s }
       rescue Exception => e # rubocop:disable Lint/RescueException
         span.record_error(e)
@@ -66,7 +66,7 @@ module OpenTelemetry
         Context.with_value(CURRENT_SPAN_KEY, span) { |s| yield s }
       end
 
-      def start_root_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
+      def start_root_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
         Span.new
       end
 
@@ -81,7 +81,7 @@ module OpenTelemetry
       #   +with_parent+.
       #
       # @return [Span]
-      def start_span(name, with_parent: nil, with_parent_context: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
+      def start_span(name, with_parent: nil, with_parent_context: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
         span_context = with_parent&.context || active_span_context(with_parent_context)
         if span_context.valid?
           Span.new(span_context: span_context)

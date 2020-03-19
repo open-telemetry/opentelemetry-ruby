@@ -12,15 +12,9 @@ module OpenTelemetry
         #
         # Implements sampling based on a probability.
         class ProbabilitySampler
-          HINT_RECORD_AND_SAMPLED = OpenTelemetry::Trace::SamplingHint::RECORD_AND_SAMPLED
-          HINT_RECORD = OpenTelemetry::Trace::SamplingHint::RECORD
-
-          private_constant(:HINT_RECORD_AND_SAMPLED, :HINT_RECORD)
-
-          def initialize(probability, ignore_hints:, ignore_parent:, apply_to_remote_parent:, apply_to_all_spans:)
+          def initialize(probability, ignore_parent:, apply_to_remote_parent:, apply_to_all_spans:)
             @probability = probability
             @id_upper_bound = format('%016x', (probability * (2**64 - 1)).ceil)
-            @ignored_hints = ignore_hints
             @use_parent_sampled_flag = !ignore_parent
             @apply_to_remote_parent = apply_to_remote_parent
             @apply_to_all_spans = apply_to_all_spans
@@ -29,18 +23,11 @@ module OpenTelemetry
           # @api private
           #
           # Callable interface for probability sampler. See {Samplers}.
-          def call(trace_id:, span_id:, parent_context:, hint:, links:, name:, kind:, attributes:)
+          def call(trace_id:, span_id:, parent_context:, links:, name:, kind:, attributes:)
             # Ignored for sampling decision: links, name, kind, attributes.
 
-            hint = nil if @ignored_hints.include?(hint)
-
-            sampled = sample?(hint, trace_id, parent_context)
-            recording = hint == HINT_RECORD || sampled
-
-            if sampled && recording
+            if sample?(trace_id, parent_context)
               RECORD_AND_SAMPLED
-            elsif recording
-              RECORD
             else
               NOT_RECORD
             end
@@ -48,11 +35,11 @@ module OpenTelemetry
 
           private
 
-          def sample?(hint, trace_id, parent_context)
+          def sample?(trace_id, parent_context)
             if parent_context.nil?
-              hint == HINT_RECORD_AND_SAMPLED || sample_trace_id?(trace_id)
+              sample_trace_id?(trace_id)
             else
-              parent_sampled?(parent_context) || hint == HINT_RECORD_AND_SAMPLED || sample_trace_id_for_child?(parent_context, trace_id)
+              parent_sampled?(parent_context) || sample_trace_id_for_child?(parent_context, trace_id)
             end
           end
 

@@ -26,11 +26,11 @@ module OpenTelemetry
           @resource = Resources::Resource.create('name' => name, 'version' => version)
         end
 
-        def start_root_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
-          start_span(name, with_parent_context: Context.empty, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind, sampling_hint: sampling_hint)
+        def start_root_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
+          start_span(name, with_parent_context: Context.empty, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind)
         end
 
-        def start_span(name, with_parent: nil, with_parent_context: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil, sampling_hint: nil)
+        def start_span(name, with_parent: nil, with_parent_context: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
           name ||= 'empty'
 
           parent_span_context = with_parent&.context || active_span_context(with_parent_context)
@@ -41,7 +41,7 @@ module OpenTelemetry
           trace_id ||= OpenTelemetry::Trace.generate_trace_id
           span_id = OpenTelemetry::Trace.generate_span_id
           sampler = OpenTelemetry.tracer_provider.active_trace_config.sampler
-          result = sampler.call(trace_id: trace_id, span_id: span_id, parent_context: parent_span_context, hint: sampling_hint, links: links, name: name, kind: kind, attributes: attributes)
+          result = sampler.call(trace_id: trace_id, span_id: span_id, parent_context: parent_span_context, links: links, name: name, kind: kind, attributes: attributes)
 
           internal_create_span(result, name, kind, trace_id, span_id, parent_span_id, attributes, links, start_timestamp, tracestate)
         end
