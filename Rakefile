@@ -69,6 +69,12 @@ GEM_INFO = {
       OpenTelemetry::Adapters::Excon::VERSION
     }
   },
+  "opentelemetry-adapters-concurrent_ruby" => {
+    version_getter: ->() {
+      require './lib/opentelemetry/adapters/concurrent-ruby/version.rb'
+      OpenTelemetry::Adapters::ConcurrentRuby::VERSION
+    }
+  },
   "opentelemetry-adapters-faraday" => {
     version_getter: ->() {
       require './lib/opentelemetry/adapters/faraday/version.rb'

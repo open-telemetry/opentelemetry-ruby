@@ -24,6 +24,10 @@ services:
       context: .
     working_dir: /app
 
+  ex-adapter-concurrent-ruby:
+    <<: *base
+    working_dir: /app/adapters/concurrent-ruby/example
+
   ex-adapter-ethon:
     <<: *base
     working_dir: /app/adapters/ethon/example
