@@ -24,6 +24,10 @@ services:
       context: .
     working_dir: /app
 
+  ex-adapter-ethon:
+    <<: *base
+    working_dir: /app/adapters/ethon/example
+
   ex-adapter-excon:
     <<: *base
     working_dir: /app/adapters/excon/example
