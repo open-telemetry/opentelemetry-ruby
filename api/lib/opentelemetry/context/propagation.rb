@@ -7,6 +7,7 @@
 require 'opentelemetry/context/propagation/default_getter'
 require 'opentelemetry/context/propagation/default_setter'
 require 'opentelemetry/context/propagation/propagation'
+require 'opentelemetry/context/propagation/propagator'
 
 module OpenTelemetry
   class Context
