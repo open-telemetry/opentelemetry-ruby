@@ -118,14 +118,14 @@ module OpenTelemetry
 
       def default_http_injectors
         [
-          OpenTelemetry::Trace::Propagation::TraceContext.http_trace_context_injector,
+          OpenTelemetry::Trace::Propagation::TraceContext.text_injector,
           OpenTelemetry::CorrelationContext::Propagation.http_injector
         ]
       end
 
       def default_http_extractors
         [
-          OpenTelemetry::Trace::Propagation::TraceContext.rack_http_trace_context_extractor,
+          OpenTelemetry::Trace::Propagation::TraceContext.rack_extractor,
           OpenTelemetry::CorrelationContext::Propagation.rack_http_extractor
         ]
       end

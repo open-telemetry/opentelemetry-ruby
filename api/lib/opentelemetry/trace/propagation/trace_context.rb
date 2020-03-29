@@ -5,8 +5,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry/trace/propagation/trace_context/trace_parent'
-require 'opentelemetry/trace/propagation/trace_context/http_trace_context_extractor'
-require 'opentelemetry/trace/propagation/trace_context/http_trace_context_injector'
+require 'opentelemetry/trace/propagation/trace_context/text_extractor'
+require 'opentelemetry/trace/propagation/trace_context/text_injector'
 
 module OpenTelemetry
   module Trace
@@ -16,44 +16,42 @@ module OpenTelemetry
       module TraceContext
         extend self
 
-        HTTP_TRACE_CONTEXT_EXTRACTOR = HttpTraceContextExtractor.new
-        HTTP_TRACE_CONTEXT_INJECTOR = HttpTraceContextInjector.new
-        RACK_HTTP_TRACE_CONTEXT_EXTRACTOR = HttpTraceContextExtractor.new(
+        TEXT_EXTRACTOR = TextExtractor.new
+        TEXT_INJECTOR = TextInjector.new
+        RACK_EXTRACTOR = TextExtractor.new(
           traceparent_header_key: 'HTTP_TRACEPARENT',
           tracestate_header_key: 'HTTP_TRACESTATE'
         )
-        RACK_HTTP_TRACE_CONTEXT_INJECTOR = HttpTraceContextInjector.new(
+        RACK_INJECTOR = TextInjector.new(
           traceparent_header_key: 'HTTP_TRACEPARENT',
           tracestate_header_key: 'HTTP_TRACESTATE'
         )
 
-        private_constant :HTTP_TRACE_CONTEXT_INJECTOR, :HTTP_TRACE_CONTEXT_EXTRACTOR,
-                         :RACK_HTTP_TRACE_CONTEXT_INJECTOR, :RACK_HTTP_TRACE_CONTEXT_EXTRACTOR
+        private_constant :TEXT_INJECTOR, :TEXT_EXTRACTOR,
+                         :RACK_INJECTOR, :RACK_EXTRACTOR
 
         # Returns an extractor that extracts context using the W3C Trace Context
-        # format for HTTP
-        def http_trace_context_extractor
-          HTTP_TRACE_CONTEXT_EXTRACTOR
+        # format
+        def text_extractor
+          TEXT_EXTRACTOR
         end
 
         # Returns an injector that injects context using the W3C Trace Context
-        # format for HTTP
-        def http_trace_context_injector
-          HTTP_TRACE_CONTEXT_INJECTOR
+        # format
+        def text_injector
+          TEXT_INJECTOR
         end
 
         # Returns an extractor that extracts context using the W3C Trace Context
-        # format for HTTP with Rack normalized keys (upcased and prefixed with
-        # HTTP_)
-        def rack_http_trace_context_extractor
-          RACK_HTTP_TRACE_CONTEXT_EXTRACTOR
+        # with Rack normalized keys (upcased and prefixed with HTTP_)
+        def rack_extractor
+          RACK_EXTRACTOR
         end
 
         # Returns an injector that injects context using the W3C Trace Context
-        # format for HTTP with Rack normalized keys (upcased and prefixed with
-        # HTTP_)
-        def rack_http_trace_context_injector
-          RACK_HTTP_TRACE_CONTEXT_INJECTOR
+        # format with Rack normalized keys (upcased and prefixed with HTTP_)
+        def rack_injector
+          RACK_INJECTOR
         end
       end
     end

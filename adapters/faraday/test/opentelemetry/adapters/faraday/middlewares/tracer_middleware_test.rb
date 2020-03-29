@@ -31,7 +31,7 @@ describe OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware do
     # these are currently empty, but this will future proof the test
     @orig_injectors = OpenTelemetry.propagation.http_injectors
     OpenTelemetry.propagation.http_injectors = [
-      OpenTelemetry::Trace::Propagation::TraceContext.http_trace_context_injector
+      OpenTelemetry::Trace::Propagation::TraceContext.text_injector
     ]
   end
 
