@@ -6,7 +6,7 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::Trace::Propagation::HttpTraceContextInjector do
+describe OpenTelemetry::Trace::Propagation::TraceContext::HttpTraceContextInjector do
   Span = OpenTelemetry::Trace::Span
   SpanContext = OpenTelemetry::Trace::SpanContext
 
@@ -19,7 +19,7 @@ describe OpenTelemetry::Trace::Propagation::HttpTraceContextInjector do
   let(:traceparent_header_key) { 'traceparent' }
   let(:tracestate_header_key) { 'tracestate' }
   let(:injector) do
-    OpenTelemetry::Trace::Propagation::HttpTraceContextInjector.new(
+    OpenTelemetry::Trace::Propagation::TraceContext::HttpTraceContextInjector.new(
       traceparent_header_key: traceparent_header_key,
       tracestate_header_key: tracestate_header_key
     )

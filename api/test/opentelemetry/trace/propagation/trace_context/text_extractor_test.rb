@@ -6,14 +6,14 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::Trace::Propagation::HttpTraceContextExtractor do
+describe OpenTelemetry::Trace::Propagation::TraceContext::HttpTraceContextExtractor do
   let(:span_context_key) do
     OpenTelemetry::Trace::Propagation::ContextKeys.extracted_span_context_key
   end
   let(:traceparent_header_key) { 'traceparent' }
   let(:tracestate_header_key) { 'tracestate' }
   let(:extractor) do
-    OpenTelemetry::Trace::Propagation::HttpTraceContextExtractor.new(
+    OpenTelemetry::Trace::Propagation::TraceContext::HttpTraceContextExtractor.new(
       traceparent_header_key: traceparent_header_key,
       tracestate_header_key: tracestate_header_key
     )

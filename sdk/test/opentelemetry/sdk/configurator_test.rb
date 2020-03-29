@@ -57,7 +57,7 @@ describe OpenTelemetry::SDK::Configurator do
         configurator.configure
 
         expected_injectors = [
-          OpenTelemetry::Trace::Propagation.http_trace_context_injector,
+          OpenTelemetry::Trace::Propagation::TraceContext.http_trace_context_injector,
           OpenTelemetry::CorrelationContext::Propagation.http_injector
         ]
 

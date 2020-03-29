@@ -6,13 +6,13 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::Trace::Propagation do
+describe OpenTelemetry::Trace::Propagation::TraceContext do
   describe '#http_trace_context_extractor, #rack_http_trace_context_extractor' do
     it 'returns an instance of HttpTraceContextExtractor' do
       %i[http_trace_context_extractor rack_http_trace_context_extractor].each do |extractor_method|
-        extractor = OpenTelemetry::Trace::Propagation.send(extractor_method)
+        extractor = OpenTelemetry::Trace::Propagation::TraceContext.send(extractor_method)
         _(extractor).must_be_instance_of(
-          OpenTelemetry::Trace::Propagation::HttpTraceContextExtractor
+          OpenTelemetry::Trace::Propagation::TraceContext::HttpTraceContextExtractor
         )
       end
     end
@@ -21,9 +21,9 @@ describe OpenTelemetry::Trace::Propagation do
   describe '#http_trace_context_injector, #rack_http_trace_context_injector' do
     it 'returns an instance of HttpTraceContextInjector' do
       %i[http_trace_context_injector rack_http_trace_context_injector].each do |injector_method|
-        injector = OpenTelemetry::Trace::Propagation.send(injector_method)
+        injector = OpenTelemetry::Trace::Propagation::TraceContext.send(injector_method)
         _(injector).must_be_instance_of(
-          OpenTelemetry::Trace::Propagation::HttpTraceContextInjector
+          OpenTelemetry::Trace::Propagation::TraceContext::HttpTraceContextInjector
         )
       end
     end
