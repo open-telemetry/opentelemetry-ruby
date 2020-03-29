@@ -11,7 +11,7 @@ module OpenTelemetry
       class NoopInjector
         # Inject the given context into the specified carrier
         #
-        # @param [Context] carrier The carrier to inject the provided context
+        # @param [Object] carrier The carrier to inject the provided context
         #   into
         # @param [Context] context The context to be injected
         # @param [optional Callable] setter An optional callable that takes a carrier and a key and

@@ -141,7 +141,7 @@ describe OpenTelemetry::Context::Propagation::CompositePropagator do
         carrier = { 'k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3' }
         context = propagator.extract(carrier)
         _(context['k1']).must_equal('v1')
-        _(context['k2']).must_equal(nil)
+        _(context['k2']).must_be_nil
         _(context['k3']).must_equal('v3')
       end
     end
