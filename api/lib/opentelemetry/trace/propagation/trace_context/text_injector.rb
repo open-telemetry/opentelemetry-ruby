@@ -32,7 +32,7 @@ module OpenTelemetry
           # @yield [Carrier, String, String] if an optional setter is provided, inject will yield
           #   carrier, header key, header value to the setter.
           # @return [Object] the carrier with context injected
-          def inject(context, carrier, &setter)
+          def inject(carrier, context, &setter)
             return carrier unless (span_context = span_context_from(context))
 
             setter ||= DEFAULT_SETTER

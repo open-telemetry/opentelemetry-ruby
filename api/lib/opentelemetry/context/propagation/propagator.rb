@@ -34,7 +34,7 @@ module OpenTelemetry
         #
         # @return [Object] carrier
         def inject(carrier, context = Context.current, &setter)
-          @injector.inject(context, carrier, &setter)
+          @injector.inject(carrier, context, &setter)
         rescue => e # rubocop:disable Style/RescueStandardError
           OpenTelemetry.logger.warn "Error in Propagator#inject #{e.message}"
           carrier
@@ -53,7 +53,7 @@ module OpenTelemetry
         # @return [Context] a new context updated with state extracted from the
         #   carrier
         def extract(carrier, context = Context.current, &getter)
-          @extractor.extract(context, carrier, &getter)
+          @extractor.extract(carrier, context, &getter)
         rescue => e # rubocop:disable Style/RescueStandardError
           OpenTelemetry.logger.warn "Error in Propagator#extract #{e.message}"
           context

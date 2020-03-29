@@ -11,13 +11,13 @@ module OpenTelemetry
       class NoopExtractor
         # Extract a context from the given carrier
         #
+        # @param [Context] carrier The carrier to extract the context from
         # @param [Context] context The context to be upated with the extracted
         #   context
-        # @param [Context] carrier The carrier to extract the context from
         # @param [optional Callable] getter An optional callable that takes a carrier and a key and
         #   and returns the value associated with the key
         # @return [Context]
-        def extract(context, carrier, &getter)
+        def extract(carrier, context, &getter)
           context
         end
       end

@@ -25,15 +25,15 @@ module OpenTelemetry
 
         # Inject in-process correlations into the supplied carrier.
         #
-        # @param [Context] context The context to read correlations from
         # @param [Carrier] carrier The carrier to inject correlations into
+        # @param [Context] context The context to read correlations from
         # @param [optional Callable] getter An optional callable that takes a carrier and a key and
         #   returns the value associated with the key. If omitted the default getter will be used
         #   which expects the carrier to respond to [] and []=.
         # @yield [Carrier, String] if an optional getter is provided, inject will yield the carrier
         #   and the header key to the getter.
         # @return [Object] carrier with injected correlations
-        def inject(context, carrier, &setter)
+        def inject(carrier, context, &setter)
           return carrier unless (correlations = context[ContextKeys.correlation_context_key]) && !correlations.empty?
 
           setter ||= default_setter

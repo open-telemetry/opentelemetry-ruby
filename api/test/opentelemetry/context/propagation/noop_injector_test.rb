@@ -11,7 +11,7 @@ describe OpenTelemetry::Context::Propagation::NoopInjector do
     it 'returns the carrier unmodified' do
       context = OpenTelemetry::Context.empty.set_value('k1', 'v1')
       injector = OpenTelemetry::Context::Propagation::NoopInjector.new
-      carrier = injector.inject(context, {})
+      carrier = injector.inject({}, context)
       _(carrier).must_equal({})
     end
   end

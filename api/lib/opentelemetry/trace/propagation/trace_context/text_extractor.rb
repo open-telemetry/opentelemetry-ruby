@@ -26,8 +26,8 @@ module OpenTelemetry
           # Extract a remote {Trace::SpanContext} from the supplied carrier.
           # Invalid headers will result in a new, valid, non-remote {Trace::SpanContext}.
           #
-          # @param [Context] context The context to be updated with extracted context
           # @param [Carrier] carrier The carrier to get the header from.
+          # @param [Context] context The context to be updated with extracted context
           # @param [optional Callable] getter An optional callable that takes a carrier and a key and
           #   returns the value associated with the key. If omitted the default getter will be used
           #   which expects the carrier to respond to [] and []=.
@@ -35,7 +35,7 @@ module OpenTelemetry
           #   and the header key to the getter.
           # @return [Context] Updated context with span context from the header, or the original
           #   context if parsing fails.
-          def extract(context, carrier, &getter)
+          def extract(carrier, context, &getter)
             getter ||= default_getter
             header = getter.call(carrier, @traceparent_key)
             tp = TraceParent.from_string(header)

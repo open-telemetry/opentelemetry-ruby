@@ -14,7 +14,7 @@ describe OpenTelemetry::Context::Propagation::CompositePropagator do
       @key = key
     end
 
-    def inject(context, carrier, &setter)
+    def inject(carrier, context, &setter)
       if setter
         setter.call(carrier, @key, context[@key])
       else
@@ -29,20 +29,20 @@ describe OpenTelemetry::Context::Propagation::CompositePropagator do
       @key = key
     end
 
-    def extract(context, carrier, &getter)
+    def extract(carrier, context, &getter)
       value = getter ? getter.call(carrier, @key) : carrier[@key]
       context.set_value(@key, value)
     end
   end
 
   class BuggyInjector
-    def inject(context, carrier, &setter)
+    def inject(carrier, context, &setter)
       raise 'oops'
     end
   end
 
   class BuggyExtractor
-    def extract(context, carrier, &getter)
+    def extract(carrier, context, &getter)
       raise 'oops'
     end
   end

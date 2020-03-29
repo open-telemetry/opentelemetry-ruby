@@ -22,7 +22,7 @@ describe OpenTelemetry::CorrelationContext::Propagation::TextInjector do
       context = Context.empty.set_value(context_key, 'key1' => 'val1',
                                                      'key2' => 'val2')
 
-      carrier = injector.inject(context, {})
+      carrier = injector.inject({}, context)
 
       _(carrier[header_key]).must_equal('key1=val1,key2=val2')
     end
@@ -31,7 +31,7 @@ describe OpenTelemetry::CorrelationContext::Propagation::TextInjector do
       context = Context.empty.set_value(context_key, 'key1' => 1,
                                                      'key2' => 3.14)
 
-      carrier = injector.inject(context, {})
+      carrier = injector.inject({}, context)
 
       _(carrier[header_key]).must_equal('key1=1,key2=3.14')
     end
@@ -40,20 +40,20 @@ describe OpenTelemetry::CorrelationContext::Propagation::TextInjector do
       context = Context.empty.set_value(context_key, 'key1' => true,
                                                      'key2' => false)
 
-      carrier = injector.inject(context, {})
+      carrier = injector.inject({}, context)
 
       _(carrier[header_key]).must_equal('key1=true,key2=false')
     end
 
     it 'does not inject correlation key is not present' do
-      carrier = injector.inject(Context.empty, {})
+      carrier = injector.inject({}, Context.empty)
       _(carrier).must_be(:empty?)
     end
 
     it 'injects boolean correlations' do
       context = Context.empty.set_value(context_key, {})
 
-      carrier = injector.inject(context, {})
+      carrier = injector.inject({}, context)
 
       _(carrier).must_be(:empty?)
     end

@@ -26,8 +26,8 @@ module OpenTelemetry
         # Extract remote correlations from the supplied carrier.
         # If extraction fails, the original context will be returned
         #
-        # @param [Context] context The context to be updated with extracted correlations
         # @param [Carrier] carrier The carrier to get the header from
+        # @param [Context] context The context to be updated with extracted correlations
         # @param [optional Callable] getter An optional callable that takes a carrier and a key and
         #   returns the value associated with the key. If omitted the default getter will be used
         #   which expects the carrier to respond to [] and []=.
@@ -35,7 +35,7 @@ module OpenTelemetry
         #   and the header key to the getter.
         # @return [Context] context updated with extracted correlations, or the original context
         #   if extraction fails
-        def extract(context, carrier, &getter)
+        def extract(carrier, context, &getter)
           getter ||= default_getter
           header = getter.call(carrier, @correlation_context_key)
 

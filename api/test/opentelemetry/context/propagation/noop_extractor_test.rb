@@ -11,7 +11,7 @@ describe OpenTelemetry::Context::Propagation::NoopExtractor do
     it 'returns the original context' do
       context = OpenTelemetry::Context.empty.set_value('k1', 'v1')
       extractor = OpenTelemetry::Context::Propagation::NoopExtractor.new
-      result = extractor.extract(context, 'foo' => 'bar')
+      result = extractor.extract({ 'foo' => 'bar' }, context)
       _(result).must_equal(context)
     end
   end

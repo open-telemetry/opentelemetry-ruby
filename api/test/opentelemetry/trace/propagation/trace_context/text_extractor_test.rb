@@ -36,7 +36,7 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextExtractor do
   describe '#extract' do
     it 'yields the carrier and the header key' do
       yielded_keys = []
-      extractor.extract(context, carrier) do |c, key|
+      extractor.extract(carrier, context) do |c, key|
         _(c).must_equal(carrier)
         yielded_keys << key
         c[key]
@@ -45,7 +45,7 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextExtractor do
     end
 
     it 'returns a remote SpanContext with fields from the traceparent and tracestate headers' do
-      ctx = extractor.extract(context, carrier) { |c, k| c[k] }
+      ctx = extractor.extract(carrier, context) { |c, k| c[k] }
       span_context = ctx[span_context_key]
       _(span_context).must_be :remote?
       _(span_context.trace_id).must_equal('000000000000000000000000000000aa')
@@ -55,7 +55,7 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextExtractor do
     end
 
     it 'uses a default getter if one is not provided' do
-      ctx = extractor.extract(context, carrier)
+      ctx = extractor.extract(carrier, context)
       span_context = ctx[span_context_key]
       _(span_context).must_be :remote?
       _(span_context.trace_id).must_equal('000000000000000000000000000000aa')
@@ -65,7 +65,7 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextExtractor do
     end
 
     it 'returns original context on error' do
-      ctx = extractor.extract(context, {}) { invalid_traceparent_header }
+      ctx = extractor.extract({}, context) { invalid_traceparent_header }
       _(ctx).must_equal(context)
       span_context = ctx[span_context_key]
       _(span_context).must_be_nil
