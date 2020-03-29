@@ -7,23 +7,23 @@
 require 'test_helper'
 
 describe OpenTelemetry::CorrelationContext::Propagation do
-  describe '#http_extractor, #rack_http_extractor' do
-    it 'returns an instance of HttpExtractor' do
-      %i[http_extractor rack_http_extractor].each do |extractor_method|
+  describe '#text_extractor, #rack_extractor' do
+    it 'returns an instance of TextExtractor' do
+      %i[text_extractor rack_extractor].each do |extractor_method|
         extractor = OpenTelemetry::CorrelationContext::Propagation.send(extractor_method)
         _(extractor).must_be_instance_of(
-          OpenTelemetry::CorrelationContext::Propagation::HttpExtractor
+          OpenTelemetry::CorrelationContext::Propagation::TextExtractor
         )
       end
     end
   end
 
-  describe '#http_injector, #rack_http_injector' do
-    it 'returns an instance of HttpInjector' do
-      %i[http_injector rack_http_injector].each do |injector_method|
+  describe '#rack_injector, #rack_injector' do
+    it 'returns an instance of TextInjector' do
+      %i[rack_injector rack_injector].each do |injector_method|
         injector = OpenTelemetry::CorrelationContext::Propagation.send(injector_method)
         _(injector).must_be_instance_of(
-          OpenTelemetry::CorrelationContext::Propagation::HttpInjector
+          OpenTelemetry::CorrelationContext::Propagation::TextInjector
         )
       end
     end

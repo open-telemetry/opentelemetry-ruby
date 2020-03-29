@@ -58,7 +58,7 @@ describe OpenTelemetry::SDK::Configurator do
 
         expected_injectors = [
           OpenTelemetry::Trace::Propagation::TraceContext.text_injector,
-          OpenTelemetry::CorrelationContext::Propagation.http_injector
+          OpenTelemetry::CorrelationContext::Propagation.text_injector
         ]
 
         _(OpenTelemetry.propagation.http_injectors).must_equal(expected_injectors)
@@ -78,7 +78,7 @@ describe OpenTelemetry::SDK::Configurator do
 
         expected_extractors = [
           OpenTelemetry::Trace::Propagation::TraceContext.rack_extractor,
-          OpenTelemetry::CorrelationContext::Propagation.rack_http_extractor
+          OpenTelemetry::CorrelationContext::Propagation.rack_extractor
         ]
 
         _(OpenTelemetry.propagation.http_extractors).must_equal(expected_extractors)

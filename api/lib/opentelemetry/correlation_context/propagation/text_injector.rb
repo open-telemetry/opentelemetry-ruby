@@ -10,15 +10,15 @@ module OpenTelemetry
   module CorrelationContext
     module Propagation
       # Injects correlation context using the W3C Correlation Context format
-      class HttpInjector
+      class TextInjector
         include Context::Propagation::DefaultSetter
 
-        # Returns a new HttpInjector that injects context using the specified
+        # Returns a new TextInjector that injects context using the specified
         # header key
         #
         # @param [String] correlation_context_header_key The correlation context header
         #   key used in the carrier
-        # @return [HttpInjector]
+        # @return [TextInjector]
         def initialize(correlation_context_key: 'Correlation-Context')
           @correlation_context_key = correlation_context_key
         end
