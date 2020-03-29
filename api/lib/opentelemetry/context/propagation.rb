@@ -7,6 +7,8 @@
 require 'opentelemetry/context/propagation/composite_propagator'
 require 'opentelemetry/context/propagation/default_getter'
 require 'opentelemetry/context/propagation/default_setter'
+require 'opentelemetry/context/propagation/noop_extractor'
+require 'opentelemetry/context/propagation/noop_injector'
 require 'opentelemetry/context/propagation/propagation'
 require 'opentelemetry/context/propagation/propagator'
 
