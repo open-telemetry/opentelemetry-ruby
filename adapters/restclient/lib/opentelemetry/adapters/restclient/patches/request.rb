@@ -31,7 +31,7 @@ module OpenTelemetry
             )
 
             tracer.with_span(span) do
-              OpenTelemetry.propagation.inject(processed_headers)
+              OpenTelemetry.propagation.http.inject(processed_headers)
             end
 
             yield(span).tap do |response|

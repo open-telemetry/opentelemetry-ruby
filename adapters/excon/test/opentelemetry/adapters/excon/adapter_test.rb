@@ -20,18 +20,20 @@ describe OpenTelemetry::Adapters::Excon::Adapter do
     stub_request(:get, 'http://example.com/failure').to_return(status: 500)
     stub_request(:get, 'http://example.com/timeout').to_timeout
 
-    # these are currently empty, but this will future proof the test
-    @orig_injectors = OpenTelemetry.propagation.http_injectors
-    OpenTelemetry.propagation.http_injectors = [
-      OpenTelemetry::Trace::Propagation::TraceContext.text_injector
-    ]
+    # this is currently a noop but this will future proof the test
+    @orig_propagator = OpenTelemetry.propagation.http
+    propagator = OpenTelemetry::Context::Propagation::Propagator.new(
+      OpenTelemetry::Trace::Propagation::TraceContext.text_injector,
+      OpenTelemetry::Trace::Propagation::TraceContext.text_extractor
+    )
+    OpenTelemetry.propagation.http = propagator
   end
 
   after do
     # Force re-install of instrumentation
     adapter.instance_variable_set(:@installed, false)
 
-    OpenTelemetry.propagation.http_injectors = @orig_injectors
+    OpenTelemetry.propagation.http = @orig_propagator
   end
 
   describe 'tracing' do

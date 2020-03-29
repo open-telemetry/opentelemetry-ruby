@@ -61,14 +61,15 @@ describe OpenTelemetry::SDK::Configurator do
           OpenTelemetry::CorrelationContext::Propagation.text_injector
         ]
 
-        _(OpenTelemetry.propagation.http_injectors).must_equal(expected_injectors)
+        _(injectors_for(OpenTelemetry.propagation.http)).must_equal(expected_injectors)
       end
 
       it 'is user settable' do
-        configurator.http_injectors = []
+        injector = OpenTelemetry::Context::Propagation::NoopInjector.new
+        configurator.http_injectors = [injector]
         configurator.configure
 
-        _(OpenTelemetry.propagation.http_injectors).must_equal([])
+        _(injectors_for(OpenTelemetry.propagation.http)).must_equal([injector])
       end
     end
 
@@ -81,14 +82,57 @@ describe OpenTelemetry::SDK::Configurator do
           OpenTelemetry::CorrelationContext::Propagation.rack_extractor
         ]
 
-        _(OpenTelemetry.propagation.http_extractors).must_equal(expected_extractors)
+        _(extractors_for(OpenTelemetry.propagation.http)).must_equal(expected_extractors)
       end
 
       it 'is user settable' do
-        configurator.http_extractors = []
+        extractor = OpenTelemetry::Context::Propagation::NoopExtractor.new
+        configurator.http_extractors = [extractor]
         configurator.configure
 
-        _(OpenTelemetry.propagation.http_extractors).must_equal([])
+        _(extractors_for(OpenTelemetry.propagation.http)).must_equal([extractor])
+      end
+    end
+
+    describe 'text_injectors' do
+      it 'defaults to trace context and correlation context' do
+        configurator.configure
+
+        expected_injectors = [
+          OpenTelemetry::Trace::Propagation::TraceContext.text_injector,
+          OpenTelemetry::CorrelationContext::Propagation.text_injector
+        ]
+
+        _(injectors_for(OpenTelemetry.propagation.text)).must_equal(expected_injectors)
+      end
+
+      it 'is user settable' do
+        injector = OpenTelemetry::Context::Propagation::NoopInjector.new
+        configurator.text_injectors = [injector]
+        configurator.configure
+
+        _(injectors_for(OpenTelemetry.propagation.text)).must_equal([injector])
+      end
+    end
+
+    describe '#text_extractors' do
+      it 'defaults to trace context and correlation context' do
+        configurator.configure
+
+        expected_extractors = [
+          OpenTelemetry::Trace::Propagation::TraceContext.text_extractor,
+          OpenTelemetry::CorrelationContext::Propagation.text_extractor
+        ]
+
+        _(extractors_for(OpenTelemetry.propagation.text)).must_equal(expected_extractors)
+      end
+
+      it 'is user settable' do
+        extractor = OpenTelemetry::Context::Propagation::NoopExtractor.new
+        configurator.text_extractors = [extractor]
+        configurator.configure
+
+        _(extractors_for(OpenTelemetry.propagation.text)).must_equal([extractor])
       end
     end
 
@@ -169,6 +213,14 @@ describe OpenTelemetry::SDK::Configurator do
 
   def active_span_processors
     OpenTelemetry.tracer_provider.active_span_processor.instance_variable_get(:@span_processors)
+  end
+
+  def extractors_for(propagator)
+    propagator.instance_variable_get(:@extractors) || propagator.instance_variable_get(:@extractor)
+  end
+
+  def injectors_for(propagator)
+    propagator.instance_variable_get(:@injectors) || propagator.instance_variable_get(:@injector)
   end
 
   def reset_globals
