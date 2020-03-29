@@ -14,13 +14,13 @@ module OpenTelemetry
           # Returns a new TextInjector that injects context using the
           # specified header keys
           #
-          # @param [String] traceparent_header_key The traceparent header key used in the carrier
-          # @param [String] tracestate_header_key The tracestate header key used in the carrier
+          # @param [String] traceparent_key The traceparent header key used in the carrier
+          # @param [String] tracestate_key The tracestate header key used in the carrier
           # @return [TextInjector]
-          def initialize(traceparent_header_key: 'traceparent',
-                         tracestate_header_key: 'tracestate')
-            @traceparent_header_key = traceparent_header_key
-            @tracestate_header_key = tracestate_header_key
+          def initialize(traceparent_key: 'traceparent',
+                         tracestate_key: 'tracestate')
+            @traceparent_key = traceparent_key
+            @tracestate_key = tracestate_key
           end
 
           # Set the span context on the supplied carrier.
@@ -36,8 +36,8 @@ module OpenTelemetry
             return carrier unless (span_context = span_context_from(context))
 
             setter ||= DEFAULT_SETTER
-            setter.call(carrier, @traceparent_header_key, TraceParent.from_context(span_context).to_s)
-            setter.call(carrier, @tracestate_header_key, span_context.tracestate) unless span_context.tracestate.nil?
+            setter.call(carrier, @traceparent_key, TraceParent.from_context(span_context).to_s)
+            setter.call(carrier, @tracestate_key, span_context.tracestate) unless span_context.tracestate.nil?
 
             carrier
           end

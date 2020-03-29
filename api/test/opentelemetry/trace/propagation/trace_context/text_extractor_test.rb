@@ -10,12 +10,12 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextExtractor do
   let(:span_context_key) do
     OpenTelemetry::Trace::Propagation::ContextKeys.extracted_span_context_key
   end
-  let(:traceparent_header_key) { 'traceparent' }
-  let(:tracestate_header_key) { 'tracestate' }
+  let(:traceparent_key) { 'traceparent' }
+  let(:tracestate_key) { 'tracestate' }
   let(:extractor) do
     OpenTelemetry::Trace::Propagation::TraceContext::TextExtractor.new(
-      traceparent_header_key: traceparent_header_key,
-      tracestate_header_key: tracestate_header_key
+      traceparent_key: traceparent_key,
+      tracestate_key: tracestate_key
     )
   end
   let(:valid_traceparent_header) do
@@ -27,8 +27,8 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextExtractor do
   let(:tracestate_header) { 'vendorname=opaquevalue' }
   let(:carrier) do
     {
-      traceparent_header_key => valid_traceparent_header,
-      tracestate_header_key => tracestate_header
+      traceparent_key => valid_traceparent_header,
+      tracestate_key => tracestate_header
     }
   end
   let(:context) { Context.empty }
@@ -41,7 +41,7 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextExtractor do
         yielded_keys << key
         c[key]
       end
-      _(yielded_keys.sort).must_equal([traceparent_header_key, tracestate_header_key])
+      _(yielded_keys.sort).must_equal([traceparent_key, tracestate_key])
     end
 
     it 'returns a remote SpanContext with fields from the traceparent and tracestate headers' do

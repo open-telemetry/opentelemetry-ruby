@@ -14,13 +14,13 @@ module OpenTelemetry
           # Returns a new TextExtractor that extracts context using the
           # specified header keys
           #
-          # @param [String] traceparent_header_key The traceparent header key used in the carrier
-          # @param [String] tracestate_header_key The tracestate header key used in the carrier
+          # @param [String] traceparent_key The traceparent header key used in the carrier
+          # @param [String] tracestate_key The tracestate header key used in the carrier
           # @return [TextExtractor]
-          def initialize(traceparent_header_key: 'traceparent',
-                         tracestate_header_key: 'tracestate')
-            @traceparent_header_key = traceparent_header_key
-            @tracestate_header_key = tracestate_header_key
+          def initialize(traceparent_key: 'traceparent',
+                         tracestate_key: 'tracestate')
+            @traceparent_key = traceparent_key
+            @tracestate_key = tracestate_key
           end
 
           # Extract a remote {Trace::SpanContext} from the supplied carrier.
@@ -37,10 +37,10 @@ module OpenTelemetry
           #   context if parsing fails.
           def extract(context, carrier, &getter)
             getter ||= default_getter
-            header = getter.call(carrier, @traceparent_header_key)
+            header = getter.call(carrier, @traceparent_key)
             tp = TraceParent.from_string(header)
 
-            tracestate = getter.call(carrier, @tracestate_header_key)
+            tracestate = getter.call(carrier, @tracestate_key)
 
             span_context = Trace::SpanContext.new(trace_id: tp.trace_id,
                                                   span_id: tp.span_id,

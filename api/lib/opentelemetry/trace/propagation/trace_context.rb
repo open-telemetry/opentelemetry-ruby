@@ -19,12 +19,12 @@ module OpenTelemetry
         TEXT_EXTRACTOR = TextExtractor.new
         TEXT_INJECTOR = TextInjector.new
         RACK_EXTRACTOR = TextExtractor.new(
-          traceparent_header_key: 'HTTP_TRACEPARENT',
-          tracestate_header_key: 'HTTP_TRACESTATE'
+          traceparent_key: 'HTTP_TRACEPARENT',
+          tracestate_key: 'HTTP_TRACESTATE'
         )
         RACK_INJECTOR = TextInjector.new(
-          traceparent_header_key: 'HTTP_TRACEPARENT',
-          tracestate_header_key: 'HTTP_TRACESTATE'
+          traceparent_key: 'HTTP_TRACEPARENT',
+          tracestate_key: 'HTTP_TRACESTATE'
         )
 
         private_constant :TEXT_INJECTOR, :TEXT_EXTRACTOR,
