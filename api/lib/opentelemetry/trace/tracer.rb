@@ -63,7 +63,7 @@ module OpenTelemetry
       #
       # On exit, the Span that was active before calling this method will be reactivated.
       def with_span(span)
-        Context.with_value(CURRENT_SPAN_KEY, span) { |s| yield s }
+        Context.with_value(CURRENT_SPAN_KEY, span) { |_, s| yield s }
       end
 
       def start_root_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil)

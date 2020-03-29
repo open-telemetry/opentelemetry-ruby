@@ -52,6 +52,13 @@ describe OpenTelemetry::Context do
 
       _(Context.current).must_equal(c1)
     end
+
+    it 'yields the current context to the block' do
+      ctx = new_context
+      Context.with_current(ctx) do |c|
+        _(c).must_equal(ctx)
+      end
+    end
   end
 
   describe '.with_value' do
@@ -60,7 +67,7 @@ describe OpenTelemetry::Context do
 
       block_called = false
 
-      Context.with_value(foo_key, 'bar') do |value|
+      Context.with_value(foo_key, 'bar') do |_, value|
         _(Context.current.value(foo_key)).must_equal('bar')
         _(value).must_equal('bar')
         block_called = true
@@ -68,6 +75,13 @@ describe OpenTelemetry::Context do
 
       _(Context.current).must_equal(orig_ctx)
       _(block_called).must_equal(true)
+    end
+
+    it 'yields the current context and value to the block' do
+      Context.with_value(foo_key, 'bar') do |c, v|
+        _(v).must_equal('bar')
+        _(c.value(foo_key)).must_equal('bar')
+      end
     end
   end
 
@@ -84,7 +98,7 @@ describe OpenTelemetry::Context do
 
       block_called = false
 
-      Context.with_values(foo_key => 'bar', bar_key => 'baz') do |values|
+      Context.with_values(foo_key => 'bar', bar_key => 'baz') do |_, values|
         _(Context.current.value(foo_key)).must_equal('bar')
         _(Context.current.value(bar_key)).must_equal('baz')
         _(values).must_equal(foo_key => 'bar', bar_key => 'baz')
@@ -93,6 +107,15 @@ describe OpenTelemetry::Context do
 
       _(Context.current).must_equal(orig_ctx)
       _(block_called).must_equal(true)
+    end
+
+    it 'yields the current context and values to the block' do
+      values = { foo_key => 'bar', bar_key => 'baz' }
+      Context.with_values(values) do |c, v|
+        _(v).must_equal(values)
+        _(c.value(foo_key)).must_equal('bar')
+        _(c.value(bar_key)).must_equal('baz')
+      end
     end
   end
 
