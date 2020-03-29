@@ -53,6 +53,13 @@ describe OpenTelemetry::Trace::Tracer do
         _(tracer.current_span).must_equal(wrapper_span)
       end
     end
+
+    it 'returns the current span from the provided context' do
+      span = tracer.start_span('a-span')
+      context = Context.empty.set_value(current_span_key, span)
+      _(tracer.current_span).wont_equal(span)
+      _(tracer.current_span(context)).must_equal(span)
+    end
   end
 
   describe '#active_span_context' do

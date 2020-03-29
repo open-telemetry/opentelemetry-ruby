@@ -13,8 +13,12 @@ module OpenTelemetry
 
       private_constant :EXTRACTED_SPAN_CONTEXT_KEY, :CURRENT_SPAN_KEY
 
-      def current_span
-        Context.value(CURRENT_SPAN_KEY) || Span::INVALID
+      # Returns the current span from the current or provided context
+      #
+      # @param [optional Context] context The context to lookup the current
+      #   {Span} from. Defaults to Context.current
+      def current_span(context = Context.current)
+        context.value(CURRENT_SPAN_KEY) || Span::INVALID
       end
 
       # Returns the the active span context from the given {Context}, or current
