@@ -46,9 +46,11 @@ module OpenTelemetry
       # On exit, the Span that was active before calling this method will be reactivated. If an
       # exception occurs during the execution of the provided block, it will be recorded on the
       # span and reraised.
+      # @yield [span, context] yields the newly created span and a context containing the
+      #   span to the block.
       def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, with_parent: nil, with_parent_context: nil)
         span = start_span(name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind, with_parent: with_parent, with_parent_context: with_parent_context)
-        with_span(span) { |s| yield s }
+        with_span(span) { |s, c| yield s, c }
       rescue Exception => e # rubocop:disable Lint/RescueException
         span.record_error(e)
         span.status = Status.new(Status::UNKNOWN_ERROR,
@@ -62,8 +64,11 @@ module OpenTelemetry
       # available implicitly.
       #
       # On exit, the Span that was active before calling this method will be reactivated.
+      #
+      # @param [Span] span the span to activate
+      # @yield [span, context] yields span and a context containing the span to the block.
       def with_span(span)
-        Context.with_value(CURRENT_SPAN_KEY, span) { |_, s| yield s }
+        Context.with_value(CURRENT_SPAN_KEY, span) { |c, s| yield s, c }
       end
 
       def start_root_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
