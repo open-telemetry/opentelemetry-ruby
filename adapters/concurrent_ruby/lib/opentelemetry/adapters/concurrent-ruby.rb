@@ -14,5 +14,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './concurrent-ruby/adapter'
-require_relative './concurrent-ruby/version'
+require_relative './concurrent_ruby/adapter'
+require_relative './concurrent_ruby/version'
