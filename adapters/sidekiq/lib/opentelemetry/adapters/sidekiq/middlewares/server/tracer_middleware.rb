@@ -16,6 +16,7 @@ module OpenTelemetry
                 msg['wrapped']&.to_s || msg['class'],
                 attributes: {
                   'job_id' => msg['jid'],
+                  'messaging.destination' => msg['queue'],
                   'created_at' => msg['created_at'],
                   'enqueued_at' => msg['enqueued_at'],
                 },
