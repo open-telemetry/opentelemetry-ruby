@@ -11,14 +11,13 @@ module OpenTelemetry
         module Server
           class TracerMiddleware
             def call(_worker, msg, _queue)
-              parent_context = OpenTelemetry.propagation.extract(msg, extractors: OpenTelemetry.propagation.job_extractors)
+              parent_context = OpenTelemetry.propagation.text.extract(job)
               tracer.in_span(
-                msg['class'],
+                msg['wrapped']&.to_s || msg['class'],
                 attributes: {
-                  id: msg['id'],
-                  jid: msg['jid'],
-                  queue: msg['queue'],
-                  created_at: msg['created_at'],
+                  'job_id' => msg['jid'],
+                  'created_at' => msg['created_at'],
+                  'enqueued_at' => msg['enqueued_at'],
                 },
                 with_parent_context: parent_context,
                 kind: :consumer

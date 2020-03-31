@@ -10,16 +10,17 @@ module OpenTelemetry
       module Middlewares
         module Client
           class TracerMiddleware
-            def call(worker_class, job, _queue, _redis_pool)
+            def call(_worker_class, job, _queue, _redis_pool)
               tracer.in_span(
-                worker_class,
+                job['wrapped']&.to_s || job['class'],
                 attributes: {
-                  jid: job['jid'],
-                  created_at: job['created_at'],
+                  'job_id' => job['jid'],
+                  'messaging.destination' => job['queue'],
+                  'created_at' => job['created_at'],
                 },
                 kind: :producer
               ) do |span|
-                OpenTelemetry.propagation.inject(job, injectors: OpenTelemetry.propagation.job_injectors)
+                OpenTelemetry.propagation.text.inject(job)
                 yield
               end
             end
