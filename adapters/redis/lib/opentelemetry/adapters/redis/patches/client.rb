@@ -19,7 +19,7 @@ module OpenTelemetry
                 'db.statement' => Utils.format_statement(args)
               ),
               kind: :client
-            ) do |span|
+            ) do
               response = super(*args, &block)
             end
 
@@ -35,7 +35,7 @@ module OpenTelemetry
                 'db.statement' => Utils.format_pipeline_statement(args)
               ),
               kind: :client
-            ) do |span|
+            ) do
               response = super(*args, &block)
             end
 

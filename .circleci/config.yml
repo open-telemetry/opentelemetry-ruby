@@ -53,7 +53,7 @@ commands:
       - run:
           name: Bundle + CI (Adapters - Concurrent Ruby)
           command: |
-            cd adapters/concurrent-ruby
+            cd adapters/concurrent_ruby
             gem uninstall -aIx bundler
             gem install --no-document bundler -v '~> 2.0.2'
             bundle install --jobs=3 --retry=3
