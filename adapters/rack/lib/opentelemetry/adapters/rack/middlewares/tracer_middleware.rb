@@ -53,7 +53,7 @@ module OpenTelemetry
 
           def call(env)
             original_env = env.dup
-            extracted_context = OpenTelemetry.propagation.extract(env)
+            extracted_context = OpenTelemetry.propagation.http.extract(env)
             frontend_context = create_frontend_span(env, extracted_context)
 
             # restore extracted context in this process:

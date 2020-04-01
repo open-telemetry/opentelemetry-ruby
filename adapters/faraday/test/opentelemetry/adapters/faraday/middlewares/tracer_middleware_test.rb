@@ -28,15 +28,17 @@ describe OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware do
   before do
     exporter.reset
 
-    # these are currently empty, but this will future proof the test
-    @orig_injectors = OpenTelemetry.propagation.http_injectors
-    OpenTelemetry.propagation.http_injectors = [
-      OpenTelemetry::Trace::Propagation.http_trace_context_injector
-    ]
+    # this is currently a noop but this will future proof the test
+    @orig_propagator = OpenTelemetry.propagation.http
+    propagator = OpenTelemetry::Context::Propagation::Propagator.new(
+      OpenTelemetry::Trace::Propagation::TraceContext.text_injector,
+      OpenTelemetry::Trace::Propagation::TraceContext.text_extractor
+    )
+    OpenTelemetry.propagation.http = propagator
   end
 
   after do
-    OpenTelemetry.propagation.http_injectors = @orig_injectors
+    OpenTelemetry.propagation.http = @orig_propagator
   end
 
   describe 'first span' do

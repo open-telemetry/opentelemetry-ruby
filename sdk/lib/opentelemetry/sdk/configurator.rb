@@ -15,13 +15,16 @@ module OpenTelemetry
 
       private_constant :USE_MODE_UNSPECIFIED, :USE_MODE_ONE, :USE_MODE_ALL
 
-      attr_writer :logger, :http_extractors, :http_injectors
+      attr_writer :logger, :http_extractors, :http_injectors, :text_extractors,
+                  :text_injectors
 
       def initialize
         @adapter_names = []
         @adapter_config_map = {}
         @http_extractors = nil
         @http_injectors = nil
+        @text_extractors = nil
+        @text_injectors = nil
         @span_processors = []
         @use_mode = USE_MODE_UNSPECIFIED
         @tracer_provider = Trace::TracerProvider.new
@@ -112,21 +115,42 @@ module OpenTelemetry
       end
 
       def configure_propagation
-        OpenTelemetry.propagation.http_extractors = @http_extractors || default_http_extractors
-        OpenTelemetry.propagation.http_injectors = @http_injectors || default_http_injectors
+        OpenTelemetry.propagation.http = create_propagator(@http_injectors || default_http_injectors,
+                                                           @http_extractors || default_http_extractors)
+        OpenTelemetry.propagation.text = create_propagator(@text_injectors || default_text_injectors,
+                                                           @text_extractors || default_text_extractors)
+      end
+
+      def create_propagator(injectors, extractors)
+        if injectors.size > 1 || extractors.size > 1
+          Context::Propagation::CompositePropagator.new(injectors, extractors)
+        else
+          Context::Propagation::Propagator.new(injectors, extractors)
+        end
       end
 
       def default_http_injectors
-        [
-          OpenTelemetry::Trace::Propagation.http_trace_context_injector,
-          OpenTelemetry::CorrelationContext::Propagation.http_injector
-        ]
+        default_text_injectors
       end
 
       def default_http_extractors
         [
-          OpenTelemetry::Trace::Propagation.rack_http_trace_context_extractor,
-          OpenTelemetry::CorrelationContext::Propagation.rack_http_extractor
+          OpenTelemetry::Trace::Propagation::TraceContext.rack_extractor,
+          OpenTelemetry::CorrelationContext::Propagation.rack_extractor
+        ]
+      end
+
+      def default_text_injectors
+        [
+          OpenTelemetry::Trace::Propagation::TraceContext.text_injector,
+          OpenTelemetry::CorrelationContext::Propagation.text_injector
+        ]
+      end
+
+      def default_text_extractors
+        [
+          OpenTelemetry::Trace::Propagation::TraceContext.text_extractor,
+          OpenTelemetry::CorrelationContext::Propagation.text_extractor
         ]
       end
     end
