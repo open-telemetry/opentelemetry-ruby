@@ -40,9 +40,10 @@ module OpenTelemetry
       # the previous context upon exiting.
       #
       # @param [Context] ctx The context to be made active
+      # @yield [context] Yields context to the block
       def with_current(ctx)
         prev = ctx.attach
-        yield
+        yield ctx
       ensure
         ctx.detach(prev)
       end
@@ -53,10 +54,12 @@ module OpenTelemetry
       # @param [String] key The lookup key
       # @param [Object] value The object stored under key
       # @param [Callable] Block to execute in a new context
+      # @yield [context, value] Yields the newly created context and value to
+      #   the block
       def with_value(key, value)
         ctx = current.set_value(key, value)
         prev = ctx.attach
-        yield value
+        yield ctx, value
       ensure
         ctx.detach(prev)
       end
@@ -68,10 +71,12 @@ module OpenTelemetry
       # @param [Hash] values Will be merged with values of the current context
       #  and returned in a new context
       # @param [Callable] Block to execute in a new context
+      # @yield [context, values] Yields the newly created context and values
+      #   to the block
       def with_values(values)
         ctx = current.set_values(values)
         prev = ctx.attach
-        yield values
+        yield ctx, values
       ensure
         ctx.detach(prev)
       end
