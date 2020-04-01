@@ -35,6 +35,9 @@ describe OpenTelemetry::Trace::Tracer do
       parent_span_context
     )
   end
+  let(:current_span_key) do
+    OpenTelemetry::Trace::Propagation::ContextKeys.current_span_key
+  end
 
   describe '#current_span' do
     let(:current_span) { tracer.start_span('current') }
@@ -49,6 +52,13 @@ describe OpenTelemetry::Trace::Tracer do
       tracer.with_span(wrapper_span) do
         _(tracer.current_span).must_equal(wrapper_span)
       end
+    end
+
+    it 'returns the current span from the provided context' do
+      span = tracer.start_span('a-span')
+      context = Context.empty.set_value(current_span_key, span)
+      _(tracer.current_span).wont_equal(span)
+      _(tracer.current_span(context)).must_equal(span)
     end
   end
 
@@ -94,6 +104,13 @@ describe OpenTelemetry::Trace::Tracer do
       end
     end
 
+    it 'yields context containing span' do
+      tracer.in_span('wrapper') do |span, context|
+        _(context).must_equal(OpenTelemetry::Context.current)
+        _(context[current_span_key]).must_equal(span)
+      end
+    end
+
     it 'returns the result of the block' do
       result = tracer.in_span('wrapper') { 'my-result' }
       _(result).must_equal('my-result')
@@ -127,6 +144,15 @@ describe OpenTelemetry::Trace::Tracer do
 
       tracer.with_span(wrapper_span) do |span|
         _(span).must_equal(wrapper_span)
+      end
+    end
+
+    it 'yields context containing span' do
+      wrapper_span = tracer.start_span('wrapper')
+
+      tracer.with_span(wrapper_span) do |span, context|
+        _(context).must_equal(OpenTelemetry::Context.current)
+        _(context[current_span_key]).must_equal(span)
       end
     end
 

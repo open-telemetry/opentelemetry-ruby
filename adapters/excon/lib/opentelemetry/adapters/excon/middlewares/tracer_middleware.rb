@@ -40,7 +40,7 @@ module OpenTelemetry
                 ).tap do |span|
                   datum[:otel_span] = span
                   tracer.with_span(span) do
-                    OpenTelemetry.propagation.inject(datum[:headers])
+                    OpenTelemetry.propagation.http.inject(datum[:headers])
                   end
                 end
               end
