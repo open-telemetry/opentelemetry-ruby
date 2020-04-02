@@ -29,26 +29,23 @@ Then, configure the SDK according to your desired handling of telemetry data, an
 ```ruby
 require 'opentelemetry/sdk'
 
-# Create a concrete tracer factory
-factory = OpenTelemetry::SDK::Trace::TracerFactory.new
+# Configure the sdk with default export and context propagation formats
+# see SDK#configure for customizing the setup
+OpenTelemetry::SDK.configure
 
-# Configure the tracer factory
-factory.add_span_processor(
-  OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(
-    OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter.new
-  )
-)
+# To start a trace you need to get a Tracer from the TracerProvider
+tracer = OpenTelemetry.tracer_provider.tracer('my_app_or_gem', '0.1.0')
 
-# Set it as the default tracer factory
-OpenTelemetry.tracer_factory = factory
-
-# Create a trace using the factory
-tracer = factory.tracer('my_app_or_gem', '1.0')
-
-# Record spans
-tracer.in_span('my_task') do |task_span|
-  tracer.in_span('inner') do |inner_span|
-    # Do something here
+# create a span
+tracer.in_span('foo') do |span|
+  # set an attribute
+  span.set_attribute('platform', 'osx')
+  # add an event
+  span.add_event(name: 'event in bar')
+  # create bar as child of foo
+  tracer.in_span('bar') do |child_span|
+    # inspect the span
+    pp child_span
   end
 end
 ```

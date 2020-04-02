@@ -88,28 +88,30 @@ The services provided are:
 ```ruby
 require 'opentelemetry/sdk'
 
-# Set preferred tracer implementation:
-SDK = OpenTelemetry::SDK
+# Configure the sdk with default export and context propagation formats
+# see SDK#configure for customizing the setup
+OpenTelemetry::SDK.configure
 
-factory = OpenTelemetry.tracer_factory = SDK::Trace::TracerFactory.new
-factory.add_span_processor(
-  SDK::Trace::Export::SimpleSpanProcessor.new(
-    SDK::Trace::Export::ConsoleSpanExporter.new
-  )
-)
+# To start a trace you need to get a Tracer from the TracerProvider
+tracer = OpenTelemetry.tracer_provider.tracer('my_app_or_gem', '0.1.0')
 
-tracer = factory.tracer('my_app_or_gem', Gem.loaded_specs['my_app_or_gem']&.version.to_s)
-tracer.in_span('foo') do |foo_span|
-  tracer.in_span('bar') do |bar_span|
-    tracer.in_span('baz') do |baz_span|
-      pp baz_span
-    end
+# create a span
+tracer.in_span('foo') do |span|
+  # set an attribute
+  span.set_attribute('platform', 'osx')
+  # add an event
+  span.add_event(name: 'event in bar')
+  # create bar as child of foo
+  tracer.in_span('bar') do |child_span|
+    # inspect the span
+    pp child_span
   end
 end
 ```
 
 See the [API Documentation](https://open-telemetry.github.io/opentelemetry-ruby/) for more
-detail, and the [opentelemetry examples][examples-github] for a complete example.
+detail, and the [opentelemetry examples][examples-github] for a complete example including
+context propagation.
 
 ## Release Schedule
 
