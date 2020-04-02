@@ -11,25 +11,21 @@ require 'sinatra/base'
 # Require otel-ruby
 require 'opentelemetry/sdk'
 
-SDK = OpenTelemetry::SDK
-OpenTelemetry.tracer_provider = SDK::Trace::TracerProvider.new
 
-exporter = SDK::Trace::Export::ConsoleSpanExporter.new
-processor = SDK::Trace::Export::SimpleSpanProcessor.new(exporter)
-OpenTelemetry.tracer_provider.add_span_processor(processor)
+# configure SDK with defaults
+OpenTelemetry::SDK.configure
 
 # Rack middleware to extract span context, create child span, and add
 # attributes/events to the span
 class OpenTelemetryMiddleware
   def initialize(app)
     @app = app
-    @formatter = OpenTelemetry.tracer_provider.http_text_format
     @tracer = OpenTelemetry.tracer_provider.tracer('sinatra', 'semver:1.0')
   end
 
   def call(env)
     # Extract context from request headers
-    context = @formatter.extract(env)
+    context = OpenTelemetry.propagation.http.extract(env)
 
     status, headers, response_body = 200, {}, ''
 
