@@ -109,9 +109,7 @@ end
 ```
 
 See the [API Documentation](https://open-telemetry.github.io/opentelemetry-ruby/) for more
-detail, and the
-[opentelemetry examples](./examples/README.md)
-for a complete example.
+detail, and the [opentelemetry examples][examples-github] for a complete example.
 
 ## Release Schedule
 
@@ -170,6 +168,7 @@ Apache 2.0 - See [LICENSE][license-url] for more information.
 
 [ci-image]: https://circleci.com/gh/open-telemetry/opentelemetry-ruby.svg?style=svg
 [ci-url]: https://circleci.com/gh/open-telemetry/opentelemetry-ruby
+[examples-github]: https://github.com/open-telemetry/opentelemetry-ruby/tree/master/examples
 [gitter-image]: https://badges.gitter.im/open-telemetry/opentelemetry-ruby.svg
 [gitter-url]: https://gitter.im/open-telemetry/opentelemetry-ruby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 [issues-good-first-issue]: https://github.com/open-telemetry/opentelemetry-ruby/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22
