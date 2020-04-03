@@ -10,7 +10,7 @@ OpenTelemetry provides a single set of APIs, libraries, agents, and collector se
 
 ## How does this gem fit in?
 
-The `opentelemetry-exporters-jaeger` gem is a plugin that provides Jaeger Tracing export. To export to Jaeger, an application can include this gem along with `opentelemetry-sdk`, and configure the `TracerFactory` to use the provided Jaeger exporter as a span processor.
+The `opentelemetry-exporters-jaeger` gem is a plugin that provides Jaeger Tracing export. To export to Jaeger, an application can include this gem along with `opentelemetry-sdk`, and configure the `SDK` to use the provided Jaeger exporter as a span processor.
 
 Generally, *libraries* that produce telemetry data should avoid depending directly on specific exporters, deferring that choice to the application developer.
 
@@ -31,28 +31,30 @@ Then, configure the SDK to use the Jaeger exporter as a span processor, and use 
 require 'opentelemetry/sdk'
 require 'opentelemetry/exporters/jaeger'
 
-# Create a concrete tracer factory
-factory = OpenTelemetry::SDK::Trace::TracerFactory.new
-
-# Configure the tracer factory
-factory.add_span_processor(
-  OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(
-    OpenTelemetry::Exporters::Jaeger::Exporter.new(
-      service_name: 'my-service', host: 'localhost', port: 14268
+# Configure the sdk with custom export
+OpenTelemetry::SDK.configure do |c|
+  c.add_span_processor(
+    OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(
+      OpenTelemetry::Exporters::Jaeger::Exporter.new(
+        service_name: 'my-service', host: 'localhost', port: 6831
+      )
     )
   )
-)
+end
 
-# Set it as the default tracer factory
-OpenTelemetry.tracer_factory = factory
+# To start a trace you need to get a Tracer from the TracerProvider
+tracer = OpenTelemetry.tracer_provider.tracer('my_app_or_gem', '0.1.0')
 
-# Create a trace using the factory
-tracer = factory.tracer('my_app_or_gem', '1.0')
-
-# Record spans
-tracer.in_span('my_task') do |task_span|
-  tracer.in_span('inner') do |inner_span|
-    # Do something here
+# create a span
+tracer.in_span('foo') do |span|
+  # set an attribute
+  span.set_attribute('platform', 'osx')
+  # add an event
+  span.add_event(name: 'event in bar')
+  # create bar as child of foo
+  tracer.in_span('bar') do |child_span|
+    # inspect the span
+    pp child_span
   end
 end
 ```

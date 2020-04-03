@@ -4,7 +4,7 @@
 
 This is a simple example that demonstrates tracing an HTTP request from client to server. The example shows several aspects of tracing, such as:
 
-* Using the `TracerFactory`
+* Using the `TracerProvider`
 * Span Attributes
 * Using the console exporter
 
