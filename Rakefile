@@ -71,7 +71,7 @@ GEM_INFO = {
   },
   "opentelemetry-adapters-concurrent_ruby" => {
     version_getter: ->() {
-      require './lib/opentelemetry/adapters/concurrent-ruby/version.rb'
+      require './lib/opentelemetry/adapters/concurrent_ruby/version.rb'
       OpenTelemetry::Adapters::ConcurrentRuby::VERSION
     }
   },
