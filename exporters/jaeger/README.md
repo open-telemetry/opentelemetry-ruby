@@ -31,16 +31,15 @@ Then, configure the SDK to use the Jaeger exporter as a span processor, and use 
 require 'opentelemetry/sdk'
 require 'opentelemetry/exporters/jaeger'
 
-# initialize a SimpleSpanProcessor with Jaeger export
-processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(
-  OpenTelemetry::Exporters::Jaeger::Exporter.new(
-    service_name: 'my-service', host: 'localhost', port: 6831
-  )
-)
-
 # Configure the sdk with custom export
 OpenTelemetry::SDK.configure do |c|
-  c.add_span_processor processor
+  c.add_span_processor(
+    OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(
+      OpenTelemetry::Exporters::Jaeger::Exporter.new(
+        service_name: 'my-service', host: 'localhost', port: 6831
+      )
+    )
+  )
 end
 
 # To start a trace you need to get a Tracer from the TracerProvider
