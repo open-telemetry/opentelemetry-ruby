@@ -9,7 +9,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'opentelemetry/adapters/concurrent_ruby/version'
 
 Gem::Specification.new do |spec|
-  spec.name        = 'opentelemetry-adapters-concurrent-ruby'
+  spec.name        = 'opentelemetry-adapters-concurrent_ruby'
   spec.version     = OpenTelemetry::Adapters::ConcurrentRuby::VERSION
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
