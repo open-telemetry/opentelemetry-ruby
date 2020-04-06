@@ -11,7 +11,7 @@ module OpenTelemetry
         module Server
           class TracerMiddleware
             def call(_worker, msg, _queue)
-              parent_context = OpenTelemetry.propagation.text.extract(job)
+              parent_context = OpenTelemetry.propagation.text.extract(msg)
               tracer.in_span(
                 msg['wrapped']&.to_s || msg['class'],
                 attributes: {

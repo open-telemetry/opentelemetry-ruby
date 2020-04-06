@@ -1,0 +1,9 @@
+# frozen_string_literal: true
+
+appraise 'sidekiq-6.0' do
+  gem 'sidekiq', '~> 6.0'
+end
+
+appraise 'sidekiq-5.0' do
+  gem 'sidekiq', '~> 5.0'
+end
