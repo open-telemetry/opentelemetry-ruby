@@ -16,7 +16,7 @@ Metrics/ParameterLists:
   Enabled: false
 Naming/FileName:
   Exclude:
-    - "lib/opentelemetry-adapters-net-http.rb"
+    - "lib/opentelemetry-adapters-net_http.rb"
 Style/FrozenStringLiteralComment:
   Exclude:
     - gemfiles/**/*
