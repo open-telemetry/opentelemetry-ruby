@@ -16,9 +16,9 @@ Metrics/ParameterLists:
   Enabled: false
 Naming/FileName:
   Exclude:
-    - "example/concurrent-ruby.rb"
-    - "lib/opentelemetry-adapters-concurrent-ruby.rb"
-    - "lib/opentelemetry/adapters/concurrent-ruby.rb"
+    - "example/concurrent_ruby.rb"
+    - "lib/opentelemetry-adapters-concurrent_ruby.rb"
+    - "lib/opentelemetry/adapters/concurrent_ruby.rb"
 Style/FrozenStringLiteralComment:
   Exclude:
     - gemfiles/**/*
