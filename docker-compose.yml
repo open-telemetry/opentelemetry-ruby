@@ -48,6 +48,10 @@ services:
     <<: *base
     working_dir: /app/adapters/rack/example
 
+  ex-adapter-rails:
+    <<: *base
+    working_dir: /app/adapters/rails/example
+
   ex-adapter-redis:
     <<: *base
     environment:
