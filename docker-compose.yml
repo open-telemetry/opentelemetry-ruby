@@ -26,7 +26,7 @@ services:
 
   ex-adapter-concurrent-ruby:
     <<: *base
-    working_dir: /app/adapters/concurrent-ruby/example
+    working_dir: /app/adapters/concurrent_ruby/example
 
   ex-adapter-ethon:
     <<: *base

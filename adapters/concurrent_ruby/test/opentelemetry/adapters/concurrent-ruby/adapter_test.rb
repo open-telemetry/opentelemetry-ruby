@@ -6,7 +6,7 @@
 
 require 'test_helper'
 
-require_relative '../../../../lib/opentelemetry/adapters/concurrent-ruby'
+require_relative '../../../../lib/opentelemetry/adapters/concurrent_ruby'
 
 describe OpenTelemetry::Adapters::ConcurrentRuby::Adapter do
   let(:adapter) { OpenTelemetry::Adapters::ConcurrentRuby::Adapter.instance }

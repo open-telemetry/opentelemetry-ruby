@@ -16,7 +16,7 @@ Metrics/ParameterLists:
   Enabled: false
 Naming/FileName:
   Exclude:
-    - "lib/opentelemetry-adapters-rest-client.rb"
+    - "lib/opentelemetry-adapters-restclient.rb"
 Style/FrozenStringLiteralComment:
   Exclude:
     - gemfiles/**/*
