@@ -49,7 +49,6 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
-
 ### Selective Install
 
 Some users may want more fine grained control over what instrumentation they install for their application. Users can opt to selectively install instrumentation with the `use` method. Call `use` with the name of the instrumentation, and an optional configuration hash.
@@ -63,6 +62,11 @@ OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Adapters::SomeAdapter', { opt: 'value' }
 end
 ```
+
+## Releasing
+
+Releasing opentelemetry-adapters-all currently requires bumping the versions for all instrumentation adapters and pushing them to
+rubygems.org first. Because of this, opentelemetry-adapters-all must be the last gem to be published in the release process.
 
 ## How can I get involved?
 
