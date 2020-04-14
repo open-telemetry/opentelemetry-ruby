@@ -1,6 +1,6 @@
 # opentelemetry-adapters-all
 
-The `opentelemetry-adapters-all` gem is an all-in-one distribution of community maintained instrumentation adapters. Instrumentation adapters are packaged as individual gems for flexibilty and maintainability. Instead of having to require each adapter individually, applications can depend on this all-in-one gem as a convenient alternative.
+The `opentelemetry-adapters-all` gem is an all-in-one distribution of community maintained instrumentation adapters. Instrumentation adapters are packaged as individual gems for flexibility and maintainability. Instead of having to require each adapter individually, applications can depend on this all-in-one gem as a convenient alternative.
 
 ## What is OpenTelemetry?
 
@@ -23,7 +23,7 @@ gem install opentelemetry-adapters-all
 Or, if you use [bundler][bundler-home], include `opentelemetry-adapters-all` in your `Gemfile`.
 
 
-The `opentelemetry-api` has functionality to discover the instrumentation adapters that an application depends on. It maintains an registry of discovered adapters that SDKs can use to automatically install the instrumentation for you. These instructions pertain to the offical `opentelemetry-sdk` implementation. Consult the documentation for your SDK if you are using an alternative implementation.
+The `opentelemetry-api` has functionality to discover the instrumentation adapters that an application depends on. It maintains a registry of discovered adapters that SDKs can use to automatically install the instrumentation for you. These instructions pertain to the offical `opentelemetry-sdk` implementation. Consult the documentation for your SDK if you are using an alternative implementation.
 
 
 ### Use All
