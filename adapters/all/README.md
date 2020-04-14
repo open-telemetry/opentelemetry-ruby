@@ -65,8 +65,7 @@ end
 
 ## Releasing
 
-Releasing opentelemetry-adapters-all currently requires bumping the versions for all instrumentation adapters and pushing them to
-rubygems.org first. Because of this, opentelemetry-adapters-all must be the last gem to be published in the release process.
+Releasing opentelemetry-adapters-all requires that all gems it depends on exist on rubygems.org before publishing it. Because of this, it must be the last gem to be published in the release process.
 
 ## How can I get involved?
 

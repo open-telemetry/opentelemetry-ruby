@@ -8,7 +8,6 @@ lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 require 'opentelemetry/adapters/all/version'
-version = OpenTelemetry::Adapters::All::VERSION
 
 Gem::Specification.new do |spec|
   spec.name        = 'opentelemetry-adapters-all'
@@ -27,15 +26,15 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.4.0'
 
-  spec.add_dependency 'opentelemetry-adapters-concurrent_ruby', version
-  spec.add_dependency 'opentelemetry-adapters-ethon', version
-  spec.add_dependency 'opentelemetry-adapters-excon', version
-  spec.add_dependency 'opentelemetry-adapters-faraday', version
-  spec.add_dependency 'opentelemetry-adapters-net_http', version
-  spec.add_dependency 'opentelemetry-adapters-rack', version
-  spec.add_dependency 'opentelemetry-adapters-redis', version
-  spec.add_dependency 'opentelemetry-adapters-restclient', version
-  spec.add_dependency 'opentelemetry-adapters-sinatra', version
+  spec.add_dependency 'opentelemetry-adapters-concurrent_ruby', '~> 0.3.0'
+  spec.add_dependency 'opentelemetry-adapters-ethon', '~> 0.3.0'
+  spec.add_dependency 'opentelemetry-adapters-excon', '~> 0.3.0'
+  spec.add_dependency 'opentelemetry-adapters-faraday', '~> 0.3.0'
+  spec.add_dependency 'opentelemetry-adapters-net_http', '~> 0.3.0'
+  spec.add_dependency 'opentelemetry-adapters-rack', '~> 0.3.0'
+  spec.add_dependency 'opentelemetry-adapters-redis', '~> 0.3.0'
+  spec.add_dependency 'opentelemetry-adapters-restclient', '~> 0.3.0'
+  spec.add_dependency 'opentelemetry-adapters-sinatra', '~> 0.3.0'
 
   spec.add_development_dependency 'bundler', '>= 1.17'
   spec.add_development_dependency 'minitest', '~> 5.0'
