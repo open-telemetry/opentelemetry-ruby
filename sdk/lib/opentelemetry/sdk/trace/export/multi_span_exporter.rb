@@ -26,12 +26,10 @@ module OpenTelemetry
           # @return [Integer] the result of the export.
           def export(spans)
             @span_exporters.inject(SUCCESS) do |result_code, span_exporter|
-              begin
-                merge_result_code(result_code, span_exporter.export(spans))
-              rescue => e # rubocop:disable Style/RescueStandardError
-                OpenTelemetry.logger.warn("exception raised by export - #{e}")
-                FAILED_NOT_RETRYABLE
-              end
+              merge_result_code(result_code, span_exporter.export(spans))
+            rescue => e # rubocop:disable Style/RescueStandardError
+              OpenTelemetry.logger.warn("exception raised by export - #{e}")
+              FAILED_NOT_RETRYABLE
             end
           end
 
