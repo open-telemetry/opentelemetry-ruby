@@ -110,6 +110,12 @@ GEM_INFO = {
       require './lib/opentelemetry/adapters/sinatra/version.rb'
       OpenTelemetry::Adapters::Sinatra::VERSION
     }
+  },
+  "opentelemetry-adapters-all" => {
+    version_getter: ->() {
+      require './lib/opentelemetry/adapters/all/version.rb'
+      OpenTelemetry::Adapters::All::VERSION
+    }
   }
 }
 
