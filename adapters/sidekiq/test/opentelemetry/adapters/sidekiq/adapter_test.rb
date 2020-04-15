@@ -45,7 +45,7 @@ describe OpenTelemetry::Adapters::Sidekiq::Adapter do
 
       _(exporter.finished_spans.size).must_equal 2
 
-      _(root_span.attributes['job_id']).must_equal job_id
+      _(root_span.attributes['messaging.message_id']).must_equal job_id
       _(root_span.attributes['messaging.destination']).must_equal 'default'
       _(root_span.attributes['created_at']).wont_be_nil
       _(root_span.name).must_equal 'SimpleJob'
@@ -53,7 +53,7 @@ describe OpenTelemetry::Adapters::Sidekiq::Adapter do
       _(root_span.parent_span_id).must_equal '0000000000000000'
 
       child_span = exporter.finished_spans.last
-      _(child_span.attributes['job_id']).must_equal job_id
+      _(child_span.attributes['messaging.message_id']).must_equal job_id
       _(child_span.attributes['messaging.destination']).must_equal 'default'
       _(child_span.attributes['created_at']).wont_be_nil
       _(child_span.name).must_equal 'SimpleJob'

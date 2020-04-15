@@ -14,7 +14,7 @@ module OpenTelemetry
               tracer.in_span(
                 job['wrapped']&.to_s || job['class'],
                 attributes: {
-                  'job_id' => job['jid'],
+                  'messaging.message_id' => job['jid'],
                   'messaging.destination' => job['queue'],
                   'created_at' => job['created_at'],
                 },
