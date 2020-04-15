@@ -119,6 +119,15 @@ commands:
             bundle exec appraisal install
             bundle exec appraisal rake test
       - run:
+          name: Bundle + CI (Adapters - Sidekiq)
+          command: |
+            cd adapters/sidekiq
+            gem uninstall -aIx bundler
+            gem install --no-document bundler -v '~> 2.0.2'
+            bundle install --jobs=3 --retry=3
+            bundle exec appraisal install
+            bundle exec appraisal rake test
+      - run:
           name: Bundle + CI (Adapters - Sinatra)
           command: |
             cd adapters/sinatra

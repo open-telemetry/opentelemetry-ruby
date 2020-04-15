@@ -60,6 +60,10 @@ services:
     <<: *base
     working_dir: /app/adapters/restclient/example
 
+  ex-adapter-sidekiq:
+    <<: *base
+    working_dir: /app/adapters/sidekiq/example
+
   ex-adapter-sinatra:
     <<: *base
     working_dir: /app/adapters/sinatra/example
