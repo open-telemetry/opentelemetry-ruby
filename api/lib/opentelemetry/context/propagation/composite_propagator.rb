@@ -38,12 +38,10 @@ module OpenTelemetry
         # @return [Object] carrier
         def inject(carrier, context = Context.current, &setter)
           @injectors.inject(carrier) do |memo, injector|
-            begin
-              injector.inject(memo, context, &setter)
-            rescue => e # rubocop:disable Style/RescueStandardError
-              OpenTelemetry.logger.warn "Error in CompositePropagator#inject #{e.message}"
-              carrier
-            end
+            injector.inject(memo, context, &setter)
+          rescue => e # rubocop:disable Style/RescueStandardError
+            OpenTelemetry.logger.warn "Error in CompositePropagator#inject #{e.message}"
+            carrier
           end
         end
 
