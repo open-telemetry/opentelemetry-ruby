@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
                ::Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 2.4.0'
+  spec.required_ruby_version = '>= 2.5.0'
 
   spec.add_dependency 'opentelemetry-api', '~> 0.3.0'
   spec.add_dependency 'thrift'

@@ -4,9 +4,6 @@
 
 version: 2.1
 executors:
-  ruby24:
-    docker:
-      - image: "circleci/ruby:2.4-buster"
   ruby25:
     docker:
       - image: "circleci/ruby:2.5-buster"
@@ -140,11 +137,6 @@ commands:
           name: Release
           command: "rake push_release"
 jobs:
-  test-ruby24:
-    executor: ruby24
-    steps:
-      - rake-test
-      - rake-test-appraisal
   test-ruby25:
     executor: ruby25
     steps:
@@ -177,10 +169,6 @@ workflows:
   version: 2
   builds:
     jobs:
-      - test-ruby24:
-          filters:
-            tags:
-              only: /^opentelemetry-.+\/v\d.*$/
       - test-ruby25:
           filters:
             tags:
@@ -203,7 +191,6 @@ workflows:
               only: /^opentelemetry-.+\/v\d.*$/
       - release:
           requires:
-            - test-ruby24
             - test-ruby25
             - test-ruby26
             - test-ruby27
