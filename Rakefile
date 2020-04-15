@@ -93,6 +93,12 @@ GEM_INFO = {
       OpenTelemetry::Adapters::Rack::VERSION
     }
   },
+  "opentelemetry-adapters-rails" => {
+    version_getter: ->() {
+      require './lib/opentelemetry/adapters/rails/version.rb'
+      OpenTelemetry::Adapters::Rails::VERSION
+    }
+  },
   "opentelemetry-adapters-redis" => {
     version_getter: ->() {
       require './lib/opentelemetry/adapters/redis/version.rb'
