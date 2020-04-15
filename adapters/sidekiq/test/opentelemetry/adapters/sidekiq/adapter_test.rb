@@ -45,20 +45,23 @@ describe OpenTelemetry::Adapters::Sidekiq::Adapter do
 
       _(exporter.finished_spans.size).must_equal 2
 
-      _(root_span.attributes['messaging.message_id']).must_equal job_id
-      _(root_span.attributes['messaging.destination']).must_equal 'default'
-      _(root_span.attributes['created_at']).wont_be_nil
       _(root_span.name).must_equal 'SimpleJob'
       _(root_span.kind).must_equal :producer
       _(root_span.parent_span_id).must_equal '0000000000000000'
+      _(root_span.attributes['messaging.message_id']).must_equal job_id
+      _(root_span.attributes['messaging.destination']).must_equal 'default'
+      _(root_span.events.size).must_equal(1)
+      _(root_span.events[0].name).must_equal('created_at')
 
       child_span = exporter.finished_spans.last
-      _(child_span.attributes['messaging.message_id']).must_equal job_id
-      _(child_span.attributes['messaging.destination']).must_equal 'default'
-      _(child_span.attributes['created_at']).wont_be_nil
       _(child_span.name).must_equal 'SimpleJob'
       _(child_span.kind).must_equal :consumer
       _(child_span.parent_span_id).must_equal root_span.span_id
+      _(child_span.attributes['messaging.message_id']).must_equal job_id
+      _(child_span.attributes['messaging.destination']).must_equal 'default'
+      _(child_span.events.size).must_equal(2)
+      _(child_span.events[0].name).must_equal('created_at')
+      _(child_span.events[1].name).must_equal('enqueued_at')
 
       _(child_span.trace_id).must_equal root_span.trace_id
     end
@@ -66,6 +69,8 @@ describe OpenTelemetry::Adapters::Sidekiq::Adapter do
     it 'after performing a simple job enqueuer' do
       SimpleEnqueueingJob.perform_async
       Sidekiq::Worker.drain_all
+
+      _(exporter.finished_spans.size).must_equal 4
 
       _(root_span.parent_span_id).must_equal '0000000000000000'
       _(root_span.name).must_equal 'SimpleEnqueueingJob'
@@ -82,8 +87,6 @@ describe OpenTelemetry::Adapters::Sidekiq::Adapter do
       child_span_3 = spans.find { |s| s.parent_span_id == child_span_2.span_id }
       _(child_span_3.name).must_equal 'SimpleJob'
       _(child_span_3.kind).must_equal :consumer
-
-      _(exporter.finished_spans.size).must_equal 4
     end
   end
 end

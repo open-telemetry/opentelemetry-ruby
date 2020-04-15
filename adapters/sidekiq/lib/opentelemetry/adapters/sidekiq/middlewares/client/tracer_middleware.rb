@@ -16,11 +16,11 @@ module OpenTelemetry
                 attributes: {
                   'messaging.message_id' => job['jid'],
                   'messaging.destination' => job['queue'],
-                  'created_at' => job['created_at'],
                 },
                 kind: :producer
               ) do |span|
                 OpenTelemetry.propagation.text.inject(job)
+                span.add_event(name: 'created_at', timestamp: job['created_at'])
                 yield
               end
             end
