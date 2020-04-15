@@ -191,11 +191,9 @@ describe OpenTelemetry::SDK::Trace::Span do
     end
 
     let(:error) do
-      begin
-        raise 'oops'
-      rescue StandardError => e
-        e
-      end
+      raise 'oops'
+    rescue StandardError => e
+      e
     end
 
     it 'records error as an event' do
