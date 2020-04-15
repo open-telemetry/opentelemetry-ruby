@@ -37,14 +37,11 @@ module OpenTelemetry
 
         def add_server_middleware
           ::Sidekiq.configure_server do |config|
-            config.server_middleware do |chain|
-              chain.add Middlewares::Server::TracerMiddleware
-            end
-          end
-
-          ::Sidekiq.configure_client do |config|
             config.client_middleware do |chain|
               chain.add Middlewares::Client::TracerMiddleware
+            end
+            config.server_middleware do |chain|
+              chain.add Middlewares::Server::TracerMiddleware
             end
           end
 

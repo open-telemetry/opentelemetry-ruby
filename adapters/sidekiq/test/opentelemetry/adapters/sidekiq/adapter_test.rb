@@ -19,7 +19,6 @@ class SimpleJob
   include Sidekiq::Worker
 
   def perform
-    puts 'Simple work accomplished'
   end
 end
 
@@ -41,7 +40,9 @@ describe OpenTelemetry::Adapters::Sidekiq::Adapter do
     end
 
     it 'after performing a simple job' do
-      job_id = Sidekiq::Testing.inline! { SimpleJob.perform_async }
+      job_id = SimpleJob.perform_async
+      SimpleJob.drain
+
       _(exporter.finished_spans.size).must_equal 2
 
       _(root_span.attributes['job_id']).must_equal job_id
@@ -63,8 +64,8 @@ describe OpenTelemetry::Adapters::Sidekiq::Adapter do
     end
 
     it 'after performing a simple job enqueuer' do
-      job_id = Sidekiq::Testing.inline! { SimpleEnqueueingJob.perform_async }
-      _(exporter.finished_spans.size).must_equal 4
+      SimpleEnqueueingJob.perform_async
+      Sidekiq::Worker.drain_all
 
       _(root_span.parent_span_id).must_equal '0000000000000000'
       _(root_span.name).must_equal 'SimpleEnqueueingJob'
@@ -81,6 +82,8 @@ describe OpenTelemetry::Adapters::Sidekiq::Adapter do
       child_span_3 = spans.find { |s| s.parent_span_id == child_span_2.span_id }
       _(child_span_3.name).must_equal 'SimpleJob'
       _(child_span_3.kind).must_equal :consumer
+
+      _(exporter.finished_spans.size).must_equal 4
     end
   end
 end
