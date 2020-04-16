@@ -12,6 +12,7 @@ require 'opentelemetry-adapters-net_http'
 require 'opentelemetry-adapters-rack'
 require 'opentelemetry-adapters-redis'
 require 'opentelemetry-adapters-restclient'
+require 'opentelemetry-adapters-sidekiq'
 require 'opentelemetry-adapters-sinatra'
 
 module OpenTelemetry

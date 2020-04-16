@@ -34,6 +34,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-adapters-rack', '~> 0.4.0'
   spec.add_dependency 'opentelemetry-adapters-redis', '~> 0.4.0'
   spec.add_dependency 'opentelemetry-adapters-restclient', '~> 0.4.0'
+  spec.add_dependency 'opentelemetry-adapters-sidekiq', '~> 0.4.0'
   spec.add_dependency 'opentelemetry-adapters-sinatra', '~> 0.4.0'
 
   spec.add_development_dependency 'bundler', '>= 1.17'
