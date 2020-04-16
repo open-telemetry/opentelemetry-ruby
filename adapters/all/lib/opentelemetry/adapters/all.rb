@@ -4,14 +4,15 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry-adapters-concurrent-ruby'
+require 'opentelemetry-adapters-concurrent_ruby'
 require 'opentelemetry-adapters-ethon'
 require 'opentelemetry-adapters-excon'
 require 'opentelemetry-adapters-faraday'
-require 'opentelemetry-adapters-net-http'
+require 'opentelemetry-adapters-net_http'
 require 'opentelemetry-adapters-rack'
 require 'opentelemetry-adapters-redis'
-require 'opentelemetry-adapters-rest-client'
+require 'opentelemetry-adapters-restclient'
+require 'opentelemetry-adapters-sidekiq'
 require 'opentelemetry-adapters-sinatra'
 
 module OpenTelemetry

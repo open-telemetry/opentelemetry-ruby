@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Adapters
     module Sidekiq
-      VERSION = '0.0.0'
+      VERSION = '0.4.0'
     end
   end
 end
