@@ -37,6 +37,7 @@ ARG PACKAGES="\
     libxslt-dev \
     openssl \
     tzdata \
+    sqlite-dev \
     util-linux \
     "
 # Install packages

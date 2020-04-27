@@ -9,3 +9,6 @@
 
 # Appraisals
 adapters/**/*.gemfile.lock
+
+# Rails adapter
+**/log

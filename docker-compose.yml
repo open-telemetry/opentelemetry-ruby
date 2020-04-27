@@ -48,9 +48,9 @@ services:
     <<: *base
     working_dir: /app/adapters/rack/example
 
-  ex-adapter-rails:
+  adapter-rails:
     <<: *base
-    working_dir: /app/adapters/rails/example
+    working_dir: /app/adapters/rails
 
   ex-adapter-redis:
     <<: *base

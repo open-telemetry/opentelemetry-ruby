@@ -5,9 +5,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 appraise 'rails-6.0' do
-  gem 'rails', '6.0.2.2'
+  gem 'rails', '~> 6.0.0'
+  gem 'sprockets', '< 4'
+  gem 'sqlite3', '~> 1.4.1'
 end
 
 appraise 'rails-5.2' do
-  gem 'rails', '5.2.4.2'
+  gem 'rails', '~> 5.2.1'
+  gem 'sprockets', '< 4'
+  gem 'sqlite3', '~> 1.4.1'
 end

@@ -4,21 +4,26 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative 'middlewares'
+require 'opentelemetry/adapters/rack/middlewares/tracer_middleware'
+# require_relative 'middlewares'
 
 module OpenTelemetry
   module Adapters
     module Rails
-      # The Adapter class contains logic to detect and install the Sinatra
+      class Railtie < Rails::Railtie
+        initializer 'opentelemetry.before_initialize' do |app|
+          app.middleware.insert_before(0, OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware)
+
+        end
+      end
+      # The Adapter class contains logic to detect and install the Rails
       # instrumentation adapter
       class Adapter < OpenTelemetry::Instrumentation::Adapter
         install do |_|
-          ::ActiveSupport.on_load(:before_initialize) do
-            self.middleware.insert_after(
-              ActionDispatch::ShowExceptions,
-              OpenTelemetry::Adapters::Rails::ExceptionMiddleware
-            )
-          end
+
+          # ::ActiveSupport.on_load(:before_initialize) do
+          #   self.middleware.insert_before(0, OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware)
+          # end
         end
 
         present do

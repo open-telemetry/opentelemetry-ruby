@@ -8,7 +8,7 @@ module OpenTelemetry
   module Adapters
     module Rails
       module Middlewares
-        class TracerMiddleware
+        class TraceMiddleware
           def initialize(app)
             @app = app
           end
