@@ -66,6 +66,7 @@ services:
 
   ex-adapter-sinatra:
     <<: *base
+    command: ./start_server.sh
     working_dir: /app/adapters/sinatra/example
 
   ex-http:
