@@ -18,15 +18,11 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     Samplers::ConstantSampler.new(result: Result.new(decision: Decision::RECORD), description: 'RecordSampler')
   end
 
-  describe '#name' do
-    it 'reflects the name passed in' do
-      _(Tracer.new('component', 'semver:1.0').name).must_equal('component')
-    end
-  end
+  describe '#resource' do
+    let(:resource) { OpenTelemetry::SDK::Resources::Resource.create('name' => 'component', 'version' => 'semver:1.0') }
 
-  describe '#version' do
-    it 'reflects the version passed in' do
-      _(Tracer.new('component', 'semver:1.0').version).must_equal('semver:1.0')
+    it 'reflects the resource passed in' do
+      _(Tracer.new(resource).resource).must_equal(resource)
     end
   end
 

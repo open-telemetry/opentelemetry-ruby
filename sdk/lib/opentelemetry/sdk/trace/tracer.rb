@@ -9,15 +9,13 @@ module OpenTelemetry
     module Trace
       # {Tracer} is the SDK implementation of {OpenTelemetry::Trace::Tracer}.
       class Tracer < OpenTelemetry::Trace::Tracer
-        attr_reader :name
-        attr_reader :version
+        attr_reader :resource
 
         # @api private
         #
         # Returns a new {Tracer} instance.
         #
-        # @param [String] name Instrumentation package name
-        # @param [String] version Instrumentation package version
+        # @param [Resource] resource Containing name and version arguments supplied to the TracerProvider
         #
         # @return [Tracer]
         def initialize(name, version)
