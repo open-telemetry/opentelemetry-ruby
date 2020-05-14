@@ -30,7 +30,7 @@ module OpenTelemetry
                 tracer.start_span(
                   "HTTP #{http_method}",
                   attributes: {
-                    'component' => 'http',
+                    'component' => 'excon',
                     'http.host' => datum[:host],
                     'http.method' => http_method,
                     'http.scheme' => datum[:scheme],

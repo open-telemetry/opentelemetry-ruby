@@ -50,7 +50,7 @@ describe OpenTelemetry::Adapters::Excon::Adapter do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
-      _(span.attributes['component']).must_equal 'http'
+      _(span.attributes['component']).must_equal 'excon'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.scheme']).must_equal 'http'
@@ -68,7 +68,7 @@ describe OpenTelemetry::Adapters::Excon::Adapter do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
-      _(span.attributes['component']).must_equal 'http'
+      _(span.attributes['component']).must_equal 'excon'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.status_code']).must_equal 500
       _(span.attributes['http.scheme']).must_equal 'http'
@@ -88,7 +88,7 @@ describe OpenTelemetry::Adapters::Excon::Adapter do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
-      _(span.attributes['component']).must_equal 'http'
+      _(span.attributes['component']).must_equal 'excon'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.host']).must_equal 'example.com'
