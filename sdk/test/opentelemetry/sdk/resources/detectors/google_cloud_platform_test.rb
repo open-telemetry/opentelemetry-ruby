@@ -24,11 +24,11 @@ describe OpenTelemetry::SDK::Resources::Detectors::GoogleCloudPlatform do
         mock = MiniTest::Mock.new
         mock.expect(:compute_engine?, true)
         mock.expect(:project_id, 'opentelemetry')
-        mock.expect(:instance_attribute, 'us-central1', %w(cluster-location))
+        mock.expect(:instance_attribute, 'us-central1', %w[cluster-location])
         mock.expect(:instance_zone, 'us-central1-a')
-        mock.expect(:lookup_metadata, 'opentelemetry-test', %w(instance id))
-        mock.expect(:lookup_metadata, 'opentelemetry-test', %w(instance hostname))
-        mock.expect(:instance_attribute, 'opentelemetry-cluster', %w(cluster-name))
+        mock.expect(:lookup_metadata, 'opentelemetry-test', %w[instance id])
+        mock.expect(:lookup_metadata, 'opentelemetry-test', %w[instance hostname])
+        mock.expect(:instance_attribute, 'opentelemetry-cluster', %w[cluster-name])
         mock.expect(:kubernetes_engine?, true)
         mock.expect(:kubernetes_engine_namespace_id, 'default')
 

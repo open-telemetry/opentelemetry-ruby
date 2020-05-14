@@ -17,7 +17,7 @@ module OpenTelemetry
         DETECTORS = [
           OpenTelemetry::SDK::Resources::Detectors::GoogleCloudPlatform,
           OpenTelemetry::SDK::Resources::Detectors::Telemetry
-        ]
+        ].freeze
 
         def detect
           resources = DETECTORS.map(&:detect)

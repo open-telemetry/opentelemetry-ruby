@@ -44,7 +44,7 @@ module OpenTelemetry
 
           def hostname
             ENV['HOSTNAME'] || `hostname`&.strip
-          rescue StandardError => e
+          rescue StandardError
             ''
           end
         end
