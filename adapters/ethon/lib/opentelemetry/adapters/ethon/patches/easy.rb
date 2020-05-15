@@ -71,7 +71,6 @@ module OpenTelemetry
             @otel_span = tracer.start_span(
               HTTP_METHODS_TO_SPAN_NAMES[method],
               attributes: {
-                'component' => 'http',
                 'http.method' => method,
                 'http.url' => url
               },

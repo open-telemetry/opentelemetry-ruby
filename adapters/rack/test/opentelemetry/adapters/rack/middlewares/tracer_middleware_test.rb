@@ -57,7 +57,6 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
     end
 
     it 'records attributes' do
-      _(first_span.attributes['component']).must_equal 'http'
       _(first_span.attributes['http.method']).must_equal 'GET'
       _(first_span.attributes['http.status_code']).must_equal 200
       _(first_span.attributes['http.status_text']).must_equal 'OK'

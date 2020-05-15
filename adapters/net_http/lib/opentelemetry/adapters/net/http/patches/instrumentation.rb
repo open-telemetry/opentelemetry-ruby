@@ -21,7 +21,6 @@ module OpenTelemetry
               tracer.in_span(
                 HTTP_METHODS_TO_SPAN_NAMES[req.method],
                 attributes: {
-                  'component' => 'http',
                   'http.method' => req.method,
                   'http.scheme' => USE_SSL_TO_SCHEME[use_ssl?],
                   'http.target' => req.path,

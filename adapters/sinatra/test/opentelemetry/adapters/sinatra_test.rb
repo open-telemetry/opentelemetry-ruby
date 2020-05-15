@@ -83,7 +83,6 @@ describe OpenTelemetry::Adapters::Sinatra do
       get '/one/endpoint'
 
       _(exporter.finished_spans.first.attributes).must_equal(
-        'component' => 'http',
         'http.method' => 'GET',
         'http.url' => '/endpoint',
         'http.status_code' => 200,

@@ -83,7 +83,6 @@ module OpenTelemetry
             span = tracer.start_span('http_server.proxy',
                                      with_parent_context: extracted_context,
                                      attributes: {
-                                       'component' => 'http',
                                        'start_time' => request_start_time.to_f
                                      },
                                      kind: :server)
@@ -105,7 +104,6 @@ module OpenTelemetry
 
           def request_span_attributes(env:)
             {
-              'component' => 'http',
               'http.method' => env['REQUEST_METHOD'],
               'http.host' => env['HTTP_HOST'] || 'unknown',
               'http.scheme' => env['rack.url_scheme'],

@@ -49,7 +49,6 @@ module OpenTelemetry
             port = options[:port]
 
             {
-              'component' => 'redis',
               'db.type' => 'redis',
               'db.instance' => options[:db].to_s,
               'db.url' => "redis://#{host}:#{port}",

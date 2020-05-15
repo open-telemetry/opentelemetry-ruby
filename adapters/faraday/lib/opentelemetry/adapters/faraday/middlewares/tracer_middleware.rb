@@ -29,7 +29,6 @@ module OpenTelemetry
             tracer.in_span(
               "HTTP #{http_method}",
               attributes: {
-                'component' => 'http',
                 'http.method' => http_method,
                 'http.url' => env.url.to_s
               },
