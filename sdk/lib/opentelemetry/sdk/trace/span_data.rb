@@ -24,6 +24,7 @@ module OpenTelemetry
                             :links,
                             :events,
                             :library_resource,
+                            :instrumentation_library,
                             :span_id,
                             :trace_id,
                             :trace_flags)

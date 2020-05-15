@@ -76,6 +76,7 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter::SpanEncoder do
       links,
       events,
       nil,
+      nil,
       OpenTelemetry::Trace.generate_span_id,
       trace_id,
       trace_flags
