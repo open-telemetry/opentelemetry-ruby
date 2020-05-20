@@ -6,9 +6,7 @@
 
 require 'simplecov'
 SimpleCov.start
-SimpleCov.minimum_coverage 85
 
-require 'opentelemetry/sdk'
+require 'opentelemetry/resource/detectors'
 require 'minitest/autorun'
-
-OpenTelemetry.logger = Logger.new('/dev/null')
+require 'pry'

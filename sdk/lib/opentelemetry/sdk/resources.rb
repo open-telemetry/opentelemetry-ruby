@@ -14,4 +14,3 @@ end
 
 require 'opentelemetry/sdk/resources/resource'
 require 'opentelemetry/sdk/resources/constants'
-require 'opentelemetry/sdk/resources/auto_detector'

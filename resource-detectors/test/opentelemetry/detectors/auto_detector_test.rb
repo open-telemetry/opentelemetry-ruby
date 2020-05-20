@@ -6,17 +6,11 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::SDK::Resources::AutoDetector do
-  let(:auto_detector) { OpenTelemetry::SDK::Resources::AutoDetector }
+describe OpenTelemetry::Resource::Detectors::AutoDetector do
+  let(:auto_detector) { OpenTelemetry::Resource::Detectors::AutoDetector }
   let(:detected_resource) { auto_detector.detect }
   let(:detected_resource_labels) { detected_resource.label_enumerator.to_h }
-  let(:expected_resource_labels) do
-    {
-      'telemetry.sdk.name' => 'OpenTelemetry',
-      'telemetry.sdk.language' => 'ruby',
-      'telemetry.sdk.version' => 'semver:0.4.0'
-    }
-  end
+  let(:expected_resource_labels) { {} }
 
   describe '.detect' do
     it 'returns detected resources' do
