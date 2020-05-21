@@ -12,7 +12,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
   let(:tracer_provider) { OpenTelemetry::SDK::Trace::TracerProvider.new }
   let(:tracer) do
     OpenTelemetry.tracer_provider = tracer_provider
-    OpenTelemetry.tracer_provider.tracer
+    OpenTelemetry.tracer_provider.tracer('component-tracer', '1.0.0')
   end
   let(:record_sampler) do
     ->(trace_id:, span_id:, parent_context:, links:, name:, kind:, attributes:) { Result.new(decision: Decision::RECORD) } # rubocop:disable Lint/UnusedBlockArgument
@@ -218,6 +218,12 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       _(span.context.trace_flags).wont_be :sampled?
       _(span).wont_be :recording?
       _(span.context.trace_id).must_equal(span_context.trace_id)
+    end
+
+    it 'creates a span with the provided instrumentation library' do
+      span = tracer.start_span('span', with_parent_context: context)
+      _(span.instrumentation_library.name).must_equal('component-tracer')
+      _(span.instrumentation_library.version).must_equal('1.0.0')
     end
 
     it 'creates a span with all supplied parameters' do
