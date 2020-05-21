@@ -16,7 +16,7 @@ module OpenTelemetry
       private_constant :USE_MODE_UNSPECIFIED, :USE_MODE_ONE, :USE_MODE_ALL
 
       attr_writer :logger, :http_extractors, :http_injectors, :text_extractors,
-                  :text_injectors, :resource
+                  :text_injectors
 
       def initialize
         @adapter_names = []
@@ -27,11 +27,15 @@ module OpenTelemetry
         @text_injectors = nil
         @span_processors = []
         @use_mode = USE_MODE_UNSPECIFIED
-        @resource = OpenTelemetry::SDK::Resources::Resource.create
+        @resource = Resources::Resource.telemetry_sdk
       end
 
       def logger
         @logger ||= Logger.new(STDOUT)
+      end
+
+      def resource=(new_resource)
+        @resource = @resource.merge(new_resource)
       end
 
       # Install an instrumentation adapter with specificied optional +config+.

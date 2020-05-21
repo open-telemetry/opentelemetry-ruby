@@ -11,7 +11,7 @@ module OpenTelemetry
       # for which telemetry (metrics or traces) is reported.
       class Resource
         class << self
-          private :new # rubocop:disable Style/AccessModifierDeclarations
+          private :new
 
           # Returns a newly created {Resource} with the specified labels
           #
@@ -28,6 +28,14 @@ module OpenTelemetry
             end.freeze
 
             new(frozen_labels)
+          end
+
+          def telemetry_sdk
+            create(
+              Constants::TELEMETRY_SDK_RESOURCE[:name] => 'opentelemetry',
+              Constants::TELEMETRY_SDK_RESOURCE[:language] => 'ruby',
+              Constants::TELEMETRY_SDK_RESOURCE[:version] => "semver:#{OpenTelemetry::SDK::VERSION}"
+            )
           end
         end
 
