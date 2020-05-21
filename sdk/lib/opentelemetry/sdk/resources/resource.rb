@@ -11,7 +11,7 @@ module OpenTelemetry
       # for which telemetry (metrics or traces) is reported.
       class Resource
         class << self
-          private :new
+          private :new # rubocop:disable Style/AccessModifierDeclarations
 
           # Returns a newly created {Resource} with the specified labels
           #
