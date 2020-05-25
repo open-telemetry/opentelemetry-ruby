@@ -86,7 +86,8 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
 
     it 'returns a default name-less version-less tracer' do
       tracer = tracer_provider.tracer
-      _(tracer.resource.label_enumerator.to_h).must_equal('name' => '', 'version' => '')
+      _(tracer.name).must_equal('')
+      _(tracer.version).must_equal('')
     end
 
     it 'returns different tracers for different names' do

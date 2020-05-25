@@ -13,8 +13,7 @@ module OpenTelemetry
         private_constant(:Key)
 
         attr_accessor :active_trace_config
-        attr_reader :active_span_processor
-        attr_reader :stopped
+        attr_reader :active_span_processor, :stopped, :resource
         alias stopped? stopped
 
         # Returns a new {TracerProvider} instance.
@@ -39,8 +38,7 @@ module OpenTelemetry
         def tracer(name = nil, version = nil)
           name ||= ''
           version ||= ''
-          resource = @resource.merge(OpenTelemetry::SDK::Resources::Resource.create('name' => name, 'version' => version))
-          @mutex.synchronize { @registry[Key.new(name, version)] ||= Tracer.new(resource) }
+          @mutex.synchronize { @registry[Key.new(name, version)] ||= Tracer.new(name, version) }
         end
 
         # Attempts to stop all the activity for this {Tracer}. Calls

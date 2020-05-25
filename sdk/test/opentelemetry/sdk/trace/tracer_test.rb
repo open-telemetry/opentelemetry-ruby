@@ -18,14 +18,6 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     Samplers::ConstantSampler.new(result: Result.new(decision: Decision::RECORD), description: 'RecordSampler')
   end
 
-  describe '#resource' do
-    let(:resource) { OpenTelemetry::SDK::Resources::Resource.create('name' => 'component', 'version' => 'semver:1.0') }
-
-    it 'reflects the resource passed in' do
-      _(Tracer.new(resource).resource).must_equal(resource)
-    end
-  end
-
   describe '#start_root_span' do
     it 'provides a default name' do
       _(tracer.start_root_span(nil).name).wont_be_nil

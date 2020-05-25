@@ -9,19 +9,19 @@ module OpenTelemetry
     module Trace
       # {Tracer} is the SDK implementation of {OpenTelemetry::Trace::Tracer}.
       class Tracer < OpenTelemetry::Trace::Tracer
-        attr_reader :resource
+        attr_reader :name
+        attr_reader :version
 
         # @api private
         #
         # Returns a new {Tracer} instance.
         #
-        # @param [Resource] resource Containing name and version arguments supplied to the TracerProvider
+        # @param [InstrumentationLibrary] resource Containing name and version arguments supplied to the TracerProvider
         #
         # @return [Tracer]
         def initialize(name, version)
           @name = name
           @version = version
-          @resource = Resources::Resource.create('name' => name, 'version' => version)
           @instrumentation_library = InstrumentationLibrary.new(name, version)
         end
 
@@ -54,7 +54,8 @@ module OpenTelemetry
             attributes = attributes&.merge(result.attributes) || result.attributes
             active_trace_config = OpenTelemetry.tracer_provider.active_trace_config
             active_span_processor = OpenTelemetry.tracer_provider.active_span_processor
-            Span.new(context, name, kind, parent_span_id, active_trace_config, active_span_processor, attributes, links, start_timestamp || Time.now, @resource, @instrumentation_library)
+            resource = OpenTelemetry.tracer_provider.resource
+            Span.new(context, name, kind, parent_span_id, active_trace_config, active_span_processor, attributes, links, start_timestamp || Time.now, resource, @instrumentation_library)
           else
             OpenTelemetry::Trace::Span.new(span_context: OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id))
           end
