@@ -18,6 +18,18 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     Samplers::ConstantSampler.new(result: Result.new(decision: Decision::RECORD), description: 'RecordSampler')
   end
 
+  describe '#name' do
+    it 'reflects the name passed in' do
+      _(Tracer.new('component', 'semver:1.0').name).must_equal('component')
+    end
+  end
+
+  describe '#version' do
+    it 'reflects the version passed in' do
+      _(Tracer.new('component', 'semver:1.0').version).must_equal('semver:1.0')
+    end
+  end
+
   describe '#start_root_span' do
     it 'provides a default name' do
       _(tracer.start_root_span(nil).name).wont_be_nil
