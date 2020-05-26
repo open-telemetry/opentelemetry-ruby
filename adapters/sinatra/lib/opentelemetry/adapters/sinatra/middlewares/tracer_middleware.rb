@@ -17,8 +17,7 @@ module OpenTelemetry
           def call(env)
             tracer.in_span(
               env['PATH_INFO'],
-              attributes: { 'component' => 'http',
-                            'http.method' => env['REQUEST_METHOD'],
+              attributes: { 'http.method' => env['REQUEST_METHOD'],
                             'http.url' => env['PATH_INFO'] },
               kind: :server,
               with_parent_context: parent_context(env)

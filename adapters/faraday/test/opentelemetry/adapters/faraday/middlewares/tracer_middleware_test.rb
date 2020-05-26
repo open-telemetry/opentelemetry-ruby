@@ -50,7 +50,6 @@ describe OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware do
       response = client.get('/success')
 
       _(span.name).must_equal 'HTTP GET'
-      _(span.attributes['component']).must_equal 'http'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.url']).must_equal 'http://example.com/success'
@@ -63,7 +62,6 @@ describe OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware do
       response = client.get('/not_found')
 
       _(span.name).must_equal 'HTTP GET'
-      _(span.attributes['component']).must_equal 'http'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.status_code']).must_equal 404
       _(span.attributes['http.url']).must_equal 'http://example.com/not_found'
@@ -76,7 +74,6 @@ describe OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware do
       response = client.get('/failure')
 
       _(span.name).must_equal 'HTTP GET'
-      _(span.attributes['component']).must_equal 'http'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.status_code']).must_equal 500
       _(span.attributes['http.url']).must_equal 'http://example.com/failure'

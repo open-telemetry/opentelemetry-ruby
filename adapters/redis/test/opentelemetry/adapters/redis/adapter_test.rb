@@ -36,7 +36,6 @@ describe OpenTelemetry::Adapters::Redis::Adapter do
       ::Redis.new.auth('password')
 
       _(span.name).must_equal 'AUTH'
-      _(span.attributes['component']).must_equal 'redis'
       _(span.attributes['db.type']).must_equal 'redis'
       _(span.attributes['db.instance']).must_equal '0'
       _(span.attributes['db.statement']).must_equal 'AUTH ?'
@@ -54,7 +53,6 @@ describe OpenTelemetry::Adapters::Redis::Adapter do
 
       set_span = exporter.finished_spans.first
       _(set_span.name).must_equal 'SET'
-      _(set_span.attributes['component']).must_equal 'redis'
       _(set_span.attributes['db.type']).must_equal 'redis'
       _(set_span.attributes['db.instance']).must_equal '0'
       _(set_span.attributes['db.statement']).must_equal(
@@ -66,7 +64,6 @@ describe OpenTelemetry::Adapters::Redis::Adapter do
 
       get_span = exporter.finished_spans.last
       _(get_span.name).must_equal 'GET'
-      _(get_span.attributes['component']).must_equal 'redis'
       _(get_span.attributes['db.type']).must_equal 'redis'
       _(get_span.attributes['db.instance']).must_equal '0'
       _(get_span.attributes['db.statement']).must_equal 'GET K'
@@ -82,7 +79,6 @@ describe OpenTelemetry::Adapters::Redis::Adapter do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'THIS_IS_NOT_A_REDIS_FUNC'
-      _(span.attributes['component']).must_equal 'redis'
       _(span.attributes['db.type']).must_equal 'redis'
       _(span.attributes['db.instance']).must_equal '0'
       _(span.attributes['db.statement']).must_equal(
@@ -108,7 +104,6 @@ describe OpenTelemetry::Adapters::Redis::Adapter do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'pipeline'
-      _(span.attributes['component']).must_equal 'redis'
       _(span.attributes['db.type']).must_equal 'redis'
       _(span.attributes['db.instance']).must_equal '0'
       _(span.attributes['db.statement']).must_equal "SET v1 0\nINCR v1\nGET v1"

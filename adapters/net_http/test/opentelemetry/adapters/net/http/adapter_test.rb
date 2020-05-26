@@ -50,7 +50,6 @@ describe OpenTelemetry::Adapters::Net::HTTP::Adapter do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
-      _(span.attributes['component']).must_equal 'http'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200
@@ -69,7 +68,6 @@ describe OpenTelemetry::Adapters::Net::HTTP::Adapter do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP POST'
-      _(span.attributes['component']).must_equal 'http'
       _(span.attributes['http.method']).must_equal 'POST'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 500
@@ -90,7 +88,6 @@ describe OpenTelemetry::Adapters::Net::HTTP::Adapter do
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
-      _(span.attributes['component']).must_equal 'http'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'https'
       _(span.attributes['http.status_code']).must_be_nil
