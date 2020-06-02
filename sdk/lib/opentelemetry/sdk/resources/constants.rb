@@ -28,7 +28,7 @@ module OpenTelemetry
           # The name of the telemetry library.
           name: 'telemetry.sdk.name',
 
-          # The language of telemetry library and of the code instrumented with it.
+          # The language of the telemetry library and of the code instrumented with it.
           language: 'telemetry.sdk.language',
 
           # The version string of the telemetry library

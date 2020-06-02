@@ -34,6 +34,11 @@ module OpenTelemetry
         @logger ||= Logger.new(STDOUT)
       end
 
+      # Accepts a resource object that is merged with the default telemetry sdk
+      # resource. The use of this method is optional, and is provided as means
+      # to add additional resource information.
+      #
+      # @param [Resource] new_resource The resource to be merged
       def resource=(new_resource)
         @resource = @resource.merge(new_resource)
       end

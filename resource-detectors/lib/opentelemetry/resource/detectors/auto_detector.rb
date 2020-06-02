@@ -16,10 +16,7 @@ module OpenTelemetry
         ].freeze
 
         def detect
-          resources = DETECTORS.map(&:detect)
-          resources.reduce(OpenTelemetry::SDK::Resources::Resource.create) do |accumulated, detected|
-            accumulated.merge(detected)
-          end
+          DETECTORS.map(&:detect).reduce(:merge)
         end
       end
     end
