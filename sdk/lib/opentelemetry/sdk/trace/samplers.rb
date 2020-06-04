@@ -45,8 +45,6 @@ module OpenTelemetry
 
         private_constant(:RECORD_AND_SAMPLED, :NOT_RECORD, :RECORD, :SAMPLING_HINTS, :APPLY_PROBABILITY_TO_SYMBOLS)
 
-        # rubocop:disable Lint/UnusedBlockArgument
-
         # Returns a {Result} with {Decision::RECORD_AND_SAMPLED}.
         ALWAYS_ON = ConstantSampler.new(result: RECORD_AND_SAMPLED, description: 'AlwaysOnSampler')
 
