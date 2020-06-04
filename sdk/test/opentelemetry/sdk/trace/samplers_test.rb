@@ -154,10 +154,9 @@ describe OpenTelemetry::SDK::Trace::Samplers do
     format('%032x', id)
   end
 
-  def call_sampler(sampler, trace_id: nil, span_id: nil, parent_context: nil, links: nil, name: nil, kind: nil, attributes: nil)
+  def call_sampler(sampler, trace_id: nil, parent_context: nil, links: nil, name: nil, kind: nil, attributes: nil)
     sampler.call(
       trace_id: trace_id || OpenTelemetry::Trace.generate_trace_id,
-      span_id: span_id || OpenTelemetry::Trace.generate_span_id,
       parent_context: parent_context,
       links: links,
       name: name,
