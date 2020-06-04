@@ -43,7 +43,9 @@ describe OpenTelemetry::SDK::Trace::Samplers do
       result = Result.new(decision: Decision::NOT_RECORD)
       mock_sampler = Minitest::Mock.new
       mock_sampler.expect(:should_sample?, result, [{ trace_id: trace_id, parent_context: nil, links: nil, name: nil, kind: nil, attributes: nil }])
-      _(call_sampler(Samplers.parent_or_else(mock_sampler), parent_context: nil)).wont_be :sampled?
+      OpenTelemetry::Trace.stub :generate_trace_id, trace_id do
+        _(call_sampler(Samplers.parent_or_else(mock_sampler), parent_context: nil)).wont_be :sampled?
+      end
       mock_sampler.verify
     end
   end
