@@ -25,7 +25,7 @@ module OpenTelemetry
 
           # @api private
           #
-          # See {Samplers#should_sample?}.
+          # See {Samplers}.
           def should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:)
             # Ignored for sampling decision: links, name, kind, attributes.
 
