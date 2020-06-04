@@ -64,7 +64,6 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     it 'calls the sampler with all parameters except parent_context' do
       links = Minitest::Mock.new
       name = 'span'
-      span_id = OpenTelemetry::Trace.generate_span_id
       trace_id = OpenTelemetry::Trace.generate_trace_id
       kind = Minitest::Mock.new
       attributes = Minitest::Mock.new
@@ -73,9 +72,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       mock_sampler.expect(:should_sample?, result, [{ trace_id: trace_id, parent_context: nil, links: links, name: name, kind: kind, attributes: attributes }])
       activate_trace_config TraceConfig.new(sampler: mock_sampler)
       OpenTelemetry::Trace.stub :generate_trace_id, trace_id do
-        OpenTelemetry::Trace.stub :generate_span_id, span_id do
-          tracer.start_root_span(name, attributes: attributes, links: links, kind: kind)
-        end
+        tracer.start_root_span(name, attributes: attributes, links: links, kind: kind)
       end
       mock_sampler.verify
     end
@@ -199,16 +196,13 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     it 'calls the sampler with all parameters' do
       links = Minitest::Mock.new
       name = 'span'
-      span_id = OpenTelemetry::Trace.generate_span_id
       kind = Minitest::Mock.new
       attributes = Minitest::Mock.new
       result = Result.new(decision: Decision::NOT_RECORD)
       mock_sampler = Minitest::Mock.new
       mock_sampler.expect(:should_sample?, result, [{ trace_id: span_context.trace_id, parent_context: span_context, links: links, name: name, kind: kind, attributes: attributes }])
       activate_trace_config TraceConfig.new(sampler: mock_sampler)
-      OpenTelemetry::Trace.stub :generate_span_id, span_id do
-        tracer.start_span(name, with_parent_context: context, attributes: attributes, links: links, kind: kind)
-      end
+      tracer.start_span(name, with_parent_context: context, attributes: attributes, links: links, kind: kind)
       mock_sampler.verify
     end
 
