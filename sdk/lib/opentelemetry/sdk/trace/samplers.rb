@@ -6,6 +6,8 @@
 
 require 'opentelemetry/sdk/trace/samplers/decision'
 require 'opentelemetry/sdk/trace/samplers/result'
+require 'opentelemetry/sdk/trace/samplers/constant_sampler'
+require 'opentelemetry/sdk/trace/samplers/parent_or_else'
 require 'opentelemetry/sdk/trace/samplers/probability_sampler'
 
 module OpenTelemetry
@@ -15,10 +17,10 @@ module OpenTelemetry
       # reference implementation provides a {ProbabilitySampler}, {ALWAYS_ON},
       # {ALWAYS_OFF}, and {ParentOrElse}.
       #
-      # Custom samplers can be provided by SDK users. The required interface is
-      # a callable with the signature:
+      # Custom samplers can be provided by SDK users. The required interface is:
       #
-      #   (trace_id:, parent_context:, links:, name:, kind:, attributes:) -> Result
+      #   should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:) -> Result
+      #   description -> String
       #
       # Where:
       #
@@ -46,10 +48,10 @@ module OpenTelemetry
         # rubocop:disable Lint/UnusedBlockArgument
 
         # Returns a {Result} with {Decision::RECORD_AND_SAMPLED}.
-        ALWAYS_ON = ->(trace_id:, parent_context:, links:, name:, kind:, attributes:) { RECORD_AND_SAMPLED }
+        ALWAYS_ON = ConstantSampler.new(result: RECORD_AND_SAMPLED, description: 'AlwaysOnSampler')
 
         # Returns a {Result} with {Decision::NOT_RECORD}.
-        ALWAYS_OFF = ->(trace_id:, parent_context:, links:, name:, kind:, attributes:) { NOT_RECORD }
+        ALWAYS_OFF = ConstantSampler.new(result: NOT_RECORD, description: 'AlwaysOffSampler')
 
         # Returns a {Result} with {Decision::RECORD_AND_SAMPLED} if the parent
         # context is sampled or {Decision::NOT_RECORD} otherwise, or if there
