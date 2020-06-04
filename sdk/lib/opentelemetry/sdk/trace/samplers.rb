@@ -53,19 +53,14 @@ module OpenTelemetry
         # Returns a {Result} with {Decision::NOT_RECORD}.
         ALWAYS_OFF = ConstantSampler.new(result: NOT_RECORD, description: 'AlwaysOffSampler')
 
-        # Returns a {Result} with {Decision::RECORD_AND_SAMPLED} if the parent
-        # context is sampled or {Decision::NOT_RECORD} otherwise, or if there
-        # is no parent context.
-        # rubocop:disable Style/Lambda
-        ALWAYS_PARENT = ->(trace_id:, parent_context:, links:, name:, kind:, attributes:) do
-          if parent_context&.trace_flags&.sampled?
-            RECORD_AND_SAMPLED
-          else
-            NOT_RECORD
-          end
+        # Returns a new sampler. It either respects the parent span's sampling
+        # decision or delegates to delegate_sampler for root spans.
+        #
+        # @param [Sampler] delegate_sampler The sampler to which the sampling
+        #   decision is delegated for root spans.
+        def self.parent_or_else(delegate_sampler)
+          ParentOrElse.new(delegate_sampler)
         end
-        # rubocop:enable Style/Lambda
-        # rubocop:enable Lint/UnusedBlockArgument
 
         # Returns a new sampler. The probability of sampling a trace is equal
         # to that of the specified probability.
