@@ -13,17 +13,16 @@ module OpenTelemetry
     module Trace
       # The Samplers module contains the sampling logic for OpenTelemetry. The
       # reference implementation provides a {ProbabilitySampler}, {ALWAYS_ON},
-      # {ALWAYS_OFF}, and {ALWAYS_PARENT}.
+      # {ALWAYS_OFF}, and {ParentOrElse}.
       #
       # Custom samplers can be provided by SDK users. The required interface is
       # a callable with the signature:
       #
-      #   (trace_id:, span_id:, parent_context:, links:, name:, kind:, attributes:) -> Result
+      #   (trace_id:, parent_context:, links:, name:, kind:, attributes:) -> Result
       #
       # Where:
       #
       # @param [String] trace_id The trace_id of the {Span} to be created.
-      # @param [String] span_id The span_id of the {Span} to be created.
       # @param [OpenTelemetry::Trace::SpanContext] parent_context The
       #   {OpenTelemetry::Trace::SpanContext} of a parent span, typically
       #   extracted from the wire. Can be nil for a root span.
@@ -47,16 +46,16 @@ module OpenTelemetry
         # rubocop:disable Lint/UnusedBlockArgument
 
         # Returns a {Result} with {Decision::RECORD_AND_SAMPLED}.
-        ALWAYS_ON = ->(trace_id:, span_id:, parent_context:, links:, name:, kind:, attributes:) { RECORD_AND_SAMPLED }
+        ALWAYS_ON = ->(trace_id:, parent_context:, links:, name:, kind:, attributes:) { RECORD_AND_SAMPLED }
 
         # Returns a {Result} with {Decision::NOT_RECORD}.
-        ALWAYS_OFF = ->(trace_id:, span_id:, parent_context:, links:, name:, kind:, attributes:) { NOT_RECORD }
+        ALWAYS_OFF = ->(trace_id:, parent_context:, links:, name:, kind:, attributes:) { NOT_RECORD }
 
         # Returns a {Result} with {Decision::RECORD_AND_SAMPLED} if the parent
         # context is sampled or {Decision::NOT_RECORD} otherwise, or if there
         # is no parent context.
         # rubocop:disable Style/Lambda
-        ALWAYS_PARENT = ->(trace_id:, span_id:, parent_context:, links:, name:, kind:, attributes:) do
+        ALWAYS_PARENT = ->(trace_id:, parent_context:, links:, name:, kind:, attributes:) do
           if parent_context&.trace_flags&.sampled?
             RECORD_AND_SAMPLED
           else
