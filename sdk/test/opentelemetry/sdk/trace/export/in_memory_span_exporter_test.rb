@@ -61,7 +61,7 @@ describe OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter do
     exporter.export([span_data1])
     exporter.shutdown
 
-    _(exporter.export([span_data2])).must_equal export::FAILED_NOT_RETRYABLE
+    _(exporter.export([span_data2])).must_equal export::FAILURE
   end
 
   it 'returns an empty array from #export after #shutdown called' do
