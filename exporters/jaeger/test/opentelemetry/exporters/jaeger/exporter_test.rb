@@ -7,8 +7,7 @@ require 'test_helper'
 
 describe OpenTelemetry::Exporters::Jaeger::Exporter do
   SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
-  FAILED_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_RETRYABLE
-  FAILED_NOT_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_NOT_RETRYABLE
+  FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
 
   describe '#initialize' do
     it 'initializes' do
@@ -24,17 +23,17 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter do
       OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new
     end
 
-    it 'returns FAILED_NOT_RETRYABLE when shutdown' do
+    it 'returns FAILURE when shutdown' do
       exporter.shutdown
       result = exporter.export(nil)
-      _(result).must_equal(FAILED_NOT_RETRYABLE)
+      _(result).must_equal(FAILURE)
     end
 
-    it 'returns FAILED_NOT_RETRYABLE if an encoded span is too large' do
+    it 'returns FAILURE if an encoded span is too large' do
       exporter = OpenTelemetry::Exporters::Jaeger::Exporter.new(service_name: 'test', host: '127.0.0.1', port: 6831, max_packet_size: 10)
       span_data = create_span_data
       result = exporter.export([span_data])
-      _(result).must_equal(FAILED_NOT_RETRYABLE)
+      _(result).must_equal(FAILURE)
     end
 
     it 'exports a span_data' do
