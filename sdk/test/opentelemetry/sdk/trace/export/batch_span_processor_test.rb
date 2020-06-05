@@ -125,32 +125,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
   end
 
-  # TODO: I think retries need to be removed completely.
   describe 'export retry' do
-    it 'should retry on FAILURE exports' do
-      te = TestExporter.new(status_codes: [FAILURE, SUCCESS])
-
-      bsp = BatchSpanProcessor.new(schedule_delay_millis: 999,
-                                   exporter: te,
-                                   max_queue_size: 6,
-                                   max_export_batch_size: 3)
-
-      tss = [TestSpan.new, TestSpan.new, TestSpan.new, TestSpan.new]
-      tss.each { |ts| bsp.on_finish(ts) }
-
-      # Ensure that our work thread has time to loop
-      sleep(1)
-      bsp.shutdown
-
-      _(te.batches.size).must_equal(2)
-      _(te.batches[0].size).must_equal(3)
-      _(te.batches[1].size).must_equal(1)
-
-      _(te.failed_batches.size).must_equal(1)
-      _(te.failed_batches[0].size).must_equal(3)
-    end
-
-    # TODO: obvious conflict with previous block.
     it 'should not retry on FAILURE exports' do
       te = TestExporter.new(status_codes: [FAILURE, SUCCESS])
 
