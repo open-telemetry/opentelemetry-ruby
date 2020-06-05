@@ -52,7 +52,7 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter do
       socket = UDPSocket.new
       socket.bind('127.0.0.1', 0)
       exporter = OpenTelemetry::Exporters::Jaeger::Exporter.new(service_name: 'test', host: '127.0.0.1', port: socket.addr[1])
-      processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter: exporter, max_queue_size: 1, max_export_batch_size: 1, max_export_attempts: 1)
+      processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter: exporter, max_queue_size: 1, max_export_batch_size: 1)
       OpenTelemetry.tracer_provider.add_span_processor(processor)
       OpenTelemetry.tracer_provider.tracer.start_root_span('foo').finish
       OpenTelemetry.tracer_provider.shutdown
