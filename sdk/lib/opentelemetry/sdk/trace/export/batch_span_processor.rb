@@ -124,7 +124,7 @@ module OpenTelemetry
             result_code = nil
             @export_attempts.times do |attempts|
               result_code = export_with_timeout(batch)
-              break unless result_code == FAILED_RETRYABLE
+              break unless result_code == FAILURE # TODO: figure out impact on retries - I think this is wrong.
 
               sleep(0.1 * attempts)
             end
@@ -134,7 +134,7 @@ module OpenTelemetry
           def export_with_timeout(batch)
             Timeout.timeout(@exporter_timeout_seconds) { @exporter.export(batch) }
           rescue Timeout::Error
-            FAILED_NOT_RETRYABLE
+            FAILURE
           end
 
           def report_result(result_code, batch)
