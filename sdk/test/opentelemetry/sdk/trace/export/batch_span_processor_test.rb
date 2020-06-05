@@ -9,8 +9,7 @@ require 'test_helper'
 describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
   BatchSpanProcessor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
   SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
-  FAILED_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_RETRYABLE
-  FAILED_NOT_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_NOT_RETRYABLE
+  FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
 
   class TestExporter
     def initialize(status_codes: nil)
@@ -126,9 +125,10 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
   end
 
+  # TODO: I think retries need to be removed completely.
   describe 'export retry' do
-    it 'should retry on FAILED_RETRYABLE exports' do
-      te = TestExporter.new(status_codes: [FAILED_RETRYABLE, SUCCESS])
+    it 'should retry on FAILURE exports' do
+      te = TestExporter.new(status_codes: [FAILURE, SUCCESS])
 
       bsp = BatchSpanProcessor.new(schedule_delay_millis: 999,
                                    exporter: te,
@@ -150,8 +150,9 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       _(te.failed_batches[0].size).must_equal(3)
     end
 
-    it 'should not retry on FAILED_NOT_RETRYABLE exports' do
-      te = TestExporter.new(status_codes: [FAILED_NOT_RETRYABLE, SUCCESS])
+    # TODO: obvious conflict with previous block.
+    it 'should not retry on FAILURE exports' do
+      te = TestExporter.new(status_codes: [FAILURE, SUCCESS])
 
       bsp = BatchSpanProcessor.new(schedule_delay_millis: 999,
                                    exporter: te,
