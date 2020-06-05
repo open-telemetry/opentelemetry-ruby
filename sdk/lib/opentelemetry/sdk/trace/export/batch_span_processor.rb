@@ -22,24 +22,18 @@ module OpenTelemetry
         # If the queue gets half full a preemptive notification is sent to the
         # worker thread that exports the spans to wake up and start a new
         # export cycle.
-        #
-        # max_export_attempts attempts are made to export each batch, while
-        # export fails with {FAILED_RETRYABLE}, backing off linearly in 100ms
-        # increments.
         class BatchSpanProcessor
           EXPORTER_TIMEOUT_MILLIS = 30_000
           SCHEDULE_DELAY_MILLIS = 5_000
           MAX_QUEUE_SIZE = 2048
           MAX_EXPORT_BATCH_SIZE = 512
-          MAX_EXPORT_ATTEMPTS = 5
-          private_constant(:SCHEDULE_DELAY_MILLIS, :MAX_QUEUE_SIZE, :MAX_EXPORT_BATCH_SIZE, :MAX_EXPORT_ATTEMPTS)
+          private_constant(:SCHEDULE_DELAY_MILLIS, :MAX_QUEUE_SIZE, :MAX_EXPORT_BATCH_SIZE)
 
           def initialize(exporter:,
                          exporter_timeout_millis: EXPORTER_TIMEOUT_MILLIS,
                          schedule_delay_millis: SCHEDULE_DELAY_MILLIS,
                          max_queue_size: MAX_QUEUE_SIZE,
-                         max_export_batch_size: MAX_EXPORT_BATCH_SIZE,
-                         max_export_attempts: MAX_EXPORT_ATTEMPTS)
+                         max_export_batch_size: MAX_EXPORT_BATCH_SIZE)
             raise ArgumentError if max_export_batch_size > max_queue_size
 
             @exporter = exporter
@@ -50,7 +44,6 @@ module OpenTelemetry
             @delay_seconds = schedule_delay_millis / 1000.0
             @max_queue_size = max_queue_size
             @batch_size = max_export_batch_size
-            @export_attempts = max_export_attempts
             @spans = []
             @thread = Thread.new { work }
           end
@@ -121,13 +114,7 @@ module OpenTelemetry
           end
 
           def export_batch(batch)
-            result_code = nil
-            @export_attempts.times do |attempts|
-              result_code = export_with_timeout(batch)
-              break unless result_code == FAILURE # TODO: figure out impact on retries - I think this is wrong.
-
-              sleep(0.1 * attempts)
-            end
+            result_code = export_with_timeout(batch)
             report_result(result_code, batch)
           end
 
