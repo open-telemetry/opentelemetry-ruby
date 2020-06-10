@@ -1,0 +1,9 @@
+--no-private
+--title=OpenTelemetry Datadog Exporter
+--markup=markdown
+--main=OVERVIEW.md
+./lib/opentelemetry/exporters/datadog/**/*.rb
+./lib/opentelemetry/exporters/datadog.rb
+-
+OVERVIEW.md
+CHANGELOG.md

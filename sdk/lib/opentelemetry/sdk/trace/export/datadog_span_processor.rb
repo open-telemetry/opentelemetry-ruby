@@ -91,7 +91,12 @@ module OpenTelemetry
               return
             end
 
-            return unless span.context.trace_flags.sampled?
+            # TODO: determine if all "not-sampled" spans still get passed to on_finish?
+            # If so then we don't need to account for Probability Sampling
+            # and can likely incorporate Priority Sampling from DD
+            # If not, then we need to ensure the rate from OpenTelemetry.tracer_provider.active_trace_config.sampler
+            # can be expoed to the span or attached to spanData in some way
+            # return unless span.context.trace_flags.sampled?
 
             context = span.context
             trace_id = context.trace_id

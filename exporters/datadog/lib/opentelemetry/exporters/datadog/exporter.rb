@@ -6,11 +6,12 @@
 
 require 'uri'
 require 'ddtrace'
-require_relative './exporter/span_encoder.rb'
+require 'opentelemetry/sdk'
+require 'opentelemetry-exporters-datadog/exporters/datadog/exporter/span_encoder'
 
 module OpenTelemetry
   module Exporters
-    module DatadogOtel
+    module Datadog
       # A noop exporter that demonstrates and documents the SpanExporter
       # duck type. SpanExporter allows different tracing services to export
       # recorded data for sampled spans in their own format.
@@ -46,7 +47,7 @@ module OpenTelemetry
           if ['http', 'https'].include?(uri_parsed.scheme)
             hostname = uri_parsed.hostname
             port = uri_parsed.port
-            @agent_writer = Datadog::Writer.new({hostname: hostname, port: port})
+            @agent_writer = ::Datadog::Writer.new({hostname: hostname, port: port})
           else
             # handle uds path
           end
@@ -61,12 +62,8 @@ module OpenTelemetry
         def export(spans)
           return FAILED_NOT_RETRYABLE if @shutdown
 
-        
           datadog_spans = @span_encoder.translate_to_datadog(spans, @service)
-
           response = @agent_writer.write(datadog_spans)
-
-          puts response
 
           SUCCESS
         end
