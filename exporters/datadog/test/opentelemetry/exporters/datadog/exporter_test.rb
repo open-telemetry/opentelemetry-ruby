@@ -11,7 +11,7 @@ module OpenTelemetry
   module Exporters
     module Datadog
       class Exporter
-        attr_accessor :agent_writer
+        attr_accessor :agent_writer, :agent_url, :service
       end
     end
   end
@@ -23,6 +23,9 @@ describe OpenTelemetry::Exporters::Datadog::Exporter do
   FAILED_NOT_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_NOT_RETRYABLE
   AGENT_URL = 'http://localhost:8126'
 
+  let(:service_name) { 'test' }
+  let(:agent_url) { 'http://localhost:8126' }
+
   let(:faux_writer) {
     FauxWriter.new(
       transport: Datadog::Transport::HTTP.default do |t|
@@ -30,16 +33,66 @@ describe OpenTelemetry::Exporters::Datadog::Exporter do
       end
     )
   }
+
   let(:exporter) { 
-    OpenTelemetry::Exporters::Datadog::Exporter.new(service_name: 'test', agent_url: 'http://localhost:8126').tap do |exporter|
+    OpenTelemetry::Exporters::Datadog::Exporter.new(service_name: service_name, agent_url: agent_url ).tap do |exporter|
       exporter.agent_writer = faux_writer
     end
   }
 
   describe '#initialize' do
+    let(:service_name) { nil }
+    let(:agent_url) { nil }
+
     it 'initializes' do
       _(exporter).wont_be_nil
     end
+
+    it 'initializes with defaults' do
+      default_exporter = exporter
+      _(default_exporter.agent_url).must_equal('http://localhost:8126')
+      _(default_exporter.service).must_equal("my_service")
+    end
+
+    it 'initializes with environment variables as defaults' do
+      env_url = 'http://localhost:8127'
+      env_service = "env_service"
+      ENV["DD_TRACE_AGENT_URL"] = env_url 
+      ENV["DD_SERVICE"] = env_service
+
+      begin
+        default_exporter = exporter
+
+        _(default_exporter.agent_url).must_equal(env_url)
+        _(default_exporter.service).must_equal(env_service)
+      ensure
+        ENV.delete("DD_TRACE_AGENT_URL")
+        ENV.delete("DD_SERVICE")
+      end
+    end
+
+    describe '#initialize precedence' do
+      let(:service_name) { 'test' }
+      let(:agent_url) { 'http://localhost:8128' }
+
+      it 'initializes with arguments taking precedence over environment variables' do
+        env_url = 'http://localhost:8127'
+        env_service = "env_service"
+
+        ENV["DD_TRACE_AGENT_URL"] = env_url 
+        ENV["DD_SERVICE"] = env_service
+
+        begin
+          default_exporter = exporter
+
+          _(default_exporter.agent_url).must_equal(agent_url)
+          _(default_exporter.service).must_equal(service_name)
+        ensure
+          ENV.delete("DD_TRACE_AGENT_URL")
+          ENV.delete("DD_SERVICE")
+        end
+      end    
+    end    
   end
 
 

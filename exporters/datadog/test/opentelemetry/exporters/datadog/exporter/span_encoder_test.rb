@@ -17,26 +17,26 @@ describe OpenTelemetry::Exporters::Datadog::Exporter::SpanEncoder do
   # it 'encodes array attribute values in events and the span as JSON strings' do
   # end
 
-  # def create_span_data(attributes: nil, events: nil, links: nil, trace_id: OpenTelemetry::Trace.generate_trace_id, trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT)
-  #   OpenTelemetry::SDK::Trace::SpanData.new(
-  #     '',
-  #     nil,
-  #     nil,
-  #     OpenTelemetry::Trace::INVALID_SPAN_ID,
-  #     0,
-  #     0,
-  #     0,
-  #     0,
-  #     Time.now,
-  #     Time.now,
-  #     attributes,
-  #     links,
-  #     events,
-  #     nil,
-  #     nil,
-  #     OpenTelemetry::Trace.generate_span_id,
-  #     trace_id,
-  #     trace_flags
-  #   )
-  # end
+  def create_span_data(attributes: nil, events: nil, links: nil, trace_id: OpenTelemetry::Trace.generate_trace_id, trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT)
+    OpenTelemetry::SDK::Trace::SpanData.new(
+      '',
+      nil,
+      nil,
+      OpenTelemetry::Trace::INVALID_SPAN_ID,
+      0,
+      0,
+      0,
+      0,
+      Time.now,
+      Time.now,
+      attributes,
+      links,
+      events,
+      nil,
+      nil,
+      OpenTelemetry::Trace.generate_span_id,
+      trace_id,
+      trace_flags
+    )
+  end
 end

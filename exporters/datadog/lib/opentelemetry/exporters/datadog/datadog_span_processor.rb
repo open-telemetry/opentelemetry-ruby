@@ -165,7 +165,9 @@ module OpenTelemetry
         end
 
         def is_trace_exportable?(trace_id)
-          traces_spans_count[trace_id] - traces_spans_ended_count[trace_id] <= 0
+          if traces_spans_count.key?(trace_id) && traces_spans_ended_count.key?(trace_id)
+            traces_spans_count[trace_id] - traces_spans_ended_count[trace_id] <= 0
+          end
         end
 
         def all_spans_count(traces_spans_count)
