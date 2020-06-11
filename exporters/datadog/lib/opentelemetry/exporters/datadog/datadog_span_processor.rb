@@ -11,21 +11,15 @@ module OpenTelemetry
     module Datadog
       
       # Implementation of the duck type SpanProcessor that batches spans
-      # exported by the SDK then pushes them to the exporter pipeline.
+      # exported by the SDK into complete traces then pushes them 
+      # to the exporter pipeline.
       #
       # All spans reported by the SDK implementation are first added to a
-      # synchronized queue (with a {max_queue_size} maximum size, after the
-      # size is reached spans are dropped) and exported every
-      # schedule_delay_millis to the exporter pipeline in batches of
-      # max_export_batch_size.
-      #
-      # If the queue gets half full a preemptive notification is sent to the
-      # worker thread that exports the spans to wake up and start a new
-      # export cycle.
-      #
-      # max_export_attempts attempts are made to export each batch, while
-      # export fails with {FAILED_RETRYABLE}, backing off linearly in 100ms
-      # increments.
+      # synchronized in memory trace storage (with a {max_queue_size} 
+      # maximum size, after the size is reached spans are dropped). 
+      # When traces are designate as "complete" they added to a queue that
+      # is exported every schedule_delay_millis to the exporter pipeline in 
+      # batches of completed traces
       class DatadogSpanProcessor
         EXPORTER_TIMEOUT_MILLIS = 30_000
         SCHEDULE_DELAY_MILLIS = 3_000

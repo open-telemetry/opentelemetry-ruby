@@ -13,12 +13,11 @@ require_relative './exporter/span_encoder.rb'
 module OpenTelemetry
   module Exporters
     module Datadog
-      # A noop exporter that demonstrates and documents the SpanExporter
-      # duck type. SpanExporter allows different tracing services to export
+      # SpanExporter allows different tracing services to export
       # recorded data for sampled spans in their own format.
       #
       # To export data an exporter MUST be registered to the {TracerProvider} using
-      # a {SimpleSpanProcessor} or a {BatchSpanProcessor}.
+      # a {DatadogSpanProcessorr}.
       class Exporter
         DEFAULT_AGENT_URL = "http://localhost:8126"
         DEFAULT_SERVICE_NAME = "my_service"
