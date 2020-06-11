@@ -90,9 +90,9 @@ describe OpenTelemetry::Exporters::Datadog::DatadogSpanProcessor do
   end
 
   describe 'initialization' do
-    it 'if max batch size is gt max queue size raise' do
+    it 'if max trace size is gt max queue size raise' do
       assert_raises ArgumentError do
-        DatadogSpanProcessor.new(exporter: TestExporter.new, max_queue_size: 6, max_export_batch_size: 999)
+        DatadogSpanProcessor.new(exporter: TestExporter.new, max_queue_size: 6, max_trace_size: 999)
       end
     end
   end
@@ -123,7 +123,7 @@ describe OpenTelemetry::Exporters::Datadog::DatadogSpanProcessor do
     it 'should batch up to but not over the max_queue_size' do
       te = TestExporter.new
 
-      dsp = DatadogSpanProcessor.new(exporter: te, max_queue_size: 3, max_export_batch_size: 3 )
+      dsp = DatadogSpanProcessor.new(exporter: te, max_queue_size: 3, max_trace_size: 3 )
 
       tss = [TestSpan.new, TestSpan.new, TestSpan.new, TestSpan.new]
       tss.each do |ts| 
@@ -150,5 +150,35 @@ describe OpenTelemetry::Exporters::Datadog::DatadogSpanProcessor do
 
       _(te.traces.size).must_equal(2)
     end
-  end  
+  end
+
+  describe 'stress test' do
+    it 'shouldnt drop traces below max_queue_size' do
+      te = TestExporter.new
+
+      dsp = DatadogSpanProcessor.new(exporter: te)
+      producers = 10.times.map do |i|
+        Thread.new do
+          100.times do |j|
+            
+            span = TestSpan.new(j + (i*100))
+            dsp.on_start(span)
+            dsp.on_finish(span)
+          end
+          sleep(rand(0.01))
+        end
+      end
+      producers.each(&:join)
+      dsp.shutdown
+
+      out = te.traces.flatten.map(&:id).sort
+
+      expected = 1000.times.map { |i| i }
+
+      _(out).must_equal(expected)
+    end
+
+    # it 'shouldnt blow up with a lot of large traces' do
+    # end
+  end
 end

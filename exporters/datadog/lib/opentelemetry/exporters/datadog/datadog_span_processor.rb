@@ -24,17 +24,17 @@ module OpenTelemetry
         EXPORTER_TIMEOUT_MILLIS = 30_000
         SCHEDULE_DELAY_MILLIS = 3_000
         MAX_QUEUE_SIZE = 2048
-        MAX_EXPORT_BATCH_SIZE = 512
         MAX_EXPORT_ATTEMPTS = 5
-        private_constant(:SCHEDULE_DELAY_MILLIS, :MAX_QUEUE_SIZE, :MAX_EXPORT_BATCH_SIZE, :MAX_EXPORT_ATTEMPTS)
+        MAX_TRACE_SIZE = 1024
+        private_constant(:SCHEDULE_DELAY_MILLIS, :MAX_QUEUE_SIZE, :MAX_TRACE_SIZE, :MAX_EXPORT_ATTEMPTS)
 
         def initialize(exporter:,
                        exporter_timeout_millis: EXPORTER_TIMEOUT_MILLIS,
                        schedule_delay_millis: SCHEDULE_DELAY_MILLIS,
                        max_queue_size: MAX_QUEUE_SIZE,
-                       max_export_batch_size: MAX_EXPORT_BATCH_SIZE,
+                       max_trace_size: MAX_TRACE_SIZE,
                        max_export_attempts: MAX_EXPORT_ATTEMPTS)
-          raise ArgumentError if max_export_batch_size > max_queue_size
+          raise ArgumentError if max_trace_size > max_queue_size
 
           @exporter = exporter
           @exporter_timeout_seconds = exporter_timeout_millis / 1000.0
@@ -43,7 +43,7 @@ module OpenTelemetry
           @keep_running = true
           @delay_seconds = schedule_delay_millis / 1000.0
           @max_queue_size = max_queue_size
-          @batch_size = max_export_batch_size
+          @trace_size = max_trace_size
           @export_attempts = max_export_attempts
           @spans = []
           @thread = Thread.new { work }
@@ -62,8 +62,8 @@ module OpenTelemetry
           trace_id = context.trace_id
 
           lock do
-            if all_spans_count(traces_spans_count) == max_queue_size
-              OpenTelemetry.logger.warn("Max spans for trace, spans will be dropped")
+            if all_spans_count(traces_spans_count) >= max_queue_size
+              OpenTelemetry.logger.warn("Max spans for all traces, spans will be dropped")
               @_spans_dropped = true
               return
             end
@@ -72,6 +72,12 @@ module OpenTelemetry
               traces[trace_id] = [span]
               traces_spans_count[trace_id] = 1
             else
+              if traces[trace_id].size >= max_trace_size
+                OpenTelemetry.logger.warn("Max spans for all traces, spans will be dropped")
+                @_spans_dropped = true
+                return
+              end
+
               traces[trace_id] << span
               traces_spans_count[trace_id] += 1
             end
@@ -136,7 +142,7 @@ module OpenTelemetry
 
         private
 
-        attr_reader :check_traces_queue, :max_queue_size, :traces, :traces_spans_count, :traces_spans_ended_count
+        attr_reader :check_traces_queue, :max_queue_size, :max_trace_size, :traces, :traces_spans_count, :traces_spans_ended_count
 
         def work
           while @keep_running
