@@ -46,7 +46,7 @@ module OpenTelemetry
                 service: service, 
                 trace_id: trace_id,
                 parent_id: parent_id,
-                resource: span.name,
+                resource: get_resource(span),
                 span_type: span_type
               })
 
@@ -71,7 +71,6 @@ module OpenTelemetry
               #set tags
               if span.attributes
                 span.attributes.keys.each do |attribute|
-
                   datadog_span.set_tag(attribute, span.attributes[attribute])
                 end
               end
@@ -135,6 +134,25 @@ module OpenTelemetry
               end
             rescue NameError
               ""
+            end
+          end
+
+          def get_resource(span)
+            # Get resource name for http related spans
+            # TODO: how to handle resource naming for broader span types, ie db/cache/queue etc
+            begin 
+              if span.attributes.key?("http.method")
+                  route = span.attributes["http.route"] || span.attributes["http.path"]
+                  if route
+                    return span.attributes["http.method"] + " " + route
+                  else   
+                    return span.attributes["http.method"]
+                  end
+              end
+
+              span.name
+            rescue Exception 
+              span.name
             end
           end
 
