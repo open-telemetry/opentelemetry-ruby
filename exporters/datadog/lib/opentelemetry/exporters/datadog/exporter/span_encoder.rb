@@ -58,7 +58,7 @@ module OpenTelemetry
 
               # set span.error, span tag error.msg/error.type
               if span.status && span.status.canonical_code != OpenTelemetry::Trace::Status::OK
-                datadog_span.error = 1
+                datadog_span.status = 1
 
                 if span.status.description
                   exception_value, exception_type = get_exception_info(span)
@@ -117,7 +117,7 @@ module OpenTelemetry
             end
           end
 
-          def get_exc_info(span)
+          def get_exception_info(span)
             # Parse span status description for exception type and value
             exc_value, exc_type = span.status.description.split(":", 2)
 

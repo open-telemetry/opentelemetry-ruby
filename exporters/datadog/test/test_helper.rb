@@ -8,6 +8,7 @@ require 'simplecov'
 SimpleCov.start
 
 require 'opentelemetry-exporters-datadog'
+require 'opentelemetry-sdk'
 require 'minitest/autorun'
 
 OpenTelemetry.logger = Logger.new('/dev/null')

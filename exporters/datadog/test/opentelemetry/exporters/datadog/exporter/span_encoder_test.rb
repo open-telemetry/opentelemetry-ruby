@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 require 'test_helper'
 
-describe OpenTelemetry::Exporters::Jaeger::Exporter::SpanEncoder do
+describe OpenTelemetry::Exporters::Datadog::Exporter::SpanEncoder do
   # let(:span_encoder) { OpenTelemetry::Exporters::Jaeger::Exporter::SpanEncoder.new }
 
   # it 'encodes a span_data' do

@@ -7,7 +7,8 @@
 require 'uri'
 require 'ddtrace'
 require 'opentelemetry/sdk'
-require 'opentelemetry-exporters-datadog/exporters/datadog/exporter/span_encoder'
+# require 'opentelemetry-exporters-datadog/exporters/datadog/exporter/span_encoder'
+require_relative './exporter/span_encoder.rb'
 
 module OpenTelemetry
   module Exporters
@@ -40,17 +41,8 @@ module OpenTelemetry
             ENV.fetch('DD_SERVICE', DEFAULT_SERVICE_NAME)
           end
 
-          uri_parsed = URI.parse(@agent_url)
+          @agent_writer = get_writer(@agent_url)
 
-          @agent_writer = nil
-          
-          if ['http', 'https'].include?(uri_parsed.scheme)
-            hostname = uri_parsed.hostname
-            port = uri_parsed.port
-            @agent_writer = ::Datadog::Writer.new({hostname: hostname, port: port})
-          else
-            # handle uds path
-          end
           @span_encoder = SpanEncoder.new
         end
 
@@ -72,6 +64,20 @@ module OpenTelemetry
         # registered to a {TracerProvider} object.
         def shutdown
           @shutdown = true
+        end
+
+        private
+
+        def get_writer(uri_parsed)
+          uri_parsed = URI.parse(@agent_url)
+
+          if ['http', 'https'].include?(uri_parsed.scheme)
+            hostname = uri_parsed.hostname
+            port = uri_parsed.port
+            @agent_writer = ::Datadog::Writer.new({hostname: hostname, port: port})
+          else 
+            # handle uds path
+          end         
         end
       end
     end
