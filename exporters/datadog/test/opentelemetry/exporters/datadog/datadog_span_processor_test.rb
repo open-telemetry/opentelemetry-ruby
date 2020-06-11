@@ -17,6 +17,9 @@ module OpenTelemetry
   end
 end
 
+# An invalid trace identifier, a 16-byte array with all zero bytes, encoded
+# as a hexadecimal string.
+INVALID_TRACE_ID = ('0' * 32).freeze
 
 describe OpenTelemetry::Exporters::Datadog::DatadogSpanProcessor do
   DatadogSpanProcessor = OpenTelemetry::Exporters::Datadog::DatadogSpanProcessor
@@ -71,9 +74,13 @@ describe OpenTelemetry::Exporters::Datadog::DatadogSpanProcessor do
   end
 
   class TestSpan
-    def initialize(id = nil, recording = true)
+    def initialize(id = nil, recording = true, trace_id = nil)
       trace_flags = recording ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
-      @context = OpenTelemetry::Trace::SpanContext.new(trace_flags: trace_flags)
+      if trace_id
+        @context = OpenTelemetry::Trace::SpanContext.new(trace_flags: trace_flags, trace_id: trace_id)
+      else
+        @context = OpenTelemetry::Trace::SpanContext.new(trace_flags: trace_flags)
+      end
       @id = id
       @recording = recording
     end
@@ -136,6 +143,28 @@ describe OpenTelemetry::Exporters::Datadog::DatadogSpanProcessor do
       _(te.traces[0].size).must_equal(1)
     end
 
+    it 'should drop spans above max_trace_size' do
+      te = TestExporter.new
+
+      dsp = DatadogSpanProcessor.new(exporter: te, max_queue_size: 4, max_trace_size: 2)
+
+      trace_id = generate_trace_id
+      spans = [TestSpan.new(1,true, trace_id), TestSpan.new(2,true, trace_id), TestSpan.new(3,true, trace_id)]
+      
+      spans.each do |span|
+        dsp.on_start(span)
+      end
+
+      spans.each do |span|
+        dsp.on_finish(span)
+      end
+
+      dsp.shutdown
+
+      _(te.traces.size).must_equal(1)
+      _(te.traces[0].size).must_equal(2)
+    end
+
     it 'should batch all samples' do
       te = TestExporter.new
 
@@ -180,5 +209,15 @@ describe OpenTelemetry::Exporters::Datadog::DatadogSpanProcessor do
 
     # it 'shouldnt blow up with a lot of large traces' do
     # end
+  end
+
+  describe 'scheduled delay' do
+  end
+
+  def generate_trace_id
+    loop do
+      id = Random::DEFAULT.bytes(16).unpack1('H*')
+      return id unless id == INVALID_TRACE_ID
+    end
   end
 end

@@ -43,7 +43,7 @@ module OpenTelemetry
           @keep_running = true
           @delay_seconds = schedule_delay_millis / 1000.0
           @max_queue_size = max_queue_size
-          @trace_size = max_trace_size
+          @max_trace_size = max_trace_size
           @export_attempts = max_export_attempts
           @spans = []
           @thread = Thread.new { work }
