@@ -92,7 +92,10 @@ describe OpenTelemetry::Exporters::Datadog::Exporter do
           ENV.delete("DD_SERVICE")
         end
       end    
-    end    
+    end
+
+    # describe '#initializes with uds writer' do
+    # end
   end
 
 

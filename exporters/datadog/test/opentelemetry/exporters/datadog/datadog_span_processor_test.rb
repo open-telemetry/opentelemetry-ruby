@@ -211,8 +211,11 @@ describe OpenTelemetry::Exporters::Datadog::DatadogSpanProcessor do
     # end
   end
 
-  describe 'scheduled delay' do
-  end
+  # describe 'scheduled delay' do
+  # end
+
+  # describe 'force flush' do
+  # end
 
   def generate_trace_id
     loop do

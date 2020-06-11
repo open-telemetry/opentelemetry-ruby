@@ -17,6 +17,21 @@ describe OpenTelemetry::Exporters::Datadog::Exporter::SpanEncoder do
   # it 'encodes array attribute values in events and the span as JSON strings' do
   # end
 
+  # it 'translates otel spans to datadog spans' do
+  # end
+
+  # it 'generates a valid datadog resource' do
+  # end
+
+  # it 'generates a valid datadog span type' do
+  # end
+
+  # it 'sets a valid datadog error, message, and type' do
+  # end
+
+  # it 'sets origin' do
+  # end  
+
   def create_span_data(attributes: nil, events: nil, links: nil, trace_id: OpenTelemetry::Trace.generate_trace_id, trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT)
     OpenTelemetry::SDK::Trace::SpanData.new(
       '',
