@@ -5,6 +5,14 @@
 # SPDX-License-Identifier: Apache-2.0
 require 'test_helper'
 
+class MockProcessor
+  def on_start(span)
+  end
+
+  def on_finish(span)
+  end
+end
+
 describe OpenTelemetry::Exporters::Datadog::Exporter::SpanEncoder do
   let(:span_encoder) { OpenTelemetry::Exporters::Datadog::Exporter::SpanEncoder.new }
 
@@ -50,18 +58,43 @@ describe OpenTelemetry::Exporters::Datadog::Exporter::SpanEncoder do
     _(datadog_span_info.resource).must_equal('GET /example/api')    
   end
 
-  # it 'translates otel spans to datadog spans' do
-  #   span_names = ["test1", "test2", "test3"]
-  #   trace_id = 0x6E0C63257DE34C926F9EFCD03927272E
-  #   trace_id_low = 0x6F9EFCD03927272E
-  #   span_id = 0x34BF92DEEFC58C92
-  #   parent_id = 0x1111111111111111
-  #   other_id = 0x2222222222222222
-  #   base_time = 683647322 * 10 ** 9
-  #   start_times = [base_time, base_time + 150 * 10 ** 6, base_time + 300 * 10 ** 6]
-  #   durations = [50 * 10 ** 6, 100 * 10 ** 6, 200 * 10 ** 6]
-  #   end_times = [ start_times[0] + durations[0], start_times[1] + durations[1], start_times[2] + durations[2] ]
-  # end
+  it 'translates otel spans to datadog spans' do
+    span_names = ["test1", "test2", "test3"]
+    trace_id = OpenTelemetry::Trace.generate_trace_id
+    span_id = OpenTelemetry::Trace.generate_span_id
+    parent_id = OpenTelemetry::Trace.generate_span_id
+    other_id = OpenTelemetry::Trace.generate_span_id
+    base_time = 683647322 * 10 ** 9
+    start_times = [base_time, base_time + 150 * 10 ** 6, base_time + 300 * 10 ** 6]
+    durations = [50 * 10 ** 6, 100 * 10 ** 6, 200 * 10 ** 6]
+    end_times = [ start_times[0] + durations[0], start_times[1] + durations[1], start_times[2] + durations[2] ]
+    instrumentation_library = OpenTelemetry::SDK::InstrumentationLibrary.new("OpenTelemetry::Adapters::Redis", 1)
+
+    span_context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: span_id)
+    parent_context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: parent_id)
+    other_context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: other_id)
+    otel_span_one = OpenTelemetry::SDK::Trace::Span.new(parent_context, span_names[0], nil, nil, OpenTelemetry::SDK::Trace::Config::TraceConfig.new, MockProcessor.new, nil, nil, start_times[0], nil, instrumentation_library)
+    otel_span_two = OpenTelemetry::SDK::Trace::Span.new(span_context, span_names[1], nil, parent_id, OpenTelemetry::SDK::Trace::Config::TraceConfig.new, MockProcessor.new, nil, nil, start_times[1], nil, instrumentation_library)
+    otel_span_three = OpenTelemetry::SDK::Trace::Span.new(other_context, span_names[2], nil, nil, OpenTelemetry::SDK::Trace::Config::TraceConfig.new, MockProcessor.new, nil, nil, start_times[2], nil, instrumentation_library)
+    otel_span_one.finish(end_timestamp: end_times[0])
+    otel_span_two.finish(end_timestamp: end_times[1])
+    otel_span_three.finish(end_timestamp: end_times[2])
+    otel_spans = [otel_span_one.to_span_data, otel_span_two.to_span_data, otel_span_three.to_span_data]
+
+    datadog_encoded_spans = span_encoder.translate_to_datadog(otel_spans, 'example_service')
+
+    _(datadog_encoded_spans.length).must_equal 3
+
+    datadog_encoded_spans.each_with_index do |span, idx|
+      _(span.start_time).must_equal(start_times[idx])
+      _(span.end_time).must_equal(end_times[idx])
+    end
+
+    _(datadog_encoded_spans[0].span_id).must_equal(datadog_encoded_spans[0].span_id)
+    _(datadog_encoded_spans[0].trace_id).must_equal(datadog_encoded_spans[1].trace_id)
+    _(datadog_encoded_spans[0].trace_id).must_equal(datadog_encoded_spans[2].trace_id)
+    _(datadog_encoded_spans[0].span_type).must_equal(::Datadog::Contrib::Redis::Ext::TYPE)
+  end
 
   it 'generates a valid datadog span type' do
     instrumentation_library = OpenTelemetry::SDK::InstrumentationLibrary.new("OpenTelemetry::Adapters::Redis", 1)
