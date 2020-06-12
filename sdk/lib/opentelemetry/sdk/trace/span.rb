@@ -240,7 +240,8 @@ module OpenTelemetry
             @instrumentation_library,
             context.span_id,
             context.trace_id,
-            context.trace_flags
+            context.trace_flags,
+            context.tracestate
           )
         end
 

@@ -38,6 +38,12 @@ describe OpenTelemetry::SDK, 'global_tracer_configurations' do
       it 'are all SpanData' do
         _(finished_spans.collect(&:class).uniq).must_equal([sdk::Trace::SpanData])
       end
+
+      it 'are all SpanData which have trace_flags and tracestate span context' do
+        finish_span_keys = finished_spans.collect(&:members).flatten.uniq
+        _(finish_span_keys).must_include(:tracestate)
+        _(finish_span_keys).must_include(:trace_flags)
+      end
     end
   end
 

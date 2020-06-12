@@ -27,7 +27,8 @@ module OpenTelemetry
                             :instrumentation_library,
                             :span_id,
                             :trace_id,
-                            :trace_flags)
+                            :trace_flags,
+                            :tracestate)
     end
   end
 end
