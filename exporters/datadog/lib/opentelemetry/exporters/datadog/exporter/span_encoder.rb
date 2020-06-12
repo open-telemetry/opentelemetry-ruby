@@ -24,15 +24,15 @@ module OpenTelemetry
           SAMPLING_PRIORITY_KEY = "_sampling_priority_v1"
 
           INSTRUMENTATION_SPAN_TYPES = {
-            "OpenTelemetry::Adapters::Ethon": ::Datadog::Ext::HTTP::TYPE_OUTBOUND,
-            "OpenTelemetry::Adapters::Excon": ::Datadog::Ext::HTTP::TYPE_OUTBOUND,
-            "OpenTelemetry::Adapters::Faraday": ::Datadog::Ext::HTTP::TYPE_OUTBOUND,
-            "OpenTelemetry::Adapters::Net::HTTP": ::Datadog::Ext::HTTP::TYPE_OUTBOUND,
-            "OpenTelemetry::Adapters::Rack": ::Datadog::Ext::HTTP::TYPE_INBOUND,
-            "OpenTelemetry::Adapters::Redis": ::Datadog::Contrib::Redis::Ext::TYPE,
-            "OpenTelemetry::Adapters::RestClient": ::Datadog::Ext::HTTP::TYPE_OUTBOUND,
-            "OpenTelemetry::Adapters::Sidekiq": ::Datadog::Ext::AppTypes::WORKER,
-            "OpenTelemetry::Adapters::Sinatra": ::Datadog::Ext::HTTP::TYPE_INBOUND
+            "OpenTelemetry::Adapters::Ethon" => ::Datadog::Ext::HTTP::TYPE_OUTBOUND,
+            "OpenTelemetry::Adapters::Excon" => ::Datadog::Ext::HTTP::TYPE_OUTBOUND,
+            "OpenTelemetry::Adapters::Faraday" => ::Datadog::Ext::HTTP::TYPE_OUTBOUND,
+            "OpenTelemetry::Adapters::Net::HTTP" => ::Datadog::Ext::HTTP::TYPE_OUTBOUND,
+            "OpenTelemetry::Adapters::Rack" => ::Datadog::Ext::HTTP::TYPE_INBOUND,
+            "OpenTelemetry::Adapters::Redis" => ::Datadog::Contrib::Redis::Ext::TYPE,
+            "OpenTelemetry::Adapters::RestClient" => ::Datadog::Ext::HTTP::TYPE_OUTBOUND,
+            "OpenTelemetry::Adapters::Sidekiq" => ::Datadog::Ext::AppTypes::WORKER,
+            "OpenTelemetry::Adapters::Sinatra" => ::Datadog::Ext::HTTP::TYPE_INBOUND
           }
 
           def translate_to_datadog(otel_spans, service) # rubocop:disable Metrics/AbcSize
@@ -60,12 +60,11 @@ module OpenTelemetry
               if span.status && span.status.canonical_code != OpenTelemetry::Trace::Status::OK
                 datadog_span.status = 1
 
-                if span.status.description
-                  exception_value, exception_type = get_exception_info(span)
+                exception_type, exception_msg, exception_stack = get_exception_info(span)
 
-                  datadog_span.set_tag("error.msg", exception_value)
-                  datadog_span.set_tag("error.type", exception_type)
-                end
+                datadog_span.set_tag("error.type", exception_type)
+                datadog_span.set_tag("error.msg", exception_msg)
+                datadog_span.set_tag("error.stack", exception_stack)              
               end
               
               #set tags
@@ -117,12 +116,16 @@ module OpenTelemetry
           end
 
           def get_exception_info(span)
-            # Parse span status description for exception type and value
-            exc_value, exc_type = span.status.description.split(":", 2)
+            # Parse span exception type, msg, and stack from span events
+            error_event = span.events.find{ |ev| ev.name == "error"}
 
-            exc_type = "" if exc_type.nil?
+            if error_event
+              err_type = error_event.attributes['error.type']
+              err_msg = error_event.attributes['error.msg']
+              err_stack = error_event.attributes['error.stack']
 
-            [exc_value, exc_type.strip]
+              return [err_type, err_msg, err_stack]
+            end            
           end
 
           def get_origin(span)
