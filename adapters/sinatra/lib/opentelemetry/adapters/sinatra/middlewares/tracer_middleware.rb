@@ -43,7 +43,7 @@ module OpenTelemetry
 
             span.set_attribute('http.status_code', status)
             span.set_attribute('http.status_text', ::Rack::Utils::HTTP_STATUS_CODES[status])
-            span.set_attribute('http.route', env['sinatra.route'].split.last)
+            span.set_attribute('http.route', env['sinatra.route'].split.last) if env['sinatra.route']
             span.status = OpenTelemetry::Trace::Status.http_to_status(status)
           end
         end
