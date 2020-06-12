@@ -142,7 +142,7 @@ module OpenTelemetry
             # TODO: how to handle resource naming for broader span types, ie db/cache/queue etc
             begin 
               if span.attributes.key?("http.method")
-                  route = span.attributes["http.route"] || span.attributes["http.path"]
+                  route = span.attributes["http.route"] || span.attributes["http.target"]
                   if route
                     return span.attributes["http.method"] + " " + route
                   else   

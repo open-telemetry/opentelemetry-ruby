@@ -50,8 +50,18 @@ describe OpenTelemetry::Exporters::Datadog::Exporter::SpanEncoder do
     _(datadog_span_info.resource).must_equal('GET /example/api')    
   end
 
-  # it 'translates otel spans to datadog spans' do
-  # end
+  it 'translates otel spans to datadog spans' do
+    span_names = ("test1", "test2", "test3")
+    trace_id = 0x6E0C63257DE34C926F9EFCD03927272E
+    trace_id_low = 0x6F9EFCD03927272E
+    span_id = 0x34BF92DEEFC58C92
+    parent_id = 0x1111111111111111
+    other_id = 0x2222222222222222
+    base_time = 683647322 * 10 ** 9
+    start_times = [base_time, base_time + 150 * 10 ** 6, base_time + 300 * 10 ** 6]
+    durations = [50 * 10 ** 6, 100 * 10 ** 6, 200 * 10 ** 6]
+    end_times = [ start_times[0] + durations[0], start_times[1] + durations[1], start_times[2] + durations[2] ]
+  end
 
   # it 'generates a valid datadog span type' do
   # end
