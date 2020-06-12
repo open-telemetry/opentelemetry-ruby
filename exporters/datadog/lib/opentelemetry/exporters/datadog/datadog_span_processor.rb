@@ -9,42 +9,35 @@ require 'timeout'
 module OpenTelemetry
   module Exporters
     module Datadog
-      
       # Implementation of the duck type SpanProcessor that batches spans
-      # exported by the SDK into complete traces then pushes them 
+      # exported by the SDK into complete traces then pushes them
       # to the exporter pipeline.
       #
       # All spans reported by the SDK implementation are first added to a
-      # synchronized in memory trace storage (with a {max_queue_size} 
-      # maximum size, after the size is reached spans are dropped). 
+      # synchronized in memory trace storage (with a {max_queue_size}
+      # maximum size, after the size is reached spans are dropped).
       # When traces are designate as "complete" they added to a queue that
-      # is exported every schedule_delay_millis to the exporter pipeline in 
+      # is exported every schedule_delay_millis to the exporter pipeline in
       # batches of completed traces
       class DatadogSpanProcessor
-        EXPORTER_TIMEOUT_MILLIS = 30_000
         SCHEDULE_DELAY_MILLIS = 3_000
         MAX_QUEUE_SIZE = 2048
-        MAX_EXPORT_ATTEMPTS = 5
         MAX_TRACE_SIZE = 1024
         private_constant(:SCHEDULE_DELAY_MILLIS, :MAX_QUEUE_SIZE, :MAX_TRACE_SIZE, :MAX_EXPORT_ATTEMPTS)
 
         def initialize(exporter:,
-                       exporter_timeout_millis: EXPORTER_TIMEOUT_MILLIS,
                        schedule_delay_millis: SCHEDULE_DELAY_MILLIS,
                        max_queue_size: MAX_QUEUE_SIZE,
-                       max_trace_size: MAX_TRACE_SIZE,
-                       max_export_attempts: MAX_EXPORT_ATTEMPTS)
+                       max_trace_size: MAX_TRACE_SIZE)
           raise ArgumentError if max_trace_size > max_queue_size
 
           @exporter = exporter
-          @exporter_timeout_seconds = exporter_timeout_millis / 1000.0
           @mutex = Mutex.new
           @condition = ConditionVariable.new
           @keep_running = true
           @delay_seconds = schedule_delay_millis / 1000.0
           @max_queue_size = max_queue_size
           @max_trace_size = max_trace_size
-          @export_attempts = max_export_attempts
           @spans = []
           @thread = Thread.new { work }
 
@@ -63,7 +56,7 @@ module OpenTelemetry
 
           lock do
             if all_spans_count(traces_spans_count) >= max_queue_size
-              OpenTelemetry.logger.warn("Max spans for all traces, spans will be dropped")
+              OpenTelemetry.logger.warn('Max spans for all traces, spans will be dropped')
               @_spans_dropped = true
               return
             end
@@ -73,7 +66,7 @@ module OpenTelemetry
               traces_spans_count[trace_id] = 1
             else
               if traces[trace_id].size >= max_trace_size
-                OpenTelemetry.logger.warn("Max spans for all traces, spans will be dropped")
+                OpenTelemetry.logger.warn('Max spans for all traces, spans will be dropped')
                 @_spans_dropped = true
                 return
               end
@@ -85,9 +78,9 @@ module OpenTelemetry
         end
 
         # adds a span to the batcher, threadsafe may block on lock
-        def on_finish(span) # rubocop:disable Metrics/AbcSize
+        def on_finish(span)
           if @keep_running == false
-            OpenTelemetry.logger.warn("Already shutdown, dropping span")
+            OpenTelemetry.logger.warn('Already shutdown, dropping span')
             return
           end
 
@@ -108,9 +101,7 @@ module OpenTelemetry
               traces_spans_ended_count[trace_id] += 1
             end
 
-            if is_trace_exportable?(trace_id)
-              check_traces_queue.unshift(trace_id)
-            end
+            check_traces_queue.unshift(trace_id) if trace_exportable?(trace_id)
           end
         end
 
@@ -159,21 +150,17 @@ module OpenTelemetry
         end
 
         def export_batch(trace_spans)
-          if trace_spans.length > 0
-            trace_spans.each do |spans|
-              begin
-                @exporter.export(spans)
-              rescue Exception => e
-                OpenTelemetry.logger.warn("Exception while exporting Span batch. #{e.message} , #{e.backtrace}")
-              end
-            end
+          return if trace_spans.empty?
+
+          trace_spans.each do |spans|
+            @exporter.export(spans)
+          rescue StandardError => e
+            OpenTelemetry.logger.warn("Exception while exporting Span batch. #{e.message} , #{e.backtrace}")
           end
         end
 
-        def is_trace_exportable?(trace_id)
-          if traces_spans_count.key?(trace_id) && traces_spans_ended_count.key?(trace_id)
-            traces_spans_count[trace_id] - traces_spans_ended_count[trace_id] <= 0
-          end
+        def trace_exportable?(trace_id)
+          traces_spans_count[trace_id] - traces_spans_ended_count[trace_id] <= 0 if traces_spans_count.key?(trace_id) && traces_spans_ended_count.key?(trace_id)
         end
 
         def all_spans_count(traces_spans_count)
@@ -184,12 +171,12 @@ module OpenTelemetry
           export_traces = []
 
           check_traces_queue.reverse_each do |trace_id|
-            if is_trace_exportable?(trace_id)                    
-              export_traces << fetch_spans(traces.delete(trace_id))
-              check_traces_queue.delete(trace_id)
-              traces_spans_count.delete(trace_id)
-              traces_spans_ended_count.delete(trace_id)                 
-            end
+            next unless trace_exportable?(trace_id)
+
+            export_traces << fetch_spans(traces.delete(trace_id))
+            check_traces_queue.delete(trace_id)
+            traces_spans_count.delete(trace_id)
+            traces_spans_ended_count.delete(trace_id)
           end
 
           export_traces

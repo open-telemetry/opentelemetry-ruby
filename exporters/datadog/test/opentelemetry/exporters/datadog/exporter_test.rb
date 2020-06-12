@@ -26,19 +26,19 @@ describe OpenTelemetry::Exporters::Datadog::Exporter do
   let(:service_name) { 'test' }
   let(:agent_url) { 'http://localhost:8126' }
 
-  let(:faux_writer) {
+  let(:faux_writer) do
     FauxWriter.new(
       transport: Datadog::Transport::HTTP.default do |t|
         t.adapter :test
       end
     )
-  }
+  end
 
-  let(:exporter) { 
-    OpenTelemetry::Exporters::Datadog::Exporter.new(service_name: service_name, agent_url: agent_url ).tap do |exporter|
+  let(:exporter) do
+    OpenTelemetry::Exporters::Datadog::Exporter.new(service_name: service_name, agent_url: agent_url).tap do |exporter|
       exporter.agent_writer = faux_writer
     end
-  }
+  end
 
   describe '#initialize' do
     let(:service_name) { nil }
@@ -51,14 +51,14 @@ describe OpenTelemetry::Exporters::Datadog::Exporter do
     it 'initializes with defaults' do
       default_exporter = exporter
       _(default_exporter.agent_url).must_equal('http://localhost:8126')
-      _(default_exporter.service).must_equal("my_service")
+      _(default_exporter.service).must_equal('my_service')
     end
 
     it 'initializes with environment variables as defaults' do
       env_url = 'http://localhost:8127'
-      env_service = "env_service"
-      ENV["DD_TRACE_AGENT_URL"] = env_url 
-      ENV["DD_SERVICE"] = env_service
+      env_service = 'env_service'
+      ENV['DD_TRACE_AGENT_URL'] = env_url
+      ENV['DD_SERVICE'] = env_service
 
       begin
         default_exporter = exporter
@@ -66,8 +66,8 @@ describe OpenTelemetry::Exporters::Datadog::Exporter do
         _(default_exporter.agent_url).must_equal(env_url)
         _(default_exporter.service).must_equal(env_service)
       ensure
-        ENV.delete("DD_TRACE_AGENT_URL")
-        ENV.delete("DD_SERVICE")
+        ENV.delete('DD_TRACE_AGENT_URL')
+        ENV.delete('DD_SERVICE')
       end
     end
 
@@ -77,10 +77,10 @@ describe OpenTelemetry::Exporters::Datadog::Exporter do
 
       it 'initializes with arguments taking precedence over environment variables' do
         env_url = 'http://localhost:8127'
-        env_service = "env_service"
+        env_service = 'env_service'
 
-        ENV["DD_TRACE_AGENT_URL"] = env_url 
-        ENV["DD_SERVICE"] = env_service
+        ENV['DD_TRACE_AGENT_URL'] = env_url
+        ENV['DD_SERVICE'] = env_service
 
         begin
           default_exporter = exporter
@@ -88,21 +88,19 @@ describe OpenTelemetry::Exporters::Datadog::Exporter do
           _(default_exporter.agent_url).must_equal(agent_url)
           _(default_exporter.service).must_equal(service_name)
         ensure
-          ENV.delete("DD_TRACE_AGENT_URL")
-          ENV.delete("DD_SERVICE")
+          ENV.delete('DD_TRACE_AGENT_URL')
+          ENV.delete('DD_SERVICE')
         end
-      end    
+      end
     end
 
     # describe '#initializes with uds writer' do
     # end
   end
 
-
-
   describe '#export' do
     before do
-      OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new()
+      OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new
     end
 
     it 'returns FAILED_NOT_RETRYABLE when shutdown' do
@@ -139,6 +137,5 @@ describe OpenTelemetry::Exporters::Datadog::Exporter do
     OpenTelemetry::SDK::Trace::SpanData.new(name, kind, status, parent_span_id, child_count, total_recorded_attributes,
                                             total_recorded_events, total_recorded_links, start_timestamp, end_timestamp,
                                             attributes, links, events, library_resource, instrumentation_library, span_id, trace_id, trace_flags)
-
   end
 end

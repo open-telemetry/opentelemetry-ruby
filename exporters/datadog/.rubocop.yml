@@ -4,11 +4,17 @@ AllCops:
 Lint/UnusedMethodArgument:
   Enabled: false
 Metrics/AbcSize:
-  Max: 18
+  Max: 26
+Metrics/BlockLength:
+  Max: 26
+Metrics/ClassLength:
+  Max: 125
 Metrics/LineLength:
   Enabled: false
 Metrics/MethodLength:
-  Max: 20
+  Max: 40
+Metrics/PerceivedComplexity:
+  Max: 8  
 Metrics/ParameterLists:
   Enabled: false
 Naming/FileName:

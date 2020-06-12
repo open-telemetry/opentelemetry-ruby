@@ -76,11 +76,11 @@ describe OpenTelemetry::Exporters::Datadog::DatadogSpanProcessor do
   class TestSpan
     def initialize(id = nil, recording = true, trace_id = nil)
       trace_flags = recording ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
-      if trace_id
-        @context = OpenTelemetry::Trace::SpanContext.new(trace_flags: trace_flags, trace_id: trace_id)
-      else
-        @context = OpenTelemetry::Trace::SpanContext.new(trace_flags: trace_flags)
-      end
+      @context = if trace_id
+                   OpenTelemetry::Trace::SpanContext.new(trace_flags: trace_flags, trace_id: trace_id)
+                 else
+                   OpenTelemetry::Trace::SpanContext.new(trace_flags: trace_flags)
+                 end
       @id = id
       @recording = recording
     end
@@ -130,10 +130,10 @@ describe OpenTelemetry::Exporters::Datadog::DatadogSpanProcessor do
     it 'should batch up to but not over the max_queue_size' do
       te = TestExporter.new
 
-      dsp = DatadogSpanProcessor.new(exporter: te, max_queue_size: 3, max_trace_size: 3 )
+      dsp = DatadogSpanProcessor.new(exporter: te, max_queue_size: 3, max_trace_size: 3)
 
       tss = [TestSpan.new, TestSpan.new, TestSpan.new, TestSpan.new]
-      tss.each do |ts| 
+      tss.each do |ts|
         dsp.on_start(ts)
         dsp.on_finish(ts)
       end
@@ -149,8 +149,8 @@ describe OpenTelemetry::Exporters::Datadog::DatadogSpanProcessor do
       dsp = DatadogSpanProcessor.new(exporter: te, max_queue_size: 4, max_trace_size: 2)
 
       trace_id = generate_trace_id
-      spans = [TestSpan.new(1,true, trace_id), TestSpan.new(2,true, trace_id), TestSpan.new(3,true, trace_id)]
-      
+      spans = [TestSpan.new(1, true, trace_id), TestSpan.new(2, true, trace_id), TestSpan.new(3, true, trace_id)]
+
       spans.each do |span|
         dsp.on_start(span)
       end
@@ -171,7 +171,7 @@ describe OpenTelemetry::Exporters::Datadog::DatadogSpanProcessor do
       dsp = DatadogSpanProcessor.new(exporter: te)
 
       tss = [TestSpan.new, TestSpan.new(nil, false)]
-      tss.each do |ts| 
+      tss.each do |ts|
         dsp.on_start(ts)
         dsp.on_finish(ts)
       end
@@ -189,8 +189,7 @@ describe OpenTelemetry::Exporters::Datadog::DatadogSpanProcessor do
       producers = 10.times.map do |i|
         Thread.new do
           100.times do |j|
-            
-            span = TestSpan.new(j + (i*100))
+            span = TestSpan.new(j + (i * 100))
             dsp.on_start(span)
             dsp.on_finish(span)
           end
