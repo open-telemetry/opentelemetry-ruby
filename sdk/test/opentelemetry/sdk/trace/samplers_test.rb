@@ -21,23 +21,32 @@ describe OpenTelemetry::SDK::Trace::Samplers do
     end
   end
 
-  describe '.ALWAYS_PARENT' do
+  describe '.parent_or_else' do
+    let(:sampler) { Samplers.parent_or_else(Samplers::ALWAYS_OFF) }
+
     it 'samples if parent is sampled' do
       context = OpenTelemetry::Trace::SpanContext.new(
         trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(1)
       )
-      _(call_sampler(Samplers::ALWAYS_PARENT, parent_context: context)).must_be :sampled?
+      _(call_sampler(sampler, parent_context: context)).must_be :sampled?
     end
 
     it 'does not sample if parent is not sampled' do
       context = OpenTelemetry::Trace::SpanContext.new(
         trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(0)
       )
-      _(call_sampler(Samplers::ALWAYS_PARENT, parent_context: context)).wont_be :sampled?
+      _(call_sampler(sampler, parent_context: context)).wont_be :sampled?
     end
 
-    it 'does not sample root spans' do
-      _(call_sampler(Samplers::ALWAYS_PARENT, parent_context: nil)).wont_be :sampled?
+    it 'delegates sampling of root spans' do
+      trace_id = OpenTelemetry::Trace.generate_trace_id
+      result = Result.new(decision: Decision::NOT_RECORD)
+      mock_sampler = Minitest::Mock.new
+      mock_sampler.expect(:should_sample?, result, [{ trace_id: trace_id, parent_context: nil, links: nil, name: nil, kind: nil, attributes: nil }])
+      OpenTelemetry::Trace.stub :generate_trace_id, trace_id do
+        _(call_sampler(Samplers.parent_or_else(mock_sampler), parent_context: nil)).wont_be :sampled?
+      end
+      mock_sampler.verify
     end
   end
 
@@ -154,10 +163,9 @@ describe OpenTelemetry::SDK::Trace::Samplers do
     format('%032x', id)
   end
 
-  def call_sampler(sampler, trace_id: nil, span_id: nil, parent_context: nil, links: nil, name: nil, kind: nil, attributes: nil)
-    sampler.call(
+  def call_sampler(sampler, trace_id: nil, parent_context: nil, links: nil, name: nil, kind: nil, attributes: nil)
+    sampler.should_sample?(
       trace_id: trace_id || OpenTelemetry::Trace.generate_trace_id,
-      span_id: span_id || OpenTelemetry::Trace.generate_span_id,
       parent_context: parent_context,
       links: links,
       name: name,
