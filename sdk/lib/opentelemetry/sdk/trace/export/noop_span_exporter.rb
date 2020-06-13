@@ -27,7 +27,7 @@ module OpenTelemetry
           def export(spans)
             return SUCCESS unless @stopped
 
-            FAILED_NOT_RETRYABLE
+            FAILURE
           end
 
           # Called when {TracerProvider#shutdown} is called, if this exporter is

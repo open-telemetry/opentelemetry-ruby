@@ -15,13 +15,8 @@ module OpenTelemetry
         # The export operation finished successfully.
         SUCCESS = 0
 
-        # The export operation finished with an error, but retrying may
-        # succeed.
-        FAILED_RETRYABLE = 1
-
-        # The export operation finished with an error, the caller should not
-        # try to export the same data again.
-        FAILED_NOT_RETRYABLE = 2
+        # The export operation finished with an error.
+        FAILURE = 1
       end
     end
   end
