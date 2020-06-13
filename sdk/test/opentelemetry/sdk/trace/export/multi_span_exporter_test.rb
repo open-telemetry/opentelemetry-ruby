@@ -54,40 +54,11 @@ describe OpenTelemetry::SDK::Trace::Export::MultiSpanExporter do
     mock_span_exporter2.verify
   end
 
-  it 'returns an error from #export if one exporter fails (retryable)' do
+  it 'returns an error from #export if one exporter fails' do
     mock_span_exporter.expect :export, export::SUCCESS, [Object]
-    mock_span_exporter2.expect :export, export::FAILED_RETRYABLE, [Object]
+    mock_span_exporter2.expect :export, export::FAILURE, [Object]
 
-    _(exporter_multi.export(spans)).must_equal export::FAILED_RETRYABLE
-    mock_span_exporter.verify
-    mock_span_exporter2.verify
-  end
-
-  it 'returns an error from #export if one exporter fails (not retryable)' do
-    mock_span_exporter.expect :export, export::SUCCESS, [Object]
-    mock_span_exporter2.expect :export, export::FAILED_NOT_RETRYABLE, [Object]
-
-    _(exporter_multi.export(spans)).must_equal export::FAILED_NOT_RETRYABLE
-    mock_span_exporter.verify
-    mock_span_exporter2.verify
-  end
-
-  it 'returns the worst error from #export if multiple exporters fail' do
-    # retryable error first
-    mock_span_exporter.expect :export, export::FAILED_RETRYABLE, [Object]
-    mock_span_exporter2.expect :export, export::FAILED_NOT_RETRYABLE, [Object]
-
-    _(exporter_multi.export(spans)).must_equal export::FAILED_NOT_RETRYABLE
-    mock_span_exporter.verify
-    mock_span_exporter2.verify
-  end
-
-  it 'returns the worst error from #export (reversed order)' do
-    # non-retryable error first
-    mock_span_exporter.expect :export, export::FAILED_NOT_RETRYABLE, [Object]
-    mock_span_exporter2.expect :export, export::FAILED_RETRYABLE, [Object]
-
-    _(exporter_multi.export(spans)).must_equal export::FAILED_NOT_RETRYABLE
+    _(exporter_multi.export(spans)).must_equal export::FAILURE
     mock_span_exporter.verify
     mock_span_exporter2.verify
   end
@@ -100,7 +71,7 @@ describe OpenTelemetry::SDK::Trace::Export::MultiSpanExporter do
     logger_mock = Minitest::Mock.new
     logger_mock.expect :warn, nil, [/ArgumentError/]
     OpenTelemetry.stub :logger, logger_mock do
-      _(exporter.export(spans)).must_equal export::FAILED_NOT_RETRYABLE
+      _(exporter.export(spans)).must_equal export::FAILURE
     end
 
     logger_mock.verify
