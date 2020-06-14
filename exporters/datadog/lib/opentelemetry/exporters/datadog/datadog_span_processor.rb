@@ -23,7 +23,7 @@ module OpenTelemetry
         SCHEDULE_DELAY_MILLIS = 3_000
         MAX_QUEUE_SIZE = 2048
         MAX_TRACE_SIZE = 1024
-        private_constant(:SCHEDULE_DELAY_MILLIS, :MAX_QUEUE_SIZE, :MAX_TRACE_SIZE, :MAX_EXPORT_ATTEMPTS)
+        private_constant(:SCHEDULE_DELAY_MILLIS, :MAX_QUEUE_SIZE, :MAX_TRACE_SIZE)
 
         def initialize(exporter:,
                        schedule_delay_millis: SCHEDULE_DELAY_MILLIS,
