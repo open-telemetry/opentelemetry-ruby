@@ -67,10 +67,17 @@ module OpenTelemetry
           if %w[http https].include?(uri_parsed.scheme)
             hostname = uri_parsed.hostname
             port = uri_parsed.port
+
             @agent_writer = ::Datadog::Writer.new(hostname: hostname, port: port)
+          elsif uri_parsed.to_s.index('/sock')
+            # handle uds path
+            transport = ::Datadog::Transport::HTTP.default do |t|
+              t.adapter :unix, uri_parsed.to_s
+            end
+
+            @agent_writer = ::Datadog::Writer.new(transport: transport)
           else
-            # TODO: handle uds path
-            OpenTelemetry.logger.warn('only http/https is supported at this time')
+            OpenTelemetry.logger.warn('only http/https and uds is supported at this time')
           end
         end
       end
