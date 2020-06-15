@@ -18,15 +18,9 @@ describe OpenTelemetry::Exporters::Datadog::Exporter do
     ::OpenTelemetry::Trace::Propagation::ContextKeys.extracted_span_context_key
   end
 
-  let(:injector) do
+  let(:propagator) do
     OpenTelemetry::Exporters::Datadog::Propagator.new
   end
-  # let(:valid_traceparent_header) do
-  #   '00-000000000000000000000000000000AA-00000000000000ea-01'
-  # end
-  # let(:invalid_traceparent_header) do
-  #   'FF-000000000000000000000000000000AA-00000000000000ea-01'
-  # end
 
   let(:otel_span_id) do
     ('1' * 16)
@@ -50,6 +44,33 @@ describe OpenTelemetry::Exporters::Datadog::Exporter do
 
   let(:dd_not_sampled) do
     '0'
+  end
+
+  let(:valid_dd_headers) do
+    {
+      'x-datadog-trace-id' => dd_trace_id,
+      'x-datadog-parent-id' => dd_span_id,
+      'x-datadog-sampling-priority' => dd_sampled,
+      'x-datadog-origin' => 'example_origin'
+    }
+  end
+
+  let(:invalid_dd_headers) do
+    {
+      'x-datadog-traceinvalid-id' => ('i' * 17),
+      'x-datadog-parentinvalid-id' => ('i' * 17),
+      'x-datadog-sampling-priority' => dd_sampled,
+      'x-datadog-origin' => 'example_origin'
+    }
+  end
+
+  let(:rack_dd_headers) do
+    {
+      'HTTP_X_DATADOG_TRACE_ID' => dd_trace_id,
+      'HTTP_X_DATADOG_PARENT_ID' => dd_span_id,
+      'HTTP_X_DATADOG_SAMPLING_PRIORITY' => dd_sampled,
+      'HTTP_X_DATADOG_ORIGIN' => 'example_origin'
+    }
   end
 
   let(:trace_flags) do
@@ -86,21 +107,21 @@ describe OpenTelemetry::Exporters::Datadog::Exporter do
     end
 
     it 'injects the datadog appropriate trace information into the carrier from the context, if provided' do
-      carrier = injector.inject({}, context) { |c, k, v| c[k] = v }
+      carrier = propagator.inject({}, context) { |c, k, v| c[k] = v }
       _(carrier['x-datadog-trace-id']).must_equal(dd_trace_id)
       _(carrier['x-datadog-parent-id']).must_equal(dd_span_id)
       _(carrier['x-datadog-sampling-priority']).must_equal(dd_not_sampled)
     end
 
     it 'injects the datadog appropriate sampling priority into the carrier from the context, if provided' do
-      carrier = injector.inject({}, context_with_trace_flags) { |c, k, v| c[k] = v }
+      carrier = propagator.inject({}, context_with_trace_flags) { |c, k, v| c[k] = v }
       _(carrier['x-datadog-trace-id']).must_equal(dd_trace_id)
       _(carrier['x-datadog-parent-id']).must_equal(dd_span_id)
       _(carrier['x-datadog-sampling-priority']).must_equal(dd_sampled)
     end
 
     it 'injects the datadog appropriate sampling priority into the carrier from the context, if provided' do
-      carrier = injector.inject({}, context_with_tracestate) { |c, k, v| c[k] = v }
+      carrier = propagator.inject({}, context_with_tracestate) { |c, k, v| c[k] = v }
       _(carrier['x-datadog-trace-id']).must_equal(dd_trace_id)
       _(carrier['x-datadog-parent-id']).must_equal(dd_span_id)
       _(carrier['x-datadog-origin']).must_equal('example_origin')
@@ -109,12 +130,27 @@ describe OpenTelemetry::Exporters::Datadog::Exporter do
 
   describe '#extract' do
     it 'returns original context on error' do
+      context = propagator.extract(invalid_dd_headers, OpenTelemetry::Context.empty)[extracted_span_context_key]
+
+      assert_nil(context)
     end
 
     it 'returns a remote SpanContext with fields from the datadog headers' do
+      context = propagator.extract(valid_dd_headers, OpenTelemetry::Context.empty)[extracted_span_context_key]
+
+      _(context.trace_id).must_equal(otel_trace_id[0, 16])
+      _(context.span_id).must_equal(otel_span_id)
+      _(context.trace_flags&.sampled?).must_equal(true)
+      _(context.tracestate).must_equal(tracestate_header)
     end
 
     it 'accounts for rack specific headers' do
+      context = propagator.extract(rack_dd_headers, OpenTelemetry::Context.empty)[extracted_span_context_key]
+
+      _(context.trace_id).must_equal(otel_trace_id[0, 16])
+      _(context.span_id).must_equal(otel_span_id)
+      _(context.trace_flags&.sampled?).must_equal(true)
+      _(context.tracestate).must_equal(tracestate_header)
     end
   end
 end
