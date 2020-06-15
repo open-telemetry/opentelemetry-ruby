@@ -19,8 +19,7 @@ end
 
 describe OpenTelemetry::Exporters::Datadog::Exporter do
   SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
-  FAILED_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_RETRYABLE
-  FAILED_NOT_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_NOT_RETRYABLE
+  FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
   AGENT_URL = 'http://localhost:8126'
 
   let(:service_name) { 'test' }
@@ -103,10 +102,10 @@ describe OpenTelemetry::Exporters::Datadog::Exporter do
       OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new
     end
 
-    it 'returns FAILED_NOT_RETRYABLE when shutdown' do
+    it 'returns FAILURE when shutdown' do
       exporter.shutdown
       result = exporter.export(nil)
-      _(result).must_equal(FAILED_NOT_RETRYABLE)
+      _(result).must_equal(FAILURE)
     end
 
     it 'exports a span_data' do

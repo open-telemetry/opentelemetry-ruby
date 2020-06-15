@@ -24,8 +24,7 @@ INVALID_TRACE_ID = ('0' * 32).freeze
 describe OpenTelemetry::Exporters::Datadog::DatadogSpanProcessor do
   DatadogSpanProcessor = OpenTelemetry::Exporters::Datadog::DatadogSpanProcessor
   SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
-  FAILED_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_RETRYABLE
-  FAILED_NOT_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_NOT_RETRYABLE
+  FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
 
   class TestExporter
     def initialize(status_codes: nil)
