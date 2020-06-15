@@ -22,11 +22,10 @@ module OpenTelemetry
         DEFAULT_AGENT_URL = 'http://localhost:8126'
         DEFAULT_SERVICE_NAME = 'my_service'
         SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
-        FAILED_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_RETRYABLE
         FAILED_NOT_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_NOT_RETRYABLE
-        private_constant(:SUCCESS, :FAILED_RETRYABLE, :FAILED_NOT_RETRYABLE)
+        private_constant(:SUCCESS, :FAILED_NOT_RETRYABLE)
 
-        def initialize(service_name:, agent_url:)
+        def initialize(service_name: nil, agent_url: nil)
           @shutdown = false
           @agent_url = agent_url || ENV.fetch('DD_TRACE_AGENT_URL', DEFAULT_AGENT_URL)
 
@@ -45,10 +44,13 @@ module OpenTelemetry
         def export(spans)
           return FAILED_NOT_RETRYABLE if @shutdown
 
-          datadog_spans = @span_encoder.translate_to_datadog(spans, @service)
-          @agent_writer.write(datadog_spans)
-
-          SUCCESS
+          if @agent_writer
+            datadog_spans = @span_encoder.translate_to_datadog(spans, @service)
+            @agent_writer.write(datadog_spans)
+            SUCCESS
+          else
+            OpenTelemetry.logger.debug('Agent writer not set')
+          end
         end
 
         # Called when {TracerProvider#shutdown} is called, if this exporter is

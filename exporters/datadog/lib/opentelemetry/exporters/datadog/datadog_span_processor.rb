@@ -15,10 +15,12 @@ module OpenTelemetry
       #
       # All spans reported by the SDK implementation are first added to a
       # synchronized in memory trace storage (with a {max_queue_size}
-      # maximum size, after the size is reached spans are dropped).
-      # When traces are designate as "complete" they added to a queue that
-      # is exported every schedule_delay_millis to the exporter pipeline in
-      # batches of completed traces
+      # maximum size, of trace size {max_trace_size} after the size of 
+      # either is reached spans are dropped). When traces are designated 
+      # as "complete" they're added to a queue that is exported every 
+      # schedule_delay_millis to the exporter pipeline in batches of
+      # completed traces. The datadog writer and transport supplied
+      # to the exporter handle the bulk of the timeout and retry logic.
       class DatadogSpanProcessor
         SCHEDULE_DELAY_MILLIS = 3_000
         MAX_QUEUE_SIZE = 2048

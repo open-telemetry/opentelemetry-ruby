@@ -22,12 +22,7 @@ module OpenTelemetry
         ORIGIN_KEY = 'x-datadog-origin'
         DD_ORIGIN = '_dd_origin'
 
-        # Returns a new TextInjector that injects context using the
-        # specified header keys
-        #
-        # @param [String] traceparent_key The traceparent header key used in the carrier
-        # @param [String] tracestate_key The tracestate header key used in the carrier
-        # @return [TextInjector]
+        # Returns a new Propagator
         def initialize
           # pass
           @truncation_helper = ::Datadog::DistributedTracing::Headers::Headers.new({})
@@ -39,8 +34,6 @@ module OpenTelemetry
         # @param [optional Callable] setter An optional callable that takes a carrier and a key and
         #   a value and assigns the key-value pair in the carrier. If omitted the default setter
         #   will be used which expects the carrier to respond to [] and []=.
-        # @yield [Carrier, String, String] if an optional setter is provided, inject will yield
-        #   carrier, header key, header value to the setter.
         # @return [Object] the carrier with context injected
         def inject(carrier, context, &setter)
           return carrier unless (span_context = span_context_from(context))
@@ -52,8 +45,6 @@ module OpenTelemetry
           setter.call(carrier, TRACE_ID_KEY, @truncation_helper.value_to_id(span_context.trace_id, 16))
           setter.call(carrier, SAMPLING_PRIORITY_KEY, sampled.to_s)
           setter.call(carrier, ORIGIN_KEY, origin)
-
-          # setter.call(carrier, @tracestate_key, span_context.tracestate) unless span_context.tracestate.nil?
 
           carrier
         end
@@ -97,6 +88,7 @@ module OpenTelemetry
 
         private
 
+        # account for rack re-formatting of headers
         def rack_helper(header)
           "HTTP_#{header.to_s.upcase.gsub(/[-\s]/, '_')}"
         end
