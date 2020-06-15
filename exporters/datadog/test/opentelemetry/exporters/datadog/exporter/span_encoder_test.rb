@@ -17,7 +17,7 @@ describe OpenTelemetry::Exporters::Datadog::Exporter::SpanEncoder do
   it 'encodes a span_data' do
     encoded_span = span_encoder.translate_to_datadog([create_span_data], 'example_service')
     _(encoded_span[0].to_hash[:name]).must_equal('example_name')
-    _(encoded_span[0].to_hash[:meta]).must_equal('_dd_origin' => '')
+    _(encoded_span[0].to_hash[:meta]).must_equal({})
   end
 
   it 'encodes attributes in the span but not the events' do

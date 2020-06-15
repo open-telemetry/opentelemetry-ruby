@@ -74,7 +74,7 @@ module OpenTelemetry
 
               # TODO: serialized span data does not contain tracestate info
               # add origin to root span
-              origin = get_origin(span)
+              origin = get_origin_string(span.tracestate)
               datadog_span.set_tag(DD_ORIGIN, origin) if origin && parent_id.zero?
 
               # TODO: serialized span data does not contain sampling rate info
@@ -129,15 +129,6 @@ module OpenTelemetry
             [err_type, err_msg, err_stack]
           end
 
-          def get_origin(span)
-            # TODO: expose tracestate to the SpanData struct
-            # struct throws NameError on missing member
-
-            span.tracestate.get(DD_ORIGIN) if span[:tracestate]
-          rescue NameError
-            ''
-          end
-
           def get_resource(span)
             # Get resource name for http related spans
             # TODO: how to handle resource naming for broader span types, ie db/cache/queue etc
@@ -164,6 +155,19 @@ module OpenTelemetry
             else
               0
             end
+          end
+
+          def get_origin_string(tracestate)
+            return if tracestate.nil? || tracestate.index(DD_ORIGIN).nil?
+
+            # Depending on the edge cases in tracestate values this might be
+            # less efficient than mapping string => array => hash.
+            origin_value = tracestate.match(ORIGIN_REGEX)
+            return if origin_value.nil?
+
+            origin_value[1]
+          rescue StandardError => e
+            OpenTelemetry.logger.debug("error getting origin from trace state, #{e.message}")
           end
         end
       end
