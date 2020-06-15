@@ -7,6 +7,7 @@
 require 'opentelemetry/sdk'
 require 'opentelemetry/context/propagation'
 require 'ddtrace/distributed_tracing/headers/headers'
+require 'ddtrace/distributed_tracing/headers/helpers'
 
 module OpenTelemetry
   module Exporters
@@ -21,6 +22,7 @@ module OpenTelemetry
         SAMPLING_PRIORITY_KEY = 'x-datadog-sampling-priority'
         ORIGIN_KEY = 'x-datadog-origin'
         DD_ORIGIN = '_dd_origin'
+        ORIGIN_REGEX = /#{DD_ORIGIN}\=(.*?)($|,)/.freeze
 
         # Returns a new Propagator
         def initialize
@@ -39,12 +41,13 @@ module OpenTelemetry
           return carrier unless (span_context = span_context_from(context))
 
           sampled = span_context.trace_flags&.sampled? ? 1 : 0
-          origin = span_context.trace_state[DD_ORIGIN]
+
+          origin = get_origin_string(span_context.tracestate)
           setter ||= DEFAULT_SETTER
           setter.call(carrier, PARENT_ID_KEY, @truncation_helper.value_to_id(span_context.span_id, 16))
           setter.call(carrier, TRACE_ID_KEY, @truncation_helper.value_to_id(span_context.trace_id, 16))
           setter.call(carrier, SAMPLING_PRIORITY_KEY, sampled.to_s)
-          setter.call(carrier, ORIGIN_KEY, origin)
+          setter.call(carrier, ORIGIN_KEY, origin) if origin
 
           carrier
         end
@@ -94,8 +97,21 @@ module OpenTelemetry
         end
 
         def span_context_from(context)
-          context[ContextKeys.current_span_key]&.context ||
-            context[ContextKeys.extracted_span_context_key]
+          context[Trace::Propagation::ContextKeys.current_span_key]&.context ||
+            context[Trace::Propagation::ContextKeys.extracted_span_context_key]
+        end
+
+        def get_origin_string(tracestate)
+          return if tracestate.nil? || tracestate.index(DD_ORIGIN).nil?
+
+          # Depending on the edge cases in tracestate values this might be
+          # less efficient than mapping string => array => hash.
+          origin_value = tracestate.match(ORIGIN_REGEX)
+          return if origin_value.nil?
+
+          origin_value[1]
+        rescue StandardError => e
+          OpenTelemetry.logger.debug("error getting origin from trace state, #{e.message}")
         end
       end
     end
