@@ -16,10 +16,11 @@ describe OpenTelemetry::SDK, 'global_tracer_configurations' do
     end
   end
   let(:tracer) { provider.tracer(__FILE__, sdk::VERSION) }
+  let(:parent_context) { nil }
   let(:finished_spans) { exporter.finished_spans }
 
   before do
-    tracer.in_span('root') do
+    tracer.in_span('root', with_parent_context: parent_context) do
       tracer.in_span('child1') {}
       tracer.in_span('child2') {}
     end
@@ -46,6 +47,27 @@ describe OpenTelemetry::SDK, 'global_tracer_configurations' do
 
     it "doesn't crash" do
       finished_spans
+    end
+  end
+
+  describe 'using tracestate in extracted span context' do
+    let(:mock_tracestate) { 'vendor_key=vendor_value' }
+    let(:parent_span_context) { OpenTelemetry::Trace::SpanContext.new(tracestate: mock_tracestate) }
+    let(:parent_context) do
+      OpenTelemetry::Context.empty.set_value(
+        OpenTelemetry::Trace::Propagation::ContextKeys.extracted_span_context_key,
+        parent_span_context
+      )
+    end
+
+    describe '#finished_spans' do
+      it 'propogates tracestate through span lifecycle into SpanData' do
+        finish_span_keys = finished_spans.collect(&:members).flatten.uniq
+
+        _(finish_span_keys).must_include(:tracestate)
+
+        finished_spans.first.tracestate.must_equal(mock_tracestate)
+      end
     end
   end
 end
