@@ -9,8 +9,7 @@ require 'test_helper'
 describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
   BatchSpanProcessor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
   SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
-  FAILED_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_RETRYABLE
-  FAILED_NOT_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_NOT_RETRYABLE
+  FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
 
   class TestExporter
     def initialize(status_codes: nil)
@@ -127,31 +126,8 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
   end
 
   describe 'export retry' do
-    it 'should retry on FAILED_RETRYABLE exports' do
-      te = TestExporter.new(status_codes: [FAILED_RETRYABLE, SUCCESS])
-
-      bsp = BatchSpanProcessor.new(schedule_delay_millis: 999,
-                                   exporter: te,
-                                   max_queue_size: 6,
-                                   max_export_batch_size: 3)
-
-      tss = [TestSpan.new, TestSpan.new, TestSpan.new, TestSpan.new]
-      tss.each { |ts| bsp.on_finish(ts) }
-
-      # Ensure that our work thread has time to loop
-      sleep(1)
-      bsp.shutdown
-
-      _(te.batches.size).must_equal(2)
-      _(te.batches[0].size).must_equal(3)
-      _(te.batches[1].size).must_equal(1)
-
-      _(te.failed_batches.size).must_equal(1)
-      _(te.failed_batches[0].size).must_equal(3)
-    end
-
-    it 'should not retry on FAILED_NOT_RETRYABLE exports' do
-      te = TestExporter.new(status_codes: [FAILED_NOT_RETRYABLE, SUCCESS])
+    it 'should not retry on FAILURE exports' do
+      te = TestExporter.new(status_codes: [FAILURE, SUCCESS])
 
       bsp = BatchSpanProcessor.new(schedule_delay_millis: 999,
                                    exporter: te,

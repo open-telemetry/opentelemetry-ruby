@@ -6,6 +6,8 @@
 
 require 'opentelemetry/sdk/trace/samplers/decision'
 require 'opentelemetry/sdk/trace/samplers/result'
+require 'opentelemetry/sdk/trace/samplers/constant_sampler'
+require 'opentelemetry/sdk/trace/samplers/parent_or_else'
 require 'opentelemetry/sdk/trace/samplers/probability_sampler'
 
 module OpenTelemetry
@@ -13,17 +15,16 @@ module OpenTelemetry
     module Trace
       # The Samplers module contains the sampling logic for OpenTelemetry. The
       # reference implementation provides a {ProbabilitySampler}, {ALWAYS_ON},
-      # {ALWAYS_OFF}, and {ALWAYS_PARENT}.
+      # {ALWAYS_OFF}, and {ParentOrElse}.
       #
-      # Custom samplers can be provided by SDK users. The required interface is
-      # a callable with the signature:
+      # Custom samplers can be provided by SDK users. The required interface is:
       #
-      #   (trace_id:, span_id:, parent_context:, links:, name:, kind:, attributes:) -> Result
+      #   should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:) -> Result
+      #   description -> String
       #
       # Where:
       #
       # @param [String] trace_id The trace_id of the {Span} to be created.
-      # @param [String] span_id The span_id of the {Span} to be created.
       # @param [OpenTelemetry::Trace::SpanContext] parent_context The
       #   {OpenTelemetry::Trace::SpanContext} of a parent span, typically
       #   extracted from the wire. Can be nil for a root span.
@@ -44,27 +45,20 @@ module OpenTelemetry
 
         private_constant(:RECORD_AND_SAMPLED, :NOT_RECORD, :RECORD, :SAMPLING_HINTS, :APPLY_PROBABILITY_TO_SYMBOLS)
 
-        # rubocop:disable Lint/UnusedBlockArgument
-
         # Returns a {Result} with {Decision::RECORD_AND_SAMPLED}.
-        ALWAYS_ON = ->(trace_id:, span_id:, parent_context:, links:, name:, kind:, attributes:) { RECORD_AND_SAMPLED }
+        ALWAYS_ON = ConstantSampler.new(result: RECORD_AND_SAMPLED, description: 'AlwaysOnSampler')
 
         # Returns a {Result} with {Decision::NOT_RECORD}.
-        ALWAYS_OFF = ->(trace_id:, span_id:, parent_context:, links:, name:, kind:, attributes:) { NOT_RECORD }
+        ALWAYS_OFF = ConstantSampler.new(result: NOT_RECORD, description: 'AlwaysOffSampler')
 
-        # Returns a {Result} with {Decision::RECORD_AND_SAMPLED} if the parent
-        # context is sampled or {Decision::NOT_RECORD} otherwise, or if there
-        # is no parent context.
-        # rubocop:disable Style/Lambda
-        ALWAYS_PARENT = ->(trace_id:, span_id:, parent_context:, links:, name:, kind:, attributes:) do
-          if parent_context&.trace_flags&.sampled?
-            RECORD_AND_SAMPLED
-          else
-            NOT_RECORD
-          end
+        # Returns a new sampler. It either respects the parent span's sampling
+        # decision or delegates to delegate_sampler for root spans.
+        #
+        # @param [Sampler] delegate_sampler The sampler to which the sampling
+        #   decision is delegated for root spans.
+        def self.parent_or_else(delegate_sampler)
+          ParentOrElse.new(delegate_sampler)
         end
-        # rubocop:enable Style/Lambda
-        # rubocop:enable Lint/UnusedBlockArgument
 
         # Returns a new sampler. The probability of sampling a trace is equal
         # to that of the specified probability.

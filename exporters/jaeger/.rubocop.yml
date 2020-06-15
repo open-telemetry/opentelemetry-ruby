@@ -10,7 +10,7 @@ Metrics/AbcSize:
 Metrics/LineLength:
   Enabled: false
 Metrics/MethodLength:
-  Max: 20
+  Max: 21
 Metrics/ParameterLists:
   Enabled: false
 Naming/FileName:
