@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
 
   spec.summary     = 'Datadog trace exporter for the OpenTelemetry framework'
   spec.description = 'Datadog trace exporter for the OpenTelemetry framework'
-  spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby-contrib'
+  spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby'
   spec.license     = 'Apache-2.0'
 
   spec.files = ::Dir.glob('lib/**/*.rb') +

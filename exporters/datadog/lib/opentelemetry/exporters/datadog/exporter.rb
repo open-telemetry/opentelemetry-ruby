@@ -50,6 +50,7 @@ module OpenTelemetry
             SUCCESS
           else
             OpenTelemetry.logger.debug('Agent writer not set')
+            FAILURE
           end
         end
 

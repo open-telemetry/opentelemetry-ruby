@@ -72,15 +72,11 @@ module OpenTelemetry
                 datadog_span.set_tag(attribute, span.attributes[attribute])
               end
 
-              # TODO: serialized span data does not contain tracestate info
-              # add origin to root span
               origin = get_origin_string(span.tracestate)
               datadog_span.set_tag(DD_ORIGIN, origin) if origin && parent_id.zero?
 
-              # TODO: serialized span data does not contain sampling rate info
-              # define sampling rate metric
-              # In other languages, spans that aren't sampled don't get passed to on_finish
-              # Is this the case with ruby?
+              # TODO: In other languages, spans that aren't sampled don't get passed to
+              # on_finish. Is this the case with ruby?
               sampling_rate = get_sampling_rate(span)
 
               datadog_span.set_metric(SAMPLE_RATE_METRIC_KEY, sampling_rate) if sampling_rate
