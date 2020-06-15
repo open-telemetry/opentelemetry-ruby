@@ -17,9 +17,8 @@ module OpenTelemetry
       # An OpenTelemetry trace exporter that sends spans over UDP as Thrift Compact encoded Jaeger spans.
       class Exporter
         SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
-        FAILED_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_RETRYABLE
-        FAILED_NOT_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_NOT_RETRYABLE
-        private_constant(:SUCCESS, :FAILED_RETRYABLE, :FAILED_NOT_RETRYABLE)
+        FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
+        private_constant(:SUCCESS, :FAILURE)
 
         def initialize(service_name:, host:, port:, max_packet_size: 65_000)
           transport = Transport.new(host, port)
@@ -38,7 +37,7 @@ module OpenTelemetry
         #   exported.
         # @return [Integer] the result of the export.
         def export(span_data)
-          return FAILED_NOT_RETRYABLE if @shutdown
+          return FAILURE if @shutdown
 
           encoded_batches(span_data) { |batch| @client.emitBatch(batch) }
         end
@@ -73,7 +72,7 @@ module OpenTelemetry
         def encoded_batches(span_data)
           encoded_spans = span_data.map(&method(:encoded_span))
           encoded_span_sizes = encoded_spans.map(&method(:encoded_span_size))
-          return FAILED_NOT_RETRYABLE if encoded_span_sizes.any? { |size| size > @max_packet_size }
+          return FAILURE if encoded_span_sizes.any? { |size| size > @max_packet_size }
 
           encoded_spans.zip(encoded_span_sizes).chunk(&batcher).each do |batch_and_spans_with_size|
             yield Thrift::Batch.new('process' => encoded_process, 'spans' => batch_and_spans_with_size.last.map(&:first))

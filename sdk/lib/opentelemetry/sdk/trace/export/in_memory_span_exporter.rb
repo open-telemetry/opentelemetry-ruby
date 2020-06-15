@@ -61,10 +61,10 @@ module OpenTelemetry
           # @param [Enumerable<SpanData>] span_datas the list of sampled {SpanData}s to be
           #   exported.
           # @return [Integer] the result of the export, SUCCESS or
-          #   FAILED_NOT_RETRYABLE
+          #   FAILURE
           def export(span_datas)
             @mutex.synchronize do
-              return FAILED_NOT_RETRYABLE if @stopped
+              return FAILURE if @stopped
 
               @finished_spans.concat(span_datas.to_a)
             end

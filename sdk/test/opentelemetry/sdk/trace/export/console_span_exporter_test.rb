@@ -45,6 +45,6 @@ describe OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter do
   it 'fails to export after shutdown' do
     exporter.shutdown
 
-    _(exporter.export(spans)).must_equal export::FAILED_NOT_RETRYABLE
+    _(exporter.export(spans)).must_equal export::FAILURE
   end
 end

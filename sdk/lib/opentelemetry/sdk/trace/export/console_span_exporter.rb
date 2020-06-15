@@ -23,7 +23,7 @@ module OpenTelemetry
           end
 
           def export(spans)
-            return ResultCodes::FAILED_NOT_RETRYABLE if @stopped
+            return ResultCodes::FAILURE if @stopped
 
             Array(spans).each { |s| pp s }
 

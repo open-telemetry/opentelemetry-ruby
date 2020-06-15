@@ -103,5 +103,17 @@ describe OpenTelemetry::Adapters::Sinatra do
         .map { |h| h['sinatra.template_name'] })
         .must_equal %w[layout foo_template]
     end
+
+    it 'does not create unhandled exceptions for missing routes' do
+      get '/one/missing_example/not_present'
+
+      _(exporter.finished_spans.first.status.canonical_code).must_equal 5
+      _(exporter.finished_spans.first.attributes).must_equal(
+        'http.method' => 'GET',
+        'http.url' => '/missing_example/not_present',
+        'http.status_code' => 404,
+        'http.status_text' => 'Not Found'
+      )
+    end
   end
 end

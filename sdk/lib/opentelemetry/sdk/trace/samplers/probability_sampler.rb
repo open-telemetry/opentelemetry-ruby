@@ -12,18 +12,21 @@ module OpenTelemetry
         #
         # Implements sampling based on a probability.
         class ProbabilitySampler
+          attr_reader :description
+
           def initialize(probability, ignore_parent:, apply_to_remote_parent:, apply_to_all_spans:)
             @probability = probability
             @id_upper_bound = format('%016x', (probability * (2**64 - 1)).ceil)
             @use_parent_sampled_flag = !ignore_parent
             @apply_to_remote_parent = apply_to_remote_parent
             @apply_to_all_spans = apply_to_all_spans
+            @description = format('ProbabilitySampler{%.6f}', probability)
           end
 
           # @api private
           #
-          # Callable interface for probability sampler. See {Samplers}.
-          def call(trace_id:, span_id:, parent_context:, links:, name:, kind:, attributes:)
+          # See {Samplers}.
+          def should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:)
             # Ignored for sampling decision: links, name, kind, attributes.
 
             if sample?(trace_id, parent_context)
