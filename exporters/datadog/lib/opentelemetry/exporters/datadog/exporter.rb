@@ -22,8 +22,8 @@ module OpenTelemetry
         DEFAULT_AGENT_URL = 'http://localhost:8126'
         DEFAULT_SERVICE_NAME = 'my_service'
         SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
-        FAILED_NOT_RETRYABLE = OpenTelemetry::SDK::Trace::Export::FAILED_NOT_RETRYABLE
-        private_constant(:SUCCESS, :FAILED_NOT_RETRYABLE)
+        FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
+        private_constant(:SUCCESS, :FAILURE)
 
         def initialize(service_name: nil, agent_url: nil)
           @shutdown = false
@@ -42,7 +42,7 @@ module OpenTelemetry
         #   exported.
         # @return [Integer] the result of the export.
         def export(spans)
-          return FAILED_NOT_RETRYABLE if @shutdown
+          return FAILURE if @shutdown
 
           if @agent_writer
             datadog_spans = @span_encoder.translate_to_datadog(spans, @service)
