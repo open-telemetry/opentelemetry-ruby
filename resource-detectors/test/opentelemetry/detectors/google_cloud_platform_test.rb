@@ -62,7 +62,7 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
       describe 'and a nil resource value is detected' do
         let(:project_id) { nil }
 
-        it 'returns a with that label' do
+        it 'returns a resource without that label' do
           _(detected_resource_labels.key?('cloud.account.id')).must_equal(false)
         end
       end
@@ -70,7 +70,7 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
       describe 'and an empty string resource value is detected' do
         let(:project_id) { '' }
 
-        it 'returns a with that label' do
+        it 'returns a resource without that label' do
           _(detected_resource_labels.key?('cloud.account.id')).must_equal(false)
         end
       end
