@@ -24,6 +24,7 @@ module OpenTelemetry
           @name = name
           @version = version
           @instrumentation_library = InstrumentationLibrary.new(name, version)
+          @resource = OpenTelemetry.tracer_provider.resource
         end
 
         def start_root_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
@@ -55,8 +56,7 @@ module OpenTelemetry
             attributes = attributes&.merge(result.attributes) || result.attributes
             active_trace_config = OpenTelemetry.tracer_provider.active_trace_config
             active_span_processor = OpenTelemetry.tracer_provider.active_span_processor
-            resource = OpenTelemetry.tracer_provider.resource
-            Span.new(context, name, kind, parent_span_id, active_trace_config, active_span_processor, attributes, links, start_timestamp || Time.now, resource, @instrumentation_library)
+            Span.new(context, name, kind, parent_span_id, active_trace_config, active_span_processor, attributes, links, start_timestamp || Time.now, @resource, @instrumentation_library)
           else
             OpenTelemetry::Trace::Span.new(span_context: OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id))
           end
