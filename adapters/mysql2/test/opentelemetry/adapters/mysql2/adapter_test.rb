@@ -10,6 +10,14 @@ require 'mysql2'
 require_relative '../../../../lib/opentelemetry/adapters/mysql2'
 require_relative '../../../../lib/opentelemetry/adapters/mysql2/patches/client'
 
+# This test suite requires a running mysql container and dedicated test container
+# To run tests:
+# 1. Build the opentelemetry/opentelemetry-ruby image
+# - docker-compose build
+# 2. Bundle install
+# - docker-compose run ex-adapter-mysql2-test bundle install
+# 3. Run test suite
+# - docker-compose run ex-adapter-mysql2-test bundle exec rake test
 describe OpenTelemetry::Adapters::Mysql2::Adapter do
   let(:adapter) { OpenTelemetry::Adapters::Mysql2::Adapter.instance }
   let(:exporter) { EXPORTER }
@@ -25,7 +33,6 @@ describe OpenTelemetry::Adapters::Mysql2::Adapter do
   end
 
   describe 'tracing' do
-
     let(:client) do
       ::Mysql2::Client.new(
         host: host,
@@ -51,7 +58,7 @@ describe OpenTelemetry::Adapters::Mysql2::Adapter do
     end
 
     it 'after requests' do
-      result = client.query('SELECT 1')
+      client.query('SELECT 1')
 
       _(span.name).must_equal 'mysql.mysql'
       _(span.attributes['db.type']).must_equal 'mysql'
@@ -62,7 +69,26 @@ describe OpenTelemetry::Adapters::Mysql2::Adapter do
       _(span.attributes['net.peer.port']).must_equal '3306'
     end
 
-    # it 'after error' do
-    # end
+    it 'after error' do
+      expect do
+        client.query('SELECT INVALID')
+      end.must_raise Mysql2::Error
+
+      _(span.name).must_equal 'mysql.mysql'
+      _(span.attributes['db.type']).must_equal 'mysql'
+      _(span.attributes['db.instance']).must_equal 'mysql'
+      _(span.attributes['db.statement']).must_equal 'SELECT INVALID'
+      _(span.attributes['db.url']).must_equal 'mysql://mysql:3306'
+      _(span.attributes['net.peer.name']).must_equal 'mysql'
+      _(span.attributes['net.peer.port']).must_equal '3306'
+
+      _(span.status.canonical_code).must_equal(
+        OpenTelemetry::Trace::Status::UNKNOWN_ERROR
+      )
+      _(span.events.first.name).must_equal 'error'
+      _(span.events.first.attributes['error.type']).must_equal 'Mysql2::Error'
+      assert(!span.events.first.attributes['error.message'].nil?)
+      assert(!span.events.first.attributes['error.stack'].nil?)
+    end
   end
 end

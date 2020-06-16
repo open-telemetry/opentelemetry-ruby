@@ -43,7 +43,7 @@ module OpenTelemetry
           end
 
           def client_attributes
-            # The client specific attributes can be found via the query_options instance variable 
+            # The client specific attributes can be found via the query_options instance variable
             # exposed on the mysql2 Client
             # https://github.com/brianmario/mysql2/blob/ca08712c6c8ea672df658bb25b931fea22555f27/lib/mysql2/client.rb#L25-L26
             host = (query_options[:host] || query_options[:hostname]).to_s
