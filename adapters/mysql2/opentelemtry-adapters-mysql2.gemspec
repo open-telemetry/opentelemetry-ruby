@@ -14,8 +14,8 @@ Gem::Specification.new do |spec|
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
-  spec.summary     = 'Redis instrumentation adapter for the OpenTelemetry framework'
-  spec.description = 'Redis instrumentation adapter for the OpenTelemetry framework'
+  spec.summary     = 'Mysql2 instrumentation adapter for the OpenTelemetry framework'
+  spec.description = 'Mysql2 instrumentation adapter for the OpenTelemetry framework'
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby'
   spec.license     = 'Apache-2.0'
 

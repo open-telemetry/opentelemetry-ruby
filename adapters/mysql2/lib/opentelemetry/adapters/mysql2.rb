@@ -8,7 +8,7 @@ require 'opentelemetry'
 
 module OpenTelemetry
   module Adapters
-    # Contains the OpenTelemetry adapter for the Redis gem
+    # Contains the OpenTelemetry adapter for the Mysql2 gem
     module Mysql2
     end
   end

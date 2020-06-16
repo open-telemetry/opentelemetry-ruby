@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'redis'
+require 'mysql2'
 
 require 'opentelemetry/sdk'
 
