@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Copyright 2019 OpenTelemetry Authors
+# Copyright 2020 OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
 
@@ -16,7 +16,8 @@ module OpenTelemetry
         #
         # Returns a new {Tracer} instance.
         #
-        # @param [InstrumentationLibrary] resource Containing name and version arguments supplied to the TracerProvider
+        # @param [String] name Instrumentation package name
+        # @param [String] version Instrumentation package version
         #
         # @return [Tracer]
         def initialize(name, version)
