@@ -7,100 +7,22 @@ executors:
   ruby25:
     docker:
       - image: "circleci/ruby:2.5-buster"
-        environment:
-          - TEST_MYSQL_USER=root
-          - TEST_MYSQL_ROOT_PASSWORD=root
-          - TEST_MYSQL_HOST=mysql
-          - TEST_MYSQL_PORT=3306
-          - TEST_MYSQ_DB=mysql
-      - image: mysql:5.6
-        environment:
-          - MYSQL_DATABASE=mysql
-          - MYSQL_ROOT_PASSWORD=root
-          - MYSQL_PASSWORD=mysql
-          - MYSQL_USER=mysql
-        expose:
-          - "3306"
-        ports:
-          - "3306:3306"
   ruby26:
     docker:
       - image: "circleci/ruby:2.6-buster"
-        environment:
-          - TEST_MYSQL_USER=root
-          - TEST_MYSQL_ROOT_PASSWORD=root
-          - TEST_MYSQL_HOST=mysql
-          - TEST_MYSQL_PORT=3306
-          - TEST_MYSQ_DB=mysql
-      - image: mysql:5.6
-        environment:
-          - MYSQL_DATABASE=mysql
-          - MYSQL_ROOT_PASSWORD=root
-          - MYSQL_PASSWORD=mysql
-          - MYSQL_USER=mysql
-        expose:
-          - "3306"
-        ports:
-          - "3306:3306"
   ruby27:
     docker:
       - image: "circleci/ruby:2.7-buster"
-        environment:
-          - TEST_MYSQL_USER=root
-          - TEST_MYSQL_ROOT_PASSWORD=root
-          - TEST_MYSQL_HOST=mysql
-          - TEST_MYSQL_PORT=3306
-          - TEST_MYSQ_DB=mysql
-      - image: mysql:5.6
-        environment:
-          - MYSQL_DATABASE=mysql
-          - MYSQL_ROOT_PASSWORD=root
-          - MYSQL_PASSWORD=mysql
-          - MYSQL_USER=mysql
-        expose:
-          - "3306"
-        ports:
-          - "3306:3306"
   jruby:
     docker:
       - image: "circleci/jruby:latest"
-        environment:
-          - JRUBY_OPTS=--debug
-          - TEST_MYSQL_USER=root
-          - TEST_MYSQL_ROOT_PASSWORD=root
-          - TEST_MYSQL_HOST=mysql
-          - TEST_MYSQL_PORT=3306
-          - TEST_MYSQ_DB=mysql
-      - image: mysql:5.6
-        environment:
-          - MYSQL_DATABASE=mysql
-          - MYSQL_ROOT_PASSWORD=root
-          - MYSQL_PASSWORD=mysql
-          - MYSQL_USER=mysql
-        expose:
-          - "3306"
-        ports:
-          - "3306:3306"
+    environment:
+      JRUBY_OPTS: "--debug"
   jruby92:
     docker:
       - image: "circleci/jruby:9.2.8-jre"
-        environment:
-          - JRUBY_OPTS=--debug
-          - TEST_MYSQL_USER=root
-          - TEST_MYSQL_ROOT_PASSWORD=root
-          - TEST_MYSQL_HOST=mysql
-          - TEST_MYSQL_PORT=3306
-          - TEST_MYSQ_DB=mysql
-      - image: mysql:5.6
-        environment:
-          - MYSQL_DATABASE=mysql
-          - MYSQL_ROOT_PASSWORD=root
-          - MYSQL_PASSWORD=mysql
-          - MYSQL_USER=mysql
-        expose:
-          - "3306"
-        ports:
-          - "3306:3306"
+    environment:
+      JRUBY_OPTS: "--debug"
 commands:
   rake-test:
     steps:
@@ -156,15 +78,6 @@ commands:
           name: Bundle + CI (Adapters - Faraday)
           command: |
             cd adapters/faraday
-            gem uninstall -aIx bundler
-            gem install --no-document bundler -v '~> 2.0.2'
-            bundle install --jobs=3 --retry=3
-            bundle exec appraisal install
-            bundle exec appraisal rake test
-      - run:
-          name: Bundle + CI (Adapters - Mysql2)
-          command: |
-            cd adapters/mysql2
             gem uninstall -aIx bundler
             gem install --no-document bundler -v '~> 2.0.2'
             bundle install --jobs=3 --retry=3
