@@ -1,0 +1,9 @@
+# frozen_string_literal: true
+
+appraise 'mysql2-0.3.21' do
+  gem 'mysql2', '>= 0.3.21'
+end
+
+appraise 'mysql2-0.3.20' do
+  gem 'mysql2', '0.3.20'
+end
