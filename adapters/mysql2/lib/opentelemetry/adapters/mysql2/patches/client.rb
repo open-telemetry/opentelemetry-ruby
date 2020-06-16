@@ -15,7 +15,7 @@ module OpenTelemetry
 
             tracer.in_span(
               database_span_name,
-              attributes: client_attributes(options).merge(
+              attributes: client_attributes.merge(
                 'db.statement' => sql
               ),
               kind: :client

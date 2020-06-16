@@ -81,6 +81,12 @@ GEM_INFO = {
       OpenTelemetry::Adapters::Faraday::VERSION
     }
   },
+  "opentelemetry-adapters-mysql2" => {
+    version_getter: ->() {
+      require './lib/opentelemetry/adapters/mysql2/version.rb'
+      OpenTelemetry::Adapters::Mysql2::VERSION
+    }
+  },
   "opentelemetry-adapters-net_http" => {
     version_getter: ->() {
       require './lib/opentelemetry/adapters/net/http/version.rb'

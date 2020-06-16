@@ -22,7 +22,6 @@ module OpenTelemetry
         private
 
         def require_dependencies
-          require_relative 'utils'
           require_relative 'patches/client'
         end
 

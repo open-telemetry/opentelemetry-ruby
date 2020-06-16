@@ -35,6 +35,7 @@ ARG PACKAGES="\
     libtool \
     libxml2-dev \
     libxslt-dev \
+    mariadb-dev \
     openssl \
     tzdata \
     util-linux \
