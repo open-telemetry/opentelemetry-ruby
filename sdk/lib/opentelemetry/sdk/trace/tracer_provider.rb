@@ -38,7 +38,7 @@ module OpenTelemetry
         def tracer(name = nil, version = nil)
           name ||= ''
           version ||= ''
-          @mutex.synchronize { @registry[Key.new(name, version)] ||= Tracer.new(name, version) }
+          @mutex.synchronize { @registry[Key.new(name, version)] ||= Tracer.new(name, version, self) }
         end
 
         # Attempts to stop all the activity for this {Tracer}. Calls
