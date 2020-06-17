@@ -11,8 +11,6 @@ module OpenTelemetry
         # Module to prepend to Mysql2::Client for instrumentation
         module Client
           def query(sql, options = {})
-            response = nil
-
             tracer.in_span(
               database_span_name,
               attributes: client_attributes.merge(
@@ -20,10 +18,8 @@ module OpenTelemetry
               ),
               kind: :client
             ) do
-              response = super(sql, options)
+              super(sql, options)
             end
-
-            response
           end
 
           private

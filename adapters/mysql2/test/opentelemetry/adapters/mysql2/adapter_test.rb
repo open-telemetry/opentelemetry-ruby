@@ -64,9 +64,9 @@ describe OpenTelemetry::Adapters::Mysql2::Adapter do
       _(span.attributes['db.type']).must_equal 'mysql'
       _(span.attributes['db.instance']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal 'SELECT 1'
-      _(span.attributes['db.url']).must_equal 'mysql://mysql:3306'
-      _(span.attributes['net.peer.name']).must_equal 'mysql'
-      _(span.attributes['net.peer.port']).must_equal '3306'
+      _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
+      _(span.attributes['net.peer.name']).must_equal host.to_s
+      _(span.attributes['net.peer.port']).must_equal port.to_s
     end
 
     it 'after error' do
@@ -78,9 +78,9 @@ describe OpenTelemetry::Adapters::Mysql2::Adapter do
       _(span.attributes['db.type']).must_equal 'mysql'
       _(span.attributes['db.instance']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal 'SELECT INVALID'
-      _(span.attributes['db.url']).must_equal 'mysql://mysql:3306'
-      _(span.attributes['net.peer.name']).must_equal 'mysql'
-      _(span.attributes['net.peer.port']).must_equal '3306'
+      _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
+      _(span.attributes['net.peer.name']).must_equal host.to_s
+      _(span.attributes['net.peer.port']).must_equal port.to_s
 
       _(span.status.canonical_code).must_equal(
         OpenTelemetry::Trace::Status::UNKNOWN_ERROR
