@@ -6,7 +6,7 @@ Lint/UnusedMethodArgument:
 Metrics/AbcSize:
   Max: 32
 Metrics/BlockLength:
-  Max: 26
+  Max: 31
 Metrics/ClassLength:
   Max: 125
 Metrics/LineLength:

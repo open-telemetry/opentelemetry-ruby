@@ -25,11 +25,15 @@ module OpenTelemetry
         FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
         private_constant(:SUCCESS, :FAILURE)
 
-        def initialize(service_name: nil, agent_url: nil)
+        def initialize(service_name: nil, agent_url: nil, env: nil, version: nil, tags: nil)
           @shutdown = false
           @agent_url = agent_url || ENV.fetch('DD_TRACE_AGENT_URL', DEFAULT_AGENT_URL)
 
           @service = service_name || ENV.fetch('DD_SERVICE', DEFAULT_SERVICE_NAME)
+
+          @env = env || ENV.fetch('DD_ENV', nil)
+          @version = version || ENV.fetch('DD_VERSION', nil)
+          @tags = tags || ENV.fetch('DD_VERSION', nil)
 
           @agent_writer = get_writer(@agent_url)
 
@@ -45,7 +49,7 @@ module OpenTelemetry
           return FAILURE if @shutdown
 
           if @agent_writer
-            datadog_spans = @span_encoder.translate_to_datadog(spans, @service)
+            datadog_spans = @span_encoder.translate_to_datadog(spans, @service, @env, @version, @tags)
             @agent_writer.write(datadog_spans)
             SUCCESS
           else

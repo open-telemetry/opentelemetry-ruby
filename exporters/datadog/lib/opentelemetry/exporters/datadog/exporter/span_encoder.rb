@@ -17,6 +17,8 @@ module OpenTelemetry
       class Exporter
         # @api private
         class SpanEncoder
+          ENV_KEY = 'env'
+          VERSION_KEY = 'version'
           DD_ORIGIN = '_dd_origin'
           AUTO_REJECT = 0
           AUTO_KEEP = 1
@@ -37,8 +39,10 @@ module OpenTelemetry
             'OpenTelemetry::Adapters::Sinatra' => ::Datadog::Ext::HTTP::TYPE_INBOUND
           }.freeze
 
-          def translate_to_datadog(otel_spans, service) # rubocop:disable Metrics/AbcSize
+          def translate_to_datadog(otel_spans, service, env = nil, version = nil, tags = nil) # rubocop:disable Metrics/AbcSize
             datadog_spans = []
+
+            default_tags = get_default_tags(tags) || {}
 
             otel_spans.each do |span|
               trace_id, span_id, parent_id = get_trace_ids(span)
@@ -72,8 +76,15 @@ module OpenTelemetry
                 datadog_span.set_tag(attribute, span.attributes[attribute])
               end
 
+              # set default tags
+              default_tags&.keys&.each do |attribute|
+                datadog_span.set_tag(attribute, span.attributes[attribute])
+              end
+
               origin = get_origin_string(span.tracestate)
               datadog_span.set_tag(DD_ORIGIN, origin) if origin && parent_id.zero?
+              datadog_span.set_tag(VERSION_KEY, version) if version && parent_id.zero?
+              datadog_span.set_tag(ENV_KEY, env) if env
 
               # TODO: In other languages, spans that aren't sampled don't get passed to
               # on_finish. Is this the case with ruby?
@@ -164,6 +175,15 @@ module OpenTelemetry
             origin_value[1]
           rescue StandardError => e
             OpenTelemetry.logger.debug("error getting origin from trace state, #{e.message}")
+          end
+
+          def get_default_tags(tags)
+            # Parse a string of tags typically provided via environment variables.
+            # The expected string is of the form: "key1:value1,key2:value2"
+
+            return if tags.nil?
+
+            tags.split(',').map { |kv| kv.split(':') }.to_h
           end
         end
       end
