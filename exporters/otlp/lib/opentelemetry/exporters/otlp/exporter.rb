@@ -112,7 +112,7 @@ module OpenTelemetry
           span.kind = as_otlp_span_kind(span_data.kind)
           span.start_time_unix_nano = as_otlp_timestamp(span_data.start_timestamp)
           span.end_time_unix_nano = as_otlp_timestamp(span_data.end_timestamp)
-          span_data.attributes&.each { |k, v| span.attributes.push(as_otlp_attribute(k, v)) }
+          span_data.attributes&.each { |k, v| span.attributes.push(as_otlp_key_value(k, v)) }
           span.dropped_attributes_count = span_data.total_recorded_attributes - span_data.attributes.size
           span_data.events&.each { |event| span.events.push(as_otlp_event(event)) }
           span.dropped_events_count = span_data.total_recorded_events - span_data.events.size
@@ -137,22 +137,19 @@ module OpenTelemetry
           end
         end
 
-        def as_otlp_attribute(key, value)
-          kv = Opentelemetry::Proto::Common::V1::AttributeKeyValue.new
+        def as_otlp_key_value(key, value)
+          kv = Opentelemetry::Proto::Common::V1::KeyValue.new
           kv.key = key
+          kv.value = Opentelemetry::Proto::Common::V1::AnyValue.new
           case value
           when String
-            kv.string_value = value
-            kv.type = Opentelemetry::Proto::Common::V1::AttributeKeyValue::ValueType::STRING
+            kv.value.string_value = value
           when Integer
-            kv.int_value = value
-            kv.type = Opentelemetry::Proto::Common::V1::AttributeKeyValue::ValueType::INT
+            kv.value.int_value = value
           when Float
-            kv.double_value = value
-            kv.type = Opentelemetry::Proto::Common::V1::AttributeKeyValue::ValueType::DOUBLE
+            kv.value.double_value = value
           when true, false
-            kv.bool_value = value
-            kv.type = Opentelemetry::Proto::Common::V1::AttributeKeyValue::ValueType::BOOL
+            kv.value.bool_value = value
           # TODO: when Array
           end
           kv
@@ -162,7 +159,7 @@ module OpenTelemetry
           e = Opentelemetry::Proto::Trace::V1::Span::Event.new
           e.time_unix_nano = as_otlp_timestamp(event.timestamp)
           e.name = event.name
-          event.attributes&.each { |k, v| e.attributes.push(as_otlp_attribute(k, v)) }
+          event.attributes&.each { |k, v| e.attributes.push(as_otlp_key_value(k, v)) }
           # TODO: enforcement of max_attributes_per_event -> dropped_attributes_count
           e
         end
@@ -172,7 +169,7 @@ module OpenTelemetry
           l.trace_id = link.context.trace_id
           l.span_id = link.context.span_id
           l.trace_state = link.context.tracestate
-          link.attributes&.each { |k, v| l.attributes.push(as_otlp_attribute(k, v)) }
+          link.attributes&.each { |k, v| l.attributes.push(as_otlp_key_value(k, v)) }
           # TODO: enforcement of max_attributes_per_link -> dropped_attributes_count
           l
         end
