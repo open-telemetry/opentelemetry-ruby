@@ -7,9 +7,31 @@ executors:
   ruby25:
     docker:
       - image: "circleci/ruby:2.5-buster"
+        environment:
+          - TEST_MYSQL_USER=root
+          - TEST_MYSQL_ROOT_PASSWORD=root
+          - TEST_MYSQL_PORT=3306
+          - TEST_MYSQ_DB=mysql
+      - image: mysql:5.6
+        environment:
+          - MYSQL_DATABASE=mysql
+          - MYSQL_ROOT_PASSWORD=root
+          - MYSQL_PASSWORD=mysql
+          - MYSQL_USER=mysql
   ruby26:
     docker:
       - image: "circleci/ruby:2.6-buster"
+        environment:
+          - TEST_MYSQL_USER=root
+          - TEST_MYSQL_ROOT_PASSWORD=root
+          - TEST_MYSQL_PORT=3306
+          - TEST_MYSQ_DB=mysql
+      - image: mysql:5.6
+        environment:
+          - MYSQL_DATABASE=mysql
+          - MYSQL_ROOT_PASSWORD=root
+          - MYSQL_PASSWORD=mysql
+          - MYSQL_USER=mysql
   ruby27:
     docker:
       - image: "circleci/ruby:2.7-buster"
@@ -136,6 +158,17 @@ commands:
             bundle install --jobs=3 --retry=3
             bundle exec appraisal install
             bundle exec appraisal rake test
+  rake-test-appraisal-container-ints:
+    steps:
+      - run:
+          name: Bundle + CI (Adapters - Mysql2)
+          command: |
+            cd adapters/mysql2
+            gem uninstall -aIx bundler
+            gem install --no-document bundler -v '~> 2.0.2'
+            bundle install --jobs=3 --retry=3
+            bundle exec appraisal install
+            bundle exec appraisal rake test
   rake-release:
     steps:
       - checkout
@@ -151,11 +184,13 @@ jobs:
     steps:
       - rake-test
       - rake-test-appraisal
+      - rake-test-appraisal-container-ints
   test-ruby26:
     executor: ruby26
     steps:
       - rake-test
       - rake-test-appraisal
+      - rake-test-appraisal-container-ints
   test-ruby27:
     executor: ruby27
     steps:
