@@ -181,9 +181,14 @@ module OpenTelemetry
             # Parse a string of tags typically provided via environment variables.
             # The expected string is of the form: "key1:value1,key2:value2"
 
-            return if tags.nil?
+            return {} if tags.nil?
 
-            tags.split(',').map { |kv| kv.split(':') }.to_h
+            tag_map = tags.split(',').map { |kv| kv.split(':') }.to_h
+
+            if tag_map.keys&.index('') || tag_map.values&.index('') || tag_map.values&.any? { |v| v.ends_with?(':') }
+              OpenTelemetry.logger.debug("malformed tag in default tags: #{tags}")
+              {}
+            end
           end
         end
       end
