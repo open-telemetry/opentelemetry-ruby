@@ -33,7 +33,7 @@ module OpenTelemetry
 
           @env = env || ENV.fetch('DD_ENV', nil)
           @version = version || ENV.fetch('DD_VERSION', nil)
-          @tags = tags || ENV.fetch('DD_VERSION', nil)
+          @tags = tags || ENV.fetch('DD_TAGS', nil)
 
           @agent_writer = get_writer(@agent_url)
 

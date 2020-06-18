@@ -188,6 +188,8 @@ module OpenTelemetry
             if tag_map.keys&.index('') || tag_map.values&.index('') || tag_map.values&.any? { |v| v.ends_with?(':') }
               OpenTelemetry.logger.debug("malformed tag in default tags: #{tags}")
               {}
+            else
+              tag_map
             end
           end
         end

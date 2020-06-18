@@ -11,7 +11,7 @@ module OpenTelemetry
   module Exporters
     module Datadog
       class Exporter
-        attr_accessor :agent_writer, :agent_url, :service
+        attr_accessor :agent_writer, :agent_url, :service, :env, :version, :tags
       end
     end
   end
@@ -24,6 +24,9 @@ describe OpenTelemetry::Exporters::Datadog::Exporter do
 
   let(:service_name) { 'test' }
   let(:agent_url) { 'http://localhost:8126' }
+  let(:tracing_env) { nil }
+  let(:tracing_version) { nil }
+  let(:tracing_tags) { nil }
 
   let(:faux_writer) do
     FauxWriter.new(
@@ -34,7 +37,7 @@ describe OpenTelemetry::Exporters::Datadog::Exporter do
   end
 
   let(:exporter) do
-    OpenTelemetry::Exporters::Datadog::Exporter.new(service_name: service_name, agent_url: agent_url).tap do |exporter|
+    OpenTelemetry::Exporters::Datadog::Exporter.new(service_name: service_name, agent_url: agent_url, env: tracing_env, version: tracing_version, tags: tracing_tags).tap do |exporter|
       exporter.agent_writer = faux_writer
     end
   end
@@ -51,44 +54,76 @@ describe OpenTelemetry::Exporters::Datadog::Exporter do
       default_exporter = exporter
       _(default_exporter.agent_url).must_equal('http://localhost:8126')
       _(default_exporter.service).must_equal('my_service')
+      assert_nil(default_exporter.tags)
+      assert_nil(default_exporter.env)
+      assert_nil(default_exporter.version)
     end
 
     it 'initializes with environment variables as defaults' do
       env_url = 'http://localhost:8127'
       env_service = 'env_service'
+      env_tags = 'exampletagkey:exampletagvalue,anotherkey:anothervalue'
+      env_env = 'prod'
+      env_version = '1'
+
       ENV['DD_TRACE_AGENT_URL'] = env_url
       ENV['DD_SERVICE'] = env_service
+      ENV['DD_TAGS'] = env_tags
+      ENV['DD_ENV'] = env_env
+      ENV['DD_VERSION'] = env_version
 
       begin
         default_exporter = exporter
 
         _(default_exporter.agent_url).must_equal(env_url)
         _(default_exporter.service).must_equal(env_service)
+        _(default_exporter.tags).must_equal(env_tags)
+        _(default_exporter.env).must_equal(env_env)
+        _(default_exporter.version).must_equal(env_version)
       ensure
         ENV.delete('DD_TRACE_AGENT_URL')
         ENV.delete('DD_SERVICE')
+        ENV.delete('DD_TAGS')
+        ENV.delete('DD_ENV')
+        ENV.delete('DD_VERSION')
       end
     end
 
     describe '#initialize precedence' do
       let(:service_name) { 'test' }
       let(:agent_url) { 'http://localhost:8128' }
+      let(:tracing_env) { 'staging' }
+      let(:tracing_version) { '2' }
+      let(:tracing_tags) { 'altkey:altvalue' }
 
       it 'initializes with arguments taking precedence over environment variables' do
         env_url = 'http://localhost:8127'
         env_service = 'env_service'
+        env_tags = 'exampletagkey:exampletagvalue,anotherkey:anothervalue'
+        env_env = 'prod'
+        env_version = '1'
 
         ENV['DD_TRACE_AGENT_URL'] = env_url
         ENV['DD_SERVICE'] = env_service
+        ENV['DD_TAGS'] = env_tags
+        ENV['DD_ENV'] = env_env
+        ENV['DD_VERSION'] = env_version
+        ENV['DD_TRACE_AGENT_URL'] = env_url
 
         begin
           default_exporter = exporter
 
           _(default_exporter.agent_url).must_equal(agent_url)
           _(default_exporter.service).must_equal(service_name)
+          _(default_exporter.tags).must_equal(tracing_tags)
+          _(default_exporter.env).must_equal(tracing_env)
+          _(default_exporter.version).must_equal(tracing_version)
         ensure
           ENV.delete('DD_TRACE_AGENT_URL')
           ENV.delete('DD_SERVICE')
+          ENV.delete('DD_TAGS')
+          ENV.delete('DD_ENV')
+          ENV.delete('DD_VERSION')
         end
       end
     end
