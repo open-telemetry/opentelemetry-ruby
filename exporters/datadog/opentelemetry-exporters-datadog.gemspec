@@ -7,7 +7,7 @@
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 # require 'opentelemetry-exporters-datadog/exporters/datadog/version'
-require_relative './lib/opentelemetry/exporters/datadog/version'
+require 'opentelemetry/exporters/datadog/version'
 
 Gem::Specification.new do |spec|
   spec.name        = 'opentelemetry-exporters-datadog'
