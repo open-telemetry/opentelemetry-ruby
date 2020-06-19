@@ -20,9 +20,11 @@ module OpenTelemetry
           ENV_KEY = 'env'
           VERSION_KEY = 'version'
           DD_ORIGIN = '_dd_origin'
+          USER_REJECT = -1
           AUTO_REJECT = 0
           AUTO_KEEP = 1
           USER_KEEP = 2
+          INTERNAL_TRACE_REGEX = /\/v\d\.\d\/traces/
           SAMPLE_RATE_METRIC_KEY = '_sample_rate'
           SAMPLING_PRIORITY_KEY = '_sampling_priority_v1'
           TRUNCATION_HELPER = ::Datadog::DistributedTracing::Headers::Headers.new({})
@@ -92,7 +94,12 @@ module OpenTelemetry
               # on_finish. Is this the case with ruby?
               sampling_rate = get_sampling_rate(span)
 
-              datadog_span.set_metric(SAMPLE_RATE_METRIC_KEY, sampling_rate) if sampling_rate
+              if filter_internal_request?(span)
+                datadog_span.set_metric(SAMPLE_RATE_METRIC_KEY, USER_REJECT) if sampling_rate
+              else
+                datadog_span.set_metric(SAMPLE_RATE_METRIC_KEY, sampling_rate) if sampling_rate
+              end
+
 
               datadog_spans << datadog_span
             end
@@ -196,6 +203,10 @@ module OpenTelemetry
               tag_map
             end
           end
+
+         def filter_internal_request?(span)
+           span.attributes['http.route'].match(INTERNAL_TRACE_REGEX) if span.attributes.key?('http.target')
+         end
         end
       end
     end
