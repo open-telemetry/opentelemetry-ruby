@@ -66,9 +66,11 @@ module OpenTelemetry
 
                 exception_type, exception_msg, exception_stack = get_exception_info(span)
 
-                datadog_span.set_tag('error.type', exception_type)
-                datadog_span.set_tag('error.msg', exception_msg)
-                datadog_span.set_tag('error.stack', exception_stack)
+                if exception_type && exception_msg && exception_stack
+                  datadog_span.set_tag('error.type', exception_type)
+                  datadog_span.set_tag('error.msg', exception_msg)
+                  datadog_span.set_tag('error.stack', exception_stack)
+                end
               end
 
               # set tags
@@ -125,7 +127,7 @@ module OpenTelemetry
 
           def get_exception_info(span)
             # Parse span exception type, msg, and stack from span events
-            error_event = span.events.find { |ev| ev.name == 'error' }
+            error_event = span&.events&.find { |ev| ev.name == 'error' }
 
             return unless error_event
 
@@ -134,6 +136,8 @@ module OpenTelemetry
             err_stack = error_event.attributes['error.stack']
 
             [err_type, err_msg, err_stack]
+          rescue StandardError => exception
+            OpenTelemetry.logger.debug("error on exception info from span events: #{span.events} , #{exception.message}")
           end
 
           def get_resource(span)

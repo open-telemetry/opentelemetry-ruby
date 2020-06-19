@@ -28,7 +28,6 @@ module OpenTelemetry
         def initialize(service_name: nil, agent_url: nil, env: nil, version: nil, tags: nil)
           @shutdown = false
           @agent_url = agent_url || ENV.fetch('DD_TRACE_AGENT_URL', DEFAULT_AGENT_URL)
-
           @service = service_name || ENV.fetch('DD_SERVICE', DEFAULT_SERVICE_NAME)
 
           @env = env || ENV.fetch('DD_ENV', nil)
@@ -73,14 +72,20 @@ module OpenTelemetry
             hostname = uri_parsed.hostname
             port = uri_parsed.port
 
-            @agent_writer = ::Datadog::Writer.new(hostname: hostname, port: port)
+            adapter = ::Datadog::Transport::HTTP::Adapters::Net.new(hostname, port)
+
+            transport = ::Datadog::Transport::HTTP.default do |t|
+              t.adapter adapter
+            end
+
+            ::Datadog::Writer.new(transport: transport)
           elsif uri_parsed.to_s.index('/sock')
             # handle uds path
             transport = ::Datadog::Transport::HTTP.default do |t|
               t.adapter :unix, uri_parsed.to_s
             end
 
-            @agent_writer = ::Datadog::Writer.new(transport: transport)
+            ::Datadog::Writer.new(transport: transport)
           else
             OpenTelemetry.logger.warn('only http/https and uds is supported at this time')
           end
