@@ -44,8 +44,8 @@ module OpenTelemetry
 
           origin = get_origin_string(span_context.tracestate)
           setter ||= DEFAULT_SETTER
-          setter.call(carrier, PARENT_ID_KEY, @truncation_helper.value_to_id(span_context.span_id, 16))
-          setter.call(carrier, TRACE_ID_KEY, @truncation_helper.value_to_id(span_context.trace_id, 16))
+          setter.call(carrier, PARENT_ID_KEY, @truncation_helper.value_to_id(span_context.span_id, 16).to_s)
+          setter.call(carrier, TRACE_ID_KEY, @truncation_helper.value_to_id(span_context.trace_id, 16).to_s)
           setter.call(carrier, SAMPLING_PRIORITY_KEY, sampled.to_s)
           setter.call(carrier, ORIGIN_KEY, origin) if origin
 
