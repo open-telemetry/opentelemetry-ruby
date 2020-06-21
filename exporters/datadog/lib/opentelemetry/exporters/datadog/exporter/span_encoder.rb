@@ -24,7 +24,7 @@ module OpenTelemetry
           AUTO_REJECT = 0
           AUTO_KEEP = 1
           USER_KEEP = 2
-          INTERNAL_TRACE_REGEX = /\/v\d\.\d\/traces/
+          INTERNAL_TRACE_REGEX = %r{/v\d\.\d/traces}.freeze
           SAMPLE_RATE_METRIC_KEY = '_sample_rate'
           SAMPLING_PRIORITY_KEY = '_sampling_priority_v1'
           ORIGIN_REGEX = /#{DD_ORIGIN}\=(.*?)($|,)/.freeze
@@ -97,10 +97,9 @@ module OpenTelemetry
 
               if filter_internal_request?(span)
                 datadog_span.set_metric(SAMPLE_RATE_METRIC_KEY, USER_REJECT) if sampling_rate
-              else
-                datadog_span.set_metric(SAMPLE_RATE_METRIC_KEY, sampling_rate) if sampling_rate
+              elsif sampling_rate
+                datadog_span.set_metric(SAMPLE_RATE_METRIC_KEY, sampling_rate)
               end
-
 
               datadog_spans << datadog_span
             end
@@ -144,8 +143,8 @@ module OpenTelemetry
             err_stack = error_event.attributes['error.stack']
 
             [err_type, err_msg, err_stack]
-          rescue StandardError => exception
-            OpenTelemetry.logger.debug("error on exception info from span events: #{span.events} , #{exception.message}")
+          rescue StandardError => e
+            OpenTelemetry.logger.debug("error on exception info from span events: #{span.events} , #{e.message}")
           end
 
           def get_resource(span)
@@ -205,9 +204,9 @@ module OpenTelemetry
             end
           end
 
-         def filter_internal_request?(span)
-           span.attributes['http.route'].match(INTERNAL_TRACE_REGEX) if span.attributes.key?('http.target')
-         end
+          def filter_internal_request?(span)
+            span.attributes['http.route'].match(INTERNAL_TRACE_REGEX) if span.attributes&.key?('http.target')
+          end
         end
       end
     end

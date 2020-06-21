@@ -6,17 +6,17 @@ Lint/UnusedMethodArgument:
 Metrics/AbcSize:
   Max: 32
 Metrics/BlockLength:
-  Max: 31
+  Max: 37
 Metrics/ClassLength:
-  Max: 125
+  Max: 134
 Metrics/LineLength:
   Enabled: false
 Metrics/MethodLength:
-  Max: 40
+  Max: 42
 Metrics/PerceivedComplexity:
-  Max: 10
+  Max: 16
 Metrics/CyclomaticComplexity:
-  Max: 10
+  Max: 15
 Metrics/ParameterLists:
   Enabled: false
 Naming/FileName:

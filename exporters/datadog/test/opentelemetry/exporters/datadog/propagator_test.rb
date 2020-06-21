@@ -31,11 +31,11 @@ describe OpenTelemetry::Exporters::Datadog::Exporter do
   end
 
   let(:dd_span_id) do
-    otel_span_id.to_i(16)
+    otel_span_id.to_i(16).to_s
   end
 
   let(:dd_trace_id) do
-    otel_trace_id[16, 16].to_i(16)
+    otel_trace_id[16, 16].to_i(16).to_s
   end
 
   let(:dd_sampled) do
@@ -108,7 +108,7 @@ describe OpenTelemetry::Exporters::Datadog::Exporter do
 
     it 'injects the datadog appropriate trace information into the carrier from the context, if provided' do
       carrier = propagator.inject({}, context) { |c, k, v| c[k] = v }
-      _(carrier['x-datadog-trace-id']).must_equal(dd_trace_id)
+      _(carrier['x-datadog-trace-id']).must_equal(dd_trace_id.to_s)
       _(carrier['x-datadog-parent-id']).must_equal(dd_span_id)
       _(carrier['x-datadog-sampling-priority']).must_equal(dd_not_sampled)
     end
