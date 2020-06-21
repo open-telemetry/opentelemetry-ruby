@@ -127,6 +127,16 @@ describe OpenTelemetry::Exporters::Datadog::Exporter::SpanEncoder do
     _(datadog_span_info.get_tag('error.stack')).must_equal(err_stack)
   end
 
+  it 'sets the sampling rate to 0 for requests to the datadog-agent' do
+    attributes = { 'http.method' => 'POST', 'http.route' => 'http://datadog-agent/v0.4/traces' }
+
+    span_data = create_span_data(attributes: attributes)
+    encoded_spans = span_encoder.translate_to_datadog([span_data], 'example_service')
+    datadog_span_info = encoded_spans[0]
+
+    _(datadog_span_info.to_hash[:metrics]['_sample_rate']).must_equal(-1)
+  end
+
   # it 'sets origin' do
   # end
 

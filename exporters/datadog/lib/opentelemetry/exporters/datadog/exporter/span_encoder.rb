@@ -205,7 +205,7 @@ module OpenTelemetry
           end
 
           def filter_internal_request?(span)
-            span.attributes['http.route'].match(INTERNAL_TRACE_REGEX) if span.attributes&.key?('http.target')
+            span.attributes['http.route'].match(INTERNAL_TRACE_REGEX) if span.attributes&.key?('http.route')
           end
         end
       end
