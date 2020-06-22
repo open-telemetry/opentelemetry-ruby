@@ -34,7 +34,7 @@ module OpenTelemetry
             # @param [SpanContext] ctx The context
             # @return [TraceParent] a trace parent
             def from_context(ctx)
-              new(trace_id: ctx.trace_id.unpack1('H*'), span_id: ctx.span_id.unpack1('H*'), flags: ctx.trace_flags)
+              new(trace_id: ctx.trace_id, span_id: ctx.span_id, flags: ctx.trace_flags)
             end
 
             # Deserializes the {TraceParent} from the string representation
@@ -78,14 +78,14 @@ module OpenTelemetry
               raise InvalidTraceIDError, string if string == INVALID_TRACE_ID
 
               string.downcase!
-              string
+              Array(string).pack('H*')
             end
 
             def parse_span_id(string)
               raise InvalidSpanIDError, string if string == INVALID_SPAN_ID
 
               string.downcase!
-              string
+              Array(string).pack('H*')
             end
 
             def parse_flags(string)
@@ -106,7 +106,7 @@ module OpenTelemetry
           # converts this object into a string according to the w3c spec
           # @return [String] the serialized trace_parent
           def to_s
-            "00-#{trace_id}-#{span_id}-#{flag_string}"
+            "00-#{trace_id.unpack1('H*')}-#{span_id.unpack1('H*')}-#{flag_string}"
           end
 
           private
