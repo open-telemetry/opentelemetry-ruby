@@ -15,8 +15,8 @@ module OpenTelemetry
             duration = (span_data.end_timestamp.to_f * 1_000_000).to_i - start_time
 
             Thrift::Span.new(
-              'traceIdLow' => int64(span_data.trace_id[16, 16]),
-              'traceIdHigh' => int64(span_data.trace_id[0, 16]),
+              'traceIdLow' => int64(span_data.trace_id[8, 8]),
+              'traceIdHigh' => int64(span_data.trace_id[0, 8]),
               'spanId' => int64(span_data.span_id),
               'parentSpanId' => int64(span_data.parent_span_id),
               'operationName' => span_data.name,
@@ -106,8 +106,8 @@ module OpenTelemetry
             )
           end
 
-          def int64(hex_string)
-            int = hex_string.to_i(16)
+          def int64(byte_string)
+            int = byte_string.unpack1('Q>')
             int < (1 << 63) ? int : int - (1 << 64)
           end
         end
