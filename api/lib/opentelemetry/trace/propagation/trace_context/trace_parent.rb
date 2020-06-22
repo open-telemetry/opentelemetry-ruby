@@ -30,7 +30,7 @@ module OpenTelemetry
             # @param [SpanContext] ctx The context
             # @return [TraceParent] a trace parent
             def from_context(ctx)
-              new(trace_id: ctx.trace_id, span_id: ctx.span_id, flags: ctx.trace_flags)
+              new(trace_id: ctx.trace_id.unpack1('H*'), span_id: ctx.span_id.unpack1('H*'), flags: ctx.trace_flags)
             end
 
             # Deserializes the {TraceParent} from the string representation
