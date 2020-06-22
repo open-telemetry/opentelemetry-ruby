@@ -32,18 +32,18 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextInjector do
   end
   let(:tracestate_header) { 'vendorname=opaquevalue' }
   let(:context) do
-    span_context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16)
+    span_context = SpanContext.new(trace_id: ("\xff" * 16).b, span_id: ("\x11" * 8).b)
     span = Span.new(span_context: span_context)
     Context.empty.set_value(current_span_key, span)
   end
   let(:context_with_tracestate) do
-    span_context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16,
+    span_context = SpanContext.new(trace_id: ("\xff" * 16).b, span_id: ("\x11" * 8).b,
                                    tracestate: tracestate_header)
     span = Span.new(span_context: span_context)
     Context.empty.set_value(current_span_key, span)
   end
   let(:context_without_current_span) do
-    span_context = SpanContext.new(trace_id: 'f' * 32, span_id: '1' * 16,
+    span_context = SpanContext.new(trace_id: ("\xff" * 16).b, span_id: ("\x11" * 8).b,
                                    tracestate: tracestate_header)
     Context.empty.set_value(extracted_span_context_key, span_context)
   end
