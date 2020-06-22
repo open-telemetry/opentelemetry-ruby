@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.5.0'
 
-  spec.add_dependency 'ddtrace', '~> 0.35'
+  spec.add_dependency 'ddtrace', '~> 0.36'
   spec.add_dependency 'opentelemetry-api', '~> 0.4.0'
   spec.add_dependency 'opentelemetry-sdk', '~> 0.4.0'
 
