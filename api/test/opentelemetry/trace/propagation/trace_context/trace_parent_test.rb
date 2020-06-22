@@ -15,7 +15,7 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TraceParent do
 
   describe '.to_s' do
     it 'formats it correctly' do
-      expected = "00-#{good.trace_id}-#{good.span_id}-01"
+      expected = "00-#{good.trace_id.unpack1('H*')}-#{good.span_id.unpack1('H*')}-01"
       _(good.to_s).must_equal(expected)
     end
 
