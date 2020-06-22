@@ -25,6 +25,10 @@ module OpenTelemetry
           REGEXP = /^(?<version>[A-Fa-f0-9]{2})-(?<trace_id>[A-Fa-f0-9]{32})-(?<span_id>[A-Fa-f0-9]{16})-(?<flags>[A-Fa-f0-9]{2})(?<ignored>-.*)?$/.freeze
           private_constant :REGEXP
 
+          INVALID_TRACE_ID = OpenTelemetry::Trace::INVALID_TRACE_ID.unpack1('H*')
+          INVALID_SPAN_ID = OpenTelemetry::Trace::INVALID_SPAN_ID.unpack1('H*')
+          private_constant :INVALID_TRACE_ID, :INVALID_SPAN_ID
+
           class << self
             # Creates a new {TraceParent} from a supplied {Trace::SpanContext}
             # @param [SpanContext] ctx The context
@@ -71,14 +75,14 @@ module OpenTelemetry
             end
 
             def parse_trace_id(string)
-              raise InvalidTraceIDError, string if string == OpenTelemetry::Trace::INVALID_TRACE_ID
+              raise InvalidTraceIDError, string if string == INVALID_TRACE_ID
 
               string.downcase!
               string
             end
 
             def parse_span_id(string)
-              raise InvalidSpanIDError, string if string == OpenTelemetry::Trace::INVALID_SPAN_ID
+              raise InvalidSpanIDError, string if string == INVALID_SPAN_ID
 
               string.downcase!
               string
