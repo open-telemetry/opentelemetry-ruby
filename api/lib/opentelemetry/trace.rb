@@ -10,10 +10,10 @@ module OpenTelemetry
   # application.
   module Trace
     # An invalid trace identifier, a 16-byte string with all zero bytes.
-    INVALID_TRACE_ID = ("\0" * 32).b
+    INVALID_TRACE_ID = ("\0" * 16).b
 
     # An invalid span identifier, an 8-byte string with all zero bytes.
-    INVALID_SPAN_ID = ("\0" * 16).b
+    INVALID_SPAN_ID = ("\0" * 8).b
 
     # Generates a valid trace identifier, a 16-byte string with at least one
     # non-zero byte.
