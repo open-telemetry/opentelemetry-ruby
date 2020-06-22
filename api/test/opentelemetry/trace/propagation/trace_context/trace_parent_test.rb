@@ -28,8 +28,8 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TraceParent do
     sp = OpenTelemetry::Trace::SpanContext.new
     tp = TraceParent.from_context(sp)
 
-    _(sp.trace_id).must_equal tp.trace_id
-    _(sp.span_id).must_equal  tp.span_id
+    _(sp.trace_id.unpack1('H*')).must_equal tp.trace_id
+    _(sp.span_id.unpack1('H*')).must_equal  tp.span_id
     _(sp.trace_flags).must_equal tp.flags
   end
 
