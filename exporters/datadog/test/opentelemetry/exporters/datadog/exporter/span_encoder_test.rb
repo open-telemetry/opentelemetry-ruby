@@ -69,7 +69,7 @@ describe OpenTelemetry::Exporters::Datadog::Exporter::SpanEncoder do
     instrumentation_library = OpenTelemetry::SDK::InstrumentationLibrary.new('OpenTelemetry::Adapters::Redis', 1)
 
     span_context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: span_id)
-    parent_context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: parent_id)
+    parent_context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: parent_id, tracestate: '_dd_origin=synthetics-example')
     other_context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: other_id)
     otel_span_one = OpenTelemetry::SDK::Trace::Span.new(parent_context, span_names[0], nil, nil, OpenTelemetry::SDK::Trace::Config::TraceConfig.new, MockProcessor.new, nil, nil, start_times[0], nil, instrumentation_library)
     otel_span_two = OpenTelemetry::SDK::Trace::Span.new(span_context, span_names[1], nil, parent_id, OpenTelemetry::SDK::Trace::Config::TraceConfig.new, MockProcessor.new, nil, nil, start_times[1], nil, instrumentation_library)
@@ -92,6 +92,9 @@ describe OpenTelemetry::Exporters::Datadog::Exporter::SpanEncoder do
     _(datadog_encoded_spans[0].trace_id).must_equal(datadog_encoded_spans[1].trace_id)
     _(datadog_encoded_spans[0].trace_id).must_equal(datadog_encoded_spans[2].trace_id)
     _(datadog_encoded_spans[0].span_type).must_equal(::Datadog::Contrib::Redis::Ext::TYPE)
+    # check origin tag exists on parent only
+    _(datadog_encoded_spans[0].get_tag('_dd_origin')).must_equal('synthetics-example')
+    assert_nil(datadog_encoded_spans[1].get_tag('_dd_origin'))
   end
 
   it 'generates a valid datadog span type' do
@@ -136,9 +139,6 @@ describe OpenTelemetry::Exporters::Datadog::Exporter::SpanEncoder do
 
     _(datadog_span_info.to_hash[:metrics]['_sample_rate']).must_equal(-1)
   end
-
-  # it 'sets origin' do
-  # end
 
   def create_span_data(attributes: nil, events: nil, links: nil, trace_id: OpenTelemetry::Trace.generate_trace_id, trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, status: nil, instrumentation_library: nil)
     OpenTelemetry::SDK::Trace::SpanData.new(

@@ -63,6 +63,14 @@ module OpenTelemetry
               # It allows for a more fair usage of the queue when under stress load,
               # and will create proportional representation of code paths being instrumented at stress time.
               unfinished_trace_id = fetch_unfinished_trace_id
+
+              # if there are no unfinished traces able to be dropped, don't add more spans, and return early
+              if unfinished_trace_id.nil?
+                OpenTelemetry.logger.warn('Max spans for all traces, spans will be dropped')
+                @_spans_dropped = true
+                return
+              end
+
               drop_unfinished_trace(unfinished_trace_id)
               OpenTelemetry.logger.warn('Max spans for all traces, traces will be dropped')
             end
