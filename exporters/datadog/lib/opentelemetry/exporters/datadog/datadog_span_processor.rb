@@ -193,7 +193,8 @@ module OpenTelemetry
         end
 
         def fetch_unfinished_trace_id
-          unfinished_traces = traces.keys
+          # don't delete potentially finished trace awaiting export
+          unfinished_traces = traces.keys - check_traces_queue
           unfinished_traces[rand(unfinished_traces.length)]
         end
 
