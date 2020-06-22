@@ -58,9 +58,13 @@ module OpenTelemetry
 
           lock do
             if all_spans_count(traces_spans_count) >= max_queue_size
-              OpenTelemetry.logger.warn('Max spans for all traces, spans will be dropped')
-              @_spans_dropped = true
-              return
+              # instead of just dropping all new spans, dd-trace-rb drops a random trace
+              # https://github.com/DataDog/dd-trace-rb/blob/c6fbf2410a60495f1b2d8912bf7ea7dc63422141/lib/ddtrace/buffer.rb#L34-L36
+              # It allows for a more fair usage of the queue when under stress load,
+              # and will create proportional representation of code paths being instrumented at stress time.
+              unfinished_trace_id = fetch_unfinished_trace_id
+              drop_unfinished_trace(unfinished_trace_id)
+              OpenTelemetry.logger.warn('Max spans for all traces, traces will be dropped')
             end
 
             if traces[trace_id].nil?
@@ -68,7 +72,7 @@ module OpenTelemetry
               traces_spans_count[trace_id] = 1
             else
               if traces[trace_id].size >= max_trace_size
-                OpenTelemetry.logger.warn('Max spans for all traces, spans will be dropped')
+                OpenTelemetry.logger.warn('Max spans for trace, spans will be dropped')
                 @_spans_dropped = true
                 return
               end
@@ -186,6 +190,17 @@ module OpenTelemetry
 
         def fetch_spans(spans)
           spans.map!(&:to_span_data)
+        end
+
+        def fetch_unfinished_trace_id
+          unfinished_traces = traces.keys
+          unfinished_traces[rand(unfinished_traces.length)]
+        end
+
+        def drop_unfinished_trace(trace_id)
+          traces.delete(trace_id)
+          traces_spans_count.delete(trace_id)
+          traces_spans_ended_count.delete(trace_id)
         end
 
         def lock

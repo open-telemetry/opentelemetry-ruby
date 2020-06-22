@@ -9,5 +9,5 @@ source 'https://rubygems.org'
 gemspec
 
 # Use the opentelemetry-api gem from source
-gem 'ddtrace'
+gem 'ddtrace', '~> 0.35'
 gem 'opentelemetry-api', path: '../../api'
