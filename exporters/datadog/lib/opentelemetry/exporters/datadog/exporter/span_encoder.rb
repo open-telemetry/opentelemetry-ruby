@@ -172,7 +172,7 @@ module OpenTelemetry
             # Get span name by using instrumentation and kind while backing off to
             instrumentation_name = span.instrumentation_library&.name
             kind = span.kind
-            instrumentation_name && kind ? instrumentation_name.kind.to_s : span.name
+            instrumentation_name && kind ? instrumentation_name.kind.to_s.gsub(':', '_') : span.name
           end
 
           def get_origin_string(tracestate)
