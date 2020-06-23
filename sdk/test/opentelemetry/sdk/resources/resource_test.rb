@@ -41,6 +41,15 @@ describe OpenTelemetry::SDK::Resources::Resource do
     end
   end
 
+  describe '.telemetry_sdk' do
+    it 'returns a resource for the telemetry sdk' do
+      resource_labels = Resource.telemetry_sdk.label_enumerator.to_h
+      _(resource_labels['telemetry.sdk.name']).must_equal('opentelemetry')
+      _(resource_labels['telemetry.sdk.language']).must_equal('ruby')
+      _(resource_labels['telemetry.sdk.version']).must_match(/semver:\b\d{1,3}\.\d{1,3}\.\d{1,3}/)
+    end
+  end
+
   describe '#merge' do
     it 'merges two resources into a third' do
       res1 = Resource.create('k1' => 'v1', 'k2' => 'v2')

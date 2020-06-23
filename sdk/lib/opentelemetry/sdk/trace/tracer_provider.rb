@@ -13,20 +13,20 @@ module OpenTelemetry
         private_constant(:Key)
 
         attr_accessor :active_trace_config
-        attr_reader :active_span_processor
-        attr_reader :stopped
+        attr_reader :active_span_processor, :stopped, :resource
         alias stopped? stopped
 
         # Returns a new {TracerProvider} instance.
         #
         # @return [TracerProvider]
-        def initialize
+        def initialize(resource = OpenTelemetry::SDK::Resources::Resource.create)
           @mutex = Mutex.new
           @registry = {}
           @active_span_processor = NoopSpanProcessor.instance
           @active_trace_config = Config::TraceConfig::DEFAULT
           @registered_span_processors = []
           @stopped = false
+          @resource = resource
         end
 
         # Returns a {Tracer} instance.
@@ -38,7 +38,7 @@ module OpenTelemetry
         def tracer(name = nil, version = nil)
           name ||= ''
           version ||= ''
-          @mutex.synchronize { @registry[Key.new(name, version)] ||= Tracer.new(name, version) }
+          @mutex.synchronize { @registry[Key.new(name, version)] ||= Tracer.new(name, version, self) }
         end
 
         # Attempts to stop all the activity for this {Tracer}. Calls

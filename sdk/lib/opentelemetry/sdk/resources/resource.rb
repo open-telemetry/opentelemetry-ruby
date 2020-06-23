@@ -29,6 +29,14 @@ module OpenTelemetry
 
             new(frozen_labels)
           end
+
+          def telemetry_sdk
+            create(
+              Constants::TELEMETRY_SDK_RESOURCE[:name] => 'opentelemetry',
+              Constants::TELEMETRY_SDK_RESOURCE[:language] => 'ruby',
+              Constants::TELEMETRY_SDK_RESOURCE[:version] => "semver:#{OpenTelemetry::SDK::VERSION}"
+            )
+          end
         end
 
         # @api private

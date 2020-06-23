@@ -8,7 +8,7 @@ module OpenTelemetry
   module SDK
     # The configurator provides defaults and facilitates configuring the
     # SDK for use.
-    class Configurator
+    class Configurator # rubocop:disable Metrics/ClassLength
       USE_MODE_UNSPECIFIED = 0
       USE_MODE_ONE = 1
       USE_MODE_ALL = 2
@@ -27,11 +27,20 @@ module OpenTelemetry
         @text_injectors = nil
         @span_processors = []
         @use_mode = USE_MODE_UNSPECIFIED
-        @tracer_provider = Trace::TracerProvider.new
+        @resource = Resources::Resource.telemetry_sdk
       end
 
       def logger
         @logger ||= Logger.new(STDOUT)
+      end
+
+      # Accepts a resource object that is merged with the default telemetry sdk
+      # resource. The use of this method is optional, and is provided as means
+      # to add additional resource information.
+      #
+      # @param [Resource] new_resource The resource to be merged
+      def resource=(new_resource)
+        @resource = @resource.merge(new_resource)
       end
 
       # Install an instrumentation adapter with specificied optional +config+.
@@ -83,11 +92,15 @@ module OpenTelemetry
         OpenTelemetry.correlations = CorrelationContext::Manager.new
         configure_propagation
         configure_span_processors
-        OpenTelemetry.tracer_provider = @tracer_provider
+        OpenTelemetry.tracer_provider = tracer_provider
         install_instrumentation
       end
 
       private
+
+      def tracer_provider
+        @tracer_provider ||= Trace::TracerProvider.new(@resource)
+      end
 
       def check_use_mode!(mode)
         @use_mode = mode if @use_mode == USE_MODE_UNSPECIFIED
@@ -105,7 +118,7 @@ module OpenTelemetry
 
       def configure_span_processors
         processors = @span_processors.empty? ? [default_span_processor] : @span_processors
-        processors.each { |p| @tracer_provider.add_span_processor(p) }
+        processors.each { |p| tracer_provider.add_span_processor(p) }
       end
 
       def default_span_processor
