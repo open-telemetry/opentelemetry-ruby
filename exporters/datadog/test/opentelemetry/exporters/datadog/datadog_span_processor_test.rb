@@ -205,15 +205,70 @@ describe OpenTelemetry::Exporters::Datadog::DatadogSpanProcessor do
       _(out).must_equal(expected)
     end
 
-    # it 'shouldnt blow up with a lot of large traces' do
-    # end
+    it 'shouldnt blow up with a lot of large traces' do
+    end
   end
 
-  # describe 'scheduled delay' do
-  # end
+  describe 'scheduled delay' do
+    it 'should flush after scheduled delay' do
+      te = TestExporter.new
 
-  # describe 'force flush' do
-  # end
+      dsp = DatadogSpanProcessor.new(exporter: te, max_queue_size: 3, max_trace_size: 3, schedule_delay_millis: 500)
+
+      tss = [TestSpan.new, TestSpan.new, TestSpan.new]
+      tss.each do |ts|
+        dsp.on_start(ts)
+        dsp.on_finish(ts)
+      end
+      sleep 0.75
+
+      _(te.traces.size).must_equal(3)
+      _(te.traces[0].size).must_equal(1)
+      dsp.shutdown
+    end
+  end
+
+  describe 'scheduled delay' do
+    it 'should not flush earlier than scheduled delay' do
+      te = TestExporter.new
+
+      dsp = DatadogSpanProcessor.new(exporter: te, max_queue_size: 3, max_trace_size: 3, schedule_delay_millis: 1000)
+
+      tss = [TestSpan.new, TestSpan.new, TestSpan.new]
+      tss.each do |ts|
+        dsp.on_start(ts)
+        dsp.on_finish(ts)
+      end
+      sleep 0.5
+
+      _(te.traces.size).must_equal(0)
+      dsp.shutdown
+    end
+  end
+
+  describe 'force flush' do
+    it 'should flush only finished traces' do
+      te = TestExporter.new
+
+      dsp = DatadogSpanProcessor.new(exporter: te, max_queue_size: 4, max_trace_size: 3)
+
+      trace_id = generate_trace_id
+      spans = [TestSpan.new(1, true, trace_id), TestSpan.new, TestSpan.new, TestSpan.new(4, true, trace_id)]
+
+      4.times do |count|
+        dsp.on_start(spans[count])
+      end
+
+      3.times do |count|
+        dsp.on_finish(spans[count])
+      end
+
+      dsp.force_flush
+
+      _(te.traces.size).must_equal(2)
+      dsp.shutdown
+    end
+  end
 
   def generate_trace_id
     loop do
