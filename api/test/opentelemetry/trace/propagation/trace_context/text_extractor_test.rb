@@ -48,8 +48,8 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextExtractor do
       ctx = extractor.extract(carrier, context) { |c, k| c[k] }
       span_context = ctx[span_context_key]
       _(span_context).must_be :remote?
-      _(span_context.trace_id).must_equal('000000000000000000000000000000aa')
-      _(span_context.span_id).must_equal('00000000000000ea')
+      _(span_context.trace_id).must_equal(("\0" * 15 + "\xaa").b)
+      _(span_context.span_id).must_equal(("\0" * 7 + "\xea").b)
       _(span_context.trace_flags).must_be :sampled?
       _(span_context.tracestate).must_equal('vendorname=opaquevalue')
     end
@@ -58,8 +58,8 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextExtractor do
       ctx = extractor.extract(carrier, context)
       span_context = ctx[span_context_key]
       _(span_context).must_be :remote?
-      _(span_context.trace_id).must_equal('000000000000000000000000000000aa')
-      _(span_context.span_id).must_equal('00000000000000ea')
+      _(span_context.trace_id).must_equal(("\0" * 15 + "\xaa").b)
+      _(span_context.span_id).must_equal(("\0" * 7 + "\xea").b)
       _(span_context.trace_flags).must_be :sampled?
       _(span_context.tracestate).must_equal('vendorname=opaquevalue')
     end
