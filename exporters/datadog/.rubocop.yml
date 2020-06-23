@@ -8,7 +8,7 @@ Metrics/AbcSize:
 Metrics/BlockLength:
   Max: 38
 Metrics/ClassLength:
-  Max: 153
+  Max: 158
 Metrics/LineLength:
   Enabled: false
 Metrics/MethodLength:

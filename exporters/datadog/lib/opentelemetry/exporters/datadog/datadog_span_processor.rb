@@ -49,15 +49,21 @@ module OpenTelemetry
           @traces_spans_ended_count = {}
           @check_traces_queue = []
           @_spans_dropped = false
-          @probability = nil
+
+          # check once for probabilility based sampling rate
+          begin
+            sampler = OpenTelemetry.tracer_provider.active_trace_config.sampler
+          rescue StandardError => e
+            OpenTelemetry.logger.warn("sampler configuration not set: #{e.message}")
+            sampler = nil
+          end
+
+          @probability = get_rate_from_description(sampler)
         end
 
         # datadog trace-agent endpoint requires a complete trace to be sent
         # threadsafe may block on lock
         def on_start(span)
-          # check once for probabilility based sampling rate
-          @probability ||= get_rate_from_description(span)
-
           context = span.context
           trace_id = context.trace_id
 
@@ -223,21 +229,21 @@ module OpenTelemetry
           traces_spans_ended_count.delete(trace_id)
         end
 
-        def get_rate_from_description(span)
+        def get_rate_from_description(sampler)
           # format to parse of sampler description is
           # "ProbabilitySampler{1.000000}" or
           # "AlwaysOnSampler" / "AlwaysOffSampler"
-          return false unless span.trace_config&.sampler&.is_a?(ProbabilitySampler)
+          return nil unless sampler&.is_a?(ProbabilitySampler)
 
-          rate = span.trace_config&.sampler&.description&.match(PROBABILITY_REGEX)
+          rate = sampler.description&.match(PROBABILITY_REGEX)
 
-          return false unless rate
+          return nil unless rate
 
           rate[0].to_f(4)
         rescue StandardError => e
           # rescue just in case the format changes dramatically in the future
           OpenTelemetry.logger.warn("error while extracting sampling rate #{e.message} , #{e.backtrace}")
-          false
+          nil
         end
 
         def lock
