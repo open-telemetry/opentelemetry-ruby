@@ -25,6 +25,7 @@ module OpenTelemetry
         SCHEDULE_DELAY_MILLIS = 3_000
         MAX_QUEUE_SIZE = 2048
         MAX_TRACE_SIZE = 1024
+        PROBABILITY_REGEX = /\d[.]\d{1,6}/.freeze
         private_constant(:SCHEDULE_DELAY_MILLIS, :MAX_QUEUE_SIZE, :MAX_TRACE_SIZE)
 
         def initialize(exporter:,
@@ -48,11 +49,15 @@ module OpenTelemetry
           @traces_spans_ended_count = {}
           @check_traces_queue = []
           @_spans_dropped = false
+          @probability = nil
         end
 
         # datadog trace-agent endpoint requires a complete trace to be sent
         # threadsafe may block on lock
         def on_start(span)
+          # check once for probabilility based sampling rate
+          @probability ||= get_rate_from_description(span)
+
           context = span.context
           trace_id = context.trace_id
 
@@ -166,8 +171,14 @@ module OpenTelemetry
         def export_batch(trace_spans)
           return if trace_spans.empty?
 
+          is_datadog_exporter = @exporter.is_a?(Datadog::Exporter)
+
           trace_spans.each do |spans|
-            @exporter.export(spans)
+            if is_datadog_exporter && @probability
+              @exporter.export(spans, @probability)
+            else
+              @exporter.export(spans)
+            end
           rescue StandardError => e
             OpenTelemetry.logger.warn("Exception while exporting Span batch. #{e.message} , #{e.backtrace}")
           end
@@ -210,6 +221,23 @@ module OpenTelemetry
           traces.delete(trace_id)
           traces_spans_count.delete(trace_id)
           traces_spans_ended_count.delete(trace_id)
+        end
+
+        def get_rate_from_description(span)
+          # format to parse of sampler description is
+          # "ProbabilitySampler{1.000000}" or
+          # "AlwaysOnSampler" / "AlwaysOffSampler"
+          return false unless span.trace_config&.sampler&.is_a?(ProbabilitySampler)
+
+          rate = span.trace_config&.sampler&.description&.match(PROBABILITY_REGEX)
+
+          return false unless rate
+
+          rate[0].to_f(4)
+        rescue StandardError => e
+          # rescue just in case the format changes dramatically in the future
+          OpenTelemetry.logger.warn("error while extracting sampling rate #{e.message} , #{e.backtrace}")
+          false
         end
 
         def lock

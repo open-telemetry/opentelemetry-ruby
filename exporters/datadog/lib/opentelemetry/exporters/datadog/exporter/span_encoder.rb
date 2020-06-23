@@ -42,7 +42,7 @@ module OpenTelemetry
             'OpenTelemetry::Adapters::Sinatra' => ::Datadog::Ext::HTTP::TYPE_INBOUND
           }.freeze
 
-          def translate_to_datadog(otel_spans, service, env = nil, version = nil, tags = nil) # rubocop:disable Metrics/AbcSize
+          def translate_to_datadog(otel_spans, service, env = nil, version = nil, tags = nil, probability = nil) # rubocop:disable Metrics/AbcSize
             datadog_spans = []
 
             default_tags = get_default_tags(tags) || {}
@@ -50,8 +50,9 @@ module OpenTelemetry
             otel_spans.each do |span|
               trace_id, span_id, parent_id = get_trace_ids(span)
               span_type = get_span_type(span)
+              span_name = get_span_name(span)
 
-              datadog_span = ::Datadog::Span.new(nil, span.name,
+              datadog_span = ::Datadog::Span.new(nil, span_name,
                                                  service: service,
                                                  trace_id: trace_id,
                                                  parent_id: parent_id,
@@ -91,12 +92,10 @@ module OpenTelemetry
               datadog_span.set_tag(VERSION_KEY, version) if version && parent_id.zero?
               datadog_span.set_tag(ENV_KEY, env) if env
 
-              # TODO: In other languages, spans that aren't sampled don't get passed to
-              # on_finish. Is this the case with ruby?
-              sampling_rate = get_sampling_rate(span)
+              sampling_rate = get_sampling_rate(span, probability)
 
               if filter_internal_request?(span)
-                datadog_span.set_metric(SAMPLE_RATE_METRIC_KEY, USER_REJECT) if sampling_rate
+                datadog_span.set_metric(SAMPLE_RATE_METRIC_KEY, USER_REJECT)
               elsif sampling_rate
                 datadog_span.set_metric(SAMPLE_RATE_METRIC_KEY, sampling_rate)
               end
@@ -165,14 +164,15 @@ module OpenTelemetry
             span.name
           end
 
-          def get_sampling_rate(span)
-            if span.trace_flags&.sampled?
-              # TODO: expose probability sampling rate of active tracer in SpanData
-              # tenatively it would be in tracestate?
-              1
-            else
-              0
-            end
+          def get_sampling_rate(span, probability)
+            probability || 1 if span.trace_flags&.sampled?
+          end
+
+          def get_span_name(span)
+            # Get span name by using instrumentation and kind while backing off to
+            instrumentation_name = span.instrumentation_library&.name
+            kind = span.kind
+            instrumentation_name && kind ? instrumentation_name.kind.to_s : span.name
           end
 
           def get_origin_string(tracestate)

@@ -44,11 +44,11 @@ module OpenTelemetry
         # @param [Enumerable<Span>] spans the list of sampled {Span}s to be
         #   exported.
         # @return [Integer] the result of the export.
-        def export(spans)
+        def export(spans, probability = nil)
           return FAILURE if @shutdown
 
           if @agent_writer
-            datadog_spans = @span_encoder.translate_to_datadog(spans, @service, @env, @version, @tags)
+            datadog_spans = @span_encoder.translate_to_datadog(spans, @service, @env, @version, @tags, probability)
             @agent_writer.write(datadog_spans)
             SUCCESS
           else
