@@ -10,11 +10,14 @@ describe OpenTelemetry::SDK, 'global_tracer_configurations' do
   let(:sdk) { OpenTelemetry::SDK }
   let(:exporter) { sdk::Trace::Export::InMemorySpanExporter.new }
   let(:span_processor) { sdk::Trace::Export::SimpleSpanProcessor.new(exporter) }
+  let(:active_trace_config) { sdk::Trace::Config::TraceConfig::DEFAULT }
   let(:provider) do
     OpenTelemetry.tracer_provider = sdk::Trace::TracerProvider.new.tap do |provider|
       provider.add_span_processor(span_processor)
+      provider.active_trace_config = active_trace_config
     end
   end
+
   let(:tracer) { provider.tracer(__FILE__, sdk::VERSION) }
   let(:parent_context) { nil }
   let(:finished_spans) { exporter.finished_spans }
@@ -67,6 +70,20 @@ describe OpenTelemetry::SDK, 'global_tracer_configurations' do
         _(finish_span_keys).must_include(:tracestate)
 
         finished_spans.first.tracestate.must_equal(mock_tracestate)
+      end
+    end
+  end
+
+  describe 'using sampler in extracted span context' do
+    let(:sampler_description) { active_trace_config.sampler.description }
+
+    describe '#finished_spans' do
+      it 'propogates sampler description through span lifecycle into SpanData' do
+        finish_span_keys = finished_spans.collect(&:members).flatten.uniq
+
+        _(finish_span_keys).must_include(:sampler)
+
+        finished_spans.first.sampler.description.must_equal(sampler_description)
       end
     end
   end

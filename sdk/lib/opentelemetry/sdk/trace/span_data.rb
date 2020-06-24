@@ -28,7 +28,8 @@ module OpenTelemetry
                             :span_id,
                             :trace_id,
                             :trace_flags,
-                            :tracestate)
+                            :tracestate,
+                            :sampler)
     end
   end
 end

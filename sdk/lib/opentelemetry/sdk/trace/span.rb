@@ -241,12 +241,13 @@ module OpenTelemetry
             context.span_id,
             context.trace_id,
             context.trace_flags,
-            context.tracestate
+            context.tracestate,
+            @trace_config.sampler
           )
         end
 
         # @api private
-        def initialize(context, name, kind, parent_span_id, trace_config, span_processor, attributes, links, start_timestamp, library_resource, instrumentation_library) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        def initialize(context, name, kind, parent_span_id, trace_config, span_processor, attributes, links, start_timestamp, library_resource, instrumentation_library) # rubocop:disable Metrics/AbcSize
           super(span_context: context)
           @mutex = Mutex.new
           @name = name

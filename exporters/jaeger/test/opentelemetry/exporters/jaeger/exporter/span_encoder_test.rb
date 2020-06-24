@@ -60,7 +60,7 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter::SpanEncoder do
     )
   end
 
-  def create_span_data(attributes: nil, events: nil, links: nil, trace_id: OpenTelemetry::Trace.generate_trace_id, trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, tracestate: nil)
+  def create_span_data(attributes: nil, events: nil, links: nil, trace_id: OpenTelemetry::Trace.generate_trace_id, trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, tracestate: nil, sampler: OpenTelemetry::SDK::Trace::Config::TraceConfig::DEFAULT.sampler)
     OpenTelemetry::SDK::Trace::SpanData.new(
       '',
       nil,
@@ -80,7 +80,8 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter::SpanEncoder do
       OpenTelemetry::Trace.generate_span_id,
       trace_id,
       trace_flags,
-      tracestate
+      tracestate,
+      sampler
     )
   end
 end
