@@ -88,7 +88,7 @@ module OpenTelemetry
                 datadog_span.set_tag(attribute, span.attributes[attribute])
               end
 
-              origin = get_origin_string(span.tracestate)
+              origin = get_origin_string(span)
               datadog_span.set_tag(DD_ORIGIN, origin) if origin && parent_id.zero?
               datadog_span.set_tag(VERSION_KEY, version) if version && parent_id.zero?
               datadog_span.set_tag(ENV_KEY, env) if env
@@ -176,7 +176,13 @@ module OpenTelemetry
             instrumentation_name && kind ? "#{instrumentation_name.to_s.gsub(':', '_')}.#{kind}" : span.name
           end
 
-          def get_origin_string(tracestate)
+          def get_origin_string(span)
+            tracestate = begin
+                           span.tracestate
+                         rescue NoMethodError
+                           nil
+                         end
+
             return if tracestate.nil? || tracestate.index(DD_ORIGIN).nil?
 
             # Depending on the edge cases in tracestate values this might be

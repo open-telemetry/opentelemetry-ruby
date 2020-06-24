@@ -18,8 +18,16 @@ module OpenTelemetry
 end
 
 describe OpenTelemetry::Exporters::Datadog::Exporter do
-  SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
-  FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
+  SUCCESS = begin
+              OpenTelemetry::SDK::Trace::Export::SUCCESS
+            rescue NameError
+              0
+            end
+  FAILURE = begin
+              OpenTelemetry::SDK::Trace::Export::FAILURE
+            rescue NameError
+              1
+            end
   AGENT_URL = 'http://localhost:8126'
 
   let(:service_name) { 'test' }

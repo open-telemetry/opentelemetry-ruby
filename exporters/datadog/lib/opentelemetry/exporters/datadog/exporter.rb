@@ -21,8 +21,16 @@ module OpenTelemetry
       class Exporter
         DEFAULT_AGENT_URL = 'http://localhost:8126'
         DEFAULT_SERVICE_NAME = 'my_service'
-        SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
-        FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
+        SUCCESS = begin
+                    OpenTelemetry::SDK::Trace::Export::SUCCESS
+                  rescue NameError
+                    0
+                  end
+        FAILURE = begin
+                    OpenTelemetry::SDK::Trace::Export::FAILURE
+                  rescue NameError
+                    1
+                  end
         private_constant(:SUCCESS, :FAILURE)
 
         def initialize(service_name: nil, agent_url: nil, env: nil, version: nil, tags: nil)
