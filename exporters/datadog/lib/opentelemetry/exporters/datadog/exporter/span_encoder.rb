@@ -42,7 +42,7 @@ module OpenTelemetry
             'OpenTelemetry::Adapters::Sinatra' => ::Datadog::Ext::HTTP::TYPE_INBOUND
           }.freeze
 
-          def translate_to_datadog(otel_spans, service, env = nil, version = nil, tags = nil, probability = nil) # rubocop:disable Metrics/AbcSize
+          def translate_to_datadog(otel_spans, service, env = nil, version = nil, tags = nil) # rubocop:disable Metrics/AbcSize
             datadog_spans = []
 
             default_tags = get_default_tags(tags) || {}
@@ -92,7 +92,7 @@ module OpenTelemetry
               datadog_span.set_tag(VERSION_KEY, version) if version && parent_id.zero?
               datadog_span.set_tag(ENV_KEY, env) if env
 
-              sampling_rate = get_sampling_rate(span, probability)
+              sampling_rate = get_sampling_rate(span)
 
               if filter_internal_request?(span)
                 datadog_span.set_metric(SAMPLE_RATE_METRIC_KEY, USER_REJECT)
@@ -164,8 +164,8 @@ module OpenTelemetry
             span.name
           end
 
-          def get_sampling_rate(span, probability)
-            probability || 1 if span.trace_flags&.sampled?
+          def get_sampling_rate(span)
+            get_rate_from_description(span) || 1 if span.trace_flags&.sampled?
           end
 
           def get_span_name(span)
@@ -202,6 +202,30 @@ module OpenTelemetry
             else
               tag_map
             end
+          end
+
+          def get_rate_from_description(span)
+            # format to parse of sampler description is
+            # "ProbabilitySampler{1.000000}" or
+            # "AlwaysOnSampler" / "AlwaysOffSampler"
+            # TODO: remove begin/rescue block if PR #282 is accepted+released
+            sampler = begin
+                        span.sampler
+                      rescue NoMethodError
+                        nil
+                      end
+
+            return nil unless sampler&.is_a?(ProbabilitySampler)
+
+            rate = sampler.description&.match(PROBABILITY_REGEX)
+
+            return nil unless rate
+
+            rate[0].to_f(4)
+          rescue StandardError => e
+            # rescue just in case the format changes dramatically in the future
+            OpenTelemetry.logger.warn("error while extracting sampling rate #{e.message} , #{e.backtrace}")
+            nil
           end
 
           def filter_internal_request?(span)

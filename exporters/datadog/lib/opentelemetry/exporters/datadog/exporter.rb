@@ -21,6 +21,7 @@ module OpenTelemetry
       class Exporter
         DEFAULT_AGENT_URL = 'http://localhost:8126'
         DEFAULT_SERVICE_NAME = 'my_service'
+        PROBABILITY_REGEX = /\d[.]\d{1,6}/.freeze
         SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
         FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
         private_constant(:SUCCESS, :FAILURE)
@@ -44,11 +45,11 @@ module OpenTelemetry
         # @param [Enumerable<Span>] spans the list of sampled {Span}s to be
         #   exported.
         # @return [Integer] the result of the export.
-        def export(spans, probability = nil)
+        def export(spans)
           return FAILURE if @shutdown
 
           if @agent_writer
-            datadog_spans = @span_encoder.translate_to_datadog(spans, @service, @env, @version, @tags, probability)
+            datadog_spans = @span_encoder.translate_to_datadog(spans, @service, @env, @version, @tags)
             @agent_writer.write(datadog_spans)
             SUCCESS
           else
