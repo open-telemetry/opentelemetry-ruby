@@ -21,7 +21,6 @@ module OpenTelemetry
       class Exporter
         DEFAULT_AGENT_URL = 'http://localhost:8126'
         DEFAULT_SERVICE_NAME = 'my_service'
-        PROBABILITY_REGEX = /\d[.]\d{1,6}/.freeze
         SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
         FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
         private_constant(:SUCCESS, :FAILURE)

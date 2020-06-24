@@ -28,6 +28,7 @@ module OpenTelemetry
           SAMPLE_RATE_METRIC_KEY = '_sample_rate'
           SAMPLING_PRIORITY_KEY = '_sampling_priority_v1'
           ORIGIN_REGEX = /#{DD_ORIGIN}\=(.*?)($|,)/.freeze
+          PROBABILITY_REGEX = /\d[.]\d{1,6}/.freeze
           TRUNCATION_HELPER = ::Datadog::DistributedTracing::Headers::Headers.new({})
 
           INSTRUMENTATION_SPAN_TYPES = {
