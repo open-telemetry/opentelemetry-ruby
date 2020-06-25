@@ -9,7 +9,7 @@ require 'opentelemetry/sdk/correlation_context/manager'
 
 module OpenTelemetry
   module SDK
-    # Contains operational implementataions of the CorrelationContext::Manager
+    # Contains operational implementations of the CorrelationContext::Manager
     module CorrelationContext
     end
   end

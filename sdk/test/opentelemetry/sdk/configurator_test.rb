@@ -15,6 +15,24 @@ describe OpenTelemetry::SDK::Configurator do
     end
   end
 
+  describe '#resource=' do
+    let(:configurator_resource) { configurator.instance_variable_get(:@resource) }
+    let(:configurator_resource_labels) { configurator_resource.label_enumerator.to_h }
+    let(:expected_resource_labels) do
+      {
+        'telemetry.sdk.name' => 'opentelemetry',
+        'telemetry.sdk.language' => 'ruby',
+        'telemetry.sdk.version' => "semver:#{OpenTelemetry::SDK::VERSION}",
+        'test_key' => 'test_value'
+      }
+    end
+
+    it 'merges the resource' do
+      configurator.resource = OpenTelemetry::SDK::Resources::Resource.create('test_key' => 'test_value')
+      _(configurator_resource_labels).must_equal(expected_resource_labels)
+    end
+  end
+
   describe '#use' do
     it 'can be called multiple times' do
       configurator.use('TestAdapter', enabled: true)

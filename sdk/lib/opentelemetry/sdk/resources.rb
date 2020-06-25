@@ -13,3 +13,4 @@ module OpenTelemetry
 end
 
 require 'opentelemetry/sdk/resources/resource'
+require 'opentelemetry/sdk/resources/constants'

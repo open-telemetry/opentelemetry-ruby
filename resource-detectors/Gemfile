@@ -4,10 +4,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-module OpenTelemetry
-  module Adapters
-    module All
-      VERSION = '0.4.1'
-    end
-  end
+source 'https://rubygems.org'
+
+gemspec
+
+group :development, :test do
+  gem 'byebug'
+  gem 'pry'
 end
