@@ -14,18 +14,17 @@ The `opentelemetry-exporters-datadog` gem is a plugin that provides Datadog Trac
 
 Generally, *libraries* that produce telemetry data should avoid depending directly on specific exporters, deferring that choice to the application developer.
 
-## How do I get started?
+## Setup
 
-Install the gem using:
+- If you use [bundler][bundler-home], include the following in your `Gemfile`:
 
 ```
-gem install opentelemetry-sdk
-gem install opentelemetry-exporters-datadog
+gem 'opentelemetry-exporters-datadog', git: 'https://github.com/Datadog/dd-opentelemetry-ruby-exporter'
+gem 'opentelemetry-api', git: 'https://github.com/open-telemetry/opentelemetry-ruby', ref: '0099668e9ad7eedf32bb496e135e8220f1e49c61'
+gem 'opentelemetry-sdk', git: 'https://github.com/open-telemetry/opentelemetry-ruby', ref: '0099668e9ad7eedf32bb496e135e8220f1e49c61'
 ```
 
-Or, if you use [bundler][bundler-home], include `opentelemetry-sdk` in your `Gemfile`.
-
-Then, configure the SDK to use the Datadog exporter as a span processor, and use the OpenTelemetry interfaces to produces traces and other information. Following is a basic example.
+- Then, configure the SDK to use the Datadog exporter as a span processor, and use the OpenTelemetry interfaces to produces traces and other information. Following is a basic example.
 
 ```ruby
 require 'opentelemetry/sdk'
@@ -45,27 +44,19 @@ end
 # For propagation of datadog specific distibuted tracing headers,
 # add the Datadog Propagator to the list of extractors and injectors, like below
 
-# extractors = [
-#   OpenTelemetry::Trace::Propagation::TraceContext.rack_extractor,
-#   OpenTelemetry::CorrelationContext::Propagation.rack_extractor,
-#   OpenTelemetry::Exporters::Datadog::Propagator.new
-# ]
+extractors = [
+  OpenTelemetry::Trace::Propagation::TraceContext.rack_extractor,
+  OpenTelemetry::CorrelationContext::Propagation.rack_extractor,
+  OpenTelemetry::Exporters::Datadog::Propagator.new
+]
 
-# injectors = [
-#   OpenTelemetry::Trace::Propagation::TraceContext.text_injector,
-#   OpenTelemetry::CorrelationContext::Propagation.text_injector,
-#   OpenTelemetry::Exporters::Datadog::Propagator.new
-# ]
+injectors = [
+  OpenTelemetry::Trace::Propagation::TraceContext.text_injector,
+  OpenTelemetry::CorrelationContext::Propagation.text_injector,
+  OpenTelemetry::Exporters::Datadog::Propagator.new
+]
 
-# OpenTelemetry.propagation.http = OpenTelemetry::Context::Propagation::CompositePropagator.new(injectors, extractors)
-
-# By default you the opentelemetry trace will sample all spans. If you wish to use Probability Based sampling
-# In Order for the datadog trace-agent to collect metrics properly, use the DatadogProbabilitySampler. You can enabled
-# Datadog Probability based sampling with the  code snippet below
-
-# OpenTelemetry.tracer_provider.active_trace_config  = OpenTelemetry::SDK::Tracer::Config::Tracer::TraceConfig.new(
-#   sampler: OpenTelemetry::SDK::Trace::Export::DatadogProbabilitySampler::DEFAULT
-# )
+OpenTelemetry.propagation.http = OpenTelemetry::Context::Propagation::CompositePropagator.new(injectors, extractors)
 
 # To start a trace you need to get a Tracer from the TracerProvider
 tracer = OpenTelemetry.tracer_provider.tracer('my_app_or_gem', '0.1.0')
@@ -85,6 +76,18 @@ end
 ```
 
 For additional examples, see the [examples on github][examples-github].
+
+## Probability Based Sampling Setup
+
+- By default, the OpenTelemetry tracer will sample and record all spans. This default is the suggest sampling approach to take when exporting to Datadog. However, if you wish to use Probability Based sampling, we recommend that, in order for the Datadog trace-agent to collect trace related metrics effectively, to use the `DatadogProbabilitySampler`. You can enabled Datadog Probability based sampling with the  code snippet below.
+
+```ruby
+#sampling rate must be a value between 0.0 and 1.0
+sampling_rate = 0.75 
+OpenTelemetry.tracer_provider.active_trace_config  = OpenTelemetry::SDK::Tracer::Config::Tracer::TraceConfig.new(
+  sampler: OpenTelemetry::SDK::Trace::Export::DatadogProbabilitySampler.default_with_probability(sampling_rate)
+)
+```
 
 ## How can I get involved?
 
