@@ -60,7 +60,7 @@ describe OpenTelemetry::Adapters::Mysql2::Adapter do
     it 'after requests' do
       client.query('SELECT 1')
 
-      _(span.name).must_equal 'mysql.mysql'
+      _(span.name).must_equal 'select'
       _(span.attributes['db.type']).must_equal 'mysql'
       _(span.attributes['db.instance']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal 'SELECT 1'
@@ -74,10 +74,47 @@ describe OpenTelemetry::Adapters::Mysql2::Adapter do
         client.query('SELECT INVALID')
       end.must_raise Mysql2::Error
 
-      _(span.name).must_equal 'mysql.mysql'
+      _(span.name).must_equal 'select'
       _(span.attributes['db.type']).must_equal 'mysql'
       _(span.attributes['db.instance']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal 'SELECT INVALID'
+      _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
+      _(span.attributes['net.peer.name']).must_equal host.to_s
+      _(span.attributes['net.peer.port']).must_equal port.to_s
+
+      _(span.status.canonical_code).must_equal(
+        OpenTelemetry::Trace::Status::UNKNOWN_ERROR
+      )
+      _(span.events.first.name).must_equal 'error'
+      _(span.events.first.attributes['error.type']).must_equal 'Mysql2::Error'
+      assert(!span.events.first.attributes['error.message'].nil?)
+      assert(!span.events.first.attributes['error.stack'].nil?)
+    end
+
+    it 'extracts statement type that begins the query' do
+      base_sql = 'SELECT 1'
+      explain = 'EXPLAIN'
+      explain_sql = "#{explain} #{base_sql}"
+      client.query(explain_sql)
+
+      _(span.name).must_equal 'explain'
+      _(span.attributes['db.type']).must_equal 'mysql'
+      _(span.attributes['db.instance']).must_equal 'mysql'
+      _(span.attributes['db.statement']).must_equal explain_sql
+      _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
+      _(span.attributes['net.peer.name']).must_equal host.to_s
+      _(span.attributes['net.peer.port']).must_equal port.to_s
+    end
+
+    it 'uses component.name and instance.name as span.name fallbacks with invalid sql' do
+      expect do
+        client.query('DESELECT 1')
+      end.must_raise Mysql2::Error
+
+      _(span.name).must_equal 'mysql.mysql'
+      _(span.attributes['db.type']).must_equal 'mysql'
+      _(span.attributes['db.instance']).must_equal 'mysql'
+      _(span.attributes['db.statement']).must_equal 'DESELECT 1'
       _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
       _(span.attributes['net.peer.name']).must_equal host.to_s
       _(span.attributes['net.peer.port']).must_equal port.to_s

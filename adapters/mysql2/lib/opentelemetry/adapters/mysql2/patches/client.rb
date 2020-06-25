@@ -10,9 +10,29 @@ module OpenTelemetry
       module Patches
         # Module to prepend to Mysql2::Client for instrumentation
         module Client
+          QUERY_NAMES = [
+            'set names',
+            'select',
+            'insert',
+            'update',
+            'delete',
+            'begin',
+            'commit',
+            'rollback',
+            'savepoint',
+            'release savepoint',
+            'explain',
+            'drop database',
+            'drop table',
+            'create database',
+            'create table'
+          ].freeze
+
+          QUERY_NAME_RE = Regexp.new("^(#{QUERY_NAMES.join('|')})", Regexp::IGNORECASE)
+
           def query(sql, options = {})
             tracer.in_span(
-              database_span_name,
+              database_span_name(sql),
               attributes: client_attributes.merge(
                 'db.statement' => sql
               ),
@@ -24,12 +44,19 @@ module OpenTelemetry
 
           private
 
-          def database_span_name
-            # Without obfuscation or quantization of SQL Queries, setting span name
-            # To the sql query woud result in PII or Cardinality issues
-            # Current Otel apprroach seems to be {database.component_name}.{database_instance_name}
+          def database_span_name(sql)
+            # Without obfuscation SQL Queries, setting span name
+            # To the sql query woud result in PII+Cardinality issues
+            # First attempt to infer the statement type then fallback to
+            # Current Otel apprroach {database.component_name}.{database_instance_name}
             # https://github.com/open-telemetry/opentelemetry-python/blob/39fa078312e6f41c403aa8cad1868264011f7546/ext/opentelemetry-ext-dbapi/tests/test_dbapi_integration.py#L53
             # This would create span names like mysql.default, mysql.replica, postgresql.staging etc etc
+
+            statement_type = extract_statement_type(sql)
+
+            return statement_type unless statement_type.nil?
+
+            # fallback
             database_name ? "mysql.#{database_name}" : 'mysql'
           end
 
@@ -56,6 +83,12 @@ module OpenTelemetry
 
           def tracer
             Mysql2::Adapter.instance.tracer
+          end
+
+          def extract_statement_type(sql)
+            QUERY_NAME_RE.match(sql) { |match| match[1].downcase } unless sql.nil?
+          rescue StandardError => e
+            OpenTelemetry.logger.debug("Error extracting sql statement type: #{e.message}")
           end
         end
       end
