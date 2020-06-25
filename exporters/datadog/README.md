@@ -59,6 +59,14 @@ end
 
 # OpenTelemetry.propagation.http = OpenTelemetry::Context::Propagation::CompositePropagator.new(injectors, extractors)
 
+# By default you the opentelemetry trace will sample all spans. If you wish to use Probability Based sampling
+# In Order for the datadog trace-agent to collect metrics properly, use the DatadogProbabilitySampler. You can enabled
+# Datadog Probability based sampling with the  code snippet below
+
+# OpenTelemetry.tracer_provider.active_trace_config  = OpenTelemetry::SDK::Tracer::Config::Tracer::TraceConfig.new(
+#   sampler: OpenTelemetry::SDK::Trace::Export::DatadogProbabilitySampler::DEFAULT
+# )
+
 # To start a trace you need to get a Tracer from the TracerProvider
 tracer = OpenTelemetry.tracer_provider.tracer('my_app_or_gem', '0.1.0')
 
