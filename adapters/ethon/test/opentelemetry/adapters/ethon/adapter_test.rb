@@ -99,7 +99,7 @@ describe OpenTelemetry::Adapters::Ethon::Adapter do
             _(easy.instance_eval { @otel_span }).must_be_nil
             _(
               easy.instance_eval { @otel_original_headers['traceparent'] }
-            ).must_equal "00-#{span.trace_id}-#{span.span_id}-01"
+            ).must_equal "00-#{span.trace_id.unpack1('H*')}-#{span.span_id.unpack1('H*')}-01"
           end
         end
 
@@ -112,7 +112,7 @@ describe OpenTelemetry::Adapters::Ethon::Adapter do
             _(easy.instance_eval { @otel_span }).must_be_nil
             _(
               easy.instance_eval { @otel_original_headers['traceparent'] }
-            ).must_equal "00-#{span.trace_id}-#{span.span_id}-01"
+            ).must_equal "00-#{span.trace_id.unpack1('H*')}-#{span.span_id.unpack1('H*')}-01"
           end
         end
 
@@ -131,7 +131,7 @@ describe OpenTelemetry::Adapters::Ethon::Adapter do
             _(easy.instance_eval { @otel_span }).must_be_nil
             _(
               easy.instance_eval { @otel_original_headers['traceparent'] }
-            ).must_equal "00-#{span.trace_id}-#{span.span_id}-01"
+            ).must_equal "00-#{span.trace_id.unpack1('H*')}-#{span.span_id.unpack1('H*')}-01"
           end
         end
       end

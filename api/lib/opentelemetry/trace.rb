@@ -9,32 +9,30 @@ module OpenTelemetry
   # single logical operation, consolidated across various components of an
   # application.
   module Trace
-    # An invalid trace identifier, a 16-byte array with all zero bytes, encoded
-    # as a hexadecimal string.
-    INVALID_TRACE_ID = ('0' * 32).freeze
+    # An invalid trace identifier, a 16-byte string with all zero bytes.
+    INVALID_TRACE_ID = ("\0" * 16).b
 
-    # An invalid span identifier, an 8-byte array with all zero bytes, encoded
-    # as a hexadecimal string.
-    INVALID_SPAN_ID = ('0' * 16).freeze
+    # An invalid span identifier, an 8-byte string with all zero bytes.
+    INVALID_SPAN_ID = ("\0" * 8).b
 
-    # Generates a valid trace identifier, a 16-byte array with at least one
-    # non-zero byte, encoded as a hexadecimal string.
+    # Generates a valid trace identifier, a 16-byte string with at least one
+    # non-zero byte.
     #
-    # @return [String] a hexadecimal string encoding of a valid trace ID.
+    # @return [String] a valid trace ID.
     def self.generate_trace_id
       loop do
-        id = Random::DEFAULT.bytes(16).unpack1('H*')
+        id = Random::DEFAULT.bytes(16)
         return id unless id == INVALID_TRACE_ID
       end
     end
 
-    # Generates a valid span identifier, an 8-byte array with at least one
-    # non-zero byte, encoded as a hexadecimal string.
+    # Generates a valid span identifier, an 8-byte string with at least one
+    # non-zero byte.
     #
-    # @return [String] a hexadecimal string encoding of a valid span ID.
+    # @return [String] a valid span ID.
     def self.generate_span_id
       loop do
-        id = Random::DEFAULT.bytes(8).unpack1('H*')
+        id = Random::DEFAULT.bytes(8)
         return id unless id == INVALID_SPAN_ID
       end
     end

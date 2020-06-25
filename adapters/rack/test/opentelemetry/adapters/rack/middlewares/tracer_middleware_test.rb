@@ -68,7 +68,7 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
     end
 
     it 'has no parent' do
-      _(first_span.parent_span_id).must_equal '0000000000000000'
+      _(first_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
     end
 
     describe 'config[:allowed_request_headers]' do
@@ -122,7 +122,7 @@ describe OpenTelemetry::Adapters::Rack::Middlewares::TracerMiddleware do
         end
 
         it 'does not parent the request_span' do
-          _(request_span.parent_span_id).must_equal '0000000000000000'
+          _(request_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
         end
       end
 
