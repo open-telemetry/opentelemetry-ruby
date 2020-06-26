@@ -10,7 +10,7 @@ require 'opentelemetry/instrumentations/excon/version'
 
 Gem::Specification.new do |spec|
   spec.name        = 'opentelemetry-instrumentations-excon'
-  spec.version     = OpenTelemetry::IInstrumentations::Excon::VERSION
+  spec.version     = OpenTelemetry::Instrumentations::Excon::VERSION
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
