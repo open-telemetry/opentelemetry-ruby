@@ -17,7 +17,7 @@ describe OpenTelemetry::Instrumentations::Faraday::Middlewares::TracerMiddleware
 
   let(:client) do
     ::Faraday.new('http://example.com') do |builder|
-      builder.instrumentation(:test) do |stub|
+      builder.adapter(:test) do |stub|
         stub.get('/success') { |_| [200, {}, 'OK'] }
         stub.get('/failure') { |_| [500, {}, 'OK'] }
         stub.get('/not_found') { |_| [404, {}, 'OK'] }
