@@ -146,8 +146,8 @@ Only a maintainer may perform a release.
    `{library-name}/v{version}`. For example, to release `opentelemetry-api`
    version `1.2.3`, create the tag `opentelemetry-api/v1.2.3`.
 4. Push the tag directly to Github.
-5. See [here][opentelemetry-adapters-all-publishing] for special instructions
-   for publishing the opentelemetry-adapters-all gem.
+5. See [here][opentelemetry-instrumentations-all-publishing] for special instructions
+   for publishing the opentelemetry-instrumentations-all gem.
 
 After the tag is pushed, CircleCI will run the release workflow. This workflow
 includes one final run of the unit tests, followed by the release script itself.
@@ -180,4 +180,4 @@ Apache 2.0 - See [LICENSE][license-url] for more information.
 [license-image]: https://img.shields.io/badge/license-Apache_2.0-green.svg?style=flat
 [license-url]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
-[opentelemetry-adapters-all-publishing]: https://github.com/open-telemetry/opentelemetry-ruby/tree/master/adapters/all#publishing
+[opentelemetry-instrumentations-all-publishing]: https://github.com/open-telemetry/opentelemetry-ruby/tree/master/instrumentations/all#publishing

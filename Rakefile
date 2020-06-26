@@ -57,70 +57,70 @@ GEM_INFO = {
       OpenTelemetry::Exporters::Jaeger::VERSION
     }
   },
-  "opentelemetry-adapters-ethon" => {
+  "opentelemetry-instrumentations-ethon" => {
     version_getter: ->() {
-      require './lib/opentelemetry/adapters/ethon/version.rb'
-      OpenTelemetry::Adapters::Ethon::VERSION
+      require './lib/opentelemetry/instrumentations/ethon/version.rb'
+      OpenTelemetry::Instrumentations::Ethon::VERSION
     }
   },
-  "opentelemetry-adapters-excon" => {
+  "opentelemetry-instrumentations-excon" => {
     version_getter: ->() {
-      require './lib/opentelemetry/adapters/excon/version.rb'
-      OpenTelemetry::Adapters::Excon::VERSION
+      require './lib/opentelemetry/instrumentations/excon/version.rb'
+      OpenTelemetry::Instrumentations::Excon::VERSION
     }
   },
-  "opentelemetry-adapters-concurrent_ruby" => {
+  "opentelemetry-instrumentations-concurrent_ruby" => {
     version_getter: ->() {
-      require './lib/opentelemetry/adapters/concurrent_ruby/version.rb'
-      OpenTelemetry::Adapters::ConcurrentRuby::VERSION
+      require './lib/opentelemetry/instrumentations/concurrent_ruby/version.rb'
+      OpenTelemetry::Instrumentations::ConcurrentRuby::VERSION
     }
   },
-  "opentelemetry-adapters-faraday" => {
+  "opentelemetry-instrumentations-faraday" => {
     version_getter: ->() {
-      require './lib/opentelemetry/adapters/faraday/version.rb'
-      OpenTelemetry::Adapters::Faraday::VERSION
+      require './lib/opentelemetry/instrumentations/faraday/version.rb'
+      OpenTelemetry::Instrumentations::Faraday::VERSION
     }
   },
-  "opentelemetry-adapters-net_http" => {
+  "opentelemetry-instrumentations-net_http" => {
     version_getter: ->() {
-      require './lib/opentelemetry/adapters/net/http/version.rb'
-      OpenTelemetry::Adapters::Net::HTTP::VERSION
+      require './lib/opentelemetry/instrumentations/net/http/version.rb'
+      OpenTelemetry::Instrumentations::Net::HTTP::VERSION
     }
   },
-  "opentelemetry-adapters-rack" => {
+  "opentelemetry-instrumentations-rack" => {
     version_getter: ->() {
-      require './lib/opentelemetry/adapters/rack/version.rb'
-      OpenTelemetry::Adapters::Rack::VERSION
+      require './lib/opentelemetry/instrumentations/rack/version.rb'
+      OpenTelemetry::Instrumentations::Rack::VERSION
     }
   },
-  "opentelemetry-adapters-redis" => {
+  "opentelemetry-instrumentations-redis" => {
     version_getter: ->() {
-      require './lib/opentelemetry/adapters/redis/version.rb'
-      OpenTelemetry::Adapters::Redis::VERSION
+      require './lib/opentelemetry/instrumentations/redis/version.rb'
+      OpenTelemetry::Instrumentations::Redis::VERSION
     }
   },
-  "opentelemetry-adapters-restclient" => {
+  "opentelemetry-instrumentations-restclient" => {
     version_getter: ->() {
-      require './lib/opentelemetry/adapters/restclient/version.rb'
-      OpenTelemetry::Adapters::RestClient::VERSION
+      require './lib/opentelemetry/instrumentations/restclient/version.rb'
+      OpenTelemetry::Instrumentations::RestClient::VERSION
     }
   },
-  "opentelemetry-adapters-sidekiq" => {
+  "opentelemetry-instrumentations-sidekiq" => {
     version_getter: ->() {
-      require './lib/opentelemetry/adapters/sidekiq/version.rb'
-      OpenTelemetry::Adapters::Sidekiq::VERSION
+      require './lib/opentelemetry/instrumentations/sidekiq/version.rb'
+      OpenTelemetry::Instrumentations::Sidekiq::VERSION
     }
   },
-  "opentelemetry-adapters-sinatra" => {
+  "opentelemetry-instrumentations-sinatra" => {
     version_getter: ->() {
-      require './lib/opentelemetry/adapters/sinatra/version.rb'
-      OpenTelemetry::Adapters::Sinatra::VERSION
+      require './lib/opentelemetry/instrumentations/sinatra/version.rb'
+      OpenTelemetry::Instrumentations::Sinatra::VERSION
     }
   },
-  "opentelemetry-adapters-all" => {
+  "opentelemetry-instrumentations-all" => {
     version_getter: ->() {
-      require './lib/opentelemetry/adapters/all/version.rb'
-      OpenTelemetry::Adapters::All::VERSION
+      require './lib/opentelemetry/instrumentations/all/version.rb'
+      OpenTelemetry::Instrumentations::All::VERSION
     }
   }
 }

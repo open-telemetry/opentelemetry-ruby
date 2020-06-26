@@ -24,50 +24,50 @@ services:
       context: .
     working_dir: /app
 
-  ex-adapter-concurrent-ruby:
+  ex-instrumentation-concurrent-ruby:
     <<: *base
-    working_dir: /app/adapters/concurrent_ruby/example
+    working_dir: /app/instrumentations/concurrent_ruby/example
 
-  ex-adapter-ethon:
+  ex-instrumentation-ethon:
     <<: *base
-    working_dir: /app/adapters/ethon/example
+    working_dir: /app/instrumentations/ethon/example
 
-  ex-adapter-excon:
+  ex-instrumentation-excon:
     <<: *base
-    working_dir: /app/adapters/excon/example
+    working_dir: /app/instrumentations/excon/example
 
-  ex-adapter-faraday:
+  ex-instrumentation-faraday:
     <<: *base
-    working_dir: /app/adapters/faraday/example
+    working_dir: /app/instrumentations/faraday/example
 
-  ex-adapter-net-http:
+  ex-instrumentation-net-http:
     <<: *base
-    working_dir: /app/adapters/net_http/example
+    working_dir: /app/instrumentations/net_http/example
 
-  ex-adapter-rack:
+  ex-instrumentation-rack:
     <<: *base
-    working_dir: /app/adapters/rack/example
+    working_dir: /app/instrumentations/rack/example
 
-  ex-adapter-redis:
+  ex-instrumentation-redis:
     <<: *base
     environment:
       - REDIS_URL=redis://redis:6379
     depends_on:
       - redis
-    working_dir: /app/adapters/redis/example
+    working_dir: /app/instrumentations/redis/example
 
-  ex-adapter-restclient:
+  ex-instrumentation-restclient:
     <<: *base
-    working_dir: /app/adapters/restclient/example
+    working_dir: /app/instrumentations/restclient/example
 
-  ex-adapter-sidekiq:
+  ex-instrumentation-sidekiq:
     <<: *base
-    working_dir: /app/adapters/sidekiq/example
+    working_dir: /app/instrumentations/sidekiq/example
 
-  ex-adapter-sinatra:
+  ex-instrumentation-sinatra:
     <<: *base
     command: ./start_server.sh
-    working_dir: /app/adapters/sinatra/example
+    working_dir: /app/instrumentations/sinatra/example
 
   ex-http:
     <<: *base
