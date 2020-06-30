@@ -1,0 +1,7 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+gem 'opentelemetry-instrumentation-net_http', path: '../../../instrumentation/net_http'
+gem 'opentelemetry-api', path: '../../../api'
+gem 'opentelemetry-sdk', path: '../../../sdk'

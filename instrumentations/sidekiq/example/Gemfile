@@ -1,7 +1,0 @@
-# frozen_string_literal: true
-
-source 'https://rubygems.org'
-
-gem 'opentelemetry-instrumentations-sidekiq', path: '../../../instrumentations/sidekiq'
-gem 'opentelemetry-api', path: '../../../api'
-gem 'opentelemetry-sdk', path: '../../../sdk'

@@ -17,7 +17,7 @@ module OpenTelemetry
     # example:
     #
     # module OpenTelemetry
-    #   module Instrumentations
+    #   module Instrumentation
     #     module Sinatra
     #       class Instrumentation < OpenTelemetry::Instrumentation::BaseInstrumentation
     #         install do |config|
@@ -40,8 +40,8 @@ module OpenTelemetry
     # end
     #
     # The instrumentation name and version will be inferred from the namespace of the
-    # class. In this example, they'd be 'OpenTelemetry::Instrumentations::Sinatra' and
-    # OpenTelemetry::Instrumentations::Sinatra::VERSION, but can be explicitly set using
+    # class. In this example, they'd be 'OpenTelemetry::Instrumentation::Sinatra' and
+    # OpenTelemetry::Instrumentation::Sinatra::VERSION, but can be explicitly set using
     # the +instrumentation_name+ and +instrumetation_version+ methods if necessary.
     #
     # All subclasses of OpenTelemetry::Instrumentation::BaseInstrumentation are automatically
@@ -51,7 +51,7 @@ module OpenTelemetry
     # Instrumentation libraries can use the instrumentation subclass to easily gain
     # a reference to its named tracer. For example:
     #
-    # OpenTelemetry::Instrumentations::Sinatra.instance.tracer
+    # OpenTelemetry::Instrumentation::Sinatra.instance.tracer
     #
     # The instrumention class establishes a convention for disabling an instrumentation
     # by environment variable and local configuration. An instrumentation disabled

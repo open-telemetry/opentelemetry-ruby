@@ -229,7 +229,7 @@ describe OpenTelemetry::Instrumentation::BaseInstrumentation do
 
   describe 'namespaced instrumentation' do
     before do
-      define_instrumentation_subclass('OTel::Instrumentations::Sinatra::Instrumentation', '2.1.0')
+      define_instrumentation_subclass('OTel::Instrumentation::Sinatra::Instrumentation', '2.1.0')
     end
 
     after do
@@ -238,15 +238,15 @@ describe OpenTelemetry::Instrumentation::BaseInstrumentation do
 
     describe '#name' do
       it 'defaults to the namespace' do
-        instance = OTel::Instrumentations::Sinatra::Instrumentation.instance
-        _(instance.name).must_equal('OTel::Instrumentations::Sinatra')
+        instance = OTel::Instrumentation::Sinatra::Instrumentation.instance
+        _(instance.name).must_equal('OTel::Instrumentation::Sinatra')
       end
     end
 
     describe '#version' do
       it 'defaults to the version constant' do
-        instance = OTel::Instrumentations::Sinatra::Instrumentation.instance
-        _(instance.version).must_equal(OTel::Instrumentations::Sinatra::VERSION)
+        instance = OTel::Instrumentation::Sinatra::Instrumentation.instance
+        _(instance.version).must_equal(OTel::Instrumentation::Sinatra::VERSION)
       end
     end
   end

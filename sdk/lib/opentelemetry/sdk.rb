@@ -30,13 +30,13 @@ module OpenTelemetry
     #   Install instrumentation individually with optional config
     #
     #     OpenTelemetry::SDK.configure do |c|
-    #       c.use 'OpenTelemetry::Instrumentations::Faraday', tracer_middleware: SomeMiddleware
+    #       c.use 'OpenTelemetry::Instrumentation::Faraday', tracer_middleware: SomeMiddleware
     #     end
     #
     #   Install all instrumentation with optional config
     #
     #     OpenTelemetry::SDK.configure do |c|
-    #       c.use_all 'OpenTelemetry::Instrumentations::Faraday' => { tracer_middleware: SomeMiddleware }
+    #       c.use_all 'OpenTelemetry::Instrumentation::Faraday' => { tracer_middleware: SomeMiddleware }
     #     end
     #
     #   Add a span processor

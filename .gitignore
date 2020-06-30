@@ -8,4 +8,4 @@
 **/.DS_Store
 
 # Appraisals
-instrumentations/**/*.gemfile.lock
+instrumentation/**/*.gemfile.lock
