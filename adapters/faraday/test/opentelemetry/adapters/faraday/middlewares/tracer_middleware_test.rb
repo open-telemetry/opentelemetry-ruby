@@ -54,7 +54,7 @@ describe OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware do
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.url']).must_equal 'http://example.com/success'
       _(response.env.request_headers['Traceparent']).must_equal(
-        "00-#{span.trace_id}-#{span.span_id}-01"
+        "00-#{span.trace_id.unpack1('H*')}-#{span.span_id.unpack1('H*')}-01"
       )
     end
 
@@ -66,7 +66,7 @@ describe OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware do
       _(span.attributes['http.status_code']).must_equal 404
       _(span.attributes['http.url']).must_equal 'http://example.com/not_found'
       _(response.env.request_headers['Traceparent']).must_equal(
-        "00-#{span.trace_id}-#{span.span_id}-01"
+        "00-#{span.trace_id.unpack1('H*')}-#{span.span_id.unpack1('H*')}-01"
       )
     end
 
@@ -78,7 +78,7 @@ describe OpenTelemetry::Adapters::Faraday::Middlewares::TracerMiddleware do
       _(span.attributes['http.status_code']).must_equal 500
       _(span.attributes['http.url']).must_equal 'http://example.com/failure'
       _(response.env.request_headers['Traceparent']).must_equal(
-        "00-#{span.trace_id}-#{span.span_id}-01"
+        "00-#{span.trace_id.unpack1('H*')}-#{span.span_id.unpack1('H*')}-01"
       )
     end
   end

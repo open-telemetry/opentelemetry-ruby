@@ -20,13 +20,19 @@ describe OpenTelemetry::SDK::Trace::Tracer do
 
   describe '#name' do
     it 'reflects the name passed in' do
-      _(Tracer.new('component', 'semver:1.0').name).must_equal('component')
+      _(Tracer.new('component', 'semver:1.0', tracer_provider).name).must_equal('component')
     end
   end
 
   describe '#version' do
     it 'reflects the version passed in' do
-      _(Tracer.new('component', 'semver:1.0').version).must_equal('semver:1.0')
+      _(Tracer.new('component', 'semver:1.0', tracer_provider).version).must_equal('semver:1.0')
+    end
+  end
+
+  describe '#tracer_provider' do
+    it 'reflects the tracer_provider passed in' do
+      _(Tracer.new('component', 'semver:1.0', tracer_provider).tracer_provider).must_equal(tracer_provider)
     end
   end
 

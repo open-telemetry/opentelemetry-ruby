@@ -26,7 +26,7 @@ describe OpenTelemetry::Adapters::Sidekiq::Adapter do
   let(:adapter) { OpenTelemetry::Adapters::Sidekiq::Adapter.instance }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
-  let(:root_span) { spans.find { |s| s.parent_span_id == '0000000000000000' } }
+  let(:root_span) { spans.find { |s| s.parent_span_id == OpenTelemetry::Trace::INVALID_SPAN_ID } }
 
   before { exporter.reset }
 
@@ -47,7 +47,7 @@ describe OpenTelemetry::Adapters::Sidekiq::Adapter do
 
       _(root_span.name).must_equal 'SimpleJob'
       _(root_span.kind).must_equal :producer
-      _(root_span.parent_span_id).must_equal '0000000000000000'
+      _(root_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
       _(root_span.attributes['messaging.message_id']).must_equal job_id
       _(root_span.attributes['messaging.destination']).must_equal 'default'
       _(root_span.events.size).must_equal(1)
@@ -72,7 +72,7 @@ describe OpenTelemetry::Adapters::Sidekiq::Adapter do
 
       _(exporter.finished_spans.size).must_equal 4
 
-      _(root_span.parent_span_id).must_equal '0000000000000000'
+      _(root_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
       _(root_span.name).must_equal 'SimpleEnqueueingJob'
       _(root_span.kind).must_equal :producer
 
