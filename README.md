@@ -133,17 +133,30 @@ not attempt to maintain backward compatibility with the alpha release.
 
 | Component                       | Version       | Target Date       | Release Date      |
 | ------------------------------- | ------------- | ----------------- | ----------------- |
-| Tracing API                     | Alpha v0.2.0  | September 30 2019 | November 13 2019  |
-| Tracing SDK                     | Alpha v0.2.0  | September 30 2019 | November 13 2019  |
-| Trace Context Propagation       | Alpha v0.2.0  | September 30 2019 | November 13 2019  |
-| Jaeger Trace Exporter           | Alpha v0.2.0  | September 30 2019 | November 13 2019  |
-| Metrics API                     | Alpha v0.3.0  | February 24 2020  | Unknown           |
-| Metrics SDK                     | Alpha v0.3.0  | February 24 2020  | Unknown           |
-| Prometheus Metrics Exporter     | Alpha v0.3.0  | February 24 2020  | Unknown           |
-| Correlation Context Propagation | Alpha v0.3.0  | February 24 2020  | Unknown           |
-| OpenTracing Bridge              | Alpha v0.3.0  | February 24 2020  | Unknown           |
+| Tracing API                     | Alpha v0.4.0  |                   | April 16 2020     |
+| Tracing SDK                     | Alpha v0.4.0  |                   | April 16 2020     |
+| Trace Context Propagation       | Alpha v0.4.0  |                   | April 16 2020     |
+| Jaeger Trace Exporter           | Alpha v0.4.0  |                   | April 16 2020     |
+| Correlation Context Propagation | Alpha v0.4.0  |                   | April 16 2020     |
+| Metrics API                     | Unknown       | Unknown           | Unknown           |
+| Metrics SDK                     | Unknown       | Unknown           | Unknown           |
+| Prometheus Metrics Exporter     | Unknown       | Unknown           | Unknown           |
+| OpenTracing Bridge              | Unknown       | Unknown           | Unknown           |
 | Zipkin Trace Exporter           | Unknown       | Unknown           | Unknown           |
 | OpenCensus Bridge               | Unknown       | Unknown           | Unknown           |
+| Resource Auto-detection (GCP)   | Alpha v0.5.0  | July 3 2020       |                   |
+| Concurrent Ruby Instrumentation | Alpha v0.4.0  |                   | April 16 2020     |
+| Ethon Instrumentation           | Alpha v0.4.0  |                   | April 16 2020     |
+| Excon Instrumentation           | Alpha v0.4.0  |                   | April 16 2020     |
+| Faraday Instrumentation         | Alpha v0.4.0  |                   | April 16 2020     |
+| MySQL2 Instrumentation          | Alpha v0.5.0  | July 3 2020       |                   |
+| Net::HTTP Instrumentation       | Alpha v0.4.0  |                   | April 16 2020     |
+| Rack Instrumentation            | Alpha v0.4.0  |                   | April 16 2020     |
+| Redis Instrumentation           | Alpha v0.4.0  |                   | April 16 2020     |
+| Restclient Instrumentation      | Alpha v0.4.0  |                   | April 16 2020     |
+| Sinatra Instrumentation         | Alpha v0.4.1  |                   | June 24 2020      |
+| Sidekiq Instrumentation         | Alpha v0.4.0  |                   | April 16 2020     |
+| All Instrumentation Convenience | Alpha v0.4.1  |                   | June 24 2020      |
 
 ## Release Process
 
