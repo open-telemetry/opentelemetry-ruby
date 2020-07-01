@@ -40,6 +40,30 @@ services:
     <<: *base
     working_dir: /app/adapters/faraday/example
 
+  ex-adapter-mysql2:
+    <<: *base
+    environment:
+      - TEST_MYSQL_USER=root
+      - TEST_MYSQL_ROOT_PASSWORD=root
+      - TEST_MYSQL_HOST=mysql
+      - TEST_MYSQL_PORT=3306
+      - TEST_MYSQ_DB=mysql
+    depends_on:
+      - mysql
+    working_dir: /app/adapters/mysql2/example
+
+  ex-adapter-mysql2-test:
+    <<: *base
+    environment:
+      - TEST_MYSQL_USER=root
+      - TEST_MYSQL_ROOT_PASSWORD=root
+      - TEST_MYSQL_HOST=mysql
+      - TEST_MYSQL_PORT=3306
+      - TEST_MYSQ_DB=mysql
+    depends_on:
+      - mysql
+    working_dir: /app/adapters/mysql2/
+
   ex-adapter-net-http:
     <<: *base
     working_dir: /app/adapters/net_http/example
@@ -73,6 +97,18 @@ services:
     <<: *base
     command: ./start_server.sh
     working_dir: /app/examples/http
+
+  mysql:
+    image: mysql:5.6
+    environment:
+      - MYSQL_DATABASE=mysql
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_PASSWORD=mysql
+      - MYSQL_USER=mysql
+    expose:
+      - "3306"
+    ports:
+      - "3306:3306"
 
   redis:
     image: redis:5.0-alpine
