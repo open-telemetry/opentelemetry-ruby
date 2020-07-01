@@ -45,11 +45,22 @@ depend on `opentelemetry-sdk` or another package that implements the API.
 **Please note** that this library is currently in _alpha_, and shouldn't be
 used in production environments.
 
-The API and SDK packages are available on RubyGems.org, and can be installed via `bundle`:
+The API and SDK packages are available on RubyGems.org, and can be installed via `gem`:
 
 ```sh
-bundle install opentelemetry-api
-bundle install opentelemetry-sdk
+gem install opentelemetry-api
+gem install opentelemetry-sdk
+```
+
+or via `Bundler` by adding the following to your `Gemfile`:
+
+```ruby
+gem 'opentelemetry-api'
+gem 'opentelemetry-sdk'
+```
+followed by:
+```sh
+bundle install
 ```
 
 To install development versions of these packages, follow the "Developer Setup" section (below).
