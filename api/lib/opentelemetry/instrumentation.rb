@@ -9,7 +9,7 @@ require 'opentelemetry/instrumentation/base_instrumentation'
 
 module OpenTelemetry
   # The instrumentation module contains functionality to register and install
-  # instrumentation instrumentations
+  # instrumentation
   module Instrumentation
   end
 end

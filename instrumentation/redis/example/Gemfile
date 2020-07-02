@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-gem 'opentelemetry-instrumentation-redis', path: '../../../instrumentation/redis'
 gem 'opentelemetry-api', path: '../../../api'
+gem 'opentelemetry-instrumentation-redis', path: '../../../instrumentation/redis'
 gem 'opentelemetry-sdk', path: '../../../sdk'
 gem 'redis'

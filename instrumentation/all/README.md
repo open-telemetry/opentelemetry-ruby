@@ -1,6 +1,6 @@
 # opentelemetry-instrumentation-all
 
-The `opentelemetry-instrumentation-all` gem is an all-in-one distribution of community maintained instrumentation instrumentations. Instrumentation instrumentations are packaged as individual gems for flexibility and maintainability. Instead of having to require each instrumentation individually, applications can depend on this all-in-one gem as a convenient alternative.
+The `opentelemetry-instrumentation-all` gem is an all-in-one distribution of community maintained instrumentation. Instrumentation libraries are packaged as individual gems for flexibility and maintainability. Instead of having to require each instrumentation individually, applications can depend on this all-in-one gem as a convenient alternative.
 
 ## What is OpenTelemetry?
 
@@ -23,7 +23,7 @@ gem install opentelemetry-instrumentation-all
 Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-all` in your `Gemfile`.
 
 
-The `opentelemetry-api` has functionality to discover the instrumentation instrumentations that an application depends on. It maintains a registry of discovered instrumentations that SDKs can use to automatically install the instrumentation for you. These instructions pertain to the offical `opentelemetry-sdk` implementation. Consult the documentation for your SDK if you are using an alternative implementation.
+The `opentelemetry-api` has functionality to discover the instrumentation that an application depends on. It maintains a registry of discovered instrumentation which can be automatically installed by the SDK. These instructions pertain to the official `opentelemetry-sdk` implementation. Consult the documentation for your SDK if you are using an alternative implementation.
 
 
 ### Use All

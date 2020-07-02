@@ -7,19 +7,19 @@
 module OpenTelemetry
   module Instrumentation
     # The instrumentation Registry contains information about instrumentation
-    # instrumentations available and facilitates discovery, installation and
+    # available and facilitates discovery, installation and
     # configuration. This functionality is primarily useful for SDK
     # implementors.
     class Registry
       def initialize
         @lock = Mutex.new
-        @instrumentations = []
+        @instrumentation = []
       end
 
       # @api private
       def register(instrumentation)
         @lock.synchronize do
-          @instrumentations << instrumentation
+          @instrumentation << instrumentation
         end
       end
 
@@ -34,7 +34,7 @@ module OpenTelemetry
         end
       end
 
-      # Install the specified instrumentations with optionally specified configuration.
+      # Install the specified instrumentation with optionally specified configuration.
       #
       # @param [Array<String>] instrumentation_names An array of instrumentation names to
       #   install
@@ -59,7 +59,7 @@ module OpenTelemetry
       #   passed for as many or as few instrumentations as desired.
       def install_all(instrumentation_config_map = {})
         @lock.synchronize do
-          @instrumentations.map(&:instance).each do |instrumentation|
+          @instrumentation.map(&:instance).each do |instrumentation|
             install_instrumentation(instrumentation, instrumentation_config_map[instrumentation.name])
           end
         end
@@ -68,7 +68,7 @@ module OpenTelemetry
       private
 
       def find_instrumentation(instrumentation_name)
-        @instrumentations.detect { |a| a.instance.name == instrumentation_name }
+        @instrumentation.detect { |a| a.instance.name == instrumentation_name }
                    &.instance
       end
 

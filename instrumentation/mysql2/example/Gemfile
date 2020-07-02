@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
+gem 'mysql2'
 gem 'opentelemetry-api', path: '../../../api'
-gem 'opentelemetry-instrumentation-restclient', path: '../../../instrumentation/restclient'
+gem 'opentelemetry-instrumentation-mysql2', path: '../../../instrumentation/mysql2'
 gem 'opentelemetry-sdk', path: '../../../sdk'
-gem 'rest-client'

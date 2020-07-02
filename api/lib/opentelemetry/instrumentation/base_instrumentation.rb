@@ -57,8 +57,8 @@ module OpenTelemetry
     # by environment variable and local configuration. An instrumentation disabled
     # by environment variable will take precedence over local config. The
     # convention for environment variable name is the library name, upcased with
-    # '::' replaced by underscores, and '_ENABLED' appended. For example:
-    # OPENTELEMETRY_INSTRUMENTATIONS_SINATRA_ENABLED = false.
+    # '::' replaced by underscores, OPENTELEMETRY shortened to OTEL_{LANG}, and '_ENABLED' appended.
+    # For example: OTEL_RUBY_INSTRUMENTATION_SINATRA_ENABLED = false.
     class BaseInstrumentation
       class << self
         NAME_REGEX = /^(?:(?<namespace>[a-zA-Z0-9_:]+):{2})?(?<classname>[a-zA-Z0-9_]+)$/.freeze
@@ -227,14 +227,15 @@ module OpenTelemetry
 
       # Checks to see if this instrumentation is enabled by env var. By convention, the
       # environment variable will be the instrumentation name upper cased, with '::'
-      # replaced by underscores and _ENABLED appended. For example, the
-      # environment variable name for OpenTelemetry::Instrumentation::Sinatra will be
-      # OPENTELEMETRY_INSTRUMENTATIONS_SINATRA_ENABLED. A value of 'false' will disable
+      # replaced by underscores, OPENTELEMETRY shortened to OTEL_{LANG} and _ENABLED appended.
+      # For example, the, environment variable name for OpenTelemetry::Instrumentation::Sinatra
+      # will be OTEL_RUBY_INSTRUMENTATION_SINATRA_ENABLED. A value of 'false' will disable
       # the instrumentation, all other values will enable it.
       def enabled_by_env_var?
         var_name = name.dup.tap do |n|
           n.upcase!
           n.gsub!('::', '_')
+          n.gsub!('OPENTELEMETRY_', 'OTEL_RUBY_')
           n << '_ENABLED'
         end
         ENV[var_name] != 'false'

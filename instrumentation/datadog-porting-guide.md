@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Aid developers who wish to port existing datadog (dd-trace-rb) instrumentations to opentelemetry.
+Aid developers who wish to port existing datadog (dd-trace-rb) instrumentation to opentelemetry.
 
 ## Interface
 
@@ -25,7 +25,7 @@ bash-5.0$ ruby trace_demonstration.rb
 * `tests/test_helper.rb`
 * Integrate rubocop (see https://github.com/open-telemetry/opentelemetry-ruby/pull/172#pullrequestreview-349183775)
 
-## Examples and template instrumentations
+## Examples and template instrumentation
 
 * `instrumentation/faraday` and `instrumentation/sinatra` were the earliest, simplest implementations
 

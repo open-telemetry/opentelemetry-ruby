@@ -39,20 +39,20 @@ describe OpenTelemetry::Instrumentation::Registry do
         install { 2 + 2 }
         present { true }
       end
-      @instrumentations = [TestInstrumentation1, TestInstrumentation2]
-      @instrumentations.each { |instrumentation| registry.register(instrumentation) }
+      @instrumentation = [TestInstrumentation1, TestInstrumentation2]
+      @instrumentation.each { |instrumentation| registry.register(instrumentation) }
     end
 
     after do
-      @instrumentations.each { |instrumentation| Object.send(:remove_const, instrumentation.name.to_sym) }
+      @instrumentation.each { |instrumentation| Object.send(:remove_const, instrumentation.name.to_sym) }
     end
 
     describe '#install_all' do
       it 'installs all registered instrumentations by default' do
-        _(@instrumentations.map(&:instance).none? { |a| a.installed? }) # rubocop:disable Style/SymbolProc
+        _(@instrumentation.map(&:instance).none? { |a| a.installed? }) # rubocop:disable Style/SymbolProc
           .must_equal(true)
         registry.install_all
-        _(@instrumentations.map(&:instance).all? { |a| a.installed? }).must_equal(true) # rubocop:disable Style/SymbolProc
+        _(@instrumentation.map(&:instance).all? { |a| a.installed? }).must_equal(true) # rubocop:disable Style/SymbolProc
       end
 
       it 'passes config to instrumentations when installing' do
@@ -69,7 +69,7 @@ describe OpenTelemetry::Instrumentation::Registry do
 
     describe '#install' do
       it 'installs specified instrumentations' do
-        _(@instrumentations.map(&:instance).none? { |a| a.installed? }) # rubocop:disable Style/SymbolProc
+        _(@instrumentation.map(&:instance).none? { |a| a.installed? }) # rubocop:disable Style/SymbolProc
           .must_equal(true)
         registry.install(%w[TestInstrumentation1])
         _(TestInstrumentation1.instance.installed?).must_equal(true)
