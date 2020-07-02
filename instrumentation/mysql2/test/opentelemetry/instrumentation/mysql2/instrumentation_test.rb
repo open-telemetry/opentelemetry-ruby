@@ -7,8 +7,8 @@
 require 'test_helper'
 require 'mysql2'
 
-require_relative '../../../../lib/opentelemetry/instrumentations/mysql2'
-require_relative '../../../../lib/opentelemetry/instrumentations/mysql2/patches/client'
+require_relative '../../../../lib/opentelemetry/instrumentation/mysql2'
+require_relative '../../../../lib/opentelemetry/instrumentation/mysql2/patches/client'
 
 # This test suite requires a running mysql container and dedicated test container
 # To run tests:
