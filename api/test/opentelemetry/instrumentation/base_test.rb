@@ -6,20 +6,20 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::Instrumentation::BaseInstrumentation do
+describe OpenTelemetry::Instrumentation::Base do
   after do
     OpenTelemetry.instance_variable_set(:@instrumentation_registry, nil)
   end
 
   let(:instrumentation) do
-    Class.new(OpenTelemetry::Instrumentation::BaseInstrumentation) do
+    Class.new(OpenTelemetry::Instrumentation::Base) do
       instrumentation_name 'test_instrumentation'
       instrumentation_version '0.1.1'
     end
   end
 
   let(:instrumentation_with_callbacks) do
-    Class.new(OpenTelemetry::Instrumentation::BaseInstrumentation) do
+    Class.new(OpenTelemetry::Instrumentation::Base) do
       attr_writer :present, :compatible
       attr_reader :present_called, :compatible_called, :install_called,
                   :config_yielded
@@ -195,22 +195,22 @@ describe OpenTelemetry::Instrumentation::BaseInstrumentation do
 
   describe 'minimal_instrumentation' do
     before do
-      MinimalBaseInstrumentation = Class.new(OpenTelemetry::Instrumentation::BaseInstrumentation)
+      MinimalBase = Class.new(OpenTelemetry::Instrumentation::Base)
     end
 
     after do
-      Object.send(:remove_const, :MinimalBaseInstrumentation)
+      Object.send(:remove_const, :MinimalBase)
     end
 
     describe '#name' do
       it 'is the class name stringified' do
-        _(MinimalBaseInstrumentation.instance.name).must_equal('MinimalBaseInstrumentation')
+        _(MinimalBase.instance.name).must_equal('MinimalBase')
       end
     end
 
     describe '#version' do
       it 'defaults to 0.0.0' do
-        _(MinimalBaseInstrumentation.instance.version).must_equal('0.0.0')
+        _(MinimalBase.instance.version).must_equal('0.0.0')
       end
     end
   end
@@ -256,7 +256,7 @@ describe OpenTelemetry::Instrumentation::BaseInstrumentation do
     names.inject(Object) do |object, const|
       if const == names[-1]
         object.const_set(:VERSION, version) if version
-        object.const_set(const, Class.new(OpenTelemetry::Instrumentation::BaseInstrumentation))
+        object.const_set(const, Class.new(OpenTelemetry::Instrumentation::Base))
       else
         object.const_set(const, Module.new)
       end

@@ -9,7 +9,7 @@ module OpenTelemetry
     module Mysql2
       # The Instrumentation class contains logic to detect and install the Mysql2
       # instrumentation
-      class Instrumentation < OpenTelemetry::Instrumentation::BaseInstrumentation
+      class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |_config|
           require_dependencies
           patch_client

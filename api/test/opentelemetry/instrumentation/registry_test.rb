@@ -16,7 +16,7 @@ describe OpenTelemetry::Instrumentation::Registry do
   end
 
   let(:instrumentation) do
-    Class.new(OpenTelemetry::Instrumentation::BaseInstrumentation) do
+    Class.new(OpenTelemetry::Instrumentation::Base) do
       instrumentation_name 'TestInstrumentation'
       instrumentation_version '0.1.1'
     end
@@ -31,11 +31,11 @@ describe OpenTelemetry::Instrumentation::Registry do
 
   describe 'installation' do
     before do
-      TestInstrumentation1 = Class.new(OpenTelemetry::Instrumentation::BaseInstrumentation) do
+      TestInstrumentation1 = Class.new(OpenTelemetry::Instrumentation::Base) do
         install { 1 + 1 }
         present { true }
       end
-      TestInstrumentation2 = Class.new(OpenTelemetry::Instrumentation::BaseInstrumentation) do
+      TestInstrumentation2 = Class.new(OpenTelemetry::Instrumentation::Base) do
         install { 2 + 2 }
         present { true }
       end
@@ -92,7 +92,7 @@ describe OpenTelemetry::Instrumentation::Registry do
 
   describe 'buggy instrumentations' do
     before do
-      BuggyInstrumentation = Class.new(OpenTelemetry::Instrumentation::BaseInstrumentation) do
+      BuggyInstrumentation = Class.new(OpenTelemetry::Instrumentation::Base) do
         install { raise 'oops' }
       end
       registry.register(BuggyInstrumentation)

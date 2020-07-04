@@ -6,20 +6,20 @@
 
 module OpenTelemetry
   module Instrumentation
-    # The BaseInstrumentation class holds all metadata and configuration for an
+    # The Base class holds all metadata and configuration for an
     # instrumentation. All instrumentation packages should
-    # include a subclass of +Instrumentation::BaseInstrumentation+ that will register
+    # include a subclass of +Instrumentation::Base+ that will register
     # it with +OpenTelemetry.instrumentation_registry+ and make it available for
     # discovery and installation by an SDK.
     #
-    # A typical subclass of BaseInstrumentation will provide an install block, a present
+    # A typical subclass of Base will provide an install block, a present
     # block, and possibly a compatible block. Below is an
     # example:
     #
     # module OpenTelemetry
     #   module Instrumentation
     #     module Sinatra
-    #       class Instrumentation < OpenTelemetry::Instrumentation::BaseInstrumentation
+    #       class Instrumentation < OpenTelemetry::Instrumentation::Base
     #         install do |config|
     #           # install instrumentation, either by library hook or applying
     #           # a monkey patch
@@ -44,7 +44,7 @@ module OpenTelemetry
     # OpenTelemetry::Instrumentation::Sinatra::VERSION, but can be explicitly set using
     # the +instrumentation_name+ and +instrumetation_version+ methods if necessary.
     #
-    # All subclasses of OpenTelemetry::Instrumentation::BaseInstrumentation are automatically
+    # All subclasses of OpenTelemetry::Instrumentation::Base are automatically
     # registered with OpenTelemetry.instrumentation_registry which is used by
     # SDKs for instrumentation discovery and installation.
     #
@@ -59,7 +59,7 @@ module OpenTelemetry
     # convention for environment variable name is the library name, upcased with
     # '::' replaced by underscores, OPENTELEMETRY shortened to OTEL_{LANG}, and '_ENABLED' appended.
     # For example: OTEL_RUBY_INSTRUMENTATION_SINATRA_ENABLED = false.
-    class BaseInstrumentation
+    class Base
       class << self
         NAME_REGEX = /^(?:(?<namespace>[a-zA-Z0-9_:]+):{2})?(?<classname>[a-zA-Z0-9_]+)$/.freeze
         private_constant :NAME_REGEX

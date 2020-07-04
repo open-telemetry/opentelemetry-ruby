@@ -11,7 +11,7 @@ module OpenTelemetry
     module Sinatra
       # The Instrumentation class contains logic to detect and install the Sinatra
       # instrumentation instrumentation
-      class Instrumentation < OpenTelemetry::Instrumentation::BaseInstrumentation
+      class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |_|
           ::Sinatra::Base.register Extensions::TracerExtension
         end

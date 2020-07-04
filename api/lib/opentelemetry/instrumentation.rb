@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry/instrumentation/registry'
-require 'opentelemetry/instrumentation/base_instrumentation'
+require 'opentelemetry/instrumentation/base'
 
 module OpenTelemetry
   # The instrumentation module contains functionality to register and install

@@ -195,7 +195,7 @@ describe OpenTelemetry::SDK::Configurator do
 
     describe 'instrumentation installation' do
       before do
-        TestInstrumentation = Class.new(OpenTelemetry::Instrumentation::BaseInstrumentation) do
+        TestInstrumentation = Class.new(OpenTelemetry::Instrumentation::Base) do
           install { 1 + 1 }
           present { true }
         end

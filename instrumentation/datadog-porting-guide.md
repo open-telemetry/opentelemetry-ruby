@@ -6,11 +6,11 @@ Aid developers who wish to port existing datadog (dd-trace-rb) instrumentation t
 
 ## Interface
 
-* There should be a subclass of `OpenTelemetry::Instrumentation::BaseInstrumentation` that implements its DSL:
+* There should be a subclass of `OpenTelemetry::Instrumentation::Base` that implements its DSL:
   * Implement `install` block, where all of the integration work happens
   * Implement `present` block
   * Optionally, implement `compatible`
-  * See `OpenTelemetry::Instrumentation::BaseInstrumentation` API documentation for more details
+  * See `OpenTelemetry::Instrumentation::Base` API documentation for more details
 
 ## Basic structure
 
@@ -39,7 +39,7 @@ bash-5.0$ ruby trace_demonstration.rb
 
 ### otel: tracer
 
-* `Tracer` `:name` and `:version` should come from instrumentation/base_instrumentation, not from the instrumented library
+* `Tracer` `:name` and `:version` should come from instrumentation/base, not from the instrumented library
 
 ### otel: span
 
