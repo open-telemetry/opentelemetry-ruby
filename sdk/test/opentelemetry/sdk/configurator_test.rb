@@ -35,21 +35,21 @@ describe OpenTelemetry::SDK::Configurator do
 
   describe '#use' do
     it 'can be called multiple times' do
-      configurator.use('TestAdapter', enabled: true)
-      configurator.use('TestAdapter1')
+      configurator.use('TestInstrumentation', enabled: true)
+      configurator.use('TestInstrumentation1')
     end
   end
 
   describe '#use, #use_all' do
     describe 'should be used mutually exclusively' do
       it 'raises when use_all called after use' do
-        configurator.use('TestAdapter', enabled: true)
+        configurator.use('TestInstrumentation', enabled: true)
         _(-> { configurator.use_all }).must_raise(StandardError)
       end
 
       it 'raises when use called after use_all' do
         configurator.use_all
-        _(-> { configurator.use('TestAdapter', enabled: true) })
+        _(-> { configurator.use('TestInstrumentation', enabled: true) })
           .must_raise(StandardError)
       end
     end
@@ -195,36 +195,36 @@ describe OpenTelemetry::SDK::Configurator do
 
     describe 'instrumentation installation' do
       before do
-        TestAdapter = Class.new(OpenTelemetry::Instrumentation::Adapter) do
+        TestInstrumentation = Class.new(OpenTelemetry::Instrumentation::Base) do
           install { 1 + 1 }
           present { true }
         end
       end
 
       after do
-        Object.send(:remove_const, :TestAdapter)
+        Object.send(:remove_const, :TestInstrumentation)
       end
 
-      it 'installs single adapter' do
+      it 'installs single instrumentation' do
         registry = OpenTelemetry.instrumentation_registry
-        adapter = registry.lookup('TestAdapter')
-        _(adapter).wont_be_nil
-        _(adapter).wont_be(:installed?)
-        configurator.use 'TestAdapter', opt: true
+        instrumentation = registry.lookup('TestInstrumentation')
+        _(instrumentation).wont_be_nil
+        _(instrumentation).wont_be(:installed?)
+        configurator.use 'TestInstrumentation', opt: true
         configurator.configure
-        _(adapter).must_be(:installed?)
-        _(adapter.config).must_equal(opt: true)
+        _(instrumentation).must_be(:installed?)
+        _(instrumentation.config).must_equal(opt: true)
       end
 
       it 'installs all' do
         registry = OpenTelemetry.instrumentation_registry
-        adapter = registry.lookup('TestAdapter')
-        _(adapter).wont_be_nil
-        _(adapter).wont_be(:installed?)
-        configurator.use_all 'TestAdapter' => { opt: true }
+        instrumentation = registry.lookup('TestInstrumentation')
+        _(instrumentation).wont_be_nil
+        _(instrumentation).wont_be(:installed?)
+        configurator.use_all 'TestInstrumentation' => { opt: true }
         configurator.configure
-        _(adapter).must_be(:installed?)
-        _(adapter.config).must_equal(opt: true)
+        _(instrumentation).must_be(:installed?)
+        _(instrumentation.config).must_equal(opt: true)
       end
     end
   end

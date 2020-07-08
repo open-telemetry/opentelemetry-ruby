@@ -1,8 +1,0 @@
-# frozen_string_literal: true
-
-source 'https://rubygems.org'
-
-gem 'ethon'
-gem 'opentelemetry-adapters-ethon', path: '../../../adapters/ethon'
-gem 'opentelemetry-api', path: '../../../api'
-gem 'opentelemetry-sdk', path: '../../../sdk'

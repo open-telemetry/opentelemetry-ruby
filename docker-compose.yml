@@ -24,35 +24,23 @@ services:
       context: .
     working_dir: /app
 
-  ex-adapter-concurrent-ruby:
+  ex-instrumentation-concurrent-ruby:
     <<: *base
-    working_dir: /app/adapters/concurrent_ruby/example
+    working_dir: /app/instrumentation/concurrent_ruby/example
 
-  ex-adapter-ethon:
+  ex-instrumentation-ethon:
     <<: *base
-    working_dir: /app/adapters/ethon/example
+    working_dir: /app/instrumentation/ethon/example
 
-  ex-adapter-excon:
+  ex-instrumentation-excon:
     <<: *base
-    working_dir: /app/adapters/excon/example
+    working_dir: /app/instrumentation/excon/example
 
-  ex-adapter-faraday:
+  ex-instrumentation-faraday:
     <<: *base
-    working_dir: /app/adapters/faraday/example
+    working_dir: /app/instrumentation/faraday/example
 
-  ex-adapter-mysql2:
-    <<: *base
-    environment:
-      - TEST_MYSQL_USER=root
-      - TEST_MYSQL_ROOT_PASSWORD=root
-      - TEST_MYSQL_HOST=mysql
-      - TEST_MYSQL_PORT=3306
-      - TEST_MYSQ_DB=mysql
-    depends_on:
-      - mysql
-    working_dir: /app/adapters/mysql2/example
-
-  ex-adapter-mysql2-test:
+  ex-instrumentation-mysql2:
     <<: *base
     environment:
       - TEST_MYSQL_USER=root
@@ -62,36 +50,48 @@ services:
       - TEST_MYSQ_DB=mysql
     depends_on:
       - mysql
-    working_dir: /app/adapters/mysql2/
+    working_dir: /app/instrumentation/mysql2/example
 
-  ex-adapter-net-http:
+  ex-instrumentation-mysql2-test:
     <<: *base
-    working_dir: /app/adapters/net_http/example
+    environment:
+      - TEST_MYSQL_USER=root
+      - TEST_MYSQL_ROOT_PASSWORD=root
+      - TEST_MYSQL_HOST=mysql
+      - TEST_MYSQL_PORT=3306
+      - TEST_MYSQ_DB=mysql
+    depends_on:
+      - mysql
+    working_dir: /app/instrumentation/mysql2/
 
-  ex-adapter-rack:
+  ex-instrumentation-net-http:
     <<: *base
-    working_dir: /app/adapters/rack/example
+    working_dir: /app/instrumentation/net_http/example
 
-  ex-adapter-redis:
+  ex-instrumentation-rack:
+    <<: *base
+    working_dir: /app/instrumentation/rack/example
+
+  ex-instrumentation-redis:
     <<: *base
     environment:
       - REDIS_URL=redis://redis:6379
     depends_on:
       - redis
-    working_dir: /app/adapters/redis/example
+    working_dir: /app/instrumentation/redis/example
 
-  ex-adapter-restclient:
+  ex-instrumentation-restclient:
     <<: *base
-    working_dir: /app/adapters/restclient/example
+    working_dir: /app/instrumentation/restclient/example
 
-  ex-adapter-sidekiq:
+  ex-instrumentation-sidekiq:
     <<: *base
-    working_dir: /app/adapters/sidekiq/example
+    working_dir: /app/instrumentation/sidekiq/example
 
-  ex-adapter-sinatra:
+  ex-instrumentation-sinatra:
     <<: *base
     command: ./start_server.sh
-    working_dir: /app/adapters/sinatra/example
+    working_dir: /app/instrumentation/sinatra/example
 
   ex-http:
     <<: *base

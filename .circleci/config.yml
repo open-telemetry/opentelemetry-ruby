@@ -70,89 +70,89 @@ commands:
   rake-test-appraisal:
     steps:
       - run:
-          name: Bundle + CI (Adapters - Concurrent Ruby)
+          name: Bundle + CI (Instrumentation - Concurrent Ruby)
           command: |
-            cd adapters/concurrent_ruby
+            cd instrumentation/concurrent_ruby
             gem uninstall -aIx bundler
             gem install --no-document bundler -v '~> 2.0.2'
             bundle install --jobs=3 --retry=3
             bundle exec appraisal install
             bundle exec appraisal rake test
       - run:
-          name: Bundle + CI (Adapters - ethon)
+          name: Bundle + CI (Instrumentation - ethon)
           command: |
-            cd adapters/ethon
+            cd instrumentation/ethon
             gem uninstall -aIx bundler
             gem install --no-document bundler -v '~> 2.0.2'
             bundle install --jobs=3 --retry=3
             bundle exec appraisal install
             bundle exec appraisal rake test
       - run:
-          name: Bundle + CI (Adapters - excon)
+          name: Bundle + CI (Instrumentation - excon)
           command: |
-            cd adapters/excon
+            cd instrumentation/excon
             gem uninstall -aIx bundler
             gem install --no-document bundler -v '~> 2.0.2'
             bundle install --jobs=3 --retry=3
             bundle exec appraisal install
             bundle exec appraisal rake test
       - run:
-          name: Bundle + CI (Adapters - Faraday)
+          name: Bundle + CI (Instrumentation - Faraday)
           command: |
-            cd adapters/faraday
+            cd instrumentation/faraday
             gem uninstall -aIx bundler
             gem install --no-document bundler -v '~> 2.0.2'
             bundle install --jobs=3 --retry=3
             bundle exec appraisal install
             bundle exec appraisal rake test
       - run:
-          name: Bundle + CI (Adapters - Net::HTTP)
+          name: Bundle + CI (Instrumentation - Net::HTTP)
           command: |
-            cd adapters/net_http
+            cd instrumentation/net_http
             gem uninstall -aIx bundler
             gem install --no-document bundler -v '~> 2.0.2'
             bundle install --jobs=3 --retry=3
             bundle exec rake test
       - run:
-          name: Bundle + CI (Adapters - Rack)
+          name: Bundle + CI (Instrumentation - Rack)
           command: |
-            cd adapters/rack
+            cd instrumentation/rack
             gem uninstall -aIx bundler
             gem install --no-document bundler -v '~> 2.0.2'
             bundle install --jobs=3 --retry=3
             bundle exec appraisal install
             bundle exec appraisal rake test
       - run:
-          name: Bundle + CI (Adapters - Redis)
+          name: Bundle + CI (Instrumentation - Redis)
           command: |
-            cd adapters/redis
+            cd instrumentation/redis
             gem uninstall -aIx bundler
             gem install --no-document bundler -v '~> 2.0.2'
             bundle install --jobs=3 --retry=3
             bundle exec appraisal install
             bundle exec appraisal rake test
       - run:
-          name: Bundle + CI (Adapters - REST Client)
+          name: Bundle + CI (Instrumentation - REST Client)
           command: |
-            cd adapters/restclient
+            cd instrumentation/restclient
             gem uninstall -aIx bundler
             gem install --no-document bundler -v '~> 2.0.2'
             bundle install --jobs=3 --retry=3
             bundle exec appraisal install
             bundle exec appraisal rake test
       - run:
-          name: Bundle + CI (Adapters - Sidekiq)
+          name: Bundle + CI (Instrumentation - Sidekiq)
           command: |
-            cd adapters/sidekiq
+            cd instrumentation/sidekiq
             gem uninstall -aIx bundler
             gem install --no-document bundler -v '~> 2.0.2'
             bundle install --jobs=3 --retry=3
             bundle exec appraisal install
             bundle exec appraisal rake test
       - run:
-          name: Bundle + CI (Adapters - Sinatra)
+          name: Bundle + CI (Instrumentation - Sinatra)
           command: |
-            cd adapters/sinatra
+            cd instrumentation/sinatra
             gem uninstall -aIx bundler
             gem install --no-document bundler -v '~> 2.0.2'
             bundle install --jobs=3 --retry=3
@@ -161,9 +161,9 @@ commands:
   rake-test-appraisal-container-ints:
     steps:
       - run:
-          name: Bundle + CI (Adapters - Mysql2)
+          name: Bundle + CI (Instrumentation - Mysql2)
           command: |
-            cd adapters/mysql2
+            cd instrumentation/mysql2
             gem uninstall -aIx bundler
             gem install --no-document bundler -v '~> 2.0.2'
             bundle install --jobs=3 --retry=3

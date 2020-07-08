@@ -19,8 +19,8 @@ module OpenTelemetry
                   :text_injectors
 
       def initialize
-        @adapter_names = []
-        @adapter_config_map = {}
+        @instrumentation_names = []
+        @instrumentation_config_map = {}
         @http_extractors = nil
         @http_injectors = nil
         @text_extractors = nil
@@ -43,31 +43,31 @@ module OpenTelemetry
         @resource = @resource.merge(new_resource)
       end
 
-      # Install an instrumentation adapter with specificied optional +config+.
-      # Use can be called multiple times to install multiple instrumentation
-      # adapters. Only +use+ or +use_all+, but not both when installing
+      # Install an instrumentation with specificied optional +config+.
+      # Use can be called multiple times to install multiple instrumentation.
+      # Only +use+ or +use_all+, but not both when installing
       # instrumentation. A call to +use_all+ after +use+ will result in an
       # exception.
       #
-      # @param [String] adapter_name The name of the instrumentation adapter
-      # @param [optional Hash] config The config for this adapter
-      def use(adapter_name, config = nil)
+      # @param [String] instrumentation_name The name of the instrumentation
+      # @param [optional Hash] config The config for this instrumentation
+      def use(instrumentation_name, config = nil)
         check_use_mode!(USE_MODE_ONE)
-        @adapter_names << adapter_name
-        @adapter_config_map[adapter_name] = config if config
+        @instrumentation_names << instrumentation_name
+        @instrumentation_config_map[instrumentation_name] = config if config
       end
 
       # Install all registered instrumentation. Configuration for specific
-      # adapters can be provided with the optional +adapter_config_map+
+      # instrumentation can be provided with the optional +instrumentation_config_map+
       # parameter. Only +use+ or +use_all+, but not both when installing
       # instrumentation. A call to +use+ after +use_all+ will result in an
       # exception.
       #
-      # @param [optional Hash<String,Hash>] adapter_config_map A map with string keys
-      #   representing the adapter name and values specifying the adapter config
-      def use_all(adapter_config_map = {})
+      # @param [optional Hash<String,Hash>] instrumentation_config_map A map with string keys
+      #   representing the instrumentation name and values specifying the instrumentation config
+      def use_all(instrumentation_config_map = {})
         check_use_mode!(USE_MODE_ALL)
-        @adapter_config_map = adapter_config_map
+        @instrumentation_config_map = instrumentation_config_map
       end
 
       # Add a span processor to the export pipeline
@@ -110,9 +110,9 @@ module OpenTelemetry
       def install_instrumentation
         case @use_mode
         when USE_MODE_ONE
-          OpenTelemetry.instrumentation_registry.install(@adapter_names, @adapter_config_map)
+          OpenTelemetry.instrumentation_registry.install(@instrumentation_names, @instrumentation_config_map)
         when USE_MODE_ALL
-          OpenTelemetry.instrumentation_registry.install_all(@adapter_config_map)
+          OpenTelemetry.instrumentation_registry.install_all(@instrumentation_config_map)
         end
       end
 

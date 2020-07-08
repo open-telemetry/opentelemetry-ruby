@@ -1,0 +1,8 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+gem 'opentelemetry-api', path: '../../../api'
+gem 'opentelemetry-instrumentation-restclient', path: '../../../instrumentation/restclient'
+gem 'opentelemetry-sdk', path: '../../../sdk'
+gem 'rest-client'
