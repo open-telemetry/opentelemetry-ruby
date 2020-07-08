@@ -11,7 +11,7 @@ describe OpenTelemetry::CorrelationContext::Propagation::TextInjector do
     OpenTelemetry::CorrelationContext::Propagation::TextInjector.new
   end
   let(:header_key) do
-    'Correlation-Context'
+    'otcorrelations'
   end
   let(:context_key) do
     OpenTelemetry::CorrelationContext::Propagation::ContextKeys.correlation_context_key

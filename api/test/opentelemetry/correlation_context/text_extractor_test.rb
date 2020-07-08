@@ -11,7 +11,7 @@ describe OpenTelemetry::CorrelationContext::Propagation::TextExtractor do
     OpenTelemetry::CorrelationContext::Propagation::TextExtractor.new
   end
   let(:header_key) do
-    'Correlation-Context'
+    'otcorrelations'
   end
   let(:context_key) do
     OpenTelemetry::CorrelationContext::Propagation::ContextKeys.correlation_context_key

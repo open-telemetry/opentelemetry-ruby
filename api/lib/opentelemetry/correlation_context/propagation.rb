@@ -18,10 +18,10 @@ module OpenTelemetry
       TEXT_EXTRACTOR = TextExtractor.new
       TEXT_INJECTOR = TextInjector.new
       RACK_EXTRACTOR = TextExtractor.new(
-        correlation_context_key: 'HTTP_CORRELATION_CONTEXT'
+        correlation_context_key: 'HTTP_OTCORRELATIONS'
       )
       RACK_INJECTOR = TextInjector.new(
-        correlation_context_key: 'HTTP_CORRELATION_CONTEXT'
+        correlation_context_key: 'HTTP_OTCORRELATIONS'
       )
 
       private_constant :TEXT_INJECTOR, :TEXT_EXTRACTOR, :RACK_INJECTOR,
