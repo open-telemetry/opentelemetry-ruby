@@ -8,7 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module ConcurrentRuby
       # The Instrumentation class contains logic to detect and install the
-      # ConcurrentRuby instrumentation instrumentation
+      # ConcurrentRuby instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |_config|
           require_dependencies

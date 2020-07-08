@@ -1,6 +1,6 @@
 # Excon Instrumentation
 
-The excon instrumentation is a community-maintained instrumentation instrumentation for the [excon][excon-home] HTTP library.
+The excon instrumentation is a community-maintained instrumentation for the [excon][excon-home] HTTP library.
 
 ## How do I get started?
 
@@ -14,7 +14,7 @@ Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-e
 
 ## Usage
 
-To install the instrumentation instrumentation, call `use` with the name of the instrumentation.
+To install the instrumentation, call `use` with the name of the instrumentation.
 
 
 ```ruby

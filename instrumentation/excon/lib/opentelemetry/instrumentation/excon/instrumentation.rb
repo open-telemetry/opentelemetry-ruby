@@ -8,7 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module Excon
       # The Instrumentation class contains logic to detect and install the Excon
-      # instrumentation instrumentation
+      # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |_config|
           require_dependencies

@@ -8,7 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module Faraday
       # The Instrumentation class contains logic to detect and install the Faraday
-      # instrumentation instrumentation
+      # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |_config|
           require_dependencies

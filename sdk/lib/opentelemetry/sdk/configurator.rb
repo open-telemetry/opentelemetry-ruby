@@ -43,13 +43,13 @@ module OpenTelemetry
         @resource = @resource.merge(new_resource)
       end
 
-      # Install an instrumentation instrumentation with specificied optional +config+.
+      # Install an instrumentation with specificied optional +config+.
       # Use can be called multiple times to install multiple instrumentation
       # Only +use+ or +use_all+, but not both when installing
       # instrumentation. A call to +use_all+ after +use+ will result in an
       # exception.
       #
-      # @param [String] instrumentation_name The name of the instrumentation instrumentation
+      # @param [String] instrumentation_name The name of the instrumentation
       # @param [optional Hash] config The config for this instrumentation
       def use(instrumentation_name, config = nil)
         check_use_mode!(USE_MODE_ONE)
