@@ -44,7 +44,7 @@ module OpenTelemetry
       end
 
       # Install an instrumentation with specificied optional +config+.
-      # Use can be called multiple times to install multiple instrumentation
+      # Use can be called multiple times to install multiple instrumentation.
       # Only +use+ or +use_all+, but not both when installing
       # instrumentation. A call to +use_all+ after +use+ will result in an
       # exception.
