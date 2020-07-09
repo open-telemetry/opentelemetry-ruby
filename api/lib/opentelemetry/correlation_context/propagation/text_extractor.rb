@@ -19,7 +19,7 @@ module OpenTelemetry
         # @param [String] correlation_context_key The correlation context header
         #   key used in the carrier
         # @return [TextExtractor]
-        def initialize(correlation_context_key: 'Correlation-Context')
+        def initialize(correlation_context_key: 'otcorrelations')
           @correlation_context_key = correlation_context_key
         end
 
