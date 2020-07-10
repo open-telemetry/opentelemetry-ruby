@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file.
 
 ### Breaking Change
 
-* [#265](https://github.com/open-telemetry/opentelemetry-ruby/pull/265) Remove component attribute. ([@dmathieu](https://github.com/dmathieu))
+* [#232](https://github.com/open-telemetry/opentelemetry-ruby/issues/232) Spec Compliance for span and trace id. ([@fbogsany](https://github.com/fbogsany))
 
 * [#270](https://github.com/open-telemetry/opentelemetry-ruby/pull/270) Remove span_id from Sampler, update Sampler interface to match spec. ([@fbogsany](https://github.com/fbogsany))
 
@@ -20,9 +20,9 @@ All notable changes to this project will be documented in this file.
 
 ### Enhancement
 
-* [#232](https://github.com/open-telemetry/opentelemetry-ruby/issues/232) Spec Compliance for span and trace id. ([@fbogsany](https://github.com/fbogsany))
-
 * [#264](https://github.com/open-telemetry/opentelemetry-ruby/pull/264) Implement the instrumentation library pattern. ([@dmathieu](https://github.com/dmathieu))
+
+* [#265](https://github.com/open-telemetry/opentelemetry-ruby/pull/265) Remove component attribute. ([@dmathieu](https://github.com/dmathieu))
 
 * [#280](https://github.com/open-telemetry/opentelemetry-ruby/pull/280) Add tracestate to SpanData struct. ([@ericmustin](https://github.com/ericmustin))
 
