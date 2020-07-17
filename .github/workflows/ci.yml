@@ -1,0 +1,137 @@
+name: CI
+
+on:
+  push:
+    tags: opentelemetry-*/v[0-9]*
+    branches: '**'
+  pull_request:
+    branches: '**'
+
+jobs:
+  test-ruby25:
+    name: Test Ruby2.5
+    runs-on: ubuntu-latest
+    container: circleci/ruby:2.5-buster
+    env:
+      TEST_MYSQL_USER: root
+      TEST_MYSQL_ROOT_PASSWORD: root
+      TEST_MYSQL_PORT: 3306
+      TEST_MYSQ_DB: mysql
+    services:
+      mysql:
+        image: mysql:5.6
+        env:
+          MYSQL_DATABASE: mysql
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_PASSWORD: mysql
+          MYSQL_USER: mysql
+    steps:
+      - name: Setup file system permissions
+        run: sudo chmod -R 777 $GITHUB_WORKSPACE /github /__w/_temp
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: rake-test
+        run: ./ci/rake_test.sh
+      - name: rake-test-appraisal
+        run: ./ci/rake_test_appraisal.sh
+      - name: rake-test-appraisal-container-ints
+        run: ./ci/rake_test_appraisal_container_ints.sh
+  test-ruby26:
+    name: Test Ruby2.6
+    runs-on: ubuntu-latest
+    container: circleci/ruby:2.6-buster
+    env:
+      TEST_MYSQL_USER: root
+      TEST_MYSQL_ROOT_PASSWORD: root
+      TEST_MYSQL_PORT: 3306
+      TEST_MYSQ_DB: mysql
+    services:
+      mysql:
+        image: mysql:5.6
+        env:
+          MYSQL_DATABASE: mysql
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_PASSWORD: mysql
+          MYSQL_USER: mysql
+    steps:
+      - name: Setup file system permissions
+        run: sudo chmod -R 777 $GITHUB_WORKSPACE /github /__w/_temp
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: rake-test
+        run: ./ci/rake_test.sh
+      - name: rake-test-appraisal
+        run: ./ci/rake_test_appraisal.sh
+      - name: rake-test-appraisal-container-ints
+        run: ./ci/rake_test_appraisal_container_ints.sh
+  test-ruby27:
+    name: Test Ruby2.7
+    runs-on: ubuntu-latest
+    container: circleci/ruby:2.7-buster
+    steps:
+      - name: Setup file system permissions
+        run: sudo chmod -R 777 $GITHUB_WORKSPACE /github /__w/_temp
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: rake-test
+        run: ./ci/rake_test.sh
+  test-jruby:
+    name: JRuby-latest Test
+    runs-on: ubuntu-latest
+    container: circleci/jruby:latest
+    env:
+      JRUBY_OPTS: --debug
+    steps:
+      - name: Setup file system permissions
+        run: sudo chmod -R 777 $GITHUB_WORKSPACE /github /__w/_temp
+      - uses: actions/checkout@v2
+      - name: rake-test
+        run: ./ci/rake_test.sh
+  test-jruby92:
+    name: Test JRuby9.2
+    runs-on: ubuntu-latest
+    container: circleci/jruby:9.2.8-jre
+    env:
+      JRUBY_OPTS: --debug
+    steps:
+      - name: Setup file system permissions
+        run: sudo chmod -R 777 $GITHUB_WORKSPACE /github /__w/_temp
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: rake-test
+        run: ./ci/rake_test.sh
+      - name: rake-test-appraisal
+        run: ./ci/rake_test_appraisal.sh        
+  release:
+    name: Test Release
+    runs-on: ubuntu-latest
+    container: circleci/ruby:2.6-buster
+    needs: [test-ruby25, test-ruby26, test-ruby27, test-jruby]
+    if: startsWith(github.ref, 'refs/tags/opentelemetry-') 
+    env:
+      TEST_MYSQL_USER: root
+      TEST_MYSQL_ROOT_PASSWORD: root
+      TEST_MYSQL_PORT: 3306
+      TEST_MYSQ_DB: mysql
+      OPENTELEMETRY_RUBYGEMS_API_KEY: ${{ secrets.OPENTELEMETRY_RUBYGEMS_API_KEY }}
+      OPENTELEMETRY_RELEASES_ENABLED: ${{ secrets.OPENTELEMETRY_RELEASES_ENABLED }}
+    services:
+      mysql:
+        image: mysql:5.6
+        env:
+          MYSQL_DATABASE: mysql
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_PASSWORD: mysql
+          MYSQL_USER: mysql
+    steps:
+      - name: Setup file system permissions
+        run: sudo chmod -R 777 $GITHUB_WORKSPACE /github /__w/_temp
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Store tag as environmental variable
+        shell: bash
+        run: echo ::set-env name=GITHUB_ACTIONS_TAG::${GITHUB_REF/refs\/tags\//}
+      - name: rake-release
+        run: ./ci/rake_release.sh
+      - name: rake-test-appraisal
+        run: ./ci/rake_test_appraisal.sh
