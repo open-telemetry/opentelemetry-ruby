@@ -160,7 +160,9 @@ describe OpenTelemetry::SDK::Trace::Samplers do
   end
 
   def trace_id(id)
-    format('%032x', id)
+    first = id >> 64
+    second = id & 0xffff_ffff_ffff_ffff
+    [first, second].pack('Q>Q>')
   end
 
   def call_sampler(sampler, trace_id: nil, parent_context: nil, links: nil, name: nil, kind: nil, attributes: nil)

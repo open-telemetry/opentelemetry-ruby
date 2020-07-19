@@ -16,7 +16,7 @@ module OpenTelemetry
 
           def initialize(probability, ignore_parent:, apply_to_remote_parent:, apply_to_all_spans:)
             @probability = probability
-            @id_upper_bound = format('%016x', (probability * (2**64 - 1)).ceil)
+            @id_upper_bound = (probability * (2**64 - 1)).ceil
             @use_parent_sampled_flag = !ignore_parent
             @apply_to_remote_parent = apply_to_remote_parent
             @apply_to_all_spans = apply_to_all_spans
@@ -55,7 +55,7 @@ module OpenTelemetry
           end
 
           def sample_trace_id?(trace_id)
-            @probability == 1.0 || trace_id[16, 16] < @id_upper_bound
+            @probability == 1.0 || trace_id[8, 8].unpack1('Q>') < @id_upper_bound
           end
         end
       end
