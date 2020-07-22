@@ -76,7 +76,7 @@ jobs:
       - name: rake-test
         run: ./ci/rake_test.sh
   test-jruby:
-    name: JRuby-latest Test
+    name: Test JRuby-latest
     runs-on: ubuntu-latest
     container: circleci/jruby:latest
     env:
@@ -103,26 +103,14 @@ jobs:
       - name: rake-test-appraisal
         run: ./ci/rake_test_appraisal.sh        
   release:
-    name: Test Release
+    name: Release
     runs-on: ubuntu-latest
     container: circleci/ruby:2.6-buster
     needs: [test-ruby25, test-ruby26, test-ruby27, test-jruby]
     if: startsWith(github.ref, 'refs/tags/opentelemetry-') 
     env:
-      TEST_MYSQL_USER: root
-      TEST_MYSQL_ROOT_PASSWORD: root
-      TEST_MYSQL_PORT: 3306
-      TEST_MYSQ_DB: mysql
       OPENTELEMETRY_RUBYGEMS_API_KEY: ${{ secrets.OPENTELEMETRY_RUBYGEMS_API_KEY }}
       OPENTELEMETRY_RELEASES_ENABLED: ${{ secrets.OPENTELEMETRY_RELEASES_ENABLED }}
-    services:
-      mysql:
-        image: mysql:5.6
-        env:
-          MYSQL_DATABASE: mysql
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_PASSWORD: mysql
-          MYSQL_USER: mysql
     steps:
       - name: Setup file system permissions
         run: sudo chmod -R 777 $GITHUB_WORKSPACE /github /__w/_temp
@@ -133,5 +121,3 @@ jobs:
         run: echo ::set-env name=GITHUB_ACTIONS_TAG::${GITHUB_REF/refs\/tags\//}
       - name: rake-release
         run: ./ci/rake_release.sh
-      - name: rake-test-appraisal
-        run: ./ci/rake_test_appraisal.sh
