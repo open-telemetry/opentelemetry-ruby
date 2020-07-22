@@ -165,7 +165,7 @@ def push_release
 end
 
 def parse_tag
-  tag = ENV['GITHUB_ACTIONS_TAG']
+  tag = ENV['GITHUB_ACTIONS_TAG'] || ENV['CIRCLE_TAG']
   match = %r{^(opentelemetry-[\w-]+)/v(.*)$}.match(tag)
   abort_release("Unexpected tag: #{tag.inspect}") unless match
   name = match[1]
