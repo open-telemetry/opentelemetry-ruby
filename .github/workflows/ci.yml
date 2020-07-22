@@ -12,19 +12,20 @@ jobs:
     name: Test Ruby2.5
     runs-on: ubuntu-latest
     container: circleci/ruby:2.5-buster
-    env:
-      TEST_MYSQL_USER: root
-      TEST_MYSQL_ROOT_PASSWORD: root
-      TEST_MYSQL_PORT: 3306
-      TEST_MYSQ_DB: mysql
     services:
-      mysql:
+      sql:
         image: mysql:5.6
         env:
+          TEST_MYSQL_USER: root
+          TEST_MYSQL_ROOT_PASSWORD: root
+          TEST_MYSQ_DB: mysql
           MYSQL_DATABASE: mysql
           MYSQL_ROOT_PASSWORD: root
           MYSQL_PASSWORD: mysql
           MYSQL_USER: mysql
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
     steps:
       - name: Setup file system permissions
         run: sudo chmod -R 777 $GITHUB_WORKSPACE /github /__w/_temp
@@ -35,24 +36,28 @@ jobs:
       - name: rake-test-appraisal
         run: ./ci/rake_test_appraisal.sh
       - name: rake-test-appraisal-container-ints
+        env:
+          TEST_MYSQL_HOST: sql
+          TEST_MYSQL_PORT: ${{ job.services.mysql.ports['3306'] }}
         run: ./ci/rake_test_appraisal_container_ints.sh
   test-ruby26:
     name: Test Ruby2.6
     runs-on: ubuntu-latest
     container: circleci/ruby:2.6-buster
-    env:
-      TEST_MYSQL_USER: root
-      TEST_MYSQL_ROOT_PASSWORD: root
-      TEST_MYSQL_PORT: 3306
-      TEST_MYSQ_DB: mysql
     services:
-      mysql:
+      sql:
         image: mysql:5.6
         env:
+          TEST_MYSQL_USER: root
+          TEST_MYSQL_ROOT_PASSWORD: root
+          TEST_MYSQ_DB: mysql
           MYSQL_DATABASE: mysql
           MYSQL_ROOT_PASSWORD: root
           MYSQL_PASSWORD: mysql
           MYSQL_USER: mysql
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
     steps:
       - name: Setup file system permissions
         run: sudo chmod -R 777 $GITHUB_WORKSPACE /github /__w/_temp
@@ -63,6 +68,9 @@ jobs:
       - name: rake-test-appraisal
         run: ./ci/rake_test_appraisal.sh
       - name: rake-test-appraisal-container-ints
+        env:
+          TEST_MYSQL_HOST: sql
+          TEST_MYSQL_PORT: ${{ job.services.mysql.ports['3306'] }}
         run: ./ci/rake_test_appraisal_container_ints.sh
   test-ruby27:
     name: Test Ruby2.7
