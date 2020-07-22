@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 printf "\nname: Install rake \n"
 gem install --no-document rake
 

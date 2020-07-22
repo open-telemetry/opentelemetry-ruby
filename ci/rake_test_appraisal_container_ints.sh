@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 root=$(pwd)
 
 printf "\nname: Bundle + CI (Instrumentation - Mysql2) \n"
