@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## Alpha v0.5.1
+
+### Bug Fix
+
+* [#299](https://github.com/open-telemetry/opentelemetry-ruby/pull/299) Fix probabilility sampler. ([@fbogsany](https://github.com/fbogsany))
+
+* [#301](https://github.com/open-telemetry/opentelemetry-ruby/pull/301) Fix require 'opentelemetry/instrumentation'. ([@fbogsany](https://github.com/fbogsany))
+
 ## Alpha v0.5.0
 
 ### Breaking Change

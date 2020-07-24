@@ -6,7 +6,7 @@
 
 module OpenTelemetry
   # Instrumentation should be able to handle the case when the library is not installed on a user's system.
-  module Snstrumentations
+  module Instrumentation
   end
 end
 

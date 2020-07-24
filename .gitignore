@@ -9,3 +9,6 @@
 
 # Appraisals
 instrumentation/**/*.gemfile.lock
+
+# Vendored gems
+**/vendor/**/*
