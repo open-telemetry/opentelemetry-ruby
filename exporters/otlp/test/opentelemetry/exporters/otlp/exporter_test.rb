@@ -11,13 +11,13 @@ describe OpenTelemetry::Exporters::OTLP::Exporter do
 
   describe '#initialize' do
     it 'initializes' do
-      exporter = OpenTelemetry::Exporters::OTLP::Exporter.new(host: '127.0.0.1', port: 56781)
+      exporter = OpenTelemetry::Exporters::OTLP::Exporter.new(host: '127.0.0.1', port: 55681)
       _(exporter).wont_be_nil
     end
   end
 
   describe '#export' do
-    let(:exporter) { OpenTelemetry::Exporters::OTLP::Exporter.new(host: '127.0.0.1', port: 56781) }
+    let(:exporter) { OpenTelemetry::Exporters::OTLP::Exporter.new(host: '127.0.0.1', port: 55681) }
 
     before do
       OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new
@@ -30,30 +30,21 @@ describe OpenTelemetry::Exporters::OTLP::Exporter do
     end
 
     it 'exports a span_data' do
-      skip 'WIP'
-      socket = UDPSocket.new
-      socket.bind('127.0.0.1', 0)
-      exporter = OpenTelemetry::Exporters::OTLP::Exporter.new(host: '127.0.0.1', port: socket.addr[1])
+      stub_request(:post, 'http://127.0.0.1:55681/v1/trace').to_return(status: 200)
+      exporter = OpenTelemetry::Exporters::OTLP::Exporter.new(host: '127.0.0.1', port: 55681)
       span_data = create_span_data
       result = exporter.export([span_data])
-      packet = socket.recvfrom(65_000)
-      socket.close
       _(result).must_equal(SUCCESS)
-      _(packet).wont_be_nil
     end
 
     it 'exports a span from a tracer' do
-      skip 'WIP'
-      socket = UDPSocket.new
-      socket.bind('127.0.0.1', 0)
-      exporter = OpenTelemetry::Exporters::OTLP::Exporter.new(host: '127.0.0.1', port: socket.addr[1])
+      stub_post = stub_request(:post, 'http://127.0.0.1:55681/v1/trace').to_return(status: 200)
+      exporter = OpenTelemetry::Exporters::OTLP::Exporter.new(host: '127.0.0.1', port: 55681)
       processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter: exporter, max_queue_size: 1, max_export_batch_size: 1)
       OpenTelemetry.tracer_provider.add_span_processor(processor)
       OpenTelemetry.tracer_provider.tracer.start_root_span('foo').finish
       OpenTelemetry.tracer_provider.shutdown
-      packet = socket.recvfrom(65_000)
-      socket.close
-      _(packet).wont_be_nil
+      assert_requested(stub_post)
     end
   end
 

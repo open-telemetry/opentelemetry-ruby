@@ -26,7 +26,7 @@ module OpenTelemetry
         OPEN_TIMEOUT = 5
         READ_TIMEOUT = 5
         RETRY_COUNT = 5
-        PATH = '/v1/traces'
+        PATH = '/v1/trace'
         private_constant(:KEEP_ALIVE_TIMEOUT, :OPEN_TIMEOUT, :READ_TIMEOUT, :RETRY_COUNT, :PATH)
 
         def initialize(host:,

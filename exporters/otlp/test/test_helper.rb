@@ -9,5 +9,6 @@ SimpleCov.start
 
 require 'opentelemetry/exporters/otlp'
 require 'minitest/autorun'
+require 'webmock/minitest'
 
 OpenTelemetry.logger = Logger.new('/dev/null')
