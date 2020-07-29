@@ -57,6 +57,12 @@ GEM_INFO = {
       OpenTelemetry::Exporters::Jaeger::VERSION
     }
   },
+  "opentelemetry-exporters-otlp" => {
+    version_getter: ->() {
+      require './lib/opentelemetry/exporters/otlp/version.rb'
+      OpenTelemetry::Exporters::OTLP::VERSION
+    }
+  },
   "opentelemetry-instrumentation-ethon" => {
     version_getter: ->() {
       require './lib/opentelemetry/instrumentation/ethon/version.rb'
