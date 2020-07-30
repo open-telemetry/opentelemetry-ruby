@@ -23,6 +23,14 @@ describe OpenTelemetry::Exporters::OTLP::Exporter do
       OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new(OpenTelemetry::SDK::Resources::Resource.telemetry_sdk)
     end
 
+    it 'integrates with collector' do
+      skip unless ENV['TRACING_INTEGRATION_TEST']
+      WebMock.disable_net_connect!(allow: '127.0.0.1')
+      span_data = create_span_data
+      result = exporter.export([span_data])
+      _(result).must_equal(SUCCESS)
+    end
+
     it 'returns FAILURE when shutdown' do
       exporter.shutdown
       result = exporter.export(nil)
