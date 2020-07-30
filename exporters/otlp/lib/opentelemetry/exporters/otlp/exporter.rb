@@ -208,7 +208,7 @@ module OpenTelemetry
             dropped_links_count: span_data.total_recorded_links - span_data.links&.size.to_i,
             status: span_data.status&.yield_self do |status|
               Opentelemetry::Proto::Trace::V1::Status.new(
-                code: status.canonical_code, # TODO: verify that the Integer canonical code can be used here instead of the enum.
+                code: status.canonical_code,
                 message: status.description,
               )
             end,

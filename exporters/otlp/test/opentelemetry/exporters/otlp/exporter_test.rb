@@ -53,26 +53,29 @@ describe OpenTelemetry::Exporters::OTLP::Exporter do
       processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter: exporter)
       tracer = OpenTelemetry.tracer_provider.tracer('tracer', 'v0.0.1')
       other_tracer = OpenTelemetry.tracer_provider.tracer('other_tracer')
+
       trace_id = OpenTelemetry::Trace.generate_trace_id
+      root_span_id = OpenTelemetry::Trace.generate_span_id
+      child_span_id = OpenTelemetry::Trace.generate_span_id
+      client_span_id = OpenTelemetry::Trace.generate_span_id
+      server_span_id = OpenTelemetry::Trace.generate_span_id
+      consumer_span_id = OpenTelemetry::Trace.generate_span_id
+      start_timestamp = Time.now
+      end_timestamp = start_timestamp + 6
+
       OpenTelemetry.tracer_provider.add_span_processor(processor)
-      OpenTelemetry::Trace.stub(:generate_trace_id, trace_id) do
-        root = tracer.start_root_span('root', kind: :internal)
-        tracer.in_span('child', with_parent: root, kind: :producer, links: [OpenTelemetry::Trace::Link.new(root.context, { 'attr' => 4 })]) do |span|
-          span['b'] = true
-          span['f'] = 1.1
-          span['i'] = 2
-          span['s'] = 'val'
-          span.status = OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::UNKNOWN_ERROR)
-          tracer.in_span('client', kind: :client) do
-            other_tracer.in_span('server', kind: :server) do
-              span.add_event(name: 'event', attributes: { 'attr' => 42 })
-            end
-          end
-          tracer.in_span('consumer', kind: :consumer) do
-          end
-        end
-        root.finish
-      end
+      root = with_ids(trace_id, root_span_id) { tracer.start_root_span('root', kind: :internal, start_timestamp: start_timestamp).finish(end_timestamp: end_timestamp) }
+      span = with_ids(trace_id, child_span_id) { tracer.start_span('child', with_parent: root, kind: :producer, start_timestamp: start_timestamp + 1, links: [OpenTelemetry::Trace::Link.new(root.context, { 'attr' => 4 })]) }
+      span['b'] = true
+      span['f'] = 1.1
+      span['i'] = 2
+      span['s'] = 'val'
+      span.status = OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::UNKNOWN_ERROR)
+      client = with_ids(trace_id, client_span_id) { tracer.start_span('client', with_parent: span, kind: :client, start_timestamp: start_timestamp + 2).finish(end_timestamp: end_timestamp) }
+      with_ids(trace_id, server_span_id) { other_tracer.start_span('server', with_parent: client, kind: :server, start_timestamp: start_timestamp + 3).finish(end_timestamp: end_timestamp) }
+      span.add_event(name: 'event', attributes: { 'attr' => 42 }, timestamp: start_timestamp + 4)
+      with_ids(trace_id, consumer_span_id) { tracer.start_span('consumer', with_parent: span, kind: :consumer, start_timestamp: start_timestamp + 5).finish(end_timestamp: end_timestamp) }
+      span.finish(end_timestamp: end_timestamp)
       OpenTelemetry.tracer_provider.shutdown
 
       encoded_etsr = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(
@@ -92,25 +95,105 @@ describe OpenTelemetry::Exporters::OTLP::Exporter do
                     name: 'tracer',
                     version: 'v0.0.1',
                   ),
-                  spans: [],
+                  spans: [
+                    Opentelemetry::Proto::Trace::V1::Span.new(
+                      trace_id: trace_id,
+                      span_id: root_span_id,
+                      parent_span_id: OpenTelemetry::Trace::INVALID_SPAN_ID,
+                      name: 'root',
+                      kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::INTERNAL,
+                      start_time_unix_nano: (start_timestamp.to_r * 1_000_000_000).to_i,
+                      end_time_unix_nano: ((end_timestamp).to_r * 1_000_000_000).to_i
+                    ),
+                    Opentelemetry::Proto::Trace::V1::Span.new(
+                      trace_id: trace_id,
+                      span_id: client_span_id,
+                      parent_span_id: child_span_id,
+                      name: 'client',
+                      kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::CLIENT,
+                      start_time_unix_nano: ((start_timestamp + 2).to_r * 1_000_000_000).to_i,
+                      end_time_unix_nano: ((end_timestamp).to_r * 1_000_000_000).to_i
+                    ),
+                    Opentelemetry::Proto::Trace::V1::Span.new(
+                      trace_id: trace_id,
+                      span_id: consumer_span_id,
+                      parent_span_id: child_span_id,
+                      name: 'consumer',
+                      kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::CONSUMER,
+                      start_time_unix_nano: ((start_timestamp + 5).to_r * 1_000_000_000).to_i,
+                      end_time_unix_nano: ((end_timestamp).to_r * 1_000_000_000).to_i
+                    ),
+                    Opentelemetry::Proto::Trace::V1::Span.new(
+                      trace_id: trace_id,
+                      span_id: child_span_id,
+                      parent_span_id: root_span_id,
+                      name: 'child',
+                      kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::PRODUCER,
+                      start_time_unix_nano: ((start_timestamp + 1).to_r * 1_000_000_000).to_i,
+                      end_time_unix_nano: ((end_timestamp).to_r * 1_000_000_000).to_i,
+                      attributes: [
+                        Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'b', value: Opentelemetry::Proto::Common::V1::AnyValue.new(bool_value: true)),
+                        Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'f', value: Opentelemetry::Proto::Common::V1::AnyValue.new(double_value: 1.1)),
+                        Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'i', value: Opentelemetry::Proto::Common::V1::AnyValue.new(int_value: 2)),
+                        Opentelemetry::Proto::Common::V1::KeyValue.new(key: 's', value: Opentelemetry::Proto::Common::V1::AnyValue.new(string_value: 'val')),
+                      ],
+                      events: [
+                        Opentelemetry::Proto::Trace::V1::Span::Event.new(
+                          time_unix_nano: ((start_timestamp + 4).to_r * 1_000_000_000).to_i,
+                          name: 'event',
+                          attributes: [
+                            Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'attr', value: Opentelemetry::Proto::Common::V1::AnyValue.new(int_value: 42)),
+                          ],
+                        ),
+                      ],
+                      links: [
+                        Opentelemetry::Proto::Trace::V1::Span::Link.new(
+                          trace_id: trace_id,
+                          span_id: root_span_id,
+                          attributes: [
+                            Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'attr', value: Opentelemetry::Proto::Common::V1::AnyValue.new(int_value: 4)),
+                          ],
+                        )
+                      ],
+                      status: Opentelemetry::Proto::Trace::V1::Status.new(
+                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::UnknownError,
+                      ),
+                    ),
+                  ],
                 ),
                 Opentelemetry::Proto::Trace::V1::InstrumentationLibrarySpans.new(
                   instrumentation_library: Opentelemetry::Proto::Common::V1::InstrumentationLibrary.new(
                     name: 'other_tracer',
                   ),
-                  spans: [],
-                )
+                  spans: [
+                    Opentelemetry::Proto::Trace::V1::Span.new(
+                      trace_id: trace_id,
+                      span_id: server_span_id,
+                      parent_span_id: client_span_id,
+                      name: 'server',
+                      kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SERVER,
+                      start_time_unix_nano: ((start_timestamp + 3).to_r * 1_000_000_000).to_i,
+                      end_time_unix_nano: ((end_timestamp).to_r * 1_000_000_000).to_i
+                    )
+                  ],
+                ),
               ]
             )
           ]
         )
       )
 
-      assert_requested(:post, "http://127.0.0.1:55681/v1/trace")
-      # assert_requested(:post, "http://127.0.0.1:55681/v1/trace") do |req|
-      #   byebug
-      #   req.body == encoded_etsr
-      # end
+      assert_requested(:post, "http://127.0.0.1:55681/v1/trace") do |req|
+        req.body == encoded_etsr
+      end
+    end
+  end
+
+  def with_ids(trace_id, span_id)
+    OpenTelemetry::Trace.stub(:generate_trace_id, trace_id) do
+      OpenTelemetry::Trace.stub(:generate_span_id, span_id) do
+        yield
+      end
     end
   end
 
