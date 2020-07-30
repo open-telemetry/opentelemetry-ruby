@@ -56,7 +56,7 @@ module OpenTelemetry
       def set_attribute(key, value)
         self
       end
-      alias []= set_attribute
+      alias_method :[]=, :set_attribute
 
       # Add an Event to a {Span}. This can be accomplished eagerly or lazily.
       # Lazy evaluation is useful when the event attributes are expensive to
