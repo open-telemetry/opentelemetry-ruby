@@ -226,7 +226,7 @@ module OpenTelemetry
             @name,
             @kind,
             @status,
-            @parent_span_id,
+            @parent_span_id.unpack1('H*'),
             @child_count,
             @total_recorded_attributes,
             @total_recorded_events,
