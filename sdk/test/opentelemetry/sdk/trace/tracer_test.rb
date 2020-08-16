@@ -145,7 +145,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
 
   describe '#start_span' do
     let(:span_context) do
-      OpenTelemetry::Trace::SpanContext.new(tracestate: 'vendorname=opaquevalue')
+      OpenTelemetry::Trace::SpanContext.new(tracestate: 'vendorname=opaquevalue', trace_flags: OpenTelemetry::Trace::TraceFlags::SAMPLED)
     end
     let(:context) do
       OpenTelemetry::Context.empty.set_value(

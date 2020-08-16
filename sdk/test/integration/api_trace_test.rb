@@ -17,7 +17,7 @@ describe OpenTelemetry::SDK, 'API_trace' do
   end
   let(:tracer) { provider.tracer(__FILE__, sdk::VERSION) }
   let(:remote_span_context) do
-    OpenTelemetry::Trace::SpanContext.new(remote: true)
+    OpenTelemetry::Trace::SpanContext.new(remote: true, trace_flags: OpenTelemetry::Trace::TraceFlags::SAMPLED)
   end
 
   describe 'tracing root spans' do
