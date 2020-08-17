@@ -10,7 +10,7 @@ module OpenTelemetry
       module Config
         # Class that holds global trace parameters.
         class TraceConfig
-          DEFAULT_SAMPLER = Samplers::ALWAYS_ON
+          DEFAULT_SAMPLER = Samplers.parent_or_else(Samplers::ALWAYS_ON)
           DEFAULT_MAX_ATTRIBUTES_COUNT = 32
           DEFAULT_MAX_EVENTS_COUNT = 128
           DEFAULT_MAX_LINKS_COUNT = 32
