@@ -27,6 +27,36 @@ describe OpenTelemetry::SDK::CorrelationContext::Manager do
       end
     end
 
+    describe '.values' do
+      describe 'explicit context' do
+        it 'returns context with empty correlation context' do
+          ctx = manager.set_value('foo', 'bar', context: Context.empty)
+          _(manager.values(context: ctx)).must_equal({'foo' => 'bar'})
+  
+          ctx2 = manager.clear(context: ctx)
+          _(manager.values(context: ctx2)).must_equal({})
+        end
+
+        it 'returns all entries' do
+          ctx = manager.build_context do |correlations|
+            correlations.set_value('k1', 'v1')
+            correlations.set_value('k2', 'v2')
+          end
+          _(manager.values(context: ctx)).must_equal({'k1' => 'v1', 'k2' => 'v2'})
+        end
+      end
+
+      describe 'implicit context' do
+        it 'returns context with empty correlation context' do
+          Context.with_current(manager.set_value('foo', 'bar')) do
+            _(manager.values).must_equal({'foo' => 'bar'})
+          end
+  
+          _(manager.values).must_equal({})
+        end
+      end
+    end
+
     describe 'implicit context' do
       it 'sets key/value in implicit context' do
         _(manager.value('foo')).must_be_nil

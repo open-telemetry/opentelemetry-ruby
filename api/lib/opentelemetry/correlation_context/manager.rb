@@ -9,7 +9,8 @@ module OpenTelemetry
     # No op implementation of CorrelationContext::Manager
     class Manager
       NOOP_BUILDER = Builder.new
-      private_constant :NOOP_BUILDER
+      EMPTY_VALUES = {}.freeze
+      private_constant(:NOOP_BUILDER, :EMPTY_VALUES)
 
       def build(context: Context.current)
         yield NOOP_BUILDER
@@ -22,6 +23,10 @@ module OpenTelemetry
 
       def value(key, context: Context.current)
         nil
+      end
+
+      def values(context: Context.current)
+        EMPTY_VALUES
       end
 
       def remove_value(key, context: Context.current)
