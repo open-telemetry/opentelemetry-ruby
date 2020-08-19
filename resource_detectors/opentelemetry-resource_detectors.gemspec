@@ -9,7 +9,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'opentelemetry/resource/detectors/version'
 
 Gem::Specification.new do |spec|
-  spec.name        = 'opentelemetry-resource-detectors'
+  spec.name        = 'opentelemetry-resource_detectors'
   spec.version     = OpenTelemetry::Resource::Detectors::VERSION
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
