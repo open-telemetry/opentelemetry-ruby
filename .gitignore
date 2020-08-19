@@ -6,6 +6,7 @@
 **/*.gem
 **/.bundle
 **/.DS_Store
+**/.byebug_history
 
 # Appraisals
 instrumentation/**/*.gemfile.lock
