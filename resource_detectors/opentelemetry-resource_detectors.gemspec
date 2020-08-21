@@ -9,7 +9,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'opentelemetry/resource/detectors/version'
 
 Gem::Specification.new do |spec|
-  spec.name        = 'opentelemetry-resource-detectors'
+  spec.name        = 'opentelemetry-resource_detectors'
   spec.version     = OpenTelemetry::Resource::Detectors::VERSION
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
 
   spec.files = ::Dir.glob('lib/**/*.rb') +
                ::Dir.glob('*.md') +
-               ['LICENSE', '.yardopts']
+               ['LICENSE']
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.5.0'
 
