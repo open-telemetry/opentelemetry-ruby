@@ -46,10 +46,6 @@ describe OpenTelemetry::Trace::Span do
     it 'accepts a timestamp' do
       _(span.add_event(name: 'event-name', timestamp: Time.now)).must_equal(span)
     end
-
-    it 'accepts an event formatter' do
-      _(span.add_event { Object.new }).must_equal(span)
-    end
   end
 
   describe '#record_error' do
