@@ -41,9 +41,8 @@ module OpenTelemetry
         NOT_RECORD = Result.new(decision: Decision::NOT_RECORD)
         RECORD = Result.new(decision: Decision::RECORD)
         SAMPLING_HINTS = [Decision::NOT_RECORD, Decision::RECORD, Decision::RECORD_AND_SAMPLED].freeze
-        APPLY_PROBABILITY_TO_SYMBOLS = %i[root_spans root_spans_and_remote_parent all_spans].freeze
 
-        private_constant(:RECORD_AND_SAMPLED, :NOT_RECORD, :RECORD, :SAMPLING_HINTS, :APPLY_PROBABILITY_TO_SYMBOLS)
+        private_constant(:RECORD_AND_SAMPLED, :NOT_RECORD, :RECORD, :SAMPLING_HINTS)
 
         # Returns a {Result} with {Decision::RECORD_AND_SAMPLED}.
         ALWAYS_ON = ConstantSampler.new(result: RECORD_AND_SAMPLED, description: 'AlwaysOnSampler')
@@ -60,29 +59,48 @@ module OpenTelemetry
           ParentOrElse.new(delegate_sampler)
         end
 
+        # Convenience method. Equivalent to:
+        #
+        #   delegate = OpenTelemetry::SDK::Trace::Samplers.ALWAYS_ON
+        #   OpenTelemetry::SDK::Trace::Samplers.parent_or_else(delegate)
+        #
+        # @return [ParentOrElse] returns a parent_or_else sampler
+        def self.parent_or_always_on
+          ParentOrElse.new(ALWAYS_ON)
+        end
+
+        # Convenience method. Equivalent to:
+        #
+        #   delegate = OpenTelemetry::SDK::Trace::Samplers.ALWAYS_OFF
+        #   OpenTelemetry::SDK::Trace::Samplers.parent_or_else(delegate)
+        #
+        # @return [ParentOrElse] returns a parent_or_else sampler
+        def self.parent_or_always_off
+          ParentOrElse.new(ALWAYS_OFF)
+        end
+
+        # Convenience method. Equivalent to:
+        #
+        #   delegate = OpenTelemetry::SDK::Trace::Samplers.probability(probability)
+        #   OpenTelemetry::SDK::Trace::Samplers.parent_or_else(delegate)
+        #
+        # @param [Numeric] probability The desired probability of sampling.
+        #   Must be within [0.0, 1.0].
+        # @return [ParentOrElse] returns a parent_or_else sampler
+        def self.parent_or_probability(probability)
+          ParentOrElse.new(probability(probability))
+        end
+
         # Returns a new sampler. The probability of sampling a trace is equal
         # to that of the specified probability.
         #
         # @param [Numeric] probability The desired probability of sampling.
         #   Must be within [0.0, 1.0].
-        # @param [optional Boolean] ignore_parent Whether to ignore parent
-        #   sampling. Defaults to not ignore parent sampling.
-        # @param [optional Symbol] apply_probability_to Whether to apply
-        #   probability sampling to root spans, root spans and remote parents,
-        #   or all spans. Allowed values include :root_spans, :root_spans_and_remote_parent,
-        #   and :all_spans. Defaults to :root_spans_and_remote_parent.
         # @raise [ArgumentError] if probability is out of range
-        # @raise [ArgumentError] if apply_probability_to is not one of the allowed symbols
-        def self.probability(probability,
-                             ignore_parent: false,
-                             apply_probability_to: :root_spans_and_remote_parent)
+        def self.probability(probability)
           raise ArgumentError, 'probability must be in range [0.0, 1.0]' unless (0.0..1.0).include?(probability)
-          raise ArgumentError, 'apply_probability_to' unless APPLY_PROBABILITY_TO_SYMBOLS.include?(apply_probability_to)
 
-          ProbabilitySampler.new(probability,
-                                 ignore_parent: ignore_parent,
-                                 apply_to_remote_parent: apply_probability_to != :root_spans,
-                                 apply_to_all_spans: apply_probability_to == :all_spans)
+          ProbabilitySampler.new(probability)
         end
       end
     end
