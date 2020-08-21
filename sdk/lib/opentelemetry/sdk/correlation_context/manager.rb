@@ -48,6 +48,16 @@ module OpenTelemetry
           correlations_for(context)[key]
         end
 
+        # Returns the correlations
+        #
+        # @param [optional Context] context The context from which to retrieve
+        #   the correlations.
+        #   Defaults to +Context.current+
+        # @return [Hash]
+        def values(context: Context.current)
+          correlations_for(context).dup.freeze
+        end
+
         # Returns a new context with new key-value pair
         #
         # @param [String] key The key to store this value under
