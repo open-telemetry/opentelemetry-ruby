@@ -142,13 +142,6 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(events.first.timestamp).must_equal(ts)
     end
 
-    it 'add an event as event formatter' do
-      span.add_event { OpenTelemetry::Trace::Event.new(name: 'c') }
-      events = span.events
-      _(events.size).must_equal(1)
-      _(events.first.name).must_equal('c')
-    end
-
     it 'does not add an event if span is ended' do
       span.finish
       span.add_event(name: 'will_not_be_added')
