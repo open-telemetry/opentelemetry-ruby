@@ -120,18 +120,18 @@ module OpenTelemetry
           self
         end
 
-        # Record an error during the execution of this span. Multiple errors
+        # Record an exception during the execution of this span. Multiple exceptions
         # can be recorded on a span.
         #
-        # @param [Exception] error The error to be recorded
+        # @param [Exception] exception The exception to be recorded
         #
         # @return [void]
-        def record_error(error)
+        def record_exception(exception)
           add_event(name: 'exception',
                     attributes: {
-                      'exception.type' => error.class.to_s,
-                      'exception.message' => error.message,
-                      'exception.stacktrace' => error.full_message(highlight: false, order: :top)
+                      'exception.type' => exception.class.to_s,
+                      'exception.message' => exception.message,
+                      'exception.stacktrace' => exception.full_message(highlight: false, order: :top)
                     })
         end
 

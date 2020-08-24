@@ -181,7 +181,7 @@ describe OpenTelemetry::SDK::Trace::Span do
     end
   end
 
-  describe '#record_error' do
+  describe '#record_exception' do
     let(:trace_config) do
       TraceConfig.new(
         max_attributes_count: 10,
@@ -197,7 +197,7 @@ describe OpenTelemetry::SDK::Trace::Span do
     end
 
     it 'records error as an event' do
-      span.record_error(error)
+      span.record_exception(error)
       events = span.events
       _(events.size).must_equal(1)
 
@@ -210,7 +210,7 @@ describe OpenTelemetry::SDK::Trace::Span do
     end
 
     it 'records multiple errors' do
-      3.times { span.record_error(error) }
+      3.times { span.record_exception(error) }
       events = span.events
       _(events.size).must_equal(3)
 

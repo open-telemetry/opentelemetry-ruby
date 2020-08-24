@@ -52,9 +52,9 @@ describe OpenTelemetry::Trace::Span do
     end
   end
 
-  describe '#record_error' do
+  describe '#record_exception' do
     it 'returns nil' do
-      _(span.record_error(StandardError.new('oops'))).must_be_nil
+      _(span.record_exception(StandardError.new('oops'))).must_be_nil
     end
   end
 
