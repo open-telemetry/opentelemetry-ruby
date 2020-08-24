@@ -41,11 +41,11 @@ end
 
 require 'opentelemetry/trace/event'
 require 'opentelemetry/trace/link'
-require 'opentelemetry/trace/propagation'
 require 'opentelemetry/trace/trace_flags'
 require 'opentelemetry/trace/span_context'
 require 'opentelemetry/trace/span_kind'
 require 'opentelemetry/trace/span'
 require 'opentelemetry/trace/status'
+require 'opentelemetry/trace/propagation'
 require 'opentelemetry/trace/tracer'
 require 'opentelemetry/trace/tracer_provider'
