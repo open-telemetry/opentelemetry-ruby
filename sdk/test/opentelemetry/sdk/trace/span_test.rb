@@ -203,10 +203,10 @@ describe OpenTelemetry::SDK::Trace::Span do
 
       ev = events[0]
 
-      _(ev.name).must_equal('error')
-      _(ev.attributes['error.type']).must_equal(error.class.to_s)
-      _(ev.attributes['error.message']).must_equal(error.message)
-      _(ev.attributes['error.stack']).must_equal(error.backtrace.join("\n"))
+      _(ev.name).must_equal('exception')
+      _(ev.attributes['exception.type']).must_equal(error.class.to_s)
+      _(ev.attributes['exception.message']).must_equal(error.message)
+      _(ev.attributes['exception.stacktrace']).must_equal(error.full_message(highlight: false, order: :top))
     end
 
     it 'records multiple errors' do
@@ -215,9 +215,9 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(events.size).must_equal(3)
 
       events.each do |ev|
-        _(ev.attributes['error.type']).must_equal(error.class.to_s)
-        _(ev.attributes['error.message']).must_equal(error.message)
-        _(ev.attributes['error.stack']).must_equal(error.backtrace.join("\n"))
+        _(ev.attributes['exception.type']).must_equal(error.class.to_s)
+        _(ev.attributes['exception.message']).must_equal(error.message)
+        _(ev.attributes['exception.stacktrace']).must_equal(error.full_message(highlight: false, order: :top))
       end
     end
   end

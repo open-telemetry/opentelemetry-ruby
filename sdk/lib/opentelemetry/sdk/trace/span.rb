@@ -127,11 +127,11 @@ module OpenTelemetry
         #
         # @return [void]
         def record_error(error)
-          add_event(name: 'error',
+          add_event(name: 'exception',
                     attributes: {
-                      'error.type' => error.class.to_s,
-                      'error.message' => error.message,
-                      'error.stack' => error.backtrace.join("\n")
+                      'exception.type' => error.class.to_s,
+                      'exception.message' => error.message,
+                      'exception.stacktrace' => error.full_message(highlight: false, order: :top)
                     })
         end
 
