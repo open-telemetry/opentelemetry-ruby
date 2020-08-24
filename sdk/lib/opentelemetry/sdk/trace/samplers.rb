@@ -7,15 +7,15 @@
 require 'opentelemetry/sdk/trace/samplers/decision'
 require 'opentelemetry/sdk/trace/samplers/result'
 require 'opentelemetry/sdk/trace/samplers/constant_sampler'
-require 'opentelemetry/sdk/trace/samplers/parent_or_else'
-require 'opentelemetry/sdk/trace/samplers/probability_sampler'
+require 'opentelemetry/sdk/trace/samplers/parent_based'
+require 'opentelemetry/sdk/trace/samplers/trace_id_ratio_based'
 
 module OpenTelemetry
   module SDK
     module Trace
       # The Samplers module contains the sampling logic for OpenTelemetry. The
-      # reference implementation provides a {ProbabilitySampler}, {ALWAYS_ON},
-      # {ALWAYS_OFF}, and {ParentOrElse}.
+      # reference implementation provides a {TraceIdRatioBased}, {ALWAYS_ON},
+      # {ALWAYS_OFF}, and {ParentBased}.
       #
       # Custom samplers can be provided by SDK users. The required interface is:
       #
@@ -50,57 +50,46 @@ module OpenTelemetry
         # Returns a {Result} with {Decision::NOT_RECORD}.
         ALWAYS_OFF = ConstantSampler.new(result: NOT_RECORD, description: 'AlwaysOffSampler')
 
-        # Returns a new sampler. It either respects the parent span's sampling
-        # decision or delegates to delegate_sampler for root spans.
+        # Returns a new sampler. It delegates to samplers according to the following rules:
         #
-        # @param [Sampler] delegate_sampler The sampler to which the sampling
-        #   decision is delegated for root spans.
-        def self.parent_or_else(delegate_sampler)
-          ParentOrElse.new(delegate_sampler)
+        # | Parent | parent.remote? | parent.trace_flags.sampled? | Invoke sampler |
+        # |--|--|--|--|
+        # | absent | n/a | n/a | root |
+        # | present | true | true | remote_parent_sampled |
+        # | present | true | false | remote_parent_not_sampled |
+        # | present | false | true | local_parent_sampled |
+        # | present | false | false | local_parent_not_sampled |
+        #
+        # @param [Sampler] root The sampler to which the sampling
+        #   decision is delegated for spans with no parent (root spans).
+        # @param [optional Sampler] remote_parent_sampled The sampler to which the sampling
+        #   decision is delegated for remote parent sampled spans. Defaults to ALWAYS_ON.
+        # @param [optional Sampler] remote_parent_not_sampled The sampler to which the sampling
+        #   decision is delegated for remote parent not sampled spans. Defaults to ALWAYS_OFF.
+        # @param [optional Sampler] local_parent_sampled The sampler to which the sampling
+        #   decision is delegated for local parent sampled spans. Defaults to ALWAYS_ON.
+        # @param [optional Sampler] local_parent_not_sampled The sampler to which the sampling
+        #   decision is delegated for local parent not sampld spans. Defaults to ALWAYS_OFF.
+        def self.parent_based(
+          root:,
+          remote_parent_sampled: ALWAYS_ON,
+          remote_parent_not_sampled: ALWAYS_OFF,
+          local_parent_sampled: ALWAYS_ON,
+          local_parent_not_sampled: ALWAYS_OFF
+        )
+          ParentBased.new(root, remote_parent_sampled, remote_parent_not_sampled, local_parent_sampled, local_parent_not_sampled)
         end
 
-        # Convenience method. Equivalent to:
+        # Returns a new sampler. The ratio describes the proportion of the trace ID
+        # space that is sampled.
         #
-        #   delegate = OpenTelemetry::SDK::Trace::Samplers.ALWAYS_ON
-        #   OpenTelemetry::SDK::Trace::Samplers.parent_or_else(delegate)
-        #
-        # @return [ParentOrElse] returns a parent_or_else sampler
-        def self.parent_or_always_on
-          ParentOrElse.new(ALWAYS_ON)
-        end
-
-        # Convenience method. Equivalent to:
-        #
-        #   delegate = OpenTelemetry::SDK::Trace::Samplers.ALWAYS_OFF
-        #   OpenTelemetry::SDK::Trace::Samplers.parent_or_else(delegate)
-        #
-        # @return [ParentOrElse] returns a parent_or_else sampler
-        def self.parent_or_always_off
-          ParentOrElse.new(ALWAYS_OFF)
-        end
-
-        # Convenience method. Equivalent to:
-        #
-        #   delegate = OpenTelemetry::SDK::Trace::Samplers.probability(probability)
-        #   OpenTelemetry::SDK::Trace::Samplers.parent_or_else(delegate)
-        #
-        # @param [Numeric] probability The desired probability of sampling.
+        # @param [Numeric] ratio The desired sampling ratio.
         #   Must be within [0.0, 1.0].
-        # @return [ParentOrElse] returns a parent_or_else sampler
-        def self.parent_or_probability(probability)
-          ParentOrElse.new(probability(probability))
-        end
+        # @raise [ArgumentError] if ratio is out of range
+        def self.trace_id_ratio_based(ratio)
+          raise ArgumentError, 'ratio must be in range [0.0, 1.0]' unless (0.0..1.0).include?(ratio)
 
-        # Returns a new sampler. The probability of sampling a trace is equal
-        # to that of the specified probability.
-        #
-        # @param [Numeric] probability The desired probability of sampling.
-        #   Must be within [0.0, 1.0].
-        # @raise [ArgumentError] if probability is out of range
-        def self.probability(probability)
-          raise ArgumentError, 'probability must be in range [0.0, 1.0]' unless (0.0..1.0).include?(probability)
-
-          ProbabilitySampler.new(probability)
+          TraceIdRatioBased.new(ratio)
         end
       end
     end

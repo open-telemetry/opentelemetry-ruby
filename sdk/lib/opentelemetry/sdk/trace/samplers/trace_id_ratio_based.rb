@@ -11,13 +11,13 @@ module OpenTelemetry
         # @api private
         #
         # Implements sampling based on a probability.
-        class ProbabilitySampler
+        class TraceIdRatioBased
           attr_reader :description
 
           def initialize(probability)
             @probability = probability
             @id_upper_bound = (probability * (2**64 - 1)).ceil
-            @description = format('ProbabilitySampler{%.6f}', probability)
+            @description = format('TraceIdRatioBased{%.6f}', probability)
           end
 
           # @api private
