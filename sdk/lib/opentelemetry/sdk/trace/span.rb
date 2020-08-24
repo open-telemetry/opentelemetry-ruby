@@ -97,7 +97,7 @@ module OpenTelemetry
         # @return [self] returns itself
         def add_event(name, attributes: nil, timestamp: nil)
           super
-          event = OpenTelemetry::Trace::Event.new(name: name, attributes: attributes, timestamp: timestamp || Time.now)
+          event = Event.new(name: name, attributes: attributes, timestamp: timestamp || Time.now)
 
           @mutex.synchronize do
             if @ended
@@ -316,7 +316,7 @@ module OpenTelemetry
             attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
             excess = attrs.size - max_attributes_per_event
             excess.times { attrs.shift } if excess.positive?
-            event = OpenTelemetry::Trace::Event.new(name: event.name, attributes: attrs, timestamp: event.timestamp)
+            event = Event.new(name: event.name, attributes: attrs, timestamp: event.timestamp)
           end
           events << event
         end

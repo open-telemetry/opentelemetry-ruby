@@ -39,7 +39,6 @@ module OpenTelemetry
   end
 end
 
-require 'opentelemetry/trace/event'
 require 'opentelemetry/trace/link'
 require 'opentelemetry/trace/propagation'
 require 'opentelemetry/trace/trace_flags'

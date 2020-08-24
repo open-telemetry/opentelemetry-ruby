@@ -58,7 +58,7 @@ module OpenTelemetry
       end
       alias []= set_attribute
 
-      # Add an Event to a {Span}.
+      # Add an event to a {Span}.
       #
       # Example:
       #
