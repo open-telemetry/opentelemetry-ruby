@@ -26,7 +26,7 @@ Benchmark.ipsa do |x|
   end
 
   x.report 'add_event' do
-    span.add_event(name: 'test event', attributes: attributes)
+    span.add_event('test event', attributes: attributes)
   end
 
   x.compare!
