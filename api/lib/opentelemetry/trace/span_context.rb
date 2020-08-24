@@ -52,16 +52,12 @@ module OpenTelemetry
       # Returns the binary representation of the trace ID.
       #
       # @return [String] A 16-byte binary string.
-      def trace_id
-        @trace_id
-      end
+      attr_reader :trace_id
 
       # Returns the binary representation of the span ID.
       #
       # @return [String] An 8-byte binary string.
-      def span_id
-        @span_id
-      end
+      attr_reader :span_id
 
       # Returns true if the {SpanContext} has a non-zero trace ID and non-zero span ID.
       #
