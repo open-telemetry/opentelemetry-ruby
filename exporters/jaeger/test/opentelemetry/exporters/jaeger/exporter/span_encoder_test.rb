@@ -17,7 +17,7 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter::SpanEncoder do
   it 'encodes attributes in events and the span' do
     attributes = { 'akey' => 'avalue' }
     events = [
-      OpenTelemetry::Trace::Event.new(
+      OpenTelemetry::SDK::Trace::Event.new(
         name: 'event', attributes: { 'ekey' => 'evalue' }
       )
     ]
@@ -40,7 +40,7 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter::SpanEncoder do
   it 'encodes array attribute values in events and the span as JSON strings' do
     attributes = { 'akey' => ['avalue'] }
     events = [
-      OpenTelemetry::Trace::Event.new(
+      OpenTelemetry::SDK::Trace::Event.new(
         name: 'event', attributes: { 'ekey' => ['evalue'] }
       )
     ]

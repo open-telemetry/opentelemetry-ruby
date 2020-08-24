@@ -6,8 +6,8 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::Trace::Event do
-  Event = OpenTelemetry::Trace::Event
+describe OpenTelemetry::SDK::Trace::Event do
+  Event = OpenTelemetry::SDK::Trace::Event
   describe '.new' do
     it 'accepts a name' do
       event = Event.new(name: 'message')

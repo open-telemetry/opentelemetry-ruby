@@ -20,7 +20,7 @@ module OpenTelemetry
                 kind: :producer
               ) do |span|
                 OpenTelemetry.propagation.text.inject(job)
-                span.add_event(name: 'created_at', timestamp: job['created_at'])
+                span.add_event('created_at', timestamp: job['created_at'])
                 yield
               end
             end
