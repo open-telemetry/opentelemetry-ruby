@@ -30,13 +30,13 @@ module OpenTelemetry
           # The global default max number of attributes per {Span}.
           attr_reader :max_attributes_count
 
-          # The global default max number of {OpenTelemetry::Trace::Event}s per {Span}.
+          # The global default max number of {OpenTelemetry::SDK::Trace::Event}s per {Span}.
           attr_reader :max_events_count
 
           # The global default max number of {OpenTelemetry::Trace::Link} entries per {Span}.
           attr_reader :max_links_count
 
-          # The global default max number of attributes per {OpenTelemetry::Trace::Event}.
+          # The global default max number of attributes per {OpenTelemetry::SDK::Trace::Event}.
           attr_reader :max_attributes_per_event
 
           # The global default max number of attributes per {OpenTelemetry::Trace::Link}.
