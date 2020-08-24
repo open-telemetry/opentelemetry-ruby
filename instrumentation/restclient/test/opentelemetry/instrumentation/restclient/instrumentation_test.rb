@@ -55,7 +55,7 @@ describe OpenTelemetry::Instrumentation::RestClient::Instrumentation do
       assert_requested(
         :get,
         'http://example.com/success',
-        headers: { 'Traceparent' => "00-#{span.trace_id.unpack1('H*')}-#{span.span_id.unpack1('H*')}-01" }
+        headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
     end
 
@@ -72,7 +72,7 @@ describe OpenTelemetry::Instrumentation::RestClient::Instrumentation do
       assert_requested(
         :get,
         'http://example.com/failure',
-        headers: { 'Traceparent' => "00-#{span.trace_id.unpack1('H*')}-#{span.span_id.unpack1('H*')}-01" }
+        headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
     end
   end

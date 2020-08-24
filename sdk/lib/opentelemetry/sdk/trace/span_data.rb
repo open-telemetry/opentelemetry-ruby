@@ -28,7 +28,21 @@ module OpenTelemetry
                             :span_id,
                             :trace_id,
                             :trace_flags,
-                            :tracestate)
+                            :tracestate) do
+                              # Returns the lowercase [hex encoded](https://tools.ietf.org/html/rfc4648#section-8) span ID.
+                              #
+                              # @return [String] A 16-hex-character lowercase string.
+                              def hex_span_id
+                                span_id.unpack1('H*')
+                              end
+
+                              # Returns the lowercase [hex encoded](https://tools.ietf.org/html/rfc4648#section-8) trace ID.
+                              #
+                              # @return [String] A 32-hex-character lowercase string.
+                              def hex_trace_id
+                                trace_id.unpack1('H*')
+                              end
+                            end
     end
   end
 end
