@@ -62,7 +62,7 @@ module OpenTelemetry
       #
       # Example:
       #
-      #   span.add_event(name: 'event', attributes: {'eager' => true})
+      #   span.add_event('event', attributes: {'eager' => true})
       #
       # Note that the OpenTelemetry project
       # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-semantic-conventions.md
@@ -77,7 +77,7 @@ module OpenTelemetry
       # @param [optional Time] timestamp Optional timestamp for the event.
       #
       # @return [self] returns itself
-      def add_event(name:, attributes: nil, timestamp: nil)
+      def add_event(name, attributes: nil, timestamp: nil)
         self
       end
 

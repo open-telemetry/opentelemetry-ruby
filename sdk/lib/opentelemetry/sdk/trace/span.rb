@@ -81,7 +81,7 @@ module OpenTelemetry
         #
         # Example:
         #
-        #   span.add_event(name: 'event', attributes: {'eager' => true})
+        #   span.add_event('event', attributes: {'eager' => true})
         #
         # Note that the OpenTelemetry project
         # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-semantic-conventions.md
@@ -95,7 +95,7 @@ module OpenTelemetry
         # @param [optional Time] timestamp Optional timestamp for the event.
         #
         # @return [self] returns itself
-        def add_event(name:, attributes: nil, timestamp: nil)
+        def add_event(name, attributes: nil, timestamp: nil)
           super
           event = OpenTelemetry::Trace::Event.new(name: name, attributes: attributes, timestamp: timestamp || Time.now)
 
@@ -118,7 +118,7 @@ module OpenTelemetry
         #
         # @return [void]
         def record_error(error)
-          add_event(name: 'error',
+          add_event('error',
                     attributes: {
                       'error.type' => error.class.to_s,
                       'error.message' => error.message,
