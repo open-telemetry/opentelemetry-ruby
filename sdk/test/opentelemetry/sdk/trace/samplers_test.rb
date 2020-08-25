@@ -21,103 +21,108 @@ describe OpenTelemetry::SDK::Trace::Samplers do
     end
   end
 
-  describe '.parent_or_else' do
-    let(:sampler) { Samplers.parent_or_else(Samplers::ALWAYS_OFF) }
+  describe '.parent_based' do
+    let(:not_a_sampler) { Minitest::Mock.new }
+    let(:trace_id) { OpenTelemetry::Trace.generate_trace_id }
+    let(:result) { Result.new(decision: Decision::RECORD_AND_SAMPLED) }
+    let(:sampled) { OpenTelemetry::Trace::TraceFlags.from_byte(1) }
+    let(:not_sampled) { OpenTelemetry::Trace::TraceFlags.from_byte(0) }
+    let(:remote_sampled_parent_context) { OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, remote: true, trace_flags: sampled) }
+    let(:remote_not_sampled_parent_context) { OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, remote: true, trace_flags: not_sampled) }
+    let(:local_sampled_parent_context) { OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, remote: false, trace_flags: sampled) }
+    let(:local_not_sampled_parent_context) { OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, remote: false, trace_flags: not_sampled) }
 
-    it 'samples if parent is sampled' do
-      context = OpenTelemetry::Trace::SpanContext.new(
-        trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(1)
-      )
-      _(call_sampler(sampler, parent_context: context)).must_be :sampled?
+    it 'provides defaults for parent samplers' do
+      sampler = Samplers.parent_based(root: not_a_sampler)
+      _(call_sampler(sampler, parent_context: remote_sampled_parent_context)).must_be :sampled?
+      _(call_sampler(sampler, parent_context: remote_not_sampled_parent_context)).wont_be :sampled?
+      _(call_sampler(sampler, parent_context: local_sampled_parent_context)).must_be :sampled?
+      _(call_sampler(sampler, parent_context: local_not_sampled_parent_context)).wont_be :sampled?
     end
 
-    it 'does not sample if parent is not sampled' do
-      context = OpenTelemetry::Trace::SpanContext.new(
-        trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(0)
+    it 'delegates sampling of remote sampled spans' do
+      mock_sampler = Minitest::Mock.new
+      mock_sampler.expect(:should_sample?, result, [{ trace_id: trace_id, parent_context: remote_sampled_parent_context, links: nil, name: nil, kind: nil, attributes: nil }])
+      sampler = Samplers.parent_based(
+        root: not_a_sampler,
+        remote_parent_sampled: mock_sampler,
+        remote_parent_not_sampled: not_a_sampler,
+        local_parent_sampled: not_a_sampler,
+        local_parent_not_sampled: not_a_sampler
       )
-      _(call_sampler(sampler, parent_context: context)).wont_be :sampled?
+      OpenTelemetry::Trace.stub :generate_trace_id, trace_id do
+        call_sampler(sampler, parent_context: remote_sampled_parent_context)
+      end
+      mock_sampler.verify
+    end
+
+    it 'delegates sampling of remote not sampled spans' do
+      mock_sampler = Minitest::Mock.new
+      mock_sampler.expect(:should_sample?, result, [{ trace_id: trace_id, parent_context: remote_not_sampled_parent_context, links: nil, name: nil, kind: nil, attributes: nil }])
+      sampler = Samplers.parent_based(
+        root: not_a_sampler,
+        remote_parent_sampled: not_a_sampler,
+        remote_parent_not_sampled: mock_sampler,
+        local_parent_sampled: not_a_sampler,
+        local_parent_not_sampled: not_a_sampler
+      )
+      OpenTelemetry::Trace.stub :generate_trace_id, trace_id do
+        call_sampler(sampler, parent_context: remote_not_sampled_parent_context)
+      end
+      mock_sampler.verify
+    end
+
+    it 'delegates sampling of local sampled spans' do
+      mock_sampler = Minitest::Mock.new
+      mock_sampler.expect(:should_sample?, result, [{ trace_id: trace_id, parent_context: local_sampled_parent_context, links: nil, name: nil, kind: nil, attributes: nil }])
+      sampler = Samplers.parent_based(
+        root: not_a_sampler,
+        remote_parent_sampled: not_a_sampler,
+        remote_parent_not_sampled: not_a_sampler,
+        local_parent_sampled: mock_sampler,
+        local_parent_not_sampled: not_a_sampler
+      )
+      OpenTelemetry::Trace.stub :generate_trace_id, trace_id do
+        call_sampler(sampler, parent_context: local_sampled_parent_context)
+      end
+      mock_sampler.verify
+    end
+
+    it 'delegates sampling of local not sampled spans' do
+      mock_sampler = Minitest::Mock.new
+      mock_sampler.expect(:should_sample?, result, [{ trace_id: trace_id, parent_context: local_not_sampled_parent_context, links: nil, name: nil, kind: nil, attributes: nil }])
+      sampler = Samplers.parent_based(
+        root: not_a_sampler,
+        remote_parent_sampled: not_a_sampler,
+        remote_parent_not_sampled: not_a_sampler,
+        local_parent_sampled: not_a_sampler,
+        local_parent_not_sampled: mock_sampler
+      )
+      OpenTelemetry::Trace.stub :generate_trace_id, trace_id do
+        call_sampler(sampler, parent_context: local_not_sampled_parent_context)
+      end
+      mock_sampler.verify
     end
 
     it 'delegates sampling of root spans' do
-      trace_id = OpenTelemetry::Trace.generate_trace_id
-      result = Result.new(decision: Decision::NOT_RECORD)
       mock_sampler = Minitest::Mock.new
       mock_sampler.expect(:should_sample?, result, [{ trace_id: trace_id, parent_context: nil, links: nil, name: nil, kind: nil, attributes: nil }])
+      sampler = Samplers.parent_based(
+        root: mock_sampler,
+        remote_parent_sampled: not_a_sampler,
+        remote_parent_not_sampled: not_a_sampler,
+        local_parent_sampled: not_a_sampler,
+        local_parent_not_sampled: not_a_sampler
+      )
       OpenTelemetry::Trace.stub :generate_trace_id, trace_id do
-        _(call_sampler(Samplers.parent_or_else(mock_sampler), parent_context: nil)).wont_be :sampled?
+        call_sampler(sampler, parent_context: nil)
       end
       mock_sampler.verify
     end
   end
 
-  describe '.parent_or_always_on' do
-    let(:sampler) { Samplers.parent_or_always_on }
-
-    it 'samples if parent is sampled' do
-      context = OpenTelemetry::Trace::SpanContext.new(
-        trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(1)
-      )
-      _(call_sampler(sampler, parent_context: context)).must_be :sampled?
-    end
-
-    it 'does not sample if parent is not sampled' do
-      context = OpenTelemetry::Trace::SpanContext.new(
-        trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(0)
-      )
-      _(call_sampler(sampler, parent_context: context)).wont_be :sampled?
-    end
-
-    it 'delegates sampling of root spans' do
-      _(call_sampler(sampler)).must_be :sampled?
-    end
-  end
-
-  describe '.parent_or_always_off' do
-    let(:sampler) { Samplers.parent_or_always_off }
-
-    it 'samples if parent is sampled' do
-      context = OpenTelemetry::Trace::SpanContext.new(
-        trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(1)
-      )
-      _(call_sampler(sampler, parent_context: context)).must_be :sampled?
-    end
-
-    it 'does not sample if parent is not sampled' do
-      context = OpenTelemetry::Trace::SpanContext.new(
-        trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(0)
-      )
-      _(call_sampler(sampler, parent_context: context)).wont_be :sampled?
-    end
-
-    it 'delegates sampling of root spans' do
-      _(call_sampler(sampler)).wont_be :sampled?
-    end
-  end
-
-  describe '.parent_or_probability' do
-    let(:sampler) { Samplers.parent_or_probability(2.0 / (2**64 - 1)) }
-
-    it 'samples if parent is sampled' do
-      context = OpenTelemetry::Trace::SpanContext.new(
-        trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(1)
-      )
-      _(call_sampler(sampler, parent_context: context)).must_be :sampled?
-    end
-
-    it 'does not sample if parent is not sampled' do
-      context = OpenTelemetry::Trace::SpanContext.new(
-        trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(0)
-      )
-      _(call_sampler(sampler, parent_context: context)).wont_be :sampled?
-    end
-
-    it 'delegates sampling of root spans' do
-      _(call_sampler(sampler, trace_id: trace_id(1))).must_be :sampled?
-    end
-  end
-
-  describe '.probability' do
-    let(:sampler) { Samplers.probability(Float::MIN) }
+  describe '.trace_id_ratio_based' do
+    let(:sampler) { Samplers.trace_id_ratio_based(Float::MIN) }
     let(:context) do
       OpenTelemetry::Trace::SpanContext.new(
         trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(1)
@@ -125,7 +130,7 @@ describe OpenTelemetry::SDK::Trace::Samplers do
     end
 
     it 'ignores parent sampling' do
-      sampler = Samplers.probability(Float::MIN)
+      sampler = Samplers.trace_id_ratio_based(Float::MIN)
       result = call_sampler(sampler, parent_context: context, trace_id: trace_id(123))
       _(result).wont_be :sampled?
     end
@@ -135,44 +140,44 @@ describe OpenTelemetry::SDK::Trace::Samplers do
       _(result).must_be_instance_of(Result)
     end
 
-    it 'samples if probability is 1' do
-      positive = Samplers.probability(1)
+    it 'samples if ratio is 1' do
+      positive = Samplers.trace_id_ratio_based(1)
       result = call_sampler(positive, trace_id: 'f' * 32)
       _(result).must_be :sampled?
     end
 
-    it 'does not sample if probability is 0' do
-      sampler = Samplers.probability(0)
+    it 'does not sample if ratio is 0' do
+      sampler = Samplers.trace_id_ratio_based(0)
       result = call_sampler(sampler, trace_id: trace_id(1))
       _(result).wont_be :sampled?
     end
 
-    it 'samples the smallest probability larger than the smallest trace_id' do
-      probability = 2.0 / (2**64 - 1)
-      sampler = Samplers.probability(probability)
+    it 'samples the smallest ratio larger than the smallest trace_id' do
+      ratio = 2.0 / (2**64 - 1)
+      sampler = Samplers.trace_id_ratio_based(ratio)
       result = call_sampler(sampler, trace_id: trace_id(1))
       _(result).must_be :sampled?
     end
 
-    it 'does not sample the largest trace_id with probability less than 1' do
-      probability = 1.0.prev_float
-      sampler = Samplers.probability(probability)
+    it 'does not sample the largest trace_id with ratio less than 1' do
+      ratio = 1.0.prev_float
+      sampler = Samplers.trace_id_ratio_based(ratio)
       result = call_sampler(sampler, trace_id: trace_id(0xffff_ffff_ffff_ffff))
       _(result).wont_be :sampled?
     end
 
     it 'ignores the high bits of the trace_id for sampling' do
-      sampler = Samplers.probability(0.5)
+      sampler = Samplers.trace_id_ratio_based(0.5)
       result = call_sampler(sampler, trace_id: trace_id(0x1_0000_0000_0000_0001))
       _(result).must_be :sampled?
     end
 
-    it 'limits probability to the range (0...1)' do
-      _(proc { Samplers.probability(-1) }).must_raise(ArgumentError)
-      _(Samplers.probability(0)).wont_be_nil
-      _(Samplers.probability(0.5)).wont_be_nil
-      _(Samplers.probability(1)).wont_be_nil
-      _(proc { Samplers.probability(2) }).must_raise(ArgumentError)
+    it 'limits ratio to the range (0...1)' do
+      _(proc { Samplers.trace_id_ratio_based(-1) }).must_raise(ArgumentError)
+      _(Samplers.trace_id_ratio_based(0)).wont_be_nil
+      _(Samplers.trace_id_ratio_based(0.5)).wont_be_nil
+      _(Samplers.trace_id_ratio_based(1)).wont_be_nil
+      _(proc { Samplers.trace_id_ratio_based(2) }).must_raise(ArgumentError)
     end
   end
 
