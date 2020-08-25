@@ -15,16 +15,16 @@ module OpenTelemetry
 
       private_constant :USE_MODE_UNSPECIFIED, :USE_MODE_ONE, :USE_MODE_ALL
 
-      attr_writer :logger, :http_extractors, :http_injectors, :text_extractors,
-                  :text_injectors
+      attr_writer :logger, :http_extractors, :http_injectors, :text_map_extractors,
+                  :text_map_injectors
 
       def initialize
         @instrumentation_names = []
         @instrumentation_config_map = {}
         @http_extractors = nil
         @http_injectors = nil
-        @text_extractors = nil
-        @text_injectors = nil
+        @text_map_extractors = nil
+        @text_map_injectors = nil
         @span_processors = []
         @use_mode = USE_MODE_UNSPECIFIED
         @resource = Resources::Resource.telemetry_sdk
@@ -130,8 +130,8 @@ module OpenTelemetry
       def configure_propagation
         OpenTelemetry.propagation.http = create_propagator(@http_injectors || default_http_injectors,
                                                            @http_extractors || default_http_extractors)
-        OpenTelemetry.propagation.text = create_propagator(@text_injectors || default_text_injectors,
-                                                           @text_extractors || default_text_extractors)
+        OpenTelemetry.propagation.text = create_propagator(@text_map_injectors || default_text_map_injectors,
+                                                           @text_map_extractors || default_text_map_extractors)
       end
 
       def create_propagator(injectors, extractors)
@@ -143,7 +143,7 @@ module OpenTelemetry
       end
 
       def default_http_injectors
-        default_text_injectors
+        default_text_map_injectors
       end
 
       def default_http_extractors
@@ -153,17 +153,17 @@ module OpenTelemetry
         ]
       end
 
-      def default_text_injectors
+      def default_text_map_injectors
         [
-          OpenTelemetry::Trace::Propagation::TraceContext.text_injector,
-          OpenTelemetry::CorrelationContext::Propagation.text_injector
+          OpenTelemetry::Trace::Propagation::TraceContext.text_map_injector,
+          OpenTelemetry::CorrelationContext::Propagation.text_map_injector
         ]
       end
 
-      def default_text_extractors
+      def default_text_map_extractors
         [
-          OpenTelemetry::Trace::Propagation::TraceContext.text_extractor,
-          OpenTelemetry::CorrelationContext::Propagation.text_extractor
+          OpenTelemetry::Trace::Propagation::TraceContext.text_map_extractor,
+          OpenTelemetry::CorrelationContext::Propagation.text_map_extractor
         ]
       end
     end

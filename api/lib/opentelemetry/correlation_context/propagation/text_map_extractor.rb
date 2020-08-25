@@ -10,15 +10,15 @@ module OpenTelemetry
   module CorrelationContext
     module Propagation
       # Extracts correlations from carriers in the W3C Correlation Context format
-      class TextExtractor
+      class TextMapExtractor
         include Context::Propagation::DefaultGetter
 
-        # Returns a new TextExtractor that extracts context using the specified
+        # Returns a new TextMapExtractor that extracts context using the specified
         # header key
         #
         # @param [String] correlation_context_key The correlation context header
         #   key used in the carrier
-        # @return [TextExtractor]
+        # @return [TextMapExtractor]
         def initialize(correlation_context_key: 'otcorrelations')
           @correlation_context_key = correlation_context_key
         end

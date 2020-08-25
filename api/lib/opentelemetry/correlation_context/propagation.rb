@@ -5,8 +5,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry/correlation_context/propagation/context_keys'
-require 'opentelemetry/correlation_context/propagation/text_injector'
-require 'opentelemetry/correlation_context/propagation/text_extractor'
+require 'opentelemetry/correlation_context/propagation/text_map_injector'
+require 'opentelemetry/correlation_context/propagation/text_map_extractor'
 
 module OpenTelemetry
   module CorrelationContext
@@ -15,28 +15,28 @@ module OpenTelemetry
     module Propagation
       extend self
 
-      TEXT_EXTRACTOR = TextExtractor.new
-      TEXT_INJECTOR = TextInjector.new
-      RACK_EXTRACTOR = TextExtractor.new(
+      TEXT_MAP_EXTRACTOR = TextMapExtractor.new
+      TEXT_MAP_INJECTOR = TextMapInjector.new
+      RACK_EXTRACTOR = TextMapExtractor.new(
         correlation_context_key: 'HTTP_OTCORRELATIONS'
       )
-      RACK_INJECTOR = TextInjector.new(
+      RACK_INJECTOR = TextMapInjector.new(
         correlation_context_key: 'HTTP_OTCORRELATIONS'
       )
 
-      private_constant :TEXT_INJECTOR, :TEXT_EXTRACTOR, :RACK_INJECTOR,
+      private_constant :TEXT_MAP_INJECTOR, :TEXT_MAP_EXTRACTOR, :RACK_INJECTOR,
                        :RACK_EXTRACTOR
 
       # Returns an extractor that extracts context using the W3C Correlation
       # Context format
-      def text_injector
-        TEXT_INJECTOR
+      def text_map_injector
+        TEXT_MAP_INJECTOR
       end
 
       # Returns an injector that injects context using the W3C Correlation
       # Context format
-      def text_extractor
-        TEXT_EXTRACTOR
+      def text_map_extractor
+        TEXT_MAP_EXTRACTOR
       end
 
       # Returns an extractor that extracts context using the W3C Correlation
