@@ -85,10 +85,10 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       _(span.status.canonical_code).must_equal(
         OpenTelemetry::Trace::Status::UNKNOWN_ERROR
       )
-      _(span.events.first.name).must_equal 'error'
-      _(span.events.first.attributes['error.type']).must_equal 'Mysql2::Error'
-      assert(!span.events.first.attributes['error.message'].nil?)
-      assert(!span.events.first.attributes['error.stack'].nil?)
+      _(span.events.first.name).must_equal 'exception'
+      _(span.events.first.attributes['exception.type']).must_equal 'Mysql2::Error'
+      assert(!span.events.first.attributes['exception.message'].nil?)
+      assert(!span.events.first.attributes['exception.stacktrace'].nil?)
     end
 
     it 'extracts statement type that begins the query' do
@@ -122,10 +122,10 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       _(span.status.canonical_code).must_equal(
         OpenTelemetry::Trace::Status::UNKNOWN_ERROR
       )
-      _(span.events.first.name).must_equal 'error'
-      _(span.events.first.attributes['error.type']).must_equal 'Mysql2::Error'
-      assert(!span.events.first.attributes['error.message'].nil?)
-      assert(!span.events.first.attributes['error.stack'].nil?)
+      _(span.events.first.name).must_equal 'exception'
+      _(span.events.first.attributes['exception.type']).must_equal 'Mysql2::Error'
+      assert(!span.events.first.attributes['exception.message'].nil?)
+      assert(!span.events.first.attributes['exception.stacktrace'].nil?)
     end
   end
 end
