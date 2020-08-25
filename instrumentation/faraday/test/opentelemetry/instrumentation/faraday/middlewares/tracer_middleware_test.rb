@@ -31,8 +31,8 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
     # this is currently a noop but this will future proof the test
     @orig_propagator = OpenTelemetry.propagation.http
     propagator = OpenTelemetry::Context::Propagation::Propagator.new(
-      OpenTelemetry::Trace::Propagation::TraceContext.text_injector,
-      OpenTelemetry::Trace::Propagation::TraceContext.text_extractor
+      OpenTelemetry::Trace::Propagation::TraceContext.text_map_injector,
+      OpenTelemetry::Trace::Propagation::TraceContext.text_map_extractor
     )
     OpenTelemetry.propagation.http = propagator
   end

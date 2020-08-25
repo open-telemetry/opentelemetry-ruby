@@ -8,15 +8,15 @@ module OpenTelemetry
     module Propagation
       module TraceContext
         # Injects context into carriers using the W3C Trace Context format
-        class TextInjector
+        class TextMapInjector
           include Context::Propagation::DefaultSetter
 
-          # Returns a new TextInjector that injects context using the
+          # Returns a new TextMapInjector that injects context using the
           # specified header keys
           #
           # @param [String] traceparent_key The traceparent header key used in the carrier
           # @param [String] tracestate_key The tracestate header key used in the carrier
-          # @return [TextInjector]
+          # @return [TextMapInjector]
           def initialize(traceparent_key: 'traceparent',
                          tracestate_key: 'tracestate')
             @traceparent_key = traceparent_key
