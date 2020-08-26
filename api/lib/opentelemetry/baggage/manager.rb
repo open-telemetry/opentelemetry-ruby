@@ -5,8 +5,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  module CorrelationContext
-    # No op implementation of CorrelationContext::Manager
+  module Baggage
+    # No op implementation of Baggage::Manager
     class Manager
       NOOP_BUILDER = Builder.new
       EMPTY_VALUES = {}.freeze

@@ -6,13 +6,13 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::CorrelationContext::Propagation do
+describe OpenTelemetry::Baggage::Propagation do
   describe '#text_map_extractor, #rack_extractor' do
     it 'returns an instance of TextMapExtractor' do
       %i[text_map_extractor rack_extractor].each do |extractor_method|
-        extractor = OpenTelemetry::CorrelationContext::Propagation.send(extractor_method)
+        extractor = OpenTelemetry::Baggage::Propagation.send(extractor_method)
         _(extractor).must_be_instance_of(
-          OpenTelemetry::CorrelationContext::Propagation::TextMapExtractor
+          OpenTelemetry::Baggage::Propagation::TextMapExtractor
         )
       end
     end
@@ -21,9 +21,9 @@ describe OpenTelemetry::CorrelationContext::Propagation do
   describe '#rack_injector, #rack_injector' do
     it 'returns an instance of TextMapInjector' do
       %i[rack_injector rack_injector].each do |injector_method|
-        injector = OpenTelemetry::CorrelationContext::Propagation.send(injector_method)
+        injector = OpenTelemetry::Baggage::Propagation.send(injector_method)
         _(injector).must_be_instance_of(
-          OpenTelemetry::CorrelationContext::Propagation::TextMapInjector
+          OpenTelemetry::Baggage::Propagation::TextMapInjector
         )
       end
     end

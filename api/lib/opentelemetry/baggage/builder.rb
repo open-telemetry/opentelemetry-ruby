@@ -5,8 +5,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  module CorrelationContext
-    # No op implementation of CorrelationContext::Builder
+  module Baggage
+    # No op implementation of Baggage::Builder
     class Builder
       def set_value(key, value); end
 

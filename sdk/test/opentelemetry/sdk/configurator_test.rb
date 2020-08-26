@@ -60,23 +60,23 @@ describe OpenTelemetry::SDK::Configurator do
       reset_globals
     end
 
-    describe 'correlations' do
-      it 'is an instance of SDK::CorrelationContext::Manager' do
+    describe 'baggage' do
+      it 'is an instance of SDK::Baggage::Manager' do
         configurator.configure
 
-        _(OpenTelemetry.correlations).must_be_instance_of(
-          OpenTelemetry::SDK::CorrelationContext::Manager
+        _(OpenTelemetry.baggage).must_be_instance_of(
+          OpenTelemetry::SDK::Baggage::Manager
         )
       end
     end
 
     describe 'http_injectors' do
-      it 'defaults to trace context and correlation context' do
+      it 'defaults to trace context and baggage' do
         configurator.configure
 
         expected_injectors = [
           OpenTelemetry::Trace::Propagation::TraceContext.text_map_injector,
-          OpenTelemetry::CorrelationContext::Propagation.text_map_injector
+          OpenTelemetry::Baggage::Propagation.text_map_injector
         ]
 
         _(injectors_for(OpenTelemetry.propagation.http)).must_equal(expected_injectors)
@@ -92,12 +92,12 @@ describe OpenTelemetry::SDK::Configurator do
     end
 
     describe '#http_extractors' do
-      it 'defaults to trace context and correlation context' do
+      it 'defaults to trace context and baggage' do
         configurator.configure
 
         expected_extractors = [
           OpenTelemetry::Trace::Propagation::TraceContext.rack_extractor,
-          OpenTelemetry::CorrelationContext::Propagation.rack_extractor
+          OpenTelemetry::Baggage::Propagation.rack_extractor
         ]
 
         _(extractors_for(OpenTelemetry.propagation.http)).must_equal(expected_extractors)
@@ -113,12 +113,12 @@ describe OpenTelemetry::SDK::Configurator do
     end
 
     describe 'text_map_injectors' do
-      it 'defaults to trace context and correlation context' do
+      it 'defaults to trace context and baggage' do
         configurator.configure
 
         expected_injectors = [
           OpenTelemetry::Trace::Propagation::TraceContext.text_map_injector,
-          OpenTelemetry::CorrelationContext::Propagation.text_map_injector
+          OpenTelemetry::Baggage::Propagation.text_map_injector
         ]
 
         _(injectors_for(OpenTelemetry.propagation.text)).must_equal(expected_injectors)
@@ -134,12 +134,12 @@ describe OpenTelemetry::SDK::Configurator do
     end
 
     describe '#text_map_extractors' do
-      it 'defaults to trace context and correlation context' do
+      it 'defaults to trace context and baggage' do
         configurator.configure
 
         expected_extractors = [
           OpenTelemetry::Trace::Propagation::TraceContext.text_map_extractor,
-          OpenTelemetry::CorrelationContext::Propagation.text_map_extractor
+          OpenTelemetry::Baggage::Propagation.text_map_extractor
         ]
 
         _(extractors_for(OpenTelemetry.propagation.text)).must_equal(expected_extractors)

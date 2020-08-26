@@ -89,7 +89,7 @@ module OpenTelemetry
       #   - install instrumentation
       def configure
         OpenTelemetry.logger = logger
-        OpenTelemetry.correlations = CorrelationContext::Manager.new
+        OpenTelemetry.baggage = Baggage::Manager.new
         configure_propagation
         configure_span_processors
         OpenTelemetry.tracer_provider = tracer_provider
@@ -149,21 +149,21 @@ module OpenTelemetry
       def default_http_extractors
         [
           OpenTelemetry::Trace::Propagation::TraceContext.rack_extractor,
-          OpenTelemetry::CorrelationContext::Propagation.rack_extractor
+          OpenTelemetry::Baggage::Propagation.rack_extractor
         ]
       end
 
       def default_text_map_injectors
         [
           OpenTelemetry::Trace::Propagation::TraceContext.text_map_injector,
-          OpenTelemetry::CorrelationContext::Propagation.text_map_injector
+          OpenTelemetry::Baggage::Propagation.text_map_injector
         ]
       end
 
       def default_text_map_extractors
         [
           OpenTelemetry::Trace::Propagation::TraceContext.text_map_extractor,
-          OpenTelemetry::CorrelationContext::Propagation.text_map_extractor
+          OpenTelemetry::Baggage::Propagation.text_map_extractor
         ]
       end
     end

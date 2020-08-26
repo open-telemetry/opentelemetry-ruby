@@ -137,7 +137,7 @@ not attempt to maintain backward compatibility with the alpha release.
 | Tracing SDK                     | Alpha v0.4.0  |                   | April 16 2020     |
 | Trace Context Propagation       | Alpha v0.4.0  |                   | April 16 2020     |
 | Jaeger Trace Exporter           | Alpha v0.4.0  |                   | April 16 2020     |
-| Correlation Context Propagation | Alpha v0.4.0  |                   | April 16 2020     |
+| Baggage Propagation             | Alpha v0.4.0  |                   | April 16 2020     |
 | Metrics API                     | Unknown       | Unknown           | Unknown           |
 | Metrics SDK                     | Unknown       | Unknown           | Unknown           |
 | Prometheus Metrics Exporter     | Unknown       | Unknown           | Unknown           |
