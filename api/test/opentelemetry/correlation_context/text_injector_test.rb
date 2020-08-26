@@ -6,9 +6,9 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::CorrelationContext::Propagation::TextInjector do
+describe OpenTelemetry::CorrelationContext::Propagation::TextMapInjector do
   let(:injector) do
-    OpenTelemetry::CorrelationContext::Propagation::TextInjector.new
+    OpenTelemetry::CorrelationContext::Propagation::TextMapInjector.new
   end
   let(:header_key) do
     'otcorrelations'

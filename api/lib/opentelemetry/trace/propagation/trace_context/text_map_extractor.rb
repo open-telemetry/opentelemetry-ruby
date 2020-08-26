@@ -8,15 +8,15 @@ module OpenTelemetry
     module Propagation
       module TraceContext
         # Extracts context from carriers in the W3C Trace Context format
-        class TextExtractor
+        class TextMapExtractor
           include Context::Propagation::DefaultGetter
 
-          # Returns a new TextExtractor that extracts context using the
+          # Returns a new TextMapExtractor that extracts context using the
           # specified header keys
           #
           # @param [String] traceparent_key The traceparent header key used in the carrier
           # @param [String] tracestate_key The tracestate header key used in the carrier
-          # @return [TextExtractor]
+          # @return [TextMapExtractor]
           def initialize(traceparent_key: 'traceparent',
                          tracestate_key: 'tracestate')
             @traceparent_key = traceparent_key

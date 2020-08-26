@@ -6,9 +6,9 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::CorrelationContext::Propagation::TextExtractor do
+describe OpenTelemetry::CorrelationContext::Propagation::TextMapExtractor do
   let(:extractor) do
-    OpenTelemetry::CorrelationContext::Propagation::TextExtractor.new
+    OpenTelemetry::CorrelationContext::Propagation::TextMapExtractor.new
   end
   let(:header_key) do
     'otcorrelations'

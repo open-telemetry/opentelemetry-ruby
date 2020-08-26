@@ -5,8 +5,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry/trace/propagation/trace_context/trace_parent'
-require 'opentelemetry/trace/propagation/trace_context/text_extractor'
-require 'opentelemetry/trace/propagation/trace_context/text_injector'
+require 'opentelemetry/trace/propagation/trace_context/text_map_extractor'
+require 'opentelemetry/trace/propagation/trace_context/text_map_injector'
 
 module OpenTelemetry
   module Trace
@@ -16,30 +16,30 @@ module OpenTelemetry
       module TraceContext
         extend self
 
-        TEXT_EXTRACTOR = TextExtractor.new
-        TEXT_INJECTOR = TextInjector.new
-        RACK_EXTRACTOR = TextExtractor.new(
+        TEXT_MAP_EXTRACTOR = TextMapExtractor.new
+        TEXT_MAP_INJECTOR = TextMapInjector.new
+        RACK_EXTRACTOR = TextMapExtractor.new(
           traceparent_key: 'HTTP_TRACEPARENT',
           tracestate_key: 'HTTP_TRACESTATE'
         )
-        RACK_INJECTOR = TextInjector.new(
+        RACK_INJECTOR = TextMapInjector.new(
           traceparent_key: 'HTTP_TRACEPARENT',
           tracestate_key: 'HTTP_TRACESTATE'
         )
 
-        private_constant :TEXT_INJECTOR, :TEXT_EXTRACTOR,
+        private_constant :TEXT_MAP_INJECTOR, :TEXT_MAP_EXTRACTOR,
                          :RACK_INJECTOR, :RACK_EXTRACTOR
 
         # Returns an extractor that extracts context using the W3C Trace Context
         # format
-        def text_extractor
-          TEXT_EXTRACTOR
+        def text_map_extractor
+          TEXT_MAP_EXTRACTOR
         end
 
         # Returns an injector that injects context using the W3C Trace Context
         # format
-        def text_injector
-          TEXT_INJECTOR
+        def text_map_injector
+          TEXT_MAP_INJECTOR
         end
 
         # Returns an extractor that extracts context using the W3C Trace Context
