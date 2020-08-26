@@ -20,7 +20,7 @@ OpenTelemetry::SDK.configure
 class OpenTelemetryMiddleware
   def initialize(app)
     @app = app
-    @tracer = OpenTelemetry.tracer_provider.tracer('sinatra', 'semver:1.0')
+    @tracer = OpenTelemetry.tracer_provider.tracer('sinatra', '1.0')
   end
 
   def call(env)

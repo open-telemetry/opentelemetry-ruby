@@ -22,7 +22,7 @@ describe OpenTelemetry::SDK::Configurator do
       {
         'telemetry.sdk.name' => 'opentelemetry',
         'telemetry.sdk.language' => 'ruby',
-        'telemetry.sdk.version' => "semver:#{OpenTelemetry::SDK::VERSION}",
+        'telemetry.sdk.version' => OpenTelemetry::SDK::VERSION,
         'test_key' => 'test_value'
       }
     end
