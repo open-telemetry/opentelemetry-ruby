@@ -132,10 +132,10 @@ module OpenTelemetry
           attr_reader :spans, :max_queue_size, :batch_size
 
           def maybe_timeout(timeout, start_time)
-            unless timeout.nil?
-              timeout = timeout - (Time.now - start_time)
-              timeout.positive? ? timeout : 0
-            end
+            return nil if timeout.nil?
+
+            timeout -= (Time.now - start_time)
+            timeout.positive? ? timeout : 0
           end
 
           def work

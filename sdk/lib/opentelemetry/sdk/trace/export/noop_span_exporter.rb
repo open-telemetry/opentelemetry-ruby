@@ -33,7 +33,7 @@ module OpenTelemetry
           # Called when {TracerProvider#shutdown} is called, if this exporter is
           # registered to a {TracerProvider} object.
           #
-          # @param [optional Numeric] timeout An optional timeout in seconds. 
+          # @param [optional Numeric] timeout An optional timeout in seconds.
           def shutdown(timeout: nil)
             @stopped = true
             SUCCESS

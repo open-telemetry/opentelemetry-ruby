@@ -50,7 +50,7 @@ module OpenTelemetry
         #
         # After this is called all the newly created {Span}s will be no-op.
         #
-        # @param [optional Numeric] timeout An optional timeout in seconds. 
+        # @param [optional Numeric] timeout An optional timeout in seconds.
         def shutdown(timeout: nil)
           @mutex.synchronize do
             if @stopped

@@ -47,6 +47,7 @@ module OpenTelemetry
               @span_exporters.map do |processor|
                 remaining_timeout = timeout - (Time.now - start_time)
                 return TIMEOUT unless remaining_timeout.positive?
+
                 processor.shutdown(timeout: timeout)
               end.uniq.max
             end
