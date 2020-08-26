@@ -59,7 +59,7 @@ module OpenTelemetry
         # meanings.
         #
         # @param [String] key
-        # @param [String, Boolean, Numeric] value
+        # @param [String, Boolean, Numeric, Array<String, Numeric, Boolean>] value
         #
         # @return [self] returns itself
         def set_attribute(key, value)
