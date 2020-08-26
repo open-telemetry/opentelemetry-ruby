@@ -39,8 +39,8 @@ describe OpenTelemetry::SDK::Trace::MultiSpanProcessor do
   end
 
   it 'implements #force_flush' do
-    mock_processor1.expect :force_flush, nil
-    mock_processor2.expect :force_flush, nil
+    mock_processor1.expect :force_flush, nil, [{ timeout: nil }]
+    mock_processor2.expect :force_flush, nil, [{ timeout: nil }]
 
     processor.force_flush
 
@@ -49,8 +49,8 @@ describe OpenTelemetry::SDK::Trace::MultiSpanProcessor do
   end
 
   it 'implements #shutdown' do
-    mock_processor1.expect :shutdown, nil
-    mock_processor2.expect :shutdown, nil
+    mock_processor1.expect :shutdown, nil, [{ timeout: nil }]
+    mock_processor2.expect :shutdown, nil, [{ timeout: nil }]
 
     processor.shutdown
 

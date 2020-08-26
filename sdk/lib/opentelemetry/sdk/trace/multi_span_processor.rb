@@ -63,7 +63,7 @@ module OpenTelemetry
               remaining_timeout = timeout - (Time.now - start_time)
               return Export::TIMEOUT unless remaining_timeout.positive?
 
-              processor.force_flush(timeout: timeout)
+              processor.force_flush(timeout: Internal.maybe_timeout(timeout, start_time))
             end.uniq.max
           end
         end
@@ -82,7 +82,7 @@ module OpenTelemetry
               remaining_timeout = timeout - (Time.now - start_time)
               return Export::TIMEOUT unless remaining_timeout.positive?
 
-              processor.shutdown(timeout: timeout)
+              processor.shutdown(timeout: Internal.maybe_timeout(timeout, start_time))
             end.uniq.max
           end
         end

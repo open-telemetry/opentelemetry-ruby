@@ -78,8 +78,8 @@ describe OpenTelemetry::SDK::Trace::Export::MultiSpanExporter do
   end
 
   it 'forwards a #shutdown call to all exporters' do
-    mock_span_exporter.expect :shutdown, nil
-    mock_span_exporter2.expect :shutdown, nil
+    mock_span_exporter.expect :shutdown, nil, [{ timeout: nil }]
+    mock_span_exporter2.expect :shutdown, nil, [{ timeout: nil }]
 
     exporter_multi.shutdown
     mock_span_exporter.verify

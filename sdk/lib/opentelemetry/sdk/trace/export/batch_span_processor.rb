@@ -101,11 +101,21 @@ module OpenTelemetry
               reset_on_fork(restart_thread: false) if @keep_running
               spans.shift(spans.size)
             end
-            until snapshot.empty? || maybe_timeout(timeout, start_time)&.zero?
+            until snapshot.empty? || Internal.maybe_timeout(timeout, start_time)&.zero?
               batch = snapshot.shift(@batch_size).map!(&:to_span_data)
               result_code = @exporter.export(batch)
               report_result(result_code, batch)
             end
+
+            # Unshift the remaining spans if we timed out. We drop excess spans from
+            # the snapshot because they're older than any spans in the spans buffer.
+            lock do
+              n = spans.size + snapshot.size - max_queue_size
+              snapshot.shift(n) if n.positive?
+              spans.unshift(snapshot) unless snapshot.empty?
+              @condition.signal if spans.size > max_queue_size / 2
+            end
+
             SUCCESS
           end
 
@@ -123,20 +133,13 @@ module OpenTelemetry
             end
 
             @thread.join(timeout)
-            force_flush(timeout: maybe_timeout(timeout, start_time))
-            @exporter.shutdown(timeout: maybe_timeout(timeout, start_time))
+            force_flush(timeout: Internal.maybe_timeout(timeout, start_time))
+            @exporter.shutdown(timeout: Internal.maybe_timeout(timeout, start_time))
           end
 
           private
 
           attr_reader :spans, :max_queue_size, :batch_size
-
-          def maybe_timeout(timeout, start_time)
-            return nil if timeout.nil?
-
-            timeout -= (Time.now - start_time)
-            timeout.positive? ? timeout : 0
-          end
 
           def work
             loop do

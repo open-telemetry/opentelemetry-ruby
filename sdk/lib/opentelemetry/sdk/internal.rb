@@ -47,6 +47,16 @@ module OpenTelemetry
       def valid_attributes?(attrs)
         attrs.nil? || attrs.all? { |k, v| valid_key?(k) && valid_value?(v) }
       end
+
+      # @api private
+      #
+      # Returns nil if timeout is nil, 0 if timeout has expired, or the remaining (positive) time left in seconds.
+      def maybe_timeout(timeout, start_time)
+        return nil if timeout.nil?
+
+        timeout -= (Time.now - start_time)
+        timeout.positive? ? timeout : 0
+      end
     end
   end
 end

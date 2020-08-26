@@ -48,7 +48,7 @@ module OpenTelemetry
                 remaining_timeout = timeout - (Time.now - start_time)
                 return TIMEOUT unless remaining_timeout.positive?
 
-                processor.shutdown(timeout: timeout)
+                processor.shutdown(timeout: Internal.maybe_timeout(timeout, start_time))
               end.uniq.max
             end
           end
