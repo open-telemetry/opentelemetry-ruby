@@ -17,7 +17,7 @@ host = ENV.fetch('HTTP_EXAMPLE_HOST', '0.0.0.0')
 OpenTelemetry::SDK.configure
 
 # Configure tracer
-tracer = OpenTelemetry.tracer_provider.tracer('faraday', 'semver:1.0')
+tracer = OpenTelemetry.tracer_provider.tracer('faraday', '1.0')
 
 connection = Faraday.new("http://#{host}:4567")
 url = '/hello'
