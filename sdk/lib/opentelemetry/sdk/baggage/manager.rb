@@ -7,37 +7,37 @@
 module OpenTelemetry
   module SDK
     module Baggage
-      # Manages correlation context
+      # Manages baggage
       class Manager
-        CORRELATION_CONTEXT_KEY = OpenTelemetry::Baggage::Propagation::ContextKeys.baggage_key
-        EMPTY_CORRELATION_CONTEXT = {}.freeze
-        private_constant(:CORRELATION_CONTEXT_KEY, :EMPTY_CORRELATION_CONTEXT)
+        BAGGAGE_KEY = OpenTelemetry::Baggage::Propagation::ContextKeys.baggage_key
+        EMPTY_BAGGAGE = {}.freeze
+        private_constant(:BAGGAGE_KEY, :EMPTY_BAGGAGE)
 
-        # Used to chain modifications to correlation context. The result is a
-        # context with an updated correlation context. If only a single
-        # modification is being made to correlation context, use the other
+        # Used to chain modifications to baggage. The result is a
+        # context with an updated baggage. If only a single
+        # modification is being made to baggage, use the other
         # methods on +Manager+, if multiple modifications are being made, use
         # this one.
         #
         # @param [optional Context] context The context to update with with new
-        #   modified correlation context. Defaults to +Context.current+
+        #   modified baggage. Defaults to +Context.current+
         # @return [Context]
         def build_context(context: Context.current)
-          builder = Builder.new(correlations_for(context).dup)
+          builder = Builder.new(baggage_for(context).dup)
           yield builder
-          context.set_value(CORRELATION_CONTEXT_KEY, builder.entries)
+          context.set_value(BAGGAGE_KEY, builder.entries)
         end
 
-        # Returns a new context with empty correlations
+        # Returns a new context with empty baggage
         #
-        # @param [optional Context] context Context to clear correlations from. Defaults
+        # @param [optional Context] context Context to clear baggage from. Defaults
         #   to +Context.current+
         # @return [Context]
         def clear(context: Context.current)
-          context.set_value(CORRELATION_CONTEXT_KEY, EMPTY_CORRELATION_CONTEXT)
+          context.set_value(BAGGAGE_KEY, EMPTY_BAGGAGE)
         end
 
-        # Returns the corresponding correlation value (or nil) for key
+        # Returns the corresponding baggage value (or nil) for key
         #
         # @param [String] key The lookup key
         # @param [optional Context] context The context from which to retrieve
@@ -45,17 +45,17 @@ module OpenTelemetry
         #   Defaults to +Context.current+
         # @return [String]
         def value(key, context: Context.current)
-          correlations_for(context)[key]
+          baggage_for(context)[key]
         end
 
-        # Returns the correlations
+        # Returns the baggage
         #
         # @param [optional Context] context The context from which to retrieve
-        #   the correlations.
+        #   the baggage.
         #   Defaults to +Context.current+
         # @return [Hash]
         def values(context: Context.current)
-          correlations_for(context).dup.freeze
+          baggage_for(context).dup.freeze
         end
 
         # Returns a new context with new key-value pair
@@ -66,30 +66,30 @@ module OpenTelemetry
         #   value. Defaults to +Context.current+
         # @return [Context]
         def set_value(key, value, context: Context.current)
-          new_correlations = correlations_for(context).dup
-          new_correlations[key] = value
-          context.set_value(CORRELATION_CONTEXT_KEY, new_correlations)
+          new_baggage = baggage_for(context).dup
+          new_baggage[key] = value
+          context.set_value(BAGGAGE_KEY, new_baggage)
         end
 
         # Returns a new context with value at key removed
         #
         # @param [String] key The key to remove
-        # @param [optional Context] context The context to remove correlation
+        # @param [optional Context] context The context to remove baggage
         #   from. Defaults to +Context.current+
         # @return [Context]
         def remove_value(key, context: Context.current)
-          correlations = correlations_for(context)
-          return context unless correlations.key?(key)
+          baggage = baggage_for(context)
+          return context unless baggage.key?(key)
 
-          new_correlations = correlations.dup
-          new_correlations.delete(key)
-          context.set_value(CORRELATION_CONTEXT_KEY, new_correlations)
+          new_baggage = baggage.dup
+          new_baggage.delete(key)
+          context.set_value(BAGGAGE_KEY, new_baggage)
         end
 
         private
 
-        def correlations_for(context)
-          context.value(CORRELATION_CONTEXT_KEY) || EMPTY_CORRELATION_CONTEXT
+        def baggage_for(context)
+          context.value(BAGGAGE_KEY) || EMPTY_BAGGAGE
         end
       end
     end

@@ -23,7 +23,7 @@ require 'opentelemetry/version'
 module OpenTelemetry
   extend self
 
-  attr_writer :tracer_provider, :meter_provider, :correlations
+  attr_writer :tracer_provider, :meter_provider, :baggage
 
   attr_accessor :logger
 
@@ -46,10 +46,10 @@ module OpenTelemetry
   end
 
   # @return [Object, Baggage::Manager] registered
-  #   correlation context manager or a default no-op implementation of the
+  #   baggage manager or a default no-op implementation of the
   #   manager.
-  def correlations
-    @correlations ||= Baggage::Manager.new
+  def baggage
+    @baggage ||= Baggage::Manager.new
   end
 
   # @return [Context::Propagation::Propagation] an instance of the propagation API

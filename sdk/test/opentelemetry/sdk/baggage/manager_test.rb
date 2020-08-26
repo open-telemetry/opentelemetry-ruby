@@ -29,7 +29,7 @@ describe OpenTelemetry::SDK::Baggage::Manager do
 
     describe '.values' do
       describe 'explicit context' do
-        it 'returns context with empty correlation context' do
+        it 'returns context with empty baggage' do
           ctx = manager.set_value('foo', 'bar', context: Context.empty)
           _(manager.values(context: ctx)).must_equal('foo' => 'bar')
 
@@ -38,16 +38,16 @@ describe OpenTelemetry::SDK::Baggage::Manager do
         end
 
         it 'returns all entries' do
-          ctx = manager.build_context do |correlations|
-            correlations.set_value('k1', 'v1')
-            correlations.set_value('k2', 'v2')
+          ctx = manager.build_context do |baggage|
+            baggage.set_value('k1', 'v1')
+            baggage.set_value('k2', 'v2')
           end
           _(manager.values(context: ctx)).must_equal('k1' => 'v1', 'k2' => 'v2')
         end
       end
 
       describe 'implicit context' do
-        it 'returns context with empty correlation context' do
+        it 'returns context with empty baggage' do
           Context.with_current(manager.set_value('foo', 'bar')) do
             _(manager.values).must_equal('foo' => 'bar')
           end
@@ -72,7 +72,7 @@ describe OpenTelemetry::SDK::Baggage::Manager do
 
   describe '.clear' do
     describe 'explicit context' do
-      it 'returns context with empty correlation context' do
+      it 'returns context with empty baggage' do
         ctx = manager.set_value('foo', 'bar', context: Context.empty)
         _(manager.value('foo', context: ctx)).must_equal('bar')
 
@@ -82,7 +82,7 @@ describe OpenTelemetry::SDK::Baggage::Manager do
     end
 
     describe 'implicit context' do
-      it 'returns context with empty correlation context' do
+      it 'returns context with empty baggage' do
         ctx = manager.set_value('foo', 'bar')
         _(manager.value('foo', context: ctx)).must_equal('bar')
 
@@ -94,7 +94,7 @@ describe OpenTelemetry::SDK::Baggage::Manager do
 
   describe '.remove_value' do
     describe 'explicit context' do
-      it 'returns context with key removed from correlation context' do
+      it 'returns context with key removed from baggage' do
         ctx = manager.set_value('foo', 'bar', context: Context.empty)
         _(manager.value('foo', context: ctx)).must_equal('bar')
 
@@ -104,7 +104,7 @@ describe OpenTelemetry::SDK::Baggage::Manager do
     end
 
     describe 'implicit context' do
-      it 'returns context with key removed from correlation context' do
+      it 'returns context with key removed from baggage' do
         Context.with_current(manager.set_value('foo', 'bar')) do
           _(manager.value('foo')).must_equal('bar')
 
@@ -121,9 +121,9 @@ describe OpenTelemetry::SDK::Baggage::Manager do
     describe 'explicit context' do
       it 'sets entries' do
         ctx = initial_context
-        ctx = manager.build_context(context: ctx) do |correlations|
-          correlations.set_value('k2', 'v2')
-          correlations.set_value('k3', 'v3')
+        ctx = manager.build_context(context: ctx) do |baggage|
+          baggage.set_value('k2', 'v2')
+          baggage.set_value('k3', 'v3')
         end
         _(manager.value('k1', context: ctx)).must_equal('v1')
         _(manager.value('k2', context: ctx)).must_equal('v2')
@@ -132,9 +132,9 @@ describe OpenTelemetry::SDK::Baggage::Manager do
 
       it 'removes entries' do
         ctx = initial_context
-        ctx = manager.build_context(context: ctx) do |correlations|
-          correlations.remove_value('k1')
-          correlations.set_value('k2', 'v2')
+        ctx = manager.build_context(context: ctx) do |baggage|
+          baggage.remove_value('k1')
+          baggage.set_value('k2', 'v2')
         end
         _(manager.value('k1', context: ctx)).must_be_nil
         _(manager.value('k2', context: ctx)).must_equal('v2')
@@ -142,9 +142,9 @@ describe OpenTelemetry::SDK::Baggage::Manager do
 
       it 'clears entries' do
         ctx = initial_context
-        ctx = manager.build_context(context: ctx) do |correlations|
-          correlations.clear
-          correlations.set_value('k2', 'v2')
+        ctx = manager.build_context(context: ctx) do |baggage|
+          baggage.clear
+          baggage.set_value('k2', 'v2')
         end
         _(manager.value('k1', context: ctx)).must_be_nil
         _(manager.value('k2', context: ctx)).must_equal('v2')
@@ -154,9 +154,9 @@ describe OpenTelemetry::SDK::Baggage::Manager do
     describe 'implicit context' do
       it 'sets entries' do
         Context.with_current(initial_context) do
-          ctx = manager.build_context do |correlations|
-            correlations.set_value('k2', 'v2')
-            correlations.set_value('k3', 'v3')
+          ctx = manager.build_context do |baggage|
+            baggage.set_value('k2', 'v2')
+            baggage.set_value('k3', 'v3')
           end
           Context.with_current(ctx) do
             _(manager.value('k1')).must_equal('v1')
@@ -170,9 +170,9 @@ describe OpenTelemetry::SDK::Baggage::Manager do
         Context.with_current(initial_context) do
           _(manager.value('k1')).must_equal('v1')
 
-          ctx = manager.build_context do |correlations|
-            correlations.remove_value('k1')
-            correlations.set_value('k2', 'v2')
+          ctx = manager.build_context do |baggage|
+            baggage.remove_value('k1')
+            baggage.set_value('k2', 'v2')
           end
 
           Context.with_current(ctx) do
@@ -186,9 +186,9 @@ describe OpenTelemetry::SDK::Baggage::Manager do
         Context.with_current(initial_context) do
           _(manager.value('k1')).must_equal('v1')
 
-          ctx = manager.build_context do |correlations|
-            correlations.clear
-            correlations.set_value('k2', 'v2')
+          ctx = manager.build_context do |baggage|
+            baggage.clear
+            baggage.set_value('k2', 'v2')
           end
 
           Context.with_current(ctx) do

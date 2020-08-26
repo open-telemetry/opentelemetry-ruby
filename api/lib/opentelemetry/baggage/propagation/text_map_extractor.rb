@@ -9,31 +9,31 @@ require 'cgi'
 module OpenTelemetry
   module Baggage
     module Propagation
-      # Extracts correlations from carriers in the W3C Correlation Context format
+      # Extracts baggage from carriers in the W3C Baggage format
       class TextMapExtractor
         include Context::Propagation::DefaultGetter
 
         # Returns a new TextMapExtractor that extracts context using the specified
         # header key
         #
-        # @param [String] baggage_key The correlation context header
+        # @param [String] baggage_key The baggage header
         #   key used in the carrier
         # @return [TextMapExtractor]
         def initialize(baggage_key: 'Baggage')
           @baggage_key = baggage_key
         end
 
-        # Extract remote correlations from the supplied carrier.
+        # Extract remote baggage from the supplied carrier.
         # If extraction fails, the original context will be returned
         #
         # @param [Carrier] carrier The carrier to get the header from
-        # @param [Context] context The context to be updated with extracted correlations
+        # @param [Context] context The context to be updated with extracted baggage
         # @param [optional Callable] getter An optional callable that takes a carrier and a key and
         #   returns the value associated with the key. If omitted the default getter will be used
         #   which expects the carrier to respond to [] and []=.
         # @yield [Carrier, String] if an optional getter is provided, extract will yield the carrier
         #   and the header key to the getter.
-        # @return [Context] context updated with extracted correlations, or the original context
+        # @return [Context] context updated with extracted baggage, or the original context
         #   if extraction fails
         def extract(carrier, context, &getter)
           getter ||= default_getter
@@ -41,7 +41,7 @@ module OpenTelemetry
 
           entries = header.gsub(/\s/, '').split(',')
 
-          correlations = entries.each_with_object({}) do |entry, memo|
+          baggage = entries.each_with_object({}) do |entry, memo|
             # The ignored variable below holds properties as per the W3C spec.
             # OTel is not using them currently, but they might be used for
             # metadata in the future
@@ -50,7 +50,7 @@ module OpenTelemetry
             memo[k] = v
           end
 
-          context.set_value(ContextKeys.baggage_key, correlations)
+          context.set_value(ContextKeys.baggage_key, baggage)
         rescue StandardError
           context
         end

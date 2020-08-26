@@ -89,7 +89,7 @@ module OpenTelemetry
       #   - install instrumentation
       def configure
         OpenTelemetry.logger = logger
-        OpenTelemetry.correlations = Baggage::Manager.new
+        OpenTelemetry.baggage = Baggage::Manager.new
         configure_propagation
         configure_span_processors
         OpenTelemetry.tracer_provider = tracer_provider

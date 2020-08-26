@@ -18,7 +18,7 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
   end
 
   describe '#inject' do
-    it 'injects correlations' do
+    it 'injects baggage' do
       context = Context.empty.set_value(context_key, 'key1' => 'val1',
                                                      'key2' => 'val2')
 
@@ -27,7 +27,7 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
       _(carrier[header_key]).must_equal('key1=val1,key2=val2')
     end
 
-    it 'injects numeric correlations' do
+    it 'injects numeric baggage' do
       context = Context.empty.set_value(context_key, 'key1' => 1,
                                                      'key2' => 3.14)
 
@@ -36,7 +36,7 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
       _(carrier[header_key]).must_equal('key1=1,key2=3.14')
     end
 
-    it 'injects boolean correlations' do
+    it 'injects boolean baggage' do
       context = Context.empty.set_value(context_key, 'key1' => true,
                                                      'key2' => false)
 
@@ -45,12 +45,12 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
       _(carrier[header_key]).must_equal('key1=true,key2=false')
     end
 
-    it 'does not inject correlation key is not present' do
+    it 'does not inject baggage key is not present' do
       carrier = injector.inject({}, Context.empty)
       _(carrier).must_be(:empty?)
     end
 
-    it 'injects boolean correlations' do
+    it 'injects boolean baggage' do
       context = Context.empty.set_value(context_key, {})
 
       carrier = injector.inject({}, context)

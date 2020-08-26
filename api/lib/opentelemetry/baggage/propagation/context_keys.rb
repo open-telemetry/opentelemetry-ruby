@@ -7,19 +7,19 @@
 module OpenTelemetry
   module Baggage
     module Propagation
-      # The ContextKeys module contains the keys used to index correlations
+      # The ContextKeys module contains the keys used to index baggage
       # in a {Context} instance
       module ContextKeys
         extend self
 
-        CORRELATION_CONTEXT_KEY = Context.create_key('correlation-context')
-        private_constant :CORRELATION_CONTEXT_KEY
+        BAGGAGE_KEY = Context.create_key('baggage')
+        private_constant :BAGGAGE_KEY
 
-        # Returns the context key that correlations are indexed by
+        # Returns the context key that baggage are indexed by
         #
         # @return [Context::Key]
         def baggage_key
-          CORRELATION_CONTEXT_KEY
+          BAGGAGE_KEY
         end
       end
     end

@@ -60,18 +60,18 @@ describe OpenTelemetry::SDK::Configurator do
       reset_globals
     end
 
-    describe 'correlations' do
+    describe 'baggage' do
       it 'is an instance of SDK::Baggage::Manager' do
         configurator.configure
 
-        _(OpenTelemetry.correlations).must_be_instance_of(
+        _(OpenTelemetry.baggage).must_be_instance_of(
           OpenTelemetry::SDK::Baggage::Manager
         )
       end
     end
 
     describe 'http_injectors' do
-      it 'defaults to trace context and correlation context' do
+      it 'defaults to trace context and baggage' do
         configurator.configure
 
         expected_injectors = [
@@ -92,7 +92,7 @@ describe OpenTelemetry::SDK::Configurator do
     end
 
     describe '#http_extractors' do
-      it 'defaults to trace context and correlation context' do
+      it 'defaults to trace context and baggage' do
         configurator.configure
 
         expected_extractors = [
@@ -113,7 +113,7 @@ describe OpenTelemetry::SDK::Configurator do
     end
 
     describe 'text_map_injectors' do
-      it 'defaults to trace context and correlation context' do
+      it 'defaults to trace context and baggage' do
         configurator.configure
 
         expected_injectors = [
@@ -134,7 +134,7 @@ describe OpenTelemetry::SDK::Configurator do
     end
 
     describe '#text_map_extractors' do
-      it 'defaults to trace context and correlation context' do
+      it 'defaults to trace context and baggage' do
         configurator.configure
 
         expected_extractors = [

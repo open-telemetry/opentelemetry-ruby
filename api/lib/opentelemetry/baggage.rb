@@ -10,7 +10,7 @@ require 'opentelemetry/baggage/propagation'
 
 module OpenTelemetry
   # The Baggage module provides functionality to record and propagate
-  # correlations in a distributed trace
+  # baggage in a distributed trace
   module Baggage
   end
 end
