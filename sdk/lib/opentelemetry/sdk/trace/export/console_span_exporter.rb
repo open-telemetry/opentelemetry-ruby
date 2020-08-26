@@ -26,7 +26,7 @@ module OpenTelemetry
             SUCCESS
           end
 
-          def shutdown
+          def shutdown(timeout: nil)
             @stopped = true
             SUCCESS
           end

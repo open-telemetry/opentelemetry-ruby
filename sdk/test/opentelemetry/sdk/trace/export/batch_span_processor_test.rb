@@ -33,7 +33,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       end
     end
 
-    def shutdown; end
+    def shutdown(timeout: nil); end
   end
 
   class TestTimeoutExporter < TestExporter

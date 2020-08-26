@@ -49,13 +49,15 @@ module OpenTelemetry
         # processed and exported.
         #
         # After this is called all the newly created {Span}s will be no-op.
-        def shutdown
+        #
+        # @param [optional Numeric] timeout An optional timeout in seconds. 
+        def shutdown(timeout: nil)
           @mutex.synchronize do
             if @stopped
               OpenTelemetry.logger.warn('calling Tracer#shutdown multiple times.')
               return
             end
-            @active_span_processor.shutdown
+            @active_span_processor.shutdown(timeout: timeout)
             @stopped = true
           end
         end

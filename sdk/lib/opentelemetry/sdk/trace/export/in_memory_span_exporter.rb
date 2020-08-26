@@ -74,9 +74,10 @@ module OpenTelemetry
           # Called when {TracerProvider#shutdown} is called, if this exporter is
           # registered to a {TracerProvider} object.
           #
+          # @param [optional Numeric] timeout An optional timeout in seconds. 
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
-          def shutdown
+          def shutdown(timeout: nil)
             @mutex.synchronize do
               @finished_spans.clear
               @stopped = true

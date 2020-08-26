@@ -68,18 +68,20 @@ module OpenTelemetry
           # the process after an invocation, but before the `Processor` exports
           # the completed spans.
           #
+          # @param [optional Numeric] timeout An optional timeout in seconds. 
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
-          def force_flush
+          def force_flush(timeout: nil)
             SUCCESS
           end
 
           # Called when {TracerProvider#shutdown} is called.
           #
+          # @param [optional Numeric] timeout An optional timeout in seconds. 
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
-          def shutdown
-            @span_exporter&.shutdown || SUCCESS
+          def shutdown(timeout: nil)
+            @span_exporter&.shutdown(timeout: timeout) || SUCCESS
           end
         end
       end

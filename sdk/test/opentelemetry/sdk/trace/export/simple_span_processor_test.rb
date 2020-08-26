@@ -96,7 +96,7 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
   end
 
   it 'forwards calls to #shutdown to the exporter' do
-    mock_span_exporter.expect :shutdown, nil
+    mock_span_exporter.expect :shutdown, nil, [{timeout: nil}]
 
     processor.shutdown
     mock_span_exporter.verify

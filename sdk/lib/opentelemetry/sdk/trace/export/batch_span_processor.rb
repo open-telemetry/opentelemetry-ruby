@@ -92,14 +92,16 @@ module OpenTelemetry
           # the process after an invocation, but before the `Processor` exports
           # the completed spans.
           #
+          # @param [optional Numeric] timeout An optional timeout in seconds. 
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
-          def force_flush
+          def force_flush(timeout: nil)
+            start_time = Time.now
             snapshot = lock do
               reset_on_fork(restart_thread: false) if @keep_running
               spans.shift(spans.size)
             end
-            until snapshot.empty?
+            until snapshot.empty? || maybe_timeout(timeout, start_time)&.zero?
               batch = snapshot.shift(@batch_size).map!(&:to_span_data)
               result_code = @exporter.export(batch)
               report_result(result_code, batch)
@@ -110,22 +112,31 @@ module OpenTelemetry
           # shuts the consumer thread down and flushes the current accumulated buffer
           # will block until the thread is finished
           #
+          # @param [optional Numeric] timeout An optional timeout in seconds. 
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
-          def shutdown
+          def shutdown(timeout: nil)
+            start_time = Time.now
             lock do
               @keep_running = false
               @condition.signal
             end
 
-            @thread.join
-            force_flush
-            @exporter.shutdown
+            @thread.join(timeout)
+            force_flush(timeout: maybe_timeout(timeout, start_time))
+            @exporter.shutdown(timeout: maybe_timeout(timeout, start_time))
           end
 
           private
 
           attr_reader :spans, :max_queue_size, :batch_size
+
+          def maybe_timeout(timeout, start_time)
+            unless timeout.nil?
+              timeout = timeout - (Time.now - start_time)
+              timeout.positive? ? timeout : 0
+            end
+          end
 
           def work
             loop do
