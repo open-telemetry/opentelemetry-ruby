@@ -11,7 +11,7 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
     OpenTelemetry::Baggage::Propagation::TextMapInjector.new
   end
   let(:header_key) do
-    'Baggage'
+    'baggage'
   end
   let(:context_key) do
     OpenTelemetry::Baggage::Propagation::ContextKeys.baggage_key

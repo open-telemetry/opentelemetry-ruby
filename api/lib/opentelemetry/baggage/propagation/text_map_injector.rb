@@ -19,7 +19,7 @@ module OpenTelemetry
         # @param [String] baggage_header_key The baggage header
         #   key used in the carrier
         # @return [TextMapInjector]
-        def initialize(baggage_key: 'Baggage')
+        def initialize(baggage_key: 'baggage')
           @baggage_key = baggage_key
         end
 
