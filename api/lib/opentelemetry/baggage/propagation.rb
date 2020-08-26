@@ -4,12 +4,12 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/correlation_context/propagation/context_keys'
-require 'opentelemetry/correlation_context/propagation/text_map_injector'
-require 'opentelemetry/correlation_context/propagation/text_map_extractor'
+require 'opentelemetry/baggage/propagation/context_keys'
+require 'opentelemetry/baggage/propagation/text_map_injector'
+require 'opentelemetry/baggage/propagation/text_map_extractor'
 
 module OpenTelemetry
-  module CorrelationContext
+  module Baggage
     # The Correlation::Propagation module contains injectors and
     # extractors for sending and receiving correlation context over the wire
     module Propagation
@@ -18,10 +18,10 @@ module OpenTelemetry
       TEXT_MAP_EXTRACTOR = TextMapExtractor.new
       TEXT_MAP_INJECTOR = TextMapInjector.new
       RACK_EXTRACTOR = TextMapExtractor.new(
-        correlation_context_key: 'HTTP_OTCORRELATIONS'
+        baggage_key: 'HTTP_OTCORRELATIONS'
       )
       RACK_INJECTOR = TextMapInjector.new(
-        correlation_context_key: 'HTTP_OTCORRELATIONS'
+        baggage_key: 'HTTP_OTCORRELATIONS'
       )
 
       private_constant :TEXT_MAP_INJECTOR, :TEXT_MAP_EXTRACTOR, :RACK_INJECTOR,

@@ -7,7 +7,7 @@
 require 'cgi'
 
 module OpenTelemetry
-  module CorrelationContext
+  module Baggage
     module Propagation
       # Injects correlation context using the W3C Correlation Context format
       class TextMapInjector
@@ -16,11 +16,11 @@ module OpenTelemetry
         # Returns a new TextMapInjector that injects context using the specified
         # header key
         #
-        # @param [String] correlation_context_header_key The correlation context header
+        # @param [String] baggage_header_key The correlation context header
         #   key used in the carrier
         # @return [TextMapInjector]
-        def initialize(correlation_context_key: 'otcorrelations')
-          @correlation_context_key = correlation_context_key
+        def initialize(baggage_key: 'Baggage')
+          @baggage_key = baggage_key
         end
 
         # Inject in-process correlations into the supplied carrier.
@@ -34,10 +34,10 @@ module OpenTelemetry
         #   and the header key to the getter.
         # @return [Object] carrier with injected correlations
         def inject(carrier, context, &setter)
-          return carrier unless (correlations = context[ContextKeys.correlation_context_key]) && !correlations.empty?
+          return carrier unless (correlations = context[ContextKeys.baggage_key]) && !correlations.empty?
 
           setter ||= default_setter
-          setter.call(carrier, @correlation_context_key, encode(correlations))
+          setter.call(carrier, @baggage_key, encode(correlations))
 
           carrier
         end

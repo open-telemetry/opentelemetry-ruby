@@ -6,10 +6,10 @@
 
 module OpenTelemetry
   module SDK
-    module CorrelationContext
+    module Baggage
       # Manages correlation context
       class Manager
-        CORRELATION_CONTEXT_KEY = OpenTelemetry::CorrelationContext::Propagation::ContextKeys.correlation_context_key
+        CORRELATION_CONTEXT_KEY = OpenTelemetry::Baggage::Propagation::ContextKeys.baggage_key
         EMPTY_CORRELATION_CONTEXT = {}.freeze
         private_constant(:CORRELATION_CONTEXT_KEY, :EMPTY_CORRELATION_CONTEXT)
 

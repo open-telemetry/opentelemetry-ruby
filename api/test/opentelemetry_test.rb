@@ -72,9 +72,9 @@ describe OpenTelemetry do
       OpenTelemetry.correlations = nil
     end
 
-    it 'returns CorrelationContext::Manager by default' do
+    it 'returns Baggage::Manager by default' do
       manager = OpenTelemetry.correlations
-      _(manager).must_be_instance_of(OpenTelemetry::CorrelationContext::Manager)
+      _(manager).must_be_instance_of(OpenTelemetry::Baggage::Manager)
     end
 
     it 'returns the same instance when accessed multiple times' do

@@ -6,15 +6,15 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::CorrelationContext::Propagation::TextMapInjector do
+describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
   let(:injector) do
-    OpenTelemetry::CorrelationContext::Propagation::TextMapInjector.new
+    OpenTelemetry::Baggage::Propagation::TextMapInjector.new
   end
   let(:header_key) do
-    'otcorrelations'
+    'Baggage'
   end
   let(:context_key) do
-    OpenTelemetry::CorrelationContext::Propagation::ContextKeys.correlation_context_key
+    OpenTelemetry::Baggage::Propagation::ContextKeys.baggage_key
   end
 
   describe '#inject' do

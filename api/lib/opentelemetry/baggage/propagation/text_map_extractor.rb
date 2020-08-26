@@ -7,7 +7,7 @@
 require 'cgi'
 
 module OpenTelemetry
-  module CorrelationContext
+  module Baggage
     module Propagation
       # Extracts correlations from carriers in the W3C Correlation Context format
       class TextMapExtractor
@@ -16,11 +16,11 @@ module OpenTelemetry
         # Returns a new TextMapExtractor that extracts context using the specified
         # header key
         #
-        # @param [String] correlation_context_key The correlation context header
+        # @param [String] baggage_key The correlation context header
         #   key used in the carrier
         # @return [TextMapExtractor]
-        def initialize(correlation_context_key: 'otcorrelations')
-          @correlation_context_key = correlation_context_key
+        def initialize(baggage_key: 'Baggage')
+          @baggage_key = baggage_key
         end
 
         # Extract remote correlations from the supplied carrier.
@@ -37,7 +37,7 @@ module OpenTelemetry
         #   if extraction fails
         def extract(carrier, context, &getter)
           getter ||= default_getter
-          header = getter.call(carrier, @correlation_context_key)
+          header = getter.call(carrier, @baggage_key)
 
           entries = header.gsub(/\s/, '').split(',')
 
@@ -50,7 +50,7 @@ module OpenTelemetry
             memo[k] = v
           end
 
-          context.set_value(ContextKeys.correlation_context_key, correlations)
+          context.set_value(ContextKeys.baggage_key, correlations)
         rescue StandardError
           context
         end

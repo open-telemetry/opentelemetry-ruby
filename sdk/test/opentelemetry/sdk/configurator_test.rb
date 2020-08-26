@@ -61,11 +61,11 @@ describe OpenTelemetry::SDK::Configurator do
     end
 
     describe 'correlations' do
-      it 'is an instance of SDK::CorrelationContext::Manager' do
+      it 'is an instance of SDK::Baggage::Manager' do
         configurator.configure
 
         _(OpenTelemetry.correlations).must_be_instance_of(
-          OpenTelemetry::SDK::CorrelationContext::Manager
+          OpenTelemetry::SDK::Baggage::Manager
         )
       end
     end
@@ -76,7 +76,7 @@ describe OpenTelemetry::SDK::Configurator do
 
         expected_injectors = [
           OpenTelemetry::Trace::Propagation::TraceContext.text_map_injector,
-          OpenTelemetry::CorrelationContext::Propagation.text_map_injector
+          OpenTelemetry::Baggage::Propagation.text_map_injector
         ]
 
         _(injectors_for(OpenTelemetry.propagation.http)).must_equal(expected_injectors)
@@ -97,7 +97,7 @@ describe OpenTelemetry::SDK::Configurator do
 
         expected_extractors = [
           OpenTelemetry::Trace::Propagation::TraceContext.rack_extractor,
-          OpenTelemetry::CorrelationContext::Propagation.rack_extractor
+          OpenTelemetry::Baggage::Propagation.rack_extractor
         ]
 
         _(extractors_for(OpenTelemetry.propagation.http)).must_equal(expected_extractors)
@@ -118,7 +118,7 @@ describe OpenTelemetry::SDK::Configurator do
 
         expected_injectors = [
           OpenTelemetry::Trace::Propagation::TraceContext.text_map_injector,
-          OpenTelemetry::CorrelationContext::Propagation.text_map_injector
+          OpenTelemetry::Baggage::Propagation.text_map_injector
         ]
 
         _(injectors_for(OpenTelemetry.propagation.text)).must_equal(expected_injectors)
@@ -139,7 +139,7 @@ describe OpenTelemetry::SDK::Configurator do
 
         expected_extractors = [
           OpenTelemetry::Trace::Propagation::TraceContext.text_map_extractor,
-          OpenTelemetry::CorrelationContext::Propagation.text_map_extractor
+          OpenTelemetry::Baggage::Propagation.text_map_extractor
         ]
 
         _(extractors_for(OpenTelemetry.propagation.text)).must_equal(expected_extractors)

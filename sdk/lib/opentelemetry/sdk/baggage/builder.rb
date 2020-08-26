@@ -6,8 +6,8 @@
 
 module OpenTelemetry
   module SDK
-    module CorrelationContext
-      # SDK implementation of CorrelationContext::Builder
+    module Baggage
+      # SDK implementation of Baggage::Builder
       class Builder
         attr_reader :entries
 

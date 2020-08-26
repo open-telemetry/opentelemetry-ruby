@@ -6,9 +6,9 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::SDK::CorrelationContext::Manager do
+describe OpenTelemetry::SDK::Baggage::Manager do
   Context = OpenTelemetry::Context
-  let(:manager) { OpenTelemetry::SDK::CorrelationContext::Manager.new }
+  let(:manager) { OpenTelemetry::SDK::Baggage::Manager.new }
 
   after do
     Context.clear

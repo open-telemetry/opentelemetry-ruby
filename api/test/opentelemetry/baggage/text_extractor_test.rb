@@ -6,15 +6,15 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::CorrelationContext::Propagation::TextMapExtractor do
+describe OpenTelemetry::Baggage::Propagation::TextMapExtractor do
   let(:extractor) do
-    OpenTelemetry::CorrelationContext::Propagation::TextMapExtractor.new
+    OpenTelemetry::Baggage::Propagation::TextMapExtractor.new
   end
   let(:header_key) do
-    'otcorrelations'
+    'Baggage'
   end
   let(:context_key) do
-    OpenTelemetry::CorrelationContext::Propagation::ContextKeys.correlation_context_key
+    OpenTelemetry::Baggage::Propagation::ContextKeys.baggage_key
   end
 
   describe '#extract' do
