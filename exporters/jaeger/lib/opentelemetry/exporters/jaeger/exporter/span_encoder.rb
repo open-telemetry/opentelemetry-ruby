@@ -83,16 +83,10 @@ module OpenTelemetry
 
           def encoded_instrumentation_library(instrumentation_library)
             return EMPTY_ARRAY unless instrumentation_library
+
             tags = []
-
-            if instrumentation_library.name
-              tags << encoded_tag('otel.instrumentation_library.name', instrumentation_library.name)
-            end
-
-            if instrumentation_library.version
-              tags << encoded_tag('otel.instrumentation_library.version', instrumentation_library.version)
-            end
-
+            tags << encoded_tag('otel.instrumentation_library.name', instrumentation_library.name) if instrumentation_library.name
+            tags << encoded_tag('otel.instrumentation_library.version', instrumentation_library.version) if instrumentation_library.version
             tags
           end
 

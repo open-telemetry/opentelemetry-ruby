@@ -73,11 +73,9 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter::SpanEncoder do
       _(name_tag.key).must_equal('otel.instrumentation_library.name')
       _(name_tag.vStr).must_equal('mylib')
 
-
       _(version_tag.key).must_equal('otel.instrumentation_library.version')
       _(version_tag.vStr).must_equal('0.1.0')
     end
-
 
     it 'skips nil values' do
       lib = OpenTelemetry::SDK::InstrumentationLibrary.new('mylib')
