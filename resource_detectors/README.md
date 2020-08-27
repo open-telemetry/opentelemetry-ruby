@@ -21,7 +21,7 @@ gem install opentelemetry-sdk
 gem install opentelemetry-resource-detectors
 ```
 
-Or, if you use [undler, include `opentelemetry-sdk` and `opentelemetry-resource-detectors` in your `Gemfile`.
+Or, if you use Bundler, include `opentelemetry-sdk` and `opentelemetry-resource-detectors` in your `Gemfile`.
 
 ```rb
 require 'opentelemetry/sdk'
