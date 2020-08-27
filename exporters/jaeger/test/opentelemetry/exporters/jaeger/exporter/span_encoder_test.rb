@@ -60,7 +60,38 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter::SpanEncoder do
     )
   end
 
-  def create_span_data(attributes: nil, events: nil, links: nil, trace_id: OpenTelemetry::Trace.generate_trace_id, trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, tracestate: nil)
+  describe 'instrumentation library' do
+    it 'encodes library and version when set' do
+      lib = OpenTelemetry::SDK::InstrumentationLibrary.new('mylib', '0.1.0')
+      span_data = create_span_data(instrumentation_library: lib)
+      encoded_span = span_encoder.encoded_span(span_data)
+
+      _(encoded_span.tags.size).must_equal(2)
+
+      name_tag, version_tag = encoded_span.tags
+
+      _(name_tag.key).must_equal('otel.instrumentation_library.name')
+      _(name_tag.vStr).must_equal('mylib')
+
+      _(version_tag.key).must_equal('otel.instrumentation_library.version')
+      _(version_tag.vStr).must_equal('0.1.0')
+    end
+
+    it 'skips nil values' do
+      lib = OpenTelemetry::SDK::InstrumentationLibrary.new('mylib')
+      span_data = create_span_data(instrumentation_library: lib)
+      encoded_span = span_encoder.encoded_span(span_data)
+
+      _(encoded_span.tags.size).must_equal(1)
+
+      name_tag, = encoded_span.tags
+
+      _(name_tag.key).must_equal('otel.instrumentation_library.name')
+      _(name_tag.vStr).must_equal('mylib')
+    end
+  end
+
+  def create_span_data(attributes: nil, events: nil, links: nil, instrumentation_library: nil, trace_id: OpenTelemetry::Trace.generate_trace_id, trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, tracestate: nil)
     OpenTelemetry::SDK::Trace::SpanData.new(
       '',
       nil,
@@ -76,7 +107,7 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter::SpanEncoder do
       links,
       events,
       nil,
-      nil,
+      instrumentation_library,
       OpenTelemetry::Trace.generate_span_id,
       trace_id,
       trace_flags,
