@@ -21,8 +21,8 @@ module OpenTelemetry
                 with_parent_context: parent_context,
                 kind: :consumer
               ) do |span|
-                span.add_event(name: 'created_at', timestamp: msg['created_at'])
-                span.add_event(name: 'enqueued_at', timestamp: msg['enqueued_at'])
+                span.add_event('created_at', timestamp: msg['created_at'])
+                span.add_event('enqueued_at', timestamp: msg['enqueued_at'])
                 yield
               end
             end

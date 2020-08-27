@@ -66,27 +66,27 @@ describe OpenTelemetry do
     end
   end
 
-  describe '.correlations' do
+  describe '.baggage' do
     after do
-      # Ensure we don't leak custom correlations to other tests
-      OpenTelemetry.correlations = nil
+      # Ensure we don't leak custom baggage to other tests
+      OpenTelemetry.baggage = nil
     end
 
-    it 'returns CorrelationContext::Manager by default' do
-      manager = OpenTelemetry.correlations
-      _(manager).must_be_instance_of(OpenTelemetry::CorrelationContext::Manager)
+    it 'returns Baggage::Manager by default' do
+      manager = OpenTelemetry.baggage
+      _(manager).must_be_instance_of(OpenTelemetry::Baggage::Manager)
     end
 
     it 'returns the same instance when accessed multiple times' do
-      _(OpenTelemetry.correlations).must_equal(
-        OpenTelemetry.correlations
+      _(OpenTelemetry.baggage).must_equal(
+        OpenTelemetry.baggage
       )
     end
 
-    it 'returns user specified correlations' do
-      custom_manager = 'a custom correlations'
-      OpenTelemetry.correlations = custom_manager
-      _(OpenTelemetry.correlations).must_equal(custom_manager)
+    it 'returns user specified baggage' do
+      custom_manager = 'a custom baggage'
+      OpenTelemetry.baggage = custom_manager
+      _(OpenTelemetry.baggage).must_equal(custom_manager)
     end
   end
 

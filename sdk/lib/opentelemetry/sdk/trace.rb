@@ -15,6 +15,7 @@ end
 
 require 'opentelemetry/sdk/trace/samplers'
 require 'opentelemetry/sdk/trace/config'
+require 'opentelemetry/sdk/trace/event'
 require 'opentelemetry/sdk/trace/export'
 require 'opentelemetry/sdk/trace/multi_span_processor'
 require 'opentelemetry/sdk/trace/noop_span_processor'

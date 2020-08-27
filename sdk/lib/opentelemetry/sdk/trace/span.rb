@@ -59,7 +59,7 @@ module OpenTelemetry
         # meanings.
         #
         # @param [String] key
-        # @param [String, Boolean, Numeric] value
+        # @param [String, Boolean, Numeric, Array<String, Numeric, Boolean>] value
         #
         # @return [self] returns itself
         def set_attribute(key, value)
@@ -78,36 +78,27 @@ module OpenTelemetry
         end
         alias []= set_attribute
 
-        # Add an Event to a {Span}. This can be accomplished eagerly or lazily.
-        # Lazy evaluation is useful when the event attributes are expensive to
-        # build and where the cost can be avoided for an unsampled {Span}.
+        # Add an Event to a {Span}.
         #
-        # Eager example:
+        # Example:
         #
-        #   span.add_event(name: 'event', attributes: {'eager' => true})
-        #
-        # Lazy example:
-        #
-        #   span.add_event { OpenTelemetry::Trace::Event.new(name: 'event', attributes: {'eager' => false}) }
+        #   span.add_event('event', attributes: {'eager' => true})
         #
         # Note that the OpenTelemetry project
         # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-semantic-conventions.md
         # documents} certain "standard event names and keys" which have
         # prescribed semantic meanings.
         #
-        # @param [optional String] name Optional name of the event. This is
-        #   required if a block is not given.
+        # @param [String] name Name of the event.
         # @param [optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
         #   One or more key:value pairs, where the keys must be strings and the
-        #   values may be string, boolean or numeric type. This argument should
-        #   only be used when passing in a name.
+        #   values may be string, boolean or numeric type.
         # @param [optional Time] timestamp Optional timestamp for the event.
-        #   This argument should only be used when passing in a name.
         #
         # @return [self] returns itself
-        def add_event(name: nil, attributes: nil, timestamp: nil)
+        def add_event(name, attributes: nil, timestamp: nil)
           super
-          event = block_given? ? yield : OpenTelemetry::Trace::Event.new(name: name, attributes: attributes, timestamp: timestamp || Time.now)
+          event = Event.new(name: name, attributes: attributes, timestamp: timestamp || Time.now)
 
           @mutex.synchronize do
             if @ended
@@ -121,18 +112,18 @@ module OpenTelemetry
           self
         end
 
-        # Record an error during the execution of this span. Multiple errors
+        # Record an exception during the execution of this span. Multiple exceptions
         # can be recorded on a span.
         #
-        # @param [Exception] error The error to be recorded
+        # @param [Exception] exception The exception to be recorded
         #
         # @return [void]
-        def record_error(error)
-          add_event(name: 'error',
+        def record_exception(exception)
+          add_event('exception',
                     attributes: {
-                      'error.type' => error.class.to_s,
-                      'error.message' => error.message,
-                      'error.stack' => error.backtrace.join("\n")
+                      'exception.type' => exception.class.to_s,
+                      'exception.message' => exception.message,
+                      'exception.stacktrace' => exception.full_message(highlight: false, order: :top)
                     })
         end
 
@@ -326,7 +317,7 @@ module OpenTelemetry
             attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
             excess = attrs.size - max_attributes_per_event
             excess.times { attrs.shift } if excess.positive?
-            event = OpenTelemetry::Trace::Event.new(name: event.name, attributes: attrs, timestamp: event.timestamp)
+            event = Event.new(name: event.name, attributes: attrs, timestamp: event.timestamp)
           end
           events << event
         end

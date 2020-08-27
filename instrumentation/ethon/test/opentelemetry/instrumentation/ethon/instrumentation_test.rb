@@ -20,8 +20,8 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
     # this is currently a noop but this will future proof the test
     @orig_propagator = OpenTelemetry.propagation.http
     propagator = OpenTelemetry::Context::Propagation::Propagator.new(
-      OpenTelemetry::Trace::Propagation::TraceContext.text_injector,
-      OpenTelemetry::Trace::Propagation::TraceContext.text_extractor
+      OpenTelemetry::Trace::Propagation::TraceContext.text_map_injector,
+      OpenTelemetry::Trace::Propagation::TraceContext.text_map_extractor
     )
     OpenTelemetry.propagation.http = propagator
   end
@@ -99,7 +99,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
             _(easy.instance_eval { @otel_span }).must_be_nil
             _(
               easy.instance_eval { @otel_original_headers['traceparent'] }
-            ).must_equal "00-#{span.trace_id.unpack1('H*')}-#{span.span_id.unpack1('H*')}-01"
+            ).must_equal "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
           end
         end
 
@@ -112,7 +112,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
             _(easy.instance_eval { @otel_span }).must_be_nil
             _(
               easy.instance_eval { @otel_original_headers['traceparent'] }
-            ).must_equal "00-#{span.trace_id.unpack1('H*')}-#{span.span_id.unpack1('H*')}-01"
+            ).must_equal "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
           end
         end
 
@@ -131,7 +131,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
             _(easy.instance_eval { @otel_span }).must_be_nil
             _(
               easy.instance_eval { @otel_original_headers['traceparent'] }
-            ).must_equal "00-#{span.trace_id.unpack1('H*')}-#{span.span_id.unpack1('H*')}-01"
+            ).must_equal "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
           end
         end
       end

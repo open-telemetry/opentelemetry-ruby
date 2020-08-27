@@ -50,7 +50,7 @@ module OpenTelemetry
       # meanings.
       #
       # @param [String] key
-      # @param [String, Boolean, Numeric] value
+      # @param [String, Boolean, Numeric, Array<String, Numeric, Boolean>] value
       #
       # @return [self] returns itself
       def set_attribute(key, value)
@@ -58,44 +58,36 @@ module OpenTelemetry
       end
       alias []= set_attribute
 
-      # Add an Event to a {Span}. This can be accomplished eagerly or lazily.
-      # Lazy evaluation is useful when the event attributes are expensive to
-      # build and where the cost can be avoided for an unsampled {Span}.
+      # Add an event to a {Span}.
       #
-      # Eager example:
+      # Example:
       #
-      #   span.add_event(name: 'event', attributes: {'eager' => true})
-      #
-      # Lazy example:
-      #
-      #   span.add_event { tracer.create_event(name: 'event', attributes: {'eager' => false}) }
+      #   span.add_event('event', attributes: {'eager' => true})
       #
       # Note that the OpenTelemetry project
       # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-semantic-conventions.md
       # documents} certain "standard event names and keys" which have
       # prescribed semantic meanings.
       #
-      # @param [optional String] name Optional name of the event. This is
-      #   required if a block is not given.
+      # @param [String] name Name of the event.
       # @param [optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}]
       #   attributes One or more key:value pairs, where the keys must be
       #   strings and the values may be (array of) string, boolean or numeric
-      #   type. This argument should only be used when passing in a name.
+      #   type.
       # @param [optional Time] timestamp Optional timestamp for the event.
-      #   This argument should only be used when passing in a name.
       #
       # @return [self] returns itself
-      def add_event(name: nil, attributes: nil, timestamp: nil)
+      def add_event(name, attributes: nil, timestamp: nil)
         self
       end
 
-      # Record an error during the execution of this span. Multiple errors
+      # Record an exception during the execution of this span. Multiple exceptions
       # can be recorded on a span.
       #
-      # @param [Exception] error The error to recorded
+      # @param [Exception] exception The exception to recorded
       #
       # @return [void]
-      def record_error(error); end
+      def record_exception(exception); end
 
       # Sets the Status to the Span
       #

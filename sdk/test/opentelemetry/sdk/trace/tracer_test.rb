@@ -20,19 +20,19 @@ describe OpenTelemetry::SDK::Trace::Tracer do
 
   describe '#name' do
     it 'reflects the name passed in' do
-      _(Tracer.new('component', 'semver:1.0', tracer_provider).name).must_equal('component')
+      _(Tracer.new('component', '1.0', tracer_provider).name).must_equal('component')
     end
   end
 
   describe '#version' do
     it 'reflects the version passed in' do
-      _(Tracer.new('component', 'semver:1.0', tracer_provider).version).must_equal('semver:1.0')
+      _(Tracer.new('component', '1.0', tracer_provider).version).must_equal('1.0')
     end
   end
 
   describe '#tracer_provider' do
     it 'reflects the tracer_provider passed in' do
-      _(Tracer.new('component', 'semver:1.0', tracer_provider).tracer_provider).must_equal(tracer_provider)
+      _(Tracer.new('component', '1.0', tracer_provider).tracer_provider).must_equal(tracer_provider)
     end
   end
 
@@ -145,7 +145,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
 
   describe '#start_span' do
     let(:span_context) do
-      OpenTelemetry::Trace::SpanContext.new(tracestate: 'vendorname=opaquevalue')
+      OpenTelemetry::Trace::SpanContext.new(tracestate: 'vendorname=opaquevalue', trace_flags: OpenTelemetry::Trace::TraceFlags::SAMPLED)
     end
     let(:context) do
       OpenTelemetry::Context.empty.set_value(
@@ -299,8 +299,8 @@ describe OpenTelemetry::SDK::Trace::Tracer do
 
       _(span.events.size).must_equal(1)
 
-      _(span.events[0].name).must_equal('error')
-      _(span.events[0].attributes['error.message']).must_equal('this is fine')
+      _(span.events[0].name).must_equal('exception')
+      _(span.events[0].attributes['exception.message']).must_equal('this is fine')
       _(span.status.canonical_code).must_equal(OpenTelemetry::Trace::Status::UNKNOWN_ERROR)
       _(span.status.description).must_equal('Unhandled exception of type: RuntimeError')
     end

@@ -32,29 +32,25 @@ describe OpenTelemetry::Trace::Span do
 
   describe '#add_event' do
     it 'returns self' do
-      _(span.add_event(name: 'event-name')).must_equal(span)
+      _(span.add_event('event-name')).must_equal(span)
     end
 
     it 'accepts a name and attributes' do
-      _(span.add_event(name: 'event-name', attributes: { 'foo' => 'bar' })).must_equal(span)
+      _(span.add_event('event-name', attributes: { 'foo' => 'bar' })).must_equal(span)
     end
 
     it 'accepts array-valued attributes' do
-      _(span.add_event(name: 'event-name', attributes: { 'foo' => [1, 2, 3] })).must_equal(span)
+      _(span.add_event('event-name', attributes: { 'foo' => [1, 2, 3] })).must_equal(span)
     end
 
     it 'accepts a timestamp' do
-      _(span.add_event(name: 'event-name', timestamp: Time.now)).must_equal(span)
-    end
-
-    it 'accepts an event formatter' do
-      _(span.add_event { Object.new }).must_equal(span)
+      _(span.add_event('event-name', timestamp: Time.now)).must_equal(span)
     end
   end
 
-  describe '#record_error' do
+  describe '#record_exception' do
     it 'returns nil' do
-      _(span.record_error(StandardError.new('oops'))).must_be_nil
+      _(span.record_exception(StandardError.new('oops'))).must_be_nil
     end
   end
 

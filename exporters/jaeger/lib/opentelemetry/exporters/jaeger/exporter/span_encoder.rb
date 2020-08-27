@@ -24,7 +24,10 @@ module OpenTelemetry
               'flags' => span_data.trace_flags.sampled? ? 1 : 0,
               'startTime' => start_time,
               'duration' => duration,
-              'tags' => encoded_tags(span_data.attributes) + encoded_status(span_data.status) + encoded_kind(span_data.kind),
+              'tags' => encoded_tags(span_data.attributes) +
+                 encoded_status(span_data.status) +
+                 encoded_kind(span_data.kind) +
+                 encoded_instrumentation_library(span_data.instrumentation_library),
               'logs' => encoded_logs(span_data.events)
             )
           end
@@ -76,6 +79,15 @@ module OpenTelemetry
           def encoded_status(status)
             # TODO: OpenTracing doesn't specify how to report non-HTTP (i.e. generic) status.
             EMPTY_ARRAY
+          end
+
+          def encoded_instrumentation_library(instrumentation_library)
+            return EMPTY_ARRAY unless instrumentation_library
+
+            tags = []
+            tags << encoded_tag('otel.instrumentation_library.name', instrumentation_library.name) if instrumentation_library.name
+            tags << encoded_tag('otel.instrumentation_library.version', instrumentation_library.version) if instrumentation_library.version
+            tags
           end
 
           def encoded_tags(attributes)

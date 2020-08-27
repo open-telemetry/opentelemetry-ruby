@@ -63,6 +63,12 @@ GEM_INFO = {
       OpenTelemetry::Exporters::OTLP::VERSION
     }
   },
+  "opentelemetry-resource_detectors" => {
+    version_getter: ->() {
+      require './lib/opentelemetry/resource/detectors/version.rb'
+      OpenTelemetry::Resource::Detectors::VERSION
+    }
+  },
   "opentelemetry-instrumentation-ethon" => {
     version_getter: ->() {
       require './lib/opentelemetry/instrumentation/ethon/version.rb'

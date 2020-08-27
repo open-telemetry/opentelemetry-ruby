@@ -7,23 +7,23 @@
 require 'test_helper'
 
 describe OpenTelemetry::Trace::Propagation::TraceContext do
-  describe '#text_extractor, #rack_extractor' do
-    it 'returns an instance of TextExtractor' do
-      %i[text_extractor rack_extractor].each do |extractor_method|
+  describe '#text_map_extractor, #rack_extractor' do
+    it 'returns an instance of TextMapExtractor' do
+      %i[text_map_extractor rack_extractor].each do |extractor_method|
         extractor = OpenTelemetry::Trace::Propagation::TraceContext.send(extractor_method)
         _(extractor).must_be_instance_of(
-          OpenTelemetry::Trace::Propagation::TraceContext::TextExtractor
+          OpenTelemetry::Trace::Propagation::TraceContext::TextMapExtractor
         )
       end
     end
   end
 
-  describe '#text_injector, #rack_injector' do
-    it 'returns an instance of TextInjector' do
-      %i[text_injector rack_injector].each do |injector_method|
+  describe '#text_map_injector, #rack_injector' do
+    it 'returns an instance of TextMapInjector' do
+      %i[text_map_injector rack_injector].each do |injector_method|
         injector = OpenTelemetry::Trace::Propagation::TraceContext.send(injector_method)
         _(injector).must_be_instance_of(
-          OpenTelemetry::Trace::Propagation::TraceContext::TextInjector
+          OpenTelemetry::Trace::Propagation::TraceContext::TextMapInjector
         )
       end
     end

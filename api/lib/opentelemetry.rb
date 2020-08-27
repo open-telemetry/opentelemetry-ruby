@@ -8,8 +8,7 @@ require 'logger'
 
 require 'opentelemetry/error'
 require 'opentelemetry/context'
-require 'opentelemetry/correlation_context'
-require 'opentelemetry/internal'
+require 'opentelemetry/baggage'
 require_relative './opentelemetry/instrumentation'
 require 'opentelemetry/metrics'
 require 'opentelemetry/trace'
@@ -23,7 +22,7 @@ require 'opentelemetry/version'
 module OpenTelemetry
   extend self
 
-  attr_writer :tracer_provider, :meter_provider, :correlations
+  attr_writer :tracer_provider, :meter_provider, :baggage
 
   attr_accessor :logger
 
@@ -45,11 +44,11 @@ module OpenTelemetry
     @instrumentation_registry ||= Instrumentation::Registry.new
   end
 
-  # @return [Object, CorrelationContext::Manager] registered
-  #   correlation context manager or a default no-op implementation of the
+  # @return [Object, Baggage::Manager] registered
+  #   baggage manager or a default no-op implementation of the
   #   manager.
-  def correlations
-    @correlations ||= CorrelationContext::Manager.new
+  def baggage
+    @baggage ||= Baggage::Manager.new
   end
 
   # @return [Context::Propagation::Propagation] an instance of the propagation API

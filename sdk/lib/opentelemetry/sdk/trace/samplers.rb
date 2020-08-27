@@ -7,15 +7,15 @@
 require 'opentelemetry/sdk/trace/samplers/decision'
 require 'opentelemetry/sdk/trace/samplers/result'
 require 'opentelemetry/sdk/trace/samplers/constant_sampler'
-require 'opentelemetry/sdk/trace/samplers/parent_or_else'
-require 'opentelemetry/sdk/trace/samplers/probability_sampler'
+require 'opentelemetry/sdk/trace/samplers/parent_based'
+require 'opentelemetry/sdk/trace/samplers/trace_id_ratio_based'
 
 module OpenTelemetry
   module SDK
     module Trace
       # The Samplers module contains the sampling logic for OpenTelemetry. The
-      # reference implementation provides a {ProbabilitySampler}, {ALWAYS_ON},
-      # {ALWAYS_OFF}, and {ParentOrElse}.
+      # reference implementation provides a {TraceIdRatioBased}, {ALWAYS_ON},
+      # {ALWAYS_OFF}, and {ParentBased}.
       #
       # Custom samplers can be provided by SDK users. The required interface is:
       #
@@ -41,9 +41,8 @@ module OpenTelemetry
         NOT_RECORD = Result.new(decision: Decision::NOT_RECORD)
         RECORD = Result.new(decision: Decision::RECORD)
         SAMPLING_HINTS = [Decision::NOT_RECORD, Decision::RECORD, Decision::RECORD_AND_SAMPLED].freeze
-        APPLY_PROBABILITY_TO_SYMBOLS = %i[root_spans root_spans_and_remote_parent all_spans].freeze
 
-        private_constant(:RECORD_AND_SAMPLED, :NOT_RECORD, :RECORD, :SAMPLING_HINTS, :APPLY_PROBABILITY_TO_SYMBOLS)
+        private_constant(:RECORD_AND_SAMPLED, :NOT_RECORD, :RECORD, :SAMPLING_HINTS)
 
         # Returns a {Result} with {Decision::RECORD_AND_SAMPLED}.
         ALWAYS_ON = ConstantSampler.new(result: RECORD_AND_SAMPLED, description: 'AlwaysOnSampler')
@@ -51,38 +50,46 @@ module OpenTelemetry
         # Returns a {Result} with {Decision::NOT_RECORD}.
         ALWAYS_OFF = ConstantSampler.new(result: NOT_RECORD, description: 'AlwaysOffSampler')
 
-        # Returns a new sampler. It either respects the parent span's sampling
-        # decision or delegates to delegate_sampler for root spans.
+        # Returns a new sampler. It delegates to samplers according to the following rules:
         #
-        # @param [Sampler] delegate_sampler The sampler to which the sampling
-        #   decision is delegated for root spans.
-        def self.parent_or_else(delegate_sampler)
-          ParentOrElse.new(delegate_sampler)
+        # | Parent | parent.remote? | parent.trace_flags.sampled? | Invoke sampler |
+        # |--|--|--|--|
+        # | absent | n/a | n/a | root |
+        # | present | true | true | remote_parent_sampled |
+        # | present | true | false | remote_parent_not_sampled |
+        # | present | false | true | local_parent_sampled |
+        # | present | false | false | local_parent_not_sampled |
+        #
+        # @param [Sampler] root The sampler to which the sampling
+        #   decision is delegated for spans with no parent (root spans).
+        # @param [optional Sampler] remote_parent_sampled The sampler to which the sampling
+        #   decision is delegated for remote parent sampled spans. Defaults to ALWAYS_ON.
+        # @param [optional Sampler] remote_parent_not_sampled The sampler to which the sampling
+        #   decision is delegated for remote parent not sampled spans. Defaults to ALWAYS_OFF.
+        # @param [optional Sampler] local_parent_sampled The sampler to which the sampling
+        #   decision is delegated for local parent sampled spans. Defaults to ALWAYS_ON.
+        # @param [optional Sampler] local_parent_not_sampled The sampler to which the sampling
+        #   decision is delegated for local parent not sampld spans. Defaults to ALWAYS_OFF.
+        def self.parent_based(
+          root:,
+          remote_parent_sampled: ALWAYS_ON,
+          remote_parent_not_sampled: ALWAYS_OFF,
+          local_parent_sampled: ALWAYS_ON,
+          local_parent_not_sampled: ALWAYS_OFF
+        )
+          ParentBased.new(root, remote_parent_sampled, remote_parent_not_sampled, local_parent_sampled, local_parent_not_sampled)
         end
 
-        # Returns a new sampler. The probability of sampling a trace is equal
-        # to that of the specified probability.
+        # Returns a new sampler. The ratio describes the proportion of the trace ID
+        # space that is sampled.
         #
-        # @param [Numeric] probability The desired probability of sampling.
+        # @param [Numeric] ratio The desired sampling ratio.
         #   Must be within [0.0, 1.0].
-        # @param [optional Boolean] ignore_parent Whether to ignore parent
-        #   sampling. Defaults to not ignore parent sampling.
-        # @param [optional Symbol] apply_probability_to Whether to apply
-        #   probability sampling to root spans, root spans and remote parents,
-        #   or all spans. Allowed values include :root_spans, :root_spans_and_remote_parent,
-        #   and :all_spans. Defaults to :root_spans_and_remote_parent.
-        # @raise [ArgumentError] if probability is out of range
-        # @raise [ArgumentError] if apply_probability_to is not one of the allowed symbols
-        def self.probability(probability,
-                             ignore_parent: false,
-                             apply_probability_to: :root_spans_and_remote_parent)
-          raise ArgumentError, 'probability must be in range [0.0, 1.0]' unless (0.0..1.0).include?(probability)
-          raise ArgumentError, 'apply_probability_to' unless APPLY_PROBABILITY_TO_SYMBOLS.include?(apply_probability_to)
+        # @raise [ArgumentError] if ratio is out of range
+        def self.trace_id_ratio_based(ratio)
+          raise ArgumentError, 'ratio must be in range [0.0, 1.0]' unless (0.0..1.0).include?(ratio)
 
-          ProbabilitySampler.new(probability,
-                                 ignore_parent: ignore_parent,
-                                 apply_to_remote_parent: apply_probability_to != :root_spans,
-                                 apply_to_all_spans: apply_probability_to == :all_spans)
+          TraceIdRatioBased.new(ratio)
         end
       end
     end
