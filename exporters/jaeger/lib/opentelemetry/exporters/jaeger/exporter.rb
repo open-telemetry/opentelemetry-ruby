@@ -70,12 +70,19 @@ module OpenTelemetry
         # and the remaining batches will be discarded. Returns SUCCESS after all batches
         # have been successfully yielded.
         def encoded_batches(span_data)
-          encoded_spans = span_data.map(&method(:encoded_span))
-          encoded_span_sizes = encoded_spans.map(&method(:encoded_span_size))
-          return FAILURE if encoded_span_sizes.any? { |size| size > @max_packet_size }
+          grouped_encoded_spans = \
+            span_data.each_with_object(Hash.new { |h, k| h[k] = []}) do |span, memo|
+              encoded_data = encoded_span(span)
+              encoded_size = encoded_span_size(encoded_data)
+              return FAILURE if encoded_size > @max_packet_size
 
-          encoded_spans.zip(encoded_span_sizes).chunk(&batcher).each do |batch_and_spans_with_size|
-            yield Thrift::Batch.new('process' => encoded_process, 'spans' => batch_and_spans_with_size.last.map(&:first))
+              memo[span.library_resource] << [encoded_data, encoded_size]
+            end
+
+          grouped_encoded_spans.each_pair do |resource, encoded_spans|
+            encoded_spans.chunk(&batcher).each do |batch_and_spans_with_size|
+              yield Thrift::Batch.new('process' => encoded_process(resource), 'spans' => batch_and_spans_with_size.last.map(&:first))
+            end
           end
           SUCCESS
         end
@@ -122,12 +129,12 @@ module OpenTelemetry
           @transport.size
         end
 
-        def encoded_process
+        def encoded_process(resource)
           @encoded_process ||= begin
-            tags = [] # TODO: figure this out.
-            # tags = OpenTelemetry.tracer.resource.label_enumerator.map do |key, value|
-            #   Thrift::Tag.new('key' => key, 'vType' => Thrift::TagType::STRING, 'vStr' => value)
-            # end
+            tags = resource&.label_enumerator&.map do |key, value|
+              Thrift::Tag.new('key' => key, 'vType' => Thrift::TagType::STRING, 'vStr' => value)
+            end || EMPTY_ARRAY
+
             Thrift::Process.new('serviceName' => @service_name, 'tags' => tags)
           end
         end

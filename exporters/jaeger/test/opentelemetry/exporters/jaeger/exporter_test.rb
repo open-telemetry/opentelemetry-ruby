@@ -70,9 +70,28 @@ describe OpenTelemetry::Exporters::Jaeger::Exporter do
       packet1 = socket.recvfrom(65_000)
       packet2 = socket.recvfrom(65_000)
       socket.close
+
       _(result).must_equal(SUCCESS)
       _(packet1.size).must_be :<=, 128
       _(packet2.size).must_be :<=, 128
+    end
+
+    it 'batches per resource' do
+      socket = UDPSocket.new
+      socket.bind('127.0.0.1', 0)
+      exporter = OpenTelemetry::Exporters::Jaeger::Exporter.new(service_name: 'test', host: '127.0.0.1', port: socket.addr[1], max_packet_size: 128)
+
+      span_data1 = create_span_data(library_resource: OpenTelemetry::SDK::Resources::Resource.create('k1' => 'v1'))
+      span_data2 = create_span_data(library_resource: OpenTelemetry::SDK::Resources::Resource.create('k2' => 'v2'))
+
+      result = exporter.export([span_data1, span_data2])
+      packet1 = socket.recvfrom(65_000)
+      packet2 = socket.recvfrom(65_000)
+      socket.close
+
+      _(result).must_equal(SUCCESS)
+      _(packet1).wont_be_nil
+      _(packet2).wont_be_nil
     end
   end
 
