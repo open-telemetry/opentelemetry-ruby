@@ -79,7 +79,7 @@ module OpenTelemetry
               encoded_size = encoded_span_size(encoded_data)
               return FAILURE if encoded_size > @max_packet_size
 
-              memo[span.library_resource] << [encoded_data, encoded_size]
+              memo[span.resource] << [encoded_data, encoded_size]
             end
 
           grouped_encoded_spans.each_pair do |resource, encoded_spans|
