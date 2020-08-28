@@ -9,6 +9,7 @@ $LOAD_PATH.push(File.dirname(__FILE__) + '/../../../../thrift/gen-rb')
 require 'agent'
 require 'opentelemetry/sdk'
 require 'socket'
+require 'opentelemetry/exporters/jaeger/exporter/encoding_utils'
 require 'opentelemetry/exporters/jaeger/exporter/span_encoder'
 
 module OpenTelemetry
@@ -16,6 +17,8 @@ module OpenTelemetry
     module Jaeger
       # An OpenTelemetry trace exporter that sends spans over UDP as Thrift Compact encoded Jaeger spans.
       class Exporter
+        include EncodingUtils
+
         SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
         FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
         private_constant(:SUCCESS, :FAILURE)
@@ -131,9 +134,7 @@ module OpenTelemetry
 
         def encoded_process(resource)
           @encoded_process ||= begin
-            tags = resource&.label_enumerator&.map do |key, value|
-              Thrift::Tag.new('key' => key, 'vType' => Thrift::TagType::STRING, 'vStr' => value)
-            end || EMPTY_ARRAY
+            tags = resource ? encoded_tags(resource.label_enumerator) : EMPTY_ARRAY
 
             Thrift::Process.new('serviceName' => @service_name, 'tags' => tags)
           end
