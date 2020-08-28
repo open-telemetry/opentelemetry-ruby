@@ -74,7 +74,7 @@ module OpenTelemetry
         # have been successfully yielded.
         def encoded_batches(span_data)
           grouped_encoded_spans = \
-            span_data.each_with_object(Hash.new { |h, k| h[k] = []}) do |span, memo|
+            span_data.each_with_object(Hash.new { |h, k| h[k] = [] }) do |span, memo|
               encoded_data = encoded_span(span)
               encoded_size = encoded_span_size(encoded_data)
               return FAILURE if encoded_size > @max_packet_size
