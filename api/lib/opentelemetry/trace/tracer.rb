@@ -55,13 +55,13 @@ module OpenTelemetry
       def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, with_parent: nil, with_parent_context: nil)
         span = start_span(name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind, with_parent: with_parent, with_parent_context: with_parent_context)
         with_span(span) { |s, c| yield s, c }
-      rescue Exception => e # rubocop:disable Lint/RescueException
+      rescue => e
         span.record_exception(e)
         span.status = Status.new(Status::UNKNOWN_ERROR,
                                  description: "Unhandled exception of type: #{e.class}")
         raise e
       ensure
-        span.finish
+        span.finish if defined?(span)
       end
 
       # Activates/deactivates the Span within the current Context, which makes the "current span"
