@@ -133,11 +133,8 @@ module OpenTelemetry
         end
 
         def encoded_process(resource)
-          @encoded_process ||= begin
-            tags = resource ? encoded_tags(resource.label_enumerator) : EMPTY_ARRAY
-
-            Thrift::Process.new('serviceName' => @service_name, 'tags' => tags)
-          end
+          tags = resource ? encoded_tags(resource.label_enumerator) : EMPTY_ARRAY
+          Thrift::Process.new('serviceName' => @service_name, 'tags' => tags)
         end
       end
     end
