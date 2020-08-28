@@ -83,8 +83,9 @@ module OpenTelemetry
             end
 
           grouped_encoded_spans.each_pair do |resource, encoded_spans|
+            process = encoded_process(resource)
             encoded_spans.chunk(&batcher).each do |batch_and_spans_with_size|
-              yield Thrift::Batch.new('process' => encoded_process(resource), 'spans' => batch_and_spans_with_size.last.map(&:first))
+              yield Thrift::Batch.new('process' => process, 'spans' => batch_and_spans_with_size.last.map(&:first))
             end
           end
           SUCCESS
