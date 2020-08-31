@@ -10,6 +10,8 @@ module OpenTelemetry
       class Exporter
         # @api private
         class SpanEncoder
+          include EncodingUtils
+
           def encoded_span(span_data) # rubocop:disable Metrics/AbcSize
             start_time = (span_data.start_timestamp.to_f * 1_000_000).to_i
             duration = (span_data.end_timestamp.to_f * 1_000_000).to_i - start_time
@@ -88,34 +90,6 @@ module OpenTelemetry
             tags << encoded_tag('otel.instrumentation_library.name', instrumentation_library.name) if instrumentation_library.name
             tags << encoded_tag('otel.instrumentation_library.version', instrumentation_library.version) if instrumentation_library.version
             tags
-          end
-
-          def encoded_tags(attributes)
-            attributes&.map do |key, value|
-              encoded_tag(key, value)
-            end || EMPTY_ARRAY
-          end
-
-          def encoded_tag(key, value)
-            @type_map ||= {
-              LONG => Thrift::TagType::LONG,
-              DOUBLE => Thrift::TagType::DOUBLE,
-              STRING => Thrift::TagType::STRING,
-              BOOL => Thrift::TagType::BOOL
-            }.freeze
-
-            value_key = case value
-                        when Integer then LONG
-                        when Float then DOUBLE
-                        when String, Array then STRING
-                        when false, true then BOOL
-                        end
-            value = value.to_json if value.is_a?(Array)
-            Thrift::Tag.new(
-              KEY => key,
-              TYPE => @type_map[value_key],
-              value_key => value
-            )
           end
 
           def int64(byte_string)
