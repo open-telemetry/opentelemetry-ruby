@@ -57,7 +57,7 @@ commands:
           command: "cd sdk && gem install --no-document bundler && bundle install --jobs=3 --retry=3"
       - run:
           name: Bundle (Jaeger)
-          command: "cd exporters/jaeger && gem install --no-document bundler && bundle install --jobs=3 --retry=3"
+          command: "cd exporter/jaeger && gem install --no-document bundler && bundle install --jobs=3 --retry=3"
       - run:
           name: CI (API)
           command: "cd api && bundle exec rake"
@@ -66,7 +66,7 @@ commands:
           command: "cd sdk && bundle exec rake"
       - run:
           name: CI (Jaeger)
-          command: "cd exporters/jaeger && bundle exec rake"
+          command: "cd exporter/jaeger && bundle exec rake"
   rake-test-appraisal:
     steps:
       - run:
