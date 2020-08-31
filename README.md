@@ -16,16 +16,15 @@ The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 
 Approvers ([@open-telemetry/ruby-approvers](https://github.com/orgs/open-telemetry/teams/ruby-approvers)):
 
-- [Vlad Gorodetsky](https://github.com/bai), Shopify
-- [Yoshinori Kawasaki](https://github.com/luvtechno), Wantedly
-- [Don Morrison](https://github.com/elskwid), Mutations
+- [Robert Laurin](https://github.com/robertlaurin), Shopify
+- [Eric Mustin](https://github.com/ericmustin), Datadog
 
 *Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#approver).*
 
 Maintainers ([@open-telemetry/ruby-maintainers](https://github.com/orgs/open-telemetry/teams/ruby-maintainers)):
 
 - [Francis Bogsanyi](https://github.com/fbogsany), Shopify
-- [Matthew Wear](https://github.com/mwear), LightStep
+- [Matthew Wear](https://github.com/mwear), Lightstep
 - [Daniel Azuma](https://github.com/dazuma), Google
 
 *Find more about the maintainer role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#maintainer).*
