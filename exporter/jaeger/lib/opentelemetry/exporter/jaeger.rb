@@ -4,10 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/exporter/jaeger/exporter'
-require 'opentelemetry/exporter/jaeger/transport'
-require 'opentelemetry/exporter/jaeger/version'
-
 # OpenTelemetry is an open source observability framework, providing a
 # general-purpose API, SDK, and related tools required for the instrumentation
 # of cloud-native software, frameworks, and libraries.
@@ -15,4 +11,20 @@ require 'opentelemetry/exporter/jaeger/version'
 # The OpenTelemetry module provides global accessors for telemetry objects.
 # See the documentation for the `opentelemetry-api` gem for details.
 module OpenTelemetry
+  module Exporter
+    module Jaeger
+    end
+  end
 end
+
+$LOAD_PATH.push(File.dirname(__FILE__) + '/../../../thrift/gen-rb')
+
+require 'agent'
+require 'collector'
+require 'opentelemetry/sdk'
+require 'socket'
+require 'opentelemetry/exporter/jaeger/encoder'
+require 'opentelemetry/exporter/jaeger/transport'
+require 'opentelemetry/exporter/jaeger/agent_exporter'
+require 'opentelemetry/exporter/jaeger/collector_exporter'
+require 'opentelemetry/exporter/jaeger/version'

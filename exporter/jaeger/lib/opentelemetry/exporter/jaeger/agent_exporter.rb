@@ -4,33 +4,25 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-$LOAD_PATH.push(File.dirname(__FILE__) + '/../../../../thrift/gen-rb')
-
-require 'agent'
-require 'opentelemetry/sdk'
-require 'socket'
-require 'opentelemetry/exporter/jaeger/exporter/encoding_utils'
-require 'opentelemetry/exporter/jaeger/exporter/span_encoder'
-
 module OpenTelemetry
   module Exporter
     module Jaeger
       # An OpenTelemetry trace exporter that sends spans over UDP as Thrift Compact encoded Jaeger spans.
-      class Exporter
-        include EncodingUtils
-
+      class AgentExporter
         SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
         FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
         private_constant(:SUCCESS, :FAILURE)
 
-        def initialize(service_name:, host:, port:, max_packet_size: 65_000)
+        def initialize(host: ENV.fetch('OTEL_EXPORTER_JAEGER_AGENT_HOST', 'localhost'),
+                       port: ENV.fetch('OTEL_EXPORTER_JAEGER_AGENT_PORT', 6831),
+                       max_packet_size: 65_000)
           transport = Transport.new(host, port)
           protocol = ::Thrift::CompactProtocol.new(transport)
           @client = Thrift::Agent::Client.new(protocol)
           @max_packet_size = max_packet_size
           @shutdown = false
-          @service_name = service_name
-          @span_encoder = SpanEncoder.new
+          @sizing_transport = SizingTransport.new
+          @sizing_protocol = ::Thrift::CompactProtocol.new(@sizing_transport)
         end
 
         # Called to export sampled {OpenTelemetry::SDK::Trace::SpanData} structs.
@@ -42,7 +34,11 @@ module OpenTelemetry
         def export(span_data)
           return FAILURE if @shutdown
 
-          encoded_batches(span_data) { |batch| @client.emitBatch(batch) }
+          encoded_batches(span_data) do |batch|
+            return FAILURE if @shutdown
+
+            @client.emitBatch(batch)
+          end
         end
 
         # Called when {OpenTelemetry::SDK::Trace::Tracer#shutdown} is called, if
@@ -69,13 +65,13 @@ module OpenTelemetry
         end
 
         # Yields Thrift-encoded batches of spans. Batches are limited to @max_packet_size.
-        # If a single span exceeds @max_packet_size, FAILED_NOT_RETRYABLE will be returned
-        # and the remaining batches will be discarded. Returns SUCCESS after all batches
-        # have been successfully yielded.
+        # If a single span exceeds @max_packet_size, FAILURE will be returned and the
+        # remaining batches will be discarded. Returns SUCCESS after all batches have been
+        # successfully yielded.
         def encoded_batches(span_data)
           grouped_encoded_spans = \
             span_data.each_with_object(Hash.new { |h, k| h[k] = [] }) do |span, memo|
-              encoded_data = encoded_span(span)
+              encoded_data = Encoder.encoded_span(span)
               encoded_size = encoded_span_size(encoded_data)
               return FAILURE if encoded_size > @max_packet_size
 
@@ -83,26 +79,13 @@ module OpenTelemetry
             end
 
           grouped_encoded_spans.each_pair do |resource, encoded_spans|
-            process = encoded_process(resource)
+            process = Encoder.encoded_process(resource)
             encoded_spans.chunk(&batcher).each do |batch_and_spans_with_size|
               yield Thrift::Batch.new('process' => process, 'spans' => batch_and_spans_with_size.last.map(&:first))
             end
           end
           SUCCESS
         end
-
-        def encoded_span(span_data)
-          @span_encoder.encoded_span(span_data)
-        end
-
-        EMPTY_ARRAY = [].freeze
-        LONG = Thrift::Tag::FIELDS[Thrift::Tag::VLONG][:name]
-        DOUBLE = Thrift::Tag::FIELDS[Thrift::Tag::VDOUBLE][:name]
-        STRING = Thrift::Tag::FIELDS[Thrift::Tag::VSTR][:name]
-        BOOL = Thrift::Tag::FIELDS[Thrift::Tag::VBOOL][:name]
-        KEY = Thrift::Tag::FIELDS[Thrift::Tag::KEY][:name]
-        TYPE = Thrift::Tag::FIELDS[Thrift::Tag::VTYPE][:name]
-        private_constant(:EMPTY_ARRAY, :LONG, :DOUBLE, :STRING, :BOOL, :KEY, :TYPE)
 
         # @api private
         class SizingTransport
@@ -126,16 +109,9 @@ module OpenTelemetry
         private_constant(:SizingTransport)
 
         def encoded_span_size(encoded_span)
-          @transport ||= SizingTransport.new
-          @protocol ||= ::Thrift::CompactProtocol.new(@transport)
-          @transport.flush
-          encoded_span.write(@protocol)
-          @transport.size
-        end
-
-        def encoded_process(resource)
-          tags = resource ? encoded_tags(resource.label_enumerator) : EMPTY_ARRAY
-          Thrift::Process.new('serviceName' => @service_name, 'tags' => tags)
+          @sizing_transport.flush
+          encoded_span.write(@sizing_protocol)
+          @sizing_transport.size
         end
       end
     end

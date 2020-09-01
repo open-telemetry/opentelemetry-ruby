@@ -5,11 +5,11 @@
 # SPDX-License-Identifier: Apache-2.0
 require 'test_helper'
 
-describe OpenTelemetry::Exporter::Jaeger::Exporter::SpanEncoder do
-  let(:span_encoder) { OpenTelemetry::Exporter::Jaeger::Exporter::SpanEncoder.new }
+describe OpenTelemetry::Exporter::Jaeger::Encoder do
+  Encoder = OpenTelemetry::Exporter::Jaeger::Encoder
 
   it 'encodes a span_data' do
-    encoded_span = span_encoder.encoded_span(create_span_data)
+    encoded_span = Encoder.encoded_span(create_span_data)
     _(encoded_span.operationName).must_equal('')
     _(encoded_span.tags).must_equal([])
   end
@@ -22,7 +22,7 @@ describe OpenTelemetry::Exporter::Jaeger::Exporter::SpanEncoder do
       )
     ]
     span_data = create_span_data(attributes: attributes, events: events)
-    encoded_span = span_encoder.encoded_span(span_data)
+    encoded_span = Encoder.encoded_span(span_data)
     field0 = encoded_span.logs.first.fields.first
     _(field0.key).must_equal('ekey')
     _(field0.vType).must_equal(
@@ -45,7 +45,7 @@ describe OpenTelemetry::Exporter::Jaeger::Exporter::SpanEncoder do
       )
     ]
     span_data = create_span_data(attributes: attributes, events: events)
-    encoded_span = span_encoder.encoded_span(span_data)
+    encoded_span = Encoder.encoded_span(span_data)
     field0 = encoded_span.logs.first.fields.first
     _(field0.key).must_equal('ekey')
     _(field0.vType).must_equal(
@@ -64,7 +64,7 @@ describe OpenTelemetry::Exporter::Jaeger::Exporter::SpanEncoder do
     it 'encodes library and version when set' do
       lib = OpenTelemetry::SDK::InstrumentationLibrary.new('mylib', '0.1.0')
       span_data = create_span_data(instrumentation_library: lib)
-      encoded_span = span_encoder.encoded_span(span_data)
+      encoded_span = Encoder.encoded_span(span_data)
 
       _(encoded_span.tags.size).must_equal(2)
 
@@ -80,7 +80,7 @@ describe OpenTelemetry::Exporter::Jaeger::Exporter::SpanEncoder do
     it 'skips nil values' do
       lib = OpenTelemetry::SDK::InstrumentationLibrary.new('mylib')
       span_data = create_span_data(instrumentation_library: lib)
-      encoded_span = span_encoder.encoded_span(span_data)
+      encoded_span = Encoder.encoded_span(span_data)
 
       _(encoded_span.tags.size).must_equal(1)
 
