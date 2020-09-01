@@ -8,7 +8,7 @@ module OpenTelemetry
   module Exporter
     module Jaeger
       # @api private
-      module Encoder
+      module Encoder # rubocop:disable Metrics/ModuleLength
         extend self
 
         EMPTY_ARRAY = [].freeze

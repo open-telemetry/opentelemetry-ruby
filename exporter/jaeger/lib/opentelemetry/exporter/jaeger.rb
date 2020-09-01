@@ -12,6 +12,7 @@
 # See the documentation for the `opentelemetry-api` gem for details.
 module OpenTelemetry
   module Exporter
+    # Jaeger contains SpanExporter implementations for the Jaeger agent and collector.
     module Jaeger
     end
   end
