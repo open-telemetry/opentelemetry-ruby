@@ -33,6 +33,10 @@ jobs:
     env:
       JRUBY_OPTS: --debug
     services:
+      memcached:
+        image: memcached:alpine
+        ports:
+          - 11211:11211
       sql:
         image: mysql:5.6
         env:
@@ -57,4 +61,6 @@ jobs:
         env:
           TEST_MYSQL_HOST: sql
           TEST_MYSQL_PORT: ${{ job.services.mysql.ports['3306'] }}
+          TEST_MEMCACHED_HOST: memcached
+          TEST_MEMCACHED_PORT: ${{ job.services.memcached.ports['11211'] }}
         run: toys ci ${{ matrix.flags }}

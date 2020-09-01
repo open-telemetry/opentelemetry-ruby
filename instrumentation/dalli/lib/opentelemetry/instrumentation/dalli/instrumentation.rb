@@ -1,0 +1,35 @@
+# frozen_string_literal: true
+
+# Copyright 2020 OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+module OpenTelemetry
+  module Instrumentation
+    module Dalli
+      # The Instrumentation class contains logic to detect and install the Dalli
+      # instrumentation
+      class Instrumentation < OpenTelemetry::Instrumentation::Base
+        install do |_config|
+          require_dependencies
+          add_patches
+        end
+
+        present do
+          defined?(::Dalli)
+        end
+
+        private
+
+        def require_dependencies
+          require_relative 'utils'
+          require_relative 'patches/server'
+        end
+
+        def add_patches
+          ::Dalli::Server.prepend(Patches::Server)
+        end
+      end
+    end
+  end
+end
