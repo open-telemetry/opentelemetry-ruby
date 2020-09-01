@@ -7,7 +7,6 @@
 require 'opentelemetry/sdk'
 require 'opentelemetry/resource/detectors/version'
 require 'opentelemetry/resource/detectors/google_cloud_platform'
-require 'opentelemetry/resource/detectors/environment_variable'
 require 'opentelemetry/resource/detectors/auto_detector'
 
 module OpenTelemetry
