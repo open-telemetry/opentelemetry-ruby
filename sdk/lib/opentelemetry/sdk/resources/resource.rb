@@ -31,11 +31,22 @@ module OpenTelemetry
           end
 
           def telemetry_sdk
-            create(
+            resource_labels = {
               Constants::TELEMETRY_SDK_RESOURCE[:name] => 'opentelemetry',
               Constants::TELEMETRY_SDK_RESOURCE[:language] => 'ruby',
               Constants::TELEMETRY_SDK_RESOURCE[:version] => OpenTelemetry::SDK::VERSION
-            )
+            }
+
+            resource_pairs = ENV['OTEL_RESOURCE_ATTRIBUTES']
+            return create(resource_labels) unless resource_pairs.is_a?(String)
+
+            resource_pairs.split(',').each do |pair|
+              key, value = pair.split('=')
+              resource_labels[key] = value
+            end
+
+            resource_labels.delete_if { |_key, value| value.nil? || value.empty? }
+            create(resource_labels)
           end
         end
 

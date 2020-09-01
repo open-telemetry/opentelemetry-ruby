@@ -10,3 +10,8 @@ gemspec
 
 # Use the opentelemetry-api gem from source
 gem 'opentelemetry-api', path: '../api'
+
+group :development, :test do
+  gem 'byebug'
+  gem 'pry'
+end
