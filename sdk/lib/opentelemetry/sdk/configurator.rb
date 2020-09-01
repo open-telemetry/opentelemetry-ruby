@@ -36,11 +36,12 @@ module OpenTelemetry
 
       # Accepts a resource object that is merged with the default telemetry sdk
       # resource. The use of this method is optional, and is provided as means
-      # to add additional resource information.
+      # to include additional resource information.
+      # If a resource key collision occurs the passed in resource takes priority.
       #
       # @param [Resource] new_resource The resource to be merged
       def resource=(new_resource)
-        @resource = @resource.merge(new_resource)
+        @resource = new_resource.merge(@resource)
       end
 
       # Install an instrumentation with specificied optional +config+.

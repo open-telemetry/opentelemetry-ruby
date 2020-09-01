@@ -48,6 +48,25 @@ describe OpenTelemetry::SDK::Resources::Resource do
       _(resource_labels['telemetry.sdk.language']).must_equal('ruby')
       _(resource_labels['telemetry.sdk.version']).must_match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}/)
     end
+
+    describe 'when the environment variable is present' do
+      let(:expected_resource_labels) do
+        {
+          'key1' => 'value1',
+          'key2' => 'value2',
+          'telemetry.sdk.name' => 'opentelemetry',
+          'telemetry.sdk.language' => 'ruby',
+          'telemetry.sdk.version' => OpenTelemetry::SDK::VERSION
+        }
+      end
+
+      it 'includes environment resources' do
+        with_env('OTEL_RESOURCE_ATTRIBUTES' => 'key1=value1,key2=value2') do
+          resource_labels = Resource.telemetry_sdk.label_enumerator.to_h
+          _(resource_labels).must_equal(expected_resource_labels)
+        end
+      end
+    end
   end
 
   describe '#merge' do

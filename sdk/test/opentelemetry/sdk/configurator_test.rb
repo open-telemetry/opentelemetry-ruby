@@ -31,6 +31,24 @@ describe OpenTelemetry::SDK::Configurator do
       configurator.resource = OpenTelemetry::SDK::Resources::Resource.create('test_key' => 'test_value')
       _(configurator_resource_labels).must_equal(expected_resource_labels)
     end
+
+    describe 'when there is a resource key collision' do
+      let(:expected_resource_labels) do
+        {
+          'telemetry.sdk.name' => 'opentelemetry',
+          'telemetry.sdk.language' => 'ruby',
+          'telemetry.sdk.version' => OpenTelemetry::SDK::VERSION,
+          'important_value' => '25'
+        }
+      end
+
+      it 'uses the user provided resources' do
+        with_env('OTEL_RESOURCE_ATTRIBUTES' => 'important_value=100') do
+          configurator.resource = OpenTelemetry::SDK::Resources::Resource.create('important_value' => '25')
+          _(configurator_resource_labels).must_equal(expected_resource_labels)
+        end
+      end
+    end
   end
 
   describe '#use' do
