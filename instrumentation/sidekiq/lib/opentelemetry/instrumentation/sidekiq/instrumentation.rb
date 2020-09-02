@@ -45,7 +45,7 @@ module OpenTelemetry
             end
           end
 
-          if defined?(::Sidekiq::Testing)
+          if defined?(::Sidekiq::Testing) # rubocop:disable Style/GuardClause
             ::Sidekiq::Testing.server_middleware do |chain|
               chain.add Middlewares::Server::TracerMiddleware
             end

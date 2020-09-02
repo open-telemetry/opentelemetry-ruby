@@ -12,7 +12,7 @@ module OpenTelemetry
         extend self
 
         DETECTORS = [
-          OpenTelemetry::Resource::Detectors::GoogleCloudPlatform,
+          OpenTelemetry::Resource::Detectors::GoogleCloudPlatform
         ].freeze
 
         def detect

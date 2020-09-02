@@ -16,9 +16,10 @@ builder.run app
 
 # demonstrate integration using 'retain_middlware_names' and 'application':
 OpenTelemetry::SDK.configure do |c|
-  c.use 'OpenTelemetry::Instrumentation::Rack', retain_middleware_names: true,
-                                         application: builder,
-                                         record_frontend_span: true
+  c.use 'OpenTelemetry::Instrumentation::Rack',
+        retain_middleware_names: true,
+        application: builder,
+        record_frontend_span: true
 end
 
 # integrate instrumentation explicitly:
