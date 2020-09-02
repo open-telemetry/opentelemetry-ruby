@@ -24,3 +24,6 @@ Style/StringLiterals:
     - gemfiles/**/*
 Metrics/BlockLength:
   Enabled: false
+Naming/FileName:
+  Exclude:
+    - "lib/opentelemetry-resource_detectors.rb"
