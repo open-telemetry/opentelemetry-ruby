@@ -10,7 +10,7 @@ module OpenTelemetry
       module Middlewares
         module Client
           # TracerMiddleware propagates context and instruments Sidekiq client
-          # by way of its middlware system
+          # by way of its middleware system
           class TracerMiddleware
             def call(_worker_class, job, _queue, _redis_pool)
               tracer.in_span(
