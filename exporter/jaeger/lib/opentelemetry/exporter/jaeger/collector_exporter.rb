@@ -54,8 +54,8 @@ module OpenTelemetry
         def invalid_url?(url)
           return true if url.nil? || url.strip.empty?
 
-          uri = URI(url)
-          uri.path.nil? || uri.path.empty?
+          URI(url)
+          false
         rescue URI::InvalidURIError
           true
         end
