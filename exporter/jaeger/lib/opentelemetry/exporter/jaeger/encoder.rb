@@ -33,8 +33,12 @@ module OpenTelemetry
         private_constant(:EMPTY_ARRAY, :LONG, :DOUBLE, :STRING, :BOOL, :KEY, :TYPE, :TYPE_MAP, :KIND_MAP)
 
         def encoded_process(resource)
-          tags = resource ? encoded_tags(resource.label_enumerator) : EMPTY_ARRAY
-          Thrift::Process.new('serviceName' => 'TODO', 'tags' => tags)
+          service_name = 'unknown'
+          tags = encoded_tags(resource&.label_enumerator&.filter do |key, value|
+                   service_name = value if key == 'service.name'
+                   key != 'service.name'
+                 end)
+          Thrift::Process.new('serviceName' => service_name, 'tags' => tags)
         end
 
         def encoded_tags(attributes)

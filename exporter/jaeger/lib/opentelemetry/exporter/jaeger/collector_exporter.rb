@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'uri'
+
 module OpenTelemetry
   module Exporter
     module Jaeger
@@ -16,6 +18,8 @@ module OpenTelemetry
         def initialize(endpoint: ENV.fetch('OTEL_EXPORTER_JAEGER_ENDPOINT', 'http://localhost:14250'),
                        username: ENV['OTEL_EXPORTER_JAEGER_USER'],
                        password: ENV['OTEL_EXPORTER_JAEGER_PASSWORD'])
+          raise ArgumentError, "invalid url for Jaeger::CollectorExporter #{endpoint}" if invalid_url?(endpoint)
+
           transport = ::Thrift::HTTPClientTransport.new(endpoint) # TODO: how to specify username and password?
           protocol = ::Thrift::BinaryProtocol.new(transport)
           @client = Thrift::Collector::Client.new(protocol)
@@ -46,6 +50,16 @@ module OpenTelemetry
         end
 
         private
+
+        def invalid_url?(url)
+          return true if url.nil? || url.strip.empty?
+          uri = URI(url)
+          return true if uri.path.nil?
+          return true if uri.path.empty?
+          false
+        rescue URI::InvalidURIError
+          true
+        end
 
         def encoded_batches(span_data)
           span_data.group_by(&:resource).map do |resource, spans|
