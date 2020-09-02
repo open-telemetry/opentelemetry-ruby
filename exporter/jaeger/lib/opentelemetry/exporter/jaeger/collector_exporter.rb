@@ -37,8 +37,8 @@ module OpenTelemetry
 
           batches = encoded_batches(span_data)
           @client.submitBatches(batches).all?(&:ok) ? SUCCESS : FAILURE
-        rescue ::Thrift::ApplicationException
-          # TODO: log exception? metrics?
+        rescue ::Thrift::ApplicationException => e
+          OpenTelemetry.logger.error("unexpected error in Jaeger::CollectorExporter#export - #{e}")
           FAILURE
         end
 
