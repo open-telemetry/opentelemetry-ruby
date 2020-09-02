@@ -2,6 +2,7 @@ AllCops:
   TargetRubyVersion: "2.5.0"
   Exclude:
     - "thrift/**/*"
+    - "vendor/**/*"
 
 Lint/UnusedMethodArgument:
   Enabled: false

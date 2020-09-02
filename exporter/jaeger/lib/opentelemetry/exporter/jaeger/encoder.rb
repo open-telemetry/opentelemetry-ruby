@@ -34,10 +34,11 @@ module OpenTelemetry
 
         def encoded_process(resource)
           service_name = 'unknown'
-          tags = encoded_tags(resource&.label_enumerator&.filter do |key, value|
-                   service_name = value if key == 'service.name'
-                   key != 'service.name'
-                 end)
+          tags = resource&.label_enumerator&.filter do |key, value|
+            service_name = value if key == 'service.name'
+            key != 'service.name'
+          end
+          tags = encoded_tags(tags)
           Thrift::Process.new('serviceName' => service_name, 'tags' => tags)
         end
 
