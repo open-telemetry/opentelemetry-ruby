@@ -59,7 +59,7 @@ describe OpenTelemetry::Exporter::Jaeger::CollectorExporter do
   end
 
   module Handler
-    def self.submitBatches(batches)
+    def self.submitBatches(batches) # rubocop:disable Naming/MethodName
       batches.map { OpenTelemetry::Exporter::Jaeger::Thrift::BatchSubmitResponse.new('ok' => true) }
     end
   end
