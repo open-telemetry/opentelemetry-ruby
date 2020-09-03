@@ -6,9 +6,6 @@
 require 'test_helper'
 
 describe OpenTelemetry::Exporter::Jaeger::AgentExporter do
-  SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
-  FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
-
   describe '#initialize' do
     it 'initializes' do
       exporter = OpenTelemetry::Exporter::Jaeger::AgentExporter.new(host: '127.0.0.1', port: 6831)
@@ -26,14 +23,14 @@ describe OpenTelemetry::Exporter::Jaeger::AgentExporter do
     it 'returns FAILURE when shutdown' do
       exporter.shutdown
       result = exporter.export(nil)
-      _(result).must_equal(FAILURE)
+      _(result).must_equal(OpenTelemetry::SDK::Trace::Export::FAILURE)
     end
 
     it 'returns FAILURE if an encoded span is too large' do
       exporter = OpenTelemetry::Exporter::Jaeger::AgentExporter.new(host: '127.0.0.1', port: 6831, max_packet_size: 10)
       span_data = create_span_data
       result = exporter.export([span_data])
-      _(result).must_equal(FAILURE)
+      _(result).must_equal(OpenTelemetry::SDK::Trace::Export::FAILURE)
     end
 
     it 'exports a span_data' do
@@ -44,7 +41,7 @@ describe OpenTelemetry::Exporter::Jaeger::AgentExporter do
       result = exporter.export([span_data])
       packet = socket.recvfrom(65_000)
       socket.close
-      _(result).must_equal(SUCCESS)
+      _(result).must_equal(OpenTelemetry::SDK::Trace::Export::SUCCESS)
       _(packet).wont_be_nil
     end
 
@@ -71,7 +68,7 @@ describe OpenTelemetry::Exporter::Jaeger::AgentExporter do
       packet2 = socket.recvfrom(65_000)
       socket.close
 
-      _(result).must_equal(SUCCESS)
+      _(result).must_equal(OpenTelemetry::SDK::Trace::Export::SUCCESS)
       _(packet1.size).must_be :<=, 128
       _(packet2.size).must_be :<=, 128
     end
@@ -89,7 +86,7 @@ describe OpenTelemetry::Exporter::Jaeger::AgentExporter do
       packet2 = socket.recvfrom(65_000)
       socket.close
 
-      _(result).must_equal(SUCCESS)
+      _(result).must_equal(OpenTelemetry::SDK::Trace::Export::SUCCESS)
       _(packet1).wont_be_nil
       _(packet2).wont_be_nil
     end
