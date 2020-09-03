@@ -15,7 +15,7 @@ module OpenTelemetry
         FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
         private_constant(:SUCCESS, :FAILURE)
 
-        def initialize(endpoint: ENV.fetch('OTEL_EXPORTER_JAEGER_ENDPOINT', 'http://localhost:14250'),
+        def initialize(endpoint: ENV.fetch('OTEL_EXPORTER_JAEGER_ENDPOINT', 'http://localhost:14268'),
                        username: ENV['OTEL_EXPORTER_JAEGER_USER'],
                        password: ENV['OTEL_EXPORTER_JAEGER_PASSWORD'])
           raise ArgumentError, "invalid url for Jaeger::CollectorExporter #{endpoint}" if invalid_url?(endpoint)

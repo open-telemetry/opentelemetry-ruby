@@ -20,6 +20,14 @@ describe OpenTelemetry::Exporter::Jaeger::CollectorExporter do
       OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new
     end
 
+    it 'integrates with collector' do
+      skip unless ENV['TRACING_INTEGRATION_TEST']
+      WebMock.disable_net_connect!(allow: 'localhost')
+      span_data = create_span_data
+      result = exporter.export([span_data])
+      _(result).must_equal(OpenTelemetry::SDK::Trace::Export::SUCCESS)
+    end
+
     it 'returns FAILURE when shutdown' do
       exporter.shutdown
       result = exporter.export(nil)
@@ -27,7 +35,7 @@ describe OpenTelemetry::Exporter::Jaeger::CollectorExporter do
     end
 
     it 'exports a span_data' do
-      stub_post = stub_request(:post, 'http://localhost:14250').to_return { |request| ok_result(request.body) }
+      stub_post = stub_request(:post, 'http://localhost:14268').to_return { |request| ok_result(request.body) }
       exporter = OpenTelemetry::Exporter::Jaeger::CollectorExporter.new
       span_data = create_span_data
       result = exporter.export([span_data])
@@ -36,7 +44,7 @@ describe OpenTelemetry::Exporter::Jaeger::CollectorExporter do
     end
 
     it 'exports a span from a tracer' do
-      stub_post = stub_request(:post, 'http://localhost:14250').to_return { |request| ok_result(request.body) }
+      stub_post = stub_request(:post, 'http://localhost:14268').to_return { |request| ok_result(request.body) }
       exporter = OpenTelemetry::Exporter::Jaeger::CollectorExporter.new
       processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter: exporter, max_queue_size: 1, max_export_batch_size: 1)
       OpenTelemetry.tracer_provider.add_span_processor(processor)
@@ -46,7 +54,7 @@ describe OpenTelemetry::Exporter::Jaeger::CollectorExporter do
     end
 
     it 'batches per resource' do
-      stub_post = stub_request(:post, 'http://localhost:14250').to_return { |request| ok_result(request.body) }
+      stub_post = stub_request(:post, 'http://localhost:14268').to_return { |request| ok_result(request.body) }
       exporter = OpenTelemetry::Exporter::Jaeger::CollectorExporter.new
 
       span_data1 = create_span_data(resource: OpenTelemetry::SDK::Resources::Resource.create('k1' => 'v1'))
