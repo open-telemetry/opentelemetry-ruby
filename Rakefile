@@ -51,10 +51,10 @@ GEM_INFO = {
       OpenTelemetry::SDK::VERSION
     }
   },
-  "opentelemetry-exporters-jaeger" => {
+  "opentelemetry-exporter-jaeger" => {
     version_getter: ->() {
-      require './lib/opentelemetry/exporters/jaeger/version.rb'
-      OpenTelemetry::Exporters::Jaeger::VERSION
+      require './lib/opentelemetry/exporter/jaeger/version.rb'
+      OpenTelemetry::Exporter::Jaeger::VERSION
     }
   },
   "opentelemetry-exporters-otlp" => {

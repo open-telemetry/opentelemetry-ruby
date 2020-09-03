@@ -23,17 +23,28 @@ module OpenTelemetry
         # worker thread that exports the spans to wake up and start a new
         # export cycle.
         class BatchSpanProcessor
-          EXPORTER_TIMEOUT_MILLIS = 30_000
-          SCHEDULE_DELAY_MILLIS = 5_000
-          MAX_QUEUE_SIZE = 2048
-          MAX_EXPORT_BATCH_SIZE = 512
-          private_constant(:SCHEDULE_DELAY_MILLIS, :MAX_QUEUE_SIZE, :MAX_EXPORT_BATCH_SIZE)
-
+          # Returns a new instance of the {BatchSpanProcessor}.
+          #
+          # @param [SpanExporter] exporter
+          # @param [Numeric] exporter_timeout_millis the delay interval between two
+          #   consecutive exports. Defaults to the value of the OTEL_BSP_EXPORT_TIMEOUT_MILLIS
+          #   environment variable, if set, or 30,000 (30 seconds).
+          # @param [Numeric] schedule_delay_millis the maximum allowed time to export data.
+          #   Defaults to the value of the OTEL_BSP_SCHEDULE_DELAY_MILLIS environment
+          #   variable, if set, or 5,000 (5 seconds).
+          # @param [Integer] max_queue_size the maximum queue size in spans.
+          #   Defaults to the value of the OTEL_BSP_MAX_QUEUE_SIZE environment
+          #   variable, if set, or 2048.
+          # @param [Integer] max_export_batch_size the maximum batch size in spans.
+          #   Defaults to the value of the OTEL_BSP_MAX_EXPORT_BATCH_SIZE environment
+          #   variable, if set, or 512.
+          #
+          # @return a new instance of the {BatchSpanProcessor}.
           def initialize(exporter:,
-                         exporter_timeout_millis: EXPORTER_TIMEOUT_MILLIS,
-                         schedule_delay_millis: SCHEDULE_DELAY_MILLIS,
-                         max_queue_size: MAX_QUEUE_SIZE,
-                         max_export_batch_size: MAX_EXPORT_BATCH_SIZE)
+                         exporter_timeout_millis: Float(ENV.fetch('OTEL_BSP_EXPORT_TIMEOUT_MILLIS', 30_000)),
+                         schedule_delay_millis: Float(ENV.fetch('OTEL_BSP_SCHEDULE_DELAY_MILLIS', 5_000)),
+                         max_queue_size: Integer(ENV.fetch('OTEL_BSP_MAX_QUEUE_SIZE', 2048)),
+                         max_export_batch_size: Integer(ENV.fetch('OTEL_BSP_MAX_EXPORT_BATCH_SIZE', 512)))
             raise ArgumentError if max_export_batch_size > max_queue_size
 
             @exporter = exporter
