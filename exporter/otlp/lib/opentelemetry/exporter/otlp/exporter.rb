@@ -6,6 +6,7 @@
 
 require 'opentelemetry/sdk'
 require 'net/http'
+require 'csv'
 
 require 'opentelemetry/proto/common/v1/common_pb'
 require 'opentelemetry/proto/resource/v1/resource_pb'
@@ -13,10 +14,10 @@ require 'opentelemetry/proto/trace/v1/trace_pb'
 require 'opentelemetry/proto/collector/trace/v1/trace_service_pb'
 
 module OpenTelemetry
-  module Exporters
+  module Exporter
     module OTLP
       # An OpenTelemetry trace exporter that sends spans over HTTP as Protobuf encoded OTLP ExportTraceServiceRequests.
-      class Exporter
+      class Exporter # rubocop:disable Metrics/ClassLength
         SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
         FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
         private_constant(:SUCCESS, :FAILURE)
@@ -26,25 +27,32 @@ module OpenTelemetry
         OPEN_TIMEOUT = 5
         READ_TIMEOUT = 5
         RETRY_COUNT = 5
-        PATH = '/v1/trace'
-        private_constant(:KEEP_ALIVE_TIMEOUT, :OPEN_TIMEOUT, :READ_TIMEOUT, :RETRY_COUNT, :PATH)
+        private_constant(:KEEP_ALIVE_TIMEOUT, :OPEN_TIMEOUT, :READ_TIMEOUT, :RETRY_COUNT)
 
-        def initialize(host:,
-                       port:,
-                       path: PATH,
-                       use_ssl: false,
-                       keep_alive_timeout: KEEP_ALIVE_TIMEOUT,
-                       open_timeout: OPEN_TIMEOUT,
-                       read_timeout: READ_TIMEOUT,
-                       retry_count: RETRY_COUNT)
-          @http = Net::HTTP.new(host, port)
-          @http.use_ssl = use_ssl
-          @http.keep_alive_timeout = keep_alive_timeout
-          @http.open_timeout = open_timeout
-          @http.read_timeout = read_timeout
+        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_SPAN_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'localhost:55681/v1/trace'), # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
+                       insecure: config_opt('OTEL_EXPORTER_OTLP_SPAN_INSECURE', 'OTEL_EXPORTER_OTLP_INSECURE', default: false),
+                       certificate_file: config_opt('OTEL_EXPORTER_OTLP_SPAN_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
+                       headers: config_opt('OTEL_EXPORTER_OTLP_SPAN_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS'), # TODO: what format is expected here?
+                       compression: config_opt('OTEL_EXPORTER_OTLP_SPAN_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION'),
+                       timeout: config_opt('OTEL_EXPORTER_OTLP_SPAN_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10))
+          raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}" if invalid_url?("http://#{endpoint}")
+          raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil?
+          raise ArgumentError, 'headers must be comma-separated k:v pairs or a Hash' unless valid_headers?(headers)
 
-          @path = path
-          @max_retry_count = retry_count
+          uri = URI "http://#{endpoint}"
+          @http = Net::HTTP.new(uri.host, uri.port)
+          @http.use_ssl = insecure.to_s.downcase == 'false'
+          @http.ca_file = certificate_file unless certificate_file.nil?
+          @http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
+          @http.open_timeout = OPEN_TIMEOUT
+          @http.read_timeout = READ_TIMEOUT
+
+          @path = uri.path
+          @headers = case headers
+                     when String then CSV.parse(headers, col_sep: ':', row_sep: ',').to_h
+                     when Hash then headers
+                     end
+          @timeout = timeout.to_f # TODO: use this as a default timeout when we implement timeouts in https://github.com/open-telemetry/opentelemetry-ruby/pull/341
           @tracer = OpenTelemetry.tracer_provider.tracer
 
           @shutdown = false
@@ -72,15 +80,43 @@ module OpenTelemetry
 
         private
 
-        def send_bytes(bytes)
+        def config_opt(*env_vars, default: nil)
+          env_vars.each do |env_var|
+            val = ENV[env_var]
+            return val unless val.nil?
+          end
+          default
+        end
+
+        def valid_headers?(headers)
+          return true if headers.nil? || headers.is_a?(Hash)
+          return false unless headers.is_a?(String)
+
+          CSV.parse(headers, col_sep: ':', row_sep: ',').to_h
+          true
+        rescue ArgumentError
+          false
+        end
+
+        def invalid_url?(url)
+          return true if url.nil? || url.strip.empty?
+
+          uri = URI(url)
+          uri.path.nil? || uri.path.empty?
+        rescue URI::InvalidURIError
+          true
+        end
+
+        def send_bytes(bytes) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
           retry_count = 0
-          untraced do
+          untraced do # rubocop:disable Metrics/BlockLength
             request = Net::HTTP::Post.new(@path)
             request.body = bytes
             request.add_field('Content-Type', 'application/x-protobuf')
+            @headers&.each { |key, value| request.add_field(key, value) }
             # TODO: enable gzip when https://github.com/open-telemetry/opentelemetry-collector/issues/1344 is fixed.
             # request.add_field('Content-Encoding', 'gzip')
-  
+
             @http.start unless @http.started?
             response = @http.request(request)
 
@@ -116,9 +152,6 @@ module OpenTelemetry
 
         def handle_redirect(location)
           # TODO: figure out destination and reinitialize @http and @path
-          location = response['location']
-          location = URI(location).relative? ? (@uri + location).to_s : location
-          initialize_http(location) # Assume this is our new destination from now on.
         end
 
         def untraced
@@ -126,7 +159,7 @@ module OpenTelemetry
         end
 
         def backoff?(retry_after: nil, retry_count:, reason:)
-          return false if retry_count > @max_retry_count
+          return false if retry_count > RETRY_COUNT
 
           sleep_interval = nil
           unless retry_after.nil?
@@ -139,7 +172,7 @@ module OpenTelemetry
             sleep_interval ||=
               begin
                 Time.httpdate(retry_after) - Time.now
-              rescue
+              rescue # rubocop:disable Style/RescueStandardError
                 nil
               end
             sleep_interval = nil unless sleep_interval&.positive?
@@ -150,32 +183,34 @@ module OpenTelemetry
           true
         end
 
-        def encode(span_data)
+        def encode(span_data) # rubocop:disable Metrics/MethodLength
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(
             Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
-              resource_spans: [
-                Opentelemetry::Proto::Trace::V1::ResourceSpans.new(
-                  resource: Opentelemetry::Proto::Resource::V1::Resource.new(
-                    attributes: OpenTelemetry.tracer_provider.resource.label_enumerator.map { |key, value| as_otlp_key_value(key, value) },
-                  ),
-                  instrumentation_library_spans: span_data
-                    .group_by { |sd| sd.instrumentation_library }
-                    .map do |il, sds|
-                      Opentelemetry::Proto::Trace::V1::InstrumentationLibrarySpans.new(
-                        instrumentation_library: Opentelemetry::Proto::Common::V1::InstrumentationLibrary.new(
-                          name: il.name,
-                          version: il.version,
-                        ),
-                        spans: sds.map { |sd| as_otlp_span(sd) },
-                      )
-                    end,
-                )
-              ]
+              resource_spans: span_data
+                .group_by(&:resource)
+                .map do |resource, span_datas|
+                  Opentelemetry::Proto::Trace::V1::ResourceSpans.new(
+                    resource: Opentelemetry::Proto::Resource::V1::Resource.new(
+                      attributes: resource.label_enumerator.map { |key, value| as_otlp_key_value(key, value) }
+                    ),
+                    instrumentation_library_spans: span_datas
+                      .group_by(&:instrumentation_library)
+                      .map do |il, sds|
+                        Opentelemetry::Proto::Trace::V1::InstrumentationLibrarySpans.new(
+                          instrumentation_library: Opentelemetry::Proto::Common::V1::InstrumentationLibrary.new(
+                            name: il.name,
+                            version: il.version
+                          ),
+                          spans: sds.map { |sd| as_otlp_span(sd) }
+                        )
+                      end
+                  )
+                end
             )
           )
         end
 
-        def as_otlp_span(span_data)
+        def as_otlp_span(span_data) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
           Opentelemetry::Proto::Trace::V1::Span.new(
             trace_id: span_data.trace_id,
             span_id: span_data.span_id,
@@ -191,7 +226,7 @@ module OpenTelemetry
               Opentelemetry::Proto::Trace::V1::Span::Event.new(
                 time_unix_nano: as_otlp_timestamp(event.timestamp),
                 name: event.name,
-                attributes: event.attributes&.map { |k, v| as_otlp_key_value(k, v) },
+                attributes: event.attributes&.map { |k, v| as_otlp_key_value(k, v) }
                 # TODO: track dropped_attributes_count in Span#append_event
               )
             end,
@@ -201,7 +236,7 @@ module OpenTelemetry
                 trace_id: link.context.trace_id,
                 span_id: link.context.span_id,
                 trace_state: link.context.tracestate,
-                attributes: link.attributes&.map { |k, v| as_otlp_key_value(k, v) },
+                attributes: link.attributes&.map { |k, v| as_otlp_key_value(k, v) }
                 # TODO: track dropped_attributes_count in Span#trim_links
               )
             end,
@@ -209,9 +244,9 @@ module OpenTelemetry
             status: span_data.status&.yield_self do |status|
               Opentelemetry::Proto::Trace::V1::Status.new(
                 code: status.canonical_code,
-                message: status.description,
+                message: status.description
               )
-            end,
+            end
           )
         end
 
@@ -231,20 +266,25 @@ module OpenTelemetry
         end
 
         def as_otlp_key_value(key, value)
-          kv = Opentelemetry::Proto::Common::V1::KeyValue.new(key: key)
-          kv.value = Opentelemetry::Proto::Common::V1::AnyValue.new
+          Opentelemetry::Proto::Common::V1::KeyValue.new(key: key, value: as_otlp_any_value(value))
+        end
+
+        def as_otlp_any_value(value)
+          result = Opentelemetry::Proto::Common::V1::AnyValue.new
           case value
           when String
-            kv.value.string_value = value
+            result.string_value = value
           when Integer
-            kv.value.int_value = value
+            result.int_value = value
           when Float
-            kv.value.double_value = value
+            result.double_value = value
           when true, false
-            kv.value.bool_value = value
-          # TODO: when Array
+            result.bool_value = value
+          when Array
+            values = value.map { |element| as_otlp_any_value(element) }
+            result.array_value = Opentelemetry::Proto::Common::V1::ArrayValue.new(values: values)
           end
-          kv
+          result
         end
       end
     end

@@ -4,4 +4,4 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/exporters/otlp'
+require 'opentelemetry/exporter/otlp'

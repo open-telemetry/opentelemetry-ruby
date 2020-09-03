@@ -6,11 +6,11 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'opentelemetry/exporters/otlp/version'
+require 'opentelemetry/exporter/otlp/version'
 
 Gem::Specification.new do |spec|
-  spec.name        = 'opentelemetry-exporters-otlp'
-  spec.version     = OpenTelemetry::Exporters::OTLP::VERSION
+  spec.name        = 'opentelemetry-exporter-otlp'
+  spec.version     = OpenTelemetry::Exporter::OTLP::VERSION
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
@@ -25,14 +25,12 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.5.0'
 
-  spec.add_dependency 'opentelemetry-api', '~> 0.5.0'
   spec.add_dependency 'google-protobuf', '>= 3.4.1.1', '< 4'
+  spec.add_dependency 'opentelemetry-api', '~> 0.5.0'
 
   spec.add_development_dependency 'bundler', '>= 1.17'
-  spec.add_development_dependency 'byebug', '~> 9.0.6'
   spec.add_development_dependency 'faraday', '~> 0.13'
   spec.add_development_dependency 'minitest', '~> 5.0'
-  spec.add_development_dependency 'pry-byebug'
   spec.add_development_dependency 'rake', '~> 12.0'
   spec.add_development_dependency 'rubocop', '~> 0.73.0'
   spec.add_development_dependency 'simplecov', '~> 0.17'

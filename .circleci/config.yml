@@ -59,6 +59,9 @@ commands:
           name: Bundle (Jaeger)
           command: "cd exporter/jaeger && gem install --no-document bundler && bundle install --jobs=3 --retry=3"
       - run:
+          name: Bundle (OTLP)
+          command: "cd exporter/otlp && gem install --no-document bundler && bundle install --jobs=3 --retry=3"
+      - run:
           name: CI (API)
           command: "cd api && bundle exec rake"
       - run:
@@ -67,6 +70,9 @@ commands:
       - run:
           name: CI (Jaeger)
           command: "cd exporter/jaeger && bundle exec rake"
+      - run:
+          name: CI (OTLP)
+          command: "cd exporter/otlp && bundle exec rake"
   rake-test-appraisal:
     steps:
       - run:

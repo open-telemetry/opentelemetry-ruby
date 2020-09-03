@@ -4,8 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/exporters/otlp/exporter'
-require 'opentelemetry/exporters/otlp/version'
+require 'opentelemetry/exporter/otlp/exporter'
+require 'opentelemetry/exporter/otlp/version'
 
 # OpenTelemetry is an open source observability framework, providing a
 # general-purpose API, SDK, and related tools required for the instrumentation
