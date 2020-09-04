@@ -7,7 +7,6 @@
 require 'test_helper'
 
 describe OpenTelemetry::SDK::Trace::TracerProvider do
-
   let(:tracer_provider) do
     OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new
   end

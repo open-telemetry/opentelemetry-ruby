@@ -14,8 +14,8 @@ describe OpenTelemetry::SDK::Configurator do
       _(configurator.logger).must_be_instance_of(Logger)
     end
     it 'assigns the logger OpenTelemetry.logger' do
-      custom_logger = Logger.new("/dev/null", level: "ERROR")
-      OpenTelemetry::SDK.configure{|c| c.logger = custom_logger}
+      custom_logger = Logger.new('/dev/null', level: 'ERROR')
+      OpenTelemetry::SDK.configure { |c| c.logger = custom_logger }
       _(OpenTelemetry.logger).must_equal custom_logger
     end
   end

@@ -28,11 +28,13 @@ module OpenTelemetry
   private_constant :DEFAULT_LOG_LEVEL
 
   def logger
-    @@logger ||= Logger.new(STDOUT, level: ENV["OTEL_LOG_LEVEL"] || DEFAULT_LOG_LEVEL)
+    return @@logger if defined?(@@logger)
+
+    self.logger = Logger.new(STDOUT, level: ENV['OTEL_LOG_LEVEL'] || DEFAULT_LOG_LEVEL)
   end
-  
+
   def logger=(logger)
-    @@logger = logger
+    class_variable_set :@@logger, logger
   end
 
   # @return [Object, Trace::TracerProvider] registered tracer provider or a
@@ -64,5 +66,4 @@ module OpenTelemetry
   def propagation
     @propagation ||= Context::Propagation::Propagation.new
   end
-
 end
