@@ -19,7 +19,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Tests
         uses: ./.github/actions/test-steps
-
+        with:
+          branch: refactor-ci-workflow
   test-ruby26:
     name: Test Ruby2.6
     runs-on: ubuntu-latest
