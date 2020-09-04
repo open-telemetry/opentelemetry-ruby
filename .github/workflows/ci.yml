@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     container: circleci/ruby:2.5-buster
     steps:
-      - id: test-steps
       uses: actions/test-steps
   test-ruby26:
     name: Test Ruby2.6
