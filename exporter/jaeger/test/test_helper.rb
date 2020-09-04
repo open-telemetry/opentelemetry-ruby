@@ -9,4 +9,3 @@ SimpleCov.start
 
 require 'opentelemetry/exporter/jaeger'
 require 'minitest/autorun'
-
