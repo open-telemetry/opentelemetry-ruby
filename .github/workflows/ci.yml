@@ -18,7 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Tests
-        uses: open-telemetry/opentelemetry-ruby/actions/test-steps@3ceeb99ce31b2b7cef59b900055c69ac2118f44e
+        uses: ./.github/actions/test-steps
 
   test-ruby26:
     name: Test Ruby2.6
