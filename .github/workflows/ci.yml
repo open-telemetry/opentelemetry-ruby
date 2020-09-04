@@ -1,5 +1,35 @@
 name: CI
 
+services: &services
+  sql:
+    image: mysql:5.6
+    env:
+      TEST_MYSQL_USER: root
+      TEST_MYSQL_ROOT_PASSWORD: root
+      TEST_MYSQ_DB: mysql
+      MYSQL_DATABASE: mysql
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: mysql
+      MYSQL_USER: mysql
+    ports:
+      - 3306
+    options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+
+test_steps: &test_steps
+  - name: Setup file system permissions
+    run: sudo chmod -R 777 $GITHUB_WORKSPACE /github /__w/_temp
+  - name: Checkout
+    uses: actions/checkout@v2
+  - name: rake-test
+    run: ./ci/rake_test.sh
+  - name: rake-test-appraisal
+    run: ./ci/rake_test_appraisal.sh
+  - name: rake-test-appraisal-container-ints
+    env:
+      TEST_MYSQL_HOST: sql
+      TEST_MYSQL_PORT: ${{ job.services.mysql.ports['3306'] }}
+    run: ./ci/rake_test_appraisal_container_ints.sh
+
 on:
   push:
     tags: opentelemetry-*/v[0-9]*
@@ -13,65 +43,17 @@ jobs:
     runs-on: ubuntu-latest
     container: circleci/ruby:2.5-buster
     services:
-      sql:
-        image: mysql:5.6
-        env:
-          TEST_MYSQL_USER: root
-          TEST_MYSQL_ROOT_PASSWORD: root
-          TEST_MYSQ_DB: mysql
-          MYSQL_DATABASE: mysql
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_PASSWORD: mysql
-          MYSQL_USER: mysql
-        ports:
-          - 3306
-        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+      <<: *services
     steps:
-      - name: Setup file system permissions
-        run: sudo chmod -R 777 $GITHUB_WORKSPACE /github /__w/_temp
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: rake-test
-        run: ./ci/rake_test.sh
-      - name: rake-test-appraisal
-        run: ./ci/rake_test_appraisal.sh
-      - name: rake-test-appraisal-container-ints
-        env:
-          TEST_MYSQL_HOST: sql
-          TEST_MYSQL_PORT: ${{ job.services.mysql.ports['3306'] }}
-        run: ./ci/rake_test_appraisal_container_ints.sh
+      <<: *test_steps
   test-ruby26:
     name: Test Ruby2.6
     runs-on: ubuntu-latest
     container: circleci/ruby:2.6-buster
     services:
-      sql:
-        image: mysql:5.6
-        env:
-          TEST_MYSQL_USER: root
-          TEST_MYSQL_ROOT_PASSWORD: root
-          TEST_MYSQ_DB: mysql
-          MYSQL_DATABASE: mysql
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_PASSWORD: mysql
-          MYSQL_USER: mysql
-        ports:
-          - 3306
-        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+      <<: *services
     steps:
-      - name: Setup file system permissions
-        run: sudo chmod -R 777 $GITHUB_WORKSPACE /github /__w/_temp
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: rake-test
-        run: ./ci/rake_test.sh
-      - name: rake-test-appraisal
-        run: ./ci/rake_test_appraisal.sh
-      - name: rake-test-appraisal-container-ints
-        env:
-          TEST_MYSQL_HOST: sql
-          TEST_MYSQL_PORT: ${{ job.services.mysql.ports['3306'] }}
-        run: ./ci/rake_test_appraisal_container_ints.sh
+      <<: *test_steps
   test-ruby27:
     name: Test Ruby2.7
     runs-on: ubuntu-latest
@@ -109,13 +91,13 @@ jobs:
       - name: rake-test
         run: ./ci/rake_test.sh
       - name: rake-test-appraisal
-        run: ./ci/rake_test_appraisal.sh        
+        run: ./ci/rake_test_appraisal.sh
   release:
     name: Release
     runs-on: ubuntu-latest
     container: circleci/ruby:2.6-buster
     needs: [test-ruby25, test-ruby26, test-ruby27, test-jruby]
-    if: startsWith(github.ref, 'refs/tags/opentelemetry-') 
+    if: startsWith(github.ref, 'refs/tags/opentelemetry-')
     env:
       OPENTELEMETRY_RUBYGEMS_API_KEY: ${{ secrets.OPENTELEMETRY_RUBYGEMS_API_KEY }}
       OPENTELEMETRY_RELEASES_ENABLED: ${{ secrets.OPENTELEMETRY_RELEASES_ENABLED }}
