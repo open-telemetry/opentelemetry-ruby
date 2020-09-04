@@ -17,10 +17,6 @@ runs:
         - 3306
       options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
   steps:
-    - name: Setup file system permissions
-      run: sudo chmod -R 777 $GITHUB_WORKSPACE /github /__w/_temp
-    - name: Checkout
-      uses: actions/checkout@v2
     - name: rake-test
       run: ./ci/rake_test.sh
     - name: rake-test-appraisal

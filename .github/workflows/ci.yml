@@ -13,7 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     container: circleci/ruby:2.5-buster
     steps:
-      uses: actions/test-steps
+      - name: Setup file system permissions
+        run: sudo chmod -R 777 $GITHUB_WORKSPACE /github /__w/_temp
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Tests
+        uses: actions/test-steps
   test-ruby26:
     name: Test Ruby2.6
     runs-on: ubuntu-latest
