@@ -13,6 +13,11 @@ describe OpenTelemetry::SDK::Configurator do
     it 'returns a logger instance' do
       _(configurator.logger).must_be_instance_of(Logger)
     end
+    it 'assigns the logger OpenTelemetry.logger' do
+      custom_logger = Logger.new("/dev/null", level: "ERROR")
+      OpenTelemetry::SDK.configure{|c| c.logger = custom_logger}
+      _(OpenTelemetry.logger).must_equal custom_logger
+    end
   end
 
   describe '#resource=' do
@@ -263,6 +268,5 @@ describe OpenTelemetry::SDK::Configurator do
     OpenTelemetry.instance_variables.each do |iv|
       OpenTelemetry.instance_variable_set(iv, nil)
     end
-    OpenTelemetry.logger = Logger.new(STDOUT)
   end
 end

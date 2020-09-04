@@ -31,7 +31,7 @@ module OpenTelemetry
       end
 
       def logger
-        @logger ||= Logger.new(STDOUT)
+        @logger ||= OpenTelemetry.logger
       end
 
       # Accepts a resource object that is merged with the default telemetry sdk

@@ -66,7 +66,7 @@ describe OpenTelemetry::SDK, 'global_tracer_configurations' do
 
         _(finish_span_keys).must_include(:tracestate)
 
-        finished_spans.first.tracestate.must_equal(mock_tracestate)
+        _(finished_spans.first.tracestate).must_equal(mock_tracestate)
       end
     end
   end

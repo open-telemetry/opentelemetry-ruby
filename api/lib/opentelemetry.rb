@@ -24,7 +24,16 @@ module OpenTelemetry
 
   attr_writer :tracer_provider, :meter_provider, :baggage
 
-  attr_accessor :logger
+  DEFAULT_LOG_LEVEL = Logger::INFO
+  private_constant :DEFAULT_LOG_LEVEL
+
+  def logger
+    @@logger ||= Logger.new(STDOUT, level: ENV["OTEL_LOG_LEVEL"] || DEFAULT_LOG_LEVEL)
+  end
+  
+  def logger=(logger)
+    @@logger = logger
+  end
 
   # @return [Object, Trace::TracerProvider] registered tracer provider or a
   #   default no-op implementation of the tracer provider.
@@ -56,5 +65,4 @@ module OpenTelemetry
     @propagation ||= Context::Propagation::Propagation.new
   end
 
-  self.logger = Logger.new(STDOUT)
 end
