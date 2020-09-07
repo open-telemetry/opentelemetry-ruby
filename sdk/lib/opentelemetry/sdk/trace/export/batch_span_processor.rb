@@ -45,7 +45,10 @@ module OpenTelemetry
             @max_queue_size = max_queue_size
             @batch_size = max_export_batch_size
             @spans = []
-            @thread = Thread.new { work }
+            # @thread = Thread.new { work }
+            @pid = nil
+            @thread = nil
+            reset_on_fork
           end
 
           # does nothing for this processor
@@ -62,6 +65,7 @@ module OpenTelemetry
               spans.shift(n) if n.positive?
               spans << span
               @condition.signal if spans.size > max_queue_size / 2
+              reset_on_fork
             end
           end
 
@@ -79,6 +83,7 @@ module OpenTelemetry
               batch = snapshot.shift(@batch_size).map!(&:to_span_data)
               result_code = @exporter.export(batch)
               report_result(result_code, batch)
+              reset_on_fork(restart_thread: false) if @keep_running
             end
           end
 
@@ -110,7 +115,16 @@ module OpenTelemetry
               end
 
               export_batch(batch)
+              reset_on_fork(restart_thread: false)
             end
+          end
+
+          def reset_on_fork(restart_thread: true)
+            pid = Process.pid
+            return if @pid == pid
+            @pid = pid
+            spans.clear
+            @thread = Thread.new { work } if restart_thread
           end
 
           def export_batch(batch)
