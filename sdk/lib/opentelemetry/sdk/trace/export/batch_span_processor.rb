@@ -45,7 +45,6 @@ module OpenTelemetry
             @max_queue_size = max_queue_size
             @batch_size = max_export_batch_size
             @spans = []
-            # @thread = Thread.new { work }
             @pid = nil
             @thread = nil
             reset_on_fork
