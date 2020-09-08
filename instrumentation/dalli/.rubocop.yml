@@ -4,6 +4,8 @@ AllCops:
 Bundler/OrderedGems:
   Exclude:
     - gemfiles/**/*
+Naming/UncommunicativeMethodParamName:
+  Enabled: false
 Lint/UnusedMethodArgument:
   Enabled: false
 Metrics/AbcSize:
