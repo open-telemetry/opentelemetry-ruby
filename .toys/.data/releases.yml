@@ -1,6 +1,6 @@
 repo: open-telemetry/opentelemetry-ruby
 main_branch: master
-required_checks_timeout: 3000
+required_checks_timeout: 1200
 
 gems:
   - name: opentelemetry-api
