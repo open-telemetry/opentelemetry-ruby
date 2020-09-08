@@ -223,10 +223,13 @@ Releases are normally performed using GitHub Actions.
     `Open release request` workflow, and run the workflow manually using the
     dropdown in the upper right.
      *  Releases must be run from the master branch.
-     *  For the `Gems to release` field, enter the gem names to release, space
-        delimited. You can also leave the field blank, and the script will find
-        all the gems that have had conventional-commit-tagged changes since
-        their last release.
+     *  If you leave the `Gems to release` field, blank, and the script will
+        find all the gems that have had conventional-commit-tagged changes since
+        their last release. Alternately, you can specify which gems to release
+        by including their names, space-delimited, in this this field. You can
+        optionally append `:<version>` to any gem in the list to specify the
+        version to release, or omit the version to let the script decide based
+        on conventional commits.
  3. The workflow will analyze the conventional commit messages for the gems to
     release, and will open a _release pull request_. This pull request will
     include the appropriate changes to each gem's version constants, and an
