@@ -14,27 +14,27 @@ module OpenTelemetry
       CMD_MAX_LEN = 500
 
       OPNAME_MAPPING = {
-        'get'           => 'get',
-        'cas'           => 'get',
-        'set'           => 'set',
-        'add'           => 'add',
-        'replace'       => 'replace',
-        'delete'        => 'delete',
-        'incr'          => 'incr',
-        'decr'          => 'decr',
-        'flush'         => 'flush',
-        'write_noop'    => 'noop',
-        'version'       => 'version',
+        'get' => 'get',
+        'cas' => 'get',
+        'set' => 'set',
+        'add' => 'add',
+        'replace' => 'replace',
+        'delete' => 'delete',
+        'incr' => 'incr',
+        'decr' => 'decr',
+        'flush' => 'flush',
+        'write_noop' => 'noop',
+        'version' => 'version',
         'send_multiget' => 'getkq',
-        'append'        => 'append',
-        'prepend'       => 'prepend',
-        'stats'         => 'stat',
-        'reset_stats'   => 'stat',
-        'multi_set'     => 'setq',
-        'multi_add'     => 'addq',
+        'append' => 'append',
+        'prepend' => 'prepend',
+        'stats' => 'stat',
+        'reset_stats' => 'stat',
+        'multi_set' => 'setq',
+        'multi_add' => 'addq',
         'multi_replace' => 'replaceq',
-        'multi_delete'  => 'deleteq',
-        'touch'         => 'touch',
+        'multi_delete' => 'deleteq',
+        'touch' => 'touch'
         # 'sasl_authentication' => 'auth_negotiation',
         # 'sasl_authentication' => 'auth_request',
       }.freeze
@@ -49,7 +49,7 @@ module OpenTelemetry
         command = [operation, *args].join(' ').strip
         command = utf8_encode(command, binary: true, placeholder: placeholder)
         truncate(command, CMD_MAX_LEN)
-      rescue => e
+      rescue StandardError => e
         OpenTelemetry.logger.debug("Error sanitizing Dalli operation: #{e}")
         placeholder
       end
@@ -78,4 +78,3 @@ module OpenTelemetry
     end
   end
 end
-

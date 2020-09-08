@@ -14,7 +14,7 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
   let(:host) { ENV.fetch('TEST_MEMCACHED_HOST') { '127.0.0.1' } }
-  let(:port) { (ENV.fetch('TEST_MEMCACHED_PORT') { 11211 }).to_i }
+  let(:port) { (ENV.fetch('TEST_MEMCACHED_PORT') { 11_211 }).to_i }
   let(:dalli) { ::Dalli::Client.new("#{host}:#{port}", {}) }
 
   before do
@@ -56,7 +56,6 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
       _(span.attributes['net.peer.name']).must_equal host
       _(span.attributes['net.peer.port']).must_equal port
     end
-
 
     it 'after dalli#get_multi' do
       dalli.get_multi('foo', 'bar')
