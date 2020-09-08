@@ -261,5 +261,4 @@ describe OpenTelemetry::SDK::Configurator do
   def injectors_for(propagator)
     propagator.instance_variable_get(:@injectors) || propagator.instance_variable_get(:@injector)
   end
-
 end
