@@ -3,10 +3,9 @@
 source "https://rubygems.org"
 
 gem "opentelemetry-api", path: "../../../api"
-gem "redis", "~> 4.1.0"
+gem "sidekiq", "~> 4.0"
 
 group :test do
-  gem "fakeredis", require: "fakeredis/minitest"
   gem "opentelemetry-sdk", path: "../../../sdk"
 end
 
