@@ -28,6 +28,10 @@ gems:
     directory: instrumentation/concurrent_ruby
     version_constant: [OpenTelemetry, Instrumentation, ConcurrentRuby, VERSION]
 
+  - name: opentelemetry-instrumentation-dalli
+    directory: instrumentation/dalli
+    version_constant: [OpenTelemetry, Instrumentation, Dalli, VERSION]
+
   - name: opentelemetry-instrumentation-ethon
     directory: instrumentation/ethon
     version_constant: [OpenTelemetry, Instrumentation, Ethon, VERSION]
