@@ -66,7 +66,7 @@ For additional examples, see the [examples on github][examples-github].
 
 ## How can I configure the Jaeger exporter?
 
-The agent exporter can be configured explicitly in code, as shown above, or via environment variables. The configuration parameters, environement variables, and defaults are shown below.
+The agent exporter can be configured explicitly in code, as shown above, or via environment variables. The configuration parameters, environment variables, and defaults are shown below.
 
 | Parameter          | Environment variable              | Default       |
 | ------------------ | --------------------------------- | ------------- |
@@ -74,7 +74,7 @@ The agent exporter can be configured explicitly in code, as shown above, or via 
 | `port:`            | `OTEL_EXPORTER_JAEGER_AGENT_PORT` | `6831`        |
 | `max_packet_size:` |                                   | 65000         |
 
-The collector exporter can be configured explicitly in code, as shown above, or via environment variables. The configuration parameters, environement variables, and defaults are shown below.
+The collector exporter can be configured explicitly in code, as shown above, or via environment variables. The configuration parameters, environment variables, and defaults are shown below.
 
 | Parameter   | Environment variable            | Default                    |
 | ----------- | ------------------------------- | -------------------------- |
