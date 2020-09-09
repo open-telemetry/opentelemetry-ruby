@@ -1,0 +1,44 @@
+name: Force release
+
+on:
+  workflow_dispatch:
+    inputs:
+      gem:
+        description: Gem to release
+        required: true
+      version:
+        description: Version to release
+        required: true
+      flags:
+        description: Extra flags to pass to the release script
+        required: false
+        default: ""
+
+jobs:
+  release-perform:
+    if: ${{ github.repository == '<%= @settings.repo_path %>' }}
+    env:
+      ruby_version: "2.7"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Ruby ${{ env.ruby_version }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.ruby_version }}
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Install Toys
+        run: "gem install --no-document toys"
+      - name: Perform release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          toys release perform --yes --verbose \
+            "--enable-releases=${{ secrets.ENABLE_RELEASES }}" \
+            "--git-user-email=${{ secrets.GIT_USER_EMAIL }}" \
+            "--git-user-name=${{ secrets.GIT_USER_NAME }}" \
+            "--release-sha=${{ github.sha }}" \
+            "--rubygems-api-key=${{ secrets.RUBYGEMS_API_KEY }}" \
+            ${{ github.event.inputs.flags }} \
+            "${{ github.event.inputs.gem }}" "${{ github.event.inputs.version }}" \
+            < /dev/null

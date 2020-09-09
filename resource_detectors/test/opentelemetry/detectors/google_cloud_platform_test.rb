@@ -35,7 +35,13 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
         gcp_env_mock.expect(:kubernetes_engine_namespace_id, 'default')
 
         Socket.stub(:gethostname, 'opentelemetry-test') do
-          Google::Cloud::Env.stub(:new, gcp_env_mock) { detected_resource }
+          old_hostname = ENV['HOSTNAME']
+          ENV['HOSTNAME'] = 'opentelemetry-test'
+          begin
+            Google::Cloud::Env.stub(:new, gcp_env_mock) { detected_resource }
+          ensure
+            ENV['HOSTNAME'] = old_hostname
+          end
         end
       end
 

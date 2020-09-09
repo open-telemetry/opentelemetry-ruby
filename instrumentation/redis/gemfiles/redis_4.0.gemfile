@@ -6,8 +6,8 @@ gem "opentelemetry-api", path: "../../../api"
 gem "redis", "~> 4.0.0"
 
 group :test do
-  gem "opentelemetry-sdk", path: "../../../sdk"
   gem "fakeredis", require: "fakeredis/minitest"
+  gem "opentelemetry-sdk", path: "../../../sdk"
 end
 
 gemspec path: "../"

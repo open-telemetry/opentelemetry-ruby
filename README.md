@@ -11,6 +11,10 @@ The Ruby [OpenTelemetry](https://opentelemetry.io/) client.
 We'd love your help! Use tags [good first issue][issues-good-first-issue] and
 [help wanted][issues-help-wanted] to get started with the project.
 
+Please review the [contribution instructions](CONTRIBUTING.md) for important
+information on setting up your environment, running the tests, and opening pull
+requests.
+
 The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 [community page][ruby-sig] repo for information on this and other language SIGs.
 
@@ -64,35 +68,6 @@ bundle install
 
 To install development versions of these packages, follow the "Developer Setup" section (below).
 
-## Developer Setup
-
-1. Install Docker and Docker Compose for your operating system
-1. Get the latest code for the project
-1. Build the `opentelemetry/opentelemetry-ruby` image
-    * `docker-compose build`
-    * This makes the image available locally
-1. API:
-    1. Install dependencies
-        * `docker-compose run api bundle install`
-    1. Run the tests
-        * `docker-compose run api bundle exec rake test`
-1. SDK:
-    1. Install dependencies
-        * `docker-compose run sdk bundle install`
-    1. Run the tests for the sdk
-        * `docker-compose run sdk bundle exec rake test`
-
-### Docker Services
-
-We use Docker Compose to configure and build services used in development
-and testing. See `docker-compose.yml` for specific configuration details.
-
-The services provided are:
-
-* `app` - main container environment scoped to the `/app` directory. Used primarily to build and tag the `opentelemetry/opentelemetry-ruby:latest` image.
-* `api` - convenience environment scoped to the `api` gem in the `/app/api` directory.
-* `sdk` - convenience environment scoped to the `sdk` gem in the `/app/sdk` directory.
-
 ## Quick Start
 
 ```ruby
@@ -127,7 +102,7 @@ context propagation.
 
 OpenTelemetry Ruby is under active development. Below is the release schedule
 for the Ruby library. The first version of the release isn't guaranteed to
-conform  to a specific version of the specification, and future releases will
+conform to a specific version of the specification, and future releases will
 not attempt to maintain backward compatibility with the alpha release.
 
 | Component                       | Version       | Target Date       | Release Date      |
@@ -156,33 +131,6 @@ not attempt to maintain backward compatibility with the alpha release.
 | Sinatra Instrumentation         | Alpha v0.4.1  |                   | June 24 2020      |
 | Sidekiq Instrumentation         | Alpha v0.4.0  |                   | April 16 2020     |
 | All Instrumentation Convenience | Alpha v0.4.1  |                   | June 24 2020      |
-
-## Release Process
-
-To perform a release of one of the OpenTelemetry Rubygems, follow these steps.
-Only a maintainer may perform a release.
-
-1. Make sure the library's `VERSION` constant matches the version to be
-   released. This constant is defined in the library's `version.rb` file.
-2. Add an entry to the library's `CHANGELOG.md`.
-3. Tag the commit to be released. The tag must be of the form:
-   `{library-name}/v{version}`. For example, to release `opentelemetry-api`
-   version `1.2.3`, create the tag `opentelemetry-api/v1.2.3`.
-4. Push the tag directly to Github.
-5. See [here][opentelemetry-instrumentation-all-publishing] for special instructions
-   for publishing the opentelemetry-instrumentation-all gem.
-
-After the tag is pushed, CircleCI will run the release workflow. This workflow
-includes one final run of the unit tests, followed by the release script itself.
-
-The [CircleCI project](https://circleci.com/gh/open-telemetry/opentelemetry-ruby)
-includes two environment variables that control the release process.
-
-* `OPENTELEMETRY_RUBYGEMS_API_KEY` contains the API key used to authenticate
-  with Rubygems for release.
-* `OPENTELEMETRY_RELEASES_ENABLED` controls whether releases are enabled. If set
-  to `true`, releases are performed normally. If set to `false` or unset, the
-  release pipeline will execute, but the final `gem push` is disabled.
 
 ## Useful links
 
