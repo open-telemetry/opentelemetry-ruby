@@ -20,9 +20,10 @@ describe OpenTelemetry::Exporter::Jaeger::AgentExporter do
       OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new
     end
 
-    it 'integrates with collector' do
+    it 'integrates with agent' do
       skip unless ENV['TRACING_INTEGRATION_TEST']
-      span_data = create_span_data
+      resource = OpenTelemetry::SDK::Resources::Resource.telemetry_sdk
+      span_data = create_span_data(name: 'agent-integration-test', resource: resource)
       result = exporter.export([span_data])
       _(result).must_equal(OpenTelemetry::SDK::Trace::Export::SUCCESS)
     end

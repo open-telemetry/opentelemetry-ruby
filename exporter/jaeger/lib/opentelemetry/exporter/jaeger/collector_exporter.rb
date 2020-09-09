@@ -15,21 +15,19 @@ module OpenTelemetry
         FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
         private_constant(:SUCCESS, :FAILURE)
 
-        def initialize(endpoint: ENV.fetch('OTEL_EXPORTER_JAEGER_ENDPOINT', 'http://localhost:14268'),
+        def initialize(endpoint: ENV.fetch('OTEL_EXPORTER_JAEGER_ENDPOINT', 'http://localhost:14268/api/traces'),
                        username: ENV['OTEL_EXPORTER_JAEGER_USER'],
                        password: ENV['OTEL_EXPORTER_JAEGER_PASSWORD'])
           raise ArgumentError, "invalid url for Jaeger::CollectorExporter #{endpoint}" if invalid_url?(endpoint)
           raise ArgumentError, 'username and password should either both be nil or both be set' if username.nil? != password.nil?
 
-          transport = ::Thrift::HTTPClientTransport.new(endpoint)
+          @transport = ::Thrift::HTTPClientTransport.new(endpoint)
           unless username.nil? || password.nil?
             authorization = Base64.strict_encode64("#{username}:#{password}")
             auth_header = { 'Authorization': "Basic #{authorization}" }
-            transport.add_headers(auth_header)
+            @transport.add_headers(auth_header)
           end
-
-          protocol = ::Thrift::BinaryProtocol.new(transport)
-          @client = Thrift::Collector::Client.new(protocol)
+          @serializer = ::Thrift::Serializer.new
           @shutdown = false
           @tracer = OpenTelemetry.tracer_provider.tracer
         end
@@ -43,12 +41,15 @@ module OpenTelemetry
         def export(span_data)
           return FAILURE if @shutdown
 
-          batches = encoded_batches(span_data)
+          encoded_batches(span_data).each do |batch|
+            @transport.write(@serializer.serialize(batch))
+          end
 
           untraced do
-            @client.submitBatches(batches).all?(&:ok) ? SUCCESS : FAILURE
+            @transport.flush
           end
-        rescue ::Thrift::ApplicationException => e
+          SUCCESS
+        rescue StandardError => e
           OpenTelemetry.logger.error("unexpected error in Jaeger::CollectorExporter#export - #{e}")
           FAILURE
         end
