@@ -25,7 +25,7 @@ jobs:
             flags: --include-simple --include-appraisal --check-rubocop --check-yard
           - name: JRuby
             container: circleci/jruby:latest
-            flags: --include-simple --exclude opentelemetry-resource_detectors
+            flags: --include-simple --exclude opentelemetry-resource_detectors --exclude opentelemetry-exporter-otlp
       fail-fast: false
     name: Test ${{ matrix.name }} (${{ matrix.flags }})
     runs-on: ubuntu-latest

@@ -16,6 +16,10 @@ gems:
     directory: exporter/jaeger
     version_constant: [OpenTelemetry, Exporter, Jaeger, VERSION]
 
+  - name: opentelemetry-exporter-otlp
+    directory: exporter/otlp
+    version_constant: [OpenTelemetry, Exporter, OTLP, VERSION]
+
   - name: opentelemetry-instrumentation-all
     directory: instrumentation/all
     version_constant: [OpenTelemetry, Instrumentation, All, VERSION]

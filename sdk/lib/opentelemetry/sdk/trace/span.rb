@@ -21,7 +21,7 @@ module OpenTelemetry
         attr_reader :name, :status, :kind, :parent_span_id, :start_timestamp, :end_timestamp, :links, :resource, :instrumentation_library
 
         # Return a frozen copy of the current attributes. This is intended for
-        # use of SpanProcesses and should not be considered part of the public
+        # use of SpanProcessors and should not be considered part of the public
         # interface for instrumentation.
         #
         # @return [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] may be nil.
@@ -76,6 +76,7 @@ module OpenTelemetry
           end
           self
         end
+        alias []= set_attribute
 
         # Add an Event to a {Span}.
         #
