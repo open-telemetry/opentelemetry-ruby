@@ -9,5 +9,3 @@ SimpleCov.start
 
 require 'opentelemetry/exporter/jaeger'
 require 'minitest/autorun'
-
-OpenTelemetry.logger = Logger.new('/dev/null')
