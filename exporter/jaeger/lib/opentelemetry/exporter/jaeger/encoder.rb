@@ -34,7 +34,7 @@ module OpenTelemetry
 
         def encoded_process(resource)
           service_name = 'unknown'
-          tags = resource&.label_enumerator&.select do |key, value|
+          tags = resource&.attribute_enumerator&.select do |key, value|
             service_name = value if key == 'service.name'
             key != 'service.name'
           end

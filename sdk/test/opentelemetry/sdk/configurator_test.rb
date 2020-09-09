@@ -23,8 +23,8 @@ describe OpenTelemetry::SDK::Configurator do
 
   describe '#resource=' do
     let(:configurator_resource) { configurator.instance_variable_get(:@resource) }
-    let(:configurator_resource_labels) { configurator_resource.label_enumerator.to_h }
-    let(:expected_resource_labels) do
+    let(:configurator_resource_attributes) { configurator_resource.attribute_enumerator.to_h }
+    let(:expected_resource_attributes) do
       {
         'telemetry.sdk.name' => 'opentelemetry',
         'telemetry.sdk.language' => 'ruby',
@@ -35,11 +35,11 @@ describe OpenTelemetry::SDK::Configurator do
 
     it 'merges the resource' do
       configurator.resource = OpenTelemetry::SDK::Resources::Resource.create('test_key' => 'test_value')
-      _(configurator_resource_labels).must_equal(expected_resource_labels)
+      _(configurator_resource_attributes).must_equal(expected_resource_attributes)
     end
 
     describe 'when there is a resource key collision' do
-      let(:expected_resource_labels) do
+      let(:expected_resource_attributes) do
         {
           'telemetry.sdk.name' => 'opentelemetry',
           'telemetry.sdk.language' => 'ruby',
@@ -51,7 +51,7 @@ describe OpenTelemetry::SDK::Configurator do
       it 'uses the user provided resources' do
         with_env('OTEL_RESOURCE_ATTRIBUTES' => 'important_value=100') do
           configurator.resource = OpenTelemetry::SDK::Resources::Resource.create('important_value' => '25')
-          _(configurator_resource_labels).must_equal(expected_resource_labels)
+          _(configurator_resource_attributes).must_equal(expected_resource_attributes)
         end
       end
     end

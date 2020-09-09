@@ -13,40 +13,40 @@ module OpenTelemetry
         class << self
           private :new # rubocop:disable Style/AccessModifierDeclarations
 
-          # Returns a newly created {Resource} with the specified labels
+          # Returns a newly created {Resource} with the specified attributes
           #
-          # @param [Hash{String => String, Numeric, Boolean} labels Hash of key-value pairs to be used
-          #   as labels for this resource
-          # @raise [ArgumentError] If label keys and values are not strings
+          # @param [Hash{String => String, Numeric, Boolean} attributes Hash of key-value pairs to be used
+          #   as attributes for this resource
+          # @raise [ArgumentError] If attribute keys and values are not strings
           # @return [Resource]
-          def create(labels = {})
-            frozen_labels = labels.each_with_object({}) do |(k, v), memo|
-              raise ArgumentError, 'label keys must be strings' unless k.is_a?(String)
-              raise ArgumentError, 'label values must be strings, integers, floats, or booleans' unless Internal.valid_value?(v)
+          def create(attributes = {})
+            frozen_attributes = attributes.each_with_object({}) do |(k, v), memo|
+              raise ArgumentError, 'attribute keys must be strings' unless k.is_a?(String)
+              raise ArgumentError, 'attribute values must be strings, integers, floats, or booleans' unless Internal.valid_value?(v)
 
               memo[-k] = v.freeze
             end.freeze
 
-            new(frozen_labels)
+            new(frozen_attributes)
           end
 
           def telemetry_sdk
-            resource_labels = {
+            resource_attributes = {
               Constants::TELEMETRY_SDK_RESOURCE[:name] => 'opentelemetry',
               Constants::TELEMETRY_SDK_RESOURCE[:language] => 'ruby',
               Constants::TELEMETRY_SDK_RESOURCE[:version] => OpenTelemetry::SDK::VERSION
             }
 
             resource_pairs = ENV['OTEL_RESOURCE_ATTRIBUTES']
-            return create(resource_labels) unless resource_pairs.is_a?(String)
+            return create(resource_attributes) unless resource_pairs.is_a?(String)
 
             resource_pairs.split(',').each do |pair|
               key, value = pair.split('=')
-              resource_labels[key] = value
+              resource_attributes[key] = value
             end
 
-            resource_labels.delete_if { |_key, value| value.nil? || value.empty? }
-            create(resource_labels)
+            resource_attributes.delete_if { |_key, value| value.nil? || value.empty? }
+            create(resource_attributes)
           end
         end
 
@@ -55,18 +55,18 @@ module OpenTelemetry
         # Users should use the {create} factory method to obtain a {Resource}
         # instance.
         #
-        # @param [Hash<String, String>] frozen_labels Frozen-hash of frozen-string
-        #  key-value pairs to be used as labels for this resource
+        # @param [Hash<String, String>] frozen_attributes Frozen-hash of frozen-string
+        #  key-value pairs to be used as attributes for this resource
         # @return [Resource]
-        def initialize(frozen_labels)
-          @labels = frozen_labels
+        def initialize(frozen_attributes)
+          @attributes = frozen_attributes
         end
 
-        # Returns an enumerator for labels of this {Resource}
+        # Returns an enumerator for attributes of this {Resource}
         #
         # @return [Enumerator]
-        def label_enumerator
-          @label_enumerator ||= labels.to_enum
+        def attribute_enumerator
+          @attribute_enumerator ||= attributes.to_enum
         end
 
         # Returns a new, merged {Resource} by merging the current {Resource} with
@@ -79,16 +79,16 @@ module OpenTelemetry
         def merge(other)
           return self unless other.is_a?(Resource)
 
-          merged_labels = labels.merge(other.labels) do |_, old_v, new_v|
+          merged_attributes = attributes.merge(other.attributes) do |_, old_v, new_v|
             old_v.empty? ? new_v : old_v
           end
 
-          self.class.send(:new, merged_labels.freeze)
+          self.class.send(:new, merged_attributes.freeze)
         end
 
         protected
 
-        attr_reader :labels
+        attr_reader :attributes
       end
     end
   end

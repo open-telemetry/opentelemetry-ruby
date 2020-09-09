@@ -191,7 +191,7 @@ module OpenTelemetry
                 .map do |resource, span_datas|
                   Opentelemetry::Proto::Trace::V1::ResourceSpans.new(
                     resource: Opentelemetry::Proto::Resource::V1::Resource.new(
-                      attributes: resource.label_enumerator.map { |key, value| as_otlp_key_value(key, value) }
+                      attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
                     ),
                     instrumentation_library_spans: span_datas
                       .group_by(&:instrumentation_library)
