@@ -13,6 +13,12 @@ describe OpenTelemetry::SDK::Configurator do
     it 'returns a logger instance' do
       _(configurator.logger).must_be_instance_of(Logger)
     end
+    it 'assigns the logger to OpenTelemetry.logger' do
+      custom_logger = Logger.new('/dev/null', level: 'ERROR')
+      _(OpenTelemetry.logger).wont_equal custom_logger
+      OpenTelemetry::SDK.configure { |c| c.logger = custom_logger }
+      _(OpenTelemetry.logger).must_equal custom_logger
+    end
   end
 
   describe '#resource=' do
@@ -74,10 +80,6 @@ describe OpenTelemetry::SDK::Configurator do
   end
 
   describe '#configure' do
-    after do
-      reset_globals
-    end
-
     describe 'baggage' do
       it 'is an instance of SDK::Baggage::Manager' do
         configurator.configure
@@ -213,6 +215,7 @@ describe OpenTelemetry::SDK::Configurator do
 
     describe 'instrumentation installation' do
       before do
+        OpenTelemetry.instance_variable_set(:@instrumentation_registry, nil)
         TestInstrumentation = Class.new(OpenTelemetry::Instrumentation::Base) do
           install { 1 + 1 }
           present { true }
@@ -257,12 +260,5 @@ describe OpenTelemetry::SDK::Configurator do
 
   def injectors_for(propagator)
     propagator.instance_variable_get(:@injectors) || propagator.instance_variable_get(:@injector)
-  end
-
-  def reset_globals
-    OpenTelemetry.instance_variables.each do |iv|
-      OpenTelemetry.instance_variable_set(iv, nil)
-    end
-    OpenTelemetry.logger = Logger.new(STDOUT)
   end
 end

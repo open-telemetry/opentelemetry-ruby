@@ -1,0 +1,32 @@
+name: "[release hook] Process release"
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  release-process-request:
+    if: ${{ github.repository == '<%= @settings.repo_path %>' }}
+    env:
+      ruby_version: "2.7"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Ruby ${{ env.ruby_version }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.ruby_version }}
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Install Toys
+        run: "gem install --no-document toys"
+      - name: Process release request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          toys release _onclosed --verbose \
+            "--enable-releases=${{ secrets.ENABLE_RELEASES }}" \
+            "--event-path=${{ github.event_path }}" \
+            "--git-user-email=${{ secrets.GIT_USER_EMAIL }}" \
+            "--git-user-name=${{ secrets.GIT_USER_NAME }}" \
+            "--rubygems-api-key=${{ secrets.RUBYGEMS_API_KEY }}" \
+            < /dev/null

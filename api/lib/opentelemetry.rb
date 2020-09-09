@@ -22,9 +22,12 @@ require 'opentelemetry/version'
 module OpenTelemetry
   extend self
 
-  attr_writer :tracer_provider, :meter_provider, :baggage
+  attr_writer :tracer_provider, :meter_provider, :baggage, :logger
 
-  attr_accessor :logger
+  # @return [Object, Logger] configured Logger or a default STDOUT Logger.
+  def logger
+    @logger ||= Logger.new(STDOUT, level: ENV['OTEL_LOG_LEVEL'] || Logger::INFO)
+  end
 
   # @return [Object, Trace::TracerProvider] registered tracer provider or a
   #   default no-op implementation of the tracer provider.
@@ -55,6 +58,4 @@ module OpenTelemetry
   def propagation
     @propagation ||= Context::Propagation::Propagation.new
   end
-
-  self.logger = Logger.new(STDOUT)
 end
