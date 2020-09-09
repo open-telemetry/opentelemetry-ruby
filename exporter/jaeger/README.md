@@ -1,6 +1,6 @@
 # opentelemetry-exporter-jaeger
 
-The `opentelemetry-exporter-jaeger` gem provides a Jaeger exporter for OpenTelemetry for Ruby. Using `opentelemetry-exporter-jaeger`, an application can configure OpenTelemetry to export collected tracing data to [Jaeger][jaeger-home].
+The `opentelemetry-exporter-jaeger` gem provides Jaeger exporters for OpenTelemetry for Ruby. Using `opentelemetry-exporter-jaeger`, an application can configure OpenTelemetry to export collected tracing data to [Jaeger][jaeger-home]. Two exporters are included: the `AgentExporter` exports in Thrift Compact format over UDP to the Jaeger agent; and the `CollectorExporter` exports in Thrift Binary format over HTTP to the Jaeger collector.
 
 ## What is OpenTelemetry?
 
@@ -25,7 +25,7 @@ gem install opentelemetry-exporter-jaeger
 
 Or, if you use [bundler][bundler-home], include `opentelemetry-sdk` in your `Gemfile`.
 
-Then, configure the SDK to use the Jaeger exporter as a span processor, and use the OpenTelemetry interfaces to produces traces and other information. Following is a basic example.
+Then, configure the SDK to use a Jaeger exporter as a span processor, and use the OpenTelemetry interfaces to produces traces and other information. Following is a basic example for the `AgentExporter`.
 
 ```ruby
 require 'opentelemetry/sdk'
@@ -35,10 +35,13 @@ require 'opentelemetry/exporter/jaeger'
 OpenTelemetry::SDK.configure do |c|
   c.add_span_processor(
     OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(
-      OpenTelemetry::Exporter::Jaeger::Exporter.new(
-        service_name: 'my-service', host: 'localhost', port: 6831
-      )
+      OpenTelemetry::Exporter::Jaeger::AgentExporter.new(host: '127.0.0.1', port: 6831)
+      # Alternatively, for the collector exporter:
+      # OpenTelemetry::Exporter::Jaeger::CollectorExporter.new(endpoint: 'http://192.168.0.1:14268')
     )
+  )
+  c.resource = OpenTelemetry::SDK::Resources::Resource.create(
+    OpenTelemetry::SDK::Resources::Constants::SERVICE_RESOURCE[:name] => 'jaeger-example'
   )
 end
 
@@ -60,6 +63,24 @@ end
 ```
 
 For additional examples, see the [examples on github][examples-github].
+
+## How can I configure the Jaeger exporter?
+
+The agent exporter can be configured explicitly in code, as shown above, or via environment variables. The configuration parameters, environement variables, and defaults are shown below.
+
+| Parameter          | Environment variable              | Default       |
+| ------------------ | --------------------------------- | ------------- |
+| `host:`            | `OTEL_EXPORTER_JAEGER_AGENT_HOST` | `"localhost"` |
+| `port:`            | `OTEL_EXPORTER_JAEGER_AGENT_PORT` | `6831`        |
+| `max_packet_size:` |                                   | 65000         |
+
+The collector exporter can be configured explicitly in code, as shown above, or via environment variables. The configuration parameters, environement variables, and defaults are shown below.
+
+| Parameter   | Environment variable            | Default                    |
+| ----------- | ------------------------------- | -------------------------- |
+| `endpoint:` | `OTEL_EXPORTER_JAEGER_ENDPOINT` | `"http://localhost:14268"` |
+| `username:` | `OTEL_EXPORTER_JAEGER_USER`     | `nil`                      |
+| `password:` | `OTEL_EXPORTER_JAEGER_PASSWORD` | `nil`                      |
 
 ## How can I get involved?
 

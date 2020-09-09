@@ -19,11 +19,19 @@ module OpenTelemetry
                        username: ENV['OTEL_EXPORTER_JAEGER_USER'],
                        password: ENV['OTEL_EXPORTER_JAEGER_PASSWORD'])
           raise ArgumentError, "invalid url for Jaeger::CollectorExporter #{endpoint}" if invalid_url?(endpoint)
+          raise ArgumentError, 'username and password should either both be nil or both be set' if username.nil? != password.nil?
 
-          transport = ::Thrift::HTTPClientTransport.new(endpoint) # TODO: how to specify username and password?
+          transport = ::Thrift::HTTPClientTransport.new(endpoint)
+          unless username.nil? || password.nil?
+            authorization = Base64.strict_encode64("#{username}:#{password}")
+            auth_header = { 'Authorization': "Basic #{authorization}" }
+            transport.add_headers(auth_header)
+          end
+
           protocol = ::Thrift::BinaryProtocol.new(transport)
           @client = Thrift::Collector::Client.new(protocol)
           @shutdown = false
+          @tracer = OpenTelemetry.tracer_provider.tracer
         end
 
         # Called to export sampled {OpenTelemetry::SDK::Trace::SpanData} structs.
@@ -36,7 +44,10 @@ module OpenTelemetry
           return FAILURE if @shutdown
 
           batches = encoded_batches(span_data)
-          @client.submitBatches(batches).all?(&:ok) ? SUCCESS : FAILURE
+
+          untraced do
+            @client.submitBatches(batches).all?(&:ok) ? SUCCESS : FAILURE
+          end
         rescue ::Thrift::ApplicationException => e
           OpenTelemetry.logger.error("unexpected error in Jaeger::CollectorExporter#export - #{e}")
           FAILURE
@@ -58,6 +69,10 @@ module OpenTelemetry
           false
         rescue URI::InvalidURIError
           true
+        end
+
+        def untraced
+          @tracer.with_span(OpenTelemetry::Trace::Span.new) { yield }
         end
 
         def encoded_batches(span_data)
