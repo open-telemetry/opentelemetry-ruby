@@ -1,0 +1,71 @@
+repo: open-telemetry/opentelemetry-ruby
+main_branch: master
+required_checks_timeout: 1200
+
+gems:
+  - name: opentelemetry-api
+    directory: api
+    version_rb_path: lib/opentelemetry/version.rb
+    version_constant: [OpenTelemetry, VERSION]
+
+  - name: opentelemetry-sdk
+    directory: sdk
+    version_constant: [OpenTelemetry, SDK, VERSION]
+
+  - name: opentelemetry-exporter-jaeger
+    directory: exporter/jaeger
+    version_constant: [OpenTelemetry, Exporter, Jaeger, VERSION]
+
+  - name: opentelemetry-instrumentation-all
+    directory: instrumentation/all
+    version_constant: [OpenTelemetry, Instrumentation, All, VERSION]
+
+  - name: opentelemetry-instrumentation-concurrent_ruby
+    directory: instrumentation/concurrent_ruby
+    version_constant: [OpenTelemetry, Instrumentation, ConcurrentRuby, VERSION]
+
+  - name: opentelemetry-instrumentation-ethon
+    directory: instrumentation/ethon
+    version_constant: [OpenTelemetry, Instrumentation, Ethon, VERSION]
+
+  - name: opentelemetry-instrumentation-excon
+    directory: instrumentation/excon
+    version_constant: [OpenTelemetry, Instrumentation, Excon, VERSION]
+
+  - name: opentelemetry-instrumentation-faraday
+    directory: instrumentation/faraday
+    version_constant: [OpenTelemetry, Instrumentation, Faraday, VERSION]
+
+  - name: opentelemetry-instrumentation-mysql2
+    directory: instrumentation/mysql2
+    version_constant: [OpenTelemetry, Instrumentation, Mysql2, VERSION]
+
+  - name: opentelemetry-instrumentation-net_http
+    directory: instrumentation/net_http
+    version_rb_path: lib/opentelemetry/instrumentation/net/http/version.rb
+    version_constant: [OpenTelemetry, Instrumentation, Net, HTTP, VERSION]
+
+  - name: opentelemetry-instrumentation-rack
+    directory: instrumentation/rack
+    version_constant: [OpenTelemetry, Instrumentation, Rack, VERSION]
+
+  - name: opentelemetry-instrumentation-redis
+    directory: instrumentation/redis
+    version_constant: [OpenTelemetry, Instrumentation, Redis, VERSION]
+
+  - name: opentelemetry-instrumentation-restclient
+    directory: instrumentation/restclient
+    version_constant: [OpenTelemetry, Instrumentation, RestClient, VERSION]
+
+  - name: opentelemetry-instrumentation-sidekiq
+    directory: instrumentation/sidekiq
+    version_constant: [OpenTelemetry, Instrumentation, Sidekiq, VERSION]
+
+  - name: opentelemetry-instrumentation-sinatra
+    directory: instrumentation/sinatra
+    version_constant: [OpenTelemetry, Instrumentation, Sinatra, VERSION]
+
+  - name: opentelemetry-resource_detectors
+    directory: resource_detectors
+    version_rb_path: lib/opentelemetry/resource/detectors/version.rb
+    version_constant: [OpenTelemetry, Resource, Detectors, VERSION]
