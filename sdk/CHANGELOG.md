@@ -17,7 +17,7 @@
 * ADDED: BatchSpanProcessor environment variable support
 * FIXED: Remove semver prefix
 * FIXED: Docs for array valued attributes
-* ADDED: Add hex_trace_id and hex_span_id helpers to SpanData 
+* ADDED: Add hex_trace_id and hex_span_id helpers to SpanData
 * FIXED: Fix ProbabilitySampler
 * ADDED: Implement GetCorrelations
 * FIXED: Change default Sampler to ParentOrElse(AlwaysOn)
