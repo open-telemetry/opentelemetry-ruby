@@ -43,7 +43,12 @@ flag :gems, "--gems=VAL" do
     "If no version is specified for a gem, a version is inferred from the" \
       " conventional commit messages. If this flag is omitted or left blank," \
       " all gems in the repository that have at least one commit of type" \
-      " 'fix', 'feat', or 'docs', or a breaking change, will be released."
+      " 'fix', 'feat', or 'docs', or a breaking change, will be released.",
+    "",
+    "You can also use the special gem name 'all' which forces release of all" \
+      " gems in the repository regardless of whether they have significant" \
+      " changes. You can also supply a version with 'all' to release all gems" \
+      " with the same version."
 end
 flag :git_remote, "--git-remote=VAL" do
   default "origin"
@@ -109,7 +114,13 @@ def populate_requester
   gem_list = gems.to_s.empty? ? @utils.all_gems : gems.split(/[\s,]+/)
   gem_list.each do |entry|
     gem_name, override_version = entry.split(":", 2)
-    requester.gem_info(gem_name, override_version: override_version)
+    if gem_name == "all"
+      @utils.all_gems.each do |name|
+        requester.gem_info(name, override_version: override_version)
+      end
+    else
+      requester.gem_info(gem_name, override_version: override_version)
+    end
   end
   requester
 end
