@@ -229,7 +229,9 @@ Releases are normally performed using GitHub Actions.
         by including their names, space-delimited, in this this field. You can
         optionally append `:<version>` to any gem in the list to specify the
         version to release, or omit the version to let the script decide based
-        on conventional commits.
+        on conventional commits. You can also use the special name `all` to
+        force release of all gems (and even `all:<version>` to release all gems
+        with the same version.)
  3. The workflow will analyze the conventional commit messages for the gems to
     release, and will open a _release pull request_. This pull request will
     include the appropriate changes to each gem's version constants, and an

@@ -43,7 +43,12 @@ flag :gems, "--gems=VAL" do
     "If no version is specified for a gem, a version is inferred from the" \
       " conventional commit messages. If this flag is omitted or left blank," \
       " all gems in the repository that have at least one commit of type" \
-      " 'fix', 'feat', or 'docs', or a breaking change, will be released."
+      " 'fix', 'feat', or 'docs', or a breaking change, will be released.",
+    "",
+    "You can also use the special gem name 'all' which forces release of all" \
+      " gems in the repository regardless of whether they have significant" \
+      " changes. You can also supply a version with 'all' to release all gems" \
+      " with the same version."
 end
 flag :git_remote, "--git-remote=VAL" do
   default "origin"
