@@ -5,3 +5,4 @@
 * BREAKING CHANGE: Rename Resource labels to attributes 
 
 * FIXED: Rename Resource labels to attributes 
+* ADDED: Environment variable resource detection

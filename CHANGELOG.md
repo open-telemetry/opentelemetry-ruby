@@ -1,6 +1,6 @@
 # CHANGELOG
 
-All notable changes to this project will be documented in this file.
+All notable changes to this project were documented in this file. This is of historical interest only at this point, and changes are now logged per gem (as of the 0.6.0 release).
 
 ## Unreleased
 
