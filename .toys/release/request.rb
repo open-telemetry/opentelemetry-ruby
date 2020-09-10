@@ -109,7 +109,13 @@ def populate_requester
   gem_list = gems.to_s.empty? ? @utils.all_gems : gems.split(/[\s,]+/)
   gem_list.each do |entry|
     gem_name, override_version = entry.split(":", 2)
-    requester.gem_info(gem_name, override_version: override_version)
+    if gem_name == "all"
+      @utils.all_gems.each do |name|
+        requester.gem_info(name, override_version: override_version)
+      end
+    else
+      requester.gem_info(gem_name, override_version: override_version)
+    end
   end
   requester
 end

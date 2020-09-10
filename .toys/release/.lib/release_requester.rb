@@ -297,6 +297,9 @@ class ReleaseRequester
 
   def gem_info(gem_name, override_version: nil)
     raise "Gem list is already finished" if @gem_info_list.frozen?
+    if @gem_info_list.any? { |gem_info| gem_info.gem_name == gem_name }
+      @utils.error("Gem #{gem_name} listed multiple times in release request")
+    end
     initial_setup unless @performed_initial_setup
     info = GemInfo.new(@utils, gem_name, override_version, @release_ref)
     @gem_info_list << info
