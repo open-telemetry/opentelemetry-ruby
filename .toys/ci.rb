@@ -67,4 +67,5 @@ def handle_gem(gem_name, has_appraisal)
   end
   exec(["bundle", "exec", "rake", "rubocop"]) if check_rubocop
   exec(["bundle", "exec", "rake", "yard"]) if check_yard
+  exec(["gem", "build", "#{gem_name}.gemspec"])
 end
