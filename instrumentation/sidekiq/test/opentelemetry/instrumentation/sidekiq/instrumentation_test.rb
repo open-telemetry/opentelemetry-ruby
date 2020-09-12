@@ -18,8 +18,7 @@ end
 class SimpleJob
   include Sidekiq::Worker
 
-  def perform
-  end
+  def perform; end
 end
 
 describe OpenTelemetry::Instrumentation::Sidekiq::Instrumentation do
@@ -76,17 +75,17 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Instrumentation do
       _(root_span.name).must_equal 'SimpleEnqueueingJob'
       _(root_span.kind).must_equal :producer
 
-      child_span_1 = spans.find { |s| s.parent_span_id == root_span.span_id }
-      _(child_span_1.name).must_equal 'SimpleEnqueueingJob'
-      _(child_span_1.kind).must_equal :consumer
+      child_span1 = spans.find { |s| s.parent_span_id == root_span.span_id }
+      _(child_span1.name).must_equal 'SimpleEnqueueingJob'
+      _(child_span1.kind).must_equal :consumer
 
-      child_span_2 = spans.find { |s| s.parent_span_id == child_span_1.span_id }
-      _(child_span_2.name).must_equal 'SimpleJob'
-      _(child_span_2.kind).must_equal :producer
+      child_span2 = spans.find { |s| s.parent_span_id == child_span1.span_id }
+      _(child_span2.name).must_equal 'SimpleJob'
+      _(child_span2.kind).must_equal :producer
 
-      child_span_3 = spans.find { |s| s.parent_span_id == child_span_2.span_id }
-      _(child_span_3.name).must_equal 'SimpleJob'
-      _(child_span_3.kind).must_equal :consumer
+      child_span3 = spans.find { |s| s.parent_span_id == child_span2.span_id }
+      _(child_span3.name).must_equal 'SimpleJob'
+      _(child_span3.kind).must_equal :consumer
     end
   end
 end

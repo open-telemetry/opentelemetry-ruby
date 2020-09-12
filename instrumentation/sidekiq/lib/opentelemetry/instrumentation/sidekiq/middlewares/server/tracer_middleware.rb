@@ -9,6 +9,8 @@ module OpenTelemetry
     module Sidekiq
       module Middlewares
         module Server
+          # TracerMiddleware propagates context and instruments Sidekiq requests
+          # by way of its middleware system
           class TracerMiddleware
             def call(_worker, msg, _queue)
               parent_context = OpenTelemetry.propagation.text.extract(msg)
@@ -16,7 +18,7 @@ module OpenTelemetry
                 msg['wrapped']&.to_s || msg['class'],
                 attributes: {
                   'messaging.message_id' => msg['jid'],
-                  'messaging.destination' => msg['queue'],
+                  'messaging.destination' => msg['queue']
                 },
                 with_parent_context: parent_context,
                 kind: :consumer

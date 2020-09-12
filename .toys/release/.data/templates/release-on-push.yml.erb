@@ -1,0 +1,28 @@
+name: "[release hook] Update open releases"
+
+on:
+  push:
+    branches:
+      - <%= @settings.main_branch %>
+
+jobs:
+  release-update-open-requests:
+    if: ${{ github.repository == '<%= @settings.repo_path %>' }}
+    env:
+      ruby_version: "2.7"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Ruby ${{ env.ruby_version }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.ruby_version }}
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Install Toys
+        run: "gem install --no-document toys"
+      - name: Update open releases
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          toys release _onpush --verbose \
+            < /dev/null

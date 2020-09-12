@@ -1,0 +1,35 @@
+name: Open release request
+
+on:
+  workflow_dispatch:
+    inputs:
+      gems:
+        description: Gems to release (leave blank to release all gems)
+        required: false
+        default: ""
+
+jobs:
+  release-request:
+    if: ${{ github.repository == '<%= @settings.repo_path %>' }}
+    env:
+      ruby_version: "2.7"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Ruby ${{ env.ruby_version }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.ruby_version }}
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Install Toys
+        run: "gem install --no-document toys"
+      - name: Open release pull request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          toys release request --yes --verbose \
+            "--gems=${{ github.event.inputs.gems }}" \
+            "--git-user-email=${{ secrets.GIT_USER_EMAIL }}" \
+            "--git-user-name=${{ secrets.GIT_USER_NAME }}" \
+            "--release-ref=${{ github.ref }}" \
+            < /dev/null

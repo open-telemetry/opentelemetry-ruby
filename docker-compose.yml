@@ -80,6 +80,14 @@ services:
       - redis
     working_dir: /app/instrumentation/redis/example
 
+  ex-instrumentation-dalli:
+    <<: *base
+    environment:
+      - MEMCACHED_URL=memcached:11211
+    depends_on:
+      - memcached
+    working_dir: /app/instrumentation/dalli/example
+
   ex-instrumentation-restclient:
     <<: *base
     working_dir: /app/instrumentation/restclient/example
@@ -114,6 +122,10 @@ services:
     image: redis:5.0-alpine
     volumes:
       - redis_data:/data
+
+  memcached:
+    image: memcached:alpine
+    command: memcached -m 64
 
   sdk:
     <<: *base
