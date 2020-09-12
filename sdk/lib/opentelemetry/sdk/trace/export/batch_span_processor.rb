@@ -60,11 +60,11 @@ module OpenTelemetry
             return unless span.context.trace_flags.sampled?
 
             lock do
+              reset_on_fork
               n = spans.size + 1 - max_queue_size
               spans.shift(n) if n.positive?
               spans << span
               @condition.signal if spans.size > max_queue_size / 2
-              reset_on_fork
             end
           end
 

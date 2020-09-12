@@ -217,28 +217,21 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     let(:exporter) { TestExporter.new }
     let(:bsp) do
       BatchSpanProcessor.new(exporter: exporter,
-                              max_queue_size: 6, max_export_batch_size: 3)
-    end
-    let(:tss) { [TestSpan.new, TestSpan.new, TestSpan.new, TestSpan.new] }
-
-    before do
-      tss.each { |ts| bsp.on_finish(ts) }
-      bsp.force_flush
+                              max_queue_size: 10, max_export_batch_size: 3)
     end
 
     describe 'when a process fork occurs' do
-      let(:parent_pid) {  bsp.instance_variable_get(:@pid) }
-      let(:parent_work_thread) { bsp.instance_variable_get(:@thread) }
-
-      it 'creates new work thread and resets state variables' do
-        Process.stub(:pid, parent_pid + 1) do
-          tss.each { |ts| bsp.on_finish(ts) }
+      it 'creates new work thread' do
+        parent_pid = bsp.instance_variable_get(:@pid)
+        parent_work_thread_id = bsp.instance_variable_get(:@thread).object_id
+        Process.stub(:pid, parent_pid + rand(10)) do
+          # Start a new span on the forked process and export it.
+          bsp.on_finish(TestSpan.new)
+          bsp.shutdown
           current_pid = bsp.instance_variable_get(:@pid)
-          current_work_thread = bsp.instance_variable_get(:@thread)
-          current_spans = bsp.instance_variable_get(:@spans)
-          _(current_pid).wont_equal parent_pid
-          # _(current_work_thread.object_id).wont_equal parent_work_thread.object_id
-          _(current_spans).must_equal []
+          current_work_thread_id = bsp.instance_variable_get(:@thread).object_id
+          _(parent_pid).wont_equal current_pid
+          _(parent_work_thread_id).wont_equal current_work_thread_id
         end
       end
     end
