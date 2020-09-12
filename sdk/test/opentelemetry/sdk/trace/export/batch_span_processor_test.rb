@@ -224,7 +224,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       it 'creates new work thread' do
         parent_pid = bsp.instance_variable_get(:@pid)
         parent_work_thread_id = bsp.instance_variable_get(:@thread).object_id
-        Process.stub(:pid, parent_pid + rand(10)) do
+        Process.stub(:pid, parent_pid + rand(1..10)) do
           # Start a new span on the forked process and export it.
           bsp.on_finish(TestSpan.new)
           bsp.shutdown
