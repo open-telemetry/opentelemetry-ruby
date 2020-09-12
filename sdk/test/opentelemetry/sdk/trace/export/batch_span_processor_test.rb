@@ -217,7 +217,8 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     let(:exporter) { TestExporter.new }
     let(:bsp) do
       BatchSpanProcessor.new(exporter: exporter,
-                              max_queue_size: 10, max_export_batch_size: 3)
+                             max_queue_size: 10,
+                             max_export_batch_size: 3)
     end
 
     describe 'when a process fork occurs' do

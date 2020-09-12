@@ -121,6 +121,7 @@ module OpenTelemetry
           def reset_on_fork(restart_thread: true)
             pid = Process.pid
             return if @pid == pid
+
             @pid = pid
             spans.clear
             @thread = Thread.new { work } if restart_thread
