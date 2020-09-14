@@ -9,6 +9,7 @@ OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Sidekiq'
 end
 
+# A basic Sidekiq job worker example
 class SimpleJob
   include Sidekiq::Worker
 

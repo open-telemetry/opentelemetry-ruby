@@ -13,12 +13,18 @@ describe OpenTelemetry::SDK::Configurator do
     it 'returns a logger instance' do
       _(configurator.logger).must_be_instance_of(Logger)
     end
+    it 'assigns the logger to OpenTelemetry.logger' do
+      custom_logger = Logger.new('/dev/null', level: 'ERROR')
+      _(OpenTelemetry.logger).wont_equal custom_logger
+      OpenTelemetry::SDK.configure { |c| c.logger = custom_logger }
+      _(OpenTelemetry.logger).must_equal custom_logger
+    end
   end
 
   describe '#resource=' do
     let(:configurator_resource) { configurator.instance_variable_get(:@resource) }
-    let(:configurator_resource_labels) { configurator_resource.label_enumerator.to_h }
-    let(:expected_resource_labels) do
+    let(:configurator_resource_attributes) { configurator_resource.attribute_enumerator.to_h }
+    let(:expected_resource_attributes) do
       {
         'telemetry.sdk.name' => 'opentelemetry',
         'telemetry.sdk.language' => 'ruby',
@@ -29,7 +35,25 @@ describe OpenTelemetry::SDK::Configurator do
 
     it 'merges the resource' do
       configurator.resource = OpenTelemetry::SDK::Resources::Resource.create('test_key' => 'test_value')
-      _(configurator_resource_labels).must_equal(expected_resource_labels)
+      _(configurator_resource_attributes).must_equal(expected_resource_attributes)
+    end
+
+    describe 'when there is a resource key collision' do
+      let(:expected_resource_attributes) do
+        {
+          'telemetry.sdk.name' => 'opentelemetry',
+          'telemetry.sdk.language' => 'ruby',
+          'telemetry.sdk.version' => OpenTelemetry::SDK::VERSION,
+          'important_value' => '25'
+        }
+      end
+
+      it 'uses the user provided resources' do
+        with_env('OTEL_RESOURCE_ATTRIBUTES' => 'important_value=100') do
+          configurator.resource = OpenTelemetry::SDK::Resources::Resource.create('important_value' => '25')
+          _(configurator_resource_attributes).must_equal(expected_resource_attributes)
+        end
+      end
     end
   end
 
@@ -56,10 +80,6 @@ describe OpenTelemetry::SDK::Configurator do
   end
 
   describe '#configure' do
-    after do
-      reset_globals
-    end
-
     describe 'baggage' do
       it 'is an instance of SDK::Baggage::Manager' do
         configurator.configure
@@ -195,6 +215,7 @@ describe OpenTelemetry::SDK::Configurator do
 
     describe 'instrumentation installation' do
       before do
+        OpenTelemetry.instance_variable_set(:@instrumentation_registry, nil)
         TestInstrumentation = Class.new(OpenTelemetry::Instrumentation::Base) do
           install { 1 + 1 }
           present { true }
@@ -239,12 +260,5 @@ describe OpenTelemetry::SDK::Configurator do
 
   def injectors_for(propagator)
     propagator.instance_variable_get(:@injectors) || propagator.instance_variable_get(:@injector)
-  end
-
-  def reset_globals
-    OpenTelemetry.instance_variables.each do |iv|
-      OpenTelemetry.instance_variable_set(iv, nil)
-    end
-    OpenTelemetry.logger = Logger.new(STDOUT)
   end
 end
