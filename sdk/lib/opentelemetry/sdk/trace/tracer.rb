@@ -42,7 +42,6 @@ module OpenTelemetry
           tracestate = parent_span_context&.tracestate
           trace_id = parent_span_context&.trace_id
           trace_id ||= OpenTelemetry::Trace.generate_trace_id
-          span_id = OpenTelemetry::Trace.generate_span_id
           sampler = tracer_provider.active_trace_config.sampler
           result = sampler.should_sample?(trace_id: trace_id, parent_context: parent_span_context, links: links, name: name, kind: kind, attributes: attributes)
           internal_create_span(result, name, kind, trace_id, span_id, parent_span_id, attributes, links, start_timestamp, tracestate)
