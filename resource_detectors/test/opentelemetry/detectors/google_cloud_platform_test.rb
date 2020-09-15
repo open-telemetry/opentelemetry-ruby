@@ -11,12 +11,12 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
 
   describe '.detect' do
     let(:detected_resource) { detector.detect }
-    let(:detected_resource_labels) { detected_resource.label_enumerator.to_h }
-    let(:expected_resource_labels) { {} }
+    let(:detected_resource_attributes) { detected_resource.attribute_enumerator.to_h }
+    let(:expected_resource_attributes) { {} }
 
     it 'returns an empty resource' do
       _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-      _(detected_resource_labels).must_equal(expected_resource_labels)
+      _(detected_resource_attributes).must_equal(expected_resource_attributes)
     end
 
     describe 'when in a gcp environment' do
@@ -35,11 +35,17 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
         gcp_env_mock.expect(:kubernetes_engine_namespace_id, 'default')
 
         Socket.stub(:gethostname, 'opentelemetry-test') do
-          Google::Cloud::Env.stub(:new, gcp_env_mock) { detected_resource }
+          old_hostname = ENV['HOSTNAME']
+          ENV['HOSTNAME'] = 'opentelemetry-test'
+          begin
+            Google::Cloud::Env.stub(:new, gcp_env_mock) { detected_resource }
+          ensure
+            ENV['HOSTNAME'] = old_hostname
+          end
         end
       end
 
-      let(:expected_resource_labels) do
+      let(:expected_resource_attributes) do
         {
           'cloud.provider' => 'gcp',
           'cloud.account.id' => 'opentelemetry',
@@ -56,22 +62,22 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
 
       it 'returns a resource with gcp attributes' do
         _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-        _(detected_resource_labels).must_equal(expected_resource_labels)
+        _(detected_resource_attributes).must_equal(expected_resource_attributes)
       end
 
       describe 'and a nil resource value is detected' do
         let(:project_id) { nil }
 
-        it 'returns a resource without that label' do
-          _(detected_resource_labels.key?('cloud.account.id')).must_equal(false)
+        it 'returns a resource without that attribute' do
+          _(detected_resource_attributes.key?('cloud.account.id')).must_equal(false)
         end
       end
 
       describe 'and an empty string resource value is detected' do
         let(:project_id) { '' }
 
-        it 'returns a resource without that label' do
-          _(detected_resource_labels.key?('cloud.account.id')).must_equal(false)
+        it 'returns a resource without that attribute' do
+          _(detected_resource_attributes.key?('cloud.account.id')).must_equal(false)
         end
       end
     end

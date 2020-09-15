@@ -78,6 +78,52 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
         BatchSpanProcessor.new(exporter: TestExporter.new, max_queue_size: 6, max_export_batch_size: 999)
       end
     end
+
+    it 'raises if OTEL_BSP_EXPORT_TIMEOUT_MILLIS env var is not numeric' do
+      assert_raises ArgumentError do
+        with_env('OTEL_BSP_EXPORT_TIMEOUT_MILLIS' => 'foo') do
+          BatchSpanProcessor.new(exporter: TestExporter.new)
+        end
+      end
+    end
+
+    it 'sets parameters from the environment' do
+      bsp = with_env('OTEL_BSP_EXPORT_TIMEOUT_MILLIS' => '4',
+                     'OTEL_BSP_SCHEDULE_DELAY_MILLIS' => '3',
+                     'OTEL_BSP_MAX_QUEUE_SIZE' => '2',
+                     'OTEL_BSP_MAX_EXPORT_BATCH_SIZE' => '1') do
+        BatchSpanProcessor.new(exporter: TestExporter.new)
+      end
+      _(bsp.instance_variable_get(:@exporter_timeout_seconds)).must_equal 0.004
+      _(bsp.instance_variable_get(:@delay_seconds)).must_equal 0.003
+      _(bsp.instance_variable_get(:@max_queue_size)).must_equal 2
+      _(bsp.instance_variable_get(:@batch_size)).must_equal 1
+    end
+
+    it 'prefers explicit parameters rather than the environment' do
+      bsp = with_env('OTEL_BSP_EXPORT_TIMEOUT_MILLIS' => '4',
+                     'OTEL_BSP_SCHEDULE_DELAY_MILLIS' => '3',
+                     'OTEL_BSP_MAX_QUEUE_SIZE' => '2',
+                     'OTEL_BSP_MAX_EXPORT_BATCH_SIZE' => '1') do
+        BatchSpanProcessor.new(exporter: TestExporter.new,
+                               exporter_timeout_millis: 10,
+                               schedule_delay_millis: 9,
+                               max_queue_size: 8,
+                               max_export_batch_size: 7)
+      end
+      _(bsp.instance_variable_get(:@exporter_timeout_seconds)).must_equal 0.01
+      _(bsp.instance_variable_get(:@delay_seconds)).must_equal 0.009
+      _(bsp.instance_variable_get(:@max_queue_size)).must_equal 8
+      _(bsp.instance_variable_get(:@batch_size)).must_equal 7
+    end
+
+    it 'sets defaults for parameters not in the environment' do
+      bsp = BatchSpanProcessor.new(exporter: TestExporter.new)
+      _(bsp.instance_variable_get(:@exporter_timeout_seconds)).must_equal 30.0
+      _(bsp.instance_variable_get(:@delay_seconds)).must_equal 5.0
+      _(bsp.instance_variable_get(:@max_queue_size)).must_equal 2048
+      _(bsp.instance_variable_get(:@batch_size)).must_equal 512
+    end
   end
 
   describe 'lifecycle' do
