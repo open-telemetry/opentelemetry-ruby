@@ -77,12 +77,14 @@ module OpenTelemetry
           # the process after an invocation, but before the `Processor` exports
           # the completed spans.
           def force_flush
-            snapshot = lock { spans.shift(spans.size) }
+            snapshot = lock do
+              reset_on_fork(restart_thread: false) if @keep_running
+              spans.shift(spans.size)
+            end
             until snapshot.empty?
               batch = snapshot.shift(@batch_size).map!(&:to_span_data)
               result_code = @exporter.export(batch)
               report_result(result_code, batch)
-              reset_on_fork(restart_thread: false) if @keep_running
             end
           end
 
@@ -106,6 +108,7 @@ module OpenTelemetry
           def work
             loop do
               batch = lock do
+                reset_on_fork(restart_thread: false)
                 @condition.wait(@mutex, @delay_seconds) if spans.size < batch_size && @keep_running
                 @condition.wait(@mutex, @delay_seconds) while spans.empty? && @keep_running
                 return unless @keep_running
@@ -114,7 +117,6 @@ module OpenTelemetry
               end
 
               export_batch(batch)
-              reset_on_fork(restart_thread: false)
             end
           end
 
