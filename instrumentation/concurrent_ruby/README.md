@@ -40,7 +40,7 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 
 Apache 2.0 license. See [LICENSE][license-github] for more information.
 
-[concurentruby-home]: https://github.com/ruby-concurrency/concurrent-ruby
+[concurrent-ruby-home]: https://github.com/ruby-concurrency/concurrent-ruby
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE
