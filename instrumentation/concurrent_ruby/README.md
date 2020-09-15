@@ -1,6 +1,6 @@
 # OpenTelemetry Concurrent Ruby Instrumentation
 
-The OpenTelemetry Concurrent Ruby gem is a community maintained instrumentation for the [Concurrent Ruby][concurentruby-home]. This is a concurrency toolkit inspired from various languages and classic concurrency patterns. 
+The OpenTelemetry Concurrent Ruby gem is a community maintained instrumentation for the [Concurrent Ruby][concurrent-ruby-home]. This is a concurrency toolkit inspired from various languages and classic concurrency patterns. 
 
 ## How do I get started?
 
