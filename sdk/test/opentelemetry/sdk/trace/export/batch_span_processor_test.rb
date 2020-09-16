@@ -258,4 +258,29 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       end
     end
   end
+
+  describe 'fork safety test' do
+    let(:exporter) { TestExporter.new }
+    let(:bsp) do
+      BatchSpanProcessor.new(exporter: exporter,
+                             max_queue_size: 10,
+                             max_export_batch_size: 3)
+    end
+
+    describe 'when a process fork occurs' do
+      it 'creates new work thread' do
+        parent_pid = bsp.instance_variable_get(:@pid)
+        parent_work_thread_id = bsp.instance_variable_get(:@thread).object_id
+        Process.stub(:pid, parent_pid + rand(1..10)) do
+          # Start a new span on the forked process and export it.
+          bsp.on_finish(TestSpan.new)
+          bsp.shutdown
+          current_pid = bsp.instance_variable_get(:@pid)
+          current_work_thread_id = bsp.instance_variable_get(:@thread).object_id
+          _(parent_pid).wont_equal current_pid
+          _(parent_work_thread_id).wont_equal current_work_thread_id
+        end
+      end
+    end
+  end
 end
