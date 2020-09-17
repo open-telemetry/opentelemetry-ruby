@@ -1,6 +1,6 @@
 # OpenTelemetry Net::HTTP Instrumentation
 
-The OpenTelemetry Net::HTTP Ruby gem is a community maintained instrumentation for [Net::HTTP][net-http-home]. This is a toolkit that allows building HTTP user-agents. 
+The OpenTelemetry Net::HTTP Ruby gem is a community maintained instrumentation for [Net::HTTP][net-http-home]. 
 
 ## How do I get started?
 
