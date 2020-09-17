@@ -56,7 +56,9 @@ module OpenTelemetry
             @max_queue_size = max_queue_size
             @batch_size = max_export_batch_size
             @spans = []
-            @thread = Thread.new { work }
+            @pid = nil
+            @thread = nil
+            reset_on_fork
           end
 
           # does nothing for this processor
@@ -69,6 +71,7 @@ module OpenTelemetry
             return unless span.context.trace_flags.sampled?
 
             lock do
+              reset_on_fork
               n = spans.size + 1 - max_queue_size
               spans.shift(n) if n.positive?
               spans << span
@@ -85,7 +88,10 @@ module OpenTelemetry
           # the process after an invocation, but before the `Processor` exports
           # the completed spans.
           def force_flush
-            snapshot = lock { spans.shift(spans.size) }
+            snapshot = lock do
+              reset_on_fork(restart_thread: false) if @keep_running
+              spans.shift(spans.size)
+            end
             until snapshot.empty?
               batch = snapshot.shift(@batch_size).map!(&:to_span_data)
               result_code = @exporter.export(batch)
@@ -113,6 +119,7 @@ module OpenTelemetry
           def work
             loop do
               batch = lock do
+                reset_on_fork(restart_thread: false)
                 @condition.wait(@mutex, @delay_seconds) if spans.size < batch_size && @keep_running
                 @condition.wait(@mutex, @delay_seconds) while spans.empty? && @keep_running
                 return unless @keep_running
@@ -122,6 +129,15 @@ module OpenTelemetry
 
               export_batch(batch)
             end
+          end
+
+          def reset_on_fork(restart_thread: true)
+            pid = Process.pid
+            return if @pid == pid
+
+            @pid = pid
+            spans.clear
+            @thread = Thread.new { work } if restart_thread
           end
 
           def export_batch(batch)
