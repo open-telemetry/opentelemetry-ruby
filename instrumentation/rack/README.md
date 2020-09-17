@@ -30,7 +30,11 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
-## How can I get invovled?
+## Examples
+
+Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/master/instrumentation/rack/example/trace_demonstration.rb)
+
+## How can I get involved?
 
 The `opentelemetry-instrumentation-rack` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
 
