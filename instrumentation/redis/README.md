@@ -1,4 +1,4 @@
-# OpenTelemetry Faraday Instrumentation
+# OpenTelemetry Redis Instrumentation
 
 The OpenTelemetry Redis Ruby gem is a community maintained instrumentation for [Redis][redis-home]. This is an in-memory data store that is used as a database, cache, and message broker.
 
