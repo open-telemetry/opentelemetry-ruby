@@ -1,6 +1,6 @@
 # OpenTelemetry Rack Instrumentation
 
-The Rack instrumentation is a community-maintained instrumentation for the [Rack][rack-home] Ruby jobs system.
+The Rack instrumentation is a community-maintained instrumentation for the [Rack][rack-home] web server interface.
 
 ## How do I get started?
 
@@ -18,7 +18,7 @@ To use the instrumentation, call `use` with the name of the instrumentation:
 
 ```ruby
 OpenTelemetry::SDK.configure do |c|
-  c.use 'OpenTelemetry::Instrumentation::rack'
+  c.use 'OpenTelemetry::Instrumentation::Rack'
 end
 ```
 
@@ -40,7 +40,7 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 
 The `opentelemetry-instrumentation-rack` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
 
-[rack-home]: https://github.com/mperham/rack
+[rack-home]: https://github.com/rack/rack
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE
