@@ -10,12 +10,11 @@ Install the gem using:
 gem install opentelemetry-instrumentation-ethon
 ```
 
-Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-ethon` to your `Gemfile`.
+Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-ethon` to your `Gemfile`. 
 
 ## Usage
 
 To install the instrumentation, call `use` with the name of the instrumentation.
-
 
 ```ruby
 OpenTelemetry::SDK.configure do |c|
@@ -31,6 +30,11 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+## Examples
+
+Examples can be found in the [examples][examples-folder] folder, where you will find an example installation in [./example/Gemfile][example-gemfile], and example usage in [./example/ethon.rb][example-use]. 
+
+
 ## How can I get involved?
 
 The `opentelemetry-instrumentation-ethon` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
@@ -44,6 +48,9 @@ The `opentelemetry-instrumentation-all` gem is distributed under the Apache 2.0 
 [ethon]:https://github.com/typhoeus/ethon
 [ethon-home]:https://github.com/typhoeus/ethon
 [bundler-home]: https://bundler.io
+[examples-folder]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/instrumentation/ethon/example/
+[example-gemfile]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/instrumentation/ethon/example/Gemfile
+[example-use]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/instrumentation/ethon/example/ethon.rb
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
