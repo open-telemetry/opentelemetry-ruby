@@ -30,7 +30,9 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
-An example of how to interface with Faraday can be found in `example/faraday.rb`.
+## Examples
+
+Example usage of faraday can be seen in the `./example/faraday.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/master/instrumentation/faraday/example/faraday.rb)
 
 ## How can I get involved?
 
