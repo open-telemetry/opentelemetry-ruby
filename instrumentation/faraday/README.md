@@ -30,6 +30,8 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+An example of how to interface with Faraday can be found within the example/faraday.rb directory.
+
 ## How can I get involved?
 
 The `opentelemetry-instrumentation-faraday` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
