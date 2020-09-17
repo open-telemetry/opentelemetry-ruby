@@ -32,8 +32,7 @@ end
 
 ## Examples
 
-Examples can be found in the [examples][examples-folder] folder, where you will find an example installation in [./example/Gemfile][example-gemfile], and example usage in [./example/ethon.rb][example-use]. 
-
+Example usage of faraday can be seen in the `./example/ethon.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/master/instrumentation/ethon/example/ethon.rb)
 
 ## How can I get involved?
 
@@ -48,9 +47,6 @@ The `opentelemetry-instrumentation-all` gem is distributed under the Apache 2.0 
 [ethon]:https://github.com/typhoeus/ethon
 [ethon-home]:https://github.com/typhoeus/ethon
 [bundler-home]: https://bundler.io
-[examples-folder]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/instrumentation/ethon/example/
-[example-gemfile]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/instrumentation/ethon/example/Gemfile
-[example-use]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/instrumentation/ethon/example/ethon.rb
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
