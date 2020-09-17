@@ -29,6 +29,9 @@ OpenTelemetry::SDK.configure do |c|
   c.use_all
 end
 ```
+## Examples
+
+Example usage can be seen in the `./example/sidekiq.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/master/instrumentation/sidekiq/example/sidekiq.rb)
 
 ## How can I get invovled?
 
