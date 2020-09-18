@@ -29,7 +29,7 @@ module OpenTelemetry
             if sample?(trace_id)
               RECORD_AND_SAMPLE
             else
-              IGNORE
+              DROP
             end
           end
 

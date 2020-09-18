@@ -12,7 +12,7 @@ module OpenTelemetry
         # decision part of a sampling {Result}.
         module Decision
           # Decision to not record events and not sample.
-          IGNORE = :__ignore__
+          DROP = :__drop__
 
           # Decision to record events and not sample.
           RECORD_ONLY = :__record_only__

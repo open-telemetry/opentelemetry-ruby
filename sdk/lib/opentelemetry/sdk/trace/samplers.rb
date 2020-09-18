@@ -38,17 +38,17 @@ module OpenTelemetry
       # @return [Result] The sampling result.
       module Samplers
         RECORD_AND_SAMPLE = Result.new(decision: Decision::RECORD_AND_SAMPLE)
-        IGNORE = Result.new(decision: Decision::IGNORE)
+        DROP = Result.new(decision: Decision::DROP)
         RECORD_ONLY = Result.new(decision: Decision::RECORD_ONLY)
-        SAMPLING_HINTS = [Decision::IGNORE, Decision::RECORD_ONLY, Decision::RECORD_AND_SAMPLE].freeze
+        SAMPLING_HINTS = [Decision::DROP, Decision::RECORD_ONLY, Decision::RECORD_AND_SAMPLE].freeze
 
-        private_constant(:RECORD_AND_SAMPLE, :IGNORE, :RECORD_ONLY, :SAMPLING_HINTS)
+        private_constant(:RECORD_AND_SAMPLE, :DROP, :RECORD_ONLY, :SAMPLING_HINTS)
 
         # Returns a {Result} with {Decision::RECORD_AND_SAMPLE}.
         ALWAYS_ON = ConstantSampler.new(result: RECORD_AND_SAMPLE, description: 'AlwaysOnSampler')
 
-        # Returns a {Result} with {Decision::IGNORE}.
-        ALWAYS_OFF = ConstantSampler.new(result: IGNORE, description: 'AlwaysOffSampler')
+        # Returns a {Result} with {Decision::DROP}.
+        ALWAYS_OFF = ConstantSampler.new(result: DROP, description: 'AlwaysOffSampler')
 
         # Returns a new sampler. It delegates to samplers according to the following rules:
         #

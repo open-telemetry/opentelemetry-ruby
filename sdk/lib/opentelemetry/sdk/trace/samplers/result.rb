@@ -14,7 +14,7 @@ module OpenTelemetry
         # root span.
         class Result
           EMPTY_HASH = {}.freeze
-          DECISIONS = [Decision::RECORD_ONLY, Decision::IGNORE, Decision::RECORD_AND_SAMPLE].freeze
+          DECISIONS = [Decision::RECORD_ONLY, Decision::DROP, Decision::RECORD_AND_SAMPLE].freeze
           private_constant(:EMPTY_HASH, :DECISIONS)
 
           # Returns a frozen hash of attributes to be attached span.
@@ -46,7 +46,7 @@ module OpenTelemetry
           #
           # @return [Boolean] recording decision
           def recording?
-            @decision != Decision::IGNORE
+            @decision != Decision::DROP
           end
         end
       end

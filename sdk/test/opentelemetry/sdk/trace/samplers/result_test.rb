@@ -41,7 +41,7 @@ describe OpenTelemetry::SDK::Trace::Samplers::Result do
     it 'accepts Decision constants' do
       _(Result.new(decision: Decision::RECORD_ONLY)).wont_be_nil
       _(Result.new(decision: Decision::RECORD_AND_SAMPLE)).wont_be_nil
-      _(Result.new(decision: Decision::IGNORE)).wont_be_nil
+      _(Result.new(decision: Decision::DROP)).wont_be_nil
     end
 
     it 'replaces invalid decisions with default' do
@@ -60,8 +60,8 @@ describe OpenTelemetry::SDK::Trace::Samplers::Result do
       _(Result.new(decision: Decision::RECORD_ONLY)).wont_be :sampled?
     end
 
-    it 'returns false when decision is IGNORE' do
-      _(Result.new(decision: Decision::IGNORE)).wont_be :sampled?
+    it 'returns false when decision is DROP' do
+      _(Result.new(decision: Decision::DROP)).wont_be :sampled?
     end
   end
 
@@ -74,8 +74,8 @@ describe OpenTelemetry::SDK::Trace::Samplers::Result do
       _(Result.new(decision: Decision::RECORD_ONLY)).must_be :recording?
     end
 
-    it 'returns false when decision is IGNORE' do
-      _(Result.new(decision: Decision::IGNORE)).wont_be :recording?
+    it 'returns false when decision is DROP' do
+      _(Result.new(decision: Decision::DROP)).wont_be :recording?
     end
   end
 end
