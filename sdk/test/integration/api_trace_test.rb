@@ -58,7 +58,9 @@ describe OpenTelemetry::SDK, 'API_trace' do
 
     before do
       @remote_span = tracer.start_span('remote', with_parent_context: context_with_remote_parent)
-      @child_of_remote = tracer.start_span('child1', with_parent: @remote_span)
+      tracer.with_span(@remote_span) do |_, ctx|
+        @child_of_remote = tracer.start_span('child1', with_parent_context: ctx)
+      end
     end
 
     it 'has a child' do
@@ -68,10 +70,11 @@ describe OpenTelemetry::SDK, 'API_trace' do
 
   describe 'tracing child-of-local spans' do
     before do
-      @local_parent_span = tracer.start_span('local')
-
-      tracer.in_span('child1', with_parent: @local_parent_span) do |span|
-        @child_of_local = span
+      tracer.in_span('local') do |parent|
+        @local_parent_span = parent
+        tracer.in_span('child1') do |child|
+          @child_of_local = child
+        end
       end
     end
 

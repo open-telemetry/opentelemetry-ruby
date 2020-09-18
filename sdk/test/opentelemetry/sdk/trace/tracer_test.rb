@@ -252,9 +252,10 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       _(span.attributes).must_equal('1' => 1, '2' => 2)
     end
 
-    it 'uses the context from parent span if supplied' do
+    it 'uses the context from parent if supplied' do
       parent = tracer.start_root_span('root')
-      span = tracer.start_span('child', with_parent: parent)
+      parent_ctx = tracer.with_span(parent) { |_, ctx| ctx }
+      span = tracer.start_span('child', with_parent_context: parent_ctx)
       _(span.parent_span_id).must_equal(parent.context.span_id)
       _(span.context.trace_id).must_equal(parent.context.trace_id)
     end
