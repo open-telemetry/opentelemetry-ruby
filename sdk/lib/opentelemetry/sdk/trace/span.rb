@@ -219,7 +219,6 @@ module OpenTelemetry
             @kind,
             @status,
             @parent_span_id,
-            @child_count,
             @total_recorded_attributes,
             @total_recorded_events,
             @total_recorded_links,
@@ -238,7 +237,7 @@ module OpenTelemetry
         end
 
         # @api private
-        def initialize(context, name, kind, parent_span_id, trace_config, span_processor, attributes, links, start_timestamp, resource, instrumentation_library) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        def initialize(context, name, kind, parent_span_id, trace_config, span_processor, attributes, links, start_timestamp, resource, instrumentation_library) # rubocop:disable Metrics/AbcSize
           super(span_context: context)
           @mutex = Mutex.new
           @name = name
@@ -250,7 +249,6 @@ module OpenTelemetry
           @instrumentation_library = instrumentation_library
           @ended = false
           @status = nil
-          @child_count = 0
           @total_recorded_events = 0
           @total_recorded_links = links&.size || 0
           @total_recorded_attributes = attributes&.size || 0

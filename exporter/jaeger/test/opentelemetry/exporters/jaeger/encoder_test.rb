@@ -112,7 +112,6 @@ describe OpenTelemetry::Exporter::Jaeger::Encoder do
       0,
       0,
       0,
-      0,
       Time.now,
       Time.now,
       attributes,
