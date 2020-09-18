@@ -10,6 +10,7 @@ require 'opentelemetry'
 tracer = OpenTelemetry::Trace::Tracer.new
 
 parent_span = tracer.start_span('parent')
+parent_context = tracer.with_span(parent_span) { |_, c| c }
 
 attributes = {
   'component' => 'rack',
@@ -32,7 +33,7 @@ Benchmark.ipsa do |x|
   end
 
   x.report 'start span with parent context' do
-    span = tracer.start_span('test_span', with_parent: parent_span.context)
+    span = tracer.start_span('test_span', with_parent: parent_context)
     span.finish
   end
 
