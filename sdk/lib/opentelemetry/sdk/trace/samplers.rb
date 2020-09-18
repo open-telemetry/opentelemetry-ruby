@@ -37,18 +37,18 @@ module OpenTelemetry
       #   to the {Span} to be created. Can be nil.
       # @return [Result] The sampling result.
       module Samplers
-        RECORD_AND_SAMPLED = Result.new(decision: Decision::RECORD_AND_SAMPLED)
-        NOT_RECORD = Result.new(decision: Decision::NOT_RECORD)
-        RECORD = Result.new(decision: Decision::RECORD)
-        SAMPLING_HINTS = [Decision::NOT_RECORD, Decision::RECORD, Decision::RECORD_AND_SAMPLED].freeze
+        RECORD_AND_SAMPLE = Result.new(decision: Decision::RECORD_AND_SAMPLE)
+        IGNORE = Result.new(decision: Decision::IGNORE)
+        RECORD_ONLY = Result.new(decision: Decision::RECORD_ONLY)
+        SAMPLING_HINTS = [Decision::IGNORE, Decision::RECORD_ONLY, Decision::RECORD_AND_SAMPLE].freeze
 
-        private_constant(:RECORD_AND_SAMPLED, :NOT_RECORD, :RECORD, :SAMPLING_HINTS)
+        private_constant(:RECORD_AND_SAMPLE, :IGNORE, :RECORD_ONLY, :SAMPLING_HINTS)
 
-        # Returns a {Result} with {Decision::RECORD_AND_SAMPLED}.
-        ALWAYS_ON = ConstantSampler.new(result: RECORD_AND_SAMPLED, description: 'AlwaysOnSampler')
+        # Returns a {Result} with {Decision::RECORD_AND_SAMPLE}.
+        ALWAYS_ON = ConstantSampler.new(result: RECORD_AND_SAMPLE, description: 'AlwaysOnSampler')
 
-        # Returns a {Result} with {Decision::NOT_RECORD}.
-        ALWAYS_OFF = ConstantSampler.new(result: NOT_RECORD, description: 'AlwaysOffSampler')
+        # Returns a {Result} with {Decision::IGNORE}.
+        ALWAYS_OFF = ConstantSampler.new(result: IGNORE, description: 'AlwaysOffSampler')
 
         # Returns a new sampler. It delegates to samplers according to the following rules:
         #

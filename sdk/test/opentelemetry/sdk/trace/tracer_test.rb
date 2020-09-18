@@ -15,7 +15,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     OpenTelemetry.tracer_provider.tracer('component-tracer', '1.0.0')
   end
   let(:record_sampler) do
-    Samplers::ConstantSampler.new(result: Result.new(decision: Decision::RECORD), description: 'RecordSampler')
+    Samplers::ConstantSampler.new(result: Result.new(decision: Decision::RECORD_ONLY), description: 'RecordSampler')
   end
 
   describe '#name' do
@@ -73,7 +73,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       trace_id = OpenTelemetry::Trace.generate_trace_id
       kind = Minitest::Mock.new
       attributes = Minitest::Mock.new
-      result = Result.new(decision: Decision::NOT_RECORD)
+      result = Result.new(decision: Decision::IGNORE)
       mock_sampler = Minitest::Mock.new
       mock_sampler.expect(:should_sample?, result, [{ trace_id: trace_id, parent_context: nil, links: links, name: name, kind: kind, attributes: attributes }])
       activate_trace_config TraceConfig.new(sampler: mock_sampler)
@@ -108,7 +108,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     it 'creates a span with sampler attributes added after supplied attributes' do
       sampler_attributes = { '1' => 1 }
       mock_sampler = Minitest::Mock.new
-      result = Result.new(decision: Decision::RECORD, attributes: sampler_attributes)
+      result = Result.new(decision: Decision::RECORD_ONLY, attributes: sampler_attributes)
       mock_sampler.expect(:should_sample?, result, [Hash])
       activate_trace_config TraceConfig.new(sampler: mock_sampler)
       span = tracer.start_root_span('op', attributes: { '1' => 0, '2' => 2 })
@@ -204,7 +204,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       name = 'span'
       kind = Minitest::Mock.new
       attributes = Minitest::Mock.new
-      result = Result.new(decision: Decision::NOT_RECORD)
+      result = Result.new(decision: Decision::IGNORE)
       mock_sampler = Minitest::Mock.new
       mock_sampler.expect(:should_sample?, result, [{ trace_id: span_context.trace_id, parent_context: span_context, links: links, name: name, kind: kind, attributes: attributes }])
       activate_trace_config TraceConfig.new(sampler: mock_sampler)
@@ -245,7 +245,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     it 'creates a span with sampler attributes added after supplied attributes' do
       sampler_attributes = { '1' => 1 }
       mock_sampler = Minitest::Mock.new
-      result = Result.new(decision: Decision::RECORD, attributes: sampler_attributes)
+      result = Result.new(decision: Decision::RECORD_ONLY, attributes: sampler_attributes)
       mock_sampler.expect(:should_sample?, result, [Hash])
       activate_trace_config TraceConfig.new(sampler: mock_sampler)
       span = tracer.start_span('op', with_parent_context: context, attributes: { '1' => 0, '2' => 2 })
