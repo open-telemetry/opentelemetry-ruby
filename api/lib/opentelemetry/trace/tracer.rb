@@ -36,9 +36,9 @@ module OpenTelemetry
       # span and reraised.
       # @yield [span, context] yields the newly created span and a context containing the
       #   span to the block.
-      def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, with_parent_context: nil)
+      def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, with_parent: nil)
         span = nil
-        span = start_span(name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind, with_parent_context: with_parent_context)
+        span = start_span(name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind, with_parent: with_parent)
         with_span(span) { |s, c| yield s, c }
       rescue Exception => e # rubocop:disable Lint/RescueException
         span&.record_exception(e)
@@ -70,8 +70,9 @@ module OpenTelemetry
       # Parent context can be either passed explicitly, or inferred from currently activated span.
       #
       # @return [Span]
-      def start_span(name, with_parent_context: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
-        span_context = current_span(with_parent_context).context
+      def start_span(name, with_parent: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
+        span_context = current_span(with_parent).context
+
         if span_context.valid?
           Span.new(span_context: span_context)
         else

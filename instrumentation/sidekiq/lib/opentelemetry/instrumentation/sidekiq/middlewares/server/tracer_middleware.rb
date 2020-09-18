@@ -20,7 +20,7 @@ module OpenTelemetry
                   'messaging.message_id' => msg['jid'],
                   'messaging.destination' => msg['queue']
                 },
-                with_parent_context: parent_context,
+                with_parent: parent_context,
                 kind: :consumer
               ) do |span|
                 span.add_event('created_at', timestamp: msg['created_at'])

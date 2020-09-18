@@ -57,9 +57,9 @@ describe OpenTelemetry::SDK, 'API_trace' do
     end
 
     before do
-      @remote_span = tracer.start_span('remote', with_parent_context: context_with_remote_parent)
+      @remote_span = tracer.start_span('remote', with_parent: context_with_remote_parent)
       tracer.with_span(@remote_span) do |_, ctx|
-        @child_of_remote = tracer.start_span('child1', with_parent_context: ctx)
+        @child_of_remote = tracer.start_span('child1', with_parent: ctx)
       end
     end
 

@@ -30,13 +30,13 @@ module OpenTelemetry
         end
 
         def start_root_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
-          start_span(name, with_parent_context: Context.empty, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind)
+          start_span(name, with_parent: Context.empty, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind)
         end
 
-        def start_span(name, with_parent_context: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
+        def start_span(name, with_parent: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
           name ||= 'empty'
 
-          parent_span_context = current_span(with_parent_context).context
+          parent_span_context = current_span(with_parent).context
           parent_span_context = nil unless parent_span_context.valid?
           parent_span_id = parent_span_context&.span_id
           tracestate = parent_span_context&.tracestate

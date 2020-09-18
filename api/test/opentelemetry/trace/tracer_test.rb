@@ -92,7 +92,7 @@ describe OpenTelemetry::Trace::Tracer do
     end
 
     it 'yields a span with the parent context' do
-      tracer.in_span('op', with_parent_context: parent_context) do |span|
+      tracer.in_span('op', with_parent: parent_context) do |span|
         _(span.context).must_be :valid?
         _(span.context).must_equal(parent_span_context)
       end
@@ -144,7 +144,7 @@ describe OpenTelemetry::Trace::Tracer do
     let(:parent) { tracer.start_span('parent') }
 
     it 'returns a valid span with the parent context' do
-      span = tracer.start_span('op', with_parent_context: parent_context)
+      span = tracer.start_span('op', with_parent: parent_context)
       _(span.context).must_be :valid?
       _(span.context).must_equal(parent_span_context)
     end
@@ -156,7 +156,7 @@ describe OpenTelemetry::Trace::Tracer do
     end
 
     it 'returns a span with a new context when passed an invalid context' do
-      span = tracer.start_span('op', with_parent_context: invalid_parent_context)
+      span = tracer.start_span('op', with_parent: invalid_parent_context)
       _(span.context).must_be :valid?
       _(span.context).wont_equal(invalid_span_context)
     end

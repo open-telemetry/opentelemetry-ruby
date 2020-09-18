@@ -32,7 +32,7 @@ Benchmark.ipsa do |x|
   end
 
   x.report 'start span with parent context' do
-    span = tracer.start_span('test_span', with_parent_context: parent_span.context)
+    span = tracer.start_span('test_span', with_parent: parent_span.context)
     span.finish
   end
 
