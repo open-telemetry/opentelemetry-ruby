@@ -45,7 +45,6 @@ The `opentelemetry-instrumentation-sidekiq` gem is distributed under the Apache 
 
 [sidekiq-home]: https://github.com/mperham/sidekiq
 [bundler-home]: https://bundler.io
-[bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
