@@ -69,6 +69,8 @@ module OpenTelemetry
       #
       # Parent context can be either passed explicitly, or inferred from currently activated span.
       #
+      # @param [optional Context] with_parent Explicitly managed parent context
+      #
       # @return [Span]
       def start_span(name, with_parent: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
         span_context = current_span(with_parent).context
