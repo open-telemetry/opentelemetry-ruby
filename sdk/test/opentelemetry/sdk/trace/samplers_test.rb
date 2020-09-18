@@ -24,7 +24,7 @@ describe OpenTelemetry::SDK::Trace::Samplers do
   describe '.parent_based' do
     let(:not_a_sampler) { Minitest::Mock.new }
     let(:trace_id) { OpenTelemetry::Trace.generate_trace_id }
-    let(:result) { Result.new(decision: Decision::RECORD_AND_SAMPLED) }
+    let(:result) { Result.new(decision: Decision::RECORD_AND_SAMPLE) }
     let(:sampled) { OpenTelemetry::Trace::TraceFlags.from_byte(1) }
     let(:not_sampled) { OpenTelemetry::Trace::TraceFlags.from_byte(0) }
     let(:remote_sampled_parent_context) { OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, remote: true, trace_flags: sampled) }

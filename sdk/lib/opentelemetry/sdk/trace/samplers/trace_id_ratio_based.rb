@@ -27,9 +27,9 @@ module OpenTelemetry
             # Ignored for sampling decision: parent_context:, links, name, kind, attributes.
 
             if sample?(trace_id)
-              RECORD_AND_SAMPLED
+              RECORD_AND_SAMPLE
             else
-              NOT_RECORD
+              DROP
             end
           end
 
