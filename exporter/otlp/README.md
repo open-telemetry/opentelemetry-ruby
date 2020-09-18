@@ -54,7 +54,7 @@ tracer.in_span('foo') do |span|
   # set an attribute
   span.set_attribute('platform', 'osx')
   # add an event
-  span.add_event(name: 'event in bar')
+  span.add_event('event in bar')
   # create bar as child of foo
   tracer.in_span('bar') do |child_span|
     # inspect the span
