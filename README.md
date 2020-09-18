@@ -98,40 +98,6 @@ See the [API Documentation](https://open-telemetry.github.io/opentelemetry-ruby/
 detail, and the [opentelemetry examples][examples-github] for a complete example including
 context propagation.
 
-## Release Schedule
-
-OpenTelemetry Ruby is under active development. Below is the release schedule
-for the Ruby library. The first version of the release isn't guaranteed to
-conform to a specific version of the specification, and future releases will
-not attempt to maintain backward compatibility with the alpha release.
-
-| Component                       | Version       | Target Date       | Release Date      |
-| ------------------------------- | ------------- | ----------------- | ----------------- |
-| Tracing API                     | Alpha v0.4.0  |                   | April 16 2020     |
-| Tracing SDK                     | Alpha v0.4.0  |                   | April 16 2020     |
-| Trace Context Propagation       | Alpha v0.4.0  |                   | April 16 2020     |
-| Jaeger Trace Exporter           | Alpha v0.4.0  |                   | April 16 2020     |
-| Baggage Propagation             | Alpha v0.4.0  |                   | April 16 2020     |
-| Metrics API                     | Unknown       | Unknown           | Unknown           |
-| Metrics SDK                     | Unknown       | Unknown           | Unknown           |
-| Prometheus Metrics Exporter     | Unknown       | Unknown           | Unknown           |
-| OpenTracing Bridge              | Unknown       | Unknown           | Unknown           |
-| Zipkin Trace Exporter           | Unknown       | Unknown           | Unknown           |
-| OpenCensus Bridge               | Unknown       | Unknown           | Unknown           |
-| Resource Auto-detection (GCP)   | Alpha v0.5.0  | July 3 2020       |                   |
-| Concurrent Ruby Instrumentation | Alpha v0.4.0  |                   | April 16 2020     |
-| Ethon Instrumentation           | Alpha v0.4.0  |                   | April 16 2020     |
-| Excon Instrumentation           | Alpha v0.4.0  |                   | April 16 2020     |
-| Faraday Instrumentation         | Alpha v0.4.0  |                   | April 16 2020     |
-| MySQL2 Instrumentation          | Alpha v0.5.0  | July 3 2020       |                   |
-| Net::HTTP Instrumentation       | Alpha v0.4.0  |                   | April 16 2020     |
-| Rack Instrumentation            | Alpha v0.4.0  |                   | April 16 2020     |
-| Redis Instrumentation           | Alpha v0.4.0  |                   | April 16 2020     |
-| Restclient Instrumentation      | Alpha v0.4.0  |                   | April 16 2020     |
-| Sinatra Instrumentation         | Alpha v0.4.1  |                   | June 24 2020      |
-| Sidekiq Instrumentation         | Alpha v0.4.0  |                   | April 16 2020     |
-| All Instrumentation Convenience | Alpha v0.4.1  |                   | June 24 2020      |
-
 ## Useful links
 
 - For more information on OpenTelemetry, visit: <https://opentelemetry.io/>
