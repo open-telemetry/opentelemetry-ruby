@@ -21,6 +21,15 @@ module OpenTelemetry
         context.value(CURRENT_SPAN_KEY) || Span::INVALID
       end
 
+      # Returns a context containing the span, derived from the optional parent
+      # context, or the current context if one was not provided.
+      #
+      # @param [optional Context] context The context to use as the parent for
+      #  the returned context
+      def context_with_span(span, context = Context.current)
+        context.set_value(CURRENT_SPAN_KEY, span)
+      end
+
       # This is a helper for the default use-case of extending the current trace with a span.
       #
       # With this helper:
