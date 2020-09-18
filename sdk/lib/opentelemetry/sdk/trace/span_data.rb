@@ -14,7 +14,6 @@ module OpenTelemetry
                             :kind,
                             :status,
                             :parent_span_id,
-                            :child_count,
                             :total_recorded_attributes,
                             :total_recorded_events,
                             :total_recorded_links,

@@ -219,7 +219,6 @@ module OpenTelemetry
             @kind,
             @status,
             @parent_span_id,
-            @child_count,
             @total_recorded_attributes,
             @total_recorded_events,
             @total_recorded_links,
@@ -250,7 +249,6 @@ module OpenTelemetry
           @instrumentation_library = instrumentation_library
           @ended = false
           @status = nil
-          @child_count = 0
           @total_recorded_events = 0
           @total_recorded_links = links&.size || 0
           @total_recorded_attributes = attributes&.size || 0
