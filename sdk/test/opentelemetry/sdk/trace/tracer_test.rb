@@ -149,8 +149,8 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     end
     let(:context) do
       OpenTelemetry::Context.empty.set_value(
-        OpenTelemetry::Trace::Propagation::ContextKeys.extracted_span_context_key,
-        span_context
+        OpenTelemetry::Trace::Propagation::ContextKeys.current_span_key,
+        OpenTelemetry::Trace::Span.new(span_context: span_context)
       )
     end
 

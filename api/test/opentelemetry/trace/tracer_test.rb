@@ -31,8 +31,8 @@ describe OpenTelemetry::Trace::Tracer do
   let(:parent_span_context) { OpenTelemetry::Trace::SpanContext.new }
   let(:parent_context) do
     OpenTelemetry::Context.empty.set_value(
-      OpenTelemetry::Trace::Propagation::ContextKeys.extracted_span_context_key,
-      parent_span_context
+      OpenTelemetry::Trace::Propagation::ContextKeys.current_span_key,
+      OpenTelemetry::Trace::Span.new(span_context: parent_span_context)
     )
   end
   let(:current_span_key) do
