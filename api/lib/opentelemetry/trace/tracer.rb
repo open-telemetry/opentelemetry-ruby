@@ -8,10 +8,9 @@ module OpenTelemetry
   module Trace
     # No-op implementation of Tracer.
     class Tracer
-      EXTRACTED_SPAN_CONTEXT_KEY = Propagation::ContextKeys.extracted_span_context_key
       CURRENT_SPAN_KEY = Propagation::ContextKeys.current_span_key
 
-      private_constant :EXTRACTED_SPAN_CONTEXT_KEY, :CURRENT_SPAN_KEY
+      private_constant :CURRENT_SPAN_KEY
 
       # Returns the current span from the current or provided context
       #
