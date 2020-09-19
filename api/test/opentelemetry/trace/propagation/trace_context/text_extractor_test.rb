@@ -7,8 +7,8 @@
 require 'test_helper'
 
 describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapExtractor do
-  let(:span_context_key) do
-    OpenTelemetry::Trace::Propagation::ContextKeys.extracted_span_context_key
+  let(:current_span_key) do
+    OpenTelemetry::Trace::Propagation::ContextKeys.current_span_key
   end
   let(:traceparent_key) { 'traceparent' }
   let(:tracestate_key) { 'tracestate' }
@@ -46,7 +46,7 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapExtractor do
 
     it 'returns a remote SpanContext with fields from the traceparent and tracestate headers' do
       ctx = extractor.extract(carrier, context) { |c, k| c[k] }
-      span_context = ctx[span_context_key]
+      span_context = ctx[current_span_key].context
       _(span_context).must_be :remote?
       _(span_context.trace_id).must_equal(("\0" * 15 + "\xaa").b)
       _(span_context.span_id).must_equal(("\0" * 7 + "\xea").b)
@@ -56,7 +56,7 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapExtractor do
 
     it 'uses a default getter if one is not provided' do
       ctx = extractor.extract(carrier, context)
-      span_context = ctx[span_context_key]
+      span_context = ctx[current_span_key].context
       _(span_context).must_be :remote?
       _(span_context.trace_id).must_equal(("\0" * 15 + "\xaa").b)
       _(span_context.span_id).must_equal(("\0" * 7 + "\xea").b)
@@ -67,8 +67,7 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapExtractor do
     it 'returns original context on error' do
       ctx = extractor.extract({}, context) { invalid_traceparent_header }
       _(ctx).must_equal(context)
-      span_context = ctx[span_context_key]
-      _(span_context).must_be_nil
+      _(ctx[current_span_key]).must_be_nil
     end
   end
 end
