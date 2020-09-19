@@ -62,38 +62,6 @@ describe OpenTelemetry::Trace::Tracer do
     end
   end
 
-  describe '#active_span_context' do
-    let(:current_span) { tracer.start_span('current') }
-
-    it 'returns an invalid span context by default' do
-      _(tracer.active_span_context).must_equal(invalid_span_context)
-    end
-
-    it 'returns the span context from the current context by default' do
-      wrapper_span = tracer.start_span('wrapper')
-
-      tracer.with_span(wrapper_span) do
-        _(tracer.active_span_context).must_equal(wrapper_span.context)
-      end
-    end
-
-    it 'returns span context from implicit and explicit contexts' do
-      wrapper_span = tracer.start_span('wrapper')
-      wrapper_ctx = nil
-
-      tracer.with_span(wrapper_span) do
-        wrapper_ctx = Context.current
-      end
-
-      inner_span = tracer.start_span('inner')
-
-      tracer.with_span(inner_span) do
-        _(tracer.active_span_context).must_equal(inner_span.context)
-        _(tracer.active_span_context(wrapper_ctx)).must_equal(wrapper_span.context)
-      end
-    end
-  end
-
   describe '#in_span' do
     let(:parent) { tracer.start_span('parent') }
 
@@ -168,21 +136,6 @@ describe OpenTelemetry::Trace::Tracer do
         end
 
         _(tracer.current_span).must_equal(outer)
-      end
-    end
-
-    it 'should reactivate the span context after the block' do
-      outer = tracer.start_span('outer')
-      inner = tracer.start_span('inner')
-
-      tracer.with_span(outer) do
-        _(tracer.active_span_context).must_equal(outer.context)
-
-        tracer.with_span(inner) do
-          _(tracer.active_span_context).must_equal(inner.context)
-        end
-
-        _(tracer.active_span_context).must_equal(outer.context)
       end
     end
   end

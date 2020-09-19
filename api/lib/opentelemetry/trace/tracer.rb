@@ -17,24 +17,9 @@ module OpenTelemetry
       #
       # @param [optional Context] context The context to lookup the current
       #   {Span} from. Defaults to Context.current
-      def current_span(context = Context.current)
-        context.value(CURRENT_SPAN_KEY) || Span::INVALID
-      end
-
-      # Returns the the active span context from the given {Context}, or current
-      # if one is not explicitly passed in. The active span context may refer to
-      # a {SpanContext} that has been extracted. If both a current {Span} and an
-      # extracted, {SpanContext} exist, the context of the current {Span} will be
-      # returned.
-      #
-      # @param [optional Context] context The context to lookup the active
-      #   {SpanContext} from.
-      #
-      def active_span_context(context = nil)
+      def current_span(context = nil)
         context ||= Context.current
-        context.value(CURRENT_SPAN_KEY)&.context ||
-          context.value(EXTRACTED_SPAN_CONTEXT_KEY) ||
-          SpanContext::INVALID
+        context.value(CURRENT_SPAN_KEY) || Span::INVALID
       end
 
       # This is a helper for the default use-case of extending the current trace with a span.
@@ -92,7 +77,7 @@ module OpenTelemetry
       #
       # @return [Span]
       def start_span(name, with_parent: nil, with_parent_context: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
-        span_context = with_parent&.context || active_span_context(with_parent_context)
+        span_context = with_parent&.context || current_span(with_parent_context).context
         if span_context.valid?
           Span.new(span_context: span_context)
         else
