@@ -7,6 +7,7 @@
 require 'opentelemetry-instrumentation-concurrent_ruby'
 require 'opentelemetry-instrumentation-ethon'
 require 'opentelemetry-instrumentation-excon'
+require 'opentelemetry-instrumentation-graphql'
 require 'opentelemetry-instrumentation-faraday'
 require 'opentelemetry-instrumentation-mysql2'
 require 'opentelemetry-instrumentation-net_http'

@@ -44,6 +44,10 @@ gems:
     directory: instrumentation/faraday
     version_constant: [OpenTelemetry, Instrumentation, Faraday, VERSION]
 
+  - name: opentelemetry-instrumentation-graphql
+    directory: instrumentation/graphql
+    version_constant: [OpenTelemetry, Instrumentation, GraphQL, VERSION]
+
   - name: opentelemetry-instrumentation-mysql2
     directory: instrumentation/mysql2
     version_constant: [OpenTelemetry, Instrumentation, Mysql2, VERSION]
