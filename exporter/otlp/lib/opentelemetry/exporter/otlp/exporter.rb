@@ -242,8 +242,9 @@ module OpenTelemetry
             end,
             dropped_links_count: span_data.total_recorded_links - span_data.links&.size.to_i,
             status: span_data.status&.yield_self do |status|
+              # TODO: fix this based on spec update.
               Opentelemetry::Proto::Trace::V1::Status.new(
-                code: status.canonical_code,
+                code: status.canonical_code == OpenTelemetry::Trace::Status::ERROR ? Opentelemetry::Proto::Trace::V1::Status::StatusCode::UnknownError : Opentelemetry::Proto::Trace::V1::Status::StatusCode::Ok,
                 message: status.description
               )
             end

@@ -160,7 +160,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       span['i'] = 2
       span['s'] = 'val'
       span['a'] = [3, 4]
-      span.status = OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::UNKNOWN_ERROR)
+      span.status = OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::ERROR)
       client = with_ids(trace_id, client_span_id) { tracer.start_span('client', with_parent: span, kind: :client, start_timestamp: start_timestamp + 2).finish(end_timestamp: end_timestamp) }
       with_ids(trace_id, server_span_id) { other_tracer.start_span('server', with_parent: client, kind: :server, start_timestamp: start_timestamp + 3).finish(end_timestamp: end_timestamp) }
       span.add_event('event', attributes: { 'attr' => 42 }, timestamp: start_timestamp + 4)
