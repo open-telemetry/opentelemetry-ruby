@@ -34,6 +34,7 @@ module OpenTelemetry
           # registered to a {TracerProvider} object.
           def shutdown
             @stopped = true
+            SUCCESS
           end
         end
       end

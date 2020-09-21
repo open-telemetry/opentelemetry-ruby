@@ -35,8 +35,11 @@ module OpenTelemetry
 
           # Called when {TracerProvider#shutdown} is called, if this exporter is
           # registered to a {TracerProvider} object.
+          #
+          # @return [Integer] SUCCESS if no error occurred, FAILURE if a
+          #   non-specific failure occurred, TIMEOUT if a timeout occurred.
           def shutdown
-            @span_exporters.each(&:shutdown)
+            @span_exporters.map(&:shutdown).uniq.max
           end
 
           private
