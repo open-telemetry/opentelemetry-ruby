@@ -48,13 +48,19 @@ module OpenTelemetry
         # necessary, such as when using some FaaS providers that may suspend
         # the process after an invocation, but before the `Processor` exports
         # the completed spans.
+        #
+        # @return [Integer] Export::SUCCESS if no error occurred, Export::FAILURE if
+        #   a non-specific failure occurred, Export::TIMEOUT if a timeout occurred.
         def force_flush
-          @span_processors.each(&:force_flush)
+          @span_processors.map(&:force_flush).uniq.max
         end
 
         # Called when {TracerProvider#shutdown} is called.
+        #
+        # @return [Integer] Export::SUCCESS if no error occurred, Export::FAILURE if
+        #   a non-specific failure occurred, Export::TIMEOUT if a timeout occurred.
         def shutdown
-          @span_processors.each(&:shutdown)
+          @span_processors.map(&:shutdown).uniq.max
         end
       end
     end
