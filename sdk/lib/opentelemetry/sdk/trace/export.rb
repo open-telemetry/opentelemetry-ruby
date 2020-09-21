@@ -7,16 +7,21 @@
 module OpenTelemetry
   module SDK
     module Trace
-      # The Export module contains the built-in exporters for the OpenTelemetry
+      # The Export module contains the built-in exporters and span processors for the OpenTelemetry
       # reference implementation.
       module Export
-        # Result codes for the SpanExporter#export method.
+        # Result codes for the SpanExporter#export method and the SpanProcessor#force_flush and SpanProcessor#shutdown methods.
 
-        # The export operation finished successfully.
+        # The operation finished successfully.
         SUCCESS = 0
 
-        # The export operation finished with an error.
+        # The operation finished with an error.
         FAILURE = 1
+
+        # Additional result code for the SpanProcessor#force_flush and SpanProcessor#shutdown methods.
+
+        # The operation timed out.
+        TIMEOUT = 2
       end
     end
   end

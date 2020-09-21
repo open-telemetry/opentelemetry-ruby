@@ -87,6 +87,9 @@ module OpenTelemetry
           # necessary, such as when using some FaaS providers that may suspend
           # the process after an invocation, but before the `Processor` exports
           # the completed spans.
+          #
+          # @return [Integer] SUCCESS if no error occurred, FAILURE if a
+          #   non-specific failure occurred, TIMEOUT if a timeout occurred.
           def force_flush
             snapshot = lock do
               reset_on_fork(restart_thread: false) if @keep_running
@@ -97,10 +100,14 @@ module OpenTelemetry
               result_code = @exporter.export(batch)
               report_result(result_code, batch)
             end
+            SUCCESS
           end
 
           # shuts the consumer thread down and flushes the current accumulated buffer
           # will block until the thread is finished
+          #
+          # @return [Integer] SUCCESS if no error occurred, FAILURE if a
+          #   non-specific failure occurred, TIMEOUT if a timeout occurred.
           def shutdown
             lock do
               @keep_running = false
