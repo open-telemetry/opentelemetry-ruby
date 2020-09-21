@@ -45,8 +45,7 @@ module OpenTelemetry
           private
 
           def span_context_from(context)
-            context[ContextKeys.current_span_key]&.context ||
-              context[ContextKeys.extracted_span_context_key]
+            context[ContextKeys.current_span_key]&.context
           end
         end
       end
