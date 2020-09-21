@@ -14,24 +14,21 @@ module OpenTelemetry
         #
         # Potentially useful for exploratory purposes.
         class ConsoleSpanExporter
-          ResultCodes = OpenTelemetry::SDK::Trace::Export
-
-          private_constant(:ResultCodes)
-
           def initialize
             @stopped = false
           end
 
           def export(spans)
-            return ResultCodes::FAILURE if @stopped
+            return FAILURE if @stopped
 
             Array(spans).each { |s| pp s }
 
-            ResultCodes::SUCCESS
+            SUCCESS
           end
 
           def shutdown
             @stopped = true
+            SUCCESS
           end
         end
       end
