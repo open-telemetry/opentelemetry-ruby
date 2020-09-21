@@ -15,8 +15,10 @@ module OpenTelemetry
           end
 
           def call(env)
+            span_name = env['sinatra.route'] || env['PATH_INFO']
+
             tracer.in_span(
-              env['PATH_INFO'],
+              span_name,
               attributes: { 'http.method' => env['REQUEST_METHOD'],
                             'http.url' => env['PATH_INFO'] },
               kind: :server,
