@@ -6,3 +6,4 @@
 ./lib/opentelemetry/resource/detectors.rb
 -
 README.md
+CHANGELOG.md

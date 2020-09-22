@@ -9,6 +9,12 @@ require 'opentelemetry/resource/detectors/version'
 require 'opentelemetry/resource/detectors/google_cloud_platform'
 require 'opentelemetry/resource/detectors/auto_detector'
 
+# OpenTelemetry is an open source observability framework, providing a
+# general-purpose API, SDK, and related tools required for the instrumentation
+# of cloud-native software, frameworks, and libraries.
+#
+# The OpenTelemetry module provides global accessors for telemetry objects.
+# See the documentation for the `opentelemetry-api` gem for details.
 module OpenTelemetry
   module Resource
     # Detectors contains the resource detectors as well as the AutoDetector
