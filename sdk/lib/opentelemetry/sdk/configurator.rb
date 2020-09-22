@@ -44,6 +44,16 @@ module OpenTelemetry
         @resource = new_resource.merge(@resource)
       end
 
+      # Accepts a string that is merged in as the service.name resource attribute.
+      # The most recent assigned value will be used in the event of repeated
+      # calls to this setter.
+      # @param [String] service_name The value to be used as the service name
+      def service_name=(service_name)
+        @resource = OpenTelemetry::SDK::Resources::Resource.create(
+          OpenTelemetry::SDK::Resources::Constants::SERVICE_RESOURCE[:name] => service_name
+        ).merge(@resource)
+      end
+
       # Install an instrumentation with specificied optional +config+.
       # Use can be called multiple times to install multiple instrumentation.
       # Only +use+ or +use_all+, but not both when installing
