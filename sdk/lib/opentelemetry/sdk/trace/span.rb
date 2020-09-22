@@ -16,6 +16,10 @@ module OpenTelemetry
       #
       # rubocop:disable Metrics/ClassLength
       class Span < OpenTelemetry::Trace::Span
+        DEFAULT_STATUS = OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::UNSET)
+
+        private_constant(:DEFAULT_STATUS)
+
         # The following readers are intended for the use of SpanProcessors and
         # should not be considered part of the public interface for instrumentation.
         attr_reader :name, :status, :kind, :parent_span_id, :start_timestamp, :end_timestamp, :links, :resource, :instrumentation_library
@@ -248,7 +252,7 @@ module OpenTelemetry
           @resource = resource
           @instrumentation_library = instrumentation_library
           @ended = false
-          @status = nil
+          @status = DEFAULT_STATUS
           @total_recorded_events = 0
           @total_recorded_links = links&.size || 0
           @total_recorded_attributes = attributes&.size || 0

@@ -42,7 +42,7 @@ module OpenTelemetry
         with_span(span) { |s, c| yield s, c }
       rescue Exception => e # rubocop:disable Lint/RescueException
         span&.record_exception(e)
-        span&.status = Status.new(Status::UNKNOWN_ERROR,
+        span&.status = Status.new(Status::ERROR,
                                   description: "Unhandled exception of type: #{e.class}")
         raise e
       ensure

@@ -91,7 +91,7 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       _(span.attributes['http.host']).must_equal 'example.com'
       _(span.attributes['http.target']).must_equal '/timeout'
       _(span.status.canonical_code).must_equal(
-        OpenTelemetry::Trace::Status::UNKNOWN_ERROR
+        OpenTelemetry::Trace::Status::ERROR
       )
       _(span.status.description).must_equal(
         'Request has failed: Excon::Error::Timeout'

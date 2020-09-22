@@ -40,7 +40,7 @@ module OpenTelemetry
                 return_code = response_options[:return_code]
                 message = return_code ? ::Ethon::Curl.easy_strerror(return_code) : 'unknown reason'
                 @otel_span.status = OpenTelemetry::Trace::Status.new(
-                  OpenTelemetry::Trace::Status::UNKNOWN_ERROR,
+                  OpenTelemetry::Trace::Status::ERROR,
                   description: "Request has failed: #{message}"
                 )
               else

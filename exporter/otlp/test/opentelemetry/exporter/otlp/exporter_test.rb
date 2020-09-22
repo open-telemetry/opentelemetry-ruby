@@ -160,7 +160,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       span['i'] = 2
       span['s'] = 'val'
       span['a'] = [3, 4]
-      span.status = OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::UNKNOWN_ERROR)
+      span.status = OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::ERROR)
       client = with_ids(trace_id, client_span_id) { tracer.start_span('client', with_parent: span, kind: :client, start_timestamp: start_timestamp + 2).finish(end_timestamp: end_timestamp) }
       with_ids(trace_id, server_span_id) { other_tracer.start_span('server', with_parent: client, kind: :server, start_timestamp: start_timestamp + 3).finish(end_timestamp: end_timestamp) }
       span.add_event('event', attributes: { 'attr' => 42 }, timestamp: start_timestamp + 4)
@@ -193,7 +193,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       name: 'root',
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::INTERNAL,
                       start_time_unix_nano: (start_timestamp.to_r * 1_000_000_000).to_i,
-                      end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i
+                      end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
+                      status: Opentelemetry::Proto::Trace::V1::Status.new(
+                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::Ok
+                      )
                     ),
                     Opentelemetry::Proto::Trace::V1::Span.new(
                       trace_id: trace_id,
@@ -202,7 +205,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       name: 'client',
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::CLIENT,
                       start_time_unix_nano: ((start_timestamp + 2).to_r * 1_000_000_000).to_i,
-                      end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i
+                      end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
+                      status: Opentelemetry::Proto::Trace::V1::Status.new(
+                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::Ok
+                      )
                     ),
                     Opentelemetry::Proto::Trace::V1::Span.new(
                       trace_id: trace_id,
@@ -211,7 +217,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       name: 'consumer',
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::CONSUMER,
                       start_time_unix_nano: ((start_timestamp + 5).to_r * 1_000_000_000).to_i,
-                      end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i
+                      end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
+                      status: Opentelemetry::Proto::Trace::V1::Status.new(
+                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::Ok
+                      )
                     ),
                     Opentelemetry::Proto::Trace::V1::Span.new(
                       trace_id: trace_id,
@@ -274,7 +283,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       name: 'server',
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SERVER,
                       start_time_unix_nano: ((start_timestamp + 3).to_r * 1_000_000_000).to_i,
-                      end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i
+                      end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
+                      status: Opentelemetry::Proto::Trace::V1::Status.new(
+                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::Ok
+                      )
                     )
                   ]
                 )

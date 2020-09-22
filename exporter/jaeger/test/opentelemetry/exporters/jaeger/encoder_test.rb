@@ -26,6 +26,19 @@ describe OpenTelemetry::Exporter::Jaeger::Encoder do
     )
   end
 
+  it 'encodes span.status and span.kind' do
+    span_data = create_span_data(status: OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::ERROR), kind: :server)
+    encoded_span = Encoder.encoded_span(span_data)
+
+    _(encoded_span.tags.size).must_equal(2)
+
+    kind_tag = encoded_span.tags.find { |tag| tag.key == 'span.kind' }
+    error_tag = encoded_span.tags.find { |tag| tag.key == 'error' }
+
+    _(kind_tag.vStr).must_equal('server')
+    _(error_tag.vBool).must_equal(true)
+  end
+
   it 'encodes attributes in events and the span' do
     attributes = { 'akey' => 'avalue' }
     events = [
@@ -103,11 +116,11 @@ describe OpenTelemetry::Exporter::Jaeger::Encoder do
     end
   end
 
-  def create_span_data(attributes: nil, events: nil, links: nil, instrumentation_library: nil, trace_id: OpenTelemetry::Trace.generate_trace_id, trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, tracestate: nil)
+  def create_span_data(status: nil, kind: nil, attributes: nil, events: nil, links: nil, instrumentation_library: nil, trace_id: OpenTelemetry::Trace.generate_trace_id, trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, tracestate: nil)
     OpenTelemetry::SDK::Trace::SpanData.new(
       '',
-      nil,
-      nil,
+      kind,
+      status,
       OpenTelemetry::Trace::INVALID_SPAN_ID,
       0,
       0,

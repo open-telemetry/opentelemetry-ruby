@@ -95,7 +95,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(span.attributes['peer.hostname']).must_equal 'example.com'
       _(span.attributes['peer.port']).must_equal 443
       _(span.status.canonical_code).must_equal(
-        OpenTelemetry::Trace::Status::UNKNOWN_ERROR
+        OpenTelemetry::Trace::Status::ERROR
       )
       _(span.status.description).must_equal(
         'Unhandled exception of type: Net::OpenTimeout'

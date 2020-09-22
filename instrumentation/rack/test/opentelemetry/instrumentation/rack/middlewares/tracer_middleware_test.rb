@@ -184,7 +184,7 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
       assert_raises SimulatedError do
         Rack::MockRequest.new(rack_builder).get('/', env)
       end
-      _(first_span.status.canonical_code).must_equal OpenTelemetry::Trace::Status::UNKNOWN_ERROR
+      _(first_span.status.canonical_code).must_equal OpenTelemetry::Trace::Status::ERROR
     end
   end
 end

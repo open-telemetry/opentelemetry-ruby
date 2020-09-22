@@ -88,7 +88,7 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
       _(span.attributes['net.peer.name']).must_equal '127.0.0.1'
       _(span.attributes['net.peer.port']).must_equal 6379
       _(span.status.canonical_code).must_equal(
-        OpenTelemetry::Trace::Status::UNKNOWN_ERROR
+        OpenTelemetry::Trace::Status::ERROR
       )
       _(span.status.description).must_equal(
         'Unhandled exception of type: Redis::CommandError'

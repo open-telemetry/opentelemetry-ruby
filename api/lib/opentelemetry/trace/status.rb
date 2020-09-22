@@ -26,7 +26,7 @@ module OpenTelemetry
 
       # Initialize a Status.
       #
-      # @param [Integer] canonical_code One of the standard gRPC codes: https://github.com/grpc/grpc/blob/master/doc/statuscodes.md
+      # @param [Integer] canonical_code One of the canonical status codes below
       # @param [String] description
       def initialize(canonical_code, description: '')
         @canonical_code = canonical_code
@@ -37,78 +37,20 @@ module OpenTelemetry
       #
       # @return [Boolean]
       def ok?
-        @canonical_code == OK
+        @canonical_code != ERROR
       end
 
       # The following represents the canonical set of status codes of a
-      # finished {Span}, following the standard gRPC codes:
-      # https://github.com/grpc/grpc/blob/master/doc/statuscodes.md
+      # finished {Span}
 
       # The operation completed successfully.
       OK = 0
 
-      # The operation was cancelled (typically by the caller).
-      CANCELLED = 1
+      # The default status.
+      UNSET = 1
 
-      # An unknown error.
-      UNKNOWN_ERROR = 2
-
-      # Client specified an invalid argument. Note that this differs from
-      # {FAILED_PRECONDITION}. {INVALID_ARGUMENT} indicates arguments that are
-      # problematic regardless of the state of the system.
-      INVALID_ARGUMENT = 3
-
-      # Deadline expired before operation could complete. For operations that
-      # change the state of the system, this error may be returned even if the
-      # operation has completed successfully.
-      DEADLINE_EXCEEDED = 4
-
-      # Some requested entity (e.g., file or directory) was not found.
-      NOT_FOUND = 5
-
-      # Some entity that we attempted to create (e.g., file or directory)
-      # already exists.
-      ALREADY_EXISTS = 6
-
-      # The caller does not have permission to execute the specified operation.
-      # {PERMISSION_DENIED} must not be used if the caller cannot be identified
-      # (use {UNAUTHENTICATED} instead for those errors).
-      PERMISSION_DENIED = 7
-
-      # Some resource has been exhausted, perhaps a per-user quota, or perhaps
-      # the entire file system is out of space.
-      RESOURCE_EXHAUSTED = 8
-
-      # Operation was rejected because the system is not in a state required
-      # for the operation's execution.
-      FAILED_PRECONDITION = 9
-
-      # The operation was aborted, typically due to a concurrency issue like
-      # sequencer check failures, transaction aborts, etc.
-      ABORTED = 10
-
-      # Operation was attempted past the valid range. E.g., seeking or reading
-      # past end of file. Unlike {INVALID_ARGUMENT}, this error indicates a
-      # problem that may be fixed if the system state changes.
-      OUT_OF_RANGE = 11
-
-      # Operation is not implemented or not supported/enabled in this service.
-      UNIMPLEMENTED = 12
-
-      # Internal errors. Means some invariants expected by underlying system
-      # has been broken.
-      INTERNAL_ERROR = 13
-
-      # The service is currently unavailable. This is a most likely a transient
-      # condition and may be corrected by retrying with a backoff.
-      UNAVAILABLE = 14
-
-      # Unrecoverable data loss or corruption.
-      DATA_LOSS = 15
-
-      # The request does not have valid authentication credentials for the
-      # operation.
-      UNAUTHENTICATED = 16
+      # An error.
+      ERROR = 2
     end
   end
 end

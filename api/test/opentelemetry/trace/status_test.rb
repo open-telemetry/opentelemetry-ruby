@@ -34,22 +34,13 @@ describe OpenTelemetry::Trace::Status do
     end
 
     it 'maps http 4xx codes' do
-      assert_http_to_status(400, trace_status::INVALID_ARGUMENT)
-      assert_http_to_status(401, trace_status::UNAUTHENTICATED)
-      assert_http_to_status(403, trace_status::PERMISSION_DENIED)
-      assert_http_to_status(404, trace_status::NOT_FOUND)
-      assert_http_to_status(409, trace_status::INVALID_ARGUMENT)
-      assert_http_to_status(429, trace_status::RESOURCE_EXHAUSTED)
-      assert_http_to_status(499, trace_status::INVALID_ARGUMENT)
+      assert_http_to_status(400, trace_status::ERROR)
+      assert_http_to_status(499, trace_status::ERROR)
     end
 
     it 'maps http 5xx codes' do
-      assert_http_to_status(500, trace_status::INTERNAL_ERROR)
-      assert_http_to_status(501, trace_status::UNIMPLEMENTED)
-      assert_http_to_status(502, trace_status::INTERNAL_ERROR)
-      assert_http_to_status(503, trace_status::UNAVAILABLE)
-      assert_http_to_status(504, trace_status::DEADLINE_EXCEEDED)
-      assert_http_to_status(599, trace_status::INTERNAL_ERROR)
+      assert_http_to_status(500, trace_status::ERROR)
+      assert_http_to_status(599, trace_status::ERROR)
     end
   end
 
@@ -88,7 +79,7 @@ describe OpenTelemetry::Trace::Status do
     end
 
     it 'reflects canonical_code when not OK' do
-      canonical_codes = OpenTelemetry::Trace::Status.constants - %i[OK]
+      canonical_codes = OpenTelemetry::Trace::Status.constants - %i[OK UNSET]
       canonical_codes.each do |canonical_code|
         code = OpenTelemetry::Trace::Status.const_get(canonical_code)
         status = OpenTelemetry::Trace::Status.new(code)

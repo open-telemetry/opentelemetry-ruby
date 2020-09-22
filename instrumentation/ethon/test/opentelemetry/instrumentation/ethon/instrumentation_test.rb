@@ -123,7 +123,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
             _(span.attributes['http.status_code']).must_be_nil
             _(span.attributes['http.url']).must_equal 'http://example.com/test'
             _(span.status.canonical_code).must_equal(
-              OpenTelemetry::Trace::Status::UNKNOWN_ERROR
+              OpenTelemetry::Trace::Status::ERROR
             )
             _(span.status.description).must_equal(
               'Request has failed: Timeout was reached'

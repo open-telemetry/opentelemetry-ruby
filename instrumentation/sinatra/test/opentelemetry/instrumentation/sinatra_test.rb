@@ -107,7 +107,7 @@ describe OpenTelemetry::Instrumentation::Sinatra do
     it 'does not create unhandled exceptions for missing routes' do
       get '/one/missing_example/not_present'
 
-      _(exporter.finished_spans.first.status.canonical_code).must_equal 5
+      _(exporter.finished_spans.first.status.canonical_code).must_equal OpenTelemetry::Trace::Status::ERROR
       _(exporter.finished_spans.first.attributes).must_equal(
         'http.method' => 'GET',
         'http.url' => '/missing_example/not_present',
