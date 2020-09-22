@@ -57,6 +57,24 @@ describe OpenTelemetry::SDK::Configurator do
     end
   end
 
+  describe '#service_name=' do
+    let(:configurator_resource) { configurator.instance_variable_get(:@resource) }
+    let(:configurator_resource_attributes) { configurator_resource.attribute_enumerator.to_h }
+    let(:expected_resource_attributes) do
+      {
+        'service.name' => 'Otel Demo App',
+        'telemetry.sdk.name' => 'opentelemetry',
+        'telemetry.sdk.language' => 'ruby',
+        'telemetry.sdk.version' => OpenTelemetry::SDK::VERSION
+      }
+    end
+
+    it 'assigns the service_name resource' do
+      configurator.service_name = 'Otel Demo App'
+      _(configurator_resource_attributes).must_equal(expected_resource_attributes)
+    end
+  end
+
   describe '#use' do
     it 'can be called multiple times' do
       configurator.use('TestInstrumentation', enabled: true)
