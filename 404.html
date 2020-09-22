@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <p>
+      <a href="https://open-telemetry.github.io/opentelemetry-ruby/index.html">OpenTelemetry-Ruby documentation</a>
+    </p>
+  </body>
+  <script>
+    var gems = [
+      "opentelemetry-api",
+      "opentelemetry-exporter-jaeger",
+      "opentelemetry-exporter-otlp",
+      "opentelemetry-instrumentation-all",
+      "opentelemetry-instrumentation-concurrent_ruby",
+      "opentelemetry-instrumentation-dalli",
+      "opentelemetry-instrumentation-ethon",
+      "opentelemetry-instrumentation-excon",
+      "opentelemetry-instrumentation-faraday",
+      "opentelemetry-instrumentation-mysql2",
+      "opentelemetry-instrumentation-net_http",
+      "opentelemetry-instrumentation-rack",
+      "opentelemetry-instrumentation-redis",
+      "opentelemetry-instrumentation-restclient",
+      "opentelemetry-instrumentation-sidekiq",
+      "opentelemetry-instrumentation-sinatra",
+      "opentelemetry-resource_detectors",
+      "opentelemetry-sdk",
+    ];
+    var versions = {};
+    versions.version_opentelemetry_api = "0.0.0";
+    versions.version_opentelemetry_exporter_jaeger = "0.0.0";
+    versions.version_opentelemetry_exporter_otlp = "0.0.0";
+    versions.version_opentelemetry_instrumentation_all = "0.0.0";
+    versions.version_opentelemetry_instrumentation_concurrent_ruby = "0.0.0";
+    versions.version_opentelemetry_instrumentation_dalli = "0.0.0";
+    versions.version_opentelemetry_instrumentation_ethon = "0.0.0";
+    versions.version_opentelemetry_instrumentation_excon = "0.0.0";
+    versions.version_opentelemetry_instrumentation_faraday = "0.0.0";
+    versions.version_opentelemetry_instrumentation_mysql2 = "0.0.0";
+    versions.version_opentelemetry_instrumentation_net_http = "0.0.0";
+    versions.version_opentelemetry_instrumentation_rack = "0.0.0";
+    versions.version_opentelemetry_instrumentation_redis = "0.0.0";
+    versions.version_opentelemetry_instrumentation_restclient = "0.0.0";
+    versions.version_opentelemetry_instrumentation_sidekiq = "0.0.0";
+    versions.version_opentelemetry_instrumentation_sinatra = "0.0.0";
+    versions.version_opentelemetry_resource_detectors = "0.0.0";
+    versions.version_opentelemetry_sdk = "0.0.0";
+
+    var whichGem = gems.find(function(gem) {
+      return window.location.href.includes("//open-telemetry.github.io/opentelemetry-ruby/" + gem + "/latest");
+    });
+    if (whichGem) {
+      var versionName = "version_" + whichGem.replaceAll("-", "_");
+      var prefix = "//open-telemetry.github.io/opentelemetry-ruby/" + whichGem;
+      var loc = window.location.href.replace(prefix + "/latest", prefix + "/v" + versions[versionName]);
+      window.location.replace(loc);
+    } else {
+      window.location.replace("https://open-telemetry.github.io/opentelemetry-ruby");
+    }
+  </script>
+</html>
