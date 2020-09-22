@@ -24,18 +24,6 @@ flag :event_path, "--event-path=VAL" do
   default ::ENV["GITHUB_EVENT_PATH"]
   desc "Path to the pull request closed event JSON file"
 end
-flag :git_user_email, "--git-user-email=VAL" do
-  desc "Git user email to use for new commits"
-  long_desc \
-    "Git user email to use for docs commits. If not provided, uses the" \
-    " current global git setting. Required if there is no global setting."
-end
-flag :git_user_name, "--git-user-name=VAL" do
-  desc "Git user email to use for new commits"
-  long_desc \
-    "Git user name to use for docs commits. If not provided, uses the" \
-    " current global git setting. Required if there is no global setting."
-end
 flag :rubygems_api_key, "--rubygems-api-key=VAL" do
   desc "Set the Rubygems API key"
   long_desc \
@@ -49,7 +37,7 @@ include :terminal, styled: true
 def run
   require "release_utils"
 
-  [:git_user_email, :git_user_name, :rubygems_api_key].each do |key|
+  [:rubygems_api_key].each do |key|
     set(key, nil) if get(key).to_s.empty?
   end
 
@@ -118,8 +106,8 @@ end
 
 def setup_git
   merge_sha = @pr_info["merge_commit_sha"]
-  @utils.exec(["git", "fetch", "--depth=2", "origin", "+#{merge_sha}:refs/heads/release/current"])
-  @utils.exec(["git", "checkout", "release/current"])
+  exec(["git", "fetch", "--depth=2", "origin", "+#{merge_sha}:refs/heads/release/current"])
+  exec(["git", "checkout", "release/current"])
 end
 
 def find_gems_and_versions
@@ -139,7 +127,7 @@ def find_gems_and_versions
 end
 
 def gems_and_versions_from_git
-  output = @utils.capture(["git", "diff", "--name-only", "release/current^..release/current"])
+  output = capture(["git", "diff", "--name-only", "release/current^..release/current"])
   files = output.split("\n")
   gems = @utils.all_gems.find_all do |gem_name|
     dir = @utils.gem_directory(gem_name)
@@ -156,8 +144,6 @@ def create_performer
   dry_run = /^t/i =~ enable_releases.to_s ? false : true
   ReleasePerformer.new(@utils,
                        rubygems_api_key: rubygems_api_key,
-                       git_user_name: git_user_name,
-                       git_user_email: git_user_email,
                        gh_token: ::ENV["GITHUB_TOKEN"],
                        pr_info: @pr_info,
                        dry_run: dry_run)

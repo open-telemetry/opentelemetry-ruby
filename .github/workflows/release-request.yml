@@ -29,7 +29,5 @@ jobs:
         run: |
           toys release request --yes --verbose \
             "--gems=${{ github.event.inputs.gems }}" \
-            "--git-user-email=${{ secrets.GIT_USER_EMAIL }}" \
-            "--git-user-name=${{ secrets.GIT_USER_NAME }}" \
             "--release-ref=${{ github.ref }}" \
             < /dev/null

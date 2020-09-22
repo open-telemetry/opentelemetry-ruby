@@ -35,8 +35,6 @@ jobs:
         run: |
           toys release perform --yes --verbose \
             "--enable-releases=${{ secrets.ENABLE_RELEASES }}" \
-            "--git-user-email=${{ secrets.GIT_USER_EMAIL }}" \
-            "--git-user-name=${{ secrets.GIT_USER_NAME }}" \
             "--release-sha=${{ github.sha }}" \
             "--rubygems-api-key=${{ secrets.RUBYGEMS_API_KEY }}" \
             ${{ github.event.inputs.flags }} \
