@@ -241,7 +241,7 @@ module OpenTelemetry
         end
 
         # @api private
-        def initialize(context, name, kind, parent_span_id, trace_config, span_processor, attributes, links, start_timestamp, resource, instrumentation_library) # rubocop:disable Metrics/AbcSize
+        def initialize(context, parent_context, name, kind, parent_span_id, trace_config, span_processor, attributes, links, start_timestamp, resource, instrumentation_library) # rubocop:disable Metrics/AbcSize
           super(span_context: context)
           @mutex = Mutex.new
           @name = name
@@ -262,7 +262,7 @@ module OpenTelemetry
           trim_span_attributes(@attributes)
           @events = nil
           @links = trim_links(links, trace_config.max_links_count, trace_config.max_attributes_per_link)
-          @span_processor.on_start(self)
+          @span_processor.on_start(self, parent_context)
         end
 
         # TODO: Java implementation overrides finalize to log if a span isn't finished.

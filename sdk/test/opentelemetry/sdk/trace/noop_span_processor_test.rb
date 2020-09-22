@@ -9,9 +9,10 @@ require 'test_helper'
 describe OpenTelemetry::SDK::Trace::NoopSpanProcessor do
   let(:processor) { OpenTelemetry::SDK::Trace::NoopSpanProcessor.instance }
   let(:span)      { nil }
+  let(:context)   { nil }
 
   it 'implements #on_start' do
-    processor.on_start(span)
+    processor.on_start(span, context)
   end
 
   it 'implements #on_finish' do

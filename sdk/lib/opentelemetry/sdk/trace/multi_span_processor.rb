@@ -26,8 +26,10 @@ module OpenTelemetry
         # not throw or block the execution thread.
         #
         # @param [Span] span the {Span} that just started.
-        def on_start(span)
-          @span_processors.each { |processor| processor.on_start(span) }
+        # @param [Context] parent_context the parent {Context} of the newly
+        #  started span.
+        def on_start(span, parent_context)
+          @span_processors.each { |processor| processor.on_start(span, parent_context) }
         end
 
         # Called when a {Span} is ended, if the {Span#recording?}
