@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: OpenTelemetry::Trace::Status
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::Trace::Status";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (S)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Trace.html" title="OpenTelemetry::Trace (module)">Trace</a></span></span>
+     &raquo; 
+    <span class="title">Status</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: OpenTelemetry::Trace::Status
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">OpenTelemetry::Trace::Status</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  <dl>
+      <dt>Extended by:</dt>
+      <dd><span class='object_link'><a href="Util/HttpToStatus.html" title="OpenTelemetry::Trace::Util::HttpToStatus (module)">Util::HttpToStatus</a></span></dd>
+  </dl>
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/trace/status.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Status represents the status of a finished <span class='object_link'><a href="Span.html" title="OpenTelemetry::Trace::Span (class)">Span</a></span>. It is composed of a canonical code in conjunction with an optional descriptive message.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="OK-constant" class="">OK =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The operation completed successfully.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>0</span></pre></dd>
+      
+        <dt id="CANCELLED-constant" class="">CANCELLED =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The operation was cancelled (typically by the caller).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>1</span></pre></dd>
+      
+        <dt id="UNKNOWN_ERROR-constant" class="">UNKNOWN_ERROR =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>An unknown error.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>2</span></pre></dd>
+      
+        <dt id="INVALID_ARGUMENT-constant" class="">INVALID_ARGUMENT =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Client specified an invalid argument. Note that this differs from <span class='object_link'><a href="#FAILED_PRECONDITION-constant" title="OpenTelemetry::Trace::Status::FAILED_PRECONDITION (constant)">FAILED_PRECONDITION</a></span>. <span class='object_link'><a href="#INVALID_ARGUMENT-constant" title="OpenTelemetry::Trace::Status::INVALID_ARGUMENT (constant)">INVALID_ARGUMENT</a></span> indicates arguments that are problematic regardless of the state of the system.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>3</span></pre></dd>
+      
+        <dt id="DEADLINE_EXCEEDED-constant" class="">DEADLINE_EXCEEDED =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Deadline expired before operation could complete. For operations that change the state of the system, this error may be returned even if the operation has completed successfully.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>4</span></pre></dd>
+      
+        <dt id="NOT_FOUND-constant" class="">NOT_FOUND =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Some requested entity (e.g., file or directory) was not found.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>5</span></pre></dd>
+      
+        <dt id="ALREADY_EXISTS-constant" class="">ALREADY_EXISTS =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Some entity that we attempted to create (e.g., file or directory) already exists.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>6</span></pre></dd>
+      
+        <dt id="PERMISSION_DENIED-constant" class="">PERMISSION_DENIED =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The caller does not have permission to execute the specified operation. <span class='object_link'><a href="#PERMISSION_DENIED-constant" title="OpenTelemetry::Trace::Status::PERMISSION_DENIED (constant)">PERMISSION_DENIED</a></span> must not be used if the caller cannot be identified (use <span class='object_link'><a href="#UNAUTHENTICATED-constant" title="OpenTelemetry::Trace::Status::UNAUTHENTICATED (constant)">UNAUTHENTICATED</a></span> instead for those errors).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>7</span></pre></dd>
+      
+        <dt id="RESOURCE_EXHAUSTED-constant" class="">RESOURCE_EXHAUSTED =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Some resource has been exhausted, perhaps a per-user quota, or perhaps the entire file system is out of space.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>8</span></pre></dd>
+      
+        <dt id="FAILED_PRECONDITION-constant" class="">FAILED_PRECONDITION =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Operation was rejected because the system is not in a state required for the operation&#39;s execution.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>9</span></pre></dd>
+      
+        <dt id="ABORTED-constant" class="">ABORTED =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The operation was aborted, typically due to a concurrency issue like sequencer check failures, transaction aborts, etc.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>10</span></pre></dd>
+      
+        <dt id="OUT_OF_RANGE-constant" class="">OUT_OF_RANGE =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Operation was attempted past the valid range. E.g., seeking or reading past end of file. Unlike <span class='object_link'><a href="#INVALID_ARGUMENT-constant" title="OpenTelemetry::Trace::Status::INVALID_ARGUMENT (constant)">INVALID_ARGUMENT</a></span>, this error indicates a problem that may be fixed if the system state changes.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>11</span></pre></dd>
+      
+        <dt id="UNIMPLEMENTED-constant" class="">UNIMPLEMENTED =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Operation is not implemented or not supported/enabled in this service.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>12</span></pre></dd>
+      
+        <dt id="INTERNAL_ERROR-constant" class="">INTERNAL_ERROR =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Internal errors. Means some invariants expected by underlying system has been broken.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>13</span></pre></dd>
+      
+        <dt id="UNAVAILABLE-constant" class="">UNAVAILABLE =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The service is currently unavailable. This is a most likely a transient condition and may be corrected by retrying with a backoff.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>14</span></pre></dd>
+      
+        <dt id="DATA_LOSS-constant" class="">DATA_LOSS =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Unrecoverable data loss or corruption.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>15</span></pre></dd>
+      
+        <dt id="UNAUTHENTICATED-constant" class="">UNAUTHENTICATED =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The request does not have valid authentication credentials for the operation.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>16</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#canonical_code-instance_method" title="#canonical_code (instance method)">#<strong>canonical_code</strong>  &#x21d2; Integer </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Retrieve the canonical code of this Status.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#description-instance_method" title="#description (instance method)">#<strong>description</strong>  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Retrieve the description of this Status.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(canonical_code, description: &#39;&#39;)  &#x21d2; Status </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Initialize a Status.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#ok%3F-instance_method" title="#ok? (instance method)">#<strong>ok?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns false if this <span class='object_link'><a href="" title="OpenTelemetry::Trace::Status (class)">Status</a></span> represents an error, else returns true.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Util/HttpToStatus.html" title="OpenTelemetry::Trace::Util::HttpToStatus (module)">Util::HttpToStatus</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Util/HttpToStatus.html#http_to_status-instance_method" title="OpenTelemetry::Trace::Util::HttpToStatus#http_to_status (method)">http_to_status</a></span></p>
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(canonical_code, description: &#39;&#39;)  &#x21d2; <tt><span class='object_link'><a href="" title="OpenTelemetry::Trace::Status (class)">Status</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Initialize a Status.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>canonical_code</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>One of the standard gRPC codes: <a href="https://github.com/grpc/grpc/blob/master/doc/statuscodes.md">github.com/grpc/grpc/blob/master/doc/statuscodes.md</a></p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>description</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>&#39;&#39;</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+31
+32
+33
+34</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/trace/status.rb', line 31</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_canonical_code'>canonical_code</span><span class='comma'>,</span> <span class='label'>description:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='ivar'>@canonical_code</span> <span class='op'>=</span> <span class='id identifier rubyid_canonical_code'>canonical_code</span>
+  <span class='ivar'>@description</span> <span class='op'>=</span> <span class='id identifier rubyid_description'>description</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id=""></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="canonical_code-instance_method">
+  
+    #<strong>canonical_code</strong>  &#x21d2; <tt>Integer</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Retrieve the canonical code of this Status.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+20
+21
+22</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/trace/status.rb', line 20</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_canonical_code'>canonical_code</span>
+  <span class='ivar'>@canonical_code</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="description-instance_method">
+  
+    #<strong>description</strong>  &#x21d2; <tt>String</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Retrieve the description of this Status.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+25
+26
+27</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/trace/status.rb', line 25</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_description'>description</span>
+  <span class='ivar'>@description</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="ok?-instance_method">
+  
+    #<strong>ok?</strong>  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns false if this <span class='object_link'><a href="" title="OpenTelemetry::Trace::Status (class)">OpenTelemetry::Trace::Status</a></span> represents an error, else returns true.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+39
+40
+41</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/trace/status.rb', line 39</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_ok?'>ok?</span>
+  <span class='ivar'>@canonical_code</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="#OK-constant" title="OpenTelemetry::Trace::Status::OK (constant)">OK</a></span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Sep 22 04:53:57 2020 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.25 (ruby-2.6.6).
+</div>
+
+    </div>
+  </body>
+</html>
