@@ -119,8 +119,15 @@ module OpenTelemetry
         end
 
         def encoded_status(status)
-          # TODO: OpenTracing doesn't specify how to report non-HTTP (i.e. generic) status.
-          EMPTY_ARRAY
+          return EMPTY_ARRAY unless status&.canonical_code == OpenTelemetry::Trace::Status::ERROR
+
+          Array(
+            Thrift::Tag.new(
+              KEY => 'error',
+              TYPE => Thrift::TagType::BOOL,
+              BOOL => true
+            )
+          )
         end
 
         def encoded_instrumentation_library(instrumentation_library)

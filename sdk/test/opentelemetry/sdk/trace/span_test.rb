@@ -223,8 +223,8 @@ describe OpenTelemetry::SDK::Trace::Span do
 
     it 'does not set the status if span is ended' do
       span.finish
-      span.status = Status.new(1, description: 'cancelled')
-      _(span.status).must_be_nil
+      span.status = Status.new(Status::ERROR, description: 'cancelled')
+      _(span.status.canonical_code).must_equal(Status::UNSET)
     end
   end
 
