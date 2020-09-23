@@ -16,6 +16,12 @@ require 'opentelemetry-instrumentation-restclient'
 require 'opentelemetry-instrumentation-sidekiq'
 require 'opentelemetry-instrumentation-sinatra'
 
+# OpenTelemetry is an open source observability framework, providing a
+# general-purpose API, SDK, and related tools required for the instrumentation
+# of cloud-native software, frameworks, and libraries.
+#
+# The OpenTelemetry module provides global accessors for telemetry objects.
+# See the documentation for the `opentelemetry-api` gem for details.
 module OpenTelemetry
   module Instrumentation
     # Namespace for the Opentelemetry all-in-one gem
