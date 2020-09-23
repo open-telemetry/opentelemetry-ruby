@@ -163,8 +163,6 @@ class ReleasePerformer
                  skip_checks: false,
                  rubygems_api_key: nil,
                  git_remote: nil,
-                 git_user_name: nil,
-                 git_user_email: nil,
                  gh_pages_dir: nil,
                  gh_token: nil,
                  pr_info: nil,
@@ -174,8 +172,6 @@ class ReleasePerformer
     @skip_checks = skip_checks
     @rubygems_api_key = rubygems_api_key
     @git_remote = git_remote || "origin"
-    @git_user_name = git_user_name
-    @git_user_email = git_user_email
     @dry_run = dry_run
     @gh_pages_dir = gh_pages_dir
     @gh_token = gh_token
@@ -271,8 +267,7 @@ class ReleasePerformer
     remote_url = @utils.git_remote_url(@git_remote)
     ::Dir.chdir(@gh_pages_dir) do
       @utils.exec(["git", "init"])
-      @utils.exec(["git", "config", "--local", "user.email", @git_user_email]) if @git_user_email
-      @utils.exec(["git", "config", "--local", "user.name", @git_user_name]) if @git_user_name
+      @utils.git_set_user_info
       if remote_url.start_with?("https://github.com/") && @gh_token
         encoded_token = ::Base64.strict_encode64("x-access-token:#{@gh_token}")
         log_cmd = '["git", "config", "--local", "http.https://github.com/.extraheader", "****"]'

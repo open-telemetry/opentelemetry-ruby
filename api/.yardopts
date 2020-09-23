@@ -1,9 +1,9 @@
 --no-private
 --title=OpenTelemetry API
 --markup=markdown
---main=OVERVIEW.md
+--main=README.md
 ./lib/opentelemetry/**/*.rb
 ./lib/opentelemetry.rb
 -
-OVERVIEW.md
+README.md
 CHANGELOG.md

@@ -1,9 +1,9 @@
 --no-private
 --title=OpenTelemetry Jaeger Exporter
 --markup=markdown
---main=OVERVIEW.md
+--main=README.md
 ./lib/opentelemetry/exporter/jaeger/**/*.rb
 ./lib/opentelemetry/exporter/jaeger.rb
 -
-OVERVIEW.md
+README.md
 CHANGELOG.md

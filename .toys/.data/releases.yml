@@ -1,7 +1,33 @@
-repo: open-telemetry/opentelemetry-ruby
-main_branch: master
-required_checks_timeout: 1200
+# This file controls the release system.
 
+# The repo organization and name.
+repo: open-telemetry/opentelemetry-ruby
+# The main branch name. Releases must happen on this branch.
+main_branch: master
+# Time in seconds for release scripts to wait for CI to complete.
+required_checks_timeout: 1200
+# Git user attached to commits for release pull requests.
+git_user_name: Daniel Azuma
+git_user_email: dazuma@gmail.com
+
+# Control the conventional commit linter.
+commit_lint:
+  # Whether conventional commit errors should cause a GitHub check fail.
+  fail_checks: true
+  # Merge types allowed by the repo.
+  merge: squash
+
+# List of all releaseable gems. Each gem should include:
+#  *  name: The name of the gem. (Required.)
+#  *  directory: Gem directory relative to the repo root. (Required.)
+#  *  version_rb_path: Path to version.rb relative to the gem directory.
+#     (Required only if it does not match the gem name. e.g. The gem
+#     "opentelemetry-sdk" would default to lib/opentelemetry/sdk/version.rb)
+#  *  version_constant: The fully-qualified version constant as an array.
+#     (Required because the OpenTelemetry namespace does not match the gem
+#     name "opentelemetry".)
+#  *  changelog_path: Path to CHANGLEOG.md relative to the gem directory.
+#     (Required only if it is not in the expected location.)
 gems:
   - name: opentelemetry-api
     directory: api

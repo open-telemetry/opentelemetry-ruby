@@ -57,18 +57,6 @@ flag :git_remote, "--git-remote=VAL" do
     "The name of the git remote pointing at the canonical repository." \
     " Defaults to 'origin'."
 end
-flag :git_user_email, "--git-user-email=VAL" do
-  desc "Git user email to use for new commits"
-  long_desc \
-    "Git user email to use for new commits. If not provided, uses the current" \
-    " global git setting. Required if there is no global setting."
-end
-flag :git_user_name, "--git-user-name=VAL" do
-  desc "Git user email to use for new commits"
-  long_desc \
-    "Git user name to use for new commits. If not provided, uses the current" \
-    " global git setting. Required if there is no global setting."
-end
 flag :release_ref, "--release-ref=VAL" do
   desc "Target branch for the release"
   long_desc \
@@ -89,7 +77,7 @@ def run
   ::Dir.chdir(context_directory)
   @utils = ReleaseUtils.new(self)
 
-  [:release_ref, :git_user_email, :git_user_name].each do |key|
+  [:release_ref].each do |key|
     set(key, nil) if get(key).to_s.empty?
   end
 
@@ -107,8 +95,6 @@ def populate_requester
   requester = ReleaseRequester.new(@utils,
                                    release_ref: release_ref,
                                    git_remote: git_remote,
-                                   git_user_name: git_user_name,
-                                   git_user_email: git_user_email,
                                    coordinate_versions: coordinate_versions,
                                    prune_gems: gems.to_s.empty?)
   gem_list = gems.to_s.empty? ? @utils.all_gems : gems.split(/[\s,]+/)
