@@ -6,7 +6,7 @@ on:
 
 jobs:
   release-process-request:
-    if: ${{ github.repository == '<%= @settings.repo_path %>' }}
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     env:
       ruby_version: "2.7"
     runs-on: ubuntu-latest
@@ -26,7 +26,5 @@ jobs:
           toys release _onclosed --verbose \
             "--enable-releases=${{ secrets.ENABLE_RELEASES }}" \
             "--event-path=${{ github.event_path }}" \
-            "--git-user-email=${{ secrets.GIT_USER_EMAIL }}" \
-            "--git-user-name=${{ secrets.GIT_USER_NAME }}" \
             "--rubygems-api-key=${{ secrets.RUBYGEMS_API_KEY }}" \
             < /dev/null

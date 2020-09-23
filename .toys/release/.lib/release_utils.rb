@@ -32,9 +32,13 @@ class ReleaseUtils
 
   def_delegators :@repo_settings,
                  :repo_path, :repo_owner, :main_branch, :default_gem,
+                 :git_user_name, :git_user_email,
                  :required_checks_regexp, :release_jobs_regexp, :required_checks_timeout,
                  :docs_builder_tool, :signoff_commits?, :enable_release_automation?,
                  :coordinate_versions?
+  def_delegators :@repo_settings,
+                 :commit_lint_active?, :commit_lint_fail_checks?,
+                 :commit_lint_merge, :commit_lint_allowed_types
   def_delegators :@repo_settings,
                  :all_gems, :gem_info,
                  :gem_directory, :gem_cd,
@@ -64,10 +68,12 @@ class ReleaseUtils
   end
 
   def exec(cmd, **opts, &block)
+    opts = modify_exec_opts(opts, cmd)
     tool_context.exec(cmd, **opts, &block)
   end
 
   def capture(cmd, **opts, &block)
+    opts = modify_exec_opts(opts, cmd)
     tool_context.capture(cmd, **opts, &block)
   end
 
@@ -287,7 +293,8 @@ class ReleaseUtils
       logger.info("GitHub checks disabled")
       return self
     end
-    wait_github_checks_internal(current_sha(ref), ::Time.now.to_i + required_checks_timeout)
+    deadline = ::Process.clock_gettime(::Process::CLOCK_MONOTONIC) + required_checks_timeout
+    wait_github_checks_internal(current_sha(ref), deadline)
   end
 
   def github_check_errors(ref)
@@ -308,6 +315,20 @@ class ReleaseUtils
       end
     end
     results
+  end
+
+  def git_set_user_info
+    if git_user_name
+      unless exec(["git", "config", "--get", "user.name"], out: :null, e: false).success?
+        exec(["git", "config", "--local", "user.name", git_user_name])
+      end
+    end
+    if git_user_email
+      unless exec(["git", "config", "--get", "user.email"], out: :null, e: false).success?
+        exec(["git", "config", "--local", "user.email", git_user_email])
+      end
+    end
+    self
   end
 
   def log(message)
@@ -339,13 +360,22 @@ class ReleaseUtils
 
   private
 
+  def modify_exec_opts(opts, cmd)
+    return opts unless raise_on_error
+    return opts if opts.key?(:result_callback)
+    return opts if opts[:e] == false || opts[:exit_on_nonzero_status] == false
+    result_callback = proc do |r|
+      error("Command failed with exit code #{r.exit_code}: #{cmd.inspect}") if r.error?
+    end
+    opts.merge(result_callback: result_callback)
+  end
+
   def load_repo_settings
     file_path = tool_context.find_data("releases.yml")
     error("Unable to find releases.yml data file") unless file_path
     info = ::YAML.load_file(file_path)
     @repo_settings = RepoSettings.new(info, @tool_context)
-    error("Repo key missing from releases.yml") unless @repo_settings.repo_path
-    error("No gems listed in releases.yml") unless @repo_settings.default_gem
+    error(*@repo_settings.errors) unless @repo_settings.errors.empty?
   end
 
   def wait_github_checks_internal(ref, deadline)
@@ -358,7 +388,7 @@ class ReleaseUtils
         return []
       end
       errors.each { |msg| logger.info(msg) }
-      if ::Time.now.to_i > deadline
+      if ::Process.clock_gettime(::Process::CLOCK_MONOTONIC) > deadline
         results = ["GitHub checks still failing after #{required_checks_timeout} secs."]
         return results + errors
       end

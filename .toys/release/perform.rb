@@ -57,18 +57,6 @@ flag_group desc: "Flags" do
       "The name of the git remote pointing at the canonical repository." \
       " Defaults to 'origin'."
   end
-  flag :git_user_email, "--git-user-email=VAL" do
-    desc "Git user email to use for new commits"
-    long_desc \
-      "Git user email to use for docs commits. If not provided, uses the" \
-      " current global git setting. Required if there is no global setting."
-  end
-  flag :git_user_name, "--git-user-name=VAL" do
-    desc "Git user email to use for new commits"
-    long_desc \
-      "Git user name to use for docs commits. If not provided, uses the" \
-      " current global git setting. Required if there is no global setting."
-  end
   flag :release_sha, "--release-sha=VAL" do
     desc "SHA of the commit to use for the release"
     long_desc \
@@ -124,7 +112,7 @@ def run
   ::Dir.chdir(context_directory)
   @utils = ReleaseUtils.new(self)
 
-  [:gh_pages_dir, :git_user_email, :git_user_name, :rubygems_api_key].each do |key|
+  [:gh_pages_dir, :rubygems_api_key].each do |key|
     set(key, nil) if get(key).to_s.empty?
   end
   set(:release_sha, @utils.current_sha) if release_sha.to_s.empty?
@@ -150,8 +138,6 @@ def create_performer
                        skip_checks: skip_checks,
                        rubygems_api_key: rubygems_api_key,
                        git_remote: git_remote,
-                       git_user_name: git_user_name,
-                       git_user_email: git_user_email,
                        gh_pages_dir: gh_pages_dir,
                        gh_token: ::ENV["GITHUB_TOKEN"],
                        pr_info: find_release_pr,

@@ -1,15 +1,11 @@
-name: Open release request
+name: "[release hook] Check commit messages"
 
 on:
-  workflow_dispatch:
-    inputs:
-      gems:
-        description: Gems to release (leave blank to release all gems)
-        required: false
-        default: ""
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
 
 jobs:
-  release-request:
+  release-check-commits:
     if: ${{ github.repository == '<%= @settings.repo_path %>' }}
     env:
       ruby_version: "2.7"
@@ -23,11 +19,10 @@ jobs:
         uses: actions/checkout@v2
       - name: Install Toys
         run: "gem install --no-document toys"
-      - name: Open release pull request
+      - name: Check commit messages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          toys release request --yes --verbose \
-            "--gems=${{ github.event.inputs.gems }}" \
-            "--release-ref=${{ github.ref }}" \
+          toys release _onopen --verbose \
+            "--event-path=${{ github.event_path }}" \
             < /dev/null
