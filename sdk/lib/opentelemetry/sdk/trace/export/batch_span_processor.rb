@@ -25,7 +25,7 @@ module OpenTelemetry
         # If the queue gets half full a preemptive notification is sent to the
         # worker thread that exports the spans to wake up and start a new
         # export cycle.
-        class BatchSpanProcessor
+        class BatchSpanProcessor # rubocop:disable Metrics/ClassLength
           # Returns a new instance of the {BatchSpanProcessor}.
           #
           # @param [SpanExporter] exporter
@@ -54,6 +54,7 @@ module OpenTelemetry
             @exporter = exporter
             @exporter_timeout_seconds = exporter_timeout_millis / 1000.0
             @mutex = Mutex.new
+            @export_mutex = Mutex.new
             @condition = ConditionVariable.new
             @keep_running = true
             @delay_seconds = schedule_delay_millis / 1000.0
@@ -70,7 +71,7 @@ module OpenTelemetry
             # noop
           end
 
-          # adds a span to the batcher, threadsafe may block on lock
+          # Adds a span to the batch. Thread-safe; may block on lock.
           def on_finish(span) # rubocop:disable Metrics/AbcSize
             return unless span.context.trace_flags.sampled?
 
@@ -95,18 +96,23 @@ module OpenTelemetry
           # @param [optional Numeric] timeout An optional timeout in seconds.
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
-          def force_flush(timeout: nil)
+          def force_flush(timeout: nil) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
             start_time = Time.now
             snapshot = lock do
               reset_on_fork(restart_thread: false) if @keep_running
               spans.shift(spans.size)
             end
-            until snapshot.empty? || Internal.maybe_timeout(timeout, start_time)&.zero?
+            until snapshot.empty?
+              remaining_timeout = Internal.maybe_timeout(timeout, start_time)
+              return TIMEOUT if remaining_timeout&.zero?
+
               batch = snapshot.shift(@batch_size).map!(&:to_span_data)
-              result_code = @exporter.export(batch)
-              report_result(result_code, batch)
+              result_code = export_batch(batch, timeout: remaining_timeout)
+              return result_code unless result_code == SUCCESS
             end
 
+            SUCCESS
+          ensure
             # Unshift the remaining spans if we timed out. We drop excess spans from
             # the snapshot because they're older than any spans in the spans buffer.
             lock do
@@ -115,8 +121,6 @@ module OpenTelemetry
               spans.unshift(snapshot) unless snapshot.empty?
               @condition.signal if spans.size > max_queue_size / 2
             end
-
-            SUCCESS
           end
 
           # shuts the consumer thread down and flushes the current accumulated buffer
@@ -165,15 +169,10 @@ module OpenTelemetry
             @thread = Thread.new { work } if restart_thread
           end
 
-          def export_batch(batch)
-            result_code = export_with_timeout(batch)
+          def export_batch(batch, timeout: @exporter_timeout_seconds)
+            result_code = @export_mutex.synchronize { @exporter.export(batch, timeout: timeout) }
             report_result(result_code, batch)
-          end
-
-          def export_with_timeout(batch)
-            Timeout.timeout(@exporter_timeout_seconds) { @exporter.export(batch) }
-          rescue Timeout::Error
-            FAILURE
+            result_code
           end
 
           def report_result(result_code, batch)

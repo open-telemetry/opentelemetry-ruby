@@ -55,36 +55,30 @@ module OpenTelemetry
         # @return [Integer] Export::SUCCESS if no error occurred, Export::FAILURE if
         #   a non-specific failure occurred, Export::TIMEOUT if a timeout occurred.
         def force_flush(timeout: nil)
-          if timeout.nil?
-            @span_processors.map(&:force_flush).uniq.max
-          else
-            start_time = Time.now
-            @span_processors.map do |processor|
-              remaining_timeout = timeout - (Time.now - start_time)
-              return Export::TIMEOUT unless remaining_timeout.positive?
+          start_time = Time.now
+          results = @span_processors.map do |processor|
+            remaining_timeout = Internal.maybe_timeout(timeout, start_time)
+            return Export::TIMEOUT if remaining_timeout&.zero?
 
-              processor.force_flush(timeout: Internal.maybe_timeout(timeout, start_time))
-            end.uniq.max
+            processor.force_flush(timeout: remaining_timeout)
           end
+          results.uniq.max
         end
 
         # Called when {TracerProvider#shutdown} is called.
         #
-        # @param [optional Numeric] timeout An optional timeout in seconds. 
+        # @param [optional Numeric] timeout An optional timeout in seconds.
         # @return [Integer] Export::SUCCESS if no error occurred, Export::FAILURE if
         #   a non-specific failure occurred, Export::TIMEOUT if a timeout occurred.
         def shutdown(timeout: nil)
-          if timeout.nil?
-            @span_processors.map(&:shutdown).uniq.max
-          else
-            start_time = Time.now
-            @span_processors.map do |processor|
-              remaining_timeout = timeout - (Time.now - start_time)
-              return Export::TIMEOUT unless remaining_timeout.positive?
+          start_time = Time.now
+          results = @span_processors.map do |processor|
+            remaining_timeout = Internal.maybe_timeout(timeout, start_time)
+            return Export::TIMEOUT if remaining_timeout&.zero?
 
-              processor.shutdown(timeout: Internal.maybe_timeout(timeout, start_time))
-            end.uniq.max
+            processor.shutdown(timeout: remaining_timeout)
           end
+          results.uniq.max
         end
       end
     end

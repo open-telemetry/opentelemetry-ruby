@@ -62,7 +62,7 @@ module OpenTelemetry
           #   exported.
           # @return [Integer] the result of the export, SUCCESS or
           #   FAILURE
-          def export(span_datas)
+          def export(span_datas, timeout: nil)
             @mutex.synchronize do
               return FAILURE if @stopped
 

@@ -55,8 +55,8 @@ describe OpenTelemetry::SDK::Trace::Export::MultiSpanExporter do
   end
 
   it 'returns an error from #export if one exporter fails' do
-    mock_span_exporter.expect :export, export::SUCCESS, [Object]
-    mock_span_exporter2.expect :export, export::FAILURE, [Object]
+    mock_span_exporter.expect(:export, export::SUCCESS) { |a| a.to_a == spans }
+    mock_span_exporter2.expect(:export, export::FAILURE) { |a| a.to_a == spans }
 
     _(exporter_multi.export(spans)).must_equal export::FAILURE
     mock_span_exporter.verify
@@ -64,7 +64,7 @@ describe OpenTelemetry::SDK::Trace::Export::MultiSpanExporter do
   end
 
   it 'synthesizes an error if an exporter raises an exception' do
-    def mock_span_exporter.export(_)
+    def mock_span_exporter.export(_, timeout: nil)
       raise ArgumentError
     end
 
