@@ -52,7 +52,7 @@ module OpenTelemetry
 
         # Called when {TracerProvider#shutdown} is called.
         #
-        # @param [optional Numeric] timeout An optional timeout in seconds. 
+        # @param [optional Numeric] timeout An optional timeout in seconds.
         # @return [Integer] Export::SUCCESS if no error occurred, Export::FAILURE if
         #   a non-specific failure occurred, Export::TIMEOUT if a timeout occurred.
         def shutdown(timeout: nil)
