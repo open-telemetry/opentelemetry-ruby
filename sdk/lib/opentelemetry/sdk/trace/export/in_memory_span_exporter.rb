@@ -60,6 +60,7 @@ module OpenTelemetry
           #
           # @param [Enumerable<SpanData>] span_datas the list of sampled {SpanData}s to be
           #   exported.
+          # @param [optional Numeric] timeout An optional timeout in seconds.
           # @return [Integer] the result of the export, SUCCESS or
           #   FAILURE
           def export(span_datas, timeout: nil)
