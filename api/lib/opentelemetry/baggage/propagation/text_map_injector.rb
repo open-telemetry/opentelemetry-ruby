@@ -16,7 +16,7 @@ module OpenTelemetry
         # Returns a new TextMapInjector that injects context using the specified
         # header key
         #
-        # @param [String] baggage_header_key The baggage header
+        # @param [String] baggage_key The baggage header
         #   key used in the carrier
         # @return [TextMapInjector]
         def initialize(baggage_key: 'baggage')
