@@ -26,8 +26,8 @@ module OpenTelemetry
       #
       # @param [optional Context] context The context to use as the parent for
       #  the returned context
-      def context_with_span(span, context = Context.current)
-        context.set_value(CURRENT_SPAN_KEY, span)
+      def context_with_span(span, parent_context: Context.current)
+        parent_context.set_value(CURRENT_SPAN_KEY, span)
       end
 
       # This is a helper for the default use-case of extending the current trace with a span.
