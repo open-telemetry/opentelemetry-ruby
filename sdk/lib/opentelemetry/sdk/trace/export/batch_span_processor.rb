@@ -62,7 +62,7 @@ module OpenTelemetry
           end
 
           # does nothing for this processor
-          def on_start(span)
+          def on_start(span, parent_context)
             # noop
           end
 

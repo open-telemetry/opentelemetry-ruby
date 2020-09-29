@@ -10,6 +10,7 @@ describe OpenTelemetry::SDK::Trace::MultiSpanProcessor do
   let(:mock_processor1)    { Minitest::Mock.new }
   let(:mock_processor2)    { Minitest::Mock.new }
   let(:span)               { 'dummy span' }
+  let(:context)            { 'dummy context' }
 
   let(:processor) do
     OpenTelemetry::SDK::Trace::MultiSpanProcessor.new(
@@ -18,10 +19,10 @@ describe OpenTelemetry::SDK::Trace::MultiSpanProcessor do
   end
 
   it 'implements #on_start' do
-    mock_processor1.expect :on_start, nil, [span]
-    mock_processor2.expect :on_start, nil, [span]
+    mock_processor1.expect :on_start, nil, [span, context]
+    mock_processor2.expect :on_start, nil, [span, context]
 
-    processor.on_start(span)
+    processor.on_start(span, context)
 
     mock_processor1.verify
     mock_processor2.verify

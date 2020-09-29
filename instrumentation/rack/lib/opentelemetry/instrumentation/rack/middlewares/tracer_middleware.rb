@@ -81,7 +81,7 @@ module OpenTelemetry
             return unless config[:record_frontend_span] && !request_start_time.nil?
 
             span = tracer.start_span('http_server.proxy',
-                                     with_parent_context: extracted_context,
+                                     with_parent: extracted_context,
                                      attributes: {
                                        'start_time' => request_start_time.to_f
                                      },

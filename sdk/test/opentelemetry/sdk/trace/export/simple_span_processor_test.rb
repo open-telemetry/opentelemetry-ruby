@@ -30,10 +30,11 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
 
   let(:stub_span_unrecorded) { stub_span_builder(recording: false) }
   let(:stub_span_recorded)   { stub_span_builder(recording: true) }
+  let(:parent_context) { OpenTelemetry::Context.empty }
   let(:processor) { export::SimpleSpanProcessor.new(mock_span_exporter) }
 
   it 'accepts calls to #on_start' do
-    processor.on_start(stub_span_recorded)
+    processor.on_start(stub_span_recorded, parent_context)
   end
 
   it 'accepts calls to #force_flush' do
@@ -43,13 +44,13 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
   it 'forwards recorded spans from #on_finish' do
     mock_span_exporter.expect :export, export::SUCCESS, [Array]
 
-    processor.on_start(stub_span_recorded)
+    processor.on_start(stub_span_recorded, parent_context)
     processor.on_finish(stub_span_recorded)
     mock_span_exporter.verify
   end
 
   it 'ignores unrecorded spans in #on_finish' do
-    processor.on_start(stub_span_unrecorded)
+    processor.on_start(stub_span_unrecorded, parent_context)
     processor.on_finish(stub_span_unrecorded)
     mock_span_exporter.verify
   end
@@ -67,7 +68,7 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
     mock_span.expect :context, mock_span_context
     mock_span.expect :to_span_data, nil
 
-    processor_noop.on_start(mock_span)
+    processor_noop.on_start(mock_span, parent_context)
     processor_noop.on_finish(mock_span)
     mock_span.verify
   end
@@ -83,7 +84,7 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
       raising_exporter
     )
 
-    processor_with_raising_exporter.on_start(stub_span_recorded)
+    processor_with_raising_exporter.on_start(stub_span_recorded, parent_context)
 
     logger_mock = Minitest::Mock.new
     logger_mock.expect :error, nil, [/ArgumentError/]

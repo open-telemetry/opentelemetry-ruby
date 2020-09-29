@@ -45,7 +45,7 @@ class OpenTelemetryMiddleware
         'http.url' => env['REQUEST_URI'],
       },
       kind: :server,
-      with_parent_context: context
+      with_parent: context
     ) do |span|
       # Run application stack
       status, headers, response_body = @app.call(env)

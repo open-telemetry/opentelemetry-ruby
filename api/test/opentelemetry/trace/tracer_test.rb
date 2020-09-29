@@ -91,15 +91,8 @@ describe OpenTelemetry::Trace::Tracer do
       mock_span.verify
     end
 
-    it 'yields a span with the same context as the parent' do
-      tracer.in_span('op', with_parent: parent) do |span|
-        _(span.context).must_be :valid?
-        _(span.context).must_equal(parent.context)
-      end
-    end
-
     it 'yields a span with the parent context' do
-      tracer.in_span('op', with_parent_context: parent_context) do |span|
+      tracer.in_span('op', with_parent: parent_context) do |span|
         _(span.context).must_be :valid?
         _(span.context).must_equal(parent_span_context)
       end
@@ -151,7 +144,7 @@ describe OpenTelemetry::Trace::Tracer do
     let(:parent) { tracer.start_span('parent') }
 
     it 'returns a valid span with the parent context' do
-      span = tracer.start_span('op', with_parent_context: parent_context)
+      span = tracer.start_span('op', with_parent: parent_context)
       _(span.context).must_be :valid?
       _(span.context).must_equal(parent_span_context)
     end
@@ -162,16 +155,26 @@ describe OpenTelemetry::Trace::Tracer do
       _(span.context).wont_equal(tracer.current_span.context)
     end
 
-    it 'returns a span with the same context as the parent' do
-      span = tracer.start_span('op', with_parent: parent)
-      _(span.context).must_be :valid?
-      _(span.context).must_equal(parent.context)
-    end
-
     it 'returns a span with a new context when passed an invalid context' do
-      span = tracer.start_span('op', with_parent_context: invalid_parent_context)
+      span = tracer.start_span('op', with_parent: invalid_parent_context)
       _(span.context).must_be :valid?
       _(span.context).wont_equal(invalid_span_context)
+    end
+  end
+
+  describe '#context_with_span' do
+    it 'returns a context containing span' do
+      span = tracer.start_span('test')
+      ctx = tracer.context_with_span(span)
+      _(tracer.current_span(ctx)).must_equal(span)
+    end
+
+    it 'returns a context containing span' do
+      parent_ctx = OpenTelemetry::Context.empty.set_value('foo', 'bar')
+      span = tracer.start_span('test')
+      ctx = tracer.context_with_span(span, parent_context: parent_ctx)
+      _(tracer.current_span(ctx)).must_equal(span)
+      _(ctx.value('foo')).must_equal('bar')
     end
   end
 end

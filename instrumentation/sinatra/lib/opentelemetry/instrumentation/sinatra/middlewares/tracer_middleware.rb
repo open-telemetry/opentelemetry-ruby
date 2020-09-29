@@ -22,7 +22,7 @@ module OpenTelemetry
               attributes: { 'http.method' => env['REQUEST_METHOD'],
                             'http.url' => env['PATH_INFO'] },
               kind: :server,
-              with_parent_context: parent_context(env)
+              with_parent: parent_context(env)
             ) do |span|
               app.call(env).tap { |resp| trace_response(span, env, resp) }
             end

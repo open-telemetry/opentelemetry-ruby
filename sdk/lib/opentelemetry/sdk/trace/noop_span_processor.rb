@@ -22,7 +22,9 @@ module OpenTelemetry
         # not throw or block the execution thread.
         #
         # @param [Span] span the {Span} that just started.
-        def on_start(span); end
+        # @param [Context] parent_context the parent {Context} of the newly
+        #  started span.
+        def on_start(span, parent_context); end
 
         # Called when a {Span} is ended, if the {Span#recording?}
         # returns true.
