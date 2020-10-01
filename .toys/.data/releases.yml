@@ -9,6 +9,8 @@ required_checks_timeout: 1200
 # Git user attached to commits for release pull requests.
 git_user_name: Daniel Azuma
 git_user_email: dazuma@gmail.com
+# Toys tool that builds YARD reference docs
+docs_builder_tool: [yardoc]
 
 # Control the conventional commit linter.
 commit_lint:
