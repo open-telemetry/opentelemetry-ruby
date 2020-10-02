@@ -35,11 +35,11 @@ module OpenTelemetry
     @tracer_provider ||= Trace::TracerProvider.new
   end
 
-  # @return [Trace::Tracer] returns a default tracer instance from the
-  #   registered tracer provider. If the tracer provider is operational, this
-  #   will be a named tracer with the name 'default'.
-  def default_tracer
-    tracer_provider.tracer('default')
+  # @return [Trace::Tracer] delegates to the registered tracer provider and
+  #  returns a tracer with the given name and version. If called without without
+  #  arguments, it returns a tracer named 'default'.
+  def tracer(name = 'default', version = nil)
+    tracer_provider.tracer(name, version)
   end
 
   # @return [Object, Metrics::MeterProvider] registered meter provider or a

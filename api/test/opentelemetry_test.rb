@@ -30,19 +30,34 @@ describe OpenTelemetry do
     end
   end
 
-  describe '.default_tracer' do
+  describe '.tracer' do
+    let(:mock_provider) { MiniTest::Mock.new }
+
+    before do
+      OpenTelemetry.tracer_provider = mock_provider
+    end
+
     after do
       # Ensure we don't leak custom tracer factories and tracers to other tests
       OpenTelemetry.tracer_provider = nil
     end
 
-    it 'returns instance of Trace::Tracer' do
-      default_tracer = OpenTelemetry.default_tracer
-      _(default_tracer).must_be_instance_of(OpenTelemetry::Trace::Tracer)
+    it 'delegates to tracer provider with default name' do
+      mock_provider.expect(:tracer, Object.new, ['default', nil])
+      _ = OpenTelemetry.tracer
+      mock_provider.verify
     end
 
-    it 'returns the same instance when accessed multiple times' do
-      _(OpenTelemetry.default_tracer).must_equal(OpenTelemetry.default_tracer)
+    it 'delegates to tracer provider with provided name' do
+      mock_provider.expect(:tracer, Object.new, ['foo', nil])
+      _ = OpenTelemetry.tracer('foo')
+      mock_provider.verify
+    end
+
+    it 'delegates to tracer provider with provided name and version' do
+      mock_provider.expect(:tracer, Object.new, ['foo', '0.4.0'])
+      _ = OpenTelemetry.tracer('foo', '0.4.0')
+      mock_provider.verify
     end
   end
 
