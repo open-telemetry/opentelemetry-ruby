@@ -106,4 +106,10 @@ describe OpenTelemetry::SDK, 'API_trace' do
       _(@child_span_with_links.to_span_data.links.size).must_equal number_of_links
     end
   end
+
+  describe 'default tracer' do
+    it 'returns tracer named default' do
+      _(OpenTelemetry.default_tracer.name).must_equal('default')
+    end
+  end
 end

@@ -30,6 +30,22 @@ describe OpenTelemetry do
     end
   end
 
+  describe '.default_tracer' do
+    after do
+      # Ensure we don't leak custom tracer factories and tracers to other tests
+      OpenTelemetry.tracer_provider = nil
+    end
+
+    it 'returns instance of Trace::Tracer' do
+      default_tracer = OpenTelemetry.default_tracer
+      _(default_tracer).must_be_instance_of(OpenTelemetry::Trace::Tracer)
+    end
+
+    it 'returns the same instance when accessed multiple times' do
+      _(OpenTelemetry.default_tracer).must_equal(OpenTelemetry.default_tracer)
+    end
+  end
+
   describe '.logger' do
     it 'should log things' do
       t = Tempfile.new('logger')
