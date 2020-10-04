@@ -54,6 +54,16 @@ module OpenTelemetry
         ).merge(@resource)
       end
 
+      # Accepts a string that is merged in as the service.version resource attribute.
+      # The most recent assigned value will be used in the event of repeated
+      # calls to this setter.
+      # @param [String] service_version The value to be used as the service version
+      def service_version=(service_version)
+        @resource = OpenTelemetry::SDK::Resources::Resource.create(
+          OpenTelemetry::SDK::Resources::Constants::SERVICE_RESOURCE[:version] => service_version
+        ).merge(@resource)
+      end
+
       # Install an instrumentation with specificied optional +config+.
       # Use can be called multiple times to install multiple instrumentation.
       # Only +use+ or +use_all+, but not both when installing
