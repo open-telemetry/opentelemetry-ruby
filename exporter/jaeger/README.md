@@ -40,9 +40,8 @@ OpenTelemetry::SDK.configure do |c|
       # exporter: OpenTelemetry::Exporter::Jaeger::CollectorExporter.new(endpoint: 'http://192.168.0.1:14268/api/traces')
     )
   )
-  c.resource = OpenTelemetry::SDK::Resources::Resource.create(
-    OpenTelemetry::SDK::Resources::Constants::SERVICE_RESOURCE[:name] => 'jaeger-example'
-  )
+  c.service_name = 'jaeger-example'
+  c.service_version = '0.6.0'
 end
 
 # To start a trace you need to get a Tracer from the TracerProvider
