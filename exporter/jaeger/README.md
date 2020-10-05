@@ -34,10 +34,10 @@ require 'opentelemetry/exporter/jaeger'
 # Configure the sdk with custom export
 OpenTelemetry::SDK.configure do |c|
   c.add_span_processor(
-    OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(
-      OpenTelemetry::Exporter::Jaeger::AgentExporter.new(host: '127.0.0.1', port: 6831)
+    OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(
+      exporter: OpenTelemetry::Exporter::Jaeger::AgentExporter.new(host: '127.0.0.1', port: 6831)
       # Alternatively, for the collector exporter:
-      # OpenTelemetry::Exporter::Jaeger::CollectorExporter.new(endpoint: 'http://192.168.0.1:14268')
+      # exporter: OpenTelemetry::Exporter::Jaeger::CollectorExporter.new(endpoint: 'http://192.168.0.1:14268/api/traces')
     )
   )
   c.service_name = 'jaeger-example'
