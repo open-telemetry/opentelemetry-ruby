@@ -1,5 +1,14 @@
 # Release History: opentelemetry-sdk
 
+### v0.7.0 / 2020-10-07
+
+* ADDED: Add service_name setter to configurator 
+* ADDED: Add service_version setter to configurator 
+* FIXED: Fork safety for batch processor 
+* FIXED: Don't generate a span ID unnecessarily 
+* DOCS: Fix Configurator#add_span_processor 
+* DOCS: Standardize toplevel docs structure and readme 
+
 ### v0.6.0 / 2020-09-10
 
 * BREAKING CHANGE: Rename Resource labels to attributes 
