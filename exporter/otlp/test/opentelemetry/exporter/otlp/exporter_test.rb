@@ -192,7 +192,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                     Opentelemetry::Proto::Trace::V1::Span.new(
                       trace_id: trace_id,
                       span_id: root_span_id,
-                      parent_span_id: OpenTelemetry::Trace::INVALID_SPAN_ID,
+                      parent_span_id: nil,
                       name: 'root',
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::INTERNAL,
                       start_time_unix_nano: (start_timestamp.to_r * 1_000_000_000).to_i,

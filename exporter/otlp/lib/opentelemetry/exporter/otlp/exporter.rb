@@ -215,7 +215,7 @@ module OpenTelemetry
             trace_id: span_data.trace_id,
             span_id: span_data.span_id,
             trace_state: span_data.tracestate,
-            parent_span_id: span_data.parent_span_id,
+            parent_span_id: span_data.parent_span_id == OpenTelemetry::Trace::INVALID_SPAN_ID ? nil : span_data.parent_span_id,
             name: span_data.name,
             kind: as_otlp_span_kind(span_data.kind),
             start_time_unix_nano: as_otlp_timestamp(span_data.start_timestamp),
