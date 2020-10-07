@@ -95,10 +95,10 @@ describe OpenTelemetry::Exporter::Jaeger::Encoder do
 
       name_tag, version_tag = encoded_span.tags
 
-      _(name_tag.key).must_equal('otel.instrumentation_library.name')
+      _(name_tag.key).must_equal('otel.library.name')
       _(name_tag.vStr).must_equal('mylib')
 
-      _(version_tag.key).must_equal('otel.instrumentation_library.version')
+      _(version_tag.key).must_equal('otel.library.version')
       _(version_tag.vStr).must_equal('0.1.0')
     end
 
@@ -111,7 +111,7 @@ describe OpenTelemetry::Exporter::Jaeger::Encoder do
 
       name_tag, = encoded_span.tags
 
-      _(name_tag.key).must_equal('otel.instrumentation_library.name')
+      _(name_tag.key).must_equal('otel.library.name')
       _(name_tag.vStr).must_equal('mylib')
     end
   end
