@@ -1,5 +1,11 @@
 # Release History: opentelemetry-api
 
+### v0.7.0 / 2020-10-07
+
+* FIXED: Safely navigate span variable during error cases 
+* DOCS: Standardize toplevel docs structure and readme 
+* DOCS: Fix param description in TextMapInjector for Baggage 
+
 ### v0.6.0 / 2020-09-10
 
 * ADDED: Add support for OTEL_LOG_LEVEL env var

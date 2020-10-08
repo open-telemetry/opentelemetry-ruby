@@ -10,6 +10,7 @@ gemspec
 
 gem 'opentelemetry-api', path: '../../api'
 gem 'opentelemetry-instrumentation-concurrent_ruby', path: '../concurrent_ruby'
+gem 'opentelemetry-instrumentation-dalli', path: '../dalli'
 gem 'opentelemetry-instrumentation-ethon', path: '../ethon'
 gem 'opentelemetry-instrumentation-excon', path: '../excon'
 gem 'opentelemetry-instrumentation-faraday', path: '../faraday'
