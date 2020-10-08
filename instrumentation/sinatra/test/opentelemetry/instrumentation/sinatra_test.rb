@@ -27,6 +27,10 @@ describe OpenTelemetry::Instrumentation::Sinatra do
       get '/with_template' do
         erb :foo_template
       end
+
+      get '/api/v1/foo/:myname/?' do
+        'Some name'
+      end
     end
   end
 
@@ -96,12 +100,31 @@ describe OpenTelemetry::Instrumentation::Sinatra do
 
       _(exporter.finished_spans.size).must_equal 3
       _(exporter.finished_spans.map(&:name))
-        .must_equal %w[sinatra.render_template
-                       sinatra.render_template
-                       /with_template]
+        .must_equal [
+          'sinatra.render_template',
+          'sinatra.render_template',
+          'GET /with_template'
+        ]
       _(exporter.finished_spans[0..1].map(&:attributes)
         .map { |h| h['sinatra.template_name'] })
         .must_equal %w[layout foo_template]
+    end
+
+    it 'correctly name spans' do
+      get '/one//api/v1/foo/janedoe/'
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(exporter.finished_spans.first.attributes).must_equal(
+        'http.method' => 'GET',
+        'http.url' => '/api/v1/foo/janedoe/',
+        'http.status_code' => 200,
+        'http.status_text' => 'OK',
+        'http.route' => '/api/v1/foo/:myname/?'
+      )
+      _(exporter.finished_spans.map(&:name))
+        .must_equal [
+          'GET /api/v1/foo/:myname/?'
+        ]
     end
 
     it 'does not create unhandled exceptions for missing routes' do
