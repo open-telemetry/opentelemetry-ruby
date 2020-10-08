@@ -45,8 +45,7 @@ Libraries that produce telemetry data should only depend on `opentelemetry-api`,
 and defer the choice of the SDK to the application developer. Applications may
 depend on `opentelemetry-sdk` or another package that implements the API.
 
-**Please note** that this library is currently in _alpha_, and shouldn't be
-used in production environments.
+**Please note** that this library is currently in _beta_ for tracing.
 
 The API and SDK packages are available on RubyGems.org, and can be installed via `gem`:
 
