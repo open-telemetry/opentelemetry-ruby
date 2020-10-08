@@ -15,10 +15,8 @@ module OpenTelemetry
           end
 
           def call(env)
-            span_name = env['sinatra.route'] || env['PATH_INFO']
-
             tracer.in_span(
-              span_name,
+              env['PATH_INFO'],
               attributes: { 'http.method' => env['REQUEST_METHOD'],
                             'http.url' => env['PATH_INFO'] },
               kind: :server,
@@ -46,6 +44,7 @@ module OpenTelemetry
             span.set_attribute('http.status_code', status)
             span.set_attribute('http.status_text', ::Rack::Utils::HTTP_STATUS_CODES[status])
             span.set_attribute('http.route', env['sinatra.route'].split.last) if env['sinatra.route']
+            span.name = env['sinatra.route'] if env['sinatra.route']
             span.status = OpenTelemetry::Trace::Status.http_to_status(status)
           end
         end
