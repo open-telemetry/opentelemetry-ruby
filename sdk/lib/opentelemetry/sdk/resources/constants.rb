@@ -79,10 +79,6 @@ module OpenTelemetry
 
         # Attributes defining a computing instance (e.g. host).
         HOST_RESOURCE = {
-          # Hostname of the host. It contains what the hostname command returns on the
-          # host machine.
-          hostname: 'host.hostname',
-
           # Unique host id. For Cloud this must be the instance_id assigned by the
           # cloud provider
           id: 'host.id',

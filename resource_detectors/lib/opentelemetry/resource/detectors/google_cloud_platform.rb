@@ -13,7 +13,7 @@ module OpenTelemetry
       module GoogleCloudPlatform
         extend self
 
-        def detect # rubocop:disable Metrics/AbcSize
+        def detect # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
           gcp_env = Google::Cloud::Env.new
           resource_attributes = {}
           resource_constants = OpenTelemetry::SDK::Resources::Constants
@@ -24,15 +24,16 @@ module OpenTelemetry
             resource_attributes[resource_constants::CLOUD_RESOURCE[:region]] = gcp_env.instance_attribute('cluster-location')
             resource_attributes[resource_constants::CLOUD_RESOURCE[:zone]] = gcp_env.instance_zone
 
-            resource_attributes[resource_constants::HOST_RESOURCE[:hostname]] = hostname
             resource_attributes[resource_constants::HOST_RESOURCE[:id]] = gcp_env.lookup_metadata('instance', 'id')
-            resource_attributes[resource_constants::HOST_RESOURCE[:name]] = gcp_env.lookup_metadata('instance', 'hostname')
+            resource_attributes[resource_constants::HOST_RESOURCE[:name]] = ENV['HOSTNAME'] ||
+                                                                            gcp_env.lookup_metadata('instance', 'hostname') ||
+                                                                            safe_gethostname
           end
 
           if gcp_env.kubernetes_engine?
             resource_attributes[resource_constants::K8S_RESOURCE[:cluster_name]] = gcp_env.instance_attribute('cluster-name')
             resource_attributes[resource_constants::K8S_RESOURCE[:namespace_name]] = gcp_env.kubernetes_engine_namespace_id
-            resource_attributes[resource_constants::K8S_RESOURCE[:pod_name]] = hostname
+            resource_attributes[resource_constants::K8S_RESOURCE[:pod_name]] = ENV['HOSTNAME'] || safe_gethostname
 
             resource_attributes[resource_constants::CONTAINER_RESOURCE[:name]] = ENV['CONTAINER_NAME']
           end
@@ -43,8 +44,8 @@ module OpenTelemetry
 
         private
 
-        def hostname
-          ENV['HOSTNAME'] || Socket.gethostname
+        def safe_gethostname
+          Socket.gethostname
         rescue StandardError
           ''
         end

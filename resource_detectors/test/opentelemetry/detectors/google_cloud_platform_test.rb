@@ -51,7 +51,6 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
           'cloud.account.id' => 'opentelemetry',
           'cloud.region' => 'us-central1',
           'cloud.zone' => 'us-central1-a',
-          'host.hostname' => 'opentelemetry-test',
           'host.id' => 'opentelemetry-test',
           'host.name' => 'opentelemetry-test',
           'k8s.cluster.name' => 'opentelemetry-cluster',
