@@ -38,9 +38,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
 
   if spec.respond_to?(:metadata)
-    spec.metadata["changelog_uri"] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-net_http/v#{OpenTelemetry::Instrumentation::Net::HTTP::VERSION}/file.CHANGELOG.html"
-    spec.metadata["source_code_uri"] = "https://github.com/open-telemetry/opentelemetry-ruby/tree/master/instrumentation/net_http"
-    spec.metadata["bug_tracker_uri"] = "https://github.com/open-telemetry/opentelemetry-ruby/issues"
-    spec.metadata["documentation_uri"] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-net_http/v#{OpenTelemetry::Instrumentation::Net::HTTP::VERSION}"
+    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-net_http/v#{OpenTelemetry::Instrumentation::Net::HTTP::VERSION}/file.CHANGELOG.html"
+    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/master/instrumentation/net_http'
+    spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/issues'
+    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-net_http/v#{OpenTelemetry::Instrumentation::Net::HTTP::VERSION}"
   end
 end
