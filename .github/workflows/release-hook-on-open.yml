@@ -1,7 +1,7 @@
 name: "[release hook] Check commit messages"
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, edited, synchronize, reopened]
 
 jobs:
@@ -17,6 +17,8 @@ jobs:
           ruby-version: ${{ env.ruby_version }}
       - name: Checkout repo
         uses: actions/checkout@v2
+        with:
+          ref: refs/pull/${{ github.event.pull_request.number }}/merge
       - name: Install Toys
         run: "gem install --no-document toys"
       - name: Check commit messages
