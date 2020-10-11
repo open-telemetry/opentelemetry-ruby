@@ -35,4 +35,11 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'simplecov', '~> 0.17'
   spec.add_development_dependency 'yard', '~> 0.9'
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
+
+  if spec.respond_to?(:metadata)
+    spec.metadata["changelog_uri"] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-sdk/v#{OpenTelemetry::SDK::VERSION}/file.CHANGELOG.html"
+    spec.metadata["source_code_uri"] = "https://github.com/open-telemetry/opentelemetry-ruby/tree/master/sdk"
+    spec.metadata["bug_tracker_uri"] = "https://github.com/open-telemetry/opentelemetry-ruby/issues"
+    spec.metadata["documentation_uri"] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-sdk/v#{OpenTelemetry::SDK::VERSION}"
+  end
 end
