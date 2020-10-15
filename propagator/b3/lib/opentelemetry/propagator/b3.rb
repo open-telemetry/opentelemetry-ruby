@@ -14,8 +14,23 @@ module OpenTelemetry
   module Propagator
     # Namespace for OpenTelemetry propagator extension libraries
     module B3
+      extend self
+
+      DEBUG_CONTEXT_KEY = Context.create_key('b3-debug-key')
+      PADDING = '0' * 16
+      private_constant :DEBUG_CONTEXT_KEY, :PADDING
+
+      def to_trace_id(id_str)
+        id_str.prepend(PADDING) unless id_str.length == 32
+        Array(id_str).pack('H*')
+      end
+
+      def to_span_id(id_str)
+        Array(id_str).pack('H*')
+      end
     end
   end
 end
 
 require_relative './b3/version'
+require_relative './b3/single/text_map_extractor'
