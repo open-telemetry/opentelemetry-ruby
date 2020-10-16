@@ -4,7 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/trace/propagation/context_keys'
 require 'opentelemetry/trace/propagation/trace_context'
 
 module OpenTelemetry

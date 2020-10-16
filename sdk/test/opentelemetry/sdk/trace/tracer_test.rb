@@ -148,9 +148,9 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       OpenTelemetry::Trace::SpanContext.new(tracestate: 'vendorname=opaquevalue', trace_flags: OpenTelemetry::Trace::TraceFlags::SAMPLED)
     end
     let(:context) do
-      OpenTelemetry::Context.empty.set_value(
-        OpenTelemetry::Trace::Propagation::ContextKeys.current_span_key,
-        OpenTelemetry::Trace::Span.new(span_context: span_context)
+      OpenTelemetry::Trace.context_with_span(
+        OpenTelemetry::Trace::Span.new(span_context: span_context),
+        parent_context: OpenTelemetry::Context.empty
       )
     end
 
@@ -254,7 +254,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
 
     it 'uses the context from parent if supplied' do
       parent = tracer.start_root_span('root')
-      parent_ctx = tracer.with_span(parent) { |_, ctx| ctx }
+      parent_ctx = OpenTelemetry::Trace.with_span(parent) { |_, ctx| ctx }
       span = tracer.start_span('child', with_parent: parent_ctx)
       _(span.parent_span_id).must_equal(parent.context.span_id)
       _(span.context.trace_id).must_equal(parent.context.trace_id)

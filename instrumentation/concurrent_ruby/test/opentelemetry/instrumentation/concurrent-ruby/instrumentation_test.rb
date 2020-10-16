@@ -35,7 +35,7 @@ describe OpenTelemetry::Instrumentation::ConcurrentRuby::Instrumentation do
     it 'propagates context in Future threads' do
       outer_span = tracer.start_span('outer_span')
       inner_span = nil
-      tracer.with_span(outer_span) do
+      OpenTelemetry::Trace.with_span(outer_span) do
         future = Concurrent::Future.new do
           inner_span = tracer.start_span('inner_span')
           inner_span.finish

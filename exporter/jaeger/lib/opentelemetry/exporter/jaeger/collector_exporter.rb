@@ -29,7 +29,6 @@ module OpenTelemetry
           end
           @serializer = ::Thrift::Serializer.new
           @shutdown = false
-          @tracer = OpenTelemetry.tracer_provider.tracer
         end
 
         # Called to export sampled {OpenTelemetry::SDK::Trace::SpanData} structs.
@@ -73,7 +72,7 @@ module OpenTelemetry
         end
 
         def untraced
-          @tracer.with_span(OpenTelemetry::Trace::Span.new) { yield }
+          OpenTelemetry::Trace.with_span(OpenTelemetry::Trace::Span.new) { yield }
         end
 
         def encoded_batches(span_data)

@@ -87,15 +87,11 @@ module OpenTelemetry
                                      },
                                      kind: :server)
 
-            extracted_context.set_value(current_span_key, span)
+            OpenTelemetry::Trace.context_with_span(span, parent_context: extracted_context)
           end
 
           def finish_span(context)
-            context[current_span_key]&.finish if context
-          end
-
-          def current_span_key
-            OpenTelemetry::Trace::Propagation::ContextKeys.current_span_key
+            OpenTelemetry::Trace.current_span(context).finish if context
           end
 
           def tracer

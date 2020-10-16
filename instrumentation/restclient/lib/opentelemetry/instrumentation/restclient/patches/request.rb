@@ -29,7 +29,7 @@ module OpenTelemetry
               kind: :client
             )
 
-            tracer.with_span(span) do
+            OpenTelemetry::Trace.with_span(span) do
               OpenTelemetry.propagation.http.inject(processed_headers)
             end
 
