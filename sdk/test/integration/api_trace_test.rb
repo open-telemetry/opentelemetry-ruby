@@ -52,7 +52,7 @@ describe OpenTelemetry::SDK, 'API_trace' do
     let(:context_with_remote_parent) do
       OpenTelemetry::Trace.context_with_span(
         OpenTelemetry::Trace::Span.new(span_context: remote_span_context),
-        parent_context: OpenTelemetry::Context.empty,
+        parent_context: OpenTelemetry::Context.empty
       )
     end
 
