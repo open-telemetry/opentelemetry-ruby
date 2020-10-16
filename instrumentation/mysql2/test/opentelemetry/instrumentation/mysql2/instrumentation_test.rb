@@ -82,7 +82,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       _(span.attributes['net.peer.name']).must_equal host.to_s
       _(span.attributes['net.peer.port']).must_equal port.to_s
 
-      _(span.status.canonical_code).must_equal(
+      _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
       _(span.events.first.name).must_equal 'exception'
@@ -119,7 +119,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       _(span.attributes['net.peer.name']).must_equal host.to_s
       _(span.attributes['net.peer.port']).must_equal port.to_s
 
-      _(span.status.canonical_code).must_equal(
+      _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
       _(span.events.first.name).must_equal 'exception'

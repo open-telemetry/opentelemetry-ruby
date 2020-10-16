@@ -61,7 +61,7 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
       _(first_span.attributes['http.status_code']).must_equal 200
       _(first_span.attributes['http.status_text']).must_equal 'OK'
       _(first_span.attributes['http.target']).must_equal '/'
-      _(first_span.status.canonical_code).must_equal OpenTelemetry::Trace::Status::OK
+      _(first_span.status.code).must_equal OpenTelemetry::Trace::Status::OK
       _(first_span.attributes['http.url']).must_be_nil
       _(first_span.name).must_equal '/'
       _(first_span.kind).must_equal :server
@@ -184,7 +184,7 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
       assert_raises SimulatedError do
         Rack::MockRequest.new(rack_builder).get('/', env)
       end
-      _(first_span.status.canonical_code).must_equal OpenTelemetry::Trace::Status::ERROR
+      _(first_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
     end
   end
 end

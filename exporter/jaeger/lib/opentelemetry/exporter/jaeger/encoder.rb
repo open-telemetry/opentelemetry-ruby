@@ -119,7 +119,7 @@ module OpenTelemetry
         end
 
         def encoded_status(status)
-          return EMPTY_ARRAY unless status&.canonical_code == OpenTelemetry::Trace::Status::ERROR
+          return EMPTY_ARRAY unless status&.code == OpenTelemetry::Trace::Status::ERROR
 
           Array(
             Thrift::Tag.new(
