@@ -78,7 +78,7 @@ module OpenTelemetry
             )
 
             @otel_original_headers ||= {}
-            tracer.with_span(@otel_span) do
+            OpenTelemetry::Trace.with_span(@otel_span) do
               OpenTelemetry.propagation.http.inject(@otel_original_headers)
             end
             self.headers = @otel_original_headers

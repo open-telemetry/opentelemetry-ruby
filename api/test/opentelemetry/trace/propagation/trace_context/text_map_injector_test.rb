@@ -10,12 +10,6 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapInjector do
   Span = OpenTelemetry::Trace::Span
   SpanContext = OpenTelemetry::Trace::SpanContext
 
-  let(:current_span_key) do
-    OpenTelemetry::Trace::Propagation::ContextKeys.current_span_key
-  end
-  let(:extracted_span_context_key) do
-    OpenTelemetry::Trace::Propagation::ContextKeys.extracted_span_context_key
-  end
   let(:traceparent_key) { 'traceparent' }
   let(:tracestate_key) { 'tracestate' }
   let(:injector) do
@@ -34,18 +28,13 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapInjector do
   let(:context) do
     span_context = SpanContext.new(trace_id: ("\xff" * 16).b, span_id: ("\x11" * 8).b)
     span = Span.new(span_context: span_context)
-    Context.empty.set_value(current_span_key, span)
+    OpenTelemetry::Trace.context_with_span(span, parent_context: Context.empty)
   end
   let(:context_with_tracestate) do
     span_context = SpanContext.new(trace_id: ("\xff" * 16).b, span_id: ("\x11" * 8).b,
                                    tracestate: tracestate_header)
     span = Span.new(span_context: span_context)
-    Context.empty.set_value(current_span_key, span)
-  end
-  let(:context_without_current_span) do
-    span_context = SpanContext.new(trace_id: ("\xff" * 16).b, span_id: ("\x11" * 8).b,
-                                   tracestate: tracestate_header)
-    Context.empty.set_value(extracted_span_context_key, span_context)
+    OpenTelemetry::Trace.context_with_span(span, parent_context: Context.empty)
   end
 
   describe '#inject' do

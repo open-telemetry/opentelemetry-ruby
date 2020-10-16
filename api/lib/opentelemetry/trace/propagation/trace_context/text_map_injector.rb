@@ -45,7 +45,7 @@ module OpenTelemetry
           private
 
           def span_context_from(context)
-            context[ContextKeys.current_span_key]&.context
+            OpenTelemetry::Trace.current_span(context)&.context
           end
         end
       end

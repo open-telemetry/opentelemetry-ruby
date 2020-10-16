@@ -38,7 +38,7 @@ module OpenTelemetry
                   kind: :client
                 ).tap do |span|
                   datum[:otel_span] = span
-                  tracer.with_span(span) do
+                  OpenTelemetry::Trace.with_span(span) do
                     OpenTelemetry.propagation.http.inject(datum[:headers])
                   end
                 end

@@ -53,7 +53,6 @@ module OpenTelemetry
                      when Hash then headers
                      end
           @timeout = timeout.to_f # TODO: use this as a default timeout when we implement timeouts in https://github.com/open-telemetry/opentelemetry-ruby/pull/341
-          @tracer = OpenTelemetry.tracer_provider.tracer
 
           @shutdown = false
         end
@@ -155,7 +154,7 @@ module OpenTelemetry
         end
 
         def untraced
-          @tracer.with_span(OpenTelemetry::Trace::Span.new) { yield }
+          OpenTelemetry::Trace.with_span(OpenTelemetry::Trace::Span.new) { yield }
         end
 
         def backoff?(retry_after: nil, retry_count:, reason:)

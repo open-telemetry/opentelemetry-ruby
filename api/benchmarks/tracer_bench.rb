@@ -10,7 +10,7 @@ require 'opentelemetry'
 tracer = OpenTelemetry::Trace::Tracer.new
 
 parent_span = tracer.start_span('parent')
-parent_context = tracer.context_with_span(parent_span)
+parent_context = OpenTelemetry::Trace.context_with_span(parent_span)
 
 attributes = {
   'component' => 'rack',

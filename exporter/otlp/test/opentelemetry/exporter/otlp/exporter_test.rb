@@ -154,7 +154,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
 
       OpenTelemetry.tracer_provider.add_span_processor(processor)
       root = with_ids(trace_id, root_span_id) { tracer.start_root_span('root', kind: :internal, start_timestamp: start_timestamp).finish(end_timestamp: end_timestamp) }
-      root_ctx = tracer.context_with_span(root)
+      root_ctx = OpenTelemetry::Trace.context_with_span(root)
       span = with_ids(trace_id, child_span_id) { tracer.start_span('child', with_parent: root_ctx, kind: :producer, start_timestamp: start_timestamp + 1, links: [OpenTelemetry::Trace::Link.new(root.context, 'attr' => 4)]) }
       span['b'] = true
       span['f'] = 1.1
@@ -162,9 +162,9 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       span['s'] = 'val'
       span['a'] = [3, 4]
       span.status = OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::ERROR)
-      child_ctx = tracer.context_with_span(span)
+      child_ctx = OpenTelemetry::Trace.context_with_span(span)
       client = with_ids(trace_id, client_span_id) { tracer.start_span('client', with_parent: child_ctx, kind: :client, start_timestamp: start_timestamp + 2).finish(end_timestamp: end_timestamp) }
-      client_ctx = tracer.context_with_span(client)
+      client_ctx = OpenTelemetry::Trace.context_with_span(client)
       with_ids(trace_id, server_span_id) { other_tracer.start_span('server', with_parent: client_ctx, kind: :server, start_timestamp: start_timestamp + 3).finish(end_timestamp: end_timestamp) }
       span.add_event('event', attributes: { 'attr' => 42 }, timestamp: start_timestamp + 4)
       with_ids(trace_id, consumer_span_id) { tracer.start_span('consumer', with_parent: child_ctx, kind: :consumer, start_timestamp: start_timestamp + 5).finish(end_timestamp: end_timestamp) }

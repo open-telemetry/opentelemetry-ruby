@@ -48,7 +48,7 @@ module OpenTelemetry
                                                   tracestate: tracestate,
                                                   remote: true)
             span = Trace::Span.new(span_context: span_context)
-            context.set_value(ContextKeys.current_span_key, span)
+            OpenTelemetry::Trace.context_with_span(span)
           rescue OpenTelemetry::Error
             context
           end

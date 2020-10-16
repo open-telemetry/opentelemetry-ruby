@@ -24,7 +24,7 @@ describe OpenTelemetry::SDK, 'API_trace' do
     before do
       @root_span = tracer.start_root_span('root')
 
-      tracer.with_span(@root_span) do
+      OpenTelemetry::Trace.with_span(@root_span) do
         tracer.in_span('child of root') do |span|
           @child_of_root = span
         end
@@ -50,15 +50,15 @@ describe OpenTelemetry::SDK, 'API_trace' do
 
   describe 'tracing child-of-remote spans' do
     let(:context_with_remote_parent) do
-      OpenTelemetry::Context.empty.set_value(
-        OpenTelemetry::Trace::Propagation::ContextKeys.extracted_span_context_key,
-        remote_span_context
+      OpenTelemetry::Trace.context_with_span(
+        OpenTelemetry::Trace::Span.new(span_context: remote_span_context),
+        parent_context: OpenTelemetry::Context.empty,
       )
     end
 
     before do
       @remote_span = tracer.start_span('remote', with_parent: context_with_remote_parent)
-      @child_of_remote = tracer.start_span('child1', with_parent: tracer.context_with_span(@remote_span))
+      @child_of_remote = tracer.start_span('child1', with_parent: OpenTelemetry::Trace.context_with_span(@remote_span))
     end
 
     it 'has a child' do
@@ -69,7 +69,7 @@ describe OpenTelemetry::SDK, 'API_trace' do
   describe 'tracing child-of-local spans' do
     before do
       @local_parent_span = tracer.start_span('local')
-      parent_ctx = tracer.context_with_span(@local_parent_span)
+      parent_ctx = OpenTelemetry::Trace.context_with_span(@local_parent_span)
       tracer.in_span('child1', with_parent: parent_ctx) do |child|
         @child_of_local = child
       end

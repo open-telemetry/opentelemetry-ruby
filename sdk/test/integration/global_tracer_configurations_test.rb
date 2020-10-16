@@ -54,9 +54,9 @@ describe OpenTelemetry::SDK, 'global_tracer_configurations' do
     let(:mock_tracestate) { 'vendor_key=vendor_value' }
     let(:parent_span_context) { OpenTelemetry::Trace::SpanContext.new(tracestate: mock_tracestate, trace_flags: OpenTelemetry::Trace::TraceFlags::SAMPLED) }
     let(:parent_context) do
-      OpenTelemetry::Context.empty.set_value(
-        OpenTelemetry::Trace::Propagation::ContextKeys.current_span_key,
-        OpenTelemetry::Trace::Span.new(span_context: parent_span_context)
+      OpenTelemetry::Trace.context_with_span(
+        OpenTelemetry::Trace::Span.new(span_context: parent_span_context),
+        parent_context: OpenTelemetry::Context.empty
       )
     end
 

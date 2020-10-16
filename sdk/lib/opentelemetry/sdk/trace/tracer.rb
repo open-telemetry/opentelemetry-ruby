@@ -37,7 +37,7 @@ module OpenTelemetry
           name ||= 'empty'
 
           with_parent ||= Context.current
-          parent_span_context = current_span(with_parent).context
+          parent_span_context = OpenTelemetry::Trace.current_span(with_parent).context
           parent_span_context = nil unless parent_span_context.valid?
           parent_span_id = parent_span_context&.span_id
           tracestate = parent_span_context&.tracestate
