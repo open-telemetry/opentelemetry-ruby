@@ -47,7 +47,7 @@ describe OpenTelemetry::Instrumentation::ConcurrentRuby::Instrumentation do
       outer_span.finish
 
       _(exporter.finished_spans.size).must_equal 2
-      _(inner_span.parent_span_id).must_equal outer_span.context.span_id
+      _(inner_span.parent_span_id).must_equal outer_span.reference.span_id
     end
   end
 end
