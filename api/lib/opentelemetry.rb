@@ -37,8 +37,8 @@ module OpenTelemetry
 
   # @return [Trace::Tracer] delegates to the registered tracer provider and
   #  returns a tracer with the given name and version. If called without without
-  #  arguments, it returns a tracer named 'default'.
-  def tracer(name = 'default', version = nil)
+  #  arguments, it returns an unnamed default tracer.
+  def tracer(name = nil, version = nil)
     tracer_provider.tracer(name, version)
   end
 
