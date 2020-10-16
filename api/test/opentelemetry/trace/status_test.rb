@@ -15,7 +15,7 @@ describe OpenTelemetry::Trace::Status do
     end
 
     def assert_http_to_status(http_code, trace_status_code)
-      _(trace_status.http_to_status(http_code).canonical_code).must_equal trace_status_code
+      _(trace_status.http_to_status(http_code).code).must_equal trace_status_code
     end
 
     it 'maps http 1xx codes' do
@@ -44,10 +44,10 @@ describe OpenTelemetry::Trace::Status do
     end
   end
 
-  describe '.canonical_code' do
+  describe '.code' do
     it 'reflects the value passed in' do
       status = OpenTelemetry::Trace::Status.new(0)
-      _(status.canonical_code).must_equal(0)
+      _(status.code).must_equal(0)
     end
   end
 
@@ -66,22 +66,22 @@ describe OpenTelemetry::Trace::Status do
   describe '.initialize' do
     it 'initializes a Status with required arguments' do
       status = OpenTelemetry::Trace::Status.new(0, description: 'this is ok')
-      _(status.canonical_code).must_equal(0)
+      _(status.code).must_equal(0)
       _(status.description).must_equal('this is ok')
     end
   end
 
   describe '.ok?' do
-    it 'reflects canonical_code when OK' do
+    it 'reflects code when OK' do
       ok = OpenTelemetry::Trace::Status::OK
       status = OpenTelemetry::Trace::Status.new(ok)
       _(status.ok?).must_equal(true)
     end
 
-    it 'reflects canonical_code when not OK' do
-      canonical_codes = OpenTelemetry::Trace::Status.constants - %i[OK UNSET]
-      canonical_codes.each do |canonical_code|
-        code = OpenTelemetry::Trace::Status.const_get(canonical_code)
+    it 'reflects code when not OK' do
+      codes = OpenTelemetry::Trace::Status.constants - %i[OK UNSET]
+      codes.each do |code|
+        code = OpenTelemetry::Trace::Status.const_get(code)
         status = OpenTelemetry::Trace::Status.new(code)
         _(status.ok?).must_equal(false)
       end

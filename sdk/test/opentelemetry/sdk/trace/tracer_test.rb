@@ -302,7 +302,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
 
       _(span.events[0].name).must_equal('exception')
       _(span.events[0].attributes['exception.message']).must_equal('this is fine')
-      _(span.status.canonical_code).must_equal(OpenTelemetry::Trace::Status::ERROR)
+      _(span.status.code).must_equal(OpenTelemetry::Trace::Status::ERROR)
       _(span.status.description).must_equal('Unhandled exception of type: RuntimeError')
     end
   end

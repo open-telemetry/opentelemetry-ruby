@@ -94,7 +94,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(span.attributes['http.target']).must_equal '/timeout'
       _(span.attributes['peer.hostname']).must_equal 'example.com'
       _(span.attributes['peer.port']).must_equal 443
-      _(span.status.canonical_code).must_equal(
+      _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
       _(span.status.description).must_equal(

@@ -243,7 +243,7 @@ module OpenTelemetry
             status: span_data.status&.yield_self do |status|
               # TODO: fix this based on spec update.
               Opentelemetry::Proto::Trace::V1::Status.new(
-                code: status.canonical_code == OpenTelemetry::Trace::Status::ERROR ? Opentelemetry::Proto::Trace::V1::Status::StatusCode::UnknownError : Opentelemetry::Proto::Trace::V1::Status::StatusCode::Ok,
+                code: status.code == OpenTelemetry::Trace::Status::ERROR ? Opentelemetry::Proto::Trace::V1::Status::StatusCode::UnknownError : Opentelemetry::Proto::Trace::V1::Status::StatusCode::Ok,
                 message: status.description
               )
             end
