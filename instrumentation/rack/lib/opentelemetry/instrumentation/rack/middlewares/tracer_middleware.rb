@@ -91,7 +91,7 @@ module OpenTelemetry
           end
 
           def finish_span(context)
-            OpenTelemetry::Trace.current_span(context)&.finish if context
+            OpenTelemetry::Trace.current_span(context).finish if context
           end
 
           def tracer
