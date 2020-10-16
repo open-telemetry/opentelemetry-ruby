@@ -155,7 +155,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       OpenTelemetry.tracer_provider.add_span_processor(processor)
       root = with_ids(trace_id, root_span_id) { tracer.start_root_span('root', kind: :internal, start_timestamp: start_timestamp).finish(end_timestamp: end_timestamp) }
       root_ctx = OpenTelemetry::Trace.context_with_span(root)
-      span = with_ids(trace_id, child_span_id) { tracer.start_span('child', with_parent: root_ctx, kind: :producer, start_timestamp: start_timestamp + 1, links: [OpenTelemetry::Trace::Link.new(root.context, 'attr' => 4)]) }
+      span = with_ids(trace_id, child_span_id) { tracer.start_span('child', with_parent: root_ctx, kind: :producer, start_timestamp: start_timestamp + 1, links: [OpenTelemetry::Trace::Link.new(root.reference, 'attr' => 4)]) }
       span['b'] = true
       span['f'] = 1.1
       span['i'] = 2

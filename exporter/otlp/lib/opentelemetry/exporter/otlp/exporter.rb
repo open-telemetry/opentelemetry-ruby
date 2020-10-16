@@ -232,9 +232,9 @@ module OpenTelemetry
             dropped_events_count: span_data.total_recorded_events - span_data.events&.size.to_i,
             links: span_data.links&.map do |link|
               Opentelemetry::Proto::Trace::V1::Span::Link.new(
-                trace_id: link.context.trace_id,
-                span_id: link.context.span_id,
-                trace_state: link.context.tracestate,
+                trace_id: link.reference.trace_id,
+                span_id: link.reference.span_id,
+                trace_state: link.reference.tracestate,
                 attributes: link.attributes&.map { |k, v| as_otlp_key_value(k, v) }
                 # TODO: track dropped_attributes_count in Span#trim_links
               )
