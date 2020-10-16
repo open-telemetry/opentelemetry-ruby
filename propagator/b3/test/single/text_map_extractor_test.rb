@@ -60,6 +60,16 @@ describe OpenTelemetry::Propagator::B3::Single::TextMapExtractor do
       _(extracted_context.hex_trace_id).must_equal('000000000000000064fe8b2a57d3eff7')
     end
 
+    it 'converts debug flag to sampled' do
+      parent_context = OpenTelemetry::Context.empty
+      carrier = { 'b3' => '80f198ee56343ba864fe8b2a57d3eff7-e457b5a2e4d86bd1-d' }
+
+      context = extractor.extract(carrier, parent_context)
+      extracted_context = tracer.current_span(context).context
+
+      _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::SAMPLED)
+    end
+
     it 'handles malformed trace id' do
       parent_context = OpenTelemetry::Context.empty
       carrier = { 'b3' => '80f198ee56343ba864feb2a-e457b5a2e4d86bd1' }

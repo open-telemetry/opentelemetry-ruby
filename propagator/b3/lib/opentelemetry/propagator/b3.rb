@@ -34,3 +34,4 @@ end
 
 require_relative './b3/version'
 require_relative './b3/single/text_map_extractor'
+require_relative './b3/single/text_map_injector'
