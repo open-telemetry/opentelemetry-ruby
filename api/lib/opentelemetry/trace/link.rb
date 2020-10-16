@@ -15,10 +15,10 @@ module OpenTelemetry
 
       private_constant :EMPTY_ATTRIBUTES
 
-      # Returns the {SpanContext} for this link
+      # Returns the {SpanReference} for this link
       #
-      # @return [SpanContext]
-      attr_reader :context
+      # @return [SpanReference]
+      attr_reader :reference
 
       # Returns the frozen attributes for this link.
       #
@@ -27,19 +27,19 @@ module OpenTelemetry
 
       # Returns a new immutable {Link}.
       #
-      # @param [SpanContext] span_context The context of the linked {Span}.
+      # @param [SpanReference] span_reference The reference to the linked {Span}.
       # @param [optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}]
       #   attributes A hash of attributes for this link. Attributes will be
       #   frozen during Link initialization.
       # @return [Link]
-      def initialize(span_context, attributes = nil)
-        @context = span_context
+      def initialize(span_reference, attributes = nil)
+        @reference = span_reference
         @attributes = attributes.freeze || EMPTY_ATTRIBUTES
       end
 
       # Returns true if two {Link}s are equal.
       def ==(other)
-        other.context == @context && other.attributes == @attributes
+        other.reference == @reference && other.attributes == @attributes
       end
     end
   end

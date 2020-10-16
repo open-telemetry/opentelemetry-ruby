@@ -49,10 +49,10 @@ module OpenTelemetry
       #
       # @return [Span]
       def start_span(name, with_parent: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
-        span_context = OpenTelemetry::Trace.current_span(with_parent).context
+        span_reference = OpenTelemetry::Trace.current_span(with_parent).reference
 
-        if span_context.valid?
-          Span.new(span_context: span_context)
+        if span_reference.valid?
+          Span.new(span_reference: span_reference)
         else
           Span.new
         end

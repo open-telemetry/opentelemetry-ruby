@@ -16,8 +16,8 @@ describe OpenTelemetry::SDK, 'API_trace' do
     end
   end
   let(:tracer) { provider.tracer(__FILE__, sdk::VERSION) }
-  let(:remote_span_context) do
-    OpenTelemetry::Trace::SpanContext.new(remote: true, trace_flags: OpenTelemetry::Trace::TraceFlags::SAMPLED)
+  let(:remote_span_reference) do
+    OpenTelemetry::Trace::SpanReference.new(remote: true, trace_flags: OpenTelemetry::Trace::TraceFlags::SAMPLED)
   end
 
   describe 'tracing root spans' do
@@ -51,7 +51,7 @@ describe OpenTelemetry::SDK, 'API_trace' do
   describe 'tracing child-of-remote spans' do
     let(:context_with_remote_parent) do
       OpenTelemetry::Trace.context_with_span(
-        OpenTelemetry::Trace::Span.new(span_context: remote_span_context),
+        OpenTelemetry::Trace::Span.new(span_reference: remote_span_reference),
         parent_context: OpenTelemetry::Context.empty
       )
     end
@@ -90,7 +90,7 @@ describe OpenTelemetry::SDK, 'API_trace' do
     let(:number_of_links) { 3 }
     let(:links) do
       Array.new(number_of_links) do
-        OpenTelemetry::Trace::Link.new(remote_span_context, attributes)
+        OpenTelemetry::Trace::Link.new(remote_span_reference, attributes)
       end
     end
 

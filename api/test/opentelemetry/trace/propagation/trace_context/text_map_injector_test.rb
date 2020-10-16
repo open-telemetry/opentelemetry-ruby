@@ -8,7 +8,7 @@ require 'test_helper'
 
 describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapInjector do
   Span = OpenTelemetry::Trace::Span
-  SpanContext = OpenTelemetry::Trace::SpanContext
+  SpanReference = OpenTelemetry::Trace::SpanReference
 
   let(:traceparent_key) { 'traceparent' }
   let(:tracestate_key) { 'tracestate' }
@@ -26,14 +26,14 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapInjector do
   end
   let(:tracestate_header) { 'vendorname=opaquevalue' }
   let(:context) do
-    span_context = SpanContext.new(trace_id: ("\xff" * 16).b, span_id: ("\x11" * 8).b)
-    span = Span.new(span_context: span_context)
+    span_reference = SpanReference.new(trace_id: ("\xff" * 16).b, span_id: ("\x11" * 8).b)
+    span = Span.new(span_reference: span_reference)
     OpenTelemetry::Trace.context_with_span(span, parent_context: Context.empty)
   end
   let(:context_with_tracestate) do
-    span_context = SpanContext.new(trace_id: ("\xff" * 16).b, span_id: ("\x11" * 8).b,
-                                   tracestate: tracestate_header)
-    span = Span.new(span_context: span_context)
+    span_reference = SpanReference.new(trace_id: ("\xff" * 16).b, span_id: ("\x11" * 8).b,
+                                       tracestate: tracestate_header)
+    span = Span.new(span_reference: span_reference)
     OpenTelemetry::Trace.context_with_span(span, parent_context: Context.empty)
   end
 

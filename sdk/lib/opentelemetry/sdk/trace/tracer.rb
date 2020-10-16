@@ -37,14 +37,14 @@ module OpenTelemetry
           name ||= 'empty'
 
           with_parent ||= Context.current
-          parent_span_context = OpenTelemetry::Trace.current_span(with_parent).context
-          parent_span_context = nil unless parent_span_context.valid?
-          parent_span_id = parent_span_context&.span_id
-          tracestate = parent_span_context&.tracestate
-          trace_id = parent_span_context&.trace_id
+          parent_span_reference = OpenTelemetry::Trace.current_span(with_parent).reference
+          parent_span_reference = nil unless parent_span_reference.valid?
+          parent_span_id = parent_span_reference&.span_id
+          tracestate = parent_span_reference&.tracestate
+          trace_id = parent_span_reference&.trace_id
           trace_id ||= OpenTelemetry::Trace.generate_trace_id
           sampler = tracer_provider.active_trace_config.sampler
-          result = sampler.should_sample?(trace_id: trace_id, parent_context: parent_span_context, links: links, name: name, kind: kind, attributes: attributes)
+          result = sampler.should_sample?(trace_id: trace_id, parent_reference: parent_span_reference, links: links, name: name, kind: kind, attributes: attributes)
           internal_create_span(result, name, kind, trace_id, parent_span_id, attributes, links, start_timestamp, tracestate, with_parent)
         end
 
@@ -53,10 +53,10 @@ module OpenTelemetry
         def internal_create_span(result, name, kind, trace_id, parent_span_id, attributes, links, start_timestamp, tracestate, parent_context) # rubocop:disable Metrics/AbcSize
           if result.recording? && !tracer_provider.stopped?
             trace_flags = result.sampled? ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
-            context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, trace_flags: trace_flags, tracestate: tracestate)
+            reference = OpenTelemetry::Trace::SpanReference.new(trace_id: trace_id, trace_flags: trace_flags, tracestate: tracestate)
             attributes = attributes&.merge(result.attributes) || result.attributes
             Span.new(
-              context,
+              reference,
               parent_context,
               name,
               kind,
@@ -70,7 +70,7 @@ module OpenTelemetry
               @instrumentation_library
             )
           else
-            OpenTelemetry::Trace::Span.new(span_context: OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id))
+            OpenTelemetry::Trace::Span.new(span_reference: OpenTelemetry::Trace::SpanReference.new(trace_id: trace_id))
           end
         end
       end

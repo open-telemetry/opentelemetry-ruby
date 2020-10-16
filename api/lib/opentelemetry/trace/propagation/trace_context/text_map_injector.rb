@@ -33,19 +33,19 @@ module OpenTelemetry
           #   carrier, header key, header value to the setter.
           # @return [Object] the carrier with context injected
           def inject(carrier, context, &setter)
-            return carrier unless (span_context = span_context_from(context))
+            return carrier unless (span_reference = span_reference_from(context)).valid?
 
             setter ||= DEFAULT_SETTER
-            setter.call(carrier, @traceparent_key, TraceParent.from_context(span_context).to_s)
-            setter.call(carrier, @tracestate_key, span_context.tracestate) unless span_context.tracestate.nil?
+            setter.call(carrier, @traceparent_key, TraceParent.from_span_reference(span_reference).to_s)
+            setter.call(carrier, @tracestate_key, span_reference.tracestate) unless span_reference.tracestate.nil?
 
             carrier
           end
 
           private
 
-          def span_context_from(context)
-            OpenTelemetry::Trace.current_span(context)&.context
+          def span_reference_from(context)
+            OpenTelemetry::Trace.current_span(context).reference
           end
         end
       end

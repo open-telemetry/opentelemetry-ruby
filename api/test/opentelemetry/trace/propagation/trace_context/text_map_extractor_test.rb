@@ -41,24 +41,24 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapExtractor do
       _(yielded_keys.sort).must_equal([traceparent_key, tracestate_key])
     end
 
-    it 'returns a remote SpanContext with fields from the traceparent and tracestate headers' do
+    it 'returns a remote SpanReference with fields from the traceparent and tracestate headers' do
       ctx = extractor.extract(carrier, context) { |c, k| c[k] }
-      span_context = OpenTelemetry::Trace.current_span(ctx).context
-      _(span_context).must_be :remote?
-      _(span_context.trace_id).must_equal(("\0" * 15 + "\xaa").b)
-      _(span_context.span_id).must_equal(("\0" * 7 + "\xea").b)
-      _(span_context.trace_flags).must_be :sampled?
-      _(span_context.tracestate).must_equal('vendorname=opaquevalue')
+      span_reference = OpenTelemetry::Trace.current_span(ctx).reference
+      _(span_reference).must_be :remote?
+      _(span_reference.trace_id).must_equal(("\0" * 15 + "\xaa").b)
+      _(span_reference.span_id).must_equal(("\0" * 7 + "\xea").b)
+      _(span_reference.trace_flags).must_be :sampled?
+      _(span_reference.tracestate).must_equal('vendorname=opaquevalue')
     end
 
     it 'uses a default getter if one is not provided' do
       ctx = extractor.extract(carrier, context)
-      span_context = OpenTelemetry::Trace.current_span(ctx).context
-      _(span_context).must_be :remote?
-      _(span_context.trace_id).must_equal(("\0" * 15 + "\xaa").b)
-      _(span_context.span_id).must_equal(("\0" * 7 + "\xea").b)
-      _(span_context.trace_flags).must_be :sampled?
-      _(span_context.tracestate).must_equal('vendorname=opaquevalue')
+      span_reference = OpenTelemetry::Trace.current_span(ctx).reference
+      _(span_reference).must_be :remote?
+      _(span_reference.trace_id).must_equal(("\0" * 15 + "\xaa").b)
+      _(span_reference.span_id).must_equal(("\0" * 7 + "\xea").b)
+      _(span_reference.trace_flags).must_be :sampled?
+      _(span_reference.tracestate).must_equal('vendorname=opaquevalue')
     end
 
     it 'returns original context on error' do

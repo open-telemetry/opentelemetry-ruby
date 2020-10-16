@@ -10,7 +10,7 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TraceParent do
   Trace = OpenTelemetry::Trace
   let(:good) do
     flags = Trace::TraceFlags.from_byte(1)
-    TraceParent.from_context(Trace::SpanContext.new(trace_flags: flags))
+    TraceParent.from_span_reference(Trace::SpanReference.new(trace_flags: flags))
   end
 
   describe '.to_s' do
@@ -25,8 +25,8 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TraceParent do
   end
 
   it 'should make a traceparent from a span context' do
-    sp = OpenTelemetry::Trace::SpanContext.new
-    tp = TraceParent.from_context(sp)
+    sp = OpenTelemetry::Trace::SpanReference.new
+    tp = TraceParent.from_span_reference(sp)
 
     _(sp.trace_id).must_equal tp.trace_id
     _(sp.span_id).must_equal  tp.span_id

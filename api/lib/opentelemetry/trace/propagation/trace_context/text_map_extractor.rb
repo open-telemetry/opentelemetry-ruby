@@ -23,8 +23,8 @@ module OpenTelemetry
             @tracestate_key = tracestate_key
           end
 
-          # Extract a remote {Trace::SpanContext} from the supplied carrier.
-          # Invalid headers will result in a new, valid, non-remote {Trace::SpanContext}.
+          # Extract a remote {Trace::SpanReference} from the supplied carrier.
+          # Invalid headers will result in a new, valid, non-remote {Trace::SpanReference}.
           #
           # @param [Carrier] carrier The carrier to get the header from.
           # @param [Context] context The context to be updated with extracted context
@@ -42,12 +42,12 @@ module OpenTelemetry
 
             tracestate = getter.call(carrier, @tracestate_key)
 
-            span_context = Trace::SpanContext.new(trace_id: tp.trace_id,
-                                                  span_id: tp.span_id,
-                                                  trace_flags: tp.flags,
-                                                  tracestate: tracestate,
-                                                  remote: true)
-            span = Trace::Span.new(span_context: span_context)
+            span_reference = Trace::SpanReference.new(trace_id: tp.trace_id,
+                                                      span_id: tp.span_id,
+                                                      trace_flags: tp.flags,
+                                                      tracestate: tracestate,
+                                                      remote: true)
+            span = Trace::Span.new(span_reference: span_reference)
             OpenTelemetry::Trace.context_with_span(span)
           rescue OpenTelemetry::Error
             context

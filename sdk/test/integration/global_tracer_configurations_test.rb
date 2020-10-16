@@ -52,10 +52,10 @@ describe OpenTelemetry::SDK, 'global_tracer_configurations' do
 
   describe 'using tracestate in extracted span context' do
     let(:mock_tracestate) { 'vendor_key=vendor_value' }
-    let(:parent_span_context) { OpenTelemetry::Trace::SpanContext.new(tracestate: mock_tracestate, trace_flags: OpenTelemetry::Trace::TraceFlags::SAMPLED) }
+    let(:parent_span_reference) { OpenTelemetry::Trace::SpanReference.new(tracestate: mock_tracestate, trace_flags: OpenTelemetry::Trace::TraceFlags::SAMPLED) }
     let(:parent_context) do
       OpenTelemetry::Trace.context_with_span(
-        OpenTelemetry::Trace::Span.new(span_context: parent_span_context),
+        OpenTelemetry::Trace::Span.new(span_reference: parent_span_reference),
         parent_context: OpenTelemetry::Context.empty
       )
     end

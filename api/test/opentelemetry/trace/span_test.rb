@@ -7,14 +7,14 @@
 require 'test_helper'
 
 describe OpenTelemetry::Trace::Span do
-  let(:span_context) do
-    OpenTelemetry::Trace::SpanContext.new
+  let(:span_reference) do
+    OpenTelemetry::Trace::SpanReference.new
   end
-  let(:span) { build_span(span_context: span_context) }
+  let(:span) { build_span(span_reference: span_reference) }
 
-  describe '#context' do
-    it 'returns span context' do
-      _(span.context).must_equal(span_context)
+  describe '#reference' do
+    it 'returns span reference' do
+      _(span.reference).must_equal(span_reference)
     end
   end
 

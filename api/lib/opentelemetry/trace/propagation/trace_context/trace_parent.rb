@@ -9,7 +9,7 @@ module OpenTelemetry
       module TraceContext
         # A TraceParent is an implementation of the W3C trace context specification
         # https://www.w3.org/TR/trace-context/
-        # {Trace::SpanContext}
+        # {Trace::SpanReference}
         class TraceParent
           InvalidFormatError = Class.new(Error)
           InvalidVersionError = Class.new(Error)
@@ -25,16 +25,16 @@ module OpenTelemetry
           REGEXP = /^(?<version>[A-Fa-f0-9]{2})-(?<trace_id>[A-Fa-f0-9]{32})-(?<span_id>[A-Fa-f0-9]{16})-(?<flags>[A-Fa-f0-9]{2})(?<ignored>-.*)?$/.freeze
           private_constant :REGEXP
 
-          INVALID_TRACE_ID = OpenTelemetry::Trace::SpanContext::INVALID.hex_trace_id
-          INVALID_SPAN_ID = OpenTelemetry::Trace::SpanContext::INVALID.hex_span_id
+          INVALID_TRACE_ID = OpenTelemetry::Trace::SpanReference::INVALID.hex_trace_id
+          INVALID_SPAN_ID = OpenTelemetry::Trace::SpanReference::INVALID.hex_span_id
           private_constant :INVALID_TRACE_ID, :INVALID_SPAN_ID
 
           class << self
-            # Creates a new {TraceParent} from a supplied {Trace::SpanContext}
-            # @param [SpanContext] ctx The context
+            # Creates a new {TraceParent} from a supplied {Trace::SpanReference}
+            # @param [SpanReference] reference The span reference
             # @return [TraceParent] a trace parent
-            def from_context(ctx)
-              new(trace_id: ctx.trace_id, span_id: ctx.span_id, flags: ctx.trace_flags)
+            def from_span_reference(reference)
+              new(trace_id: reference.trace_id, span_id: reference.span_id, flags: reference.trace_flags)
             end
 
             # Deserializes the {TraceParent} from the string representation

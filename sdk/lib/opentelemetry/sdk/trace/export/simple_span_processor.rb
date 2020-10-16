@@ -47,7 +47,7 @@ module OpenTelemetry
           #
           # @param [Span] span the {Span} that just ended.
           def on_finish(span)
-            return unless span.context.trace_flags.sampled?
+            return unless span.reference.trace_flags.sampled?
 
             @span_exporter&.export([span.to_span_data])
           rescue => e # rubocop:disable Style/RescueStandardError

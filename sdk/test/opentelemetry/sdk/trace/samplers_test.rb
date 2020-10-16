@@ -27,22 +27,22 @@ describe OpenTelemetry::SDK::Trace::Samplers do
     let(:result) { Result.new(decision: Decision::RECORD_AND_SAMPLE) }
     let(:sampled) { OpenTelemetry::Trace::TraceFlags.from_byte(1) }
     let(:not_sampled) { OpenTelemetry::Trace::TraceFlags.from_byte(0) }
-    let(:remote_sampled_parent_context) { OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, remote: true, trace_flags: sampled) }
-    let(:remote_not_sampled_parent_context) { OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, remote: true, trace_flags: not_sampled) }
-    let(:local_sampled_parent_context) { OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, remote: false, trace_flags: sampled) }
-    let(:local_not_sampled_parent_context) { OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, remote: false, trace_flags: not_sampled) }
+    let(:remote_sampled_parent_reference) { OpenTelemetry::Trace::SpanReference.new(trace_id: trace_id, remote: true, trace_flags: sampled) }
+    let(:remote_not_sampled_parent_reference) { OpenTelemetry::Trace::SpanReference.new(trace_id: trace_id, remote: true, trace_flags: not_sampled) }
+    let(:local_sampled_parent_reference) { OpenTelemetry::Trace::SpanReference.new(trace_id: trace_id, remote: false, trace_flags: sampled) }
+    let(:local_not_sampled_parent_reference) { OpenTelemetry::Trace::SpanReference.new(trace_id: trace_id, remote: false, trace_flags: not_sampled) }
 
     it 'provides defaults for parent samplers' do
       sampler = Samplers.parent_based(root: not_a_sampler)
-      _(call_sampler(sampler, parent_context: remote_sampled_parent_context)).must_be :sampled?
-      _(call_sampler(sampler, parent_context: remote_not_sampled_parent_context)).wont_be :sampled?
-      _(call_sampler(sampler, parent_context: local_sampled_parent_context)).must_be :sampled?
-      _(call_sampler(sampler, parent_context: local_not_sampled_parent_context)).wont_be :sampled?
+      _(call_sampler(sampler, parent_reference: remote_sampled_parent_reference)).must_be :sampled?
+      _(call_sampler(sampler, parent_reference: remote_not_sampled_parent_reference)).wont_be :sampled?
+      _(call_sampler(sampler, parent_reference: local_sampled_parent_reference)).must_be :sampled?
+      _(call_sampler(sampler, parent_reference: local_not_sampled_parent_reference)).wont_be :sampled?
     end
 
     it 'delegates sampling of remote sampled spans' do
       mock_sampler = Minitest::Mock.new
-      mock_sampler.expect(:should_sample?, result, [{ trace_id: trace_id, parent_context: remote_sampled_parent_context, links: nil, name: nil, kind: nil, attributes: nil }])
+      mock_sampler.expect(:should_sample?, result, [{ trace_id: trace_id, parent_reference: remote_sampled_parent_reference, links: nil, name: nil, kind: nil, attributes: nil }])
       sampler = Samplers.parent_based(
         root: not_a_sampler,
         remote_parent_sampled: mock_sampler,
@@ -51,14 +51,14 @@ describe OpenTelemetry::SDK::Trace::Samplers do
         local_parent_not_sampled: not_a_sampler
       )
       OpenTelemetry::Trace.stub :generate_trace_id, trace_id do
-        call_sampler(sampler, parent_context: remote_sampled_parent_context)
+        call_sampler(sampler, parent_reference: remote_sampled_parent_reference)
       end
       mock_sampler.verify
     end
 
     it 'delegates sampling of remote not sampled spans' do
       mock_sampler = Minitest::Mock.new
-      mock_sampler.expect(:should_sample?, result, [{ trace_id: trace_id, parent_context: remote_not_sampled_parent_context, links: nil, name: nil, kind: nil, attributes: nil }])
+      mock_sampler.expect(:should_sample?, result, [{ trace_id: trace_id, parent_reference: remote_not_sampled_parent_reference, links: nil, name: nil, kind: nil, attributes: nil }])
       sampler = Samplers.parent_based(
         root: not_a_sampler,
         remote_parent_sampled: not_a_sampler,
@@ -67,14 +67,14 @@ describe OpenTelemetry::SDK::Trace::Samplers do
         local_parent_not_sampled: not_a_sampler
       )
       OpenTelemetry::Trace.stub :generate_trace_id, trace_id do
-        call_sampler(sampler, parent_context: remote_not_sampled_parent_context)
+        call_sampler(sampler, parent_reference: remote_not_sampled_parent_reference)
       end
       mock_sampler.verify
     end
 
     it 'delegates sampling of local sampled spans' do
       mock_sampler = Minitest::Mock.new
-      mock_sampler.expect(:should_sample?, result, [{ trace_id: trace_id, parent_context: local_sampled_parent_context, links: nil, name: nil, kind: nil, attributes: nil }])
+      mock_sampler.expect(:should_sample?, result, [{ trace_id: trace_id, parent_reference: local_sampled_parent_reference, links: nil, name: nil, kind: nil, attributes: nil }])
       sampler = Samplers.parent_based(
         root: not_a_sampler,
         remote_parent_sampled: not_a_sampler,
@@ -83,14 +83,14 @@ describe OpenTelemetry::SDK::Trace::Samplers do
         local_parent_not_sampled: not_a_sampler
       )
       OpenTelemetry::Trace.stub :generate_trace_id, trace_id do
-        call_sampler(sampler, parent_context: local_sampled_parent_context)
+        call_sampler(sampler, parent_reference: local_sampled_parent_reference)
       end
       mock_sampler.verify
     end
 
     it 'delegates sampling of local not sampled spans' do
       mock_sampler = Minitest::Mock.new
-      mock_sampler.expect(:should_sample?, result, [{ trace_id: trace_id, parent_context: local_not_sampled_parent_context, links: nil, name: nil, kind: nil, attributes: nil }])
+      mock_sampler.expect(:should_sample?, result, [{ trace_id: trace_id, parent_reference: local_not_sampled_parent_reference, links: nil, name: nil, kind: nil, attributes: nil }])
       sampler = Samplers.parent_based(
         root: not_a_sampler,
         remote_parent_sampled: not_a_sampler,
@@ -99,14 +99,14 @@ describe OpenTelemetry::SDK::Trace::Samplers do
         local_parent_not_sampled: mock_sampler
       )
       OpenTelemetry::Trace.stub :generate_trace_id, trace_id do
-        call_sampler(sampler, parent_context: local_not_sampled_parent_context)
+        call_sampler(sampler, parent_reference: local_not_sampled_parent_reference)
       end
       mock_sampler.verify
     end
 
     it 'delegates sampling of root spans' do
       mock_sampler = Minitest::Mock.new
-      mock_sampler.expect(:should_sample?, result, [{ trace_id: trace_id, parent_context: nil, links: nil, name: nil, kind: nil, attributes: nil }])
+      mock_sampler.expect(:should_sample?, result, [{ trace_id: trace_id, parent_reference: nil, links: nil, name: nil, kind: nil, attributes: nil }])
       sampler = Samplers.parent_based(
         root: mock_sampler,
         remote_parent_sampled: not_a_sampler,
@@ -115,7 +115,7 @@ describe OpenTelemetry::SDK::Trace::Samplers do
         local_parent_not_sampled: not_a_sampler
       )
       OpenTelemetry::Trace.stub :generate_trace_id, trace_id do
-        call_sampler(sampler, parent_context: nil)
+        call_sampler(sampler, parent_reference: nil)
       end
       mock_sampler.verify
     end
@@ -123,15 +123,15 @@ describe OpenTelemetry::SDK::Trace::Samplers do
 
   describe '.trace_id_ratio_based' do
     let(:sampler) { Samplers.trace_id_ratio_based(Float::MIN) }
-    let(:context) do
-      OpenTelemetry::Trace::SpanContext.new(
+    let(:reference) do
+      OpenTelemetry::Trace::SpanReference.new(
         trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(1)
       )
     end
 
     it 'ignores parent sampling' do
       sampler = Samplers.trace_id_ratio_based(Float::MIN)
-      result = call_sampler(sampler, parent_context: context, trace_id: trace_id(123))
+      result = call_sampler(sampler, parent_reference: reference, trace_id: trace_id(123))
       _(result).wont_be :sampled?
     end
 
@@ -187,10 +187,10 @@ describe OpenTelemetry::SDK::Trace::Samplers do
     [first, second].pack('Q>Q>')
   end
 
-  def call_sampler(sampler, trace_id: nil, parent_context: nil, links: nil, name: nil, kind: nil, attributes: nil)
+  def call_sampler(sampler, trace_id: nil, parent_reference: nil, links: nil, name: nil, kind: nil, attributes: nil)
     sampler.should_sample?(
       trace_id: trace_id || OpenTelemetry::Trace.generate_trace_id,
-      parent_context: parent_context,
+      parent_reference: parent_reference,
       links: links,
       name: name,
       kind: kind,

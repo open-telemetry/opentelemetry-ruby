@@ -22,7 +22,7 @@ module OpenTelemetry
           # @api private
           #
           # See {Samplers}.
-          def should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:)
+          def should_sample?(trace_id:, parent_reference:, links:, name:, kind:, attributes:)
             # All arguments ignored for sampling decision.
             @result
           end

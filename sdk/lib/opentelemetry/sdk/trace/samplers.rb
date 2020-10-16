@@ -19,14 +19,14 @@ module OpenTelemetry
       #
       # Custom samplers can be provided by SDK users. The required interface is:
       #
-      #   should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:) -> Result
+      #   should_sample?(trace_id:, parent_reference:, links:, name:, kind:, attributes:) -> Result
       #   description -> String
       #
       # Where:
       #
       # @param [String] trace_id The trace_id of the {Span} to be created.
-      # @param [OpenTelemetry::Trace::SpanContext] parent_context The
-      #   {OpenTelemetry::Trace::SpanContext} of a parent span, typically
+      # @param [OpenTelemetry::Trace::SpanReference] parent_reference The
+      #   {OpenTelemetry::Trace::SpanReference} of a parent span, typically
       #   extracted from the wire. Can be nil for a root span.
       # @param [Enumerable<Link>] links A collection of links to be associated
       #   with the {Span} to be created. Can be nil.

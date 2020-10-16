@@ -19,18 +19,18 @@ module OpenTelemetry
     #
     # {Span} must be ended by calling {#finish}.
     class Span
-      # Retrieve the spans SpanContext
+      # Retrieve the spans SpanReference
       #
       # The returned value may be used even after the Span is finished.
       #
-      # @return [SpanContext]
-      attr_reader :context
+      # @return [SpanReference]
+      attr_reader :reference
 
       # Spans must be created using {Tracer}. This is for internal use only.
       #
       # @api private
-      def initialize(span_context: nil)
-        @context = span_context || SpanContext.new
+      def initialize(span_reference: nil)
+        @reference = span_reference || SpanReference.new
       end
 
       # Return whether this span is recording.
@@ -131,7 +131,7 @@ module OpenTelemetry
         self
       end
 
-      INVALID = new(span_context: SpanContext::INVALID)
+      INVALID = new(span_reference: SpanReference::INVALID)
     end
   end
 end

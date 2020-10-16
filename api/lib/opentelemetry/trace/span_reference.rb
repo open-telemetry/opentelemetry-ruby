@@ -6,21 +6,21 @@
 
 module OpenTelemetry
   module Trace
-    # A SpanContext contains the state that must propagate to child {Span}s and across process boundaries.
+    # A SpanReference contains the state that must propagate to child {Span}s and across process boundaries.
     # It contains the identifiers (a trace ID and span ID) associated with the {Span}, a set of
-    # {TraceFlags}, a system-specific tracestate, and a boolean indicating that the SpanContext was
+    # {TraceFlags}, a system-specific tracestate, and a boolean indicating that the SpanReference was
     # extracted from the wire.
-    class SpanContext
+    class SpanReference
       attr_reader :trace_flags, :tracestate
 
-      # Returns a new {SpanContext}.
+      # Returns a new {SpanReference}.
       #
       # @param [optional String] trace_id The trace ID associated with a {Span}.
       # @param [optional String] span_id The span ID associated with a {Span}.
       # @param [optional TraceFlags] trace_flags The trace flags associated with a {Span}.
       # @param [optional String] tracestate The tracestate associated with a {Span}. May be nil.
-      # @param [optional Boolean] remote Whether the {SpanContext} was extracted from the wire.
-      # @return [SpanContext]
+      # @param [optional Boolean] remote Whether the {SpanReference} was extracted from the wire.
+      # @return [SpanReference]
       def initialize(
         trace_id: Trace.generate_trace_id,
         span_id: Trace.generate_span_id,
@@ -59,21 +59,21 @@ module OpenTelemetry
       # @return [String] An 8-byte binary string.
       attr_reader :span_id
 
-      # Returns true if the {SpanContext} has a non-zero trace ID and non-zero span ID.
+      # Returns true if the {SpanReference} has a non-zero trace ID and non-zero span ID.
       #
       # @return [Boolean]
       def valid?
         @trace_id != INVALID_TRACE_ID && @span_id != INVALID_SPAN_ID
       end
 
-      # Returns true if the {SpanContext} was propagated from a remote parent.
+      # Returns true if the {SpanReference} was propagated from a remote parent.
       #
       # @return [Boolean]
       def remote?
         @remote
       end
 
-      # Represents an invalid {SpanContext}, with an invalid trace ID and an invalid span ID.
+      # Represents an invalid {SpanReference}, with an invalid trace ID and an invalid span ID.
       INVALID = new(trace_id: INVALID_TRACE_ID, span_id: INVALID_SPAN_ID)
     end
   end

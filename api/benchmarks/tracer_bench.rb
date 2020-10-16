@@ -21,7 +21,7 @@ attributes = {
 
 links = Array.new(3) do
   OpenTelemetry::Trace::Link.new(
-    OpenTelemetry::Trace::SpanContext.new,
+    OpenTelemetry::Trace::SpanReference.new,
     attributes
   )
 end

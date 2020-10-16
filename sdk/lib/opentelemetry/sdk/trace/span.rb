@@ -233,16 +233,16 @@ module OpenTelemetry
             @events,
             @resource,
             @instrumentation_library,
-            context.span_id,
-            context.trace_id,
-            context.trace_flags,
-            context.tracestate
+            reference.span_id,
+            reference.trace_id,
+            reference.trace_flags,
+            reference.tracestate
           )
         end
 
         # @api private
-        def initialize(context, parent_context, name, kind, parent_span_id, trace_config, span_processor, attributes, links, start_timestamp, resource, instrumentation_library) # rubocop:disable Metrics/AbcSize
-          super(span_context: context)
+        def initialize(reference, parent_context, name, kind, parent_span_id, trace_config, span_processor, attributes, links, start_timestamp, resource, instrumentation_library) # rubocop:disable Metrics/AbcSize
+          super(span_reference: reference)
           @mutex = Mutex.new
           @name = name
           @kind = kind
@@ -294,7 +294,7 @@ module OpenTelemetry
             attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
             excess = attrs.size - max_attributes_per_link
             excess.times { attrs.shift } if excess.positive?
-            OpenTelemetry::Trace::Link.new(link.context, attrs)
+            OpenTelemetry::Trace::Link.new(link.reference, attrs)
           end.freeze
         end
 
