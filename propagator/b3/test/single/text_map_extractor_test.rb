@@ -8,7 +8,6 @@ require 'test_helper'
 
 describe OpenTelemetry::Propagator::B3::Single::TextMapExtractor do
   let(:extractor) { OpenTelemetry::Propagator::B3::Single::TextMapExtractor.new }
-  let(:tracer) { OpenTelemetry.tracer_provider.tracer }
 
   describe('#extract') do
     it 'extracts context with trace id, span id, sampling flag, parent span id' do
@@ -16,7 +15,7 @@ describe OpenTelemetry::Propagator::B3::Single::TextMapExtractor do
       carrier = { 'b3' => '80f198ee56343ba864fe8b2a57d3eff7-e457b5a2e4d86bd1-1-05e3ac9a4f6e3b90' }
 
       context = extractor.extract(carrier, parent_context)
-      extracted_context = tracer.current_span(context).context
+      extracted_context = OpenTelemetry::Trace.current_span(context).context
 
       _(extracted_context.hex_trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
       _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
@@ -29,7 +28,7 @@ describe OpenTelemetry::Propagator::B3::Single::TextMapExtractor do
       carrier = { 'b3' => '80f198ee56343ba864fe8b2a57d3eff7-e457b5a2e4d86bd1-1' }
 
       context = extractor.extract(carrier, parent_context)
-      extracted_context = tracer.current_span(context).context
+      extracted_context = OpenTelemetry::Trace.current_span(context).context
 
       _(extracted_context.hex_trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
       _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
@@ -42,7 +41,7 @@ describe OpenTelemetry::Propagator::B3::Single::TextMapExtractor do
       carrier = { 'b3' => '80f198ee56343ba864fe8b2a57d3eff7-e457b5a2e4d86bd1' }
 
       context = extractor.extract(carrier, parent_context)
-      extracted_context = tracer.current_span(context).context
+      extracted_context = OpenTelemetry::Trace.current_span(context).context
 
       _(extracted_context.hex_trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
       _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
@@ -55,7 +54,7 @@ describe OpenTelemetry::Propagator::B3::Single::TextMapExtractor do
       carrier = { 'b3' => '64fe8b2a57d3eff7-e457b5a2e4d86bd1' }
 
       context = extractor.extract(carrier, parent_context)
-      extracted_context = tracer.current_span(context).context
+      extracted_context = OpenTelemetry::Trace.current_span(context).context
 
       _(extracted_context.hex_trace_id).must_equal('000000000000000064fe8b2a57d3eff7')
     end
@@ -65,7 +64,7 @@ describe OpenTelemetry::Propagator::B3::Single::TextMapExtractor do
       carrier = { 'b3' => '80f198ee56343ba864fe8b2a57d3eff7-e457b5a2e4d86bd1-d' }
 
       context = extractor.extract(carrier, parent_context)
-      extracted_context = tracer.current_span(context).context
+      extracted_context = OpenTelemetry::Trace.current_span(context).context
 
       _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::SAMPLED)
     end

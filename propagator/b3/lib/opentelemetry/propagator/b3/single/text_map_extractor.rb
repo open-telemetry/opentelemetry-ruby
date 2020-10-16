@@ -58,8 +58,8 @@ module OpenTelemetry
             )
 
             span = Trace::Span.new(span_context: span_context)
-            context.set_values(Trace::Propagation::ContextKeys.current_span_key => span,
-                               DEBUG_CONTEXT_KEY => match['sampling_state'] == 'd')
+            context = B3.debug(context) if match['sampling_state'] == 'd'
+            Trace.context_with_span(span, parent_context: context)
           rescue OpenTelemetry::Error
             context
           end

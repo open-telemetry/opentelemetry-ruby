@@ -32,10 +32,10 @@ module OpenTelemetry
           #   carrier, header key, header value to the setter.
           # @return [Object] the carrier with context injected
           def inject(carrier, context, &setter)
-            span_context = span_context_from(context)
+            span_context = Trace.current_span(context).context
             return unless span_context&.valid?
 
-            sampling_state = if context.value(DEBUG_CONTEXT_KEY)
+            sampling_state = if B3.debug?(context)
                                'd'
                              elsif span_context.trace_flags.sampled?
                                '1'
@@ -48,12 +48,6 @@ module OpenTelemetry
             setter ||= DEFAULT_SETTER
             setter.call(carrier, @b3_key, b3_value)
             carrier
-          end
-
-          private
-
-          def span_context_from(context)
-            context[Trace::Propagation::ContextKeys.current_span_key]&.context
           end
         end
       end

@@ -20,6 +20,14 @@ module OpenTelemetry
       PADDING = '0' * 16
       private_constant :DEBUG_CONTEXT_KEY, :PADDING
 
+      def debug(context)
+        context.set_value(DEBUG_CONTEXT_KEY, true)
+      end
+
+      def debug?(context)
+        context.value(DEBUG_CONTEXT_KEY)
+      end
+
       def to_trace_id(id_str)
         id_str.prepend(PADDING) unless id_str.length == 32
         Array(id_str).pack('H*')

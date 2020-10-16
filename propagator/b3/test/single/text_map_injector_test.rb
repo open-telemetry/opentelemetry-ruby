@@ -13,7 +13,6 @@ describe OpenTelemetry::Propagator::B3::Single::TextMapInjector do
 
   let(:injector) { OpenTelemetry::Propagator::B3::Single::TextMapInjector.new }
   let(:extractor) { OpenTelemetry::Propagator::B3::Single::TextMapExtractor.new }
-  let(:tracer) { OpenTelemetry.tracer_provider.tracer }
 
   describe '#inject' do
     it 'injects context with sampled trace flags' do
@@ -84,7 +83,7 @@ describe OpenTelemetry::Propagator::B3::Single::TextMapInjector do
                      trace_flags: TraceFlags::DEFAULT,
                      b3_debug: false)
 
-    tracer.context_with_span(
+    OpenTelemetry::Trace.context_with_span(
       Span.new(
         span_context: SpanContext.new(
           trace_id: Array(trace_id).pack('H*'),
