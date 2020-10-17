@@ -20,7 +20,7 @@ module OpenTelemetry
       PADDING = '0' * 16
       private_constant :DEBUG_CONTEXT_KEY, :PADDING
 
-      def debug(context)
+      def context_with_debug(context)
         context.set_value(DEBUG_CONTEXT_KEY, true)
       end
 

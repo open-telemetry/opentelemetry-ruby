@@ -12,7 +12,6 @@ describe OpenTelemetry::Propagator::B3::Single::TextMapInjector do
   TraceFlags = OpenTelemetry::Trace::TraceFlags
 
   let(:injector) { OpenTelemetry::Propagator::B3::Single::TextMapInjector.new }
-  let(:extractor) { OpenTelemetry::Propagator::B3::Single::TextMapExtractor.new }
 
   describe '#inject' do
     it 'injects context with sampled trace flags' do
@@ -44,12 +43,16 @@ describe OpenTelemetry::Propagator::B3::Single::TextMapInjector do
     end
 
     it 'injects debug flag when present' do
-      expected_b3 = '80f198ee56343ba864fe8b2a57d3eff7-e457b5a2e4d86bd1-d'
-      context = extractor.extract({ 'b3' => expected_b3 }, OpenTelemetry::Context.empty)
+      context = create_context(
+        trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
+        span_id: 'e457b5a2e4d86bd1',
+        b3_debug: true
+      )
 
       carrier = {}
       injector.inject(carrier, context)
 
+      expected_b3 = '80f198ee56343ba864fe8b2a57d3eff7-e457b5a2e4d86bd1-d'
       _(carrier['b3']).must_equal(expected_b3)
     end
 
@@ -82,8 +85,7 @@ describe OpenTelemetry::Propagator::B3::Single::TextMapInjector do
                      span_id:,
                      trace_flags: TraceFlags::DEFAULT,
                      b3_debug: false)
-
-    OpenTelemetry::Trace.context_with_span(
+    context = OpenTelemetry::Trace.context_with_span(
       Span.new(
         span_context: SpanContext.new(
           trace_id: Array(trace_id).pack('H*'),
@@ -92,5 +94,7 @@ describe OpenTelemetry::Propagator::B3::Single::TextMapInjector do
         )
       )
     )
+    context = OpenTelemetry::Propagator::B3.context_with_debug(context) if b3_debug
+    context
   end
 end

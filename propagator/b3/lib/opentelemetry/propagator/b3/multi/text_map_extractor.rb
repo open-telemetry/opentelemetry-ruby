@@ -68,7 +68,7 @@ module OpenTelemetry
             sampled = getter.call(carrier, @b3_sampled_key)
             flags = getter.call(carrier, @b3_flags_key)
 
-            context = B3.debug(context) if flags == DEBUG_FLAG
+            context = B3.context_with_debug(context) if flags == DEBUG_FLAG
 
             span_context = Trace::SpanContext.new(
               trace_id: B3.to_trace_id(trace_id_hex),
