@@ -28,13 +28,13 @@ module OpenTelemetry
         context.value(DEBUG_CONTEXT_KEY)
       end
 
-      def to_trace_id(id_str)
-        id_str = "#{PADDING}#{id_str}" unless id_str.length == 32
-        Array(id_str).pack('H*')
+      def to_trace_id(hex_id)
+        hex_id = "#{PADDING}#{hex_id}" unless hex_id.length == 32
+        Array(hex_id).pack('H*')
       end
 
-      def to_span_id(id_str)
-        Array(id_str).pack('H*')
+      def to_span_id(hex_id)
+        Array(hex_id).pack('H*')
       end
     end
   end
