@@ -14,22 +14,33 @@ module OpenTelemetry
   module Propagator
     # Namespace for OpenTelemetry propagator extension libraries
     module B3
-      # Namespace for OpenTelemetry b3 single header encoding
-      module Single
+      # Namespace for OpenTelemetry b3 multi header encoding
+      module Multi
         # Extracts context from carriers in the b3 single header format
         class TextMapExtractor
           include Context::Propagation::DefaultGetter
 
-          B3_CONTEXT_REGEX = /\A(?<trace_id>(?:[0-9a-f]{16}){1,2})-(?<span_id>[0-9a-f]{16})(?:-(?<sampling_state>[01d](?![0-9a-f])))?(?:-(?<parent_span_id>[0-9a-f]{16}))?\z/.freeze
-          SAMPLED_VALUES = %w[1 d].freeze
+          B3_TRACE_ID_REGEX = /\A(?:[0-9a-f]{16}){1,2}\z/.freeze
+          B3_SPAN_ID_REGEX = /\A[0-9a-f]{16}\z/.freeze
+          SAMPLED_VALUES = %w[1 true].freeze
+          DEBUG_FLAG = '1'
 
           # Returns a new TextMapExtractor that extracts b3 context using the
           # specified header keys
           #
-          # @param [String] b3_key The b3 header key used in the carrier
+          # @param [String] b3_trace_id_key The b3 trace id key used in the carrier
+          # @param [String] b3_span_id_key The b3 span id key used in the carrier
+          # @param [String] b3_sampled_key The b3 sampled key used in the carrier
+          # @param [String] b3_flags_key The b3 flags key used in the carrier
           # @return [TextMapExtractor]
-          def initialize(b3_key: 'b3')
-            @b3_key = b3_key
+          def initialize(b3_trace_id_key: 'X-B3-TraceId',
+                         b3_span_id_key: 'X-B3-SpanId',
+                         b3_sampled_key: 'X-B3-Sampled',
+                         b3_flags_key: 'X-B3-Flags')
+            @b3_trace_id_key = b3_trace_id_key
+            @b3_span_id_key = b3_span_id_key
+            @b3_sampled_key = b3_sampled_key
+            @b3_flags_key = b3_flags_key
           end
 
           # Extract b3 context from the supplied carrier and set the active span
@@ -47,18 +58,26 @@ module OpenTelemetry
           #   context if parsing fails.
           def extract(carrier, context, &getter)
             getter ||= default_getter
-            header = getter.call(carrier, @b3_key)
-            return context unless (match = header.match(B3_CONTEXT_REGEX))
+
+            trace_id_hex = getter.call(carrier, @b3_trace_id_key)
+            return context unless valid_trace_id?(trace_id_hex)
+
+            span_id_hex = getter.call(carrier, @b3_span_id_key)
+            return context unless valid_span_id?(span_id_hex)
+
+            sampled = getter.call(carrier, @b3_sampled_key)
+            flags = getter.call(carrier, @b3_flags_key)
+
+            context = B3.debug(context) if flags == DEBUG_FLAG
 
             span_context = Trace::SpanContext.new(
-              trace_id: B3.to_trace_id(match['trace_id']),
-              span_id: B3.to_span_id(match['span_id']),
-              trace_flags: to_trace_flags(match['sampling_state']),
+              trace_id: B3.to_trace_id(trace_id_hex),
+              span_id: B3.to_span_id(span_id_hex),
+              trace_flags: to_trace_flags(sampled, flags),
               remote: true
             )
 
             span = Trace::Span.new(span_context: span_context)
-            context = B3.debug(context) if match['sampling_state'] == 'd'
             Trace.context_with_span(span, parent_context: context)
           rescue OpenTelemetry::Error
             context
@@ -66,12 +85,20 @@ module OpenTelemetry
 
           private
 
-          def to_trace_flags(sampling_state)
-            if SAMPLED_VALUES.include?(sampling_state)
+          def to_trace_flags(sampled, b3_flags)
+            if b3_flags == DEBUG_FLAG || SAMPLED_VALUES.include?(sampled)
               Trace::TraceFlags::SAMPLED
             else
               Trace::TraceFlags::DEFAULT
             end
+          end
+
+          def valid_trace_id?(trace_id)
+            B3_TRACE_ID_REGEX.match?(trace_id)
+          end
+
+          def valid_span_id?(span_id)
+            B3_SPAN_ID_REGEX.match?(span_id)
           end
         end
       end

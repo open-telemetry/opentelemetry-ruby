@@ -29,7 +29,7 @@ module OpenTelemetry
       end
 
       def to_trace_id(id_str)
-        id_str.prepend(PADDING) unless id_str.length == 32
+        id_str = "#{PADDING}#{id_str}" unless id_str.length == 32
         Array(id_str).pack('H*')
       end
 
@@ -41,5 +41,6 @@ module OpenTelemetry
 end
 
 require_relative './b3/version'
+require_relative './b3/multi/text_map_extractor'
 require_relative './b3/single/text_map_extractor'
 require_relative './b3/single/text_map_injector'
