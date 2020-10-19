@@ -4,8 +4,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 module OpenTelemetry
+  # Namespace for OpenTelemetry propagator extension libraries
   module Propagator
-    # Namespace for OpenTelemetry propagator extension libraries
+    # Namespace for OpenTelemetry B3 propagation
     module B3
       # Namespace for OpenTelemetry b3 single header encoding
       module Multi
@@ -33,7 +34,7 @@ module OpenTelemetry
 
           # Set the span context on the supplied carrier.
           #
-          # @param [Context] context The active {Context}.
+          # @param [Context] context The active Context.
           # @param [optional Callable] setter An optional callable that takes a carrier and a key and
           #   a value and assigns the key-value pair in the carrier. If omitted the default setter
           #   will be used which expects the carrier to respond to [] and []=.

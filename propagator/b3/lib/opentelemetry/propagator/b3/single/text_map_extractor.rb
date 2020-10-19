@@ -11,8 +11,9 @@
 # The OpenTelemetry module provides global accessors for telemetry objects.
 # See the documentation for the `opentelemetry-api` gem for details.
 module OpenTelemetry
+  # Namespace for OpenTelemetry propagator extension libraries
   module Propagator
-    # Namespace for OpenTelemetry propagator extension libraries
+    # Namespace for OpenTelemetry B3 propagation
     module B3
       # Namespace for OpenTelemetry b3 single header encoding
       module Single
