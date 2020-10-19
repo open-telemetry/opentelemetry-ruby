@@ -42,7 +42,7 @@ module OpenTelemetry
           #   carrier, header key, header value to the setter.
           # @return [Object] the carrier with context injected
           def inject(carrier, context, &setter)
-            span_context = Trace.current_span(context).context
+            span_context = Trace.current_span(context)&.context
             return unless span_context&.valid?
 
             setter ||= DEFAULT_SETTER
