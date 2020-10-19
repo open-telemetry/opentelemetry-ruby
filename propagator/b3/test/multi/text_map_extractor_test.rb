@@ -77,32 +77,42 @@ describe OpenTelemetry::Propagator::B3::Multi::TextMapExtractor do
       _(extracted_context.hex_trace_id).must_equal('000000000000000064fe8b2a57d3eff7')
     end
 
-    # it 'converts debug flag to sampled' do
-    #   parent_context = OpenTelemetry::Context.empty
-    #   carrier = { 'b3' => '80f198ee56343ba864fe8b2a57d3eff7-e457b5a2e4d86bd1-d' }
+    it 'converts debug flag to sampled' do
+      parent_context = OpenTelemetry::Context.empty
+      carrier = {
+        trace_id_key => '80f198ee56343ba864fe8b2a57d3eff7',
+        span_id_key => 'e457b5a2e4d86bd1',
+        sampled_key => '1'
+      }
 
-    #   context = extractor.extract(carrier, parent_context)
-    #   extracted_context = OpenTelemetry::Trace.current_span(context).context
+      context = extractor.extract(carrier, parent_context)
+      extracted_context = OpenTelemetry::Trace.current_span(context).context
 
-    #   _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::SAMPLED)
-    # end
+      _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::SAMPLED)
+    end
 
-    # it 'handles malformed trace id' do
-    #   parent_context = OpenTelemetry::Context.empty
-    #   carrier = { 'b3' => '80f198ee56343ba864feb2a-e457b5a2e4d86bd1' }
+    it 'handles malformed trace id' do
+      parent_context = OpenTelemetry::Context.empty
+      carrier = {
+        trace_id_key => '80f198ee56343ba864feb2a',
+        span_id_key => 'e457b5a2e4d86bd1'
+      }
 
-    #   context = extractor.extract(carrier, parent_context)
+      context = extractor.extract(carrier, parent_context)
 
-    #   _(context).must_equal(parent_context)
-    # end
+      _(context).must_equal(parent_context)
+    end
 
-    # it 'handles malformed span id' do
-    #   parent_context = OpenTelemetry::Context.empty
-    #   carrier = { 'b3' => '80f198ee56343ba864fe8b2a57d3eff7-e457b5a2e4d1' }
+    it 'handles malformed span id' do
+      parent_context = OpenTelemetry::Context.empty
+      carrier = {
+        trace_id_key => '80f198ee56343ba864fe8b2a57d3eff7',
+        span_id_key => 'e457b5a2e4d1'
+      }
 
-    #   context = extractor.extract(carrier, parent_context)
+      context = extractor.extract(carrier, parent_context)
 
-    #   _(context).must_equal(parent_context)
-    # end
+      _(context).must_equal(parent_context)
+    end
   end
 end
