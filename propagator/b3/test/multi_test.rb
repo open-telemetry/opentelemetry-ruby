@@ -18,9 +18,9 @@ describe OpenTelemetry::Propagator::B3::Multi do
     end
   end
 
-  describe '#rack_injector, #rack_injector' do
+  describe '#text_map_injector, #rack_injector' do
     it 'returns an instance of TextMapInjector' do
-      %i[rack_injector rack_injector].each do |injector_method|
+      %i[text_map_injector rack_injector].each do |injector_method|
         injector = OpenTelemetry::Propagator::B3::Multi.send(injector_method)
         _(injector).must_be_instance_of(
           OpenTelemetry::Propagator::B3::Multi::TextMapInjector
