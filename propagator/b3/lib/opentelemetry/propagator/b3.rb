@@ -18,8 +18,7 @@ module OpenTelemetry
       extend self
 
       DEBUG_CONTEXT_KEY = Context.create_key('b3-debug-key')
-      PADDING = '0' * 16
-      private_constant :DEBUG_CONTEXT_KEY, :PADDING
+      private_constant :DEBUG_CONTEXT_KEY
 
       # @api private
       # Returns a new context with the b3 debug flag enabled
