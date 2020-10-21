@@ -25,6 +25,7 @@ module OpenTelemetry
           B3_SPAN_ID_REGEX = /\A[0-9a-f]{16}\z/.freeze
           SAMPLED_VALUES = %w[1 true].freeze
           DEBUG_FLAG = '1'
+          private_constant :B3_TRACE_ID_REGEX, :B3_SPAN_ID_REGEX, :SAMPLED_VALUES, :DEBUG_FLAG
 
           # Returns a new TextMapExtractor that extracts b3 context using the
           # specified header keys

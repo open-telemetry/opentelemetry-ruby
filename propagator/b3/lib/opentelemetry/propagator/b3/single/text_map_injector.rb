@@ -17,7 +17,7 @@ module OpenTelemetry
           # Returns a new TextMapInjector that extracts b3 context using the
           # specified header keys
           #
-          # @param [String] b3_key The traceparent header key used in the carrier
+          # @param [String] b3_key The b3 header key used in the carrier
           # @return [TextMapInjector]
           def initialize(b3_key: 'b3')
             @b3_key = b3_key
@@ -33,8 +33,8 @@ module OpenTelemetry
           #   carrier, header key, header value to the setter.
           # @return [Object] the carrier with context injected
           def inject(carrier, context, &setter)
-            span_context = Trace.current_span(context)&.context
-            return unless span_context&.valid?
+            span_context = Trace.current_span(context).context
+            return unless span_context.valid?
 
             sampling_state = if B3.debug?(context)
                                'd'
@@ -46,7 +46,7 @@ module OpenTelemetry
 
             b3_value = "#{span_context.hex_trace_id}-#{span_context.hex_span_id}-#{sampling_state}"
 
-            setter ||= DEFAULT_SETTER
+            setter ||= default_setter
             setter.call(carrier, @b3_key, b3_value)
             carrier
           end

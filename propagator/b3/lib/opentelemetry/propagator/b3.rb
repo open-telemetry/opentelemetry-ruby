@@ -38,8 +38,11 @@ module OpenTelemetry
       # padding to the correct length. Assumes the input id has already been
       # validated to be 16 or 32 characters in length.
       def to_trace_id(hex_id)
-        hex_id = "#{PADDING}#{hex_id}" unless hex_id.length == 32
-        Array(hex_id).pack('H*')
+        if hex_id.length == 32
+          Array(hex_id).pack('H*')
+        else
+          [0, hex_id].pack('qH*')
+        end
       end
 
       # @api private
