@@ -40,8 +40,8 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
       _(span.attributes['db.instance']).must_equal '0'
       _(span.attributes['db.statement']).must_equal 'AUTH ?'
       _(span.attributes['db.url']).must_equal 'redis://127.0.0.1:6379'
-      _(span.attributes['net.peer.name']).must_equal '127.0.0.1'
-      _(span.attributes['net.peer.port']).must_equal 6379
+      _(span.attributes['peer.hostname']).must_equal '127.0.0.1'
+      _(span.attributes['peer.port']).must_equal 6379
     end
 
     it 'after requests' do
@@ -59,8 +59,8 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
         'SET K ' + 'x' * 47 + '...'
       )
       _(set_span.attributes['db.url']).must_equal 'redis://127.0.0.1:6379'
-      _(set_span.attributes['net.peer.name']).must_equal '127.0.0.1'
-      _(set_span.attributes['net.peer.port']).must_equal 6379
+      _(set_span.attributes['peer.hostname']).must_equal '127.0.0.1'
+      _(set_span.attributes['peer.port']).must_equal 6379
 
       get_span = exporter.finished_spans.last
       _(get_span.name).must_equal 'GET'
@@ -68,8 +68,8 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
       _(get_span.attributes['db.instance']).must_equal '0'
       _(get_span.attributes['db.statement']).must_equal 'GET K'
       _(get_span.attributes['db.url']).must_equal 'redis://127.0.0.1:6379'
-      _(get_span.attributes['net.peer.name']).must_equal '127.0.0.1'
-      _(get_span.attributes['net.peer.port']).must_equal 6379
+      _(get_span.attributes['peer.hostname']).must_equal '127.0.0.1'
+      _(get_span.attributes['peer.port']).must_equal 6379
     end
 
     it 'after error' do
@@ -85,8 +85,8 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
         'THIS_IS_NOT_A_REDIS_FUNC THIS_IS_NOT_A_VALID_ARG'
       )
       _(span.attributes['db.url']).must_equal 'redis://127.0.0.1:6379'
-      _(span.attributes['net.peer.name']).must_equal '127.0.0.1'
-      _(span.attributes['net.peer.port']).must_equal 6379
+      _(span.attributes['peer.hostname']).must_equal '127.0.0.1'
+      _(span.attributes['peer.port']).must_equal 6379
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
       )
@@ -108,8 +108,8 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
       _(span.attributes['db.instance']).must_equal '0'
       _(span.attributes['db.statement']).must_equal "SET v1 0\nINCR v1\nGET v1"
       _(span.attributes['db.url']).must_equal 'redis://example.com:8321'
-      _(span.attributes['net.peer.name']).must_equal 'example.com'
-      _(span.attributes['net.peer.port']).must_equal 8321
+      _(span.attributes['peer.hostname']).must_equal 'example.com'
+      _(span.attributes['peer.port']).must_equal 8321
     end
   end
 end

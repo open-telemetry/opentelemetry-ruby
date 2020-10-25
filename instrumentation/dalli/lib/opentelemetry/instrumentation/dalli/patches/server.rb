@@ -15,8 +15,8 @@ module OpenTelemetry
             attributes = {
               'db.system' => 'memcached',
               'db.statement' => Utils.format_command(operation, args),
-              'net.peer.name' => hostname,
-              'net.peer.port' => port
+              'peer.hostname' => hostname,
+              'peer.port' => port
             }
 
             tracer.in_span(operation, attributes: attributes, kind: :client) do

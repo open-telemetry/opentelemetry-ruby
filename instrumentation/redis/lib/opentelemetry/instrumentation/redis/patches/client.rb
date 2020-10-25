@@ -52,8 +52,8 @@ module OpenTelemetry
               'db.type' => 'redis',
               'db.instance' => options[:db].to_s,
               'db.url' => "redis://#{host}:#{port}",
-              'net.peer.name' => host,
-              'net.peer.port' => port
+              'peer.hostname' => host,
+              'peer.port' => port
             }
           end
 

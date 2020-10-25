@@ -65,8 +65,8 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       _(span.attributes['db.instance']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal 'SELECT 1'
       _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
-      _(span.attributes['net.peer.name']).must_equal host.to_s
-      _(span.attributes['net.peer.port']).must_equal port.to_s
+      _(span.attributes['peer.hostname']).must_equal host.to_s
+      _(span.attributes['peer.port']).must_equal port.to_s
     end
 
     it 'after error' do
@@ -79,8 +79,8 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       _(span.attributes['db.instance']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal 'SELECT INVALID'
       _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
-      _(span.attributes['net.peer.name']).must_equal host.to_s
-      _(span.attributes['net.peer.port']).must_equal port.to_s
+      _(span.attributes['peer.hostname']).must_equal host.to_s
+      _(span.attributes['peer.port']).must_equal port.to_s
 
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR
@@ -102,8 +102,8 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       _(span.attributes['db.instance']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal explain_sql
       _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
-      _(span.attributes['net.peer.name']).must_equal host.to_s
-      _(span.attributes['net.peer.port']).must_equal port.to_s
+      _(span.attributes['peer.hostname']).must_equal host.to_s
+      _(span.attributes['peer.port']).must_equal port.to_s
     end
 
     it 'uses component.name and instance.name as span.name fallbacks with invalid sql' do
@@ -116,8 +116,8 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       _(span.attributes['db.instance']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal 'DESELECT 1'
       _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
-      _(span.attributes['net.peer.name']).must_equal host.to_s
-      _(span.attributes['net.peer.port']).must_equal port.to_s
+      _(span.attributes['peer.hostname']).must_equal host.to_s
+      _(span.attributes['peer.port']).must_equal port.to_s
 
       _(span.status.code).must_equal(
         OpenTelemetry::Trace::Status::ERROR

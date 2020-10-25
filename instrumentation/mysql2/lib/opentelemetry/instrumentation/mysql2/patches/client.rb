@@ -76,8 +76,8 @@ module OpenTelemetry
               'db.type' => 'mysql',
               'db.instance' => database_name,
               'db.url' => "mysql://#{host}:#{port}",
-              'net.peer.name' => host,
-              'net.peer.port' => port
+              'peer.hostname' => host,
+              'peer.port' => port
             }
           end
 

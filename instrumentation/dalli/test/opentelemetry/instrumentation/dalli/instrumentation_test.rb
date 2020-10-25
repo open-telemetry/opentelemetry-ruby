@@ -42,8 +42,8 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
       _(span.name).must_equal 'set'
       _(span.attributes['db.system']).must_equal 'memcached'
       _(span.attributes['db.statement']).must_equal 'set foo bar 0 0'
-      _(span.attributes['net.peer.name']).must_equal host
-      _(span.attributes['net.peer.port']).must_equal port
+      _(span.attributes['peer.hostname']).must_equal host
+      _(span.attributes['peer.port']).must_equal port
     end
 
     it 'after dalli#set' do
@@ -53,8 +53,8 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
       _(span.name).must_equal 'get'
       _(span.attributes['db.system']).must_equal 'memcached'
       _(span.attributes['db.statement']).must_equal 'get foo'
-      _(span.attributes['net.peer.name']).must_equal host
-      _(span.attributes['net.peer.port']).must_equal port
+      _(span.attributes['peer.hostname']).must_equal host
+      _(span.attributes['peer.port']).must_equal port
     end
 
     it 'after dalli#get_multi' do
@@ -64,8 +64,8 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
       _(span.name).must_equal 'getkq'
       _(span.attributes['db.system']).must_equal 'memcached'
       _(span.attributes['db.statement']).must_equal 'getkq foo bar'
-      _(span.attributes['net.peer.name']).must_equal host
-      _(span.attributes['net.peer.port']).must_equal port
+      _(span.attributes['peer.hostname']).must_equal host
+      _(span.attributes['peer.port']).must_equal port
     end
 
     it 'after error' do
@@ -80,8 +80,8 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
       _(span.name).must_equal 'getkq'
       _(span.attributes['db.system']).must_equal 'memcached'
       _(span.attributes['db.statement']).must_equal 'getkq foo bar'
-      _(span.attributes['net.peer.name']).must_equal host
-      _(span.attributes['net.peer.port']).must_equal port
+      _(span.attributes['peer.hostname']).must_equal host
+      _(span.attributes['peer.port']).must_equal port
 
       span_event = span.events.first
       _(span_event.name).must_equal 'exception'
