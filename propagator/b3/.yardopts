@@ -1,0 +1,9 @@
+--no-private
+--title=OpenTelemetry Propagator B3
+--markup=markdown
+--main=README.md
+./lib/opentelemetry/propagator/b3/**/*.rb
+./lib/opentelemetry/propagator/b3.rb
+-
+README.md
+CHANGELOG.md
