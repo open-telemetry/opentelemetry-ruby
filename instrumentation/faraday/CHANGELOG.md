@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.8.0 / 2020-10-27
+
+* (No significant changes)
+
 ### v0.7.0 / 2020-10-07
 
 * DOCS: Faraday documentation 
