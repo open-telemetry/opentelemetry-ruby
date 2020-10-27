@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.8.0 / 2020-10-27
+
+* BREAKING CHANGE: Remove 'canonical' from status codes 
+
+* FIXED: Remove 'canonical' from status codes 
+
 ### v0.7.0 / 2020-10-07
 
 * DOCS: Added documentation for net_http gem in instrumentation 
