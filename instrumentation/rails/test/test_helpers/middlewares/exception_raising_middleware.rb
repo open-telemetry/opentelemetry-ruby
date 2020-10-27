@@ -10,6 +10,8 @@ class ExceptionRaisingMiddleware
   end
 
   def call(env)
-    raise 'the roof'
+    raise 'a little hell' if env['PATH_INFO'] == '/exception'
+
+    @app.call(env)
   end
 end

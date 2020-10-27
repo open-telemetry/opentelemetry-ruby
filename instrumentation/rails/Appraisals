@@ -4,10 +4,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-module OpenTelemetry
-  module Instrumentation
-    module Rails
-      VERSION = '0.8.0'
-    end
-  end
+appraise 'rails-5.2' do
+  gem 'rails', '~> 5.2'
+end
+
+appraise 'rails-6.0' do
+  gem 'rails', '~> 6.0'
 end

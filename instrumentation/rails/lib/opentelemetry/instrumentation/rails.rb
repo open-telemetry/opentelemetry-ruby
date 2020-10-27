@@ -8,7 +8,7 @@ require 'opentelemetry'
 
 module OpenTelemetry
   module Instrumentation
-    # Contains the OpenTelemetry instrumentation for the Rack gem
+    # Contains the OpenTelemetry instrumentation for the Rails gem
     module Rails
     end
   end

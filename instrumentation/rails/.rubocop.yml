@@ -18,7 +18,7 @@ Metrics/ParameterLists:
   Enabled: false
 Naming/FileName:
   Exclude:
-    - "lib/opentelemetry-instrumentation-rack.rb"
+    - "lib/opentelemetry-instrumentation-rails.rb"
 Style/FrozenStringLiteralComment:
   Exclude:
     - gemfiles/**/*

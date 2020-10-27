@@ -4,6 +4,4 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'action_controller/railtie'
-
 require_relative 'controllers/example_controller'
