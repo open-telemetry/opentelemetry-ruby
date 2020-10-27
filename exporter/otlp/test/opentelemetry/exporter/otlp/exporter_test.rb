@@ -16,6 +16,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(exp.instance_variable_get(:@headers)).must_be_nil
       _(exp.instance_variable_get(:@timeout)).must_equal 10.0
       _(exp.instance_variable_get(:@path)).must_equal '/v1/trace'
+      _(exp.instance_variable_get(:@compression)).must_be_nil
       http = exp.instance_variable_get(:@http)
       _(http.ca_file).must_be_nil
       _(http.use_ssl?).must_equal true
@@ -35,10 +36,14 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       end
     end
 
-    it 'refuses compression' do
+    it 'only allows gzip compression or none' do
       assert_raises ArgumentError do
-        OpenTelemetry::Exporter::OTLP::Exporter.new(compression: 'gzip')
+        OpenTelemetry::Exporter::OTLP::Exporter.new(compression: 'flate')
       end
+      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(compression: 'gzip')
+      _(exp).wont_be_nil
+      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(compression: nil)
+      _(exp).wont_be_nil
     end
 
     it 'sets parameters from the environment' do
@@ -46,12 +51,14 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                      'OTEL_EXPORTER_OTLP_INSECURE' => 'true',
                      'OTEL_EXPORTER_OTLP_CERTIFICATE' => '/foo/bar',
                      'OTEL_EXPORTER_OTLP_HEADERS' => 'a:b,c:d',
+                     'OTEL_EXPORTER_OTLP_COMPRESSION' => 'gzip',
                      'OTEL_EXPORTER_OTLP_TIMEOUT' => '11') do
         OpenTelemetry::Exporter::OTLP::Exporter.new
       end
       _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd')
       _(exp.instance_variable_get(:@timeout)).must_equal 11.0
       _(exp.instance_variable_get(:@path)).must_equal '/v2/trace'
+      _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
       http = exp.instance_variable_get(:@http)
       _(http.ca_file).must_equal '/foo/bar'
       _(http.use_ssl?).must_equal false
@@ -64,16 +71,19 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                      'OTEL_EXPORTER_OTLP_INSECURE' => 'true',
                      'OTEL_EXPORTER_OTLP_CERTIFICATE' => '/foo/bar',
                      'OTEL_EXPORTER_OTLP_HEADERS' => 'a:b,c:d',
+                     'OTEL_EXPORTER_OTLP_COMPRESSION' => 'flate',
                      'OTEL_EXPORTER_OTLP_TIMEOUT' => '11') do
         OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'localhost:4321/v3/trace',
                                                     insecure: 'false',
                                                     certificate_file: '/baz',
                                                     headers: { 'x' => 'y' },
+                                                    compression: 'gzip',
                                                     timeout: 12)
       end
       _(exp.instance_variable_get(:@headers)).must_equal('x' => 'y')
       _(exp.instance_variable_get(:@timeout)).must_equal 12.0
       _(exp.instance_variable_get(:@path)).must_equal '/v3/trace'
+      _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
       http = exp.instance_variable_get(:@http)
       _(http.ca_file).must_equal '/baz'
       _(http.use_ssl?).must_equal true
@@ -93,7 +103,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       skip unless ENV['TRACING_INTEGRATION_TEST']
       WebMock.disable_net_connect!(allow: 'localhost')
       span_data = create_span_data
-      exporter = OpenTelemetry::Exporter::OTLP::Exporter.new(insecure: true)
+      exporter = OpenTelemetry::Exporter::OTLP::Exporter.new(insecure: true, compression: 'gzip')
       result = exporter.export([span_data])
       _(result).must_equal(SUCCESS)
     end
@@ -117,6 +127,21 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       OpenTelemetry.tracer_provider.add_span_processor(processor)
       OpenTelemetry.tracer_provider.tracer.start_root_span('foo').finish
       OpenTelemetry.tracer_provider.shutdown
+      assert_requested(stub_post)
+    end
+
+    it 'compresses with gzip if enabled' do
+      exporter = OpenTelemetry::Exporter::OTLP::Exporter.new(compression: 'gzip')
+      etsr = nil
+      stub_post = stub_request(:post, 'https://localhost:55681/v1/trace').to_return do |request|
+        etsr = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(Zlib.gunzip(request.body))
+        { status: 200 }
+      end
+
+      span_data = create_span_data
+      result = exporter.export([span_data])
+
+      _(result).must_equal(SUCCESS)
       assert_requested(stub_post)
     end
 
