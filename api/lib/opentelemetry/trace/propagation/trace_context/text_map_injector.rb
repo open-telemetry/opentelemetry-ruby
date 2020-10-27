@@ -36,7 +36,7 @@ module OpenTelemetry
             return carrier unless (span_context = span_context_from(context))
 
             setter ||= DEFAULT_SETTER
-            setter.call(carrier, @traceparent_key, TraceParent.from_context(span_context).to_s)
+            setter.call(carrier, @traceparent_key, TraceParent.from_span_context(span_context).to_s)
             setter.call(carrier, @tracestate_key, span_context.tracestate) unless span_context.tracestate.nil?
 
             carrier
@@ -45,7 +45,7 @@ module OpenTelemetry
           private
 
           def span_context_from(context)
-            OpenTelemetry::Trace.current_span(context)&.context
+            OpenTelemetry::Trace.current_span(context).context
           end
         end
       end

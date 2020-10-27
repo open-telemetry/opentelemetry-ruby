@@ -18,7 +18,7 @@ module OpenTelemetry
       # Returns the {SpanContext} for this link
       #
       # @return [SpanContext]
-      attr_reader :context
+      attr_reader :span_context
 
       # Returns the frozen attributes for this link.
       #
@@ -33,13 +33,13 @@ module OpenTelemetry
       #   frozen during Link initialization.
       # @return [Link]
       def initialize(span_context, attributes = nil)
-        @context = span_context
+        @span_context = span_context
         @attributes = attributes.freeze || EMPTY_ATTRIBUTES
       end
 
       # Returns true if two {Link}s are equal.
       def ==(other)
-        other.context == @context && other.attributes == @attributes
+        other.span_context == @span_context && other.attributes == @attributes
       end
     end
   end

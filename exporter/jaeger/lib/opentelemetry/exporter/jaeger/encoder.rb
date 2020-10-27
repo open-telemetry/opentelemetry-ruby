@@ -111,9 +111,9 @@ module OpenTelemetry
           links&.map do |link|
             Thrift::SpanRef.new(
               'refType' => Thrift::SpanRefType::CHILD_OF,
-              'traceIdLow' => int64(link.context.trace_id[16, 16]),
-              'traceIdHigh' => int64(link.context.trace_id[0, 16]),
-              'spanId' => int64(link.context.span_id)
+              'traceIdLow' => int64(link.span_context.trace_id[16, 16]),
+              'traceIdHigh' => int64(link.span_context.trace_id[0, 16]),
+              'spanId' => int64(link.span_context.span_id)
             )
           end
         end
