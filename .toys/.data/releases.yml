@@ -101,6 +101,10 @@ gems:
     directory: instrumentation/sinatra
     version_constant: [OpenTelemetry, Instrumentation, Sinatra, VERSION]
 
+  - name: opentelemetry-propagator-b3
+    directory: propagator/b3
+    version_constant: [OpenTelemetry, Propagator, B3, VERSION]
+
   - name: opentelemetry-resource_detectors
     directory: resource_detectors
     version_rb_path: lib/opentelemetry/resource/detectors/version.rb
