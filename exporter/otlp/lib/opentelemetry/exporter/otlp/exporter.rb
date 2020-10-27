@@ -7,6 +7,7 @@
 require 'opentelemetry/sdk'
 require 'net/http'
 require 'csv'
+require 'zlib'
 
 require 'opentelemetry/proto/common/v1/common_pb'
 require 'opentelemetry/proto/resource/v1/resource_pb'
@@ -36,7 +37,7 @@ module OpenTelemetry
                        compression: config_opt('OTEL_EXPORTER_OTLP_SPAN_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION'),
                        timeout: config_opt('OTEL_EXPORTER_OTLP_SPAN_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10))
           raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}" if invalid_url?("http://#{endpoint}")
-          raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil?
+          raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || compression == 'gzip'
           raise ArgumentError, 'headers must be comma-separated k:v pairs or a Hash' unless valid_headers?(headers)
 
           uri = URI "http://#{endpoint}"
@@ -53,6 +54,7 @@ module OpenTelemetry
                      when Hash then headers
                      end
           @timeout = timeout.to_f # TODO: use this as a default timeout when we implement timeouts in https://github.com/open-telemetry/opentelemetry-ruby/pull/341
+          @compression = compression
 
           @shutdown = false
         end
@@ -110,11 +112,14 @@ module OpenTelemetry
           retry_count = 0
           untraced do # rubocop:disable Metrics/BlockLength
             request = Net::HTTP::Post.new(@path)
-            request.body = bytes
+            request.body = if @compression == 'gzip'
+                             request.add_field('Content-Encoding', 'gzip')
+                             Zlib.gzip(bytes)
+                           else
+                             bytes
+                           end
             request.add_field('Content-Type', 'application/x-protobuf')
             @headers&.each { |key, value| request.add_field(key, value) }
-            # TODO: enable gzip when https://github.com/open-telemetry/opentelemetry-collector/issues/1344 is fixed.
-            # request.add_field('Content-Encoding', 'gzip')
 
             @http.start unless @http.started?
             response = @http.request(request)
