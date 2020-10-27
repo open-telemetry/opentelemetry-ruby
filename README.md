@@ -1,7 +1,7 @@
 # OpenTelemetry Ruby
 
 [![Gitter chat][gitter-image]][gitter-url]
-[![CircleCI][ci-image]][ci-url]
+[![CI][ci-image]][ci-image]
 [![Apache License][license-image]][license-image]
 
 The Ruby [OpenTelemetry](https://opentelemetry.io/) client.
@@ -106,8 +106,7 @@ context propagation.
 
 Apache 2.0 - See [LICENSE][license-url] for more information.
 
-[ci-image]: https://circleci.com/gh/open-telemetry/opentelemetry-ruby.svg?style=svg
-[ci-url]: https://circleci.com/gh/open-telemetry/opentelemetry-ruby
+[ci-image]: https://github.com/open-telemetry/opentelemetry-ruby/workflows/CI/badge.svg?event=push
 [examples-github]: https://github.com/open-telemetry/opentelemetry-ruby/tree/master/examples
 [gitter-image]: https://badges.gitter.im/open-telemetry/opentelemetry-ruby.svg
 [gitter-url]: https://gitter.im/open-telemetry/opentelemetry-ruby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
