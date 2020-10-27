@@ -227,7 +227,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     end
 
     it 'creates a span with all supplied parameters' do
-      links = [OpenTelemetry::Trace::Link.new(context)]
+      links = [OpenTelemetry::Trace::Link.new(span_context)]
       name = 'span'
       kind = OpenTelemetry::Trace::SpanKind::INTERNAL
       attributes = { '1' => 1 }
@@ -254,7 +254,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
 
     it 'uses the context from parent if supplied' do
       parent = tracer.start_root_span('root')
-      parent_ctx = OpenTelemetry::Trace.with_span(parent) { |_, ctx| ctx }
+      parent_ctx = OpenTelemetry::Trace.context_with_span(parent)
       span = tracer.start_span('child', with_parent: parent_ctx)
       _(span.parent_span_id).must_equal(parent.context.span_id)
       _(span.context.trace_id).must_equal(parent.context.trace_id)

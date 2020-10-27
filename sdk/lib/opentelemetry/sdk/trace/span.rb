@@ -294,7 +294,7 @@ module OpenTelemetry
             attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
             excess = attrs.size - max_attributes_per_link
             excess.times { attrs.shift } if excess.positive?
-            OpenTelemetry::Trace::Link.new(link.context, attrs)
+            OpenTelemetry::Trace::Link.new(link.span_context, attrs)
           end.freeze
         end
 

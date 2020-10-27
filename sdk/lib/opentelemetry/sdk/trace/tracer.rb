@@ -38,10 +38,13 @@ module OpenTelemetry
 
           with_parent ||= Context.current
           parent_span_context = OpenTelemetry::Trace.current_span(with_parent).context
-          parent_span_context = nil unless parent_span_context.valid?
-          parent_span_id = parent_span_context&.span_id
-          tracestate = parent_span_context&.tracestate
-          trace_id = parent_span_context&.trace_id
+          if parent_span_context.valid?
+            parent_span_id = parent_span_context.span_id
+            tracestate = parent_span_context.tracestate
+            trace_id = parent_span_context.trace_id
+          else
+            parent_span_context = nil
+          end
           trace_id ||= OpenTelemetry::Trace.generate_trace_id
           sampler = tracer_provider.active_trace_config.sampler
           result = sampler.should_sample?(trace_id: trace_id, parent_context: parent_span_context, links: links, name: name, kind: kind, attributes: attributes)
