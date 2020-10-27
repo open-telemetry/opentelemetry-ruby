@@ -1,5 +1,16 @@
 # Release History: opentelemetry-api
 
+### v0.8.0 / 2020-10-27
+
+* BREAKING CHANGE: Move context/span methods to Trace module 
+* BREAKING CHANGE: Remove 'canonical' from status codes 
+* BREAKING CHANGE: Assorted SpanContext fixes 
+
+* ADDED: B3 support 
+* FIXED: Move context/span methods to Trace module 
+* FIXED: Remove 'canonical' from status codes 
+* FIXED: Assorted SpanContext fixes 
+
 ### v0.7.0 / 2020-10-07
 
 * FIXED: Safely navigate span variable during error cases 
