@@ -82,8 +82,8 @@ describe OpenTelemetry::Instrumentation::Rails::Middlewares::TracerMiddleware do
     _(span.attributes['http.status_code']).must_equal 307
   end
 
-  describe 'when the application has an exceptions controller configured' do
-    let(:rails_app) { build_app(use_exceptions_controller: true) }
+  describe 'when the application has exceptions_app configured' do
+    let(:rails_app) { AppConfig.initialize_app(use_exceptions_app: true) }
 
     it 'traces the request handled by the exceptions_app' do
       get '/exception'

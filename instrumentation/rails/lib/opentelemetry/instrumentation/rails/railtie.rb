@@ -17,12 +17,6 @@ module OpenTelemetry
             OpenTelemetry::Instrumentation::Rails::Middlewares::TracerMiddleware
           )
         end
-
-        private
-
-        def config
-          Instrumentation.instance.config
-        end
       end
     end
   end
