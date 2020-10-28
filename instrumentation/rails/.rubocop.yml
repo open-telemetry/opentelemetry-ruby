@@ -8,12 +8,16 @@ Lint/UnusedMethodArgument:
   Enabled: false
 Metrics/AbcSize:
   Max: 18
+  Exclude:
+    - test/**/*
 Metrics/BlockLength:
   Enabled: false
 Metrics/LineLength:
   Enabled: false
 Metrics/MethodLength:
   Max: 20
+  Exclude:
+    - test/**/*
 Metrics/ParameterLists:
   Enabled: false
 Naming/FileName:

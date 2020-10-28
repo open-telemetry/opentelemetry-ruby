@@ -13,11 +13,12 @@ describe OpenTelemetry::Instrumentation::Rails::Middlewares::TracerMiddleware do
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
   let(:span) { exporter.finished_spans.last }
+  let(:rails_app) { DEFAULT_RAILS_APP }
 
   # Clear captured spans
   before { exporter.reset }
 
-  it 'traces controller requests' do
+  it 'traces a successful known route' do
     get '/ok'
 
     _(last_response.body).must_equal 'actually ok'
@@ -39,7 +40,21 @@ describe OpenTelemetry::Instrumentation::Rails::Middlewares::TracerMiddleware do
     _(span.attributes['rails.action']).must_equal 'ok'
   end
 
-  it 'traces the request when it raises in middleware' do
+  it 'traces a to known route that raises in the middleware' do
+    get '/ok?raise_in_middleware'
+
+    _(span.name).must_equal '/ok'
+    _(span.kind).must_equal :server
+    _(span.status.ok?).must_equal false
+
+    _(span.attributes['http.method']).must_equal 'GET'
+    _(span.attributes['http.host']).must_equal 'example.org'
+    _(span.attributes['http.scheme']).must_equal 'http'
+    _(span.attributes['http.target']).must_equal '/ok?raise_in_middleware'
+    _(span.attributes['http.status_code']).must_equal 500
+  end
+
+  it 'traces a request to a missing route that raises in middleware' do
     get '/exception'
 
     _(span.name).must_equal '/exception'
@@ -53,7 +68,7 @@ describe OpenTelemetry::Instrumentation::Rails::Middlewares::TracerMiddleware do
     _(span.attributes['http.status_code']).must_equal 500
   end
 
-  it 'traces the request when it redirects in middleware' do
+  it 'traces a request to a missing route that redirects in middleware' do
     get '/redirection'
 
     _(span.name).must_equal '/redirection'
@@ -67,7 +82,25 @@ describe OpenTelemetry::Instrumentation::Rails::Middlewares::TracerMiddleware do
     _(span.attributes['http.status_code']).must_equal 307
   end
 
+  describe 'when the application has an exceptions controller configured' do
+    let(:rails_app) { build_app(use_exceptions_controller: true) }
+
+    it 'traces the request handled by the exceptions_app' do
+      get '/exception'
+
+      _(span.name).must_equal 'ExceptionsController.show'
+      _(span.kind).must_equal :server
+      _(span.status.ok?).must_equal true
+
+      _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.host']).must_equal 'example.org'
+      _(span.attributes['http.scheme']).must_equal 'http'
+      _(span.attributes['http.target']).must_equal '/exception'
+      _(span.attributes['http.status_code']).must_equal 200
+    end
+  end
+
   def app
-    ::Rails.application
+    rails_app
   end
 end

@@ -12,3 +12,48 @@ module Rails6
     config.secret_key_base = 'secret_key_base'
   end
 end
+
+def build_app(use_exceptions_controller: false)
+  require 'action_controller/railtie'
+  require 'test_helpers/middlewares'
+
+  new_app = ::Rails6::Application.new
+  new_app.config.secret_key_base = 'secret_key_base'
+
+  # Ensure we don't see this Rails warning when testing
+  new_app.config.eager_load = false
+
+  # Prevent tests from creating log/*.log
+  new_app.config.logger = Logger.new('/dev/null')
+
+  # Required in Rails 6
+  new_app.config.hosts << 'example.org'
+
+  # Creates a lot of deprecation warnins on subsequent app initializations if not explicitly set.
+  new_app.config.action_view.finalize_compiled_template_methods = ActionView::Railtie::NULL_OPTION
+
+  if use_exceptions_controller
+    new_app.config.exceptions_app = lambda do |env|
+      ExceptionsController.action(:show).call(env)
+    end
+  end
+
+  new_app.middleware.insert_after(
+    ActionDispatch::DebugExceptions,
+    ExceptionRaisingMiddleware
+  )
+
+  new_app.middleware.insert_after(
+    ActionDispatch::DebugExceptions,
+    RedirectMiddleware
+  )
+
+  new_app.initialize!
+
+  require 'test_helpers/routes'
+  draw_routes(new_app)
+
+  require 'test_helpers/controllers'
+
+  new_app
+end

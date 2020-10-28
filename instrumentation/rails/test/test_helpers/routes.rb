@@ -4,8 +4,20 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+ROUTES = {
+  '/ok' => 'example#ok'
+}.freeze
+
 ::Rails.application.routes.draw do
-  get '/ok', to: 'example#ok'
-  get '/exception', to: 'example#ok'
-  get '/redirection', to: 'example#ok'
+  ROUTES.each do |k, v|
+    get k, to: v
+  end
+end
+
+def draw_routes(rails_app, routes: ROUTES)
+  rails_app.routes.draw do
+    routes.each do |k, v|
+      get k, to: v
+    end
+  end
 end

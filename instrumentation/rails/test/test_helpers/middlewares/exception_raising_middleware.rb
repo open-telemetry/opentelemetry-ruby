@@ -10,8 +10,14 @@ class ExceptionRaisingMiddleware
   end
 
   def call(env)
-    raise 'a little hell' if env['PATH_INFO'] == '/exception'
+    raise 'a little hell' if should_raise?(env)
 
     @app.call(env)
+  end
+
+  private
+
+  def should_raise?(env)
+    env['PATH_INFO'] == '/exception' || env['QUERY_STRING'].include?('raise_in_middleware')
   end
 end

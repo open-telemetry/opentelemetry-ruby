@@ -16,10 +16,6 @@ module OpenTelemetry
             ActionDispatch::RequestId,
             OpenTelemetry::Instrumentation::Rails::Middlewares::TracerMiddleware
           )
-
-          # TODO: Check for exceptions app
-          # Rails.application.config.exceptions_app or
-          # it defaults to https://github.com/rails/rails/blob/master/actionpack/lib/action_dispatch/middleware/public_exceptions.rb
         end
 
         private
