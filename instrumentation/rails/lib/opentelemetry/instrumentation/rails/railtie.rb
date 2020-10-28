@@ -11,7 +11,7 @@ module OpenTelemetry
       # instrumentation, while this Railtie is used to conventionally instrument
       # the Rails application through its initialization hooks
       class Railtie < ::Rails::Railtie
-        initializer 'opentelemetry.before_initialize' do |app|
+        config.before_initialize do |app|
           app.middleware.insert_after(
             ActionDispatch::RequestId,
             OpenTelemetry::Instrumentation::Rails::Middlewares::TracerMiddleware
