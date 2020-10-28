@@ -6,6 +6,6 @@
 
 class ExceptionsController < ActionController::Base
   def show
-    render plain: 'oops'
+    render plain: 'oops', status: :internal_server_error
   end
 end

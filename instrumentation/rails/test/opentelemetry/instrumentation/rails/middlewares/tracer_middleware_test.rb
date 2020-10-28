@@ -90,13 +90,13 @@ describe OpenTelemetry::Instrumentation::Rails::Middlewares::TracerMiddleware do
 
       _(span.name).must_equal 'ExceptionsController.show'
       _(span.kind).must_equal :server
-      _(span.status.ok?).must_equal true
+      _(span.status.ok?).must_equal false
 
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.host']).must_equal 'example.org'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.target']).must_equal '/exception'
-      _(span.attributes['http.status_code']).must_equal 200
+      _(span.attributes['http.status_code']).must_equal 500
     end
   end
 
