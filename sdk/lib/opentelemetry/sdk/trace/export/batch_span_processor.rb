@@ -75,7 +75,7 @@ module OpenTelemetry
               n = spans.size + 1 - max_queue_size
               spans.shift(n) if n.positive?
               spans << span
-              @condition.signal if spans.size > max_queue_size / 2
+              @condition.signal if spans.size > batch_size
             end
           end
 
