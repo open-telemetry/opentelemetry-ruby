@@ -12,6 +12,12 @@ module OpenTelemetry
         # {Span} to {io.opentelemetry.proto.trace.v1.Span} and passes it to the
         # configured exporter.
         #
+        # Typically, the SimpleSpanProcessor will be most suitable for use in testing;
+        # it should be used with caution in production. It may be appropriate for
+        # production use in scenarios where creating multiple threads is not desirable
+        # as well as scenarios where different custom attributes should be added to
+        # individual spans based on code scopes.
+        #
         # Only spans that are recorded are converted, {OpenTelemetry::Trace::Span#is_recording?} must
         # return true.
         class SimpleSpanProcessor

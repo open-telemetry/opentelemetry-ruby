@@ -13,6 +13,9 @@ module OpenTelemetry
         # Implementation of the duck type SpanProcessor that batches spans
         # exported by the SDK then pushes them to the exporter pipeline.
         #
+        # Typically, the BatchSpanProcessor will be more suitable for
+        # production environments than the SimpleSpanProcessor.
+        #
         # All spans reported by the SDK implementation are first added to a
         # synchronized queue (with a {max_queue_size} maximum size, after the
         # size is reached spans are dropped) and exported every
