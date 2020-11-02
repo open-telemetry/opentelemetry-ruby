@@ -28,6 +28,10 @@ services:
     <<: *base
     working_dir: /app/instrumentation/concurrent_ruby/example
 
+  ex-instrumentation-delayed_job:
+    <<: *base
+    working_dir: /app/instrumentation/delayed_job/example
+
   ex-instrumentation-ethon:
     <<: *base
     working_dir: /app/instrumentation/ethon/example
