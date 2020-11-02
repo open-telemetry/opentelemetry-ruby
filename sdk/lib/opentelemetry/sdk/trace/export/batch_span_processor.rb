@@ -51,6 +51,7 @@ module OpenTelemetry
             raise ArgumentError if max_export_batch_size > max_queue_size
 
             @exporter = exporter
+            @dispatcher = DispatcherDetector.dispatcher
             @exporter_timeout_seconds = exporter_timeout_millis / 1000.0
             @mutex = Mutex.new
             @condition = ConditionVariable.new
@@ -61,7 +62,7 @@ module OpenTelemetry
             @spans = []
             @pid = nil
             @thread = nil
-            reset_on_fork
+            reset_on_fork(restart_thread: !forking_dispatcher?)
           end
 
           # does nothing for this processor
@@ -173,6 +174,10 @@ module OpenTelemetry
             @mutex.synchronize do
               yield
             end
+          end
+
+          def forking_dispatcher?
+            %i[passenger puma rainbows unicorn].include?(@dispatcher)
           end
         end
       end

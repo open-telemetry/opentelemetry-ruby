@@ -27,6 +27,7 @@ module OpenTelemetry
   end
 end
 
+require 'opentelemetry/sdk/trace/export/dispatcher_detector'
 require 'opentelemetry/sdk/trace/export/batch_span_processor'
 require 'opentelemetry/sdk/trace/export/console_span_exporter'
 require 'opentelemetry/sdk/trace/export/in_memory_span_exporter'
