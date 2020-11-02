@@ -56,6 +56,13 @@ module OpenTelemetry
       configurator = Configurator.new
       yield configurator if block_given?
       configurator.configure
+    rescue StandardError => e
+      if configurator.error_handler
+        configurator.error_handler.call(e)
+      else
+        OpenTelemetry.logger.error("unexpected error in span.on_finish - #{e}")
+        raise
+      end
     end
   end
 end

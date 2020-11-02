@@ -21,6 +21,22 @@ describe OpenTelemetry::SDK::Configurator do
     end
   end
 
+  describe '#error_handler' do
+    it 'raises configuration errors by default' do
+      _ { OpenTelemetry::SDK.configure { |c| raise 'hell' } }.must_raise(StandardError)
+    end
+
+    it 'receives configuration errors if overridden' do
+      raised_error = nil
+      custom_handler = ->(e) { raised_error = e }
+      OpenTelemetry::SDK.configure do |c|
+        c.error_handler = custom_handler
+        raise 'hell'
+      end
+      _(raised_error).must_be_kind_of(StandardError)
+    end
+  end
+
   describe '#resource=' do
     let(:configurator_resource) { configurator.instance_variable_get(:@resource) }
     let(:configurator_resource_attributes) { configurator_resource.attribute_enumerator.to_h }

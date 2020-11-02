@@ -15,10 +15,18 @@ module OpenTelemetry
 
       private_constant :USE_MODE_UNSPECIFIED, :USE_MODE_ONE, :USE_MODE_ALL
 
+      # An optional handler for configuration errors. If no error_handler is
+      # configured, configuration errors will escape the OpenTelemetry.sdk.configure
+      # method.
+      #
+      # Error handlers are callable and accept a single (exception object) argument.
+      attr_accessor :error_handler
+
       attr_writer :logger, :http_extractors, :http_injectors, :text_map_extractors,
                   :text_map_injectors
 
       def initialize
+        @error_handler = nil
         @instrumentation_names = []
         @instrumentation_config_map = {}
         @http_extractors = nil
