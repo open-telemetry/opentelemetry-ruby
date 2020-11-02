@@ -66,7 +66,7 @@ module OpenTelemetry
           end
 
           def detect_glassfish
-            defined?(::JRuby) && defined?(::JRuby::Rack::VERSION) && defined?(::GlassFish::Server)
+            defined?(::JRuby::Rack::VERSION) && defined?(::GlassFish::Server)
           end
 
           def detect_litespeed
@@ -74,7 +74,7 @@ module OpenTelemetry
           end
 
           def detect_mongrel
-            defined?(::Mongrel) && defined?(::Mongrel::HttpServer)
+            defined?(::Mongrel::HttpServer)
           end
 
           def detect_passenger
@@ -86,7 +86,7 @@ module OpenTelemetry
           end
 
           def detect_rainbows
-            defined?(::Rainbows) && defined?(::Rainbows::HttpServer) && object_loaded?(::Rainbows::HttpServer)
+            defined?(::Rainbows::HttpServer) && object_loaded?(::Rainbows::HttpServer)
           end
 
           def detect_resque
@@ -110,7 +110,7 @@ module OpenTelemetry
           end
 
           def detect_thin
-            defined?(::Thin) && defined?(::Thin::Server) && object_loaded?(::Thin::Server)
+            defined?(::Thin::Server) && object_loaded?(::Thin::Server)
           end
 
           def detect_torquebox
@@ -118,15 +118,15 @@ module OpenTelemetry
           end
 
           def detect_trinidad
-            defined?(::JRuby) && defined?(::JRuby::Rack::VERSION) && defined?(::Trinidad::Server)
+            defined?(::JRuby::Rack::VERSION) && defined?(::Trinidad::Server)
           end
 
           def detect_unicorn
-            defined?(::Unicorn) && defined?(::Unicorn::HttpServer) && object_loaded?(::Unicorn::HttpServer)
+            defined?(::Unicorn::HttpServer) && object_loaded?(::Unicorn::HttpServer)
           end
 
           def detect_webrick
-            defined?(::WEBrick) && defined?(::WEBrick::VERSION)
+            defined?(::WEBrick::VERSION)
           end
 
           def object_loaded?(klass)
