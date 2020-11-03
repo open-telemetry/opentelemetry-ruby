@@ -16,9 +16,11 @@ module OpenTelemetry
             def instrument_enqueue(job, &block)
               return block.call(job) unless enabled?
 
-              tracer.in_span('delayed_job.enqueue', kind: :producer) do |span|
+              attributes = build_attributes(job)
+              attributes['messaging.operation'] = 'send'
+              tracer.in_span("delayed_job.#{job_queue(job)}.send", attributes: attributes, kind: :producer) do |span|
                 yield job
-                add_attributes(span, job)
+                span.set_attribute('messaging.message_id', job.id)
                 add_events(span, job)
               end
             end
@@ -26,19 +28,14 @@ module OpenTelemetry
             def instrument_invoke(job, &block) # rubocop:disable Metrics/AbcSize
               return block.call(job) unless enabled?
 
-              tracer.in_span('delayed_job.invoke', kind: :consumer) do |span|
-                add_attributes(span, job)
-                span.set_attribute('delayed_job.attempts', job.attempts) if job.attempts
-                span.set_attribute('delayed_job.locked_by', job.locked_by) if job.locked_by
+              attributes = build_attributes(job)
+              attributes['messaging.delayed_job.attempts'] = job.attempts if job.attempts
+              attributes['messaging.delayed_job.locked_by'] = job.locked_by if job.locked_by
+              attributes['messaging.operation'] = 'process'
+              attributes['messaging.message_id'] = job.id
+              tracer.in_span("delayed_job.#{job_queue(job)}.process", attributes: attributes, kind: :consumer) do |span|
                 add_events(span, job)
-                begin
-                  yield job
-                rescue StandardError => e
-                  span.set_attribute('error', true)
-                  span.set_attribute('error.kind', e.class.name)
-                  span.set_attribute('message', e.message&.[](0...120))
-                  raise e
-                end
+                yield job
               end
             end
 
@@ -50,12 +47,15 @@ module OpenTelemetry
 
             protected
 
-            def add_attributes(span, job)
-              span.set_attribute('component', 'delayed_job')
-              span.set_attribute('delayed_job.id', job.id)
-              span.set_attribute('delayed_job.name', job_name(job))
-              span.set_attribute('delayed_job.queue', job.queue) if job.queue
-              span.set_attribute('delayed_job.priority', job.priority)
+            def build_attributes(job)
+              {
+                'component' => 'delayed_job',
+                'messaging.system' => 'delayed_job',
+                'messaging.destination' => job_queue(job),
+                'messaging.destination_kind' => 'queue',
+                'messaging.delayed_job.name' => job_name(job),
+                'messaging.delayed_job.priority' => job.priority
+              }
             end
 
             def add_events(span, job)
@@ -74,9 +74,15 @@ module OpenTelemetry
 
             def job_name(job)
               # If Delayed Job is used via ActiveJob then get the job name from the payload
-              return job.payload_object.job_data['job_class'] if job.payload_object.respond_to?(:job_data)
+              if job.payload_object.respond_to?(:job_data)
+                job.payload_object.job_data['job_class']
+              else
+                job.name
+              end
+            end
 
-              job.name
+            def job_queue(job)
+              job.queue || 'default'
             end
           end
 

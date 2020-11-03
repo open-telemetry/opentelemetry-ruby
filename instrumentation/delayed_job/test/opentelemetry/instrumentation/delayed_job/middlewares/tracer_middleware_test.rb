@@ -67,15 +67,17 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Middlewares::TracerMiddlewa
       _(exporter.finished_spans).must_equal []
       job_enqueue
       _(exporter.finished_spans.size).must_equal 1
-      _(span.name).must_equal 'delayed_job.enqueue'
 
       _(span).must_be_kind_of OpenTelemetry::SDK::Trace::SpanData
+      _(span.name).must_equal 'delayed_job.default.send'
       _(span.attributes['component']).must_equal 'delayed_job'
-      _(span.attributes['delayed_job.name']).must_equal 'BasicPayload'
-      _(span.attributes['delayed_job.id']).must_be_kind_of Integer
-      _(span.attributes['delayed_job.queue']).must_equal nil
-      _(span.attributes['delayed_job.priority']).must_equal 0
-      _(span.attributes['delayed_job.queue']).must_equal nil
+      _(span.attributes['messaging.system']).must_equal 'delayed_job'
+      _(span.attributes['messaging.destination']).must_equal 'default'
+      _(span.attributes['messaging.destination_kind']).must_equal 'queue'
+      _(span.attributes['messaging.delayed_job.name']).must_equal 'BasicPayload'
+      _(span.attributes['messaging.delayed_job.priority']).must_equal 0
+      _(span.attributes['messaging.operation']).must_equal 'send'
+      _(span.attributes['messaging.message_id']).must_be_kind_of Integer
 
       _(span.events.size).must_equal 2
       _(span.events[0].name).must_equal 'created_at'
@@ -89,7 +91,8 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Middlewares::TracerMiddlewa
 
       it 'span tags include queue name' do
         job_enqueue
-        _(span.attributes['delayed_job.queue']).must_equal 'foobar_queue'
+        _(span.attributes['messaging.destination']).must_equal 'foobar_queue'
+        _(span.attributes['messaging.destination_kind']).must_equal 'queue'
       end
     end
 
@@ -98,7 +101,7 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Middlewares::TracerMiddlewa
 
       it 'span tags include priority' do
         job_enqueue
-        _(span.attributes['delayed_job.priority']).must_equal 123
+        _(span.attributes['messaging.delayed_job.priority']).must_equal 123
       end
     end
 
@@ -107,7 +110,7 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Middlewares::TracerMiddlewa
 
       it 'has resource name equal to underlying ActiveJob class name' do
         job_enqueue
-        _(span.attributes['delayed_job.name']).must_equal 'UnderlyingJobClass'
+        _(span.attributes['messaging.delayed_job.name']).must_equal 'UnderlyingJobClass'
       end
     end
   end
@@ -124,20 +127,22 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Middlewares::TracerMiddlewa
       _(exporter.finished_spans).must_equal []
       job_enqueue
       _(exporter.finished_spans.size).must_equal 1
-      _(exporter.finished_spans.first.name).must_equal 'delayed_job.enqueue'
+      _(exporter.finished_spans.first.name).must_equal 'delayed_job.default.send'
       job_run
       _(exporter.finished_spans.size).must_equal 2
-      _(span.name).must_equal 'delayed_job.invoke'
 
       _(span).must_be_kind_of OpenTelemetry::SDK::Trace::SpanData
+      _(span.name).must_equal 'delayed_job.default.process'
       _(span.attributes['component']).must_equal 'delayed_job'
-      _(span.attributes['delayed_job.name']).must_equal 'BasicPayload'
-      _(span.attributes['delayed_job.id']).must_be_kind_of Integer
-      _(span.attributes['delayed_job.queue']).must_equal nil
-      _(span.attributes['delayed_job.priority']).must_equal 0
-      _(span.attributes['delayed_job.queue']).must_equal nil
-      _(span.attributes['delayed_job.attempts']).must_equal 0
-      _(span.attributes['delayed_job.locked_by']).must_be_kind_of String
+      _(span.attributes['messaging.system']).must_equal 'delayed_job'
+      _(span.attributes['messaging.destination']).must_equal 'default'
+      _(span.attributes['messaging.destination_kind']).must_equal 'queue'
+      _(span.attributes['messaging.delayed_job.name']).must_equal 'BasicPayload'
+      _(span.attributes['messaging.delayed_job.priority']).must_equal 0
+      _(span.attributes['messaging.delayed_job.attempts']).must_equal 0
+      _(span.attributes['messaging.delayed_job.locked_by']).must_be_kind_of String
+      _(span.attributes['messaging.operation']).must_equal 'process'
+      _(span.attributes['messaging.message_id']).must_be_kind_of Integer
 
       _(span.events.size).must_equal 3
       _(span.events[0].name).must_equal 'created_at'
@@ -153,7 +158,8 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Middlewares::TracerMiddlewa
 
       it 'span tags include queue name' do
         job_run
-        _(span.attributes['delayed_job.queue']).must_equal 'foobar_queue'
+        _(span.attributes['messaging.destination']).must_equal 'foobar_queue'
+        _(span.attributes['messaging.destination_kind']).must_equal 'queue'
       end
     end
 
@@ -162,7 +168,7 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Middlewares::TracerMiddlewa
 
       it 'span tags include priority' do
         job_run
-        _(span.attributes['delayed_job.priority']).must_equal 123
+        _(span.attributes['messaging.delayed_job.priority']).must_equal 123
       end
     end
 
@@ -171,7 +177,7 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Middlewares::TracerMiddlewa
 
       it 'has resource name equal to underlying ActiveJob class name' do
         job_run
-        _(span.attributes['delayed_job.name']).must_equal 'UnderlyingJobClass'
+        _(span.attributes['messaging.delayed_job.name']).must_equal 'UnderlyingJobClass'
       end
     end
 
@@ -180,13 +186,12 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Middlewares::TracerMiddlewa
 
       it 'has resource name equal to underlying ActiveJob class name' do
         job_run
-        _(span.attributes['delayed_job.name']).must_equal 'ErrorPayload'
-        _(span.attributes['error']).must_equal true
-        _(span.attributes['error.kind']).must_equal 'ArgumentError'
-        _(span.attributes['message']).must_equal 'This job failed'
+        _(span.attributes['messaging.delayed_job.name']).must_equal 'ErrorPayload'
         _(span.events.size).must_equal 4
         _(span.events[3].name).must_equal 'exception'
         _(span.events[3].timestamp).must_be_kind_of Time
+        _(span.events[3].attributes['exception.type']).must_equal 'ArgumentError'
+        _(span.events[3].attributes['exception.message']).must_equal 'This job failed'
       end
     end
   end
