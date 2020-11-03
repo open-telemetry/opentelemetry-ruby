@@ -49,7 +49,6 @@ module OpenTelemetry
 
             def build_attributes(job)
               {
-                'component' => 'delayed_job',
                 'messaging.system' => 'delayed_job',
                 'messaging.destination' => job_queue(job),
                 'messaging.destination_kind' => 'queue',

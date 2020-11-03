@@ -70,7 +70,6 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Middlewares::TracerMiddlewa
 
       _(span).must_be_kind_of OpenTelemetry::SDK::Trace::SpanData
       _(span.name).must_equal 'delayed_job.default.send'
-      _(span.attributes['component']).must_equal 'delayed_job'
       _(span.attributes['messaging.system']).must_equal 'delayed_job'
       _(span.attributes['messaging.destination']).must_equal 'default'
       _(span.attributes['messaging.destination_kind']).must_equal 'queue'
@@ -133,7 +132,6 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Middlewares::TracerMiddlewa
 
       _(span).must_be_kind_of OpenTelemetry::SDK::Trace::SpanData
       _(span.name).must_equal 'delayed_job.default.process'
-      _(span.attributes['component']).must_equal 'delayed_job'
       _(span.attributes['messaging.system']).must_equal 'delayed_job'
       _(span.attributes['messaging.destination']).must_equal 'default'
       _(span.attributes['messaging.destination_kind']).must_equal 'queue'
