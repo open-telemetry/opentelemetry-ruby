@@ -10,4 +10,8 @@ class ExampleController < ActionController::Base
   def ok
     render plain: 'actually ok'
   end
+
+  def internal_server_error
+    raise :internal_server_error
+  end
 end

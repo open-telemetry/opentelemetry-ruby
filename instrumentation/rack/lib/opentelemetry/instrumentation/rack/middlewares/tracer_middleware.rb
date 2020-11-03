@@ -15,6 +15,8 @@ module OpenTelemetry
         # TracerMiddleware propagates context and instruments Rack requests
         # by way of its middleware system
         class TracerMiddleware # rubocop:disable Metrics/ClassLength
+          THREAD_KEY = :__opentelemetry_rack_span__
+
           class << self
             def allowed_rack_request_headers
               @allowed_rack_request_headers ||= Array(config[:allowed_request_headers]).each_with_object({}) do |header, memo|
@@ -63,6 +65,7 @@ module OpenTelemetry
               tracer.in_span(request_span_name,
                              attributes: request_span_attributes(env: env),
                              kind: request_span_kind) do |request_span|
+                Thread.current[THREAD_KEY] = request_span
                 @app.call(env).tap do |status, headers, response|
                   set_attributes_after_request(request_span, status, headers, response)
                 end
@@ -70,6 +73,7 @@ module OpenTelemetry
             end
           ensure
             finish_span(frontend_context)
+            Thread.current[THREAD_KEY] = nil
           end
 
           private
@@ -103,7 +107,8 @@ module OpenTelemetry
               'http.method' => env['REQUEST_METHOD'],
               'http.host' => env['HTTP_HOST'] || 'unknown',
               'http.scheme' => env['rack.url_scheme'],
-              'http.target' => fullpath(env)
+              'http.target' => fullpath(env),
+              'http.user_agent' => env['HTTP_USER_AGENT']
             }.merge(allowed_request_headers(env))
           end
 

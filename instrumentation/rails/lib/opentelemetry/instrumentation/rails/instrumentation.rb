@@ -15,6 +15,7 @@ module OpenTelemetry
         install do |_config|
           require_dependencies
           require_railtie
+          patch_metal
         end
 
         present do
@@ -24,11 +25,15 @@ module OpenTelemetry
         private
 
         def require_dependencies
-          require_relative 'middlewares/tracer_middleware'
+          require_relative 'patches/action_controller/metal'
         end
 
         def require_railtie
           require_relative 'railtie'
+        end
+
+        def patch_metal
+          ::ActionController::Metal.prepend(Patches::ActionController::Metal)
         end
       end
     end

@@ -8,6 +8,6 @@ require 'test_helper'
 
 describe OpenTelemetry::Instrumentation::Rails::Instrumentation do
   it 'adds the tracing middleware' do
-    _(DEFAULT_RAILS_APP.config.middleware).must_include OpenTelemetry::Instrumentation::Rails::Middlewares::TracerMiddleware
+    _(DEFAULT_RAILS_APP.config.middleware).must_include OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware
   end
 end

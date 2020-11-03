@@ -10,8 +10,14 @@ class RedirectMiddleware
   end
 
   def call(env)
-    return [307, {}, 'Temporary Redirect'] if env['PATH_INFO'] == '/redirection'
+    return [307, {}, 'Temporary Redirect'] if should_redirect?(env)
 
     @app.call(env)
+  end
+
+  private
+
+  def should_redirect?(env)
+    env['PATH_INFO'] == '/redirection' || env['QUERY_STRING'].include?('redirect_in_middleware')
   end
 end
