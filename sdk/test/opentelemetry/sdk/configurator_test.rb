@@ -23,7 +23,7 @@ describe OpenTelemetry::SDK::Configurator do
 
   describe '#error_handler' do
     it 'raises configuration errors by default' do
-      _ { OpenTelemetry::SDK.configure { |c| raise 'hell' } }.must_raise(StandardError)
+      _ { OpenTelemetry::SDK.configure { |_| raise 'hell' } }.must_raise(StandardError)
     end
 
     it 'receives configuration errors if overridden' do
