@@ -58,7 +58,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
       include MongoTraceTest
 
       it 'has operation-specific properties' do
-        _(span.name).must_equal 'mongodb.artists.insert'
+        _(span.name).must_equal 'artists.insert'
         _(span.attributes['db.operation']).must_equal 'insert'
         _(span.attributes['db.mongodb.collection']).must_equal 'artists'
         assert_nil(span.attributes['db.statement'])
@@ -72,7 +72,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
       include MongoTraceTest
 
       it 'has operation-specific properties' do
-        _(span.name).must_equal 'mongodb.people.insert'
+        _(span.name).must_equal 'people.insert'
         _(span.attributes['db.operation']).must_equal 'insert'
         _(span.attributes['db.mongodb.collection']).must_equal 'people'
         assert_nil(span.attributes['db.statement'])
@@ -96,7 +96,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
       include MongoTraceTest
 
       it 'has operation-specific properties' do
-        _(span.name).must_equal 'mongodb.people.insert'
+        _(span.name).must_equal 'people.insert'
         _(span.attributes['db.operation']).must_equal 'insert'
         _(span.attributes['db.mongodb.collection']).must_equal 'people'
         assert_nil(span.attributes['db.statement'])
@@ -121,7 +121,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
     include MongoTraceTest
 
     it 'has operation-specific properties' do
-      _(span.name).must_equal 'mongodb.people.find'
+      _(span.name).must_equal 'people.find'
       _(span.attributes['db.operation']).must_equal 'find'
       _(span.attributes['db.mongodb.collection']).must_equal 'people'
       assert_nil(span.attributes['db.statement'])
@@ -144,7 +144,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
     include MongoTraceTest
 
     it 'has operation-specific properties' do
-      _(span.name).must_equal 'mongodb.people.find'
+      _(span.name).must_equal 'people.find'
       _(span.attributes['db.operation']).must_equal 'find'
       _(span.attributes['db.mongodb.collection']).must_equal 'people'
       _(span.attributes['db.statement']).must_equal '{"filter":{"name":"?"}}'
@@ -166,7 +166,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
     include MongoTraceTest
 
     it 'has operation-specific properties' do
-      _(span.name).must_equal 'mongodb.people.update'
+      _(span.name).must_equal 'people.update'
       _(span.attributes['db.operation']).must_equal 'update'
       _(span.attributes['db.mongodb.collection']).must_equal 'people'
       _(span.attributes['db.statement']).must_equal '{"updates":[{"q":{"name":"?"},"u":{"$set":{"phone_number":"?"}}}]}'
@@ -198,7 +198,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
     include MongoTraceTest
 
     it 'has operation-specific properties' do
-      _(span.name).must_equal 'mongodb.people.update'
+      _(span.name).must_equal 'people.update'
       _(span.attributes['db.operation']).must_equal 'update'
       _(span.attributes['db.mongodb.collection']).must_equal 'people'
       _(span.attributes['db.statement']).must_equal '{"updates":[{"u":{"$set":{"phone_number":"?"}},"multi":true}]}'
@@ -226,7 +226,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
     include MongoTraceTest
 
     it 'has operation-specific properties' do
-      _(span.name).must_equal 'mongodb.people.delete'
+      _(span.name).must_equal 'people.delete'
       _(span.attributes['db.operation']).must_equal 'delete'
       _(span.attributes['db.mongodb.collection']).must_equal 'people'
       _(span.attributes['db.statement']).must_equal '{"deletes":[{"q":{"name":"?"}}]}'
@@ -258,7 +258,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
     include MongoTraceTest
 
     it 'has operation-specific properties' do
-      _(span.name).must_equal 'mongodb.people.delete'
+      _(span.name).must_equal 'people.delete'
       _(span.attributes['db.operation']).must_equal 'delete'
       _(span.attributes['db.mongodb.collection']).must_equal 'people'
       _(span.attributes['db.statement']).must_equal '{"deletes":[{"q":{"name":"?"}}]}'
@@ -279,7 +279,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
     include MongoTraceTest
 
     it 'has operation-specific properties' do
-      _(span.name).must_equal 'mongodb.dropDatabase'
+      _(span.name).must_equal 'dropDatabase'
       _(span.attributes['db.operation']).must_equal 'dropDatabase'
       assert_nil(span.attributes['db.mongodb.collection'])
       assert_nil(span.attributes['db.statement'])
@@ -292,7 +292,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
     include MongoTraceTest
 
     it 'has operation-specific properties' do
-      _(span.name).must_equal 'mongodb.artists.drop'
+      _(span.name).must_equal 'artists.drop'
       _(span.attributes['db.operation']).must_equal 'drop'
       _(span.attributes['db.mongodb.collection']).must_equal 'artists'
       assert_nil(span.attributes['db.statement'])
@@ -333,7 +333,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
 
       it 'produces spans for command and authentication' do
         _(spans.size).must_equal 1
-        _(span.name).must_equal 'mongodb.saslStart'
+        _(span.name).must_equal 'saslStart'
         _(span.attributes['db.operation']).must_equal 'saslStart'
         _(span.events.size).must_equal 1
         _(span.events[0].name).must_equal 'exception'
