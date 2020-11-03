@@ -69,7 +69,7 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Middlewares::TracerMiddlewa
       _(exporter.finished_spans.size).must_equal 1
 
       _(span).must_be_kind_of OpenTelemetry::SDK::Trace::SpanData
-      _(span.name).must_equal 'delayed_job.default.send'
+      _(span.name).must_equal 'default send'
       _(span.attributes['messaging.system']).must_equal 'delayed_job'
       _(span.attributes['messaging.destination']).must_equal 'default'
       _(span.attributes['messaging.destination_kind']).must_equal 'queue'
@@ -126,12 +126,12 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Middlewares::TracerMiddlewa
       _(exporter.finished_spans).must_equal []
       job_enqueue
       _(exporter.finished_spans.size).must_equal 1
-      _(exporter.finished_spans.first.name).must_equal 'delayed_job.default.send'
+      _(exporter.finished_spans.first.name).must_equal 'default send'
       job_run
       _(exporter.finished_spans.size).must_equal 2
 
       _(span).must_be_kind_of OpenTelemetry::SDK::Trace::SpanData
-      _(span.name).must_equal 'delayed_job.default.process'
+      _(span.name).must_equal 'default process'
       _(span.attributes['messaging.system']).must_equal 'delayed_job'
       _(span.attributes['messaging.destination']).must_equal 'default'
       _(span.attributes['messaging.destination_kind']).must_equal 'queue'
