@@ -37,6 +37,10 @@ jobs:
         image: memcached:alpine
         ports:
           - 11211:11211
+      mongodb:
+        image: mongo:4.4
+        ports:
+          - 27017:27017
       sql:
         image: mysql:5.6
         env:
@@ -63,4 +67,6 @@ jobs:
           TEST_MYSQL_PORT: ${{ job.services.mysql.ports['3306'] }}
           TEST_MEMCACHED_HOST: memcached
           TEST_MEMCACHED_PORT: ${{ job.services.memcached.ports['11211'] }}
+          TEST_MONGODB_HOST: mongodb
+          TEST_MONGODB_PORT: ${{ job.services.mongodb.ports['27017'] }}
         run: toys ci ${{ matrix.flags }}
