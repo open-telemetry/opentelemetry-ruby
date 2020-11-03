@@ -24,7 +24,7 @@ module OpenTelemetry
 
           def serialize
             build_payload
-            payload.to_json unless payload.empty?
+            payload.to_json.freeze unless payload.empty?
           end
 
           private

@@ -14,35 +14,27 @@ module OpenTelemetry
         class Subscriber
           THREAD_KEY = :__opentelemetry_mongo_spans__
 
-          def started(event) # rubocop:disable Metrics/AbcSize
+          def started(event)
             # start a trace and store it in the current thread; using the `operation_id`
             # is safe since it's a unique id used to link events together. Also only one
             # thread is involved in this execution so thread-local storage should be safe. Reference:
             # https://github.com/mongodb/mongo-ruby-driver/blob/master/lib/mongo/monitoring.rb#L70
             # https://github.com/mongodb/mongo-ruby-driver/blob/master/lib/mongo/monitoring/publishable.rb#L38-L56
-            # TODO: decide naming convention
             collection = get_collection(event.command)
-            span = tracer.start_span("#{collection || ''}.#{event.command_name}", kind: :client)
+            attributes = build_attributes(event)
+            attributes['db.mongodb.collection'] = collection if collection
+            span = tracer.start_span(span_name(collection, event.command_name), attributes: attributes, kind: :client)
             set_span(event, span)
-
-            serialized_command = CommandSerializer.new(event.command).serialize
-            span.set_attribute('db.system', 'mongodb')
-            span.set_attribute('db.name', event.database_name)
-            span.set_attribute('db.operation', event.command_name)
-            span.set_attribute('db.mongodb.collection', collection) if collection
-            span.set_attribute('db.statement', serialized_command)
-            span.set_attribute('net.peer.name', event.address.host)
-            span.set_attribute('net.peer.port', event.address.port)
           end
 
           def failed(event)
             finish_event('failed', event) do |span|
               if event.is_a?(::Mongo::Monitoring::Event::CommandFailed)
                 span.add_event('exception',
-                          attributes: {
-                            'exception.type' => 'CommandFailed',
-                            'exception.message' => event.message
-                          })
+                               attributes: {
+                                 'exception.type' => 'CommandFailed',
+                                 'exception.message' => event.message
+                               })
               end
             end
           end
@@ -64,6 +56,24 @@ module OpenTelemetry
             # finish span to prevent leak and remove it from thread storage
             span&.finish
             clear_span(event)
+          end
+
+          def span_name(collection, command_name)
+            name = +'mongodb.'
+            name << "#{collection}." if collection
+            name << command_name
+            name.freeze
+          end
+
+          def build_attributes(event)
+            {
+              'db.system' => 'mongodb',
+              'db.name' => event.database_name,
+              'db.operation' => event.command_name,
+              'db.statement' => CommandSerializer.new(event.command).serialize,
+              'net.peer.name' => event.address.host,
+              'net.peer.port' => event.address.port
+            }
           end
 
           def get_collection(command)

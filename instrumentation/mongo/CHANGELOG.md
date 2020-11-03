@@ -1,5 +1,5 @@
 # Release History: opentelemetry-instrumentation-mongo
 
-### v0.8.0 / 2020-10-07
+### v0.9.0 / 2020-11-03
 
 * Initial release of Mongo instrumenter (ported from Datadog)
