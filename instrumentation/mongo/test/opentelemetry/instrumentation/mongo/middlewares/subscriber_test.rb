@@ -339,7 +339,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
         _(span.events[0].name).must_equal 'exception'
         _(span.events[0].timestamp).must_be_kind_of Time
         _(span.events[0].attributes['exception.type']).must_equal 'CommandFailed'
-        _(span.events[0].attributes['exception.message']).must_match(/Unsupported mechanism.+PLAIN.+\(2\)/)
+        _(span.events[0].attributes['exception.message']).must_match(/mechanism.+PLAIN.+\(2\)/)
       end
     end
   end
