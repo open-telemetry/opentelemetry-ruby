@@ -44,8 +44,6 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
       _(spans.size).must_equal 1
       _(span.attributes['db.system']).must_equal 'mongodb'
       _(span.attributes['db.name']).must_equal TestHelper.database
-      # _(span.attributes['mongo.request_id']).must_be_kind_of Integer
-      # _(span.attributes['mongo.op_id']).must_be_kind_of Integer
       _(span.attributes['net.peer.name']).must_equal TestHelper.host
       _(span.attributes['net.peer.port']).must_equal TestHelper.port
     end
@@ -63,7 +61,6 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
         _(span.attributes['db.operation']).must_equal 'insert'
         _(span.attributes['db.mongodb.collection']).must_equal 'artists'
         _(span.attributes['db.statement']).must_equal nil
-        # _(span.attributes['mongo.n']).must_equal 1
       end
     end
 
@@ -77,7 +74,6 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
         _(span.attributes['db.operation']).must_equal 'insert'
         _(span.attributes['db.mongodb.collection']).must_equal 'people'
         _(span.attributes['db.statement']).must_equal nil
-        # _(span.attributes['mongo.n']).must_equal 1
       end
     end
   end
@@ -101,7 +97,6 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
         _(span.attributes['db.operation']).must_equal 'insert'
         _(span.attributes['db.mongodb.collection']).must_equal 'people'
         _(span.attributes['db.statement']).must_equal nil
-        # _(span.attributes['mongo.n']).must_equal 2
       end
     end
   end
@@ -110,13 +105,13 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
     let(:collection) { :people }
 
     before do
-      # Insert a document
+      # insert a document
       client[collection].insert_one(name: 'Steve', hobbies: ['hiking', 'tennis', 'fly fishing'])
       exporter.reset
 
-      # Do #find_all operation
+      # do #find_all operation
       client[collection].find.each do |document|
-        # =>  Yields a BSON::Document.
+        # => yields a BSON::Document.
       end
     end
 
@@ -126,7 +121,6 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
       _(span.attributes['db.operation']).must_equal 'find'
       _(span.attributes['db.mongodb.collection']).must_equal 'people'
       assert_nil(span.attributes['db.statement'])
-      # _(span.attributes['mongo.n']).must_equal nil
     end
   end
 
@@ -134,11 +128,11 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
     let(:collection) { :people }
 
     before do
-      # Insert a document
+      # insert a document
       client[collection].insert_one(name: 'Steve', hobbies: ['hiking'])
       exporter.reset
 
-      # Do #find operation
+      # do #find operation
       result = client[collection].find(name: 'Steve').first[:hobbies]
       _(result).must_equal ['hiking']
     end
@@ -149,7 +143,6 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
       _(span.attributes['db.operation']).must_equal 'find'
       _(span.attributes['db.mongodb.collection']).must_equal 'people'
       _(span.attributes['db.statement']).must_equal '{"filter":{"name":"?"}}'
-      # _(span.attributes['mongo.n']).must_equal nil
     end
   end
 
@@ -157,11 +150,11 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
     let(:collection) { :people }
 
     before do
-      # Insert a document
+      # insert a document
       client[collection].insert_one(name: 'Sally', hobbies: ['skiing', 'stamp collecting'])
       exporter.reset
 
-      # Do #update_one operation
+      # do #update_one operation
       client[collection].update_one({ name: 'Sally' }, '$set' => { 'phone_number' => '555-555-5555' })
     end
 
@@ -171,7 +164,6 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
       _(span.attributes['db.operation']).must_equal 'update'
       _(span.attributes['db.mongodb.collection']).must_equal 'people'
       _(span.attributes['db.statement']).must_equal '{"updates":[{"q":{"name":"?"},"u":{"$set":{"phone_number":"?"}}}]}'
-      # _(span.attributes['mongo.n']).must_equal 1
     end
 
     it 'correctly performs operation' do
@@ -189,11 +181,11 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
     end
 
     before do
-      # Insert documents
+      # insert documents
       client[collection].insert_many(documents)
       exporter.reset
 
-      # Do #update_many operation
+      # do #update_many operation
       client[collection].update_many({}, '$set' => { 'phone_number' => '555-555-5555' })
     end
 
@@ -203,7 +195,6 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
       _(span.attributes['db.operation']).must_equal 'update'
       _(span.attributes['db.mongodb.collection']).must_equal 'people'
       _(span.attributes['db.statement']).must_equal '{"updates":[{"u":{"$set":{"phone_number":"?"}},"multi":true}]}'
-      # _(span.attributes['mongo.n']).must_equal 2
     end
 
     it 'correctly performs operation' do
@@ -217,11 +208,11 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
     let(:collection) { :people }
 
     before do
-      # Insert a document
+      # insert a document
       client[collection].insert_one(name: 'Sally', hobbies: ['skiing', 'stamp collecting'])
       exporter.reset
 
-      # Do #delete_one operation
+      # do #delete_one operation
       client[collection].delete_one(name: 'Sally')
     end
 
@@ -231,7 +222,6 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
       _(span.attributes['db.operation']).must_equal 'delete'
       _(span.attributes['db.mongodb.collection']).must_equal 'people'
       _(span.attributes['db.statement']).must_equal '{"deletes":[{"q":{"name":"?"}}]}'
-      # _(span.attributes['mongo.n']).must_equal 1
     end
 
     it 'correctly performs operation' do
@@ -249,11 +239,11 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
     end
 
     before do
-      # Insert documents
+      # insert documents
       client[collection].insert_many(documents)
       exporter.reset
 
-      # Do #delete_many operation
+      # do #delete_many operation
       client[collection].delete_many(name: /$S*/)
     end
 
@@ -263,7 +253,6 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
       _(span.attributes['db.operation']).must_equal 'delete'
       _(span.attributes['db.mongodb.collection']).must_equal 'people'
       _(span.attributes['db.statement']).must_equal '{"deletes":[{"q":{"name":"?"}}]}'
-      # _(span.attributes['mongo.n']).must_equal 2
     end
 
     it 'correctly performs operation' do
@@ -274,7 +263,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
   end
 
   describe '#drop operation' do
-    let(:collection) { 1 } # Because drop operation doesn't have a collection
+    let(:collection) { 1 } # because drop operation doesn't have a collection
 
     before { client.database.drop }
 
@@ -284,7 +273,6 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
       _(span.attributes['db.operation']).must_equal 'dropDatabase'
       _(span.attributes['db.mongodb.collection']).must_equal nil
       _(span.attributes['db.statement']).must_equal nil
-      # _(span.attributes['mongo.n']).must_equal nil
     end
   end
 
