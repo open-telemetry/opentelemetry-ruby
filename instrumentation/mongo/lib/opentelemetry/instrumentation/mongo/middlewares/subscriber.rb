@@ -59,10 +59,8 @@ module OpenTelemetry
           end
 
           def span_name(collection, command_name)
-            name = +'mongodb.'
-            name << "#{collection}." if collection
-            name << command_name
-            name.freeze
+            return command_name unless collection
+            "#{collection}.#{command_name}"
           end
 
           def build_attributes(event)
