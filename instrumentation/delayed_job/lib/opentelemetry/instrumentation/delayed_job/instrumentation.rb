@@ -23,7 +23,7 @@ module OpenTelemetry
         private
 
         def gem_version
-          Gem.loaded_specs['delayed_job']&.version
+          Gem.loaded_specs['delayed_job'].version
         end
 
         def require_dependencies
