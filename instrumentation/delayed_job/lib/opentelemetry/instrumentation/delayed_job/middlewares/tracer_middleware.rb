@@ -25,7 +25,7 @@ module OpenTelemetry
               end
             end
 
-            def instrument_invoke(job, &block) # rubocop:disable Metrics/AbcSize
+            def instrument_invoke(job, &block)
               return block.call(job) unless enabled?
 
               attributes = build_attributes(job)
