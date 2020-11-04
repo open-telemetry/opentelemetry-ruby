@@ -33,7 +33,7 @@ module OpenTelemetry
           start_span(name, with_parent: Context.empty, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind)
         end
 
-        def start_span(name, with_parent: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil) # rubocop:disable Metrics/AbcSize
+        def start_span(name, with_parent: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
           name ||= 'empty'
 
           with_parent ||= Context.current
@@ -42,12 +42,10 @@ module OpenTelemetry
             parent_span_id = parent_span_context.span_id
             tracestate = parent_span_context.tracestate
             trace_id = parent_span_context.trace_id
-          else
-            parent_span_context = nil
           end
           trace_id ||= OpenTelemetry::Trace.generate_trace_id
           sampler = tracer_provider.active_trace_config.sampler
-          result = sampler.should_sample?(trace_id: trace_id, parent_context: parent_span_context, links: links, name: name, kind: kind, attributes: attributes)
+          result = sampler.should_sample?(trace_id: trace_id, parent_context: with_parent, links: links, name: name, kind: kind, attributes: attributes)
           internal_create_span(result, name, kind, trace_id, parent_span_id, attributes, links, start_timestamp, tracestate, with_parent)
         end
 
