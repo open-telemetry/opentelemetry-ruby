@@ -193,29 +193,4 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Middlewares::TracerMiddlewa
       end
     end
   end
-
-  # TODO: do we need to call #shutdown??
-  # describe 'execute callback' do
-  #   let(:worker) { double(:worker, name: 'worker') }
-  #
-  #   before do
-  #     allow(exporter).to receive(:shutdown).and_call_original
-  #   end
-  #
-  #   it 'execution callback yields control' do
-  #     result = nil
-  #     Delayed::Worker.lifecycle.run_callbacks(:execute, worker) do |b|
-  #       result = b
-  #     end
-  #     _(result).must_equal worker
-  #   end
-  #
-  #   it 'shutdown happens after yielding' do
-  #     Delayed::Worker.lifecycle.run_callbacks(:execute, worker) do
-  #       expect(exporter).not_to have_received(:shutdown)
-  #     end
-  #
-  #     expect(exporter).to have_received(:shutdown)
-  #   end
-  # end
 end
