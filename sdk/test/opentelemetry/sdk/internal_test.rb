@@ -31,7 +31,7 @@ describe OpenTelemetry::SDK::Internal do
     end
 
     it 'Symbol true case' do
-      _(klass.to_boolean(:true)).must_equal true
+      _(klass.to_boolean(:true)).must_equal true # rubocop:disable Lint/BooleanSymbol
       _(klass.to_boolean(:yes)).must_equal true
       _(klass.to_boolean(:t)).must_equal true
       _(klass.to_boolean(:y)).must_equal true
@@ -39,7 +39,7 @@ describe OpenTelemetry::SDK::Internal do
     end
 
     it 'Symbol false case' do
-      _(klass.to_boolean(:false)).must_equal false
+      _(klass.to_boolean(:false)).must_equal false # rubocop:disable Lint/BooleanSymbol
       _(klass.to_boolean(:no)).must_equal false
       _(klass.to_boolean(:f)).must_equal false
       _(klass.to_boolean(:n)).must_equal false
