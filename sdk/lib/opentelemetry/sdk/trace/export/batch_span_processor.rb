@@ -48,7 +48,7 @@ module OpenTelemetry
                          schedule_delay_millis: Float(ENV.fetch('OTEL_BSP_SCHEDULE_DELAY_MILLIS', 5_000)),
                          max_queue_size: Integer(ENV.fetch('OTEL_BSP_MAX_QUEUE_SIZE', 2048)),
                          max_export_batch_size: Integer(ENV.fetch('OTEL_BSP_MAX_EXPORT_BATCH_SIZE', 512)),
-                         start_thread_on_boot: OpenTelemetry::SDK::Internal.to_boolean(ENV['OTEL_START_EXPORT_THREAD_ON_BOOT']))
+                         start_thread_on_boot: String(ENV['OTEL_START_EXPORT_THREAD_ON_BOOT']) !~ /false/i)
             raise ArgumentError if max_export_batch_size > max_queue_size
 
             @exporter = exporter
@@ -62,7 +62,7 @@ module OpenTelemetry
             @spans = []
             @pid = nil
             @thread = nil
-            start_thread_on_boot = true if start_thread_on_boot.nil?
+
             reset_on_fork(restart_thread: start_thread_on_boot)
           end
 

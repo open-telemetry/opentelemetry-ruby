@@ -16,16 +16,6 @@ module OpenTelemetry
         value.is_a?(TrueClass) || value.is_a?(FalseClass)
       end
 
-      def to_boolean(value)
-        return nil if value.nil?
-        return value if boolean?(value)
-
-        case value.to_s
-        when /\A(true|t|yes|y|1)\z/i then true
-        when /\A(false|f|no|n|0)\z/i then false
-        end
-      end
-
       def valid_key?(key)
         key.instance_of?(String)
       end
