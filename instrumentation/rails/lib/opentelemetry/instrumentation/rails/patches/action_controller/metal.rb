@@ -13,7 +13,7 @@ module OpenTelemetry
           module Metal
             def dispatch(name, request, response)
               rack_span = OpenTelemetry::Instrumentation::Rack.current_span
-              rack_span.name = "#{self.class.name}##{name}" if rack_span && !request.env['action_dispatch.exception']
+              rack_span.name = "#{self.class.name}##{name}" if rack_span.context.valid? && !request.env['action_dispatch.exception']
               super(name, request, response)
             end
           end
