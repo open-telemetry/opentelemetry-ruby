@@ -85,6 +85,10 @@ gems:
     directory: instrumentation/rack
     version_constant: [OpenTelemetry, Instrumentation, Rack, VERSION]
 
+  - name: opentelemetry-instrumentation-rails
+    directory: instrumentation/rails
+    version_constant: [OpenTelemetry, Instrumentation, Rails, VERSION]
+
   - name: opentelemetry-instrumentation-redis
     directory: instrumentation/redis
     version_constant: [OpenTelemetry, Instrumentation, Redis, VERSION]
