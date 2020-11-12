@@ -1,0 +1,27 @@
+# frozen_string_literal: true
+
+# Copyright 2020 OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+require 'active_support'
+require 'kafka'
+
+require 'opentelemetry/sdk'
+
+require 'pry'
+require 'minitest/autorun'
+
+# global opentelemetry-sdk setup:
+EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
+span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)
+
+OpenTelemetry::SDK.configure do |c|
+  c.add_span_processor span_processor
+end
+
+def clear_notification_subscriptions
+  OpenTelemetry::Instrumentation::RubyKafka::Events::ALL.each do |event|
+    ActiveSupport::Notifications.unsubscribe(event::EVENT_NAME)
+  end
+end
