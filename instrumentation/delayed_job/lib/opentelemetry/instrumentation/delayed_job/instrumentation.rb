@@ -27,11 +27,11 @@ module OpenTelemetry
         end
 
         def require_dependencies
-          require_relative 'tracer_plugin'
+          require_relative 'plugins/tracer_plugin'
         end
 
         def register_tracer_plugin
-          ::Delayed::Worker.plugins << TracerPlugin
+          ::Delayed::Worker.plugins << Plugins::TracerPlugin
         end
       end
     end

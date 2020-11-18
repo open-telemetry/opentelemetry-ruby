@@ -42,7 +42,7 @@ describe OpenTelemetry::Instrumentation::DelayedJob do
 
   describe 'install' do
     it 'installs the tracer plugin' do
-      klass = OpenTelemetry::Instrumentation::DelayedJob::TracerPlugin
+      klass = OpenTelemetry::Instrumentation::DelayedJob::Plugins::TracerPlugin
       _(Delayed::Worker.plugins).must_include klass
     end
   end
