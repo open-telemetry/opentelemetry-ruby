@@ -136,12 +136,12 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       mock.verify
     end
 
-    it 'spawns a thread on boot if OTEL_BSP_START_THREAD_ON_BOOT is true' do
+    it 'spawns a thread on boot if OTEL_RUBY_BSP_START_THREAD_ON_BOOT is true' do
       mock = MiniTest::Mock.new
       mock.expect(:call, nil)
 
       Thread.stub(:new, mock) do
-        with_env('OTEL_BSP_START_THREAD_ON_BOOT' => 'true') do
+        with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => 'true') do
           BatchSpanProcessor.new(exporter: TestExporter.new)
         end
       end
@@ -149,12 +149,12 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       mock.verify
     end
 
-    it 'does not spawn a thread on boot if OTEL_BSP_START_THREAD_ON_BOOT is false' do
+    it 'does not spawn a thread on boot if OTEL_RUBY_BSP_START_THREAD_ON_BOOT is false' do
       mock = MiniTest::Mock.new
       mock.expect(:call, nil) { assert false }
 
       Thread.stub(:new, mock) do
-        with_env('OTEL_BSP_START_THREAD_ON_BOOT' => 'false') do
+        with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => 'false') do
           BatchSpanProcessor.new(exporter: TestExporter.new)
         end
       end
@@ -165,7 +165,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       mock.expect(:call, nil) { assert false }
 
       Thread.stub(:new, mock) do
-        with_env('OTEL_BSP_START_THREAD_ON_BOOT' => 'true') do
+        with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => 'true') do
           BatchSpanProcessor.new(exporter: TestExporter.new,
                                  start_thread_on_boot: false)
         end
