@@ -13,7 +13,7 @@ module OpenTelemetry
 
         install do |_config|
           require_dependencies
-          register_tracer_middleware
+          register_tracer_plugin
         end
 
         present do
@@ -27,11 +27,11 @@ module OpenTelemetry
         end
 
         def require_dependencies
-          require_relative 'middlewares/tracer_middleware'
+          require_relative 'tracer_plugin'
         end
 
-        def register_tracer_middleware
-          ::Delayed::Worker.plugins << Middlewares::TracerMiddleware
+        def register_tracer_plugin
+          ::Delayed::Worker.plugins << TracerPlugin
         end
       end
     end

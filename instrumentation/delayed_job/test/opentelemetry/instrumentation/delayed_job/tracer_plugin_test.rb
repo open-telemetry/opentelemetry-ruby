@@ -4,13 +4,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative '../../../../test_helper'
+require_relative '../../../test_helper'
 
 # require Instrumentation so .install method is found:
-require_relative '../../../../../lib/opentelemetry/instrumentation/delayed_job'
-require_relative '../../../../../lib/opentelemetry/instrumentation/delayed_job/middlewares/tracer_middleware'
+require_relative '../../../../lib/opentelemetry/instrumentation/delayed_job'
+require_relative '../../../../lib/opentelemetry/instrumentation/delayed_job/tracer_plugin'
 
-describe OpenTelemetry::Instrumentation::DelayedJob::Middlewares::TracerMiddleware do
+describe OpenTelemetry::Instrumentation::DelayedJob::TracerPlugin do
   let(:instrumentation) { OpenTelemetry::Instrumentation::DelayedJob::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:finished_spans) { exporter.finished_spans }

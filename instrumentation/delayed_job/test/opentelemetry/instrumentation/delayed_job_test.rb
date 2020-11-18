@@ -41,8 +41,8 @@ describe OpenTelemetry::Instrumentation::DelayedJob do
   end
 
   describe 'install' do
-    it 'installs the middleware plugin' do
-      klass = OpenTelemetry::Instrumentation::DelayedJob::Middlewares::TracerMiddleware
+    it 'installs the tracer plugin' do
+      klass = OpenTelemetry::Instrumentation::DelayedJob::TracerPlugin
       _(Delayed::Worker.plugins).must_include klass
     end
   end
