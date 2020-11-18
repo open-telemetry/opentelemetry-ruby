@@ -124,6 +124,53 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       _(bsp.instance_variable_get(:@max_queue_size)).must_equal 2048
       _(bsp.instance_variable_get(:@batch_size)).must_equal 512
     end
+
+    it 'spawns a thread on boot by default' do
+      mock = MiniTest::Mock.new
+      mock.expect(:call, nil)
+
+      Thread.stub(:new, mock) do
+        BatchSpanProcessor.new(exporter: TestExporter.new)
+      end
+
+      mock.verify
+    end
+
+    it 'spawns a thread on boot if OTEL_RUBY_BSP_START_THREAD_ON_BOOT is true' do
+      mock = MiniTest::Mock.new
+      mock.expect(:call, nil)
+
+      Thread.stub(:new, mock) do
+        with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => 'true') do
+          BatchSpanProcessor.new(exporter: TestExporter.new)
+        end
+      end
+
+      mock.verify
+    end
+
+    it 'does not spawn a thread on boot if OTEL_RUBY_BSP_START_THREAD_ON_BOOT is false' do
+      mock = MiniTest::Mock.new
+      mock.expect(:call, nil) { assert false }
+
+      Thread.stub(:new, mock) do
+        with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => 'false') do
+          BatchSpanProcessor.new(exporter: TestExporter.new)
+        end
+      end
+    end
+
+    it 'prefers explicit start_thread_on_boot parameter rather than the environment' do
+      mock = MiniTest::Mock.new
+      mock.expect(:call, nil) { assert false }
+
+      Thread.stub(:new, mock) do
+        with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => 'true') do
+          BatchSpanProcessor.new(exporter: TestExporter.new,
+                                 start_thread_on_boot: false)
+        end
+      end
+    end
   end
 
   describe 'lifecycle' do
