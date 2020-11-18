@@ -47,7 +47,8 @@ module OpenTelemetry
                          exporter_timeout_millis: Float(ENV.fetch('OTEL_BSP_EXPORT_TIMEOUT_MILLIS', 30_000)),
                          schedule_delay_millis: Float(ENV.fetch('OTEL_BSP_SCHEDULE_DELAY_MILLIS', 5_000)),
                          max_queue_size: Integer(ENV.fetch('OTEL_BSP_MAX_QUEUE_SIZE', 2048)),
-                         max_export_batch_size: Integer(ENV.fetch('OTEL_BSP_MAX_EXPORT_BATCH_SIZE', 512)))
+                         max_export_batch_size: Integer(ENV.fetch('OTEL_BSP_MAX_EXPORT_BATCH_SIZE', 512)),
+                         start_thread_on_boot: String(ENV['OTEL_RUBY_BSP_START_THREAD_ON_BOOT']) !~ /false/i)
             raise ArgumentError if max_export_batch_size > max_queue_size
 
             @exporter = exporter
@@ -61,7 +62,7 @@ module OpenTelemetry
             @spans = []
             @pid = nil
             @thread = nil
-            reset_on_fork
+            reset_on_fork(restart_thread: start_thread_on_boot)
           end
 
           # does nothing for this processor

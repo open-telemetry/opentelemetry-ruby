@@ -75,7 +75,15 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       attributes = Minitest::Mock.new
       result = Result.new(decision: Decision::DROP)
       mock_sampler = Minitest::Mock.new
-      mock_sampler.expect(:should_sample?, result, [{ trace_id: trace_id, parent_context: nil, links: links, name: name, kind: kind, attributes: attributes }])
+      mock_sampler.expect(:should_sample?, result) do |args|
+        args[:trace_id] == trace_id &&
+          args[:links] === links && # rubocop:disable Style/CaseEquality
+          args[:name] === name && # rubocop:disable Style/CaseEquality
+          args[:kind] === kind && # rubocop:disable Style/CaseEquality
+          args[:attributes] === attributes && # rubocop:disable Style/CaseEquality
+          !args[:parent_context].nil? &&
+          !OpenTelemetry::Trace.current_span(args[:parent_context]).context.valid?
+      end
       activate_trace_config TraceConfig.new(sampler: mock_sampler)
       OpenTelemetry::Trace.stub :generate_trace_id, trace_id do
         tracer.start_root_span(name, attributes: attributes, links: links, kind: kind)
@@ -206,7 +214,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       attributes = Minitest::Mock.new
       result = Result.new(decision: Decision::DROP)
       mock_sampler = Minitest::Mock.new
-      mock_sampler.expect(:should_sample?, result, [{ trace_id: span_context.trace_id, parent_context: span_context, links: links, name: name, kind: kind, attributes: attributes }])
+      mock_sampler.expect(:should_sample?, result, [{ trace_id: span_context.trace_id, parent_context: context, links: links, name: name, kind: kind, attributes: attributes }])
       activate_trace_config TraceConfig.new(sampler: mock_sampler)
       tracer.start_span(name, with_parent: context, attributes: attributes, links: links, kind: kind)
       mock_sampler.verify

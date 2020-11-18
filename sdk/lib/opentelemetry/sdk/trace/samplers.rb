@@ -25,9 +25,10 @@ module OpenTelemetry
       # Where:
       #
       # @param [String] trace_id The trace_id of the {Span} to be created.
-      # @param [OpenTelemetry::Trace::SpanContext] parent_context The
-      #   {OpenTelemetry::Trace::SpanContext} of a parent span, typically
-      #   extracted from the wire. Can be nil for a root span.
+      # @param [OpenTelemetry::Context] parent_context The
+      #   {OpenTelemetry::Context} with a parent {Span}. The {Span}'s
+      #   {OpenTelemetry::Trace::SpanContext} may be invalid to indicate a
+      #   root span.
       # @param [Enumerable<Link>] links A collection of links to be associated
       #   with the {Span} to be created. Can be nil.
       # @param [String] name Name of the {Span} to be created.

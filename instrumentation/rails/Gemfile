@@ -1,0 +1,18 @@
+# frozen_string_literal: true
+
+# Copyright 2020 OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+source 'https://rubygems.org'
+
+gemspec
+
+gem 'opentelemetry-api', path: '../../api'
+
+group :test do
+  gem 'byebug'
+  gem 'opentelemetry-instrumentation-rack', path: '../../instrumentation/rack'
+  gem 'opentelemetry-sdk', path: '../../sdk'
+  gem 'pry-byebug'
+end

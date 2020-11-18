@@ -45,12 +45,12 @@ module OpenTelemetry
           private
 
           def database_span_name(sql)
-            # Without obfuscation SQL Queries, setting span name
-            # To the sql query woud result in PII+Cardinality issues
+            # Setting span name to the SQL query without obfuscation would
+            # result in PII + cardinality issues.
             # First attempt to infer the statement type then fallback to
-            # Current Otel apprroach {database.component_name}.{database_instance_name}
+            # current Otel approach {database.component_name}.{database_instance_name}
             # https://github.com/open-telemetry/opentelemetry-python/blob/39fa078312e6f41c403aa8cad1868264011f7546/ext/opentelemetry-ext-dbapi/tests/test_dbapi_integration.py#L53
-            # This would create span names like mysql.default, mysql.replica, postgresql.staging etc etc
+            # This creates span names like mysql.default, mysql.replica, postgresql.staging etc.
 
             statement_type = extract_statement_type(sql)
 
