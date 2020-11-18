@@ -6,16 +6,16 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'opentelemetry/instrumentation/net/http/version'
+require 'opentelemetry/instrumentation/rails/version'
 
 Gem::Specification.new do |spec|
-  spec.name        = 'opentelemetry-instrumentation-net_http'
-  spec.version     = OpenTelemetry::Instrumentation::Net::HTTP::VERSION
+  spec.name        = 'opentelemetry-instrumentation-rails'
+  spec.version     = OpenTelemetry::Instrumentation::Rails::VERSION
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
-  spec.summary     = 'Net::HTTP instrumentation for the OpenTelemetry framework'
-  spec.description = 'Net::HTTP instrumentation for the OpenTelemetry framework'
+  spec.summary     = 'Rails instrumentation for the OpenTelemetry framework'
+  spec.description = 'Rails instrumentation for the OpenTelemetry framework'
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby'
   spec.license     = 'Apache-2.0'
 
@@ -26,22 +26,18 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 2.5.0'
 
   spec.add_dependency 'opentelemetry-api', '~> 0.8.0'
-  spec.add_dependency 'opentelemetry-common', '~> 0.8.0'
+  spec.add_dependency 'opentelemetry-instrumentation-rack', '~> 0.8.0'
 
+  spec.add_development_dependency 'appraisal', '~> 2.2.0'
   spec.add_development_dependency 'bundler', '>= 1.17'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'opentelemetry-sdk', '~> 0.0'
-  spec.add_development_dependency 'rake', '~> 13.0.1'
+  spec.add_development_dependency 'rack-test', '~> 1.1.0'
+  spec.add_development_dependency 'rails'
+  spec.add_development_dependency 'rake', '~> 12.3.3'
   spec.add_development_dependency 'rubocop', '~> 0.73.0'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
   spec.add_development_dependency 'webmock', '~> 3.7.6'
   spec.add_development_dependency 'yard', '~> 0.9'
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
-
-  if spec.respond_to?(:metadata)
-    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-net_http/v#{OpenTelemetry::Instrumentation::Net::HTTP::VERSION}/file.CHANGELOG.html"
-    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/master/instrumentation/net_http'
-    spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/issues'
-    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-net_http/v#{OpenTelemetry::Instrumentation::Net::HTTP::VERSION}"
-  end
 end

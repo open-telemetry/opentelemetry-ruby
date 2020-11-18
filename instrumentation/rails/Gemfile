@@ -9,8 +9,10 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'opentelemetry-api', path: '../../api'
-gem 'opentelemetry-common', path: '../../common'
 
 group :test do
+  gem 'byebug'
+  gem 'opentelemetry-instrumentation-rack', path: '../../instrumentation/rack'
   gem 'opentelemetry-sdk', path: '../../sdk'
+  gem 'pry-byebug'
 end

@@ -106,5 +106,26 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
     end
+
+    it 'merges http client attributes' do
+      OpenTelemetry::Common::HTTP::ClientContext.with_attributes('peer.service' => 'foo') do
+        ::Net::HTTP.get('example.com', '/success')
+      end
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.name).must_equal 'HTTP GET'
+      _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.scheme']).must_equal 'http'
+      _(span.attributes['http.status_code']).must_equal 200
+      _(span.attributes['http.target']).must_equal '/success'
+      _(span.attributes['peer.hostname']).must_equal 'example.com'
+      _(span.attributes['peer.port']).must_equal 80
+      _(span.attributes['peer.service']).must_equal 'foo'
+      assert_requested(
+        :get,
+        'http://example.com/success',
+        headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+      )
+    end
   end
 end

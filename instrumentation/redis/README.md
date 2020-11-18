@@ -30,6 +30,17 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+The Redis instrumentation allows the user to supply additional attributes via context propagation. This may be used to propagate attributes from instrumentation for things like Resque and Sidekiq, for example, to attach to the Redis client spans.
+
+```ruby
+require 'opentelemetry/instrumentation/redis'
+
+redis = ::Redis.new
+OpenTelemetry::Instrumentation::Redis.with_attributes('peer.service' => 'cache') do
+  redis.set('K', 'x')
+end
+```
+
 ## Example
 
 An example of usage can be seen in [`example/redis.rb`](https://github.com/open-telemetry/opentelemetry-ruby/blob/master/instrumentation/redis/example/redis.rb).
