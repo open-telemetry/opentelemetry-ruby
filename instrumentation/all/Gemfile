@@ -9,6 +9,7 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'opentelemetry-api', path: '../../api'
+gem 'opentelemetry-common', path: '../../common'
 gem 'opentelemetry-instrumentation-concurrent_ruby', path: '../concurrent_ruby'
 gem 'opentelemetry-instrumentation-dalli', path: '../dalli'
 gem 'opentelemetry-instrumentation-ethon', path: '../ethon'
