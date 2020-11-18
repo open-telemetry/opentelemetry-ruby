@@ -72,6 +72,25 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
       _(get_span.attributes['net.peer.port']).must_equal 6379
     end
 
+    it 'merges context attributes' do
+      redis = ::Redis.new
+      OpenTelemetry::Instrumentation::Redis.with_attributes('peer.service' => 'foo') do
+        redis.set('K', 'x')
+      end
+
+      _(exporter.finished_spans.size).must_equal 1
+
+      set_span = exporter.finished_spans.first
+      _(set_span.name).must_equal 'SET'
+      _(set_span.attributes['db.type']).must_equal 'redis'
+      _(set_span.attributes['db.instance']).must_equal '0'
+      _(set_span.attributes['db.statement']).must_equal('SET K x')
+      _(set_span.attributes['db.url']).must_equal 'redis://127.0.0.1:6379'
+      _(set_span.attributes['peer.service']).must_equal 'foo'
+      _(set_span.attributes['net.peer.name']).must_equal '127.0.0.1'
+      _(set_span.attributes['net.peer.port']).must_equal 6379
+    end
+
     it 'after error' do
       expect do
         ::Redis.new.call 'THIS_IS_NOT_A_REDIS_FUNC', 'THIS_IS_NOT_A_VALID_ARG'
