@@ -27,9 +27,9 @@ require 'opentelemetry/common'
 
 # TODO: example of semantic convention helpers
 
-# Context propagation in Koala instrumentation
-OpenTelemetry::Common::HTTP::ClientContext.with_attributes('peer.service' => 'facebook') do
-  ...
+# Context propagation in Net::HTTP client
+OpenTelemetry::Common::HTTP::ClientContext.with_attributes('peer.service' => 'example') do
+  Net::HTTP.get('example.com', '/index.html')
 end
 
 # Context propagation in Net::HTTP instrumentation
