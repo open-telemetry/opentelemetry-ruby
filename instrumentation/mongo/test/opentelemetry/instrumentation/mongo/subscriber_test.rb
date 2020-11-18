@@ -4,11 +4,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative '../../../../test_helper'
+require_relative '../../../test_helper'
 
 # require Instrumentation so .install method is found:
-require_relative '../../../../../lib/opentelemetry/instrumentation/mongo'
-require_relative '../../../../../lib/opentelemetry/instrumentation/mongo/subscriber'
+require_relative '../../../../lib/opentelemetry/instrumentation/mongo'
+require_relative '../../../../lib/opentelemetry/instrumentation/mongo/subscriber'
 
 describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Mongo::Instrumentation.instance }
