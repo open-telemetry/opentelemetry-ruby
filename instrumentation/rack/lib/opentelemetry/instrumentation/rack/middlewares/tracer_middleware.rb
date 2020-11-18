@@ -51,7 +51,7 @@ module OpenTelemetry
             @app = app
           end
 
-          def call(env)
+          def call(env) # rubocop:disable Metrics/AbcSize
             original_env = env.dup
             extracted_context = OpenTelemetry.propagation.http.extract(env)
             frontend_context = create_frontend_span(env, extracted_context)
@@ -63,8 +63,10 @@ module OpenTelemetry
               tracer.in_span(request_span_name,
                              attributes: request_span_attributes(env: env),
                              kind: request_span_kind) do |request_span|
-                @app.call(env).tap do |status, headers, response|
-                  set_attributes_after_request(request_span, status, headers, response)
+                OpenTelemetry::Instrumentation::Rack.with_span(request_span) do
+                  @app.call(env).tap do |status, headers, response|
+                    set_attributes_after_request(request_span, status, headers, response)
+                  end
                 end
               end
             end
@@ -103,7 +105,8 @@ module OpenTelemetry
               'http.method' => env['REQUEST_METHOD'],
               'http.host' => env['HTTP_HOST'] || 'unknown',
               'http.scheme' => env['rack.url_scheme'],
-              'http.target' => fullpath(env)
+              'http.target' => fullpath(env),
+              'http.user_agent' => env['HTTP_USER_AGENT']
             }.merge(allowed_request_headers(env))
           end
 

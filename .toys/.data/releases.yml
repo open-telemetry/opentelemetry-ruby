@@ -40,6 +40,11 @@ gems:
     directory: sdk
     version_constant: [OpenTelemetry, SDK, VERSION]
 
+  - name: opentelemetry-common
+    directory: common
+    version_rb_path: lib/opentelemetry/common/version.rb
+    version_constant: [OpenTelemetry, Common, VERSION]
+
   - name: opentelemetry-exporter-jaeger
     directory: exporter/jaeger
     version_constant: [OpenTelemetry, Exporter, Jaeger, VERSION]
@@ -84,6 +89,10 @@ gems:
   - name: opentelemetry-instrumentation-rack
     directory: instrumentation/rack
     version_constant: [OpenTelemetry, Instrumentation, Rack, VERSION]
+
+  - name: opentelemetry-instrumentation-rails
+    directory: instrumentation/rails
+    version_constant: [OpenTelemetry, Instrumentation, Rails, VERSION]
 
   - name: opentelemetry-instrumentation-redis
     directory: instrumentation/redis

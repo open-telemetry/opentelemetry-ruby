@@ -13,11 +13,11 @@ module OpenTelemetry
           def call(*args, &block)
             response = nil
 
+            attributes = client_attributes
+            attributes['db.statement'] = Utils.format_statement(args)
             tracer.in_span(
               Utils.format_command(args),
-              attributes: client_attributes.merge(
-                'db.statement' => Utils.format_statement(args)
-              ),
+              attributes: attributes,
               kind: :client
             ) do
               response = super(*args, &block)
@@ -29,11 +29,11 @@ module OpenTelemetry
           def call_pipeline(*args, &block)
             response = nil
 
+            attributes = client_attributes
+            attributes['db.statement'] = Utils.format_pipeline_statement(args)
             tracer.in_span(
               'pipeline',
-              attributes: client_attributes.merge(
-                'db.statement' => Utils.format_pipeline_statement(args)
-              ),
+              attributes: attributes,
               kind: :client
             ) do
               response = super(*args, &block)
@@ -48,13 +48,13 @@ module OpenTelemetry
             host = options[:host]
             port = options[:port]
 
-            {
+            OpenTelemetry::Instrumentation::Redis.attributes.merge(
               'db.type' => 'redis',
               'db.instance' => options[:db].to_s,
               'db.url' => "redis://#{host}:#{port}",
               'net.peer.name' => host,
               'net.peer.port' => port
-            }
+            )
           end
 
           def tracer

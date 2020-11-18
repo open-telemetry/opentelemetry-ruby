@@ -47,6 +47,11 @@ describe OpenTelemetry::SDK::Trace::Span do
     it 'returns true' do
       _(span).must_be :recording?
     end
+
+    it 'returns false when span is finished' do
+      span.finish
+      _(span).wont_be :recording?
+    end
   end
 
   describe '#set_attribute' do

@@ -27,10 +27,14 @@ describe OpenTelemetry::SDK::Trace::Samplers do
     let(:result) { Result.new(decision: Decision::RECORD_AND_SAMPLE) }
     let(:sampled) { OpenTelemetry::Trace::TraceFlags.from_byte(1) }
     let(:not_sampled) { OpenTelemetry::Trace::TraceFlags.from_byte(0) }
-    let(:remote_sampled_parent_context) { OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, remote: true, trace_flags: sampled) }
-    let(:remote_not_sampled_parent_context) { OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, remote: true, trace_flags: not_sampled) }
-    let(:local_sampled_parent_context) { OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, remote: false, trace_flags: sampled) }
-    let(:local_not_sampled_parent_context) { OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, remote: false, trace_flags: not_sampled) }
+    let(:remote_sampled_parent_span_context) { OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, remote: true, trace_flags: sampled) }
+    let(:remote_not_sampled_parent_span_context) { OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, remote: true, trace_flags: not_sampled) }
+    let(:local_sampled_parent_span_context) { OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, remote: false, trace_flags: sampled) }
+    let(:local_not_sampled_parent_span_context) { OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, remote: false, trace_flags: not_sampled) }
+    let(:remote_sampled_parent_context) { OpenTelemetry::Trace.context_with_span(OpenTelemetry::Trace::Span.new(span_context: remote_sampled_parent_span_context)) }
+    let(:remote_not_sampled_parent_context) { OpenTelemetry::Trace.context_with_span(OpenTelemetry::Trace::Span.new(span_context: remote_not_sampled_parent_span_context)) }
+    let(:local_sampled_parent_context) { OpenTelemetry::Trace.context_with_span(OpenTelemetry::Trace::Span.new(span_context: local_sampled_parent_span_context)) }
+    let(:local_not_sampled_parent_context) { OpenTelemetry::Trace.context_with_span(OpenTelemetry::Trace::Span.new(span_context: local_not_sampled_parent_span_context)) }
 
     it 'provides defaults for parent samplers' do
       sampler = Samplers.parent_based(root: not_a_sampler)
@@ -187,7 +191,7 @@ describe OpenTelemetry::SDK::Trace::Samplers do
     [first, second].pack('Q>Q>')
   end
 
-  def call_sampler(sampler, trace_id: nil, parent_context: nil, links: nil, name: nil, kind: nil, attributes: nil)
+  def call_sampler(sampler, trace_id: nil, parent_context: OpenTelemetry::Context.current, links: nil, name: nil, kind: nil, attributes: nil)
     sampler.should_sample?(
       trace_id: trace_id || OpenTelemetry::Trace.generate_trace_id,
       parent_context: parent_context,

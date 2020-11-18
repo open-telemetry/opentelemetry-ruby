@@ -52,7 +52,7 @@ module OpenTelemetry
         #   like events with the #add_event operation and attributes using
         #   #set_attribute.
         def recording?
-          true
+          !@ended
         end
 
         # Set attribute
