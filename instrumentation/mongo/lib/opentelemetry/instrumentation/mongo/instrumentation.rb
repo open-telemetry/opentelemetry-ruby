@@ -13,7 +13,7 @@ module OpenTelemetry
 
         install do |_config|
           require_dependencies
-          register_tracer_middleware
+          register_subscriber
         end
 
         present do
@@ -27,12 +27,12 @@ module OpenTelemetry
         end
 
         def require_dependencies
-          require_relative 'middlewares/subscriber'
+          require_relative 'subscriber'
         end
 
-        def register_tracer_middleware
+        def register_subscriber
           # Subscribe to all COMMAND queries with our subscriber class
-          ::Mongo::Monitoring::Global.subscribe(::Mongo::Monitoring::COMMAND, Middlewares::Subscriber.new)
+          ::Mongo::Monitoring::Global.subscribe(::Mongo::Monitoring::COMMAND, Subscriber.new)
         end
       end
     end

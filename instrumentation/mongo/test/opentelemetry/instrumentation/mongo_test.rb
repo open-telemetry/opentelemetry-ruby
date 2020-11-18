@@ -39,8 +39,8 @@ describe OpenTelemetry::Instrumentation::Mongo do
   end
 
   describe 'install' do
-    it 'installs the middleware subscriber' do
-      klass = OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber
+    it 'installs the subscriber' do
+      klass = OpenTelemetry::Instrumentation::Mongo::Subscriber
       subscribers = Mongo::Monitoring::Global.subscribers['Command']
       _(subscribers.size).must_equal 1
       _(subscribers.first).must_be_kind_of klass

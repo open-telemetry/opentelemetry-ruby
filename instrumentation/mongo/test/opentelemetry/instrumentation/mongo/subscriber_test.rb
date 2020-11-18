@@ -8,9 +8,9 @@ require_relative '../../../../test_helper'
 
 # require Instrumentation so .install method is found:
 require_relative '../../../../../lib/opentelemetry/instrumentation/mongo'
-require_relative '../../../../../lib/opentelemetry/instrumentation/mongo/middlewares/subscriber'
+require_relative '../../../../../lib/opentelemetry/instrumentation/mongo/subscriber'
 
-describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
+describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Mongo::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
@@ -304,7 +304,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber do
     end
 
     describe 'that triggers #failed before #started' do
-      let(:subscriber) { OpenTelemetry::Instrumentation::Mongo::Middlewares::Subscriber.new }
+      let(:subscriber) { OpenTelemetry::Instrumentation::Mongo::Subscriber.new }
       let(:failed_event) { subscriber.failed(event) }
       let(:event) { instance_double(Mongo::Monitoring::Event::CommandFailed, request_id: double('request_id')) }
 
