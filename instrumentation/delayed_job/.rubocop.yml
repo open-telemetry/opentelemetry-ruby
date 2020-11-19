@@ -1,0 +1,27 @@
+AllCops:
+  TargetRubyVersion: "2.5.0"
+
+Bundler/OrderedGems:
+  Exclude:
+    - gemfiles/**/*
+Lint/UnusedMethodArgument:
+  Enabled: false
+Metrics/AbcSize:
+  Max: 18
+Metrics/LineLength:
+  Enabled: false
+Metrics/MethodLength:
+  Max: 20
+Metrics/ParameterLists:
+  Enabled: false
+Naming/FileName:
+  Exclude:
+    - "lib/opentelemetry-instrumentation-delayed_job.rb"
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - gemfiles/**/*
+Style/ModuleFunction:
+  Enabled: false
+Style/StringLiterals:
+  Exclude:
+    - gemfiles/**/*

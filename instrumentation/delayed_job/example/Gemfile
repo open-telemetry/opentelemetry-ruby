@@ -1,0 +1,8 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+gem 'delayed_job'
+gem 'opentelemetry-api', path: '../../../api'
+gem 'opentelemetry-instrumentation-delayed_job', path: '../../../instrumentation/delayed_job'
+gem 'opentelemetry-sdk', path: '../../../sdk'
