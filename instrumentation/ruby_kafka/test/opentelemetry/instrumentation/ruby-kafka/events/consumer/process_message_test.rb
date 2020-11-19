@@ -51,7 +51,8 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Events::Consumer::ProcessMes
 
     _(spans.size).must_equal(1)
 
-    _(span.name).must_equal('kafka.consumer.process_message')
+    _(span.name).must_equal('process')
+    _(span.kind).must_equal(:consumer)
     _(span.start_timestamp).must_be_instance_of(Time)
     _(span.end_timestamp).must_be_instance_of(Time)
 

@@ -14,7 +14,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Instrumentation do
   let(:spans) { exporter.finished_spans }
 
   let(:host) { ENV.fetch('TEST_KAFKA_HOST') { '127.0.0.1' } }
-  let(:port) { (ENV.fetch('TEST_KAFKA_PORT') { 9_092 }).to_i }
+  let(:port) { (ENV.fetch('TEST_KAFKA_PORT') { 29_092 }) }
 
   let(:kafka) { Kafka.new(["#{host}:#{port}"], client_id: 'opentelemetry-kafka-test') }
   let(:topic) { "topic-#{SecureRandom.uuid}" }
@@ -24,6 +24,10 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Instrumentation do
   let(:async_producer) { kafka.async_producer(delivery_threshold: 1000) }
 
   before do
+    kafka.create_topic(topic)
+    kafka.create_topic(async_topic)
+    consumer.subscribe(topic)
+
     # Clear spans
     exporter.reset
 
@@ -37,11 +41,27 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Instrumentation do
     # Clean up
     producer.shutdown
     async_producer.shutdown
+    consumer.stop
     kafka.close
     clear_notification_subscriptions
   end
 
   describe 'tracing' do
+    it 'traces client deliver_message call' do
+      kafka.deliver_message('hello', topic: topic)
+      span = spans.find { |s| s.name == 'send' }
+      _(span.name).must_equal('send')
+      _(span.kind).must_equal(:producer)
+    end
+
+    it 'traces a client each_meassage call' do
+      kafka.deliver_message('hello', topic: topic)
+      consumer.each_message { |msg| puts msg.value; break; }
+      span = spans.find { |s| s.name == 'process' }
+      _(span.name).must_equal('process')
+      _(span.kind).must_equal(:consumer)
+    end
+
     it 'traces sync produce calls' do
       producer.produce('hello', topic: topic)
       producer.deliver_messages
@@ -58,7 +78,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Instrumentation do
       _(spans.last.attributes['messaging.system']).must_equal('kafka')
       _(spans.last.attributes['message_count']).must_equal(1)
       _(spans.last.attributes['delivered_message_count']).must_equal(1)
-      _(spans.last.attributes['attempts']).must_equal(2)
+      _(spans.last.attributes['attempts']).must_equal(1)
     end
 
     it 'traces async produce calls' do

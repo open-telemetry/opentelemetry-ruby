@@ -24,11 +24,13 @@ module OpenTelemetry
 
         def require_dependencies
           require_relative 'patches/producer'
+          require_relative 'patches/client'
           require_relative 'events'
         end
 
         def patch
           ::Kafka::Producer.prepend(Patches::Producer)
+          ::Kafka::Client.prepend(Patches::Client)
         end
 
         def subscribe(events: Events::ALL)

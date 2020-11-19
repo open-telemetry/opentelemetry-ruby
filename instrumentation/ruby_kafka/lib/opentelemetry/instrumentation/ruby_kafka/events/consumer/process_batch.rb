@@ -26,7 +26,7 @@ module OpenTelemetry
                 attributes['highwater_mark_offset'] = payload[:highwater_mark_offset] if payload.key?(:highwater_mark_offset)
                 attributes['offset_lag'] = payload[:offset_lag] if payload.key?(:offset_lag)
 
-                span = tracer.start_span(SPAN_NAME, attributes: attributes, start_timestamp: start, kind: :client)
+                span = tracer.start_span(SPAN_NAME, attributes: attributes, start_timestamp: start, kind: :consumer)
                 span.finish(end_timestamp: finish)
               end
             end

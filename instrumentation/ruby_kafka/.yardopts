@@ -1,5 +1,5 @@
 --no-private
---title=OpenTelemetry Rack Instrumentation
+--title=OpenTelemetry RubyKafka Instrumentation
 --markup=markdown
 --main=README.md
 ./lib/opentelemetry/instrumentation/**/*.rb

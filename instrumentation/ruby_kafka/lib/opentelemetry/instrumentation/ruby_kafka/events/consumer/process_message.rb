@@ -14,7 +14,7 @@ module OpenTelemetry
             extend self
 
             EVENT_NAME = 'process_message.consumer.kafka'
-            SPAN_NAME = 'kafka.consumer.process_message'
+            SPAN_NAME = 'process'
 
             def subscribe!
               ::ActiveSupport::Notifications.subscribe(EVENT_NAME) do |_name, start, finish, _id, payload|
@@ -25,7 +25,9 @@ module OpenTelemetry
                 attributes['offset'] = payload[:offset] if payload.key?(:offset)
                 attributes['offset_lag'] = payload[:offset_lag] if payload.key?(:offset_lag)
 
-                span = tracer.start_span(SPAN_NAME, attributes: attributes, start_timestamp: start, kind: :client)
+                parent_context = OpenTelemetry.propagation.text.extract(payload[:headers])
+
+                span = tracer.start_span(SPAN_NAME, attributes: attributes, start_timestamp: start, with_parent: parent_context, kind: :consumer)
                 span.finish(end_timestamp: finish)
               end
             end
