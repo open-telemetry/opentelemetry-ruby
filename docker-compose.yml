@@ -40,6 +40,12 @@ services:
     <<: *base
     working_dir: /app/instrumentation/faraday/example
 
+  ex-instrumentation-mongo:
+    <<: *base
+    depends_on:
+      - mongo
+    working_dir: /app/instrumentation/mongo/example
+
   ex-instrumentation-mysql2:
     <<: *base
     environment:
@@ -105,6 +111,13 @@ services:
     <<: *base
     command: ./start_server.sh
     working_dir: /app/examples/http
+
+  mongo:
+    image: mongo:4.4
+    expose:
+      - "27017"
+    ports:
+      - "27017:27017"
 
   mysql:
     image: mysql:5.6

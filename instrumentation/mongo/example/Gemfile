@@ -1,0 +1,8 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+gem 'mongo-ruby-driver'
+gem 'opentelemetry-api', path: '../../../api'
+gem 'opentelemetry-instrumentation-mongo', path: '../../../instrumentation/mongo'
+gem 'opentelemetry-sdk', path: '../../../sdk'
