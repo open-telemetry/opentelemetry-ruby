@@ -9,15 +9,17 @@ module OpenTelemetry
     module ActiveModelSerializers
       # Instrumentation class that detects and installs the ActiveModelSerializers instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MINIMUM_VERSION = Gem::Version.new('2.5.0')
+        MINIMUM_VERSION = Gem::Version.new('0.10.0')
 
         install do |_config|
           require_dependencies
-          register_subscriber
+          register_event_handler
         end
 
         present do
-          !defined?(::ActiveModelSerializers::Monitoring::Global).nil? && gem_version >= MINIMUM_VERSION
+          !defined?(::ActiveSupport::Notifications).nil? &&
+              !defined?(::ActiveModel::Serializers).nil? &&
+              gem_version >= MINIMUM_VERSION
         end
 
         private
@@ -27,12 +29,17 @@ module OpenTelemetry
         end
 
         def require_dependencies
-          require_relative 'subscriber'
+          require_relative 'event_handler'
         end
 
-        def register_subscriber
-          # Subscribe to all COMMAND queries with our subscriber class
-          ::ActiveModelSerializers::Monitoring::Global.subscribe(::ActiveModelSerializers::Monitoring::COMMAND, Subscriber.new)
+        def register_event_handler
+          ActiveSupport::Notifications.subscribe(event_name) do |_name, start, finish, _id, payload|
+            EventHandler.handle(start, finish, payload)
+          end
+        end
+
+        def event_name
+          'render.active_model_serializers'
         end
       end
     end

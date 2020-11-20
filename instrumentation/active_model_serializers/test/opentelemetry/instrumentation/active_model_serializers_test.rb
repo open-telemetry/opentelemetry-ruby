@@ -23,51 +23,26 @@ describe OpenTelemetry::Instrumentation::ActiveModelSerializers do
     end
 
     it 'when active_model_serializers gem not installed' do
-      hide_const('ActiveModelSerializers')
+      hide_const('ActiveModel::Serializers')
       _(instrumentation.present?).must_equal false
     end
 
     it 'when older gem version installed' do
-      allow_any_instance_of(Bundler::StubSpecification).to receive(:version).and_return(Gem::Version.new('2.4.3'))
+      allow_any_instance_of(Bundler::StubSpecification).to receive(:version).and_return(Gem::Version.new('0.9.4'))
       _(instrumentation.present?).must_equal false
     end
 
     it 'when future gem version installed' do
-      allow_any_instance_of(Bundler::StubSpecification).to receive(:version).and_return(Gem::Version.new('3.0.0'))
+      allow_any_instance_of(Bundler::StubSpecification).to receive(:version).and_return(Gem::Version.new('0.11.0'))
       _(instrumentation.present?).must_equal true
     end
   end
 
   describe 'install' do
-    it 'installs the subscriber' do
-      klass = OpenTelemetry::Instrumentation::ActiveModelSerializers::Subscriber
-      subscribers = Mongo::Monitoring::Global.subscribers['Command']
-      _(subscribers.size).must_equal 1
-      _(subscribers.first).must_be_kind_of klass
-    end
-  end
-
-  describe 'tracing' do
-    before do
-      TestHelper.setup_active_model_serializers
-    end
-
-    after do
-      TestHelper.teardown_active_model_serializers
-    end
-
-    it 'before job' do
-      _(exporter.finished_spans.size).must_equal 0
-    end
-
-    it 'after job' do
-      client = TestHelper.client
-
-      client['people'].insert_one(name: 'Steve', hobbies: ['hiking'])
-      _(exporter.finished_spans.size).must_equal 1
-
-      client['people'].find(name: 'Steve').first
-      _(exporter.finished_spans.size).must_equal 2
+    it 'subscribes to ActiveSupport::Notifications' do
+      subscriptions = ActiveSupport::Notifications.notifier.instance_variable_get(:'@string_subscribers')
+      subscriptions = subscriptions['render.active_model_serializers']
+      assert(subscriptions.detect { |s| s.is_a?(ActiveSupport::Notifications::Fanout::Subscribers::Timed) })
     end
   end
 end

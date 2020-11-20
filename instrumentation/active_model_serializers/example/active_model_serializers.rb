@@ -13,7 +13,14 @@ OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::ActiveModelSerializers'
 end
 
-# TODO:
-client['people'].insert_one(name: 'Steve', hobbies: ['hiking'])
+class TestModel < ActiveModelSerializers::Model
+  attr_accessor :name
+end
 
-client['people'].find(name: 'Steve').first
+class TestModelSerializer < ActiveModel::Serializer
+  attributes :name
+end
+
+model = TestModel.new(name: 'test object')
+
+ActiveModelSerializers::SerializableResource.new(model).serializable_hash
