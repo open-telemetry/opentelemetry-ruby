@@ -1,0 +1,9 @@
+# frozen_string_literal: true
+
+# Copyright 2020 OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+appraise 'delayed_job-4.1' do
+  gem 'delayed_job', '~> 4.1.0'
+end
