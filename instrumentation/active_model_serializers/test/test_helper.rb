@@ -24,11 +24,12 @@ OpenTelemetry::SDK.configure do |c|
   c.add_span_processor span_processor
 end
 
-# rename to TestModel
-class TestModel < ActiveModelSerializers::Model
-  attr_accessor :name
-end
+module TestHelper
+  class Model < ActiveModelSerializers::Model
+    attr_accessor :name
+  end
 
-class TestModelSerializer < ActiveModel::Serializer
-  attributes :name
+  class ModelSerializer < ActiveModel::Serializer
+    attributes :name
+  end
 end

@@ -14,7 +14,7 @@ describe OpenTelemetry::Instrumentation::ActiveModelSerializers::EventHandler do
   let(:instrumentation) { OpenTelemetry::Instrumentation::ActiveModelSerializers::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
-  let(:model) { TestModel.new(name: 'test object') }
+  let(:model) { TestHelper::Model.new(name: 'test object') }
 
   before do
     instrumentation.install
@@ -42,8 +42,8 @@ describe OpenTelemetry::Instrumentation::ActiveModelSerializers::EventHandler do
       _(exporter.finished_spans.size).must_equal 1
 
       _(span).must_be_kind_of OpenTelemetry::SDK::Trace::SpanData
-      _(span.name).must_equal 'TestModelSerializer render'
-      _(span.attributes['serializer.name']).must_equal 'TestModelSerializer'
+      _(span.name).must_equal 'ModelSerializer render'
+      _(span.attributes['serializer.name']).must_equal 'TestHelper::ModelSerializer'
       _(span.attributes['serializer.renderer']).must_equal 'active_model_serializers'
       _(span.attributes['serializer.format']).must_equal 'ActiveModelSerializers::Adapter::Attributes'
     end
@@ -58,10 +58,10 @@ describe OpenTelemetry::Instrumentation::ActiveModelSerializers::EventHandler do
       _(exporter.finished_spans.size).must_equal 1
 
       _(span).must_be_kind_of OpenTelemetry::SDK::Trace::SpanData
-      _(span.name).must_equal 'TestModelSerializer render'
-      _(span.attributes['serializer.name']).must_equal 'TestModelSerializer'
+      _(span.name).must_equal 'ModelSerializer render'
+      _(span.attributes['serializer.name']).must_equal 'TestHelper::ModelSerializer'
       _(span.attributes['serializer.renderer']).must_equal 'active_model_serializers'
-      _(span.attributes['serializer.format']).must_equal 'TestModel'
+      _(span.attributes['serializer.format']).must_equal 'TestHelper::Model'
     end
   end
 end
