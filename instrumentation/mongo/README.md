@@ -44,7 +44,7 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 
 Apache 2.0 license. See [LICENSE][license-github] for more information.
 
-[mongo-home]: https://github.com/lostisland/mongo
+[mongo-home]: https://github.com/mongodb/mongo-ruby-driver
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE
