@@ -31,7 +31,7 @@ module OpenTelemetry
           {
             'serializer.name' => payload[:serializer].name,
             'serializer.renderer' => 'active_model_serializers',
-            'serializer.format' => payload[:adapter]&.class&.name
+            'serializer.format' => payload[:adapter]&.class&.name || 'default'
           }
         end
 
