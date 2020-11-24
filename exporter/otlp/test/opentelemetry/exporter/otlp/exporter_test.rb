@@ -108,6 +108,13 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(result).must_equal(SUCCESS)
     end
 
+    it 'retries on timeout' do
+      stub_request(:post, 'https://localhost:55681/v1/trace').to_timeout.then.to_return(status: 200)
+      span_data = create_span_data
+      result = exporter.export([span_data])
+      _(result).must_equal(SUCCESS)
+    end
+
     it 'returns FAILURE when shutdown' do
       exporter.shutdown
       result = exporter.export(nil)

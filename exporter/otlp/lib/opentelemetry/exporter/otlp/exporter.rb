@@ -162,7 +162,7 @@ module OpenTelemetry
           OpenTelemetry::Trace.with_span(OpenTelemetry::Trace::Span.new) { yield }
         end
 
-        def backoff?(retry_after: nil, retry_count:, reason:)
+        def backoff?(retry_after: nil, retry_count:)
           return false if retry_count > RETRY_COUNT
 
           sleep_interval = nil
