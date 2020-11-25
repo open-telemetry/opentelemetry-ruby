@@ -115,6 +115,31 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(result).must_equal(SUCCESS)
     end
 
+    it 'returns FAILURE on timeout' do
+      stub_request(:post, 'https://localhost:55681/v1/trace').to_return(status: 200)
+      span_data = create_span_data
+      result = exporter.export([span_data], timeout: 0)
+      _(result).must_equal(FAILURE)
+    end
+
+    it 'returns FAILURE on timeout after retrying' do
+      stub_request(:post, 'https://localhost:55681/v1/trace').to_timeout.then.to_raise('this should not be reached')
+      span_data = create_span_data
+
+      @retry_count = 0
+      backoff_stubbed_call = lambda do |**_args|
+        sleep(0.10)
+        @retry_count += 1
+        true
+      end
+
+      exporter.stub(:backoff?, backoff_stubbed_call) do
+        _(exporter.export([span_data], timeout: 0.1)).must_equal(FAILURE)
+      end
+    ensure
+      @retry_count = 0
+    end
+
     it 'returns FAILURE when shutdown' do
       exporter.shutdown
       result = exporter.export(nil)
