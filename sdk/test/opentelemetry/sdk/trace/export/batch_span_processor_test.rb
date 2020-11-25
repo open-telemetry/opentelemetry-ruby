@@ -10,6 +10,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
   BatchSpanProcessor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
   SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
   FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
+  TIMEOUT = OpenTelemetry::SDK::Trace::Export::TIMEOUT
 
   class TestExporter
     def initialize(status_codes: nil)
@@ -170,6 +171,36 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
                                  start_thread_on_boot: false)
         end
       end
+    end
+  end
+
+  describe '#force_flush' do
+    it 'reenqueues excess spans on timeout' do
+      test_exporter = TestExporter.new
+      bsp = BatchSpanProcessor.new(exporter: test_exporter)
+      bsp.on_finish(TestSpan.new)
+      result = bsp.force_flush(timeout: 0)
+
+      _(result).must_equal(TIMEOUT)
+
+      _(test_exporter.failed_batches.size).must_equal(0)
+      _(test_exporter.batches.size).must_equal(0)
+
+      _(bsp.instance_variable_get(:@spans).size).must_equal(1)
+    end
+  end
+
+  describe '#shutdown' do
+    it 'respects the timeout' do
+      test_exporter = TestExporter.new
+      bsp = BatchSpanProcessor.new(exporter: test_exporter)
+      bsp.on_finish(TestSpan.new)
+      bsp.shutdown(timeout: 0)
+
+      _(test_exporter.failed_batches.size).must_equal(0)
+      _(test_exporter.batches.size).must_equal(0)
+
+      _(bsp.instance_variable_get(:@spans).size).must_equal(1)
     end
   end
 
