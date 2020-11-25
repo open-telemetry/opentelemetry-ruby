@@ -50,7 +50,7 @@ module OpenTelemetry
 
               processor.shutdown(timeout: remaining_timeout)
             end
-            results.uniq.max
+            results.uniq.max || SUCCESS
           end
         end
       end
