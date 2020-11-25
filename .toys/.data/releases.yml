@@ -53,6 +53,10 @@ gems:
     directory: exporter/otlp
     version_constant: [OpenTelemetry, Exporter, OTLP, VERSION]
 
+  - name: opentelemetry-instrumentation-active_model_serializers
+    directory: instrumentation/active_model_serializers
+    version_constant: [OpenTelemetry, Instrumentation, ActiveModelSerializers, VERSION]
+
   - name: opentelemetry-instrumentation-all
     directory: instrumentation/all
     version_constant: [OpenTelemetry, Instrumentation, All, VERSION]
@@ -65,6 +69,10 @@ gems:
     directory: instrumentation/dalli
     version_constant: [OpenTelemetry, Instrumentation, Dalli, VERSION]
 
+  - name: opentelemetry-instrumentation-delayed_job
+    directory: instrumentation/delayed_job
+    version_constant: [OpenTelemetry, Instrumentation, DelayedJob, VERSION]
+
   - name: opentelemetry-instrumentation-ethon
     directory: instrumentation/ethon
     version_constant: [OpenTelemetry, Instrumentation, Ethon, VERSION]
@@ -76,6 +84,10 @@ gems:
   - name: opentelemetry-instrumentation-faraday
     directory: instrumentation/faraday
     version_constant: [OpenTelemetry, Instrumentation, Faraday, VERSION]
+
+  - name: opentelemetry-instrumentation-mongo
+    directory: instrumentation/mongo
+    version_constant: [OpenTelemetry, Instrumentation, Mongo, VERSION]
 
   - name: opentelemetry-instrumentation-mysql2
     directory: instrumentation/mysql2
