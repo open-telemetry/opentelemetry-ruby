@@ -116,14 +116,14 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(result).must_equal(SUCCESS)
     end
 
-    it 'returns FAILURE on timeout' do
+    it 'returns TIMEOUT on timeout' do
       stub_request(:post, 'https://localhost:55681/v1/trace').to_return(status: 200)
       span_data = create_span_data
       result = exporter.export([span_data], timeout: 0)
       _(result).must_equal(TIMEOUT)
     end
 
-    it 'returns FAILURE on timeout after retrying' do
+    it 'returns TIMEOUT on timeout after retrying' do
       stub_request(:post, 'https://localhost:55681/v1/trace').to_timeout.then.to_raise('this should not be reached')
       span_data = create_span_data
 
