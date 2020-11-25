@@ -26,7 +26,8 @@ module OpenTelemetry
         # Default timeouts in seconds.
         KEEP_ALIVE_TIMEOUT = 30
         RETRY_COUNT = 5
-        private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT)
+        WRITE_TIMEOUT_SUPPORTED = Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.6')
+        private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT, :WRITE_TIMEOUT_SUPPORTED)
 
         def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_SPAN_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'localhost:55681/v1/trace'), # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
                        insecure: config_opt('OTEL_EXPORTER_OTLP_SPAN_INSECURE', 'OTEL_EXPORTER_OTLP_INSECURE', default: false),
@@ -127,6 +128,7 @@ module OpenTelemetry
 
             @http.open_timeout = remaining_timeout
             @http.read_timeout = remaining_timeout
+            @http.write_timeout = remaining_timeout if WRITE_TIMEOUT_SUPPORTED
             @http.start unless @http.started?
             response = @http.request(request)
 
@@ -158,6 +160,11 @@ module OpenTelemetry
             retry if backoff?(retry_count: retry_count += 1)
             return FAILURE
           end
+        ensure
+          # Reset timeouts to defaults for the next call.
+          @http.open_timeout = @timeout
+          @http.read_timeout = @timeout
+          @http.write_timeout = @timeout if WRITE_TIMEOUT_SUPPORTED
         end
 
         def handle_redirect(location)
