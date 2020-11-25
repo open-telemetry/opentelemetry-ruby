@@ -37,7 +37,7 @@ module OpenTelemetry
 
           start_time = Time.now
           encoded_batches(span_data) do |batch|
-            return FAILURE if @shutdown || OpenTelemetry::SDK::Internal.maybe_timeout(timeout, start_time)&.zero?
+            return FAILURE if @shutdown || OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)&.zero?
 
             @client.emitBatch(batch)
           end

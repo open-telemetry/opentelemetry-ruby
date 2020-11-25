@@ -6,6 +6,7 @@
 
 require 'opentelemetry'
 require 'opentelemetry/common/http'
+require 'opentelemetry/common/utilities'
 require 'opentelemetry/common/version'
 
 # OpenTelemetry is an open source observability framework, providing a

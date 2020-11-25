@@ -57,7 +57,7 @@ module OpenTelemetry
         def force_flush(timeout: nil)
           start_time = Time.now
           results = @span_processors.map do |processor|
-            remaining_timeout = Internal.maybe_timeout(timeout, start_time)
+            remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
             return Export::TIMEOUT if remaining_timeout&.zero?
 
             processor.force_flush(timeout: remaining_timeout)
@@ -73,7 +73,7 @@ module OpenTelemetry
         def shutdown(timeout: nil)
           start_time = Time.now
           results = @span_processors.map do |processor|
-            remaining_timeout = Internal.maybe_timeout(timeout, start_time)
+            remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
             return Export::TIMEOUT if remaining_timeout&.zero?
 
             processor.shutdown(timeout: remaining_timeout)

@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/common'
 require 'opentelemetry/sdk'
 require 'net/http'
 require 'csv'
@@ -124,7 +125,7 @@ module OpenTelemetry
             request.add_field('Content-Type', 'application/x-protobuf')
             @headers&.each { |key, value| request.add_field(key, value) }
 
-            remaining_timeout = OpenTelemetry::SDK::Internal.maybe_timeout(timeout, start_time)
+            remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
             return TIMEOUT if remaining_timeout.zero?
 
             @http.open_timeout = remaining_timeout

@@ -28,7 +28,7 @@ module OpenTelemetry
           def export(spans, timeout: nil)
             start_time = Time.now
             results = @span_exporters.map do |span_exporter|
-              span_exporter.export(spans, timeout: Internal.maybe_timeout(timeout, start_time))
+              span_exporter.export(spans, timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
             rescue => e # rubocop:disable Style/RescueStandardError
               OpenTelemetry.logger.warn("exception raised by export - #{e}")
               FAILURE
@@ -45,7 +45,7 @@ module OpenTelemetry
           def shutdown(timeout: nil)
             start_time = Time.now
             results = @span_exporters.map do |processor|
-              remaining_timeout = Internal.maybe_timeout(timeout, start_time)
+              remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
               return TIMEOUT if remaining_timeout&.zero?
 
               processor.shutdown(timeout: remaining_timeout)

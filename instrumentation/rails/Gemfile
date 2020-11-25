@@ -12,7 +12,8 @@ gem 'opentelemetry-api', path: '../../api'
 
 group :test do
   gem 'byebug'
+  gem 'pry-byebug'
   gem 'opentelemetry-instrumentation-rack', path: '../../instrumentation/rack'
   gem 'opentelemetry-sdk', path: '../../sdk'
-  gem 'pry-byebug'
+  gem 'opentelemetry-common', path: '../../common'
 end

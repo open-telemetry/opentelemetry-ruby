@@ -25,4 +25,5 @@ gem 'opentelemetry-instrumentation-sinatra', path: '../sinatra'
 
 group :test do
   gem 'opentelemetry-sdk', path: '../../sdk'
+  gem 'opentelemetry-common', path: '../../common'
 end

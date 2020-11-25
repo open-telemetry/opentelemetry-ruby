@@ -23,6 +23,7 @@ $LOAD_PATH.push(File.dirname(__FILE__) + '/../../../thrift/gen-rb')
 require 'agent'
 require 'collector'
 require 'opentelemetry/sdk'
+require 'opentelemetry/common'
 require 'socket'
 require 'opentelemetry/exporter/jaeger/encoder'
 require 'opentelemetry/exporter/jaeger/transport'

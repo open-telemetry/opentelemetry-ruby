@@ -100,7 +100,7 @@ module OpenTelemetry
               spans.shift(spans.size)
             end
             until snapshot.empty?
-              remaining_timeout = Internal.maybe_timeout(timeout, start_time)
+              remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
               return TIMEOUT if remaining_timeout&.zero?
 
               batch = snapshot.shift(@batch_size).map!(&:to_span_data)
@@ -134,8 +134,8 @@ module OpenTelemetry
             end
 
             @thread.join(timeout)
-            force_flush(timeout: Internal.maybe_timeout(timeout, start_time))
-            @exporter.shutdown(timeout: Internal.maybe_timeout(timeout, start_time))
+            force_flush(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
+            @exporter.shutdown(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
           end
 
           private
