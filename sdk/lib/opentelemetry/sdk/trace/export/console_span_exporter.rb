@@ -18,7 +18,7 @@ module OpenTelemetry
             @stopped = false
           end
 
-          def export(spans)
+          def export(spans, timeout: nil)
             return FAILURE if @stopped
 
             Array(spans).each { |s| pp s }
@@ -26,7 +26,7 @@ module OpenTelemetry
             SUCCESS
           end
 
-          def shutdown
+          def shutdown(timeout: nil)
             @stopped = true
             SUCCESS
           end

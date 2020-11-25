@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'google-protobuf', '>= 3.4.1.1', '< 4'
   spec.add_dependency 'opentelemetry-api', '~> 0.8.0'
+  spec.add_dependency 'opentelemetry-common', '~> 0.8.0'
 
   spec.add_development_dependency 'bundler', '>= 1.17'
   spec.add_development_dependency 'faraday', '~> 0.13'

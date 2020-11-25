@@ -21,7 +21,7 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
     let(:mock_span_processor) { Minitest::Mock.new }
 
     it 'notifies the span processor' do
-      mock_span_processor.expect(:shutdown, nil)
+      mock_span_processor.expect(:shutdown, nil, [{ timeout: nil }])
       tracer_provider.add_span_processor(mock_span_processor)
       tracer_provider.shutdown
       mock_span_processor.verify
@@ -38,7 +38,7 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
     end
 
     it 'only notifies the span processor once' do
-      mock_span_processor.expect(:shutdown, nil)
+      mock_span_processor.expect(:shutdown, nil, [{ timeout: nil }])
       tracer_provider.add_span_processor(mock_span_processor)
       tracer_provider.shutdown
       tracer_provider.shutdown

@@ -36,8 +36,9 @@ module OpenTelemetry
         # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] span_data the
         #   list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
         #   exported.
+        # @param [optional Numeric] timeout An optional timeout in seconds.
         # @return [Integer] the result of the export.
-        def export(span_data)
+        def export(span_data, timeout: nil)
           return FAILURE if @shutdown
 
           encoded_batches(span_data).each do |batch|
@@ -56,7 +57,9 @@ module OpenTelemetry
         # Called when {OpenTelemetry::SDK::Trace::Tracer#shutdown} is called, if
         # this exporter is registered to a {OpenTelemetry::SDK::Trace::Tracer}
         # object.
-        def shutdown
+        #
+        # @param [optional Numeric] timeout An optional timeout in seconds.
+        def shutdown(timeout: nil)
           @shutdown = true
         end
 

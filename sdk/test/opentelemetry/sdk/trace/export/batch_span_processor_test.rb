@@ -10,6 +10,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
   BatchSpanProcessor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
   SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
   FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
+  TIMEOUT = OpenTelemetry::SDK::Trace::Export::TIMEOUT
 
   class TestExporter
     def initialize(status_codes: nil)
@@ -21,7 +22,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     attr_reader :batches
     attr_reader :failed_batches
 
-    def export(batch)
+    def export(batch, timeout: nil)
       # If status codes is empty, its a success for less verbose testing
       s = @status_codes.shift
       if s.nil? || s == SUCCESS
@@ -33,24 +34,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       end
     end
 
-    def shutdown; end
-  end
-
-  class TestTimeoutExporter < TestExporter
-    attr_reader :state
-
-    def initialize(sleep_for_millis: 0, **args)
-      @sleep_for_seconds = sleep_for_millis / 1000.0
-      super(**args)
-    end
-
-    def export(batch)
-      @state = :called
-      # long enough to cause a timeout:
-      sleep @sleep_for_seconds
-      @state = :not_interrupted
-      super
-    end
+    def shutdown(timeout: nil); end
   end
 
   class TestSpan
@@ -173,6 +157,36 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
   end
 
+  describe '#force_flush' do
+    it 'reenqueues excess spans on timeout' do
+      test_exporter = TestExporter.new
+      bsp = BatchSpanProcessor.new(exporter: test_exporter)
+      bsp.on_finish(TestSpan.new)
+      result = bsp.force_flush(timeout: 0)
+
+      _(result).must_equal(TIMEOUT)
+
+      _(test_exporter.failed_batches.size).must_equal(0)
+      _(test_exporter.batches.size).must_equal(0)
+
+      _(bsp.instance_variable_get(:@spans).size).must_equal(1)
+    end
+  end
+
+  describe '#shutdown' do
+    it 'respects the timeout' do
+      test_exporter = TestExporter.new
+      bsp = BatchSpanProcessor.new(exporter: test_exporter)
+      bsp.on_finish(TestSpan.new)
+      bsp.shutdown(timeout: 0)
+
+      _(test_exporter.failed_batches.size).must_equal(0)
+      _(test_exporter.batches.size).must_equal(0)
+
+      _(bsp.instance_variable_get(:@spans).size).must_equal(1)
+    end
+  end
+
   describe 'lifecycle' do
     it 'should stop and start correctly' do
       bsp = BatchSpanProcessor.new(exporter: TestExporter.new)
@@ -264,45 +278,6 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       expected = 100.times.map { |i| i }
 
       _(out).must_equal(expected)
-    end
-  end
-
-  describe 'export timeout' do
-    let(:exporter) do
-      TestTimeoutExporter.new(status_codes: [SUCCESS],
-                              sleep_for_millis: exporter_sleeps_for_millis)
-    end
-    let(:processor) do
-      BatchSpanProcessor.new(exporter: exporter,
-                             exporter_timeout_millis: exporter_timeout_millis,
-                             schedule_delay_millis: schedule_delay_millis)
-    end
-    let(:schedule_delay_millis) { 50 }
-    let(:exporter_timeout_millis) { 100 }
-    let(:spans) { [TestSpan.new, TestSpan.new] }
-
-    before do
-      spans.each { |ts| processor.on_finish(ts) }
-
-      # Ensure that work thread loops (longer than 'schedule_delay_millis'):
-      sleep((schedule_delay_millis + 100) / 1000.0)
-      processor.shutdown
-    end
-
-    describe 'normally' do
-      let(:exporter_sleeps_for_millis) { exporter_timeout_millis - 1 }
-
-      it 'exporter is not interrupted' do
-        _(exporter.state).must_equal(:not_interrupted)
-      end
-    end
-
-    describe 'when exporter runs too long' do
-      let(:exporter_sleeps_for_millis) { exporter_timeout_millis + 700 }
-
-      it 'is interrupted by a timeout' do
-        _(exporter.state).must_equal(:called)
-      end
     end
   end
 

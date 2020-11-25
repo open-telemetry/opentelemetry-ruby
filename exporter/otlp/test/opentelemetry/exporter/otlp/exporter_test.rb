@@ -8,6 +8,7 @@ require 'test_helper'
 describe OpenTelemetry::Exporter::OTLP::Exporter do
   SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
   FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
+  TIMEOUT = OpenTelemetry::SDK::Trace::Export::TIMEOUT
 
   describe '#initialize' do
     it 'initializes with defaults' do
@@ -113,6 +114,31 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       span_data = create_span_data
       result = exporter.export([span_data])
       _(result).must_equal(SUCCESS)
+    end
+
+    it 'returns TIMEOUT on timeout' do
+      stub_request(:post, 'https://localhost:55681/v1/trace').to_return(status: 200)
+      span_data = create_span_data
+      result = exporter.export([span_data], timeout: 0)
+      _(result).must_equal(TIMEOUT)
+    end
+
+    it 'returns TIMEOUT on timeout after retrying' do
+      stub_request(:post, 'https://localhost:55681/v1/trace').to_timeout.then.to_raise('this should not be reached')
+      span_data = create_span_data
+
+      @retry_count = 0
+      backoff_stubbed_call = lambda do |**_args|
+        sleep(0.10)
+        @retry_count += 1
+        true
+      end
+
+      exporter.stub(:backoff?, backoff_stubbed_call) do
+        _(exporter.export([span_data], timeout: 0.1)).must_equal(TIMEOUT)
+      end
+    ensure
+      @retry_count = 0
     end
 
     it 'returns FAILURE when shutdown' do

@@ -23,36 +23,34 @@ module OpenTelemetry
           #
           # @param [Enumerable<Span>] spans the list of sampled {Span}s to be
           #   exported.
+          # @param [optional Numeric] timeout An optional timeout in seconds.
           # @return [Integer] the result of the export.
-          def export(spans)
-            @span_exporters.inject(SUCCESS) do |result_code, span_exporter|
-              merge_result_code(result_code, span_exporter.export(spans))
+          def export(spans, timeout: nil)
+            start_time = Time.now
+            results = @span_exporters.map do |span_exporter|
+              span_exporter.export(spans, timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
             rescue => e # rubocop:disable Style/RescueStandardError
               OpenTelemetry.logger.warn("exception raised by export - #{e}")
               FAILURE
             end
+            results.uniq.max || SUCCESS
           end
 
           # Called when {TracerProvider#shutdown} is called, if this exporter is
           # registered to a {TracerProvider} object.
           #
+          # @param [optional Numeric] timeout An optional timeout in seconds.
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
-          def shutdown
-            @span_exporters.map(&:shutdown).uniq.max
-          end
+          def shutdown(timeout: nil)
+            start_time = Time.now
+            results = @span_exporters.map do |processor|
+              remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
+              return TIMEOUT if remaining_timeout&.zero?
 
-          private
-
-          # Returns a merged error code, see the rules in the code.
-          def merge_result_code(result_code, new_result_code)
-            if result_code == SUCCESS && new_result_code == SUCCESS
-              # If both errors are success then return success.
-              SUCCESS
-            else
-              # At this point at least one of the code is FAILURE, so return FAILURE.
-              FAILURE
+              processor.shutdown(timeout: remaining_timeout)
             end
+            results.uniq.max || SUCCESS
           end
         end
       end

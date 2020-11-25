@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/common'
 require 'opentelemetry/sdk'
 require 'net/http'
 require 'csv'
@@ -21,14 +22,14 @@ module OpenTelemetry
       class Exporter # rubocop:disable Metrics/ClassLength
         SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
         FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
-        private_constant(:SUCCESS, :FAILURE)
+        TIMEOUT = OpenTelemetry::SDK::Trace::Export::TIMEOUT
+        private_constant(:SUCCESS, :FAILURE, :TIMEOUT)
 
         # Default timeouts in seconds.
         KEEP_ALIVE_TIMEOUT = 30
-        OPEN_TIMEOUT = 5
-        READ_TIMEOUT = 5
         RETRY_COUNT = 5
-        private_constant(:KEEP_ALIVE_TIMEOUT, :OPEN_TIMEOUT, :READ_TIMEOUT, :RETRY_COUNT)
+        WRITE_TIMEOUT_SUPPORTED = Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.6')
+        private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT, :WRITE_TIMEOUT_SUPPORTED)
 
         def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_SPAN_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'localhost:55681/v1/trace'), # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
                        insecure: config_opt('OTEL_EXPORTER_OTLP_SPAN_INSECURE', 'OTEL_EXPORTER_OTLP_INSECURE', default: false),
@@ -45,8 +46,6 @@ module OpenTelemetry
           @http.use_ssl = insecure.to_s.downcase == 'false'
           @http.ca_file = certificate_file unless certificate_file.nil?
           @http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
-          @http.open_timeout = OPEN_TIMEOUT
-          @http.read_timeout = READ_TIMEOUT
 
           @path = uri.path
           @headers = case headers
@@ -64,17 +63,20 @@ module OpenTelemetry
         # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] span_data the
         #   list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
         #   exported.
+        # @param [optional Numeric] timeout An optional timeout in seconds.
         # @return [Integer] the result of the export.
-        def export(span_data)
+        def export(span_data, timeout: nil)
           return FAILURE if @shutdown
 
-          send_bytes(encode(span_data))
+          send_bytes(encode(span_data), timeout: timeout)
         end
 
         # Called when {OpenTelemetry::SDK::Trace::Tracer#shutdown} is called, if
         # this exporter is registered to a {OpenTelemetry::SDK::Trace::Tracer}
         # object.
-        def shutdown
+        #
+        # @param [optional Numeric] timeout An optional timeout in seconds.
+        def shutdown(timeout: nil)
           @shutdown = true
           @http.finish if @http.started?
         end
@@ -108,8 +110,10 @@ module OpenTelemetry
           true
         end
 
-        def send_bytes(bytes) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+        def send_bytes(bytes, timeout:) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
           retry_count = 0
+          timeout ||= @timeout
+          start_time = Time.now
           untraced do # rubocop:disable Metrics/BlockLength
             request = Net::HTTP::Post.new(@path)
             request.body = if @compression == 'gzip'
@@ -121,6 +125,12 @@ module OpenTelemetry
             request.add_field('Content-Type', 'application/x-protobuf')
             @headers&.each { |key, value| request.add_field(key, value) }
 
+            remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
+            return TIMEOUT if remaining_timeout.zero?
+
+            @http.open_timeout = remaining_timeout
+            @http.read_timeout = remaining_timeout
+            @http.write_timeout = remaining_timeout if WRITE_TIMEOUT_SUPPORTED
             @http.start unless @http.started?
             response = @http.request(request)
 
@@ -152,6 +162,11 @@ module OpenTelemetry
             retry if backoff?(retry_count: retry_count += 1)
             return FAILURE
           end
+        ensure
+          # Reset timeouts to defaults for the next call.
+          @http.open_timeout = @timeout
+          @http.read_timeout = @timeout
+          @http.write_timeout = @timeout if WRITE_TIMEOUT_SUPPORTED
         end
 
         def handle_redirect(location)
