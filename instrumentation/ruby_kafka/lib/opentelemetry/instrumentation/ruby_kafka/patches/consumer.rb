@@ -10,7 +10,7 @@ module OpenTelemetry
       module Patches
         # The Consumer module contains the instrumentation patch for the Consumer class
         module Consumer
-          def each_message(min_bytes: 1, max_bytes: 10485760, max_wait_time: 1, automatically_mark_as_processed: true)
+          def each_message(min_bytes: 1, max_bytes: 10_485_760, max_wait_time: 1, automatically_mark_as_processed: true)
             super do |message|
               attributes = { 'messaging.system' => 'kafka' }
               attributes['messaging.destination'] = message.topic
@@ -26,7 +26,7 @@ module OpenTelemetry
             end
           end
 
-          def each_batch(min_bytes: 1, max_bytes: 10485760, max_wait_time: 1, automatically_mark_as_processed: true)
+          def each_batch(min_bytes: 1, max_bytes: 10_485_760, max_wait_time: 1, automatically_mark_as_processed: true)
             super do |batch|
               attributes = { 'messaging.system' => 'kafka' }
               attributes['messaging.destination'] = batch.topic

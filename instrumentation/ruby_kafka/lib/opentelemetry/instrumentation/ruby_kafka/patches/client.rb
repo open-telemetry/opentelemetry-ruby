@@ -16,9 +16,26 @@ module OpenTelemetry
               'messaging.destination' => topic
             }
 
+            attributes['messaging.kafka.message_key'] = key if key
+            attributes['messaging.kafka.partition'] = partition if partition
+
             tracer.in_span('send', attributes: attributes, kind: :producer) do
               OpenTelemetry.propagation.text.inject(headers)
               super
+            end
+          end
+
+          def each_message(topic:, start_from_beginning: true, max_wait_time: 5, min_bytes: 1, max_bytes: 1_048_576, &block)
+            super do |message|
+              attributes = { 'messaging.system' => 'kafka' }
+              attributes['messaging.destination'] = message.topic
+              attributes['messaging.kafka.message_key'] = message.key if message.key
+              attributes['messaging.kafka.partition'] = message.partition
+
+              parent_context = OpenTelemetry.propagation.text.extract(message.headers)
+              tracer.in_span('process', with_parent: parent_context, attributes: attributes, kind: :consumer) do
+                yield message
+              end
             end
           end
 
