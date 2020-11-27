@@ -1,0 +1,54 @@
+# frozen_string_literal: true
+
+# Copyright 2020 OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+module OpenTelemetry
+  module Instrumentation
+    module RubyKafka
+      module Patches
+        # The Consumer module contains the instrumentation patch for the Consumer class
+        module Consumer
+          def each_message(min_bytes: 1, max_bytes: 10485760, max_wait_time: 1, automatically_mark_as_processed: true)
+            super do |message|
+              attributes = { 'messaging.system' => 'kafka' }
+              attributes['messaging.destination'] = message.topic
+              attributes['messaging.kafka.message_key'] = message.key if message.key
+              attributes['messaging.kafka.partition'] = message.partition
+
+              attributes['offset'] = message.offset
+
+              parent_context = OpenTelemetry.propagation.text.extract(message.headers)
+              tracer.in_span('process', with_parent: parent_context, attributes: attributes, kind: :consumer) do
+                yield message
+              end
+            end
+          end
+
+          def each_batch(min_bytes: 1, max_bytes: 10485760, max_wait_time: 1, automatically_mark_as_processed: true)
+            super do |batch|
+              attributes = { 'messaging.system' => 'kafka' }
+              attributes['messaging.destination'] = batch.topic
+              attributes['messaging.kafka.partition'] = batch.partition
+
+              attributes['offset_lag'] = batch.offset_lag
+              attributes['highwater_mark_offset'] = batch.highwater_mark_offset
+              attributes['message_count'] = batch.messages.count
+
+              tracer.in_span('process', attributes: attributes, kind: :consumer) do
+                yield batch
+              end
+            end
+          end
+
+          private
+
+          def tracer
+            RubyKafka::Instrumentation.instance.tracer
+          end
+        end
+      end
+    end
+  end
+end
