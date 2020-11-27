@@ -1,5 +1,9 @@
 # Release History: opentelemetry-api
 
+### v0.9.0 / 2020-11-27
+
+* (No significant changes)
+
 ### v0.8.0 / 2020-10-27
 
 * BREAKING CHANGE: Move context/span methods to Trace module 

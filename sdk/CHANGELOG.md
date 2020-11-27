@@ -1,5 +1,17 @@
 # Release History: opentelemetry-sdk
 
+### v0.9.0 / 2020-11-27
+
+* BREAKING CHANGE: Pass full Context to samplers 
+* BREAKING CHANGE: Add timeout for force_flush and shutdown 
+
+* ADDED: Add OTEL_RUBY_BSP_START_THREAD_ON_BOOT env var 
+* ADDED: Add timeout for force_flush and shutdown 
+* FIXED: Signal at batch_size 
+* FIXED: SDK Span.recording? after finish 
+* FIXED: Pass full Context to samplers 
+* DOCS: Add documentation on usage scenarios for span processors 
+
 ### v0.8.0 / 2020-10-27
 
 * BREAKING CHANGE: Move context/span methods to Trace module 

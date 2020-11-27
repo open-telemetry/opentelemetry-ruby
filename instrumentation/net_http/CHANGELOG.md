@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.9.0 / 2020-11-27
+
+* ADDED: Add common helpers 
+
 ### v0.8.0 / 2020-10-27
 
 * BREAKING CHANGE: Remove 'canonical' from status codes 
