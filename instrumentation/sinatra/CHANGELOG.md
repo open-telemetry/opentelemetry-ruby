@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-sinatra
 
+### v0.9.0 / 2020-11-27
+
+* BREAKING CHANGE: Add timeout for force_flush and shutdown 
+
+* ADDED: Add timeout for force_flush and shutdown 
+
 ### v0.8.0 / 2020-10-27
 
 * BREAKING CHANGE: Remove 'canonical' from status codes 
