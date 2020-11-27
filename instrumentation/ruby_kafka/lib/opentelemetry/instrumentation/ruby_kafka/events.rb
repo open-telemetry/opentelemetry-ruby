@@ -5,8 +5,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require_relative 'events/connection/request'
-require_relative 'events/consumer/process_batch'
-require_relative 'events/consumer/process_message'
 require_relative 'events/consumer_group/heartbeat'
 require_relative 'events/consumer_group/join_group'
 require_relative 'events/consumer_group/leave_group'
@@ -20,8 +18,6 @@ module OpenTelemetry
       module Events
         ALL = [
           Events::Connection::Request,
-          Events::Consumer::ProcessBatch,
-          Events::Consumer::ProcessMessage,
           Events::ConsumerGroup::Heartbeat,
           Events::ConsumerGroup::JoinGroup,
           Events::ConsumerGroup::LeaveGroup,
