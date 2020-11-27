@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: OpenTelemetry::Trace::Propagation::TraceContext::TextMapExtractor
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::Trace::Propagation::TraceContext::TextMapExtractor";
+  relpath = '../../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../../_index.html">Index (T)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../../Trace.html" title="OpenTelemetry::Trace (module)">Trace</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Propagation.html" title="OpenTelemetry::Trace::Propagation (module)">Propagation</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../TraceContext.html" title="OpenTelemetry::Trace::Propagation::TraceContext (module)">TraceContext</a></span></span>
+     &raquo; 
+    <span class="title">TextMapExtractor</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: OpenTelemetry::Trace::Propagation::TraceContext::TextMapExtractor
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">OpenTelemetry::Trace::Propagation::TraceContext::TextMapExtractor</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="../../../Context/Propagation/DefaultGetter.html" title="OpenTelemetry::Context::Propagation::DefaultGetter (module)">Context::Propagation::DefaultGetter</a></span></dd>
+  </dl>
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/trace/propagation/trace_context/text_map_extractor.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Extracts context from carriers in the W3C Trace Context format</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#extract-instance_method" title="#extract (instance method)">#<strong>extract</strong>(carrier, context, &amp;getter) {|Carrier, String| ... } &#x21d2; Context </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Extract a remote <span class='object_link'><a href="../../SpanContext.html" title="OpenTelemetry::Trace::SpanContext (class)">SpanContext</a></span> from the supplied carrier.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(traceparent_key: &#39;traceparent&#39;, tracestate_key: &#39;tracestate&#39;)  &#x21d2; TextMapExtractor </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns a new TextMapExtractor that extracts context using the specified header keys.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../../../Context/Propagation/DefaultGetter.html" title="OpenTelemetry::Context::Propagation::DefaultGetter (module)">Context::Propagation::DefaultGetter</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../../../Context/Propagation/DefaultGetter.html#default_getter-instance_method" title="OpenTelemetry::Context::Propagation::DefaultGetter#default_getter (method)">#default_getter</a></span></p>
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(traceparent_key: &#39;traceparent&#39;, tracestate_key: &#39;tracestate&#39;)  &#x21d2; <tt><span class='object_link'><a href="" title="OpenTelemetry::Trace::Propagation::TraceContext::TextMapExtractor (class)">TextMapExtractor</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns a new TextMapExtractor that extracts context using the specified header keys</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>traceparent_key</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>&#39;traceparent&#39;</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The traceparent header key used in the carrier</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>tracestate_key</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>&#39;tracestate&#39;</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The tracestate header key used in the carrier</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+20
+21
+22
+23
+24</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/trace/propagation/trace_context/text_map_extractor.rb', line 20</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='label'>traceparent_key:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>traceparent</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+               <span class='label'>tracestate_key:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>tracestate</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='ivar'>@traceparent_key</span> <span class='op'>=</span> <span class='id identifier rubyid_traceparent_key'>traceparent_key</span>
+  <span class='ivar'>@tracestate_key</span> <span class='op'>=</span> <span class='id identifier rubyid_tracestate_key'>tracestate_key</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="extract-instance_method">
+  
+    #<strong>extract</strong>(carrier, context, &amp;getter) {|Carrier, String| ... } &#x21d2; <tt><span class='object_link'><a href="../../../Context.html" title="OpenTelemetry::Context (class)">Context</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Extract a remote <span class='object_link'><a href="../../SpanContext.html" title="OpenTelemetry::Trace::SpanContext (class)">SpanContext</a></span> from the supplied carrier. Invalid headers will result in a new, valid, non-remote <span class='object_link'><a href="../../SpanContext.html" title="OpenTelemetry::Trace::SpanContext (class)">SpanContext</a></span>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>carrier</span>
+      
+      
+        <span class='type'>(<tt>Carrier</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The carrier to get the header from.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>context</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../Context.html" title="OpenTelemetry::Context (class)">Context</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The context to be updated with extracted context</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>getter</span>
+      
+      
+        <span class='type'>(<tt>optional Callable</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>An optional callable that takes a carrier and a key and returns the value associated with the key. If omitted the default getter will be used which expects the carrier to respond to [] and []=.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Carrier</tt>, <tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>if an optional getter is provided, extract will yield the carrier and the header key to the getter.</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../Context.html" title="OpenTelemetry::Context (class)">Context</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Updated context with span context from the header, or the original context if parsing fails.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/trace/propagation/trace_context/text_map_extractor.rb', line 38</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_extract'>extract</span><span class='lparen'>(</span><span class='id identifier rubyid_carrier'>carrier</span><span class='comma'>,</span> <span class='id identifier rubyid_context'>context</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_getter'>getter</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_getter'>getter</span> <span class='op'>||=</span> <span class='id identifier rubyid_default_getter'>default_getter</span>
+  <span class='id identifier rubyid_header'>header</span> <span class='op'>=</span> <span class='id identifier rubyid_getter'>getter</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_carrier'>carrier</span><span class='comma'>,</span> <span class='ivar'>@traceparent_key</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_tp'>tp</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="TraceParent.html" title="OpenTelemetry::Trace::Propagation::TraceContext::TraceParent (class)">TraceParent</a></span></span><span class='period'>.</span><span class='id identifier rubyid_from_string'><span class='object_link'><a href="TraceParent.html#from_string-class_method" title="OpenTelemetry::Trace::Propagation::TraceContext::TraceParent.from_string (method)">from_string</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_header'>header</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_tracestate'>tracestate</span> <span class='op'>=</span> <span class='id identifier rubyid_getter'>getter</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_carrier'>carrier</span><span class='comma'>,</span> <span class='ivar'>@tracestate_key</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_span_context'>span_context</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../../Trace.html" title="OpenTelemetry::Trace (module)">Trace</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../SpanContext.html" title="OpenTelemetry::Trace::SpanContext (class)">SpanContext</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../../SpanContext.html#initialize-instance_method" title="OpenTelemetry::Trace::SpanContext#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='label'>trace_id:</span> <span class='id identifier rubyid_tp'>tp</span><span class='period'>.</span><span class='id identifier rubyid_trace_id'>trace_id</span><span class='comma'>,</span>
+                                        <span class='label'>span_id:</span> <span class='id identifier rubyid_tp'>tp</span><span class='period'>.</span><span class='id identifier rubyid_span_id'>span_id</span><span class='comma'>,</span>
+                                        <span class='label'>trace_flags:</span> <span class='id identifier rubyid_tp'>tp</span><span class='period'>.</span><span class='id identifier rubyid_flags'>flags</span><span class='comma'>,</span>
+                                        <span class='label'>tracestate:</span> <span class='id identifier rubyid_tracestate'>tracestate</span><span class='comma'>,</span>
+                                        <span class='label'>remote:</span> <span class='kw'>true</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_span'>span</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../../Trace.html" title="OpenTelemetry::Trace (module)">Trace</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../Span.html" title="OpenTelemetry::Trace::Span (class)">Span</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../../Span.html#initialize-instance_method" title="OpenTelemetry::Trace::Span#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='label'>span_context:</span> <span class='id identifier rubyid_span_context'>span_context</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../../Trace.html" title="OpenTelemetry::Trace (module)">Trace</a></span></span><span class='period'>.</span><span class='id identifier rubyid_context_with_span'><span class='object_link'><a href="../../../Trace.html#context_with_span-instance_method" title="OpenTelemetry::Trace#context_with_span (method)">context_with_span</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_span'>span</span><span class='rparen'>)</span>
+<span class='kw'>rescue</span> <span class='const'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../../Error.html" title="OpenTelemetry::Error (class)">Error</a></span></span>
+  <span class='id identifier rubyid_context'>context</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Fri Nov 27 22:12:09 2020 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.25 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>
