@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  File: README
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "README";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><div id='filecontents'>
+<h1 id="label-Opentelemetry-3A-3AResource-3A-3ADetectors">Opentelemetry::Resource::Detectors</h1>
+
+<p>The <code>opentelemetry-resource-detectors</code> gem provides resource detectors for OpenTelemetry.</p>
+
+<h2 id="label-What+is+OpenTelemetry-3F">What is OpenTelemetry?</h2>
+
+<p>OpenTelemetry is an open source observability framework, providing a general-purpose API, SDK, and related tools required for the instrumentation of cloud-native software, frameworks, and libraries.</p>
+
+<p>OpenTelemetry provides a single set of APIs, libraries, agents, and collector services to capture distributed traces and metrics from your application. You can analyze them using Prometheus, Jaeger, and other observability tools.</p>
+
+<h2 id="label-How+does+this+gem+fit+in-3F">How does this gem fit in?</h2>
+
+<p>The <code>opentelemetry-resource-detectors</code> gem provides a means of retrieving a resource for supported environments following the resource semantic conventions.</p>
+
+<h2 id="label-How+do+I+get+started-3F">How do I get started?</h2>
+
+<p>Install the gem using:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_gem'>gem</span> <span class='id identifier rubyid_install'>install</span> <span class='id identifier rubyid_opentelemetry'>opentelemetry</span><span class='op'>-</span><span class='id identifier rubyid_sdk'>sdk</span>
+<span class='id identifier rubyid_gem'>gem</span> <span class='id identifier rubyid_install'>install</span> <span class='id identifier rubyid_opentelemetry'>opentelemetry</span><span class='op'>-</span><span class='id identifier rubyid_resource'>resource</span><span class='op'>-</span><span class='id identifier rubyid_detectors'>detectors</span>
+</code></pre>
+
+<p>Or, if you use Bundler, include <code>opentelemetry-sdk</code> and <code>opentelemetry-resource-detectors</code> in your <code>Gemfile</code>.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>opentelemetry/sdk</span><span class='tstring_end'>&#39;</span></span>
+<span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>opentelemetry/resource/detectors</span><span class='tstring_end'>&#39;</span></span>
+
+<span class='comment'># For a specific platform
+</span><span class='const'><span class='object_link'><a href="OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'>SDK</span><span class='period'>.</span><span class='id identifier rubyid_configure'>configure</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_c'>c</span><span class='op'>|</span>
+  <span class='id identifier rubyid_c'>c</span><span class='period'>.</span><span class='id identifier rubyid_resource'>resource</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="OpenTelemetry/Resource.html" title="OpenTelemetry::Resource (module)">Resource</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="OpenTelemetry/Resource/Detectors.html" title="OpenTelemetry::Resource::Detectors (module)">Detectors</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="OpenTelemetry/Resource/Detectors/GoogleCloudPlatform.html" title="OpenTelemetry::Resource::Detectors::GoogleCloudPlatform (module)">GoogleCloudPlatform</a></span></span><span class='period'>.</span><span class='id identifier rubyid_detect'><span class='object_link'><a href="OpenTelemetry/Resource/Detectors/GoogleCloudPlatform.html#detect-instance_method" title="OpenTelemetry::Resource::Detectors::GoogleCloudPlatform#detect (method)">detect</a></span></span>
+<span class='kw'>end</span>
+
+<span class='comment'># Or if you would like for it to run all detectors available
+</span><span class='const'><span class='object_link'><a href="OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'>SDK</span><span class='period'>.</span><span class='id identifier rubyid_configure'>configure</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_c'>c</span><span class='op'>|</span>
+  <span class='id identifier rubyid_c'>c</span><span class='period'>.</span><span class='id identifier rubyid_resource'>resource</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="OpenTelemetry/Resource.html" title="OpenTelemetry::Resource (module)">Resource</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="OpenTelemetry/Resource/Detectors.html" title="OpenTelemetry::Resource::Detectors (module)">Detectors</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="OpenTelemetry/Resource/Detectors/AutoDetector.html" title="OpenTelemetry::Resource::Detectors::AutoDetector (module)">AutoDetector</a></span></span><span class='period'>.</span><span class='id identifier rubyid_detect'><span class='object_link'><a href="OpenTelemetry/Resource/Detectors/AutoDetector.html#detect-instance_method" title="OpenTelemetry::Resource::Detectors::AutoDetector#detect (method)">detect</a></span></span>
+<span class='kw'>end</span>
+</code></pre>
+
+<h2 id="label-How+can+I+get+involved-3F">How can I get involved?</h2>
+
+<p>The <code>opentelemetry-resource-detectors</code> gem source is on github, along with related gems.</p>
+
+<p>The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us on our gitter channel or attending our weekly meeting. See the meeting calendar for dates and times. For more information on this and other language SIGs, see the OpenTelemetry community page.</p>
+
+<h2 id="label-License">License</h2>
+
+<p>The <code>opentelemetry-resource-detectors</code> gem is distributed under the Apache 2.0 license. See LICENSE for more information.</p>
+</div></div>
+
+      <div id="footer">
+  Generated on Sat Nov 28 01:34:38 2020 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.25 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>
