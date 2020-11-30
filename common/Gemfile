@@ -8,6 +8,9 @@ source 'https://rubygems.org'
 
 gemspec
 
+# Use the opentelemetry-api gem from source
+gem 'opentelemetry-api', path: '../api'
+
 group :development, :test do
   gem 'pry'
 end
