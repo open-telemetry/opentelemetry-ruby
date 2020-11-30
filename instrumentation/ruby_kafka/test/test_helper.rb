@@ -14,9 +14,7 @@ require 'minitest/autorun'
 
 # ruby-kafka 1.1.0 depends on active support `.try`
 # https://github.com/zendesk/ruby-kafka/issues/836
-if Gem.loaded_specs['ruby-kafka'].version == Gem::Version.new('1.1.0')
-  require 'active_support/core_ext/object/try'
-end
+require 'active_support/core_ext/object/try' if Gem.loaded_specs['ruby-kafka'].version == Gem::Version.new('1.1.0')
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
