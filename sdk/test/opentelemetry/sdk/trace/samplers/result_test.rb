@@ -37,6 +37,13 @@ describe OpenTelemetry::SDK::Trace::Samplers::Result do
     end
   end
 
+  describe '#tracestate' do
+    it 'reflects the value passed in' do
+      tracestate = Object.new
+      _(Result.new(decision: Decision::RECORD_AND_SAMPLE, tracestate: tracestate).tracestate).must_equal(tracestate)
+    end
+  end
+
   describe '#initialize' do
     it 'accepts Decision constants' do
       _(Result.new(decision: Decision::RECORD_ONLY, tracestate: nil)).wont_be_nil

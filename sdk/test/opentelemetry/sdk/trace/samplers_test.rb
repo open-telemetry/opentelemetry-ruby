@@ -9,15 +9,29 @@ require 'test_helper'
 describe OpenTelemetry::SDK::Trace::Samplers do
   Samplers = OpenTelemetry::SDK::Trace::Samplers
 
+  let(:tracestate) { Object.new }
+  let(:context_with_tracestate) do
+    span_context = OpenTelemetry::Trace::SpanContext.new(trace_id: OpenTelemetry::Trace.generate_trace_id, tracestate: tracestate)
+    OpenTelemetry::Trace.context_with_span(OpenTelemetry::Trace::Span.new(span_context: span_context))
+  end
+
   describe '.ALWAYS_ON' do
     it 'samples' do
       _(call_sampler(Samplers::ALWAYS_ON)).must_be :sampled?
+    end
+
+    it 'passes through the tracestate from context' do
+      _(call_sampler(Samplers::ALWAYS_ON, parent_context: context_with_tracestate).tracestate).must_equal tracestate
     end
   end
 
   describe '.ALWAYS_OFF' do
     it 'does not sample' do
       _(call_sampler(Samplers::ALWAYS_OFF)).wont_be :sampled?
+    end
+
+    it 'passes through the tracestate from context' do
+      _(call_sampler(Samplers::ALWAYS_ON, parent_context: context_with_tracestate).tracestate).must_equal tracestate
     end
   end
 
@@ -140,6 +154,10 @@ describe OpenTelemetry::SDK::Trace::Samplers do
     it 'returns a result' do
       result = call_sampler(sampler, trace_id: trace_id(123))
       _(result).must_be_instance_of(Result)
+    end
+
+    it 'passes through the tracestate from context' do
+      _(call_sampler(sampler, parent_context: context_with_tracestate).tracestate).must_equal tracestate
     end
 
     it 'samples if ratio is 1' do
