@@ -12,11 +12,14 @@ module OpenTelemetry
         module Consumer
           def each_message(min_bytes: 1, max_bytes: 10_485_760, max_wait_time: 1, automatically_mark_as_processed: true)
             super do |message|
-              attributes = { 'messaging.system' => 'kafka' }
-              attributes['messaging.destination'] = message.topic
-              attributes['messaging.kafka.message_key'] = message.key if message.key
-              attributes['messaging.kafka.partition'] = message.partition
+              attributes = {
+                'messaging.system' => 'kafka',
+                'messaging.destination' => message.topic,
+                'messaging.destination_kind' => 'topic',
+                'messaging.kafka.partition' => message.partition,
+              }
 
+              attributes['messaging.kafka.message_key'] = message.key if message.key
               attributes['offset'] = message.offset
 
               parent_context = OpenTelemetry.propagation.text.extract(message.headers)
@@ -28,9 +31,12 @@ module OpenTelemetry
 
           def each_batch(min_bytes: 1, max_bytes: 10_485_760, max_wait_time: 1, automatically_mark_as_processed: true)
             super do |batch|
-              attributes = { 'messaging.system' => 'kafka' }
-              attributes['messaging.destination'] = batch.topic
-              attributes['messaging.kafka.partition'] = batch.partition
+              attributes = {
+                'messaging.system' => 'kafka',
+                'messaging.destination' => batch.topic,
+                'messaging.destination_kind' => 'topic',
+                'messaging.kafka.partition' => batch.partition,
+              }
 
               attributes['offset_lag'] = batch.offset_lag
               attributes['highwater_mark_offset'] = batch.highwater_mark_offset

@@ -13,7 +13,8 @@ module OpenTelemetry
           def produce(value, key: nil, headers: {}, topic:, partition: nil, partition_key: nil, create_time: Time.now)
             attributes = {
               'messaging.system' => 'kafka',
-              'messaging.destination' => topic
+              'messaging.destination' => topic,
+              'messaging.destination_kind' => 'topic'
             }
 
             tracer.in_span('send', attributes: attributes, kind: :producer) do

@@ -34,6 +34,7 @@ module OpenTelemetry
                 'messaging.destination_kind' => 'topic',
                 'messaging.kafka.partition' => message.partition
               }
+
               attributes['messaging.kafka.message_key'] = message.key if message.key
 
               parent_context = OpenTelemetry.propagation.text.extract(message.headers)
