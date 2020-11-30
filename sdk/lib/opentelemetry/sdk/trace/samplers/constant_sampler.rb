@@ -10,12 +10,12 @@ module OpenTelemetry
       module Samplers
         # @api private
         #
-        # Implements a sampler returning a constant result.
+        # Implements a sampler returning a result with a constant decision.
         class ConstantSampler
           attr_reader :description
 
-          def initialize(result:, description:)
-            @result = result
+          def initialize(decision:, description:)
+            @decision = decision
             @description = description
           end
 
@@ -23,8 +23,7 @@ module OpenTelemetry
           #
           # See {Samplers}.
           def should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:)
-            # All arguments ignored for sampling decision.
-            @result
+            Result.new(decision: @decision, tracestate: OpenTelemetry::Trace.current_span(parent_context).context.tracestate)
           end
         end
       end

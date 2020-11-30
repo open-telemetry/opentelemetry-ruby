@@ -40,21 +40,20 @@ module OpenTelemetry
           parent_span_context = OpenTelemetry::Trace.current_span(with_parent).context
           if parent_span_context.valid?
             parent_span_id = parent_span_context.span_id
-            tracestate = parent_span_context.tracestate
             trace_id = parent_span_context.trace_id
           end
           trace_id ||= OpenTelemetry::Trace.generate_trace_id
           sampler = tracer_provider.active_trace_config.sampler
           result = sampler.should_sample?(trace_id: trace_id, parent_context: with_parent, links: links, name: name, kind: kind, attributes: attributes)
-          internal_create_span(result, name, kind, trace_id, parent_span_id, attributes, links, start_timestamp, tracestate, with_parent)
+          internal_create_span(result, name, kind, trace_id, parent_span_id, attributes, links, start_timestamp, with_parent)
         end
 
         private
 
-        def internal_create_span(result, name, kind, trace_id, parent_span_id, attributes, links, start_timestamp, tracestate, parent_context) # rubocop:disable Metrics/AbcSize
+        def internal_create_span(result, name, kind, trace_id, parent_span_id, attributes, links, start_timestamp, parent_context) # rubocop:disable Metrics/AbcSize
           if result.recording? && !tracer_provider.stopped?
             trace_flags = result.sampled? ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
-            context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, trace_flags: trace_flags, tracestate: tracestate)
+            context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, trace_flags: trace_flags, tracestate: result.tracestate)
             attributes = attributes&.merge(result.attributes) || result.attributes
             Span.new(
               context,
