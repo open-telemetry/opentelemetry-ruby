@@ -1,6 +1,6 @@
 # OpenTelemetry RubyKafka Instrumentation
 
-The RubyKafka instrumentation is a community-maintained instrumentation for the [RubyKafka][ruby_kafka-home] web server interface.
+The RubyKafka instrumentation is a community-maintained instrumentation for [RubyKafka][ruby_kafka-home], a client library for Apache Kafka.
 
 ## How do I get started?
 
