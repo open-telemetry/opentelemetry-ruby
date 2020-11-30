@@ -120,11 +120,12 @@ class ReleasePerformer
         ::FileUtils.rm_rf(".yardoc")
         ::FileUtils.rm_rf("doc")
         @parent.docs_builder.call
-        path = ::File.expand_path(@utils.gem_info(@gem_name, "gh_pages_directory"),
-                                  @parent.gh_pages_dir)
-        path = ::File.expand_path("v#{@gem_version}", path)
-        ::FileUtils.rm_rf(path)
-        ::FileUtils.cp_r("doc", path)
+        base_path = ::File.expand_path(@utils.gem_info(@gem_name, "gh_pages_directory"),
+                                       @parent.gh_pages_dir)
+        versioned_path = ::File.expand_path("v#{@gem_version}", base_path)
+        ::FileUtils.rm_rf(versioned_path)
+        ::FileUtils.mkdir_p(base_path)
+        ::FileUtils.cp_r("doc", versioned_path)
       end
       @utils.log("Built docs")
       self
