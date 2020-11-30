@@ -92,7 +92,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
   end
 
   describe '#each_batch' do
-    it 'traces each_meassage call' do
+    it 'traces each_batch call' do
       kafka.deliver_message('hello', topic: topic)
       kafka.deliver_message('hello2', topic: topic)
 
