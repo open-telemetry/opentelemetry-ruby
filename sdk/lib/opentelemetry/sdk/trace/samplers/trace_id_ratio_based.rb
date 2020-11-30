@@ -24,12 +24,11 @@ module OpenTelemetry
           #
           # See {Samplers}.
           def should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:)
-            # Ignored for sampling decision: parent_context:, links, name, kind, attributes.
-
+            tracestate = OpenTelemetry::Trace.current_span(parent_context).context.tracestate
             if sample?(trace_id)
-              RECORD_AND_SAMPLE
+              Result.new(decision: Decision::RECORD_AND_SAMPLE, tracestate: tracestate)
             else
-              DROP
+              Result.new(decision: Decision::DROP, tracestate: tracestate)
             end
           end
 

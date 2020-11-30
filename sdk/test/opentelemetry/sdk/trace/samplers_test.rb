@@ -24,7 +24,7 @@ describe OpenTelemetry::SDK::Trace::Samplers do
   describe '.parent_based' do
     let(:not_a_sampler) { Minitest::Mock.new }
     let(:trace_id) { OpenTelemetry::Trace.generate_trace_id }
-    let(:result) { Result.new(decision: Decision::RECORD_AND_SAMPLE) }
+    let(:result) { Result.new(decision: Decision::RECORD_AND_SAMPLE, tracestate: nil) }
     let(:sampled) { OpenTelemetry::Trace::TraceFlags.from_byte(1) }
     let(:not_sampled) { OpenTelemetry::Trace::TraceFlags.from_byte(0) }
     let(:remote_sampled_parent_span_context) { OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, remote: true, trace_flags: sampled) }
@@ -127,15 +127,13 @@ describe OpenTelemetry::SDK::Trace::Samplers do
 
   describe '.trace_id_ratio_based' do
     let(:sampler) { Samplers.trace_id_ratio_based(Float::MIN) }
-    let(:context) do
-      OpenTelemetry::Trace::SpanContext.new(
-        trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(1)
-      )
-    end
 
     it 'ignores parent sampling' do
       sampler = Samplers.trace_id_ratio_based(Float::MIN)
-      result = call_sampler(sampler, parent_context: context, trace_id: trace_id(123))
+      span_context = OpenTelemetry::Trace::SpanContext.new(trace_flags: OpenTelemetry::Trace::TraceFlags.from_byte(1))
+      span = OpenTelemetry::Trace::Span.new(span_context: span_context)
+      parent_context = OpenTelemetry::Trace.context_with_span(span)
+      result = call_sampler(sampler, parent_context: parent_context, trace_id: trace_id(123))
       _(result).wont_be :sampled?
     end
 

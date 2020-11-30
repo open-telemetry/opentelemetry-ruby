@@ -17,10 +17,15 @@ module OpenTelemetry
           DECISIONS = [Decision::RECORD_ONLY, Decision::DROP, Decision::RECORD_AND_SAMPLE].freeze
           private_constant(:EMPTY_HASH, :DECISIONS)
 
-          # Returns a frozen hash of attributes to be attached span.
+          # Returns a frozen hash of attributes to be attached to the span.
           #
           # @return [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}]
           attr_reader :attributes
+
+          # Returns a Tracestate to be associated with the span.
+          #
+          # @return [Tracestate]
+          attr_reader :tracestate
 
           # Returns a new sampling result with the specified decision and
           # attributes.
@@ -30,9 +35,15 @@ module OpenTelemetry
           # @param [optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}]
           #   attributes A frozen or freezable hash containing attributes to be
           #   attached to the span.
-          def initialize(decision:, attributes: nil)
+          # @param [Tracestate] tracestate A Tracestate that will be associated
+          #   with the Span through the new SpanContext. If the sampler returns
+          #   an empty Tracestate here, the Tracestate will be cleared, so
+          #   samplers SHOULD normally return the passed-in Tracestate if they
+          #   do not intend to change it.
+          def initialize(decision:, attributes: nil, tracestate:)
             @decision = decision
             @attributes = attributes.freeze || EMPTY_HASH
+            @tracestate = tracestate
           end
 
           # Returns true if this span should be sampled.
