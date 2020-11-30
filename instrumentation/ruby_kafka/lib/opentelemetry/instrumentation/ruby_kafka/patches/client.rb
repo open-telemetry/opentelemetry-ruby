@@ -8,12 +8,13 @@ module OpenTelemetry
   module Instrumentation
     module RubyKafka
       module Patches
-        # The Client module contains the instrumentation patch the Producer#deliver_message method
+        # The Client module contains the instrumentation patch the Client#deliver_message and Client#each_message methods.
         module Client
           def deliver_message(value, key: nil, headers: {}, topic:, partition: nil, partition_key: nil, retries: 1)
             attributes = {
               'messaging.system' => 'kafka',
-              'messaging.destination' => topic
+              'messaging.destination' => topic,
+              'messaging.destination_kind' => 'topic'
             }
 
             attributes['messaging.kafka.message_key'] = key if key
@@ -27,10 +28,13 @@ module OpenTelemetry
 
           def each_message(topic:, start_from_beginning: true, max_wait_time: 5, min_bytes: 1, max_bytes: 1_048_576, &block)
             super do |message|
-              attributes = { 'messaging.system' => 'kafka' }
-              attributes['messaging.destination'] = message.topic
+              attributes = {
+                'messaging.system' => 'kafka',
+                'messaging.destination' => message.topic,
+                'messaging.destination_kind' => 'topic',
+                'messaging.kafka.partition' => message.partition
+              }
               attributes['messaging.kafka.message_key'] = message.key if message.key
-              attributes['messaging.kafka.partition'] = message.partition
 
               parent_context = OpenTelemetry.propagation.text.extract(message.headers)
               tracer.in_span('process', with_parent: parent_context, attributes: attributes, kind: :consumer) do
