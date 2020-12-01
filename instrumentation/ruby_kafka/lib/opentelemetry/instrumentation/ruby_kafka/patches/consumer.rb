@@ -16,7 +16,7 @@ module OpenTelemetry
                 'messaging.system' => 'kafka',
                 'messaging.destination' => message.topic,
                 'messaging.destination_kind' => 'topic',
-                'messaging.kafka.partition' => message.partition,
+                'messaging.kafka.partition' => message.partition
               }
 
               attributes['messaging.kafka.message_key'] = message.key if message.key
@@ -35,7 +35,7 @@ module OpenTelemetry
                 'messaging.system' => 'kafka',
                 'messaging.destination' => batch.topic,
                 'messaging.destination_kind' => 'topic',
-                'messaging.kafka.partition' => batch.partition,
+                'messaging.kafka.partition' => batch.partition
               }
 
               attributes['offset_lag'] = batch.offset_lag
