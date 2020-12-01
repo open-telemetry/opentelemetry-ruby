@@ -18,10 +18,10 @@ require 'active_support/core_ext/object/try' if Gem.loaded_specs['ruby-kafka'].v
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
-span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)
+SPAN_PROCESSOR = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)
 
 OpenTelemetry::SDK.configure do |c|
-  c.add_span_processor span_processor
+  c.add_span_processor SPAN_PROCESSOR
 end
 
 def clear_notification_subscriptions

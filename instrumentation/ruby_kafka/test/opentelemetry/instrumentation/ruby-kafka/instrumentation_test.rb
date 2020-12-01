@@ -33,6 +33,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Instrumentation do
       mock_logger.expect(:warn, nil, [warning_message])
 
       OpenTelemetry::SDK.configure do |c|
+        c.add_span_processor SPAN_PROCESSOR
         c.logger = mock_logger
       end
 
