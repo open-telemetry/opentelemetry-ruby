@@ -85,6 +85,14 @@ describe OpenTelemetry::Exporter::Jaeger::Encoder do
     )
   end
 
+  it 'ignores nil values' do
+    attributes = { 'a_nil' => nil }
+    span_data = create_span_data(attributes: attributes)
+    encoded_span = Encoder.encoded_span(span_data)
+    _(encoded_span.tags.length).must_equal(0)
+  end
+
+
   describe 'instrumentation library' do
     it 'encodes library and version when set' do
       lib = OpenTelemetry::SDK::InstrumentationLibrary.new('mylib', '0.1.0')
