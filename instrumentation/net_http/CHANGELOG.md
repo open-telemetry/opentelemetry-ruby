@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.10.0 / 2020-12-03
+
+* (No significant changes)
+
 ### v0.9.0 / 2020-11-27
 
 * ADDED: Add common helpers 
