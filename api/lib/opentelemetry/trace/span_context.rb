@@ -18,7 +18,7 @@ module OpenTelemetry
       # @param [optional String] trace_id The trace ID associated with a {Span}.
       # @param [optional String] span_id The span ID associated with a {Span}.
       # @param [optional TraceFlags] trace_flags The trace flags associated with a {Span}.
-      # @param [optional String] tracestate The tracestate associated with a {Span}. May be nil.
+      # @param [optional Tracestate] tracestate The tracestate associated with a {Span}. May be nil.
       # @param [optional Boolean] remote Whether the {SpanContext} was extracted from the wire.
       # @return [SpanContext]
       def initialize(
