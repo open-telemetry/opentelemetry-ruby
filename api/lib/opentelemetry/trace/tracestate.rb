@@ -49,6 +49,16 @@ module OpenTelemetry
           end
           new(hash)
         end
+
+        # @api private
+        # Returns a new Tracestate created from the Hash provided. This
+        # skips validation of the keys and values, assuming they are already
+        # valid.
+        # This method is intended only for the use of instance methods in
+        # this class.
+        def create(hash)
+          new(hash)
+        end
       end
 
       MAX_MEMBER_COUNT = 32 # Defined by https://www.w3.org/TR/trace-context/
@@ -94,7 +104,7 @@ module OpenTelemetry
 
         h = Hash[@hash]
         h[key] = value
-        new(h)
+        self.class.create(h)
       end
 
       # Deletes the key/value pair associated with the given key.
@@ -107,7 +117,7 @@ module OpenTelemetry
 
         h = Hash[@hash]
         h.delete(key)
-        new(h)
+        self.class.create(h)
       end
 
       # Returns this Tracestate encoded according to the W3C Trace Context

@@ -33,14 +33,27 @@ describe OpenTelemetry::Trace::Tracestate do
       _(tracestate.to_h.size).must_be :<=, 32
     end
     it 'returns a new Tracestate' do
+      old_tracestate = OpenTelemetry::Trace::Tracestate.from_hash('a' => 'a')
+      new_tracestate = old_tracestate.set_value('a', 'b')
+      _(new_tracestate).wont_equal old_tracestate
     end
     it 'adds a new key-value pair' do
+      tracestate = OpenTelemetry::Trace::Tracestate.from_hash('a' => 'a')
+      tracestate = tracestate.set_value('b', 'b')
+      _(tracestate.to_h).must_equal('a' => 'a', 'b' => 'b')
     end
     it 'updates the value for an existing key' do
+      tracestate = OpenTelemetry::Trace::Tracestate.from_hash('a' => 'a')
+      tracestate = tracestate.set_value('a', 'b')
+      _(tracestate.to_h).must_equal('a' => 'b')
     end
   end
 
   describe '#delete' do
+    it 'returns a new Tracestate' do
+    end
+    it 'deletes the specified key' do
+    end
   end
 
   describe '#to_s' do
