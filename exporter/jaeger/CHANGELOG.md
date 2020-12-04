@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-jaeger
 
+### v0.10.0 / 2020-12-03
+
+* (No significant changes)
+
 ### v0.9.0 / 2020-11-27
 
 * BREAKING CHANGE: Add timeout for force_flush and shutdown 

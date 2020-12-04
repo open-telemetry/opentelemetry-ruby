@@ -1,5 +1,11 @@
 # Release History: opentelemetry-sdk
 
+### v0.10.0 / 2020-12-03
+
+* BREAKING CHANGE: Allow samplers to modify tracestate 
+
+* FIXED: Allow samplers to modify tracestate 
+
 ### v0.9.0 / 2020-11-27
 
 * BREAKING CHANGE: Pass full Context to samplers 
