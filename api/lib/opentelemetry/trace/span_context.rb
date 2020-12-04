@@ -25,7 +25,7 @@ module OpenTelemetry
         trace_id: Trace.generate_trace_id,
         span_id: Trace.generate_span_id,
         trace_flags: TraceFlags::DEFAULT,
-        tracestate: nil,
+        tracestate: Tracestate::DEFAULT,
         remote: false
       )
         @trace_id = trace_id

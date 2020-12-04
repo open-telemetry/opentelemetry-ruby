@@ -37,7 +37,7 @@ module OpenTelemetry
 
             setter ||= DEFAULT_SETTER
             setter.call(carrier, @traceparent_key, TraceParent.from_span_context(span_context).to_s)
-            setter.call(carrier, @tracestate_key, span_context.tracestate.to_s) unless span_context.tracestate.nil?
+            setter.call(carrier, @tracestate_key, span_context.tracestate.to_s) unless span_context.tracestate.empty?
 
             carrier
           end

@@ -48,7 +48,7 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapExtractor do
       _(span_context.trace_id).must_equal(("\0" * 15 + "\xaa").b)
       _(span_context.span_id).must_equal(("\0" * 7 + "\xea").b)
       _(span_context.trace_flags).must_be :sampled?
-      _(span_context.tracestate).must_equal('vendorname=opaquevalue')
+      _(span_context.tracestate.to_s).must_equal('vendorname=opaquevalue')
     end
 
     it 'uses a default getter if one is not provided' do
@@ -58,7 +58,7 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapExtractor do
       _(span_context.trace_id).must_equal(("\0" * 15 + "\xaa").b)
       _(span_context.span_id).must_equal(("\0" * 7 + "\xea").b)
       _(span_context.trace_flags).must_be :sampled?
-      _(span_context.tracestate).must_equal('vendorname=opaquevalue')
+      _(span_context.tracestate.to_s).must_equal('vendorname=opaquevalue')
     end
 
     it 'returns original context on error' do
