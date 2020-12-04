@@ -14,6 +14,26 @@ describe OpenTelemetry::Trace::Tracestate do
   end
 
   describe '.from_hash' do
+    it 'skips invalid members' do
+      h = {
+        'commas-,-are-bad' => 'commas-are-bad',
+        'commas-are-bad' => 'commas-,-are-bad',
+        'no-equality' => 'no=equality',
+        'no=equality' => 'no-equality',
+        '0xff' => 'key-cant-start-with-a-digit',
+        'too-much-value' => '0' * 257,
+        'a' * 257 => 'too-much-key',
+        'cannot-be-all-space' => '          ',
+        'the-good-key' => '  the-good-value',
+        '0x_the-vendor/key@my*v3nd0r' => 'another-great-value'
+      }
+      tracestate = OpenTelemetry::Trace::Tracestate.from_hash(h)
+      _(tracestate.to_h).must_equal('the-good-key' => '  the-good-value', '0x_the-vendor/key@my*v3nd0r' => 'another-great-value')
+    end
+    it 'will not exceed 32 members' do
+      tracestate = OpenTelemetry::Trace::Tracestate.from_hash(33.times.collect { |n| [n.to_s, n.to_s] }.to_h)
+      _(tracestate.to_h.size).must_be :<=, 32
+    end
   end
 
   describe '#value' do
@@ -51,12 +71,37 @@ describe OpenTelemetry::Trace::Tracestate do
 
   describe '#delete' do
     it 'returns a new Tracestate' do
+      old_tracestate = OpenTelemetry::Trace::Tracestate.from_hash('a' => 'a')
+      new_tracestate = old_tracestate.delete('a')
+      _(new_tracestate).wont_equal old_tracestate
     end
     it 'deletes the specified key' do
+      tracestate = OpenTelemetry::Trace::Tracestate.from_hash('a' => 'a', 'b' => 'b')
+      tracestate = tracestate.delete('a')
+      _(tracestate.to_h).must_equal('b' => 'b')
     end
   end
 
   describe '#to_s' do
+    let(:header) { 'i=am_a_member,and= so-am_I.' }
+    it 'is the inverse of from_string' do
+      tracestate = OpenTelemetry::Trace::Tracestate.from_string(header)
+      _(tracestate.to_s).must_equal header
+    end
+    it 'preserves whitespace prefixes in values' do
+      h = { 'i' => 'am_a_member', 'and' => ' so-am_I.' }
+      tracestate = OpenTelemetry::Trace::Tracestate.from_hash(h)
+      _(tracestate.to_s).must_equal header
+    end
+    it 'returns an empty string when empty?' do
+      tracestate = OpenTelemetry::Trace::Tracestate::DEFAULT
+      _(tracestate).must_be :empty?
+      _(tracestate.to_s).must_be :empty?
+    end
+    it 'does not terminate a single member with ,' do
+      tracestate = OpenTelemetry::Trace::Tracestate.from_hash('a' => 'a')
+      _(tracestate.to_s).must_equal 'a=a'
+    end
   end
 
   describe '#empty?' do
