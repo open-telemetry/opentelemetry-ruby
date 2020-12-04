@@ -24,25 +24,36 @@ describe OpenTelemetry::Trace::Tracestate do
       _(tracestate).must_be :empty?
     end
     it 'omits empty members' do
-      skip
+      tracestate = OpenTelemetry::Trace::Tracestate.from_string('a=a,,b=b')
+      _(tracestate.to_h).must_equal('a' => 'a', 'b' => 'b')
     end
     it 'omits invalid keys' do
-      skip
+      tracestate = OpenTelemetry::Trace::Tracestate.from_string('a=a,0xaa=0xaa,b=b')
+      _(tracestate.to_h).must_equal('a' => 'a', 'b' => 'b')
     end
     it 'omits invalid values' do
-      skip
+      tracestate = OpenTelemetry::Trace::Tracestate.from_string('a=a,key==,,b=b')
+      _(tracestate.to_h).must_equal('a' => 'a', 'b' => 'b')
     end
     it 'omits keys containing whitespace' do
-      skip
+      tracestate = OpenTelemetry::Trace::Tracestate.from_string('a=a,ke y=value,b=b')
+      _(tracestate.to_h).must_equal('a' => 'a', 'b' => 'b')
     end
     it 'strips surrounding whitespace from members' do
-      skip
+      tracestate = OpenTelemetry::Trace::Tracestate.from_string('  a=a  ')
+      _(tracestate.to_h).must_equal('a' => 'a')
     end
     it 'preserves whitespace in value prefixes' do
-      skip
+      tracestate = OpenTelemetry::Trace::Tracestate.from_string('a=  a')
+      _(tracestate.to_h).must_equal('a' => '  a')
     end
     it 'permits multitenant vendor keys' do
-      skip
+      tracestate = OpenTelemetry::Trace::Tracestate.from_string('0mg@a-vendor=a')
+      _(tracestate.to_h).must_equal('0mg@a-vendor' => 'a')
+    end
+    it 'supports _-*/ in keys' do
+      tracestate = OpenTelemetry::Trace::Tracestate.from_string('omg/what_is-this*thing=a')
+      _(tracestate.to_h).must_equal('omg/what_is-this*thing' => 'a')
     end
   end
 
