@@ -27,6 +27,17 @@ describe OpenTelemetry::Trace::Tracestate do
   end
 
   describe '#set_value' do
+    it 'will not exceed 32 members' do
+      tracestate = OpenTelemetry::Trace::Tracestate.from_hash(31.times.collect { |n| [n.to_s, n.to_s] }.to_h)
+      tracestate = tracestate.set_value('a', 'a').set_value('b', 'b')
+      _(tracestate.to_h.size).must_be :<=, 32
+    end
+    it 'returns a new Tracestate' do
+    end
+    it 'adds a new key-value pair' do
+    end
+    it 'updates the value for an existing key' do
+    end
   end
 
   describe '#delete' do

@@ -25,7 +25,7 @@ module OpenTelemetry
             member.strip!
             kv = member.split('=')
             k, v = *kv
-            next unless kv.length == 2 && valid_key?(k) && valid_value?(v)
+            next unless kv.length == 2 && VALID_KEY.match?(k) && VALID_VALUE.match?(v)
 
             memo[k] = v
           end
@@ -43,25 +43,18 @@ module OpenTelemetry
         # @return [Tracestate] A new Tracestate instance or DEFAULT
         def from_hash(hash)
           hash = hash.select do |k, v|
-            valid = valid_key?(k) && valid_value?(v)
+            valid = VALID_KEY.match?(k) && VALID_VALUE.match?(v)
             OpenTelemetry.logger.debug("Invalid Tracestate member - #{k} : #{v}") unless valid
             valid
           end
           new(hash)
         end
-
-        private
-
-        def valid_key?(key)
-          %r(^[a-z][a-z0-9_\-*/]{,255}$).match?(key) || %r(^[a-z0-9][a-z0-9_\-*/]{,240}@[a-z][a-z0-9_\-*/]{,13}$).match?(key)
-        end
-
-        def valid_value?(value)
-          /^[ -~&&[^,=]]{,255}[!-~&&[^,=]]$/.match?(value)
-        end
       end
 
       MAX_MEMBER_COUNT = 32 # Defined by https://www.w3.org/TR/trace-context/
+      VALID_KEY = Regexp::union(%r(^[a-z][a-z0-9_\-*/]{,255}$), %r(^[a-z0-9][a-z0-9_\-*/]{,240}@[a-z][a-z0-9_\-*/]{,13}$)).freeze
+      VALID_VALUE = /^[ -~&&[^,=]]{,255}[!-~&&[^,=]]$/.freeze
+      private_constant(:MAX_MEMBER_COUNT, :VALID_KEY, :VALID_VALUE)
 
       # @api private
       # The constructor is private and only for use internally by the class.
@@ -85,6 +78,8 @@ module OpenTelemetry
         @hash[key]
       end
 
+      alias [] value
+
       # Adds a new key/value pair or updates an existing value for a given key.
       # Keys and values are validated against the W3C Trace Context
       # specification, and any invalid members are logged at DEBUG level and
@@ -95,7 +90,7 @@ module OpenTelemetry
       # @return [Tracestate] self, if unchanged, or a new Tracestate containing
       #   the new or updated key/value pair.
       def set_value(key, value)
-        return self unless valid_key?(key) && valid_value?(value)
+        return self unless VALID_KEY.match?(key) && VALID_VALUE.match?(value)
 
         h = Hash[@hash]
         h[key] = value
@@ -123,6 +118,13 @@ module OpenTelemetry
         @hash.inject(+'') do |memo, (k, v)|
           memo << k << '=' << v << ','
         end.chop! || ''
+      end
+
+      # Returns this Tracestate as a Hash.
+      #
+      # @return [Hash] the members of this Tracestate
+      def to_h
+        @hash.dup
       end
 
       # Returns true if this Tracestate is empty.
