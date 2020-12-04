@@ -63,8 +63,15 @@ module OpenTelemetry
 
       MAX_MEMBER_COUNT = 32 # Defined by https://www.w3.org/TR/trace-context/
 
+      # @api private
+      # The constructor is private and only for use internally by the class.
+      # Users should use the {from_hash} or {from_string} factory methods to
+      # obtain a {Tracestate} instance.
+      #
+      # @param [Hash<String, String>] hash Key-value pairs
+      # @return [Tracestate]
       def initialize(hash)
-        excess = MAX_MEMBER_COUNT - hash.size
+        excess = hash.size - MAX_MEMBER_COUNT
         hash = Hash[hash.drop(excess)] if excess.positive?
         @hash = hash.freeze
       end
@@ -75,7 +82,7 @@ module OpenTelemetry
       # @param [String] key The key to lookup.
       # @return [String] The value associated with the key, or nil.
       def value(key)
-        h[key]
+        @hash[key]
       end
 
       # Adds a new key/value pair or updates an existing value for a given key.
