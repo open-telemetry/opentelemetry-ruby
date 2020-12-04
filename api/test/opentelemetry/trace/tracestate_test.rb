@@ -11,6 +11,39 @@ describe OpenTelemetry::Trace::Tracestate do
   end
 
   describe '.from_string' do
+    it 'returns an empty Tracestate for nil' do
+      tracestate = OpenTelemetry::Trace::Tracestate.from_string(nil)
+      _(tracestate).must_be :empty?
+    end
+    it 'returns an empty Tracestate for an empty string' do
+      tracestate = OpenTelemetry::Trace::Tracestate.from_string('')
+      _(tracestate).must_be :empty?
+    end
+    it 'returns an empty Tracestate for an invalid header' do
+      tracestate = OpenTelemetry::Trace::Tracestate.from_string('  ***=, ')
+      _(tracestate).must_be :empty?
+    end
+    it 'omits empty members' do
+      skip
+    end
+    it 'omits invalid keys' do
+      skip
+    end
+    it 'omits invalid values' do
+      skip
+    end
+    it 'omits keys containing whitespace' do
+      skip
+    end
+    it 'strips surrounding whitespace from members' do
+      skip
+    end
+    it 'preserves whitespace in value prefixes' do
+      skip
+    end
+    it 'permits multitenant vendor keys' do
+      skip
+    end
   end
 
   describe '.from_hash' do

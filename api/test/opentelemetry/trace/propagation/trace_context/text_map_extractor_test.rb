@@ -22,6 +22,7 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapExtractor do
     'FF-000000000000000000000000000000AA-00000000000000ea-01'
   end
   let(:tracestate_header) { 'vendorname=opaquevalue' }
+  let(:tracestate) { OpenTelemetry::Trace::Tracestate.from_hash('vendorname' => 'opaquevalue') }
   let(:carrier) do
     {
       traceparent_key => valid_traceparent_header,
@@ -48,7 +49,7 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapExtractor do
       _(span_context.trace_id).must_equal(("\0" * 15 + "\xaa").b)
       _(span_context.span_id).must_equal(("\0" * 7 + "\xea").b)
       _(span_context.trace_flags).must_be :sampled?
-      _(span_context.tracestate.to_s).must_equal('vendorname=opaquevalue')
+      _(span_context.tracestate).must_equal(tracestate)
     end
 
     it 'uses a default getter if one is not provided' do
@@ -58,7 +59,7 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapExtractor do
       _(span_context.trace_id).must_equal(("\0" * 15 + "\xaa").b)
       _(span_context.span_id).must_equal(("\0" * 7 + "\xea").b)
       _(span_context.trace_flags).must_be :sampled?
-      _(span_context.tracestate.to_s).must_equal('vendorname=opaquevalue')
+      _(span_context.tracestate).must_equal(tracestate)
     end
 
     it 'returns original context on error' do

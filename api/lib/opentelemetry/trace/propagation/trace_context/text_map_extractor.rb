@@ -37,10 +37,8 @@ module OpenTelemetry
           #   context if parsing fails.
           def extract(carrier, context, &getter)
             getter ||= default_getter
-            header = getter.call(carrier, @traceparent_key)
-            tp = TraceParent.from_string(header)
-
-            tracestate = getter.call(carrier, @tracestate_key)
+            tp = TraceParent.from_string(getter.call(carrier, @traceparent_key))
+            tracestate = Tracestate.from_string(getter.call(carrier, @tracestate_key))
 
             span_context = Trace::SpanContext.new(trace_id: tp.trace_id,
                                                   span_id: tp.span_id,

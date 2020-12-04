@@ -144,6 +144,14 @@ module OpenTelemetry
         @hash.empty?
       end
 
+      # Returns true if this Tracestate equals other.
+      #
+      # @param [Tracestate] other The Tracestate for comparison.
+      # @return [Boolean] true if this Tracestate == other, else false.
+      def ==(other)
+        @hash == other.to_h
+      end
+
       DEFAULT = new({})
     end
   end
