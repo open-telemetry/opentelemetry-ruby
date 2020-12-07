@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry-instrumentation-amazing_gem'
 require 'opentelemetry-instrumentation-active_model_serializers'
 require 'opentelemetry-instrumentation-concurrent_ruby'
 require 'opentelemetry-instrumentation-dalli'
