@@ -76,6 +76,7 @@ end
 
 require 'opentelemetry/trace/link'
 require 'opentelemetry/trace/trace_flags'
+require 'opentelemetry/trace/tracestate'
 require 'opentelemetry/trace/span_context'
 require 'opentelemetry/trace/span_kind'
 require 'opentelemetry/trace/span'

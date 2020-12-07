@@ -233,7 +233,7 @@ module OpenTelemetry
           Opentelemetry::Proto::Trace::V1::Span.new(
             trace_id: span_data.trace_id,
             span_id: span_data.span_id,
-            trace_state: span_data.tracestate,
+            trace_state: span_data.tracestate.to_s,
             parent_span_id: span_data.parent_span_id == OpenTelemetry::Trace::INVALID_SPAN_ID ? nil : span_data.parent_span_id,
             name: span_data.name,
             kind: as_otlp_span_kind(span_data.kind),
@@ -254,7 +254,7 @@ module OpenTelemetry
               Opentelemetry::Proto::Trace::V1::Span::Link.new(
                 trace_id: link.span_context.trace_id,
                 span_id: link.span_context.span_id,
-                trace_state: link.span_context.tracestate,
+                trace_state: link.span_context.tracestate.to_s,
                 attributes: link.attributes&.map { |k, v| as_otlp_key_value(k, v) }
                 # TODO: track dropped_attributes_count in Span#trim_links
               )
