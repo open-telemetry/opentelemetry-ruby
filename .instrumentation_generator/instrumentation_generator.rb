@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative '../api/lib/opentelemetry/version'
 require 'thor'
 
 class InstrumentationGenerator < Thor::Group
@@ -14,7 +15,7 @@ class InstrumentationGenerator < Thor::Group
 
   def root_files
     template('templates/rubocop.yml.tt', "#{instrumentation_path}/.rubocop.yml")
-    template('templates/yardopts.tt', "#{instrumentation_path}/yardopts.tt")
+    template('templates/yardopts.tt', "#{instrumentation_path}/.yardopts")
     template('templates/Appraisals', "#{instrumentation_path}/Appraisal")
     template('templates/CHANGELOG.md.tt', "#{instrumentation_path}/CHANGELOG.md")
     template('templates/Gemfile', "#{instrumentation_path}/Gemfile")
@@ -38,6 +39,10 @@ class InstrumentationGenerator < Thor::Group
   end
 
   private
+
+  def opentelemetry_version
+    OpenTelemetry::VERSION
+  end
 
   def instrumentation_path
     "instrumentation/#{instrumentation_name}"

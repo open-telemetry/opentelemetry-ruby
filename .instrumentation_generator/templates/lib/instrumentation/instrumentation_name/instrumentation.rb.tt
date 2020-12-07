@@ -11,7 +11,7 @@ module OpenTelemetry
     module <%= pascal_cased_instrumentation_name %>
       # The Instrumentation class contains logic to detect and install the <%= pascal_cased_instrumentation_name %> instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        install do |config|
+        install do |_config|
           require_dependencies
         end
 
