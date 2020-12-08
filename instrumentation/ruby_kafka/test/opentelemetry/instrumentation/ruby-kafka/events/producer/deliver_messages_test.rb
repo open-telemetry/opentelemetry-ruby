@@ -51,8 +51,8 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Events::Producer::DeliverMes
     _(span.end_timestamp).must_be_instance_of(Time)
 
     _(span.attributes['messaging.system']).must_equal('kafka')
-    _(span.attributes['attempts']).must_equal(attempts)
-    _(span.attributes['message_count']).must_equal(message_count)
-    _(span.attributes['delivered_message_count']).must_equal(delivered_message_count)
+    _(span.attributes['messaging.kafka.attempts']).must_equal(attempts)
+    _(span.attributes['messaging.kafka.message_count']).must_equal(message_count)
+    _(span.attributes['messaging.kafka.delivered_message_count']).must_equal(delivered_message_count)
   end
 end

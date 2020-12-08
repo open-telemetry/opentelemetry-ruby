@@ -48,7 +48,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Events::Connection::Request 
     _(span.end_timestamp).must_be_instance_of(Time)
 
     _(span.attributes['messaging.system']).must_equal('kafka')
-    _(span.attributes['request_size']).must_equal(request_size)
-    _(span.attributes['response_size']).must_equal(response_size)
+    _(span.attributes['messaging.kafka.request_size']).must_equal(request_size)
+    _(span.attributes['messaging.kafka.response_size']).must_equal(response_size)
   end
 end

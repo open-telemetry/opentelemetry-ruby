@@ -62,9 +62,9 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
       _(spans.last.kind).must_equal(:client)
 
       _(spans.last.attributes['messaging.system']).must_equal('kafka')
-      _(spans.last.attributes['message_count']).must_equal(1)
-      _(spans.last.attributes['delivered_message_count']).must_equal(1)
-      _(spans.last.attributes['attempts']).must_equal(1)
+      _(spans.last.attributes['messaging.kafka.message_count']).must_equal(1)
+      _(spans.last.attributes['messaging.kafka.delivered_message_count']).must_equal(1)
+      _(spans.last.attributes['messaging.kafka.attempts']).must_equal(1)
     end
 
     it 'traces async produce calls' do

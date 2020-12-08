@@ -48,7 +48,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Events::ProduceOperation::Se
     _(span.end_timestamp).must_be_instance_of(Time)
 
     _(span.attributes['messaging.system']).must_equal('kafka')
-    _(span.attributes['message_count']).must_equal(message_count)
-    _(span.attributes['sent_message_count']).must_equal(sent_message_count)
+    _(span.attributes['messaging.kafka.message_count']).must_equal(message_count)
+    _(span.attributes['messaging.kafka.sent_message_count']).must_equal(sent_message_count)
   end
 end

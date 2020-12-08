@@ -19,8 +19,8 @@ module OpenTelemetry
             def subscribe!
               ::ActiveSupport::Notifications.subscribe(EVENT_NAME) do |_name, start, finish, _id, payload|
                 attributes = { 'messaging.system' => 'kafka' }
-                attributes['request_size'] = payload[:request_size] if payload.key?(:request_size)
-                attributes['response_size'] = payload[:response_size] if payload.key?(:response_size)
+                attributes['messaging.kafka.request_size'] = payload[:request_size] if payload.key?(:request_size)
+                attributes['messaging.kafka.response_size'] = payload[:response_size] if payload.key?(:response_size)
 
                 span = tracer.start_span(SPAN_NAME, attributes: attributes, start_timestamp: start, kind: :client)
                 span.finish(end_timestamp: finish)
