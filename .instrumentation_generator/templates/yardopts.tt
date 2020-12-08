@@ -1,5 +1,5 @@
 --no-private
---title=OpenTelemetry <%= instrumentation_name %> Instrumentation
+--title=OpenTelemetry <%= humanized_instrumentation_name %> Instrumentation
 --markup=markdown
 --main=README.md
 ./lib/opentelemetry/instrumentation/**/*.rb

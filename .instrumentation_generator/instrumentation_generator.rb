@@ -55,4 +55,8 @@ class InstrumentationGenerator < Thor::Group
   def pascal_cased_instrumentation_name
     instrumentation_name.split('_').collect(&:capitalize).join
   end
+
+  def humanized_instrumentation_name
+    instrumentation_name.split('_').collect(&:capitalize).join(' ')
+  end
 end
