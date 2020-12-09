@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
+### v0.10.1 / 2020-12-09
+
+* FIXED: Semantic conventions db.type -> db.system 
+
 ### v0.10.0 / 2020-12-03
 
 * (No significant changes)
