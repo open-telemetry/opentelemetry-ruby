@@ -48,17 +48,23 @@ module OpenTelemetry
             host = options[:host]
             port = options[:port]
 
-            OpenTelemetry::Instrumentation::Redis.attributes.merge(
+            attributes = {
               'db.system' => 'redis',
               'db.instance' => options[:db].to_s,
               'db.url' => "redis://#{host}:#{port}",
               'net.peer.name' => host,
-              'net.peer.port' => port
-            )
+              'net.peer.port' => port,
+            }
+            attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+            OpenTelemetry::Instrumentation::Redis.attributes.merge(attributes)
           end
 
           def tracer
             Redis::Instrumentation.instance.tracer
+          end
+
+          def config
+            Redis::Instrumentation.instance.config
           end
         end
       end
