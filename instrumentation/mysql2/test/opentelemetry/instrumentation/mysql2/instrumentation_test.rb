@@ -62,7 +62,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       instrumentation.install({ peer_service: 'readonly:mysql' })
       client.query('SELECT 1')
 
-      _(span.attributes['peer.service']).must_equal 'readonly:redis'
+      _(span.attributes['peer.service']).must_equal 'readonly:mysql'
     end
 
     it 'after requests' do
