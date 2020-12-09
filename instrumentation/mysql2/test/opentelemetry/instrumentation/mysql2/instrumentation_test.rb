@@ -61,7 +61,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       client.query('SELECT 1')
 
       _(span.name).must_equal 'select'
-      _(span.attributes['db.type']).must_equal 'mysql'
+      _(span.attributes['db.system']).must_equal 'mysql'
       _(span.attributes['db.instance']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal 'SELECT 1'
       _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
@@ -75,7 +75,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       end.must_raise Mysql2::Error
 
       _(span.name).must_equal 'select'
-      _(span.attributes['db.type']).must_equal 'mysql'
+      _(span.attributes['db.system']).must_equal 'mysql'
       _(span.attributes['db.instance']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal 'SELECT INVALID'
       _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
@@ -98,7 +98,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       client.query(explain_sql)
 
       _(span.name).must_equal 'explain'
-      _(span.attributes['db.type']).must_equal 'mysql'
+      _(span.attributes['db.system']).must_equal 'mysql'
       _(span.attributes['db.instance']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal explain_sql
       _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
@@ -112,7 +112,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       end.must_raise Mysql2::Error
 
       _(span.name).must_equal 'mysql.mysql'
-      _(span.attributes['db.type']).must_equal 'mysql'
+      _(span.attributes['db.system']).must_equal 'mysql'
       _(span.attributes['db.instance']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal 'DESELECT 1'
       _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"

@@ -49,7 +49,7 @@ module OpenTelemetry
             port = options[:port]
 
             OpenTelemetry::Instrumentation::Redis.attributes.merge(
-              'db.type' => 'redis',
+              'db.system' => 'redis',
               'db.instance' => options[:db].to_s,
               'db.url' => "redis://#{host}:#{port}",
               'net.peer.name' => host,
