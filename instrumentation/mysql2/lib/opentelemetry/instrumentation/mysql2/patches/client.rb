@@ -80,6 +80,7 @@ module OpenTelemetry
               'net.peer.port' => port
             }
             attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+            attributes
           end
 
           def tracer
