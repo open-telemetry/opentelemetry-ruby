@@ -17,7 +17,7 @@ module OpenTelemetry
 
         present do
           # TODO: Replace true with a definition check of the gem being instrumented
-          # Exampe: `defined?(::Rack)`
+          # Example: `defined?(::Rack)`
           true
         end
 
