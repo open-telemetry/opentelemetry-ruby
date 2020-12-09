@@ -13,7 +13,7 @@ require 'test_helpers/routes'
 module AppConfig
   extend self
 
-  def initialize_app(use_exceptions_app: false, add_middlewares: true)
+  def initialize_app(use_exceptions_app: false, remove_rack_tracer_middleware: false)
     new_app = Application.new
     new_app.config.secret_key_base = 'secret_key_base'
 
@@ -28,6 +28,7 @@ module AppConfig
       apply_rails_6_0_configs(new_app)
     end
 
+    remove_rack_middleware(new_app) if remove_rack_tracer_middleware
     add_exceptions_app(new_app) if use_exceptions_app
     add_middlewares(new_app)
 
@@ -39,6 +40,12 @@ module AppConfig
   end
 
   private
+
+  def remove_rack_middleware(application)
+    application.middleware.delete(
+      OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware
+    )
+  end
 
   def add_exceptions_app(application)
     application.config.exceptions_app = lambda do |env|
