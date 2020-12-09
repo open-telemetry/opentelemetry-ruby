@@ -73,7 +73,7 @@ module OpenTelemetry
             port = query_options[:port].to_s
 
             {
-              'db.type' => 'mysql',
+              'db.system' => 'mysql',
               'db.instance' => database_name,
               'db.url' => "mysql://#{host}:#{port}",
               'net.peer.name' => host,
