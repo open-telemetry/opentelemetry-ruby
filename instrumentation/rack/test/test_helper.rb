@@ -8,6 +8,7 @@ require 'rack'
 
 require 'opentelemetry/sdk'
 
+require 'pry'
 require 'minitest/autorun'
 require 'webmock/minitest'
 
