@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.10.1 / 2020-12-09
+
+* FIXED: Rack current_span 
+
 ### v0.10.0 / 2020-12-03
 
 * (No significant changes)
