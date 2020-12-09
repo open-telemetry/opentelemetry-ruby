@@ -18,14 +18,14 @@ module OpenTelemetry
 
         present do
           !defined?(::ActiveSupport::Notifications).nil? &&
-            !defined?(::ActiveModel::Serializers).nil? &&
+            !defined?(::ActiveModelSerializers).nil? &&
             gem_version >= MINIMUM_VERSION
         end
 
         private
 
         def gem_version
-          Gem.loaded_specs['active_model_serializers']&.version
+          Gem.loaded_specs['active_model_serializers'].version
         end
 
         def require_dependencies

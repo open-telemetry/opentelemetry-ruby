@@ -23,7 +23,7 @@ describe OpenTelemetry::Instrumentation::ActiveModelSerializers do
     end
 
     it 'when active_model_serializers gem not installed' do
-      hide_const('ActiveModel::Serializers')
+      hide_const('::ActiveModelSerializers')
       _(instrumentation.present?).must_equal false
     end
 
