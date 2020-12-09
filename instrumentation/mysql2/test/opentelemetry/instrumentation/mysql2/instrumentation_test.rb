@@ -59,7 +59,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
 
     it 'accepts peer service name from config' do
       instrumentation.instance_variable_set(:@installed, false)
-      instrumentation.install({ peer_service: 'readonly:mysql' })
+      instrumentation.install(peer_service: 'readonly:mysql')
       client.query('SELECT 1')
 
       _(span.attributes['peer.service']).must_equal 'readonly:mysql'
