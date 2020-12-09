@@ -38,6 +38,28 @@ class InstrumentationGenerator < Thor::Group
     template('templates/test/instrumentation.rb', "#{instrumentation_path}/test/#{instrumentation_path}/instrumentation_test.rb")
   end
 
+  def add_to_releases
+    release_details = <<-HEREDOC
+  - name: #{instrumentation_gem_name}
+    directory: #{instrumentation_path}
+    version_constant: [OpenTelemetry, Instrumentation, #{pascal_cased_instrumentation_name}, VERSION]\n
+    HEREDOC
+
+    insert_into_file('.toys/.data/releases.yml', release_details, after: "gems:\n")
+  end
+
+  def add_to_instrumentation_all
+    instrumentation_all_path = 'instrumentation/all'
+    gemfile_text = "\ngem '#{instrumentation_gem_name}', path: '../#{instrumentation_name}'"
+    insert_into_file("#{instrumentation_all_path}/Gemfile", gemfile_text, after: "gemspec\n")
+
+    gemspec_text = "\n  spec.add_dependency '#{instrumentation_gem_name}', '~> #{opentelemetry_version}'"
+    insert_into_file("#{instrumentation_all_path}/opentelemetry-instrumentation-all.gemspec", gemspec_text, after: "spec.required_ruby_version = '>= 2.5.0'\n")
+
+    all_rb_text = "\nrequire '#{instrumentation_gem_name}'"
+    insert_into_file("#{instrumentation_all_path}/lib/opentelemetry/instrumentation/all.rb", all_rb_text, after: "# SPDX-License-Identifier: Apache-2.0\n")
+  end
+
   private
 
   def opentelemetry_version
