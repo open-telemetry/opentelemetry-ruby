@@ -40,6 +40,18 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
       _(span.attributes['peer.service']).must_equal 'readonly:redis'
     end
 
+    it 'context attributes take priority' do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install({ peer_service: 'readonly:redis' })
+      redis = ::Redis.new
+
+      OpenTelemetry::Instrumentation::Redis.with_attributes('peer.service' => 'foo') do
+        redis.set('K', 'x')
+      end
+
+      _(span.attributes['peer.service']).must_equal 'foo'
+    end
+
     it 'after authorization with Redis server' do
       ::Redis.new.auth('password')
 
