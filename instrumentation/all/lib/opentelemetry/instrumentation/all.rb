@@ -4,7 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry-instrumentation-graphql'
 require 'opentelemetry-instrumentation-active_model_serializers'
 require 'opentelemetry-instrumentation-concurrent_ruby'
 require 'opentelemetry-instrumentation-dalli'
@@ -12,6 +11,8 @@ require 'opentelemetry-instrumentation-delayed_job'
 require 'opentelemetry-instrumentation-ethon'
 require 'opentelemetry-instrumentation-excon'
 require 'opentelemetry-instrumentation-faraday'
+require 'opentelemetry-instrumentation-graphql'
+require 'opentelemetry-instrumentation-http_client'
 require 'opentelemetry-instrumentation-mongo'
 require 'opentelemetry-instrumentation-mysql2'
 require 'opentelemetry-instrumentation-net_http'

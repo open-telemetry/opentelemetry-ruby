@@ -35,6 +35,10 @@ gems:
     directory: instrumentation/graphql
     version_constant: [OpenTelemetry, Instrumentation, GraphQL, VERSION]
 
+  - name: opentelemetry-instrumentation-http_client
+    directory: instrumentation/http_client
+    version_constant: [OpenTelemetry, Instrumentation, HttpClient, VERSION]
+
   - name: opentelemetry-api
     directory: api
     version_rb_path: lib/opentelemetry/version.rb
