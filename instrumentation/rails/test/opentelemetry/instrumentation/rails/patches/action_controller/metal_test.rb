@@ -66,6 +66,18 @@ describe OpenTelemetry::Instrumentation::Rails::Patches::ActionController::Metal
     end
   end
 
+  describe 'when the application does not have the tracing rack middleware' do
+    let(:rails_app) { AppConfig.initialize_app(remove_rack_tracer_middleware: true) }
+
+    it 'does something' do
+      get '/ok'
+
+      _(last_response.body).must_equal 'actually ok'
+      _(last_response.ok?).must_equal true
+      _(spans.size).must_equal(0)
+    end
+  end
+
   def app
     rails_app
   end
