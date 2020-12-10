@@ -48,7 +48,8 @@ module OpenTelemetry
                          schedule_delay_millis: Float(ENV.fetch('OTEL_BSP_SCHEDULE_DELAY_MILLIS', 5_000)),
                          max_queue_size: Integer(ENV.fetch('OTEL_BSP_MAX_QUEUE_SIZE', 2048)),
                          max_export_batch_size: Integer(ENV.fetch('OTEL_BSP_MAX_EXPORT_BATCH_SIZE', 512)),
-                         start_thread_on_boot: String(ENV['OTEL_RUBY_BSP_START_THREAD_ON_BOOT']) !~ /false/i)
+                         start_thread_on_boot: String(ENV['OTEL_RUBY_BSP_START_THREAD_ON_BOOT']) !~ /false/i,
+                         metrics_reporter: nil)
             raise ArgumentError if max_export_batch_size > max_queue_size
 
             @exporter = exporter
@@ -60,6 +61,7 @@ module OpenTelemetry
             @delay_seconds = schedule_delay_millis / 1000.0
             @max_queue_size = max_queue_size
             @batch_size = max_export_batch_size
+            @metrics_reporter = metrics_reporter || OpenTelemetry::SDK::Trace::Export::MetricsReporter
             @spans = []
             @pid = nil
             @thread = nil
@@ -77,6 +79,7 @@ module OpenTelemetry
               reset_on_fork
               n = spans.size + 1 - max_queue_size
               spans.shift(n) if n.positive?
+              report_dropped_spans(n, reason: 'buffer-full')
               spans << span
               @condition.signal if spans.size > batch_size
             end
@@ -115,6 +118,7 @@ module OpenTelemetry
             lock do
               n = spans.size + snapshot.size - max_queue_size
               snapshot.shift(n) if n.positive?
+              report_dropped_spans(n, reason: 'buffer-full')
               spans.unshift(snapshot) unless snapshot.empty?
               @condition.signal if spans.size > max_queue_size / 2
             end
@@ -136,13 +140,15 @@ module OpenTelemetry
             @thread.join(timeout)
             force_flush(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
             @exporter.shutdown(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
+            dropped_spans = lock { spans.size }
+            report_dropped_spans(dropped_spans, reason: 'terminating') if dropped_spans.positive?
           end
 
           private
 
           attr_reader :spans, :max_queue_size, :batch_size
 
-          def work
+          def work # rubocop:disable Metrics/AbcSize
             loop do
               batch = lock do
                 reset_on_fork(restart_thread: false)
@@ -152,6 +158,8 @@ module OpenTelemetry
 
                 fetch_batch
               end
+
+              @metrics_reporter.observe_value('otel.bsp.buffer_utilization', value: spans.size / max_queue_size.to_f)
 
               export_batch(batch)
             end
@@ -173,7 +181,18 @@ module OpenTelemetry
           end
 
           def report_result(result_code, batch)
-            OpenTelemetry.logger.error("Unable to export #{batch.size} spans") unless result_code == SUCCESS
+            if result_code == SUCCESS
+              @metrics_reporter.add_to_counter('otel.bsp.export.success')
+              @metrics_reporter.add_to_counter('otel.bsp.export.spans', increment: batch.size)
+            else
+              OpenTelemetry.logger.error("Unable to export #{batch.size} spans")
+              @metrics_reporter.add_to_counter('otel.bsp.export.failure')
+              report_dropped_spans(batch.size, reason: 'export-failure')
+            end
+          end
+
+          def report_dropped_spans(count, reason:)
+            @metrics_reporter.add_to_counter('otel.bsp.dropped_span', increment: count, labels: { 'reason' => reason })
           end
 
           def fetch_batch
