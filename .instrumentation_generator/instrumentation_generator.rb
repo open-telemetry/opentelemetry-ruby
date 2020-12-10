@@ -16,7 +16,7 @@ class InstrumentationGenerator < Thor::Group
   def root_files
     template('templates/rubocop.yml.tt', "#{instrumentation_path}/.rubocop.yml")
     template('templates/yardopts.tt', "#{instrumentation_path}/.yardopts")
-    template('templates/Appraisals', "#{instrumentation_path}/Appraisal")
+    template('templates/Appraisals', "#{instrumentation_path}/Appraisals")
     template('templates/CHANGELOG.md.tt', "#{instrumentation_path}/CHANGELOG.md")
     template('templates/Gemfile', "#{instrumentation_path}/Gemfile")
     template('templates/LICENSE', "#{instrumentation_path}/LICENSE")
