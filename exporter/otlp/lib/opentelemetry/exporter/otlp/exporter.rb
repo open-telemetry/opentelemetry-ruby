@@ -31,12 +31,13 @@ module OpenTelemetry
         WRITE_TIMEOUT_SUPPORTED = Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.6')
         private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT, :WRITE_TIMEOUT_SUPPORTED)
 
-        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_SPAN_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'localhost:55681/v1/trace'), # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
+        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_SPAN_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'localhost:55681/v1/trace'), # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
                        insecure: config_opt('OTEL_EXPORTER_OTLP_SPAN_INSECURE', 'OTEL_EXPORTER_OTLP_INSECURE', default: false),
                        certificate_file: config_opt('OTEL_EXPORTER_OTLP_SPAN_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
                        headers: config_opt('OTEL_EXPORTER_OTLP_SPAN_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS'), # TODO: what format is expected here?
                        compression: config_opt('OTEL_EXPORTER_OTLP_SPAN_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION'),
-                       timeout: config_opt('OTEL_EXPORTER_OTLP_SPAN_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10))
+                       timeout: config_opt('OTEL_EXPORTER_OTLP_SPAN_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
+                       metrics_reporter: nil)
           raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}" if invalid_url?("http://#{endpoint}")
           raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || compression == 'gzip'
           raise ArgumentError, 'headers must be comma-separated k:v pairs or a Hash' unless valid_headers?(headers)
@@ -54,6 +55,7 @@ module OpenTelemetry
                      end
           @timeout = timeout.to_f # TODO: use this as a default timeout when we implement timeouts in https://github.com/open-telemetry/opentelemetry-ruby/pull/341
           @compression = compression
+          @metrics_reporter = metrics_reporter || OpenTelemetry::SDK::Trace::Export::MetricsReporter
 
           @shutdown = false
         end
@@ -132,7 +134,7 @@ module OpenTelemetry
             @http.read_timeout = remaining_timeout
             @http.write_timeout = remaining_timeout if WRITE_TIMEOUT_SUPPORTED
             @http.start unless @http.started?
-            response = @http.request(request)
+            response = measure_request_duration { @http.request(request) }
 
             case response
             when Net::HTTPOK
@@ -140,11 +142,11 @@ module OpenTelemetry
               SUCCESS
             when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
               response.body # Read and discard body
-              redo if backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1)
+              redo if backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1, reason: response.code)
               FAILURE
             when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
               response.body # Read and discard body
-              redo if backoff?(retry_count: retry_count += 1)
+              redo if backoff?(retry_count: retry_count += 1, reason: response.code)
               FAILURE
             when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
               # TODO: decode the body as a google.rpc.Status Protobuf-encoded message when https://github.com/open-telemetry/opentelemetry-collector/issues/1357 is fixed.
@@ -153,13 +155,13 @@ module OpenTelemetry
             when Net::HTTPRedirection
               @http.finish
               handle_redirect(response['location'])
-              redo if backoff?(retry_after: 0, retry_count: retry_count += 1)
+              redo if backoff?(retry_after: 0, retry_count: retry_count += 1, reason: response.code)
             else
               @http.finish
               FAILURE
             end
           rescue Net::OpenTimeout, Net::ReadTimeout
-            retry if backoff?(retry_count: retry_count += 1)
+            retry if backoff?(retry_count: retry_count += 1, reason: 'timeout')
             return FAILURE
           end
         ensure
@@ -177,8 +179,23 @@ module OpenTelemetry
           OpenTelemetry::Trace.with_span(OpenTelemetry::Trace::Span.new) { yield }
         end
 
-        def backoff?(retry_after: nil, retry_count:)
+        def measure_request_duration
+          start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+          begin
+            response = yield
+          ensure
+            stop = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+            duration_ms = 1000.0 * (stop - start)
+            @metrics_reporter.record_value('otel.otlp_exporter.request_duration',
+                                           value: duration_ms,
+                                           labels: { 'status' => response&.code || 'unknown' })
+          end
+        end
+
+        def backoff?(retry_after: nil, retry_count:, reason:)
           return false if retry_count > RETRY_COUNT
+
+          @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => reason })
 
           sleep_interval = nil
           unless retry_after.nil?
