@@ -183,7 +183,7 @@ module OpenTelemetry
           def report_result(result_code, batch)
             if result_code == SUCCESS
               @metrics_reporter.add_to_counter('otel.bsp.export.success')
-              @metrics_reporter.add_to_counter('otel.bsp.export.spans', increment: batch.size)
+              @metrics_reporter.add_to_counter('otel.bsp.exported_spans', increment: batch.size)
             else
               OpenTelemetry.logger.error("Unable to export #{batch.size} spans")
               @metrics_reporter.add_to_counter('otel.bsp.export.failure')
