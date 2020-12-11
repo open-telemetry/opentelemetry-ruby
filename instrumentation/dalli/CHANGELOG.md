@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-dalli
 
+### v0.11.0 / 2020-12-11
+
+* ADDED: Add peer service config to dalli 
+* ADDED: Move utf8 encoding to common utils 
+* FIXED: Copyright comments to not reference year 
+
 ### v0.10.0 / 2020-12-03
 
 * (No significant changes)
