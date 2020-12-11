@@ -2,7 +2,7 @@
 
 # frozen_string_literal: true
 
-# Copyright 2020 OpenTelemetry Authors
+# Copyright The OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
 
