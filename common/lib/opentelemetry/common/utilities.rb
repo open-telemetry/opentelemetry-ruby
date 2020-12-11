@@ -10,14 +10,40 @@ module OpenTelemetry
     module Utilities
       extend self
 
-      # @api private
-      #
-      # Returns nil if timeout is nil, 0 if timeout has expired, or the remaining (positive) time left in seconds.
+      STRING_PLACEHOLDER = ''.encode(::Encoding::UTF_8).freeze
+
+      # Returns nil if timeout is nil, 0 if timeout has expired,
+      # or the remaining (positive) time left in seconds.
       def maybe_timeout(timeout, start_time)
         return nil if timeout.nil?
 
         timeout -= (Time.now - start_time)
         timeout.positive? ? timeout : 0
+      end
+
+      # Encodes a string in utf8
+      #
+      # @param [String] string The string to be utf8 encoded
+      # @param [optional boolean] binary This option is for displaying binary data
+      # @param [optional String] placeholder The fallback string to be used if encoding fails
+      #
+      # @return [String]
+      def utf8_encode(string, binary: false, placeholder: STRING_PLACEHOLDER)
+        string = string.to_s
+
+        if binary
+          # This option is useful for "gracefully" displaying binary data that
+          # often contains text such as marshalled objects
+          string.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+        elsif string.encoding == ::Encoding::UTF_8
+          string
+        else
+          string.encode(::Encoding::UTF_8)
+        end
+      rescue StandardError => e
+        OpenTelemetry.logger.debug("Error encoding string in UTF-8: #{e}")
+
+        placeholder
       end
     end
   end

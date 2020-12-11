@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry'
+require 'opentelemetry/common'
 
 module OpenTelemetry
   module Instrumentation

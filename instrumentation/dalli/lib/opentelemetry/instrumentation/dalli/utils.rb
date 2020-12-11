@@ -47,7 +47,7 @@ module OpenTelemetry
       def format_command(operation, args)
         placeholder = "#{operation} BLOB (OMITTED)"
         command = [operation, *args].join(' ').strip
-        command = utf8_encode(command, binary: true, placeholder: placeholder)
+        command = OpenTelemetry::Common::Utilities.utf8_encode(command, binary: true, placeholder: placeholder)
         truncate(command, CMD_MAX_LEN)
       rescue StandardError => e
         OpenTelemetry.logger.debug("Error sanitizing Dalli operation: #{e}")
@@ -56,24 +56,6 @@ module OpenTelemetry
 
       def truncate(string, size)
         string.size > size ? "#{string[0...size - 3]}..." : string
-      end
-
-      def utf8_encode(str, binary: false, placeholder: STRING_PLACEHOLDER)
-        str = str.to_s
-
-        if binary
-          # This option is useful for "gracefully" displaying binary data that
-          # often contains text such as marshalled objects
-          str.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
-        elsif str.encoding == ::Encoding::UTF_8
-          str
-        else
-          str.encode(::Encoding::UTF_8)
-        end
-      rescue StandardError => e
-        OpenTelemetry.logger.debug("Error encoding string in UTF-8: #{e}")
-
-        placeholder
       end
     end
   end
