@@ -1,5 +1,13 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.11.0 / 2020-12-11
+
+* BREAKING CHANGE: Implement tracestate 
+
+* ADDED: Implement tracestate 
+* ADDED: Metrics reporting from trace export 
+* FIXED: Copyright comments to not reference year 
+
 ### v0.10.0 / 2020-12-03
 
 * (No significant changes)

@@ -1,5 +1,10 @@
 # Release History: opentelemetry-sdk
 
+### v0.11.0 / 2020-12-11
+
+* ADDED: Metrics reporting from trace export 
+* FIXED: Copyright comments to not reference year 
+
 ### v0.10.0 / 2020-12-03
 
 * BREAKING CHANGE: Allow samplers to modify tracestate 

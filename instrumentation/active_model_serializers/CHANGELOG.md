@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_model_serializers
 
+### v0.11.0 / 2020-12-11
+
+* FIXED: Copyright comments to not reference year 
+
 ### v0.10.1 / 2020-12-09
 
 * FIXED: Active_model_serializers installer 

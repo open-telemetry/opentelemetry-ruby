@@ -1,5 +1,10 @@
 
 
+### v0.11.0 / 2020-12-11
+
+* ADDED: Move utf8 encoding to common utils 
+* FIXED: Copyright comments to not reference year 
+
 ### v0.10.0 / 2020-12-03
 
 * FIXED: Common gem should depend on api gem 
