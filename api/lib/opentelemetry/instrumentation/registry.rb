@@ -79,7 +79,7 @@ module OpenTelemetry
           OpenTelemetry.logger.warn "Instrumentation: #{instrumentation.name} failed to install"
         end
       rescue => e # rubocop:disable Style/RescueStandardError
-        OpenTelemetry.logger.warn "Instrumentation: #{instrumentation.name} unhandled exception" \
+        OpenTelemetry.logger.warn "Instrumentation: #{instrumentation.name} unhandled exception " \
                                   "during install #{e}: #{e.backtrace}"
       end
     end

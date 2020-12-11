@@ -3,7 +3,7 @@
 source "https://rubygems.org"
 
 gem "opentelemetry-api", path: "../../../api"
-gem "rails", "~> 5.2.0"
+gem "rails", "~> 6.1.0"
 
 group :test do
   gem "byebug"

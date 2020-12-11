@@ -72,17 +72,23 @@ module OpenTelemetry
             host = (query_options[:host] || query_options[:hostname]).to_s
             port = query_options[:port].to_s
 
-            {
+            attributes = {
               'db.system' => 'mysql',
               'db.instance' => database_name,
               'db.url' => "mysql://#{host}:#{port}",
               'net.peer.name' => host,
               'net.peer.port' => port
             }
+            attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+            attributes
           end
 
           def tracer
             Mysql2::Instrumentation.instance.tracer
+          end
+
+          def config
+            Mysql2::Instrumentation.instance.config
           end
 
           def extract_statement_type(sql)
