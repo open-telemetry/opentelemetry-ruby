@@ -192,7 +192,7 @@ module OpenTelemetry
           end
 
           def report_dropped_spans(count, reason:)
-            @metrics_reporter.add_to_counter('otel.bsp.dropped_span', increment: count, labels: { 'reason' => reason })
+            @metrics_reporter.add_to_counter('otel.bsp.dropped_spans', increment: count, labels: { 'reason' => reason })
           end
 
           def fetch_batch
