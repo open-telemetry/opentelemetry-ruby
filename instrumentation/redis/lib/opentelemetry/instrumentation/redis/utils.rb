@@ -11,7 +11,6 @@ module OpenTelemetry
       module Utils
         extend self
 
-        STRING_PLACEHOLDER = ''.encode(::Encoding::UTF_8).freeze
         PLACEHOLDER = '?'
         VALUE_MAX_LEN = 50
         CMD_MAX_LEN = 500
@@ -36,7 +35,7 @@ module OpenTelemetry
 
         def format_arg(arg)
           str = arg.is_a?(Symbol) ? arg.to_s.upcase : arg.to_s
-          str = utf8_encode(str, binary: true, placeholder: PLACEHOLDER)
+          str = OpenTelemetry::Common::Utilities.utf8_encode(str, binary: true)
           truncate(str, VALUE_MAX_LEN)
         rescue StandardError => e
           OpenTelemetry.logger.debug("non formattable Redis arg #{str}: #{e}")
@@ -59,24 +58,6 @@ module OpenTelemetry
 
         def truncate(string, size)
           string.size > size ? "#{string[0...size - 3]}..." : string
-        end
-
-        def utf8_encode(str, options = {})
-          str = str.to_s
-
-          if options[:binary]
-            # This option is useful for "gracefully" displaying binary data that
-            # often contains text such as marshalled objects
-            str.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
-          elsif str.encoding == ::Encoding::UTF_8
-            str
-          else
-            str.encode(::Encoding::UTF_8)
-          end
-        rescue StandardError => e
-          OpenTelemetry.logger.debug("Error encoding string in UTF-8: #{e}")
-
-          options.fetch(:placeholder, STRING_PLACEHOLDER)
         end
       end
     end
