@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-redis
 
+### v0.11.0 / 2020-12-11
+
+* ADDED: Accept config for redis peer service attribute 
+* ADDED: Move utf8 encoding to common utils 
+
 ### v0.10.1 / 2020-12-09
 
 * FIXED: Semantic conventions db.type -> db.system 
