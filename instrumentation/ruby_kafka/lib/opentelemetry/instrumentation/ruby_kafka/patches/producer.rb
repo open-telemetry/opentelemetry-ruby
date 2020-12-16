@@ -17,7 +17,7 @@ module OpenTelemetry
               'messaging.destination_kind' => 'topic'
             }
 
-            tracer.in_span('send', attributes: attributes, kind: :producer) do
+            tracer.in_span("#{topic} send", attributes: attributes, kind: :producer) do
               OpenTelemetry.propagation.text.inject(headers)
               super
             end
