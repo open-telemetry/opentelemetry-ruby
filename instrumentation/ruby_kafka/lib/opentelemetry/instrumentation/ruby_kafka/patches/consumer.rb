@@ -41,7 +41,6 @@ module OpenTelemetry
                 'messaging.kafka.message_count' => batch.messages.count
               }
 
-
               tracer.in_span("#{batch.topic} process", attributes: attributes, kind: :consumer) do
                 yield batch
               end
