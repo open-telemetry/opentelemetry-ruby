@@ -117,8 +117,10 @@ module OpenTelemetry
             # the snapshot because they're older than any spans in the spans buffer.
             lock do
               n = spans.size + snapshot.size - max_queue_size
-              snapshot.shift(n) if n.positive?
-              report_dropped_spans(n, reason: 'buffer-full')
+              if n.positive?
+                snapshot.shift(n)
+                report_dropped_spans(n, reason: 'buffer-full')
+              end
               spans.unshift(snapshot) unless snapshot.empty?
               @condition.signal if spans.size > max_queue_size / 2
             end
