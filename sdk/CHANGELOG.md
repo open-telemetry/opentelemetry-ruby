@@ -1,5 +1,9 @@
 # Release History: opentelemetry-sdk
 
+### v0.11.1 / 2020-12-16
+
+* FIXED: BSP dropped span buffer full reporting 
+
 ### v0.11.0 / 2020-12-11
 
 * ADDED: Metrics reporting from trace export 
