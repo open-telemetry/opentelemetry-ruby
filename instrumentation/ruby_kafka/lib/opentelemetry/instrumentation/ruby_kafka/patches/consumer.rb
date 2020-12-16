@@ -16,11 +16,11 @@ module OpenTelemetry
                 'messaging.system' => 'kafka',
                 'messaging.destination' => message.topic,
                 'messaging.destination_kind' => 'topic',
-                'messaging.kafka.partition' => message.partition
+                'messaging.kafka.partition' => message.partition,
+                'messaging.kafka.offset' => message.offset
               }
 
               attributes['messaging.kafka.message_key'] = message.key if message.key
-              attributes['offset'] = message.offset
 
               parent_context = OpenTelemetry.propagation.text.extract(message.headers)
               tracer.in_span('process', with_parent: parent_context, attributes: attributes, kind: :consumer) do
