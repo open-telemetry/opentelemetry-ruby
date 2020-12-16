@@ -35,12 +35,12 @@ module OpenTelemetry
                 'messaging.system' => 'kafka',
                 'messaging.destination' => batch.topic,
                 'messaging.destination_kind' => 'topic',
-                'messaging.kafka.partition' => batch.partition
+                'messaging.kafka.partition' => batch.partition,
+                'messaging.kafka.offset_lag' => batch.offset_lag,
+                'messaging.kafka.highwater_mark_offset' => batch.highwater_mark_offset,
+                'messaging.kafka.message_count' => batch.messages.count
               }
 
-              attributes['offset_lag'] = batch.offset_lag
-              attributes['highwater_mark_offset'] = batch.highwater_mark_offset
-              attributes['message_count'] = batch.messages.count
 
               tracer.in_span("#{batch.topic} process", attributes: attributes, kind: :consumer) do
                 yield batch
