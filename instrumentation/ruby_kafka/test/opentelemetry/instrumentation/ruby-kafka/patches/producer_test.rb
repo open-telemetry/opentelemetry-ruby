@@ -52,7 +52,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
       producer.produce('hello', topic: topic)
       producer.deliver_messages
 
-      _(spans.first.name).must_equal('send')
+      _(spans.first.name).must_equal("#{topic} send")
       _(spans.first.kind).must_equal(:producer)
 
       _(spans.first.attributes['messaging.system']).must_equal('kafka')
@@ -74,7 +74,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
       # Wait for the async calls to produce spans
       wait_for(error_message: 'Max wait time exceeded for async producer') { EXPORTER.finished_spans.size.positive? }
 
-      _(spans.first.name).must_equal('send')
+      _(spans.first.name).must_equal("#{async_topic} send")
       _(spans.first.kind).must_equal(:producer)
 
       _(spans.first.attributes['messaging.system']).must_equal('kafka')

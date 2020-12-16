@@ -42,10 +42,10 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Client do
     kafka.each_message(topic: topic) { |_msg| break }
 
     _(spans.size).must_equal(2)
-    _(spans[0].name).must_equal('send')
+    _(spans[0].name).must_equal("#{topic} send")
     _(spans[0].kind).must_equal(:producer)
 
-    _(spans[1].name).must_equal('process')
+    _(spans[1].name).must_equal("#{topic} process")
     _(spans[1].kind).must_equal(:consumer)
   end
 end

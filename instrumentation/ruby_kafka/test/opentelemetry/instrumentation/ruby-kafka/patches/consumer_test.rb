@@ -58,26 +58,26 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
       rescue StandardError # rubocop:disable Lint/HandleExceptions
       end
 
-      process_spans = spans.select { |s| s.name == 'process' }
+      process_spans = spans.select { |s| s.name == "#{topic} process" }
 
       first_process_span = process_spans[0]
-      _(first_process_span.name).must_equal('process')
+      _(first_process_span.name).must_equal("#{topic} process")
       _(first_process_span.kind).must_equal(:consumer)
       _(first_process_span.attributes['messaging.destination']).must_equal(topic)
       _(first_process_span.attributes['messaging.kafka.partition']).must_equal(0)
 
       parent_span_id = first_process_span.parent_span_id
       parent_span = spans.find { |s| s.span_id == parent_span_id }
-      _(parent_span.name).must_equal('send')
+      _(parent_span.name).must_equal("#{topic} send")
       _(parent_span.trace_id).must_equal(first_process_span.trace_id)
 
       second_process_span = process_spans[1]
-      _(second_process_span.name).must_equal('process')
+      _(second_process_span.name).must_equal("#{topic} process")
       _(second_process_span.kind).must_equal(:consumer)
 
       parent_span_id = second_process_span.parent_span_id
       parent_span = spans.find { |s| s.span_id == parent_span_id }
-      _(parent_span.name).must_equal('send')
+      _(parent_span.name).must_equal("#{topic} send")
       _(parent_span.trace_id).must_equal(second_process_span.trace_id)
 
       event = second_process_span.events.first
@@ -101,12 +101,12 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
       rescue StandardError # rubocop:disable Lint/HandleExceptions
       end
 
-      span = spans.find { |s| s.name == 'process' }
-      _(span.name).must_equal('process')
+      span = spans.find { |s| s.name == "#{topic} process" }
+      _(span.name).must_equal("#{topic} process")
       _(span.kind).must_equal(:consumer)
       _(span.attributes['messaging.destination']).must_equal(topic)
       _(span.attributes['messaging.kafka.partition']).must_equal(0)
-      _(span.attributes['message_count']).must_equal(2)
+      _(span.attributes['messaging.kafka.message_count']).must_equal(2)
 
       event = span.events.first
       _(event.name).must_equal('exception')
