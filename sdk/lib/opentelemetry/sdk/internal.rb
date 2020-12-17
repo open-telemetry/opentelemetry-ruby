@@ -45,7 +45,17 @@ module OpenTelemetry
       end
 
       def valid_attributes?(attrs)
-        attrs.nil? || attrs.all? { |k, v| valid_key?(k) && valid_value?(v) }
+        attrs.nil? || attrs.all? do |k, v|
+          if !valid_key?(k)
+            OpenTelemetry.handle_error(message: "invalid attribute key type #{v.class}")
+            false
+          elsif !valid_value?(v)
+            OpenTelemetry.handle_error(message: "invalid attribute value type #{v.class}")
+            false
+          else
+            true
+          end
+        end
       end
     end
   end

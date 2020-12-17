@@ -22,7 +22,7 @@ module OpenTelemetry
           def create(attributes = {})
             frozen_attributes = attributes.each_with_object({}) do |(k, v), memo|
               raise ArgumentError, 'attribute keys must be strings' unless k.is_a?(String)
-              raise ArgumentError, 'attribute values must be strings, integers, floats, or booleans' unless Internal.valid_value?(v)
+              raise ArgumentError, 'attribute values must be (array of) strings, integers, floats, or booleans' unless Internal.valid_value?(v)
 
               memo[-k] = v.freeze
             end.freeze

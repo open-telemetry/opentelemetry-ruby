@@ -199,7 +199,7 @@ module OpenTelemetry
               return self
             end
             @end_timestamp = end_timestamp || Time.now
-            @attributes.freeze
+            @attributes = validated_attributes(@attributes).freeze
             @events.freeze
             @ended = true
           end
@@ -269,6 +269,12 @@ module OpenTelemetry
 
         private
 
+        def validated_attributes(attrs)
+          return attrs if Internal.valid_attributes?(attrs)
+
+          attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
+        end
+
         def trim_span_attributes(attrs)
           return if attrs.nil?
 
@@ -301,11 +307,12 @@ module OpenTelemetry
         def append_event(events, event) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           max_events_count = @trace_config.max_events_count
           max_attributes_per_event = @trace_config.max_attributes_per_event
+          valid_attributes = Internal.valid_attributes?(event.attributes)
 
           # Fast path (likely) common case.
           if events.size < max_events_count &&
              event.attributes.size <= max_attributes_per_event &&
-             Internal.valid_attributes?(event.attributes)
+             valid_attributes
             return events << event
           end
 
@@ -314,7 +321,7 @@ module OpenTelemetry
           events.shift(excess) if excess.positive?
 
           excess = event.attributes.size - max_attributes_per_event
-          if excess.positive? || !Internal.valid_attributes?(event.attributes)
+          if excess.positive? || !valid_attributes
             attrs = Hash[event.attributes] # event.attributes is frozen, so we need an unfrozen copy to adjust.
             attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
             excess = attrs.size - max_attributes_per_event
