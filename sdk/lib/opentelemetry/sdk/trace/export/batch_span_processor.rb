@@ -187,7 +187,7 @@ module OpenTelemetry
               @metrics_reporter.add_to_counter('otel.bsp.export.success')
               @metrics_reporter.add_to_counter('otel.bsp.exported_spans', increment: batch.size)
             else
-              OpenTelemetry.logger.error("Unable to export #{batch.size} spans")
+              OpenTelemetry.handle_error(message: "Unable to export #{batch.size} spans")
               @metrics_reporter.add_to_counter('otel.bsp.export.failure')
               report_dropped_spans(batch.size, reason: 'export-failure')
             end

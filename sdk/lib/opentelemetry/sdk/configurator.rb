@@ -16,7 +16,7 @@ module OpenTelemetry
       private_constant :USE_MODE_UNSPECIFIED, :USE_MODE_ONE, :USE_MODE_ALL
 
       attr_writer :logger, :http_extractors, :http_injectors, :text_map_extractors,
-                  :text_map_injectors
+                  :text_map_injectors, :error_handler
 
       def initialize
         @instrumentation_names = []
@@ -32,6 +32,10 @@ module OpenTelemetry
 
       def logger
         @logger ||= OpenTelemetry.logger
+      end
+
+      def error_handler
+        @error_handler ||= OpenTelemetry.error_handler
       end
 
       # Accepts a resource object that is merged with the default telemetry sdk
@@ -110,6 +114,7 @@ module OpenTelemetry
       #   - install instrumentation
       def configure
         OpenTelemetry.logger = logger
+        OpenTelemetry.error_handler = error_handler
         OpenTelemetry.baggage = Baggage::Manager.new
         configure_propagation
         configure_span_processors

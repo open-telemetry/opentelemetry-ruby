@@ -18,6 +18,11 @@ module OpenTelemetry
   module SDK
     extend self
 
+    # ConfigurationError is an exception type used to wrap configuration errors
+    # passed to OpenTelemetry.error_handler. This can be used to distinguish
+    # errors reported during SDK configuration.
+    ConfigurationError = Class.new(OpenTelemetry::Error)
+
     # Configures SDK and instrumentation
     #
     # @yieldparam [Configurator] configurator Yields a configurator to the
@@ -57,6 +62,12 @@ module OpenTelemetry
       configurator = Configurator.new
       yield configurator if block_given?
       configurator.configure
+    rescue StandardError
+      begin
+        raise ConfigurationError
+      rescue ConfigurationError => e
+        OpenTelemetry.handle_error(exception: e, message: 'unexpected configuration error')
+      end
     end
   end
 end
