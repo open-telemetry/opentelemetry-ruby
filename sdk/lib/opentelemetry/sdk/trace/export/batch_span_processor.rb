@@ -78,8 +78,10 @@ module OpenTelemetry
             lock do
               reset_on_fork
               n = spans.size + 1 - max_queue_size
-              spans.shift(n) if n.positive?
-              report_dropped_spans(n, reason: 'buffer-full')
+              if n.positive?
+                spans.shift(n)
+                report_dropped_spans(n, reason: 'buffer-full')
+              end
               spans << span
               @condition.signal if spans.size > batch_size
             end
