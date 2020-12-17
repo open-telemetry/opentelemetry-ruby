@@ -98,7 +98,7 @@ module OpenTelemetry
           # @param [optional Numeric] timeout An optional timeout in seconds.
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
-          def force_flush(timeout: nil) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+          def force_flush(timeout: nil) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
             start_time = Time.now
             snapshot = lock do
               reset_on_fork(restart_thread: false) if @keep_running
@@ -119,8 +119,10 @@ module OpenTelemetry
             # the snapshot because they're older than any spans in the spans buffer.
             lock do
               n = spans.size + snapshot.size - max_queue_size
-              snapshot.shift(n) if n.positive?
-              report_dropped_spans(n, reason: 'buffer-full')
+              if n.positive?
+                snapshot.shift(n)
+                report_dropped_spans(n, reason: 'buffer-full')
+              end
               spans.unshift(snapshot) unless snapshot.empty?
               @condition.signal if spans.size > max_queue_size / 2
             end
