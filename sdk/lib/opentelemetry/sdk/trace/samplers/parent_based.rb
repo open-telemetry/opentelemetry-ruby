@@ -26,6 +26,14 @@ module OpenTelemetry
             @local_parent_not_sampled = local_parent_not_sampled
           end
 
+          def ==(other)
+            @root == other.root &&
+              @remote_parent_sampled == other.remote_parent_sampled &&
+              @remote_parent_not_sampled == other.remote_parent_not_sampled &&
+              @local_parent_sampled == other.local_parent_sampled &&
+              @local_parent_not_sampled == other.local_parent_not_sampled
+          end
+
           # @api private
           #
           # See {Samplers}.
@@ -47,6 +55,10 @@ module OpenTelemetry
                        end
             delegate.should_sample?(trace_id: trace_id, parent_context: parent_context, links: links, name: name, kind: kind, attributes: attributes)
           end
+
+          protected
+
+          attr_reader :root, :remote_parent_sampled, :remote_parent_not_sampled, :local_parent_sampled, :local_parent_not_sampled
         end
       end
     end
