@@ -30,6 +30,49 @@ describe OpenTelemetry do
     end
   end
 
+  describe '.handle_error' do
+    after do
+      # Ensure we don't leak custom loggers and error handlers to other tests
+      OpenTelemetry.logger = nil
+      OpenTelemetry.error_handler = nil
+    end
+
+    it 'logs at error level by default' do
+      logger = Struct.new(:messages) do
+        def error(message)
+          messages << message
+        end
+      end
+      OpenTelemetry.logger = logger.new([])
+
+      OpenTelemetry.handle_error(message: 'foo')
+      begin
+        raise 'hell'
+      rescue StandardError => e
+        OpenTelemetry.handle_error(exception: e)
+      end
+      begin
+        raise 'bar'
+      rescue StandardError => e
+        OpenTelemetry.handle_error(exception: e, message: 'hi')
+      end
+      _(OpenTelemetry.logger.messages).must_equal ['OpenTelemetry error: foo', 'OpenTelemetry error: hell', 'OpenTelemetry error: hi - bar']
+    end
+
+    it 'calls user specified error handler' do
+      received_exception = nil
+      received_message = nil
+      custom_error_handler = lambda do |exception: nil, message: nil|
+        received_exception = exception
+        received_message = message
+      end
+      OpenTelemetry.error_handler = custom_error_handler
+      OpenTelemetry.handle_error(exception: 1, message: 2)
+      _(received_exception).must_equal 1
+      _(received_message).must_equal 2
+    end
+  end
+
   describe '.logger' do
     it 'should log things' do
       t = Tempfile.new('logger')
