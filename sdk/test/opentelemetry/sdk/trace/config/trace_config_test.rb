@@ -77,9 +77,13 @@ describe OpenTelemetry::SDK::Trace::Config::TraceConfig do
     end
 
     it 'requires OTEL_TRACE_SAMPLER_ARG for traceidratio' do
+      sampler = with_env('OTEL_TRACE_SAMPLER' => 'traceidratio') { trace_config.new.sampler }
+      _(sampler).must_equal trace_config::DEFAULT.sampler
     end
 
     it 'requires OTEL_TRACE_SAMPLER_ARG for parentbased_traceidratio' do
+      sampler = with_env('OTEL_TRACE_SAMPLER' => 'parentbased_traceidratio') { trace_config.new.sampler }
+      _(sampler).must_equal trace_config::DEFAULT.sampler
     end
   end
 end
