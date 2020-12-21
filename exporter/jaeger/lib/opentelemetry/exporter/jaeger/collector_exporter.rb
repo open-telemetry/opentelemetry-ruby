@@ -50,7 +50,7 @@ module OpenTelemetry
           end
           SUCCESS
         rescue StandardError => e
-          OpenTelemetry.logger.error("unexpected error in Jaeger::CollectorExporter#export - #{e}")
+          OpenTelemetry.handle_error(exception: e, message: 'unexpected error in Jaeger::CollectorExporter#export')
           FAILURE
         end
 
