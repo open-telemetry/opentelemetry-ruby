@@ -22,11 +22,25 @@ require 'opentelemetry/version'
 module OpenTelemetry
   extend self
 
-  attr_writer :tracer_provider, :meter_provider, :baggage, :logger
+  attr_writer :tracer_provider, :meter_provider, :baggage, :logger, :error_handler
 
   # @return [Object, Logger] configured Logger or a default STDOUT Logger.
   def logger
     @logger ||= Logger.new(STDOUT, level: ENV['OTEL_LOG_LEVEL'] || Logger::INFO)
+  end
+
+  # @return [Callable] configured error handler or a default that logs the
+  #   exception and message at ERROR level.
+  def error_handler
+    @error_handler ||= ->(exception: nil, message: nil) { logger.error("OpenTelemetry error: #{[message, exception&.message].compact.join(' - ')}") }
+  end
+
+  # Handles an error by calling the configured error_handler.
+  #
+  # @param [optional Exception] exception The exception to be handled
+  # @param [optional String] message An error message.
+  def handle_error(exception: nil, message: nil)
+    error_handler.call(exception: exception, message: message)
   end
 
   # @return [Object, Trace::TracerProvider] registered tracer provider or a

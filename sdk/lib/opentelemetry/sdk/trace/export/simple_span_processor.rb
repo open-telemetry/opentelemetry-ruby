@@ -57,7 +57,7 @@ module OpenTelemetry
 
             @span_exporter&.export([span.to_span_data])
           rescue => e # rubocop:disable Style/RescueStandardError
-            OpenTelemetry.logger.error("unexpected error in span.on_finish - #{e}")
+            OpenTelemetry.handle_error(exception: e, message: 'unexpected error in span.on_finish')
           end
 
           # Export all ended spans to the configured `Exporter` that have not yet
