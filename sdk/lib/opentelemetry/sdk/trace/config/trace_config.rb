@@ -59,13 +59,13 @@ module OpenTelemetry
             case ENV['OTEL_TRACE_SAMPLER']
             when 'always_on' then Samplers::ALWAYS_ON
             when 'always_off' then Samplers::ALWAYS_OFF
-            when 'traceidratio' then Samplers.trace_id_ratio_based(Float(ENV['OTEL_TRACE_SAMPLER_ARG'], exception: false))
+            when 'traceidratio' then Samplers.trace_id_ratio_based(Float(ENV['OTEL_TRACE_SAMPLER_ARG']))
             when 'parentbased_always_on' then Samplers.parent_based(root: Samplers::ALWAYS_ON)
             when 'parentbased_always_off' then Samplers.parent_based(root: Samplers::ALWAYS_OFF)
-            when 'parentbased_traceidratio' then Samplers.parent_based(root: Samplers.trace_id_ratio_based(Float(ENV['OTEL_TRACE_SAMPLER_ARG'], exception: false)))
+            when 'parentbased_traceidratio' then Samplers.parent_based(root: Samplers.trace_id_ratio_based(Float(ENV['OTEL_TRACE_SAMPLER_ARG'])))
             else default_sampler
             end
-          rescue ArgumentError => e
+          rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: "installing default sampler #{default_sampler.description}")
             default_sampler
           end
