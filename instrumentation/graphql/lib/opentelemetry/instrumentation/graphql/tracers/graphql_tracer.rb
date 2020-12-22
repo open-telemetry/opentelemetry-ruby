@@ -27,7 +27,7 @@ module OpenTelemetry
           def platform_trace(platform_key, key, data) # rubocop:disable Metrics/AbcSize
             return yield if platform_key.nil?
 
-            tracer.in_span(platform_key || 'test', attributes: attributes_for(key, data), kind: :client) do |span|
+            tracer.in_span(platform_key || 'test', attributes: attributes_for(key, data)) do |span|
               yield.tap do |response|
                 if key == 'validate' && !response[:errors]&.empty?
                   span.status = OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::ERROR)
