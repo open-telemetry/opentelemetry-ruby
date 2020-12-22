@@ -24,23 +24,11 @@ module OpenTelemetry
             'execute_multiplex' => 'graphql.execute_multiplex'
           }
 
-          def platform_trace(platform_key, key, data) # rubocop:disable Metrics/AbcSize
+          def platform_trace(platform_key, key, data)
             return yield if platform_key.nil?
 
-            tracer.in_span(platform_key || 'test', attributes: attributes_for(key, data)) do |span|
-              yield.tap do |response|
-                if key == 'validate' && !response[:errors]&.empty?
-                  span.status = OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::ERROR)
-                  response[:errors].each do |error|
-                    span.add_event(
-                      error.field_name,
-                      attributes: {
-                        'error_message' => error.message
-                      }
-                    )
-                  end
-                end
-              end
+            tracer.in_span(platform_key || 'test', attributes: attributes_for(key, data)) do |_span|
+              yield
             end
           end
 

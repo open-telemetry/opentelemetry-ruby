@@ -42,19 +42,6 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
   end
 
   describe '#platform_trace' do
-    it 'when the query fails' do
-      result = SomeGraphQLAppSchema.execute('query { complexField }')
-
-      validate_span = spans.find { |s| s.name = 'graphql.validate' && !s.status.ok? }
-      error_event = validate_span.events.first
-
-      _(error_event.name).must_equal('complexField')
-      _(error_event.attributes['error_message']).must_equal("Field 'complexField' doesn't exist on type 'Query'")
-
-      _(result.to_h['data']).must_be_nil
-      _(result.to_h['errors']).must_equal([{ 'message' => "Field 'complexField' doesn't exist on type 'Query'", 'locations' => [{ 'line' => 1, 'column' => 9 }], 'path' => %w[query complexField], 'extensions' => { 'code' => 'undefinedField', 'typeName' => 'Query', 'fieldName' => 'complexField' } }])
-    end
-
     it 'traces platform keys' do
       result = SomeGraphQLAppSchema.execute(query_string, variables: { 'id': 1 })
 
