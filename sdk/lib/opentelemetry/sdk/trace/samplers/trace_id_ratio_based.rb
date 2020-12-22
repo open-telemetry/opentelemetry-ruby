@@ -20,6 +20,10 @@ module OpenTelemetry
             @description = format('TraceIdRatioBased{%.6f}', probability)
           end
 
+          def ==(other)
+            @description == other.description
+          end
+
           # @api private
           #
           # See {Samplers}.

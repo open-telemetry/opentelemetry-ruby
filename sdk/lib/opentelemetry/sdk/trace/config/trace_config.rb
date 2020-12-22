@@ -10,20 +10,6 @@ module OpenTelemetry
       module Config
         # Class that holds global trace parameters.
         class TraceConfig
-          DEFAULT_SAMPLER = Samplers.parent_based(root: Samplers::ALWAYS_ON)
-          DEFAULT_MAX_ATTRIBUTES_COUNT = 32
-          DEFAULT_MAX_EVENTS_COUNT = 128
-          DEFAULT_MAX_LINKS_COUNT = 32
-          DEFAULT_MAX_ATTRIBUTES_PER_EVENT = 32
-          DEFAULT_MAX_ATTRIBUTES_PER_LINK = 32
-
-          private_constant(:DEFAULT_SAMPLER,
-                           :DEFAULT_MAX_ATTRIBUTES_COUNT,
-                           :DEFAULT_MAX_EVENTS_COUNT,
-                           :DEFAULT_MAX_LINKS_COUNT,
-                           :DEFAULT_MAX_ATTRIBUTES_PER_EVENT,
-                           :DEFAULT_MAX_ATTRIBUTES_PER_LINK)
-
           # The global default sampler (see {Samplers}).
           attr_reader :sampler
 
@@ -46,12 +32,12 @@ module OpenTelemetry
           #
           # @return [TraceConfig] with the desired values.
           # @raise [ArgumentError] if any of the max numbers are not positive.
-          def initialize(sampler: DEFAULT_SAMPLER,
-                         max_attributes_count: DEFAULT_MAX_ATTRIBUTES_COUNT,
-                         max_events_count: DEFAULT_MAX_EVENTS_COUNT,
-                         max_links_count: DEFAULT_MAX_LINKS_COUNT,
-                         max_attributes_per_event: DEFAULT_MAX_ATTRIBUTES_PER_EVENT,
-                         max_attributes_per_link: DEFAULT_MAX_ATTRIBUTES_PER_LINK)
+          def initialize(sampler: sampler_from_environment(Samplers.parent_based(root: Samplers::ALWAYS_ON)),
+                         max_attributes_count: Integer(ENV.fetch('OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT', 1000)),
+                         max_events_count: Integer(ENV.fetch('OTEL_SPAN_EVENT_COUNT_LIMIT', 1000)),
+                         max_links_count: Integer(ENV.fetch('OTEL_SPAN_LINK_COUNT_LIMIT', 1000)),
+                         max_attributes_per_event: max_attributes_count,
+                         max_attributes_per_link: max_attributes_count)
             raise ArgumentError, 'max_attributes_count must be positive' unless max_attributes_count.positive?
             raise ArgumentError, 'max_events_count must be positive' unless max_events_count.positive?
             raise ArgumentError, 'max_links_count must be positive' unless max_links_count.positive?
@@ -67,6 +53,22 @@ module OpenTelemetry
           end
 
           # TODO: from_proto
+          private
+
+          def sampler_from_environment(default_sampler) # rubocop:disable Metrics/CyclomaticComplexity
+            case ENV['OTEL_TRACE_SAMPLER']
+            when 'always_on' then Samplers::ALWAYS_ON
+            when 'always_off' then Samplers::ALWAYS_OFF
+            when 'traceidratio' then Samplers.trace_id_ratio_based(Float(ENV['OTEL_TRACE_SAMPLER_ARG']))
+            when 'parentbased_always_on' then Samplers.parent_based(root: Samplers::ALWAYS_ON)
+            when 'parentbased_always_off' then Samplers.parent_based(root: Samplers::ALWAYS_OFF)
+            when 'parentbased_traceidratio' then Samplers.parent_based(root: Samplers.trace_id_ratio_based(Float(ENV['OTEL_TRACE_SAMPLER_ARG'])))
+            else default_sampler
+            end
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e, message: "installing default sampler #{default_sampler.description}")
+            default_sampler
+          end
 
           # The default {TraceConfig}.
           DEFAULT = new
