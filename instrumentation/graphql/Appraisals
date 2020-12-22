@@ -12,6 +12,7 @@ appraise 'graphql-1.10' do
   gem 'graphql', '~> 1.10'
 end
 
-appraise 'graphql-1.9' do
-  gem 'graphql', '1.9'
-end
+# TODO: Either support or remove
+# appraise 'graphql-1.9' do
+#   gem 'graphql', '1.9'
+# end
