@@ -58,8 +58,8 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
     it 'traces platform keys' do
       result = SomeGraphQLAppSchema.execute(query_string, variables: { 'id': 1 })
 
-      graphql_tracer.platform_keys.keys.each do |key|
-        span = spans.find { |s| s.name == "graphql.#{key}" }
+      graphql_tracer.platform_keys.each do |_key, value|
+        span = spans.find { |s| s.name == value }
         _(span).wont_be_nil
       end
 
