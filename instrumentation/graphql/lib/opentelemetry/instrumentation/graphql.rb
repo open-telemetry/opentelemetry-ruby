@@ -8,7 +8,7 @@ require 'opentelemetry'
 
 module OpenTelemetry
   module Instrumentation
-    # Contains the OpenTelemetry instrumentation for the Graphql gem
+    # Contains the OpenTelemetry instrumentation for the GraphQL gem
     module GraphQL
     end
   end

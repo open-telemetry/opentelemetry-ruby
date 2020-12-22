@@ -1,6 +1,6 @@
-# OpenTelemetry Graphql Instrumentation
+# OpenTelemetry GraphQL Instrumentation
 
-The OpenTelemetry Graphql Ruby gem is a community maintained instrumentation for [Graphql][graphql-home]. The GraphQL integration activates instrumentation for GraphQL queries.
+The OpenTelemetry GraphQL Ruby gem is a community maintained instrumentation for [GraphQL][graphql-home]. The GraphQL integration activates instrumentation for GraphQL queries.
 
 ## How do I get started?
 
@@ -18,7 +18,7 @@ To use the instrumentation, call `use` with the name of the instrumentation:
 
 ```ruby
 OpenTelemetry::SDK.configure do |c|
-  c.use 'OpenTelemetry::Instrumentation::Graphql'
+  c.use 'OpenTelemetry::Instrumentation::GraphQL'
 end
 ```
 

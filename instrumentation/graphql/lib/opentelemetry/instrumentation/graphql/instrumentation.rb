@@ -9,7 +9,7 @@ require 'opentelemetry'
 module OpenTelemetry
   module Instrumentation
     module GraphQL
-      # The Instrumentation class contains logic to detect and install the Graphql instrumentation
+      # The Instrumentation class contains logic to detect and install the GraphQL instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |_config|
           require_dependencies

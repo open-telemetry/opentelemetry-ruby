@@ -33,7 +33,7 @@ commit_lint:
 gems:
   - name: opentelemetry-instrumentation-graphql
     directory: instrumentation/graphql
-    version_constant: [OpenTelemetry, Instrumentation, Graphql, VERSION]
+    version_constant: [OpenTelemetry, Instrumentation, GraphQL, VERSION]
 
   - name: opentelemetry-api
     directory: api

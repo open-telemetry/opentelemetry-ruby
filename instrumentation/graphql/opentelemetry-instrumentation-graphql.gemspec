@@ -14,8 +14,8 @@ Gem::Specification.new do |spec|
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
-  spec.summary     = 'Graphql instrumentation for the OpenTelemetry framework'
-  spec.description = 'Graphql instrumentation for the OpenTelemetry framework'
+  spec.summary     = 'GraphQL instrumentation for the OpenTelemetry framework'
+  spec.description = 'GraphQL instrumentation for the OpenTelemetry framework'
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby'
   spec.license     = 'Apache-2.0'
 
