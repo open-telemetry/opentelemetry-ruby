@@ -58,25 +58,33 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
 
       process_spans = spans.select { |s| s.name == "#{topic} process" }
 
+      # First pair for senda and process spans
       first_process_span = process_spans[0]
       _(first_process_span.name).must_equal("#{topic} process")
       _(first_process_span.kind).must_equal(:consumer)
       _(first_process_span.attributes['messaging.destination']).must_equal(topic)
       _(first_process_span.attributes['messaging.kafka.partition']).must_equal(0)
 
-      parent_span_id = first_process_span.parent_span_id
-      parent_span = spans.find { |s| s.span_id == parent_span_id }
-      _(parent_span.name).must_equal("#{topic} send")
-      _(parent_span.trace_id).must_equal(first_process_span.trace_id)
+      first_process_span_link = first_process_span.links[0]
+      linked_span_context = OpenTelemetry::Trace.current_span(first_process_span_link.span_context).context
 
+      linked_send_span = spans.find { |s| s.span_id == linked_span_context.span_id }
+      _(linked_send_span.name).must_equal("#{topic} send")
+      _(linked_send_span.trace_id).wont_equal(first_process_span.trace_id)
+      _(linked_send_span.trace_id).must_equal(linked_span_context.trace_id)
+
+      # Second pair of send and process spans
       second_process_span = process_spans[1]
       _(second_process_span.name).must_equal("#{topic} process")
       _(second_process_span.kind).must_equal(:consumer)
 
-      parent_span_id = second_process_span.parent_span_id
-      parent_span = spans.find { |s| s.span_id == parent_span_id }
-      _(parent_span.name).must_equal("#{topic} send")
-      _(parent_span.trace_id).must_equal(second_process_span.trace_id)
+      second_process_span_link = second_process_span.links[0]
+      linked_span_context = OpenTelemetry::Trace.current_span(second_process_span_link.span_context).context
+
+      linked_send_span = spans.find { |s| s.span_id == linked_span_context.span_id }
+      _(linked_send_span.name).must_equal("#{topic} send")
+      _(linked_send_span.trace_id).wont_equal(second_process_span.trace_id)
+      _(linked_send_span.trace_id).must_equal(linked_span_context.trace_id)
 
       event = second_process_span.events.first
       _(event.name).must_equal('exception')
@@ -110,6 +118,16 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
       _(event.name).must_equal('exception')
       _(event.attributes['exception.type']).must_equal('RuntimeError')
       _(event.attributes['exception.message']).must_equal('oops')
+
+      first_link = span.links[0]
+      linked_span_context = OpenTelemetry::Trace.current_span(first_link.span_context).context
+      _(linked_span_context.trace_id).must_equal(spans[0].trace_id)
+      _(linked_span_context.span_id).must_equal(spans[0].span_id)
+
+      second_link = span.links[1]
+      linked_span_context = OpenTelemetry::Trace.current_span(second_link.span_context).context
+      _(linked_span_context.trace_id).must_equal(spans[1].trace_id)
+      _(linked_span_context.span_id).must_equal(spans[1].span_id)
 
       _(spans.size).must_equal(3)
     end

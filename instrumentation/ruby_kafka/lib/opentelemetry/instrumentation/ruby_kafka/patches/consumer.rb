@@ -22,8 +22,11 @@ module OpenTelemetry
 
               attributes['messaging.kafka.message_key'] = message.key if message.key
 
-              parent_context = OpenTelemetry.propagation.text.extract(message.headers)
-              tracer.in_span("#{message.topic} process", with_parent: parent_context, attributes: attributes, kind: :consumer) do
+              link = OpenTelemetry::Trace::Link.new(
+                OpenTelemetry.propagation.text.extract(message.headers)
+              )
+
+              tracer.in_span("#{message.topic} process", links: [link], attributes: attributes, kind: :consumer) do
                 yield message
               end
             end
@@ -41,7 +44,13 @@ module OpenTelemetry
                 'messaging.kafka.message_count' => batch.messages.count
               }
 
-              tracer.in_span("#{batch.topic} process", attributes: attributes, kind: :consumer) do
+              links = batch.messages.map do |message|
+                OpenTelemetry::Trace::Link.new(
+                  OpenTelemetry.propagation.text.extract(message.headers)
+                )
+              end
+
+              tracer.in_span("#{batch.topic} process", attributes: attributes, links: links, kind: :consumer) do
                 yield batch
               end
             end
