@@ -50,7 +50,7 @@ module OpenTelemetry
 
         private
 
-        def internal_create_span(result, name, kind, trace_id, parent_span_id, attributes, links, start_timestamp, parent_context) # rubocop:disable Metrics/AbcSize
+        def internal_create_span(result, name, kind, trace_id, parent_span_id, attributes, links, start_timestamp, parent_context) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
           span_id = tracer_provider.id_generator.generate_span_id
           if result.recording? && !tracer_provider.stopped?
             trace_flags = result.sampled? ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
