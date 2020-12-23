@@ -5,14 +5,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 appraise 'graphql-1.11' do
-  gem 'graphql', '~> 1.10'
+  gem 'graphql', '~> 1.11.0'
 end
 
 appraise 'graphql-1.10' do
-  gem 'graphql', '~> 1.10'
+  gem 'graphql', '~> 1.10.0'
 end
 
-# TODO: Either support or remove
-# appraise 'graphql-1.9' do
-#   gem 'graphql', '1.9'
-# end
+appraise 'graphql-1.9' do
+  gem 'graphql', '~> 1.9.0'
+end

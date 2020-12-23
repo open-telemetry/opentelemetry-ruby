@@ -87,6 +87,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
       let(:config) { { enable_platform_authorized_key: true } }
 
       it 'traces .authorized' do
+        skip unless supports_authorized_and_resolved_types?
         SomeGraphQLAppSchema.execute(query_string, variables: { 'id': 1 })
 
         span = spans.find { |s| s.name == 'Query.authorized' }
@@ -101,6 +102,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
       let(:config) { { enable_platform_resolve_type_key: true } }
 
       it 'traces .resolve_type' do
+        skip unless supports_authorized_and_resolved_types?
         SomeGraphQLAppSchema.execute('{ vehicle { __typename } }')
 
         span = spans.find { |s| s.name == 'Vehicle.resolve_type' }
@@ -110,6 +112,12 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
   end
 
   private
+
+  # These fields are only supported as of version 1.10.0
+  # https://github.com/rmosolgo/graphql-ruby/blob/v1.10.0/CHANGELOG.md#new-features-1
+  def supports_authorized_and_resolved_types?
+    Gem.loaded_specs['graphql'].version >= Gem::Version.new('1.10.0')
+  end
 
   module Old
     Truck = Struct.new(:price)
@@ -121,6 +129,8 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
 
   class Car < ::GraphQL::Schema::Object
     implements Vehicle
+
+    field :price, Integer, null: true
   end
 
   class SlightlyComplexType < ::GraphQL::Schema::Object
@@ -162,6 +172,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
     query(::QueryType)
     use GraphQL::Execution::Interpreter
     use GraphQL::Analysis::AST
+    use OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer
     orphan_types Car
 
     def self.resolve_type(_type, _obj, _ctx)

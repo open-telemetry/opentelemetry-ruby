@@ -3,7 +3,7 @@
 source "https://rubygems.org"
 
 gem "opentelemetry-api", path: "../../../api"
-gem "graphql", "~> 1.9.0"
+gem "graphql", "~> 1.8.0"
 
 group :test do
   gem "byebug"
