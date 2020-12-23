@@ -61,16 +61,14 @@ module OpenTelemetry
           end
 
           def attributes_for(key, data)
+            attributes = {}
             case key
             when 'execute_query'
-              {
-                'selected_operation_name' => data[:query].selected_operation_name,
-                'selected_operation_type' => data[:query].selected_operation.operation_type,
-                'query_string' => data[:query].query_string
-              }
-            else
-              {}
+              attributes['selected_operation_name'] = data[:query].selected_operation_name if data[:query].selected_operation_name
+              attributes['selected_operation_type'] = data[:query].selected_operation.operation_type
+              attributes['query_string'] = data[:query].query_string
             end
+            attributes
           end
         end
       end

@@ -38,7 +38,7 @@ describe OpenTelemetry::Instrumentation::GraphQL do
     describe 'when a user supplies an invalid schema' do
       let(:config) { { schemas: [Old::Truck] } }
 
-      it 'fails gracefully' do
+      it 'fails gracefully and logs the error' do
         mock_logger = Minitest::Mock.new
         mock_logger.expect(:error, nil, [String])
         OpenTelemetry.stub :logger, mock_logger do

@@ -77,6 +77,19 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
       _(span.attributes.to_h).must_equal(expected_attributes)
     end
 
+    it 'omits nil attributes for execute_query' do
+      expected_attributes = {
+        'selected_operation_type' => 'query',
+        'query_string' => '{ simpleField }'
+      }
+
+      SomeGraphQLAppSchema.execute('{ simpleField }')
+
+      span = spans.find { |s| s.name == 'graphql.execute_query' }
+      _(span).wont_be_nil
+      _(span.attributes.to_h).must_equal(expected_attributes)
+    end
+
     describe 'when a set of schemas is provided' do
       let(:config) { { schemas: [SomeOtherGraphQLAppSchema] } }
 
