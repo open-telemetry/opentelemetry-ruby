@@ -31,9 +31,9 @@ describe OpenTelemetry::Instrumentation::Koala do
       _(instrumentation.present?).must_equal true
     end
 
-    # it 'when koala gem not installed' do
-    # hide_const('Koala')
-    # _(instrumentation.present?).must_equal false
-    # end
+    it 'when koala gem not installed' do
+      hide_const('Koala')
+      _(instrumentation.present?).must_equal false
+    end
   end
 end

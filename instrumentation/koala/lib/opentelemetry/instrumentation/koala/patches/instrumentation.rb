@@ -20,15 +20,17 @@ module OpenTelemetry
                 'koala.path' => path
               },
               kind: :client
-            ) do |span|
-              super(path, args, verb, options, &post_processing)
+            ) do |_|
+              OpenTelemetry::Common::HTTP::ClientContext.with_attributes('peer.service' => 'facebook') do
+                super(path, args, verb, options, &post_processing)
+              end
             end
           end
 
           private
 
           def tracer
-            Koala.instance.tracer
+            Koala::Instrumentation.instance.tracer
           end
         end
       end

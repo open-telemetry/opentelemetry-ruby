@@ -16,7 +16,7 @@ module OpenTelemetry
         end
 
         present do
-          !defined?(::Koala::Facebook::API).nil?
+          !defined?(::Koala).nil?
         end
 
         private
