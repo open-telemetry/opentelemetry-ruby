@@ -12,7 +12,7 @@ module OpenTelemetry
         Key = Struct.new(:name, :version)
         private_constant(:Key)
 
-        attr_accessor :active_trace_config
+        attr_accessor :active_trace_config, :id_generator
         attr_reader :active_span_processor, :stopped, :resource
         alias stopped? stopped
 
@@ -24,6 +24,7 @@ module OpenTelemetry
           @registry = {}
           @active_span_processor = NoopSpanProcessor.instance
           @active_trace_config = Config::TraceConfig::DEFAULT
+          @id_generator = OpenTelemetry::Trace
           @registered_span_processors = []
           @stopped = false
           @resource = resource
