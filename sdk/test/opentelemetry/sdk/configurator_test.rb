@@ -218,6 +218,14 @@ describe OpenTelemetry::SDK::Configurator do
           OpenTelemetry::SDK::Trace::TracerProvider
         )
       end
+
+      it 'reflects the configured id generator' do
+        id_generator = Object.new
+        configurator.id_generator = id_generator
+        configurator.configure
+
+        _(OpenTelemetry.tracer_provider.id_generator).must_equal id_generator
+      end
     end
 
     describe 'span processors' do
