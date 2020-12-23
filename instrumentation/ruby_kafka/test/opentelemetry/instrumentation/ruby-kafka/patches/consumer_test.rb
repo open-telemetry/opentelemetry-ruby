@@ -30,7 +30,6 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
     exporter.reset
 
     instrumentation.install
-    clear_notification_subscriptions
   end
 
   after do
@@ -41,7 +40,6 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
     producer.shutdown
     consumer.stop
     kafka.close
-    clear_notification_subscriptions
   end
 
   describe '#each_message' do

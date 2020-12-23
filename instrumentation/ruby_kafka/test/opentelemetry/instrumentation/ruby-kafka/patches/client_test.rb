@@ -25,7 +25,6 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Client do
     exporter.reset
 
     instrumentation.install
-    clear_notification_subscriptions
   end
 
   after do
@@ -34,7 +33,6 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Client do
 
     # Clean up
     kafka.close
-    clear_notification_subscriptions
   end
 
   it 'traces produce and consuming' do

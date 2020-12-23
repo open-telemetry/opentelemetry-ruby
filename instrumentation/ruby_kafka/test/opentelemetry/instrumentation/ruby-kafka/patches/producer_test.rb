@@ -44,7 +44,6 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
     async_producer.shutdown
     consumer.stop
     kafka.close
-    clear_notification_subscriptions
   end
 
   describe 'tracing' do
@@ -57,14 +56,6 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
 
       _(spans.first.attributes['messaging.system']).must_equal('kafka')
       _(spans.first.attributes['messaging.destination']).must_equal(topic)
-
-      _(spans.last.name).must_equal('kafka.producer.deliver_messages')
-      _(spans.last.kind).must_equal(:client)
-
-      _(spans.last.attributes['messaging.system']).must_equal('kafka')
-      _(spans.last.attributes['messaging.kafka.message_count']).must_equal(1)
-      _(spans.last.attributes['messaging.kafka.delivered_message_count']).must_equal(1)
-      _(spans.last.attributes['messaging.kafka.attempts']).must_equal(1)
     end
 
     it 'traces async produce calls' do

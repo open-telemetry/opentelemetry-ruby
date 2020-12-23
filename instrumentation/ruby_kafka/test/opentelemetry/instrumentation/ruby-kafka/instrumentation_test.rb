@@ -25,26 +25,5 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Instrumentation do
       instrumentation.instance_variable_set(:@installed, false)
       _(instrumentation.install({})).must_equal(true)
     end
-
-    it 'logs a warning when active support is not available' do
-      instrumentation.instance_variable_set(:@installed, false)
-      warning_message = 'OpenTelemetry::Instrumentation::RubyKafka requires ActiveSupport::Notifications to generate spans from the ruby-kafka instrumentation.'
-      mock_logger = MiniTest::Mock.new
-      mock_logger.expect(:warn, nil, [warning_message])
-
-      OpenTelemetry::SDK.configure do |c|
-        c.add_span_processor SPAN_PROCESSOR
-        c.logger = mock_logger
-      end
-
-      @original = ::ActiveSupport::Notifications
-      ::ActiveSupport.send(:remove_const, 'Notifications')
-
-      _(instrumentation.install({})).must_equal(true)
-
-      mock_logger.verify
-    ensure
-      ::ActiveSupport.const_set('Notifications', @original)
-    end
   end
 end

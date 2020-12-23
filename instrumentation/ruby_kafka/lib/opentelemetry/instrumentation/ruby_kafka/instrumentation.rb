@@ -13,13 +13,6 @@ module OpenTelemetry
         install do |_config|
           require_patches
           patch
-
-          if defined?(::ActiveSupport::Notifications)
-            require_events
-            subscribe
-          else
-            OpenTelemetry.logger.warn('OpenTelemetry::Instrumentation::RubyKafka requires ActiveSupport::Notifications to generate spans from the ruby-kafka instrumentation.')
-          end
         end
 
         present do
@@ -38,14 +31,6 @@ module OpenTelemetry
           ::Kafka::Producer.prepend(Patches::Producer)
           ::Kafka::Consumer.prepend(Patches::Consumer)
           ::Kafka::Client.prepend(Patches::Client)
-        end
-
-        def require_events
-          require_relative 'events'
-        end
-
-        def subscribe(events: Events::ALL)
-          events.each(&:subscribe!)
         end
       end
     end
