@@ -34,5 +34,18 @@ describe OpenTelemetry::Instrumentation::GraphQL do
       instrumentation.install({})
       _(::GraphQL::Schema.tracers[0]).must_be_instance_of(OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer)
     end
+
+    describe 'when a user supplies an invalid schema' do
+      let(:config) { { schemas: [Old::Truck] } }
+
+      it 'fails gracefully' do
+        mock_logger = Minitest::Mock.new
+        mock_logger.expect(:error, nil, [String])
+        OpenTelemetry.stub :logger, mock_logger do
+          instrumentation.install(config)
+        end
+        mock_logger.verify
+      end
+    end
   end
 end

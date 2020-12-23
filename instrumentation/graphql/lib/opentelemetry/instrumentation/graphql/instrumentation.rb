@@ -11,9 +11,9 @@ module OpenTelemetry
     module GraphQL
       # The Instrumentation class contains logic to detect and install the GraphQL instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        install do |_config|
+        install do |config|
           require_dependencies
-          install_tracer
+          install_tracer(config)
         end
 
         present do
@@ -26,8 +26,16 @@ module OpenTelemetry
           require_relative 'tracers/graphql_tracer'
         end
 
-        def install_tracer
-          ::GraphQL::Schema.tracer(Tracers::GraphQLTracer.new)
+        def install_tracer(config = {})
+          if config[:schemas].nil? || config[:schemas].empty?
+            ::GraphQL::Schema.tracer(Tracers::GraphQLTracer.new)
+          else
+            config[:schemas].each do |schema|
+              schema.use(Tracers::GraphQLTracer)
+            rescue StandardError => e
+              OpenTelemetry.logger.error("Unable to patch schema #{schema}: #{e.message}")
+            end
+          end
         end
       end
     end
