@@ -33,19 +33,19 @@ module OpenTelemetry
           end
 
           def platform_field_key(type, field)
-            return unless config[:enable_platform_field_key]
+            return unless config[:enable_platform_field]
 
             "#{type.graphql_name}.#{field.graphql_name}"
           end
 
           def platform_authorized_key(type)
-            return unless config[:enable_platform_authorized_key]
+            return unless config[:enable_platform_authorized]
 
             "#{type.graphql_name}.authorized"
           end
 
           def platform_resolve_type_key(type)
-            return unless config[:enable_platform_resolve_type_key]
+            return unless config[:enable_platform_resolve_type]
 
             "#{type.graphql_name}.resolve_type"
           end

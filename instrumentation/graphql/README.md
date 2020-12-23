@@ -22,6 +22,28 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+### Configuration options
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::GraphQL', {
+    # If this option is not provided the default behaviour is to instrument all
+    # schemas that extend GraphQL::Schema
+    schemas: [MyAppSchema],
+
+    # The following fields are disabled by default as they generate
+    # large traces, but can be enabled using the following keys.
+    # Further details about what these keys correspond can be found on the [platform_tracing.rb class](https://github.com/rmosolgo/graphql-ruby/blob/1.10.x/lib/graphql/tracing/platform_tracing.rb#L28-L73).
+    # enable_platform_field maps to the execute_field and execute_field_lazy keys
+    enable_platform_field: true,
+    # enable_platform_authorized maps to the authorized and authorized_lazy keys
+    enable_platform_authorized: true,
+    # enable_platform_resolve_type maps to the resolve_type and resolve_type_lazy keys
+    enable_platform_resolve_type: true
+  }
+end
+```
+
 Alternatively, you can also call `use_all` to install all the available instrumentation.
 
 ```ruby
