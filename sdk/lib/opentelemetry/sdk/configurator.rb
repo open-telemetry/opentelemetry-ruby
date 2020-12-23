@@ -16,7 +16,7 @@ module OpenTelemetry
       private_constant :USE_MODE_UNSPECIFIED, :USE_MODE_ONE, :USE_MODE_ALL
 
       attr_writer :logger, :http_extractors, :http_injectors, :text_map_extractors,
-                  :text_map_injectors, :error_handler
+                  :text_map_injectors, :error_handler, :id_generator
 
       def initialize
         @instrumentation_names = []
@@ -28,6 +28,7 @@ module OpenTelemetry
         @span_processors = []
         @use_mode = USE_MODE_UNSPECIFIED
         @resource = Resources::Resource.telemetry_sdk
+        @id_generator = OpenTelemetry::Trace
       end
 
       def logger
@@ -118,6 +119,7 @@ module OpenTelemetry
         OpenTelemetry.baggage = Baggage::Manager.new
         configure_propagation
         configure_span_processors
+        tracer_provider.id_generator = @id_generator
         OpenTelemetry.tracer_provider = tracer_provider
         install_instrumentation
       end
