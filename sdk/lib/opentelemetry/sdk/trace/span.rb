@@ -279,7 +279,7 @@ module OpenTelemetry
           return if attrs.nil?
 
           excess = attrs.size - @trace_config.max_attributes_count
-          attrs.shift(excess) if excess.positive?
+          excess.times { attrs.shift } if excess.positive?
           nil
         end
 
