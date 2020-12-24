@@ -48,10 +48,10 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
       kafka.deliver_message('hello2', topic: topic)
 
       begin
-        @counter = 0
+        counter = 0
         consumer.each_message do |_msg|
-          @counter += 1
-          raise 'oops' if @counter >= 2
+          counter += 1
+          raise 'oops' if counter >= 2
         end
       rescue StandardError # rubocop:disable Lint/HandleExceptions
       end
@@ -92,8 +92,6 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
       _(event.attributes['exception.message']).must_equal('oops')
 
       _(spans.size).must_equal(4)
-    ensure
-      @counter = 0
     end
   end
 
