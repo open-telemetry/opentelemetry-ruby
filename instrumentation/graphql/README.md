@@ -31,8 +31,9 @@ OpenTelemetry::SDK.configure do |c|
     # schemas that extend GraphQL::Schema
     schemas: [MyAppSchema],
 
-    # The following fields are disabled by default as they generate
-    # large traces, but can be enabled using the following keys.
+    # The following options are disabled by default as they generate
+    # large traces, but can be enabled using the following keys to add
+    # spans that provide more detail.
     # Further details about what these keys correspond can be found on the [platform_tracing.rb class](https://github.com/rmosolgo/graphql-ruby/blob/1.10.x/lib/graphql/tracing/platform_tracing.rb#L28-L73).
     # enable_platform_field maps to the execute_field and execute_field_lazy keys
     enable_platform_field: true,

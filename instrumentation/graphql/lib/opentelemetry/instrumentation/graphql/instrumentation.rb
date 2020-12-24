@@ -12,15 +12,16 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the GraphQL instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         ## Supported configuration keys for the install config hash:
+        #
         # The enable_platform_field key expects a boolean value,
-        # and enables the tracing of "execute_field", "execute_field_lazy"
-
+        # and enables the tracing of "execute_field" and "execute_field_lazy".
+        #
         # The enable_platform_authorized key expects a boolean value,
-        # and enables the tracing of "authorized", "authorized_lazy"
-
+        # and enables the tracing of "authorized" and "authorized_lazy".
+        #
         # The enable_platform_resolve_type key expects a boolean value,
-        # and enables the tracing of "resolve_type", "resolve_type_lazy"
-
+        # and enables the tracing of "resolve_type" and "resolve_type_lazy".
+        #
         # The schemas key expects an array of Schemas, and is used to specify
         # which schemas are to be instrumented. If this value is not supplied
         # the default behaviour is to instrument all schemas.
