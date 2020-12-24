@@ -1,5 +1,13 @@
 # Release History: opentelemetry-sdk
 
+### v0.12.0 / 2020-12-24
+
+* ADDED: Structured error handling 
+* ADDED: Pluggable ID generation 
+* FIXED: BSP dropped span buffer full reporting 
+* FIXED: Implement SDK environment variables 
+* FIXED: Remove incorrect TODO 
+
 ### v0.11.1 / 2020-12-16
 
 * FIXED: BSP dropped span buffer full reporting 
