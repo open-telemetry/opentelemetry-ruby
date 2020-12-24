@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: OpenTelemetry::SDK::Trace::Config::TraceConfig
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::SDK::Trace::Config::TraceConfig";
+  relpath = '../../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../../_index.html">Index (T)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../../SDK.html" title="OpenTelemetry::SDK (module)">SDK</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Trace.html" title="OpenTelemetry::SDK::Trace (module)">Trace</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Config.html" title="OpenTelemetry::SDK::Trace::Config (module)">Config</a></span></span>
+     &raquo; 
+    <span class="title">TraceConfig</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: OpenTelemetry::SDK::Trace::Config::TraceConfig
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">OpenTelemetry::SDK::Trace::Config::TraceConfig</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/sdk/trace/config/trace_config.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Class that holds global trace parameters.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#max_attributes_count-instance_method" title="#max_attributes_count (instance method)">#<strong>max_attributes_count</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The global default max number of attributes per <span class='object_link'><a href="../Span.html" title="OpenTelemetry::SDK::Trace::Span (class)">Span</a></span>.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#max_attributes_per_event-instance_method" title="#max_attributes_per_event (instance method)">#<strong>max_attributes_per_event</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The global default max number of attributes per <span class='object_link'><a href="../Event.html" title="OpenTelemetry::SDK::Trace::Event (class)">Event</a></span>.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#max_attributes_per_link-instance_method" title="#max_attributes_per_link (instance method)">#<strong>max_attributes_per_link</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The global default max number of attributes per Trace::Link.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#max_events_count-instance_method" title="#max_events_count (instance method)">#<strong>max_events_count</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The global default max number of <span class='object_link'><a href="../Event.html" title="OpenTelemetry::SDK::Trace::Event (class)">Event</a></span>s per <span class='object_link'><a href="../Span.html" title="OpenTelemetry::SDK::Trace::Span (class)">Span</a></span>.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#max_links_count-instance_method" title="#max_links_count (instance method)">#<strong>max_links_count</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The global default max number of Trace::Link entries per <span class='object_link'><a href="../Span.html" title="OpenTelemetry::SDK::Trace::Span (class)">Span</a></span>.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#sampler-instance_method" title="#sampler (instance method)">#<strong>sampler</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The global default sampler (see <span class='object_link'><a href="../Samplers.html" title="OpenTelemetry::SDK::Trace::Samplers (module)">Samplers</a></span>).</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(sampler: sampler_from_environment(Samplers.parent_based(root: Samplers::ALWAYS_ON)), max_attributes_count: Integer(ENV.fetch(&#39;OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT&#39;, 1000)), max_events_count: Integer(ENV.fetch(&#39;OTEL_SPAN_EVENT_COUNT_LIMIT&#39;, 1000)), max_links_count: Integer(ENV.fetch(&#39;OTEL_SPAN_LINK_COUNT_LIMIT&#39;, 1000)), max_attributes_per_event: max_attributes_count, max_attributes_per_link: max_attributes_count)  &#x21d2; TraceConfig </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns a <span class='object_link'><a href="" title="OpenTelemetry::SDK::Trace::Config::TraceConfig (class)">TraceConfig</a></span> with the desired values.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(sampler: sampler_from_environment(Samplers.parent_based(root: Samplers::ALWAYS_ON)), max_attributes_count: Integer(ENV.fetch(&#39;OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT&#39;, 1000)), max_events_count: Integer(ENV.fetch(&#39;OTEL_SPAN_EVENT_COUNT_LIMIT&#39;, 1000)), max_links_count: Integer(ENV.fetch(&#39;OTEL_SPAN_LINK_COUNT_LIMIT&#39;, 1000)), max_attributes_per_event: max_attributes_count, max_attributes_per_link: max_attributes_count)  &#x21d2; <tt><span class='object_link'><a href="" title="OpenTelemetry::SDK::Trace::Config::TraceConfig (class)">TraceConfig</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns a <span class='object_link'><a href="" title="OpenTelemetry::SDK::Trace::Config::TraceConfig (class)">OpenTelemetry::SDK::Trace::Config::TraceConfig</a></span> with the desired values.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>if any of the max numbers are not positive.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/trace/config/trace_config.rb', line 35</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='label'>sampler:</span> <span class='id identifier rubyid_sampler_from_environment'>sampler_from_environment</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Samplers.html" title="OpenTelemetry::SDK::Trace::Samplers (module)">Samplers</a></span></span><span class='period'>.</span><span class='id identifier rubyid_parent_based'><span class='object_link'><a href="../Samplers.html#parent_based-class_method" title="OpenTelemetry::SDK::Trace::Samplers.parent_based (method)">parent_based</a></span></span><span class='lparen'>(</span><span class='label'>root:</span> <span class='const'><span class='object_link'><a href="../Samplers.html" title="OpenTelemetry::SDK::Trace::Samplers (module)">Samplers</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Samplers.html#ALWAYS_ON-constant" title="OpenTelemetry::SDK::Trace::Samplers::ALWAYS_ON (constant)">ALWAYS_ON</a></span></span><span class='rparen'>)</span><span class='rparen'>)</span><span class='comma'>,</span>
+               <span class='label'>max_attributes_count:</span> <span class='const'>Integer</span><span class='lparen'>(</span><span class='const'>ENV</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='int'>1000</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='comma'>,</span>
+               <span class='label'>max_events_count:</span> <span class='const'>Integer</span><span class='lparen'>(</span><span class='const'>ENV</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>OTEL_SPAN_EVENT_COUNT_LIMIT</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='int'>1000</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='comma'>,</span>
+               <span class='label'>max_links_count:</span> <span class='const'>Integer</span><span class='lparen'>(</span><span class='const'>ENV</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>OTEL_SPAN_LINK_COUNT_LIMIT</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='int'>1000</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='comma'>,</span>
+               <span class='label'>max_attributes_per_event:</span> <span class='id identifier rubyid_max_attributes_count'>max_attributes_count</span><span class='comma'>,</span>
+               <span class='label'>max_attributes_per_link:</span> <span class='id identifier rubyid_max_attributes_count'>max_attributes_count</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>max_attributes_count must be positive</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_max_attributes_count'>max_attributes_count</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>max_events_count must be positive</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_max_events_count'>max_events_count</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>max_links_count must be positive</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_max_links_count'>max_links_count</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>max_attributes_per_event must be positive</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_max_attributes_per_event'>max_attributes_per_event</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>max_attributes_per_link must be positive</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_max_attributes_per_link'>max_attributes_per_link</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span>
+
+  <span class='ivar'>@sampler</span> <span class='op'>=</span> <span class='id identifier rubyid_sampler'>sampler</span>
+  <span class='ivar'>@max_attributes_count</span> <span class='op'>=</span> <span class='id identifier rubyid_max_attributes_count'>max_attributes_count</span>
+  <span class='ivar'>@max_events_count</span> <span class='op'>=</span> <span class='id identifier rubyid_max_events_count'>max_events_count</span>
+  <span class='ivar'>@max_links_count</span> <span class='op'>=</span> <span class='id identifier rubyid_max_links_count'>max_links_count</span>
+  <span class='ivar'>@max_attributes_per_event</span> <span class='op'>=</span> <span class='id identifier rubyid_max_attributes_per_event'>max_attributes_per_event</span>
+  <span class='ivar'>@max_attributes_per_link</span> <span class='op'>=</span> <span class='id identifier rubyid_max_attributes_per_link'>max_attributes_per_link</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id=""></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="max_attributes_count-instance_method">
+  
+    #<strong>max_attributes_count</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The global default max number of attributes per <span class='object_link'><a href="../Span.html" title="OpenTelemetry::SDK::Trace::Span (class)">Span</a></span>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+17
+18
+19</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/trace/config/trace_config.rb', line 17</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_max_attributes_count'>max_attributes_count</span>
+  <span class='ivar'>@max_attributes_count</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="max_attributes_per_event-instance_method">
+  
+    #<strong>max_attributes_per_event</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The global default max number of attributes per <span class='object_link'><a href="../Event.html" title="OpenTelemetry::SDK::Trace::Event (class)">Event</a></span>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+26
+27
+28</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/trace/config/trace_config.rb', line 26</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_max_attributes_per_event'>max_attributes_per_event</span>
+  <span class='ivar'>@max_attributes_per_event</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="max_attributes_per_link-instance_method">
+  
+    #<strong>max_attributes_per_link</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The global default max number of attributes per Trace::Link.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+29
+30
+31</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/trace/config/trace_config.rb', line 29</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_max_attributes_per_link'>max_attributes_per_link</span>
+  <span class='ivar'>@max_attributes_per_link</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="max_events_count-instance_method">
+  
+    #<strong>max_events_count</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The global default max number of <span class='object_link'><a href="../Event.html" title="OpenTelemetry::SDK::Trace::Event (class)">Event</a></span>s per <span class='object_link'><a href="../Span.html" title="OpenTelemetry::SDK::Trace::Span (class)">Span</a></span>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+20
+21
+22</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/trace/config/trace_config.rb', line 20</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_max_events_count'>max_events_count</span>
+  <span class='ivar'>@max_events_count</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="max_links_count-instance_method">
+  
+    #<strong>max_links_count</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The global default max number of Trace::Link entries per <span class='object_link'><a href="../Span.html" title="OpenTelemetry::SDK::Trace::Span (class)">Span</a></span>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+23
+24
+25</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/trace/config/trace_config.rb', line 23</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_max_links_count'>max_links_count</span>
+  <span class='ivar'>@max_links_count</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="sampler-instance_method">
+  
+    #<strong>sampler</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The global default sampler (see <span class='object_link'><a href="../Samplers.html" title="OpenTelemetry::SDK::Trace::Samplers (module)">Samplers</a></span>).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+14
+15
+16</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/trace/config/trace_config.rb', line 14</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_sampler'>sampler</span>
+  <span class='ivar'>@sampler</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+</div>
+
+      <div id="footer">
+  Generated on Thu Dec 24 21:30:45 2020 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.25 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>

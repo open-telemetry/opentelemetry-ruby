@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: OpenTelemetry::SDK::Resources::Constants
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::SDK::Resources::Constants";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (C)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../SDK.html" title="OpenTelemetry::SDK (module)">SDK</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Resources.html" title="OpenTelemetry::SDK::Resources (module)">Resources</a></span></span>
+     &raquo; 
+    <span class="title">Constants</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: OpenTelemetry::SDK::Resources::Constants
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/sdk/resources/constants.rb</dd>
+  </dl>
+  
+</div>
+
+
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="SERVICE_RESOURCE-constant" class="">SERVICE_RESOURCE =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Attributes describing a service instance.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='comment'># Logical name of the service.
+</span>  <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>service.name</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># A namespace for `service.name`.
+</span>  <span class='label'>namespace:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>service.namespace</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># The string ID of the service instance.
+</span>  <span class='label'>instance_id:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>service.instance.id</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># The version string of the service API or implementation.
+</span>  <span class='label'>version:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>service.version</span><span class='tstring_end'>&#39;</span></span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="TELEMETRY_SDK_RESOURCE-constant" class="">TELEMETRY_SDK_RESOURCE =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Attributes describing the telemetry library.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='comment'># The name of the telemetry library.
+</span>  <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>telemetry.sdk.name</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># The language of the telemetry library and of the code instrumented with it.
+</span>  <span class='label'>language:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>telemetry.sdk.language</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># The version string of the telemetry library
+</span>  <span class='label'>version:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>telemetry.sdk.version</span><span class='tstring_end'>&#39;</span></span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="CONTAINER_RESOURCE-constant" class="">CONTAINER_RESOURCE =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Attributes defining a compute unit (e.g. Container, Process, Lambda Function).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='comment'># The container name.
+</span>  <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>container.name</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># The name of the image the container was built on.
+</span>  <span class='label'>image_name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>container.image.name</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># The container image tag.
+</span>  <span class='label'>image_tag:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>container.image.tag</span><span class='tstring_end'>&#39;</span></span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="FAAS_RESOURCE-constant" class="">FAAS_RESOURCE =
+          
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='comment'># The name of the function being executed.
+</span>  <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.name</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># The unique name of the function being executed.
+</span>  <span class='label'>id:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.id</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># The version string of the function being executed.
+</span>  <span class='label'>version:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.version</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># The execution environment ID as a string.
+</span>  <span class='label'>instance:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.instance</span><span class='tstring_end'>&#39;</span></span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="K8S_RESOURCE-constant" class="">K8S_RESOURCE =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Attributes defining a deployment service (e.g. Kubernetes).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='comment'># The name of the cluster that the pod is running in.
+</span>  <span class='label'>cluster_name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.cluster.name</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># The name of the namespace that the pod is running in.
+</span>  <span class='label'>namespace_name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.namespace.name</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># The name of the pod.
+</span>  <span class='label'>pod_name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.pod.name</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># The name of the deployment.
+</span>  <span class='label'>deployment_name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.deployment.name</span><span class='tstring_end'>&#39;</span></span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="HOST_RESOURCE-constant" class="">HOST_RESOURCE =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Attributes defining a computing instance (e.g. host).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='comment'># Unique host id. For Cloud this must be the instance_id assigned by the
+</span>  <span class='comment'># cloud provider
+</span>  <span class='label'>id:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>host.id</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># Name of the host. It may contain what hostname returns on Unix systems,
+</span>  <span class='comment'># the fully qualified, or a name specified by the user.
+</span>  <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>host.name</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># Type of host. For Cloud this must be the machine type.
+</span>  <span class='label'>type:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>host.type</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># Name of the VM image or OS install the host was instantiated from.
+</span>  <span class='label'>image_name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>host.image.name</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># VM image id. For Cloud, this value is from the provider.
+</span>  <span class='label'>image_id:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>host.image.id</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># The version string of the VM image.
+</span>  <span class='label'>image_version:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>host.image.version</span><span class='tstring_end'>&#39;</span></span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="CLOUD_RESOURCE-constant" class="">CLOUD_RESOURCE =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Attributes defining a running environment (e.g. Cloud, Data Center).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='comment'># Name of the cloud provider. Example values are aws, azure, gcp.
+</span>  <span class='label'>provider:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cloud.provider</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># The cloud account id used to identify different entities.
+</span>  <span class='label'>account_id:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cloud.account.id</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># A specific geographical location where different entities can run.
+</span>  <span class='label'>region:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cloud.region</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+
+  <span class='comment'># Zones are a sub set of the region connected through low-latency links.
+</span>  <span class='label'>zone:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cloud.zone</span><span class='tstring_end'>&#39;</span></span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+
+
+</div>
+
+      <div id="footer">
+  Generated on Thu Dec 24 21:30:44 2020 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.25 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>
