@@ -36,11 +36,11 @@ OpenTelemetry::SDK.configure do |c|
     # spans that provide more detail.
     # Further details about what these keys correspond can be found on the [platform_tracing.rb class](https://github.com/rmosolgo/graphql-ruby/blob/1.10.x/lib/graphql/tracing/platform_tracing.rb#L28-L73).
     # enable_platform_field maps to the execute_field and execute_field_lazy keys
-    enable_platform_field: true,
+    enable_platform_field: false,
     # enable_platform_authorized maps to the authorized and authorized_lazy keys
-    enable_platform_authorized: true,
+    enable_platform_authorized: false,
     # enable_platform_resolve_type maps to the resolve_type and resolve_type_lazy keys
-    enable_platform_resolve_type: true
+    enable_platform_resolve_type: false
   }
 end
 ```
