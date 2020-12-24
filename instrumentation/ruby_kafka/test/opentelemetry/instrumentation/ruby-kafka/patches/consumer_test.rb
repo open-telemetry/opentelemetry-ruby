@@ -79,7 +79,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
       _(second_process_span.kind).must_equal(:consumer)
 
       second_process_span_link = second_process_span.links[0]
-      linked_span_context = OpenTelemetry::Trace.current_span(second_process_span_link.span_context).context
+      linked_span_context = second_process_span_link.span_context
 
       linked_send_span = spans.find { |s| s.span_id == linked_span_context.span_id }
       _(linked_send_span.name).must_equal("#{topic} send")
@@ -118,12 +118,12 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
       _(event.attributes['exception.message']).must_equal('oops')
 
       first_link = span.links[0]
-      linked_span_context = OpenTelemetry::Trace.current_span(first_link.span_context).context
+      linked_span_context = first_link.span_context
       _(linked_span_context.trace_id).must_equal(spans[0].trace_id)
       _(linked_span_context.span_id).must_equal(spans[0].span_id)
 
       second_link = span.links[1]
-      linked_span_context = OpenTelemetry::Trace.current_span(second_link.span_context).context
+      linked_span_context = second_link.span_context
       _(linked_span_context.trace_id).must_equal(spans[1].trace_id)
       _(linked_span_context.span_id).must_equal(spans[1].span_id)
 
