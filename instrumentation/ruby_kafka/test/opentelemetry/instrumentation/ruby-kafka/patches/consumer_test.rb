@@ -58,7 +58,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
 
       process_spans = spans.select { |s| s.name == "#{topic} process" }
 
-      # First pair for senda and process spans
+      # First pair for send and process spans
       first_process_span = process_spans[0]
       _(first_process_span.name).must_equal("#{topic} process")
       _(first_process_span.kind).must_equal(:consumer)
