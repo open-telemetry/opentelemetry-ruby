@@ -33,6 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-ethon', '~> 0.11.0'
   spec.add_dependency 'opentelemetry-instrumentation-excon', '~> 0.11.0'
   spec.add_dependency 'opentelemetry-instrumentation-faraday', '~> 0.11.0'
+  spec.add_dependency 'opentelemetry-instrumentation-graphql', '~> 0.11.0'
   spec.add_dependency 'opentelemetry-instrumentation-mongo', '~> 0.11.0'
   spec.add_dependency 'opentelemetry-instrumentation-mysql2', '~> 0.11.0'
   spec.add_dependency 'opentelemetry-instrumentation-net_http', '~> 0.11.0'
