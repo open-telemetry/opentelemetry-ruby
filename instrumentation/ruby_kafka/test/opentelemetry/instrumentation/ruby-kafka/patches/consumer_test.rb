@@ -66,7 +66,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
       _(first_process_span.attributes['messaging.kafka.partition']).must_equal(0)
 
       first_process_span_link = first_process_span.links[0]
-      linked_span_context = OpenTelemetry::Trace.current_span(first_process_span_link.span_context).context
+      linked_span_context = first_process_span_link.span_context
 
       linked_send_span = spans.find { |s| s.span_id == linked_span_context.span_id }
       _(linked_send_span.name).must_equal("#{topic} send")
