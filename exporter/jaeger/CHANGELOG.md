@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-jaeger
 
+### v0.12.0 / 2020-12-24
+
+* ADDED: Structured error handling 
+
 ### v0.11.0 / 2020-12-11
 
 * FIXED: Copyright comments to not reference year 

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.12.0 / 2020-12-24
+
+* ADDED: Instrument graphql 
+
 ### v0.11.0 / 2020-12-11
 
 * FIXED: Copyright comments to not reference year 

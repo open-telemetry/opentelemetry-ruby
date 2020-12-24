@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-excon
 
+### v0.12.0 / 2020-12-24
+
+* (No significant changes)
+
 ### v0.11.0 / 2020-12-11
 
 * FIXED: Copyright comments to not reference year 
