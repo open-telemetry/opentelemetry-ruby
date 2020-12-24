@@ -1,5 +1,9 @@
 # Release History: opentelemetry-api
 
+### v0.12.0 / 2020-12-24
+
+* ADDED: Structured error handling 
+
 ### v0.11.0 / 2020-12-11
 
 * BREAKING CHANGE: Implement tracestate 
