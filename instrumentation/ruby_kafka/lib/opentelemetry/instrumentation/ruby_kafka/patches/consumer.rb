@@ -32,7 +32,7 @@ module OpenTelemetry
             end
           end
 
-          def each_batch(min_bytes: 1, max_bytes: 10_485_760, max_wait_time: 1, automatically_mark_as_processed: true)
+          def each_batch(min_bytes: 1, max_bytes: 10_485_760, max_wait_time: 1, automatically_mark_as_processed: true) # # rubocop:disable Metrics/AbcSize
             super do |batch|
               attributes = {
                 'messaging.system' => 'kafka',
