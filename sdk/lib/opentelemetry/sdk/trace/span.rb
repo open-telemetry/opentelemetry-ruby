@@ -279,9 +279,7 @@ module OpenTelemetry
           return if attrs.nil?
 
           excess = attrs.size - @trace_config.max_attributes_count
-          # TODO: with Ruby 2.5, replace with the more efficient
-          # attrs.shift(excess) if excess.positive?
-          excess.times { attrs.shift } if excess.positive?
+          attrs.shift(excess) if excess.positive?
           nil
         end
 
