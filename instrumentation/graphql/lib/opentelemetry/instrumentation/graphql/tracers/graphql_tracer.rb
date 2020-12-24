@@ -27,7 +27,7 @@ module OpenTelemetry
           def platform_trace(platform_key, key, data)
             return yield if platform_key.nil?
 
-            tracer.in_span(platform_key || 'test', attributes: attributes_for(key, data)) do |_span|
+            tracer.in_span(platform_key, attributes: attributes_for(key, data)) do |_span|
               yield
             end
           end
