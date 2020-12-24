@@ -45,10 +45,10 @@ module OpenTelemetry
               }
 
               links = batch.messages.map do |message|
-                OpenTelemetry::Trace::Link.new(
-                  OpenTelemetry.propagation.text.extract(message.headers)
-                )
+                span_context = OpenTelemetry::Trace.current_span(OpenTelemetry.propagation.text.extract(message.headers)).context
+                OpenTelemetry::Trace::Link.new(span_context) if span_context.valid?
               end
+              links.compact!
 
               tracer.in_span("#{batch.topic} process", attributes: attributes, links: links, kind: :consumer) do
                 yield batch
