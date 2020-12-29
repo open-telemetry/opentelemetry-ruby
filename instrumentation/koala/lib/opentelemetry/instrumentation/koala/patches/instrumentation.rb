@@ -9,7 +9,7 @@ module OpenTelemetry
     module Koala
       module Patches
         # Module to prepend to Koala::Facebook::API for instrumentation
-        module Instrumentation
+        module Api
           VERBS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = "Koala #{k}" }
 
           def graph_call(path, args = {}, verb = 'get', options = {}, &post_processing)
