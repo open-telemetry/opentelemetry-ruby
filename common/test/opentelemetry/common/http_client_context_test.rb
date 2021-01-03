@@ -86,7 +86,7 @@ describe OpenTelemetry::Common::HTTP::ClientContext do
 
   describe '#context_with_attributes' do
     it 'returns a context containing attributes' do
-      ctx = client_context.context_with_attributes('foo' => 'bar')
+      ctx = client_context.context_with_attributes({ 'foo' => 'bar' })
       _(client_context.attributes(ctx)).must_equal('foo' => 'bar')
     end
 
