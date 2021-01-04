@@ -63,7 +63,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
       async_producer.deliver_messages
 
       # Wait for the async calls to produce spans
-      wait_for(error_message: 'Max wait time exceeded for async producer') { EXPORTER.finished_spans.size.positive? }
+      wait_for(error_message: 'Max wait time exceeded for async producer', retry_delay: 1.0) { EXPORTER.finished_spans.size.positive? }
 
       _(spans.first.name).must_equal("#{async_topic} send")
       _(spans.first.kind).must_equal(:producer)
