@@ -23,6 +23,9 @@ jobs:
           - name: Ruby 2.7
             container: circleci/ruby:2.7-buster
             flags: --include-simple --include-appraisal --check-rubocop --check-yard
+          - name: Ruby 3.0
+            container: circleci/ruby:3.0-buster
+            flags: --include-simple --include-appraisal --exclude opentelemetry-exporter-otlp
           - name: JRuby
             container: circleci/jruby:latest
             flags: --include-simple --exclude opentelemetry-resource_detectors --exclude opentelemetry-exporter-otlp
