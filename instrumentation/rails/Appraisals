@@ -4,11 +4,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-if RUBY_VERSION < '3'
-  appraise 'rails-5.2' do
-    gem 'rails', '~> 5.2.0'
-  end
-end
+# Rails 5.2 is incompatible with Ruby 3.
+appraise 'rails-5.2' do
+  gem 'rails', '~> 5.2.0'
+end if RUBY_VERSION < '3'
 
 appraise 'rails-6.0' do
   gem 'rails', '~> 6.0.0'

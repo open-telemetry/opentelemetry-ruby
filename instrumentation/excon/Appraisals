@@ -4,6 +4,7 @@ appraise 'excon-0.71' do
   gem 'excon', '~> 0.71.0'
 end
 
+# Incompatible with Ruby 3.0.0 (https://bugs.ruby-lang.org/issues/10499)
 appraise 'excon-0.64' do
   gem 'excon', '~> 0.64.0'
-end
+end if RUBY_VERSION < '3'
