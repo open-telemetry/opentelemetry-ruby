@@ -86,8 +86,9 @@ describe OpenTelemetry::Instrumentation::Redis do
 
   describe '#context_with_attributes' do
     it 'returns a context containing attributes' do
-      ctx = redis.context_with_attributes('foo' => 'bar')
-      _(redis.attributes(ctx)).must_equal('foo' => 'bar')
+      attrs = { 'foo' => 'bar' }
+      ctx = redis.context_with_attributes(attrs)
+      _(redis.attributes(ctx)).must_equal(attrs)
     end
 
     it 'returns a context containing attributes' do
