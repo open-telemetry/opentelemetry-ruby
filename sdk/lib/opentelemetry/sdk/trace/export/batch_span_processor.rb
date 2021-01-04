@@ -101,7 +101,7 @@ module OpenTelemetry
           def force_flush(timeout: nil) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
             start_time = Time.now
             snapshot = lock do
-              reset_on_fork(restart_thread: false) if @keep_running
+              reset_on_fork if @keep_running
               spans.shift(spans.size)
             end
             until snapshot.empty?
@@ -136,12 +136,13 @@ module OpenTelemetry
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
           def shutdown(timeout: nil)
             start_time = Time.now
-            lock do
+            thread = lock do
               @keep_running = false
               @condition.signal
+              @thread
             end
 
-            @thread.join(timeout)
+            thread&.join(timeout)
             force_flush(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
             @exporter.shutdown(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
             dropped_spans = lock { spans.size }
@@ -155,7 +156,6 @@ module OpenTelemetry
           def work # rubocop:disable Metrics/AbcSize
             loop do
               batch = lock do
-                reset_on_fork(restart_thread: false)
                 @condition.wait(@mutex, @delay_seconds) if spans.size < batch_size && @keep_running
                 @condition.wait(@mutex, @delay_seconds) while spans.empty? && @keep_running
                 return unless @keep_running
@@ -175,7 +175,7 @@ module OpenTelemetry
 
             @pid = pid
             spans.clear
-            @thread = Thread.new { work } if restart_thread
+            @thread = restart_thread ? Thread.new { work } : nil
           end
 
           def export_batch(batch, timeout: @exporter_timeout_seconds)

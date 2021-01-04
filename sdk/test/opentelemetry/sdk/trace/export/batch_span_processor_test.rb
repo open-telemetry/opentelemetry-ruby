@@ -185,6 +185,11 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
       _(bsp.instance_variable_get(:@spans).size).must_equal(1)
     end
+
+    it 'works if the thread is not running' do
+      bsp = BatchSpanProcessor.new(exporter: TestExporter.new, start_thread_on_boot: false)
+      bsp.shutdown(timeout: 0)
+    end
   end
 
   describe 'lifecycle' do
@@ -290,13 +295,25 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
 
     describe 'when a process fork occurs' do
-      it 'creates new work thread' do
+      it 'creates new work thread when on_finish is called' do
         parent_pid = bsp.instance_variable_get(:@pid)
         parent_work_thread_id = bsp.instance_variable_get(:@thread).object_id
         Process.stub(:pid, parent_pid + rand(1..10)) do
           # Start a new span on the forked process and export it.
           bsp.on_finish(TestSpan.new)
-          bsp.shutdown
+          current_pid = bsp.instance_variable_get(:@pid)
+          current_work_thread_id = bsp.instance_variable_get(:@thread).object_id
+          _(parent_pid).wont_equal current_pid
+          _(parent_work_thread_id).wont_equal current_work_thread_id
+        end
+      end
+
+      it 'creates new work thread when force_flush' do
+        parent_pid = bsp.instance_variable_get(:@pid)
+        parent_work_thread_id = bsp.instance_variable_get(:@thread).object_id
+        Process.stub(:pid, parent_pid + rand(1..10)) do
+          # Force flush on the forked process.
+          bsp.force_flush
           current_pid = bsp.instance_variable_get(:@pid)
           current_work_thread_id = bsp.instance_variable_get(:@thread).object_id
           _(parent_pid).wont_equal current_pid
