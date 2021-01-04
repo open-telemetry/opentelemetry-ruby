@@ -320,17 +320,6 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
           _(parent_work_thread_id).wont_equal current_work_thread_id
         end
       end
-
-      it 'shuts down gracefully if the thread has not yet been restarted' do
-        parent_pid = bsp.instance_variable_get(:@pid)
-        parent_work_thread = bsp.instance_variable_get(:@thread)
-        Process.stub(:pid, parent_pid + rand(1..10)) do
-          # Simulate the thread being disconnected
-          parent_work_thread.stub(:join, proc { raise 'Tried to join disconnected thread!' }) do
-            bsp.shutdown
-          end
-        end
-      end
     end
   end
 end

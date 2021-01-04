@@ -137,7 +137,6 @@ module OpenTelemetry
           def shutdown(timeout: nil)
             start_time = Time.now
             thread = lock do
-              reset_on_fork(restart_thread: false)
               @keep_running = false
               @condition.signal
               @thread
