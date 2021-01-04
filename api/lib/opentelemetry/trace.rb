@@ -16,7 +16,7 @@ module OpenTelemetry
     # Random number generator for generating IDs. This is an object that can
     # respond to `#bytes` and uses the system PRNG. The current logic is
     # compatible with Ruby 2.5 (which does not implement the `Random.bytes`
-    # class method) and with Ruby 3.0+ (which deprecates `Random::DEFAULT`). 
+    # class method) and with Ruby 3.0+ (which deprecates `Random::DEFAULT`).
     # When we drop support for Ruby 2.5, this can simply be replaced with
     # the class `Random`.
     #
