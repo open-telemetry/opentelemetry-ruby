@@ -4,6 +4,8 @@ appraise 'excon-0.71' do
   gem 'excon', '~> 0.71.0'
 end
 
-appraise 'excon-0.64' do
-  gem 'excon', '~> 0.64.0'
-end
+# Disabling excon 0.64 for now because it seems to be incompatible with Ruby 3.
+# TODO: Decide whether we still need to test against it.
+# appraise 'excon-0.64' do
+#   gem 'excon', '~> 0.64.0'
+# end
