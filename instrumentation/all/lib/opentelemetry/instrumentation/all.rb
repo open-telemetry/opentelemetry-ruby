@@ -19,6 +19,7 @@ require 'opentelemetry-instrumentation-rack'
 require 'opentelemetry-instrumentation-rails'
 require 'opentelemetry-instrumentation-redis'
 require 'opentelemetry-instrumentation-restclient'
+require 'opentelemetry-instrumentation-ruby_kafka'
 require 'opentelemetry-instrumentation-sidekiq'
 require 'opentelemetry-instrumentation-sinatra'
 
