@@ -25,6 +25,7 @@ gem 'opentelemetry-instrumentation-rack', path: '../rack'
 gem 'opentelemetry-instrumentation-rails', path: '../rails'
 gem 'opentelemetry-instrumentation-redis', path: '../redis'
 gem 'opentelemetry-instrumentation-restclient', path: '../restclient'
+gem 'opentelemetry-instrumentation-ruby_kafka', path: '../ruby_kafka'
 gem 'opentelemetry-instrumentation-sidekiq', path: '../sidekiq'
 gem 'opentelemetry-instrumentation-sinatra', path: '../sinatra'
 

@@ -41,6 +41,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-rails', '~> 0.12.0'
   spec.add_dependency 'opentelemetry-instrumentation-redis', '~> 0.12.0'
   spec.add_dependency 'opentelemetry-instrumentation-restclient', '~> 0.12.0'
+  spec.add_dependency 'opentelemetry-instrumentation-ruby_kafka', '~> 0.12.0'
   spec.add_dependency 'opentelemetry-instrumentation-sidekiq', '~> 0.12.0'
   spec.add_dependency 'opentelemetry-instrumentation-sinatra', '~> 0.12.0'
 
