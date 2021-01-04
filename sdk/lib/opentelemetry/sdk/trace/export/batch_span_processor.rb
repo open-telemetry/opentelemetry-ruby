@@ -136,13 +136,14 @@ module OpenTelemetry
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
           def shutdown(timeout: nil)
             start_time = Time.now
-            thread_alive = lock do
+            thread = lock do
+              reset_on_fork(restart_thread: false)
               @keep_running = false
               @condition.signal
-              !@thread.nil? && Process.pid == @pid
+              @thread
             end
 
-            @thread.join(timeout) if thread_alive
+            thread&.join(timeout)
             force_flush(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
             @exporter.shutdown(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
             dropped_spans = lock { spans.size }
@@ -175,7 +176,7 @@ module OpenTelemetry
 
             @pid = pid
             spans.clear
-            @thread = Thread.new { work } if restart_thread
+            @thread = restart_thread ? Thread.new { work } : nil
           end
 
           def export_batch(batch, timeout: @exporter_timeout_seconds)
