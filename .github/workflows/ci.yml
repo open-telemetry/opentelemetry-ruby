@@ -25,7 +25,7 @@ jobs:
             flags: --include-simple --include-appraisal --check-rubocop --check-yard
           - name: Ruby 3.0
             container: circleci/ruby:3.0-buster
-            flags: --include-simple --include-appraisal --exclude opentelemetry-exporter-otlp --exclude opentelemetry-instrumentation-excon --exclude opentelemetry-instrumentation-faraday --exclude opentelemetry-instrumentation-graphql
+            flags: --include-simple --include-appraisal --exclude opentelemetry-exporter-otlp --exclude opentelemetry-instrumentation-excon --exclude opentelemetry-instrumentation-faraday --exclude opentelemetry-instrumentation-graphql --exclude opentelemetry-instrumentation-rails
           - name: JRuby
             container: circleci/jruby:latest
             flags: --include-simple --exclude opentelemetry-resource_detectors --exclude opentelemetry-exporter-otlp
