@@ -2,7 +2,7 @@
 
 ### v0.12.1 / 2021-01-06
 
-* (No significant changes)
+* ADDED: Instrument RubyKafka
 
 ### v0.12.0 / 2020-12-24
 
