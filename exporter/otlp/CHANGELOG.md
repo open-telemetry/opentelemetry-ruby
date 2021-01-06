@@ -2,7 +2,7 @@
 
 ### v0.12.1 / 2021-01-06
 
-* (No significant changes)
+* FIXED: Updated protobuf version dependency
 
 ### v0.12.0 / 2020-12-24
 
