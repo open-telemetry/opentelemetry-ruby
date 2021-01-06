@@ -1,5 +1,9 @@
 # Release History: opentelemetry-sdk
 
+### v0.12.1 / 2021-01-06
+
+* FIXED: Fix several BatchSpanProcessor errors related to fork safety 
+
 ### v0.12.0 / 2020-12-24
 
 * ADDED: Structured error handling 
