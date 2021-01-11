@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '>= 1.17'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'opentelemetry-sdk', '~> 0.0'
+  spec.add_development_dependency 'rspec-mocks'
   spec.add_development_dependency 'rubocop', '~> 0.73.0'
   spec.add_development_dependency 'ruby-kafka'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
