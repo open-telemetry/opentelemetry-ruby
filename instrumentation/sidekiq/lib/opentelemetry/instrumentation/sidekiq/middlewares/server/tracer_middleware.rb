@@ -18,7 +18,8 @@ module OpenTelemetry
                 msg['wrapped']&.to_s || msg['class'],
                 attributes: {
                   'messaging.message_id' => msg['jid'],
-                  'messaging.destination' => msg['queue']
+                  'messaging.destination' => msg['queue'],
+                  'messaging.destination_type' => 'queue',
                 },
                 with_parent: parent_context,
                 kind: :consumer

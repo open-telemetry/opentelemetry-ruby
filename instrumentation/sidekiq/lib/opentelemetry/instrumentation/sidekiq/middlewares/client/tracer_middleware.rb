@@ -17,7 +17,8 @@ module OpenTelemetry
                 job['wrapped']&.to_s || job['class'],
                 attributes: {
                   'messaging.message_id' => job['jid'],
-                  'messaging.destination' => job['queue']
+                  'messaging.destination' => job['queue'],
+                  'messaging.destination_type' => 'queue',
                 },
                 kind: :producer
               ) do |span|
