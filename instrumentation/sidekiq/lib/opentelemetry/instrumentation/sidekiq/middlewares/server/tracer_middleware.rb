@@ -17,6 +17,7 @@ module OpenTelemetry
               tracer.in_span(
                 msg['wrapped']&.to_s || msg['class'],
                 attributes: {
+                  'messaging.system' => 'sidekiq',
                   'messaging.message_id' => msg['jid'],
                   'messaging.destination' => msg['queue'],
                   'messaging.destination_type' => 'queue',
