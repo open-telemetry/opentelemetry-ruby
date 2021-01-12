@@ -25,8 +25,15 @@ module OpenTelemetry
       #   span to the block.
       def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, with_parent: nil)
         span = nil
-        span = start_span(name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind, with_parent: with_parent)
-        Trace.with_span(span) { |s, c| yield s, c }
+        if with_parent.nil?
+          span = start_span(name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind, with_parent: with_parent)
+          Trace.with_span(span) { |s, c| yield s, c }
+        else
+          OpenTelemetry::Context.with_current(with_parent) do
+            span = start_span(name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind)
+            Trace.with_span(span) { |s, c| yield s, c }
+          end
+        end
       rescue Exception => e # rubocop:disable Lint/RescueException
         span&.record_exception(e)
         span&.status = Status.new(Status::ERROR,
