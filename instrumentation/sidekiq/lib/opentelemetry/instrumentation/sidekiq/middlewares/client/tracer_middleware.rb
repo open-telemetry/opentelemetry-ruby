@@ -14,7 +14,7 @@ module OpenTelemetry
           class TracerMiddleware
             def call(_worker_class, job, _queue, _redis_pool)
               tracer.in_span(
-                job['wrapped']&.to_s || job['class'],
+                "#{job['queue']} send",
                 attributes: {
                   'messaging.system' => 'sidekiq',
                   'messaging.message_id' => job['jid'],
