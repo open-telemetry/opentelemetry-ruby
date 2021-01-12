@@ -38,8 +38,10 @@ module OpenTelemetry
               attributes['messaging.kafka.message_key'] = message.key if message.key
 
               parent_context = OpenTelemetry.propagation.text.extract(message.headers)
-              tracer.in_span("#{topic} process", with_parent: parent_context, attributes: attributes, kind: :consumer) do
-                yield message
+              OpenTelemetry::Context.with_current(parent_context) do
+                tracer.in_span("#{topic} process", attributes: attributes, kind: :consumer) do
+                  yield message
+                end
               end
             end
           end
