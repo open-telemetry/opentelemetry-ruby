@@ -15,7 +15,7 @@ module OpenTelemetry
             def call(_worker, msg, _queue)
               parent_context = OpenTelemetry.propagation.text.extract(msg)
               tracer.in_span(
-                "#{job['queue']} process",
+                "#{msg['queue']} process",
                 attributes: {
                   'messaging.system' => 'sidekiq',
                   'messaging.message_id' => msg['jid'],
