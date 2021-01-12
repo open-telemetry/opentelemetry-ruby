@@ -48,6 +48,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Instrumentation do
       _(root_span.kind).must_equal :producer
       _(root_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
       _(root_span.attributes['messaging.system']).must_equal 'sidekiq'
+      _(root_span.attributes['messaging.sidekiq.job_class']).must_equal 'SimpleJob'
       _(root_span.attributes['messaging.message_id']).must_equal job_id
       _(root_span.attributes['messaging.destination']).must_equal 'default'
       _(root_span.attributes['messaging.destination_type']).must_equal 'queue'
@@ -59,6 +60,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Instrumentation do
       _(child_span.kind).must_equal :consumer
       _(child_span.parent_span_id).must_equal root_span.span_id
       _(child_span.attributes['messaging.system']).must_equal 'sidekiq'
+      _(child_span.attributes['messaging.sidekiq.job_class']).must_equal 'SimpleJob'
       _(child_span.attributes['messaging.message_id']).must_equal job_id
       _(child_span.attributes['messaging.destination']).must_equal 'default'
       _(child_span.attributes['messaging.destination_type']).must_equal 'queue'

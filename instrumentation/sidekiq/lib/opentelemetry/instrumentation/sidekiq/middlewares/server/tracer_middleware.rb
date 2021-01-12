@@ -18,6 +18,7 @@ module OpenTelemetry
                 "#{msg['queue']} process",
                 attributes: {
                   'messaging.system' => 'sidekiq',
+                  'messaging.sidekiq.job_class' => msg['wrapped']&.to_s || msg['class'],
                   'messaging.message_id' => msg['jid'],
                   'messaging.destination' => msg['queue'],
                   'messaging.destination_type' => 'queue',
