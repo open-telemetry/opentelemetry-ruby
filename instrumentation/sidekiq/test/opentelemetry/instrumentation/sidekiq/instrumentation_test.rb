@@ -55,7 +55,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Instrumentation do
       _(root_span.events[0].name).must_equal('created_at')
 
       child_span = exporter.finished_spans.last
-      _(child_span.name).must_equal 'default receive'
+      _(child_span.name).must_equal 'default process'
       _(child_span.kind).must_equal :consumer
       _(child_span.parent_span_id).must_equal root_span.span_id
       _(child_span.attributes['messaging.system']).must_equal 'sidekiq'
@@ -80,7 +80,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Instrumentation do
       _(root_span.kind).must_equal :producer
 
       child_span1 = spans.find { |s| s.parent_span_id == root_span.span_id }
-      _(child_span1.name).must_equal 'default receive'
+      _(child_span1.name).must_equal 'default process'
       _(child_span1.kind).must_equal :consumer
 
       child_span2 = spans.find { |s| s.parent_span_id == child_span1.span_id }
@@ -88,7 +88,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Instrumentation do
       _(child_span2.kind).must_equal :producer
 
       child_span3 = spans.find { |s| s.parent_span_id == child_span2.span_id }
-      _(child_span3.name).must_equal 'default receive'
+      _(child_span3.name).must_equal 'default process'
       _(child_span3.kind).must_equal :consumer
     end
   end
