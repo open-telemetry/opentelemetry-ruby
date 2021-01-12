@@ -21,7 +21,7 @@ module OpenTelemetry
                   'messaging.sidekiq.job_class' => msg['wrapped']&.to_s || msg['class'],
                   'messaging.message_id' => msg['jid'],
                   'messaging.destination' => msg['queue'],
-                  'messaging.destination_type' => 'queue',
+                  'messaging.destination_type' => 'queue'
                 },
                 with_parent: parent_context,
                 kind: :consumer
