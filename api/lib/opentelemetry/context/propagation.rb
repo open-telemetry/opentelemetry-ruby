@@ -11,6 +11,7 @@ require 'opentelemetry/context/propagation/propagator'
 require 'opentelemetry/context/propagation/text_map_getter'
 require 'opentelemetry/context/propagation/text_map_setter'
 require 'opentelemetry/context/propagation/rack_env_getter'
+require 'opentelemetry/context/propagation/rack_env_setter'
 
 module OpenTelemetry
   class Context
@@ -22,6 +23,7 @@ module OpenTelemetry
       TEXT_MAP_GETTER = TextMapGetter.new
       TEXT_MAP_SETTER = TextMapSetter.new
       RACK_ENV_GETTER = RackEnvGetter.new
+      RACK_ENV_SETTER = RackEnvSetter.new
 
       private_constant :TEXT_MAP_GETTER, :TEXT_MAP_SETTER, :RACK_ENV_GETTER
 
@@ -41,6 +43,12 @@ module OpenTelemetry
       # Rack environment.
       def rack_env_getter
         RACK_ENV_GETTER
+      end
+
+      # Returns a {RackEnvSetter} instance suitable for writing values into a
+      # Rack environment.
+      def rack_env_setter
+        RACK_ENV_SETTER
       end
     end
   end
