@@ -26,15 +26,17 @@ describe OpenTelemetry::Instrumentation::Mongo do
       hide_const('Mongo')
       _(instrumentation.present?).must_equal false
     end
+  end
 
+  describe 'compatible' do
     it 'when older gem version installed' do
       allow_any_instance_of(Bundler::StubSpecification).to receive(:version).and_return(Gem::Version.new('2.4.3'))
-      _(instrumentation.present?).must_equal false
+      _(instrumentation.compatible?).must_equal false
     end
 
     it 'when future gem version installed' do
       allow_any_instance_of(Bundler::StubSpecification).to receive(:version).and_return(Gem::Version.new('3.0.0'))
-      _(instrumentation.present?).must_equal true
+      _(instrumentation.compatible?).must_equal true
     end
   end
 
