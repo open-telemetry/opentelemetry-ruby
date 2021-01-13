@@ -101,13 +101,14 @@ module OpenTelemetry
           end
 
           def request_span_attributes(env:)
-            {
+            attributes = {
               'http.method' => env['REQUEST_METHOD'],
               'http.host' => env['HTTP_HOST'] || 'unknown',
               'http.scheme' => env['rack.url_scheme'],
               'http.target' => fullpath(env),
-              'http.user_agent' => env['HTTP_USER_AGENT']
-            }.merge(allowed_request_headers(env))
+            }
+            attributes['http.user_agent'] = env['HTTP_USER_AGENT'] if env['HTTP_USER_AGENT']
+            attributes.merge(allowed_request_headers(env))
           end
 
           # e.g., "/webshop/articles/4?s=1":
