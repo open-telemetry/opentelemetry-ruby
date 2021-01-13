@@ -105,7 +105,7 @@ module OpenTelemetry
               'http.method' => env['REQUEST_METHOD'],
               'http.host' => env['HTTP_HOST'] || 'unknown',
               'http.scheme' => env['rack.url_scheme'],
-              'http.target' => fullpath(env),
+              'http.target' => fullpath(env)
             }
             attributes['http.user_agent'] = env['HTTP_USER_AGENT'] if env['HTTP_USER_AGENT']
             attributes.merge(allowed_request_headers(env))
