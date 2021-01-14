@@ -100,8 +100,8 @@ module OpenTelemetry
           command_args: 'process.command_args',
 
           # The username of the user that owns the process.
-          owner: 'process.owner',
-        }
+          owner: 'process.owner'
+        }.freeze
 
         # Attributes defining the single (language) runtime instance which is monitored.
         PROCESS_RUNTIME_RESOURCE = {
@@ -114,8 +114,8 @@ module OpenTelemetry
 
           # An additional description about the runtime of the process, for example
           # a specific vendor customization of the runtime environment.
-          description: 'process.runtime.description',
-        }
+          description: 'process.runtime.description'
+        }.freeze
 
         # Attributes defining a computing instance (e.g. host).
         HOST_RESOURCE = {
