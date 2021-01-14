@@ -1,5 +1,9 @@
 # Release History: opentelemetry-api
 
+### v0.12.1 / 2021-01-13
+
+* FIXED: Eliminate warning about Random::DEFAULT on Ruby 3.0 
+
 ### v0.12.0 / 2020-12-24
 
 * ADDED: Structured error handling 

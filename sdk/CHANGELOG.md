@@ -1,5 +1,10 @@
 # Release History: opentelemetry-sdk
 
+### v0.12.1 / 2021-01-13
+
+* FIXED: Fix several BatchSpanProcessor errors related to fork safety 
+* FIXED: Define default value for traceid ratio 
+
 ### v0.12.0 / 2020-12-24
 
 * ADDED: Structured error handling 
