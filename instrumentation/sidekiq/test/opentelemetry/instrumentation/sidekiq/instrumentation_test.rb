@@ -26,12 +26,13 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Instrumentation do
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
   let(:root_span) { spans.find { |s| s.parent_span_id == OpenTelemetry::Trace::INVALID_SPAN_ID } }
+  let(:config) { {} }
 
   before { exporter.reset }
 
   describe 'tracing' do
     before do
-      instrumentation.install
+      instrumentation.install(config)
     end
 
     it 'before performing any jobs' do
@@ -69,6 +70,41 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Instrumentation do
       _(child_span.events[1].name).must_equal('enqueued_at')
 
       _(child_span.trace_id).must_equal root_span.trace_id
+    end
+
+    describe 'uses job class for span names' do
+      let(:config) { { :enable_job_class_span_names => true } }
+
+      it 'after performing a simple job' do
+        job_id = SimpleJob.perform_async
+        SimpleJob.drain
+
+        _(root_span.name).must_equal 'SimpleJob'
+        _(root_span.kind).must_equal :producer
+        _(root_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
+        _(root_span.attributes['messaging.system']).must_equal 'sidekiq'
+        _(root_span.attributes['messaging.sidekiq.job_class']).must_equal 'SimpleJob'
+        _(root_span.attributes['messaging.message_id']).must_equal job_id
+        _(root_span.attributes['messaging.destination']).must_equal 'default'
+        _(root_span.attributes['messaging.destination_type']).must_equal 'queue'
+        _(root_span.events.size).must_equal(1)
+        _(root_span.events[0].name).must_equal('created_at')
+
+        child_span = exporter.finished_spans.last
+        _(child_span.name).must_equal 'SimpleJob'
+        _(child_span.kind).must_equal :consumer
+        _(child_span.parent_span_id).must_equal root_span.span_id
+        _(child_span.attributes['messaging.system']).must_equal 'sidekiq'
+        _(child_span.attributes['messaging.sidekiq.job_class']).must_equal 'SimpleJob'
+        _(child_span.attributes['messaging.message_id']).must_equal job_id
+        _(child_span.attributes['messaging.destination']).must_equal 'default'
+        _(child_span.attributes['messaging.destination_type']).must_equal 'queue'
+        _(child_span.events.size).must_equal(2)
+        _(child_span.events[0].name).must_equal('created_at')
+        _(child_span.events[1].name).must_equal('enqueued_at')
+
+        _(child_span.trace_id).must_equal root_span.trace_id
+      end
     end
 
     it 'after performing a simple job enqueuer' do

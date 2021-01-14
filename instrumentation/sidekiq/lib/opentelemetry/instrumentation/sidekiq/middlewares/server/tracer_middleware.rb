@@ -15,7 +15,7 @@ module OpenTelemetry
             def call(_worker, msg, _queue)
               parent_context = OpenTelemetry.propagation.text.extract(msg)
               tracer.in_span(
-                "#{msg['queue']} process",
+                span_name(msg),
                 attributes: {
                   'messaging.system' => 'sidekiq',
                   'messaging.sidekiq.job_class' => msg['wrapped']&.to_s || msg['class'],
@@ -33,6 +33,18 @@ module OpenTelemetry
             end
 
             private
+
+            def span_name(msg)
+              if config[:enable_job_class_span_names]
+                msg['wrapped']&.to_s || msg['class']
+              else
+                "#{msg['queue']} process"
+              end
+            end
+
+            def config
+              Sidekiq::Instrumentation.instance.config
+            end
 
             def tracer
               Sidekiq::Instrumentation.instance.tracer
