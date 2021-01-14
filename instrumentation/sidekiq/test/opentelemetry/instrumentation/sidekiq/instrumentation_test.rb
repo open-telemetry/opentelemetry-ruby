@@ -35,6 +35,11 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Instrumentation do
       instrumentation.install(config)
     end
 
+    after do
+      # Need to reset install state to uptake config
+      instrumentation.instance_variable_set(:@installed, false)
+    end
+
     it 'before performing any jobs' do
       _(exporter.finished_spans.size).must_equal 0
     end
@@ -72,8 +77,31 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Instrumentation do
       _(child_span.trace_id).must_equal root_span.trace_id
     end
 
+    it 'after performing a simple job enqueuer' do
+      SimpleEnqueueingJob.perform_async
+      Sidekiq::Worker.drain_all
+
+      _(exporter.finished_spans.size).must_equal 4
+
+      _(root_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
+      _(root_span.name).must_equal 'default send'
+      _(root_span.kind).must_equal :producer
+
+      child_span1 = spans.find { |s| s.parent_span_id == root_span.span_id }
+      _(child_span1.name).must_equal 'default process'
+      _(child_span1.kind).must_equal :consumer
+
+      child_span2 = spans.find { |s| s.parent_span_id == child_span1.span_id }
+      _(child_span2.name).must_equal 'default send'
+      _(child_span2.kind).must_equal :producer
+
+      child_span3 = spans.find { |s| s.parent_span_id == child_span2.span_id }
+      _(child_span3.name).must_equal 'default process'
+      _(child_span3.kind).must_equal :consumer
+    end
+
     describe 'uses job class for span names' do
-      let(:config) { { :enable_job_class_span_names => true } }
+      let(:config) { { enable_job_class_span_names: true } }
 
       it 'after performing a simple job' do
         job_id = SimpleJob.perform_async
@@ -105,29 +133,6 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Instrumentation do
 
         _(child_span.trace_id).must_equal root_span.trace_id
       end
-    end
-
-    it 'after performing a simple job enqueuer' do
-      SimpleEnqueueingJob.perform_async
-      Sidekiq::Worker.drain_all
-
-      _(exporter.finished_spans.size).must_equal 4
-
-      _(root_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
-      _(root_span.name).must_equal 'default send'
-      _(root_span.kind).must_equal :producer
-
-      child_span1 = spans.find { |s| s.parent_span_id == root_span.span_id }
-      _(child_span1.name).must_equal 'default process'
-      _(child_span1.kind).must_equal :consumer
-
-      child_span2 = spans.find { |s| s.parent_span_id == child_span1.span_id }
-      _(child_span2.name).must_equal 'default send'
-      _(child_span2.kind).must_equal :producer
-
-      child_span3 = spans.find { |s| s.parent_span_id == child_span2.span_id }
-      _(child_span3.name).must_equal 'default process'
-      _(child_span3.kind).must_equal :consumer
     end
   end
 end
