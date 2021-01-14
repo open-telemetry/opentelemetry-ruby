@@ -77,6 +77,46 @@ module OpenTelemetry
           deployment_name: 'k8s.deployment.name'
         }.freeze
 
+        # Attributes defining an operating system process.
+        PROCESS_RESOURCE = {
+          # Process identifier (PID).
+          pid: 'process.pid',
+
+          # The name of the process executable.
+          executable_name: 'process.executable.name',
+
+          # The full path to the process executable.
+          executable_path: 'process.executable.path',
+
+          # The command used to launch the process (i.e. the command name).
+          command: 'process.command',
+
+          # The full command used to launch the process as a single string
+          # representing the full command.
+          command_line: 'process.command_line',
+
+          # All the command arguments (including the command/executable itself)
+          # as received by the process.
+          command_args: 'process.command_args',
+
+          # The username of the user that owns the process.
+          owner: 'process.owner',
+        }
+
+        # Attributes defining the single (language) runtime instance which is monitored.
+        PROCESS_RUNTIME_RESOURCE = {
+          # The name of the runtime of this process.
+          name: 'process.runtime.name',
+
+          # The version of the runtime of this process, as returned by the runtime
+          # without modification.
+          version: 'process.runtime.version',
+
+          # An additional description about the runtime of the process, for example
+          # a specific vendor customization of the runtime environment.
+          description: 'process.runtime.description',
+        }
+
         # Attributes defining a computing instance (e.g. host).
         HOST_RESOURCE = {
           # Unique host id. For Cloud this must be the instance_id assigned by the
