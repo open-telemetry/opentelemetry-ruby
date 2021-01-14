@@ -91,6 +91,14 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(http.address).must_equal 'localhost'
       _(http.port).must_equal 4321
     end
+
+    it 'uses the port 443 for secure connections by default' do
+      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'localhost/v1/trace', insecure: 'false')
+      http = exp.instance_variable_get(:@http)
+      _(http.use_ssl?).must_equal true
+      _(http.address).must_equal 'localhost'
+      _(http.port).must_equal 443
+    end
   end
 
   describe '#export' do

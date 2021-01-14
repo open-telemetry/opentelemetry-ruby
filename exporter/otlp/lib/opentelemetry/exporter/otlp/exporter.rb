@@ -42,9 +42,11 @@ module OpenTelemetry
           raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || compression == 'gzip'
           raise ArgumentError, 'headers must be comma-separated k:v pairs or a Hash' unless valid_headers?(headers)
 
-          uri = URI "http://#{endpoint}"
+          use_ssl = insecure.to_s.downcase == 'false'
+          scheme = use_ssl ? 'https://' : 'http://'
+          uri = URI("#{scheme}#{endpoint}")
           @http = Net::HTTP.new(uri.host, uri.port)
-          @http.use_ssl = insecure.to_s.downcase == 'false'
+          @http.use_ssl = use_ssl
           @http.ca_file = certificate_file unless certificate_file.nil?
           @http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
 
