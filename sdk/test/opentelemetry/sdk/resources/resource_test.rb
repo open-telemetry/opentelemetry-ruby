@@ -69,6 +69,23 @@ describe OpenTelemetry::SDK::Resources::Resource do
     end
   end
 
+  describe '.process' do
+    let(:expected_resource_attributes) do
+      {
+        'process.pid' => Process.pid,
+        'process.command' => Process.argv0,
+        'process.runtime.name' => RUBY_ENGINE,
+        'process.runtime.version' => RUBY_VERSION,
+        'process.runtime.description' => RUBY_DESCRIPTION
+      }
+    end
+
+    it 'returns a resource for the process and runtime' do
+      resource_attributes = Resource.process.attribute_enumerator.to_h
+      _(resource_attributes).must_equal(expected_resource_attributes)
+    end
+  end
+
   describe '#merge' do
     it 'merges two resources into a third' do
       res1 = Resource.create('k1' => 'v1', 'k2' => 'v2')
