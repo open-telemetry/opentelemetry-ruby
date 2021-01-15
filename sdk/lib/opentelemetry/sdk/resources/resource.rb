@@ -52,7 +52,7 @@ module OpenTelemetry
           def process
             resource_attributes = {
               Constants::PROCESS_RESOURCE[:pid] => Process.pid,
-              Constants::PROCESS_RESOURCE[:command] => $0,
+              Constants::PROCESS_RESOURCE[:command] => $PROGRAM_NAME,
               Constants::PROCESS_RUNTIME_RESOURCE[:name] => RUBY_ENGINE,
               Constants::PROCESS_RUNTIME_RESOURCE[:version] => RUBY_VERSION,
               Constants::PROCESS_RUNTIME_RESOURCE[:description] => RUBY_DESCRIPTION
