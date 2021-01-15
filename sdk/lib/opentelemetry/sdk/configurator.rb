@@ -46,7 +46,7 @@ module OpenTelemetry
       #
       # @param [Resource] new_resource The resource to be merged
       def resource=(new_resource)
-        @resource = new_resource.merge(@resource)
+        @resource = @resource.merge(new_resource)
       end
 
       # Accepts a string that is merged in as the service.name resource attribute.
@@ -54,9 +54,9 @@ module OpenTelemetry
       # calls to this setter.
       # @param [String] service_name The value to be used as the service name
       def service_name=(service_name)
-        @resource = OpenTelemetry::SDK::Resources::Resource.create(
+        self.resource = OpenTelemetry::SDK::Resources::Resource.create(
           OpenTelemetry::SDK::Resources::Constants::SERVICE_RESOURCE[:name] => service_name
-        ).merge(@resource)
+        )
       end
 
       # Accepts a string that is merged in as the service.version resource attribute.
@@ -64,9 +64,9 @@ module OpenTelemetry
       # calls to this setter.
       # @param [String] service_version The value to be used as the service version
       def service_version=(service_version)
-        @resource = OpenTelemetry::SDK::Resources::Resource.create(
+        self.resource = OpenTelemetry::SDK::Resources::Resource.create(
           OpenTelemetry::SDK::Resources::Constants::SERVICE_RESOURCE[:version] => service_version
-        ).merge(@resource)
+        )
       end
 
       # Install an instrumentation with specificied optional +config+.
