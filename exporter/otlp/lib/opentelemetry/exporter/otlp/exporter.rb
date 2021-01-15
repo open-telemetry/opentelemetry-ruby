@@ -31,29 +31,28 @@ module OpenTelemetry
         WRITE_TIMEOUT_SUPPORTED = Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.6')
         private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT, :WRITE_TIMEOUT_SUPPORTED)
 
-        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_SPAN_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'localhost:55681/v1/trace'), # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-                       insecure: config_opt('OTEL_EXPORTER_OTLP_SPAN_INSECURE', 'OTEL_EXPORTER_OTLP_INSECURE', default: false),
+        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_SPAN_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'https://localhost:4317'), # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
                        certificate_file: config_opt('OTEL_EXPORTER_OTLP_SPAN_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
-                       headers: config_opt('OTEL_EXPORTER_OTLP_SPAN_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS'), # TODO: what format is expected here?
+                       headers: config_opt('OTEL_EXPORTER_OTLP_SPAN_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS'),
                        compression: config_opt('OTEL_EXPORTER_OTLP_SPAN_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION'),
                        timeout: config_opt('OTEL_EXPORTER_OTLP_SPAN_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
                        metrics_reporter: nil)
-          raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}" if invalid_url?("http://#{endpoint}")
+          raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}" if invalid_url?(endpoint)
           raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || compression == 'gzip'
-          raise ArgumentError, 'headers must be comma-separated k:v pairs or a Hash' unless valid_headers?(headers)
+          raise ArgumentError, 'headers must be comma-separated k=v pairs or a Hash' unless valid_headers?(headers)
 
-          uri = URI "http://#{endpoint}"
+          uri = URI("#{endpoint}/v1/trace")
           @http = Net::HTTP.new(uri.host, uri.port)
-          @http.use_ssl = insecure.to_s.downcase == 'false'
+          @http.use_ssl = uri.scheme == 'https'
           @http.ca_file = certificate_file unless certificate_file.nil?
           @http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
 
           @path = uri.path
           @headers = case headers
-                     when String then CSV.parse(headers, col_sep: ':', row_sep: ',').to_h
+                     when String then CSV.parse(headers, col_sep: '=', row_sep: ',').to_h
                      when Hash then headers
                      end
-          @timeout = timeout.to_f # TODO: use this as a default timeout when we implement timeouts in https://github.com/open-telemetry/opentelemetry-ruby/pull/341
+          @timeout = timeout.to_f
           @compression = compression
           @metrics_reporter = metrics_reporter || OpenTelemetry::SDK::Trace::Export::MetricsReporter
 
@@ -97,7 +96,7 @@ module OpenTelemetry
           return true if headers.nil? || headers.is_a?(Hash)
           return false unless headers.is_a?(String)
 
-          CSV.parse(headers, col_sep: ':', row_sep: ',').to_h
+          CSV.parse(headers, col_sep: '=', row_sep: ',').to_h
           true
         rescue ArgumentError
           false
@@ -106,8 +105,8 @@ module OpenTelemetry
         def invalid_url?(url)
           return true if url.nil? || url.strip.empty?
 
-          uri = URI(url)
-          uri.path.nil? || uri.path.empty?
+          URI(url)
+          false
         rescue URI::InvalidURIError
           true
         end
