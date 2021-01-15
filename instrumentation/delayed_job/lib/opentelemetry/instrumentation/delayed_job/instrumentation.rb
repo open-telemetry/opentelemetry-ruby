@@ -17,7 +17,11 @@ module OpenTelemetry
         end
 
         present do
-          !defined?(::Delayed).nil? && gem_version >= MINIMUM_VERSION
+          !defined?(::Delayed).nil?
+        end
+
+        compatible do
+          gem_version >= MINIMUM_VERSION
         end
 
         private
