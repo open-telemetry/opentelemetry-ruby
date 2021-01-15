@@ -73,7 +73,7 @@ describe OpenTelemetry::SDK::Resources::Resource do
     let(:expected_resource_attributes) do
       {
         'process.pid' => Process.pid,
-        'process.command' => Process.argv0,
+        'process.command' => $0,
         'process.runtime.name' => RUBY_ENGINE,
         'process.runtime.version' => RUBY_VERSION,
         'process.runtime.description' => RUBY_DESCRIPTION

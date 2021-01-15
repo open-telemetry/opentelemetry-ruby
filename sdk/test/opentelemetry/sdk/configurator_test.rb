@@ -14,7 +14,7 @@ describe OpenTelemetry::SDK::Configurator do
       'telemetry.sdk.language' => 'ruby',
       'telemetry.sdk.version' => OpenTelemetry::SDK::VERSION,
       'process.pid' => Process.pid,
-      'process.command' => Process.argv0,
+      'process.command' => $0,
       'process.runtime.name' => RUBY_ENGINE,
       'process.runtime.version' => RUBY_VERSION,
       'process.runtime.description' => RUBY_DESCRIPTION
