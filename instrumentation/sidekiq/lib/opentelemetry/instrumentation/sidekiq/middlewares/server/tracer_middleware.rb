@@ -21,7 +21,7 @@ module OpenTelemetry
                   'messaging.sidekiq.job_class' => msg['wrapped']&.to_s || msg['class'],
                   'messaging.message_id' => msg['jid'],
                   'messaging.destination' => msg['queue'],
-                  'messaging.destination_type' => 'queue'
+                  'messaging.destination_kind' => 'queue'
                 },
                 with_parent: parent_context,
                 kind: :consumer
@@ -36,7 +36,7 @@ module OpenTelemetry
 
             def span_name(msg)
               if config[:enable_job_class_span_names]
-                msg['wrapped']&.to_s || msg['class']
+                "#{msg['wrapped']&.to_s || msg['class']} process"
               else
                 "#{msg['queue']} process"
               end
