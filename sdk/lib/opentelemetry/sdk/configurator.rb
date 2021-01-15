@@ -27,7 +27,7 @@ module OpenTelemetry
         @text_map_injectors = nil
         @span_processors = []
         @use_mode = USE_MODE_UNSPECIFIED
-        @resource = Resources::Resource.telemetry_sdk
+        @resource = Resources::Resource.telemetry_sdk.merge(Resources::Resource.process)
         @id_generator = OpenTelemetry::Trace
       end
 
