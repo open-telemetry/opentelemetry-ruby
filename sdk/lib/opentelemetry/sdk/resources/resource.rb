@@ -79,11 +79,7 @@ module OpenTelemetry
         def merge(other)
           return self unless other.is_a?(Resource)
 
-          merged_attributes = attributes.merge(other.attributes) do |_, old_v, new_v|
-            old_v.empty? ? new_v : old_v
-          end
-
-          self.class.send(:new, merged_attributes.freeze)
+          self.class.send(:new, attributes.merge(other.attributes).freeze)
         end
 
         protected
