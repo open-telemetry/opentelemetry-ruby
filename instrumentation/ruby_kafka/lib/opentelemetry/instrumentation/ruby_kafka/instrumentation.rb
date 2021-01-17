@@ -18,7 +18,7 @@ module OpenTelemetry
         end
 
         present do
-          defined?(::Kafka)
+          !defined?(::Kafka).nil?
         end
 
         compatible do
