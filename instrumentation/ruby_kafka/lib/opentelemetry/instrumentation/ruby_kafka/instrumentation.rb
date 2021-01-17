@@ -18,7 +18,11 @@ module OpenTelemetry
         end
 
         present do
-          defined?(::Kafka) && gem_version >= MINIMUM_VERSION
+          defined?(::Kafka)
+        end
+
+        compatible do
+          gem_version >= MINIMUM_VERSION
         end
 
         private
