@@ -17,7 +17,11 @@ module OpenTelemetry
         end
 
         present do
-          !defined?(::Mongo::Monitoring::Global).nil? && gem_version >= MINIMUM_VERSION
+          !defined?(::Mongo::Monitoring::Global).nil?
+        end
+
+        compatible do
+          gem_version >= MINIMUM_VERSION
         end
 
         private
