@@ -17,9 +17,11 @@ module OpenTelemetry
         end
 
         present do
-          !defined?(::ActiveSupport::Notifications).nil? &&
-            !defined?(::ActiveModelSerializers).nil? &&
-            gem_version >= MINIMUM_VERSION
+          !defined?(::ActiveModelSerializers).nil?
+        end
+
+        compatible do
+          !defined?(::ActiveSupport::Notifications).nil? && gem_version >= MINIMUM_VERSION
         end
 
         private
