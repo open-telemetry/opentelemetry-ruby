@@ -281,7 +281,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
     it 'has operation-specific properties' do
       _(span.name).must_equal 'dropDatabase'
       _(span.attributes['db.operation']).must_equal 'dropDatabase'
-      assert_nil(span.attributes['db.mongodb.collection'])
+      refute(span.attributes.key?('db.mongodb.collection'))
       refute(span.attributes.key?('db.statement'))
     end
   end
