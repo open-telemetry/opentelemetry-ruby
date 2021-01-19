@@ -10,16 +10,26 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the
       # KafkaRuby instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
+        MINIMUM_VERSION = Gem::Version.new('0.7.0')
+
         install do |_config|
           require_patches
           patch
         end
 
         present do
-          defined?(::Kafka)
+          !defined?(::Kafka).nil?
+        end
+
+        compatible do
+          gem_version >= MINIMUM_VERSION
         end
 
         private
+
+        def gem_version
+          Gem.loaded_specs['ruby-kafka'].version
+        end
 
         def require_patches
           require_relative 'patches/producer'

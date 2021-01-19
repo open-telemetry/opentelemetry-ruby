@@ -61,7 +61,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
         _(span.name).must_equal 'artists.insert'
         _(span.attributes['db.operation']).must_equal 'insert'
         _(span.attributes['db.mongodb.collection']).must_equal 'artists'
-        assert_nil(span.attributes['db.statement'])
+        refute(span.attributes.key?('db.statement'))
       end
     end
 
@@ -75,7 +75,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
         _(span.name).must_equal 'people.insert'
         _(span.attributes['db.operation']).must_equal 'insert'
         _(span.attributes['db.mongodb.collection']).must_equal 'people'
-        assert_nil(span.attributes['db.statement'])
+        refute(span.attributes.key?('db.statement'))
       end
     end
   end
@@ -99,7 +99,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
         _(span.name).must_equal 'people.insert'
         _(span.attributes['db.operation']).must_equal 'insert'
         _(span.attributes['db.mongodb.collection']).must_equal 'people'
-        assert_nil(span.attributes['db.statement'])
+        refute(span.attributes.key?('db.statement'))
       end
     end
   end
@@ -124,7 +124,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
       _(span.name).must_equal 'people.find'
       _(span.attributes['db.operation']).must_equal 'find'
       _(span.attributes['db.mongodb.collection']).must_equal 'people'
-      assert_nil(span.attributes['db.statement'])
+      refute(span.attributes.key?('db.statement'))
     end
   end
 
@@ -281,8 +281,8 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
     it 'has operation-specific properties' do
       _(span.name).must_equal 'dropDatabase'
       _(span.attributes['db.operation']).must_equal 'dropDatabase'
-      assert_nil(span.attributes['db.mongodb.collection'])
-      assert_nil(span.attributes['db.statement'])
+      refute(span.attributes.key?('db.mongodb.collection'))
+      refute(span.attributes.key?('db.statement'))
     end
   end
 
@@ -295,7 +295,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
       _(span.name).must_equal 'artists.drop'
       _(span.attributes['db.operation']).must_equal 'drop'
       _(span.attributes['db.mongodb.collection']).must_equal 'artists'
-      assert_nil(span.attributes['db.statement'])
+      refute(span.attributes.key?('db.statement'))
       _(span.events.size).must_equal 1
       _(span.events[0].name).must_equal 'exception'
       _(span.events[0].timestamp).must_be_kind_of Time
