@@ -76,7 +76,7 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Plugins::TracerPlugin do
       _(span.attributes['messaging.delayed_job.name']).must_equal 'BasicPayload'
       _(span.attributes['messaging.delayed_job.priority']).must_equal 0
       _(span.attributes['messaging.operation']).must_equal 'send'
-      _(span.attributes['messaging.message_id']).must_be_kind_of Integer
+      _(span.attributes['messaging.message_id']).must_be_kind_of String
 
       _(span.events.size).must_equal 2
       _(span.events[0].name).must_equal 'created_at'
@@ -140,7 +140,7 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Plugins::TracerPlugin do
       _(span.attributes['messaging.delayed_job.attempts']).must_equal 0
       _(span.attributes['messaging.delayed_job.locked_by']).must_be_kind_of String
       _(span.attributes['messaging.operation']).must_equal 'process'
-      _(span.attributes['messaging.message_id']).must_be_kind_of Integer
+      _(span.attributes['messaging.message_id']).must_be_kind_of String
 
       _(span.events.size).must_equal 3
       _(span.events[0].name).must_equal 'created_at'
