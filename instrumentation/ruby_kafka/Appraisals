@@ -21,4 +21,8 @@ if RUBY_VERSION < '3'
   appraise 'ruby-kafka-1.0.0' do
     gem 'ruby-kafka', '~> 1.0.0'
   end
+
+  appraise 'ruby-kafka-0.7.0' do
+    gem 'ruby-kafka', '~> 0.7.0'
+  end
 end
