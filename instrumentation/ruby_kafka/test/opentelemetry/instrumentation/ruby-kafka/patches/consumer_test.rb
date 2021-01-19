@@ -70,7 +70,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
 
       linked_send_span = spans.find { |s| s.span_id == linked_span_context.span_id }
       _(linked_send_span.name).must_equal("#{topic} send")
-      _(linked_send_span.trace_id).wont_equal(first_process_span.trace_id)
+      _(linked_send_span.trace_id).must_equal(first_process_span.trace_id)
       _(linked_send_span.trace_id).must_equal(linked_span_context.trace_id)
 
       # Second pair of send and process spans
@@ -83,7 +83,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
 
       linked_send_span = spans.find { |s| s.span_id == linked_span_context.span_id }
       _(linked_send_span.name).must_equal("#{topic} send")
-      _(linked_send_span.trace_id).wont_equal(second_process_span.trace_id)
+      _(linked_send_span.trace_id).must_equal(second_process_span.trace_id)
       _(linked_send_span.trace_id).must_equal(linked_span_context.trace_id)
 
       event = second_process_span.events.first

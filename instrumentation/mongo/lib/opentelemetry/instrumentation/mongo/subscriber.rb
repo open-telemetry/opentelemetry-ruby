@@ -71,7 +71,7 @@ module OpenTelemetry
             'db.statement' => CommandSerializer.new(event.command).serialize,
             'net.peer.name' => event.address.host,
             'net.peer.port' => event.address.port
-          }
+          }.compact
         end
 
         def get_collection(command)

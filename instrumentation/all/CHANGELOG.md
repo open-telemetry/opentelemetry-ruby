@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.12.1 / 2021-01-13
+
+* ADDED: Instrument RubyKafka
+
 ### v0.12.0 / 2020-12-24
 
 * ADDED: Instrument graphql 

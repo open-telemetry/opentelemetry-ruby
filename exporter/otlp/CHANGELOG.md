@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.12.1 / 2021-01-13
+
+* FIXED: Updated protobuf version dependency
+
 ### v0.12.0 / 2020-12-24
 
 * (No significant changes)

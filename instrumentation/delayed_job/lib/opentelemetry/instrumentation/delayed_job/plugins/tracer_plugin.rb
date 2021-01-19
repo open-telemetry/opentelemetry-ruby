@@ -20,7 +20,7 @@ module OpenTelemetry
               attributes['messaging.operation'] = 'send'
               tracer.in_span("#{job_queue(job)} send", attributes: attributes, kind: :producer) do |span|
                 yield job
-                span.set_attribute('messaging.message_id', job.id)
+                span.set_attribute('messaging.message_id', job.id.to_s)
                 add_events(span, job)
               end
             end
@@ -32,7 +32,7 @@ module OpenTelemetry
               attributes['messaging.delayed_job.attempts'] = job.attempts if job.attempts
               attributes['messaging.delayed_job.locked_by'] = job.locked_by if job.locked_by
               attributes['messaging.operation'] = 'process'
-              attributes['messaging.message_id'] = job.id
+              attributes['messaging.message_id'] = job.id.to_s
               tracer.in_span("#{job_queue(job)} process", attributes: attributes, kind: :consumer) do |span|
                 add_events(span, job)
                 yield job

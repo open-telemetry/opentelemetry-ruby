@@ -48,6 +48,18 @@ module OpenTelemetry
             resource_attributes.delete_if { |_key, value| value.nil? || value.empty? }
             create(resource_attributes)
           end
+
+          def process
+            resource_attributes = {
+              Constants::PROCESS_RESOURCE[:pid] => Process.pid,
+              Constants::PROCESS_RESOURCE[:command] => $PROGRAM_NAME,
+              Constants::PROCESS_RUNTIME_RESOURCE[:name] => RUBY_ENGINE,
+              Constants::PROCESS_RUNTIME_RESOURCE[:version] => RUBY_VERSION,
+              Constants::PROCESS_RUNTIME_RESOURCE[:description] => RUBY_DESCRIPTION
+            }
+
+            create(resource_attributes)
+          end
         end
 
         # @api private
@@ -79,11 +91,7 @@ module OpenTelemetry
         def merge(other)
           return self unless other.is_a?(Resource)
 
-          merged_attributes = attributes.merge(other.attributes) do |_, old_v, new_v|
-            old_v.empty? ? new_v : old_v
-          end
-
-          self.class.send(:new, merged_attributes.freeze)
+          self.class.send(:new, attributes.merge(other.attributes).freeze)
         end
 
         protected

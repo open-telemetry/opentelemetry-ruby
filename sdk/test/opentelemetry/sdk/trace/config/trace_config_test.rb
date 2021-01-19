@@ -66,6 +66,9 @@ describe OpenTelemetry::SDK::Trace::Config::TraceConfig do
       sampler = with_env('OTEL_TRACE_SAMPLER' => 'traceidratio', 'OTEL_TRACE_SAMPLER_ARG' => '0.1') { trace_config.new.sampler }
       _(sampler).must_equal samplers.trace_id_ratio_based(0.1)
 
+      sampler = with_env('OTEL_TRACE_SAMPLER' => 'traceidratio') { trace_config.new.sampler }
+      _(sampler).must_equal samplers.trace_id_ratio_based(1.0)
+
       sampler = with_env('OTEL_TRACE_SAMPLER' => 'parentbased_always_on') { trace_config.new.sampler }
       _(sampler).must_equal samplers.parent_based(root: samplers::ALWAYS_ON)
 
@@ -74,16 +77,9 @@ describe OpenTelemetry::SDK::Trace::Config::TraceConfig do
 
       sampler = with_env('OTEL_TRACE_SAMPLER' => 'parentbased_traceidratio', 'OTEL_TRACE_SAMPLER_ARG' => '0.2') { trace_config.new.sampler }
       _(sampler).must_equal samplers.parent_based(root: samplers.trace_id_ratio_based(0.2))
-    end
 
-    it 'requires OTEL_TRACE_SAMPLER_ARG for traceidratio' do
-      sampler = with_env('OTEL_TRACE_SAMPLER' => 'traceidratio') { trace_config.new.sampler }
-      _(sampler).must_equal trace_config::DEFAULT.sampler
-    end
-
-    it 'requires OTEL_TRACE_SAMPLER_ARG for parentbased_traceidratio' do
       sampler = with_env('OTEL_TRACE_SAMPLER' => 'parentbased_traceidratio') { trace_config.new.sampler }
-      _(sampler).must_equal trace_config::DEFAULT.sampler
+      _(sampler).must_equal samplers.parent_based(root: samplers.trace_id_ratio_based(1.0))
     end
   end
 end

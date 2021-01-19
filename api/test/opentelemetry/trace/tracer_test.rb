@@ -37,8 +37,6 @@ describe OpenTelemetry::Trace::Tracer do
   end
 
   describe '#in_span' do
-    let(:parent) { tracer.start_span('parent') }
-
     it 'yields the new span' do
       tracer.in_span('wrapper') do |span|
         _(span).wont_equal(invalid_span)
@@ -81,8 +79,6 @@ describe OpenTelemetry::Trace::Tracer do
   end
 
   describe '#start_span' do
-    let(:parent) { tracer.start_span('parent') }
-
     it 'returns a valid span with the parent context' do
       span = tracer.start_span('op', with_parent: parent_context)
       _(span.context).must_be :valid?

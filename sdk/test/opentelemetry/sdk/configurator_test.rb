@@ -8,6 +8,18 @@ require 'test_helper'
 
 describe OpenTelemetry::SDK::Configurator do
   let(:configurator) { OpenTelemetry::SDK::Configurator.new }
+  let(:default_resource_attributes) do
+    {
+      'telemetry.sdk.name' => 'opentelemetry',
+      'telemetry.sdk.language' => 'ruby',
+      'telemetry.sdk.version' => OpenTelemetry::SDK::VERSION,
+      'process.pid' => Process.pid,
+      'process.command' => $PROGRAM_NAME,
+      'process.runtime.name' => RUBY_ENGINE,
+      'process.runtime.version' => RUBY_VERSION,
+      'process.runtime.description' => RUBY_DESCRIPTION
+    }
+  end
 
   describe '#logger' do
     it 'returns a logger instance' do
@@ -24,14 +36,7 @@ describe OpenTelemetry::SDK::Configurator do
   describe '#resource=' do
     let(:configurator_resource) { configurator.instance_variable_get(:@resource) }
     let(:configurator_resource_attributes) { configurator_resource.attribute_enumerator.to_h }
-    let(:expected_resource_attributes) do
-      {
-        'telemetry.sdk.name' => 'opentelemetry',
-        'telemetry.sdk.language' => 'ruby',
-        'telemetry.sdk.version' => OpenTelemetry::SDK::VERSION,
-        'test_key' => 'test_value'
-      }
-    end
+    let(:expected_resource_attributes) { default_resource_attributes.merge('test_key' => 'test_value') }
 
     it 'merges the resource' do
       configurator.resource = OpenTelemetry::SDK::Resources::Resource.create('test_key' => 'test_value')
@@ -39,14 +44,7 @@ describe OpenTelemetry::SDK::Configurator do
     end
 
     describe 'when there is a resource key collision' do
-      let(:expected_resource_attributes) do
-        {
-          'telemetry.sdk.name' => 'opentelemetry',
-          'telemetry.sdk.language' => 'ruby',
-          'telemetry.sdk.version' => OpenTelemetry::SDK::VERSION,
-          'important_value' => '25'
-        }
-      end
+      let(:expected_resource_attributes) { default_resource_attributes.merge('important_value' => '25') }
 
       it 'uses the user provided resources' do
         with_env('OTEL_RESOURCE_ATTRIBUTES' => 'important_value=100') do
@@ -60,14 +58,7 @@ describe OpenTelemetry::SDK::Configurator do
   describe '#service_name=' do
     let(:configurator_resource) { configurator.instance_variable_get(:@resource) }
     let(:configurator_resource_attributes) { configurator_resource.attribute_enumerator.to_h }
-    let(:expected_resource_attributes) do
-      {
-        'service.name' => 'Otel Demo App',
-        'telemetry.sdk.name' => 'opentelemetry',
-        'telemetry.sdk.language' => 'ruby',
-        'telemetry.sdk.version' => OpenTelemetry::SDK::VERSION
-      }
-    end
+    let(:expected_resource_attributes) { default_resource_attributes.merge('service.name' => 'Otel Demo App') }
 
     it 'assigns the service_name resource' do
       configurator.service_name = 'Otel Demo App'
@@ -78,14 +69,7 @@ describe OpenTelemetry::SDK::Configurator do
   describe '#service_version=' do
     let(:configurator_resource) { configurator.instance_variable_get(:@resource) }
     let(:configurator_resource_attributes) { configurator_resource.attribute_enumerator.to_h }
-    let(:expected_resource_attributes) do
-      {
-        'service.version' => '0.6.0',
-        'telemetry.sdk.name' => 'opentelemetry',
-        'telemetry.sdk.language' => 'ruby',
-        'telemetry.sdk.version' => OpenTelemetry::SDK::VERSION
-      }
-    end
+    let(:expected_resource_attributes) { default_resource_attributes.merge('service.version' => '0.6.0') }
 
     it 'assigns the service_version resource' do
       configurator.service_version = '0.6.0'
