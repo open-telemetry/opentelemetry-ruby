@@ -56,6 +56,8 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
       _(response.env.request_headers['Traceparent']).must_equal(
         "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
       )
+      _(span.attributes['code.lineno']).must_equal 50
+      _(span.attributes['code.absolute_path']).must_equal __FILE__
     end
 
     it 'has http.status_code 404' do
@@ -68,6 +70,8 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
       _(response.env.request_headers['Traceparent']).must_equal(
         "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
       )
+      _(span.attributes['code.lineno']).must_equal 64
+      _(span.attributes['code.absolute_path']).must_equal __FILE__
     end
 
     it 'has http.status_code 500' do
@@ -80,6 +84,8 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
       _(response.env.request_headers['Traceparent']).must_equal(
         "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
       )
+      _(span.attributes['code.lineno']).must_equal 78
+      _(span.attributes['code.absolute_path']).must_equal __FILE__
     end
   end
 end

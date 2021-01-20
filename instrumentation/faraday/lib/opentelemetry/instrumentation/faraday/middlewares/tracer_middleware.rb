@@ -49,6 +49,10 @@ module OpenTelemetry
           end
 
           def trace_response(span, response)
+            caller_of_faraday = caller_locations[12]
+            span.set_attribute('code.lineno', caller_of_faraday.lineno)
+            span.set_attribute('code.absolute_path', caller_of_faraday.absolute_path)
+            span.set_attribute('code.base_label', caller_of_faraday.base_label)
             span.set_attribute('http.status_code', response.status)
             span.set_attribute('http.status_text', response.reason_phrase)
             span.status = OpenTelemetry::Trace::Status.http_to_status(
