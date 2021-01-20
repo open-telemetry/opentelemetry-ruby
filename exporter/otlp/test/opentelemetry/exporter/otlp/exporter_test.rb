@@ -37,6 +37,11 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       end
     end
 
+    it 'uses endpoints path if provided' do
+      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'https://localhost/custom/path')
+      _(exp.instance_variable_get(:@path)).must_equal '/custom/path'
+    end
+
     it 'only allows gzip compression or none' do
       assert_raises ArgumentError do
         OpenTelemetry::Exporter::OTLP::Exporter.new(compression: 'flate')
@@ -80,7 +85,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       end
       _(exp.instance_variable_get(:@headers)).must_equal('x' => 'y')
       _(exp.instance_variable_get(:@timeout)).must_equal 12.0
-      _(exp.instance_variable_get(:@path)).must_equal '/v1/trace'
+      _(exp.instance_variable_get(:@path)).must_equal ''
       _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
       http = exp.instance_variable_get(:@http)
       _(http.ca_file).must_equal '/baz'
