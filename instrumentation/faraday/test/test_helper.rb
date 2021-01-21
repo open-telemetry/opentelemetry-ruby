@@ -9,6 +9,7 @@ require 'faraday'
 require 'opentelemetry/sdk'
 
 require 'minitest/autorun'
+require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
 
 # global opentelemetry-sdk setup:

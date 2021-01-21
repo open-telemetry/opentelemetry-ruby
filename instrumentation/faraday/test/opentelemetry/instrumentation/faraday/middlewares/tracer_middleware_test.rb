@@ -44,6 +44,8 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
   describe 'first span' do
     before do
       instrumentation.install
+      allow(ENV).to receive(:[]).with(anything).and_call_original
+      allow(ENV).to receive(:[]).with('OTEL_EXPORTER_ADD_CALLER_LOCATION').and_return(true)
     end
 
     it 'has http 200 attributes' do
@@ -56,8 +58,9 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
       _(response.env.request_headers['Traceparent']).must_equal(
         "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
       )
-      _(span.attributes['code.lineno']).must_equal 50
-      _(span.attributes['code.absolute_path']).must_equal __FILE__
+      _(span.attributes['code.filepath']).must_equal __FILE__
+      _(span.attributes['code.lineno']).must_equal 52
+      _(span.attributes['code.function']).must_equal '<top (required)>'
     end
 
     it 'has http.status_code 404' do
@@ -70,8 +73,9 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
       _(response.env.request_headers['Traceparent']).must_equal(
         "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
       )
-      _(span.attributes['code.lineno']).must_equal 64
-      _(span.attributes['code.absolute_path']).must_equal __FILE__
+      _(span.attributes['code.filepath']).must_equal __FILE__
+      _(span.attributes['code.lineno']).must_equal 67
+      _(span.attributes['code.function']).must_equal '<top (required)>'
     end
 
     it 'has http.status_code 500' do
@@ -84,8 +88,9 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
       _(response.env.request_headers['Traceparent']).must_equal(
         "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
       )
-      _(span.attributes['code.lineno']).must_equal 78
-      _(span.attributes['code.absolute_path']).must_equal __FILE__
+      _(span.attributes['code.filepath']).must_equal __FILE__
+      _(span.attributes['code.lineno']).must_equal 82
+      _(span.attributes['code.function']).must_equal '<top (required)>'
     end
   end
 end

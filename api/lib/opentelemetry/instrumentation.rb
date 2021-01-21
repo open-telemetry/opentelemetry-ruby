@@ -6,6 +6,7 @@
 
 require 'opentelemetry/instrumentation/registry'
 require 'opentelemetry/instrumentation/base'
+require 'opentelemetry/instrumentation/caller_locations'
 
 module OpenTelemetry
   # The instrumentation module contains functionality to register and install
