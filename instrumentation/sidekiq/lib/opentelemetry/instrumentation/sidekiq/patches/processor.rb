@@ -8,6 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module Sidekiq
       module Patches
+        # The Processor module contains the insturmentation for the process_one method
         module Processor
           def process_one
             if config[:trace_processor_process_one]

@@ -23,9 +23,9 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Processor do
   let(:spans) { exporter.finished_spans }
   let(:span) { spans.first }
   let(:config) { {} }
-  let(:manager) { Minitest::Mock.new() }
+  let(:manager) { Minitest::Mock.new }
   let(:processor) do
-    if ::Sidekiq::VERSION.match? /^6\.1/
+    if ::Sidekiq::VERSION.match?(/^6\.1/)
       ::Sidekiq::Processor.new(manager, ::Sidekiq.options)
     else
       ::Sidekiq::Processor.new(manager)
@@ -33,9 +33,9 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Processor do
   end
 
   before do
-    manager.expect(:options, {:queues => ['default']})
-    manager.expect(:options, {:queues => ['default']})
-    manager.expect(:options, {:queues => ['default']})
+    manager.expect(:options, { queues: ['default'] })
+    manager.expect(:options, { queues: ['default'] })
+    manager.expect(:options, { queues: ['default'] })
 
     # Clear spans
     exporter.reset

@@ -8,6 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module Sidekiq
       module Patches
+        # The Poller module contains instrumentation for the enqueue and wait methods
         module Poller
           def enqueue
             if config[:trace_poller_enqueue]

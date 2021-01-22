@@ -43,7 +43,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Poller do
       let(:config) { { trace_poller_enqueue: true } }
 
       it 'traces' do
-        poller = ::Sidekiq::Scheduled::Poller.new.enqueue
+        ::Sidekiq::Scheduled::Poller.new.enqueue
         span_names = spans.map(&:name)
         _(span_names).must_include('Sidekiq::Scheduled::Poller#enqueue')
         _(span_names).must_include('ZRANGEBYSCORE')
