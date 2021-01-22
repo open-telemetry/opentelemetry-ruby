@@ -16,7 +16,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(exp).wont_be_nil
       _(exp.instance_variable_get(:@headers)).must_be_nil
       _(exp.instance_variable_get(:@timeout)).must_equal 10.0
-      _(exp.instance_variable_get(:@path)).must_equal '/v1/trace'
+      _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
       _(exp.instance_variable_get(:@compression)).must_be_nil
       http = exp.instance_variable_get(:@http)
       _(http.ca_file).must_be_nil
@@ -62,7 +62,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       end
       _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd')
       _(exp.instance_variable_get(:@timeout)).must_equal 11.0
-      _(exp.instance_variable_get(:@path)).must_equal '/v1/trace'
+      _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
       _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
       http = exp.instance_variable_get(:@http)
       _(http.ca_file).must_equal '/foo/bar'
@@ -112,21 +112,21 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     end
 
     it 'retries on timeout' do
-      stub_request(:post, 'https://localhost:4317/v1/trace').to_timeout.then.to_return(status: 200)
+      stub_request(:post, 'https://localhost:4317/v1/traces').to_timeout.then.to_return(status: 200)
       span_data = create_span_data
       result = exporter.export([span_data])
       _(result).must_equal(SUCCESS)
     end
 
     it 'returns TIMEOUT on timeout' do
-      stub_request(:post, 'https://localhost:4317/v1/trace').to_return(status: 200)
+      stub_request(:post, 'https://localhost:4317/v1/traces').to_return(status: 200)
       span_data = create_span_data
       result = exporter.export([span_data], timeout: 0)
       _(result).must_equal(TIMEOUT)
     end
 
     it 'returns TIMEOUT on timeout after retrying' do
-      stub_request(:post, 'https://localhost:4317/v1/trace').to_timeout.then.to_raise('this should not be reached')
+      stub_request(:post, 'https://localhost:4317/v1/traces').to_timeout.then.to_raise('this should not be reached')
       span_data = create_span_data
 
       @retry_count = 0
@@ -150,14 +150,14 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     end
 
     it 'exports a span_data' do
-      stub_request(:post, 'https://localhost:4317/v1/trace').to_return(status: 200)
+      stub_request(:post, 'https://localhost:4317/v1/traces').to_return(status: 200)
       span_data = create_span_data
       result = exporter.export([span_data])
       _(result).must_equal(SUCCESS)
     end
 
     it 'exports a span from a tracer' do
-      stub_post = stub_request(:post, 'https://localhost:4317/v1/trace').to_return(status: 200)
+      stub_post = stub_request(:post, 'https://localhost:4317/v1/traces').to_return(status: 200)
       processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter: exporter, max_queue_size: 1, max_export_batch_size: 1)
       OpenTelemetry.tracer_provider.add_span_processor(processor)
       OpenTelemetry.tracer_provider.tracer.start_root_span('foo').finish
@@ -168,7 +168,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     it 'compresses with gzip if enabled' do
       exporter = OpenTelemetry::Exporter::OTLP::Exporter.new(compression: 'gzip')
       etsr = nil
-      stub_post = stub_request(:post, 'https://localhost:4317/v1/trace').to_return do |request|
+      stub_post = stub_request(:post, 'https://localhost:4317/v1/traces').to_return do |request|
         etsr = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(Zlib.gunzip(request.body))
         { status: 200 }
       end
@@ -182,7 +182,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
 
     it 'batches per resource' do
       etsr = nil
-      stub_post = stub_request(:post, 'https://localhost:4317/v1/trace').to_return do |request|
+      stub_post = stub_request(:post, 'https://localhost:4317/v1/traces').to_return do |request|
         etsr = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(request.body)
         { status: 200 }
       end
@@ -198,7 +198,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     end
 
     it 'translates all the things' do
-      stub_request(:post, 'https://localhost:4317/v1/trace').to_return(status: 200)
+      stub_request(:post, 'https://localhost:4317/v1/traces').to_return(status: 200)
       processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter: exporter)
       tracer = OpenTelemetry.tracer_provider.tracer('tracer', 'v0.0.1')
       other_tracer = OpenTelemetry.tracer_provider.tracer('other_tracer')
@@ -359,7 +359,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
         )
       )
 
-      assert_requested(:post, 'https://localhost:4317/v1/trace') do |req|
+      assert_requested(:post, 'https://localhost:4317/v1/traces') do |req|
         req.body == encoded_etsr
       end
     end
