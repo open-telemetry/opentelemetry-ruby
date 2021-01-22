@@ -19,7 +19,7 @@ module OpenTelemetry
         # All spans reported by the SDK implementation are first added to a
         # synchronized queue (with a {max_queue_size} maximum size, after the
         # size is reached spans are dropped) and exported every
-        # schedule_delay_millis to the exporter pipeline in batches of
+        # schedule_delay to the exporter pipeline in batches of
         # max_export_batch_size.
         #
         # If the queue gets half full a preemptive notification is sent to the
@@ -29,11 +29,11 @@ module OpenTelemetry
           # Returns a new instance of the {BatchSpanProcessor}.
           #
           # @param [SpanExporter] exporter
-          # @param [Numeric] exporter_timeout_millis the delay interval between two
-          #   consecutive exports. Defaults to the value of the OTEL_BSP_EXPORT_TIMEOUT_MILLIS
+          # @param [Numeric] exporter_timeout the delay interval between two
+          #   consecutive exports. Defaults to the value of the OTEL_BSP_EXPORT_TIMEOUT
           #   environment variable, if set, or 30,000 (30 seconds).
-          # @param [Numeric] schedule_delay_millis the maximum allowed time to export data.
-          #   Defaults to the value of the OTEL_BSP_SCHEDULE_DELAY_MILLIS environment
+          # @param [Numeric] schedule_delay the maximum allowed time to export data.
+          #   Defaults to the value of the OTEL_BSP_SCHEDULE_DELAY environment
           #   variable, if set, or 5,000 (5 seconds).
           # @param [Integer] max_queue_size the maximum queue size in spans.
           #   Defaults to the value of the OTEL_BSP_MAX_QUEUE_SIZE environment
@@ -44,8 +44,8 @@ module OpenTelemetry
           #
           # @return a new instance of the {BatchSpanProcessor}.
           def initialize(exporter:,
-                         exporter_timeout_millis: Float(ENV.fetch('OTEL_BSP_EXPORT_TIMEOUT_MILLIS', 30_000)),
-                         schedule_delay_millis: Float(ENV.fetch('OTEL_BSP_SCHEDULE_DELAY_MILLIS', 5_000)),
+                         exporter_timeout: Float(ENV.fetch('OTEL_BSP_EXPORT_TIMEOUT', 30_000)),
+                         schedule_delay: Float(ENV.fetch('OTEL_BSP_SCHEDULE_DELAY', 5_000)),
                          max_queue_size: Integer(ENV.fetch('OTEL_BSP_MAX_QUEUE_SIZE', 2048)),
                          max_export_batch_size: Integer(ENV.fetch('OTEL_BSP_MAX_EXPORT_BATCH_SIZE', 512)),
                          start_thread_on_boot: String(ENV['OTEL_RUBY_BSP_START_THREAD_ON_BOOT']) !~ /false/i,
@@ -53,12 +53,12 @@ module OpenTelemetry
             raise ArgumentError if max_export_batch_size > max_queue_size
 
             @exporter = exporter
-            @exporter_timeout_seconds = exporter_timeout_millis / 1000.0
+            @exporter_timeout_seconds = exporter_timeout / 1000.0
             @mutex = Mutex.new
             @export_mutex = Mutex.new
             @condition = ConditionVariable.new
             @keep_running = true
-            @delay_seconds = schedule_delay_millis / 1000.0
+            @delay_seconds = schedule_delay / 1000.0
             @max_queue_size = max_queue_size
             @batch_size = max_export_batch_size
             @metrics_reporter = metrics_reporter || OpenTelemetry::SDK::Trace::Export::MetricsReporter

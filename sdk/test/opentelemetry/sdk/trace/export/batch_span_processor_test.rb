@@ -63,17 +63,17 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       end
     end
 
-    it 'raises if OTEL_BSP_EXPORT_TIMEOUT_MILLIS env var is not numeric' do
+    it 'raises if OTEL_BSP_EXPORT_TIMEOUT env var is not numeric' do
       assert_raises ArgumentError do
-        with_env('OTEL_BSP_EXPORT_TIMEOUT_MILLIS' => 'foo') do
+        with_env('OTEL_BSP_EXPORT_TIMEOUT' => 'foo') do
           BatchSpanProcessor.new(exporter: TestExporter.new)
         end
       end
     end
 
     it 'sets parameters from the environment' do
-      bsp = with_env('OTEL_BSP_EXPORT_TIMEOUT_MILLIS' => '4',
-                     'OTEL_BSP_SCHEDULE_DELAY_MILLIS' => '3',
+      bsp = with_env('OTEL_BSP_EXPORT_TIMEOUT' => '4',
+                     'OTEL_BSP_SCHEDULE_DELAY' => '3',
                      'OTEL_BSP_MAX_QUEUE_SIZE' => '2',
                      'OTEL_BSP_MAX_EXPORT_BATCH_SIZE' => '1') do
         BatchSpanProcessor.new(exporter: TestExporter.new)
@@ -85,13 +85,13 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
 
     it 'prefers explicit parameters rather than the environment' do
-      bsp = with_env('OTEL_BSP_EXPORT_TIMEOUT_MILLIS' => '4',
-                     'OTEL_BSP_SCHEDULE_DELAY_MILLIS' => '3',
+      bsp = with_env('OTEL_BSP_EXPORT_TIMEOUT' => '4',
+                     'OTEL_BSP_SCHEDULE_DELAY' => '3',
                      'OTEL_BSP_MAX_QUEUE_SIZE' => '2',
                      'OTEL_BSP_MAX_EXPORT_BATCH_SIZE' => '1') do
         BatchSpanProcessor.new(exporter: TestExporter.new,
-                               exporter_timeout_millis: 10,
-                               schedule_delay_millis: 9,
+                               exporter_timeout: 10,
+                               schedule_delay: 9,
                                max_queue_size: 8,
                                max_export_batch_size: 7)
       end
@@ -241,7 +241,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     it 'should not retry on FAILURE exports' do
       te = TestExporter.new(status_codes: [FAILURE, SUCCESS])
 
-      bsp = BatchSpanProcessor.new(schedule_delay_millis: 999,
+      bsp = BatchSpanProcessor.new(schedule_delay: 999,
                                    exporter: te,
                                    max_queue_size: 6,
                                    max_export_batch_size: 3)
