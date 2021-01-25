@@ -41,6 +41,30 @@ describe OpenTelemetry::SDK::Resources::Resource do
     end
   end
 
+  describe '.default' do
+    it 'contains telemetry sdk attributes' do
+      resource_attributes = Resource.default.attribute_enumerator.to_h
+      _(resource_attributes).must_include('telemetry.sdk.name')
+      _(resource_attributes).must_include('telemetry.sdk.language')
+      _(resource_attributes).must_include('telemetry.sdk.version')
+    end
+
+    it 'contains process attributes' do
+      resource_attributes = Resource.default.attribute_enumerator.to_h
+      _(resource_attributes).must_include('process.pid')
+      _(resource_attributes).must_include('process.command')
+      _(resource_attributes).must_include('process.runtime.name')
+      _(resource_attributes).must_include('process.runtime.version')
+      _(resource_attributes).must_include('process.runtime.description')
+    end
+
+    it 'contains a default value for service.name' do
+      resource_attributes = Resource.default.attribute_enumerator.to_h
+      _(resource_attributes).must_include('service.name')
+      _(resource_attributes['service.name']).must_equal('unknown_service')
+    end
+  end
+
   describe '.telemetry_sdk' do
     it 'returns a resource for the telemetry sdk' do
       resource_attributes = Resource.telemetry_sdk.attribute_enumerator.to_h

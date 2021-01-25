@@ -30,6 +30,10 @@ module OpenTelemetry
             new(frozen_attributes)
           end
 
+          def default
+            @default ||= telemetry_sdk.merge(process).merge(create(Constants::SERVICE_RESOURCE[:name] => 'unknown_service'))
+          end
+
           def telemetry_sdk
             resource_attributes = {
               Constants::TELEMETRY_SDK_RESOURCE[:name] => 'opentelemetry',

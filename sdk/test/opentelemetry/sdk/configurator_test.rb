@@ -17,7 +17,8 @@ describe OpenTelemetry::SDK::Configurator do
       'process.command' => $PROGRAM_NAME,
       'process.runtime.name' => RUBY_ENGINE,
       'process.runtime.version' => RUBY_VERSION,
-      'process.runtime.description' => RUBY_DESCRIPTION
+      'process.runtime.description' => RUBY_DESCRIPTION,
+      'service.name' => 'unknown_service'
     }
   end
 

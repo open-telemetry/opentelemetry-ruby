@@ -30,10 +30,11 @@ module OpenTelemetry
           OpenTelemetry::Trace::SpanKind::PRODUCER => 'producer',
           OpenTelemetry::Trace::SpanKind::CONSUMER => 'consumer'
         }.freeze
-        private_constant(:EMPTY_ARRAY, :LONG, :DOUBLE, :STRING, :BOOL, :KEY, :TYPE, :TYPE_MAP, :KIND_MAP)
+        DEFAULT_SERVICE_NAME = OpenTelemetry::SDK::Resources::Resource.default.attribute_enumerator.find { |k, _| k == 'service.name' }&.last || 'unknown_service'
+        private_constant(:EMPTY_ARRAY, :LONG, :DOUBLE, :STRING, :BOOL, :KEY, :TYPE, :TYPE_MAP, :KIND_MAP, :DEFAULT_SERVICE_NAME)
 
         def encoded_process(resource)
-          service_name = 'unknown'
+          service_name = DEFAULT_SERVICE_NAME
           tags = resource&.attribute_enumerator&.select do |key, value|
             service_name = value if key == 'service.name'
             key != 'service.name'
