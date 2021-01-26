@@ -56,6 +56,10 @@ class ReleasePerformer
       @parent.initial_setup
       verify unless @parent.skip_checks?
 
+      check_release_exists
+      check_gem_exists
+      check_docs_exists
+
       build_gem if @include_gem
       if @include_docs
         build_docs
@@ -65,6 +69,42 @@ class ReleasePerformer
       create_github_release(@changelog_content) if @include_github_release
       push_gem if @include_gem
       push_docs if @include_docs
+    end
+
+    def check_gem_exists
+      return if !@parent.check_exists? || !@include_gem
+      result = @utils.capture(["gem", "info", "-r", "-a", @gem_name])
+      if result =~ /#{@gem_name} \(([\w\., ]+)\)/
+        if Regexp.last_match[1].split(/,\s+/).include?(@gem_version)
+          @utils.logger.warn("Gem already pushed for #{@gem_name} #{@gem_version}. Skipping.")
+          @include_gem = false
+        end
+      end
+    end
+
+    def check_docs_exists
+      return if !@parent.check_exists? || !@include_docs
+      base_path = ::File.expand_path(@utils.gem_info(@gem_name, "gh_pages_directory"),
+                                     @parent.gh_pages_dir)
+      versioned_path = ::File.expand_path("v#{@gem_version}", base_path)
+      if File.directory?(versioned_path)
+        @utils.logger.warn("Docs already pushed for #{@gem_name} #{@gem_version}. Skipping.")
+        @include_docs = false
+      end
+    end
+
+    def check_release_exists
+      return if !@parent.check_exists? || !@include_github_release
+      result = @utils.exec(["gh", "api",
+                            "repos/#{@utils.repo_path}/releases/tags/#{@gem_name}/v#{@gem_version}",
+                            "-H", "Accept: application/vnd.github.v3+json"],
+                           out: :null, e: false)
+      if result.success?
+        @utils.logger.warn(
+          "GitHub release already exists for #{@gem_name} #{@gem_version}. Skipping."
+        )
+        @include_github_release = false
+      end
     end
 
     def verify
@@ -79,7 +119,7 @@ class ReleasePerformer
       body = ::JSON.dump(tag_name: "#{@gem_name}/v#{@gem_version}",
                          target_commitish: @parent.release_sha,
                          name: "#{@gem_name} #{@gem_version}",
-                         body: content.strip)
+                         body: content.to_s.strip)
       @utils.exec(["gh", "api", "repos/#{@utils.repo_path}/releases", "--input", "-",
                    "-H", "Accept: application/vnd.github.v3+json"],
                   in: [:string, body], out: :null)
@@ -167,6 +207,7 @@ class ReleasePerformer
                  gh_pages_dir: nil,
                  gh_token: nil,
                  pr_info: nil,
+                 check_exists: false,
                  dry_run: false)
     @utils = utils
     @release_sha = @utils.current_sha release_sha
@@ -174,6 +215,7 @@ class ReleasePerformer
     @rubygems_api_key = rubygems_api_key
     @git_remote = git_remote || "origin"
     @dry_run = dry_run
+    @check_exists = check_exists
     @gh_pages_dir = gh_pages_dir
     @gh_token = gh_token
     @pr_info = pr_info
@@ -198,6 +240,10 @@ class ReleasePerformer
 
   def skip_checks?
     @skip_checks
+  end
+
+  def check_exists?
+    @check_exists
   end
 
   def add_extra_errors(*messages)

@@ -86,7 +86,7 @@ class RepoSettings
     when :directory
       path
     when :context
-      ::File.expand_path(path, gem_directory(gem_name))
+      ::File.join(gem_directory(gem_name), path)
     when :absolute
       ::File.expand_path(path, gem_directory(gem_name, from: :absolute))
     else
@@ -100,7 +100,7 @@ class RepoSettings
     when :directory
       path
     when :context
-      ::File.expand_path(path, gem_directory(gem_name))
+      ::File.join(gem_directory(gem_name), path)
     when :absolute
       ::File.expand_path(path, gem_directory(gem_name, from: :absolute))
     else

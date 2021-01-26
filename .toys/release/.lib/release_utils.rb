@@ -77,6 +77,12 @@ class ReleaseUtils
     tool_context.capture(cmd, **opts, &block)
   end
 
+  def capture_ruby(code, **opts, &block)
+    opts[:in] = [:string, code]
+    opts = modify_exec_opts(opts, "ruby")
+    tool_context.capture_ruby([], **opts, &block)
+  end
+
   def ensure_gh_binary
     result = exec(["gh", "--version"], out: :capture, exit_on_nonzero_status: false)
     match = /^gh version (\d+)\.(\d+)\.(\d+)/.match(result.captured_out.to_s)
@@ -184,14 +190,17 @@ class ReleaseUtils
     self
   end
 
-  def current_library_version(gem_name)
-    path = gem_version_rb_path(gem_name, from: :absolute)
-    require path
-    const = ::Object
-    gem_version_constant(gem_name).each do |name|
-      const = const.const_get(name)
-    end
-    const
+  def current_library_version(gem_name, at: nil)
+    content =
+      if at
+        path = gem_version_rb_path(gem_name, from: :context)
+        capture(["git", "show", "#{at}:#{path}"])
+      else
+        File.read(gem_version_rb_path(gem_name, from: :absolute))
+      end
+    const = gem_version_constant(gem_name).join("::")
+    content += "\nputs ::#{const}\n"
+    capture_ruby(content).strip
   end
 
   def verify_library_version(gem_name, gem_vers)
@@ -331,6 +340,10 @@ class ReleaseUtils
     self
   end
 
+  def released_gems_and_versions(pr_info)
+    single_released_gem_and_version(pr_info) || multiple_released_gems_and_versions(pr_info)
+  end
+
   def log(message)
     logger.info(message)
   end
@@ -395,6 +408,34 @@ class ReleaseUtils
       logger.info("Sleeping for #{interval} secs ...")
       sleep(interval)
       interval += 10 unless interval >= 60
+    end
+  end
+
+  def single_released_gem_and_version(pr_info)
+    gem_name =
+      if all_gems.size == 1
+        default_gem
+      else
+        gem_name_from_release_branch(pr_info["head"]["ref"])
+      end
+    return nil unless gem_name
+    merge_sha = pr_info["merge_commit_sha"]
+    gem_version = current_library_version(gem_name, at: merge_sha)
+    logger.info("Found single gem to release: #{gem_name} #{gem_version}.")
+    { gem_name => gem_version }
+  end
+
+  def multiple_released_gems_and_versions(pr_info)
+    merge_sha = pr_info["merge_commit_sha"]
+    output = capture(["git", "diff", "--name-only", "#{merge_sha}^..#{merge_sha}"])
+    files = output.split("\n")
+    gems = all_gems.find_all do |gem_name|
+      dir = gem_directory(gem_name)
+      files.any? { |file| file.start_with?(dir) }
+    end
+    gems.each_with_object({}) do |gem_name, result|
+      result[gem_name] = gem_version = current_library_version(gem_name, at: merge_sha)
+      logger.info("Releasing gem due to file changes: #{gem_name} #{gem_version}.")
     end
   end
 end

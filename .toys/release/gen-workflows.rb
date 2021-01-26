@@ -38,10 +38,10 @@ def run
   @workflows_dir = ::File.join(context_directory, ".github", "workflows")
   files = [
     "release-hook-on-closed.yml",
-    "release-hook-on-open.yml",
     "release-hook-on-push.yml",
     "release-perform.yml",
     "release-request.yml",
+    "release-retry.yml",
   ]
 
   files.each { |name| generate(name) }

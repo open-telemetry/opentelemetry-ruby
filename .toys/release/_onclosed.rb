@@ -89,7 +89,7 @@ def handle_release_merged
   performer = create_performer
   github_check_errors = @utils.wait_github_checks
   if github_check_errors.empty?
-    find_gems_and_versions.each do |gem_name, gem_version|
+    @utils.released_gems_and_versions(@pr_info).each do |gem_name, gem_version|
       if performer.instance(gem_name, gem_version).perform
         puts("SUCCESS: Released #{gem_name} #{gem_version}", :bold, :green)
       end
@@ -108,35 +108,6 @@ def setup_git
   merge_sha = @pr_info["merge_commit_sha"]
   exec(["git", "fetch", "--depth=2", "origin", "+#{merge_sha}:refs/heads/release/current"])
   exec(["git", "checkout", "release/current"])
-end
-
-def find_gems_and_versions
-  gem_name =
-    if @utils.all_gems.size == 1
-      @utils.default_gem
-    else
-      @utils.gem_name_from_release_branch(@pr_info["head"]["ref"])
-    end
-  if gem_name
-    gem_version = @utils.current_library_version(gem_name)
-    logger.info("Found single gem to release: #{gem_name} #{gem_version}.")
-    result = { gem_name => gem_version }
-    return result
-  end
-  gems_and_versions_from_git
-end
-
-def gems_and_versions_from_git
-  output = capture(["git", "diff", "--name-only", "release/current^..release/current"])
-  files = output.split("\n")
-  gems = @utils.all_gems.find_all do |gem_name|
-    dir = @utils.gem_directory(gem_name)
-    files.any? { |file| file.start_with?(dir) }
-  end
-  gems.each_with_object({}) do |gem_name, result|
-    result[gem_name] = gem_version = @utils.current_library_version(gem_name)
-    logger.info("Releasing gem due to file changes: #{gem_name} #{gem_version}.")
-  end
 end
 
 def create_performer
