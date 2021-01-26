@@ -31,7 +31,7 @@ end
 ```
 ## Examples
 
-Example usage can be seen in the `./example/sidekiq.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/master/instrumentation/sidekiq/example/sidekiq.rb)
+Example usage can be seen in the `./example/sidekiq.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/sidekiq/example/sidekiq.rb)
 
 ## How can I get invovled?
 
@@ -46,7 +46,7 @@ The `opentelemetry-instrumentation-sidekiq` gem is distributed under the Apache 
 [sidekiq-home]: https://github.com/mperham/sidekiq
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
-[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE
+[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [ruby-gitter]: https://gitter.im/open-telemetry/opentelemetry-ruby

@@ -3,7 +3,7 @@
 # The repo organization and name.
 repo: open-telemetry/opentelemetry-ruby
 # The main branch name. Releases must happen on this branch.
-main_branch: master
+main_branch: main
 # Time in seconds for release scripts to wait for CI to complete.
 required_checks_timeout: 1200
 # Git user attached to commits for release pull requests.

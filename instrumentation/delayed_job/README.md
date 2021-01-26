@@ -32,7 +32,7 @@ end
 
 ## Examples
 
-Example usage of delayed_job can be seen in the `./example/delayed_job.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/master/instrumentation/delayed_job/example/delayed_job.rb)
+Example usage of delayed_job can be seen in the `./example/delayed_job.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/delayed_job/example/delayed_job.rb)
 
 ## How can I get involved?
 
@@ -47,7 +47,7 @@ Apache 2.0 license. See [LICENSE][license-github] for more information.
 [delayedjob-home]: https://github.com/collectiveidea/delayed_job
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
-[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE
+[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [ruby-gitter]: https://gitter.im/open-telemetry/opentelemetry-ruby
