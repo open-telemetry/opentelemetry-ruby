@@ -19,6 +19,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Poller do
   let(:spans) { exporter.finished_spans }
   let(:span) { spans.first }
   let(:config) { {} }
+  let(:poller) { MockLoader.new.poller }
 
   before do
     # Clear spans
@@ -35,7 +36,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Poller do
 
   describe '#enqueue' do
     it 'does not trace' do
-      ::Sidekiq::Scheduled::Poller.new.enqueue
+      poller.enqueue
       _(spans.size).must_equal(0)
     end
 
@@ -43,7 +44,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Poller do
       let(:config) { { trace_poller_enqueue: true } }
 
       it 'traces' do
-        ::Sidekiq::Scheduled::Poller.new.enqueue
+        poller.enqueue
         span_names = spans.map(&:name)
         _(span_names).must_include('Sidekiq::Scheduled::Poller#enqueue')
         _(span_names).must_include('ZRANGEBYSCORE')
@@ -53,7 +54,6 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Poller do
 
   describe '#wait' do
     it 'does not trace' do
-      poller = ::Sidekiq::Scheduled::Poller.new
       poller.stub(:random_poll_interval, 0.0) do
         poller.send(:wait)
       end
@@ -65,7 +65,6 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Poller do
       let(:config) { { trace_poller_wait: true } }
 
       it 'traces' do
-        poller = ::Sidekiq::Scheduled::Poller.new
         poller.stub(:random_poll_interval, 0.0) do
           poller.send(:wait)
         end
