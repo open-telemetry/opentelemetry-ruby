@@ -52,7 +52,7 @@ module OpenTelemetry
             'messaging.destination' => exchange,
             'messaging.destination_kind' => 'topic',
             'messaging.protocol' => 'AMQP',
-            'messaging.protocol_version' => '0.9.1'
+            'messaging.protocol_version' => ::Bunny.protocol_version
           }
           attributes['messaging.rabbitmq.routing_key'] = routing_key if routing_key
           attributes

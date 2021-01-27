@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'active_support'
+require 'securerandom'
 require 'bunny'
 
 require 'opentelemetry/sdk'
