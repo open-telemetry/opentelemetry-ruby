@@ -11,7 +11,7 @@ module OpenTelemetry
         # The Consumer module contains the instrumentation patch for the Consumer class
         module Consumer
           def call(delivery_info, properties, payload)
-            OpenTelemetry::Instrumentation::Bunny::PatchHelpers.with_process_span(tracer, delivery_info, properties) do
+            OpenTelemetry::Instrumentation::Bunny::PatchHelpers.with_process_span(queue.channel, tracer, delivery_info, properties) do
               super
             end
           end

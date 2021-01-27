@@ -49,15 +49,23 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Consumer do
 
     consumer.cancel
 
-    _(spans.size).must_equal(2)
+    _(spans.size).must_equal(3)
     _(spans[0].name).must_equal("#{topic}.ruby.news send")
     _(spans[0].kind).must_equal(:producer)
 
-    _(spans[1].name).must_equal("#{topic}.ruby.news process")
+    _(spans[1].name).must_equal("#{topic}.ruby.news receive")
     _(spans[1].kind).must_equal(:consumer)
 
-    linked_span_context = spans[1].links.first.span_context
-    _(linked_span_context.trace_id).must_equal(spans[0].trace_id)
-    _(linked_span_context.span_id).must_equal(spans[0].span_id)
+    _(spans[2].name).must_equal("#{topic}.ruby.news process")
+    _(spans[2].kind).must_equal(:consumer)
+
+    linked_send_span_context = spans[1].links.first.span_context
+    _(linked_send_span_context.trace_id).must_equal(spans[0].trace_id)
+    _(linked_send_span_context.span_id).must_equal(spans[0].span_id)
+
+    linked_receive_span_context = spans[2].links.first.span_context
+    _(linked_receive_span_context.trace_id).must_equal(spans[0].trace_id)
+    _(linked_receive_span_context.trace_id).must_equal(spans[1].trace_id)
+    _(linked_receive_span_context.span_id).must_equal(spans[1].span_id)
   end
 end

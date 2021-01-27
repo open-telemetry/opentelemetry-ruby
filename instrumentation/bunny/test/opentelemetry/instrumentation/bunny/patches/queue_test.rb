@@ -49,12 +49,8 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Queue do
       _(spans.last.name).must_equal(".#{queue_name} process")
       _(spans.last.kind).must_equal(:consumer)
 
-      _(spans.last.attributes['messaging.system']).must_equal('rabbitmq')
-      _(spans.last.attributes['messaging.rabbitmq.routing_key']).must_equal(queue_name)
-
-      linked_span_context = spans[1].links.first.span_context
+      linked_span_context = spans.last.links.first.span_context
       _(linked_span_context.trace_id).must_equal(spans[0].trace_id)
-      _(linked_span_context.span_id).must_equal(spans[0].span_id)
     end
 
     it 'traces messages returned' do
