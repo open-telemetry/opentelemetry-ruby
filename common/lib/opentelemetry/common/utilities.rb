@@ -45,6 +45,10 @@ module OpenTelemetry
 
         placeholder
       end
+
+      def untraced
+        OpenTelemetry::Trace.with_span(OpenTelemetry::Trace::Span.new) { yield }
+      end
     end
   end
 end
