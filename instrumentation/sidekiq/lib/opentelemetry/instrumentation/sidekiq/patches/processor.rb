@@ -10,6 +10,8 @@ module OpenTelemetry
       module Patches
         # The Processor module contains the insturmentation for the process_one method
         module Processor
+          private
+
           def process_one
             if config[:trace_processor_process_one]
               tracer.in_span('Sidekiq::Processor#process_one') { super }
@@ -17,8 +19,6 @@ module OpenTelemetry
               untraced { super }
             end
           end
-
-          private
 
           def tracer
             Sidekiq::Instrumentation.instance.tracer

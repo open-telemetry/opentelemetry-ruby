@@ -10,7 +10,7 @@ module OpenTelemetry
       module Patches
         # The Launcher module contains the instrumentation for the Sidekiq heartbeat
         module Launcher
-          private unless $TESTING
+          private
 
           def ❤ # rubocop:disable Naming/MethodName
             if config[:trace_launcher_heartbeat]

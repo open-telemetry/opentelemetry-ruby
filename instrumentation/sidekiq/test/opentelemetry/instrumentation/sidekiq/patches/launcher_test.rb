@@ -37,7 +37,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Launcher do
   # The method being tested here is `❤`
   describe '#heartbeat' do
     it 'does not trace' do
-      launcher.❤
+      launcher.send(:❤)
       _(spans.size).must_equal(0)
     end
 
@@ -45,7 +45,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Launcher do
       let(:config) { { trace_launcher_heartbeat: true } }
 
       it 'traces' do
-        launcher.❤
+        launcher.send(:❤)
         span_names = spans.map(&:name)
         _(span_names).must_include('Sidekiq::Launcher#heartbeat')
         _(span_names).must_include('pipeline')
