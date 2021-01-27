@@ -19,6 +19,8 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Launcher do
   let(:spans) { exporter.finished_spans }
   let(:span) { spans.first }
   let(:config) { {} }
+  let(:launcher) { MockLoader.new.launcher }
+
   before do
     # Clear spans
     exporter.reset
@@ -35,7 +37,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Launcher do
   # The method being tested here is `❤`
   describe '#heartbeat' do
     it 'does not trace' do
-      ::Sidekiq::Launcher.new(::Sidekiq.options).❤
+      launcher.❤
       _(spans.size).must_equal(0)
     end
 
@@ -43,10 +45,10 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Launcher do
       let(:config) { { trace_launcher_heartbeat: true } }
 
       it 'traces' do
-        ::Sidekiq::Launcher.new(::Sidekiq.options).❤
+        launcher.❤
         span_names = spans.map(&:name)
-        _(span_names).must_include('pipeline')
         _(span_names).must_include('Sidekiq::Launcher#heartbeat')
+        _(span_names).must_include('pipeline')
       end
     end
   end

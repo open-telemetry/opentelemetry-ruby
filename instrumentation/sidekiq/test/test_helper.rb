@@ -13,6 +13,8 @@ require 'minitest/autorun'
 
 require 'pry'
 
+require 'helpers/mock_loader'
+
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
 span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)
