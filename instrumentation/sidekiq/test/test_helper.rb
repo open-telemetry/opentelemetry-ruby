@@ -4,16 +4,14 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'sidekiq'
-require 'sidekiq/testing'
-
-require 'opentelemetry/sdk'
-
 require 'minitest/autorun'
-
 require 'pry'
 
+require 'sidekiq'
+require 'sidekiq/testing'
 require 'helpers/mock_loader'
+
+require 'opentelemetry/sdk'
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new

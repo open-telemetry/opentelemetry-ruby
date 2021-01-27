@@ -7,7 +7,6 @@
 require 'test_helper'
 
 require 'opentelemetry-instrumentation-redis'
-require 'fakeredis/minitest'
 
 require_relative '../../../../../lib/opentelemetry/instrumentation/sidekiq'
 require_relative '../../../../../lib/opentelemetry/instrumentation/sidekiq/patches/launcher'
