@@ -16,7 +16,7 @@ module OpenTelemetry
             if config[:trace_launcher_heartbeat]
               tracer.in_span('Sidekiq::Launcher#heartbeat') { super }
             else
-              untraced { super }
+              OpenTelemetry::Common::Utilities.untraced { super }
             end
           end
 
@@ -26,10 +26,6 @@ module OpenTelemetry
 
           def config
             Sidekiq::Instrumentation.instance.config
-          end
-
-          def untraced
-            OpenTelemetry::Trace.with_span(OpenTelemetry::Trace::Span.new) { yield }
           end
         end
       end
