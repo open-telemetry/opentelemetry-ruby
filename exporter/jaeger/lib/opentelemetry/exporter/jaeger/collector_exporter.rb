@@ -45,7 +45,7 @@ module OpenTelemetry
             @transport.write(@serializer.serialize(batch))
           end
 
-          untraced do
+          OpenTelemetry::Common::Utilities.untraced do
             @transport.flush
           end
           SUCCESS
@@ -72,10 +72,6 @@ module OpenTelemetry
           false
         rescue URI::InvalidURIError
           true
-        end
-
-        def untraced
-          OpenTelemetry::Trace.with_span(OpenTelemetry::Trace::Span.new) { yield }
         end
 
         def encoded_batches(span_data)

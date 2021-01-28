@@ -120,7 +120,7 @@ module OpenTelemetry
           retry_count = 0
           timeout ||= @timeout
           start_time = Time.now
-          untraced do # rubocop:disable Metrics/BlockLength
+          OpenTelemetry::Common::Utilities.untraced do # rubocop:disable Metrics/BlockLength
             request = Net::HTTP::Post.new(@path)
             request.body = if @compression == 'gzip'
                              request.add_field('Content-Encoding', 'gzip')
@@ -177,10 +177,6 @@ module OpenTelemetry
 
         def handle_redirect(location)
           # TODO: figure out destination and reinitialize @http and @path
-        end
-
-        def untraced
-          OpenTelemetry::Trace.with_span(OpenTelemetry::Trace::Span.new) { yield }
         end
 
         def measure_request_duration
