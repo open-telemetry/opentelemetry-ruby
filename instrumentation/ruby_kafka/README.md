@@ -32,7 +32,7 @@ end
 
 ## Examples
 
-Example usage can be seen in the `./example/ruby_kafka.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/master/instrumentation/ruby_kafka/example/ruby_kafka.rb)
+Example usage can be seen in the `./example/ruby_kafka.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/ruby_kafka/example/ruby_kafka.rb)
 
 ## How can I get involved?
 
@@ -47,7 +47,7 @@ The `opentelemetry-instrumentation-ruby_kafka` gem is distributed under the Apac
 [ruby_kafka-home]: https://github.com/zendesk/ruby-kafka
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
-[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE
+[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [ruby-gitter]: https://gitter.im/open-telemetry/opentelemetry-ruby

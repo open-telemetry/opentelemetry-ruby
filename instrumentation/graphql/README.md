@@ -55,7 +55,7 @@ end
 
 ## Examples
 
-An example of usage can be seen in [`example/graphql.rb`](https://github.com/open-telemetry/opentelemetry-ruby/blob/master/instrumentation/graphql/example/graphql.rb).
+An example of usage can be seen in [`example/graphql.rb`](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/graphql/example/graphql.rb).
 
 ## How can I get involved?
 
@@ -70,7 +70,7 @@ The `opentelemetry-instrumentation-graphql` gem is distributed under the Apache 
 [graphql-home]: https://github.com/rmosolgo/graphql-ruby
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
-[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE
+[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [ruby-gitter]: https://gitter.im/open-telemetry/opentelemetry-ruby

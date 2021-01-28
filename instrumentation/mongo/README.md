@@ -32,7 +32,7 @@ end
 
 ## Examples
 
-Example usage of mongo can be seen in the `./example/mongo.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/master/instrumentation/mongo/example/mongo.rb)
+Example usage of mongo can be seen in the `./example/mongo.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/mongo/example/mongo.rb)
 
 ## How can I get involved?
 
@@ -47,7 +47,7 @@ Apache 2.0 license. See [LICENSE][license-github] for more information.
 [mongo-home]: https://github.com/mongodb/mongo-ruby-driver
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
-[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE
+[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [ruby-gitter]: https://gitter.im/open-telemetry/opentelemetry-ruby

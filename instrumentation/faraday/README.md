@@ -32,7 +32,7 @@ end
 
 ## Examples
 
-Example usage of faraday can be seen in the `./example/faraday.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/master/instrumentation/faraday/example/faraday.rb)
+Example usage of faraday can be seen in the `./example/faraday.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/faraday/example/faraday.rb)
 
 ## How can I get involved?
 
@@ -47,7 +47,7 @@ Apache 2.0 license. See [LICENSE][license-github] for more information.
 [faraday-home]: https://github.com/lostisland/faraday
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
-[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE
+[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [ruby-gitter]: https://gitter.im/open-telemetry/opentelemetry-ruby
