@@ -3,10 +3,15 @@
 source "https://rubygems.org"
 
 gem "opentelemetry-api", path: "../../../api"
-gem "sidekiq", "~> 5.0"
+gem "sidekiq", "~> 5.2"
 
 group :test do
+  gem "fakeredis", require: "fakeredis/minitest"
+  gem "opentelemetry-common", path: "../../../common"
+  gem "opentelemetry-instrumentation-redis"
   gem "opentelemetry-sdk", path: "../../../sdk"
+  gem "pry"
+  gem "pry-byebug"
 end
 
 gemspec path: "../"

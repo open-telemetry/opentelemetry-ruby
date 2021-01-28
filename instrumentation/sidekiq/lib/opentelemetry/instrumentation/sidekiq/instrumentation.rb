@@ -14,6 +14,7 @@ module OpenTelemetry
           require_dependencies
           add_client_middleware
           add_server_middleware
+          patch_on_startup
         end
 
         present do
@@ -25,6 +26,20 @@ module OpenTelemetry
         def require_dependencies
           require_relative 'middlewares/client/tracer_middleware'
           require_relative 'middlewares/server/tracer_middleware'
+
+          require_relative 'patches/processor'
+          require_relative 'patches/launcher'
+          require_relative 'patches/poller'
+        end
+
+        def patch_on_startup
+          ::Sidekiq.configure_server do |config|
+            config.on(:startup) do
+              ::Sidekiq::Processor.prepend(Patches::Processor)
+              ::Sidekiq::Launcher.prepend(Patches::Launcher)
+              ::Sidekiq::Scheduled::Poller.prepend(Patches::Poller)
+            end
+          end
         end
 
         def add_client_middleware
