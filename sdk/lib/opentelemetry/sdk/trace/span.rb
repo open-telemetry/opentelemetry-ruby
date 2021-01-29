@@ -120,15 +120,20 @@ module OpenTelemetry
         # can be recorded on a span.
         #
         # @param [Exception] exception The exception to be recorded
+        # @param [optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}]
+        #   attributes One or more key:value pairs, where the keys must be
+        #   strings and the values may be (array of) string, boolean or numeric
+        #   type.
         #
         # @return [void]
-        def record_exception(exception)
-          add_event('exception',
-                    attributes: {
-                      'exception.type' => exception.class.to_s,
-                      'exception.message' => exception.message,
-                      'exception.stacktrace' => exception.full_message(highlight: false, order: :top)
-                    })
+        def record_exception(exception, attributes: nil)
+          event_attributes = {
+            'exception.type' => exception.class.to_s,
+            'exception.message' => exception.message,
+            'exception.stacktrace' => exception.full_message(highlight: false, order: :top)
+          }
+          event_attributes.merge!(attributes) unless attributes.nil?
+          add_event('exception', attributes: event_attributes)
         end
 
         # Sets the Status to the Span
