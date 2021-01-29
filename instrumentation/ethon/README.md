@@ -32,7 +32,7 @@ end
 
 ## Examples
 
-Example usage of faraday can be seen in the `./example/ethon.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/master/instrumentation/ethon/example/ethon.rb)
+Example usage of faraday can be seen in the `./example/ethon.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/ethon/example/ethon.rb)
 
 ## How can I get involved?
 
@@ -48,7 +48,7 @@ The `opentelemetry-instrumentation-all` gem is distributed under the Apache 2.0 
 [ethon-home]:https://github.com/typhoeus/ethon
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
-[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE
+[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [ruby-gitter]: https://gitter.im/open-telemetry/opentelemetry-ruby

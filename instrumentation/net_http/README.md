@@ -32,7 +32,7 @@ end
 
 ## Example
 
-An example of usage can be seen in [`example/net_http.rb`](https://github.com/open-telemetry/opentelemetry-ruby/blob/master/instrumentation/net_http/example/net_http.rb).
+An example of usage can be seen in [`example/net_http.rb`](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/net_http/example/net_http.rb).
 
 ## How can I get involved?
 
@@ -47,7 +47,7 @@ Apache 2.0 license. See [LICENSE][license-github] for more information.
 [net-http-home]: https://docs.ruby-lang.org/en/2.0.0/Net/HTTP.html
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
-[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE
+[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [ruby-gitter]: https://gitter.im/open-telemetry/opentelemetry-ruby

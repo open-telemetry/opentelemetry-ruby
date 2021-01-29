@@ -59,8 +59,8 @@ The `opentelemetry-api` gem is distributed under the Apache 2.0 license. See [LI
 [opentelemetry-home]: https://opentelemetry.io
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
-[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE
-[examples-github]: https://github.com/open-telemetry/opentelemetry-ruby/tree/master/examples
+[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
+[examples-github]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/examples
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [ruby-gitter]: https://gitter.im/open-telemetry/opentelemetry-ruby

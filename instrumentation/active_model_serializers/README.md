@@ -32,7 +32,7 @@ end
 
 ## Examples
 
-Example usage of active_model_serializers can be seen in the `./example/active_model_serializers.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/master/instrumentation/active_model_serializers/example/active_model_serializers.rb)
+Example usage of active_model_serializers can be seen in the `./example/active_model_serializers.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/active_model_serializers/example/active_model_serializers.rb)
 
 ## How can I get involved?
 
@@ -47,7 +47,7 @@ Apache 2.0 license. See [LICENSE][license-github] for more information.
 [active_model_serializers-home]: https://github.com/rails-api/active_model_serializers
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
-[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE
+[license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [ruby-gitter]: https://gitter.im/open-telemetry/opentelemetry-ruby
