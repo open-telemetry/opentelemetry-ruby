@@ -16,3 +16,4 @@ end
 
 require_relative './sidekiq/instrumentation'
 require_relative './sidekiq/version'
+require 'opentelemetry/common'
