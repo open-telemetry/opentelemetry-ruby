@@ -208,6 +208,20 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(ev.attributes['exception.stacktrace']).must_equal(error.full_message(highlight: false, order: :top))
     end
 
+    it 'merges optional attributes' do
+      span.record_exception(error, attributes: { 'exception.type' => 'foo', 'bar' => 'baz' })
+      events = span.events
+      _(events.size).must_equal(1)
+
+      ev = events[0]
+
+      _(ev.name).must_equal('exception')
+      _(ev.attributes['exception.type']).must_equal('foo')
+      _(ev.attributes['exception.message']).must_equal(error.message)
+      _(ev.attributes['exception.stacktrace']).must_equal(error.full_message(highlight: false, order: :top))
+      _(ev.attributes['bar']).must_equal('baz')
+    end
+
     it 'records multiple errors' do
       3.times { span.record_exception(error) }
       events = span.events
