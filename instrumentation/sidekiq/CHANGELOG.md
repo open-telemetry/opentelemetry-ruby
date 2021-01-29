@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-sidekiq
 
+### v0.13.0 / 2021-01-29
+
+* ADDED: Instrument sidekiq background work 
+* FIXED: Adjust Sidekiq middlewares to match semantic conventions 
+* FIXED: Set minimum compatible version and use untraced helper 
+
 ### v0.12.0 / 2020-12-24
 
 * (No significant changes)
