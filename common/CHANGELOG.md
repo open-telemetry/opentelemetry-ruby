@@ -1,5 +1,9 @@
 
 
+### v0.13.0 / 2021-01-29
+
+* ADDED: Add untraced wrapper to common utils 
+
 ### v0.12.0 / 2020-12-24
 
 * (No significant changes)

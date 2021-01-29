@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.12.1 / 2021-01-29
+
+* FIXED: Only include user agent when present 
+
 ### v0.12.0 / 2020-12-24
 
 * (No significant changes)

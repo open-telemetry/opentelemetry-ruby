@@ -1,5 +1,11 @@
 # Release History: opentelemetry-exporter-jaeger
 
+### v0.13.0 / 2021-01-29
+
+* ADDED: Provide default resource in SDK 
+* ADDED: Add untraced wrapper to common utils 
+* FIXED: Jaeger ref type should be FOLLOWS_FROM 
+
 ### v0.12.0 / 2020-12-24
 
 * ADDED: Structured error handling 

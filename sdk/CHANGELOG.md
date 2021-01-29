@@ -1,5 +1,15 @@
 # Release History: opentelemetry-sdk
 
+### v0.13.0 / 2021-01-29
+
+* BREAKING CHANGE: Remove MILLIS from BatchSpanProcessor vars 
+
+* ADDED: Process.runtime resource 
+* ADDED: Provide default resource in SDK 
+* ADDED: Add optional attributes to record_exception 
+* FIXED: Resource.merge consistency 
+* FIXED: Remove MILLIS from BatchSpanProcessor vars 
+
 ### v0.12.1 / 2021-01-13
 
 * FIXED: Fix several BatchSpanProcessor errors related to fork safety 
