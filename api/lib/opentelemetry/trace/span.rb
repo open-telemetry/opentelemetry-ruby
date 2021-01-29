@@ -85,9 +85,13 @@ module OpenTelemetry
       # can be recorded on a span.
       #
       # @param [Exception] exception The exception to recorded
+      # @param [optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}]
+      #   attributes One or more key:value pairs, where the keys must be
+      #   strings and the values may be (array of) string, boolean or numeric
+      #   type.
       #
       # @return [void]
-      def record_exception(exception); end
+      def record_exception(exception, attributes: nil); end
 
       # Sets the Status to the Span
       #
