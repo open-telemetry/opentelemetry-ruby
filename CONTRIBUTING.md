@@ -122,7 +122,7 @@ Some important tips to keep in mind when making your modifications.
 git checkout -b my-feature-branch
 ```
 
-Do not open a pull request from your own master branch, because we squash when
+Do not open a pull request from your own main branch, because we squash when
 merging, and that will cause you problems when you update your fork after
 merging.
 
@@ -217,12 +217,12 @@ can perform releases.
 
 Releases are normally performed using GitHub Actions.
 
- 1. Wait for the CI checks on the latest master branch commit to succeed. The
+ 1. Wait for the CI checks on the latest main branch commit to succeed. The
     release scripts will not run unless the build is green.
  2. In the GitHub UI, go to the `Actions` tab, select the
     `Open release request` workflow, and run the workflow manually using the
     dropdown in the upper right.
-     *  Releases must be run from the master branch.
+     *  Releases must be run from the main branch.
      *  If you leave the `Gems to release` field, blank, and the script will
         find all the gems that have had conventional-commit-tagged changes since
         their last release. Alternately, you can specify which gems to release
@@ -273,7 +273,7 @@ There are four GitHub actions workflows related to releases.
     a release pull request. If something goes wrong with this process, the logs
     will appear in the workflow run.
  *  `Force release` is generally used only to restart a failed release.
- *  `[release hook] Update open releases` is run on pushes to the master branch,
+ *  `[release hook] Update open releases` is run on pushes to the main branch,
     and pushes warnings to open release pull requests if you make modifications
     before triggering the release (i.e. because you might need to update the
     changelogs.)

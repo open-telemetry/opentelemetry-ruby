@@ -107,12 +107,12 @@ context propagation.
 Apache 2.0 - See [LICENSE][license-url] for more information.
 
 [ci-image]: https://github.com/open-telemetry/opentelemetry-ruby/workflows/CI/badge.svg?event=push
-[examples-github]: https://github.com/open-telemetry/opentelemetry-ruby/tree/master/examples
+[examples-github]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/examples
 [gitter-image]: https://badges.gitter.im/open-telemetry/opentelemetry-ruby.svg
 [gitter-url]: https://gitter.im/open-telemetry/opentelemetry-ruby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 [issues-good-first-issue]: https://github.com/open-telemetry/opentelemetry-ruby/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22
 [issues-help-wanted]: https://github.com/open-telemetry/opentelemetry-ruby/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22
 [license-image]: https://img.shields.io/badge/license-Apache_2.0-green.svg?style=flat
-[license-url]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE
+[license-url]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
-[opentelemetry-instrumentation-all-publishing]: https://github.com/open-telemetry/opentelemetry-ruby/tree/master/instrumentation/all#publishing
+[opentelemetry-instrumentation-all-publishing]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/instrumentation/all#publishing

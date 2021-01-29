@@ -3,7 +3,7 @@ name: "[release hook] Update open releases"
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   release-update-open-requests:
