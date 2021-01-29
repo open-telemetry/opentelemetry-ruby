@@ -14,7 +14,7 @@ module OpenTelemetry
             if config[:trace_poller_enqueue]
               tracer.in_span('Sidekiq::Scheduled::Poller#enqueue') { super }
             else
-              untraced { super }
+              OpenTelemetry::Common::Utilities.untraced { super }
             end
           end
 
@@ -24,7 +24,7 @@ module OpenTelemetry
             if config[:trace_poller_wait]
               tracer.in_span('Sidekiq::Scheduled::Poller#wait') { super }
             else
-              untraced { super }
+              OpenTelemetry::Common::Utilities.untraced { super }
             end
           end
 
@@ -34,10 +34,6 @@ module OpenTelemetry
 
           def config
             Sidekiq::Instrumentation.instance.config
-          end
-
-          def untraced
-            OpenTelemetry::Trace.with_span(OpenTelemetry::Trace::Span.new) { yield }
           end
         end
       end
