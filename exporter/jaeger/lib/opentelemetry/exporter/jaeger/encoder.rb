@@ -111,7 +111,7 @@ module OpenTelemetry
         def encoded_references(links)
           links&.map do |link|
             Thrift::SpanRef.new(
-              'refType' => Thrift::SpanRefType::CHILD_OF,
+              'refType' => Thrift::SpanRefType::FOLLOWS_FROM,
               'traceIdLow' => int64(link.span_context.trace_id[16, 16]),
               'traceIdHigh' => int64(link.span_context.trace_id[0, 16]),
               'spanId' => int64(link.span_context.span_id)
