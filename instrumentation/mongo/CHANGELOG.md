@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mongo
 
+### v0.13.0 / 2021-01-29
+
+* FIXED: Mongo Instrumenter: Do not send nil attributes 
+
 ### v0.12.0 / 2020-12-24
 
 * (No significant changes)

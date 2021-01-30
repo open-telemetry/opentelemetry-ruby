@@ -1,5 +1,15 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.13.0 / 2021-01-29
+
+* BREAKING CHANGE: Spec compliance for OTLP exporter 
+
+* ADDED: Add untraced wrapper to common utils 
+* FIXED: Spec compliance for OTLP exporter 
+* FIXED: Conditionally append path to collector endpoint 
+* FIXED: OTLP path should be /v1/traces 
+* FIXED: Rename OTLP env vars SPAN -> TRACES 
+
 ### v0.12.1 / 2021-01-13
 
 * FIXED: Updated protobuf version dependency
