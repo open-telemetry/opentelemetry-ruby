@@ -59,9 +59,9 @@ module OpenTelemetry
         #
         # @return [Context] a new context updated with state extracted from the
         #   carrier
-        def extract(carrier, context = Context.current, &getter)
+        def extract(carrier, context = Context.current, getter = Context::Propagation.text_map_getter)
           @extractors.inject(context) do |ctx, extractor|
-            extractor.extract(carrier, ctx, &getter)
+            extractor.extract(carrier, ctx, getter)
           rescue => e # rubocop:disable Style/RescueStandardError
             OpenTelemetry.logger.warn "Error in CompositePropagator#extract #{e.message}"
             ctx

@@ -52,8 +52,8 @@ module OpenTelemetry
         #
         # @return [Context] a new context updated with state extracted from the
         #   carrier
-        def extract(carrier, context = Context.current, &getter)
-          @extractor.extract(carrier, context, &getter)
+        def extract(carrier, context = Context.current, getter = Context::Propagation.text_map_getter)
+          @extractor.extract(carrier, context, getter)
         rescue => e # rubocop:disable Style/RescueStandardError
           OpenTelemetry.logger.warn "Error in Propagator#extract #{e.message}"
           context

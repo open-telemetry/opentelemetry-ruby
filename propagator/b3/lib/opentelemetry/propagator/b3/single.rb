@@ -21,18 +21,18 @@ module OpenTelemetry
       # Namespace for OpenTelemetry b3 single header encoding
       module Single
         extend self
-
+        B3_CONTEXT_KEY = 'b3'
         TEXT_MAP_EXTRACTOR = TextMapExtractor.new
         TEXT_MAP_INJECTOR = TextMapInjector.new
         RACK_EXTRACTOR = TextMapExtractor.new(
-          b3_key: 'HTTP_B3'
+          Context::Propagation.text_map_getter
         )
         RACK_INJECTOR = TextMapInjector.new(
           b3_key: 'HTTP_B3'
         )
 
-        private_constant :TEXT_MAP_INJECTOR, :TEXT_MAP_EXTRACTOR, :RACK_INJECTOR,
-                         :RACK_EXTRACTOR
+        private_constant :B3_CONTEXT_KEY, :TEXT_MAP_INJECTOR, :TEXT_MAP_EXTRACTOR,
+                         :RACK_INJECTOR, :RACK_EXTRACTOR
 
         # Returns an extractor that extracts context in the B3 single header
         # format

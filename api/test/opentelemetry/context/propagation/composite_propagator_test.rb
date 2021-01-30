@@ -29,8 +29,8 @@ describe OpenTelemetry::Context::Propagation::CompositePropagator do
       @key = key
     end
 
-    def extract(carrier, context, &getter)
-      value = getter ? getter.call(carrier, @key) : carrier[@key]
+    def extract(carrier, context, getter = nil)
+      value = getter ? getter.get(carrier, @key) : carrier[@key]
       context.set_value(@key, value)
     end
   end
@@ -42,7 +42,7 @@ describe OpenTelemetry::Context::Propagation::CompositePropagator do
   end
 
   class BuggyExtractor
-    def extract(carrier, context, &getter)
+    def extract(carrier, context, getter = nil)
       raise 'oops'
     end
   end
@@ -107,7 +107,12 @@ describe OpenTelemetry::Context::Propagation::CompositePropagator do
 
       it 'executes getter' do
         carrier = { 'k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3' }
-        context = propagator.extract(carrier) { |c, k| c[k].upcase }
+        getter = Class.new do
+          def get(carrier, key)
+            carrier[key]&.upcase
+          end
+        end.new
+        context = propagator.extract(carrier, Context.empty, getter)
         _(context['k1']).must_equal('V1')
         _(context['k2']).must_equal('V2')
         _(context['k3']).must_equal('V3')

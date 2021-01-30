@@ -19,8 +19,7 @@ module OpenTelemetry
         TEXT_MAP_EXTRACTOR = TextMapExtractor.new
         TEXT_MAP_INJECTOR = TextMapInjector.new
         RACK_EXTRACTOR = TextMapExtractor.new(
-          traceparent_key: 'HTTP_TRACEPARENT',
-          tracestate_key: 'HTTP_TRACESTATE'
+          Context::Propagation.rack_env_getter
         )
         RACK_INJECTOR = TextMapInjector.new(
           traceparent_key: 'HTTP_TRACEPARENT',

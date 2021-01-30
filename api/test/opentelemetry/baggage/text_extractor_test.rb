@@ -54,7 +54,12 @@ describe OpenTelemetry::Baggage::Propagation::TextMapExtractor do
       it 'returns original context on failure' do
         orig_context = Context.empty.set_value('k1', 'v1')
         carrier = { header_key => 'key1=val1,key2=val2' }
-        context = extractor.extract(carrier, orig_context) { raise 'mwahaha' }
+        getter = Class.new do
+          def get(*)
+            raise 'mwahaha'
+          end
+        end.new
+        context = extractor.extract(carrier, orig_context, getter)
         _(context).must_equal(orig_context)
       end
     end

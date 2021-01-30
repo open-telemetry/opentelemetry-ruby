@@ -17,7 +17,7 @@ module OpenTelemetry
         # @param [optional Callable] getter An optional callable that takes a carrier and a key and
         #   and returns the value associated with the key
         # @return [Context]
-        def extract(carrier, context, &getter)
+        def extract(carrier, context, getter = nil)
           context
         end
       end

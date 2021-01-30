@@ -22,6 +22,13 @@ module OpenTelemetry
       module Multi
         extend self
 
+        B3_TRACE_ID_KEY = 'X-B3-TraceId'
+        B3_SPAN_ID_KEY = 'X-B3-SpanId'
+        B3_SAMPLED_KEY = 'X-B3-Sampled'
+        B3_FLAGS_KEY = 'X-B3-Flags'
+        private_constant :B3_TRACE_ID_KEY, :B3_SPAN_ID_KEY, :B3_SAMPLED_KEY,
+                         :B3_FLAGS_KEY
+
         TEXT_MAP_EXTRACTOR = TextMapExtractor.new
         TEXT_MAP_INJECTOR = TextMapInjector.new
         RACK_KEYS = {

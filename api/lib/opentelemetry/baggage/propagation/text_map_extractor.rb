@@ -11,16 +11,18 @@ module OpenTelemetry
     module Propagation
       # Extracts baggage from carriers in the W3C Baggage format
       class TextMapExtractor
-        include Context::Propagation::DefaultGetter
+        BAGGAGE_KEY = 'baggage'
+        private_constant :BAGGAGE_KEY
 
         # Returns a new TextMapExtractor that extracts context using the specified
         # header key
         #
-        # @param [String] baggage_key The baggage header
-        #   key used in the carrier
+        # @param [optional Getter] default_getter The default getter used to read
+        #   headers from a carrier during extract. Defaults to a +TextMapGetter+
+        #   instance.
         # @return [TextMapExtractor]
-        def initialize(baggage_key: 'baggage')
-          @baggage_key = baggage_key
+        def initialize(default_getter = Context::Propagation.text_map_getter)
+          @default_getter = default_getter
         end
 
         # Extract remote baggage from the supplied carrier.
@@ -28,16 +30,14 @@ module OpenTelemetry
         #
         # @param [Carrier] carrier The carrier to get the header from
         # @param [Context] context The context to be updated with extracted baggage
-        # @param [optional Callable] getter An optional callable that takes a carrier and a key and
-        #   returns the value associated with the key. If omitted the default getter will be used
-        #   which expects the carrier to respond to [] and []=.
-        # @yield [Carrier, String] if an optional getter is provided, extract will yield the carrier
-        #   and the header key to the getter.
+        # @param [optional Getter] getter If the optional getter is provided, it
+        #   will be used to read the header from the carrier, otherwise the default
+        #   getter will be used.
         # @return [Context] context updated with extracted baggage, or the original context
         #   if extraction fails
-        def extract(carrier, context, &getter)
-          getter ||= default_getter
-          header = getter.call(carrier, @baggage_key)
+        def extract(carrier, context, getter = nil)
+          getter ||= @default_getter
+          header = getter.get(carrier, BAGGAGE_KEY)
 
           entries = header.gsub(/\s/, '').split(',')
 

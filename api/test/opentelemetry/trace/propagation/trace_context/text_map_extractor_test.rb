@@ -10,10 +10,7 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapExtractor do
   let(:traceparent_key) { 'traceparent' }
   let(:tracestate_key) { 'tracestate' }
   let(:extractor) do
-    OpenTelemetry::Trace::Propagation::TraceContext::TextMapExtractor.new(
-      traceparent_key: traceparent_key,
-      tracestate_key: tracestate_key
-    )
+    OpenTelemetry::Trace::Propagation::TraceContext::TextMapExtractor.new
   end
   let(:valid_traceparent_header) do
     '00-000000000000000000000000000000AA-00000000000000ea-01'
@@ -32,16 +29,6 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapExtractor do
   let(:context) { Context.empty }
 
   describe '#extract' do
-    it 'yields the carrier and the header key' do
-      yielded_keys = []
-      extractor.extract(carrier, context) do |c, key|
-        _(c).must_equal(carrier)
-        yielded_keys << key
-        c[key]
-      end
-      _(yielded_keys.sort).must_equal([traceparent_key, tracestate_key])
-    end
-
     it 'returns a remote SpanContext with fields from the traceparent and tracestate headers' do
       ctx = extractor.extract(carrier, context) { |c, k| c[k] }
       span_context = OpenTelemetry::Trace.current_span(ctx).context
