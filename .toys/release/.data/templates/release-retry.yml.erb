@@ -1,0 +1,38 @@
+name: Retry release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_pr:
+        description: Release PR number
+        required: true
+      flags:
+        description: Extra flags to pass to the release script
+        required: false
+        default: ""
+
+jobs:
+  release-retry:
+    if: ${{ github.repository == '<%= @settings.repo_path %>' }}
+    env:
+      ruby_version: "2.7"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Ruby ${{ env.ruby_version }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.ruby_version }}
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Install Toys
+        run: "gem install --no-document toys"
+      - name: Retry release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          toys release retry --yes --verbose \
+            "--enable-releases=${{ secrets.ENABLE_RELEASES }}" \
+            "--rubygems-api-key=${{ secrets.RUBYGEMS_API_KEY }}" \
+            ${{ github.event.inputs.flags }} \
+            "${{ github.event.inputs.release_pr }}" \
+            < /dev/null
