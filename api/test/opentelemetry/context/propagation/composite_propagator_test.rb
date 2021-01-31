@@ -14,9 +14,9 @@ describe OpenTelemetry::Context::Propagation::CompositePropagator do
       @key = key
     end
 
-    def inject(carrier, context, &setter)
+    def inject(carrier, context, setter = nil)
       if setter
-        setter.call(carrier, @key, context[@key])
+        setter.set(carrier, @key, context[@key])
       else
         carrier[@key] = context[@key]
       end
@@ -36,7 +36,7 @@ describe OpenTelemetry::Context::Propagation::CompositePropagator do
   end
 
   class BuggyInjector
-    def inject(carrier, context, &setter)
+    def inject(carrier, context, setter = nil)
       raise 'oops'
     end
   end
@@ -78,9 +78,12 @@ describe OpenTelemetry::Context::Propagation::CompositePropagator do
 
       it 'executes setter' do
         Context.with_values('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3') do
-          result = propagator.inject({}) do |c, k, v|
-            c[k.upcase] = v.upcase
-          end
+          setter = Class.new do
+            def set(carrier, key, value)
+              carrier[key.upcase] = value.upcase
+            end
+          end.new
+          result = propagator.inject({}, OpenTelemetry::Context.current, setter)
           _(result).must_equal('K1' => 'V1', 'K2' => 'V2', 'K3' => 'V3')
         end
       end

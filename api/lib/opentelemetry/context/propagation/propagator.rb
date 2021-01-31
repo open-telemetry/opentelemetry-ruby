@@ -28,13 +28,13 @@ module OpenTelemetry
         #   context into
         # @param [optional Context] context Context to be injected into carrier. Defaults
         #   to +Context.current+
-        # @param [optional Callable] setter An optional callable that takes a carrier, a key and
-        #   a value and assigns the key-value pair in the carrier. If omitted the default setter
-        #   will be used which expects the carrier to respond to [] and []=.
+        # @param [optional Setter] setter If the optional setter is provided, it
+        #   will be used to write context into the carrier, otherwise the default
+        #   setter will be used.
         #
         # @return [Object] carrier
-        def inject(carrier, context = Context.current, &setter)
-          @injector.inject(carrier, context, &setter)
+        def inject(carrier, context = Context.current, setter = Context::Propagation.text_map_setter)
+          @injector.inject(carrier, context, setter)
         rescue => e # rubocop:disable Style/RescueStandardError
           OpenTelemetry.logger.warn "Error in Propagator#inject #{e.message}"
           carrier
@@ -46,9 +46,9 @@ module OpenTelemetry
         # @param [Object] carrier The carrier to extract context from
         # @param [optional Context] context Context to be updated with the state
         #   extracted from the carrier. Defaults to +Context.current+
-        # @param [optional Callable] getter An optional callable that takes a carrier and a key and
-        #   returns the value associated with the key. If omitted the default getter will be used
-        #   which expects the carrier to respond to [] and []=.
+        # @param [optional Getter] getter If the optional getter is provided, it
+        #   will be used to read the header from the carrier, otherwise the default
+        #   getter will be used.
         #
         # @return [Context] a new context updated with state extracted from the
         #   carrier

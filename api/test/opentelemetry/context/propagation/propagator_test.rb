@@ -14,7 +14,7 @@ describe OpenTelemetry::Context::Propagation::Propagator do
 
   describe 'with working injectors / extractors' do
     let(:mock_injector) do
-      Minitest::Mock.new.expect(:inject, {}, [Hash, OpenTelemetry::Context])
+      Minitest::Mock.new.expect(:inject, {}, [Hash, OpenTelemetry::Context, Context::Propagation::TextMapSetter])
     end
     let(:mock_extractor) do
       Minitest::Mock.new.expect(:extract, context, [Hash, OpenTelemetry::Context, Context::Propagation::TextMapGetter])
