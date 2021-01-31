@@ -21,7 +21,7 @@ module OpenTelemetry
             attributes['messaging.kafka.partition'] = partition if partition
 
             tracer.in_span("#{topic} send", attributes: attributes, kind: :producer) do
-              OpenTelemetry.propagation.text.inject(headers)
+              OpenTelemetry.propagation.inject(headers)
               super
             end
           end
@@ -37,7 +37,7 @@ module OpenTelemetry
 
               attributes['messaging.kafka.message_key'] = message.key if message.key
 
-              parent_context = OpenTelemetry.propagation.text.extract(message.headers)
+              parent_context = OpenTelemetry.propagation.extract(message.headers)
               OpenTelemetry::Context.with_current(parent_context) do
                 tracer.in_span("#{topic} process", attributes: attributes, kind: :consumer) do
                   yield message

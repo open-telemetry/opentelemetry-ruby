@@ -18,7 +18,7 @@ module OpenTelemetry
             }
 
             tracer.in_span("#{topic} send", attributes: attributes, kind: :producer) do
-              OpenTelemetry.propagation.text.inject(headers)
+              OpenTelemetry.propagation.inject(headers)
               super
             end
           end

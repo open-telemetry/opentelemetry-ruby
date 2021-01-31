@@ -13,7 +13,7 @@ module OpenTelemetry
           # by way of its middleware system
           class TracerMiddleware
             def call(_worker, msg, _queue)
-              parent_context = OpenTelemetry.propagation.text.extract(msg)
+              parent_context = OpenTelemetry.propagation.extract(msg)
               tracer.in_span(
                 span_name(msg),
                 attributes: {

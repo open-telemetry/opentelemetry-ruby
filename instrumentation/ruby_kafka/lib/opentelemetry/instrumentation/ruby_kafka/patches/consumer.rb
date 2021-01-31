@@ -22,7 +22,7 @@ module OpenTelemetry
 
               attributes['messaging.kafka.message_key'] = message.key if message.key
 
-              parent_context = OpenTelemetry.propagation.text.extract(message.headers)
+              parent_context = OpenTelemetry.propagation.extract(message.headers)
               span_context = OpenTelemetry::Trace.current_span(parent_context).context
               links = [OpenTelemetry::Trace::Link.new(span_context)] if span_context.valid?
 
@@ -47,7 +47,7 @@ module OpenTelemetry
               }
 
               links = batch.messages.map do |message|
-                span_context = OpenTelemetry::Trace.current_span(OpenTelemetry.propagation.text.extract(message.headers)).context
+                span_context = OpenTelemetry::Trace.current_span(OpenTelemetry.propagation.extract(message.headers)).context
                 OpenTelemetry::Trace::Link.new(span_context) if span_context.valid?
               end
               links.compact!

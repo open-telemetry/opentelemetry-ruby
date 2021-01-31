@@ -22,7 +22,7 @@ module OpenTelemetry
             trace: 'TRACE'
           }.freeze
 
-          def request_call(datum) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+          def request_call(datum) # rubocop:disable Metrics/MethodLength
             begin
               unless datum.key?(:otel_span)
                 http_method = HTTP_METHODS_SYMBOL_TO_STRING[datum[:method]]
@@ -39,7 +39,7 @@ module OpenTelemetry
                 ).tap do |span|
                   datum[:otel_span] = span
                   OpenTelemetry::Trace.with_span(span) do
-                    OpenTelemetry.propagation.http.inject(datum[:headers])
+                    OpenTelemetry.propagation.inject(datum[:headers])
                   end
                 end
               end

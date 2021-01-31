@@ -144,7 +144,7 @@ describe OpenTelemetry do
   describe '.propagation' do
     it 'returns instance of Context::Propagation::Propagation by default' do
       _(OpenTelemetry.propagation).must_be_instance_of(
-        OpenTelemetry::Context::Propagation::Propagation
+        OpenTelemetry::Context::Propagation::Propagator
       )
     end
 

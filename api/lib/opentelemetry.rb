@@ -22,7 +22,8 @@ require 'opentelemetry/version'
 module OpenTelemetry
   extend self
 
-  attr_writer :tracer_provider, :meter_provider, :baggage, :logger, :error_handler
+  attr_writer :tracer_provider, :meter_provider, :propagation, :baggage,
+              :logger, :error_handler
 
   # @return [Object, Logger] configured Logger or a default STDOUT Logger.
   def logger
@@ -68,8 +69,11 @@ module OpenTelemetry
     @baggage ||= Baggage::Manager.new
   end
 
-  # @return [Context::Propagation::Propagation] an instance of the propagation API
+  # @return [Context::Propagation::Propagator] a propagator instance
   def propagation
-    @propagation ||= Context::Propagation::Propagation.new
+    @propagation ||= Context::Propagation::Propagator.new(
+      Context::Propagation::NoopInjector.new,
+      Context::Propagation::NoopExtractor.new
+    )
   end
 end
