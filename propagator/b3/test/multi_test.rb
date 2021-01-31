@@ -7,25 +7,21 @@
 require 'test_helper'
 
 describe OpenTelemetry::Propagator::B3::Multi do
-  describe '#text_map_extractor, #rack_extractor' do
+  describe '#text_map_extractor' do
     it 'returns an instance of TextMapExtractor' do
-      %i[text_map_extractor rack_extractor].each do |extractor_method|
-        extractor = OpenTelemetry::Propagator::B3::Multi.send(extractor_method)
-        _(extractor).must_be_instance_of(
-          OpenTelemetry::Propagator::B3::Multi::TextMapExtractor
-        )
-      end
+      extractor = OpenTelemetry::Propagator::B3::Multi.text_map_extractor
+      _(extractor).must_be_instance_of(
+        OpenTelemetry::Propagator::B3::Multi::TextMapExtractor
+      )
     end
   end
 
-  describe '#text_map_injector, #rack_injector' do
+  describe '#text_map_injector' do
     it 'returns an instance of TextMapInjector' do
-      %i[text_map_injector rack_injector].each do |injector_method|
-        injector = OpenTelemetry::Propagator::B3::Multi.send(injector_method)
-        _(injector).must_be_instance_of(
-          OpenTelemetry::Propagator::B3::Multi::TextMapInjector
-        )
-      end
+      injector = OpenTelemetry::Propagator::B3::Multi.text_map_injector
+      _(injector).must_be_instance_of(
+        OpenTelemetry::Propagator::B3::Multi::TextMapInjector
+      )
     end
   end
 end
