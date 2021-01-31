@@ -23,7 +23,7 @@ module OpenTelemetry
           SAMPLED_VALUES = %w[1 d].freeze
 
           # Returns a new TextMapExtractor that extracts b3 context using the
-          # specified header keys
+          # specified getter
           #
           # @param [optional Getter] default_getter The default getter used to read
           #   headers from a carrier during extract. Defaults to a

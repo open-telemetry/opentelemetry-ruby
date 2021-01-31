@@ -10,7 +10,7 @@ module OpenTelemetry
         # Extracts context from carriers in the W3C Trace Context format
         class TextMapExtractor
           # Returns a new TextMapExtractor that extracts context using the
-          # specified header keys
+          # specified getter
           #
           # @param [optional Getter] default_getter The default getter used to read
           #   headers from a carrier during extract. Defaults to a +TextMapGetter+

@@ -12,11 +12,11 @@ module OpenTelemetry
       # Extracts baggage from carriers in the W3C Baggage format
       class TextMapExtractor
         # Returns a new TextMapExtractor that extracts context using the specified
-        # header key
+        # getter
         #
         # @param [optional Getter] default_getter The default getter used to read
-        #   headers from a carrier during extract. Defaults to a +TextMapGetter+
-        #   instance.
+        #   headers from a carrier during extract. Defaults to a
+        #   {OpenTelemetry::Context::Propagation::TextMapGetter} instance.
         # @return [TextMapExtractor]
         def initialize(default_getter = Context::Propagation.text_map_getter)
           @default_getter = default_getter

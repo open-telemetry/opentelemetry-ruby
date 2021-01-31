@@ -26,7 +26,7 @@ module OpenTelemetry
           private_constant :B3_TRACE_ID_REGEX, :B3_SPAN_ID_REGEX, :SAMPLED_VALUES, :DEBUG_FLAG
 
           # Returns a new TextMapExtractor that extracts b3 context using the
-          # specified header keys
+          # specified getter
           #
           # @param [optional Getter] default_getter The default getter used to read
           #   headers from a carrier during extract. Defaults to a

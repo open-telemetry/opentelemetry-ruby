@@ -16,7 +16,7 @@ module OpenTelemetry
         #
         # @param [optional Setter] default_setter The default setter used to
         #   write context into a carrier during inject. Defaults to a
-        #   {TextMapSetter} instance.
+        #   {OpenTelemetry::Context::Propagation::TextMapSetter} instance.
         # @return [TextMapInjector]
         def initialize(default_setter = Context::Propagation.text_map_setter)
           @default_setter = default_setter
