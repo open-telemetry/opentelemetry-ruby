@@ -12,27 +12,25 @@ module OpenTelemetry
       module Single
         # Injects context into carriers using the b3 single header format
         class TextMapInjector
-          include Context::Propagation::DefaultSetter
-
-          # Returns a new TextMapInjector that extracts b3 context using the
-          # specified header keys
+          # Returns a new TextMapInjector that injects b3 context using the
+          # specified setter
           #
-          # @param [String] b3_key The b3 header key used in the carrier
+          # @param [optional Setter] default_setter The default setter used to
+          #   write context into a carrier during inject. Defaults to a
+          #   {OpenTelemetry::Context:Propagation::TextMapSetter} instance.
           # @return [TextMapInjector]
-          def initialize(b3_key: 'b3')
-            @b3_key = b3_key
+          def initialize(default_setter = Context::Propagation.text_map_setter)
+            @default_setter = default_setter
           end
 
           # Set the span context on the supplied carrier.
           #
           # @param [Context] context The active Context.
-          # @param [optional Callable] setter An optional callable that takes a carrier and a key and
-          #   a value and assigns the key-value pair in the carrier. If omitted the default setter
-          #   will be used which expects the carrier to respond to [] and []=.
-          # @yield [Carrier, String, String] if an optional setter is provided, inject will yield
-          #   carrier, header key, header value to the setter.
+          # @param [optional Setter] setter If the optional setter is provided, it
+          #   will be used to write context into the carrier, otherwise the default
+          #   setter will be used.
           # @return [Object] the carrier with context injected
-          def inject(carrier, context, &setter)
+          def inject(carrier, context, setter = nil)
             span_context = Trace.current_span(context).context
             return unless span_context.valid?
 
@@ -46,8 +44,8 @@ module OpenTelemetry
 
             b3_value = "#{span_context.hex_trace_id}-#{span_context.hex_span_id}-#{sampling_state}"
 
-            setter ||= default_setter
-            setter.call(carrier, @b3_key, b3_value)
+            setter ||= @default_setter
+            setter.set(carrier, B3_CONTEXT_KEY, b3_value)
             carrier
           end
         end

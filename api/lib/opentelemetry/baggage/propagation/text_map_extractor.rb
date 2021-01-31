@@ -11,9 +11,6 @@ module OpenTelemetry
     module Propagation
       # Extracts baggage from carriers in the W3C Baggage format
       class TextMapExtractor
-        BAGGAGE_KEY = 'baggage'
-        private_constant :BAGGAGE_KEY
-
         # Returns a new TextMapExtractor that extracts context using the specified
         # header key
         #

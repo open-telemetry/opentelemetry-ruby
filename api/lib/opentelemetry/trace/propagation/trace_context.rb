@@ -15,6 +15,9 @@ module OpenTelemetry
       # for context propagation in the W3C Trace Context format.
       module TraceContext
         extend self
+        TRACEPARENT_KEY = 'traceparent'
+        TRACESTATE_KEY = 'tracestate'
+        private_constant :TRACEPARENT_KEY, :TRACESTATE_KEY
 
         TEXT_MAP_EXTRACTOR = TextMapExtractor.new
         TEXT_MAP_INJECTOR = TextMapInjector.new
@@ -22,8 +25,7 @@ module OpenTelemetry
           Context::Propagation.rack_env_getter
         )
         RACK_INJECTOR = TextMapInjector.new(
-          traceparent_key: 'HTTP_TRACEPARENT',
-          tracestate_key: 'HTTP_TRACESTATE'
+          Context::Propagation.text_map_setter
         )
 
         private_constant :TEXT_MAP_INJECTOR, :TEXT_MAP_EXTRACTOR,

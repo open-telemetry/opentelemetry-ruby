@@ -9,10 +9,6 @@ module OpenTelemetry
       module TraceContext
         # Extracts context from carriers in the W3C Trace Context format
         class TextMapExtractor
-          TRACEPARENT_KEY = 'traceparent'
-          TRACESTATE_KEY = 'tracestate'
-          private_constant :TRACEPARENT_KEY, :TRACESTATE_KEY
-
           # Returns a new TextMapExtractor that extracts context using the
           # specified header keys
           #

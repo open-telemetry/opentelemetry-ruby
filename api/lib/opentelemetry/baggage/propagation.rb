@@ -15,6 +15,7 @@ module OpenTelemetry
     module Propagation
       extend self
 
+      BAGGAGE_KEY = 'baggage'
       TEXT_MAP_EXTRACTOR = TextMapExtractor.new
       TEXT_MAP_INJECTOR = TextMapInjector.new
       RACK_EXTRACTOR = TextMapExtractor.new(
@@ -24,8 +25,8 @@ module OpenTelemetry
         baggage_key: 'HTTP_BAGGAGE'
       )
 
-      private_constant :TEXT_MAP_INJECTOR, :TEXT_MAP_EXTRACTOR, :RACK_INJECTOR,
-                       :RACK_EXTRACTOR
+      private_constant :BAGGAGE_KEY, :TEXT_MAP_INJECTOR, :TEXT_MAP_EXTRACTOR,
+                       :RACK_INJECTOR, :RACK_EXTRACTOR
 
       # Returns an extractor that extracts context using the W3C Baggage
       # format

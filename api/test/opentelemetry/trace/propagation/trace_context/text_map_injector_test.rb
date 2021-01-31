@@ -13,10 +13,7 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapInjector do
   let(:traceparent_key) { 'traceparent' }
   let(:tracestate_key) { 'tracestate' }
   let(:injector) do
-    OpenTelemetry::Trace::Propagation::TraceContext::TextMapInjector.new(
-      traceparent_key: traceparent_key,
-      tracestate_key: tracestate_key
-    )
+    OpenTelemetry::Trace::Propagation::TraceContext::TextMapInjector.new
   end
   let(:valid_traceparent_header) do
     '00-000000000000000000000000000000AA-00000000000000ea-01'
@@ -38,25 +35,19 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapInjector do
   end
 
   describe '#inject' do
-    it 'yields the carrier, key, and traceparent value from the context' do
-      yielded = false
-      injector.inject({}, context) do |c, k, v|
-        _(c).must_equal({})
-        _(k).must_equal(traceparent_key)
-        _(v).must_equal('00-ffffffffffffffffffffffffffffffff-1111111111111111-00')
-        yielded = true
-        c
-      end
-      _(yielded).must_equal(true)
+    it 'writes traceparent into the carrier' do
+      carrier = {}
+      injector.inject(carrier, context)
+      _(carrier[traceparent_key]).must_equal('00-ffffffffffffffffffffffffffffffff-1111111111111111-00')
     end
 
-    it 'does not yield the tracestate from the context, if nil' do
-      carrier = injector.inject({}, context) { |c, k, v| c[k] = v }
+    it 'does not write the tracestate into carrier, if nil' do
+      carrier = injector.inject({}, context)
       _(carrier).wont_include(tracestate_key)
     end
 
-    it 'yields the tracestate from the context, if provided' do
-      carrier = injector.inject({}, context_with_tracestate) { |c, k, v| c[k] = v }
+    it 'writes the tracestate into the context, if provided' do
+      carrier = injector.inject({}, context_with_tracestate)
       _(carrier).must_include(tracestate_key)
     end
 

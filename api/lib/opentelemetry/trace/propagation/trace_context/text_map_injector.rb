@@ -9,35 +9,30 @@ module OpenTelemetry
       module TraceContext
         # Injects context into carriers using the W3C Trace Context format
         class TextMapInjector
-          include Context::Propagation::DefaultSetter
-
           # Returns a new TextMapInjector that injects context using the
-          # specified header keys
+          # specified setter
           #
-          # @param [String] traceparent_key The traceparent header key used in the carrier
-          # @param [String] tracestate_key The tracestate header key used in the carrier
+          # @param [optional Setter] default_setter The default setter used to
+          #   write context into a carrier during inject. Defaults to a
+          #   {TextMapSetter} instance.
           # @return [TextMapInjector]
-          def initialize(traceparent_key: 'traceparent',
-                         tracestate_key: 'tracestate')
-            @traceparent_key = traceparent_key
-            @tracestate_key = tracestate_key
+          def initialize(default_setter = Context::Propagation.text_map_setter)
+            @default_setter = default_setter
           end
 
           # Set the span context on the supplied carrier.
           #
           # @param [Context] context The active {Context}.
-          # @param [optional Callable] setter An optional callable that takes a carrier and a key and
-          #   a value and assigns the key-value pair in the carrier. If omitted the default setter
-          #   will be used which expects the carrier to respond to [] and []=.
-          # @yield [Carrier, String, String] if an optional setter is provided, inject will yield
-          #   carrier, header key, header value to the setter.
+          # @param [optional Setter] setter If the optional setter is provided, it
+          #   will be used to write context into the carrier, otherwise the default
+          #   setter will be used.
           # @return [Object] the carrier with context injected
-          def inject(carrier, context, &setter)
+          def inject(carrier, context, setter = nil)
             return carrier unless (span_context = span_context_from(context))
 
-            setter ||= DEFAULT_SETTER
-            setter.call(carrier, @traceparent_key, TraceParent.from_span_context(span_context).to_s)
-            setter.call(carrier, @tracestate_key, span_context.tracestate.to_s) unless span_context.tracestate.empty?
+            setter ||= @default_setter
+            setter.set(carrier, TRACEPARENT_KEY, TraceParent.from_span_context(span_context).to_s)
+            setter.set(carrier, TRACESTATE_KEY, span_context.tracestate.to_s) unless span_context.tracestate.empty?
 
             carrier
           end

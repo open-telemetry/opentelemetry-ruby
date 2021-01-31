@@ -12,49 +12,38 @@ module OpenTelemetry
       module Multi
         # Injects context into carriers using the b3 single header format
         class TextMapInjector
-          include Context::Propagation::DefaultSetter
-
-          # Returns a new TextMapInjector that extracts b3 context using the
-          # specified header keys
+          # Returns a new TextMapInjector that injects b3 context using the
+          # specified setter
           #
-          # @param [String] b3_trace_id_key The b3 trace id key used in the carrier
-          # @param [String] b3_span_id_key The b3 span id key used in the carrier
-          # @param [String] b3_sampled_key The b3 sampled key used in the carrier
-          # @param [String] b3_flags_key The b3 flags key used in the carrier
+          # @param [optional Setter] default_setter The default setter used to
+          #   write context into a carrier during inject. Defaults to a
+          #   {OpenTelemetry::Context:Propagation::TextMapSetter} instance.
           # @return [TextMapInjector]
-          def initialize(b3_trace_id_key: 'X-B3-TraceId',
-                         b3_span_id_key: 'X-B3-SpanId',
-                         b3_sampled_key: 'X-B3-Sampled',
-                         b3_flags_key: 'X-B3-Flags')
-            @b3_trace_id_key = b3_trace_id_key
-            @b3_span_id_key = b3_span_id_key
-            @b3_sampled_key = b3_sampled_key
-            @b3_flags_key = b3_flags_key
+          def initialize(default_setter = Context::Propagation.text_map_setter)
+            @default_setter = default_setter
           end
 
           # Set the span context on the supplied carrier.
           #
           # @param [Context] context The active Context.
-          # @param [optional Callable] setter An optional callable that takes a carrier and a key and
-          #   a value and assigns the key-value pair in the carrier. If omitted the default setter
-          #   will be used which expects the carrier to respond to [] and []=.
-          # @yield [Carrier, String, String] if an optional setter is provided, inject will yield
-          #   carrier, header key, header value to the setter.
+          # @param [optional Setter] setter If the optional setter is provided, it
+          #   will be used to write context into the carrier, otherwise the default
+          #   setter will be used.
           # @return [Object] the carrier with context injected
-          def inject(carrier, context, &setter)
+          def inject(carrier, context, setter = nil)
             span_context = Trace.current_span(context).context
             return unless span_context.valid?
 
-            setter ||= default_setter
-            setter.call(carrier, @b3_trace_id_key, span_context.hex_trace_id)
-            setter.call(carrier, @b3_span_id_key, span_context.hex_span_id)
+            setter ||= @default_setter
+            setter.set(carrier, B3_TRACE_ID_KEY, span_context.hex_trace_id)
+            setter.set(carrier, B3_SPAN_ID_KEY, span_context.hex_span_id)
 
             if B3.debug?(context)
-              setter.call(carrier, @b3_flags_key, '1')
+              setter.set(carrier, B3_FLAGS_KEY, '1')
             elsif span_context.trace_flags.sampled?
-              setter.call(carrier, @b3_sampled_key, '1')
+              setter.set(carrier, B3_SAMPLED_KEY, '1')
             else
-              setter.call(carrier, @b3_sampled_key, '0')
+              setter.set(carrier, B3_SAMPLED_KEY, '0')
             end
 
             carrier
