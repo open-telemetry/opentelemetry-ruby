@@ -23,6 +23,7 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
   let(:rack_builder) { Rack::Builder.new }
 
   let(:exporter) { EXPORTER }
+  let(:finished_spans) { exporter.finished_spans }
   let(:first_span) { exporter.finished_spans.first }
 
   let(:default_config) { {} }
@@ -69,6 +70,50 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
 
     it 'has no parent' do
       _(first_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
+    end
+
+    describe 'config[:untraced_endpoints]' do
+      describe 'when an array is passed in' do
+        let(:config) { { untraced_endpoints: ['/ping'] } }
+
+        it 'does not trace paths listed in the array' do
+          Rack::MockRequest.new(rack_builder).get('/ping', env)
+
+          ping_span = finished_spans.find { |s| s.name == '/ping' }
+          _(ping_span).must_be_nil
+
+          root_span = finished_spans.find { |s| s.name == '/' }
+          _(root_span).wont_be_nil
+        end
+      end
+
+      describe 'when a string is passed in' do
+        let(:config) { { untraced_endpoints: '/ping' } }
+
+        it 'traces everything' do
+          Rack::MockRequest.new(rack_builder).get('/ping', env)
+
+          ping_span = finished_spans.find { |s| s.name == '/ping' }
+          _(ping_span).wont_be_nil
+
+          root_span = finished_spans.find { |s| s.name == '/' }
+          _(root_span).wont_be_nil
+        end
+      end
+
+      describe 'when nil is passed in' do
+        let(:config) { { untraced_endpoints: nil } }
+
+        it 'traces everything' do
+          Rack::MockRequest.new(rack_builder).get('/ping', env)
+
+          ping_span = finished_spans.find { |s| s.name == '/ping' }
+          _(ping_span).wont_be_nil
+
+          root_span = finished_spans.find { |s| s.name == '/' }
+          _(root_span).wont_be_nil
+        end
+      end
     end
 
     describe 'config[:allowed_request_headers]' do

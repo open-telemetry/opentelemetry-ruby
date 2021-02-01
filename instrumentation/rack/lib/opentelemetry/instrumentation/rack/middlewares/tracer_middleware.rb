@@ -49,9 +49,15 @@ module OpenTelemetry
 
           def initialize(app)
             @app = app
+            @untraced_endpoints = config[:untraced_endpoints].is_a?(Array) ? config[:untraced_endpoints] : []
           end
 
           def call(env) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+            if untraced_request?(env)
+              OpenTelemetry::Common::Utilities.untraced do
+                return @app.call(env)
+              end
+            end
             original_env = env.dup
             extracted_context = OpenTelemetry.propagation.extract(
               env,
@@ -78,6 +84,10 @@ module OpenTelemetry
           end
 
           private
+
+          def untraced_request?(env)
+            @untraced_endpoints.include?(env['PATH_INFO'])
+          end
 
           # return Context with the frontend span as the current span
           def create_frontend_span(env, extracted_context)
