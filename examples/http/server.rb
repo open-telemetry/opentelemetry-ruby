@@ -25,7 +25,10 @@ class OpenTelemetryMiddleware
 
   def call(env)
     # Extract context from request headers
-    context = OpenTelemetry.propagation.http.extract(env)
+    context = OpenTelemetry.propagation.extract(
+      env,
+      getter: OpenTelemetry::Context::Propagation.rack_env_getter
+    )
 
     status, headers, response_body = 200, {}, ''
 

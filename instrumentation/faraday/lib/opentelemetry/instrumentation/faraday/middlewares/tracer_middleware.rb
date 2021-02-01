@@ -34,7 +34,7 @@ module OpenTelemetry
               },
               kind: :client
             ) do |span|
-              OpenTelemetry.propagation.http.inject(env.request_headers)
+              OpenTelemetry.propagation.inject(env.request_headers)
 
               app.call(env).on_complete { |resp| trace_response(span, resp) }
             end

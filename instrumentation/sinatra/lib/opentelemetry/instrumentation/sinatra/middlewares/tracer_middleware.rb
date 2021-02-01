@@ -31,7 +31,10 @@ module OpenTelemetry
           attr_reader :app
 
           def parent_context(env)
-            OpenTelemetry.propagation.http.extract(env)
+            OpenTelemetry.propagation.extract(
+              env,
+              getter: OpenTelemetry::Context::Propagation.rack_env_getter
+            )
           end
 
           def tracer

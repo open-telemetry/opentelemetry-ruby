@@ -19,8 +19,6 @@ module OpenTelemetry
       module Multi
         # Extracts context from carriers in the b3 single header format
         class TextMapExtractor
-          include Context::Propagation::DefaultGetter
-
           B3_TRACE_ID_REGEX = /\A(?:[0-9a-f]{16}){1,2}\z/.freeze
           B3_SPAN_ID_REGEX = /\A[0-9a-f]{16}\z/.freeze
           SAMPLED_VALUES = %w[1 true].freeze
@@ -28,21 +26,14 @@ module OpenTelemetry
           private_constant :B3_TRACE_ID_REGEX, :B3_SPAN_ID_REGEX, :SAMPLED_VALUES, :DEBUG_FLAG
 
           # Returns a new TextMapExtractor that extracts b3 context using the
-          # specified header keys
+          # specified getter
           #
-          # @param [String] b3_trace_id_key The b3 trace id key used in the carrier
-          # @param [String] b3_span_id_key The b3 span id key used in the carrier
-          # @param [String] b3_sampled_key The b3 sampled key used in the carrier
-          # @param [String] b3_flags_key The b3 flags key used in the carrier
+          # @param [optional Getter] default_getter The default getter used to read
+          #   headers from a carrier during extract. Defaults to a
+          #   {OpenTelemetry::Context:Propagation::TextMapGetter} instance.
           # @return [TextMapExtractor]
-          def initialize(b3_trace_id_key: 'X-B3-TraceId',
-                         b3_span_id_key: 'X-B3-SpanId',
-                         b3_sampled_key: 'X-B3-Sampled',
-                         b3_flags_key: 'X-B3-Flags')
-            @b3_trace_id_key = b3_trace_id_key
-            @b3_span_id_key = b3_span_id_key
-            @b3_sampled_key = b3_sampled_key
-            @b3_flags_key = b3_flags_key
+          def initialize(default_getter = Context::Propagation.text_map_getter)
+            @default_getter = default_getter
           end
 
           # Extract b3 context from the supplied carrier and set the active span
@@ -51,24 +42,22 @@ module OpenTelemetry
           #
           # @param [Carrier] carrier The carrier to get the header from.
           # @param [Context] context The context to be updated with extracted context
-          # @param [optional Callable] getter An optional callable that takes a carrier and a key and
-          #   returns the value associated with the key. If omitted the default getter will be used
-          #   which expects the carrier to respond to [] and []=.
-          # @yield [Carrier, String] if an optional getter is provided, extract will yield the carrier
-          #   and the header key to the getter.
+          # @param [optional Getter] getter If the optional getter is provided, it
+          #   will be used to read the header from the carrier, otherwise the default
+          #   getter will be used.
           # @return [Context] Updated context with active span derived from the header, or the original
           #   context if parsing fails.
-          def extract(carrier, context, &getter)
-            getter ||= default_getter
+          def extract(carrier, context, getter = nil)
+            getter ||= @default_getter
 
-            trace_id_hex = getter.call(carrier, @b3_trace_id_key)
+            trace_id_hex = getter.get(carrier, B3_TRACE_ID_KEY)
             return context unless valid_trace_id?(trace_id_hex)
 
-            span_id_hex = getter.call(carrier, @b3_span_id_key)
+            span_id_hex = getter.get(carrier, B3_SPAN_ID_KEY)
             return context unless valid_span_id?(span_id_hex)
 
-            sampled = getter.call(carrier, @b3_sampled_key)
-            flags = getter.call(carrier, @b3_flags_key)
+            sampled = getter.get(carrier, B3_SAMPLED_KEY)
+            flags = getter.get(carrier, B3_FLAGS_KEY)
 
             context = B3.context_with_debug(context) if flags == DEBUG_FLAG
 

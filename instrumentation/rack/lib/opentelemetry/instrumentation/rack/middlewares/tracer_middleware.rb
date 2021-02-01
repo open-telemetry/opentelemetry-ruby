@@ -51,9 +51,12 @@ module OpenTelemetry
             @app = app
           end
 
-          def call(env) # rubocop:disable Metrics/AbcSize
+          def call(env) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
             original_env = env.dup
-            extracted_context = OpenTelemetry.propagation.http.extract(env)
+            extracted_context = OpenTelemetry.propagation.extract(
+              env,
+              getter: OpenTelemetry::Context::Propagation.rack_env_getter
+            )
             frontend_context = create_frontend_span(env, extracted_context)
 
             # restore extracted context in this process:

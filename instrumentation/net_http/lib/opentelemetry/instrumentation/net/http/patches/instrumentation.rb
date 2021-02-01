@@ -30,7 +30,7 @@ module OpenTelemetry
                 ),
                 kind: :client
               ) do |span|
-                OpenTelemetry.propagation.http.inject(req)
+                OpenTelemetry.propagation.inject(req)
 
                 super(req, body, &block).tap do |response|
                   annotate_span_with_response!(span, response)

@@ -9,18 +9,15 @@ module OpenTelemetry
       module TraceContext
         # Extracts context from carriers in the W3C Trace Context format
         class TextMapExtractor
-          include Context::Propagation::DefaultGetter
-
           # Returns a new TextMapExtractor that extracts context using the
-          # specified header keys
+          # specified getter
           #
-          # @param [String] traceparent_key The traceparent header key used in the carrier
-          # @param [String] tracestate_key The tracestate header key used in the carrier
+          # @param [optional Getter] default_getter The default getter used to read
+          #   headers from a carrier during extract. Defaults to a +TextMapGetter+
+          #   instance.
           # @return [TextMapExtractor]
-          def initialize(traceparent_key: 'traceparent',
-                         tracestate_key: 'tracestate')
-            @traceparent_key = traceparent_key
-            @tracestate_key = tracestate_key
+          def initialize(default_getter = Context::Propagation.text_map_getter)
+            @default_getter = default_getter
           end
 
           # Extract a remote {Trace::SpanContext} from the supplied carrier.
@@ -28,17 +25,15 @@ module OpenTelemetry
           #
           # @param [Carrier] carrier The carrier to get the header from.
           # @param [Context] context The context to be updated with extracted context
-          # @param [optional Callable] getter An optional callable that takes a carrier and a key and
-          #   returns the value associated with the key. If omitted the default getter will be used
-          #   which expects the carrier to respond to [] and []=.
-          # @yield [Carrier, String] if an optional getter is provided, extract will yield the carrier
-          #   and the header key to the getter.
+          # @param [optional Getter] getter If the optional getter is provided, it
+          #   will be used to read the header from the carrier, otherwise the default
+          #   getter will be used.
           # @return [Context] Updated context with span context from the header, or the original
           #   context if parsing fails.
-          def extract(carrier, context, &getter)
-            getter ||= default_getter
-            tp = TraceParent.from_string(getter.call(carrier, @traceparent_key))
-            tracestate = Tracestate.from_string(getter.call(carrier, @tracestate_key))
+          def extract(carrier, context, getter = nil)
+            getter ||= @default_getter
+            tp = TraceParent.from_string(getter.get(carrier, TRACEPARENT_KEY))
+            tracestate = Tracestate.from_string(getter.get(carrier, TRACESTATE_KEY))
 
             span_context = Trace::SpanContext.new(trace_id: tp.trace_id,
                                                   span_id: tp.span_id,

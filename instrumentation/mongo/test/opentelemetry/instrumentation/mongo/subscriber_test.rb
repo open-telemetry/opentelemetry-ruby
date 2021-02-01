@@ -25,16 +25,16 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
     TestHelper.setup_mongo
 
     # this is currently a noop but this will future proof the test
-    @orig_propagator = OpenTelemetry.propagation.http
+    @orig_propagation = OpenTelemetry.propagation
     propagator = OpenTelemetry::Context::Propagation::Propagator.new(
       OpenTelemetry::Trace::Propagation::TraceContext.text_map_injector,
       OpenTelemetry::Trace::Propagation::TraceContext.text_map_extractor
     )
-    OpenTelemetry.propagation.http = propagator
+    OpenTelemetry.propagation = propagator
   end
 
   after do
-    OpenTelemetry.propagation.http = @orig_propagator
+    OpenTelemetry.propagation = @orig_propagation
 
     TestHelper.teardown_mongo
   end

@@ -11,33 +11,30 @@ module OpenTelemetry
     module Propagation
       # Injects baggage using the W3C Baggage format
       class TextMapInjector
-        include Context::Propagation::DefaultSetter
-
         # Returns a new TextMapInjector that injects context using the specified
-        # header key
+        # setter
         #
-        # @param [String] baggage_key The baggage header
-        #   key used in the carrier
+        # @param [optional Setter] default_setter The default setter used to
+        #   write context into a carrier during inject. Defaults to a
+        #   {OpenTelemetry::Context::Propagation::TextMapSetter} instance.
         # @return [TextMapInjector]
-        def initialize(baggage_key: 'baggage')
-          @baggage_key = baggage_key
+        def initialize(default_setter = Context::Propagation.text_map_setter)
+          @default_setter = default_setter
         end
 
         # Inject in-process baggage into the supplied carrier.
         #
         # @param [Carrier] carrier The carrier to inject baggage into
         # @param [Context] context The context to read baggage from
-        # @param [optional Callable] getter An optional callable that takes a carrier and a key and
-        #   returns the value associated with the key. If omitted the default getter will be used
-        #   which expects the carrier to respond to [] and []=.
-        # @yield [Carrier, String] if an optional getter is provided, inject will yield the carrier
-        #   and the header key to the getter.
+        # @param [optional Setter] setter If the optional setter is provided, it
+        #   will be used to write context into the carrier, otherwise the default
+        #   setter will be used.
         # @return [Object] carrier with injected baggage
-        def inject(carrier, context, &setter)
+        def inject(carrier, context, setter = nil)
           return carrier unless (baggage = context[ContextKeys.baggage_key]) && !baggage.empty?
 
-          setter ||= default_setter
-          setter.call(carrier, @baggage_key, encode(baggage))
+          setter ||= @default_setter
+          setter.set(carrier, BAGGAGE_KEY, encode(baggage))
 
           carrier
         end

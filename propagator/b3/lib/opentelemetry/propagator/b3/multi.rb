@@ -22,19 +22,15 @@ module OpenTelemetry
       module Multi
         extend self
 
+        B3_TRACE_ID_KEY = 'X-B3-TraceId'
+        B3_SPAN_ID_KEY = 'X-B3-SpanId'
+        B3_SAMPLED_KEY = 'X-B3-Sampled'
+        B3_FLAGS_KEY = 'X-B3-Flags'
         TEXT_MAP_EXTRACTOR = TextMapExtractor.new
         TEXT_MAP_INJECTOR = TextMapInjector.new
-        RACK_KEYS = {
-          b3_trace_id_key: 'HTTP_X_B3_TRACEID',
-          b3_span_id_key: 'HTTP_X_B3_SPANID',
-          b3_sampled_key: 'HTTP_X_B3_SAMPLED',
-          b3_flags_key: 'HTTP_X_B3_FLAGS'
-        }.freeze
-        RACK_EXTRACTOR = TextMapExtractor.new(**RACK_KEYS)
-        RACK_INJECTOR = TextMapInjector.new(**RACK_KEYS)
 
-        private_constant :TEXT_MAP_INJECTOR, :TEXT_MAP_EXTRACTOR, :RACK_INJECTOR,
-                         :RACK_EXTRACTOR, :RACK_KEYS
+        private_constant :B3_TRACE_ID_KEY, :B3_SPAN_ID_KEY, :B3_SAMPLED_KEY,
+                         :B3_FLAGS_KEY, :TEXT_MAP_INJECTOR, :TEXT_MAP_EXTRACTOR
 
         # Returns an extractor that extracts context in the B3 multi header
         # format
@@ -46,20 +42,6 @@ module OpenTelemetry
         # format
         def text_map_extractor
           TEXT_MAP_EXTRACTOR
-        end
-
-        # Returns an extractor that extracts context in the B3 multi header
-        # format with Rack normalized keys (upcased and prefixed with
-        # HTTP_)
-        def rack_injector
-          RACK_INJECTOR
-        end
-
-        # Returns an injector that injects context in the B3 multi header
-        # format with Rack normalized keys (upcased and prefixed with
-        # HTTP_)
-        def rack_extractor
-          RACK_EXTRACTOR
         end
       end
     end

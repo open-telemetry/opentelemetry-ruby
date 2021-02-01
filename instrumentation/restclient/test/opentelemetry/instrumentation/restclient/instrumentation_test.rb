@@ -20,19 +20,19 @@ describe OpenTelemetry::Instrumentation::RestClient::Instrumentation do
     stub_request(:get, 'http://example.com/failure').to_return(status: 500)
 
     # this is currently a noop but this will future proof the test
-    @orig_propagator = OpenTelemetry.propagation.http
+    @orig_propagation = OpenTelemetry.propagation
     propagator = OpenTelemetry::Context::Propagation::Propagator.new(
       OpenTelemetry::Trace::Propagation::TraceContext.text_map_injector,
       OpenTelemetry::Trace::Propagation::TraceContext.text_map_extractor
     )
-    OpenTelemetry.propagation.http = propagator
+    OpenTelemetry.propagation = propagator
   end
 
   after do
     # Force re-install of instrumentation
     instrumentation.instance_variable_set(:@installed, false)
 
-    OpenTelemetry.propagation.http = @orig_propagator
+    OpenTelemetry.propagation = @orig_propagation
   end
 
   describe 'tracing' do

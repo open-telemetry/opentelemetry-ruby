@@ -36,7 +36,7 @@ tracer.in_span(
 ) do |span|
   response = connection.get(url) do |request|
     # Inject context into request headers
-    OpenTelemetry.propagation.http.inject(request.headers)
+    OpenTelemetry.propagation.inject(request.headers)
   end
 
   span.set_attribute('http.url', response.env.url.to_s)

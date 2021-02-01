@@ -115,7 +115,7 @@ describe OpenTelemetry::SDK::Configurator do
       end
     end
 
-    describe 'http_injectors' do
+    describe 'injectors' do
       it 'defaults to trace context and baggage' do
         configurator.configure
 
@@ -124,61 +124,19 @@ describe OpenTelemetry::SDK::Configurator do
           OpenTelemetry::Baggage::Propagation.text_map_injector
         ]
 
-        _(injectors_for(OpenTelemetry.propagation.http)).must_equal(expected_injectors)
+        _(injectors_for(OpenTelemetry.propagation)).must_equal(expected_injectors)
       end
 
       it 'is user settable' do
         injector = OpenTelemetry::Context::Propagation::NoopInjector.new
-        configurator.http_injectors = [injector]
+        configurator.injectors = [injector]
         configurator.configure
 
-        _(injectors_for(OpenTelemetry.propagation.http)).must_equal([injector])
+        _(injectors_for(OpenTelemetry.propagation)).must_equal([injector])
       end
     end
 
-    describe '#http_extractors' do
-      it 'defaults to trace context and baggage' do
-        configurator.configure
-
-        expected_extractors = [
-          OpenTelemetry::Trace::Propagation::TraceContext.rack_extractor,
-          OpenTelemetry::Baggage::Propagation.rack_extractor
-        ]
-
-        _(extractors_for(OpenTelemetry.propagation.http)).must_equal(expected_extractors)
-      end
-
-      it 'is user settable' do
-        extractor = OpenTelemetry::Context::Propagation::NoopExtractor.new
-        configurator.http_extractors = [extractor]
-        configurator.configure
-
-        _(extractors_for(OpenTelemetry.propagation.http)).must_equal([extractor])
-      end
-    end
-
-    describe 'text_map_injectors' do
-      it 'defaults to trace context and baggage' do
-        configurator.configure
-
-        expected_injectors = [
-          OpenTelemetry::Trace::Propagation::TraceContext.text_map_injector,
-          OpenTelemetry::Baggage::Propagation.text_map_injector
-        ]
-
-        _(injectors_for(OpenTelemetry.propagation.text)).must_equal(expected_injectors)
-      end
-
-      it 'is user settable' do
-        injector = OpenTelemetry::Context::Propagation::NoopInjector.new
-        configurator.text_map_injectors = [injector]
-        configurator.configure
-
-        _(injectors_for(OpenTelemetry.propagation.text)).must_equal([injector])
-      end
-    end
-
-    describe '#text_map_extractors' do
+    describe '#extractors' do
       it 'defaults to trace context and baggage' do
         configurator.configure
 
@@ -187,15 +145,15 @@ describe OpenTelemetry::SDK::Configurator do
           OpenTelemetry::Baggage::Propagation.text_map_extractor
         ]
 
-        _(extractors_for(OpenTelemetry.propagation.text)).must_equal(expected_extractors)
+        _(extractors_for(OpenTelemetry.propagation)).must_equal(expected_extractors)
       end
 
       it 'is user settable' do
         extractor = OpenTelemetry::Context::Propagation::NoopExtractor.new
-        configurator.text_map_extractors = [extractor]
+        configurator.extractors = [extractor]
         configurator.configure
 
-        _(extractors_for(OpenTelemetry.propagation.text)).must_equal([extractor])
+        _(extractors_for(OpenTelemetry.propagation)).must_equal([extractor])
       end
     end
 
