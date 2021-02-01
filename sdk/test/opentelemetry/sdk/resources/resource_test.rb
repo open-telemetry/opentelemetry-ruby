@@ -42,6 +42,10 @@ describe OpenTelemetry::SDK::Resources::Resource do
   end
 
   describe '.default' do
+    after do
+      Resource.instance_variable_set(:@default, nil)
+    end
+
     it 'contains telemetry sdk attributes' do
       resource_attributes = Resource.default.attribute_enumerator.to_h
       _(resource_attributes).must_include('telemetry.sdk.name')
@@ -62,6 +66,14 @@ describe OpenTelemetry::SDK::Resources::Resource do
       resource_attributes = Resource.default.attribute_enumerator.to_h
       _(resource_attributes).must_include('service.name')
       _(resource_attributes['service.name']).must_equal('unknown_service')
+    end
+
+    it 'allows overriding the default service.name with the environment variable' do
+      with_env('OTEL_RESOURCE_ATTRIBUTES' => 'service.name=svc') do
+        resource_attributes = Resource.default.attribute_enumerator.to_h
+        _(resource_attributes).must_include('service.name')
+        _(resource_attributes['service.name']).must_equal('svc')
+      end
     end
   end
 
