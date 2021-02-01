@@ -70,7 +70,7 @@ describe OpenTelemetry::Context::Propagation::CompositePropagator do
       it 'accepts explicit context' do
         Context.with_values('k1' => 'v1', 'k2' => 'v2') do
           ctx = Context.current.set_value('k3', 'v3') do
-            carrier = propagator.inject({}, ctx)
+            carrier = propagator.inject({}, context: ctx)
             _(carrier).must_equal('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3')
           end
         end
@@ -83,7 +83,7 @@ describe OpenTelemetry::Context::Propagation::CompositePropagator do
               carrier[key.upcase] = value.upcase
             end
           end.new
-          result = propagator.inject({}, OpenTelemetry::Context.current, setter)
+          result = propagator.inject({}, setter: setter)
           _(result).must_equal('K1' => 'V1', 'K2' => 'V2', 'K3' => 'V3')
         end
       end
@@ -101,7 +101,7 @@ describe OpenTelemetry::Context::Propagation::CompositePropagator do
       it 'accepts explicit context' do
         ctx = Context.empty.set_value('k0', 'v0')
         carrier = { 'k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3' }
-        context = propagator.extract(carrier, ctx)
+        context = propagator.extract(carrier, context: ctx)
         _(context['k0']).must_equal('v0')
         _(context['k1']).must_equal('v1')
         _(context['k2']).must_equal('v2')
@@ -115,7 +115,7 @@ describe OpenTelemetry::Context::Propagation::CompositePropagator do
             carrier[key]&.upcase
           end
         end.new
-        context = propagator.extract(carrier, Context.empty, getter)
+        context = propagator.extract(carrier, getter: getter)
         _(context['k1']).must_equal('V1')
         _(context['k2']).must_equal('V2')
         _(context['k3']).must_equal('V3')

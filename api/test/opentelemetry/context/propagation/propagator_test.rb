@@ -53,7 +53,7 @@ describe OpenTelemetry::Context::Propagation::Propagator do
 
     describe '#extract' do
       it 'returns context' do
-        result = propagator.extract({}, context)
+        result = propagator.extract({}, context: context)
         _(result).must_equal(context)
         mock_extractor.verify
       end

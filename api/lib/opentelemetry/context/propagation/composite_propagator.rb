@@ -35,7 +35,7 @@ module OpenTelemetry
         #   setter will be used.
         #
         # @return [Object] carrier
-        def inject(carrier, context = Context.current, setter = Context::Propagation.text_map_setter)
+        def inject(carrier, context: Context.current, setter: Context::Propagation.text_map_setter)
           @injectors.inject(carrier) do |memo, injector|
             injector.inject(memo, context, setter)
           rescue => e # rubocop:disable Style/RescueStandardError
@@ -58,7 +58,7 @@ module OpenTelemetry
         #
         # @return [Context] a new context updated with state extracted from the
         #   carrier
-        def extract(carrier, context = Context.current, getter = Context::Propagation.text_map_getter)
+        def extract(carrier, context: Context.current, getter: Context::Propagation.text_map_getter)
           @extractors.inject(context) do |ctx, extractor|
             extractor.extract(carrier, ctx, getter)
           rescue => e # rubocop:disable Style/RescueStandardError

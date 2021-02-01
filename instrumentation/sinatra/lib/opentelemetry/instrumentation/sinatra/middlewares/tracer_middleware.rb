@@ -33,8 +33,7 @@ module OpenTelemetry
           def parent_context(env)
             OpenTelemetry.propagation.extract(
               env,
-              OpenTelemetry::Context.current,
-              OpenTelemetry::Context::Propagation.rack_env_getter
+              getter: OpenTelemetry::Context::Propagation.rack_env_getter
             )
           end
 
