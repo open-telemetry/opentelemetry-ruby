@@ -31,7 +31,7 @@ module OpenTelemetry
           end
 
           def default
-            @default ||= telemetry_sdk.merge(process).merge(create(Constants::SERVICE_RESOURCE[:name] => 'unknown_service'))
+            @default ||= create(Constants::SERVICE_RESOURCE[:name] => 'unknown_service').merge(process).merge(telemetry_sdk)
           end
 
           def telemetry_sdk
