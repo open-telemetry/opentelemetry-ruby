@@ -42,6 +42,10 @@ describe OpenTelemetry::SDK::Resources::Resource do
   end
 
   describe '.default' do
+    before do
+      Resource.instance_variable_set(:@default, nil)
+    end
+
     after do
       Resource.instance_variable_set(:@default, nil)
     end
