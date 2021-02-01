@@ -1,5 +1,10 @@
 # Release History: opentelemetry-sdk
 
+### v0.13.1 / 2021-02-01
+
+* FIXED: Leaky test 
+* FIXED: Allow env var override of service.name 
+
 ### v0.13.0 / 2021-01-29
 
 * BREAKING CHANGE: Remove MILLIS from BatchSpanProcessor vars 
