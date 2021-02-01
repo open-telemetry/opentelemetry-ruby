@@ -2,7 +2,7 @@
 
 ### v0.13.0 / 2021-01-29
 
-* (No significant changes)
+* FIXED: Coerce message ID to string in span payload
 
 ### v0.12.0 / 2020-12-24
 
