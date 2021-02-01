@@ -47,6 +47,10 @@ describe OpenTelemetry::SDK::Configurator do
     describe 'when there is a resource key collision' do
       let(:expected_resource_attributes) { default_resource_attributes.merge('important_value' => '25') }
 
+      after do
+        OpenTelemetry::SDK::Resources::Resource.instance_variable_set(:@default, nil)
+      end
+
       it 'uses the user provided resources' do
         with_env('OTEL_RESOURCE_ATTRIBUTES' => 'important_value=100') do
           configurator.resource = OpenTelemetry::SDK::Resources::Resource.create('important_value' => '25')
