@@ -15,7 +15,7 @@ module OpenTelemetry
 
             OpenTelemetry::Instrumentation::Bunny::PatchHelpers.with_receive_span(self, tracer, delivery_info, properties) do
               properties[:headers] ||= {}
-              OpenTelemetry.propagation.text.inject(properties[:headers])
+              OpenTelemetry.propagation.inject(properties[:headers])
             end
 
             [delivery_info, properties, payload]
@@ -24,7 +24,7 @@ module OpenTelemetry
           def basic_publish(payload, exchange, routing_key, opts = {})
             OpenTelemetry::Instrumentation::Bunny::PatchHelpers.with_send_span(self, tracer, exchange, routing_key) do
               opts[:headers] ||= {}
-              OpenTelemetry.propagation.text.inject(opts[:headers])
+              OpenTelemetry.propagation.inject(opts[:headers])
               super(payload, exchange, routing_key, opts)
             end
           end
@@ -33,7 +33,7 @@ module OpenTelemetry
           def handle_frameset(basic_deliver, properties, content)
             OpenTelemetry::Instrumentation::Bunny::PatchHelpers.with_receive_span(self, tracer, basic_deliver, properties) do
               properties[:headers] ||= {}
-              OpenTelemetry.propagation.text.inject(properties[:headers])
+              OpenTelemetry.propagation.inject(properties[:headers])
             end
 
             super

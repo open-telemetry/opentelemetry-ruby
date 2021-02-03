@@ -45,7 +45,7 @@ module OpenTelemetry
         end
 
         def self.extract_context(headers)
-          parent_context = OpenTelemetry.propagation.text.extract(headers)
+          parent_context = OpenTelemetry.propagation.extract(headers)
           span_context = OpenTelemetry::Trace.current_span(parent_context).context
           links = [OpenTelemetry::Trace::Link.new(span_context)] if span_context.valid?
 
