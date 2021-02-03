@@ -34,6 +34,11 @@ module OpenTelemetry
           defined?(::GraphQL)
         end
 
+        option :schemas, default: nil, validate: ->(v) { v.is_a?(Array) }, allow_nil: true
+        option :enable_platform_field, default: false, validate: ->(v) { v }
+        option :enable_platform_authorized, default: false, validate: ->(v) { v }
+        option :enable_platform_resolve_type, default: false, validate: ->(v) { v }
+
         private
 
         def require_dependencies

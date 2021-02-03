@@ -129,14 +129,19 @@ module OpenTelemetry
           @compatible_blk = blk
         end
 
+        def option(name, default:, validate:, allow_nil: false)
+          @options ||= []
+          @options << { name: name, default: default, validate: validate, allow_nil: allow_nil}
+        end
+
         def instance
           @instance ||= new(instrumentation_name, instrumentation_version, install_blk,
-                            present_blk, compatible_blk)
+                            present_blk, compatible_blk, options)
         end
 
         private
 
-        attr_reader :install_blk, :present_blk, :compatible_blk
+        attr_reader :install_blk, :present_blk, :compatible_blk, :options
 
         def infer_name
           @inferred_name ||= if (md = name.match(NAME_REGEX)) # rubocop:disable Naming/MemoizedInstanceVariableName
@@ -161,7 +166,7 @@ module OpenTelemetry
       alias installed? installed
 
       def initialize(name, version, install_blk, present_blk,
-                     compatible_blk)
+                     compatible_blk, options)
         @name = name
         @version = version
         @install_blk = install_blk
@@ -169,6 +174,7 @@ module OpenTelemetry
         @compatible_blk = compatible_blk
         @config = {}
         @installed = false
+        @options = options
       end
 
       # Install instrumentation with the given config. The present? and compatible?
@@ -180,10 +186,29 @@ module OpenTelemetry
         return true if installed?
         return false unless installable?(config)
 
-        @config = config unless config.nil?
+        @config = config_options(config)
         instance_exec(@config, &@install_blk)
         @tracer ||= OpenTelemetry.tracer_provider.tracer(name, version)
         @installed = true
+      end
+
+      def config_options(config_hash)
+        config_hash ||= {}
+
+        @options.each_with_object({}) do |option, h|
+          option_name = option[:name]
+          config_hash_value = config_hash[option_name]
+
+          value = if config_hash_value.nil? && option[:allow_nil]
+            nil
+          elsif option[:validate].call(config_hash_value)
+            config_hash_value
+          else
+            option[:default]
+          end
+
+          h[option_name] = value
+        end
       end
 
       # Whether or not this instrumentation is installable in the current process. Will
