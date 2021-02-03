@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-jaeger
 
+### v0.14.0 / 2021-02-03
+
+* (No significant changes)
+
 ### v0.13.0 / 2021-01-29
 
 * ADDED: Provide default resource in SDK 

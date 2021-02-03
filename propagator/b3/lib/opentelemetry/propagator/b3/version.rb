@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Propagator
     module B3
-      VERSION = '0.13.0'
+      VERSION = '0.14.0'
     end
   end
 end

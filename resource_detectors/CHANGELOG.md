@@ -1,5 +1,9 @@
 # Release History: opentelemetry-resource_detectors
 
+### v0.14.0 / 2021-02-03
+
+* DOCS: Updated gem name to match gemspec 
+
 ### v0.13.0 / 2021-01-29
 
 * (No significant changes)
