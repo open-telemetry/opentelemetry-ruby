@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.14.0 / 2021-02-03
+
+* BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators 
+
+* ADDED: Replace getter and setter callables and remove rack specific propagators 
+* ADDED: Add untraced endpoints config to rack middleware 
+
 ### v0.13.0 / 2021-01-29
 
 * FIXED: Only include user agent when present 

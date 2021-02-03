@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.14.0 / 2021-02-03
+
+* BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators 
+
+* ADDED: Replace getter and setter callables and remove rack specific propagators 
+
 ### v0.13.0 / 2021-01-29
 
 * (No significant changes)
