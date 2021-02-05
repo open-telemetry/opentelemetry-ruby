@@ -129,9 +129,13 @@ module OpenTelemetry
           @compatible_blk = blk
         end
 
-        def option(name, default:, validate:, allow_nil: false)
+        # @param [String] name
+        # @param default The default value
+        # @param [Callable] validate A callable the returns a boolean
+        def option(name, default:, validate:)
+          raise ArgumentError, 'validate must be a callable' unless validate.respond_to?(:call)
           @options ||= []
-          @options << { name: name, default: default, validate: validate, allow_nil: allow_nil}
+          @options << { name: name, default: default, validate: validate }
         end
 
         def instance
@@ -185,30 +189,10 @@ module OpenTelemetry
       def install(config = {})
         return true if installed?
         return false unless installable?(config)
-
         @config = config_options(config)
         instance_exec(@config, &@install_blk)
         @tracer ||= OpenTelemetry.tracer_provider.tracer(name, version)
         @installed = true
-      end
-
-      def config_options(config_hash)
-        config_hash ||= {}
-
-        @options.each_with_object({}) do |option, h|
-          option_name = option[:name]
-          config_hash_value = config_hash[option_name]
-
-          value = if config_hash_value.nil? && option[:allow_nil]
-            nil
-          elsif option[:validate].call(config_hash_value)
-            config_hash_value
-          else
-            option[:default]
-          end
-
-          h[option_name] = value
-        end
       end
 
       # Whether or not this instrumentation is installable in the current process. Will
@@ -249,6 +233,36 @@ module OpenTelemetry
       end
 
       private
+
+      # The config_options method is responsible for validating that the user supplied
+      # config hash is valid.
+      # Unknown configuration keys are not included in the final config hash.
+      # Invalid configuration values are logged, and replaced by the default.
+      #
+      # @param [Hash] config The user supplied config hash
+      def config_options(config)
+        @options ||= {}
+        config ||= {}
+
+        @options.each_with_object({}) do |option, h|
+          option_name = option[:name]
+          config_value = config[option_name]
+
+          value = if config_value.nil?
+            option[:default]
+          elsif option[:validate].call(config_value)
+            config_value
+          else
+            OpenTelemetry.logger.warn(
+              "Instrumentation #{name} configuration option #{option_name} value=#{config_value} " \
+              "failed validation, falling back to default value=#{option[:default]}"
+            )
+            option[:default]
+          end
+
+          h[option_name] = value
+        end
+      end
 
       # Checks to see if this instrumentation is enabled by env var. By convention, the
       # environment variable will be the instrumentation name upper cased, with '::'

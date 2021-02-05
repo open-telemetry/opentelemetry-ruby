@@ -34,7 +34,7 @@ module OpenTelemetry
           defined?(::GraphQL)
         end
 
-        option :schemas, default: nil, validate: ->(v) { v.is_a?(Array) }, allow_nil: true
+        option :schemas, default: [], validate: ->(v) { v.is_a?(Array) }
         option :enable_platform_field, default: false, validate: ->(v) { v }
         option :enable_platform_authorized, default: false, validate: ->(v) { v }
         option :enable_platform_resolve_type, default: false, validate: ->(v) { v }
@@ -46,7 +46,7 @@ module OpenTelemetry
         end
 
         def install_tracer(config = {})
-          if config[:schemas].nil? || config[:schemas].empty?
+          if config[:schemas].empty?
             ::GraphQL::Schema.tracer(Tracers::GraphQLTracer.new)
           else
             config[:schemas].each do |schema|

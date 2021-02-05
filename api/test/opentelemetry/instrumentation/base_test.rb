@@ -42,6 +42,8 @@ describe OpenTelemetry::Instrumentation::Base do
         @install_called = true
       end
 
+      option :max_count, default: 5, validate: ->(v) { v.is_a?(Integer) }
+
       def initialize(*args)
         super
         @present = true
@@ -62,6 +64,21 @@ describe OpenTelemetry::Instrumentation::Base do
   describe '.instance' do
     it 'returns an instance' do
       _(instrumentation.instance).must_be_instance_of(instrumentation)
+    end
+  end
+
+  describe '.option' do
+    let(:instrumentation) do
+      Class.new(OpenTelemetry::Instrumentation::Base) do
+        instrumentation_name 'test_instrumentation'
+        instrumentation_version '0.1.1'
+
+        option :a, default: 'b', validate: true
+      end
+    end
+
+    it 'raises argument errors when validate does not receive a callable' do
+      _(-> { instrumentation.instance }).must_raise(ArgumentError)
     end
   end
 
@@ -119,12 +136,49 @@ describe OpenTelemetry::Instrumentation::Base do
         _(instance.install_called).must_equal(true)
       end
 
-      it 'yields and set config' do
+      it 'yields and sets config' do
         instance = instrumentation_with_callbacks.instance
-        config = { option: 'value' }
+        config = { max_count: 3 }
+
         instance.install(config)
         _(instance.config_yielded).must_equal(config)
         _(instance.config).must_equal(config)
+      end
+
+      it 'drops unknown config keys before yielding and setting' do
+        instance = instrumentation_with_callbacks.instance
+        config = { max_count: 3, unknown_config_option: 500 }
+        expected_config = { max_count: 3 }
+
+        instance.install(config)
+        _(instance.config_yielded).must_equal(expected_config)
+        _(instance.config).must_equal(expected_config)
+      end
+
+      it 'uses the default config options when not provided' do
+        instance = instrumentation_with_callbacks.instance
+        config = {}
+        expected_config = { max_count: 5 }
+
+        instance.install(config)
+        _(instance.config_yielded).must_equal(expected_config)
+        _(instance.config).must_equal(expected_config)
+      end
+
+      it 'uses the default config options and logs when validation fails' do
+        instance = instrumentation_with_callbacks.instance
+        config = { max_count: 'three' }
+        expected_config = { max_count: 5 }
+
+        mock_logger = Minitest::Mock.new
+        mock_logger.expect(:warn, nil, ['Instrumentation test_instrumentation configuration option max_count value=three failed validation, falling back to default value=5'])
+        OpenTelemetry.stub :logger, mock_logger do
+          instance.install(config)
+        end
+        mock_logger.verify
+
+        _(instance.config_yielded).must_equal(expected_config)
+        _(instance.config).must_equal(expected_config)
       end
     end
 

@@ -34,10 +34,12 @@ describe OpenTelemetry::Instrumentation::Registry do
       TestInstrumentation1 = Class.new(OpenTelemetry::Instrumentation::Base) do
         install { 1 + 1 }
         present { true }
+        option :a, default: 'c', validate: ->(v) { v.is_a?(String) }
       end
       TestInstrumentation2 = Class.new(OpenTelemetry::Instrumentation::Base) do
         install { 2 + 2 }
         present { true }
+        option :b, default: 'c', validate: ->(v) { v.is_a?(String) }
       end
       @instrumentation = [TestInstrumentation1, TestInstrumentation2]
       @instrumentation.each { |instrumentation| registry.register(instrumentation) }
