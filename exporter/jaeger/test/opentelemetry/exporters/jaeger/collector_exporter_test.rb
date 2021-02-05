@@ -115,7 +115,7 @@ describe OpenTelemetry::Exporter::Jaeger::CollectorExporter do
     it 'exports a span from a tracer' do
       stub_post = stub_request(:post, DEFAULT_JAEGER_COLLECTOR_ENDPOINT).to_return(status: 200)
       exporter = OpenTelemetry::Exporter::Jaeger::CollectorExporter.new
-      processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter: exporter, max_queue_size: 1, max_export_batch_size: 1)
+      processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter, max_queue_size: 1, max_export_batch_size: 1)
       OpenTelemetry.tracer_provider.add_span_processor(processor)
       OpenTelemetry.tracer_provider.tracer.start_root_span('foo').finish
       OpenTelemetry.tracer_provider.shutdown

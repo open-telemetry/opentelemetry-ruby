@@ -78,7 +78,11 @@ module OpenTelemetry
               return
             end
             @registered_span_processors << span_processor
-            @active_span_processor = MultiSpanProcessor.new(@registered_span_processors.dup)
+            @active_span_processor = if @registered_span_processors.size == 1
+                                       span_processor
+                                     else
+                                       MultiSpanProcessor.new(@registered_span_processors.dup)
+                                     end
           end
         end
       end

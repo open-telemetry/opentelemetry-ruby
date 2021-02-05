@@ -39,7 +39,7 @@ require 'opentelemetry/exporter/otlp'
 OpenTelemetry::SDK.configure do |c|
   c.add_span_processor(
     OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(
-      exporter: OpenTelemetry::Exporter::OTLP::Exporter.new(
+      OpenTelemetry::Exporter::OTLP::Exporter.new(
         endpoint: 'http://localhost:55680'
       )
     )

@@ -43,7 +43,7 @@ describe OpenTelemetry::SDK, 'global_tracer_configurations' do
   end
 
   describe 'using batch span processor' do
-    let(:span_processor) { sdk::Trace::Export::BatchSpanProcessor.new(exporter: exporter) }
+    let(:span_processor) { sdk::Trace::Export::BatchSpanProcessor.new(exporter) }
 
     it "doesn't crash" do
       finished_spans
