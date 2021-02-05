@@ -245,7 +245,7 @@ module OpenTelemetry
       # Invalid configuration values are logged, and replaced by the default.
       #
       # @param [Hash] config The user supplied config hash
-      def config_options(config)
+      def config_options(config) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
         @options ||= {}
         config ||= {}
 
