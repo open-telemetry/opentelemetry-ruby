@@ -129,9 +129,12 @@ module OpenTelemetry
           @compatible_blk = blk
         end
 
-        # @param [String] name
-        # @param default The default value
-        # @param [Callable] validate A callable the returns a boolean
+        # The option method is used to define default configuration options
+        # for the instrumentation library. It requires a name, default value,
+        # and a validation callable to be provided.
+        # @param [String] name The name of the configuration option
+        # @param default The default value to be used, or to used if validation fails
+        # @param [Callable] validate A callable that validates the option value and returns a boolean
         def option(name, default:, validate:)
           raise ArgumentError, 'validate must be a callable' unless validate.respond_to?(:call)
 
