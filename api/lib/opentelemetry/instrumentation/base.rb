@@ -59,7 +59,7 @@ module OpenTelemetry
     # convention for environment variable name is the library name, upcased with
     # '::' replaced by underscores, OPENTELEMETRY shortened to OTEL_{LANG}, and '_ENABLED' appended.
     # For example: OTEL_RUBY_INSTRUMENTATION_SINATRA_ENABLED = false.
-    class Base
+    class Base # rubocop:disable Metrics/ClassLength
       class << self
         NAME_REGEX = /^(?:(?<namespace>[a-zA-Z0-9_:]+):{2})?(?<classname>[a-zA-Z0-9_]+)$/.freeze
         private_constant :NAME_REGEX
@@ -134,6 +134,7 @@ module OpenTelemetry
         # @param [Callable] validate A callable the returns a boolean
         def option(name, default:, validate:)
           raise ArgumentError, 'validate must be a callable' unless validate.respond_to?(:call)
+
           @options ||= []
           @options << { name: name, default: default, validate: validate }
         end
@@ -189,6 +190,7 @@ module OpenTelemetry
       def install(config = {})
         return true if installed?
         return false unless installable?(config)
+
         @config = config_options(config)
         instance_exec(@config, &@install_blk)
         @tracer ||= OpenTelemetry.tracer_provider.tracer(name, version)
@@ -249,16 +251,16 @@ module OpenTelemetry
           config_value = config[option_name]
 
           value = if config_value.nil?
-            option[:default]
-          elsif option[:validate].call(config_value)
-            config_value
-          else
-            OpenTelemetry.logger.warn(
-              "Instrumentation #{name} configuration option #{option_name} value=#{config_value} " \
-              "failed validation, falling back to default value=#{option[:default]}"
-            )
-            option[:default]
-          end
+                    option[:default]
+                  elsif option[:validate].call(config_value)
+                    config_value
+                  else
+                    OpenTelemetry.logger.warn(
+                      "Instrumentation #{name} configuration option #{option_name} value=#{config_value} " \
+                      "failed validation, falling back to default value=#{option[:default]}"
+                    )
+                    option[:default]
+                  end
 
           h[option_name] = value
         end
