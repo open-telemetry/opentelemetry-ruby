@@ -28,7 +28,8 @@ module OpenTelemetry
         class BatchSpanProcessor # rubocop:disable Metrics/ClassLength
           # Returns a new instance of the {BatchSpanProcessor}.
           #
-          # @param [SpanExporter] exporter
+          # @param [SpanExporter] exporter the (duck type) SpanExporter to where the
+          #   recorded Spans are pushed after batching.
           # @param [Numeric] exporter_timeout the delay interval between two
           #   consecutive exports. Defaults to the value of the OTEL_BSP_EXPORT_TIMEOUT
           #   environment variable, if set, or 30,000 (30 seconds).
@@ -43,7 +44,7 @@ module OpenTelemetry
           #   variable, if set, or 512.
           #
           # @return a new instance of the {BatchSpanProcessor}.
-          def initialize(exporter:,
+          def initialize(exporter,
                          exporter_timeout: Float(ENV.fetch('OTEL_BSP_EXPORT_TIMEOUT', 30_000)),
                          schedule_delay: Float(ENV.fetch('OTEL_BSP_SCHEDULE_DELAY', 5_000)),
                          max_queue_size: Integer(ENV.fetch('OTEL_BSP_MAX_QUEUE_SIZE', 2048)),

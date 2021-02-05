@@ -59,14 +59,14 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
   describe 'initialization' do
     it 'if max batch size is gt max queue size raise' do
       assert_raises ArgumentError do
-        BatchSpanProcessor.new(exporter: TestExporter.new, max_queue_size: 6, max_export_batch_size: 999)
+        BatchSpanProcessor.new(TestExporter.new, max_queue_size: 6, max_export_batch_size: 999)
       end
     end
 
     it 'raises if OTEL_BSP_EXPORT_TIMEOUT env var is not numeric' do
       assert_raises ArgumentError do
         with_env('OTEL_BSP_EXPORT_TIMEOUT' => 'foo') do
-          BatchSpanProcessor.new(exporter: TestExporter.new)
+          BatchSpanProcessor.new(TestExporter.new)
         end
       end
     end
@@ -76,7 +76,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
                      'OTEL_BSP_SCHEDULE_DELAY' => '3',
                      'OTEL_BSP_MAX_QUEUE_SIZE' => '2',
                      'OTEL_BSP_MAX_EXPORT_BATCH_SIZE' => '1') do
-        BatchSpanProcessor.new(exporter: TestExporter.new)
+        BatchSpanProcessor.new(TestExporter.new)
       end
       _(bsp.instance_variable_get(:@exporter_timeout_seconds)).must_equal 0.004
       _(bsp.instance_variable_get(:@delay_seconds)).must_equal 0.003
@@ -89,7 +89,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
                      'OTEL_BSP_SCHEDULE_DELAY' => '3',
                      'OTEL_BSP_MAX_QUEUE_SIZE' => '2',
                      'OTEL_BSP_MAX_EXPORT_BATCH_SIZE' => '1') do
-        BatchSpanProcessor.new(exporter: TestExporter.new,
+        BatchSpanProcessor.new(TestExporter.new,
                                exporter_timeout: 10,
                                schedule_delay: 9,
                                max_queue_size: 8,
@@ -102,7 +102,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
 
     it 'sets defaults for parameters not in the environment' do
-      bsp = BatchSpanProcessor.new(exporter: TestExporter.new)
+      bsp = BatchSpanProcessor.new(TestExporter.new)
       _(bsp.instance_variable_get(:@exporter_timeout_seconds)).must_equal 30.0
       _(bsp.instance_variable_get(:@delay_seconds)).must_equal 5.0
       _(bsp.instance_variable_get(:@max_queue_size)).must_equal 2048
@@ -114,7 +114,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       mock.expect(:call, nil)
 
       Thread.stub(:new, mock) do
-        BatchSpanProcessor.new(exporter: TestExporter.new)
+        BatchSpanProcessor.new(TestExporter.new)
       end
 
       mock.verify
@@ -126,7 +126,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
       Thread.stub(:new, mock) do
         with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => 'true') do
-          BatchSpanProcessor.new(exporter: TestExporter.new)
+          BatchSpanProcessor.new(TestExporter.new)
         end
       end
 
@@ -139,7 +139,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
       Thread.stub(:new, mock) do
         with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => 'false') do
-          BatchSpanProcessor.new(exporter: TestExporter.new)
+          BatchSpanProcessor.new(TestExporter.new)
         end
       end
     end
@@ -150,7 +150,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
       Thread.stub(:new, mock) do
         with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => 'true') do
-          BatchSpanProcessor.new(exporter: TestExporter.new,
+          BatchSpanProcessor.new(TestExporter.new,
                                  start_thread_on_boot: false)
         end
       end
@@ -160,7 +160,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
   describe '#force_flush' do
     it 'reenqueues excess spans on timeout' do
       test_exporter = TestExporter.new
-      bsp = BatchSpanProcessor.new(exporter: test_exporter)
+      bsp = BatchSpanProcessor.new(test_exporter)
       bsp.on_finish(TestSpan.new)
       result = bsp.force_flush(timeout: 0)
 
@@ -176,7 +176,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
   describe '#shutdown' do
     it 'respects the timeout' do
       test_exporter = TestExporter.new
-      bsp = BatchSpanProcessor.new(exporter: test_exporter)
+      bsp = BatchSpanProcessor.new(test_exporter)
       bsp.on_finish(TestSpan.new)
       bsp.shutdown(timeout: 0)
 
@@ -187,20 +187,20 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
 
     it 'works if the thread is not running' do
-      bsp = BatchSpanProcessor.new(exporter: TestExporter.new, start_thread_on_boot: false)
+      bsp = BatchSpanProcessor.new(TestExporter.new, start_thread_on_boot: false)
       bsp.shutdown(timeout: 0)
     end
   end
 
   describe 'lifecycle' do
     it 'should stop and start correctly' do
-      bsp = BatchSpanProcessor.new(exporter: TestExporter.new)
+      bsp = BatchSpanProcessor.new(TestExporter.new)
       bsp.shutdown
     end
 
     it 'should flush everything on shutdown' do
       te = TestExporter.new
-      bsp = BatchSpanProcessor.new(exporter: te)
+      bsp = BatchSpanProcessor.new(te)
       ts = TestSpan.new
       bsp.on_finish(ts)
 
@@ -214,7 +214,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     it 'should batch up to but not over the max_batch' do
       te = TestExporter.new
 
-      bsp = BatchSpanProcessor.new(exporter: te, max_queue_size: 6, max_export_batch_size: 3)
+      bsp = BatchSpanProcessor.new(te, max_queue_size: 6, max_export_batch_size: 3)
 
       tss = [TestSpan.new, TestSpan.new, TestSpan.new, TestSpan.new]
       tss.each { |ts| bsp.on_finish(ts) }
@@ -227,7 +227,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     it 'should batch only recording samples' do
       te = TestExporter.new
 
-      bsp = BatchSpanProcessor.new(exporter: te, max_queue_size: 6, max_export_batch_size: 3)
+      bsp = BatchSpanProcessor.new(te, max_queue_size: 6, max_export_batch_size: 3)
 
       tss = [TestSpan.new, TestSpan.new(nil, false)]
       tss.each { |ts| bsp.on_finish(ts) }
@@ -241,8 +241,8 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     it 'should not retry on FAILURE exports' do
       te = TestExporter.new(status_codes: [FAILURE, SUCCESS])
 
-      bsp = BatchSpanProcessor.new(schedule_delay: 999,
-                                   exporter: te,
+      bsp = BatchSpanProcessor.new(te,
+                                   schedule_delay: 999,
                                    max_queue_size: 6,
                                    max_export_batch_size: 3)
 
@@ -265,7 +265,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     it 'shouldnt blow up with a lot of things' do
       te = TestExporter.new
 
-      bsp = BatchSpanProcessor.new(exporter: te)
+      bsp = BatchSpanProcessor.new(te)
       producers = 10.times.map do |i|
         Thread.new do
           x = i * 10
@@ -289,7 +289,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
   describe 'fork safety test' do
     let(:exporter) { TestExporter.new }
     let(:bsp) do
-      BatchSpanProcessor.new(exporter: exporter,
+      BatchSpanProcessor.new(exporter,
                              max_queue_size: 10,
                              max_export_batch_size: 3)
     end

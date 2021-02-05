@@ -158,7 +158,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
 
     it 'exports a span from a tracer' do
       stub_post = stub_request(:post, 'https://localhost:4317/v1/traces').to_return(status: 200)
-      processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter: exporter, max_queue_size: 1, max_export_batch_size: 1)
+      processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter, max_queue_size: 1, max_export_batch_size: 1)
       OpenTelemetry.tracer_provider.add_span_processor(processor)
       OpenTelemetry.tracer_provider.tracer.start_root_span('foo').finish
       OpenTelemetry.tracer_provider.shutdown
@@ -167,9 +167,8 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
 
     it 'compresses with gzip if enabled' do
       exporter = OpenTelemetry::Exporter::OTLP::Exporter.new(compression: 'gzip')
-      etsr = nil
       stub_post = stub_request(:post, 'https://localhost:4317/v1/traces').to_return do |request|
-        etsr = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(Zlib.gunzip(request.body))
+        Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(Zlib.gunzip(request.body))
         { status: 200 }
       end
 
@@ -199,7 +198,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
 
     it 'translates all the things' do
       stub_request(:post, 'https://localhost:4317/v1/traces').to_return(status: 200)
-      processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter: exporter)
+      processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter)
       tracer = OpenTelemetry.tracer_provider.tracer('tracer', 'v0.0.1')
       other_tracer = OpenTelemetry.tracer_provider.tracer('other_tracer')
 

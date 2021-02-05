@@ -179,10 +179,7 @@ describe OpenTelemetry::SDK::Configurator do
       it 'defaults to SimpleSpanProcessor w/ ConsoleSpanExporter' do
         configurator.configure
 
-        processors = active_span_processors
-
-        _(processors.size).must_equal(1)
-        _(processors.first).must_be_instance_of(
+        _(OpenTelemetry.tracer_provider.active_span_processor).must_be_instance_of(
           OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor
         )
       end
@@ -190,15 +187,13 @@ describe OpenTelemetry::SDK::Configurator do
       it 'reflects configured value' do
         configurator.add_span_processor(
           OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(
-            exporter: OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter.new
+            OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter.new
           )
         )
 
         configurator.configure
-        processors = active_span_processors
 
-        _(processors.size).must_equal(1)
-        _(processors.first).must_be_instance_of(
+        _(OpenTelemetry.tracer_provider.active_span_processor).must_be_instance_of(
           OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
         )
       end
@@ -239,10 +234,6 @@ describe OpenTelemetry::SDK::Configurator do
         _(instrumentation.config).must_equal(opt: true)
       end
     end
-  end
-
-  def active_span_processors
-    OpenTelemetry.tracer_provider.active_span_processor.instance_variable_get(:@span_processors)
   end
 
   def extractors_for(propagator)

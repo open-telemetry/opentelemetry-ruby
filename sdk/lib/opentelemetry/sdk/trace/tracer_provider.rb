@@ -65,11 +65,6 @@ module OpenTelemetry
 
         # Adds a new SpanProcessor to this {Tracer}.
         #
-        # Any registered processor causes overhead, consider to use an
-        # async/batch processor especially for span exporting, and export to
-        # multiple backends using the
-        # {io.opentelemetry.sdk.trace.export.MultiSpanExporter}.
-        #
         # @param span_processor the new SpanProcessor to be added.
         def add_span_processor(span_processor)
           @mutex.synchronize do
@@ -78,7 +73,11 @@ module OpenTelemetry
               return
             end
             @registered_span_processors << span_processor
-            @active_span_processor = MultiSpanProcessor.new(@registered_span_processors.dup)
+            @active_span_processor = if @registered_span_processors.size == 1
+                                       span_processor
+                                     else
+                                       MultiSpanProcessor.new(@registered_span_processors.dup)
+                                     end
           end
         end
       end
