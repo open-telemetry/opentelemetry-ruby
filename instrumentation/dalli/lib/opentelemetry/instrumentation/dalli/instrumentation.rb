@@ -19,6 +19,8 @@ module OpenTelemetry
           defined?(::Dalli)
         end
 
+        option :peer_service, default: nil, validate: ->(v) { v.is_a?(String) }
+
         private
 
         def require_dependencies
