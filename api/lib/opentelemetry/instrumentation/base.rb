@@ -266,6 +266,9 @@ module OpenTelemetry
                   end
 
           h[option_name] = value
+        rescue StandardError => e
+          OpenTelemetry.handle_error(exception: e, message: "Instrumentation #{name} unexpected configuration error")
+          h[option_name] = option[:default]
         end
       end
 

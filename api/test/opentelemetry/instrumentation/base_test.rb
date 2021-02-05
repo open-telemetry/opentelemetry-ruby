@@ -70,8 +70,8 @@ describe OpenTelemetry::Instrumentation::Base do
   describe '.option' do
     let(:instrumentation) do
       Class.new(OpenTelemetry::Instrumentation::Base) do
-        instrumentation_name 'test_instrumentation'
-        instrumentation_version '0.1.1'
+        instrumentation_name 'test_buggy_instrumentation'
+        instrumentation_version '0.0.1'
 
         option :a, default: 'b', validate: true
       end
@@ -179,6 +179,28 @@ describe OpenTelemetry::Instrumentation::Base do
 
         _(instance.config_yielded).must_equal(expected_config)
         _(instance.config).must_equal(expected_config)
+      end
+
+      describe 'when there is an option with a raising validate callable' do
+        let(:buggy_instrumentation) do
+          Class.new(OpenTelemetry::Instrumentation::Base) do
+            instrumentation_name 'test_buggy_instrumentation'
+            instrumentation_version '0.0.2'
+
+            present { true }
+            compatible { true }
+            install { true }
+
+            option :first, default: 'first_default', validate: ->(_v) { raise 'hell' }
+            option :second, default: 'second_default', validate: ->(_v) { true }
+          end
+        end
+
+        it 'falls back to the default' do
+          instance = buggy_instrumentation.instance
+          instance.install(first: 'value', second: 'user_value')
+          _(instance.config).must_equal(first: 'first_default', second: 'user_value')
+        end
       end
     end
 
