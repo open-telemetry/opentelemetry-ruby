@@ -41,18 +41,18 @@ module OpenTelemetry
           raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || compression == 'gzip'
           raise ArgumentError, 'headers must be comma-separated k=v pairs or a Hash' unless valid_headers?(headers)
 
-          uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
+          @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
                   URI("#{endpoint}/v1/traces")
                 else
                   URI(endpoint)
                 end
 
-          @http = Net::HTTP.new(uri.host, uri.port)
-          @http.use_ssl = uri.scheme == 'https'
+          @http = Net::HTTP.new(@uri.host, @uri.port)
+          @http.use_ssl = @uri.scheme == 'https'
           @http.ca_file = certificate_file unless certificate_file.nil?
           @http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
 
-          @path = uri.path
+          @path = @uri.path
           @headers = case headers
                      when String then CSV.parse(headers, col_sep: '=', row_sep: ',').to_h
                      when Hash then headers
@@ -60,7 +60,6 @@ module OpenTelemetry
           @timeout = timeout.to_f
           @compression = compression
           @metrics_reporter = metrics_reporter || OpenTelemetry::SDK::Trace::Export::MetricsReporter
-
           @shutdown = false
         end
 
@@ -116,11 +115,15 @@ module OpenTelemetry
           true
         end
 
+        def trace_request
+          OpenTelemetry::Common::Utilities.untraced { yield }
+        end
+
         def send_bytes(bytes, timeout:) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
           retry_count = 0
           timeout ||= @timeout
           start_time = Time.now
-          OpenTelemetry::Common::Utilities.untraced do # rubocop:disable Metrics/BlockLength
+          trace_request do # rubocop:disable Metrics/BlockLength
             request = Net::HTTP::Post.new(@path)
             request.body = if @compression == 'gzip'
                              request.add_field('Content-Encoding', 'gzip')
