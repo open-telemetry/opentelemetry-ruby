@@ -145,12 +145,18 @@ describe OpenTelemetry::Instrumentation::Base do
         _(instance.config).must_equal(config)
       end
 
-      it 'drops unknown config keys before yielding and setting' do
+      it 'drops and logs unknown config keys before yielding and setting' do
         instance = instrumentation_with_callbacks.instance
         config = { max_count: 3, unknown_config_option: 500 }
         expected_config = { max_count: 3 }
 
-        instance.install(config)
+        mock_logger = Minitest::Mock.new
+        mock_logger.expect(:warn, nil, ['Instrumentation test_instrumentation ignored the following unknown configuration options [:unknown_config_option]'])
+        OpenTelemetry.stub :logger, mock_logger do
+          instance.install(config)
+        end
+        mock_logger.verify
+
         _(instance.config_yielded).must_equal(expected_config)
         _(instance.config).must_equal(expected_config)
       end

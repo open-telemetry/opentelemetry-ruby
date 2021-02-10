@@ -244,14 +244,13 @@ module OpenTelemetry
       # Unknown configuration keys are not included in the final config hash.
       # Invalid configuration values are logged, and replaced by the default.
       #
-      # @param [Hash] config The user supplied config hash
-      def config_options(config) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      # @param [Hash] user_config The user supplied configuration hash
+      def config_options(user_config) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
         @options ||= {}
-        config ||= {}
-
-        @options.each_with_object({}) do |option, h|
+        user_config ||= {}
+        validated_config = @options.each_with_object({}) do |option, h|
           option_name = option[:name]
-          config_value = config[option_name]
+          config_value = user_config[option_name]
 
           value = if config_value.nil?
                     option[:default]
@@ -270,6 +269,13 @@ module OpenTelemetry
           OpenTelemetry.handle_error(exception: e, message: "Instrumentation #{name} unexpected configuration error")
           h[option_name] = option[:default]
         end
+
+        dropped_config_keys = user_config.keys - validated_config.keys
+        unless dropped_config_keys.empty?
+          OpenTelemetry.logger.warn("Instrumentation #{name} ignored the following unknown configuration options #{dropped_config_keys}")
+        end
+
+        validated_config
       end
 
       # Checks to see if this instrumentation is enabled by env var. By convention, the
