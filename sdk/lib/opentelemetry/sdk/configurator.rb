@@ -148,14 +148,41 @@ module OpenTelemetry
       end
 
       def default_span_processor
-        Trace::Export::SimpleSpanProcessor.new(
-          Trace::Export::ConsoleSpanExporter.new
-        )
+        Trace::Export::SimpleSpanProcessor.new(configured_exporter)
       end
 
-      def configure_propagation
-        OpenTelemetry.propagation = create_propagator(@injectors || default_injectors,
-                                                      @extractors || default_extractors)
+      def configured_exporter
+        exporter = ENV.fetch('OTEL_TRACES_EXPORTER', 'otlp')
+        case exporter
+        when 'otlp' then otlp_exporter
+        when 'jaeger' then jaeger_exporter
+        when 'zipkin' then zipkin_exporter
+        else
+          OpenTelemetry.logger.warn "The #{exporter} exporter is unknown and cannot be configured, configuring the console exporter instead"
+          Trace::Export::ConsoleSpanExporter.new
+        end
+      end
+
+      def configure_propagation # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
+        propagators = ENV.fetch('OTEL_PROPAGATORS', 'tracecontext,baggage').split(',')
+        injectors, extractors = propagators.uniq.collect do |propagator|
+          case propagator
+          when 'tracecontext'
+            [OpenTelemetry::Trace::Propagation::TraceContext.text_map_injector, OpenTelemetry::Trace::Propagation::TraceContext.text_map_extractor]
+          when 'baggage'
+            [OpenTelemetry::Baggage::Propagation.text_map_injector, OpenTelemetry::Baggage::Propagation.text_map_extractor]
+          when 'b3' then b3_single_propagator
+          when 'b3multi' then b3_multi_propagator
+          when 'jaeger' then jaeger_propagator
+          when 'xray' then xray_propagator
+          when 'ottrace' then ot_trace_propagator
+          else
+            OpenTelemetry.logger.warn "The #{propagator} propagator is unknown and cannot be configured"
+            [nil, nil]
+          end
+        end.transpose
+        OpenTelemetry.propagation = create_propagator(@injectors || injectors.compact,
+                                                      @extractors || extractors.compact)
       end
 
       def create_propagator(injectors, extractors)
@@ -166,18 +193,72 @@ module OpenTelemetry
         end
       end
 
-      def default_injectors
-        [
-          OpenTelemetry::Trace::Propagation::TraceContext.text_map_injector,
-          OpenTelemetry::Baggage::Propagation.text_map_injector
-        ]
+      def b3_single_propagator
+        if defined?(OpenTelemetry::Propagator::B3::Single)
+          [OpenTelemetry::Propagator::B3::Single.text_map_injector, OpenTelemetry::Propagator::B3::Single.text_map_extractor]
+        else
+          unavailable_external_propagator 'b3'
+        end
       end
 
-      def default_extractors
-        [
-          OpenTelemetry::Trace::Propagation::TraceContext.text_map_extractor,
-          OpenTelemetry::Baggage::Propagation.text_map_extractor
-        ]
+      def b3_multi_propagator
+        if defined?(OpenTelemetry::Propagator::B3::Multi)
+          [OpenTelemetry::Propagator::B3::Multi.text_map_injector, OpenTelemetry::Propagator::B3::Multi.text_map_extractor]
+        else
+          unavailable_external_propagator 'b3multi', 'b3'
+        end
+      end
+
+      def jaeger_propagator
+        if defined?(OpenTelemetry::Propagator::Jaeger)
+          [OpenTelemetry::Propagator::Jaeger.text_map_injector, OpenTelemetry::Propagator::Jaeger.text_map_extractor]
+        else
+          unavailable_external_propagator 'jaeger'
+        end
+      end
+
+      def xray_propagator
+        if defined?(OpenTelemetry::Propagator::XRay)
+          [OpenTelemetry::Propagator::XRay.text_map_injector, OpenTelemetry::Propagator::XRay.text_map_extractor]
+        else
+          unavailable_external_propagator 'xray'
+        end
+      end
+
+      def ot_trace_propagator
+        if defined?(OpenTelemetry::Propagator::OTTrace)
+          [OpenTelemetry::Propagator::OTTrace.text_map_injector, OpenTelemetry::Propagator::OTTrace.text_map_extractor]
+        else
+          unavailable_external_propagator 'ottrace'
+        end
+      end
+
+      def unavailable_external_propagator(name, gem_suffix = name)
+        OpenTelemetry.logger.warn "The #{name} propagator cannot be configured - please add opentelemetry-propagator-#{gem_suffix} to your Gemfile"
+        [nil, nil]
+      end
+
+      def otlp_exporter
+        return OpenTelemetry::Exporter::OTLP::Exporter.new if defined?(OpenTelemetry::Exporter::OTLP)
+
+        unavailable_external_exporter 'otlp'
+      end
+
+      def jaeger_exporter
+        return OpenTelemetry::Exporter::Jaeger::CollectorExporter.new if defined?(OpenTelemetry::Exporter::Jaeger)
+
+        unavailable_external_exporter 'jaeger'
+      end
+
+      def zipkin_exporter
+        return OpenTelemetry::Exporter::Zipkin::Exporter.new if defined?(OpenTelemetry::Exporter::Zipkin)
+
+        unavailable_external_exporter 'zipkin'
+      end
+
+      def unavailable_external_exporter(name)
+        OpenTelemetry.logger.warn "The #{name} exporter cannot be configured - please add opentelemetry-exporter-#{name} to your Gemfile, configuring the console exporter instead"
+        Trace::Export::ConsoleSpanExporter.new
       end
     end
   end
