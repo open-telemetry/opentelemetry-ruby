@@ -42,10 +42,10 @@ module OpenTelemetry
           raise ArgumentError, 'headers must be comma-separated k=v pairs or a Hash' unless valid_headers?(headers)
 
           @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
-                  URI("#{endpoint}/v1/traces")
-                else
-                  URI(endpoint)
-                end
+                   URI("#{endpoint}/v1/traces")
+                 else
+                   URI(endpoint)
+                 end
 
           @http = Net::HTTP.new(@uri.host, @uri.port)
           @http.use_ssl = @uri.scheme == 'https'
