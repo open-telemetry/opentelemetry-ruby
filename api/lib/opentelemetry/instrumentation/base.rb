@@ -62,6 +62,14 @@ module OpenTelemetry
     class Base # rubocop:disable Metrics/ClassLength
       class << self
         NAME_REGEX = /^(?:(?<namespace>[a-zA-Z0-9_:]+):{2})?(?<classname>[a-zA-Z0-9_]+)$/.freeze
+        VALIDATORS = {
+          array: ->(v) { v.is_a?(Array) },
+          boolean: ->(v) { v.is_a?(TrueClass) || v.is_a?(FalseClass) },
+          callable: ->(v) { v.respond_to?(:call) },
+          integer: ->(v) { v.is_a?(Integer) },
+          string: ->(v) { v.is_a?(String) }
+        }.freeze
+
         private_constant :NAME_REGEX
 
         private :new # rubocop:disable Style/AccessModifierDeclarations
@@ -136,7 +144,8 @@ module OpenTelemetry
         # @param default The default value to be used, or to used if validation fails
         # @param [Callable] validate A callable that validates the option value and returns a boolean
         def option(name, default:, validate:)
-          raise ArgumentError, 'validate must be a callable' unless validate.respond_to?(:call)
+          validate = VALIDATORS[validate] || validate
+          raise ArgumentError, "validate must be #{VALIDATORS.keys.join(', ')}, or a callable" unless validate.respond_to?(:call)
 
           @options ||= []
           @options << { name: name, default: default, validate: validate }

@@ -19,7 +19,7 @@ module OpenTelemetry
           defined?(::Redis)
         end
 
-        option :peer_service, default: nil, validate: ->(v) { v.is_a?(String) }
+        option :peer_service, default: nil, validate: :string
 
         private
 

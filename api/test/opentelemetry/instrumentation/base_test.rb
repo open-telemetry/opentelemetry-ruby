@@ -77,7 +77,7 @@ describe OpenTelemetry::Instrumentation::Base do
       end
     end
 
-    it 'raises argument errors when validate does not receive a callable' do
+    it 'raises argument errors when validate does not receive a callable or valid symbol' do
       _(-> { instrumentation.instance }).must_raise(ArgumentError)
     end
   end

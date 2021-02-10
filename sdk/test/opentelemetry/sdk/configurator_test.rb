@@ -205,7 +205,7 @@ describe OpenTelemetry::SDK::Configurator do
         TestInstrumentation = Class.new(OpenTelemetry::Instrumentation::Base) do
           install { 1 + 1 }
           present { true }
-          option :opt, default: false, validate: ->(v) { v }
+          option :opt, default: false, validate: :boolean
         end
       end
 

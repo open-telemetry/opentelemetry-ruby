@@ -27,11 +27,11 @@ module OpenTelemetry
           gem_version >= MINIMUM_VERSION
         end
 
-        option :enable_job_class_span_names, default: false, validate: ->(v) { v == true || v == false }
-        option :trace_launcher_heartbeat,    default: false, validate: ->(v) { v == true || v == false }
-        option :trace_poller_enqueue,        default: false, validate: ->(v) { v == true || v == false }
-        option :trace_poller_wait,           default: false, validate: ->(v) { v == true || v == false }
-        option :trace_processor_process_one, default: false, validate: ->(v) { v == true || v == false }
+        option :enable_job_class_span_names, default: false, validate: :boolean
+        option :trace_launcher_heartbeat,    default: false, validate: :boolean
+        option :trace_poller_enqueue,        default: false, validate: :boolean
+        option :trace_poller_wait,           default: false, validate: :boolean
+        option :trace_processor_process_one, default: false, validate: :boolean
 
         private
 
