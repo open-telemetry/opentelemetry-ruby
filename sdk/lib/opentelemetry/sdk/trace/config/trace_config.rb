@@ -56,13 +56,13 @@ module OpenTelemetry
           private
 
           def sampler_from_environment(default_sampler) # rubocop:disable Metrics/CyclomaticComplexity
-            case ENV['OTEL_TRACE_SAMPLER']
+            case ENV['OTEL_TRACES_SAMPLER']
             when 'always_on' then Samplers::ALWAYS_ON
             when 'always_off' then Samplers::ALWAYS_OFF
-            when 'traceidratio' then Samplers.trace_id_ratio_based(Float(ENV.fetch('OTEL_TRACE_SAMPLER_ARG', 1.0)))
+            when 'traceidratio' then Samplers.trace_id_ratio_based(Float(ENV.fetch('OTEL_TRACES_SAMPLER_ARG', 1.0)))
             when 'parentbased_always_on' then Samplers.parent_based(root: Samplers::ALWAYS_ON)
             when 'parentbased_always_off' then Samplers.parent_based(root: Samplers::ALWAYS_OFF)
-            when 'parentbased_traceidratio' then Samplers.parent_based(root: Samplers.trace_id_ratio_based(Float(ENV.fetch('OTEL_TRACE_SAMPLER_ARG', 1.0))))
+            when 'parentbased_traceidratio' then Samplers.parent_based(root: Samplers.trace_id_ratio_based(Float(ENV.fetch('OTEL_TRACES_SAMPLER_ARG', 1.0))))
             else default_sampler
             end
           rescue StandardError => e
