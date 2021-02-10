@@ -271,9 +271,7 @@ module OpenTelemetry
         end
 
         dropped_config_keys = user_config.keys - validated_config.keys
-        unless dropped_config_keys.empty?
-          OpenTelemetry.logger.warn("Instrumentation #{name} ignored the following unknown configuration options #{dropped_config_keys}")
-        end
+        OpenTelemetry.logger.warn("Instrumentation #{name} ignored the following unknown configuration options #{dropped_config_keys}") unless dropped_config_keys.empty?
 
         validated_config
       end
