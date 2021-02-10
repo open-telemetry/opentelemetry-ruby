@@ -25,8 +25,8 @@ module OpenTelemetry
         option :allowed_request_headers,  default: [],    validate: ->(v) { v.is_a?(Array) }
         option :allowed_response_headers, default: [],    validate: ->(v) { v.is_a?(Array) }
         option :application,              default: nil,   validate: ->(v) { v.respond_to?(:call) }
-        option :record_frontend_span,     default: false, validate: ->(v) { v.is_a?(TrueClass) || v.is_a?(FalseClass) }
-        option :retain_middleware_names,  default: false, validate: ->(v) { v }
+        option :record_frontend_span,     default: false, validate: ->(v) { v == true || v == false }
+        option :retain_middleware_names,  default: false, validate: ->(v) { v == true || v == false }
         option :untraced_endpoints,       default: [],    validate: ->(v) { v.is_a?(Array) }
         option :url_quantization,         default: nil,   validate: ->(v) { v.respond_to?(:call) }
 
