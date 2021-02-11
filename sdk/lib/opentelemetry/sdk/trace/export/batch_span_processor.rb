@@ -177,6 +177,8 @@ module OpenTelemetry
             @pid = pid
             spans.clear
             @thread = restart_thread ? Thread.new { work } : nil
+          rescue ThreadError
+            @metrics_reporter.add_to_counter('otel.bsp.failure', labels: { 'reason' => 'ThreadError' })
           end
 
           def export_batch(batch, timeout: @exporter_timeout_seconds)

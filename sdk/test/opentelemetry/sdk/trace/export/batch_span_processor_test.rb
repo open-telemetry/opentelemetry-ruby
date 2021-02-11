@@ -294,6 +294,21 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
                              max_export_batch_size: 3)
     end
 
+    it 'when ThreadError is raised it handles it gracefully' do
+      parent_pid = bsp.instance_variable_get(:@pid)
+      parent_work_thread_id = bsp.instance_variable_get(:@thread).object_id
+      Process.stub(:pid, parent_pid + rand(1..10)) do
+        Thread.stub(:new, -> { raise ThreadError }) do
+          bsp.on_finish(TestSpan.new)
+        end
+
+        current_pid = bsp.instance_variable_get(:@pid)
+        current_work_thread_id = bsp.instance_variable_get(:@thread).object_id
+        _(parent_pid).wont_equal current_pid
+        _(parent_work_thread_id).must_equal current_work_thread_id
+      end
+    end
+
     describe 'when a process fork occurs' do
       it 'creates new work thread when on_finish is called' do
         parent_pid = bsp.instance_variable_get(:@pid)
