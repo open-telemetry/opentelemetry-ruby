@@ -143,23 +143,19 @@ module OpenTelemetry
       end
 
       def configure_span_processors
-        processors = @span_processors.empty? ? [configured_span_processor] : @span_processors
+        processors = @span_processors.empty? ? [wrapped_exporter_from_env] : @span_processors
         processors.each { |p| tracer_provider.add_span_processor(p) }
       end
 
-      def default_span_processor
-        Trace::Export::SimpleSpanProcessor.new(Trace::Export::ConsoleSpanExporter.new)
-      end
-
-      def configured_span_processor
+      def wrapped_exporter_from_env
         exporter = ENV.fetch('OTEL_TRACES_EXPORTER', 'otlp')
         case exporter
         when 'otlp' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::OTLP::Exporter')
         when 'jaeger' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::Jaeger::CollectorExporter')
         when 'zipkin' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::Zipkin::Exporter')
         else
-          OpenTelemetry.logger.warn "The #{exporter} exporter is unknown and cannot be configured, configuring the console exporter instead"
-          default_span_processor
+          OpenTelemetry.logger.warn "The #{exporter} exporter is unknown and cannot be configured, spans will not be exported"
+          Trace::NoopSpanProcessor.instance
         end
       end
 
@@ -204,8 +200,8 @@ module OpenTelemetry
       def fetch_exporter(name, class_name)
         Trace::Export::BatchSpanProcessor.new(Kernel.const_get(class_name).new)
       rescue NameError
-        OpenTelemetry.logger.warn "The #{name} exporter cannot be configured - please add opentelemetry-exporter-#{name} to your Gemfile, configuring the console exporter instead"
-        default_span_processor
+        OpenTelemetry.logger.warn "The #{name} exporter cannot be configured - please add opentelemetry-exporter-#{name} to your Gemfile, spans will not be exported"
+        Trace::NoopSpanProcessor.instance
       end
     end
   end
