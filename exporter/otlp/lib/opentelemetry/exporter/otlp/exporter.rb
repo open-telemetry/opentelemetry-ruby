@@ -115,7 +115,14 @@ module OpenTelemetry
           true
         end
 
-        def trace_request
+        # The around_request is a private method that provides an extension
+        # point for the exporters network calls. The default behaviour
+        # is to not trace these operations.
+        #
+        # An example use case would be to prepend a patch, or extend this class
+        # and override this methods behaviour to explicitly trace the. ttp request.
+        # This would allow you to trace your export pipeline.
+        def around_request
           OpenTelemetry::Common::Utilities.untraced { yield }
         end
 
@@ -123,7 +130,7 @@ module OpenTelemetry
           retry_count = 0
           timeout ||= @timeout
           start_time = Time.now
-          trace_request do # rubocop:disable Metrics/BlockLength
+          around_request do # rubocop:disable Metrics/BlockLength
             request = Net::HTTP::Post.new(@path)
             request.body = if @compression == 'gzip'
                              request.add_field('Content-Encoding', 'gzip')
