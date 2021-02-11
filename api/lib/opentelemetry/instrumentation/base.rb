@@ -64,13 +64,13 @@ module OpenTelemetry
         NAME_REGEX = /^(?:(?<namespace>[a-zA-Z0-9_:]+):{2})?(?<classname>[a-zA-Z0-9_]+)$/.freeze
         VALIDATORS = {
           array: ->(v) { v.is_a?(Array) },
-          boolean: ->(v) { v.is_a?(TrueClass) || v.is_a?(FalseClass) },
+          boolean: ->(v) { v == true || v == false }, # rubocop:disable Style/MultipleComparison
           callable: ->(v) { v.respond_to?(:call) },
           integer: ->(v) { v.is_a?(Integer) },
           string: ->(v) { v.is_a?(String) }
         }.freeze
 
-        private_constant :NAME_REGEX
+        private_constant :NAME_REGEX, :VALIDATORS
 
         private :new # rubocop:disable Style/AccessModifierDeclarations
 
