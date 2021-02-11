@@ -14,11 +14,11 @@ describe OpenTelemetry::SDK::Trace::Config::TraceConfig do
     it 'provides defaults' do
       config = trace_config.new
       _(config.sampler).must_equal samplers.parent_based(root: samplers::ALWAYS_ON)
-      _(config.max_attributes_count).must_equal 1000
-      _(config.max_events_count).must_equal 1000
-      _(config.max_links_count).must_equal 1000
-      _(config.max_attributes_per_event).must_equal 1000
-      _(config.max_attributes_per_link).must_equal 1000
+      _(config.max_attributes_count).must_equal 128
+      _(config.max_events_count).must_equal 128
+      _(config.max_links_count).must_equal 128
+      _(config.max_attributes_per_event).must_equal 128
+      _(config.max_attributes_per_link).must_equal 128
     end
 
     it 'reflects environment variables' do

@@ -33,9 +33,9 @@ module OpenTelemetry
           # @return [TraceConfig] with the desired values.
           # @raise [ArgumentError] if any of the max numbers are not positive.
           def initialize(sampler: sampler_from_environment(Samplers.parent_based(root: Samplers::ALWAYS_ON)),
-                         max_attributes_count: Integer(ENV.fetch('OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT', 1000)),
-                         max_events_count: Integer(ENV.fetch('OTEL_SPAN_EVENT_COUNT_LIMIT', 1000)),
-                         max_links_count: Integer(ENV.fetch('OTEL_SPAN_LINK_COUNT_LIMIT', 1000)),
+                         max_attributes_count: Integer(ENV.fetch('OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT', 128)),
+                         max_events_count: Integer(ENV.fetch('OTEL_SPAN_EVENT_COUNT_LIMIT', 128)),
+                         max_links_count: Integer(ENV.fetch('OTEL_SPAN_LINK_COUNT_LIMIT', 128)),
                          max_attributes_per_event: max_attributes_count,
                          max_attributes_per_link: max_attributes_count)
             raise ArgumentError, 'max_attributes_count must be positive' unless max_attributes_count.positive?
