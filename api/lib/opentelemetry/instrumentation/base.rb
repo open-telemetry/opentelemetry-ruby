@@ -142,7 +142,9 @@ module OpenTelemetry
         # and a validation callable to be provided.
         # @param [String] name The name of the configuration option
         # @param default The default value to be used, or to used if validation fails
-        # @param [Callable] validate A callable that validates the option value and returns a boolean
+        # @param [Callable, Symbol] validate Accepts a callable or a symbol that matches
+        # a key in the VALIDATORS hash.  The supported keys are, :array, :boolean,
+        # :callable, :integer, :string.
         def option(name, default:, validate:)
           validate = VALIDATORS[validate] || validate
           raise ArgumentError, "validate must be #{VALIDATORS.keys.join(', ')}, or a callable" unless validate.respond_to?(:call)
