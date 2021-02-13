@@ -73,8 +73,9 @@ module OpenTelemetry
         end
 
         def set_baggage(carrier, context, getter)
+          baggage_key_prefix = 'uberctx-'
           getter.keys(carrier).each do |carrier_key|
-            baggage_key = (carrier_key =~ /^uberctx-(.*)/) && Regexp.last_match(1).downcase.gsub(/_/, '-')
+            baggage_key = carrier_key.start_with?(baggage_key_prefix) && carrier_key[baggage_key_prefix.length..-1]
             next unless baggage_key
 
             value = getter.get(carrier, carrier_key)
