@@ -17,7 +17,7 @@ module OpenTelemetry
     module Jaeger
       # Extracts context from carriers
       class TextMapExtractor
-        TRACE_SPAN_IDENTITY_REGEX = /\A(?<trace_id>(?:[0-9a-f]{16}){1,2}):(?<span_id>[0-9a-f]{16}):[0-9a-f]{1,16}:(?<sampling_flags>[0-9a-f]{1,2})\z/.freeze
+        TRACE_SPAN_IDENTITY_REGEX = /\A(?<trace_id>(?:[0-9a-f]{2}){1,16}):(?<span_id>([0-9a-f]{2}){1,8}):[0-9a-f]{1,16}:(?<sampling_flags>[0-9a-f]{1,2})\z/.freeze
         SAMPLED_VALUES = %w[1 3 5 7].freeze
         DEBUG_VALUES = %w[2 3 6 7].freeze
 
@@ -64,7 +64,7 @@ module OpenTelemetry
           trace_id = to_trace_id(match['trace_id'])
           span_context = Trace::SpanContext.new(
             trace_id: trace_id,
-            span_id: Array(match['span_id']).pack('H*'),
+            span_id: to_span_id(match['span_id']),
             trace_flags: to_trace_flags(match['sampling_flags']),
             remote: true
           )
@@ -92,12 +92,20 @@ module OpenTelemetry
           end
         end
 
+        def to_span_id(span_id_str)
+          zero_pad_count = (16 - span_id_str.length) % 16 / 2
+          to_zero_padded_id(span_id_str, zero_pad_count)
+        end
+
         def to_trace_id(trace_id_str)
-          if trace_id_str.length == 32
-            Array(trace_id_str).pack('H*')
-          else
-            [0, trace_id_str].pack('qH*')
-          end
+          zero_pad_count = (16 - (trace_id_str.length % 16)) % 16 / 2
+          to_zero_padded_id(trace_id_str, zero_pad_count)
+        end
+
+        def to_zero_padded_id(id_str, zero_pad_count)
+          bytes = Array.new(zero_pad_count, "\x00") << id_str
+          template_string = ('A' * zero_pad_count) + 'H*'
+          bytes.pack(template_string)
         end
       end
     end
