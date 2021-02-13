@@ -18,8 +18,8 @@ module OpenTelemetry
       # Extracts context from carriers
       class TextMapExtractor
         TRACE_SPAN_IDENTITY_REGEX = /\A(?<trace_id>(?:[0-9a-f]{2}){1,16}):(?<span_id>([0-9a-f]{2}){1,8}):[0-9a-f]{1,16}:(?<sampling_flags>[0-9a-f]{1,2})\z/.freeze
-        SAMPLED_VALUES = %w[1 3 5 7].freeze
-        DEBUG_VALUES = %w[2 3 6 7].freeze
+        SAMPLED_FLAG_BIT = 0x01
+        DEBUG_FLAG_BIT = 0x02
 
         # Returns a new TextMapExtractor that extracts Jaeger context using the
         # specified header keys
@@ -52,20 +52,21 @@ module OpenTelemetry
           header = getter.get(carrier, IDENTITY_KEY)
           return context unless (match = header.match(TRACE_SPAN_IDENTITY_REGEX))
 
-          span = build_span(match)
-          context = Jaeger.context_with_debug(context) if DEBUG_VALUES.include?(match['sampling_flags'])
+          sampling_flags = match['sampling_flags'].to_i
+          span = build_span(match, sampling_flags)
+          context = Jaeger.context_with_debug(context) if sampling_flags & DEBUG_FLAG_BIT != 0
           context = set_baggage(carrier, context, getter)
           Trace.context_with_span(span, parent_context: context)
         end
 
         private
 
-        def build_span(match)
+        def build_span(match, sampling_flags)
           trace_id = to_trace_id(match['trace_id'])
           span_context = Trace::SpanContext.new(
             trace_id: trace_id,
             span_id: to_span_id(match['span_id']),
-            trace_flags: to_trace_flags(match['sampling_flags']),
+            trace_flags: to_trace_flags(sampling_flags),
             remote: true
           )
           Trace::Span.new(span_context: span_context)
@@ -85,7 +86,7 @@ module OpenTelemetry
         end
 
         def to_trace_flags(sampling_flags)
-          if SAMPLED_VALUES.include?(sampling_flags)
+          if (sampling_flags & SAMPLED_FLAG_BIT) != 0
             Trace::TraceFlags::SAMPLED
           else
             Trace::TraceFlags::DEFAULT
