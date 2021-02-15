@@ -85,8 +85,15 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapInjector do
     end
 
     it 'injects to rack keys' do
+      rack_env_setter = Object.new
+      def rack_env_setter.set(carrier, key, value)
+        rack_key = 'HTTP_' + key
+        rack_key.tr!('-', '_')
+        rack_key.upcase!
+        carrier[rack_key] = value
+      end
       rack_injector = OpenTelemetry::Propagator::Jaeger::TextMapInjector.new(
-        OpenTelemetry::Context::Propagation.rack_env_setter
+        rack_env_setter
       )
       context = create_context(
         trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
