@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative './jaeger/operation'
 require_relative './jaeger/text_map_extractor'
 require_relative './jaeger/text_map_injector'
 
@@ -22,7 +23,6 @@ module OpenTelemetry
 
       DEBUG_CONTEXT_KEY = Context.create_key('jaeger-debug-key')
       private_constant :DEBUG_CONTEXT_KEY
-      IDENTITY_KEY = 'uber-trace-id'
 
       TEXT_MAP_EXTRACTOR = TextMapExtractor.new
       TEXT_MAP_INJECTOR = TextMapInjector.new

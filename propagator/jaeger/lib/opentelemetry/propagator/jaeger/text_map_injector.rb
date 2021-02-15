@@ -9,11 +9,7 @@ module OpenTelemetry
     # Namespace for OpenTelemetry Jaeger propagation
     module Jaeger
       # Injects context into carriers
-      class TextMapInjector
-        DEFAULT_FLAG_BIT = 0b0
-        SAMPLED_FLAG_BIT = 0b01
-        DEBUG_FLAG_BIT   = 0b10
-
+      class TextMapInjector < Operation
         # Returns a new TextMapInjector that extracts Jaeger context using the
         # specified header keys
         #
@@ -44,7 +40,7 @@ module OpenTelemetry
             span_context.hex_trace_id, span_context.hex_span_id, '0', flags
           ].join(':')
           setter ||= @default_setter
-          setter.set(carrier, IDENTITY_KEY, trace_span_identity_value)
+          setter.set(carrier, identity_key, trace_span_identity_value)
           OpenTelemetry.baggage.values(context: context).each do |key, value|
             baggage_key = 'uberctx-' + key
             setter.set(carrier, baggage_key, value)
@@ -57,12 +53,12 @@ module OpenTelemetry
         def to_flags(context, span_context)
           if span_context.trace_flags == TraceFlags::SAMPLED
             if Jaeger.debug?(context)
-              SAMPLED_FLAG_BIT | DEBUG_FLAG_BIT
+              sampled_flag_bit | debug_flag_bit
             else
-              SAMPLED_FLAG_BIT
+              sampled_flag_bit
             end
           else
-            DEFAULT_FLAG_BIT
+            default_flag_bit
           end
         end
       end
