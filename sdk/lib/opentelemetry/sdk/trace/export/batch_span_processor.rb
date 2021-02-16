@@ -177,9 +177,9 @@ module OpenTelemetry
             @pid = pid
             spans.clear
             @thread = restart_thread ? Thread.new { work } : nil
-          rescue ThreadError => error
+          rescue ThreadError => e
             @metrics_reporter.add_to_counter('otel.bsp.error', labels: { 'reason' => 'ThreadError' })
-            OpenTelemetry.logger.error "OpenTelemetry error in BatchSpanProcessor#reset_on_fork #{error.message}"
+            OpenTelemetry.logger.error "OpenTelemetry error in BatchSpanProcessor#reset_on_fork #{e.message}"
           end
 
           def export_batch(batch, timeout: @exporter_timeout_seconds)
