@@ -120,7 +120,7 @@ module OpenTelemetry
         # is to not trace these operations.
         #
         # An example use case would be to prepend a patch, or extend this class
-        # and override this methods behaviour to explicitly trace the. ttp request.
+        # and override this method's behaviour to explicitly trace the HTTP request.
         # This would allow you to trace your export pipeline.
         def around_request
           OpenTelemetry::Common::Utilities.untraced { yield }
