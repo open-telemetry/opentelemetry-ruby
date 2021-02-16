@@ -19,6 +19,8 @@ module OpenTelemetry
           defined?(::Redis)
         end
 
+        option :peer_service, default: nil, validate: :string
+
         private
 
         def require_dependencies

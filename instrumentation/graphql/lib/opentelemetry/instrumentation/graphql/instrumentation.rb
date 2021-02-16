@@ -11,6 +11,15 @@ module OpenTelemetry
     module GraphQL
       # The Instrumentation class contains logic to detect and install the GraphQL instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
+        install do |config|
+          require_dependencies
+          install_tracer(config)
+        end
+
+        present do
+          defined?(::GraphQL)
+        end
+
         ## Supported configuration keys for the install config hash:
         #
         # The enable_platform_field key expects a boolean value,
@@ -25,14 +34,10 @@ module OpenTelemetry
         # The schemas key expects an array of Schemas, and is used to specify
         # which schemas are to be instrumented. If this value is not supplied
         # the default behaviour is to instrument all schemas.
-        install do |config|
-          require_dependencies
-          install_tracer(config)
-        end
-
-        present do
-          defined?(::GraphQL)
-        end
+        option :schemas,                      default: [],    validate: :array
+        option :enable_platform_field,        default: false, validate: :boolean
+        option :enable_platform_authorized,   default: false, validate: :boolean
+        option :enable_platform_resolve_type, default: false, validate: :boolean
 
         private
 
@@ -41,7 +46,7 @@ module OpenTelemetry
         end
 
         def install_tracer(config = {})
-          if config[:schemas].nil? || config[:schemas].empty?
+          if config[:schemas].empty?
             ::GraphQL::Schema.tracer(Tracers::GraphQLTracer.new)
           else
             config[:schemas].each do |schema|
