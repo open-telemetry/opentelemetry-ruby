@@ -40,6 +40,24 @@ module OpenTelemetry
 
             private
 
+            def connect
+              if proxy?
+                conn_address = proxy_address
+                conn_port    = proxy_port
+              else
+                conn_address = address
+                conn_port    = port
+              end
+
+              attributes = OpenTelemetry::Common::HTTP::ClientContext.attributes
+              tracer.in_span('HTTP CONNECT', attributes: attributes.merge(
+                'peer.hostname' => conn_address,
+                'peer.port' => conn_port
+              )) do
+                super
+              end
+            end
+
             def annotate_span_with_response!(span, response)
               return unless response&.code
 
