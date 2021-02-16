@@ -150,19 +150,19 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
     it 'captures errors' do
       WebMock.allow_net_connect!
 
-      uri  = URI.parse('http://localhost:99999999/example')
+      uri  = URI.parse('http://localhost:99999/example')
       http = Net::HTTP.new(uri.host, uri.port)
-      _(-> { http.request(Net::HTTP::Get.new(uri.request_uri)) }).must_raise(SocketError)
+      _(-> { http.request(Net::HTTP::Get.new(uri.request_uri)) }).must_raise
 
       _(exporter.finished_spans.size).must_equal(1)
       _(span.name).must_equal 'HTTP CONNECT'
       _(span.attributes['peer.hostname']).must_equal('localhost')
-      _(span.attributes['peer.port']).must_equal(99_999_999)
+      _(span.attributes['peer.port']).must_equal(99_999)
 
       span_event = span.events.first
       _(span_event.name).must_equal 'exception'
-      _(span_event.attributes['exception.type']).must_equal 'SocketError'
-      _(span_event.attributes['exception.message']).must_equal 'Failed to open TCP connection to localhost:99999999 (getaddrinfo: nodename nor servname provided, or not known)'
+      _(span_event.attributes['exception.type']).wont_be_nil
+      _(span_event.attributes['exception.message']).must_match(/Failed to open TCP connection to localhost:99999/)
     ensure
       WebMock.disable_net_connect!
     end
