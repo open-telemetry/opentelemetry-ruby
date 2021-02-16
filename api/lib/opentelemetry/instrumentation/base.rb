@@ -59,10 +59,18 @@ module OpenTelemetry
     # convention for environment variable name is the library name, upcased with
     # '::' replaced by underscores, OPENTELEMETRY shortened to OTEL_{LANG}, and '_ENABLED' appended.
     # For example: OTEL_RUBY_INSTRUMENTATION_SINATRA_ENABLED = false.
-    class Base
+    class Base # rubocop:disable Metrics/ClassLength
       class << self
         NAME_REGEX = /^(?:(?<namespace>[a-zA-Z0-9_:]+):{2})?(?<classname>[a-zA-Z0-9_]+)$/.freeze
-        private_constant :NAME_REGEX
+        VALIDATORS = {
+          array: ->(v) { v.is_a?(Array) },
+          boolean: ->(v) { v == true || v == false }, # rubocop:disable Style/MultipleComparison
+          callable: ->(v) { v.respond_to?(:call) },
+          integer: ->(v) { v.is_a?(Integer) },
+          string: ->(v) { v.is_a?(String) }
+        }.freeze
+
+        private_constant :NAME_REGEX, :VALIDATORS
 
         private :new # rubocop:disable Style/AccessModifierDeclarations
 
@@ -129,14 +137,30 @@ module OpenTelemetry
           @compatible_blk = blk
         end
 
+        # The option method is used to define default configuration options
+        # for the instrumentation library. It requires a name, default value,
+        # and a validation callable to be provided.
+        # @param [String] name The name of the configuration option
+        # @param default The default value to be used, or to used if validation fails
+        # @param [Callable, Symbol] validate Accepts a callable or a symbol that matches
+        # a key in the VALIDATORS hash.  The supported keys are, :array, :boolean,
+        # :callable, :integer, :string.
+        def option(name, default:, validate:)
+          validate = VALIDATORS[validate] || validate
+          raise ArgumentError, "validate must be #{VALIDATORS.keys.join(', ')}, or a callable" unless validate.respond_to?(:call)
+
+          @options ||= []
+          @options << { name: name, default: default, validate: validate }
+        end
+
         def instance
           @instance ||= new(instrumentation_name, instrumentation_version, install_blk,
-                            present_blk, compatible_blk)
+                            present_blk, compatible_blk, options)
         end
 
         private
 
-        attr_reader :install_blk, :present_blk, :compatible_blk
+        attr_reader :install_blk, :present_blk, :compatible_blk, :options
 
         def infer_name
           @inferred_name ||= if (md = name.match(NAME_REGEX)) # rubocop:disable Naming/MemoizedInstanceVariableName
@@ -161,7 +185,7 @@ module OpenTelemetry
       alias installed? installed
 
       def initialize(name, version, install_blk, present_blk,
-                     compatible_blk)
+                     compatible_blk, options)
         @name = name
         @version = version
         @install_blk = install_blk
@@ -169,6 +193,7 @@ module OpenTelemetry
         @compatible_blk = compatible_blk
         @config = {}
         @installed = false
+        @options = options
       end
 
       # Install instrumentation with the given config. The present? and compatible?
@@ -180,7 +205,7 @@ module OpenTelemetry
         return true if installed?
         return false unless installable?(config)
 
-        @config = config unless config.nil?
+        @config = config_options(config)
         instance_exec(@config, &@install_blk)
         @tracer ||= OpenTelemetry.tracer_provider.tracer(name, version)
         @installed = true
@@ -224,6 +249,43 @@ module OpenTelemetry
       end
 
       private
+
+      # The config_options method is responsible for validating that the user supplied
+      # config hash is valid.
+      # Unknown configuration keys are not included in the final config hash.
+      # Invalid configuration values are logged, and replaced by the default.
+      #
+      # @param [Hash] user_config The user supplied configuration hash
+      def config_options(user_config) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        @options ||= {}
+        user_config ||= {}
+        validated_config = @options.each_with_object({}) do |option, h|
+          option_name = option[:name]
+          config_value = user_config[option_name]
+
+          value = if config_value.nil?
+                    option[:default]
+                  elsif option[:validate].call(config_value)
+                    config_value
+                  else
+                    OpenTelemetry.logger.warn(
+                      "Instrumentation #{name} configuration option #{option_name} value=#{config_value} " \
+                      "failed validation, falling back to default value=#{option[:default]}"
+                    )
+                    option[:default]
+                  end
+
+          h[option_name] = value
+        rescue StandardError => e
+          OpenTelemetry.handle_error(exception: e, message: "Instrumentation #{name} unexpected configuration error")
+          h[option_name] = option[:default]
+        end
+
+        dropped_config_keys = user_config.keys - validated_config.keys
+        OpenTelemetry.logger.warn("Instrumentation #{name} ignored the following unknown configuration options #{dropped_config_keys}") unless dropped_config_keys.empty?
+
+        validated_config
+      end
 
       # Checks to see if this instrumentation is enabled by env var. By convention, the
       # environment variable will be the instrumentation name upper cased, with '::'
