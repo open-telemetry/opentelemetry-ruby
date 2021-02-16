@@ -49,7 +49,7 @@ module OpenTelemetry
 
           def initialize(app)
             @app = app
-            @untraced_endpoints = config[:untraced_endpoints].is_a?(Array) ? config[:untraced_endpoints] : []
+            @untraced_endpoints = config[:untraced_endpoints]
           end
 
           def call(env) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength

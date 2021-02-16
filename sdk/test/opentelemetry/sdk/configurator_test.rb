@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'test_helper'
+require 'opentelemetry/exporter/jaeger'
 
 describe OpenTelemetry::SDK::Configurator do
   let(:configurator) { OpenTelemetry::SDK::Configurator.new }
@@ -134,6 +135,27 @@ describe OpenTelemetry::SDK::Configurator do
 
         _(injectors_for(OpenTelemetry.propagation)).must_equal([injector])
       end
+
+      it 'can be set by environment variable' do
+        expected_injectors = [OpenTelemetry::Baggage::Propagation.text_map_injector]
+
+        with_env('OTEL_PROPAGATORS' => 'baggage') do
+          configurator.configure
+        end
+
+        _(injectors_for(OpenTelemetry.propagation)).must_equal(expected_injectors)
+      end
+
+      it 'defaults to none with invalid env var' do
+        with_env('OTEL_PROPAGATORS' => 'unladen_swallow') do
+          configurator.configure
+        end
+
+        _(injectors_for(OpenTelemetry.propagation).length).must_equal(1)
+        _(injectors_for(OpenTelemetry.propagation).first).must_be_instance_of(
+          Context::Propagation::NoopInjector
+        )
+      end
     end
 
     describe '#extractors' do
@@ -154,6 +176,27 @@ describe OpenTelemetry::SDK::Configurator do
         configurator.configure
 
         _(extractors_for(OpenTelemetry.propagation)).must_equal([extractor])
+      end
+
+      it 'can be set by environment variable' do
+        expected_extractors = [OpenTelemetry::Baggage::Propagation.text_map_extractor]
+
+        with_env('OTEL_PROPAGATORS' => 'baggage') do
+          configurator.configure
+        end
+
+        _(extractors_for(OpenTelemetry.propagation)).must_equal(expected_extractors)
+      end
+
+      it 'defaults to none with invalid env var' do
+        with_env('OTEL_PROPAGATORS' => 'unladen_swallow') do
+          configurator.configure
+        end
+
+        _(extractors_for(OpenTelemetry.propagation).length).must_equal(1)
+        _(extractors_for(OpenTelemetry.propagation).first).must_be_instance_of(
+          Context::Propagation::NoopExtractor
+        )
       end
     end
 
@@ -176,11 +219,11 @@ describe OpenTelemetry::SDK::Configurator do
     end
 
     describe 'span processors' do
-      it 'defaults to SimpleSpanProcessor w/ ConsoleSpanExporter' do
+      it 'defaults to NoopSpanProcessor if no valid exporter is available' do
         configurator.configure
 
         _(OpenTelemetry.tracer_provider.active_span_processor).must_be_instance_of(
-          OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor
+          OpenTelemetry::SDK::Trace::NoopSpanProcessor
         )
       end
 
@@ -197,6 +240,29 @@ describe OpenTelemetry::SDK::Configurator do
           OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
         )
       end
+
+      it 'can be set by environment variable' do
+        with_env('OTEL_TRACES_EXPORTER' => 'jaeger') do
+          configurator.configure
+        end
+
+        _(OpenTelemetry.tracer_provider.active_span_processor).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
+        )
+        _(OpenTelemetry.tracer_provider.active_span_processor.instance_variable_get(:@exporter)).must_be_instance_of(
+          OpenTelemetry::Exporter::Jaeger::CollectorExporter
+        )
+      end
+
+      it 'accepts "none" as an environment variable value' do
+        with_env('OTEL_TRACES_EXPORTER' => 'none') do
+          configurator.configure
+        end
+
+        _(OpenTelemetry.tracer_provider.active_span_processor).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::NoopSpanProcessor
+        )
+      end
     end
 
     describe 'instrumentation installation' do
@@ -205,6 +271,7 @@ describe OpenTelemetry::SDK::Configurator do
         TestInstrumentation = Class.new(OpenTelemetry::Instrumentation::Base) do
           install { 1 + 1 }
           present { true }
+          option :opt, default: false, validate: :boolean
         end
       end
 
@@ -237,10 +304,18 @@ describe OpenTelemetry::SDK::Configurator do
   end
 
   def extractors_for(propagator)
-    propagator.instance_variable_get(:@extractors) || propagator.instance_variable_get(:@extractor)
+    if propagator.instance_of? Context::Propagation::CompositePropagator
+      propagator.instance_variable_get(:@extractors)
+    else
+      [propagator.instance_variable_get(:@extractor)]
+    end
   end
 
   def injectors_for(propagator)
-    propagator.instance_variable_get(:@injectors) || propagator.instance_variable_get(:@injector)
+    if propagator.instance_of? Context::Propagation::CompositePropagator
+      propagator.instance_variable_get(:@injectors)
+    else
+      [propagator.instance_variable_get(:@injector)]
+    end
   end
 end
