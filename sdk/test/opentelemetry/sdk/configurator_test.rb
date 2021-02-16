@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'test_helper'
+require 'opentelemetry/exporter/jaeger'
 
 describe OpenTelemetry::SDK::Configurator do
   let(:configurator) { OpenTelemetry::SDK::Configurator.new }
@@ -245,8 +246,10 @@ describe OpenTelemetry::SDK::Configurator do
           configurator.configure
         end
 
-        skip 'how do we load this gem for testing?'
         _(OpenTelemetry.tracer_provider.active_span_processor).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
+        )
+        _(OpenTelemetry.tracer_provider.active_span_processor.instance_variable_get(:@exporter)).must_be_instance_of(
           OpenTelemetry::Exporter::Jaeger::CollectorExporter
         )
       end
