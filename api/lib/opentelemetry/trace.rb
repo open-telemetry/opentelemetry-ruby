@@ -21,7 +21,7 @@ module OpenTelemetry
     # the class `Random`.
     #
     # @return [#bytes]
-    RANDOM = Random.respond_to?(:bytes) ? Random : Random::DEFAULT
+    RANDOM = Random.respond_to?(:bytes) ? Random.new : Random::DEFAULT
 
     private_constant :CURRENT_SPAN_KEY, :RANDOM
 
