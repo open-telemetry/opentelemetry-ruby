@@ -10,11 +10,14 @@ module OpenTelemetry
       module Patches
         # Module to prepend to HTTPClient for instrumentation
         module Client
-          def do_request(method, uri, query, body, header, &block)
-            url = "#{uri.scheme}://#{uri.host}"
+          private
 
+          def do_get_block(req, proxy, conn, &block) # rubocop:disable Metrics/AbcSize
+            uri = req.header.request_uri
+            url = "#{uri.scheme}://#{uri.host}"
+            request_method = req.header.request_method
             attributes = {
-              'http.method' => method.upcase.to_s,
+              'http.method' => request_method,
               'http.scheme' => uri.scheme,
               'http.target' => uri.path,
               'http.url' => url,
@@ -22,15 +25,15 @@ module OpenTelemetry
               'peer.port' => uri.port
             }.merge(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
-            tracer.in_span("HTTP #{method.upcase}", attributes: attributes, kind: :client) do |span|
-              OpenTelemetry.propagation.inject(header)
-              super.tap do |response|
+            tracer.in_span("HTTP #{request_method}", attributes: attributes, kind: :client) do |span|
+              OpenTelemetry.propagation.inject(req.header)
+              super.tap do
+                response = conn.pop
                 annotate_span_with_response!(span, response)
+                conn.push response
               end
             end
           end
-
-          private
 
           def annotate_span_with_response!(span, response)
             return unless response&.status_code
