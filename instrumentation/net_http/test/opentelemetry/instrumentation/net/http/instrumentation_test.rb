@@ -27,6 +27,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       OpenTelemetry::Trace::Propagation::TraceContext.text_map_extractor
     )
     OpenTelemetry.propagation = propagator
+    instrumentation.install
   end
 
   after do
@@ -36,11 +37,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
     OpenTelemetry.propagation = @orig_propagation
   end
 
-  describe 'tracing' do
-    before do
-      instrumentation.install
-    end
-
+  describe '#request' do
     it 'before request' do
       _(exporter.finished_spans.size).must_equal 0
     end
@@ -126,6 +123,48 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
         'http://example.com/success',
         headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
+    end
+  end
+
+  describe '#connect' do
+    it 'emits span on connect' do
+      WebMock.allow_net_connect!
+      TCPServer.open('localhost', 0) do |server|
+        Thread.start { server.accept }
+        port = server.addr[1]
+
+        uri  = URI.parse("http://localhost:#{port}/example")
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.read_timeout = 0
+        _(-> { http.request(Net::HTTP::Get.new(uri.request_uri)) }).must_raise(Net::ReadTimeout)
+      end
+
+      _(exporter.finished_spans.size).must_equal(2)
+      _(span.name).must_equal 'HTTP CONNECT'
+      _(span.attributes['peer.hostname']).must_equal('localhost')
+      _(span.attributes['peer.port']).wont_be_nil
+    ensure
+      WebMock.disable_net_connect!
+    end
+
+    it 'captures errors' do
+      WebMock.allow_net_connect!
+
+      uri  = URI.parse('http://localhost:99999/example')
+      http = Net::HTTP.new(uri.host, uri.port)
+      _(-> { http.request(Net::HTTP::Get.new(uri.request_uri)) }).must_raise
+
+      _(exporter.finished_spans.size).must_equal(1)
+      _(span.name).must_equal 'HTTP CONNECT'
+      _(span.attributes['peer.hostname']).must_equal('localhost')
+      _(span.attributes['peer.port']).must_equal(99_999)
+
+      span_event = span.events.first
+      _(span_event.name).must_equal 'exception'
+      _(span_event.attributes['exception.type']).wont_be_nil
+      _(span_event.attributes['exception.message']).must_match(/Failed to open TCP connection to localhost:99999/)
+    ensure
+      WebMock.disable_net_connect!
     end
   end
 end
