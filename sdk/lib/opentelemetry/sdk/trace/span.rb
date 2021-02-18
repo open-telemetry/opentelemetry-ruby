@@ -64,6 +64,9 @@ module OpenTelemetry
         #
         # @param [String] key
         # @param [String, Boolean, Numeric, Array<String, Numeric, Boolean>] value
+        #   Values must be non-nil and (array of) string, boolean or numeric type.
+        #   Array values must not contain nil elements and all elements must be of
+        #   the same basic type (string, numeric, boolean).
         #
         # @return [self] returns itself
         def set_attribute(key, value)
@@ -96,7 +99,7 @@ module OpenTelemetry
         # @param [String] name Name of the event.
         # @param [optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
         #   One or more key:value pairs, where the keys must be strings and the
-        #   values may be string, boolean or numeric type.
+        #   values may be (array of) string, boolean or numeric type.
         # @param [optional Time] timestamp Optional timestamp for the event.
         #
         # @return [self] returns itself
