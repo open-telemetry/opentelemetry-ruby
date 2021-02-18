@@ -51,6 +51,9 @@ module OpenTelemetry
       #
       # @param [String] key
       # @param [String, Boolean, Numeric, Array<String, Numeric, Boolean>] value
+      #   Values must be non-nil and (array of) string, boolean or numeric type.
+      #   Array values must not contain nil elements and all elements must be of
+      #   the same basic type (string, numeric, boolean).
       #
       # @return [self] returns itself
       def set_attribute(key, value)
