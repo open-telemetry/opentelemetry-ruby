@@ -81,5 +81,12 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
         "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
       )
     end
+
+    it 'sets the reason phrase' do
+      stub_request(:any, 'example.com').to_return(status: [500, 'Internal Server Error'])
+      ::Faraday.new('http://example.com').get('/')
+
+      _(span.attributes['http.status_text']).must_equal 'Internal Server Error'
+    end
   end
 end
