@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.15.0 / 2021-02-18
+
+* FIXED: Include http.status_text only if reason_phrase is in the response 
+
 ### v0.14.0 / 2021-02-03
 
 * BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators 

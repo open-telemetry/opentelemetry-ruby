@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-concurrent_ruby
 
+### v0.15.0 / 2021-02-18
+
+* (No significant changes)
+
 ### v0.14.0 / 2021-02-03
 
 * (No significant changes)

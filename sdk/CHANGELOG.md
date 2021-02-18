@@ -1,5 +1,17 @@
 # Release History: opentelemetry-sdk
 
+### v0.15.0 / 2021-02-18
+
+* BREAKING CHANGE: Streamline processor pipeline 
+
+* ADDED: Add instrumentation config validation 
+* FIXED: Streamline processor pipeline 
+* FIXED: OTEL_TRACE -> OTEL_TRACES env vars 
+* FIXED: Change limits from 1000 to 128 
+* FIXED: OTEL_TRACES_EXPORTER and OTEL_PROPAGATORS 
+* FIXED: Add thread error handling to the BSP 
+* DOCS: Clarify nil attribute values not allowed 
+
 ### v0.14.0 / 2021-02-03
 
 * BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators 

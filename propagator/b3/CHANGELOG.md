@@ -1,5 +1,9 @@
 # Release History: opentelemetry-propagator-b3
 
+### v0.15.0 / 2021-02-18
+
+* (No significant changes)
+
 ### v0.14.0 / 2021-02-03
 
 * BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators 
