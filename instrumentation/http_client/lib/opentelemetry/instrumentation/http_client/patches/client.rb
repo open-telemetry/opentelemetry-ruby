@@ -38,7 +38,7 @@ module OpenTelemetry
           def annotate_span_with_response!(span, response)
             return unless response&.status_code
 
-            status_code = response&.status_code.to_i
+            status_code = response.status_code.to_i
 
             span.set_attribute('http.status_code', status_code)
             span.status = OpenTelemetry::Trace::Status.http_to_status(
