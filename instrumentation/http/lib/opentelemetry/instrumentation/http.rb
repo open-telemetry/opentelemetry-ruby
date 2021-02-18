@@ -9,7 +9,7 @@ require 'opentelemetry'
 module OpenTelemetry
   module Instrumentation
     # Contains the OpenTelemetry instrumentation for the Http gem
-    module Http
+    module HTTP
     end
   end
 end

@@ -8,11 +8,11 @@ require 'test_helper'
 
 require_relative '../../../lib/opentelemetry/instrumentation/http'
 
-describe OpenTelemetry::Instrumentation::Http do
-  let(:instrumentation) { OpenTelemetry::Instrumentation::Http::Instrumentation.instance }
+describe OpenTelemetry::Instrumentation::HTTP do
+  let(:instrumentation) { OpenTelemetry::Instrumentation::HTTP::Instrumentation.instance }
 
   it 'has #name' do
-    _(instrumentation.name).must_equal 'OpenTelemetry::Instrumentation::Http'
+    _(instrumentation.name).must_equal 'OpenTelemetry::Instrumentation::HTTP'
   end
 
   it 'has #version' do

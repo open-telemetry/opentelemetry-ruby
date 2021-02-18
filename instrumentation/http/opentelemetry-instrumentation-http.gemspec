@@ -10,12 +10,12 @@ require 'opentelemetry/instrumentation/http/version'
 
 Gem::Specification.new do |spec|
   spec.name        = 'opentelemetry-instrumentation-http'
-  spec.version     = OpenTelemetry::Instrumentation::Http::VERSION
+  spec.version     = OpenTelemetry::Instrumentation::HTTP::VERSION
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
-  spec.summary     = 'Http instrumentation for the OpenTelemetry framework'
-  spec.description = 'Http instrumentation for the OpenTelemetry framework'
+  spec.summary     = 'HTTP instrumentation for the OpenTelemetry framework'
+  spec.description = 'HTTP instrumentation for the OpenTelemetry framework'
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby'
   spec.license     = 'Apache-2.0'
 
@@ -40,9 +40,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
 
   if spec.respond_to?(:metadata)
-    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-http/v#{OpenTelemetry::Instrumentation::Http::VERSION}/file.CHANGELOG.html"
+    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-http/v#{OpenTelemetry::Instrumentation::HTTP::VERSION}/file.CHANGELOG.html"
     spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/instrumentation/http'
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/issues'
-    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-http/v#{OpenTelemetry::Instrumentation::Http::VERSION}"
+    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-http/v#{OpenTelemetry::Instrumentation::HTTP::VERSION}"
   end
 end

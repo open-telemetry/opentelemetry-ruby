@@ -8,7 +8,7 @@ require 'opentelemetry'
 
 module OpenTelemetry
   module Instrumentation
-    module Http
+    module HTTP
       # The Instrumentation class contains logic to detect and install the Http instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |_config|
@@ -22,6 +22,7 @@ module OpenTelemetry
 
         def patch
           ::HTTP::Client.prepend(Patches::Client)
+          ::HTTP::Connection.prepend(Patches::Connection)
         end
 
         def require_dependencies

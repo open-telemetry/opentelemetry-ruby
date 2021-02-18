@@ -9,8 +9,8 @@ require 'test_helper'
 require_relative '../../../../lib/opentelemetry/instrumentation/http'
 require_relative '../../../../lib/opentelemetry/instrumentation/http/patches/client'
 
-describe OpenTelemetry::Instrumentation::Http::Patches::Client do
-  let(:instrumentation) { OpenTelemetry::Instrumentation::Http::Instrumentation.instance }
+describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
+  let(:instrumentation) { OpenTelemetry::Instrumentation::HTTP::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
 

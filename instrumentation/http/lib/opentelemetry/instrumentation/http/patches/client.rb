@@ -6,9 +6,9 @@
 
 module OpenTelemetry
   module Instrumentation
-    module Http
+    module HTTP
       module Patches
-        # Module to prepend to HTTPClient for instrumentation
+        # Module to prepend to HTTP::Client for instrumentation
         module Client
           def perform(req, options) # rubocop:disable Metrics/AbcSize
             uri = req.uri
@@ -42,7 +42,7 @@ module OpenTelemetry
           end
 
           def tracer
-            Http::Instrumentation.instance.tracer
+            HTTP::Instrumentation.instance.tracer
           end
         end
       end

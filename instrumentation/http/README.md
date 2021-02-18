@@ -1,6 +1,6 @@
 # OpenTelemetry Http Instrumentation
 
-Todo: Add a description.
+The HTTP instrumentation is a community-maintained instrumentation for the [HTTP][http-home] gem.
 
 ## How do I get started?
 
@@ -18,7 +18,7 @@ To use the instrumentation, call `use` with the name of the instrumentation:
 
 ```ruby
 OpenTelemetry::SDK.configure do |c|
-  c.use 'OpenTelemetry::Instrumentation::Http'
+  c.use 'OpenTelemetry::Instrumentation::HTTP'
 end
 ```
 
@@ -44,6 +44,7 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 
 The `opentelemetry-instrumentation-http` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
 
+[http-home]: https://github.com/httprb/http
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
