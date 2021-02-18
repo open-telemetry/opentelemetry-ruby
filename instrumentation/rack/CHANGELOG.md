@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.15.0 / 2021-02-18
+
+* ADDED: Add instrumentation config validation 
+
 ### v0.14.0 / 2021-02-03
 
 * BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators 

@@ -1,5 +1,12 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.15.0 / 2021-02-18
+
+* BREAKING CHANGE: Streamline processor pipeline 
+
+* ADDED: Add otlp exporter hooks 
+* FIXED: Streamline processor pipeline 
+
 ### v0.14.0 / 2021-02-03
 
 * (No significant changes)
