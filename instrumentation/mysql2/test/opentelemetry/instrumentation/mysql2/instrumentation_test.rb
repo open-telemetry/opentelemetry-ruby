@@ -135,5 +135,24 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       assert(!span.events.first.attributes['exception.message'].nil?)
       assert(!span.events.first.attributes['exception.stacktrace'].nil?)
     end
+
+    describe 'OTEL_INSTRUMENTATION_MYSQL2_OBFUSCATE variable is configured' do
+      it 'obfuscates SQL parameters in db.statement' do
+        ENV['OTEL_INSTRUMENTATION_MYSQL2_OBFUSCATE'] = 'true'
+        sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+        obfuscated_sql = 'SELECT * from users where users.id = ? and users.email = ?'
+        expect do
+          client.query(sql)
+        end.must_raise Mysql2::Error
+
+        _(span.attributes['db.system']).must_equal 'mysql'
+        _(span.attributes['db.instance']).must_equal 'mysql'
+        _(span.name).must_equal 'select'
+        _(span.attributes['db.statement']).must_equal obfuscated_sql
+        _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
+        _(span.attributes['net.peer.name']).must_equal host.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_s
+      end
+    end
   end
 end
