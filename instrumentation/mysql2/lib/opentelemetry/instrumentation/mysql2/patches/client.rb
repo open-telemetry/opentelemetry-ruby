@@ -34,7 +34,7 @@ module OpenTelemetry
             tracer.in_span(
               database_span_name(sql),
               attributes: client_attributes.merge(
-                'db.statement' => sql
+                'db.statement' => obfuscate_sql(sql)
               ),
               kind: :client
             ) do
@@ -43,6 +43,18 @@ module OpenTelemetry
           end
 
           private
+
+          def obfuscate_sql(sql)
+            # if ENV variable is set, removes any string values or numbers inside spaces
+            # (to avoid mathcing dates).
+            return sql unless ENV['OTEL_INSTRUMENTATION_MYSQL2_OBFUSCATE']
+
+            if sql.size > 2000
+              'SQL query too large to remove sensitive data ...'
+            else
+              sql.gsub(/'.+?'/m, '?').gsub(/ \d+ /m, ' ? ')
+            end
+          end
 
           def database_span_name(sql)
             # Setting span name to the SQL query without obfuscation would
