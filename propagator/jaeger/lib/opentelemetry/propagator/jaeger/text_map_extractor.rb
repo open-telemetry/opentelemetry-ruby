@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'uri'
+
 # OpenTelemetry is an open source observability framework, providing a
 # general-purpose API, SDK, and related tools required for the instrumentation
 # of cloud-native software, frameworks, and libraries.
@@ -78,7 +80,8 @@ module OpenTelemetry
             baggage_key = carrier_key.start_with?(baggage_key_prefix) && carrier_key[baggage_key_prefix.length..-1]
             next unless baggage_key
 
-            value = getter.get(carrier, carrier_key)
+            raw_value = getter.get(carrier, carrier_key)
+            value = URI.decode_www_form_component(raw_value)
             context = OpenTelemetry.baggage.set_value(
               baggage_key, value, context: context
             )

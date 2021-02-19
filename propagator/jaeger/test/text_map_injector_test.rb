@@ -84,6 +84,19 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapInjector do
       _(carrier['uberctx-key2']).must_equal('value2')
     end
 
+    it 'URL-encodes baggage values before injecting' do
+      context = create_context(
+        trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
+        span_id: 'e457b5a2e4d86bd1'
+      )
+      context = OpenTelemetry.baggage.build_context(context: context) do |baggage|
+        baggage.set_value('key1', 'value 1 / blah')
+      end
+      carrier = {}
+      injector.inject(carrier, context)
+      _(carrier['uberctx-key1']).must_equal('value%201%20%2F%20blah')
+    end
+
     it 'injects to rack keys' do
       rack_env_setter = Object.new
       def rack_env_setter.set(carrier, key, value)
