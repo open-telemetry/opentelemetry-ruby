@@ -30,6 +30,16 @@ module OpenTelemetry
 
           QUERY_NAME_RE = Regexp.new("^(#{QUERY_NAMES.join('|')})", Regexp::IGNORECASE)
 
+          COMPONENTS_REGEX_MAP = {
+            single_quotes: /'(?:[^']|'')*?(?:\\'.*|'(?!'))/,
+            double_quotes: /"(?:[^"]|"")*?(?:\\".*|"(?!"))/,
+            numeric_literals: /-?\b(?:[0-9]+\.)?[0-9]+([eE][+-]?[0-9]+)?\b/,
+            boolean_literals: /\b(?:true|false|null)\b/i,
+            hexadecimal_literals: /0x[0-9a-fA-F]+/,
+            comments: /(?:#|--).*?(?=\r|\n|$)/i,
+            multi_line_comments: %r/\/\*(?:[^\/]|\/[^*])*?(?:\*\/|\/\*.*)/
+          }.freeze
+
           def query(sql, options = {})
             tracer.in_span(
               database_span_name(sql),
@@ -45,15 +55,30 @@ module OpenTelemetry
           private
 
           def obfuscate_sql(sql)
-            # if enabled, removes any string values or numbers inside spaces
-            # (to avoid mathcing dates).
             return sql unless config[:enable_sql_obfuscation]
 
             if sql.size > 2000
               'SQL query too large to remove sensitive data ...'
             else
-              sql.gsub(/'.+?'/m, '?').gsub(/ \d+ /m, ' ? ')
+              obfuscated = sql.gsub(generate_mysql_regex, '?')
+              obfuscated = 'Failed to obfuscate SQL query - quote characters remained after obfuscation' if detect_unmatched_pairs(obfuscated)
+              obfuscated
             end
+          end
+
+          def generate_mysql_regex
+            components = %i[single_quotes double_quotes numeric_literals boolean_literals
+                            hexadecimal_literals comments multi_line_comments]
+            Regexp.union(components.map { |component| COMPONENTS_REGEX_MAP[component] })
+          end
+
+          def detect_unmatched_pairs(obfuscated)
+            # We use this to check whether the query contains any quote characters
+            # after obfuscation. If so, that's a good indication that the original
+            # query was malformed, and so our obfuscation can't reliably find
+            # literals. In such a case, we'll replace the entire query with a
+            # placeholder.
+            %r{'|"|\/\*|\*\/}.match(obfuscated)
           end
 
           def database_span_name(sql)
