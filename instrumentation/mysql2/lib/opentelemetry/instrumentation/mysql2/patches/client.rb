@@ -45,9 +45,9 @@ module OpenTelemetry
           private
 
           def obfuscate_sql(sql)
-            # if ENV variable is set, removes any string values or numbers inside spaces
+            # if enabled, removes any string values or numbers inside spaces
             # (to avoid mathcing dates).
-            return sql unless ENV['OTEL_INSTRUMENTATION_MYSQL2_OBFUSCATE']
+            return sql unless config[:enable_sql_obfuscation]
 
             if sql.size > 2000
               'SQL query too large to remove sensitive data ...'

@@ -22,6 +22,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Mysql2::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
+  let(:config) { {} }
 
   before do
     exporter.reset
@@ -50,7 +51,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
     let(:password) { ENV.fetch('TEST_MYSQL_PASSWORD') { 'root' } }
 
     before do
-      instrumentation.install
+      instrumentation.install(config)
     end
 
     it 'before request' do
@@ -136,9 +137,10 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       assert(!span.events.first.attributes['exception.stacktrace'].nil?)
     end
 
-    describe 'OTEL_INSTRUMENTATION_MYSQL2_OBFUSCATE variable is configured' do
+    describe 'when enable_sql_obfuscation is enabled' do
+      let(:config) { { enable_sql_obfuscation: true } }
+
       it 'obfuscates SQL parameters in db.statement' do
-        ENV['OTEL_INSTRUMENTATION_MYSQL2_OBFUSCATE'] = 'true'
         sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
         obfuscated_sql = 'SELECT * from users where users.id = ? and users.email = ?'
         expect do
