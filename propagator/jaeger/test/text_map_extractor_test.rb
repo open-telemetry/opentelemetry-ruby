@@ -67,10 +67,10 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapExtractor do
 
     it 'extracts context with a shorter trace id and span id' do
       span_context = extract_span_context(
-        '98ee56343ba864fe8b2a57d3eff7:b5a2e4d86bd1:0:1'
+        '8ee56343ba864fe8b2a57d3eff7:5a2e4d86bd1:0:1'
       )
-      _(span_context.hex_trace_id).must_equal('000098ee56343ba864fe8b2a57d3eff7')
-      _(span_context.hex_span_id).must_equal('0000b5a2e4d86bd1')
+      _(span_context.hex_trace_id).must_equal('000008ee56343ba864fe8b2a57d3eff7')
+      _(span_context.hex_span_id).must_equal('000005a2e4d86bd1')
     end
 
     it 'extracts context with 64-bit trace ids' do
@@ -142,15 +142,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapExtractor do
       extracted_context_must_equal_parent_context(
         '80f198ee56343ba864fe8b2a57d3eff7:0:0:1'
       )
-    end
-
-    it 'handles broken hex strings' do
-      extracted_context_must_equal_parent_context(
-        '80f198ee56343ba864fe8b2a57d3eff:e457b5a2e4d86bd1:0:1'
-      )
-      extracted_context_must_equal_parent_context(
-        '80f198ee56343ba864fe8b2a57d3eff7:e457b5a2e4d86bd:0:1'
-      )
+      extracted_context_must_equal_parent_context('00:00:0:1')
     end
   end
 end
