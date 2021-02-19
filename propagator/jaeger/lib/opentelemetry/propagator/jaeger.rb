@@ -4,7 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative './jaeger/operation'
 require_relative './jaeger/text_map_extractor'
 require_relative './jaeger/text_map_injector'
 
@@ -28,6 +27,11 @@ module OpenTelemetry
       TEXT_MAP_INJECTOR = TextMapInjector.new
 
       private_constant :TEXT_MAP_INJECTOR, :TEXT_MAP_EXTRACTOR
+
+      IDENTITY_KEY = 'uber-trace-id'
+      DEFAULT_FLAG_BIT = 0x0
+      SAMPLED_FLAG_BIT = 0x01
+      DEBUG_FLAG_BIT   = 0x02
 
       # Returns an extractor that extracts context in the Jaeger single header
       # format

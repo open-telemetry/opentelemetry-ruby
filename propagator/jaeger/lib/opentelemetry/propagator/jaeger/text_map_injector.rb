@@ -12,7 +12,7 @@ module OpenTelemetry
     # Namespace for OpenTelemetry Jaeger propagation
     module Jaeger
       # Injects context into carriers
-      class TextMapInjector < Operation
+      class TextMapInjector
         # Returns a new TextMapInjector that extracts Jaeger context using the
         # specified header keys
         #
@@ -43,7 +43,7 @@ module OpenTelemetry
             span_context.hex_trace_id, span_context.hex_span_id, '0', flags
           ].join(':')
           setter ||= @default_setter
-          setter.set(carrier, identity_key, trace_span_identity_value)
+          setter.set(carrier, IDENTITY_KEY, trace_span_identity_value)
           OpenTelemetry.baggage.values(context: context).each do |key, value|
             baggage_key = 'uberctx-' + key
             encoded_value = ERB::Util.url_encode(value)
@@ -57,12 +57,12 @@ module OpenTelemetry
         def to_flags(context, span_context)
           if span_context.trace_flags == TraceFlags::SAMPLED
             if Jaeger.debug?(context)
-              sampled_flag_bit | debug_flag_bit
+              SAMPLED_FLAG_BIT | DEBUG_FLAG_BIT
             else
-              sampled_flag_bit
+              SAMPLED_FLAG_BIT
             end
           else
-            default_flag_bit
+            DEFAULT_FLAG_BIT
           end
         end
       end
