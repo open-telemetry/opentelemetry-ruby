@@ -37,7 +37,7 @@ module OpenTelemetry
             boolean_literals: /\b(?:true|false|null)\b/i,
             hexadecimal_literals: /0x[0-9a-fA-F]+/,
             comments: /(?:#|--).*?(?=\r|\n|$)/i,
-            multi_line_comments: %r/\/\*(?:[^\/]|\/[^*])*?(?:\*\/|\/\*.*)/
+            multi_line_comments: %r{\/\*(?:[^\/]|\/[^*])*?(?:\*\/|\/\*.*)}
           }.freeze
 
           def query(sql, options = {})
