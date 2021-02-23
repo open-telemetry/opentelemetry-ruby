@@ -15,7 +15,7 @@ describe OpenTelemetry::Exporter::Zipkin::Exporter do
     end
 
     # TODO
-    
+
     it 'refuses an invalid endpoint' do
       assert_raises ArgumentError do
         OpenTelemetry::Exporter::Zipkin::Exporter.new(endpoint: 'not a url')

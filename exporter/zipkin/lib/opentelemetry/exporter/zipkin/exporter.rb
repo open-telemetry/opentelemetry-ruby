@@ -23,14 +23,12 @@ module OpenTelemetry
 
         # Default timeouts in seconds.
         KEEP_ALIVE_TIMEOUT = 30
-        RETRY_COUNT = 5
         WRITE_TIMEOUT_SUPPORTED = Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.6')
-        private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT, :WRITE_TIMEOUT_SUPPORTED)
+        private_constant(:KEEP_ALIVE_TIMEOUT, :WRITE_TIMEOUT_SUPPORTED)
 
         def initialize(endpoint: config_opt('OTEL_EXPORTER_ZIPKIN_ENDPOINT', default: 'http://localhost:9411/api/v2/spans'),
                        headers: config_opt('OTEL_EXPORTER_ZIPKIN_TRACES_HEADERS', 'OTEL_EXPORTER_ZIPKIN_HEADERS'),
-                       timeout: config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10)
-                       )
+                       timeout: config_opt('OTEL_EXPORTER_ZIPKIN_TRACES_TIMEOUT', 'OTEL_EXPORTER_ZIPKIN_TIMEOUT', default: 10))
           raise ArgumentError, "invalid url for Zipkin::Exporter #{endpoint}" if invalid_url?(endpoint)
           raise ArgumentError, 'headers must be comma-separated k=v pairs or a Hash' unless valid_headers?(headers)
 
@@ -97,7 +95,7 @@ module OpenTelemetry
           span_data.group_by(&:resource).map do |resource, spans|
             spans.map! { |span| Transformer.to_zipkin_span(span, resource) }
           end
-        end        
+        end
 
         def around_request
           OpenTelemetry::Common::Utilities.untraced { yield }
@@ -113,15 +111,11 @@ module OpenTelemetry
         end
 
         def send_spans(zipkin_spans, timeout: nil)
-          # todo send spans
-
-          retry_count = 0
           timeout ||= @timeout
           start_time = Time.now
-          around_request do # rubocop:disable Metrics/BlockLength
+          around_request do
             request = Net::HTTP::Post.new(@path)
             request.body = JSON.generate(zipkin_spans)
-
             request.add_field('Content-Type', 'application/json')
             @headers&.each { |key, value| request.add_field(key, value) }
 
@@ -134,20 +128,16 @@ module OpenTelemetry
             @http.start unless @http.started?
 
             response = @http.request(request)
-
-            # Kind of confusing, in JS 200-300 level is succcess and everything else is a failure
-            # in collector zipkin exporter, 300 are not a success
-            # going with broader set for now
-            # not doing any retry
+            response.body # Read and discard body
+            # in opentelemetry-js 200-300 level is succcess and everything else is failure, in opentelemetry-collector zipkin exporter, 300+ not a success
+            # going with broader set for now, not doing any retry (should this be added?)
             # https://github.com/open-telemetry/opentelemetry-js/blob/38d1ee2552bbdda0a151734ba0d50ee7448e68e1/packages/opentelemetry-exporter-zipkin/src/platform/node/util.ts#L60-L76
             # https://github.com/open-telemetry/opentelemetry-collector/blob/347cfa9ab21d47240128c58c9bafcc0014bc729d/exporter/zipkinexporter/zipkin.go#L90
             case response.code
             when 200..399
-              response.body # Read and discard body
               SUCCESS
             else
-              response.body # Read and discard body
-              FAILURE 
+              FAILURE
             end
           rescue Net::OpenTimeout, Net::ReadTimeout
             return FAILURE
