@@ -10,7 +10,7 @@ DEFAULT_ZIPKIN_COLLECTOR_ENDPOINT = 'http://localhost:9411/api/v2/spans'
 describe OpenTelemetry::Exporter::Zipkin::Exporter do
   describe '#initialize' do
     it 'initializes with defaults' do
-      exp = OpenTelemetry::Exporter::Zipkin::CollectorExporter.new
+      exp = OpenTelemetry::Exporter::Zipkin::Exporter.new
       _(exp).wont_be_nil
     end
 

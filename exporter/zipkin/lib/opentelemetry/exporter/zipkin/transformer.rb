@@ -36,17 +36,20 @@ module OpenTelemetry
         ATTRIBUTE_NET_HOST_IP = 'host.ip'
         ATTRIBUTE_NET_HOST_PORT = 'host.port'
 
-        DEFAULT_SERVICE_NAME = OpenTelemetry::SDK::Resources::Resource.DEFAULT_SERVICE_NAME.attribute_enumerator.find { |k, _| k == SERVICE_NAME_ATTRIBUTE_KEY }&.last || 'unknown_service'
-        private_constant(:EMPTY_ARRAY, :KIND_MAP, :DEFAULT_SERVICE_NAME, :SERVICE_NAME_ATTRIBUTE_KEY, :ERROR_TAG_KEY, :STATUS_CODE_NAME, :STATUS_CODE_DESCRIPTION, :STATUS_UNSET, :STATUS_ERROR, :STATUS_OK)
+        DEFAULT_SERVICE_NAME = OpenTelemetry::SDK::Resources::Resource.default.attribute_enumerator.find { |k, _| k == SERVICE_NAME_ATTRIBUTE_KEY }&.last || 'unknown_service'
+        private_constant(:KIND_MAP, :DEFAULT_SERVICE_NAME, :SERVICE_NAME_ATTRIBUTE_KEY, :ERROR_TAG_KEY, :STATUS_CODE_NAME, :STATUS_CODE_DESCRIPTION, :STATUS_UNSET, :STATUS_ERROR, :STATUS_OK)
 
-        def to_zipkin_span(span_data, resource, zipkin_tags)
+        def to_zipkin_span(span_data, resource)
           start_time = (span_data.start_timestamp.to_f * 1_000_000).to_i
           duration = (span_data.end_timestamp.to_f * 1_000_000).to_i - start_time
+          tags = {}
           service_name = DEFAULT_SERVICE_NAME
-
-          tags = resource&.attribute_enumerator&.select do |key, value|
-            service_name = value if key == SERVICE_NAME_ATTRIBUTE_KEY
-            key != SERVICE_NAME_ATTRIBUTE_KEY
+          resource&.attribute_enumerator&.select do |key, value|
+            if key == SERVICE_NAME_ATTRIBUTE_KEY
+              service_name = value
+            else
+              tags[key] = value
+            end
           end
 
           add_il_tags(span_data, tags)
@@ -73,31 +76,31 @@ module OpenTelemetry
         end
 
         def add_il_tags(span_data, tags)
-          tags['otel.library.name'] = instrumentation_library.name if instrumentation_library.name
-          tags['otel.library.version'] = instrumentation_library.version if instrumentation_library.version
+          tags['otel.library.name'] = span_data.instrumentation_library&.name if span_data.instrumentation_library&.name
+          tags['otel.library.version'] = span_data.instrumentation_library&.version if span_data.instrumentation_library&.version
         end
 
         def add_status_tags(span_data, tags)
           # https://github.com/openzipkin/zipkin-ruby/blob/7bedb4dd162c4cbeffc7b97dd06c8dbccbfbab62/lib/zipkin-tracer/trace.rb#L259
-          if span_data.status&.code == OpenTelemetry::Trace::Status::ERROR
+          if span_data.status&.code && span_data.status&.code == OpenTelemetry::Trace::Status::ERROR
             # mark errors if we can
             # https://github.com/open-telemetry/opentelemetry-specification/blob/84b18b23339dcc0b1a9d48f976a1afd287417602/specification/trace/sdk_exporters/zipkin.md#status
             tags[ERROR_TAG_KEY] = 'true'
             tags[STATUS_CODE_NAME] = STATUS_ERROR
-          elsif span_data.status&.code == OpenTelemetry::Trace::Status::OK
+          elsif span_data.status&.code && span_data.status&.code == OpenTelemetry::Trace::Status::OK
             tags[STATUS_CODE_NAME] = STATUS_OK
           else
             tags[STATUS_CODE_NAME] = STATUS_UNSET
           end
 
-          tags[STATUS_CODE_DESCRIPTION] = span_data.status&.status_description if span_data.status&.status_description
+          tags[STATUS_CODE_DESCRIPTION] = span_data.status&.description if span_data.status&.description
         end
 
         def add_conditional_tags(zipkin_span, span_data, tags, service_name)
           zipkin_span[:tags] = tags unless tags.empty?
           zipkin_span[:kind] = KIND_MAP[span_data.kind] unless KIND_MAP[span_data.kind].nil?
           zipkin_span[:parentId] = int64(span_data.parent_span_id).to_s unless span_data.parent_span_id.nil?
-          zipkin_span[:localEndpoint] = endpoint_from_tags(tags, span_data.attributes[SERVICE_NAME_ATTRIBUTE_KEY] || service_name)
+          zipkin_span[:localEndpoint] = endpoint_from_tags(tags, (span_data.attributes && span_data.attributes[SERVICE_NAME_ATTRIBUTE_KEY]) || service_name)
           # remote endpoint logic https://github.com/open-telemetry/opentelemetry-collector/blob/347cfa9ab21d47240128c58c9bafcc0014bc729d/translator/trace/zipkin/traces_to_zipkinv2.go#L284
           zipkin_span[:remoteEndpoint] = endpoint_from_tags(tags, nil)
         end
@@ -129,6 +132,8 @@ module OpenTelemetry
         def aggregate_span_tags(span_data, tags)
           # convert attributes to strings
           # https://github.com/open-telemetry/opentelemetry-specification/blob/84b18b23339dcc0b1a9d48f976a1afd287417602/specification/trace/sdk_exporters/zipkin.md#attribute
+          return tags if span_data.attributes.nil?
+
           tags.merge(span_data.attributes) do |_key, _oldval, newval|
             newval.to_s
           end

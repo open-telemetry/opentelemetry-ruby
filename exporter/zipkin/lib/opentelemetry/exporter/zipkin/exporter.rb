@@ -64,7 +64,7 @@ module OpenTelemetry
 
           zipkin_spans = encode_spans(span_data)
 
-          send_spans(zipkin_spans, timeout)
+          send_spans(zipkin_spans, timeout: timeout)
 
           SUCCESS
         rescue StandardError => e
@@ -110,6 +110,16 @@ module OpenTelemetry
           true
         end
 
+        def valid_headers?(headers)
+          return true if headers.nil? || headers.is_a?(Hash)
+          return false unless headers.is_a?(String)
+
+          CSV.parse(headers, col_sep: '=', row_sep: ',').to_h
+          true
+        rescue ArgumentError
+          false
+        end
+
         def send_spans(zipkin_spans, timeout: nil)
           timeout ||= @timeout
           start_time = Time.now
@@ -133,7 +143,7 @@ module OpenTelemetry
             # going with broader set for now, not doing any retry (should this be added?)
             # https://github.com/open-telemetry/opentelemetry-js/blob/38d1ee2552bbdda0a151734ba0d50ee7448e68e1/packages/opentelemetry-exporter-zipkin/src/platform/node/util.ts#L60-L76
             # https://github.com/open-telemetry/opentelemetry-collector/blob/347cfa9ab21d47240128c58c9bafcc0014bc729d/exporter/zipkinexporter/zipkin.go#L90
-            case response.code
+            case response.code.to_i
             when 200..399
               SUCCESS
             else

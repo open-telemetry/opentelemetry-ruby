@@ -11,8 +11,8 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
   it 'encodes a span_data' do
     resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo', 'bar' => 'baz')
     encoded_span = Transformer.to_zipkin_span(create_span_data, resource)
-    _(encoded_span.name).must_equal('')
-    _(encoded_span.tags).must_equal([])
+    _(encoded_span[:name]).must_equal('')
+    _(encoded_span[:tags]).must_equal('bar' => 'baz', 'otel.status_code' => 'UNSET')
   end
 
   # TODO

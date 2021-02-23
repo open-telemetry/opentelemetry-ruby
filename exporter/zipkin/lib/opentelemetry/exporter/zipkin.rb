@@ -12,7 +12,7 @@
 # See the documentation for the `opentelemetry-api` gem for details.
 module OpenTelemetry
   module Exporter
-    # Zipkin contains SpanExporter implementations for the Zipkin agent and collector.
+    # Zipkin contains SpanExporter implementations for the Zipkin collector in v2 format.
     module Zipkin
     end
   end
