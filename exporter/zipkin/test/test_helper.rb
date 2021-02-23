@@ -7,7 +7,7 @@
 require 'simplecov'
 SimpleCov.start
 
-require 'opentelemetry/exporter/jaeger'
+require 'opentelemetry/exporter/zipkin'
 require 'minitest/autorun'
 require 'webmock/minitest'
 

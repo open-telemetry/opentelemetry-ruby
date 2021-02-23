@@ -28,7 +28,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'opentelemetry-api', '~> 0.15.0'
   spec.add_dependency 'opentelemetry-common', '~> 0.15.0'
-  spec.add_dependency 'thrift'
 
   spec.add_development_dependency 'bundler', '>= 1.17'
   spec.add_development_dependency 'faraday', '~> 0.13'

@@ -5,12 +5,17 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'uri'
+require 'opentelemetry/common'
+require 'opentelemetry/sdk'
+require 'net/http'
+require 'csv'
+require 'json'
 
 module OpenTelemetry
   module Exporter
     module Zipkin
-      # An OpenTelemetry trace exporter that sends spans over HTTP as Thrift Binary encoded Zipkin spans.
-      class CollectorExporter
+      # An OpenTelemetry trace exporter that sends spans over HTTP as JSON encoded Zipkin spans.
+      class Exporter
         SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
         FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
         TIMEOUT = OpenTelemetry::SDK::Trace::Export::TIMEOUT
@@ -39,6 +44,7 @@ module OpenTelemetry
           @http.use_ssl = @uri.scheme == 'https'
           @http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
 
+          @timeout = timeout.to_f
           @path = @uri.path
           @headers = case headers
                      when String then CSV.parse(headers, col_sep: '=', row_sep: ',').to_h
@@ -64,7 +70,7 @@ module OpenTelemetry
 
           SUCCESS
         rescue StandardError => e
-          OpenTelemetry.handle_error(exception: e, message: 'unexpected error in Jaeger::CollectorExporter#export')
+          OpenTelemetry.handle_error(exception: e, message: 'unexpected error in Zipkin::Exporter#export')
           FAILURE
         end
 
@@ -87,6 +93,12 @@ module OpenTelemetry
           default
         end
 
+        def encode_spans(span_data)
+          span_data.group_by(&:resource).map do |resource, spans|
+            spans.map! { |span| Transformer.to_zipkin_span(span, resource) }
+          end
+        end        
+
         def around_request
           OpenTelemetry::Common::Utilities.untraced { yield }
         end
@@ -102,11 +114,43 @@ module OpenTelemetry
 
         def send_spans(zipkin_spans, timeout: nil)
           # todo send spans
-        end
 
-        def encode_spans(span_data)
-          span_data.group_by(&:resource).map do |resource, spans|
-            spans.map! { |span| Transformer.to_zipkin_span(span, resource) }
+          retry_count = 0
+          timeout ||= @timeout
+          start_time = Time.now
+          around_request do # rubocop:disable Metrics/BlockLength
+            request = Net::HTTP::Post.new(@path)
+            request.body = JSON.generate(zipkin_spans)
+
+            request.add_field('Content-Type', 'application/json')
+            @headers&.each { |key, value| request.add_field(key, value) }
+
+            remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
+            return TIMEOUT if remaining_timeout.zero?
+
+            @http.open_timeout = remaining_timeout
+            @http.read_timeout = remaining_timeout
+            @http.write_timeout = remaining_timeout if WRITE_TIMEOUT_SUPPORTED
+            @http.start unless @http.started?
+
+            response = @http.request(request)
+
+            # Kind of confusing, in JS 200-300 level is succcess and everything else is a failure
+            # in collector zipkin exporter, 300 are not a success
+            # going with broader set for now
+            # not doing any retry
+            # https://github.com/open-telemetry/opentelemetry-js/blob/38d1ee2552bbdda0a151734ba0d50ee7448e68e1/packages/opentelemetry-exporter-zipkin/src/platform/node/util.ts#L60-L76
+            # https://github.com/open-telemetry/opentelemetry-collector/blob/347cfa9ab21d47240128c58c9bafcc0014bc729d/exporter/zipkinexporter/zipkin.go#L90
+            case response.code
+            when 200..399
+              response.body # Read and discard body
+              SUCCESS
+            else
+              response.body # Read and discard body
+              FAILURE 
+            end
+          rescue Net::OpenTimeout, Net::ReadTimeout
+            return FAILURE
           end
         end
       end
