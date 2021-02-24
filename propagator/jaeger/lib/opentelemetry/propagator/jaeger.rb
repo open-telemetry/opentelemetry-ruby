@@ -33,6 +33,8 @@ module OpenTelemetry
       SAMPLED_FLAG_BIT = 0x01
       DEBUG_FLAG_BIT   = 0x02
 
+      private_constant :IDENTITY_KEY, :DEFAULT_FLAG_BIT, :SAMPLED_FLAG_BIT, :DEBUG_FLAG_BIT
+
       # Returns an extractor that extracts context in the Jaeger single header
       # format
       def text_map_injector
