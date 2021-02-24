@@ -15,7 +15,7 @@ module OpenTelemetry
   module Exporter
     module Zipkin
       # An OpenTelemetry trace exporter that sends spans over HTTP as JSON encoded Zipkin spans.
-      class Exporter
+      class Exporter # rubocop:disable Metrics/ClassLength
         SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
         FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
         TIMEOUT = OpenTelemetry::SDK::Trace::Export::TIMEOUT
@@ -23,6 +23,7 @@ module OpenTelemetry
 
         # Default timeouts in seconds.
         KEEP_ALIVE_TIMEOUT = 30
+        RETRY_COUNT = 5
         WRITE_TIMEOUT_SUPPORTED = Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.6')
         private_constant(:KEEP_ALIVE_TIMEOUT, :WRITE_TIMEOUT_SUPPORTED)
 
@@ -120,10 +121,11 @@ module OpenTelemetry
           false
         end
 
-        def send_spans(zipkin_spans, timeout: nil)
+        def send_spans(zipkin_spans, timeout: nil) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+          retry_count = 0
           timeout ||= @timeout
           start_time = Time.now
-          around_request do
+          around_request do # rubocop:disable Metrics/BlockLength
             request = Net::HTTP::Post.new(@path)
             request.body = JSON.generate(zipkin_spans)
             request.add_field('Content-Type', 'application/json')
@@ -139,19 +141,70 @@ module OpenTelemetry
 
             response = @http.request(request)
             response.body # Read and discard body
-            # in opentelemetry-js 200-300 level is succcess and everything else is failure, in opentelemetry-collector zipkin exporter, 300+ not a success
-            # going with broader set for now, not doing any retry (should this be added?)
-            # https://github.com/open-telemetry/opentelemetry-js/blob/38d1ee2552bbdda0a151734ba0d50ee7448e68e1/packages/opentelemetry-exporter-zipkin/src/platform/node/util.ts#L60-L76
-            # https://github.com/open-telemetry/opentelemetry-collector/blob/347cfa9ab21d47240128c58c9bafcc0014bc729d/exporter/zipkinexporter/zipkin.go#L90
-            case response.code.to_i
-            when 200..399
+            # in opentelemetry-js 200-399 is succcess, in opentelemetry-collector zipkin exporter,200-299 is a success
+            # zipkin api docs list 202 as default success code
+            # https://zipkin.io/zipkin-api/#/default/post_spans
+            # TODO: redirect
+
+            case response
+            when Net::HTTPAccepted, Net::HTTPOK
+              response.body # Read and discard body
               SUCCESS
+            when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
+              response.body # Read and discard body
+              redo if backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1, reason: response.code)
+              FAILURE
+            when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
+              response.body # Read and discard body
+              redo if backoff?(retry_count: retry_count += 1, reason: response.code)
+              FAILURE
+            when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
+              # TODO: decode the body as a google.rpc.Status Protobuf-encoded message when https://github.com/open-telemetry/opentelemetry-collector/issues/1357 is fixed.
+              response.body # Read and discard body
+              FAILURE
+            when Net::HTTPRedirection
+              @http.finish
+              handle_redirect(response['location'])
+              redo if backoff?(retry_after: 0, retry_count: retry_count += 1, reason: response.code)
             else
+              @http.finish
               FAILURE
             end
           rescue Net::OpenTimeout, Net::ReadTimeout
+            retry if backoff?(retry_count: retry_count += 1, reason: 'timeout')
             return FAILURE
           end
+        end
+
+        def handle_redirect(location)
+          # TODO: figure out destination and reinitialize @http and @path
+        end
+
+        def backoff?(retry_after: nil, retry_count:, reason:)
+          return false if retry_count > RETRY_COUNT
+
+          # TODO: metric exporter
+
+          sleep_interval = nil
+          unless retry_after.nil?
+            sleep_interval =
+              begin
+                Integer(retry_after)
+              rescue ArgumentError
+                nil
+              end
+            sleep_interval ||=
+              begin
+                Time.httpdate(retry_after) - Time.now
+              rescue # rubocop:disable Style/RescueStandardError
+                nil
+              end
+            sleep_interval = nil unless sleep_interval&.positive?
+          end
+          sleep_interval ||= rand(2**retry_count)
+
+          sleep(sleep_interval)
+          true
         end
       end
     end
