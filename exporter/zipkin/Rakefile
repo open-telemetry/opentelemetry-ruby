@@ -16,7 +16,7 @@ Rake::TestTask.new :test do |t|
   t.libs << 'lib'
   t.libs << '../../api/lib'
   t.libs << '../../sdk/lib'
-  t.test_files = FileList['test/**/transformer_test.rb']
+  t.test_files = FileList['test/**/*_test.rb']
 end
 
 YARD::Rake::YardocTask.new do |t|
