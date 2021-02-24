@@ -34,10 +34,74 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
   # TODO
 
   it 'encodes attributes in events and the span' do
+    attributes = { 'akey' => 'avalue' }
+    events = [
+      OpenTelemetry::SDK::Trace::Event.new(
+        name: 'event_with_attribs', attributes: { 'ekey' => 'evalue' }
+      ),
+      OpenTelemetry::SDK::Trace::Event.new(
+        name: 'event_no_attrib', attributes: nil
+      )
+    ]
+
+    resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo', 'bar' => 'baz')
+    span_data = create_span_data(attributes: attributes, events: events)
+    encoded_span = Transformer.to_zipkin_span(span_data, resource)
+
+    annotation_one = encoded_span[:annotations].first
+    annotation_two = encoded_span[:annotations][1]
+
+    _(annotation_one[:timestamp]).must_equal((events[0].timestamp.to_f * 1_000_000).to_s)
+    _(annotation_one[:value]).must_equal({ 'event_with_attribs' => { 'ekey' => 'evalue' } }.to_json)
+
+    _(annotation_two[:timestamp]).must_equal((events[1].timestamp.to_f * 1_000_000).to_s)
+    _(annotation_two[:value]).must_equal('event_no_attrib')
+
+    tags = encoded_span[:tags]
+    _(tags).must_equal('akey' => 'avalue', 'bar' => 'baz', 'otel.status_code' => 'UNSET')
+  end
+
+  it 'encodes array attribute values in events and the span as JSON strings' do
+    attributes = { 'akey' => ['avalue'] }
+    events = [
+      OpenTelemetry::SDK::Trace::Event.new(
+        name: 'event_with_attribs', attributes: { 'ekey' => ['evalue'] }
+      )
+    ]
+
+    resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo', 'bar' => 'baz')
+    span_data = create_span_data(attributes: attributes, events: events)
+    encoded_span = Transformer.to_zipkin_span(span_data, resource)
+
+    annotation_one = encoded_span[:annotations].first
+
+    _(annotation_one[:timestamp]).must_equal((events[0].timestamp.to_f * 1_000_000).to_s)
+    _(annotation_one[:value]).must_equal({ 'event_with_attribs' => { 'ekey' => '["evalue"]' } }.to_json)
+
+    tags = encoded_span[:tags]
+    _(tags).must_equal('akey' => ['avalue'], 'bar' => 'baz', 'otel.status_code' => 'UNSET')
   end
 
   describe 'instrumentation library' do
     it 'encodes library and version when set' do
+      lib = OpenTelemetry::SDK::InstrumentationLibrary.new('mylib', '0.1.0')
+      resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo', 'bar' => 'baz')
+      span_data = create_span_data(instrumentation_library: lib)
+      encoded_span = Transformer.to_zipkin_span(span_data, resource)
+
+      _(encoded_span[:tags].size).must_equal(4)
+      _(encoded_span[:tags]['otel.library.name']).must_equal('mylib')
+      _(encoded_span[:tags]['otel.library.version']).must_equal('0.1.0')
+    end
+
+    it 'skips nil values' do
+      lib = OpenTelemetry::SDK::InstrumentationLibrary.new('mylib')
+      resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo', 'bar' => 'baz')
+      span_data = create_span_data(instrumentation_library: lib)
+      encoded_span = Transformer.to_zipkin_span(span_data, resource)
+
+      _(encoded_span[:tags].size).must_equal(3)
+      _(encoded_span[:tags]['otel.library.name']).must_equal('mylib')
     end
   end
 

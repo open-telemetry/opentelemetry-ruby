@@ -126,15 +126,15 @@ module OpenTelemetry
             end
           end
 
-          zipkin_span[:annotations] = events.map(&:to_h) unless @annotations.empty?
+          zipkin_span[:annotations] = events.map(&:to_h) unless events.empty?
         end
 
         def aggregate_span_tags(span_data, tags)
           # convert attributes to strings
           # https://github.com/open-telemetry/opentelemetry-specification/blob/84b18b23339dcc0b1a9d48f976a1afd287417602/specification/trace/sdk_exporters/zipkin.md#attribute
-          return tags if span_data.attributes.nil?
+          return tags if span_data[:attributes].nil?
 
-          tags.merge(span_data.attributes) do |_key, _oldval, newval|
+          tags.merge(span_data[:attributes]) do |_key, _oldval, newval|
             newval.to_s
           end
         end
