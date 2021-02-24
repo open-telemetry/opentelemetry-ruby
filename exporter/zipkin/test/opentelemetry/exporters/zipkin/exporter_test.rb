@@ -8,18 +8,63 @@ require 'test_helper'
 DEFAULT_ZIPKIN_COLLECTOR_ENDPOINT = 'http://localhost:9411/api/v2/spans'
 
 describe OpenTelemetry::Exporter::Zipkin::Exporter do
+  SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
+  FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
+  TIMEOUT = OpenTelemetry::SDK::Trace::Export::TIMEOUT
+
   describe '#initialize' do
     it 'initializes with defaults' do
       exp = OpenTelemetry::Exporter::Zipkin::Exporter.new
       _(exp).wont_be_nil
-    end
 
-    # TODO
+      headers = exp.instance_variable_get(:@headers)
+      http = exp.instance_variable_get(:@http)
+      assert_nil(headers)
+      _(http.address).must_equal 'localhost'
+      _(http.port).must_equal 9_411
+    end
 
     it 'refuses an invalid endpoint' do
       assert_raises ArgumentError do
         OpenTelemetry::Exporter::Zipkin::Exporter.new(endpoint: 'not a url')
       end
+    end
+
+    it 'uses endpoints path if provided' do
+      exp = OpenTelemetry::Exporter::Zipkin::Exporter.new(endpoint: 'https://localhost/custom/path')
+      _(exp.instance_variable_get(:@path)).must_equal '/custom/path'
+    end
+
+    it 'sets parameters from the environment' do
+      exp = with_env('OTEL_EXPORTER_ZIPKIN_ENDPOINT' => 'http://127.0.0.1:1234',
+                     'OTEL_EXPORTER_ZIPKIN_TRACES_HEADERS' => 'foo=bar,c=d',
+                     'OTEL_EXPORTER_ZIPKIN_TRACES_TIMEOUT' => '20') do
+        OpenTelemetry::Exporter::Zipkin::Exporter.new
+      end
+      timeout = exp.instance_variable_get(:@timeout)
+      headers = exp.instance_variable_get(:@headers)
+      http = exp.instance_variable_get(:@http)
+      _(headers).must_include 'foo'
+      _(headers['foo']).must_equal 'bar'
+      _(http.address).must_equal '127.0.0.1'
+      _(http.port).must_equal 1_234
+      _(timeout).must_equal 20.0
+    end
+
+    it 'prefers explicit parameters rather than the environment' do
+      exp = with_env('OTEL_EXPORTER_ZIPKIN_ENDPOINT' => 'http://127.0.0.1:1234',
+                     'OTEL_EXPORTER_ZIPKIN_TRACES_HEADERS' => 'foo=bar,c=d',
+                     'OTEL_EXPORTER_ZIPKIN_TRACES_TIMEOUT' => '20') do
+        OpenTelemetry::Exporter::Zipkin::Exporter.new(endpoint: 'http://localhost:4321',
+                                                      headers: { 'x' => 'y' },
+                                                      timeout: 12)
+      end
+      _(exp.instance_variable_get(:@headers)).must_equal('x' => 'y')
+      _(exp.instance_variable_get(:@timeout)).must_equal 12.0
+      _(exp.instance_variable_get(:@path)).must_equal ''
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal 'localhost'
+      _(http.port).must_equal 4321
     end
   end
 
@@ -35,29 +80,61 @@ describe OpenTelemetry::Exporter::Zipkin::Exporter do
       WebMock.disable_net_connect!(allow: 'localhost')
       resource = OpenTelemetry::SDK::Resources::Resource.telemetry_sdk
       span_data = create_span_data(name: 'collector-integration-test', resource: resource)
-      result = exporter.export([span_data])
+      result = exporter.export([span_data], timeout: nil)
       _(result).must_equal(OpenTelemetry::SDK::Trace::Export::SUCCESS)
     ensure
       WebMock.disable_net_connect!
     end
 
+    it 'retries on timeout' do
+      stub_request(:post, 'http://localhost:9411/api/v2/spans').to_timeout.then.to_return(status: 202)
+      span_data = create_span_data
+      result = exporter.export([span_data], timeout: nil)
+      _(result).must_equal(SUCCESS)
+    end
+
+    it 'returns TIMEOUT on timeout' do
+      stub_request(:post, 'http://localhost:9411/api/v2/spans').to_return(status: 400)
+      span_data = create_span_data
+      result = exporter.export([span_data], timeout: 0)
+      _(result).must_equal(TIMEOUT)
+    end
+
+    it 'returns TIMEOUT on timeout after retrying' do
+      stub_request(:post, 'http://localhost:9411/api/v2/spans').to_timeout.then.to_raise('this should not be reached')
+      span_data = create_span_data
+
+      @retry_count = 0
+      backoff_stubbed_call = lambda do |**_args|
+        sleep(0.10)
+        @retry_count += 1
+        true
+      end
+
+      exporter.stub(:backoff?, backoff_stubbed_call) do
+        _(exporter.export([span_data], timeout: 0.1)).must_equal(TIMEOUT)
+      end
+    ensure
+      @retry_count = 0
+    end
+
     it 'returns FAILURE when shutdown' do
       exporter.shutdown
-      result = exporter.export(nil)
+      result = exporter.export(nil, timeout: nil)
       _(result).must_equal(OpenTelemetry::SDK::Trace::Export::FAILURE)
     end
 
     it 'exports a span_data' do
-      stub_post = stub_request(:post, DEFAULT_ZIPKIN_COLLECTOR_ENDPOINT).to_return(status: 200)
+      stub_post = stub_request(:post, DEFAULT_ZIPKIN_COLLECTOR_ENDPOINT).to_return(status: 202)
       exporter = OpenTelemetry::Exporter::Zipkin::Exporter.new
       span_data = create_span_data
-      result = exporter.export([span_data])
+      result = exporter.export([span_data], timeout: nil)
       _(result).must_equal(OpenTelemetry::SDK::Trace::Export::SUCCESS)
       assert_requested(stub_post)
     end
 
     it 'exports a span from a tracer' do
-      stub_post = stub_request(:post, DEFAULT_ZIPKIN_COLLECTOR_ENDPOINT).to_return(status: 200)
+      stub_post = stub_request(:post, DEFAULT_ZIPKIN_COLLECTOR_ENDPOINT).to_return(status: 202)
       exporter = OpenTelemetry::Exporter::Zipkin::Exporter.new
       processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter, max_queue_size: 1, max_export_batch_size: 1)
       OpenTelemetry.tracer_provider.add_span_processor(processor)
@@ -65,7 +142,5 @@ describe OpenTelemetry::Exporter::Zipkin::Exporter do
       OpenTelemetry.tracer_provider.shutdown
       assert_requested(stub_post)
     end
-
-    # TODO
   end
 end

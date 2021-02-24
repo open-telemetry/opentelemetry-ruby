@@ -66,8 +66,6 @@ module OpenTelemetry
           zipkin_spans = encode_spans(span_data)
 
           send_spans(zipkin_spans, timeout: timeout)
-
-          SUCCESS
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error in Zipkin::Exporter#export')
           FAILURE
