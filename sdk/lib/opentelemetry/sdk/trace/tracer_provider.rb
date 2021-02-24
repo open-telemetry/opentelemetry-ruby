@@ -42,7 +42,7 @@ module OpenTelemetry
           @mutex.synchronize { @registry[Key.new(name, version)] ||= Tracer.new(name, version, self) }
         end
 
-        # Attempts to stop all the activity for this {Tracer}. Calls
+        # Attempts to stop all the activity for this {TracerProvider}. Calls
         # SpanProcessor#shutdown for all registered SpanProcessors.
         #
         # This operation may block until all the Spans are processed. Must be
@@ -60,6 +60,25 @@ module OpenTelemetry
             end
             @active_span_processor.shutdown(timeout: timeout)
             @stopped = true
+          end
+        end
+
+        # Immediately export all spans that have not yet been exported for all the
+        # registered SpanProcessors.
+        #
+        # This method should only be called in cases where it is absolutely
+        # necessary, such as when using some FaaS providers that may suspend
+        # the process after an invocation, but before the `Processor` exports
+        # the completed spans.
+        #
+        # @param [optional Numeric] timeout An optional timeout in seconds.
+        # @return [Integer] Export::SUCCESS if no error occurred, Export::FAILURE if
+        #   a non-specific failure occurred, Export::TIMEOUT if a timeout occurred.
+        def force_flush(timeout: nil)
+          @mutex.synchronize do
+            return Export::SUCCESS if @stopped
+
+            @active_span_processor.force_flush(timeout: timeout)
           end
         end
 
