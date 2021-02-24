@@ -20,6 +20,7 @@ module OpenTelemetry
       # Extracts context from carriers
       class TextMapExtractor
         TRACE_SPAN_IDENTITY_REGEX = /\A(?<trace_id>(?:[0-9a-f]){1,32}):(?<span_id>([0-9a-f]){1,16}):[0-9a-f]{1,16}:(?<sampling_flags>[0-9a-f]{1,2})\z/.freeze
+        ZERO_ID_REGEX = /^0+$/.freeze
 
         # Returns a new TextMapExtractor that extracts Jaeger context using the
         # specified header keys
@@ -51,8 +52,8 @@ module OpenTelemetry
           getter ||= @default_getter
           header = getter.get(carrier, IDENTITY_KEY)
           return context unless (match = header.match(TRACE_SPAN_IDENTITY_REGEX))
-          return context if match['trace_id'] =~ /^0+$/
-          return context if match['span_id'] =~ /^0+$/
+          return context if match['trace_id'] =~ ZERO_ID_REGEX
+          return context if match['span_id'] =~ ZERO_ID_REGEX
 
           sampling_flags = match['sampling_flags'].to_i
           span = build_span(match, sampling_flags)
