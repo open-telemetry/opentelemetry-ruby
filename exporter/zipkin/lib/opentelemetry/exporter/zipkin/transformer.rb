@@ -98,7 +98,7 @@ module OpenTelemetry
 
         def add_conditional_tags(zipkin_span, span_data, tags, service_name)
           zipkin_span[:tags] = tags unless tags.empty?
-          zipkin_span[:kind] = KIND_MAP[span_data.kind] unless KIND_MAP[span_data.kind].nil?
+          zipkin_span[:kind] = KIND_MAP[span_data[:kind]] unless span_data[:kind].nil?
           zipkin_span[:parentId] = int64(span_data.parent_span_id).to_s unless span_data.parent_span_id.nil?
           zipkin_span[:localEndpoint] = endpoint_from_tags(tags, (span_data.attributes && span_data.attributes[SERVICE_NAME_ATTRIBUTE_KEY]) || service_name)
           # remote endpoint logic https://github.com/open-telemetry/opentelemetry-collector/blob/347cfa9ab21d47240128c58c9bafcc0014bc729d/translator/trace/zipkin/traces_to_zipkinv2.go#L284
