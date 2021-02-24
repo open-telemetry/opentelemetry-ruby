@@ -42,8 +42,10 @@ end
 
 The `opentelemetry-resource_detectors` gem source is on github, along with related gems.
 
-The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us on our gitter channel or attending our weekly meeting. See the meeting calendar for dates and times. For more information on this and other language SIGs, see the OpenTelemetry community page.
+The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us in [GitHub Discussions][discussions-url] or attending our weekly meeting. See the meeting calendar for dates and times. For more information on this and other language SIGs, see the OpenTelemetry community page.
 
 ## License
 
 The `opentelemetry-resource_detectors` gem is distributed under the Apache 2.0 license. See LICENSE for more information.
+
+[discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
