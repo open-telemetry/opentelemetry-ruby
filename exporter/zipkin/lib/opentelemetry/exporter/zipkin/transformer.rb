@@ -81,19 +81,23 @@ module OpenTelemetry
         end
 
         def add_status_tags(span_data, tags)
-          # https://github.com/openzipkin/zipkin-ruby/blob/7bedb4dd162c4cbeffc7b97dd06c8dbccbfbab62/lib/zipkin-tracer/trace.rb#L259
           if span_data.status&.code && span_data.status&.code == OpenTelemetry::Trace::Status::ERROR
-            # mark errors if we can
+            # mark errors if we can, setting error key to description but falling back to 'true'
             # https://github.com/open-telemetry/opentelemetry-specification/blob/84b18b23339dcc0b1a9d48f976a1afd287417602/specification/trace/sdk_exporters/zipkin.md#status
-            tags[ERROR_TAG_KEY] = 'true'
+            # https://github.com/openzipkin/zipkin-ruby/blob/7bedb4dd162c4cbeffc7b97dd06c8dbccbfbab62/lib/zipkin-tracer/trace.rb#L259
+            # https://github.com/open-telemetry/opentelemetry-collector/blob/81c7cc53b7067fbf3db4e1671b13bbe2796eb56e/translator/trace/zipkin/traces_to_zipkinv2.go#L144
+            if span_data.status&.description.nil? || span_data.status.description.empty?
+              tags[ERROR_TAG_KEY] = 'true'
+            else
+              tags[ERROR_TAG_KEY] = span_data.status&.description
+              tags[STATUS_CODE_DESCRIPTION] = span_data.status&.description
+            end
             tags[STATUS_CODE_NAME] = STATUS_ERROR
           elsif span_data.status&.code && span_data.status&.code == OpenTelemetry::Trace::Status::OK
             tags[STATUS_CODE_NAME] = STATUS_OK
           else
             tags[STATUS_CODE_NAME] = STATUS_UNSET
           end
-
-          tags[STATUS_CODE_DESCRIPTION] = span_data.status&.description if span_data.status&.description
         end
 
         def add_conditional_tags(zipkin_span, span_data, tags, service_name)

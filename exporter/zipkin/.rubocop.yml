@@ -11,7 +11,7 @@ Metrics/AbcSize:
 Metrics/LineLength:
   Enabled: false
 Metrics/ModuleLength:
-  Max: 125
+  Max: 130
 Metrics/MethodLength:
   Max: 25
 Metrics/PerceivedComplexity:
