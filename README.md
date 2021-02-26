@@ -97,6 +97,13 @@ See the [API Documentation](https://open-telemetry.github.io/opentelemetry-ruby/
 detail, and the [opentelemetry examples][examples-github] for a complete example including
 context propagation.
 
+## Instrumentation Libraries
+
+This repository contains instrumentation libraries for many popular Ruby
+gems, including Rails, Rack, Sinatra, and others, so you can start
+using OpenTelemetry with minimal changes to your application. See the
+[instrumentation README](instrumentation/) for more.
+
 ## Useful links
 
 - For more information on OpenTelemetry, visit: <https://opentelemetry.io/>
