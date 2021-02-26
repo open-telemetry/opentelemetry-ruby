@@ -183,8 +183,7 @@ module OpenTelemetry
         end
 
         def int64(byte_string)
-          int = byte_string.unpack1('Q>')
-          int < (1 << 63) ? int : int - (1 << 64)
+          byte_string.unpack1('q>')
         end
       end
     end

@@ -1,6 +1,6 @@
 # opentelemetry-exporter-zipkin
 
-The `opentelemetry-exporter-zipkin` gem provides Zipkin exporters for OpenTelemetry for Ruby. Using `opentelemetry-exporter-zipkin`, an application can configure OpenTelemetry to export collected tracing data to [Zipkin][zipkin-home]. One exporter is included: the `Exporter` exports in HTTP JSONformat over TCP to a Zipkin backend
+The `opentelemetry-exporter-zipkin` gem provides Zipkin exporters for OpenTelemetry for Ruby. Using `opentelemetry-exporter-zipkin`, an application can configure OpenTelemetry to export collected tracing data to [Zipkin][zipkin-home]. One exporter is included: the `Exporter` exports in HTTP JSON format over TCP to a Zipkin backend
 
 ## What is OpenTelemetry?
 
@@ -63,13 +63,19 @@ For additional examples, see the [examples on github][examples-github].
 
 ## How can I configure the Zipkin exporter?
 
-TODO
+The collector exporter can be configured explicitly in code, as shown above, or via environment variables. The configuration parameters, environment variables, and defaults are shown below.
+
+| Parameter   | Environment variable                  | Default                    |
+| ----------- | --------------------------------------| -------------------------- |
+| `endpoint:` | `OTEL_EXPORTER_ZIPKIN_ENDPOINT`       | `"http://localhost:9411"`  |
+| `headers:`  | `OTEL_EXPORTER_ZIPKIN_TRACES_HEADERS` | `nil`                      |
+| `timeoout:` | `OTEL_EXPORTER_ZIPKIN_TRACES_TIMEOUT` | `10`                       |
 
 ## How can I get involved?
 
 The `opentelemetry-exporter-zipkin` gem source is [on github][repo-github], along with related gems including `opentelemetry-sdk`.
 
-The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us on our [gitter channel][ruby-gitter] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
+The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us on  in [GitHub Discussions][discussions-url]  or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
 ## License
 
@@ -84,4 +90,4 @@ The `opentelemetry-exporter-zipkin` gem is distributed under the Apache 2.0 lice
 [examples-github]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/examples
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
-[ruby-gitter]: https://gitter.im/open-telemetry/opentelemetry-ruby
+[discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
