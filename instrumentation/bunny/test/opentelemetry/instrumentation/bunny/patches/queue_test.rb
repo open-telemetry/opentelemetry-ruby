@@ -19,7 +19,6 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Queue do
   let(:bunny) { Bunny.new(url) }
   let(:topic) { "topic-#{SecureRandom.uuid}" }
   let(:channel) { bunny.create_channel }
-  # let(:exchange) { channel.topic(topic, :auto_delete => true) }
   let(:queue_name) { "opentelemetry-ruby-#{SecureRandom.uuid}" }
   let(:queue) { channel.queue(queue_name) }
 

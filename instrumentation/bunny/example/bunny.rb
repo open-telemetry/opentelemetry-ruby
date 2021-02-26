@@ -10,7 +10,6 @@ require 'bundler/setup'
 Bundler.require
 
 require 'bunny'
-require 'active_support'
 
 span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(
   OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter.new

@@ -69,11 +69,11 @@ module OpenTelemetry
         def self.destination_kind(channel, exchange)
           # The default exchange with no name is always a direct exchange
           # https://github.com/ruby-amqp/bunny/blob/master/lib/bunny/exchange.rb#L33
-          return 'direct' if exchange == ''
+          return 'queue' if exchange == ''
 
           # All exchange types https://www.rabbitmq.com/tutorials/amqp-concepts.html#exchanges
           # except direct exchanges are mapped to topic
-          return 'direct' if channel.find_exchange(exchange)&.type == :direct
+          return 'queue' if channel.find_exchange(exchange)&.type == :direct
 
           'topic'
         end
