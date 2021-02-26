@@ -7,6 +7,7 @@
 require 'simplecov'
 SimpleCov.start
 
+require 'opentelemetry/common/test_helpers'
 require 'opentelemetry/exporter/jaeger'
 require 'minitest/autorun'
 require 'webmock/minitest'
@@ -19,14 +20,4 @@ def create_span_data(name: '', kind: nil, status: nil, parent_span_id: OpenTelem
   OpenTelemetry::SDK::Trace::SpanData.new(name, kind, status, parent_span_id, total_recorded_attributes,
                                           total_recorded_events, total_recorded_links, start_timestamp, end_timestamp,
                                           attributes, links, events, resource, instrumentation_library, span_id, trace_id, trace_flags, tracestate)
-end
-
-def with_env(new_env)
-  env_to_reset = ENV.select { |k, _| new_env.key?(k) }
-  keys_to_delete = new_env.keys - ENV.keys
-  new_env.each_pair { |k, v| ENV[k] = v }
-  yield
-ensure
-  env_to_reset.each_pair { |k, v| ENV[k] = v }
-  keys_to_delete.each { |k| ENV.delete(k) }
 end
