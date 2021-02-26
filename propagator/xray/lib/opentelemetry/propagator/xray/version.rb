@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-# Copyright 2020 OpenTelemetry Authors
+# Copyright OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
   module Propagator
     module XRay
-      VERSION = '0.1.0'
+      VERSION = '0.15.0'
     end
   end
 end

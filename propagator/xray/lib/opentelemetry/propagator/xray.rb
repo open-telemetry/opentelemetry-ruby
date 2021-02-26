@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Copyright 2020 OpenTelemetry Authors
+# Copyright OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
 
@@ -37,11 +37,10 @@ module OpenTelemetry
       end
 
       # @api private
-      # Convert an id from a hex encoded string to byte array, optionally left
-      # padding to the correct length. Assumes the input id has already been
-      # validated to be 16 or 32 characters in length.
+      # Convert an id from a hex encoded string to byte array. Assumes the input id has already been
+      # validated to be 35 characters in length.
       def to_trace_id(hex_id)
-        Array(hex_id[2..8] + hex_id[10..hex_id.length - 1]).pack('H*')
+        Array(hex_id[2..8] + hex_id[10..]).pack('H*')
       end
 
       # @api private
@@ -50,17 +49,11 @@ module OpenTelemetry
         Array(hex_id).pack('H*')
       end
 
+      XRAY_CONTEXT_KEY = 'X-Amzn-Trace-Id'
       TEXT_MAP_EXTRACTOR = TextMapExtractor.new
       TEXT_MAP_INJECTOR = TextMapInjector.new
-      RACK_EXTRACTOR = TextMapExtractor.new(
-        xray_key: 'HTTP_XRAY'
-      )
-      RACK_INJECTOR = TextMapInjector.new(
-        xray_key: 'HTTP_XRAY'
-      )
 
-      private_constant :TEXT_MAP_INJECTOR, :TEXT_MAP_EXTRACTOR, :RACK_INJECTOR,
-                       :RACK_EXTRACTOR
+      private_constant :XRAY_CONTEXT_KEY, :TEXT_MAP_INJECTOR, :TEXT_MAP_EXTRACTOR
 
       # Returns an extractor that extracts context in the XRay single header
       # format
@@ -72,20 +65,6 @@ module OpenTelemetry
       # format
       def text_map_extractor
         TEXT_MAP_EXTRACTOR
-      end
-
-      # Returns an extractor that extracts context in the XRay single header
-      # format with Rack normalized keys (upcased and prefixed with
-      # HTTP_)
-      def rack_injector
-        RACK_INJECTOR
-      end
-
-      # Returns an injector that injects context in the XRay single header
-      # format with Rack normalized keys (upcased and prefixed with
-      # HTTP_)
-      def rack_extractor
-        RACK_EXTRACTOR
       end
     end
   end
