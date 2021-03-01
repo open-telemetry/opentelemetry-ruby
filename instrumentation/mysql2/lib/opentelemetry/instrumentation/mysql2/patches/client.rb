@@ -40,6 +40,16 @@ module OpenTelemetry
             multi_line_comments: %r{\/\*(?:[^\/]|\/[^*])*?(?:\*\/|\/\*.*)}
           }.freeze
 
+          MYSQL_COMPONENTS = %i[
+            single_quotes
+            double_quotes
+            numeric_literals
+            boolean_literals
+            hexadecimal_literals
+            comments
+            multi_line_comments
+          ].freeze
+
           def query(sql, options = {})
             tracer.in_span(
               database_span_name(sql),
@@ -60,16 +70,14 @@ module OpenTelemetry
             if sql.size > 2000
               'SQL query too large to remove sensitive data ...'
             else
-              obfuscated = sql.gsub(generate_mysql_regex, '?')
+              obfuscated = sql.gsub(generated_mysql_regex, '?')
               obfuscated = 'Failed to obfuscate SQL query - quote characters remained after obfuscation' if detect_unmatched_pairs(obfuscated)
               obfuscated
             end
           end
 
-          def generate_mysql_regex
-            components = %i[single_quotes double_quotes numeric_literals boolean_literals
-                            hexadecimal_literals comments multi_line_comments]
-            Regexp.union(components.map { |component| COMPONENTS_REGEX_MAP[component] })
+          def generated_mysql_regex
+            @generated_mysql_regex ||= Regexp.union(MYSQL_COMPONENTS.map { |component| COMPONENTS_REGEX_MAP[component] })
           end
 
           def detect_unmatched_pairs(obfuscated)
