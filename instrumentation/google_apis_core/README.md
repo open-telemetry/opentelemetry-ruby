@@ -1,6 +1,6 @@
 # OpenTelemetry GoogleApisCore Instrumentation
 
-Todo: Add a description.
+The GoogleApisCore instrumentation is a community-maintained instrumentation for the [google-apis-core][google-apis-core-home] gem.
 
 ## How do I get started?
 
@@ -44,6 +44,7 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 
 The `opentelemetry-instrumentation-google_apis_core` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
 
+[google-apis-core-home]: https://github.com/googleapis/google-api-ruby-client/tree/master/google-apis-core
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
