@@ -46,6 +46,17 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
     end
   end
 
+  describe '#force_flush' do
+    let(:mock_span_processor) { Minitest::Mock.new }
+
+    it 'notifies the span processor' do
+      mock_span_processor.expect(:force_flush, nil, [{ timeout: nil }])
+      tracer_provider.add_span_processor(mock_span_processor)
+      tracer_provider.force_flush
+      mock_span_processor.verify
+    end
+  end
+
   describe '#add_span_processor' do
     it 'does not add the processor if stopped' do
       mock_span_processor = Minitest::Mock.new
