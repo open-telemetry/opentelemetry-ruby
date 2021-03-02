@@ -22,7 +22,7 @@ module OpenTelemetry
             }
 
             @opentelemetry_tracing_span = tracer.start_span(url.host.to_s, attributes: attributes)
-          rescue StandardError # rubocop:disable Lint/SuppressedException
+          rescue StandardError # rubocop:disable Lint/HandleExceptions
           end
 
           def opencensus_end_span
@@ -39,7 +39,7 @@ module OpenTelemetry
 
             @opentelemetry_tracing_span.finish
             @opentelemetry_tracing_span = nil
-          rescue StandardError # rubocop:disable Lint/SuppressedException
+          rescue StandardError # rubocop:disable Lint/HandleExceptions
           end
 
           private
