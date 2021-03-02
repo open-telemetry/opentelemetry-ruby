@@ -44,6 +44,7 @@ TEMPLATE
         raise "Could not infer Title from gem spec summary #{gem_specification.summary}"
       end
       repo = gem_specification.metadata['source_code_uri']
+      raise "Could not find repo for #{gem_specification.name}" unless repo
       gem_specification.description =~ /^.* instrumentation/
       description = $& + " for Ruby."
 
