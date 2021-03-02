@@ -31,7 +31,7 @@ module OpenTelemetry
 
           setter.set(carrier, TRACE_ID_HEADER, span_context.hex_trace_id)
           setter.set(carrier, SPAN_ID_HEADER, span_context.hex_span_id)
-          setter.set(carrier, SAMPLED_HEADER, false)
+          setter.set(carrier, SAMPLED_HEADER, span_context.trace_flags.sampled?.to_s)
           carrier
         end
 
@@ -46,6 +46,7 @@ end
 describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
   Span = OpenTelemetry::Trace::Span
   SpanContext = OpenTelemetry::Trace::SpanContext
+  TraceFlags = OpenTelemetry::Trace::TraceFlags
   OTTrace = OpenTelemetry::Propagator::OTTrace
 
   let(:span_id) do
@@ -56,12 +57,17 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
     '64fe8b2a57d3eff7'
   end
 
+  let(:trace_flags) do
+    TraceFlags::DEFAULT
+  end
+
   let(:context) do
     OpenTelemetry::Trace.context_with_span(
       Span.new(
         span_context: SpanContext.new(
           trace_id: Array(trace_id).pack('H*'),
-          span_id: Array(span_id).pack('H*')
+          span_id: Array(span_id).pack('H*'),
+          trace_flags: trace_flags
         )
       )
     )
@@ -105,7 +111,22 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
         _(updated_carrier).must_be_same_as(carrier)
         _(updated_carrier.fetch(OTTrace::TRACE_ID_HEADER)).must_equal(trace_id)
         _(updated_carrier.fetch(OTTrace::SPAN_ID_HEADER)).must_equal(span_id)
-        _(updated_carrier.fetch(OTTrace::SAMPLED_HEADER)).must_equal(false)
+        _(updated_carrier.fetch(OTTrace::SAMPLED_HEADER)).must_equal('false')
+      end
+    end
+
+    describe 'given a sampled trace flag' do
+      let(:trace_flags) do
+        TraceFlags::SAMPLED
+      end
+
+      it 'injects OpenTracing headers' do
+        carrier = {}
+        updated_carrier = injector.inject(carrier, context)
+        _(updated_carrier).must_be_same_as(carrier)
+        _(updated_carrier.fetch(OTTrace::TRACE_ID_HEADER)).must_equal(trace_id)
+        _(updated_carrier.fetch(OTTrace::SPAN_ID_HEADER)).must_equal(span_id)
+        _(updated_carrier.fetch(OTTrace::SAMPLED_HEADER)).must_equal('true')
       end
     end
   end
