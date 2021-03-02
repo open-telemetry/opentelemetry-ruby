@@ -12,7 +12,7 @@ module OpenTelemetry
         module HttpCommand
           def opencensus_begin_span
             return if @opentelemetry_tracing_span
-            return unless OpenTelemetry::Trace.current_span.context.trace_flags.sampled?
+            return unless OpenTelemetry::Trace.current_span.recording?
 
             attributes = {
               'http.host' => url.host.to_s,
@@ -27,7 +27,7 @@ module OpenTelemetry
 
           def opencensus_end_span
             return unless @opentelemetry_tracing_span
-            return unless OpenTelemetry::Trace.current_span.context.trace_flags.sampled?
+            return unless OpenTelemetry::Trace.current_span.recording?
 
             if @http_res
               status_code = @http_res.status.to_i
