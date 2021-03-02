@@ -24,7 +24,7 @@ describe OpenTelemetry::Instrumentation::GoogleApisCore::Patches::HttpCommand do
   after { instrumentation.instance_variable_set(:@installed, false) }
 
   it 'it does not trace when not sampled' do
-    stub_request(:get, 'https://www.googleapis.com/zoo/animals').to_return(status: [200, ''], body: "Hello world")
+    stub_request(:get, 'https://www.googleapis.com/zoo/animals').to_return(status: [200, ''], body: 'Hello world')
     command = Google::Apis::Core::HttpCommand.new(:get, 'https://www.googleapis.com/zoo/animals')
     command.execute(client)
 
@@ -32,7 +32,7 @@ describe OpenTelemetry::Instrumentation::GoogleApisCore::Patches::HttpCommand do
   end
 
   it 'traces when in the context of a sampled trace' do
-    stub_request(:get, 'https://www.googleapis.com/zoo/animals').to_return(status: [200, ''], body: "Hello world")
+    stub_request(:get, 'https://www.googleapis.com/zoo/animals').to_return(status: [200, ''], body: 'Hello world')
     command = Google::Apis::Core::HttpCommand.new(:get, 'https://www.googleapis.com/zoo/animals')
     instrumentation.tracer.in_span('test') { command.execute(client) }
 
@@ -45,7 +45,7 @@ describe OpenTelemetry::Instrumentation::GoogleApisCore::Patches::HttpCommand do
   end
 
   it 'traces when there is an error' do
-    stub_request(:get, 'https://www.googleapis.com/zoo/animals').to_return(status: [500, ''], body: "Hello world")
+    stub_request(:get, 'https://www.googleapis.com/zoo/animals').to_return(status: [500, ''], body: 'Hello world')
     command = Google::Apis::Core::HttpCommand.new(:get, 'https://www.googleapis.com/zoo/animals')
 
     _(-> { instrumentation.tracer.in_span('test') { command.execute(client) } }).must_raise(Google::Apis::ServerError)
