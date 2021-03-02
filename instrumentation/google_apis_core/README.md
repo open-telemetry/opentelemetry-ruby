@@ -50,4 +50,3 @@ The `opentelemetry-instrumentation-google_apis_core` gem is distributed under th
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
-[ruby-gitter]: https://gitter.im/open-telemetry/opentelemetry-ruby
