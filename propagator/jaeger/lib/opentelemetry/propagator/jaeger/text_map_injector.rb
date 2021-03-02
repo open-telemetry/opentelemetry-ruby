@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'erb'
+require 'cgi'
 
 module OpenTelemetry
   # Namespace for OpenTelemetry propagator extension libraries
@@ -46,7 +46,7 @@ module OpenTelemetry
           setter.set(carrier, IDENTITY_KEY, trace_span_identity_value)
           OpenTelemetry.baggage.values(context: context).each do |key, value|
             baggage_key = 'uberctx-' + key
-            encoded_value = ERB::Util.url_encode(value)
+            encoded_value = CGI.escape(value)
             setter.set(carrier, baggage_key, encoded_value)
           end
           carrier
