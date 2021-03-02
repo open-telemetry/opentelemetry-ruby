@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry-api'
 require 'opentelemetry/propagator/ottrace/version'
 
 module OpenTelemetry

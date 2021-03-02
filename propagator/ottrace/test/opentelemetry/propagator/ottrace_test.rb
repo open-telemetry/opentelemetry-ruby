@@ -6,7 +6,7 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::Propagator::OTTraceTest do
+describe OpenTelemetry::Propagator::OTTrace do
   it 'has a version number' do
     refute_nil ::OpenTelemetry::Propagator::OTTrace::VERSION
   end
