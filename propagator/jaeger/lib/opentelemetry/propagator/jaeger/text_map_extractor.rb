@@ -103,13 +103,7 @@ module OpenTelemetry
         end
 
         def to_trace_id(trace_id_str)
-          zero_pad_count = (16 - (trace_id_str.length % 16)) % 16
-          to_zero_padded_id(trace_id_str, zero_pad_count)
-        end
-
-        def to_zero_padded_id(id_str, zero_pad_count)
-          zero_padded_id_str = ('0' * zero_pad_count) + id_str
-          [zero_padded_id_str].pack('H*')
+          [trace_id_str.rjust(32, '0')].pack('H*')
         end
       end
     end

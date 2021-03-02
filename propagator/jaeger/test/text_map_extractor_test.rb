@@ -77,14 +77,14 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapExtractor do
       span_context = extract_span_context(
         '80f198ee56343ba8:e457b5a2e4d86bd1:0:1'
       )
-      _(span_context.hex_trace_id).must_equal('80f198ee56343ba8')
+      _(span_context.hex_trace_id).must_equal('000000000000000080f198ee56343ba8')
     end
 
     it 'extracts context with a shorter trace id that can be included in a 64-bit hex string' do
       span_context = extract_span_context(
         '98ee56343ba8:e457b5a2e4d86bd1:0:1'
       )
-      _(span_context.hex_trace_id).must_equal('000098ee56343ba8')
+      _(span_context.hex_trace_id).must_equal('0000000000000000000098ee56343ba8')
     end
 
     it 'converts debug flag to sampled' do
