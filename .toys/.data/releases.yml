@@ -31,6 +31,10 @@ commit_lint:
 #  *  changelog_path: Path to CHANGLEOG.md relative to the gem directory.
 #     (Required only if it is not in the expected location.)
 gems:
+  - name: opentelemetry-instrumentation-google_apis_core
+    directory: instrumentation/google_apis_core
+    version_constant: [OpenTelemetry, Instrumentation, GoogleApisCore, VERSION]
+
   - name: opentelemetry-instrumentation-http
     directory: instrumentation/http
     version_constant: [OpenTelemetry, Instrumentation, HTTP, VERSION]

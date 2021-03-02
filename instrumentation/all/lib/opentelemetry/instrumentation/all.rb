@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry-instrumentation-google_apis_core'
 require 'opentelemetry-instrumentation-http'
 require 'opentelemetry-instrumentation-active_model_serializers'
 require 'opentelemetry-instrumentation-concurrent_ruby'
