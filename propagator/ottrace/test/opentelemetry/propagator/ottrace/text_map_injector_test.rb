@@ -10,6 +10,8 @@ module OpenTelemetry
   module Propagator
     module OTTrace
       class TextMapInjector
+        TRACE_ID_64_BIT_WIDTH = 64 / 4
+
         # Returns a new TextMapInjector that injects context using the specified setter
         #
         # @param [optional Setter] default_setter The default setter used to
@@ -29,7 +31,7 @@ module OpenTelemetry
           span_context = Trace.current_span(context).context
           return carrier unless span_context.valid?
 
-          setter.set(carrier, TRACE_ID_HEADER, span_context.hex_trace_id)
+          setter.set(carrier, TRACE_ID_HEADER, span_context.hex_trace_id[-TRACE_ID_64_BIT_WIDTH, TRACE_ID_64_BIT_WIDTH])
           setter.set(carrier, SPAN_ID_HEADER, span_context.hex_span_id)
           setter.set(carrier, SAMPLED_HEADER, span_context.trace_flags.sampled?.to_s)
           carrier
@@ -127,6 +129,21 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
         _(updated_carrier.fetch(OTTrace::TRACE_ID_HEADER)).must_equal(trace_id)
         _(updated_carrier.fetch(OTTrace::SPAN_ID_HEADER)).must_equal(span_id)
         _(updated_carrier.fetch(OTTrace::SAMPLED_HEADER)).must_equal('true')
+      end
+    end
+
+    describe 'given a trace id that exceeds the 64 BIT/16 HEXDIG limit' do
+      let(:trace_id) do
+        '80f198ee56343ba864fe8b2a57d3eff7'
+      end
+
+      it 'injects truncates the trace id header' do
+        carrier = {}
+        updated_carrier = injector.inject(carrier, context)
+        _(updated_carrier).must_be_same_as(carrier)
+        _(updated_carrier.fetch(OTTrace::TRACE_ID_HEADER)).must_equal('64fe8b2a57d3eff7')
+        _(updated_carrier.fetch(OTTrace::SPAN_ID_HEADER)).must_equal(span_id)
+        _(updated_carrier.fetch(OTTrace::SAMPLED_HEADER)).must_equal('false')
       end
     end
   end
