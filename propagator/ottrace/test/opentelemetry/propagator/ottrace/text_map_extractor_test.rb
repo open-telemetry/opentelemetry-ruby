@@ -50,12 +50,8 @@ module OpenTelemetry
             remote: true
           )
 
-          if span_context.valid?
-            span = Trace::Span.new(span_context: span_context)
-            Trace.context_with_span(span, parent_context: context)
-          else
-            context
-          end
+          span = Trace::Span.new(span_context: span_context)
+          Trace.context_with_span(span, parent_context: context)
         end
 
         private
