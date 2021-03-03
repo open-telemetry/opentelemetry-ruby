@@ -107,6 +107,25 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
       end
     end
 
+    describe 'given a context with sampling disabled' do
+      it 'extracts parent context' do
+        parent_context = OpenTelemetry::Context.empty
+        carrier = {
+          OTTrace::TRACE_ID_HEADER => '80f198ee56343ba864fe8b2a57d3eff7',
+          OTTrace::SPAN_ID_HEADER => 'e457b5a2e4d86bd1',
+          OTTrace::SAMPLED_HEADER => 'false'
+        }
+
+        context = extractor.extract(carrier, parent_context)
+        extracted_context = OpenTelemetry::Trace.current_span(context).context
+
+        _(extracted_context.hex_trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
+        _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
+        _(extracted_context.trace_flags).must_equal(TraceFlags::DEFAULT)
+        _(extracted_context).must_be(:remote?)
+      end
+    end
+
     describe 'given context with a 64 bit/16 HEXDIGIT trace id' do
       it 'pads the trace id' do
         parent_context = OpenTelemetry::Context.empty
@@ -123,6 +142,22 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
         _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
         _(extracted_context.trace_flags).must_equal(TraceFlags::SAMPLED)
         _(extracted_context).must_be(:remote?)
+      end
+    end
+
+    describe 'given context with a malformed trace id' do
+      it 'skips content extraction' do
+        parent_context = OpenTelemetry::Context.empty
+        carrier = {
+          OTTrace::TRACE_ID_HEADER => 'abc123',
+          OTTrace::SPAN_ID_HEADER => 'e457b5a2e4d86bd1',
+          OTTrace::SAMPLED_HEADER => 'false'
+        }
+
+        context = extractor.extract(carrier, parent_context)
+        extracted_context = OpenTelemetry::Trace.current_span(context).context
+
+        _(extracted_context).must_be_nil
       end
     end
   end
