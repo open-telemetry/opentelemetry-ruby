@@ -11,6 +11,8 @@ module OpenTelemetry
     module OTTrace
       class TextMapExtractor
         PADDING = '0' * 16
+        VALID_TRACE_ID_REGEX = /^[0-9a-f]{32}$/.freeze
+        VALID_SPAN_ID_REGEX = /^[0-9a-f]{16}$/.freeze
 
         # Returns a new TextMapExtractor that extracts OTTrace context using the
         # specified getter
@@ -42,6 +44,8 @@ module OpenTelemetry
           return context unless trace_id && span_id
 
           trace_id = trace_id.length == 16 ? "#{PADDING}#{trace_id}" : trace_id
+
+          return context if VALID_TRACE_ID_REGEX !~ trace_id || VALID_SPAN_ID_REGEX !~ span_id
 
           span_context = Trace::SpanContext.new(
             trace_id: Array(trace_id).pack('H*'),
@@ -157,7 +161,23 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
         context = extractor.extract(carrier, parent_context)
         extracted_context = OpenTelemetry::Trace.current_span(context).context
 
-        _(extracted_context).must_be_nil
+        _(extracted_context).must_be_same_as(SpanContext::INVALID)
+      end
+    end
+
+    describe 'given context with a malformed span id' do
+      it 'skips content extraction' do
+        parent_context = OpenTelemetry::Context.empty
+        carrier = {
+          OTTrace::TRACE_ID_HEADER => '80f198ee56343ba864fe8b2a57d3eff7',
+          OTTrace::SPAN_ID_HEADER => 'abc123',
+          OTTrace::SAMPLED_HEADER => 'false'
+        }
+
+        context = extractor.extract(carrier, parent_context)
+        extracted_context = OpenTelemetry::Trace.current_span(context).context
+
+        _(extracted_context).must_be_same_as(SpanContext::INVALID)
       end
     end
   end
