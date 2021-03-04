@@ -46,6 +46,10 @@ module OpenTelemetry
         placeholder
       end
 
+      def truncate(string, size)
+        string.size > size ? "#{string[0...size - 3]}..." : string
+      end
+
       def untraced
         OpenTelemetry::Trace.with_span(OpenTelemetry::Trace::Span.new) { yield }
       end
