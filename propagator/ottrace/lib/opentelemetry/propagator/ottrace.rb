@@ -13,6 +13,7 @@ module OpenTelemetry
       TRACE_ID_HEADER = 'ot-tracer-traceid'
       SPAN_ID_HEADER = 'ot-tracer-spanid'
       SAMPLED_HEADER = 'ot-tracer-sampled'
+      BAGGAGE_HEADER_PREFIX = 'ot-baggage-'
     end
   end
 end
