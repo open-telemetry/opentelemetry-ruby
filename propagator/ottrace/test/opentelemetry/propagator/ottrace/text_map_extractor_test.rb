@@ -21,7 +21,11 @@ module OpenTelemetry
         #   headers from a carrier during extract. Defaults to a
         #   {OpenTelemetry::Context:Propagation::TextMapGetter} instance.
         # @return [TextMapExtractor]
-        def initialize(default_getter = Context::Propagation.text_map_getter)
+        def initialize(
+          baggage_manager:,
+          default_getter: Context::Propagation.text_map_getter
+        )
+          @baggage_manager = baggage_manager
           @default_getter = default_getter
         end
 
@@ -55,12 +59,26 @@ module OpenTelemetry
           )
 
           span = Trace::Span.new(span_context: span_context)
-          Trace.context_with_span(span, parent_context: context)
+          Trace.context_with_span(span, parent_context: set_baggage(carrier: carrier, context: context, getter: getter))
         end
 
         private
 
         attr_reader :default_getter
+        attr_reader :baggage_manager
+
+        def set_baggage(carrier:, context:, getter:)
+          baggage_manager.build_context(context: context) do builder
+            prefix = OTTrace::BAGGAGE_HEADER_PREFIX
+            getter.keys(carrier).each do |carrier_key|
+              baggage_key = carrier_key.start_with?(prefix) && carrier_key[prefix.length..-1]
+              next unless baggage_key
+
+              value = getter.get(carrier, carrier_key)
+              builder.set_value(baggage_key, value)
+            end
+          end
+        end
       end
     end
   end
@@ -72,8 +90,12 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
   TraceFlags = OpenTelemetry::Trace::TraceFlags
   OTTrace = OpenTelemetry::Propagator::OTTrace
 
+  let(:baggage_manager) do
+    OpenTelemetry.baggage
+  end
+
   let(:extractor) do
-    OpenTelemetry::Propagator::OTTrace::TextMapExtractor.new
+    OpenTelemetry::Propagator::OTTrace::TextMapExtractor.new(baggage_manager: baggage_manager)
   end
 
   describe '#extract' do
@@ -178,6 +200,27 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
         extracted_context = OpenTelemetry::Trace.current_span(context).context
 
         _(extracted_context).must_be_same_as(SpanContext::INVALID)
+      end
+    end
+
+    describe 'baggage handling' do
+      before do
+        OpenTelemetry::SDK::Configurator.new.configure
+      end
+
+      it 'extracts baggage items' do
+        parent_context = OpenTelemetry::Context.empty
+        carrier = {
+          OTTrace::TRACE_ID_HEADER => '80f198ee56343ba864fe8b2a57d3eff7',
+          OTTrace::SPAN_ID_HEADER => 'e457b5a2e4d86bd1',
+          OTTrace::SAMPLED_HEADER => 'true',
+          "#{OTTrace::BAGGAGE_HEADER_PREFIX}foo" => 'bar',
+          "#{OTTrace::BAGGAGE_HEADER_PREFIX}bar" => 'baz'
+        }
+
+        context = extractor.extract(carrier, parent_context)
+        _(OpenTelemetry.baggage.value('foo', context: context)).must_equal('bar')
+        _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
       end
     end
   end
