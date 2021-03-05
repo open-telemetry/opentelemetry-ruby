@@ -4,8 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative './single/text_map_extractor'
-require_relative './single/text_map_injector'
+require_relative './single/text_map_propagator'
 
 # OpenTelemetry is an open source observability framework, providing a
 # general-purpose API, SDK, and related tools required for the instrumentation
@@ -18,26 +17,18 @@ module OpenTelemetry
   module Propagator
     # Namespace for OpenTelemetry B3 propagation
     module B3
-      # Namespace for OpenTelemetry b3 single header encoding
+      # Namespace for OpenTelemetry B3 single header encoding
       module Single
         extend self
 
-        B3_CONTEXT_KEY = 'b3'
-        TEXT_MAP_EXTRACTOR = TextMapExtractor.new
-        TEXT_MAP_INJECTOR = TextMapInjector.new
+        TEXT_MAP_PROPAGATOR = TextMapPropagator.new
 
-        private_constant :B3_CONTEXT_KEY, :TEXT_MAP_INJECTOR, :TEXT_MAP_EXTRACTOR
+        private_constant :TEXT_MAP_PROPAGATOR
 
-        # Returns an extractor that extracts context in the B3 single header
-        # format
-        def text_map_injector
-          TEXT_MAP_INJECTOR
-        end
-
-        # Returns an injector that injects context in the B3 single header
-        # format
-        def text_map_extractor
-          TEXT_MAP_EXTRACTOR
+        # Returns a text map propagator that propagates context using the
+        # B3 single header format.
+        def text_map_propagator
+          TEXT_MAP_PROPAGATOR
         end
       end
     end

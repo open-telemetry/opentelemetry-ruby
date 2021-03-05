@@ -71,9 +71,6 @@ module OpenTelemetry
 
   # @return [Context::Propagation::Propagator] a propagator instance
   def propagation
-    @propagation ||= Context::Propagation::Propagator.new(
-      Context::Propagation::NoopInjector.new,
-      Context::Propagation::NoopExtractor.new
-    )
+    @propagation ||= Context::Propagation::NoopTextMapPropagator.new
   end
 end
