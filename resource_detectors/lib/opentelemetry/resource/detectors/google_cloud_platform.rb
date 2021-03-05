@@ -34,6 +34,7 @@ module OpenTelemetry
             resource_attributes[resource_constants::K8S_RESOURCE[:cluster_name]] = gcp_env.instance_attribute('cluster-name')
             resource_attributes[resource_constants::K8S_RESOURCE[:namespace_name]] = gcp_env.kubernetes_engine_namespace_id
             resource_attributes[resource_constants::K8S_RESOURCE[:pod_name]] = ENV['HOSTNAME'] || safe_gethostname
+            resource_attributes[resource_constants::K8S_RESOURCE[:node_name]] = gcp_env.lookup_metadata('instance', 'hostname')
 
             resource_attributes[resource_constants::CONTAINER_RESOURCE[:name]] = ENV['CONTAINER_NAME']
           end
