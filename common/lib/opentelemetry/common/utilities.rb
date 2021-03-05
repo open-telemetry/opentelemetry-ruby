@@ -46,6 +46,12 @@ module OpenTelemetry
         placeholder
       end
 
+      # Truncates a string if it exceeds the size provided.
+      #
+      # @param [String] string The string to be truncated
+      # @param [Integer] size The max size of the string
+      #
+      # @return [String]
       def truncate(string, size)
         string.size > size ? "#{string[0...size - 3]}..." : string
       end
