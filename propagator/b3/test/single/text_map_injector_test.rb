@@ -22,8 +22,9 @@ describe OpenTelemetry::Propagator::B3::Single::TextMapInjector do
       )
 
       carrier = {}
-      injector.inject(carrier, context)
+      updated_carrier = injector.inject(carrier, context)
 
+      _(updated_carrier).must_be_same_as(updated_carrier)
       expected_b3 = '80f198ee56343ba864fe8b2a57d3eff7-e457b5a2e4d86bd1-1'
       _(carrier['b3']).must_equal(expected_b3)
     end
@@ -36,8 +37,9 @@ describe OpenTelemetry::Propagator::B3::Single::TextMapInjector do
       )
 
       carrier = {}
-      injector.inject(carrier, context)
+      updated_carrier = injector.inject(carrier, context)
 
+      _(updated_carrier).must_be_same_as(updated_carrier)
       expected_b3 = '80f198ee56343ba864fe8b2a57d3eff7-e457b5a2e4d86bd1-0'
       _(carrier['b3']).must_equal(expected_b3)
     end
@@ -50,8 +52,9 @@ describe OpenTelemetry::Propagator::B3::Single::TextMapInjector do
       )
 
       carrier = {}
-      injector.inject(carrier, context)
+      updated_carrier = injector.inject(carrier, context)
 
+      _(updated_carrier).must_be_same_as(updated_carrier)
       expected_b3 = '80f198ee56343ba864fe8b2a57d3eff7-e457b5a2e4d86bd1-d'
       _(carrier['b3']).must_equal(expected_b3)
     end
@@ -63,8 +66,8 @@ describe OpenTelemetry::Propagator::B3::Single::TextMapInjector do
       )
 
       carrier = {}
-      injector.inject(carrier, context)
-
+      unchanged_carrier = injector.inject(carrier, context)
+      _(unchanged_carrier).must_be_same_as(carrier)
       _(carrier.key?('b3')).must_equal(false)
     end
 
@@ -75,7 +78,8 @@ describe OpenTelemetry::Propagator::B3::Single::TextMapInjector do
       )
 
       carrier = {}
-      injector.inject(carrier, context)
+      unchanged_carrier = injector.inject(carrier, context)
+      _(unchanged_carrier).must_be_same_as(carrier)
 
       _(carrier.key?('b3')).must_equal(false)
     end

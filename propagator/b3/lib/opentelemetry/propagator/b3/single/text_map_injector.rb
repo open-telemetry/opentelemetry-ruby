@@ -32,7 +32,7 @@ module OpenTelemetry
           # @return [Object] the carrier with context injected
           def inject(carrier, context, setter = nil)
             span_context = Trace.current_span(context).context
-            return unless span_context.valid?
+            return carrier unless span_context.valid?
 
             sampling_state = if B3.debug?(context)
                                'd'

@@ -32,7 +32,7 @@ module OpenTelemetry
           # @return [Object] the carrier with context injected
           def inject(carrier, context, setter = nil)
             span_context = Trace.current_span(context).context
-            return unless span_context.valid?
+            return carrier unless span_context.valid?
 
             setter ||= @default_setter
             setter.set(carrier, B3_TRACE_ID_KEY, span_context.hex_trace_id)

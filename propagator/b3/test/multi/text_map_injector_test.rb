@@ -28,8 +28,9 @@ describe OpenTelemetry::Propagator::B3::Multi::TextMapInjector do
       )
 
       carrier = {}
-      injector.inject(carrier, context)
+      updated_carrier = injector.inject(carrier, context)
 
+      _(updated_carrier).must_be_same_as(updated_carrier)
       _(carrier[trace_id_key]).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
       _(carrier[span_id_key]).must_equal('e457b5a2e4d86bd1')
       _(carrier[sampled_key]).must_equal('1')
@@ -45,8 +46,9 @@ describe OpenTelemetry::Propagator::B3::Multi::TextMapInjector do
       )
 
       carrier = {}
-      injector.inject(carrier, context)
+      updated_carrier = injector.inject(carrier, context)
 
+      _(updated_carrier).must_be_same_as(updated_carrier)
       _(carrier[trace_id_key]).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
       _(carrier[span_id_key]).must_equal('e457b5a2e4d86bd1')
       _(carrier[sampled_key]).must_equal('0')
@@ -62,8 +64,9 @@ describe OpenTelemetry::Propagator::B3::Multi::TextMapInjector do
       )
 
       carrier = {}
-      injector.inject(carrier, context)
+      updated_carrier = injector.inject(carrier, context)
 
+      _(updated_carrier).must_be_same_as(updated_carrier)
       _(carrier[trace_id_key]).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
       _(carrier[span_id_key]).must_equal('e457b5a2e4d86bd1')
       _(carrier[flags_key]).must_equal('1')
@@ -78,9 +81,11 @@ describe OpenTelemetry::Propagator::B3::Multi::TextMapInjector do
       )
 
       carrier = {}
-      injector.inject(carrier, context)
 
-      all_keys.each { |k| _(carrier.key?(k)).must_equal(false) }
+      unchanged_carrier = injector.inject(carrier, context)
+
+      _(unchanged_carrier).must_be_same_as(carrier)
+      _(unchanged_carrier).must_be(:empty?)
     end
 
     it 'no-ops if trace id invalid' do
@@ -90,9 +95,11 @@ describe OpenTelemetry::Propagator::B3::Multi::TextMapInjector do
       )
 
       carrier = {}
-      injector.inject(carrier, context)
 
-      all_keys.each { |k| _(carrier.key?(k)).must_equal(false) }
+      unchanged_carrier = injector.inject(carrier, context)
+
+      _(unchanged_carrier).must_be_same_as(carrier)
+      _(unchanged_carrier).must_be(:empty?)
     end
   end
 
