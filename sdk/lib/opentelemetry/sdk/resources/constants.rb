@@ -67,14 +67,59 @@ module OpenTelemetry
           # The name of the cluster that the pod is running in.
           cluster_name: 'k8s.cluster.name',
 
+          # The name of the Node.
+          node_name: 'k8s.node.name',
+
+          # The UID of the Node.
+          node_uid: 'k8s.node.uid',
+
           # The name of the namespace that the pod is running in.
           namespace_name: 'k8s.namespace.name',
 
           # The name of the pod.
           pod_name: 'k8s.pod.name',
 
+          # The UID of the Pod.
+          pod_uid: 'k8s.pod.uid',
+
+          #  The name of the Container in a Pod template.
+          container_name: 'k8s.container.name',
+
+          # The UID of the ReplicaSet.
+          replicaset_uid: 'k8s.replicaset.uid',
+
+          # The name of the ReplicaSet.
+          replicaset_name: 'k8s.replicaset.name',
+
+          # The UID of the Deployment.
+          deployment_uid: 'k8s.deployment.uid',
+
           # The name of the deployment.
-          deployment_name: 'k8s.deployment.name'
+          deployment_name: 'k8s.deployment.name',
+
+          # The UID of the StatefulSet.
+          statefulset_uid: 'k8s.statefulset.uid',
+
+          # The name of the StatefulSet.
+          statefulset_name: 'k8s.statefulset.name',
+
+          # The UID of the DaemonSet.
+          daemonset_uid: 'k8s.daemonset.uid',
+
+          # The name of the DaemonSet.
+          daemonset_name: 'k8s.daemonset.name',
+
+          # The UID of the Job.
+          job_uid: 'k8s.job.uid',
+
+          # The name of the Job.
+          job_name: 'k8s.job.name',
+
+          # The UID of the CronJob.
+          cronjob_uid: 'k8s.cronjob.uid',
+
+          # The name of the CronJob.
+          cronjob_name: 'k8s.cronjob.name'
         }.freeze
 
         # Attributes defining an operating system process.
