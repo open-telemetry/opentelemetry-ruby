@@ -78,8 +78,10 @@ module OpenTelemetry
             getter.keys(carrier).each do |carrier_key|
               baggage_key = carrier_key.start_with?(prefix) && carrier_key[prefix.length..-1]
               next unless baggage_key
+              next unless VALID_BAGGAGE_HEADER_NAME_CHARS =~ baggage_key
 
               value = getter.get(carrier, carrier_key)
+              next unless INVALID_BAGGAGE_HEADER_VALUE_CHARS !~ value
               builder.set_value(baggage_key, value)
             end
           end
@@ -213,19 +215,55 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
         OpenTelemetry::SDK::Configurator.new.configure
       end
 
-      it 'extracts baggage items' do
-        parent_context = OpenTelemetry::Context.empty
-        carrier = {
-          OTTrace::TRACE_ID_HEADER => '80f198ee56343ba864fe8b2a57d3eff7',
-          OTTrace::SPAN_ID_HEADER => 'e457b5a2e4d86bd1',
-          OTTrace::SAMPLED_HEADER => 'true',
-          "#{OTTrace::BAGGAGE_HEADER_PREFIX}foo" => 'bar',
-          "#{OTTrace::BAGGAGE_HEADER_PREFIX}bar" => 'baz'
-        }
+      describe 'given valid baggage items' do
+        it 'extracts baggage items' do
+          parent_context = OpenTelemetry::Context.empty
+          carrier = {
+            OTTrace::TRACE_ID_HEADER => '80f198ee56343ba864fe8b2a57d3eff7',
+            OTTrace::SPAN_ID_HEADER => 'e457b5a2e4d86bd1',
+            OTTrace::SAMPLED_HEADER => 'true',
+            "#{OTTrace::BAGGAGE_HEADER_PREFIX}foo" => 'bar',
+            "#{OTTrace::BAGGAGE_HEADER_PREFIX}bar" => 'baz'
+          }
 
-        context = extractor.extract(carrier, parent_context)
-        _(OpenTelemetry.baggage.value('foo', context: context)).must_equal('bar')
-        _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
+          context = extractor.extract(carrier, parent_context)
+          _(OpenTelemetry.baggage.value('foo', context: context)).must_equal('bar')
+          _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
+        end
+      end
+
+      describe 'given invalid baggage keys' do
+        it 'omits entries' do
+          parent_context = OpenTelemetry::Context.empty
+          carrier = {
+            OTTrace::TRACE_ID_HEADER => '80f198ee56343ba864fe8b2a57d3eff7',
+            OTTrace::SPAN_ID_HEADER => 'e457b5a2e4d86bd1',
+            OTTrace::SAMPLED_HEADER => 'true',
+            "#{OTTrace::BAGGAGE_HEADER_PREFIX}fθθ" => 'bar',
+            "#{OTTrace::BAGGAGE_HEADER_PREFIX}bar" => 'baz'
+          }
+
+          context = extractor.extract(carrier, parent_context)
+          _(OpenTelemetry.baggage.value('fθθ', context: context)).must_be_nil
+          _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
+        end
+      end
+
+      describe 'given invalid baggage values' do
+        it 'omits entries' do
+          parent_context = OpenTelemetry::Context.empty
+          carrier = {
+            OTTrace::TRACE_ID_HEADER => '80f198ee56343ba864fe8b2a57d3eff7',
+            OTTrace::SPAN_ID_HEADER => 'e457b5a2e4d86bd1',
+            OTTrace::SAMPLED_HEADER => 'true',
+            "#{OTTrace::BAGGAGE_HEADER_PREFIX}foo" => 'bαr',
+            "#{OTTrace::BAGGAGE_HEADER_PREFIX}bar" => 'baz'
+          }
+
+          context = extractor.extract(carrier, parent_context)
+          _(OpenTelemetry.baggage.value('foo', context: context)).must_be_nil
+          _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
+        end
       end
     end
   end

@@ -43,7 +43,9 @@ module OpenTelemetry
           setter.set(carrier, SAMPLED_HEADER, span_context.trace_flags.sampled?.to_s)
 
           baggage_manager.values(context: context).each do |key, value|
-            setter.set(carrier, "#{BAGGAGE_HEADER_PREFIX}#{key}", value)
+            if VALID_BAGGAGE_HEADER_NAME_CHARS =~ key && INVALID_BAGGAGE_HEADER_VALUE_CHARS !~ value
+              setter.set(carrier, "#{BAGGAGE_HEADER_PREFIX}#{key}", value)
+            end
           end
           carrier
         end
@@ -94,10 +96,6 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
 
   let(:injector) do
     OpenTelemetry::Propagator::OTTrace::TextMapInjector.new(baggage_manager: baggage_manager)
-  end
-
-  before do
-    OpenTelemetry::SDK::Configurator.new.configure
   end
 
   describe '#inject' do
@@ -169,17 +167,53 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
     end
 
     describe 'baggage handling' do
-      it 'injects baggage items' do
-        context_with_baggage = baggage_manager.build_context(context: context) do |builder|
-          builder.set_value('foo', 'bar')
-          builder.set_value('bar', 'baz')
-        end
+      before do
+        OpenTelemetry::SDK::Configurator.new.configure
+      end
 
-        carrier = {}
-        updated_carrier = injector.inject(carrier, context_with_baggage)
-        _(updated_carrier).must_be_same_as(carrier)
-        _(updated_carrier.fetch('ot-baggage-foo')).must_equal('bar')
-        _(updated_carrier.fetch('ot-baggage-baz')).must_equal('baz')
+      describe 'given valid baggage items' do
+        it 'injects baggage items' do
+          context_with_baggage = baggage_manager.build_context(context: context) do |builder|
+            builder.set_value('foo', 'bar')
+            builder.set_value('bar', 'baz')
+          end
+
+          carrier = {}
+          updated_carrier = injector.inject(carrier, context_with_baggage)
+          _(updated_carrier).must_be_same_as(carrier)
+          _(updated_carrier.fetch('ot-baggage-foo')).must_equal('bar')
+          _(updated_carrier.fetch('ot-baggage-bar')).must_equal('baz')
+        end
+      end
+
+      describe 'given invalid baggage keys' do
+        it 'omits entries' do
+          context_with_baggage = baggage_manager.build_context(context: context) do |builder|
+            builder.set_value('fθθ', 'bar')
+            builder.set_value('bar', 'baz')
+          end
+
+          carrier = {}
+          updated_carrier = injector.inject(carrier, context_with_baggage)
+          _(updated_carrier).must_be_same_as(carrier)
+          _(updated_carrier.keys).wont_include('ot-baggage-f00')
+          _(updated_carrier.fetch('ot-baggage-bar')).must_equal('baz')
+        end
+      end
+
+      describe 'given invalid baggage values' do
+        it 'omits entries' do
+          context_with_baggage = baggage_manager.build_context(context: context) do |builder|
+            builder.set_value('foo', 'bαr')
+            builder.set_value('bar', 'baz')
+          end
+
+          carrier = {}
+          updated_carrier = injector.inject(carrier, context_with_baggage)
+          _(updated_carrier).must_be_same_as(carrier)
+          _(updated_carrier.keys).wont_include('ot-baggage-foo')
+          _(updated_carrier.fetch('ot-baggage-bar')).must_equal('baz')
+        end
       end
     end
   end
