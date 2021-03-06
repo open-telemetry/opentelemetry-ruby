@@ -6,65 +6,6 @@
 
 require 'test_helper'
 
-module OpenTelemetry
-  module Propagator
-    module OTTrace
-      class TextMapInjector
-        TRACE_ID_64_BIT_WIDTH = 64 / 4
-
-        # Returns a new TextMapInjector that injects context using the specified setter
-        #
-        # @param [optional Setter] default_setter The default setter used to
-        #   write context into a carrier during inject. Defaults to a
-        #   {OpenTelemetry::Context:Propagation::TextMapSetter} instance.
-        # @param [optional BaggageManager] baggage_manager Provides access to
-        #   baggage values to write into the carrier during inject.
-        #   write context into a carrier during inject
-        # @return [TextMapInjector]
-        def initialize(
-          baggage_manager:,
-          default_setter: Context::Propagation.text_map_setter
-        )
-          @default_setter = default_setter
-          @baggage_manager = baggage_manager
-        end
-
-        # @param [Object] carrier to update with context.
-        # @param [Context] context The active Context.
-        # @param [optional Setter] setter If the optional setter is provided, it
-        #   will be used to write context into the carrier, otherwise the default
-        #   setter will be used.
-        # @return [Object] the carrier with context injected
-        def inject(carrier, context, setter = nil)
-          setter ||= default_setter
-          span_context = Trace.current_span(context).context
-          return carrier unless span_context.valid?
-
-          setter.set(carrier, TRACE_ID_HEADER, span_context.hex_trace_id[-TRACE_ID_64_BIT_WIDTH, TRACE_ID_64_BIT_WIDTH])
-          setter.set(carrier, SPAN_ID_HEADER, span_context.hex_span_id)
-          setter.set(carrier, SAMPLED_HEADER, span_context.trace_flags.sampled?.to_s)
-
-          baggage_manager
-            .values(context: context)
-            .filter { |key, value| valid_baggage_entry?(key, value) }
-            .each { |key, value| setter.set(carrier, "#{BAGGAGE_HEADER_PREFIX}#{key}", value) }
-
-          carrier
-        end
-
-        private
-
-        attr_reader :default_setter
-        attr_reader :baggage_manager
-
-        def valid_baggage_entry?(key, value)
-          VALID_BAGGAGE_HEADER_NAME_CHARS =~ key && INVALID_BAGGAGE_HEADER_VALUE_CHARS !~ value
-        end
-      end
-    end
-  end
-end
-
 describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
   Span = OpenTelemetry::Trace::Span
   SpanContext = OpenTelemetry::Trace::SpanContext

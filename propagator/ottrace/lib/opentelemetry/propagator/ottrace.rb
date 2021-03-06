@@ -23,3 +23,5 @@ module OpenTelemetry
     end
   end
 end
+
+require_relative './ottrace/text_map_injector'

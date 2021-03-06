@@ -1,9 +1,13 @@
+---
 AllCops:
   TargetRubyVersion: '2.5.0'
 Lint/UnusedMethodArgument:
   Enabled: false
 Metrics/AbcSize:
   Max: 18
+Metrics/BlockLength:
+  Exclude:
+    - 'test/opentelemetry/propagator/**/*_test.rb'
 Metrics/LineLength:
   Enabled: false
 Metrics/MethodLength:
