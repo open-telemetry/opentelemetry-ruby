@@ -42,7 +42,6 @@ module OpenTelemetry
           setter.set(carrier, SPAN_ID_HEADER, span_context.hex_span_id)
           setter.set(carrier, SAMPLED_HEADER, span_context.trace_flags.sampled?.to_s)
 
-          puts baggage_manager.inspect
           baggage_manager.values(context: context).each do |key, value|
             setter.set(carrier, "#{BAGGAGE_HEADER_PREFIX}#{key}", value)
           end
