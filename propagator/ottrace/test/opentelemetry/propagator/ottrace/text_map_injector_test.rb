@@ -34,7 +34,8 @@ module OpenTelemetry
         #   will be used to write context into the carrier, otherwise the default
         #   setter will be used.
         # @return [Object] the carrier with context injected
-        def inject(carrier, context, setter = default_setter)
+        def inject(carrier, context, setter=nil)
+          setter ||= default_setter
           span_context = Trace.current_span(context).context
           return carrier unless span_context.valid?
 
@@ -65,6 +66,12 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
   TraceFlags = OpenTelemetry::Trace::TraceFlags
   OTTrace = OpenTelemetry::Propagator::OTTrace
   ContextKeys = OpenTelemetry::Baggage::Propagation::ContextKeys
+
+  class FakeSetter
+    def set(carrier, key, value)
+      carrier[key] = "#{key} = #{value}"
+    end
+  end
 
   let(:span_id) do
     'e457b5a2e4d86bd1'
@@ -214,6 +221,47 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
           _(updated_carrier.keys).wont_include('ot-baggage-foo')
           _(updated_carrier.fetch('ot-baggage-bar')).must_equal('baz')
         end
+      end
+    end
+
+    describe 'given an alternative setter parameter' do
+      it 'will use the alternative setter instead of the constructor provided one' do
+        carrier = {}
+
+        alternate_setter = FakeSetter.new
+        updated_carrier = injector.inject(carrier, context, alternate_setter)
+        _(updated_carrier).must_be_same_as(carrier)
+        _(updated_carrier.fetch(OTTrace::TRACE_ID_HEADER)).must_equal('ot-tracer-traceid = 64fe8b2a57d3eff7')
+        _(updated_carrier.fetch(OTTrace::SPAN_ID_HEADER)).must_equal('ot-tracer-spanid = e457b5a2e4d86bd1')
+        _(updated_carrier.fetch(OTTrace::SAMPLED_HEADER)).must_equal('ot-tracer-sampled = false')
+      end
+    end
+
+    describe 'given an missing setter parameter' do
+      it 'uses the default setter' do
+        carrier = {}
+
+        updated_carrier = injector.inject(carrier, context, nil)
+        _(updated_carrier).must_be_same_as(carrier)
+        _(updated_carrier.fetch(OTTrace::TRACE_ID_HEADER)).must_equal(trace_id)
+        _(updated_carrier.fetch(OTTrace::SPAN_ID_HEADER)).must_equal(span_id)
+        _(updated_carrier.fetch(OTTrace::SAMPLED_HEADER)).must_equal('false')
+      end
+    end
+
+    describe 'given an alternative default setter' do
+      let(:injector) do
+        OpenTelemetry::Propagator::OTTrace::TextMapInjector.new(baggage_manager: baggage_manager, default_setter: FakeSetter.new)
+      end
+
+      it 'will use the alternative setter' do
+        carrier = {}
+
+        updated_carrier = injector.inject(carrier, context)
+        _(updated_carrier).must_be_same_as(carrier)
+        _(updated_carrier.fetch(OTTrace::TRACE_ID_HEADER)).must_equal('ot-tracer-traceid = 64fe8b2a57d3eff7')
+        _(updated_carrier.fetch(OTTrace::SPAN_ID_HEADER)).must_equal('ot-tracer-spanid = e457b5a2e4d86bd1')
+        _(updated_carrier.fetch(OTTrace::SAMPLED_HEADER)).must_equal('ot-tracer-sampled = false')
       end
     end
   end
