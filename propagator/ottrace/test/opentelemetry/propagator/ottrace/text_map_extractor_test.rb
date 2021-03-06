@@ -6,6 +6,11 @@
 
 require 'test_helper'
 
+# Temp Fix for https://github.com/open-telemetry/opentelemetry-ruby/pull/643
+OpenTelemetry::SDK::Baggage::Manager.class_eval do
+  alias_method :build, :build_context
+end
+
 module OpenTelemetry
   module Propagator
     module OTTrace
@@ -68,7 +73,7 @@ module OpenTelemetry
         attr_reader :baggage_manager
 
         def set_baggage(carrier:, context:, getter:)
-          baggage_manager.build_context(context: context) do builder
+          baggage_manager.build(context: context) do |builder|
             prefix = OTTrace::BAGGAGE_HEADER_PREFIX
             getter.keys(carrier).each do |carrier_key|
               baggage_key = carrier_key.start_with?(prefix) && carrier_key[prefix.length..-1]
