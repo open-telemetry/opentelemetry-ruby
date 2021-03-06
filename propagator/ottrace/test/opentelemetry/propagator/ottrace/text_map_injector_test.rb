@@ -242,7 +242,7 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
       end
     end
 
-    describe 'given an missing setter parameter' do
+    describe 'given a missing setter parameter' do
       it 'uses the default setter' do
         carrier = {}
 

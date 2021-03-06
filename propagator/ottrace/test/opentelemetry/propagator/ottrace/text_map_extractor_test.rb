@@ -45,7 +45,8 @@ module OpenTelemetry
         #   getter will be used.
         # @return [Context] Updated context with active span derived from the header, or the original
         #   context if parsing fails.
-        def extract(carrier, context, getter = default_getter)
+        def extract(carrier, context, getter = nil)
+          getter ||= default_getter
           trace_id = getter.get(carrier, TRACE_ID_HEADER)
           span_id = getter.get(carrier, SPAN_ID_HEADER)
           sampled = getter.get(carrier, SAMPLED_HEADER)
@@ -96,6 +97,20 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
   SpanContext = OpenTelemetry::Trace::SpanContext
   TraceFlags = OpenTelemetry::Trace::TraceFlags
   OTTrace = OpenTelemetry::Propagator::OTTrace
+  class FakeGetter
+    def get(carrier, key)
+      case key
+      when OTTrace::TRACE_ID_HEADER, OTTrace::SPAN_ID_HEADER
+        carrier[key].reverse
+      when OTTrace::SAMPLED_HEADER
+        carrier[key] != 'true'
+      end
+    end
+
+    def keys(carrier)
+      []
+    end
+  end
 
   let(:baggage_manager) do
     OpenTelemetry.baggage
@@ -264,6 +279,67 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
           _(OpenTelemetry.baggage.value('foo', context: context)).must_be_nil
           _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
         end
+      end
+    end
+
+    describe 'given an alternative getter parameter' do
+      it 'will use the alternative getter instead of the constructor provided one' do
+        parent_context = OpenTelemetry::Context.empty
+        carrier = {
+          OTTrace::TRACE_ID_HEADER => '80f198ee56343ba864fe8b2a57d3eff7',
+          OTTrace::SPAN_ID_HEADER => 'e457b5a2e4d86bd1',
+          OTTrace::SAMPLED_HEADER => 'true'
+        }
+
+        context = extractor.extract(carrier, parent_context, FakeGetter.new)
+        extracted_context = OpenTelemetry::Trace.current_span(context).context
+
+        _(extracted_context.hex_trace_id).must_equal('7ffe3d75a2b8ef468ab34365ee891f08')
+        _(extracted_context.hex_span_id).must_equal('1db68d4e2a5b754e')
+        _(extracted_context.trace_flags).must_equal(TraceFlags::DEFAULT)
+        _(extracted_context).must_be(:remote?)
+      end
+    end
+
+    describe 'given a missing getter parameter' do
+      it 'will use the default getter' do
+        parent_context = OpenTelemetry::Context.empty
+        carrier = {
+          OTTrace::TRACE_ID_HEADER => '80f198ee56343ba864fe8b2a57d3eff7',
+          OTTrace::SPAN_ID_HEADER => 'e457b5a2e4d86bd1',
+          OTTrace::SAMPLED_HEADER => 'true'
+        }
+
+        context = extractor.extract(carrier, parent_context, nil)
+        extracted_context = OpenTelemetry::Trace.current_span(context).context
+
+        _(extracted_context.hex_trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
+        _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
+        _(extracted_context.trace_flags).must_equal(TraceFlags::SAMPLED)
+        _(extracted_context).must_be(:remote?)
+      end
+    end
+
+    describe 'given an alternative default getter' do
+      let(:extractor) do
+        OpenTelemetry::Propagator::OTTrace::TextMapExtractor.new(baggage_manager: baggage_manager, default_getter: FakeGetter.new)
+      end
+
+      it 'will use the alternative getter' do
+        parent_context = OpenTelemetry::Context.empty
+        carrier = {
+          OTTrace::TRACE_ID_HEADER => '80f198ee56343ba864fe8b2a57d3eff7',
+          OTTrace::SPAN_ID_HEADER => 'e457b5a2e4d86bd1',
+          OTTrace::SAMPLED_HEADER => 'true'
+        }
+
+        context = extractor.extract(carrier, parent_context)
+        extracted_context = OpenTelemetry::Trace.current_span(context).context
+
+        _(extracted_context.hex_trace_id).must_equal('7ffe3d75a2b8ef468ab34365ee891f08')
+        _(extracted_context.hex_span_id).must_equal('1db68d4e2a5b754e')
+        _(extracted_context.trace_flags).must_equal(TraceFlags::DEFAULT)
+        _(extracted_context).must_be(:remote?)
       end
     end
   end
