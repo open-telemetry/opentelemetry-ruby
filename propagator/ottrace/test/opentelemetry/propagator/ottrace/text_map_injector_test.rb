@@ -29,12 +29,13 @@ module OpenTelemetry
           @baggage_manager = baggage_manager
         end
 
+        # @param [Object] carrier to update with context.
         # @param [Context] context The active Context.
         # @param [optional Setter] setter If the optional setter is provided, it
         #   will be used to write context into the carrier, otherwise the default
         #   setter will be used.
         # @return [Object] the carrier with context injected
-        def inject(carrier, context, setter=nil)
+        def inject(carrier, context, setter = nil)
           setter ||= default_setter
           span_context = Trace.current_span(context).context
           return carrier unless span_context.valid?
@@ -43,11 +44,11 @@ module OpenTelemetry
           setter.set(carrier, SPAN_ID_HEADER, span_context.hex_span_id)
           setter.set(carrier, SAMPLED_HEADER, span_context.trace_flags.sampled?.to_s)
 
-          baggage_manager.values(context: context).each do |key, value|
-            if VALID_BAGGAGE_HEADER_NAME_CHARS =~ key && INVALID_BAGGAGE_HEADER_VALUE_CHARS !~ value
-              setter.set(carrier, "#{BAGGAGE_HEADER_PREFIX}#{key}", value)
-            end
-          end
+          baggage_manager
+            .values(context: context)
+            .filter { |key, value| valid_baggage_entry?(key, value) }
+            .each { |key, value| setter.set(carrier, "#{BAGGAGE_HEADER_PREFIX}#{key}", value) }
+
           carrier
         end
 
@@ -55,6 +56,10 @@ module OpenTelemetry
 
         attr_reader :default_setter
         attr_reader :baggage_manager
+
+        def valid_baggage_entry?(key, value)
+          VALID_BAGGAGE_HEADER_NAME_CHARS =~ key && INVALID_BAGGAGE_HEADER_VALUE_CHARS !~ value
+        end
       end
     end
   end
