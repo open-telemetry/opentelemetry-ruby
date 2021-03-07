@@ -38,7 +38,7 @@ module OpenTelemetry
           span_context = Trace.current_span(context).context
           return carrier unless span_context.valid?
 
-          setter.set(carrier, TRACE_ID_HEADER, span_context.hex_trace_id[-TRACE_ID_64_BIT_WIDTH, TRACE_ID_64_BIT_WIDTH])
+          setter.set(carrier, TRACE_ID_HEADER, span_context.hex_trace_id[TRACE_ID_64_BIT_WIDTH, TRACE_ID_64_BIT_WIDTH])
           setter.set(carrier, SPAN_ID_HEADER, span_context.hex_span_id)
           setter.set(carrier, SAMPLED_HEADER, span_context.trace_flags.sampled?.to_s)
 
