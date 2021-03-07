@@ -44,7 +44,7 @@ module OpenTelemetry
 
           baggage_manager
             .values(context: context)
-            .filter { |key, value| valid_baggage_entry?(key, value) }
+            .select { |key, value| valid_baggage_entry?(key, value) }
             .each { |key, value| setter.set(carrier, "#{BAGGAGE_HEADER_PREFIX}#{key}", value) }
 
           carrier
