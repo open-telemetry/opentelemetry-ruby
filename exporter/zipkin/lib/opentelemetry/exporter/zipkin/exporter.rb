@@ -25,7 +25,7 @@ module OpenTelemetry
         KEEP_ALIVE_TIMEOUT = 30
         RETRY_COUNT = 5
         WRITE_TIMEOUT_SUPPORTED = Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.6')
-        private_constant(:KEEP_ALIVE_TIMEOUT, :WRITE_TIMEOUT_SUPPORTED)
+        private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT, :WRITE_TIMEOUT_SUPPORTED)
 
         def initialize(endpoint: config_opt('OTEL_EXPORTER_ZIPKIN_ENDPOINT', default: 'http://localhost:9411/api/v2/spans'),
                        headers: config_opt('OTEL_EXPORTER_ZIPKIN_TRACES_HEADERS', 'OTEL_EXPORTER_ZIPKIN_HEADERS'),
