@@ -60,10 +60,11 @@ module OpenTelemetry
           # https://github.com/openzipkin/b3-propagation#why-is-debug-encoded-as-x-b3-flags-1
           # https://github.com/openzipkin/zipkin-api/blob/7692ca7be4dc3be9225db550d60c4d30e6e9ec59/zipkin2-api.yaml#L475
           # TODO: shared key mapping
+
           zipkin_span = {
             name: span_data.name,
-            traceId: int64(span_data.trace_id[8, 8]).to_s,
-            id: int64(span_data.span_id).to_s,
+            traceId: span_data.hex_trace_id,
+            id: span_data.hex_span_id,
             timestamp: start_time,
             duration: duration,
             debug: false
@@ -101,12 +102,12 @@ module OpenTelemetry
         end
 
         def add_conditional_tags(zipkin_span, span_data, tags, service_name)
-          zipkin_span[:tags] = tags unless tags.empty?
-          zipkin_span[:kind] = KIND_MAP[span_data[:kind]] unless span_data[:kind].nil?
-          zipkin_span[:parentId] = int64(span_data.parent_span_id).to_s unless span_data.parent_span_id.nil?
-          zipkin_span[:localEndpoint] = endpoint_from_tags(tags, (span_data.attributes && span_data.attributes[SERVICE_NAME_ATTRIBUTE_KEY]) || service_name)
+          zipkin_span["tags"] = tags unless tags.empty?
+          zipkin_span["kind"] = KIND_MAP[span_data[:kind]] unless span_data[:kind].nil?
+          zipkin_span["parentId"] = span_data.parent_span_id.unpack1('H*') unless span_data.parent_span_id.nil?
+          zipkin_span["localEndpoint"] = endpoint_from_tags(tags, (span_data.attributes && span_data.attributes[SERVICE_NAME_ATTRIBUTE_KEY]) || service_name)
           # remote endpoint logic https://github.com/open-telemetry/opentelemetry-collector/blob/347cfa9ab21d47240128c58c9bafcc0014bc729d/translator/trace/zipkin/traces_to_zipkinv2.go#L284
-          zipkin_span[:remoteEndpoint] = endpoint_from_tags(tags, nil)
+          zipkin_span["remoteEndpoint"] = endpoint_from_tags(tags, nil)
         end
 
         def add_annotations(zipkin_span, span_data)
@@ -138,9 +139,9 @@ module OpenTelemetry
           # https://github.com/open-telemetry/opentelemetry-specification/blob/84b18b23339dcc0b1a9d48f976a1afd287417602/specification/trace/sdk_exporters/zipkin.md#attribute
           return tags if span_data[:attributes].nil?
 
-          tags.merge(span_data[:attributes]) do |_key, _oldval, newval|
-            newval.to_s
-          end
+          tags = tags.merge(span_data[:attributes])
+
+          tags.each_with_object(tags) { |(k,v),m| m[k] = v.to_s }
         end
 
         # mostly based on https://github.com/open-telemetry/opentelemetry-specification/blob/cb16422a61219d4fd99b466a70e47cb8af9e26b1/specification/trace/sdk_exporters/zipkin.md#otlp---zipkin
@@ -180,10 +181,6 @@ module OpenTelemetry
           end
 
           endpoint
-        end
-
-        def int64(byte_string)
-          byte_string.unpack1('q>')
         end
       end
     end

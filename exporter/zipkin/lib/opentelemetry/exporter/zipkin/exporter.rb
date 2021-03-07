@@ -64,7 +64,6 @@ module OpenTelemetry
           return FAILURE if @shutdown
 
           zipkin_spans = encode_spans(span_data)
-
           send_spans(zipkin_spans, timeout: timeout)
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error in Zipkin::Exporter#export')
@@ -91,9 +90,7 @@ module OpenTelemetry
         end
 
         def encode_spans(span_data)
-          span_data.group_by(&:resource).map do |resource, spans|
-            spans.map! { |span| Transformer.to_zipkin_span(span, resource) }
-          end
+          span_data.map! { |span| Transformer.to_zipkin_span(span, resource) }
         end
 
         def around_request
