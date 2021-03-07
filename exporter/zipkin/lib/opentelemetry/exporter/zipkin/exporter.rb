@@ -90,7 +90,7 @@ module OpenTelemetry
         end
 
         def encode_spans(span_data)
-          span_data.map! { |span| Transformer.to_zipkin_span(span, resource) }
+          span_data.map! { |span| Transformer.to_zipkin_span(span, span.resource) }
         end
 
         def around_request
