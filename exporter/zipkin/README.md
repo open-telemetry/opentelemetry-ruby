@@ -70,6 +70,7 @@ The collector exporter can be configured explicitly in code, as shown above, or 
 | `endpoint:` | `OTEL_EXPORTER_ZIPKIN_ENDPOINT`       | `"http://localhost:9411"`  |
 | `headers:`  | `OTEL_EXPORTER_ZIPKIN_TRACES_HEADERS` | `nil`                      |
 | `timeoout:` | `OTEL_EXPORTER_ZIPKIN_TRACES_TIMEOUT` | `10`                       |
+|             | `OTEL_TRACES_EXPORTER`                | `zipkin`                   |
 
 ## How can I get involved?
 
