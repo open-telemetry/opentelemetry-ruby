@@ -8,12 +8,11 @@ Metrics/AbcSize:
 Metrics/BlockLength:
   Exclude:
     - 'test/opentelemetry/propagator/**/*_test.rb'
+    - 'opentelemetry-propagator-ottrace.gemspec'
 Metrics/LineLength:
   Enabled: false
 Metrics/MethodLength:
   Max: 20
-  Exclude:
-    - 'opentelemetry-propagator-ottrace'
 Metrics/ParameterLists:
   Enabled: false
 Naming/FileName:
