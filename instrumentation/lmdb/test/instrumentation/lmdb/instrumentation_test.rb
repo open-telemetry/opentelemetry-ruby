@@ -21,6 +21,8 @@ describe OpenTelemetry::Instrumentation::LMDB do
   end
 
   describe '#install' do
+    after { instrumentation.instance_variable_set(:@installed, false) }
+
     it 'accepts argument' do
       _(instrumentation.install({})).must_equal(true)
     end
