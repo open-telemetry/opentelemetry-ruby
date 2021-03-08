@@ -6,7 +6,6 @@
 
 require 'opentelemetry'
 require 'opentelemetry/common/http'
-require 'opentelemetry/common/test_helpers'
 require 'opentelemetry/common/utilities'
 require 'opentelemetry/common/version'
 
