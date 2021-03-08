@@ -12,8 +12,8 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo', 'bar' => 'baz')
     encoded_span = Transformer.to_zipkin_span(create_span_data, resource)
     _(encoded_span[:name]).must_equal('')
-    _(encoded_span[:localEndpoint]['serviceName']).must_equal('foo')
-    _(encoded_span[:tags]).must_equal('bar' => 'baz', 'otel.status_code' => 'UNSET')
+    _(encoded_span['localEndpoint']['serviceName']).must_equal('foo')
+    _(encoded_span['tags']).must_equal('bar' => 'baz', 'otel.status_code' => 'UNSET')
   end
 
   it 'encodes span.status and span.kind' do
@@ -22,10 +22,10 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
 
     encoded_span = Transformer.to_zipkin_span(span_data, resource)
 
-    _(encoded_span[:tags].size).must_equal(3)
+    _(encoded_span['tags'].size).must_equal(3)
 
-    kind_tag = encoded_span[:kind]
-    error_tag = encoded_span[:tags]['error']
+    kind_tag = encoded_span['kind']
+    error_tag = encoded_span['tags']['error']
 
     _(kind_tag).must_equal('SERVER')
     _(error_tag).must_equal('true')
@@ -57,7 +57,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     _(annotation_two[:timestamp]).must_equal((events[1].timestamp.to_f * 1_000_000).to_s)
     _(annotation_two[:value]).must_equal('event_no_attrib')
 
-    tags = encoded_span[:tags]
+    tags = encoded_span['tags']
     _(tags).must_equal('akey' => 'avalue', 'bar' => 'baz', 'otel.status_code' => 'UNSET')
   end
 
@@ -78,8 +78,8 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     _(annotation_one[:timestamp]).must_equal((events[0].timestamp.to_f * 1_000_000).to_s)
     _(annotation_one[:value]).must_equal({ 'event_with_attribs' => { 'ekey' => '["evalue"]' } }.to_json)
 
-    tags = encoded_span[:tags]
-    _(tags).must_equal('akey' => ['avalue'], 'bar' => 'baz', 'otel.status_code' => 'UNSET')
+    tags = encoded_span['tags']
+    _(tags).must_equal('akey' => ['avalue'].to_s, 'bar' => 'baz', 'otel.status_code' => 'UNSET')
   end
 
   describe 'status' do
@@ -90,7 +90,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
       span_data = create_span_data(status: status)
       encoded_span = Transformer.to_zipkin_span(span_data, resource)
 
-      tags = encoded_span[:tags]
+      tags = encoded_span['tags']
       _(tags).must_equal('otel.status_code' => 'OK', 'bar' => 'baz')
     end
 
@@ -101,7 +101,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
       span_data = create_span_data(status: status)
       encoded_span = Transformer.to_zipkin_span(span_data, resource)
 
-      tags = encoded_span[:tags]
+      tags = encoded_span['tags']
       _(tags).must_equal('error' => error_description, 'otel.status_description' => error_description, 'otel.status_code' => 'ERROR', 'bar' => 'baz')
     end
   end
@@ -113,9 +113,9 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
       span_data = create_span_data(instrumentation_library: lib)
       encoded_span = Transformer.to_zipkin_span(span_data, resource)
 
-      _(encoded_span[:tags].size).must_equal(4)
-      _(encoded_span[:tags]['otel.library.name']).must_equal('mylib')
-      _(encoded_span[:tags]['otel.library.version']).must_equal('0.1.0')
+      _(encoded_span['tags'].size).must_equal(4)
+      _(encoded_span['tags']['otel.library.name']).must_equal('mylib')
+      _(encoded_span['tags']['otel.library.version']).must_equal('0.1.0')
     end
 
     it 'skips nil values' do
@@ -124,8 +124,8 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
       span_data = create_span_data(instrumentation_library: lib)
       encoded_span = Transformer.to_zipkin_span(span_data, resource)
 
-      _(encoded_span[:tags].size).must_equal(3)
-      _(encoded_span[:tags]['otel.library.name']).must_equal('mylib')
+      _(encoded_span['tags'].size).must_equal(3)
+      _(encoded_span['tags']['otel.library.name']).must_equal('mylib')
     end
   end
 end

@@ -39,9 +39,9 @@ module OpenTelemetry
         DEFAULT_SERVICE_NAME = OpenTelemetry::SDK::Resources::Resource.default.attribute_enumerator.find { |k, _| k == SERVICE_NAME_ATTRIBUTE_KEY }&.last || 'unknown_service'
         private_constant(:KIND_MAP, :DEFAULT_SERVICE_NAME, :SERVICE_NAME_ATTRIBUTE_KEY, :ERROR_TAG_KEY, :STATUS_CODE_NAME, :STATUS_CODE_DESCRIPTION, :STATUS_UNSET, :STATUS_ERROR, :STATUS_OK)
 
-        def to_zipkin_span(span_data, resource)
-          start_time = (span_data.start_timestamp.to_f * 1_000_000).to_i
-          duration = (span_data.end_timestamp.to_f * 1_000_000).to_i - start_time
+        def to_zipkin_span(span_d, resource)
+          start_time = (span_d.start_timestamp.to_f * 1_000_000).to_i
+          duration = (span_d.end_timestamp.to_f * 1_000_000).to_i - start_time
           tags = {}
           service_name = DEFAULT_SERVICE_NAME
           resource&.attribute_enumerator&.select do |key, value|
@@ -52,9 +52,9 @@ module OpenTelemetry
             end
           end
 
-          add_il_tags(span_data, tags)
-          add_status_tags(span_data, tags)
-          tags = aggregate_span_tags(span_data, tags)
+          add_il_tags(span_d, tags)
+          add_status_tags(span_d, tags)
+          tags = aggregate_span_tags(span_d, tags)
 
           # TOOO: set debug flag? (is that represented in tracestate?)
           # https://github.com/openzipkin/b3-propagation#why-is-debug-encoded-as-x-b3-flags-1
@@ -62,16 +62,16 @@ module OpenTelemetry
           # TODO: shared key mapping
 
           zipkin_span = {
-            name: span_data.name,
-            traceId: span_data.hex_trace_id,
-            id: span_data.hex_span_id,
+            name: span_d.name,
+            traceId: span_d.hex_trace_id,
+            id: span_d.hex_span_id,
             timestamp: start_time,
             duration: duration,
             debug: false
           }
 
-          add_conditional_tags(zipkin_span, span_data, tags, service_name)
-          add_annotations(zipkin_span, span_data)
+          add_conditional_tags(zipkin_span, span_d, tags, service_name)
+          add_annotations(zipkin_span, span_d)
 
           zipkin_span
         end
@@ -102,12 +102,12 @@ module OpenTelemetry
         end
 
         def add_conditional_tags(zipkin_span, span_data, tags, service_name)
-          zipkin_span["tags"] = tags unless tags.empty?
-          zipkin_span["kind"] = KIND_MAP[span_data[:kind]] unless span_data[:kind].nil?
-          zipkin_span["parentId"] = span_data.parent_span_id.unpack1('H*') unless span_data.parent_span_id.nil?
-          zipkin_span["localEndpoint"] = endpoint_from_tags(tags, (span_data.attributes && span_data.attributes[SERVICE_NAME_ATTRIBUTE_KEY]) || service_name)
+          zipkin_span['tags'] = tags unless tags.empty?
+          zipkin_span['kind'] = KIND_MAP[span_data[:kind]] unless span_data[:kind].nil?
+          zipkin_span['parentId'] = span_data.parent_span_id.unpack1('H*') unless span_data.parent_span_id.nil?
+          zipkin_span['localEndpoint'] = endpoint_from_tags(tags, (span_data.attributes && span_data.attributes[SERVICE_NAME_ATTRIBUTE_KEY]) || service_name)
           # remote endpoint logic https://github.com/open-telemetry/opentelemetry-collector/blob/347cfa9ab21d47240128c58c9bafcc0014bc729d/translator/trace/zipkin/traces_to_zipkinv2.go#L284
-          zipkin_span["remoteEndpoint"] = endpoint_from_tags(tags, nil)
+          zipkin_span['remoteEndpoint'] = endpoint_from_tags(tags, nil)
         end
 
         def add_annotations(zipkin_span, span_data)
@@ -141,7 +141,7 @@ module OpenTelemetry
 
           tags = tags.merge(span_data[:attributes])
 
-          tags.each_with_object(tags) { |(k,v),m| m[k] = v.to_s }
+          tags.each_with_object(tags) { |(k, v), m| m[k] = v.to_s }
         end
 
         # mostly based on https://github.com/open-telemetry/opentelemetry-specification/blob/cb16422a61219d4fd99b466a70e47cb8af9e26b1/specification/trace/sdk_exporters/zipkin.md#otlp---zipkin
