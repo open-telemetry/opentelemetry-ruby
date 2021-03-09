@@ -48,14 +48,10 @@ module OpenTelemetry
         placeholder = "#{operation} BLOB (OMITTED)"
         command = [operation, *args].join(' ').strip
         command = OpenTelemetry::Common::Utilities.utf8_encode(command, binary: true, placeholder: placeholder)
-        truncate(command, CMD_MAX_LEN)
+        OpenTelemetry::Common::Utilities.truncate(command, CMD_MAX_LEN)
       rescue StandardError => e
         OpenTelemetry.logger.debug("Error sanitizing Dalli operation: #{e}")
         placeholder
-      end
-
-      def truncate(string, size)
-        string.size > size ? "#{string[0...size - 3]}..." : string
       end
     end
   end
