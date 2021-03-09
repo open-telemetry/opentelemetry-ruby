@@ -52,7 +52,7 @@ module OpenTelemetry
         private
 
         def to_flags(context, span_context)
-          if span_context.trace_flags == TraceFlags::SAMPLED
+          if span_context.trace_flags == Trace::TraceFlags::SAMPLED
             if Jaeger.debug?(context)
               SAMPLED_FLAG_BIT | DEBUG_FLAG_BIT
             else

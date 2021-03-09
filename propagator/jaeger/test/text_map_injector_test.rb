@@ -8,10 +8,6 @@ require 'test_helper'
 require 'opentelemetry-sdk'
 
 describe OpenTelemetry::Propagator::Jaeger::TextMapInjector do
-  Span = OpenTelemetry::Trace::Span
-  SpanContext = OpenTelemetry::Trace::SpanContext
-  TraceFlags = OpenTelemetry::Trace::TraceFlags
-
   let(:injector) { OpenTelemetry::Propagator::Jaeger::TextMapInjector.new }
   let(:identity_key) { 'uber-trace-id' }
 
@@ -24,7 +20,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapInjector do
       context = create_context(
         trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
         span_id: 'e457b5a2e4d86bd1',
-        trace_flags: TraceFlags::SAMPLED
+        trace_flags: OpenTelemetry::Trace::TraceFlags::SAMPLED
       )
       carrier = {}
       injector.inject(carrier, context)
@@ -40,7 +36,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapInjector do
       context = create_context(
         trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
         span_id: 'e457b5a2e4d86bd1',
-        trace_flags: TraceFlags::DEFAULT
+        trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT
       )
       carrier = {}
       injector.inject(carrier, context)
@@ -56,7 +52,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapInjector do
       context = create_context(
         trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
         span_id: 'e457b5a2e4d86bd1',
-        trace_flags: TraceFlags::SAMPLED,
+        trace_flags: OpenTelemetry::Trace::TraceFlags::SAMPLED,
         jaeger_debug: true
       )
       carrier = {}
@@ -111,7 +107,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapInjector do
       context = create_context(
         trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
         span_id: 'e457b5a2e4d86bd1',
-        trace_flags: TraceFlags::SAMPLED
+        trace_flags: OpenTelemetry::Trace::TraceFlags::SAMPLED
       )
       context = OpenTelemetry.baggage.build_context(context: context) do |baggage|
         baggage.set_value('key-1', 'value1')
@@ -133,7 +129,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapInjector do
       context = create_context(
         trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
         span_id: 'e457b5a2e4d86bd1',
-        trace_flags: TraceFlags::DEFAULT,
+        trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT,
         jaeger_debug: true
       )
       carrier = {}
@@ -166,11 +162,11 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapInjector do
 
   def create_context(trace_id:,
                      span_id:,
-                     trace_flags: TraceFlags::DEFAULT,
+                     trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT,
                      jaeger_debug: false)
     context = OpenTelemetry::Trace.context_with_span(
-      Span.new(
-        span_context: SpanContext.new(
+      OpenTelemetry::Trace::Span.new(
+        span_context: OpenTelemetry::Trace::SpanContext.new(
           trace_id: Array(trace_id).pack('H*'),
           span_id: Array(span_id).pack('H*'),
           trace_flags: trace_flags
