@@ -16,7 +16,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
   let(:span) { exporter.finished_spans.first }
 
   let(:client) do
-    ::Faraday.new('http://example.com') do |builder|
+    ::Faraday.new('http://username:password@example.com') do |builder|
       builder.adapter(:test) do |stub|
         stub.get('/success') { |_| [200, {}, 'OK'] }
         stub.get('/failure') { |_| [500, {}, 'OK'] }
