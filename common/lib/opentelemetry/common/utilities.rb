@@ -59,6 +59,20 @@ module OpenTelemetry
       def untraced
         OpenTelemetry::Trace.with_span(OpenTelemetry::Trace::Span.new) { yield }
       end
+
+      # Returns a URL string with userinfo removed.
+      #
+      # @param [String] url The URL string to cleanse.
+      #
+      # @return [String] the cleansed URL.
+      def cleanse_url(url)
+        cleansed_url = URI.parse(url)
+        cleansed_url.password = nil
+        cleansed_url.user = nil
+        cleansed_url.to_s
+      rescue URI::Error
+        url
+      end
     end
   end
 end
