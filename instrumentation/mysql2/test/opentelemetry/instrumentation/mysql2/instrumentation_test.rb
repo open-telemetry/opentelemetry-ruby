@@ -71,9 +71,8 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
 
       _(span.name).must_equal 'select'
       _(span.attributes['db.system']).must_equal 'mysql'
-      _(span.attributes['db.instance']).must_equal 'mysql'
+      _(span.attributes['db.name']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal 'SELECT 1'
-      _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
       _(span.attributes['net.peer.name']).must_equal host.to_s
       _(span.attributes['net.peer.port']).must_equal port.to_s
     end
@@ -85,9 +84,8 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
 
       _(span.name).must_equal 'select'
       _(span.attributes['db.system']).must_equal 'mysql'
-      _(span.attributes['db.instance']).must_equal 'mysql'
+      _(span.attributes['db.name']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal 'SELECT INVALID'
-      _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
       _(span.attributes['net.peer.name']).must_equal host.to_s
       _(span.attributes['net.peer.port']).must_equal port.to_s
 
@@ -108,9 +106,8 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
 
       _(span.name).must_equal 'explain'
       _(span.attributes['db.system']).must_equal 'mysql'
-      _(span.attributes['db.instance']).must_equal 'mysql'
+      _(span.attributes['db.name']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal explain_sql
-      _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
       _(span.attributes['net.peer.name']).must_equal host.to_s
       _(span.attributes['net.peer.port']).must_equal port.to_s
     end
@@ -122,9 +119,8 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
 
       _(span.name).must_equal 'mysql.mysql'
       _(span.attributes['db.system']).must_equal 'mysql'
-      _(span.attributes['db.instance']).must_equal 'mysql'
+      _(span.attributes['db.name']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal 'DESELECT 1'
-      _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
       _(span.attributes['net.peer.name']).must_equal host.to_s
       _(span.attributes['net.peer.port']).must_equal port.to_s
 
@@ -148,10 +144,9 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
         end.must_raise Mysql2::Error
 
         _(span.attributes['db.system']).must_equal 'mysql'
-        _(span.attributes['db.instance']).must_equal 'mysql'
+        _(span.attributes['db.name']).must_equal 'mysql'
         _(span.name).must_equal 'select'
         _(span.attributes['db.statement']).must_equal obfuscated_sql
-        _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
         _(span.attributes['net.peer.name']).must_equal host.to_s
         _(span.attributes['net.peer.port']).must_equal port.to_s
       end
