@@ -30,13 +30,13 @@ module OpenTelemetry
           return 'AUTH ?' if auth_command?(command_args)
 
           cmd = command_args.map { |x| format_arg(x) }.join(' ')
-          truncate(cmd, CMD_MAX_LEN)
+          OpenTelemetry::Common::Utilities.truncate(cmd, CMD_MAX_LEN)
         end
 
         def format_arg(arg)
           str = arg.is_a?(Symbol) ? arg.to_s.upcase : arg.to_s
           str = OpenTelemetry::Common::Utilities.utf8_encode(str, binary: true)
-          truncate(str, VALUE_MAX_LEN)
+          OpenTelemetry::Common::Utilities.truncate(str, VALUE_MAX_LEN)
         rescue StandardError => e
           OpenTelemetry.logger.debug("non formattable Redis arg #{str}: #{e}")
           PLACEHOLDER
@@ -54,10 +54,6 @@ module OpenTelemetry
           return command_args.first if command_args.is_a?(Array) && command_args.first.is_a?(Array)
 
           command_args
-        end
-
-        def truncate(string, size)
-          string.size > size ? "#{string[0...size - 3]}..." : string
         end
       end
     end

@@ -22,7 +22,7 @@ module OpenTelemetry
         # @param [optional Context] context The context to update with with new
         #   modified baggage. Defaults to +Context.current+
         # @return [Context]
-        def build_context(context: Context.current)
+        def build(context: Context.current)
           builder = Builder.new(baggage_for(context).dup)
           yield builder
           context.set_value(BAGGAGE_KEY, builder.entries)

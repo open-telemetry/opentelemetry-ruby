@@ -32,7 +32,7 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Session do
         assert_raises(HTTPClient::ReceiveTimeoutError) do
           http = HTTPClient.new
           http.receive_timeout = 0.01
-          http.get("http://localhost:#{port}/example")
+          http.get("http://username:password@localhost:#{port}/example")
         end
       end
 
