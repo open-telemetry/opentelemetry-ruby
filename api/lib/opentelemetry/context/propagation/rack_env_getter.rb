@@ -16,7 +16,7 @@ module OpenTelemetry
         # Converts key into a rack-normalized key and reads it from the carrier.
         # Useful for extract operations.
         def get(carrier, key)
-          carrier[to_rack_key(key)]
+          carrier[to_rack_key(key)] || carrier[key]
         end
 
         # Reads all keys from a carrier and converts them from the rack-normalized
@@ -32,6 +32,7 @@ module OpenTelemetry
           ret = 'HTTP_' + key
           ret.tr!('-', '_')
           ret.upcase!
+          ret
         end
 
         def from_rack_key(key)
@@ -39,6 +40,7 @@ module OpenTelemetry
           ret = key[start..-1]
           ret.tr!('_', '-')
           ret.downcase!
+          ret
         end
       end
     end

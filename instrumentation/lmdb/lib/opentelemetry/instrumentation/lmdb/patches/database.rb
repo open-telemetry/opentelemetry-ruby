@@ -19,6 +19,7 @@ module OpenTelemetry
               'db.system' => 'lmdb',
               'db.statement' => formatted_statement('GET', "GET #{key}")
             }
+            attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
             tracer.in_span("GET #{key}", attributes: attributes, kind: :client) do
               super
@@ -30,6 +31,7 @@ module OpenTelemetry
               'db.system' => 'lmdb',
               'db.statement' => formatted_statement('DELETE', "DELETE #{key} #{value}".strip)
             }
+            attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
             tracer.in_span("DELETE #{key}", attributes: attributes, kind: :client) do
               super
@@ -41,6 +43,7 @@ module OpenTelemetry
               'db.system' => 'lmdb',
               'db.statement' => formatted_statement('PUT', "PUT #{key} #{value}")
             }
+            attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
             tracer.in_span("PUT #{key}", attributes: attributes, kind: :client) do
               super
@@ -52,6 +55,7 @@ module OpenTelemetry
               'db.system' => 'lmdb',
               'db.statement' => 'CLEAR'
             }
+            attributes['peer.service'] = config[:peer_service] if config[:peer_service]
 
             tracer.in_span('CLEAR', attributes: attributes, kind: :client) do
               super
@@ -66,6 +70,10 @@ module OpenTelemetry
           rescue StandardError => e
             OpenTelemetry.logger.debug("non formattable LMDB statement #{statement}: #{e}")
             "#{operation} BLOB (OMITTED)"
+          end
+
+          def config
+            LMDB::Instrumentation.instance.config
           end
 
           def tracer

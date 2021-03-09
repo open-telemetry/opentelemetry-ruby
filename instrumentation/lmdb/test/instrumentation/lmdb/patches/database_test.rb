@@ -14,13 +14,13 @@ describe OpenTelemetry::Instrumentation::LMDB::Patches::Database do
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
   let(:last_span) { exporter.finished_spans.last }
-
+  let(:config) { {} }
   let(:db_path) { File.join(File.dirname(__FILE__), '..', 'tmp', 'test') }
   let(:lmdb) { LMDB.new(db_path) }
 
   before do
     exporter.reset
-    instrumentation.install({})
+    instrumentation.install(config)
     FileUtils.rm_rf(db_path)
     FileUtils.mkdir_p(db_path)
   end
@@ -56,6 +56,19 @@ describe OpenTelemetry::Instrumentation::LMDB::Patches::Database do
       _(span.kind).must_equal(:client)
       _(span.attributes['db.system']).must_equal('lmdb')
       _(span.attributes['db.statement'].size).must_equal(500)
+    end
+
+    describe 'when peer_service config is set' do
+      let(:config) { { peer_service: 'otel:lmdb' } }
+
+      it 'adds peer.service attribute' do
+        lmdb.database['foo'] = 'bar'
+        _(span.name).must_equal('PUT foo')
+        _(span.kind).must_equal(:client)
+        _(span.attributes['db.system']).must_equal('lmdb')
+        _(span.attributes['db.statement']).must_equal('PUT foo bar')
+        _(span.attributes['peer.service']).must_equal('otel:lmdb')
+      end
     end
   end
 
