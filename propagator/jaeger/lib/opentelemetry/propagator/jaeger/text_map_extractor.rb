@@ -74,17 +74,16 @@ module OpenTelemetry
 
         def set_baggage(carrier, context, getter)
           baggage_key_prefix = 'uberctx-'
-          getter.keys(carrier).each do |carrier_key|
-            baggage_key = carrier_key.start_with?(baggage_key_prefix) && carrier_key[baggage_key_prefix.length..-1]
-            next unless baggage_key
+          OpenTelemetry.baggage.build(context: context) do |b|
+            getter.keys(carrier).each do |carrier_key|
+              baggage_key = carrier_key.start_with?(baggage_key_prefix) && carrier_key[baggage_key_prefix.length..-1]
+              next unless baggage_key
 
-            raw_value = getter.get(carrier, carrier_key)
-            value = CGI.unescape(raw_value)
-            context = OpenTelemetry.baggage.set_value(
-              baggage_key, value, context: context
-            )
+              raw_value = getter.get(carrier, carrier_key)
+              value = CGI.unescape(raw_value)
+              b.set_value(baggage_key, value)
+            end
           end
-          context
         end
 
         def to_trace_flags(sampling_flags)
