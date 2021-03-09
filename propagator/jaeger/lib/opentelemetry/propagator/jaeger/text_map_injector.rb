@@ -27,14 +27,11 @@ module OpenTelemetry
         # Set the span context on the supplied carrier.
         #
         # @param [Context] context The active Context.
-        # @param [optional Callable] setter An optional callable that takes a
-        #   carrier and a key and a value and assigns the key-value pair in the
-        #   carrier. If omitted the default setter will be used which expects
-        #   the carrier to respond to [] and []=.
-        # @yield [Carrier, String, String] if an optional setter is provided,
-        #   inject will yield carrier, header key, header value to the setter.
+        # @param [optional Setter] setter If the optional setter is provided, it
+        #   will be used to write context into the carrier, otherwise the default
+        #   setter will be used.
         # @return [Object] the carrier with context injected
-        def inject(carrier, context, &setter)
+        def inject(carrier, context, setter = nil)
           span_context = Trace.current_span(context).context
           return unless span_context.valid?
 

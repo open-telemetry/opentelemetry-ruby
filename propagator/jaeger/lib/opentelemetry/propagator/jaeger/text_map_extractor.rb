@@ -40,12 +40,9 @@ module OpenTelemetry
         # @param [Carrier] carrier The carrier to get the header from.
         # @param [Context] context The context to be updated with extracted
         #   context
-        # @param [optional Callable] getter An optional callable that takes a
-        #   carrier and a key and returns the value associated with the key. If
-        #   omitted the default getter will be used which expects the carrier to
-        #   respond to [] and []=.
-        # @yield [Carrier, String] if an optional getter is provided, extract
-        #   will yield the carrier and the header key to the getter.
+        # @param [optional Getter] getter If the optional getter is provided, it
+        #   will be used to read the header from the carrier, otherwise the default
+        #   getter will be used.
         # @return [Context] Updated context with active span derived from the
         #   header, or the original context if parsing fails.
         def extract(carrier, context, getter = nil)
