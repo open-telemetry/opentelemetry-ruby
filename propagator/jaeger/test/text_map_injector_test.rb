@@ -70,7 +70,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapInjector do
         trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
         span_id: 'e457b5a2e4d86bd1'
       )
-      context = OpenTelemetry.baggage.build_context(context: context) do |baggage|
+      context = OpenTelemetry.baggage.build(context: context) do |baggage|
         baggage.set_value('key1', 'value1')
         baggage.set_value('key2', 'value2')
       end
@@ -85,7 +85,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapInjector do
         trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
         span_id: 'e457b5a2e4d86bd1'
       )
-      context = OpenTelemetry.baggage.build_context(context: context) do |baggage|
+      context = OpenTelemetry.baggage.build(context: context) do |baggage|
         baggage.set_value('key1', 'value 1 / blah')
       end
       carrier = {}
@@ -109,7 +109,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapInjector do
         span_id: 'e457b5a2e4d86bd1',
         trace_flags: OpenTelemetry::Trace::TraceFlags::SAMPLED
       )
-      context = OpenTelemetry.baggage.build_context(context: context) do |baggage|
+      context = OpenTelemetry.baggage.build(context: context) do |baggage|
         baggage.set_value('key-1', 'value1')
         baggage.set_value('key-2', 'value2')
       end
