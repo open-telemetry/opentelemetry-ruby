@@ -72,7 +72,7 @@ module OpenTelemetry
               HTTP_METHODS_TO_SPAN_NAMES[method],
               attributes: {
                 'http.method' => method,
-                'http.url' => url
+                'http.url' => OpenTelemetry::Common::Utilities.cleanse_url(url)
               },
               kind: :client
             )

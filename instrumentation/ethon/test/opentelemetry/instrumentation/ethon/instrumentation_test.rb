@@ -43,7 +43,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
     end
 
     describe 'easy' do
-      let(:easy) { ::Ethon::Easy.new(url: 'http://example.com/test') }
+      let(:easy) { ::Ethon::Easy.new(url: 'http://username:password@example.com/test') }
 
       describe '#http_request' do
         it 'preserves HTTP request method on easy instance' do
