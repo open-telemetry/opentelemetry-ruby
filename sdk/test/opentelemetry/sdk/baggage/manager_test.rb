@@ -38,7 +38,7 @@ describe OpenTelemetry::SDK::Baggage::Manager do
         end
 
         it 'returns all entries' do
-          ctx = manager.build_context do |baggage|
+          ctx = manager.build do |baggage|
             baggage.set_value('k1', 'v1')
             baggage.set_value('k2', 'v2')
           end
@@ -115,13 +115,13 @@ describe OpenTelemetry::SDK::Baggage::Manager do
     end
   end
 
-  describe '.build_context' do
+  describe '.build' do
     let(:initial_context) { manager.set_value('k1', 'v1') }
 
     describe 'explicit context' do
       it 'sets entries' do
         ctx = initial_context
-        ctx = manager.build_context(context: ctx) do |baggage|
+        ctx = manager.build(context: ctx) do |baggage|
           baggage.set_value('k2', 'v2')
           baggage.set_value('k3', 'v3')
         end
@@ -132,7 +132,7 @@ describe OpenTelemetry::SDK::Baggage::Manager do
 
       it 'removes entries' do
         ctx = initial_context
-        ctx = manager.build_context(context: ctx) do |baggage|
+        ctx = manager.build(context: ctx) do |baggage|
           baggage.remove_value('k1')
           baggage.set_value('k2', 'v2')
         end
@@ -142,7 +142,7 @@ describe OpenTelemetry::SDK::Baggage::Manager do
 
       it 'clears entries' do
         ctx = initial_context
-        ctx = manager.build_context(context: ctx) do |baggage|
+        ctx = manager.build(context: ctx) do |baggage|
           baggage.clear
           baggage.set_value('k2', 'v2')
         end
@@ -154,7 +154,7 @@ describe OpenTelemetry::SDK::Baggage::Manager do
     describe 'implicit context' do
       it 'sets entries' do
         Context.with_current(initial_context) do
-          ctx = manager.build_context do |baggage|
+          ctx = manager.build do |baggage|
             baggage.set_value('k2', 'v2')
             baggage.set_value('k3', 'v3')
           end
@@ -170,7 +170,7 @@ describe OpenTelemetry::SDK::Baggage::Manager do
         Context.with_current(initial_context) do
           _(manager.value('k1')).must_equal('v1')
 
-          ctx = manager.build_context do |baggage|
+          ctx = manager.build do |baggage|
             baggage.remove_value('k1')
             baggage.set_value('k2', 'v2')
           end
@@ -186,7 +186,7 @@ describe OpenTelemetry::SDK::Baggage::Manager do
         Context.with_current(initial_context) do
           _(manager.value('k1')).must_equal('v1')
 
-          ctx = manager.build_context do |baggage|
+          ctx = manager.build do |baggage|
             baggage.clear
             baggage.set_value('k2', 'v2')
           end
