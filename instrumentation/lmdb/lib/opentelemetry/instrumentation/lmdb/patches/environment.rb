@@ -13,12 +13,19 @@ module OpenTelemetry
         # Module to prepend to LMDB::Environment for instrumentation
         module Environment
           def transaction(*args)
-            tracer.in_span('TRANSACTION', attributes: { 'db.system' => 'lmdb' }) do |_span|
+            attributes = { 'db.system' => 'lmdb' }
+            attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+
+            tracer.in_span('TRANSACTION', attributes: attributes) do
               super
             end
           end
 
           private
+
+          def config
+            LMDB::Instrumentation.instance.config
+          end
 
           def tracer
             LMDB::Instrumentation.instance.tracer
