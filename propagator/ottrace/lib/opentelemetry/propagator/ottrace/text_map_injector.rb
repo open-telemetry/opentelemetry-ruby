@@ -24,16 +24,9 @@ module OpenTelemetry
         # @param [optional Setter] default_setter The default setter used to
         #   write context into a carrier during inject. Defaults to a
         #   {OpenTelemetry::Context:Propagation::TextMapSetter} instance.
-        # @param [optional BaggageManager] baggage_manager Provides access to
-        #   baggage values to write into the carrier during inject.
-        #   write context into a carrier during inject
         # @return [TextMapInjector]
-        def initialize(
-          baggage_manager: OpenTelemetry.baggage,
-          default_setter: Context::Propagation.text_map_setter
-        )
+        def initialize(default_setter: Context::Propagation.text_map_setter)
           @default_setter = default_setter
-          @baggage_manager = baggage_manager
         end
 
         # @param [Object] carrier to update with context.
@@ -55,7 +48,6 @@ module OpenTelemetry
         private
 
         attr_reader :default_setter
-        attr_reader :baggage_manager
 
         def inject_span_context(span_context:, carrier:, setter:)
           setter.set(carrier, TRACE_ID_HEADER, span_context.hex_trace_id[TRACE_ID_64_BIT_WIDTH, TRACE_ID_64_BIT_WIDTH])
@@ -64,14 +56,17 @@ module OpenTelemetry
         end
 
         def inject_baggage(context:, carrier:, setter:)
-          baggage_manager
-            .values(context: context)
-            .select { |key, value| valid_baggage_entry?(key, value) }
-            .each { |key, value| setter.set(carrier, "#{BAGGAGE_HEADER_PREFIX}#{key}", value) }
+          baggage.values(context: context)
+                 .select { |key, value| valid_baggage_entry?(key, value) }
+                 .each { |key, value| setter.set(carrier, "#{BAGGAGE_HEADER_PREFIX}#{key}", value) }
         end
 
         def valid_baggage_entry?(key, value)
           VALID_BAGGAGE_HEADER_NAME_CHARS =~ key && INVALID_BAGGAGE_HEADER_VALUE_CHARS !~ value
+        end
+
+        def baggage
+          OpenTelemetry.baggage
         end
       end
     end

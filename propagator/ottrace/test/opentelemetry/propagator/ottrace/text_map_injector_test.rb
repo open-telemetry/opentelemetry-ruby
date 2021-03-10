@@ -47,12 +47,12 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
     )
   end
 
-  let(:baggage_manager) do
+  let(:baggage) do
     OpenTelemetry.baggage
   end
 
   let(:injector) do
-    OpenTelemetry::Propagator::OTTrace::TextMapInjector.new(baggage_manager: baggage_manager)
+    OpenTelemetry::Propagator::OTTrace::TextMapInjector.new
   end
 
   describe '#inject' do
@@ -130,7 +130,7 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
 
       describe 'given valid baggage items' do
         it 'injects baggage items' do
-          context_with_baggage = baggage_manager.build(context: context) do |builder|
+          context_with_baggage = baggage.build(context: context) do |builder|
             builder.set_value('foo', 'bar')
             builder.set_value('bar', 'baz')
           end
@@ -145,7 +145,7 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
 
       describe 'given invalid baggage keys' do
         it 'omits entries' do
-          context_with_baggage = baggage_manager.build(context: context) do |builder|
+          context_with_baggage = baggage.build(context: context) do |builder|
             builder.set_value('fθθ', 'bar')
             builder.set_value('bar', 'baz')
           end
@@ -160,7 +160,7 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
 
       describe 'given invalid baggage values' do
         it 'omits entries' do
-          context_with_baggage = baggage_manager.build(context: context) do |builder|
+          context_with_baggage = baggage.build(context: context) do |builder|
             builder.set_value('foo', 'bαr')
             builder.set_value('bar', 'baz')
           end
@@ -201,7 +201,7 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
 
     describe 'given an alternative default setter' do
       let(:injector) do
-        OpenTelemetry::Propagator::OTTrace::TextMapInjector.new(baggage_manager: baggage_manager, default_setter: FakeSetter.new)
+        OpenTelemetry::Propagator::OTTrace::TextMapInjector.new(default_setter: FakeSetter.new)
       end
 
       it 'will use the alternative setter' do
