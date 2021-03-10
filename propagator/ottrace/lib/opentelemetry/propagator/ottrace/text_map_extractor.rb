@@ -46,9 +46,9 @@ module OpenTelemetry
 
           return context unless trace_id && span_id
 
-          trace_id = trace_id.length == 16 ? "#{PADDING}#{trace_id}" : trace_id
+          trace_id = optionally_pad_trace_id(trace_id)
 
-          return context if VALID_TRACE_ID_REGEX !~ trace_id || VALID_SPAN_ID_REGEX !~ span_id
+          return context if valid?(trace_id: trace_id, span_id: span_id)
 
           span_context = Trace::SpanContext.new(
             trace_id: Array(trace_id).pack('H*'),
@@ -65,6 +65,18 @@ module OpenTelemetry
 
         attr_reader :default_getter
         attr_reader :baggage_manager
+
+        def valid?(trace_id:, span_id:)
+          VALID_TRACE_ID_REGEX !~ trace_id || VALID_SPAN_ID_REGEX !~ span_id
+        end
+
+        def optionally_pad_trace_id(trace_id)
+          if trace_id.length == 16
+            "#{PADDING}#{trace_id}"
+          else
+            trace_id
+          end
+        end
 
         def set_baggage(carrier:, context:, getter:)
           baggage_manager.build(context: context) do |builder|
