@@ -63,9 +63,9 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
 
       it 'skips injecting context' do
         carrier = {}
-        updated_carrier = injector.inject(carrier, context)
-        _(updated_carrier).must_be_same_as(carrier)
-        _(updated_carrier).must_be_empty
+        injector.inject(carrier, context)
+
+        _(carrier).must_be_empty
       end
     end
 
@@ -76,20 +76,20 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
 
       it 'skips injecting context' do
         carrier = {}
-        updated_carrier = injector.inject(carrier, context)
-        _(updated_carrier).must_be_same_as(carrier)
-        _(updated_carrier).must_be_empty
+        injector.inject(carrier, context)
+
+        _(carrier).must_be_empty
       end
     end
 
     describe 'given a minimal context' do
       it 'injects OpenTracing headers' do
         carrier = {}
-        updated_carrier = injector.inject(carrier, context)
-        _(updated_carrier).must_be_same_as(carrier)
-        _(updated_carrier.fetch(OTTrace::TRACE_ID_HEADER)).must_equal(truncated_trace_id)
-        _(updated_carrier.fetch(OTTrace::SPAN_ID_HEADER)).must_equal(span_id)
-        _(updated_carrier.fetch(OTTrace::SAMPLED_HEADER)).must_equal('false')
+        injector.inject(carrier, context)
+
+        _(carrier.fetch(OTTrace::TRACE_ID_HEADER)).must_equal(truncated_trace_id)
+        _(carrier.fetch(OTTrace::SPAN_ID_HEADER)).must_equal(span_id)
+        _(carrier.fetch(OTTrace::SAMPLED_HEADER)).must_equal('false')
       end
     end
 
@@ -100,11 +100,11 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
 
       it 'injects OpenTracing headers' do
         carrier = {}
-        updated_carrier = injector.inject(carrier, context)
-        _(updated_carrier).must_be_same_as(carrier)
-        _(updated_carrier.fetch(OTTrace::TRACE_ID_HEADER)).must_equal(truncated_trace_id)
-        _(updated_carrier.fetch(OTTrace::SPAN_ID_HEADER)).must_equal(span_id)
-        _(updated_carrier.fetch(OTTrace::SAMPLED_HEADER)).must_equal('true')
+        injector.inject(carrier, context)
+
+        _(carrier.fetch(OTTrace::TRACE_ID_HEADER)).must_equal(truncated_trace_id)
+        _(carrier.fetch(OTTrace::SPAN_ID_HEADER)).must_equal(span_id)
+        _(carrier.fetch(OTTrace::SAMPLED_HEADER)).must_equal('true')
       end
     end
 
@@ -115,11 +115,11 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
 
       it 'injects truncates the trace id header' do
         carrier = {}
-        updated_carrier = injector.inject(carrier, context)
-        _(updated_carrier).must_be_same_as(carrier)
-        _(updated_carrier.fetch(OTTrace::TRACE_ID_HEADER)).must_equal('64fe8b2a57d3eff7')
-        _(updated_carrier.fetch(OTTrace::SPAN_ID_HEADER)).must_equal(span_id)
-        _(updated_carrier.fetch(OTTrace::SAMPLED_HEADER)).must_equal('false')
+        injector.inject(carrier, context)
+
+        _(carrier.fetch(OTTrace::TRACE_ID_HEADER)).must_equal('64fe8b2a57d3eff7')
+        _(carrier.fetch(OTTrace::SPAN_ID_HEADER)).must_equal(span_id)
+        _(carrier.fetch(OTTrace::SAMPLED_HEADER)).must_equal('false')
       end
     end
 
@@ -136,10 +136,10 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
           end
 
           carrier = {}
-          updated_carrier = injector.inject(carrier, context_with_baggage)
-          _(updated_carrier).must_be_same_as(carrier)
-          _(updated_carrier.fetch('ot-baggage-foo')).must_equal('bar')
-          _(updated_carrier.fetch('ot-baggage-bar')).must_equal('baz')
+          injector.inject(carrier, context_with_baggage)
+
+          _(carrier.fetch('ot-baggage-foo')).must_equal('bar')
+          _(carrier.fetch('ot-baggage-bar')).must_equal('baz')
         end
       end
 
@@ -151,10 +151,10 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
           end
 
           carrier = {}
-          updated_carrier = injector.inject(carrier, context_with_baggage)
-          _(updated_carrier).must_be_same_as(carrier)
-          _(updated_carrier.keys).wont_include('ot-baggage-f00')
-          _(updated_carrier.fetch('ot-baggage-bar')).must_equal('baz')
+          injector.inject(carrier, context_with_baggage)
+
+          _(carrier.keys).wont_include('ot-baggage-f00')
+          _(carrier.fetch('ot-baggage-bar')).must_equal('baz')
         end
       end
 
@@ -166,10 +166,10 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
           end
 
           carrier = {}
-          updated_carrier = injector.inject(carrier, context_with_baggage)
-          _(updated_carrier).must_be_same_as(carrier)
-          _(updated_carrier.keys).wont_include('ot-baggage-foo')
-          _(updated_carrier.fetch('ot-baggage-bar')).must_equal('baz')
+          injector.inject(carrier, context_with_baggage)
+
+          _(carrier.keys).wont_include('ot-baggage-foo')
+          _(carrier.fetch('ot-baggage-bar')).must_equal('baz')
         end
       end
     end
@@ -179,11 +179,11 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
         carrier = {}
 
         alternate_setter = FakeSetter.new
-        updated_carrier = injector.inject(carrier, context, alternate_setter)
-        _(updated_carrier).must_be_same_as(carrier)
-        _(updated_carrier.fetch(OTTrace::TRACE_ID_HEADER)).must_equal('ot-tracer-traceid = 64fe8b2a57d3eff7')
-        _(updated_carrier.fetch(OTTrace::SPAN_ID_HEADER)).must_equal('ot-tracer-spanid = e457b5a2e4d86bd1')
-        _(updated_carrier.fetch(OTTrace::SAMPLED_HEADER)).must_equal('ot-tracer-sampled = false')
+        injector.inject(carrier, context, alternate_setter)
+
+        _(carrier.fetch(OTTrace::TRACE_ID_HEADER)).must_equal('ot-tracer-traceid = 64fe8b2a57d3eff7')
+        _(carrier.fetch(OTTrace::SPAN_ID_HEADER)).must_equal('ot-tracer-spanid = e457b5a2e4d86bd1')
+        _(carrier.fetch(OTTrace::SAMPLED_HEADER)).must_equal('ot-tracer-sampled = false')
       end
     end
 
@@ -191,11 +191,11 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
       it 'uses the default setter' do
         carrier = {}
 
-        updated_carrier = injector.inject(carrier, context, nil)
-        _(updated_carrier).must_be_same_as(carrier)
-        _(updated_carrier.fetch(OTTrace::TRACE_ID_HEADER)).must_equal(truncated_trace_id)
-        _(updated_carrier.fetch(OTTrace::SPAN_ID_HEADER)).must_equal(span_id)
-        _(updated_carrier.fetch(OTTrace::SAMPLED_HEADER)).must_equal('false')
+        injector.inject(carrier, context, nil)
+
+        _(carrier.fetch(OTTrace::TRACE_ID_HEADER)).must_equal(truncated_trace_id)
+        _(carrier.fetch(OTTrace::SPAN_ID_HEADER)).must_equal(span_id)
+        _(carrier.fetch(OTTrace::SAMPLED_HEADER)).must_equal('false')
       end
     end
 
@@ -207,11 +207,11 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
       it 'will use the alternative setter' do
         carrier = {}
 
-        updated_carrier = injector.inject(carrier, context)
-        _(updated_carrier).must_be_same_as(carrier)
-        _(updated_carrier.fetch(OTTrace::TRACE_ID_HEADER)).must_equal('ot-tracer-traceid = 64fe8b2a57d3eff7')
-        _(updated_carrier.fetch(OTTrace::SPAN_ID_HEADER)).must_equal('ot-tracer-spanid = e457b5a2e4d86bd1')
-        _(updated_carrier.fetch(OTTrace::SAMPLED_HEADER)).must_equal('ot-tracer-sampled = false')
+        injector.inject(carrier, context)
+
+        _(carrier.fetch(OTTrace::TRACE_ID_HEADER)).must_equal('ot-tracer-traceid = 64fe8b2a57d3eff7')
+        _(carrier.fetch(OTTrace::SPAN_ID_HEADER)).must_equal('ot-tracer-spanid = e457b5a2e4d86bd1')
+        _(carrier.fetch(OTTrace::SAMPLED_HEADER)).must_equal('ot-tracer-sampled = false')
       end
     end
   end

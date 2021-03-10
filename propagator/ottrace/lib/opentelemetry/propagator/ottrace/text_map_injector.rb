@@ -41,16 +41,15 @@ module OpenTelemetry
         # @param [optional Setter] setter If the optional setter is provided, it
         #   will be used to write context into the carrier, otherwise the default
         #   setter will be used.
-        # @return [Object] the carrier with context injected
         def inject(carrier, context, setter = nil)
           setter ||= default_setter
           span_context = Trace.current_span(context).context
-          return carrier unless span_context.valid?
+          return unless span_context.valid?
 
           inject_span_context(span_context: span_context, carrier: carrier, setter: setter)
           inject_baggage(context: context, carrier: carrier, setter: setter)
 
-          carrier
+          nil
         end
 
         private
