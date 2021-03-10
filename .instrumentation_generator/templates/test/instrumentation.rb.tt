@@ -22,7 +22,8 @@ describe OpenTelemetry::Instrumentation::<%= pascal_cased_instrumentation_name %
 
   describe '#install' do
     it 'accepts argument' do
-      instrumentation.install({})
+      _(instrumentation.install({})).must_equal(true)
+      instrumentation.instance_variable_set(:@installed, false)
     end
   end
 end
