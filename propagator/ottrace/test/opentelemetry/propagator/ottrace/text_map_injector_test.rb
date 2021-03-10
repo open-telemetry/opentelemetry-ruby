@@ -130,7 +130,7 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
 
       describe 'given valid baggage items' do
         it 'injects baggage items' do
-          context_with_baggage = baggage_manager.build_context(context: context) do |builder|
+          context_with_baggage = baggage_manager.build(context: context) do |builder|
             builder.set_value('foo', 'bar')
             builder.set_value('bar', 'baz')
           end
@@ -145,7 +145,7 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
 
       describe 'given invalid baggage keys' do
         it 'omits entries' do
-          context_with_baggage = baggage_manager.build_context(context: context) do |builder|
+          context_with_baggage = baggage_manager.build(context: context) do |builder|
             builder.set_value('fθθ', 'bar')
             builder.set_value('bar', 'baz')
           end
@@ -160,7 +160,7 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
 
       describe 'given invalid baggage values' do
         it 'omits entries' do
-          context_with_baggage = baggage_manager.build_context(context: context) do |builder|
+          context_with_baggage = baggage_manager.build(context: context) do |builder|
             builder.set_value('foo', 'bαr')
             builder.set_value('bar', 'baz')
           end
