@@ -6,11 +6,6 @@
 
 require 'test_helper'
 
-# Temp Fix for https://github.com/open-telemetry/opentelemetry-ruby/pull/643
-OpenTelemetry::SDK::Baggage::Manager.class_eval do
-  alias_method :build, :build_context
-end
-
 describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
   Span = OpenTelemetry::Trace::Span
   SpanContext = OpenTelemetry::Trace::SpanContext
