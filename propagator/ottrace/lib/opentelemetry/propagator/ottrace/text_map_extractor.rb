@@ -54,7 +54,7 @@ module OpenTelemetry
           span_context = Trace::SpanContext.new(
             trace_id: Array(trace_id).pack('H*'),
             span_id: Array(span_id).pack('H*'),
-            trace_flags: sampled == 'true' ? TraceFlags::SAMPLED : TraceFlags::DEFAULT,
+            trace_flags: sampled == 'true' ? Trace::TraceFlags::SAMPLED : Trace::TraceFlags::DEFAULT,
             remote: true
           )
 

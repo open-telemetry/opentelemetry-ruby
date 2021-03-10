@@ -125,7 +125,11 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapInjector do
 
     describe 'baggage handling' do
       before do
-        OpenTelemetry::SDK::Configurator.new.configure
+        OpenTelemetry.baggage = OpenTelemetry::SDK::Baggage::Manager.new
+      end
+
+      after do
+        OpenTelemetry.baggage = nil
       end
 
       describe 'given valid baggage items' do
