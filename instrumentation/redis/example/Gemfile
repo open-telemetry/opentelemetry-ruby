@@ -4,5 +4,6 @@ source 'https://rubygems.org'
 
 gem 'opentelemetry-api', path: '../../../api'
 gem 'opentelemetry-instrumentation-redis', path: '../../../instrumentation/redis'
+gem 'opentelemetry-common', path: '../../../common'
 gem 'opentelemetry-sdk', path: '../../../sdk'
 gem 'redis'

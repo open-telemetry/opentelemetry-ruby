@@ -8,5 +8,6 @@ source 'https://rubygems.org'
 
 gem 'opentelemetry-api', path: '../../../api'
 gem 'opentelemetry-instrumentation-sinatra', path: '../../../instrumentation/sinatra'
+gem 'opentelemetry-common', path: '../../../common'
 gem 'opentelemetry-sdk', path: '../../../sdk'
 gem 'sinatra'
