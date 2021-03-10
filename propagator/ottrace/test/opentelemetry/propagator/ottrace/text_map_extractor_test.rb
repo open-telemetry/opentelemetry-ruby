@@ -26,12 +26,12 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
     end
   end
 
-  let(:baggage_manager) do
+  let(:baggage) do
     OpenTelemetry.baggage
   end
 
   let(:extractor) do
-    OpenTelemetry::Propagator::OTTrace::TextMapExtractor.new(baggage_manager: baggage_manager)
+    OpenTelemetry::Propagator::OTTrace::TextMapExtractor.new
   end
 
   describe '#extract' do
@@ -236,7 +236,7 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
 
     describe 'given an alternative default getter' do
       let(:extractor) do
-        OpenTelemetry::Propagator::OTTrace::TextMapExtractor.new(baggage_manager: baggage_manager, default_getter: FakeGetter.new)
+        OpenTelemetry::Propagator::OTTrace::TextMapExtractor.new(default_getter: FakeGetter.new)
       end
 
       it 'will use the alternative getter' do

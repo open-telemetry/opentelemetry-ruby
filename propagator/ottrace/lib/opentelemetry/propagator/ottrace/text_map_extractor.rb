@@ -28,11 +28,7 @@ module OpenTelemetry
         #   headers from a carrier during extract. Defaults to a
         #   {OpenTelemetry::Context:Propagation::TextMapGetter} instance.
         # @return [TextMapExtractor]
-        def initialize(
-          baggage_manager: OpenTelemetry.baggage,
-          default_getter: Context::Propagation.text_map_getter
-        )
-          @baggage_manager = baggage_manager
+        def initialize(default_getter: Context::Propagation.text_map_getter)
           @default_getter = default_getter
         end
 
@@ -69,7 +65,6 @@ module OpenTelemetry
         private
 
         attr_reader :default_getter
-        attr_reader :baggage_manager
 
         def valid?(trace_id:, span_id:)
           !(VALID_TRACE_ID_REGEX !~ trace_id || VALID_SPAN_ID_REGEX !~ span_id)
@@ -84,7 +79,7 @@ module OpenTelemetry
         end
 
         def set_baggage(carrier:, context:, getter:)
-          baggage_manager.build(context: context) do |builder|
+          baggage.build(context: context) do |builder|
             prefix = OTTrace::BAGGAGE_HEADER_PREFIX
             getter.keys(carrier).each do |carrier_key|
               baggage_key = carrier_key.start_with?(prefix) && carrier_key[prefix.length..-1]
@@ -97,6 +92,10 @@ module OpenTelemetry
               builder.set_value(baggage_key, value)
             end
           end
+        end
+
+        def baggage
+          OpenTelemetry.baggage
         end
       end
     end
