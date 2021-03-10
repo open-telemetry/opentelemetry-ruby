@@ -263,6 +263,19 @@ describe OpenTelemetry::SDK::Configurator do
           OpenTelemetry::SDK::Trace::NoopSpanProcessor
         )
       end
+
+      it 'accepts "console" as an environment variable value' do
+        with_env('OTEL_TRACES_EXPORTER' => 'console') do
+          configurator.configure
+        end
+
+        _(OpenTelemetry.tracer_provider.active_span_processor).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor
+        )
+        _(OpenTelemetry.tracer_provider.active_span_processor.instance_variable_get(:@span_exporter)).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter
+        )
+      end
     end
 
     describe 'instrumentation installation' do
