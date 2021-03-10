@@ -40,15 +40,11 @@ module OpenTelemetry
         #   context if parsing fails.
         def extract(carrier, context, getter = nil)
           getter ||= default_getter
-          trace_id = getter.get(carrier, TRACE_ID_HEADER)
+          trace_id = optionally_pad_trace_id(getter.get(carrier, TRACE_ID_HEADER))
           span_id = getter.get(carrier, SPAN_ID_HEADER)
           sampled = getter.get(carrier, SAMPLED_HEADER)
 
-          return context unless trace_id && span_id
-
-          trace_id = optionally_pad_trace_id(trace_id)
-
-          return context if valid?(trace_id: trace_id, span_id: span_id)
+          return context unless valid?(trace_id: trace_id, span_id: span_id)
 
           span_context = Trace::SpanContext.new(
             trace_id: Array(trace_id).pack('H*'),
@@ -67,11 +63,11 @@ module OpenTelemetry
         attr_reader :baggage_manager
 
         def valid?(trace_id:, span_id:)
-          VALID_TRACE_ID_REGEX !~ trace_id || VALID_SPAN_ID_REGEX !~ span_id
+          !(VALID_TRACE_ID_REGEX !~ trace_id || VALID_SPAN_ID_REGEX !~ span_id)
         end
 
         def optionally_pad_trace_id(trace_id)
-          if trace_id.length == 16
+          if trace_id&.length == 16
             "#{PADDING}#{trace_id}"
           else
             trace_id
