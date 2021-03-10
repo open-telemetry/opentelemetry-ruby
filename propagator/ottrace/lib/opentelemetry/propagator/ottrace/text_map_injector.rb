@@ -29,7 +29,7 @@ module OpenTelemetry
         #   write context into a carrier during inject
         # @return [TextMapInjector]
         def initialize(
-          baggage_manager:,
+          baggage_manager: OpenTelemetry.baggage,
           default_setter: Context::Propagation.text_map_setter
         )
           @default_setter = default_setter

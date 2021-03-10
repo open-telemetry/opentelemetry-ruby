@@ -29,7 +29,7 @@ module OpenTelemetry
         #   {OpenTelemetry::Context:Propagation::TextMapGetter} instance.
         # @return [TextMapExtractor]
         def initialize(
-          baggage_manager:,
+          baggage_manager: OpenTelemetry.baggage,
           default_getter: Context::Propagation.text_map_getter
         )
           @baggage_manager = baggage_manager

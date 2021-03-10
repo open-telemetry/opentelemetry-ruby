@@ -31,12 +31,12 @@ module OpenTelemetry
 
       ## Returns an extractor that extracts context from OTTrace carrier
       def text_map_extractor
-        TextMapExtractor.new(baggage_manager: OpenTelemetry.baggage)
+        TextMapExtractor.new
       end
 
       ## Returns an injector that injects context into a carrier
       def text_map_injector
-        TextMapInjector.new(baggage_manager: OpenTelemetry.baggage)
+        TextMapInjector.new
       end
     end
   end
