@@ -38,14 +38,8 @@ module OpenTelemetry
           span_context = Trace.current_span(context).context
           return carrier unless span_context.valid?
 
-          setter.set(carrier, TRACE_ID_HEADER, span_context.hex_trace_id[TRACE_ID_64_BIT_WIDTH, TRACE_ID_64_BIT_WIDTH])
-          setter.set(carrier, SPAN_ID_HEADER, span_context.hex_span_id)
-          setter.set(carrier, SAMPLED_HEADER, span_context.trace_flags.sampled?.to_s)
-
-          baggage_manager
-            .values(context: context)
-            .select { |key, value| valid_baggage_entry?(key, value) }
-            .each { |key, value| setter.set(carrier, "#{BAGGAGE_HEADER_PREFIX}#{key}", value) }
+          inject_span_context(span_context: span_context, carrier: carrier, setter: setter)
+          inject_baggage(context: context, carrier: carrier, setter: setter)
 
           carrier
         end
@@ -54,6 +48,19 @@ module OpenTelemetry
 
         attr_reader :default_setter
         attr_reader :baggage_manager
+
+        def inject_span_context(span_context:, carrier:, setter:)
+          setter.set(carrier, TRACE_ID_HEADER, span_context.hex_trace_id[TRACE_ID_64_BIT_WIDTH, TRACE_ID_64_BIT_WIDTH])
+          setter.set(carrier, SPAN_ID_HEADER, span_context.hex_span_id)
+          setter.set(carrier, SAMPLED_HEADER, span_context.trace_flags.sampled?.to_s)
+        end
+
+        def inject_baggage(context:, carrier:, setter:)
+          baggage_manager
+            .values(context: context)
+            .select { |key, value| valid_baggage_entry?(key, value) }
+            .each { |key, value| setter.set(carrier, "#{BAGGAGE_HEADER_PREFIX}#{key}", value) }
+        end
 
         def valid_baggage_entry?(key, value)
           VALID_BAGGAGE_HEADER_NAME_CHARS =~ key && INVALID_BAGGAGE_HEADER_VALUE_CHARS !~ value
