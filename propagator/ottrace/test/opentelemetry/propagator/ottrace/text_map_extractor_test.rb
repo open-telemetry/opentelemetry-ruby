@@ -30,12 +30,37 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
     OpenTelemetry::Propagator::OTTrace::TextMapExtractor.new
   end
 
+  let(:parent_context) do
+    OpenTelemetry::Context.empty
+  end
+
+  let(:trace_id_header) do
+    '80f198ee56343ba864fe8b2a57d3eff7'
+  end
+
+  let(:span_id_header) do
+    'e457b5a2e4d86bd1'
+  end
+
+  let(:sampled_header) do
+    'true'
+  end
+
+  let(:carrier) do
+    {
+      OpenTelemetry::Propagator::OTTrace::TRACE_ID_HEADER => trace_id_header,
+      OpenTelemetry::Propagator::OTTrace::SPAN_ID_HEADER => span_id_header,
+      OpenTelemetry::Propagator::OTTrace::SAMPLED_HEADER => sampled_header
+    }
+  end
+
   describe '#extract' do
     describe 'given an empty context' do
-      it 'skips context extraction' do
-        parent_context = OpenTelemetry::Context.empty
-        carrier = {}
+      let(:carrier) do
+        {}
+      end
 
+      it 'skips context extraction' do
         context = extractor.extract(carrier, parent_context)
         extracted_context = OpenTelemetry::Trace.current_span(context).context
 
@@ -48,13 +73,6 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
 
     describe 'given a minimal context' do
       it 'extracts parent context' do
-        parent_context = OpenTelemetry::Context.empty
-        carrier = {
-          OpenTelemetry::Propagator::OTTrace::TRACE_ID_HEADER => '80f198ee56343ba864fe8b2a57d3eff7',
-          OpenTelemetry::Propagator::OTTrace::SPAN_ID_HEADER => 'e457b5a2e4d86bd1',
-          OpenTelemetry::Propagator::OTTrace::SAMPLED_HEADER => 'true'
-        }
-
         context = extractor.extract(carrier, parent_context)
         extracted_context = OpenTelemetry::Trace.current_span(context).context
 
@@ -66,14 +84,11 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
     end
 
     describe 'given a context with sampling disabled' do
-      it 'extracts parent context' do
-        parent_context = OpenTelemetry::Context.empty
-        carrier = {
-          OpenTelemetry::Propagator::OTTrace::TRACE_ID_HEADER => '80f198ee56343ba864fe8b2a57d3eff7',
-          OpenTelemetry::Propagator::OTTrace::SPAN_ID_HEADER => 'e457b5a2e4d86bd1',
-          OpenTelemetry::Propagator::OTTrace::SAMPLED_HEADER => 'false'
-        }
+      let(:sampled_header) do
+        'false'
+      end
 
+      it 'extracts parent context' do
         context = extractor.extract(carrier, parent_context)
         extracted_context = OpenTelemetry::Trace.current_span(context).context
 
@@ -85,14 +100,11 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
     end
 
     describe 'given context with a 64 bit/16 HEXDIGIT trace id' do
-      it 'pads the trace id' do
-        parent_context = OpenTelemetry::Context.empty
-        carrier = {
-          OpenTelemetry::Propagator::OTTrace::TRACE_ID_HEADER => '64fe8b2a57d3eff7',
-          OpenTelemetry::Propagator::OTTrace::SPAN_ID_HEADER => 'e457b5a2e4d86bd1',
-          OpenTelemetry::Propagator::OTTrace::SAMPLED_HEADER => 'true'
-        }
+      let(:trace_id_header) do
+        '64fe8b2a57d3eff7'
+      end
 
+      it 'pads the trace id' do
         context = extractor.extract(carrier, parent_context)
         extracted_context = OpenTelemetry::Trace.current_span(context).context
 
@@ -104,14 +116,11 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
     end
 
     describe 'given context with a malformed trace id' do
-      it 'skips content extraction' do
-        parent_context = OpenTelemetry::Context.empty
-        carrier = {
-          OpenTelemetry::Propagator::OTTrace::TRACE_ID_HEADER => 'abc123',
-          OpenTelemetry::Propagator::OTTrace::SPAN_ID_HEADER => 'e457b5a2e4d86bd1',
-          OpenTelemetry::Propagator::OTTrace::SAMPLED_HEADER => 'false'
-        }
+      let(:trace_id_header) do
+        'abc123'
+      end
 
+      it 'skips content extraction' do
         context = extractor.extract(carrier, parent_context)
         extracted_context = OpenTelemetry::Trace.current_span(context).context
 
@@ -120,14 +129,11 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
     end
 
     describe 'given context with a malformed span id' do
-      it 'skips content extraction' do
-        parent_context = OpenTelemetry::Context.empty
-        carrier = {
-          OpenTelemetry::Propagator::OTTrace::TRACE_ID_HEADER => '80f198ee56343ba864fe8b2a57d3eff7',
-          OpenTelemetry::Propagator::OTTrace::SPAN_ID_HEADER => 'abc123',
-          OpenTelemetry::Propagator::OTTrace::SAMPLED_HEADER => 'false'
-        }
+      let(:span_id_header) do
+        'abc123'
+      end
 
+      it 'skips content extraction' do
         context = extractor.extract(carrier, parent_context)
         extracted_context = OpenTelemetry::Trace.current_span(context).context
 
@@ -146,16 +152,12 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
 
       describe 'given valid baggage items' do
         it 'extracts baggage items' do
-          parent_context = OpenTelemetry::Context.empty
-          carrier = {
-            OpenTelemetry::Propagator::OTTrace::TRACE_ID_HEADER => '80f198ee56343ba864fe8b2a57d3eff7',
-            OpenTelemetry::Propagator::OTTrace::SPAN_ID_HEADER => 'e457b5a2e4d86bd1',
-            OpenTelemetry::Propagator::OTTrace::SAMPLED_HEADER => 'true',
+          carrier_with_baggage = carrier.merge(
             "#{OpenTelemetry::Propagator::OTTrace::BAGGAGE_HEADER_PREFIX}foo" => 'bar',
             "#{OpenTelemetry::Propagator::OTTrace::BAGGAGE_HEADER_PREFIX}bar" => 'baz'
-          }
+          )
 
-          context = extractor.extract(carrier, parent_context)
+          context = extractor.extract(carrier_with_baggage, parent_context)
           _(OpenTelemetry.baggage.value('foo', context: context)).must_equal('bar')
           _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
         end
@@ -163,16 +165,12 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
 
       describe 'given invalid baggage keys' do
         it 'omits entries' do
-          parent_context = OpenTelemetry::Context.empty
-          carrier = {
-            OpenTelemetry::Propagator::OTTrace::TRACE_ID_HEADER => '80f198ee56343ba864fe8b2a57d3eff7',
-            OpenTelemetry::Propagator::OTTrace::SPAN_ID_HEADER => 'e457b5a2e4d86bd1',
-            OpenTelemetry::Propagator::OTTrace::SAMPLED_HEADER => 'true',
+          carrier_with_baggage = carrier.merge(
             "#{OpenTelemetry::Propagator::OTTrace::BAGGAGE_HEADER_PREFIX}fθθ" => 'bar',
             "#{OpenTelemetry::Propagator::OTTrace::BAGGAGE_HEADER_PREFIX}bar" => 'baz'
-          }
+          )
 
-          context = extractor.extract(carrier, parent_context)
+          context = extractor.extract(carrier_with_baggage, parent_context)
           _(OpenTelemetry.baggage.value('fθθ', context: context)).must_be_nil
           _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
         end
@@ -180,16 +178,12 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
 
       describe 'given invalid baggage values' do
         it 'omits entries' do
-          parent_context = OpenTelemetry::Context.empty
-          carrier = {
-            OpenTelemetry::Propagator::OTTrace::TRACE_ID_HEADER => '80f198ee56343ba864fe8b2a57d3eff7',
-            OpenTelemetry::Propagator::OTTrace::SPAN_ID_HEADER => 'e457b5a2e4d86bd1',
-            OpenTelemetry::Propagator::OTTrace::SAMPLED_HEADER => 'true',
+          carrier_with_baggage = carrier.merge(
             "#{OpenTelemetry::Propagator::OTTrace::BAGGAGE_HEADER_PREFIX}foo" => 'bαr',
             "#{OpenTelemetry::Propagator::OTTrace::BAGGAGE_HEADER_PREFIX}bar" => 'baz'
-          }
+          )
 
-          context = extractor.extract(carrier, parent_context)
+          context = extractor.extract(carrier_with_baggage, parent_context)
           _(OpenTelemetry.baggage.value('foo', context: context)).must_be_nil
           _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
         end
@@ -198,13 +192,6 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
 
     describe 'given an alternative getter parameter' do
       it 'will use the alternative getter instead of the constructor provided one' do
-        parent_context = OpenTelemetry::Context.empty
-        carrier = {
-          OpenTelemetry::Propagator::OTTrace::TRACE_ID_HEADER => '80f198ee56343ba864fe8b2a57d3eff7',
-          OpenTelemetry::Propagator::OTTrace::SPAN_ID_HEADER => 'e457b5a2e4d86bd1',
-          OpenTelemetry::Propagator::OTTrace::SAMPLED_HEADER => 'true'
-        }
-
         context = extractor.extract(carrier, parent_context, FakeGetter.new)
         extracted_context = OpenTelemetry::Trace.current_span(context).context
 
@@ -217,13 +204,6 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
 
     describe 'given a missing getter parameter' do
       it 'will use the default getter' do
-        parent_context = OpenTelemetry::Context.empty
-        carrier = {
-          OpenTelemetry::Propagator::OTTrace::TRACE_ID_HEADER => '80f198ee56343ba864fe8b2a57d3eff7',
-          OpenTelemetry::Propagator::OTTrace::SPAN_ID_HEADER => 'e457b5a2e4d86bd1',
-          OpenTelemetry::Propagator::OTTrace::SAMPLED_HEADER => 'true'
-        }
-
         context = extractor.extract(carrier, parent_context, nil)
         extracted_context = OpenTelemetry::Trace.current_span(context).context
 
@@ -240,13 +220,6 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
       end
 
       it 'will use the alternative getter' do
-        parent_context = OpenTelemetry::Context.empty
-        carrier = {
-          OpenTelemetry::Propagator::OTTrace::TRACE_ID_HEADER => '80f198ee56343ba864fe8b2a57d3eff7',
-          OpenTelemetry::Propagator::OTTrace::SPAN_ID_HEADER => 'e457b5a2e4d86bd1',
-          OpenTelemetry::Propagator::OTTrace::SAMPLED_HEADER => 'true'
-        }
-
         context = extractor.extract(carrier, parent_context)
         extracted_context = OpenTelemetry::Trace.current_span(context).context
 
