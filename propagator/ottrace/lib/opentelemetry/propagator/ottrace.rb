@@ -7,8 +7,16 @@
 require 'opentelemetry-api'
 require 'opentelemetry/propagator/ottrace/version'
 
+# OpenTelemetry is an open source observability framework, providing a
+# general-purpose API, SDK, and related tools required for the instrumentation
+# of cloud-native software, frameworks, and libraries.
+#
+# The OpenTelemetry module provides global accessors for telemetry objects.
+# See the documentation for the `opentelemetry-api` gem for details.
 module OpenTelemetry
+  # Namespace for OpenTelemetry propagator extension libraries
   module Propagator
+    # Namespace for OpenTelemetry OTTrace propagation
     module OTTrace
       extend self
 
@@ -17,10 +25,8 @@ module OpenTelemetry
       SAMPLED_HEADER = 'ot-tracer-sampled'
       BAGGAGE_HEADER_PREFIX = 'ot-baggage-'
 
-      # TODO: Is this documented in a specification somewhere? Does check need to happen in all injectors?
-      # Taken from JS implementation https://github.com/open-telemetry/opentelemetry-js-contrib/blob/7a87f4105ff432380132d81f56a33e3f5c4e8fb1/propagators/opentelemetry-propagator-ot-trace/src/OTTracePropagator.ts#L53
+      # https://github.com/open-telemetry/opentelemetry-specification/blob/14d123c121b6caa53bffd011292c42a181c9ca26/specification/context/api-propagators.md#textmap-propagator0
       VALID_BAGGAGE_HEADER_NAME_CHARS = /^[\^_`a-zA-Z\-0-9!#$%&'*+.|~]+$/.freeze
-      # https://github.com/open-telemetry/opentelemetry-js-contrib/blob/7a87f4105ff432380132d81f56a33e3f5c4e8fb1/propagators/opentelemetry-propagator-ot-trace/src/OTTracePropagator.ts#L59
       INVALID_BAGGAGE_HEADER_VALUE_CHARS = /[^\t\u0020-\u007E\u0080-\u00FF]/.freeze
 
       ## Returns an extractor that extracts context from OTTrace carrier
