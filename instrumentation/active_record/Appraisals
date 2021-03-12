@@ -1,0 +1,17 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+appraise 'activerecord-6.1' do
+  gem 'activerecord', '~> 6.1.0'
+end
+
+appraise 'activerecord-6.0' do
+  gem 'activerecord', '~> 6.0.0'
+end
+
+appraise 'activerecord-5.2' do
+  gem 'activerecord', '~> 5.2.0'
+end
