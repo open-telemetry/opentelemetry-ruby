@@ -1,29 +1,7 @@
-AllCops:
-  TargetRubyVersion: "2.5.0"
+inherit_from: ../.rubocop-examples.yml
 
-Bundler/OrderedGems:
-  Exclude:
-    - gemfiles/**/*
-Naming/UncommunicativeMethodParamName:
-  Enabled: false
-Lint/UnusedMethodArgument:
-  Enabled: false
-Metrics/AbcSize:
-  Max: 18
-Metrics/LineLength:
-  Enabled: false
-Metrics/MethodLength:
-  Max: 20
-Metrics/ParameterLists:
-  Enabled: false
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-instrumentation-dalli.rb"
-Style/FrozenStringLiteralComment:
-  Exclude:
-    - gemfiles/**/*
-Style/ModuleFunction:
+Naming/UncommunicativeMethodParamName:
   Enabled: false
-Style/StringLiterals:
-  Exclude:
-    - gemfiles/**/*

@@ -1,19 +1,5 @@
-AllCops:
-  TargetRubyVersion: '2.5.0'
+inherit_from: ../.rubocop-examples.yml
 
-Bundler/OrderedGems:
-  Exclude:
-    - gemfiles/**/*
-Lint/UnusedMethodArgument:
-  Enabled: false
-Metrics/AbcSize:
-  Max: 18
-Metrics/LineLength:
-  Enabled: false
-Metrics/MethodLength:
-  Max: 20
-Metrics/ParameterLists:
-  Enabled: false
 Style/AsciiComments:
   Enabled: false
 Naming/AsciiIdentifiers:
@@ -21,11 +7,3 @@ Naming/AsciiIdentifiers:
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-instrumentation-sidekiq.rb"
-Style/FrozenStringLiteralComment:
-  Exclude:
-    - gemfiles/**/*
-Style/ModuleFunction:
-  Enabled: false
-Style/StringLiterals:
-  Exclude:
-    - gemfiles/**/*
