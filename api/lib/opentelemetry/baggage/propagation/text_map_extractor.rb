@@ -38,16 +38,17 @@ module OpenTelemetry
 
           entries = header.gsub(/\s/, '').split(',')
 
-          baggage = entries.each_with_object({}) do |entry, memo|
-            # The ignored variable below holds properties as per the W3C spec.
-            # OTel is not using them currently, but they might be used for
-            # metadata in the future
-            kv, = entry.split(';', 2)
-            k, v = kv.split('=').map!(&CGI.method(:unescape))
-            memo[k] = v
-          end
+          OpenTelemetry.baggage.build(context: context) do |builder|
+            entries.each do |entry|
+              # The ignored variable below holds properties as per the W3C spec.
+              # OTel is not using them currently, but they might be used for
+              # metadata in the future
+              kv, = entry.split(';', 2)
+              k, v = kv.split('=').map!(&CGI.method(:unescape))
 
-          context.set_value(ContextKeys.baggage_key, baggage)
+              builder.set_value(k, v)
+            end
+          end
         rescue StandardError
           context
         end
