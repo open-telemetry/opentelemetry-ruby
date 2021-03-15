@@ -41,7 +41,7 @@ module OpenTelemetry
           ].join(':')
           setter ||= @default_setter
           setter.set(carrier, IDENTITY_KEY, trace_span_identity_value)
-          OpenTelemetry.baggage.values(context: context).each do |key, value|
+          OpenTelemetry.baggage.entries(context: context).each do |key, value|
             baggage_key = 'uberctx-' + key
             encoded_value = CGI.escape(value.value)
             setter.set(carrier, baggage_key, encoded_value)

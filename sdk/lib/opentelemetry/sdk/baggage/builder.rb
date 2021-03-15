@@ -19,14 +19,14 @@ module OpenTelemetry
         #
         # @param [String] key The key to store this value under
         # @param [String] value String value to be stored under key
-        def set_value(key, value, metadata: nil)
+        def set_entry(key, value, metadata: nil)
           @entries[key] = OpenTelemetry::Baggage::Entry.new(value, metadata)
         end
 
         # Removes key from the to-be-created baggage
         #
         # @param [String] key The key to remove
-        def remove_value(key)
+        def remove_entry(key)
           @entries.delete(key)
         end
 

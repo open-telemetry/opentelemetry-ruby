@@ -71,8 +71,8 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapInjector do
         span_id: 'e457b5a2e4d86bd1'
       )
       context = OpenTelemetry.baggage.build(context: context) do |baggage|
-        baggage.set_value('key1', 'value1')
-        baggage.set_value('key2', 'value2')
+        baggage.set_entry('key1', 'value1')
+        baggage.set_entry('key2', 'value2')
       end
       carrier = {}
       injector.inject(carrier, context)
@@ -80,13 +80,13 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapInjector do
       _(carrier['uberctx-key2']).must_equal('value2')
     end
 
-    it 'URL-encodes baggage values before injecting' do
+    it 'URL-encodes baggage.entries before injecting' do
       context = create_context(
         trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
         span_id: 'e457b5a2e4d86bd1'
       )
       context = OpenTelemetry.baggage.build(context: context) do |baggage|
-        baggage.set_value('key1', 'value 1 / blah')
+        baggage.set_entry('key1', 'value 1 / blah')
       end
       carrier = {}
       injector.inject(carrier, context)
@@ -110,8 +110,8 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapInjector do
         trace_flags: OpenTelemetry::Trace::TraceFlags::SAMPLED
       )
       context = OpenTelemetry.baggage.build(context: context) do |baggage|
-        baggage.set_value('key-1', 'value1')
-        baggage.set_value('key-2', 'value2')
+        baggage.set_entry('key-1', 'value1')
+        baggage.set_entry('key-2', 'value2')
       end
       carrier = {}
       rack_injector.inject(carrier, context)

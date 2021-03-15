@@ -9,27 +9,27 @@ module OpenTelemetry
     # No op implementation of Baggage::Manager
     class Manager
       NOOP_BUILDER = Builder.new
-      EMPTY_VALUES = {}.freeze
-      private_constant(:NOOP_BUILDER, :EMPTY_VALUES)
+      EMPTY_ENTRIES = {}.freeze
+      private_constant(:NOOP_BUILDER, :EMPTY_ENTRIES)
 
       def build(context: Context.current)
         yield NOOP_BUILDER
         context
       end
 
-      def set_value(key, value, metadata: nil, context: Context.current)
+      def set_entry(key, value, metadata: nil, context: Context.current)
         context
       end
 
-      def value(key, context: Context.current)
+      def entry(key, context: Context.current)
         nil
       end
 
-      def values(context: Context.current)
-        EMPTY_VALUES
+      def entries(context: Context.current)
+        EMPTY_ENTRIES
       end
 
-      def remove_value(key, context: Context.current)
+      def remove_entry(key, context: Context.current)
         context
       end
 
