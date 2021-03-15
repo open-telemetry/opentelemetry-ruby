@@ -17,10 +17,21 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
     OpenTelemetry::Baggage::Propagation::ContextKeys.baggage_key
   end
 
+  before do
+    @original_baggage_mgr = OpenTelemetry.baggage
+    OpenTelemetry.baggage = OpenTelemetry::Baggage::Manager.new
+  end
+
+  after do
+    OpenTelemetry.baggage = @original_baggage_mgr
+  end
+
   describe '#inject' do
     it 'injects baggage' do
-      context = set_baggage('key1', 'val1')
-      context = set_baggage('key2', 'val2', context: context)
+      context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
+        b.set_entry('key1', 'val1')
+        b.set_entry('key2', 'val2')
+      end
 
       carrier = injector.inject({}, context)
 
@@ -28,8 +39,10 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
     end
 
     it 'injects numeric baggage' do
-      context = set_baggage('key1', 1)
-      context = set_baggage('key2', 3.14, context: context)
+      context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
+        b.set_entry('key1', 1)
+        b.set_entry('key2', 3.14)
+      end
 
       carrier = injector.inject({}, context)
 
@@ -37,8 +50,10 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
     end
 
     it 'injects boolean baggage' do
-      context = set_baggage('key1', true)
-      context = set_baggage('key2', false, context: context)
+      context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
+        b.set_entry('key1', true)
+        b.set_entry('key2', false)
+      end
 
       carrier = injector.inject({}, context)
 
@@ -50,24 +65,14 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
       _(carrier).must_be(:empty?)
     end
 
-    it 'injects boolean baggage' do
-      context = Context.empty.set_value(context_key, {})
-
-      carrier = injector.inject({}, context)
-
-      _(carrier).must_be(:empty?)
-    end
-
     it 'injects properties' do
-      context = set_baggage('key1', 'val1')
-      context = set_baggage('key2', 'val2', metadata: 'prop1=propval1;prop2=propval2', context: context)
+      context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
+        b.set_entry('key1', 'val1')
+        b.set_entry('key2', 'val2', metadata: 'prop1=propval1;prop2=propval2')
+      end
+
       carrier = injector.inject({}, context)
       _(carrier[header_key]).must_equal('key1=val1,key2=val2;prop1=propval1;prop2=propval2')
     end
   end
-end
-
-def set_baggage(key, value, metadata: nil, context: Context.empty)
-  baggage = context[context_key] || {}
-  context.set_value(context_key, baggage.merge(key => OpenTelemetry::Baggage::Entry.new(value, metadata)))
 end

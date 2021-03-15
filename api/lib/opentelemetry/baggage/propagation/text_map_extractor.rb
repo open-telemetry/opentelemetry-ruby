@@ -46,7 +46,7 @@ module OpenTelemetry
               kv, meta = entry.split(';', 2)
               k, v = kv.split('=').map!(&CGI.method(:unescape))
 
-              builder.set_value(k, v, metadata: meta)
+              builder.set_entry(k, v, metadata: meta)
             end
           end
         rescue StandardError
