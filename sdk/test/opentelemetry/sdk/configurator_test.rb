@@ -111,7 +111,7 @@ describe OpenTelemetry::SDK::Configurator do
         configurator.configure
 
         _(OpenTelemetry.baggage).must_be_instance_of(
-          OpenTelemetry::SDK::Baggage::Manager
+          OpenTelemetry::Baggage::Manager
         )
       end
     end
