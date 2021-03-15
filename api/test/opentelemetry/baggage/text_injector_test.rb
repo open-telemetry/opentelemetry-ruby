@@ -57,6 +57,13 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
 
       _(carrier).must_be(:empty?)
     end
+
+    it 'injects properties' do
+      context = set_baggage('key1', 'val1')
+      context = set_baggage('key2', 'val2', metadata: 'prop1=propval1;prop2=propval2', context: context)
+      carrier = injector.inject({}, context)
+      _(carrier[header_key]).must_equal('key1=val1,key2=val2;prop1=propval1;prop2=propval2')
+    end
   end
 end
 
