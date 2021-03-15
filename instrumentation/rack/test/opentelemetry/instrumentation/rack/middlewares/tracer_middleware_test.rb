@@ -116,6 +116,39 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
       end
     end
 
+    describe 'config[:filtered_requests]' do
+      describe 'when a callable is passed in' do
+        let(:filter_example) do
+          ->(env) { env['PATH_INFO'] =~ %r{^\/assets} }
+        end
+        let(:config) { default_config.merge(filtered_requests: filter_example) }
+
+        it 'does not trace requests in which the callable returns true' do
+          Rack::MockRequest.new(rack_builder).get('/assets', env)
+
+          ping_span = finished_spans.find { |s| s.name == '/assets' }
+          _(ping_span).must_be_nil
+
+          root_span = finished_spans.find { |s| s.name == '/' }
+          _(root_span).wont_be_nil
+        end
+      end
+
+      describe 'when nil is passed in' do
+        let(:config) { { filtered_requests: nil } }
+
+        it 'traces everything' do
+          Rack::MockRequest.new(rack_builder).get('/assets', env)
+
+          ping_span = finished_spans.find { |s| s.name == '/assets' }
+          _(ping_span).wont_be_nil
+
+          root_span = finished_spans.find { |s| s.name == '/' }
+          _(root_span).wont_be_nil
+        end
+      end
+    end
+
     describe 'config[:allowed_request_headers]' do
       let(:env) { Hash('HTTP_FOO_BAR' => 'http foo bar value') }
 
