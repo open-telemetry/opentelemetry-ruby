@@ -8,8 +8,20 @@ require 'test_helper'
 
 describe OpenTelemetry::Baggage::Propagation::TextMapExtractor do
   class MockBaggage
+    class MockBuilder
+      attr_reader :entries
+
+      def initialize
+        @entries = {}
+      end
+
+      def set_value(key, value, metadata: nil)
+        @entries[key] = { value: value, metadata: metadata }
+      end
+    end
+
     def builder
-      @builder ||= MiniTest::Mock.new
+      @builder ||= MockBuilder.new
     end
 
     def build(context: _)
@@ -17,12 +29,8 @@ describe OpenTelemetry::Baggage::Propagation::TextMapExtractor do
       OpenTelemetry::Context.empty
     end
 
-    def expect(*args, &blk)
-      builder.expect(*args, &blk)
-    end
-
-    def verify
-      builder.verify
+    def entries
+      builder.entries
     end
   end
 
@@ -44,35 +52,38 @@ describe OpenTelemetry::Baggage::Propagation::TextMapExtractor do
   describe '#extract' do
     describe 'valid headers' do
       it 'extracts key-value pairs' do
-        mock_baggage.expect(:set_value, OpenTelemetry::Context.empty, %w[key1 val1])
-        mock_baggage.expect(:set_value, OpenTelemetry::Context.empty, %w[key2 val2])
         carrier = { header_key => 'key1=val1,key2=val2' }
         extractor.extract(carrier, Context.empty)
-        mock_baggage.verify
+        assert_entry('key1', 'val1')
+        assert_entry('key2', 'val2')
       end
 
       it 'extracts entries with spaces' do
-        mock_baggage.expect(:set_value, OpenTelemetry::Context.empty, %w[key1 val1])
-        mock_baggage.expect(:set_value, OpenTelemetry::Context.empty, %w[key2 val2])
         carrier = { header_key => ' key1  =  val1,  key2=val2 ' }
         extractor.extract(carrier, Context.empty)
-        mock_baggage.verify
+        assert_entry('key1', 'val1')
+        assert_entry('key2', 'val2')
       end
 
-      it 'ignores properties' do
-        mock_baggage.expect(:set_value, OpenTelemetry::Context.empty, %w[key1 val1])
-        mock_baggage.expect(:set_value, OpenTelemetry::Context.empty, %w[key2 val2])
+      it 'preserves properties' do
         carrier = { header_key => 'key1=val1,key2=val2;prop1=propval1;prop2=propval2' }
         extractor.extract(carrier, Context.empty)
-        mock_baggage.verify
+        assert_entry('key1', 'val1')
+        assert_entry('key2', 'val2', 'prop1=propval1;prop2=propval2')
       end
 
       it 'extracts urlencoded entries' do
-        mock_baggage.expect(:set_value, OpenTelemetry::Context.empty, %w[key:1 val1,1])
-        mock_baggage.expect(:set_value, OpenTelemetry::Context.empty, %w[key:2 val2,2])
         carrier = { header_key => 'key%3A1=val1%2C1,key%3A2=val2%2C2' }
         extractor.extract(carrier, Context.empty)
+        assert_entry('key:1', 'val1,1')
+        assert_entry('key:2', 'val2,2')
       end
     end
   end
+end
+
+def assert_entry(key, value, metadata = nil)
+  entry = mock_baggage.entries.fetch(key, {})
+  _(entry[:value]).must_equal(value)
+  _(entry[:metadata]).must_equal(metadata)
 end

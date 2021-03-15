@@ -40,13 +40,13 @@ module OpenTelemetry
 
           OpenTelemetry.baggage.build(context: context) do |builder|
             entries.each do |entry|
-              # The ignored variable below holds properties as per the W3C spec.
-              # OTel is not using them currently, but they might be used for
-              # metadata in the future
-              kv, = entry.split(';', 2)
+              # Note metadata is currently unused in OpenTelemetry, but is part
+              # the W3C spec where it's referred to as properties. We preserve
+              # the properties so that they can be propagated elsewhere.
+              kv, meta = entry.split(';', 2)
               k, v = kv.split('=').map!(&CGI.method(:unescape))
 
-              builder.set_value(k, v)
+              builder.set_value(k, v, metadata: meta)
             end
           end
         rescue StandardError

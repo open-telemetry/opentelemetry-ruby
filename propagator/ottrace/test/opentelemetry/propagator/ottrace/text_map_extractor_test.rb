@@ -158,8 +158,8 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
           )
 
           context = extractor.extract(carrier_with_baggage, parent_context)
-          _(OpenTelemetry.baggage.value('foo', context: context)).must_equal('bar')
-          _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
+          _(OpenTelemetry.baggage.value('foo', context: context).value).must_equal('bar')
+          _(OpenTelemetry.baggage.value('bar', context: context).value).must_equal('baz')
         end
       end
 
@@ -172,7 +172,7 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
 
           context = extractor.extract(carrier_with_baggage, parent_context)
           _(OpenTelemetry.baggage.value('fθθ', context: context)).must_be_nil
-          _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
+          _(OpenTelemetry.baggage.value('bar', context: context).value).must_equal('baz')
         end
       end
 
@@ -185,7 +185,7 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
 
           context = extractor.extract(carrier_with_baggage, parent_context)
           _(OpenTelemetry.baggage.value('foo', context: context)).must_be_nil
-          _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
+          _(OpenTelemetry.baggage.value('bar', context: context).value).must_equal('baz')
         end
       end
     end

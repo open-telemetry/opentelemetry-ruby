@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry/baggage/builder'
+require 'opentelemetry/baggage/entry'
 require 'opentelemetry/baggage/manager'
 require 'opentelemetry/baggage/propagation'
 

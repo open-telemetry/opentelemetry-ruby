@@ -8,7 +8,7 @@ module OpenTelemetry
   module Baggage
     # No op implementation of Baggage::Builder
     class Builder
-      def set_value(key, value); end
+      def set_value(key, value, metadata: nil); end
 
       def remove_value(key); end
 

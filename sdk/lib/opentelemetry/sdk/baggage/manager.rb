@@ -65,9 +65,9 @@ module OpenTelemetry
         # @param [optional Context] context The context to update with new
         #   value. Defaults to +Context.current+
         # @return [Context]
-        def set_value(key, value, context: Context.current)
+        def set_value(key, value, metadata: nil, context: Context.current)
           new_baggage = baggage_for(context).dup
-          new_baggage[key] = value
+          new_baggage[key] = OpenTelemetry::Baggage::Entry.new(value, metadata)
           context.set_value(BAGGAGE_KEY, new_baggage)
         end
 

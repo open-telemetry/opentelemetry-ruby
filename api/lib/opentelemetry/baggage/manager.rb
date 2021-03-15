@@ -17,7 +17,7 @@ module OpenTelemetry
         context
       end
 
-      def set_value(key, value, context: Context.current)
+      def set_value(key, value, metadata: nil, context: Context.current)
         context
       end
 

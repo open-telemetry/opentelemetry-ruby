@@ -57,8 +57,8 @@ module OpenTelemetry
 
         def inject_baggage(context:, carrier:, setter:)
           baggage.values(context: context)
-                 .select { |key, value| valid_baggage_entry?(key, value) }
-                 .each { |key, value| setter.set(carrier, "#{BAGGAGE_HEADER_PREFIX}#{key}", value) }
+                 .select { |key, value| valid_baggage_entry?(key, value.value) }
+                 .each { |key, value| setter.set(carrier, "#{BAGGAGE_HEADER_PREFIX}#{key}", value.value) }
         end
 
         def valid_baggage_entry?(key, value)

@@ -43,7 +43,7 @@ module OpenTelemetry
 
         def encode(baggage)
           baggage.inject(+'') do |memo, (k, v)|
-            memo << CGI.escape(k.to_s) << '=' << CGI.escape(v.to_s) << ','
+            memo << CGI.escape(k.to_s) << '=' << CGI.escape(v.value.to_s) << ','
           end.chop!
         end
       end

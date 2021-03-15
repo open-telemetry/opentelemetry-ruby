@@ -19,8 +19,8 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
 
   describe '#inject' do
     it 'injects baggage' do
-      context = Context.empty.set_value(context_key, 'key1' => 'val1',
-                                                     'key2' => 'val2')
+      context = set_baggage('key1', 'val1')
+      context = set_baggage('key2', 'val2', context: context)
 
       carrier = injector.inject({}, context)
 
@@ -28,8 +28,8 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
     end
 
     it 'injects numeric baggage' do
-      context = Context.empty.set_value(context_key, 'key1' => 1,
-                                                     'key2' => 3.14)
+      context = set_baggage('key1', 1)
+      context = set_baggage('key2', 3.14, context: context)
 
       carrier = injector.inject({}, context)
 
@@ -37,8 +37,8 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
     end
 
     it 'injects boolean baggage' do
-      context = Context.empty.set_value(context_key, 'key1' => true,
-                                                     'key2' => false)
+      context = set_baggage('key1', true)
+      context = set_baggage('key2', false, context: context)
 
       carrier = injector.inject({}, context)
 
@@ -58,4 +58,9 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
       _(carrier).must_be(:empty?)
     end
   end
+end
+
+def set_baggage(key, value, metadata: nil, context: Context.empty)
+  baggage = context[context_key] || {}
+  context.set_value(context_key, baggage.merge(key => OpenTelemetry::Baggage::Entry.new(value, metadata)))
 end
