@@ -74,5 +74,54 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
       carrier = injector.inject({}, context)
       _(carrier[header_key]).must_equal('key1=val1,key2=val2;prop1=propval1;prop2=propval2')
     end
+
+    it 'enforces max of 180 name-value pairs' do
+      context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
+        (0..180).each do |i|
+          b.set_entry("k#{i}", "v#{i}")
+        end
+      end
+
+      carrier = injector.inject({}, context)
+      result = carrier[header_key]
+
+      # expect keys indexed from 0 to 180 to be in baggage, but only 0 to 179 in the result
+      _(OpenTelemetry.baggage.entry('k180', context: context)).wont_be_nil
+      (0...180).each do |i|
+        _(result).must_include("k#{i}")
+      end
+      _(result).wont_include('k180')
+    end
+
+    it 'enforces max entry length of 4096' do
+      context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
+        b.set_entry('key1', 'x' * 4092)
+        b.set_entry('key2', 'val2')
+      end
+
+      carrier = injector.inject({}, context)
+      result = carrier[header_key]
+
+      _(result).wont_include('key1')
+      _(result).must_include('key2')
+    end
+
+    it 'enforces total length of 8192 chars' do
+      # each entry will be 100 chars long including '=' and ','
+      # the last entry will be 99 chars long (it doesn't have a trailing ',')
+      keys = (0..81).map { |i| "k#{i.to_s.rjust(48, '0')}" }
+      values = (0..81).map { |i| "v#{i.to_s.rjust(48, '0')}" }
+
+      context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
+        keys.zip(values).each { |k, v| b.set_entry(k, v) }
+      end
+
+      carrier = injector.inject({}, context)
+      result = carrier[header_key]
+
+      keys.take(81).each { |k| _(result).must_include(k) }
+      _(result).wont_include(keys.last)
+      _(result.size).must_equal(8099)
+    end
   end
 end
