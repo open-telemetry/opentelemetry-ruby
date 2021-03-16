@@ -29,7 +29,7 @@ module OpenTelemetry
         option :retain_middleware_names,  default: false, validate: :boolean
         option :untraced_endpoints,       default: [],    validate: :array
         option :url_quantization,         default: nil,   validate: :callable
-        option :filtered_requests,        default: nil,   validate: :callable
+        option :untraced_requests,        default: nil,   validate: :callable
 
         private
 

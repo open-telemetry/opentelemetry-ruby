@@ -53,7 +53,7 @@ module OpenTelemetry
           end
 
           def call(env) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-            if untraced_request?(env) || filtered_request?(env)
+            if untraced_request?(env)
               OpenTelemetry::Common::Utilities.untraced do
                 return @app.call(env)
               end
@@ -86,12 +86,10 @@ module OpenTelemetry
           private
 
           def untraced_request?(env)
-            @untraced_endpoints.include?(env['PATH_INFO'])
-          end
+            return true if @untraced_endpoints.include?(env['PATH_INFO'])
+            return true if config[:untraced_requests]&.call(env)
 
-          def filtered_request?(env)
-            filter = config[:filtered_requests]
-            filter ? filter.call(env) : false
+            false
           end
 
           # return Context with the frontend span as the current span

@@ -116,12 +116,12 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
       end
     end
 
-    describe 'config[:filtered_requests]' do
+    describe 'config[:untraced_requests]' do
       describe 'when a callable is passed in' do
-        let(:filter_example) do
+        let(:untraced_callable) do
           ->(env) { env['PATH_INFO'] =~ %r{^\/assets} }
         end
-        let(:config) { default_config.merge(filtered_requests: filter_example) }
+        let(:config) { default_config.merge(untraced_requests: untraced_callable) }
 
         it 'does not trace requests in which the callable returns true' do
           Rack::MockRequest.new(rack_builder).get('/assets', env)
@@ -135,7 +135,7 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
       end
 
       describe 'when nil is passed in' do
-        let(:config) { { filtered_requests: nil } }
+        let(:config) { { untraced_requests: nil } }
 
         it 'traces everything' do
           Rack::MockRequest.new(rack_builder).get('/assets', env)
