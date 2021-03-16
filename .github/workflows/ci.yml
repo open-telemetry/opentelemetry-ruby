@@ -96,8 +96,9 @@ jobs:
           TEST_MYSQL_PORT: ${{ job.services.mysql.ports['3306'] }}
           TEST_POSTGRES_PASSWORD: postgres
           TEST_POSTGRES_USER: postgres
+          TEST_POSTGRES_HOST: postgres
           TEST_POSTGRES_PORT: ${{ job.services.postgres.ports['5432'] }}
-          TEST_POSTGRES_DB: "postgres"
+          TEST_POSTGRES_DB: postgres
           TEST_MEMCACHED_HOST: memcached
           TEST_MEMCACHED_PORT: ${{ job.services.memcached.ports['11211'] }}
           TEST_MONGODB_HOST: mongodb
