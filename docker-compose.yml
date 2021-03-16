@@ -74,6 +74,31 @@ services:
       - mysql
     working_dir: /app/instrumentation/mysql2/
 
+  ex-instrumentation-pg:
+    <<: *base
+    environment:
+      - TEST_POSTGRES_PASSWORD=postgres
+      - TEST_POSTGRES_USER=postgres
+      - TEST_POSTGRES_HOST=postgres
+      - TEST_POSTGRES_PORT=5432
+      - TEST_POSTGRES_DB=postgres
+      - OTEL_TRACES_EXPORTER=console
+    depends_on:
+      - postgres
+    working_dir: /app/instrumentation/pg/example
+
+  ex-instrumentation-pg-test:
+    <<: *base
+    environment:
+      - TEST_POSTGRES_PASSWORD=postgres
+      - TEST_POSTGRES_USER=postgres
+      - TEST_POSTGRES_HOST=postgres
+      - TEST_POSTGRES_PORT=5432
+      - TEST_POSTGRES_DB=postgres
+    depends_on:
+      - postgres
+    working_dir: /app/instrumentation/pg/
+
   ex-instrumentation-net-http:
     <<: *base
     working_dir: /app/instrumentation/net_http/example
@@ -134,6 +159,15 @@ services:
       - "3306"
     ports:
       - "3306:3306"
+
+  postgres:
+    image: postgres:13
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
 
   redis:
     image: redis:5.0-alpine
