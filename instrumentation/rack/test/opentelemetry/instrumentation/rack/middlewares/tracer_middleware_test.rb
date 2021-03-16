@@ -208,7 +208,7 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
     describe 'with quantization' do
       let(:quantization_example) do
         # demonstrate simple shortening of URL:
-        ->(url) { url.to_s[0..5] }
+        ->(url, _env) { url.to_s[0..5] }
       end
       let(:config) { default_config.merge(url_quantization: quantization_example) }
 
