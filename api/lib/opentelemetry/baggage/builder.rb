@@ -6,7 +6,7 @@
 
 module OpenTelemetry
   module Baggage
-    # SDK implementation of Baggage::Builder
+    # Operational implementation of Baggage::Builder
     class Builder
       attr_reader :entries
 
@@ -18,6 +18,9 @@ module OpenTelemetry
       #
       # @param [String] key The key to store this value under
       # @param [String] value String value to be stored under key
+      # @param [optional String] metadata Used to retain properties for
+      #   W3C baggage for the purposes of context propagation. This is considered
+      #   private API and is not intended for end users.
       def set_entry(key, value, metadata: nil)
         @entries[key] = OpenTelemetry::Baggage::Entry.new(value, metadata)
       end

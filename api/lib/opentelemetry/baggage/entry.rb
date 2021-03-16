@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  # Contains operational implementations of the Baggage::Manager
+  # OpenTelemetry Baggage Implementation
   module Baggage
     # Read-only representation of a baggage entry
     class Entry
