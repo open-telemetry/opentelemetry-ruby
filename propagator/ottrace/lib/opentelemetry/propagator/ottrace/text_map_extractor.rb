@@ -89,7 +89,7 @@ module OpenTelemetry
               value = getter.get(carrier, carrier_key)
               next unless INVALID_BAGGAGE_HEADER_VALUE_CHARS !~ value
 
-              builder.set_entry(baggage_key, value)
+              builder.set_value(baggage_key, value)
             end
           end
         end

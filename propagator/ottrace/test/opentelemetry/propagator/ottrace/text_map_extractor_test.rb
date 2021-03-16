@@ -158,8 +158,8 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
           )
 
           context = extractor.extract(carrier_with_baggage, parent_context)
-          _(OpenTelemetry.baggage.entry('foo', context: context).value).must_equal('bar')
-          _(OpenTelemetry.baggage.entry('bar', context: context).value).must_equal('baz')
+          _(OpenTelemetry.baggage.value('foo', context: context)).must_equal('bar')
+          _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
         end
       end
 
@@ -171,12 +171,12 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
           )
 
           context = extractor.extract(carrier_with_baggage, parent_context)
-          _(OpenTelemetry.baggage.entry('fθθ', context: context)).must_be_nil
-          _(OpenTelemetry.baggage.entry('bar', context: context).value).must_equal('baz')
+          _(OpenTelemetry.baggage.value('fθθ', context: context)).must_be_nil
+          _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
         end
       end
 
-      describe 'given invalid baggage.entries' do
+      describe 'given invalid baggage values' do
         it 'omits entries' do
           carrier_with_baggage = carrier.merge(
             "#{OpenTelemetry::Propagator::OTTrace::BAGGAGE_HEADER_PREFIX}foo" => 'bαr',
@@ -184,8 +184,8 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
           )
 
           context = extractor.extract(carrier_with_baggage, parent_context)
-          _(OpenTelemetry.baggage.entry('foo', context: context)).must_be_nil
-          _(OpenTelemetry.baggage.entry('bar', context: context).value).must_equal('baz')
+          _(OpenTelemetry.baggage.value('foo', context: context)).must_be_nil
+          _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
         end
       end
     end

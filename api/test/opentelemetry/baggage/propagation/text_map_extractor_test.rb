@@ -26,36 +26,36 @@ describe OpenTelemetry::Baggage::Propagation::TextMapExtractor do
       it 'extracts key-value pairs' do
         carrier = { header_key => 'key1=val1,key2=val2' }
         context = extractor.extract(carrier, Context.empty)
-        assert_entry(context, 'key1', 'val1')
-        assert_entry(context, 'key2', 'val2')
+        assert_value(context, 'key1', 'val1')
+        assert_value(context, 'key2', 'val2')
       end
 
       it 'extracts entries with spaces' do
         carrier = { header_key => ' key1  =  val1,  key2=val2 ' }
         context = extractor.extract(carrier, Context.empty)
-        assert_entry(context, 'key1', 'val1')
-        assert_entry(context, 'key2', 'val2')
+        assert_value(context, 'key1', 'val1')
+        assert_value(context, 'key2', 'val2')
       end
 
       it 'preserves properties' do
         carrier = { header_key => 'key1=val1,key2=val2;prop1=propval1;prop2=propval2' }
         context = extractor.extract(carrier, Context.empty)
-        assert_entry(context, 'key1', 'val1')
-        assert_entry(context, 'key2', 'val2', 'prop1=propval1;prop2=propval2')
+        assert_value(context, 'key1', 'val1')
+        assert_value(context, 'key2', 'val2', 'prop1=propval1;prop2=propval2')
       end
 
       it 'extracts urlencoded entries' do
         carrier = { header_key => 'key%3A1=val1%2C1,key%3A2=val2%2C2' }
         context = extractor.extract(carrier, Context.empty)
-        assert_entry(context, 'key:1', 'val1,1')
-        assert_entry(context, 'key:2', 'val2,2')
+        assert_value(context, 'key:1', 'val1,1')
+        assert_value(context, 'key:2', 'val2,2')
       end
     end
   end
 end
 
-def assert_entry(context, key, value, metadata = nil)
-  entry = OpenTelemetry.baggage.entry(key, context: context)
+def assert_value(context, key, value, metadata = nil)
+  entry = OpenTelemetry.baggage.raw_entries(context: context)[key]
   _(entry).wont_be_nil
   _(entry.value).must_equal(value)
   _(entry.metadata).must_equal(metadata)

@@ -22,14 +22,14 @@ module OpenTelemetry
       #   received from other W3C Baggage impelmentations but is not exposed in
       #   OpenTelemetry. This is condsidered private API and not for use by
       #   end-users.
-      def set_entry(key, value, metadata: nil)
+      def set_value(key, value, metadata: nil)
         @entries[key] = OpenTelemetry::Baggage::Entry.new(value, metadata)
       end
 
       # Removes key from the to-be-created baggage
       #
       # @param [String] key The key to remove
-      def remove_entry(key)
+      def remove_value(key)
         @entries.delete(key)
       end
 

@@ -43,8 +43,8 @@ module OpenTelemetry
       #   the key.
       #   Defaults to +Context.current+
       # @return [String]
-      def entry(key, context: Context.current)
-        baggage_for(context)[key]
+      def value(key, context: Context.current)
+        baggage_for(context)[key]&.value
       end
 
       # Returns the baggage
@@ -53,7 +53,12 @@ module OpenTelemetry
       #   the baggage.
       #   Defaults to +Context.current+
       # @return [Hash]
-      def entries(context: Context.current)
+      def values(context: Context.current)
+        baggage_for(context).transform_values(&:value)
+      end
+
+      # @api private
+      def raw_entries(context: Context.current)
         baggage_for(context).dup.freeze
       end
 
@@ -68,7 +73,7 @@ module OpenTelemetry
       # @param [optional Context] context The context to update with new
       #   value. Defaults to +Context.current+
       # @return [Context]
-      def set_entry(key, value, metadata: nil, context: Context.current)
+      def set_value(key, value, metadata: nil, context: Context.current)
         new_baggage = baggage_for(context).dup
         new_baggage[key] = Entry.new(value, metadata)
         context.set_value(BAGGAGE_KEY, new_baggage)
@@ -80,7 +85,7 @@ module OpenTelemetry
       # @param [optional Context] context The context to remove baggage
       #   from. Defaults to +Context.current+
       # @return [Context]
-      def remove_entry(key, context: Context.current)
+      def remove_value(key, context: Context.current)
         baggage = baggage_for(context)
         return context unless baggage.key?(key)
 

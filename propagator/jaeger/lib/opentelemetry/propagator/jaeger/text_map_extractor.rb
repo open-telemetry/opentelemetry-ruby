@@ -81,7 +81,7 @@ module OpenTelemetry
 
               raw_value = getter.get(carrier, carrier_key)
               value = CGI.unescape(raw_value)
-              b.set_entry(baggage_key, value)
+              b.set_value(baggage_key, value)
             end
           end
         end

@@ -37,7 +37,7 @@ module OpenTelemetry
         #   setter will be used.
         # @return [Object] carrier with injected baggage
         def inject(carrier, context, setter = nil)
-          return carrier unless (baggage = OpenTelemetry.baggage.entries(context: context)) && !baggage.empty?
+          return carrier unless (baggage = OpenTelemetry.baggage.raw_entries(context: context)) && !baggage.empty?
 
           setter ||= @default_setter
           encoded_baggage = encode(baggage)
@@ -53,7 +53,7 @@ module OpenTelemetry
           baggage.each_pair do |key, entry|
             break unless encoded_count < MAX_ENTRIES
 
-            encoded_entry = encode_entry(key, entry)
+            encoded_entry = encode_value(key, entry)
             next unless encoded_entry.size <= MAX_ENTRY_LENGTH &&
                         encoded_entry.size + result.size <= MAX_TOTAL_LENGTH
 
@@ -63,7 +63,7 @@ module OpenTelemetry
           result.chop!
         end
 
-        def encode_entry(key, entry)
+        def encode_value(key, entry)
           result = +"#{CGI.escape(key.to_s)}=#{CGI.escape(entry.value.to_s)}"
           # We preserve metadata recieved on extract and assume it's already formatted
           # for transport. It's sent as-is without further processing.

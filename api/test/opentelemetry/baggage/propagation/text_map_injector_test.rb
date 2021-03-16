@@ -29,8 +29,8 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
   describe '#inject' do
     it 'injects baggage' do
       context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
-        b.set_entry('key1', 'val1')
-        b.set_entry('key2', 'val2')
+        b.set_value('key1', 'val1')
+        b.set_value('key2', 'val2')
       end
 
       carrier = injector.inject({}, context)
@@ -40,8 +40,8 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
 
     it 'injects numeric baggage' do
       context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
-        b.set_entry('key1', 1)
-        b.set_entry('key2', 3.14)
+        b.set_value('key1', 1)
+        b.set_value('key2', 3.14)
       end
 
       carrier = injector.inject({}, context)
@@ -51,8 +51,8 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
 
     it 'injects boolean baggage' do
       context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
-        b.set_entry('key1', true)
-        b.set_entry('key2', false)
+        b.set_value('key1', true)
+        b.set_value('key2', false)
       end
 
       carrier = injector.inject({}, context)
@@ -67,8 +67,8 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
 
     it 'injects properties' do
       context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
-        b.set_entry('key1', 'val1')
-        b.set_entry('key2', 'val2', metadata: 'prop1=propval1;prop2=propval2')
+        b.set_value('key1', 'val1')
+        b.set_value('key2', 'val2', metadata: 'prop1=propval1;prop2=propval2')
       end
 
       carrier = injector.inject({}, context)
@@ -78,7 +78,7 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
     it 'enforces max of 180 name-value pairs' do
       context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
         (0..180).each do |i|
-          b.set_entry("k#{i}", "v#{i}")
+          b.set_value("k#{i}", "v#{i}")
         end
       end
 
@@ -86,7 +86,7 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
       result = carrier[header_key]
 
       # expect keys indexed from 0 to 180 to be in baggage, but only 0 to 179 in the result
-      _(OpenTelemetry.baggage.entry('k180', context: context)).wont_be_nil
+      _(OpenTelemetry.baggage.value('k180', context: context)).wont_be_nil
       (0...180).each do |i|
         _(result).must_include("k#{i}")
       end
@@ -95,8 +95,8 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
 
     it 'enforces max entry length of 4096' do
       context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
-        b.set_entry('key1', 'x' * 4092)
-        b.set_entry('key2', 'val2')
+        b.set_value('key1', 'x' * 4092)
+        b.set_value('key2', 'val2')
       end
 
       carrier = injector.inject({}, context)
@@ -113,7 +113,7 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
       values = (0..81).map { |i| "v#{i.to_s.rjust(48, '0')}" }
 
       context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
-        keys.zip(values).each { |k, v| b.set_entry(k, v) }
+        keys.zip(values).each { |k, v| b.set_value(k, v) }
       end
 
       carrier = injector.inject({}, context)

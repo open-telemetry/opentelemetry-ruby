@@ -8,9 +8,9 @@ module OpenTelemetry
   module Baggage
     # No op implementation of Baggage::Builder
     class NoopBuilder
-      def set_entry(key, value, metadata: nil); end
+      def set_value(key, value, metadata: nil); end
 
-      def remove_entry(key); end
+      def remove_value(key); end
 
       def clear; end
     end
