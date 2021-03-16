@@ -35,6 +35,8 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
 
     def shutdown(timeout: nil); end
+
+    def force_flush(timeout: nil); end
   end
 
   class TestSpan

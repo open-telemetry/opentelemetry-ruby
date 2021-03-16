@@ -31,6 +31,16 @@ module OpenTelemetry
             FAILURE
           end
 
+          # Called when {TracerProvider#force_flush} is called, if this exporter is
+          # registered to a {TracerProvider} object.
+          #
+          # @param [optional Numeric] timeout An optional timeout in seconds.
+          # @return [Integer] SUCCESS if no error occurred, FAILURE if a
+          #   non-specific failure occurred, TIMEOUT if a timeout occurred.
+          def force_flush(timeout: nil)
+            SUCCESS
+          end
+
           # Called when {TracerProvider#shutdown} is called, if this exporter is
           # registered to a {TracerProvider} object.
           #

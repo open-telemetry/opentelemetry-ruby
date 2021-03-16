@@ -114,7 +114,7 @@ module OpenTelemetry
               return result_code unless result_code == SUCCESS
             end
 
-            SUCCESS
+            @exporter.force_flush(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
           ensure
             # Unshift the remaining spans if we timed out. We drop excess spans from
             # the snapshot because they're older than any spans in the spans buffer.
