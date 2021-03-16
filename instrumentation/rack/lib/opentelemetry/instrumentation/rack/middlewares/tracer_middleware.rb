@@ -86,7 +86,10 @@ module OpenTelemetry
           private
 
           def untraced_request?(env)
-            @untraced_endpoints.include?(env['PATH_INFO'])
+            return true if @untraced_endpoints.include?(env['PATH_INFO'])
+            return true if config[:untraced_requests]&.call(env)
+
+            false
           end
 
           # return Context with the frontend span as the current span

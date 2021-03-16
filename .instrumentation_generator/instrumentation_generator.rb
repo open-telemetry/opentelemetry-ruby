@@ -34,6 +34,7 @@ class InstrumentationGenerator < Thor::Group
   end
 
   def test_files
+    template('templates/test/.rubocop.yml', "#{instrumentation_path}/test/.rubocop.yml")
     template('templates/test/test_helper.rb', "#{instrumentation_path}/test/test_helper.rb")
     template('templates/test/instrumentation.rb', "#{instrumentation_path}/test/#{instrumentation_path}/instrumentation_test.rb")
   end
