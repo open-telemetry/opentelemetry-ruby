@@ -30,6 +30,12 @@ describe OpenTelemetry::Trace::Span do
     end
   end
 
+  describe '#add_attributes' do
+    it 'returns self' do
+      _(span.add_attributes('foo' => 'bar')).must_equal(span)
+    end
+  end
+
   describe '#add_event' do
     it 'returns self' do
       _(span.add_event('event-name')).must_equal(span)
