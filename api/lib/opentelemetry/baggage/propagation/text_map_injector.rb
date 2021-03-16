@@ -65,9 +65,8 @@ module OpenTelemetry
 
         def encode_entry(key, entry)
           result = +"#{CGI.escape(key.to_s)}=#{CGI.escape(entry.value.to_s)}"
-          # We do not currently process metadata as it's not defined for OpenTelemtry
-          # we preserve metadata recieved on extract and assume it's already formatted
-          # for transport.
+          # We preserve metadata recieved on extract and assume it's already formatted
+          # for transport. It's sent as-is without further processing.
           result << ";#{entry.metadata}" if entry.metadata
           result
         end

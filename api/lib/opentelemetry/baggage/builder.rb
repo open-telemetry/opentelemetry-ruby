@@ -18,9 +18,10 @@ module OpenTelemetry
       #
       # @param [String] key The key to store this value under
       # @param [String] value String value to be stored under key
-      # @param [optional String] metadata Used to retain properties for
-      #   W3C baggage for the purposes of context propagation. This is considered
-      #   private API and is not intended for end users.
+      # @param [optional String] metadata This is here to store properties
+      #   received from other W3C Baggage impelmentations but is not exposed in
+      #   OpenTelemetry. This is condsidered private API and not for use by
+      #   end-users.
       def set_entry(key, value, metadata: nil)
         @entries[key] = OpenTelemetry::Baggage::Entry.new(value, metadata)
       end
