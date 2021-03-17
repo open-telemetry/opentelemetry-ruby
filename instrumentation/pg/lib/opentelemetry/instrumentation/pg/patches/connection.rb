@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'lru_redux'
 require_relative '../constants'
 
 module OpenTelemetry
@@ -14,19 +15,8 @@ module OpenTelemetry
         module Connection
           PG::Constants::EXEC_ISH_METHODS.each do |method|
             define_method method do |*args|
-              operation = extract_operation(args[0])
-              extra_attrs = { 'db.statement' => obfuscate_sql(args[0]) }
-
-              if PG::Constants::SQL_COMMANDS.include?(operation)
-                span_name = "#{operation} #{database_name}"
-                extra_attrs['db.operation'] = operation
-              end
-
-              tracer.in_span(
-                span_name || database_name,
-                attributes: client_attributes.merge(extra_attrs),
-                kind: :client
-              ) do
+              span_name, attrs = span_attrs(:query, *args)
+              tracer.in_span(span_name, attributes: attrs, kind: :client) do
                 super(*args)
               end
             end
@@ -34,17 +24,8 @@ module OpenTelemetry
 
           PG::Constants::PREPARE_ISH_METHODS.each do |method|
             define_method method do |*args|
-              span_name = "PREPARE #{database_name}"
-
-              tracer.in_span(
-                span_name,
-                attributes: client_attributes.merge(
-                  'db.statement' => obfuscate_sql(args[1]),
-                  'db.operation' => 'PREPARE',
-                  'db.postgresql.prepared_statement_name' => args[0]
-                ),
-                kind: :client
-              ) do
+              span_name, attrs = span_attrs(:prepare, *args)
+              tracer.in_span(span_name, attributes: attrs, kind: :client) do
                 super(*args)
               end
             end
@@ -52,21 +33,8 @@ module OpenTelemetry
 
           PG::Constants::EXEC_PREPARED_ISH_METHODS.each do |method|
             define_method method do |*args|
-              # On the off-chance someone has named their prepared
-              # statement something that looks like a SQL statement...
-              span_name = "EXECUTE #{database_name}"
-
-              # Note: no SQL statement is available here - we don't memoize
-              # the prepared statements in this library, so all we get is the
-              # prepared statement name.
-              tracer.in_span(
-                span_name,
-                attributes: client_attributes.merge(
-                  'db.operation' => 'EXECUTE',
-                  'db.postgresql.prepared_statement_name' => args[0]
-                ),
-                kind: :client
-              ) do
+              span_name, attrs = span_attrs(:execute, *args)
+              tracer.in_span(span_name, attributes: attrs, kind: :client) do
                 super(*args)
               end
             end
@@ -82,6 +50,58 @@ module OpenTelemetry
             PG::Instrumentation.instance.config
           end
 
+          def lru_cache
+            # When SQL is being sanitized, we know that this cache will
+            # never be more than 50 entries * 2000 characters (so, presumably
+            # 100k bytes - or 97k). When not sanitizing SQL, then this cache
+            # could grow much larger - but the small cache size should otherwise
+            # help contain memory growth. The intended use here is to cache
+            # prepared SQL statements, so that we can attach a reasonable
+            # `db.sql.statement` value to spans when those prepared statements
+            # are executed later on.
+            @lru_cache ||= ::LruRedux::ThreadSafeCache.new(50)
+          end
+
+          # Rubocop is complaining about 19.31/18 for Metrics/AbcSize.
+          # But, getting that metric in line would force us over the
+          # module size limit! We can't win here unless we want to start
+          # abstracting things into a million pieces.
+          def span_attrs(kind, *args) # rubocop:disable Metrics/AbcSize
+            if kind == :query
+              operation = extract_operation(args[0])
+              sql = obfuscate_sql(args[0])
+            else
+              statement_name = args[0]
+
+              if kind == :prepare
+                sql = obfuscate_sql(args[1])
+                lru_cache[statement_name] = sql
+                operation = 'PREPARE'
+              else
+                sql = lru_cache[statement_name]
+                operation = 'EXECUTE'
+              end
+            end
+
+            attrs = { 'db.operation' => validated_operation(operation), 'db.statement' => sql, 'db.postgresql.prepared_statement_name' => statement_name }
+            attrs.reject! { |_, v| v.nil? }
+
+            [span_name(operation), client_attributes.merge(attrs)]
+          end
+
+          def extract_operation(sql)
+            # From: https://github.com/open-telemetry/opentelemetry-js-contrib/blob/9244a08a8d014afe26b82b91cf86e407c2599d73/plugins/node/opentelemetry-instrumentation-pg/src/utils.ts#L35
+            sql.to_s.split[0].to_s.upcase
+          end
+
+          def span_name(operation)
+            [validated_operation(operation), database_name].compact.join(' ')
+          end
+
+          def validated_operation(operation)
+            operation if PG::Constants::SQL_COMMANDS.include?(operation)
+          end
+
           def obfuscate_sql(sql)
             return sql unless config[:enable_sql_obfuscation]
 
@@ -92,23 +112,13 @@ module OpenTelemetry
             # https://github.com/newrelic/newrelic-ruby-agent/blob/9787095d4b5b2d8fcaf2fdbd964ed07c731a8b6b/lib/new_relic/agent/database/obfuscator.rb
             # https://github.com/newrelic/newrelic-ruby-agent/blob/9787095d4b5b2d8fcaf2fdbd964ed07c731a8b6b/lib/new_relic/agent/database/obfuscation_helpers.rb
             obfuscated = sql.gsub(generated_postgres_regex, '?')
-            obfuscated = 'Failed to obfuscate SQL query - quote characters remained after obfuscation' if detect_unmatched_pairs(obfuscated)
+            obfuscated = 'Failed to obfuscate SQL query - quote characters remained after obfuscation' if PG::Constants::UNMATCHED_PAIRS_REGEX.match(obfuscated)
 
             obfuscated
           end
 
           def generated_postgres_regex
             @generated_postgres_regex ||= Regexp.union(PG::Constants::POSTGRES_COMPONENTS.map { |component| PG::Constants::COMPONENTS_REGEX_MAP[component] })
-          end
-
-          def detect_unmatched_pairs(obfuscated)
-            # From: https://github.com/newrelic/newrelic-ruby-agent/blob/9787095d4b5b2d8fcaf2fdbd964ed07c731a8b6b/lib/new_relic/agent/database/obfuscation_helpers.rb#L44
-            PG::Constants::UNMATCHED_PAIRS_REGEX.match(obfuscated)
-          end
-
-          def extract_operation(sql)
-            # From: https://github.com/open-telemetry/opentelemetry-js-contrib/blob/9244a08a8d014afe26b82b91cf86e407c2599d73/plugins/node/opentelemetry-instrumentation-pg/src/utils.ts#L35
-            sql.to_s.split[0].to_s.upcase
           end
 
           def database_name

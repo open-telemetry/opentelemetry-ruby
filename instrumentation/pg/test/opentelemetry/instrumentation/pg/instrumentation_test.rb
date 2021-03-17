@@ -119,10 +119,26 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(last_span.attributes['db.system']).must_equal 'postgresql'
         _(last_span.attributes['db.name']).must_equal 'postgres'
         _(last_span.attributes['db.operation']).must_equal 'EXECUTE'
+        _(last_span.attributes['db.statement']).must_equal 'SELECT $1 AS a'
         _(last_span.attributes['db.postgresql.prepared_statement_name']).must_equal 'foo'
         _(last_span.attributes['net.peer.name']).must_equal host.to_s
         _(last_span.attributes['net.peer.port']).must_equal port.to_s
       end
+    end
+
+    it 'only caches 50 prepared statement names' do
+      51.times { |i| client.prepare("foo#{i}", "SELECT $1 AS foo#{i}") }
+      client.exec_prepared('foo0', [1])
+
+      _(last_span.name).must_equal 'EXECUTE postgres'
+      _(last_span.attributes['db.system']).must_equal 'postgresql'
+      _(last_span.attributes['db.name']).must_equal 'postgres'
+      _(last_span.attributes['db.operation']).must_equal 'EXECUTE'
+      # We should have evicted the statement from the cache
+      _(last_span.attributes['db.statement']).must_be_nil
+      _(last_span.attributes['db.postgresql.prepared_statement_name']).must_equal 'foo0'
+      _(last_span.attributes['net.peer.name']).must_equal host.to_s
+      _(last_span.attributes['net.peer.port']).must_equal port.to_s
     end
 
     it 'after error' do
@@ -162,7 +178,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       _(span.attributes['net.peer.port']).must_equal port.to_s
     end
 
-    it 'uses component.name and instance.name as span.name fallbacks with invalid sql' do
+    it 'uses database name as span.name fallback with invalid sql' do
       expect do
         client.exec('DESELECT 1')
       end.must_raise PG::SyntaxError
@@ -171,6 +187,7 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       _(span.attributes['db.system']).must_equal 'postgresql'
       _(span.attributes['db.name']).must_equal 'postgres'
       _(span.attributes['db.statement']).must_equal 'DESELECT 1'
+      _(span.attributes['db.operation']).must_be_nil
       _(span.attributes['net.peer.name']).must_equal host.to_s
       _(span.attributes['net.peer.port']).must_equal port.to_s
 
