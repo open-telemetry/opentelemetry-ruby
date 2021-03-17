@@ -40,7 +40,7 @@ module OpenTelemetry
           # @param [optional Setter] setter If the optional setter is provided, it
           #   will be used to write context into the carrier, otherwise the default
           #   text map setter will be used.
-          def inject(carrier, context, setter = nil)
+          def inject(carrier, context: Context.current, setter: Context::Propagation.text_map_setter)
             span_context = Trace.current_span(context).context
             return unless span_context.valid?
 
