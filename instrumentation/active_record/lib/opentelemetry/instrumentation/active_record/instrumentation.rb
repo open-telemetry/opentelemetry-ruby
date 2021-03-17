@@ -38,16 +38,18 @@ module OpenTelemetry
           ::ActiveRecord::Querying.prepend(Patches::Querying)
           ::ActiveRecord::Persistence.prepend(Patches::Persistence)
           ::ActiveRecord::Persistence::ClassMethods.prepend(Patches::PersistenceClassMethods)
-          ::ActiveRecord::Transactions::ClassMethods.prepend(Patches::TransactionsClassMethods)
           ::ActiveRecord::Persistence::ClassMethods.prepend(Patches::PersistenceInsertClassMethods) if insert_class_methods_supported?
+          ::ActiveRecord::Transactions::ClassMethods.prepend(Patches::TransactionsClassMethods)
+          ::ActiveRecord::Validations.prepend(Patches::Validations)
         end
 
         def require_dependencies
           require_relative 'patches/querying'
           require_relative 'patches/persistence'
           require_relative 'patches/persistence_class_methods'
-          require_relative 'patches/transactions_class_methods'
           require_relative 'patches/persistence_insert_class_methods' if insert_class_methods_supported?
+          require_relative 'patches/transactions_class_methods'
+          require_relative 'patches/validations'
         end
       end
     end

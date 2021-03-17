@@ -9,19 +9,7 @@ module OpenTelemetry
     module ActiveRecord
       module Patches
         # Module to prepend to ActiveRecord::Persistence for instrumentation
-        module Persistence # rubocop:disable Metrics/ModuleLength
-          def save(**options, &block)
-            tracer.in_span("#{self.class}#save") do
-              super
-            end
-          end
-
-          def save!(**options, &block)
-            tracer.in_span("#{self.class}#save!") do
-              super
-            end
-          end
-
+        module Persistence
           def delete
             tracer.in_span("#{self.class}#delete") do
               super

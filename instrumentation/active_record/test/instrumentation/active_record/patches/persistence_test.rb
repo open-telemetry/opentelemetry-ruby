@@ -29,6 +29,16 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::Persistence do
       save_span = spans.find { |s| s.name == 'User#save!' }
       _(save_span).wont_be_nil
     end
+
+    it 'adds an exception event if it raises' do
+      _(-> { User.new(name: 'not otel').save! }).must_raise(ActiveRecord::RecordInvalid)
+
+      save_span = spans.find { |s| s.name == 'User#save!' }
+      _(save_span).wont_be_nil
+      save_span_event = save_span.events.first
+      _(save_span_event.attributes['exception.type']).must_equal('ActiveRecord::RecordInvalid')
+      _(save_span_event.attributes['exception.message']).must_equal('Validation failed: must be otel')
+    end
   end
 
   describe '#delete' do
