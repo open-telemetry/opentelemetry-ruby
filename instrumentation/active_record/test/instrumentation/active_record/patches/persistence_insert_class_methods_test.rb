@@ -20,7 +20,7 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::PersistenceInser
 
   describe '.insert' do
     it 'traces' do
-      User.insert(updated_at: Time.current, created_at: Time.current)
+      User.insert({ updated_at: Time.current, created_at: Time.current })
       insert_span = spans.find { |s| s.name == 'User.insert' }
       _(insert_span).wont_be_nil
     end
@@ -36,7 +36,7 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::PersistenceInser
 
   describe '.insert!' do
     it 'traces' do
-      User.insert!(updated_at: Time.current, created_at: Time.current)
+      User.insert!({ updated_at: Time.current, created_at: Time.current })
       insert_span = spans.find { |s| s.name == 'User.insert!' }
       _(insert_span).wont_be_nil
     end
@@ -52,7 +52,7 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::PersistenceInser
 
   describe '.upsert' do
     it 'traces' do
-      User.upsert(updated_at: Time.current, created_at: Time.current)
+      User.upsert({ updated_at: Time.current, created_at: Time.current })
       upsert_span = spans.find { |s| s.name == 'User.upsert' }
       _(upsert_span).wont_be_nil
     end
