@@ -85,6 +85,34 @@ module OpenTelemetry
         end
         alias []= set_attribute
 
+        # Add attributes
+        #
+        # Note that the OpenTelemetry project
+        # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-semantic-conventions.md
+        # documents} certain "standard attributes" that have prescribed semantic
+        # meanings.
+        #
+        # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
+        #   Values must be non-nil and (array of) string, boolean or numeric type.
+        #   Array values must not contain nil elements and all elements must be of
+        #   the same basic type (string, numeric, boolean).
+        #
+        # @return [self] returns itself
+        def add_attributes(attributes)
+          super
+          @mutex.synchronize do
+            if @ended
+              OpenTelemetry.logger.warn('Calling add_attributes on an ended Span.')
+            else
+              @attributes ||= {}
+              @attributes.merge!(attributes)
+              trim_span_attributes(@attributes)
+              @total_recorded_attributes += attributes.size
+            end
+          end
+          self
+        end
+
         # Add an Event to a {Span}.
         #
         # Example:
