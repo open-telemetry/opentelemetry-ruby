@@ -61,7 +61,7 @@ module OpenTelemetry
           end
 
           # Export all ended spans to the configured `Exporter` that have not yet
-          # been exported.
+          # been exported, then call {Exporter#force_flush}.
           #
           # This method should only be called in cases where it is absolutely
           # necessary, such as when using some FaaS providers that may suspend
@@ -72,7 +72,7 @@ module OpenTelemetry
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
           def force_flush(timeout: nil)
-            SUCCESS
+            @span_exporter&.force_flush(timeout: timeout) || SUCCESS
           end
 
           # Called when {TracerProvider#shutdown} is called.
