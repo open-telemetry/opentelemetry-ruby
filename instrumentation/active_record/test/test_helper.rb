@@ -29,7 +29,15 @@ ActiveRecord::Base.establish_connection(
 )
 
 # Create User model
-class User < ActiveRecord::Base; end
+class User < ActiveRecord::Base
+  validate :name_if_present
+
+  def name_if_present
+    errors.add(:base, 'must be otel') if name.present? && name != 'otel'
+  end
+end
+
+class SuperUser < ActiveRecord::Base; end
 
 # Get the current version so we can create a test table
 segments = Gem.loaded_specs['activerecord'].version.segments
@@ -38,7 +46,17 @@ migration_version = "#{segments[0]}.#{segments[1]}".to_f
 # Simple migration to create a table to test against
 class CreateUserTable < ActiveRecord::Migration[migration_version]
   def change
-    create_table :users, &:timestamps
+    create_table :users do |t|
+      t.string 'name'
+      t.integer 'counter'
+      t.timestamps
+    end
+
+    create_table :super_users do |t|
+      t.string 'name'
+      t.integer 'counter'
+      t.timestamps
+    end
   end
 end
 

@@ -15,18 +15,18 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::Persistence do
 
   before { exporter.reset }
 
-  describe '#save!' do
-    it 'traces' do
-      User.new.save!
-      save_span = spans.find { |s| s.name == 'User#save!' }
-      _(save_span).wont_be_nil
-    end
-  end
-
   describe '#save' do
     it 'traces' do
       User.new.save
       save_span = spans.find { |s| s.name == 'User#save' }
+      _(save_span).wont_be_nil
+    end
+  end
+
+  describe '#save!' do
+    it 'traces' do
+      User.new.save!
+      save_span = spans.find { |s| s.name == 'User#save!' }
       _(save_span).wont_be_nil
     end
   end
@@ -39,6 +39,14 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::Persistence do
     end
   end
 
+  describe '#destroy' do
+    it 'traces' do
+      User.new.destroy
+      destroy_span = spans.find { |s| s.name == 'User#destroy' }
+      _(destroy_span).wont_be_nil
+    end
+  end
+
   describe '#destroy!' do
     it 'traces' do
       User.new.destroy!
@@ -47,11 +55,38 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::Persistence do
     end
   end
 
-  describe '#destroy' do
+  describe '#becomes' do
     it 'traces' do
-      User.new.destroy
-      destroy_span = spans.find { |s| s.name == 'User#destroy' }
-      _(destroy_span).wont_be_nil
+      User.new.becomes(SuperUser)
+      becomes_span = spans.find { |s| s.name == 'User#becomes' }
+      _(becomes_span).wont_be_nil
+    end
+  end
+
+  describe '#becomes!' do
+    it 'traces' do
+      _(-> { User.new.becomes!(SuperUser) }).must_raise(NoMethodError)
+
+      becomes_span = spans.find { |s| s.name == 'User#becomes!' }
+      _(becomes_span).wont_be_nil
+      becomes_span = becomes_span.events.first
+      _(becomes_span.attributes['exception.type']).must_equal('NoMethodError')
+    end
+  end
+
+  describe '#update_attribute' do
+    it 'traces' do
+      User.new.update_attribute('updated_at', Time.current)
+      update_attribute_span = spans.find { |s| s.name == 'User#update_attribute' }
+      _(update_attribute_span).wont_be_nil
+    end
+  end
+
+  describe '#update' do
+    it 'traces' do
+      User.new.update(updated_at: Time.current)
+      update_span = spans.find { |s| s.name == 'User#update' }
+      _(update_span).wont_be_nil
     end
   end
 
@@ -63,11 +98,93 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::Persistence do
     end
   end
 
-  describe '#update' do
+  describe '#update_column' do
     it 'traces' do
-      User.new.update(updated_at: Time.current)
-      update_span = spans.find { |s| s.name == 'User#update' }
-      _(update_span).wont_be_nil
+      new_user = User.new
+      new_user.save
+      new_user.update_column(:updated_at, Time.current)
+
+      update_column_span = spans.find { |s| s.name == 'User#update_column' }
+      _(update_column_span).wont_be_nil
+    end
+  end
+
+  describe '#update_columns' do
+    it 'traces' do
+      new_user = User.new
+      new_user.save
+      new_user.update_columns(updated_at: Time.current, name: 'otel')
+
+      update_column_span = spans.find { |s| s.name == 'User#update_columns' }
+      _(update_column_span).wont_be_nil
+    end
+  end
+
+  describe '#increment' do
+    it 'traces' do
+      User.new.increment(:counter)
+      increment_span = spans.find { |s| s.name == 'User#increment' }
+      _(increment_span).wont_be_nil
+    end
+  end
+
+  describe '#increment!' do
+    it 'traces' do
+      User.new.increment!(:counter)
+      increment_span = spans.find { |s| s.name == 'User#increment!' }
+      _(increment_span).wont_be_nil
+    end
+  end
+
+  describe '#decrement' do
+    it 'traces' do
+      User.new.decrement(:counter)
+      decrement_span = spans.find { |s| s.name == 'User#decrement' }
+      _(decrement_span).wont_be_nil
+    end
+  end
+
+  describe '#decrement!' do
+    it 'traces' do
+      User.new.decrement!(:counter)
+      decrement_span = spans.find { |s| s.name == 'User#decrement!' }
+      _(decrement_span).wont_be_nil
+    end
+  end
+
+  describe '#toggle' do
+    it 'traces' do
+      User.new.toggle(:counter)
+      toggle_span = spans.find { |s| s.name == 'User#toggle' }
+      _(toggle_span).wont_be_nil
+    end
+  end
+
+  describe '#toggle!' do
+    it 'traces' do
+      User.new.toggle!(:counter)
+      toggle_span = spans.find { |s| s.name == 'User#toggle!' }
+      _(toggle_span).wont_be_nil
+    end
+  end
+
+  describe '#reload' do
+    it 'traces' do
+      new_user = User.new
+      new_user.save
+      new_user.reload
+      reload_span = spans.find { |s| s.name == 'User#reload' }
+      _(reload_span).wont_be_nil
+    end
+  end
+
+  describe '#touch' do
+    it 'traces' do
+      new_user = User.new
+      new_user.save
+      new_user.touch
+      touch_span = spans.find { |s| s.name == 'User#touch' }
+      _(touch_span).wont_be_nil
     end
   end
 end

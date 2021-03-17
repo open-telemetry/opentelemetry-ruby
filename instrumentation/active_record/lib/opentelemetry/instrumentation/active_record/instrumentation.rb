@@ -32,18 +32,16 @@ module OpenTelemetry
 
         def patch
           ::ActiveRecord::Querying.prepend(Patches::Querying)
-          ::ActiveRecord::Transactions.prepend(Patches::Transactions)
-          ::ActiveRecord::Transactions::ClassMethods.prepend(Patches::TransactionsClassMethods)
           ::ActiveRecord::Persistence.prepend(Patches::Persistence)
           ::ActiveRecord::Persistence::ClassMethods.prepend(Patches::PersistenceClassMethods)
+          ::ActiveRecord::Transactions::ClassMethods.prepend(Patches::TransactionsClassMethods)
         end
 
         def require_dependencies
           require_relative 'patches/querying'
-          require_relative 'patches/transactions'
-          require_relative 'patches/transactions_class_methods'
           require_relative 'patches/persistence'
           require_relative 'patches/persistence_class_methods'
+          require_relative 'patches/transactions_class_methods'
         end
       end
     end
