@@ -4,8 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative './jaeger/text_map_extractor'
-require_relative './jaeger/text_map_injector'
+require_relative './jaeger/text_map_propagator'
 
 # OpenTelemetry is an open source observability framework, providing a
 # general-purpose API, SDK, and related tools required for the instrumentation
@@ -23,28 +22,14 @@ module OpenTelemetry
       DEBUG_CONTEXT_KEY = Context.create_key('jaeger-debug-key')
       private_constant :DEBUG_CONTEXT_KEY
 
-      TEXT_MAP_EXTRACTOR = TextMapExtractor.new
-      TEXT_MAP_INJECTOR = TextMapInjector.new
+      TEXT_MAP_PROPAGATOR = TextMapPropagator.new
 
-      private_constant :TEXT_MAP_INJECTOR, :TEXT_MAP_EXTRACTOR
+      private_constant :TEXT_MAP_PROPAGATOR
 
-      IDENTITY_KEY = 'uber-trace-id'
-      DEFAULT_FLAG_BIT = 0x0
-      SAMPLED_FLAG_BIT = 0x01
-      DEBUG_FLAG_BIT   = 0x02
-
-      private_constant :IDENTITY_KEY, :DEFAULT_FLAG_BIT, :SAMPLED_FLAG_BIT, :DEBUG_FLAG_BIT
-
-      # Returns an extractor that extracts context in the Jaeger single header
-      # format
-      def text_map_injector
-        TEXT_MAP_INJECTOR
-      end
-
-      # Returns an injector that injects context in the Jaeger single header
-      # format
-      def text_map_extractor
-        TEXT_MAP_EXTRACTOR
+      # Returns a text map propagator that propagates context in the Jaeger
+      # format.
+      def text_map_propagator
+        TEXT_MAP_PROPAGATOR
       end
 
       # @api private
