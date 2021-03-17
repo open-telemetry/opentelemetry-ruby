@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.16.0 / 2021-03-17
+
+* FIXED: Example scripts now reference local common lib 
+* DOCS: Replace Gitter with GitHub Discussions 
+
 ### v0.15.0 / 2021-02-18
 
 * ADDED: Add Net::HTTP#connect tracing 
