@@ -36,6 +36,7 @@ describe OpenTelemetry::Instrumentation::Rails::Patches::ActionController::Metal
     _(span.attributes['http.target']).must_equal '/ok'
     _(span.attributes['http.status_code']).must_equal 200
     _(span.attributes['http.user_agent']).must_be_nil
+    _(span.attributes['http.route']).must_equal '/ok(.:format)'
   end
 
   it 'sets the span name when the controller raises an exception' do

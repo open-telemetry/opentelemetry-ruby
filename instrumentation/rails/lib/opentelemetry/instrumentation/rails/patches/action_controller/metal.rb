@@ -14,6 +14,10 @@ module OpenTelemetry
             def dispatch(name, request, response)
               rack_span = OpenTelemetry::Instrumentation::Rack.current_span
               rack_span.name = "#{self.class.name}##{name}" if rack_span.context.valid? && !request.env['action_dispatch.exception']
+
+              ::Rails.application.routes.router.recognize(request) do |route, _params|
+                rack_span.set_attribute('http.route', route.path.spec.to_s)
+              end
               super(name, request, response)
             end
           end
