@@ -79,6 +79,14 @@ module OpenTelemetry
           nil
         end
 
+        # Returns the predefined propagation fields. If your carrier is reused, you
+        # should delete the fields returned by this method before calling +inject+.
+        #
+        # @return [Array<String>] a list of fields that will be used by this propagator.
+        def fields
+          FIELDS
+        end
+
         private
 
         def valid?(trace_id:, span_id:)
