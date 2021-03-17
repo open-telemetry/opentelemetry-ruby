@@ -6,7 +6,7 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::Context::Propagation::CompositePropagator do
+describe OpenTelemetry::Context::Propagation::CompositeTextMapPropagator do
   Context = OpenTelemetry::Context
 
   class TestInjector
@@ -48,7 +48,7 @@ describe OpenTelemetry::Context::Propagation::CompositePropagator do
   end
 
   let(:propagator) do
-    OpenTelemetry::Context::Propagation::CompositePropagator.new(injectors, extractors)
+    OpenTelemetry::Context::Propagation::CompositeTextMapPropagator.compose(injectors: injectors, extractors: extractors)
   end
 
   after do
@@ -62,7 +62,8 @@ describe OpenTelemetry::Context::Propagation::CompositePropagator do
     describe '#inject' do
       it 'injects values from current context into carrier' do
         Context.with_values('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3') do
-          carrier = propagator.inject({})
+          carrier = {}
+          propagator.inject(carrier)
           _(carrier).must_equal('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3')
         end
       end
@@ -70,7 +71,8 @@ describe OpenTelemetry::Context::Propagation::CompositePropagator do
       it 'accepts explicit context' do
         Context.with_values('k1' => 'v1', 'k2' => 'v2') do
           ctx = Context.current.set_value('k3', 'v3') do
-            carrier = propagator.inject({}, context: ctx)
+            carrier = {}
+            propagator.inject(carrier, context: ctx)
             _(carrier).must_equal('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3')
           end
         end
@@ -83,7 +85,8 @@ describe OpenTelemetry::Context::Propagation::CompositePropagator do
               carrier[key.upcase] = value.upcase
             end
           end.new
-          result = propagator.inject({}, setter: setter)
+          result = {}
+          propagator.inject(result, setter: setter)
           _(result).must_equal('K1' => 'V1', 'K2' => 'V2', 'K3' => 'V3')
         end
       end
@@ -138,7 +141,8 @@ describe OpenTelemetry::Context::Propagation::CompositePropagator do
     describe '#inject' do
       it 'injects values from working injectors' do
         Context.with_values('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3') do
-          carrier = propagator.inject({})
+          carrier = {}
+          propagator.inject(carrier)
           _(carrier).must_equal('k1' => 'v1', 'k3' => 'v3')
         end
       end

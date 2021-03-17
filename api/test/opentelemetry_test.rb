@@ -142,9 +142,9 @@ describe OpenTelemetry do
   end
 
   describe '.propagation' do
-    it 'returns instance of Context::Propagation::Propagation by default' do
+    it 'returns instance of Context::Propagation::NoopTextMapPropagator by default' do
       _(OpenTelemetry.propagation).must_be_instance_of(
-        OpenTelemetry::Context::Propagation::Propagator
+        OpenTelemetry::Context::Propagation::NoopTextMapPropagator
       )
     end
 

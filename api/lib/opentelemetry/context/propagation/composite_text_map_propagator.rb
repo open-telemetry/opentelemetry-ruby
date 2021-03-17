@@ -22,7 +22,7 @@ module OpenTelemetry
           # @param [Array<#inject, #fields>] injectors An array of text map injectors
           # @param [Array<#extract>] extractors An array of text map extractors
           def compose(injectors:, extractors:)
-            raise ArgumentError, "injectors and extractors must both be non-nil arrays" unless injectors.is_a?(Array) && extractors.is_a?(Array)
+            raise ArgumentError, 'injectors and extractors must both be non-nil arrays' unless injectors.is_a?(Array) && extractors.is_a?(Array)
 
             new(injectors: injectors, extractors: extractors)
           end
@@ -32,7 +32,7 @@ module OpenTelemetry
           # @param [Array<#inject, #extract, #fields>] propagators An array of
           #   text map propagators
           def compose_propagators(propagators)
-            raise ArgumentError, "propagators must be a non-nil array" unless propagators.is_a?(Array)
+            raise ArgumentError, 'propagators must be a non-nil array' unless propagators.is_a?(Array)
             return propagators.first if propagators.size == 1
 
             new(propagators: propagators)
@@ -95,7 +95,7 @@ module OpenTelemetry
         # @return [Array<String>] a list of fields that will be used by this propagator.
         def fields
           injectors = @injectors || @propagators
-          injectors.flat_map {|injector| injector.fields }.uniq
+          injectors.flat_map(&fields).uniq
         end
       end
     end

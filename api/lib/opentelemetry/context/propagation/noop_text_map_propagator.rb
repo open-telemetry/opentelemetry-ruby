@@ -20,8 +20,7 @@ module OpenTelemetry
         # @param [optional Setter] setter If the optional setter is provided, it
         #   will be used to write context into the carrier, otherwise the default
         #   setter will be used.
-        def inject(carrier, context: Context.current, setter: Context::Propagation.text_map_setter)
-        end
+        def inject(carrier, context: Context.current, setter: Context::Propagation.text_map_setter); end
 
         # Extracts and returns context from a carrier. Returns the provided
         # context and logs a warning if an error if extraction fails.

@@ -16,7 +16,7 @@ module OpenTelemetry
         # @param [#inject] injector
         # @param [#extract] extractor
         def initialize(injector, extractor)
-          raise ArgumentError, "injector and extractor must both be non-nil" if injector.nil? || extractor.nil?
+          raise ArgumentError, 'injector and extractor must both be non-nil' if injector.nil? || extractor.nil?
 
           @injector = injector
           @extractor = extractor
