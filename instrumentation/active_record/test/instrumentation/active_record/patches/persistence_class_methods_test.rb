@@ -9,7 +9,7 @@ require 'test_helper'
 require_relative '../../../../lib/opentelemetry/instrumentation/active_record'
 require_relative '../../../../lib/opentelemetry/instrumentation/active_record/patches/persistence_class_methods'
 
-describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::Persistence do
+describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::PersistenceClassMethods do
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
 
@@ -38,54 +38,6 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::Persistence do
       create_span_event = create_span.events.first
       _(create_span_event.attributes['exception.type']).must_equal('ActiveModel::UnknownAttributeError')
       _(create_span_event.attributes['exception.message']).must_equal('unknown attribute \'attreeboot\' for User.')
-    end
-  end
-
-  describe '.insert' do
-    it 'traces' do
-      User.insert(updated_at: Time.current, created_at: Time.current)
-      insert_span = spans.find { |s| s.name == 'User.insert' }
-      _(insert_span).wont_be_nil
-    end
-  end
-
-  describe '.insert_all' do
-    it 'traces' do
-      User.insert_all([{ updated_at: Time.current, created_at: Time.current }])
-      insert_all_span = spans.find { |s| s.name == 'User.insert_all' }
-      _(insert_all_span).wont_be_nil
-    end
-  end
-
-  describe '.insert!' do
-    it 'traces' do
-      User.insert!(updated_at: Time.current, created_at: Time.current)
-      insert_span = spans.find { |s| s.name == 'User.insert!' }
-      _(insert_span).wont_be_nil
-    end
-  end
-
-  describe '.insert_all!' do
-    it 'traces' do
-      User.insert_all!([{ updated_at: Time.current, created_at: Time.current }])
-      insert_all_span = spans.find { |s| s.name == 'User.insert_all!' }
-      _(insert_all_span).wont_be_nil
-    end
-  end
-
-  describe '.upsert' do
-    it 'traces' do
-      User.upsert(updated_at: Time.current, created_at: Time.current)
-      upsert_span = spans.find { |s| s.name == 'User.upsert' }
-      _(upsert_span).wont_be_nil
-    end
-  end
-
-  describe '.upsert_all' do
-    it 'traces' do
-      User.upsert_all([{ updated_at: Time.current, created_at: Time.current }])
-      upsert_all_span = spans.find { |s| s.name == 'User.upsert_all' }
-      _(upsert_all_span).wont_be_nil
     end
   end
 

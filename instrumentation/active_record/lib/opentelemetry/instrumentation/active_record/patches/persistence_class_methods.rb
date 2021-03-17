@@ -22,42 +22,6 @@ module OpenTelemetry
             end
           end
 
-          def insert(attributes, returning: nil, unique_by: nil)
-            tracer.in_span("#{self}.insert") do
-              super
-            end
-          end
-
-          def insert_all(attributes, returning: nil, unique_by: nil)
-            tracer.in_span("#{self}.insert_all") do
-              super
-            end
-          end
-
-          def insert!(attributes, returning: nil)
-            tracer.in_span("#{self}.insert!") do
-              super
-            end
-          end
-
-          def insert_all!(attributes, returning: nil)
-            tracer.in_span("#{self}.insert_all!") do
-              super
-            end
-          end
-
-          def upsert(attributes, returning: nil, unique_by: nil)
-            tracer.in_span("#{self}.upsert") do
-              super
-            end
-          end
-
-          def upsert_all(attributes, returning: nil, unique_by: nil)
-            tracer.in_span("#{self}.upsert_all") do
-              super
-            end
-          end
-
           def instantiate(attributes, column_types = {}, &block)
             tracer.in_span("#{self}.instantiate") do
               super

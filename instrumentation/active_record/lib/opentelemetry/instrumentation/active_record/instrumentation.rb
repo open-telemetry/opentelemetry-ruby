@@ -26,6 +26,10 @@ module OpenTelemetry
 
         private
 
+        def insert_class_methods_supported?
+          gem_version >= Gem::Version.new('6.0.0')
+        end
+
         def gem_version
           Gem.loaded_specs['activerecord'].version
         end
@@ -35,6 +39,7 @@ module OpenTelemetry
           ::ActiveRecord::Persistence.prepend(Patches::Persistence)
           ::ActiveRecord::Persistence::ClassMethods.prepend(Patches::PersistenceClassMethods)
           ::ActiveRecord::Transactions::ClassMethods.prepend(Patches::TransactionsClassMethods)
+          ::ActiveRecord::Persistence::ClassMethods.prepend(Patches::PersistenceInsertClassMethods) if insert_class_methods_supported?
         end
 
         def require_dependencies
@@ -42,6 +47,7 @@ module OpenTelemetry
           require_relative 'patches/persistence'
           require_relative 'patches/persistence_class_methods'
           require_relative 'patches/transactions_class_methods'
+          require_relative 'patches/persistence_insert_class_methods' if insert_class_methods_supported?
         end
       end
     end
