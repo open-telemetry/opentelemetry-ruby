@@ -116,34 +116,32 @@ describe OpenTelemetry::SDK::Configurator do
       end
     end
 
-    describe 'injectors' do
+    describe 'propagators' do
       it 'defaults to trace context and baggage' do
         configurator.configure
 
-        expected_injectors = [
-          OpenTelemetry::Trace::Propagation::TraceContext.text_map_injector,
-          OpenTelemetry::Baggage::Propagation.text_map_injector
+        expected_propagators = [
+          OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator,
+          OpenTelemetry::Baggage::Propagation.text_map_propagator
         ]
 
-        _(injectors_for(OpenTelemetry.propagation)).must_equal(expected_injectors)
+        _(propagators_for(OpenTelemetry.propagation)).must_equal(expected_propagators)
       end
 
       it 'is user settable' do
-        injector = OpenTelemetry::Context::Propagation::NoopInjector.new
-        configurator.injectors = [injector]
+        propagator = OpenTelemetry::Context::Propagation::NoopTextMapPropagator.new
+        configurator.propagators = [propagator]
         configurator.configure
 
-        _(injectors_for(OpenTelemetry.propagation)).must_equal([injector])
+        _(OpenTelemetry.propagation).must_equal(propagator)
       end
 
       it 'can be set by environment variable' do
-        expected_injectors = [OpenTelemetry::Baggage::Propagation.text_map_injector]
-
         with_env('OTEL_PROPAGATORS' => 'baggage') do
           configurator.configure
         end
 
-        _(injectors_for(OpenTelemetry.propagation)).must_equal(expected_injectors)
+        _(OpenTelemetry.propagation).must_equal(OpenTelemetry::Baggage::Propagation.text_map_propagator)
       end
 
       it 'defaults to none with invalid env var' do
@@ -151,51 +149,8 @@ describe OpenTelemetry::SDK::Configurator do
           configurator.configure
         end
 
-        _(injectors_for(OpenTelemetry.propagation).length).must_equal(1)
-        _(injectors_for(OpenTelemetry.propagation).first).must_be_instance_of(
-          Context::Propagation::NoopInjector
-        )
-      end
-    end
-
-    describe '#extractors' do
-      it 'defaults to trace context and baggage' do
-        configurator.configure
-
-        expected_extractors = [
-          OpenTelemetry::Trace::Propagation::TraceContext.text_map_extractor,
-          OpenTelemetry::Baggage::Propagation.text_map_extractor
-        ]
-
-        _(extractors_for(OpenTelemetry.propagation)).must_equal(expected_extractors)
-      end
-
-      it 'is user settable' do
-        extractor = OpenTelemetry::Context::Propagation::NoopExtractor.new
-        configurator.extractors = [extractor]
-        configurator.configure
-
-        _(extractors_for(OpenTelemetry.propagation)).must_equal([extractor])
-      end
-
-      it 'can be set by environment variable' do
-        expected_extractors = [OpenTelemetry::Baggage::Propagation.text_map_extractor]
-
-        with_env('OTEL_PROPAGATORS' => 'baggage') do
-          configurator.configure
-        end
-
-        _(extractors_for(OpenTelemetry.propagation)).must_equal(expected_extractors)
-      end
-
-      it 'defaults to none with invalid env var' do
-        with_env('OTEL_PROPAGATORS' => 'unladen_swallow') do
-          configurator.configure
-        end
-
-        _(extractors_for(OpenTelemetry.propagation).length).must_equal(1)
-        _(extractors_for(OpenTelemetry.propagation).first).must_be_instance_of(
-          Context::Propagation::NoopExtractor
+        _(OpenTelemetry.propagation).must_be_instance_of(
+          Context::Propagation::NoopTextMapPropagator
         )
       end
     end
@@ -316,19 +271,11 @@ describe OpenTelemetry::SDK::Configurator do
     end
   end
 
-  def extractors_for(propagator)
-    if propagator.instance_of? Context::Propagation::CompositePropagator
-      propagator.instance_variable_get(:@extractors)
+  def propagators_for(propagator)
+    if propagator.instance_of? Context::Propagation::CompositeTextMapPropagator
+      propagator.instance_variable_get(:@propagators)
     else
-      [propagator.instance_variable_get(:@extractor)]
-    end
-  end
-
-  def injectors_for(propagator)
-    if propagator.instance_of? Context::Propagation::CompositePropagator
-      propagator.instance_variable_get(:@injectors)
-    else
-      [propagator.instance_variable_get(:@injector)]
+      [propagator]
     end
   end
 end
