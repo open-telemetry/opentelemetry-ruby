@@ -152,6 +152,7 @@ module OpenTelemetry
         when 'otlp' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::OTLP::Exporter')
         when 'jaeger' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::Jaeger::CollectorExporter')
         when 'zipkin' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::Zipkin::Exporter')
+        when 'console' then Trace::Export::SimpleSpanProcessor.new(Trace::Export::ConsoleSpanExporter.new)
         else
           OpenTelemetry.logger.warn "The #{exporter} exporter is unknown and cannot be configured, spans will not be exported"
           nil

@@ -1,17 +1,5 @@
-AllCops:
-  TargetRubyVersion: '2.5.0'
-Lint/UnusedMethodArgument:
-  Enabled: false
-Metrics/AbcSize:
-  Max: 18
-Metrics/LineLength:
-  Enabled: false
-Metrics/MethodLength:
-  Max: 20
-Metrics/ParameterLists:
-  Enabled: false
+inherit_from: ../.rubocop-examples.yml
+
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-instrumentation-all.rb"
-Style/ModuleFunction:
-  Enabled: false
