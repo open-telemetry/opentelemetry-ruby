@@ -14,7 +14,7 @@ describe OpenTelemetry::Context::Propagation::CompositeTextMapPropagator do
       @key = key
     end
 
-    def inject(carrier, context, setter = nil)
+    def inject(carrier, context:, setter: nil)
       if setter
         setter.set(carrier, @key, context[@key])
       else
@@ -29,20 +29,20 @@ describe OpenTelemetry::Context::Propagation::CompositeTextMapPropagator do
       @key = key
     end
 
-    def extract(carrier, context, getter = nil)
+    def extract(carrier, context:, getter: nil)
       value = getter ? getter.get(carrier, @key) : carrier[@key]
       context.set_value(@key, value)
     end
   end
 
   class BuggyInjector
-    def inject(carrier, context, setter = nil)
+    def inject(carrier, context:, setter: nil)
       raise 'oops'
     end
   end
 
   class BuggyExtractor
-    def extract(carrier, context, getter = nil)
+    def extract(carrier, context:, getter: nil)
       raise 'oops'
     end
   end
