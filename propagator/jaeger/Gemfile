@@ -10,3 +10,4 @@ gemspec
 
 gem 'opentelemetry-api', path: '../../api'
 gem 'opentelemetry-sdk', path: '../../sdk'
+gem 'opentelemetry-common', path: '../../common'
