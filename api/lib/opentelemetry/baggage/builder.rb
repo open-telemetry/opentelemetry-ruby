@@ -8,8 +8,10 @@ module OpenTelemetry
   module Baggage
     # Operational implementation of Baggage::Builder
     class Builder
+      # @api private
       attr_reader :entries
 
+      # @api private
       def initialize(entries)
         @entries = entries
       end
