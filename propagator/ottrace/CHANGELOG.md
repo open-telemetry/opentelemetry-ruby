@@ -1,8 +1,4 @@
-# Release History: opentelemetry-propagator-b3
-
-### Unreleased
-
-* Initial release.
+# Release History: opentelemetry-propagator-ottrace
 
 ### v0.16.0 / 2021-03-17
 
