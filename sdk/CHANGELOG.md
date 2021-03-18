@@ -1,5 +1,18 @@
 # Release History: opentelemetry-sdk
 
+### v0.16.0 / 2021-03-17
+
+* BREAKING CHANGE: Update SDK BaggageManager to match API 
+* BREAKING CHANGE: Implement Exporter#force_flush 
+
+* ADDED: Add force_flush to SDK's TracerProvider 
+* ADDED: Add k8s node to gcp resource detector 
+* ADDED: Add console option for OTEL_TRACES_EXPORTER 
+* ADDED: Span#add_attributes 
+* ADDED: Implement Exporter#force_flush 
+* FIXED: Update SDK BaggageManager to match API 
+* DOCS: Replace Gitter with GitHub Discussions 
+
 ### v0.15.0 / 2021-02-18
 
 * BREAKING CHANGE: Streamline processor pipeline 

@@ -1,5 +1,14 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.16.0 / 2021-03-17
+
+* BREAKING CHANGE: Pass env to url quantization rack config to allow more flexibility 
+
+* ADDED: Pass env to url quantization rack config to allow more flexibility 
+* ADDED: Add rack instrumentation config option to accept callable to filter requests to trace 
+* FIXED: Example scripts now reference local common lib 
+* DOCS: Replace Gitter with GitHub Discussions 
+
 ### v0.15.0 / 2021-02-18
 
 * ADDED: Add instrumentation config validation 
