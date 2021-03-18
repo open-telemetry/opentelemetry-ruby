@@ -58,7 +58,7 @@ module OpenTelemetry
         def inject(carrier, context: Context.current, setter: Context::Propagation.text_map_setter)
           injectors = @injectors || @propagators
           injectors.each do |injector|
-            injector.inject(carrier, context, setter)
+            injector.inject(carrier, context: context, setter: setter)
           rescue => e # rubocop:disable Style/RescueStandardError
             OpenTelemetry.logger.warn "Error in CompositePropagator#inject #{e.message}"
           end
@@ -81,7 +81,7 @@ module OpenTelemetry
         def extract(carrier, context: Context.current, getter: Context::Propagation.text_map_getter)
           extractors = @extractors || @propagators
           extractors.inject(context) do |ctx, extractor|
-            extractor.extract(carrier, ctx, getter)
+            extractor.extract(carrier, context: ctx, getter: getter)
           rescue => e # rubocop:disable Style/RescueStandardError
             OpenTelemetry.logger.warn "Error in CompositePropagator#extract #{e.message}"
             ctx
