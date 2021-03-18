@@ -4,6 +4,7 @@
 
 * FIXED: Update DB semantic conventions 
 * FIXED: Example scripts now reference local common lib 
+* ADDED: Configurable obfuscation of sql in mysql2 instrumentation to avoid logging sensitive data
 
 ### v0.15.0 / 2021-02-18
 
