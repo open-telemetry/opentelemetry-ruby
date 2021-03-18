@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module PG
-      VERSION = '0.15.0'
+      VERSION = '0.16.0'
       MIN_PG_GEM_VERSION = '1.1.0'
     end
   end
