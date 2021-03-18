@@ -69,7 +69,6 @@ module OpenTelemetry
           trace_span_identity_value = [
             span_context.hex_trace_id, span_context.hex_span_id, '0', flags
           ].join(':')
-          setter ||= @default_setter
           setter.set(carrier, IDENTITY_KEY, trace_span_identity_value)
           OpenTelemetry.baggage.values(context: context).each do |key, value|
             baggage_key = 'uberctx-' + key
