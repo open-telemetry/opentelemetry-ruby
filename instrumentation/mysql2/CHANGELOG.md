@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
+### v0.16.0 / 2021-03-17
+
+* FIXED: Update DB semantic conventions 
+* FIXED: Example scripts now reference local common lib 
+* ADDED: Configurable obfuscation of sql in mysql2 instrumentation to avoid logging sensitive data
+
 ### v0.15.0 / 2021-02-18
 
 * ADDED: Add instrumentation config validation 
