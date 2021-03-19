@@ -26,7 +26,6 @@ module OpenTelemetry
         SERVICE_NAME_ATTRIBUTE_KEY = 'service.name'
         ERROR_TAG_KEY = 'error'
         STATUS_CODE_NAME = 'otel.status_code'
-        STATUS_CODE_DESCRIPTION = 'otel.status_description'
         STATUS_UNSET = 'UNSET'
         STATUS_ERROR = 'ERROR'
         STATUS_OK = 'OK'
@@ -37,7 +36,7 @@ module OpenTelemetry
         ATTRIBUTE_NET_HOST_PORT = 'host.port'
 
         DEFAULT_SERVICE_NAME = OpenTelemetry::SDK::Resources::Resource.default.attribute_enumerator.find { |k, _| k == SERVICE_NAME_ATTRIBUTE_KEY }&.last || 'unknown_service'
-        private_constant(:KIND_MAP, :DEFAULT_SERVICE_NAME, :SERVICE_NAME_ATTRIBUTE_KEY, :ERROR_TAG_KEY, :STATUS_CODE_NAME, :STATUS_CODE_DESCRIPTION, :STATUS_UNSET, :STATUS_ERROR, :STATUS_OK)
+        private_constant(:KIND_MAP, :DEFAULT_SERVICE_NAME, :SERVICE_NAME_ATTRIBUTE_KEY, :ERROR_TAG_KEY, :STATUS_CODE_NAME, :STATUS_UNSET, :STATUS_ERROR, :STATUS_OK)
 
         def to_zipkin_span(span_d, resource)
           start_time = (span_d.start_timestamp.to_f * 1_000_000).to_i
@@ -45,11 +44,7 @@ module OpenTelemetry
           tags = {}
           service_name = DEFAULT_SERVICE_NAME
           resource&.attribute_enumerator&.select do |key, value|
-            if key == SERVICE_NAME_ATTRIBUTE_KEY
-              service_name = value
-            else
-              tags[key] = value
-            end
+            service_name = value if key == SERVICE_NAME_ATTRIBUTE_KEY
           end
 
           add_il_tags(span_d, tags)
@@ -83,21 +78,18 @@ module OpenTelemetry
 
         def add_status_tags(span_data, tags)
           if span_data.status&.code && span_data.status&.code == OpenTelemetry::Trace::Status::ERROR
-            # mark errors if we can, setting error key to description but falling back to 'true'
+            # mark errors if we can, setting error key to description but falling back to an empty string
             # https://github.com/open-telemetry/opentelemetry-specification/blob/84b18b23339dcc0b1a9d48f976a1afd287417602/specification/trace/sdk_exporters/zipkin.md#status
             # https://github.com/openzipkin/zipkin-ruby/blob/7bedb4dd162c4cbeffc7b97dd06c8dbccbfbab62/lib/zipkin-tracer/trace.rb#L259
             # https://github.com/open-telemetry/opentelemetry-collector/blob/81c7cc53b7067fbf3db4e1671b13bbe2796eb56e/translator/trace/zipkin/traces_to_zipkinv2.go#L144
-            if span_data.status&.description.nil? || span_data.status.description.empty?
-              tags[ERROR_TAG_KEY] = 'true'
-            else
-              tags[ERROR_TAG_KEY] = span_data.status&.description
-              tags[STATUS_CODE_DESCRIPTION] = span_data.status&.description
-            end
+            tags[ERROR_TAG_KEY] = if span_data.status.description.nil? || span_data.status.description.empty?
+                                    ''
+                                  else
+                                    span_data.status.description
+                                  end
             tags[STATUS_CODE_NAME] = STATUS_ERROR
           elsif span_data.status&.code && span_data.status&.code == OpenTelemetry::Trace::Status::OK
             tags[STATUS_CODE_NAME] = STATUS_OK
-          else
-            tags[STATUS_CODE_NAME] = STATUS_UNSET
           end
         end
 
