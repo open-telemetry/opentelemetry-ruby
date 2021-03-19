@@ -12,7 +12,7 @@ This is a simple example that demonstrates tracing an HTTP request from client t
 
 The example uses Docker Compose to make it a bit easier to get things up and running.
 
-1. Follow the `Developer Setup` instructions in [the main README](../../README.md)
+1. Follow the [Docker setup instructions](../../CONTRIBUTING.md#docker-setup).
 1. Run the server using the `ex-http` compose service
     * `docker-compose run ex-http`
 1. After a few seconds, an interactive shell should appear
