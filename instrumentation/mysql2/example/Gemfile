@@ -4,5 +4,6 @@ source 'https://rubygems.org'
 
 gem 'mysql2'
 gem 'opentelemetry-api', path: '../../../api'
+gem 'opentelemetry-common', path: '../../../common'
 gem 'opentelemetry-instrumentation-mysql2', path: '../../../instrumentation/mysql2'
 gem 'opentelemetry-sdk', path: '../../../sdk'

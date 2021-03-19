@@ -11,13 +11,21 @@ describe OpenTelemetry::Context::Propagation::RackEnvGetter do
     OpenTelemetry::Context::Propagation::RackEnvGetter.new
   end
 
-  let(:carrier) { { 'HTTP_TRACEPARENT' => 'tp', 'HTTP_TRACESTATE' => 'ts', 'HTTP_X_SOURCE_ID' => '123' } }
+  let(:carrier) do
+    {
+      'HTTP_TRACEPARENT' => 'tp',
+      'HTTP_TRACESTATE' => 'ts',
+      'HTTP_X_SOURCE_ID' => '123',
+      'rack.hijack?' => true
+    }
+  end
 
   describe '#get' do
     it 'reads key from carrier' do
       _(getter.get(carrier, 'traceparent')).must_equal('tp')
       _(getter.get(carrier, 'tracestate')).must_equal('ts')
       _(getter.get(carrier, 'x-source-id')).must_equal('123')
+      _(getter.get(carrier, 'rack.hijack?')).must_equal(true)
     end
 
     it 'returns nil for non-existent key' do
@@ -27,7 +35,7 @@ describe OpenTelemetry::Context::Propagation::RackEnvGetter do
 
   describe '#keys' do
     it 'returns carrier keys' do
-      _(getter.keys(carrier)).must_equal(%w[traceparent tracestate x-source-id])
+      _(getter.keys(carrier)).must_equal(%w[traceparent tracestate x-source-id rack.hijack?])
     end
 
     it 'returns empty array for empty carrier' do

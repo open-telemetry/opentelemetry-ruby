@@ -4,5 +4,6 @@ source 'https://rubygems.org'
 
 gem 'excon'
 gem 'opentelemetry-api', path: '../../../api'
+gem 'opentelemetry-common', path: '../../../common'
 gem 'opentelemetry-instrumentation-excon', path: '../../../instrumentation/excon'
 gem 'opentelemetry-sdk', path: '../../../sdk'

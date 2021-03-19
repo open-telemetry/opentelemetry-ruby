@@ -57,9 +57,7 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
 
       _(span.name).must_equal 'AUTH'
       _(span.attributes['db.system']).must_equal 'redis'
-      _(span.attributes['db.instance']).must_equal '0'
       _(span.attributes['db.statement']).must_equal 'AUTH ?'
-      _(span.attributes['db.url']).must_equal 'redis://127.0.0.1:6379'
       _(span.attributes['net.peer.name']).must_equal '127.0.0.1'
       _(span.attributes['net.peer.port']).must_equal 6379
     end
@@ -74,20 +72,38 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
       set_span = exporter.finished_spans.first
       _(set_span.name).must_equal 'SET'
       _(set_span.attributes['db.system']).must_equal 'redis'
-      _(set_span.attributes['db.instance']).must_equal '0'
       _(set_span.attributes['db.statement']).must_equal(
         'SET K ' + 'x' * 47 + '...'
       )
-      _(set_span.attributes['db.url']).must_equal 'redis://127.0.0.1:6379'
       _(set_span.attributes['net.peer.name']).must_equal '127.0.0.1'
       _(set_span.attributes['net.peer.port']).must_equal 6379
 
       get_span = exporter.finished_spans.last
       _(get_span.name).must_equal 'GET'
       _(get_span.attributes['db.system']).must_equal 'redis'
-      _(get_span.attributes['db.instance']).must_equal '0'
       _(get_span.attributes['db.statement']).must_equal 'GET K'
-      _(get_span.attributes['db.url']).must_equal 'redis://127.0.0.1:6379'
+      _(get_span.attributes['net.peer.name']).must_equal '127.0.0.1'
+      _(get_span.attributes['net.peer.port']).must_equal 6379
+    end
+
+    it 'reflects db index' do
+      redis = ::Redis.new(db: 1)
+      redis.get('K')
+
+      _(exporter.finished_spans.size).must_equal 2
+
+      select_span = exporter.finished_spans.first
+      _(select_span.name).must_equal 'SELECT'
+      _(select_span.attributes['db.system']).must_equal 'redis'
+      _(select_span.attributes['db.statement']).must_equal('SELECT 1')
+      _(select_span.attributes['net.peer.name']).must_equal '127.0.0.1'
+      _(select_span.attributes['net.peer.port']).must_equal 6379
+
+      get_span = exporter.finished_spans.last
+      _(get_span.name).must_equal 'GET'
+      _(get_span.attributes['db.system']).must_equal 'redis'
+      _(get_span.attributes['db.statement']).must_equal('GET K')
+      _(get_span.attributes['db.redis.database_index']).must_equal 1
       _(get_span.attributes['net.peer.name']).must_equal '127.0.0.1'
       _(get_span.attributes['net.peer.port']).must_equal 6379
     end
@@ -103,9 +119,7 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
       set_span = exporter.finished_spans.first
       _(set_span.name).must_equal 'SET'
       _(set_span.attributes['db.system']).must_equal 'redis'
-      _(set_span.attributes['db.instance']).must_equal '0'
       _(set_span.attributes['db.statement']).must_equal('SET K x')
-      _(set_span.attributes['db.url']).must_equal 'redis://127.0.0.1:6379'
       _(set_span.attributes['peer.service']).must_equal 'foo'
       _(set_span.attributes['net.peer.name']).must_equal '127.0.0.1'
       _(set_span.attributes['net.peer.port']).must_equal 6379
@@ -119,11 +133,9 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'THIS_IS_NOT_A_REDIS_FUNC'
       _(span.attributes['db.system']).must_equal 'redis'
-      _(span.attributes['db.instance']).must_equal '0'
       _(span.attributes['db.statement']).must_equal(
         'THIS_IS_NOT_A_REDIS_FUNC THIS_IS_NOT_A_VALID_ARG'
       )
-      _(span.attributes['db.url']).must_equal 'redis://127.0.0.1:6379'
       _(span.attributes['net.peer.name']).must_equal '127.0.0.1'
       _(span.attributes['net.peer.port']).must_equal 6379
       _(span.status.code).must_equal(
@@ -144,9 +156,7 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'pipeline'
       _(span.attributes['db.system']).must_equal 'redis'
-      _(span.attributes['db.instance']).must_equal '0'
       _(span.attributes['db.statement']).must_equal "SET v1 0\nINCR v1\nGET v1"
-      _(span.attributes['db.url']).must_equal 'redis://example.com:8321'
       _(span.attributes['net.peer.name']).must_equal 'example.com'
       _(span.attributes['net.peer.port']).must_equal 8321
     end

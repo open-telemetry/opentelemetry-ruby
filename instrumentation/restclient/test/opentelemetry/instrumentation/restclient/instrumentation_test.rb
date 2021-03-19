@@ -45,7 +45,7 @@ describe OpenTelemetry::Instrumentation::RestClient::Instrumentation do
     end
 
     it 'after request with success code' do
-      ::RestClient.get('http://example.com/success')
+      ::RestClient.get('http://username:password@example.com/success')
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
@@ -61,7 +61,7 @@ describe OpenTelemetry::Instrumentation::RestClient::Instrumentation do
 
     it 'after request with failure code' do
       expect do
-        ::RestClient.get('http://example.com/failure')
+        ::RestClient.get('http://username:password@example.com/failure')
       end.must_raise RestClient::InternalServerError
 
       _(exporter.finished_spans.size).must_equal 1

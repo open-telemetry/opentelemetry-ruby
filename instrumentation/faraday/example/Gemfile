@@ -4,5 +4,6 @@ source 'https://rubygems.org'
 
 gem 'faraday'
 gem 'opentelemetry-api', path: '../../../api'
+gem 'opentelemetry-common', path: '../../../common'
 gem 'opentelemetry-instrumentation-faraday', path: '../../../instrumentation/faraday'
 gem 'opentelemetry-sdk', path: '../../../sdk'

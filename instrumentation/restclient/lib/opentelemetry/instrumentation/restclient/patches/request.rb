@@ -24,7 +24,7 @@ module OpenTelemetry
               "HTTP #{http_method}",
               attributes: {
                 'http.method' => http_method,
-                'http.url' => url
+                'http.url' => OpenTelemetry::Common::Utilities.cleanse_url(url)
               },
               kind: :client
             )

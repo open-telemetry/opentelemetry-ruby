@@ -29,14 +29,14 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
         gcp_env_mock.expect(:instance_attribute, 'us-central1', %w[cluster-location])
         gcp_env_mock.expect(:instance_zone, 'us-central1-a')
         gcp_env_mock.expect(:lookup_metadata, 'opentelemetry-test', %w[instance id])
-        gcp_env_mock.expect(:lookup_metadata, 'opentelemetry-test', %w[instance hostname])
+        gcp_env_mock.expect(:lookup_metadata, 'opentelemetry-node-1', %w[instance hostname])
         gcp_env_mock.expect(:instance_attribute, 'opentelemetry-cluster', %w[cluster-name])
         gcp_env_mock.expect(:kubernetes_engine?, true)
         gcp_env_mock.expect(:kubernetes_engine_namespace_id, 'default')
 
         Socket.stub(:gethostname, 'opentelemetry-test') do
           old_hostname = ENV['HOSTNAME']
-          ENV['HOSTNAME'] = 'opentelemetry-test'
+          ENV['HOSTNAME'] = 'opentelemetry-host-name-1'
           begin
             Google::Cloud::Env.stub(:new, gcp_env_mock) { detected_resource }
           ensure
@@ -52,10 +52,11 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
           'cloud.region' => 'us-central1',
           'cloud.zone' => 'us-central1-a',
           'host.id' => 'opentelemetry-test',
-          'host.name' => 'opentelemetry-test',
+          'host.name' => 'opentelemetry-host-name-1',
           'k8s.cluster.name' => 'opentelemetry-cluster',
           'k8s.namespace.name' => 'default',
-          'k8s.pod.name' => 'opentelemetry-test'
+          'k8s.pod.name' => 'opentelemetry-host-name-1',
+          'k8s.node.name' => 'opentelemetry-node-1'
         }
       end
 

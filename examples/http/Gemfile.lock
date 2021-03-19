@@ -1,13 +1,20 @@
 PATH
   remote: ../../api
   specs:
-    opentelemetry-api (0.0.0)
+    opentelemetry-api (0.15.0)
+
+PATH
+  remote: ../../common
+  specs:
+    opentelemetry-common (0.15.0)
+      opentelemetry-api (~> 0.15.0)
 
 PATH
   remote: ../../sdk
   specs:
-    opentelemetry-sdk (0.0.0)
-      opentelemetry-api (~> 0.0)
+    opentelemetry-sdk (0.15.0)
+      opentelemetry-api (~> 0.15.0)
+      opentelemetry-common (~> 0.15.0)
 
 GEM
   remote: https://rubygems.org/
@@ -32,8 +39,9 @@ PLATFORMS
 DEPENDENCIES
   faraday (~> 0.16.1)
   opentelemetry-api!
+  opentelemetry-common!
   opentelemetry-sdk!
   sinatra (~> 2.0)
 
 BUNDLED WITH
-   2.0.2
+   2.2.14

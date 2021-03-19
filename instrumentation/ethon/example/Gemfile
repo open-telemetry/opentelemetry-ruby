@@ -4,5 +4,6 @@ source 'https://rubygems.org'
 
 gem 'ethon'
 gem 'opentelemetry-api', path: '../../../api'
+gem 'opentelemetry-common', path: '../../../common'
 gem 'opentelemetry-instrumentation-ethon', path: '../../../instrumentation/ethon'
 gem 'opentelemetry-sdk', path: '../../../sdk'

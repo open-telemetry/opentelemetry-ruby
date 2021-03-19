@@ -1,5 +1,10 @@
 # Release History: opentelemetry-resource_detectors
 
+### v0.16.0 / 2021-03-17
+
+* ADDED: Add k8s node to gcp resource detector 
+* DOCS: Replace Gitter with GitHub Discussions 
+
 ### v0.15.0 / 2021-02-18
 
 * (No significant changes)
