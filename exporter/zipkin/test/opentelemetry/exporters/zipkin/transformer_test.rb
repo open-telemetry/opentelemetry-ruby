@@ -8,8 +8,8 @@ require 'test_helper'
 describe OpenTelemetry::Exporter::Zipkin::Transformer do
   Transformer = OpenTelemetry::Exporter::Zipkin::Transformer
 
-  it 'encodes a span_data and resource' do
-    resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo')
+  it 'encodes a span_data but not resource' do
+    resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo', 'bar_not_copied' => 'baz_not_capied')
     encoded_span = Transformer.to_zipkin_span(create_span_data(attributes: { 'bar' => 'baz' }), resource)
     _(encoded_span[:name]).must_equal('')
     _(encoded_span['localEndpoint']['serviceName']).must_equal('foo')
