@@ -26,13 +26,14 @@ module OpenTelemetry
           def call(env)
             http_method = HTTP_METHODS_SYMBOL_TO_STRING[env.method]
 
+            instrumentation_attrs = {
+              'http.method' => http_method, 'http.url' => env.url.to_s
+            }
+            attributes = instrumentation_attrs.merge(
+              OpenTelemetry::Common::HTTP::ClientContext.attributes
+            )
             tracer.in_span(
-              "HTTP #{http_method}",
-              attributes: {
-                'http.method' => http_method,
-                'http.url' => env.url.to_s
-              },
-              kind: :client
+              "HTTP #{http_method}", attributes: attributes, kind: :client
             ) do |span|
               OpenTelemetry.propagation.inject(env.request_headers)
 

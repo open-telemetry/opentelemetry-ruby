@@ -88,5 +88,23 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
 
       _(span.attributes['http.status_text']).must_equal 'Internal Server Error'
     end
+
+    it 'merges http client attributes' do
+      client_context_attrs = {
+        'test.attribute' => 'test.value', 'http.method' => 'OVERRIDE'
+      }
+      response = OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
+        client.get('/success')
+      end
+
+      _(span.name).must_equal 'HTTP GET'
+      _(span.attributes['http.method']).must_equal 'OVERRIDE'
+      _(span.attributes['http.status_code']).must_equal 200
+      _(span.attributes['http.url']).must_equal 'http://example.com/success'
+      _(span.attributes['test.attribute']).must_equal 'test.value'
+      _(response.env.request_headers['Traceparent']).must_equal(
+        "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
+      )
+    end
   end
 end
