@@ -33,7 +33,7 @@ end
 
 ### Configuration options
 
-The `http.route` attribute is disabled by default because we use [.recognize](https://github.com/rails/rails/blob/main/actionpack/lib/action_dispatch/journey/router.rb#L65)
+The `http.route` attribute is disabled by default because we use [.recognize](https://github.com/rails/rails/blob/v6.1.3/actionpack/lib/action_dispatch/journey/router.rb#L65)
 ```ruby
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Rails', {
