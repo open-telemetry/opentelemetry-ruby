@@ -106,5 +106,26 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
         "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
       )
     end
+
+    it 'accepts peer service name from config' do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(peer_service: 'example:faraday')
+
+      client.get('/success')
+
+      _(span.attributes['peer.service']).must_equal 'example:faraday'
+    end
+
+    it 'prioritizes context attributes over config for peer service name' do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(peer_service: 'example:faraday')
+
+      client_context_attrs = { 'peer.service' => 'example:custom' }
+      OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
+        client.get('/success')
+      end
+
+      _(span.attributes['peer.service']).must_equal 'example:custom'
+    end
   end
 end

@@ -25,12 +25,8 @@ module OpenTelemetry
 
           def call(env)
             http_method = HTTP_METHODS_SYMBOL_TO_STRING[env.method]
-
-            instrumentation_attrs = {
-              'http.method' => http_method, 'http.url' => env.url.to_s
-            }
-            attributes = instrumentation_attrs.merge(
-              OpenTelemetry::Common::HTTP::ClientContext.attributes
+            attributes = span_creation_attributes(
+              http_method: http_method, url: env.url
             )
             tracer.in_span(
               "HTTP #{http_method}", attributes: attributes, kind: :client
@@ -44,6 +40,17 @@ module OpenTelemetry
           private
 
           attr_reader :app
+
+          def span_creation_attributes(http_method:, url:)
+            instrumentation_attrs = {
+              'http.method' => http_method, 'http.url' => url.to_s
+            }
+            config = Faraday::Instrumentation.instance.config
+            instrumentation_attrs['peer.service'] = config[:peer_service] if config[:peer_service]
+            instrumentation_attrs.merge(
+              OpenTelemetry::Common::HTTP::ClientContext.attributes
+            )
+          end
 
           def tracer
             Faraday::Instrumentation.instance.tracer
