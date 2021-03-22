@@ -97,7 +97,7 @@ end
 
 def perform_pending_releases
   performer = create_performer
-  github_check_errors = @utils.wait_github_checks
+  github_check_errors = skip_checks ? [] : @utils.wait_github_checks
   if github_check_errors.empty?
     @utils.released_gems_and_versions(@pr_info).each do |gem_name, gem_version|
       if performer.instance(gem_name, gem_version).perform
