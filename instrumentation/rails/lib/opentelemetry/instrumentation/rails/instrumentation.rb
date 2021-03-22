@@ -22,6 +22,8 @@ module OpenTelemetry
           defined?(::Rails)
         end
 
+        option :enable_recognize_route, default: false, validate: :boolean
+
         private
 
         def require_dependencies
