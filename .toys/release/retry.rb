@@ -118,8 +118,8 @@ def setup_git
   @original_branch = @utils.current_branch
   merge_sha = @pr_info["merge_commit_sha"]
   release_sha = sha || merge_sha
+  exec(["git", "fetch", "--depth=1", "origin", release_sha])
   exec(["git", "fetch", "--depth=2", "origin", merge_sha])
-  exec(["git", "fetch", "--depth=2", "origin", release_sha])
   exec(["git", "checkout", release_sha])
 end
 
