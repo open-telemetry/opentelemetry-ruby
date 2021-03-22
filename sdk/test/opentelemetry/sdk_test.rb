@@ -28,7 +28,7 @@ describe OpenTelemetry::SDK do
       end
 
       _(received_exception).must_be_instance_of OpenTelemetry::SDK::ConfigurationError
-      _(received_message).must_equal('unexpected configuration error due to unknown keyword: :invalid_option')
+      _(received_message).must_match(/unexpected configuration error due to unknown keyword: .*invalid_option/)
     end
   end
 end
