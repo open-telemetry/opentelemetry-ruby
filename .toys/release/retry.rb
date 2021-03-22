@@ -26,6 +26,13 @@ flag_group desc: "Flags" do
       "The name of the git remote pointing at the canonical repository." \
       " Defaults to 'origin'."
   end
+  flag :sha, "--sha=VAL" do
+    desc "Override the SHA for the release"
+    long_desc \
+      "The SHA to release from. This can be used if additional commits" \
+      " needed to be done to fix the release. If not given, the merge SHA" \
+      " of the pull request is used."
+  end
   flag :rubygems_api_key, "--rubygems-api-key=VAL" do
     desc "Set the Rubygems API key"
     long_desc \
@@ -109,7 +116,7 @@ end
 
 def setup_git
   @original_branch = @utils.current_branch
-  merge_sha = @pr_info["merge_commit_sha"]
+  merge_sha = sha || @pr_info["merge_commit_sha"]
   exec(["git", "fetch", "--depth=2", "origin", merge_sha])
   exec(["git", "checkout", merge_sha])
 end
