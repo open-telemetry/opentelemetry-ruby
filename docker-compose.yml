@@ -113,6 +113,8 @@ services:
 
   ex-http:
     <<: *base
+    environment:
+      - OTEL_TRACES_EXPORTER=console
     command: ./start_server.sh
     working_dir: /app/examples/http
 
