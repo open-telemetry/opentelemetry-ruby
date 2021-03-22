@@ -36,6 +36,7 @@ describe OpenTelemetry::Instrumentation::Rails::Patches::ActionController::Metal
     _(span.attributes['http.target']).must_equal '/ok'
     _(span.attributes['http.status_code']).must_equal 200
     _(span.attributes['http.user_agent']).must_be_nil
+    _(span.attributes['http.route']).must_be_nil
   end
 
   it 'sets the span name when the controller raises an exception' do
@@ -63,6 +64,37 @@ describe OpenTelemetry::Instrumentation::Rails::Patches::ActionController::Metal
       get 'internal_server_error'
 
       _(span.name).must_equal 'ExampleController#internal_server_error'
+    end
+  end
+
+  describe 'when the application has enable_rails_route enabled' do
+    before do
+      OpenTelemetry::Instrumentation::Rails::Instrumentation.instance.config[:enable_recognize_route] = true
+    end
+
+    after do
+      OpenTelemetry::Instrumentation::Rails::Instrumentation.instance.config[:enable_recognize_route] = false
+    end
+
+    it 'sets the span name to ControllerName#action' do
+      get '/ok'
+
+      _(last_response.body).must_equal 'actually ok'
+      _(last_response.ok?).must_equal true
+      _(span.name).must_equal 'ExampleController#ok'
+      _(span.kind).must_equal :server
+      _(span.status.ok?).must_equal true
+
+      _(span.instrumentation_library.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
+      _(span.instrumentation_library.version).must_equal OpenTelemetry::Instrumentation::Rack::VERSION
+
+      _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.host']).must_equal 'example.org'
+      _(span.attributes['http.scheme']).must_equal 'http'
+      _(span.attributes['http.target']).must_equal '/ok'
+      _(span.attributes['http.status_code']).must_equal 200
+      _(span.attributes['http.user_agent']).must_be_nil
+      _(span.attributes['http.route']).must_equal '/ok(.:format)'
     end
   end
 
