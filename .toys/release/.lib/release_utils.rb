@@ -268,7 +268,7 @@ class ReleaseUtils
     if cur_repo == repo_path
       logger.info("Git repo is correct.")
     else
-      error("Remmote repo is #{cur_repo}, expected #{repo_path}")
+      error("Remote repo is #{cur_repo}, expected #{repo_path}")
     end
     cur_repo
   end

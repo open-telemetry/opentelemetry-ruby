@@ -65,7 +65,7 @@ followed by:
 bundle install
 ```
 
-To install development versions of these packages, follow the "Developer Setup" section (below).
+To install development versions of these packages, follow the [Docker Setup instructions](CONTRIBUTING.md#docker-setup).
 
 ## Quick Start
 

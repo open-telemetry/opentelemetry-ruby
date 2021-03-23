@@ -6,4 +6,5 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'opentelemetry-api', path: '../../api'
+gem 'opentelemetry-common', path: '../../common'
 gem 'opentelemetry-sdk', path: '../../sdk'

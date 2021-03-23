@@ -26,6 +26,13 @@ flag_group desc: "Flags" do
       "The name of the git remote pointing at the canonical repository." \
       " Defaults to 'origin'."
   end
+  flag :sha, "--sha=VAL" do
+    desc "Override the SHA for the release"
+    long_desc \
+      "The SHA to release from. This can be used if additional commits" \
+      " needed to be done to fix the release. If not given, the merge SHA" \
+      " of the pull request is used."
+  end
   flag :rubygems_api_key, "--rubygems-api-key=VAL" do
     desc "Set the Rubygems API key"
     long_desc \
@@ -90,7 +97,7 @@ end
 
 def perform_pending_releases
   performer = create_performer
-  github_check_errors = @utils.wait_github_checks
+  github_check_errors = skip_checks ? [] : @utils.wait_github_checks
   if github_check_errors.empty?
     @utils.released_gems_and_versions(@pr_info).each do |gem_name, gem_version|
       if performer.instance(gem_name, gem_version).perform
@@ -110,8 +117,10 @@ end
 def setup_git
   @original_branch = @utils.current_branch
   merge_sha = @pr_info["merge_commit_sha"]
+  release_sha = sha || merge_sha
+  exec(["git", "fetch", "--depth=1", "origin", release_sha])
   exec(["git", "fetch", "--depth=2", "origin", merge_sha])
-  exec(["git", "checkout", merge_sha])
+  exec(["git", "checkout", release_sha])
 end
 
 def cleanup_git
