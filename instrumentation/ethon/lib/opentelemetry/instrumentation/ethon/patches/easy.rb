@@ -68,12 +68,15 @@ module OpenTelemetry
             method = 'N/A' # Could be GET or not HTTP at all
             method = @otel_method if instance_variable_defined?(:@otel_method) && !@otel_method.nil?
 
+            instrumentation_attrs = {
+              'http.method' => method,
+              'http.url' => OpenTelemetry::Common::Utilities.cleanse_url(url)
+            }
             @otel_span = tracer.start_span(
               HTTP_METHODS_TO_SPAN_NAMES[method],
-              attributes: {
-                'http.method' => method,
-                'http.url' => OpenTelemetry::Common::Utilities.cleanse_url(url)
-              },
+              attributes: instrumentation_attrs.merge(
+                OpenTelemetry::Common::HTTP::ClientContext.attributes
+              ),
               kind: :client
             )
 
