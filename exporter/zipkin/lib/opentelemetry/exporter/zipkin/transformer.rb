@@ -43,7 +43,7 @@ module OpenTelemetry
           duration = (span_d.end_timestamp.to_f * 1_000_000).to_i - start_time
           tags = {}
           service_name = DEFAULT_SERVICE_NAME
-          resource&.attribute_enumerator&.select do |key, value|
+          resource.attribute_enumerator.select do |key, value|
             service_name = value if key == SERVICE_NAME_ATTRIBUTE_KEY
           end
 
@@ -72,23 +72,19 @@ module OpenTelemetry
         end
 
         def add_il_tags(span_data, tags)
-          tags['otel.library.name'] = span_data.instrumentation_library&.name if span_data.instrumentation_library&.name
-          tags['otel.library.version'] = span_data.instrumentation_library&.version if span_data.instrumentation_library&.version
+          tags['otel.library.name'] = span_data.instrumentation_library.name
+          tags['otel.library.version'] = span_data.instrumentation_library.version
         end
 
         def add_status_tags(span_data, tags)
-          if span_data.status&.code && span_data.status&.code == OpenTelemetry::Trace::Status::ERROR
+          if span_data.status&.code == OpenTelemetry::Trace::Status::ERROR
             # mark errors if we can, setting error key to description but falling back to an empty string
             # https://github.com/open-telemetry/opentelemetry-specification/blob/84b18b23339dcc0b1a9d48f976a1afd287417602/specification/trace/sdk_exporters/zipkin.md#status
             # https://github.com/openzipkin/zipkin-ruby/blob/7bedb4dd162c4cbeffc7b97dd06c8dbccbfbab62/lib/zipkin-tracer/trace.rb#L259
             # https://github.com/open-telemetry/opentelemetry-collector/blob/81c7cc53b7067fbf3db4e1671b13bbe2796eb56e/translator/trace/zipkin/traces_to_zipkinv2.go#L144
-            tags[ERROR_TAG_KEY] = if span_data.status.description.nil? || span_data.status.description.empty?
-                                    ''
-                                  else
-                                    span_data.status.description
-                                  end
+            tags[ERROR_TAG_KEY] = span_data.status.description || ''
             tags[STATUS_CODE_NAME] = STATUS_ERROR
-          elsif span_data.status&.code && span_data.status&.code == OpenTelemetry::Trace::Status::OK
+          elsif span_data.status&.code == OpenTelemetry::Trace::Status::OK
             tags[STATUS_CODE_NAME] = STATUS_OK
           end
         end
@@ -107,9 +103,9 @@ module OpenTelemetry
           # https://github.com/open-telemetry/opentelemetry-collector/blob/347cfa9ab21d47240128c58c9bafcc0014bc729d/translator/trace/zipkin/traces_to_zipkinv2.go#L172
           # https://github.com/open-telemetry/opentelemetry-collector/blob/347cfa9ab21d47240128c58c9bafcc0014bc729d/translator/trace/zipkin/traces_to_zipkinv2.go#L183-L191
           # https://github.com/open-telemetry/opentelemetry-specification/blob/cb16422a61219d4fd99b466a70e47cb8af9e26b1/specification/trace/sdk_exporters/zipkin.md#events
-          return if span_data.events.nil? || span_data.events&.size.to_i.zero?
+          return if span_data.events.nil? || span_data.events.empty?
 
-          events = span_data.events&.map do |event|
+          events = span_data.events.map do |event|
             if event.attributes.keys.length.zero?
               {
                 timestamp: (event.timestamp.to_f * 1_000_000).to_s,
@@ -118,7 +114,7 @@ module OpenTelemetry
             else
               {
                 timestamp: (event.timestamp.to_f * 1_000_000).to_s,
-                value: { "#{event.name}": event.attributes&.transform_values { |val| val.to_s } }.to_json
+                value: { event.name => event.attributes.transform_values(&:to_s) }.to_json
               }
             end
           end
@@ -129,11 +125,11 @@ module OpenTelemetry
         def aggregate_span_tags(span_data, tags)
           # convert attributes to strings
           # https://github.com/open-telemetry/opentelemetry-specification/blob/84b18b23339dcc0b1a9d48f976a1afd287417602/specification/trace/sdk_exporters/zipkin.md#attribute
-          return tags if span_data[:attributes].nil?
+          return tags if span_data.attributes.nil?
 
-          tags = tags.merge(span_data[:attributes])
+          tags = tags.merge(span_data.attributes)
 
-          tags.each_with_object(tags) { |(k, v), m| m[k] = v.to_s }
+          tags.transform_values!(&:to_s)
         end
 
         # mostly based on https://github.com/open-telemetry/opentelemetry-specification/blob/cb16422a61219d4fd99b466a70e47cb8af9e26b1/specification/trace/sdk_exporters/zipkin.md#otlp---zipkin
