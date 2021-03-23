@@ -68,15 +68,9 @@ module OpenTelemetry
             method = 'N/A' # Could be GET or not HTTP at all
             method = @otel_method if instance_variable_defined?(:@otel_method) && !@otel_method.nil?
 
-            instrumentation_attrs = {
-              'http.method' => method,
-              'http.url' => OpenTelemetry::Common::Utilities.cleanse_url(url)
-            }
             @otel_span = tracer.start_span(
               HTTP_METHODS_TO_SPAN_NAMES[method],
-              attributes: instrumentation_attrs.merge(
-                OpenTelemetry::Common::HTTP::ClientContext.attributes
-              ),
+              attributes: span_creation_attributes(method),
               kind: :client
             )
 
@@ -92,6 +86,18 @@ module OpenTelemetry
           end
 
           private
+
+          def span_creation_attributes(method)
+            instrumentation_attrs = {
+              'http.method' => method,
+              'http.url' => OpenTelemetry::Common::Utilities.cleanse_url(url)
+            }
+            config = Ethon::Instrumentation.instance.config
+            instrumentation_attrs['peer.service'] = config[:peer_service] if config[:peer_service]
+            instrumentation_attrs.merge(
+              OpenTelemetry::Common::HTTP::ClientContext.attributes
+            )
+          end
 
           def tracer
             Ethon::Instrumentation.instance.tracer
