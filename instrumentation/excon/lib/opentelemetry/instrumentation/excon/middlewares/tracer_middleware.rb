@@ -100,7 +100,7 @@ module OpenTelemetry
             OpenTelemetry.logger.debug(e.message)
           end
 
-          def span_creation_attributes(datum)
+          def span_creation_attributes(datum, http_method)
             http_method = HTTP_METHODS_SYMBOL_TO_STRING[datum[:method]]
             instrumentation_attrs = {
               'http.host' => datum[:host],
