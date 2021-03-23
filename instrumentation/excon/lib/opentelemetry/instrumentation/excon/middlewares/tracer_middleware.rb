@@ -26,7 +26,7 @@ module OpenTelemetry
             begin
               unless datum.key?(:otel_span)
                 http_method = HTTP_METHODS_SYMBOL_TO_STRING[datum[:method]]
-                attributes = span_creation_attributes(datum)
+                attributes = span_creation_attributes(datum, http_method)
                 tracer.start_span(
                   "HTTP #{http_method}",
                   attributes: attributes,
