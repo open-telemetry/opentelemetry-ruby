@@ -16,7 +16,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
   let(:span) { exporter.finished_spans.first }
 
   let(:client) do
-    ::Faraday.new('http://example.com') do |builder|
+    ::Faraday.new('http://username:password@example.com') do |builder|
       builder.adapter(:test) do |stub|
         stub.get('/success') { |_| [200, {}, 'OK'] }
         stub.get('/failure') { |_| [500, {}, 'OK'] }
@@ -87,6 +87,45 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
       ::Faraday.new('http://example.com').get('/')
 
       _(span.attributes['http.status_text']).must_equal 'Internal Server Error'
+    end
+
+    it 'merges http client attributes' do
+      client_context_attrs = {
+        'test.attribute' => 'test.value', 'http.method' => 'OVERRIDE'
+      }
+      response = OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
+        client.get('/success')
+      end
+
+      _(span.name).must_equal 'HTTP GET'
+      _(span.attributes['http.method']).must_equal 'OVERRIDE'
+      _(span.attributes['http.status_code']).must_equal 200
+      _(span.attributes['http.url']).must_equal 'http://example.com/success'
+      _(span.attributes['test.attribute']).must_equal 'test.value'
+      _(response.env.request_headers['Traceparent']).must_equal(
+        "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
+      )
+    end
+
+    it 'accepts peer service name from config' do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(peer_service: 'example:faraday')
+
+      client.get('/success')
+
+      _(span.attributes['peer.service']).must_equal 'example:faraday'
+    end
+
+    it 'prioritizes context attributes over config for peer service name' do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(peer_service: 'example:faraday')
+
+      client_context_attrs = { 'peer.service' => 'example:custom' }
+      OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
+        client.get('/success')
+      end
+
+      _(span.attributes['peer.service']).must_equal 'example:custom'
     end
   end
 end

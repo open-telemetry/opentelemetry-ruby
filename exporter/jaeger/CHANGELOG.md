@@ -1,5 +1,12 @@
 # Release History: opentelemetry-exporter-jaeger
 
+### v0.16.0 / 2021-03-17
+
+* BREAKING CHANGE: Implement Exporter#force_flush 
+
+* ADDED: Implement Exporter#force_flush 
+* DOCS: Replace Gitter with GitHub Discussions 
+
 ### v0.15.0 / 2021-02-18
 
 * BREAKING CHANGE: Streamline processor pipeline 

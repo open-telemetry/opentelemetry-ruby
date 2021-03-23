@@ -67,7 +67,7 @@ module OpenTelemetry
 
             # restore extracted context in this process:
             OpenTelemetry::Context.with_current(frontend_context || extracted_context) do
-              request_span_name = create_request_span_name(env['REQUEST_URI'] || original_env['PATH_INFO'])
+              request_span_name = create_request_span_name(env['REQUEST_URI'] || original_env['PATH_INFO'], env)
               request_span_kind = frontend_context.nil? ? :server : :internal
               tracer.in_span(request_span_name,
                              attributes: request_span_attributes(env: env),
@@ -86,7 +86,10 @@ module OpenTelemetry
           private
 
           def untraced_request?(env)
-            @untraced_endpoints.include?(env['PATH_INFO'])
+            return true if @untraced_endpoints.include?(env['PATH_INFO'])
+            return true if config[:untraced_requests]&.call(env)
+
+            false
           end
 
           # return Context with the frontend span as the current span
@@ -138,12 +141,12 @@ module OpenTelemetry
           # strip off query param value, keep param name)
           #
           # see http://github.com/open-telemetry/opentelemetry-specification/pull/416/files
-          def create_request_span_name(request_uri_or_path_info)
+          def create_request_span_name(request_uri_or_path_info, env)
             # NOTE: dd-trace-rb has implemented 'quantization' (which lowers url cardinality)
             #       see Datadog::Quantization::HTTP.url
 
             if (implementation = config[:url_quantization])
-              implementation.call(request_uri_or_path_info)
+              implementation.call(request_uri_or_path_info, env)
             else
               request_uri_or_path_info
             end

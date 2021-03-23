@@ -116,6 +116,39 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
       end
     end
 
+    describe 'config[:untraced_requests]' do
+      describe 'when a callable is passed in' do
+        let(:untraced_callable) do
+          ->(env) { env['PATH_INFO'] =~ %r{^\/assets} }
+        end
+        let(:config) { default_config.merge(untraced_requests: untraced_callable) }
+
+        it 'does not trace requests in which the callable returns true' do
+          Rack::MockRequest.new(rack_builder).get('/assets', env)
+
+          ping_span = finished_spans.find { |s| s.name == '/assets' }
+          _(ping_span).must_be_nil
+
+          root_span = finished_spans.find { |s| s.name == '/' }
+          _(root_span).wont_be_nil
+        end
+      end
+
+      describe 'when nil is passed in' do
+        let(:config) { { untraced_requests: nil } }
+
+        it 'traces everything' do
+          Rack::MockRequest.new(rack_builder).get('/assets', env)
+
+          ping_span = finished_spans.find { |s| s.name == '/assets' }
+          _(ping_span).wont_be_nil
+
+          root_span = finished_spans.find { |s| s.name == '/' }
+          _(root_span).wont_be_nil
+        end
+      end
+    end
+
     describe 'config[:allowed_request_headers]' do
       let(:env) { Hash('HTTP_FOO_BAR' => 'http foo bar value') }
 
@@ -208,7 +241,7 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
     describe 'with quantization' do
       let(:quantization_example) do
         # demonstrate simple shortening of URL:
-        ->(url) { url.to_s[0..5] }
+        ->(url, _env) { url.to_s[0..5] }
       end
       let(:config) { default_config.merge(url_quantization: quantization_example) }
 

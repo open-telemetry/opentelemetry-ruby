@@ -3,5 +3,6 @@
 source 'https://rubygems.org'
 
 gem 'opentelemetry-api', path: '../../../api'
+gem 'opentelemetry-common', path: '../../../common'
 gem 'opentelemetry-instrumentation-net_http', path: '../../../instrumentation/net_http'
 gem 'opentelemetry-sdk', path: '../../../sdk'

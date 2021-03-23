@@ -1,13 +1,20 @@
 PATH
   remote: ../../api
   specs:
-    opentelemetry-api (0.0.0)
+    opentelemetry-api (0.16.0)
+
+PATH
+  remote: ../../common
+  specs:
+    opentelemetry-common (0.16.0)
+      opentelemetry-api (~> 0.16.0)
 
 PATH
   remote: ../../sdk
   specs:
-    opentelemetry-sdk (0.0.0)
-      opentelemetry-api (~> 0.0)
+    opentelemetry-sdk (0.16.0)
+      opentelemetry-api (~> 0.16.0)
+      opentelemetry-common (~> 0.16.0)
 
 GEM
   remote: https://rubygems.org/
@@ -16,7 +23,7 @@ GEM
       multipart-post (>= 1.2, < 3)
     multipart-post (2.1.1)
     mustermann (1.0.3)
-    rack (2.0.8)
+    rack (2.2.3)
     rack-protection (2.0.7)
       rack
     sinatra (2.0.7)
@@ -32,8 +39,9 @@ PLATFORMS
 DEPENDENCIES
   faraday (~> 0.16.1)
   opentelemetry-api!
+  opentelemetry-common!
   opentelemetry-sdk!
   sinatra (~> 2.0)
 
 BUNDLED WITH
-   2.0.2
+   2.2.15

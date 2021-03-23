@@ -22,6 +22,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Mysql2::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
+  let(:config) { {} }
 
   before do
     exporter.reset
@@ -50,7 +51,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
     let(:password) { ENV.fetch('TEST_MYSQL_PASSWORD') { 'root' } }
 
     before do
-      instrumentation.install
+      instrumentation.install(config)
     end
 
     it 'before request' do
@@ -70,9 +71,8 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
 
       _(span.name).must_equal 'select'
       _(span.attributes['db.system']).must_equal 'mysql'
-      _(span.attributes['db.instance']).must_equal 'mysql'
+      _(span.attributes['db.name']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal 'SELECT 1'
-      _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
       _(span.attributes['net.peer.name']).must_equal host.to_s
       _(span.attributes['net.peer.port']).must_equal port.to_s
     end
@@ -84,9 +84,8 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
 
       _(span.name).must_equal 'select'
       _(span.attributes['db.system']).must_equal 'mysql'
-      _(span.attributes['db.instance']).must_equal 'mysql'
+      _(span.attributes['db.name']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal 'SELECT INVALID'
-      _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
       _(span.attributes['net.peer.name']).must_equal host.to_s
       _(span.attributes['net.peer.port']).must_equal port.to_s
 
@@ -107,9 +106,8 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
 
       _(span.name).must_equal 'explain'
       _(span.attributes['db.system']).must_equal 'mysql'
-      _(span.attributes['db.instance']).must_equal 'mysql'
+      _(span.attributes['db.name']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal explain_sql
-      _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
       _(span.attributes['net.peer.name']).must_equal host.to_s
       _(span.attributes['net.peer.port']).must_equal port.to_s
     end
@@ -121,9 +119,8 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
 
       _(span.name).must_equal 'mysql.mysql'
       _(span.attributes['db.system']).must_equal 'mysql'
-      _(span.attributes['db.instance']).must_equal 'mysql'
+      _(span.attributes['db.name']).must_equal 'mysql'
       _(span.attributes['db.statement']).must_equal 'DESELECT 1'
-      _(span.attributes['db.url']).must_equal "mysql://#{host}:#{port}"
       _(span.attributes['net.peer.name']).must_equal host.to_s
       _(span.attributes['net.peer.port']).must_equal port.to_s
 
@@ -134,6 +131,25 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       _(span.events.first.attributes['exception.type']).must_equal 'Mysql2::Error'
       assert(!span.events.first.attributes['exception.message'].nil?)
       assert(!span.events.first.attributes['exception.stacktrace'].nil?)
+    end
+
+    describe 'when enable_sql_obfuscation is enabled' do
+      let(:config) { { enable_sql_obfuscation: true } }
+
+      it 'obfuscates SQL parameters in db.statement' do
+        sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+        obfuscated_sql = 'SELECT * from users where users.id = ? and users.email = ?'
+        expect do
+          client.query(sql)
+        end.must_raise Mysql2::Error
+
+        _(span.attributes['db.system']).must_equal 'mysql'
+        _(span.attributes['db.name']).must_equal 'mysql'
+        _(span.name).must_equal 'select'
+        _(span.attributes['db.statement']).must_equal obfuscated_sql
+        _(span.attributes['net.peer.name']).must_equal host.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_s
+      end
     end
   end
 end

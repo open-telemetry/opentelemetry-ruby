@@ -30,11 +30,31 @@ module OpenTelemetry
 
           QUERY_NAME_RE = Regexp.new("^(#{QUERY_NAMES.join('|')})", Regexp::IGNORECASE)
 
+          COMPONENTS_REGEX_MAP = {
+            single_quotes: /'(?:[^']|'')*?(?:\\'.*|'(?!'))/,
+            double_quotes: /"(?:[^"]|"")*?(?:\\".*|"(?!"))/,
+            numeric_literals: /-?\b(?:[0-9]+\.)?[0-9]+([eE][+-]?[0-9]+)?\b/,
+            boolean_literals: /\b(?:true|false|null)\b/i,
+            hexadecimal_literals: /0x[0-9a-fA-F]+/,
+            comments: /(?:#|--).*?(?=\r|\n|$)/i,
+            multi_line_comments: %r{\/\*(?:[^\/]|\/[^*])*?(?:\*\/|\/\*.*)}
+          }.freeze
+
+          MYSQL_COMPONENTS = %i[
+            single_quotes
+            double_quotes
+            numeric_literals
+            boolean_literals
+            hexadecimal_literals
+            comments
+            multi_line_comments
+          ].freeze
+
           def query(sql, options = {})
             tracer.in_span(
               database_span_name(sql),
               attributes: client_attributes.merge(
-                'db.statement' => sql
+                'db.statement' => obfuscate_sql(sql)
               ),
               kind: :client
             ) do
@@ -43,6 +63,31 @@ module OpenTelemetry
           end
 
           private
+
+          def obfuscate_sql(sql)
+            return sql unless config[:enable_sql_obfuscation]
+
+            if sql.size > 2000
+              'SQL query too large to remove sensitive data ...'
+            else
+              obfuscated = sql.gsub(generated_mysql_regex, '?')
+              obfuscated = 'Failed to obfuscate SQL query - quote characters remained after obfuscation' if detect_unmatched_pairs(obfuscated)
+              obfuscated
+            end
+          end
+
+          def generated_mysql_regex
+            @generated_mysql_regex ||= Regexp.union(MYSQL_COMPONENTS.map { |component| COMPONENTS_REGEX_MAP[component] })
+          end
+
+          def detect_unmatched_pairs(obfuscated)
+            # We use this to check whether the query contains any quote characters
+            # after obfuscation. If so, that's a good indication that the original
+            # query was malformed, and so our obfuscation can't reliably find
+            # literals. In such a case, we'll replace the entire query with a
+            # placeholder.
+            %r{'|"|\/\*|\*\/}.match(obfuscated)
+          end
 
           def database_span_name(sql)
             # Setting span name to the SQL query without obfuscation would
@@ -74,8 +119,7 @@ module OpenTelemetry
 
             attributes = {
               'db.system' => 'mysql',
-              'db.instance' => database_name,
-              'db.url' => "mysql://#{host}:#{port}",
+              'db.name' => database_name,
               'net.peer.name' => host,
               'net.peer.port' => port
             }

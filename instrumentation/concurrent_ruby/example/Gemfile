@@ -4,5 +4,6 @@ source 'https://rubygems.org'
 
 gem 'concurrent-ruby'
 gem 'opentelemetry-api', path: '../../../api'
+gem 'opentelemetry-common', path: '../../../common'
 gem 'opentelemetry-instrumentation-concurrent_ruby', path: '../../../instrumentation/concurrent_ruby'
 gem 'opentelemetry-sdk', path: '../../../sdk'

@@ -1,0 +1,9 @@
+--no-private
+--title=OpenTelemetry Propagator Jaeger
+--markup=markdown
+--main=README.md
+./lib/opentelemetry/propagator/jaeger/**/*.rb
+./lib/opentelemetry/propagator/jaeger.rb
+-
+README.md
+CHANGELOG.md
