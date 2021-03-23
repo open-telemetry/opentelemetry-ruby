@@ -108,6 +108,8 @@ module OpenTelemetry
               'http.scheme' => datum[:scheme],
               'http.target' => datum[:path]
             }
+            config = Excon::Instrumentation.instance.config
+            instrumentation_attrs['peer.service'] = config[:peer_service] if config[:peer_service]
             instrumentation_attrs.merge(
               OpenTelemetry::Common::HTTP::ClientContext.attributes
             )
