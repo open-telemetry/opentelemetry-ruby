@@ -194,6 +194,7 @@ module OpenTelemetry
         @config = {}
         @installed = false
         @options = options
+        @tracer = OpenTelemetry::Trace::Tracer.new
       end
 
       # Install instrumentation with the given config. The present? and compatible?
@@ -207,7 +208,7 @@ module OpenTelemetry
 
         @config = config_options(config)
         instance_exec(@config, &@install_blk)
-        @tracer ||= OpenTelemetry.tracer_provider.tracer(name, version)
+        @tracer = OpenTelemetry.tracer_provider.tracer(name, version)
         @installed = true
       end
 
