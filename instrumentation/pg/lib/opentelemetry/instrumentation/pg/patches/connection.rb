@@ -4,8 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'lru_redux'
 require_relative '../constants'
+require_relative '../lru_cache'
 
 module OpenTelemetry
   module Instrumentation
@@ -59,7 +59,7 @@ module OpenTelemetry
             # prepared SQL statements, so that we can attach a reasonable
             # `db.sql.statement` value to spans when those prepared statements
             # are executed later on.
-            @lru_cache ||= ::LruRedux::ThreadSafeCache.new(50)
+            @lru_cache ||= LruCache.new(50)
           end
 
           # Rubocop is complaining about 19.31/18 for Metrics/AbcSize.
