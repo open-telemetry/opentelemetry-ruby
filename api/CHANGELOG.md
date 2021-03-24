@@ -1,5 +1,11 @@
 # Release History: opentelemetry-api
 
+### v0.16.0 / 2021-03-17
+
+* ADDED: Span#add_attributes 
+* FIXED: Handle rack env getter edge cases 
+* DOCS: Replace Gitter with GitHub Discussions 
+
 ### v0.15.0 / 2021-02-18
 
 * ADDED: Add instrumentation config validation 

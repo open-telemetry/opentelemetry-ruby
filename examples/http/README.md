@@ -10,12 +10,11 @@ This is a simple example that demonstrates tracing an HTTP request from client t
 
 ### Running the example
 
-The example uses Docker Compose to make it a bit easier to get things up and running.
+1. Install gems
+  * `bundle install`
+1. Start the server from the `examples/http` directory
+	* `./server.rb`
+1. In a separate terminal window, run the client to make a single request:
+	* `./client.rb`
+1. You should see console exporter output for both the client and server sessions.
 
-1. Follow the `Developer Setup` instructions in [the main README](../../README.md)
-1. Run the server using the `ex-http` compose service
-    * `docker-compose run ex-http`
-1. After a few seconds, an interactive shell should appear
-1. Run the client
-    * `./client.rb`
-1. You should see console exporter output for both the client and server sessions

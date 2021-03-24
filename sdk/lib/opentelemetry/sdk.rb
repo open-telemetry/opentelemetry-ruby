@@ -66,7 +66,7 @@ module OpenTelemetry
       begin
         raise ConfigurationError
       rescue ConfigurationError => e
-        OpenTelemetry.handle_error(exception: e, message: 'unexpected configuration error')
+        OpenTelemetry.handle_error(exception: e, message: "unexpected configuration error due to #{e.cause}")
       end
     end
   end

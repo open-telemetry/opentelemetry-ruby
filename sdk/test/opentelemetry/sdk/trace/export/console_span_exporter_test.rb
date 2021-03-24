@@ -38,6 +38,10 @@ describe OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter do
     _(captured_stdout.string).must_match(/#<OpenTelemetry::Trace::Span:/)
   end
 
+  it 'accepts calls to #force_flush' do
+    exporter.force_flush
+  end
+
   it 'accepts calls to #shutdown' do
     exporter.shutdown
   end

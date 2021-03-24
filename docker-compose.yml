@@ -111,11 +111,6 @@ services:
     command: ./start_server.sh
     working_dir: /app/instrumentation/sinatra/example
 
-  ex-http:
-    <<: *base
-    command: ./start_server.sh
-    working_dir: /app/examples/http
-
   mongo:
     image: mongo:4.4
     expose:

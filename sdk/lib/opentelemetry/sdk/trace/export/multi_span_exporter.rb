@@ -36,6 +36,23 @@ module OpenTelemetry
             results.uniq.max || SUCCESS
           end
 
+          # Called when {TracerProvider#force_flush} is called, if this exporter is
+          # registered to a {TracerProvider} object.
+          #
+          # @param [optional Numeric] timeout An optional timeout in seconds.
+          # @return [Integer] SUCCESS if no error occurred, FAILURE if a
+          #   non-specific failure occurred, TIMEOUT if a timeout occurred.
+          def force_flush(timeout: nil)
+            start_time = Time.now
+            results = @span_exporters.map do |processor|
+              remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
+              return TIMEOUT if remaining_timeout&.zero?
+
+              processor.force_flush(timeout: remaining_timeout)
+            end
+            results.uniq.max || SUCCESS
+          end
+
           # Called when {TracerProvider#shutdown} is called, if this exporter is
           # registered to a {TracerProvider} object.
           #

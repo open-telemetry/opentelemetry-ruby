@@ -84,6 +84,36 @@ describe OpenTelemetry::SDK::Trace::Span do
     end
   end
 
+  describe '#add_attributes' do
+    it 'sets attributes' do
+      span.add_attributes('foo' => 'bar')
+      _(span.attributes).must_equal('foo' => 'bar')
+    end
+
+    it 'trims the oldest attributes' do
+      span.add_attributes('old' => 'oldbar')
+      span.add_attributes('foo' => 'bar', 'bar' => 'baz')
+      _(span.attributes).must_equal('bar' => 'baz')
+    end
+
+    it 'does not set an attribute if span is ended' do
+      span.finish
+      span.add_attributes('no' => 'set')
+      _(span.attributes).must_be_nil
+    end
+
+    it 'counts attributes' do
+      span.add_attributes('old' => 'oldbar')
+      span.add_attributes('foo' => 'bar', 'bar' => 'baz')
+      _(span.to_span_data.total_recorded_attributes).must_equal(3)
+    end
+
+    it 'accepts an array value' do
+      span.add_attributes('foo' => [1, 2, 3])
+      _(span.attributes).must_equal('foo' => [1, 2, 3])
+    end
+  end
+
   describe '#add_event' do
     it 'add a named event' do
       span.add_event('added')

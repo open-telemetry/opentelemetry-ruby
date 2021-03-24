@@ -76,14 +76,24 @@ module OpenTelemetry
           send_bytes(encode(span_data), timeout: timeout)
         end
 
-        # Called when {OpenTelemetry::SDK::Trace::Tracer#shutdown} is called, if
-        # this exporter is registered to a {OpenTelemetry::SDK::Trace::Tracer}
+        # Called when {OpenTelemetry::SDK::Trace::TracerProvider#force_flush} is called, if
+        # this exporter is registered to a {OpenTelemetry::SDK::Trace::TracerProvider}
+        # object.
+        #
+        # @param [optional Numeric] timeout An optional timeout in seconds.
+        def force_flush(timeout: nil)
+          SUCCESS
+        end
+
+        # Called when {OpenTelemetry::SDK::Trace::TracerProvider#shutdown} is called, if
+        # this exporter is registered to a {OpenTelemetry::SDK::Trace::TracerProvider}
         # object.
         #
         # @param [optional Numeric] timeout An optional timeout in seconds.
         def shutdown(timeout: nil)
           @shutdown = true
           @http.finish if @http.started?
+          SUCCESS
         end
 
         private

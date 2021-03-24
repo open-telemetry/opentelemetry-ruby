@@ -9,6 +9,7 @@ def run
   raise "No yardopts in the current directory" unless File.file?(".yardopts")
   rm_rf(".yardoc")
   rm_rf("doc")
+  exec(["bundle", "update"])
   exec_tool(["yardoc", "_build"])
 end
 

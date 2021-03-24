@@ -1,5 +1,9 @@
 # Release History: opentelemetry-propagator-b3
 
+### v0.16.0 / 2021-03-17
+
+* DOCS: Replace Gitter with GitHub Discussions 
+
 ### v0.15.0 / 2021-02-18
 
 * (No significant changes)
