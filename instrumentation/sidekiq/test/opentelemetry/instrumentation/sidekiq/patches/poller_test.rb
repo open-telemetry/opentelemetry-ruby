@@ -48,6 +48,15 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Poller do
         _(span_names).must_include('Sidekiq::Scheduled::Poller#enqueue')
         _(span_names).must_include('ZRANGEBYSCORE')
       end
+
+      describe 'when peer_service config is set' do
+        let(:config) { { trace_poller_enqueue: true, peer_service: 'MySidekiqService' } }
+        it 'add peer.service info' do
+          poller.enqueue
+          span = spans.last
+          _(span.attributes['peer.service']).must_equal 'MySidekiqService'
+        end
+      end
     end
   end
 

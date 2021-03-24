@@ -20,6 +20,8 @@ module OpenTelemetry
           defined?(::Faraday)
         end
 
+        option :peer_service, default: nil, validate: :string
+
         private
 
         def require_dependencies

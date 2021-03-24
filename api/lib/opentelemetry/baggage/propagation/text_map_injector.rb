@@ -11,6 +11,12 @@ module OpenTelemetry
     module Propagation
       # Injects baggage using the W3C Baggage format
       class TextMapInjector
+        # Maximums according to W3C Baggage spec
+        MAX_ENTRIES = 180
+        MAX_ENTRY_LENGTH = 4096
+        MAX_TOTAL_LENGTH = 8192
+        private_constant :MAX_ENTRIES, :MAX_ENTRY_LENGTH, :MAX_TOTAL_LENGTH
+
         # Returns a new TextMapInjector that injects context using the specified
         # setter
         #
@@ -31,20 +37,38 @@ module OpenTelemetry
         #   setter will be used.
         # @return [Object] carrier with injected baggage
         def inject(carrier, context, setter = nil)
-          return carrier unless (baggage = context[ContextKeys.baggage_key]) && !baggage.empty?
+          return carrier unless (baggage = OpenTelemetry.baggage.raw_entries(context: context)) && !baggage.empty?
 
           setter ||= @default_setter
-          setter.set(carrier, BAGGAGE_KEY, encode(baggage))
-
+          encoded_baggage = encode(baggage)
+          setter.set(carrier, BAGGAGE_KEY, encoded_baggage) unless encoded_baggage&.empty?
           carrier
         end
 
         private
 
         def encode(baggage)
-          baggage.inject(+'') do |memo, (k, v)|
-            memo << CGI.escape(k.to_s) << '=' << CGI.escape(v.to_s) << ','
-          end.chop!
+          result = +''
+          encoded_count = 0
+          baggage.each_pair do |key, entry|
+            break unless encoded_count < MAX_ENTRIES
+
+            encoded_entry = encode_value(key, entry)
+            next unless encoded_entry.size <= MAX_ENTRY_LENGTH &&
+                        encoded_entry.size + result.size <= MAX_TOTAL_LENGTH
+
+            result << encoded_entry << ','
+            encoded_count += 1
+          end
+          result.chop!
+        end
+
+        def encode_value(key, entry)
+          result = +"#{CGI.escape(key.to_s)}=#{CGI.escape(entry.value.to_s)}"
+          # We preserve metadata recieved on extract and assume it's already formatted
+          # for transport. It's sent as-is without further processing.
+          result << ";#{entry.metadata}" if entry.metadata
+          result
         end
       end
     end
