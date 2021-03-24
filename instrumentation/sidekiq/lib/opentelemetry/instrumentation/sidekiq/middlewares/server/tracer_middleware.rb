@@ -16,13 +16,7 @@ module OpenTelemetry
               parent_context = OpenTelemetry.propagation.extract(msg)
               tracer.in_span(
                 span_name(msg),
-                attributes: {
-                  'messaging.system' => 'sidekiq',
-                  'messaging.sidekiq.job_class' => msg['wrapped']&.to_s || msg['class'],
-                  'messaging.message_id' => msg['jid'],
-                  'messaging.destination' => msg['queue'],
-                  'messaging.destination_kind' => 'queue'
-                },
+                attributes: build_attributes(msg),
                 with_parent: parent_context,
                 kind: :consumer
               ) do |span|
@@ -33,6 +27,18 @@ module OpenTelemetry
             end
 
             private
+
+            def build_attributes(msg)
+              attributes = {
+                'messaging.system' => 'sidekiq',
+                'messaging.sidekiq.job_class' => msg['wrapped']&.to_s || msg['class'],
+                'messaging.message_id' => msg['jid'],
+                'messaging.destination' => msg['queue'],
+                'messaging.destination_kind' => 'queue'
+              }
+              attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+              attributes
+            end
 
             def span_name(msg)
               if config[:enable_job_class_span_names]

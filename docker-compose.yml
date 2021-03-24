@@ -111,13 +111,6 @@ services:
     command: ./start_server.sh
     working_dir: /app/instrumentation/sinatra/example
 
-  ex-http:
-    <<: *base
-    environment:
-      - OTEL_TRACES_EXPORTER=console
-    command: ./start_server.sh
-    working_dir: /app/examples/http
-
   mongo:
     image: mongo:4.4
     expose:

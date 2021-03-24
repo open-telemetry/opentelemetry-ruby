@@ -49,6 +49,15 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Processor do
         _(span_names).must_include('Sidekiq::Processor#process_one')
         _(span_names).must_include('BRPOP')
       end
+
+      describe 'when peer_service config is set' do
+        let(:config) { { trace_processor_process_one: true, peer_service: 'MySidekiqService' } }
+        it 'add peer.service info' do
+          processor.send(:process_one)
+          span = spans.last
+          _(span.attributes['peer.service']).must_equal 'MySidekiqService'
+        end
+      end
     end
   end
 end
