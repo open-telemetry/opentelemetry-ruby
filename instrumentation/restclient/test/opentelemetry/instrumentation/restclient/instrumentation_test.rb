@@ -75,5 +75,18 @@ describe OpenTelemetry::Instrumentation::RestClient::Instrumentation do
         headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
     end
+
+    it 'merges HTTP client context' do
+      client_context_attrs = {
+        'test.attribute' => 'test.value', 'http.method' => 'OVERRIDE'
+      }
+      OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
+        ::RestClient.get('http://username:password@example.com/success')
+      end
+
+      _(span.attributes['http.method']).must_equal 'OVERRIDE'
+      _(span.attributes['test.attribute']).must_equal 'test.value'
+      _(span.attributes['http.url']).must_equal 'http://example.com/success'
+    end
   end
 end
