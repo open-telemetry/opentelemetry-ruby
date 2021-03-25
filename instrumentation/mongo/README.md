@@ -30,9 +30,19 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
-## Examples
+## Example
 
-Example usage of mongo can be seen in the `./example/mongo.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/mongo/example/mongo.rb)
+To run the example:
+
+1. Start MongoDB using docker-compose
+	* `docker-compose up mongo`
+2. In a separate terminal window, `cd` to the examples directory and install gems
+	* `cd example`
+	* `bundle install`
+3. Run the sample client script
+	* `./mongo.rb`
+
+This will run a few MongoDB commands, printing OpenTelemetry traces to the console as it goes.
 
 ## How can I get involved?
 
@@ -51,3 +61,4 @@ Apache 2.0 license. See [LICENSE][license-github] for more information.
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
+
