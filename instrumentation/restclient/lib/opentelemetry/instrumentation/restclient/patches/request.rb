@@ -24,6 +24,8 @@ module OpenTelemetry
               'http.method' => http_method,
               'http.url' => OpenTelemetry::Common::Utilities.cleanse_url(url)
             }
+            config = RestClient::Instrumentation.instance.config
+            instrumentation_attrs['peer.service'] = config[:peer_service] if config[:peer_service]
             span = tracer.start_span(
               "HTTP #{http_method}",
               attributes: instrumentation_attrs.merge(
