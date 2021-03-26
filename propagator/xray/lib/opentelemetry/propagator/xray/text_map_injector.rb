@@ -41,7 +41,7 @@ module OpenTelemetry
                            end
 
           ot_trace_id = span_context.hex_trace_id
-          xray_trace_id = '1-' + ot_trace_id[0..6] + '-' + ot_trace_id[7..]
+          xray_trace_id = "1-#{ot_trace_id[0..6]}-#{ot_trace_id[7..ot_trace_id.length]}"
           parent_id = span_context.hex_span_id
 
           xray_value = "Root=#{xray_trace_id};Parent=#{parent_id};Sampled=#{sampling_state}"

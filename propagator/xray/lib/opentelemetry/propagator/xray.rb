@@ -40,7 +40,7 @@ module OpenTelemetry
       # Convert an id from a hex encoded string to byte array. Assumes the input id has already been
       # validated to be 35 characters in length.
       def to_trace_id(hex_id)
-        Array(hex_id[2..8] + hex_id[10..]).pack('H*')
+        Array(hex_id[2..8] + hex_id[10..hex_id.length]).pack('H*')
       end
 
       # @api private
