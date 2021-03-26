@@ -17,7 +17,7 @@ module OpenTelemetry
     module XRay
       # Extracts context from carriers in the xray single header format
       class TextMapExtractor
-        XRAY_CONTEXT_REGEX = /\ARoot=(?<trace_id>([a-z0-9\-]{35}))(?:;Parent=(?<span_id>([a-z0-9]{16})))?(?:;Sampled=(?<sampling_state>[01d](?![0-9a-f])))?\Z/.freeze
+        XRAY_CONTEXT_REGEX = /\ARoot=(?<trace_id>([a-z0-9\-]{35}))(?:;Parent=(?<span_id>([a-z0-9]{16})))?(?:;Sampled=(?<sampling_state>[01d](?![0-9a-f])))?(?:;(?<trace_state>.*))?\Z/.freeze
         SAMPLED_VALUES = %w[1 d].freeze
 
         # Returns a new TextMapExtractor that extracts XRay context using the
@@ -45,12 +45,14 @@ module OpenTelemetry
         def extract(carrier, context, getter = nil)
           getter ||= @default_getter
           header = getter.get(carrier, XRAY_CONTEXT_KEY)
-          return context unless (match = header.match(XRAY_CONTEXT_REGEX))
+          match = parse_header(header)
+          return context unless match
 
           span_context = Trace::SpanContext.new(
             trace_id: XRay.to_trace_id(match['trace_id']),
             span_id: XRay.to_span_id(match['span_id']),
             trace_flags: to_trace_flags(match['sampling_state']),
+            tracestate: to_trace_state(match['trace_state']),
             remote: true
           )
 
@@ -63,12 +65,26 @@ module OpenTelemetry
 
         private
 
+        def parse_header(header)
+          return nil unless (match = header.match(XRAY_CONTEXT_REGEX))
+          return nil unless match['trace_id']
+          return nil unless match['span_id']
+
+          match
+        end
+
         def to_trace_flags(sampling_state)
           if SAMPLED_VALUES.include?(sampling_state)
             Trace::TraceFlags::SAMPLED
           else
             Trace::TraceFlags::DEFAULT
           end
+        end
+
+        def to_trace_state(trace_state)
+          return nil unless trace_state
+
+          Trace::Tracestate.from_string(trace_state.gsub(';', ','))
         end
       end
     end
