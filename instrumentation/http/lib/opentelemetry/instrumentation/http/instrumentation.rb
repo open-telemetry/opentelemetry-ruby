@@ -17,7 +17,7 @@ module OpenTelemetry
         end
 
         present do
-          defined?(::HTTP)
+          defined?(::HTTP) && Gem.loaded_specs['http']
         end
 
         def patch
