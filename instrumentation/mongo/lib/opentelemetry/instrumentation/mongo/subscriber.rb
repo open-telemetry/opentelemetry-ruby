@@ -74,7 +74,8 @@ module OpenTelemetry
           }
           config = Mongo::Instrumentation.instance.config
           attrs['peer.service'] = config[:peer_service] if config[:peer_service]
-          attrs.compact
+          attrs.compact!
+          attrs
         end
 
         def get_collection(command)
