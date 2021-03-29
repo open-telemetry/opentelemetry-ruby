@@ -49,19 +49,24 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Consumer do
 
     consumer.cancel
 
-    _(spans.size).must_equal(3)
-    _(spans[0].name).must_equal("#{topic}.ruby.news send")
-    _(spans[0].kind).must_equal(:producer)
+    _(spans.size >= 3).must_equal(true)
 
-    _(spans[1].name).must_equal("#{topic}.ruby.news receive")
-    _(spans[1].kind).must_equal(:consumer)
+    send_span = spans.find { |span| span.name == "#{topic}.ruby.news send" }
+    _(send_span).wont_be_nil
+    _(send_span.kind).must_equal(:producer)
 
-    _(spans[2].name).must_equal("#{topic}.ruby.news process")
-    _(spans[2].kind).must_equal(:consumer)
-    _(spans[2].trace_id).must_equal(spans[1].trace_id)
+    receive_span = spans.find { |span| span.name == "#{topic}.ruby.news receive" }
+    _(receive_span).wont_be_nil
+    _(receive_span.name).must_equal("#{topic}.ruby.news receive")
+    _(receive_span.kind).must_equal(:consumer)
 
-    linked_span_context = spans[2].links.first.span_context
-    _(linked_span_context.trace_id).must_equal(spans[0].trace_id)
-    _(linked_span_context.span_id).must_equal(spans[0].span_id)
+    process_span = spans.find { |span| span.name == "#{topic}.ruby.news process" }
+    _(process_span).wont_be_nil
+    _(process_span.kind).must_equal(:consumer)
+    _(process_span.trace_id).must_equal(receive_span.trace_id)
+
+    linked_span_context = process_span.links.first.span_context
+    _(linked_span_context.trace_id).must_equal(send_span.trace_id)
+    _(linked_span_context.span_id).must_equal(send_span.span_id)
   end
 end

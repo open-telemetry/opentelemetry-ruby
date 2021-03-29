@@ -44,35 +44,39 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Channel do
 
     queue.pop { |_msg| break }
 
-    _(spans.size).must_equal(3)
-    _(spans[0].name).must_equal("#{topic}.ruby.news send")
-    _(spans[0].kind).must_equal(:producer)
-    _(spans[0].attributes['messaging.system']).must_equal('rabbitmq')
-    _(spans[0].attributes['messaging.destination']).must_equal(topic)
-    _(spans[0].attributes['messaging.destination_kind']).must_equal('topic')
-    _(spans[0].attributes['messaging.protocol']).must_equal('AMQP')
-    _(spans[0].attributes['messaging.protocol_version']).must_equal('0.9.1')
-    _(spans[0].attributes['messaging.rabbitmq.routing_key']).must_equal('ruby.news')
-    _(spans[0].attributes['net.peer.name']).must_equal('rabbitmq')
-    _(spans[0].attributes['net.peer.port']).must_equal(5672)
+    _(spans.size >= 3).must_equal(true)
 
-    _(spans[1].name).must_equal("#{topic}.ruby.news receive")
-    _(spans[1].kind).must_equal(:consumer)
-    _(spans[1].attributes['messaging.system']).must_equal('rabbitmq')
-    _(spans[1].attributes['messaging.destination']).must_equal(topic)
-    _(spans[1].attributes['messaging.destination_kind']).must_equal('topic')
-    _(spans[1].attributes['messaging.protocol']).must_equal('AMQP')
-    _(spans[1].attributes['messaging.protocol_version']).must_equal('0.9.1')
-    _(spans[1].attributes['messaging.rabbitmq.routing_key']).must_equal('ruby.news')
-    _(spans[1].attributes['net.peer.name']).must_equal('rabbitmq')
-    _(spans[1].attributes['net.peer.port']).must_equal(5672)
+    send_span = spans.find { |span| span.name == "#{topic}.ruby.news send" }
+    _(send_span).wont_be_nil
+    _(send_span.kind).must_equal(:producer)
+    _(send_span.attributes['messaging.system']).must_equal('rabbitmq')
+    _(send_span.attributes['messaging.destination']).must_equal(topic)
+    _(send_span.attributes['messaging.destination_kind']).must_equal('topic')
+    _(send_span.attributes['messaging.protocol']).must_equal('AMQP')
+    _(send_span.attributes['messaging.protocol_version']).must_equal('0.9.1')
+    _(send_span.attributes['messaging.rabbitmq.routing_key']).must_equal('ruby.news')
+    _(send_span.attributes['net.peer.name']).must_equal('rabbitmq')
+    _(send_span.attributes['net.peer.port']).must_equal(5672)
 
-    _(spans[2].name).must_equal("#{topic}.ruby.news process")
-    _(spans[2].kind).must_equal(:consumer)
-    _(spans[2].trace_id).must_equal(spans[1].trace_id)
+    receive_span = spans.find { |span| span.name == "#{topic}.ruby.news receive" }
+    _(receive_span).wont_be_nil
+    _(receive_span.kind).must_equal(:consumer)
+    _(receive_span.attributes['messaging.system']).must_equal('rabbitmq')
+    _(receive_span.attributes['messaging.destination']).must_equal(topic)
+    _(receive_span.attributes['messaging.destination_kind']).must_equal('topic')
+    _(receive_span.attributes['messaging.protocol']).must_equal('AMQP')
+    _(receive_span.attributes['messaging.protocol_version']).must_equal('0.9.1')
+    _(receive_span.attributes['messaging.rabbitmq.routing_key']).must_equal('ruby.news')
+    _(receive_span.attributes['net.peer.name']).must_equal('rabbitmq')
+    _(receive_span.attributes['net.peer.port']).must_equal(5672)
 
-    linked_span_context = spans[2].links.first.span_context
-    _(linked_span_context.trace_id).must_equal(spans[0].trace_id)
-    _(linked_span_context.span_id).must_equal(spans[0].span_id)
+    process_span = spans.find { |span| span.name == "#{topic}.ruby.news process" }
+    _(process_span).wont_be_nil
+    _(process_span.kind).must_equal(:consumer)
+    _(process_span.trace_id).must_equal(receive_span.trace_id)
+
+    linked_span_context = process_span.links.first.span_context
+    _(linked_span_context.trace_id).must_equal(send_span.trace_id)
+    _(linked_span_context.span_id).must_equal(send_span.span_id)
   end
 end

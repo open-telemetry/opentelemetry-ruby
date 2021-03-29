@@ -13,7 +13,7 @@ module OpenTelemetry
       # See https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/trace/semantic_conventions/messaging.md#messaging-attributes
       module PatchHelpers
         def self.with_send_span(channel, tracer, exchange, routing_key, &block)
-          attributes = basic_attributes(channel, exchange, routing_key)
+          attributes = basic_attributes(channel, channel.connection, exchange, routing_key)
           destination = destination_name(exchange, routing_key)
 
           tracer.in_span("#{destination} send", attributes: attributes, kind: :producer, &block)
@@ -44,15 +44,34 @@ module OpenTelemetry
           [parent_context, links]
         end
 
-        def self.basic_attributes(channel, exchange, routing_key)
+        def self.inject_context_into_property(properties, key)
+          properties[key] ||= {}
+          OpenTelemetry.propagation.inject(properties[key])
+        end
+
+        def self.trace_enrich_receive_span(span, channel, delivery_info, properties)
+          exchange = delivery_info.exchange
+          routing_key = delivery_info.routing_key
+          destination = OpenTelemetry::Instrumentation::Bunny::PatchHelpers.destination_name(exchange, routing_key)
+          destination_kind = OpenTelemetry::Instrumentation::Bunny::PatchHelpers.destination_kind(channel, exchange)
+          span.name = "#{destination} receive"
+          span['messaging.destination'] = exchange
+          span['messaging.destination_kind'] = destination_kind
+          span['messaging.rabbitmq.routing_key'] = routing_key if routing_key
+          span['messaging.operation'] = 'receive'
+
+          inject_context_into_property(properties, :tracer_receive_headers)
+        end
+
+        def self.basic_attributes(channel, transport, exchange, routing_key)
           attributes = {
             'messaging.system' => 'rabbitmq',
             'messaging.destination' => exchange,
             'messaging.destination_kind' => destination_kind(channel, exchange),
             'messaging.protocol' => 'AMQP',
             'messaging.protocol_version' => ::Bunny.protocol_version,
-            'net.peer.name' => channel.connection.host,
-            'net.peer.port' => channel.connection.port
+            'net.peer.name' => transport.host,
+            'net.peer.port' => transport.port
           }
           attributes['messaging.rabbitmq.routing_key'] = routing_key if routing_key
           attributes
