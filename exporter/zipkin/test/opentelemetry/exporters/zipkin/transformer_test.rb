@@ -13,7 +13,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     encoded_span = Transformer.to_zipkin_span(create_span_data(attributes: { 'bar' => 'baz' }), resource)
     _(encoded_span[:name]).must_equal('')
     _(encoded_span['localEndpoint']['serviceName']).must_equal('foo')
-    _(encoded_span['tags']).must_equal('bar' => 'baz')
+    _(encoded_span['tags']).must_equal('bar' => 'baz', 'otel.library.version' => '0.0.0', 'otel.library.name' => 'vendorlib')
   end
 
   it 'encodes span.status and span.kind' do
@@ -22,7 +22,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
 
     encoded_span = Transformer.to_zipkin_span(span_data, resource)
 
-    _(encoded_span['tags'].size).must_equal(3)
+    _(encoded_span['tags'].size).must_equal(5)
 
     kind_tag = encoded_span['kind']
     error_tag = encoded_span['tags']['error']
@@ -58,7 +58,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     _(annotation_two[:value]).must_equal('event_no_attrib')
 
     tags = encoded_span['tags']
-    _(tags).must_equal('akey' => 'avalue', 'bar' => 'baz')
+    _(tags).must_equal('akey' => 'avalue', 'bar' => 'baz', 'otel.library.version' => '0.0.0', 'otel.library.name' => 'vendorlib')
   end
 
   it 'encodes array attribute values in events and the span as JSON strings' do
@@ -79,7 +79,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     _(annotation_one[:value]).must_equal({ 'event_with_attribs' => { 'ekey' => '["evalue"]' } }.to_json)
 
     tags = encoded_span['tags']
-    _(tags).must_equal('akey' => ['avalue'].to_s, 'bar' => 'baz')
+    _(tags).must_equal('akey' => ['avalue'].to_s, 'bar' => 'baz', 'otel.library.version' => '0.0.0', 'otel.library.name' => 'vendorlib')
   end
 
   describe 'status' do
@@ -91,7 +91,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
       encoded_span = Transformer.to_zipkin_span(span_data, resource)
 
       tags = encoded_span['tags']
-      _(tags).must_equal('otel.status_code' => 'OK', 'bar' => 'baz')
+      _(tags).must_equal('otel.status_code' => 'OK', 'bar' => 'baz', 'otel.library.version' => '0.0.0', 'otel.library.name' => 'vendorlib')
     end
 
     it 'encodes error status code as strings on error tag and status description field' do
@@ -102,7 +102,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
       encoded_span = Transformer.to_zipkin_span(span_data, resource)
 
       tags = encoded_span['tags']
-      _(tags).must_equal('error' => error_description, 'otel.status_code' => 'ERROR', 'bar' => 'baz')
+      _(tags).must_equal('error' => error_description, 'otel.status_code' => 'ERROR', 'bar' => 'baz', 'otel.library.version' => '0.0.0', 'otel.library.name' => 'vendorlib')
     end
   end
 
@@ -124,7 +124,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
       span_data = create_span_data(attributes: { 'bar' => 'baz' }, instrumentation_library: lib)
       encoded_span = Transformer.to_zipkin_span(span_data, resource)
 
-      _(encoded_span['tags'].size).must_equal(2)
+      _(encoded_span['tags'].size).must_equal(3)
       _(encoded_span['tags']['otel.library.name']).must_equal('mylib')
     end
   end

@@ -66,18 +66,6 @@ describe OpenTelemetry::Exporter::Zipkin::Exporter do
       _(http.address).must_equal 'localhost'
       _(http.port).must_equal 4321
     end
-
-    def create_span_data(name: '', kind: nil, status: nil, parent_span_id: OpenTelemetry::Trace::INVALID_SPAN_ID,
-                         total_recorded_attributes: 0, total_recorded_events: 0, total_recorded_links: 0, start_timestamp: Time.now,
-                         end_timestamp: Time.now, attributes: nil, links: nil, events: nil, resource: nil,
-                         instrumentation_library: OpenTelemetry::SDK::InstrumentationLibrary.new('', 'v0.0.1'),
-                         span_id: OpenTelemetry::Trace.generate_span_id, trace_id: OpenTelemetry::Trace.generate_trace_id,
-                         trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, tracestate: nil)
-      resource ||= OpenTelemetry::SDK::Resources::Resource.telemetry_sdk
-      OpenTelemetry::SDK::Trace::SpanData.new(name, kind, status, parent_span_id, total_recorded_attributes,
-                                              total_recorded_events, total_recorded_links, start_timestamp, end_timestamp,
-                                              attributes, links, events, resource, instrumentation_library, span_id, trace_id, trace_flags, tracestate)
-    end
   end
 
   describe '#export' do
@@ -91,7 +79,7 @@ describe OpenTelemetry::Exporter::Zipkin::Exporter do
       skip unless ENV['TRACING_INTEGRATION_TEST']
       WebMock.disable_net_connect!(allow: 'localhost')
       resource = OpenTelemetry::SDK::Resources::Resource.telemetry_sdk
-      span_data = create_span_data(name: 'collector-integration-test', resource: resource)
+      span_data = create_resource_span_data(name: 'collector-integration-test', resource: resource)
       result = exporter.export([span_data], timeout: nil)
       _(result).must_equal(OpenTelemetry::SDK::Trace::Export::SUCCESS)
     ensure
@@ -100,21 +88,21 @@ describe OpenTelemetry::Exporter::Zipkin::Exporter do
 
     it 'retries on timeout' do
       stub_request(:post, 'http://localhost:9411/api/v2/spans').to_timeout.then.to_return(status: 202)
-      span_data = create_span_data
+      span_data = create_resource_span_data
       result = exporter.export([span_data], timeout: nil)
       _(result).must_equal(SUCCESS)
     end
 
     it 'returns TIMEOUT on timeout' do
       stub_request(:post, 'http://localhost:9411/api/v2/spans').to_return(status: 400)
-      span_data = create_span_data
+      span_data = create_resource_span_data
       result = exporter.export([span_data], timeout: 0)
       _(result).must_equal(TIMEOUT)
     end
 
     it 'returns TIMEOUT on timeout after retrying' do
       stub_request(:post, 'http://localhost:9411/api/v2/spans').to_timeout.then.to_raise('this should not be reached')
-      span_data = create_span_data
+      span_data = create_resource_span_data
 
       @retry_count = 0
       backoff_stubbed_call = lambda do |**_args|
@@ -139,7 +127,7 @@ describe OpenTelemetry::Exporter::Zipkin::Exporter do
     it 'exports a span_data' do
       stub_post = stub_request(:post, DEFAULT_ZIPKIN_COLLECTOR_ENDPOINT).to_return(status: 202)
       exporter = OpenTelemetry::Exporter::Zipkin::Exporter.new
-      span_data = create_span_data
+      span_data = create_resource_span_data
       result = exporter.export([span_data], timeout: nil)
       _(result).must_equal(OpenTelemetry::SDK::Trace::Export::SUCCESS)
       assert_requested(stub_post)
@@ -155,4 +143,16 @@ describe OpenTelemetry::Exporter::Zipkin::Exporter do
       assert_requested(stub_post)
     end
   end
+end
+
+def create_resource_span_data(name: '', kind: nil, status: nil, parent_span_id: OpenTelemetry::Trace::INVALID_SPAN_ID,
+                              total_recorded_attributes: 0, total_recorded_events: 0, total_recorded_links: 0, start_timestamp: Time.now,
+                              end_timestamp: Time.now, attributes: nil, links: nil, events: nil, resource: nil,
+                              instrumentation_library: OpenTelemetry::SDK::InstrumentationLibrary.new('', 'v0.0.1'),
+                              span_id: OpenTelemetry::Trace.generate_span_id, trace_id: OpenTelemetry::Trace.generate_trace_id,
+                              trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, tracestate: nil)
+  resource ||= OpenTelemetry::SDK::Resources::Resource.telemetry_sdk
+  OpenTelemetry::SDK::Trace::SpanData.new(name, kind, status, parent_span_id, total_recorded_attributes,
+                                          total_recorded_events, total_recorded_links, start_timestamp, end_timestamp,
+                                          attributes, links, events, resource, instrumentation_library, span_id, trace_id, trace_flags, tracestate)
 end

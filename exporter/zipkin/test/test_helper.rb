@@ -12,7 +12,7 @@ require 'opentelemetry/common/test_helpers'
 require 'minitest/autorun'
 require 'webmock/minitest'
 
-def create_span_data(status: nil, kind: nil, attributes: nil, events: nil, links: nil, instrumentation_library: nil, trace_id: OpenTelemetry::Trace.generate_trace_id, trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, tracestate: nil)
+def create_span_data(status: nil, kind: nil, attributes: nil, events: nil, links: nil, instrumentation_library: OpenTelemetry::SDK::InstrumentationLibrary.new('vendorlib', '0.0.0'), trace_id: OpenTelemetry::Trace.generate_trace_id, trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, tracestate: nil)
   OpenTelemetry::SDK::Trace::SpanData.new(
     '',
     kind,
