@@ -8,6 +8,7 @@ require 'http'
 require 'opentelemetry/sdk'
 
 require 'minitest/autorun'
+require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
 require 'pry'
 
