@@ -20,12 +20,17 @@ module OpenTelemetry
 
           def trace_request # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
             http_method = method.upcase
+            instrumentation_attrs = {
+              'http.method' => http_method,
+              'http.url' => OpenTelemetry::Common::Utilities.cleanse_url(url)
+            }
+            config = RestClient::Instrumentation.instance.config
+            instrumentation_attrs['peer.service'] = config[:peer_service] if config[:peer_service]
             span = tracer.start_span(
               "HTTP #{http_method}",
-              attributes: {
-                'http.method' => http_method,
-                'http.url' => OpenTelemetry::Common::Utilities.cleanse_url(url)
-              },
+              attributes: instrumentation_attrs.merge(
+                OpenTelemetry::Common::HTTP::ClientContext.attributes
+              ),
               kind: :client
             )
 

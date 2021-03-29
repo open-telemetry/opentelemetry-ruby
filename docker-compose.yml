@@ -44,12 +44,6 @@ services:
     <<: *base
     working_dir: /app/instrumentation/faraday/example
 
-  ex-instrumentation-mongo:
-    <<: *base
-    depends_on:
-      - mongo
-    working_dir: /app/instrumentation/mongo/example
-
   ex-instrumentation-mysql2:
     <<: *base
     environment:

@@ -75,5 +75,37 @@ describe OpenTelemetry::Instrumentation::RestClient::Instrumentation do
         headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
     end
+
+    it 'merges HTTP client context' do
+      client_context_attrs = {
+        'test.attribute' => 'test.value', 'http.method' => 'OVERRIDE'
+      }
+      OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
+        ::RestClient.get('http://username:password@example.com/success')
+      end
+
+      _(span.attributes['http.method']).must_equal 'OVERRIDE'
+      _(span.attributes['test.attribute']).must_equal 'test.value'
+      _(span.attributes['http.url']).must_equal 'http://example.com/success'
+    end
+
+    it 'accepts peer service name from config' do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(peer_service: 'example:faraday')
+
+      ::RestClient.get('http://example.com/success')
+      _(span.attributes['peer.service']).must_equal 'example:faraday'
+    end
+
+    it 'prioritizes context attributes over config for peer service name' do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(peer_service: 'example:faraday')
+
+      client_context_attrs = { 'peer.service' => 'example:custom' }
+      OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
+        ::RestClient.get('http://example.com/success')
+      end
+      _(span.attributes['peer.service']).must_equal 'example:custom'
+    end
   end
 end
