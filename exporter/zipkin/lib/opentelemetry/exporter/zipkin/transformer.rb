@@ -26,7 +26,6 @@ module OpenTelemetry
         SERVICE_NAME_ATTRIBUTE_KEY = 'service.name'
         ERROR_TAG_KEY = 'error'
         STATUS_CODE_NAME = 'otel.status_code'
-        STATUS_UNSET = 'UNSET'
         STATUS_ERROR = 'ERROR'
         STATUS_OK = 'OK'
         ATTRIBUTE_PEER_SERVICE = 'peer.service'
@@ -36,7 +35,7 @@ module OpenTelemetry
         ATTRIBUTE_NET_HOST_PORT = 'host.port'
 
         DEFAULT_SERVICE_NAME = OpenTelemetry::SDK::Resources::Resource.default.attribute_enumerator.find { |k, _| k == SERVICE_NAME_ATTRIBUTE_KEY }&.last || 'unknown_service'
-        private_constant(:KIND_MAP, :DEFAULT_SERVICE_NAME, :SERVICE_NAME_ATTRIBUTE_KEY, :ERROR_TAG_KEY, :STATUS_CODE_NAME, :STATUS_UNSET, :STATUS_ERROR, :STATUS_OK)
+        private_constant(:KIND_MAP, :DEFAULT_SERVICE_NAME, :SERVICE_NAME_ATTRIBUTE_KEY, :ERROR_TAG_KEY, :STATUS_CODE_NAME, :STATUS_ERROR, :STATUS_OK, :ATTRIBUTE_PEER_SERVICE, :ATTRIBUTE_NET_PEER_IP, :ATTRIBUTE_NET_PEER_PORT, :ATTRIBUTE_NET_HOST_IP, :ATTRIBUTE_NET_HOST_PORT)
 
         def to_zipkin_span(span_d, resource)
           start_time = (span_d.start_timestamp.to_f * 1_000_000).to_i
@@ -91,7 +90,7 @@ module OpenTelemetry
 
         def add_conditional_tags(zipkin_span, span_data, tags, service_name)
           zipkin_span['tags'] = tags unless tags.empty?
-          zipkin_span['kind'] = KIND_MAP[span_data[:kind]] unless span_data[:kind].nil?
+          zipkin_span['kind'] = KIND_MAP[span_data.kind] unless span_data.kind.nil?
           zipkin_span['parentId'] = span_data.parent_span_id.unpack1('H*') unless span_data.parent_span_id.nil?
           zipkin_span['localEndpoint'] = endpoint_from_tags(tags, (span_data.attributes && span_data.attributes[SERVICE_NAME_ATTRIBUTE_KEY]) || service_name)
           # remote endpoint logic https://github.com/open-telemetry/opentelemetry-collector/blob/347cfa9ab21d47240128c58c9bafcc0014bc729d/translator/trace/zipkin/traces_to_zipkinv2.go#L284
