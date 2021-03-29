@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-http
 
+### v0.16.2 / 2021-03-29
+
+* FIXED: HTTP instrumenter should check for gem presence 
+
 ### v0.16.1 / 2021-03-25
 
 * FIXED: HTTP instrumentation missing require 
