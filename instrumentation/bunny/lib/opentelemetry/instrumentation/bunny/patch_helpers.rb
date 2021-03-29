@@ -19,21 +19,9 @@ module OpenTelemetry
           tracer.in_span("#{destination} send", attributes: attributes, kind: :producer, &block)
         end
 
-        def self.with_receive_span(channel, tracer, delivery_info, properties, &block)
-          exchange = delivery_info.exchange
-          routing_key = delivery_info.routing_key
-          attributes = basic_attributes(channel, exchange, routing_key)
-          destination = destination_name(exchange, routing_key)
-          parent_context, links = extract_context(properties[:headers])
-
-          OpenTelemetry::Context.with_current(parent_context) do
-            tracer.in_span("#{destination} receive", links: links, attributes: attributes, kind: :consumer, &block)
-          end
-        end
-
         def self.with_process_span(channel, tracer, delivery_info, properties, &block)
           destination = destination_name(delivery_info[:exchange], delivery_info[:routing_key])
-          parent_context, links = extract_context(properties[:headers])
+          parent_context, links = extract_context(properties)
 
           OpenTelemetry::Context.with_current(parent_context) do
             tracer.in_span("#{destination} process", links: links, kind: :consumer, &block)
@@ -44,10 +32,14 @@ module OpenTelemetry
           [exchange, routing_key].compact.join('.')
         end
 
-        def self.extract_context(headers)
-          parent_context = OpenTelemetry.propagation.extract(headers)
-          span_context = OpenTelemetry::Trace.current_span(parent_context).context
-          links = [OpenTelemetry::Trace::Link.new(span_context)] if span_context.valid?
+        def self.extract_context(properties)
+          # use the receive span as parent context
+          parent_context = OpenTelemetry.propagation.extract(properties[:tracer_receive_headers])
+
+          # link to the producer context
+          producer_context = OpenTelemetry.propagation.extract(properties[:headers])
+          producer_span_context = OpenTelemetry::Trace.current_span(producer_context).context
+          links = [OpenTelemetry::Trace::Link.new(producer_span_context)] if producer_span_context.valid?
 
           [parent_context, links]
         end
