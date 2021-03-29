@@ -154,6 +154,10 @@ gems:
     directory: propagator/ottrace
     version_constant: [OpenTelemetry, Propagator, OTTrace, VERSION]
 
+  - name: opentelemetry-propagator-xray
+    directory: propagator/xray
+    version_constant: [OpenTelemetry, Propagator, XRay, VERSION]
+
   - name: opentelemetry-resource_detectors
     directory: resource_detectors
     version_rb_path: lib/opentelemetry/resource/detectors/version.rb
