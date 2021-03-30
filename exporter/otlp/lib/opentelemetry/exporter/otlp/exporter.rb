@@ -190,6 +190,12 @@ module OpenTelemetry
           rescue SocketError
             retry if backoff?(retry_count: retry_count += 1, reason: 'socket_error')
             return FAILURE
+          rescue SystemCallError
+            retry if backoff?(retry_count: retry_count += 1, reason: 'system_call_error')
+            return FAILURE
+          rescue EOFError
+            retry if backoff?(retry_count: retry_count += 1, reason: 'eof_error')
+            return FAILURE
           end
         ensure
           # Reset timeouts to defaults for the next call.
