@@ -31,8 +31,6 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     _(error_tag).must_equal('')
   end
 
-  # TODO
-
   it 'encodes attributes in events and the span' do
     attributes = { 'akey' => 'avalue', 'bar' => 'baz' }
     events = [
