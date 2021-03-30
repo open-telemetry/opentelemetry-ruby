@@ -6,9 +6,9 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
-  let(:injector) do
-    OpenTelemetry::Baggage::Propagation::TextMapInjector.new
+describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
+  let(:propagator) do
+    OpenTelemetry::Baggage::Propagation::TextMapPropagator.new
   end
   let(:header_key) do
     'baggage'
@@ -26,6 +26,38 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
     OpenTelemetry.baggage = @original_baggage_mgr
   end
 
+  describe '#extract' do
+    describe 'valid headers' do
+      it 'extracts key-value pairs' do
+        carrier = { header_key => 'key1=val1,key2=val2' }
+        context = propagator.extract(carrier, context: Context.empty)
+        assert_value(context, 'key1', 'val1')
+        assert_value(context, 'key2', 'val2')
+      end
+
+      it 'extracts entries with spaces' do
+        carrier = { header_key => ' key1  =  val1,  key2=val2 ' }
+        context = propagator.extract(carrier, context: Context.empty)
+        assert_value(context, 'key1', 'val1')
+        assert_value(context, 'key2', 'val2')
+      end
+
+      it 'preserves properties' do
+        carrier = { header_key => 'key1=val1,key2=val2;prop1=propval1;prop2=propval2' }
+        context = propagator.extract(carrier, context: Context.empty)
+        assert_value(context, 'key1', 'val1')
+        assert_value(context, 'key2', 'val2', 'prop1=propval1;prop2=propval2')
+      end
+
+      it 'extracts urlencoded entries' do
+        carrier = { header_key => 'key%3A1=val1%2C1,key%3A2=val2%2C2' }
+        context = propagator.extract(carrier, context: Context.empty)
+        assert_value(context, 'key:1', 'val1,1')
+        assert_value(context, 'key:2', 'val2,2')
+      end
+    end
+  end
+
   describe '#inject' do
     it 'injects baggage' do
       context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
@@ -33,7 +65,8 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
         b.set_value('key2', 'val2')
       end
 
-      carrier = injector.inject({}, context)
+      carrier = {}
+      propagator.inject(carrier, context: context)
 
       _(carrier[header_key]).must_equal('key1=val1,key2=val2')
     end
@@ -44,7 +77,8 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
         b.set_value('key2', 3.14)
       end
 
-      carrier = injector.inject({}, context)
+      carrier = {}
+      propagator.inject(carrier, context: context)
 
       _(carrier[header_key]).must_equal('key1=1,key2=3.14')
     end
@@ -55,13 +89,15 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
         b.set_value('key2', false)
       end
 
-      carrier = injector.inject({}, context)
+      carrier = {}
+      propagator.inject(carrier, context: context)
 
       _(carrier[header_key]).must_equal('key1=true,key2=false')
     end
 
     it 'does not inject baggage key is not present' do
-      carrier = injector.inject({}, Context.empty)
+      carrier = {}
+      propagator.inject(carrier, context: Context.empty)
       _(carrier).must_be(:empty?)
     end
 
@@ -71,7 +107,8 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
         b.set_value('key2', 'val2', metadata: 'prop1=propval1;prop2=propval2')
       end
 
-      carrier = injector.inject({}, context)
+      carrier = {}
+      propagator.inject(carrier, context: context)
       _(carrier[header_key]).must_equal('key1=val1,key2=val2;prop1=propval1;prop2=propval2')
     end
 
@@ -82,7 +119,8 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
         end
       end
 
-      carrier = injector.inject({}, context)
+      carrier = {}
+      propagator.inject(carrier, context: context)
       result = carrier[header_key]
 
       # expect keys indexed from 0 to 180 to be in baggage, but only 0 to 179 in the result
@@ -99,7 +137,8 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
         b.set_value('key2', 'val2')
       end
 
-      carrier = injector.inject({}, context)
+      carrier = {}
+      propagator.inject(carrier, context: context)
       result = carrier[header_key]
 
       _(result).wont_include('key1')
@@ -116,7 +155,8 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
         keys.zip(values).each { |k, v| b.set_value(k, v) }
       end
 
-      carrier = injector.inject({}, context)
+      carrier = {}
+      propagator.inject(carrier, context: context)
       result = carrier[header_key]
 
       keys.take(81).each { |k| _(result).must_include(k) }
@@ -124,4 +164,11 @@ describe OpenTelemetry::Baggage::Propagation::TextMapInjector do
       _(result.size).must_equal(8099)
     end
   end
+end
+
+def assert_value(context, key, value, metadata = nil)
+  entry = OpenTelemetry.baggage.raw_entries(context: context)[key]
+  _(entry).wont_be_nil
+  _(entry.value).must_equal(value)
+  _(entry.metadata).must_equal(metadata)
 end
