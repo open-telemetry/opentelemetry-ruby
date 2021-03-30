@@ -31,28 +31,11 @@ module OpenTelemetry
       def debug?(context)
         context.value(DEBUG_CONTEXT_KEY)
       end
-
-      # @api private
-      # Convert an id from a hex encoded string to byte array, optionally left
-      # padding to the correct length. Assumes the input id has already been
-      # validated to be 16 or 32 characters in length.
-      def to_trace_id(hex_id)
-        if hex_id.length == 32
-          Array(hex_id).pack('H*')
-        else
-          [0, hex_id].pack('qH*')
-        end
-      end
-
-      # @api private
-      # Convert an id from a hex encoded string to byte array.
-      def to_span_id(hex_id)
-        Array(hex_id).pack('H*')
-      end
     end
   end
 end
 
 require_relative './b3/version'
+require_relative './b3/text_map_extractor'
 require_relative './b3/multi'
 require_relative './b3/single'
