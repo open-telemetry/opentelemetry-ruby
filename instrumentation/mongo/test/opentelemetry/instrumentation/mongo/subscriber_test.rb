@@ -80,6 +80,27 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
     end
   end
 
+  describe 'when peer service has been set in config' do
+    let(:params) { { name: 'FKA Twigs' } }
+
+    include MongoTraceTest
+
+    before do
+      instrumentation.instance_variable_set(
+        :@config, peer_service: 'example:mongo'
+      )
+      client[collection].insert_one(params)
+    end
+
+    after do
+      instrumentation.instance_variable_set(:@config, {})
+    end
+
+    it 'includes it in the span attributes' do
+      _(span.attributes['peer.service']).must_equal 'example:mongo'
+    end
+  end
+
   describe '#insert_many operation' do
     before { client[collection].insert_many(params) }
 
