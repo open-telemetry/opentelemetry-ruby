@@ -52,6 +52,7 @@ module OpenTelemetry
                          start_thread_on_boot: String(ENV['OTEL_RUBY_BSP_START_THREAD_ON_BOOT']) !~ /false/i,
                          metrics_reporter: nil)
             raise ArgumentError if max_export_batch_size > max_queue_size
+            raise ArgumentError, "exporter #{exporter.inspect} does not appear to be a valid exporter" unless Internal.valid_exporter?(exporter)
 
             @exporter = exporter
             @exporter_timeout_seconds = exporter_timeout / 1000.0
