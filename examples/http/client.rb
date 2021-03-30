@@ -10,6 +10,9 @@ require 'faraday'
 # Require otel-ruby
 require 'opentelemetry/sdk'
 
+# Export traces to console by default
+ENV['OTEL_TRACES_EXPORTER'] ||= 'console'
+
 # Allow setting the host from the ENV
 host = ENV.fetch('HTTP_EXAMPLE_HOST', '0.0.0.0')
 

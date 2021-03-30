@@ -15,13 +15,7 @@ module OpenTelemetry
             def call(_worker_class, job, _queue, _redis_pool)
               tracer.in_span(
                 span_name(job),
-                attributes: {
-                  'messaging.system' => 'sidekiq',
-                  'messaging.sidekiq.job_class' => job['wrapped']&.to_s || job['class'],
-                  'messaging.message_id' => job['jid'],
-                  'messaging.destination' => job['queue'],
-                  'messaging.destination_kind' => 'queue'
-                },
+                attributes: build_attributes(job),
                 kind: :producer
               ) do |span|
                 OpenTelemetry.propagation.inject(job)
@@ -31,6 +25,18 @@ module OpenTelemetry
             end
 
             private
+
+            def build_attributes(job)
+              attributes = {
+                'messaging.system' => 'sidekiq',
+                'messaging.sidekiq.job_class' => job['wrapped']&.to_s || job['class'],
+                'messaging.message_id' => job['jid'],
+                'messaging.destination' => job['queue'],
+                'messaging.destination_kind' => 'queue'
+              }
+              attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+              attributes
+            end
 
             def span_name(job)
               if config[:enable_job_class_span_names]

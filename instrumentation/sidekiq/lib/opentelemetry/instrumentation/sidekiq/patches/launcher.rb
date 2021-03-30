@@ -14,7 +14,9 @@ module OpenTelemetry
 
           def ❤ # rubocop:disable Naming/MethodName
             if config[:trace_launcher_heartbeat]
-              tracer.in_span('Sidekiq::Launcher#heartbeat') { super }
+              attributes = {}
+              attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+              tracer.in_span('Sidekiq::Launcher#heartbeat', attributes: attributes) { super }
             else
               OpenTelemetry::Common::Utilities.untraced { super }
             end

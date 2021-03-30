@@ -44,12 +44,6 @@ services:
     <<: *base
     working_dir: /app/instrumentation/faraday/example
 
-  ex-instrumentation-mongo:
-    <<: *base
-    depends_on:
-      - mongo
-    working_dir: /app/instrumentation/mongo/example
-
   ex-instrumentation-mysql2:
     <<: *base
     environment:
@@ -110,11 +104,6 @@ services:
     <<: *base
     command: ./start_server.sh
     working_dir: /app/instrumentation/sinatra/example
-
-  ex-http:
-    <<: *base
-    command: ./start_server.sh
-    working_dir: /app/examples/http
 
   mongo:
     image: mongo:4.4

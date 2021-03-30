@@ -11,6 +11,8 @@ require 'sinatra/base'
 # Require otel-ruby
 require 'opentelemetry/sdk'
 
+# Export traces to console by default
+ENV['OTEL_TRACES_EXPORTER'] ||= 'console'
 
 # configure SDK with defaults
 OpenTelemetry::SDK.configure

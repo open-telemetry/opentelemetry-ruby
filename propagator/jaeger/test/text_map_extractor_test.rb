@@ -110,7 +110,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapExtractor do
       _(OpenTelemetry.baggage.value('key2', context: context)).must_equal('value2')
     end
 
-    it 'extracts URL-encoded baggage values' do
+    it 'extracts URL-encoded baggage entries' do
       parent_context = OpenTelemetry::Context.empty
       carrier = {
         'uber-trace-id' => '80f198ee56343ba864fe8b2a57d3eff7:e457b5a2e4d86bd1:0:1',

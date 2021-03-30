@@ -143,7 +143,7 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapExtractor do
 
     describe 'baggage handling' do
       before do
-        OpenTelemetry.baggage = OpenTelemetry::SDK::Baggage::Manager.new
+        OpenTelemetry.baggage = OpenTelemetry::Baggage::Manager.new
       end
 
       after do
