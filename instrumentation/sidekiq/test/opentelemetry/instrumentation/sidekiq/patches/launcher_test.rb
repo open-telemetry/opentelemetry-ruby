@@ -49,6 +49,15 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Launcher do
         _(span_names).must_include('Sidekiq::Launcher#heartbeat')
         _(span_names).must_include('pipeline')
       end
+
+      describe 'when peer_service config is set' do
+        let(:config) { { trace_launcher_heartbeat: true, peer_service: 'MySidekiqService' } }
+        it 'add peer.service info' do
+          launcher.send(:❤)
+          span = spans.last
+          _(span.attributes['peer.service']).must_equal 'MySidekiqService'
+        end
+      end
     end
   end
 end

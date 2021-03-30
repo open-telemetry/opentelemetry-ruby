@@ -24,6 +24,8 @@ module OpenTelemetry
           gem_version >= MINIMUM_VERSION
         end
 
+        option :peer_service, default: nil, validate: :string
+
         private
 
         def gem_version

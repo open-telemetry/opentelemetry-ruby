@@ -64,14 +64,18 @@ module OpenTelemetry
         end
 
         def build_attributes(event)
-          {
+          attrs = {
             'db.system' => 'mongodb',
             'db.name' => event.database_name,
             'db.operation' => event.command_name,
             'db.statement' => CommandSerializer.new(event.command).serialize,
             'net.peer.name' => event.address.host,
             'net.peer.port' => event.address.port
-          }.compact
+          }
+          config = Mongo::Instrumentation.instance.config
+          attrs['peer.service'] = config[:peer_service] if config[:peer_service]
+          attrs.compact!
+          attrs
         end
 
         def get_collection(command)

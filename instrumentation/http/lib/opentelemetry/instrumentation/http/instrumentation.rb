@@ -17,7 +17,7 @@ module OpenTelemetry
         end
 
         present do
-          defined?(::HTTP)
+          !(defined?(::HTTP) && Gem.loaded_specs['http']).nil?
         end
 
         def patch
@@ -27,6 +27,7 @@ module OpenTelemetry
 
         def require_dependencies
           require_relative 'patches/client'
+          require_relative 'patches/connection'
         end
       end
     end

@@ -62,11 +62,11 @@ module OpenTelemetry
     @instrumentation_registry ||= Instrumentation::Registry.new
   end
 
-  # @return [Object, Baggage::Manager] registered
+  # @return [Object, Baggage::NoopManager] registered
   #   baggage manager or a default no-op implementation of the
   #   manager.
   def baggage
-    @baggage ||= Baggage::Manager.new
+    @baggage ||= Baggage::NoopManager.new
   end
 
   # @return [Context::Propagation::Propagator] a propagator instance

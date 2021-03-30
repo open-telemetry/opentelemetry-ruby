@@ -22,19 +22,14 @@ module OpenTelemetry
             trace: 'TRACE'
           }.freeze
 
-          def request_call(datum) # rubocop:disable Metrics/MethodLength
+          def request_call(datum)
             begin
               unless datum.key?(:otel_span)
                 http_method = HTTP_METHODS_SYMBOL_TO_STRING[datum[:method]]
-
+                attributes = span_creation_attributes(datum, http_method)
                 tracer.start_span(
                   "HTTP #{http_method}",
-                  attributes: {
-                    'http.host' => datum[:host],
-                    'http.method' => http_method,
-                    'http.scheme' => datum[:scheme],
-                    'http.target' => datum[:path]
-                  },
+                  attributes: attributes,
                   kind: :client
                 ).tap do |span|
                   datum[:otel_span] = span
@@ -103,6 +98,20 @@ module OpenTelemetry
             end
           rescue StandardError => e
             OpenTelemetry.logger.debug(e.message)
+          end
+
+          def span_creation_attributes(datum, http_method)
+            instrumentation_attrs = {
+              'http.host' => datum[:host],
+              'http.method' => http_method,
+              'http.scheme' => datum[:scheme],
+              'http.target' => datum[:path]
+            }
+            config = Excon::Instrumentation.instance.config
+            instrumentation_attrs['peer.service'] = config[:peer_service] if config[:peer_service]
+            instrumentation_attrs.merge(
+              OpenTelemetry::Common::HTTP::ClientContext.attributes
+            )
           end
 
           def tracer

@@ -115,9 +115,9 @@ describe OpenTelemetry do
       OpenTelemetry.baggage = nil
     end
 
-    it 'returns Baggage::Manager by default' do
+    it 'returns Baggage::NoopManager by default' do
       manager = OpenTelemetry.baggage
-      _(manager).must_be_instance_of(OpenTelemetry::Baggage::Manager)
+      _(manager).must_be_instance_of(OpenTelemetry::Baggage::NoopManager)
     end
 
     it 'returns the same instance when accessed multiple times' do
