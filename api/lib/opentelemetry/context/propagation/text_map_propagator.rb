@@ -34,7 +34,7 @@ module OpenTelemetry
         def inject(carrier, context: Context.current, setter: Context::Propagation.text_map_setter)
           @injector.inject(carrier, context, setter)
           nil
-        rescue => e # rubocop:disable Style/RescueStandardError
+        rescue StandardError => e
           OpenTelemetry.logger.warn "Error in Propagator#inject #{e.message}"
           nil
         end
@@ -53,7 +53,7 @@ module OpenTelemetry
         #   carrier
         def extract(carrier, context: Context.current, getter: Context::Propagation.text_map_getter)
           @extractor.extract(carrier, context, getter)
-        rescue => e # rubocop:disable Style/RescueStandardError
+        rescue StandardError => e
           OpenTelemetry.logger.warn "Error in Propagator#extract #{e.message}"
           context
         end

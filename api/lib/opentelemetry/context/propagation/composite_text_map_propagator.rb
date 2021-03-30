@@ -33,6 +33,7 @@ module OpenTelemetry
           #   text map propagators
           def compose_propagators(propagators)
             raise ArgumentError, 'propagators must be a non-nil array' unless propagators.is_a?(Array)
+            return NoopTextMapPropagator.new if propagators.empty?
             return propagators.first if propagators.size == 1
 
             new(propagators: propagators)
@@ -59,9 +60,10 @@ module OpenTelemetry
           injectors = @injectors || @propagators
           injectors.each do |injector|
             injector.inject(carrier, context: context, setter: setter)
-          rescue => e # rubocop:disable Style/RescueStandardError
+          rescue StandardError => e
             OpenTelemetry.logger.warn "Error in CompositePropagator#inject #{e.message}"
           end
+          nil
         end
 
         # Runs extractors or propagators in order and returns a Context updated
@@ -82,7 +84,7 @@ module OpenTelemetry
           extractors = @extractors || @propagators
           extractors.inject(context) do |ctx, extractor|
             extractor.extract(carrier, context: ctx, getter: getter)
-          rescue => e # rubocop:disable Style/RescueStandardError
+          rescue StandardError => e
             OpenTelemetry.logger.warn "Error in CompositePropagator#extract #{e.message}"
             ctx
           end

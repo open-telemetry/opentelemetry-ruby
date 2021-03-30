@@ -59,7 +59,8 @@ module OpenTelemetry
           end
 
           context.set_value(ContextKeys.baggage_key, baggage)
-        rescue StandardError
+        rescue StandardError => e
+          OpenTelemetry.logger.debug "Error extracting W3C baggage: #{e.message}"
           context
         end
 

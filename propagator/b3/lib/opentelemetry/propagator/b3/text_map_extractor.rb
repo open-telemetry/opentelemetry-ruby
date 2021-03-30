@@ -57,8 +57,6 @@ module OpenTelemetry
           debug = match['sampling_state'] == 'd'
           sampled = debug || match['sampling_state'] == '1'
           extracted_context(match['trace_id'], match['span_id'], sampled, debug, context)
-        rescue OpenTelemetry::Error
-          nil
         end
 
         def extract_b3_multi_header(carrier, context, getter)
@@ -74,8 +72,6 @@ module OpenTelemetry
           debug = flags == '1'
           sampled = debug || SAMPLED_VALUES.include?(sampled)
           extracted_context(trace_id_hex, span_id_hex, sampled, debug, context)
-        rescue OpenTelemetry::Error
-          nil
         end
 
         def extracted_context(trace_id_hex, span_id_hex, sampled, debug, context)
