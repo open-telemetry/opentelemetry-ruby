@@ -9,7 +9,6 @@ require 'logger'
 require 'opentelemetry/error'
 require 'opentelemetry/context'
 require 'opentelemetry/baggage'
-require_relative './opentelemetry/instrumentation'
 require 'opentelemetry/trace'
 require 'opentelemetry/version'
 
@@ -46,12 +45,6 @@ module OpenTelemetry
   #   default no-op implementation of the tracer provider.
   def tracer_provider
     @tracer_provider ||= Trace::TracerProvider.new
-  end
-
-  # @return [Instrumentation::Registry] registry containing all known
-  #  instrumentation
-  def instrumentation_registry
-    @instrumentation_registry ||= Instrumentation::Registry.new
   end
 
   # @return [Object, Baggage::NoopManager] registered

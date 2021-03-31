@@ -134,9 +134,9 @@ module OpenTelemetry
       def install_instrumentation
         case @use_mode
         when USE_MODE_ONE
-          OpenTelemetry.instrumentation_registry.install(@instrumentation_names, @instrumentation_config_map)
+          OpenTelemetry::Instrumentation.registry.install(@instrumentation_names, @instrumentation_config_map)
         when USE_MODE_ALL
-          OpenTelemetry.instrumentation_registry.install_all(@instrumentation_config_map)
+          OpenTelemetry::Instrumentation.registry.install_all(@instrumentation_config_map)
         end
       end
 
