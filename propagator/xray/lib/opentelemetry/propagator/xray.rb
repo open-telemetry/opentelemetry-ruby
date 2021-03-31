@@ -11,8 +11,7 @@
 # The OpenTelemetry module provides global accessors for telemetry objects.
 # See the documentation for the `opentelemetry-api` gem for details.
 
-require_relative './xray/text_map_extractor'
-require_relative './xray/text_map_injector'
+require_relative './xray/text_map_propagator'
 
 module OpenTelemetry
   # Namespace for OpenTelemetry propagator extension libraries
@@ -22,7 +21,8 @@ module OpenTelemetry
       extend self
 
       DEBUG_CONTEXT_KEY = Context.create_key('xray-debug-key')
-      private_constant :DEBUG_CONTEXT_KEY
+      TEXT_MAP_PROPAGATOR = TextMapPropagator.new
+      private_constant :DEBUG_CONTEXT_KEY, :TEXT_MAP_PROPAGATOR
 
       # @api private
       # Returns a new context with the xray debug flag enabled
@@ -33,38 +33,13 @@ module OpenTelemetry
       # @api private
       # Read the XRay debug flag from the provided context
       def debug?(context)
-        context.value(DEBUG_CONTEXT_KEY)
+        !context.value(DEBUG_CONTEXT_KEY).nil?
       end
 
-      # @api private
-      # Convert an id from a hex encoded string to byte array. Assumes the input id has already been
-      # validated to be 35 characters in length.
-      def to_trace_id(hex_id)
-        Array(hex_id[2..8] + hex_id[10..hex_id.length]).pack('H*')
-      end
-
-      # @api private
-      # Convert an id from a hex encoded string to byte array.
-      def to_span_id(hex_id)
-        Array(hex_id).pack('H*')
-      end
-
-      XRAY_CONTEXT_KEY = 'X-Amzn-Trace-Id'
-      TEXT_MAP_EXTRACTOR = TextMapExtractor.new
-      TEXT_MAP_INJECTOR = TextMapInjector.new
-
-      private_constant :XRAY_CONTEXT_KEY, :TEXT_MAP_INJECTOR, :TEXT_MAP_EXTRACTOR
-
-      # Returns an extractor that extracts context in the XRay single header
-      # format
-      def text_map_injector
-        TEXT_MAP_INJECTOR
-      end
-
-      # Returns an injector that injects context in the XRay single header
-      # format
-      def text_map_extractor
-        TEXT_MAP_EXTRACTOR
+      # Returns a text map propagator that propagates context in the XRay
+      # format.
+      def text_map_propagator
+        TEXT_MAP_PROPAGATOR
       end
     end
   end

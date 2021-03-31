@@ -15,14 +15,12 @@ module OpenTelemetry
 
       private_constant :USE_MODE_UNSPECIFIED, :USE_MODE_ONE, :USE_MODE_ALL
 
-      attr_writer :logger, :extractors, :injectors, :error_handler,
-                  :id_generator
+      attr_writer :logger, :propagators, :error_handler, :id_generator
 
       def initialize
         @instrumentation_names = []
         @instrumentation_config_map = {}
-        @injectors = nil
-        @extractors = nil
+        @propagators = nil
         @span_processors = []
         @use_mode = USE_MODE_UNSPECIFIED
         @resource = Resources::Resource.default
@@ -161,14 +159,11 @@ module OpenTelemetry
         end
       end
 
-      def configure_propagation # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
-        propagators = ENV.fetch('OTEL_PROPAGATORS', 'tracecontext,baggage').split(',')
-        injectors, extractors = propagators.uniq.collect do |propagator|
+      def configure_propagation # rubocop:disable Metrics/CyclomaticComplexity
+        propagators = ENV.fetch('OTEL_PROPAGATORS', 'tracecontext,baggage').split(',').uniq.collect do |propagator|
           case propagator
-          when 'tracecontext'
-            [OpenTelemetry::Trace::Propagation::TraceContext.text_map_injector, OpenTelemetry::Trace::Propagation::TraceContext.text_map_extractor]
-          when 'baggage'
-            [OpenTelemetry::Baggage::Propagation.text_map_injector, OpenTelemetry::Baggage::Propagation.text_map_extractor]
+          when 'tracecontext' then OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
+          when 'baggage' then OpenTelemetry::Baggage::Propagation.text_map_propagator
           when 'b3' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::B3::Single')
           when 'b3multi' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::B3::Multi', 'b3')
           when 'jaeger' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::Jaeger')
@@ -176,27 +171,17 @@ module OpenTelemetry
           when 'ottrace' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::OTTrace')
           else
             OpenTelemetry.logger.warn "The #{propagator} propagator is unknown and cannot be configured"
-            [Context::Propagation::NoopInjector.new, Context::Propagation::NoopExtractor.new]
+            Context::Propagation::NoopTextMapPropagator.new
           end
-        end.transpose
-        OpenTelemetry.propagation = create_propagator(@injectors || injectors.compact,
-                                                      @extractors || extractors.compact)
-      end
-
-      def create_propagator(injectors, extractors)
-        if injectors.size > 1 || extractors.size > 1
-          Context::Propagation::CompositePropagator.new(injectors, extractors)
-        else
-          Context::Propagation::Propagator.new(injectors.first, extractors.first)
         end
+        OpenTelemetry.propagation = Context::Propagation::CompositeTextMapPropagator.compose_propagators((@propagators || propagators).compact)
       end
 
       def fetch_propagator(name, class_name, gem_suffix = name)
-        propagator_class = Kernel.const_get(class_name)
-        [propagator_class.text_map_injector, propagator_class.text_map_extractor]
+        Kernel.const_get(class_name).text_map_propagator
       rescue NameError
         OpenTelemetry.logger.warn "The #{name} propagator cannot be configured - please add opentelemetry-propagator-#{gem_suffix} to your Gemfile"
-        [nil, nil]
+        nil
       end
 
       def fetch_exporter(name, class_name)
