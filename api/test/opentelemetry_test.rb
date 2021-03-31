@@ -87,28 +87,6 @@ describe OpenTelemetry do
     end
   end
 
-  describe '.meter_provider' do
-    after do
-      # Ensure we don't leak custom meter factories and meters to other tests
-      OpenTelemetry.meter_provider = nil
-    end
-
-    it 'returns instance of Metrics::MeterProvider by default' do
-      meter_provider = OpenTelemetry.meter_provider
-      _(meter_provider).must_be_instance_of(OpenTelemetry::Metrics::MeterProvider)
-    end
-
-    it 'returns the same instance when accessed multiple times' do
-      _(OpenTelemetry.meter_provider).must_equal(OpenTelemetry.meter_provider)
-    end
-
-    it 'returns user specified meter provider' do
-      custom_meter_provider = 'a custom meter provider'
-      OpenTelemetry.meter_provider = custom_meter_provider
-      _(OpenTelemetry.meter_provider).must_equal(custom_meter_provider)
-    end
-  end
-
   describe '.baggage' do
     after do
       # Ensure we don't leak custom baggage to other tests
