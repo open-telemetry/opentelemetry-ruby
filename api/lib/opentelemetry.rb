@@ -10,7 +10,6 @@ require 'opentelemetry/error'
 require 'opentelemetry/context'
 require 'opentelemetry/baggage'
 require_relative './opentelemetry/instrumentation'
-require 'opentelemetry/metrics'
 require 'opentelemetry/trace'
 require 'opentelemetry/version'
 
@@ -22,8 +21,7 @@ require 'opentelemetry/version'
 module OpenTelemetry
   extend self
 
-  attr_writer :tracer_provider, :meter_provider, :propagation, :baggage,
-              :logger, :error_handler
+  attr_writer :tracer_provider, :propagation, :baggage, :logger, :error_handler
 
   # @return [Object, Logger] configured Logger or a default STDOUT Logger.
   def logger
@@ -50,12 +48,6 @@ module OpenTelemetry
     @tracer_provider ||= Trace::TracerProvider.new
   end
 
-  # @return [Object, Metrics::MeterProvider] registered meter provider or a
-  #   default no-op implementation of the meter provider.
-  def meter_provider
-    @meter_provider ||= Metrics::MeterProvider.new
-  end
-
   # @return [Instrumentation::Registry] registry containing all known
   #  instrumentation
   def instrumentation_registry
@@ -71,9 +63,6 @@ module OpenTelemetry
 
   # @return [Context::Propagation::Propagator] a propagator instance
   def propagation
-    @propagation ||= Context::Propagation::Propagator.new(
-      Context::Propagation::NoopInjector.new,
-      Context::Propagation::NoopExtractor.new
-    )
+    @propagation ||= Context::Propagation::NoopTextMapPropagator.new
   end
 end

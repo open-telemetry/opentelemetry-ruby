@@ -45,10 +45,7 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Plugins::TracerPlugin do
 
     # this is currently a noop but this will future proof the test
     @orig_propagation = OpenTelemetry.propagation
-    propagator = OpenTelemetry::Context::Propagation::Propagator.new(
-      OpenTelemetry::Trace::Propagation::TraceContext.text_map_injector,
-      OpenTelemetry::Trace::Propagation::TraceContext.text_map_extractor
-    )
+    propagator = OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
     OpenTelemetry.propagation = propagator
   end
 
