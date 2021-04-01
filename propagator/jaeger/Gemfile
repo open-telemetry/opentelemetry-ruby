@@ -11,3 +11,4 @@ gemspec
 gem 'opentelemetry-api', path: '../../api'
 gem 'opentelemetry-common', path: '../../common'
 gem 'opentelemetry-sdk', path: '../../sdk'
+gem 'opentelemetry-instrumentation-base', path: '../../instrumentation/base'
