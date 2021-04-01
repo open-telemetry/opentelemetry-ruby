@@ -73,6 +73,11 @@ module OpenTelemetry
       rescue URI::Error
         url
       end
+
+      # Returns true if exporter is a valid exporter.
+      def valid_exporter?(exporter)
+        exporter && %i[export shutdown force_flush].all? { |m| exporter.respond_to?(m) }
+      end
     end
   end
 end

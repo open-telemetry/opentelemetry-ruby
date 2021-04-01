@@ -57,10 +57,6 @@ module OpenTelemetry
           end
         end
       end
-
-      def valid_exporter?(exporter)
-        exporter && %i[export shutdown force_flush].all? { |m| exporter.respond_to?(m) }
-      end
     end
   end
 end

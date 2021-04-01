@@ -7,6 +7,14 @@
 require 'test_helper'
 
 describe OpenTelemetry::Common::Utilities do
+  class OneOffExporter
+    def export(spans, timeout: nil); end
+
+    def force_flush(timeout: nil); end
+
+    def shutdown(timeout: nil); end
+  end
+
   let(:common_utils) { OpenTelemetry::Common::Utilities }
 
   describe '#utf8_encode' do
@@ -39,6 +47,17 @@ describe OpenTelemetry::Common::Utilities do
       byte_array = "keep what\xC2 is valid".dup.force_encoding(::Encoding::ASCII_8BIT)
 
       assert_equal('keep what is valid', common_utils.utf8_encode(byte_array, binary: true))
+    end
+  end
+
+  describe '#valid_exporter?' do
+    it 'defines exporters via their method signatures' do
+      exporter = OneOffExporter.new
+      _(common_utils.valid_exporter?(exporter)).must_equal true
+    end
+
+    it 'is false for other objects' do
+      _(common_utils.valid_exporter?({})).must_equal false
     end
   end
 end
