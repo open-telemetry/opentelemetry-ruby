@@ -33,7 +33,7 @@ commit_lint:
 gems:
   - name: opentelemetry-instrumentation-base
     directory: instrumentation/base
-    version_constant: [OpenTelemetry, Instrumentation, Base, VERSION]
+    version_constant: [OpenTelemetry, Instrumentation, VERSION]
 
   - name: opentelemetry-instrumentation-lmdb
     directory: instrumentation/lmdb
