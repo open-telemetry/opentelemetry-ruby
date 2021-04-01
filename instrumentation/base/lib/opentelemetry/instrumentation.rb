@@ -14,10 +14,10 @@ module OpenTelemetry
   module Instrumentation
     extend self
 
-    # @return [Instrumentation::Registry] registry containing all known
+    # @return [Registry] registry containing all known
     #  instrumentation
     def registry
-      @registry ||= Instrumentation::Registry.new
+      @registry ||= Registry.new
     end
   end
 end
