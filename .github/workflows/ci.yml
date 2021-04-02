@@ -62,6 +62,9 @@ jobs:
         image: mongo:4.4
         ports:
           - 27017:27017
+      redis:
+        image: redis:6.2
+        ports: 6379:6379
       sql:
         image: mysql:5.6
         env:
@@ -92,4 +95,6 @@ jobs:
           TEST_MEMCACHED_PORT: ${{ job.services.memcached.ports['11211'] }}
           TEST_MONGODB_HOST: mongodb
           TEST_MONGODB_PORT: ${{ job.services.mongodb.ports['27017'] }}
+          TEST_REDIS_HOST: redis
+          TEST_REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
         run: toys ci ${{ matrix.flags }}
