@@ -80,6 +80,18 @@ jobs:
         uses: getong/redis-action@v1
         with:
           redis password: 'passw0rd'
+
+      - name: Wait / Sleep
+        uses: jakejarvis/wait-action@v0.1.0
+        with:
+          time: '10s'
+
+      - name: Collect Docker Logs
+        uses: jwalton/gh-docker-logs@v1.0.0
+
+      - name: Check running containers
+        run: docker ps -a
+
       - name: Setup file system permissions
         run: sudo chmod -R 777 $GITHUB_WORKSPACE /github /__w/_temp
       - name: Checkout
