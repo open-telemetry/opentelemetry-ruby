@@ -96,6 +96,6 @@ jobs:
           TEST_MEMCACHED_PORT: ${{ job.services.memcached.ports['11211'] }}
           TEST_MONGODB_HOST: mongodb
           TEST_MONGODB_PORT: ${{ job.services.mongodb.ports['27017'] }}
-          TEST_REDIS_HOST: 127.0.0.1
+          TEST_REDIS_HOST: localhost
           TEST_REDIS_PORT: 6379
         run: toys ci ${{ matrix.flags }}
