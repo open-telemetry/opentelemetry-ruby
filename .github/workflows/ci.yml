@@ -86,8 +86,8 @@ jobs:
         with:
           time: '10s'
 
-      - name: Collect Docker Logs
-        uses: jwalton/gh-docker-logs@v2.0.0
+      #- name: Collect Docker Logs
+        #uses: jwalton/gh-docker-logs@v2.0.0
 
       - name: Check running containers
         run: docker ps -a
