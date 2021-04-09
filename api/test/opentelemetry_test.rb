@@ -14,9 +14,9 @@ describe OpenTelemetry do
       OpenTelemetry.tracer_provider = nil
     end
 
-    it 'returns instance of Trace::TracerProvider by default' do
+    it 'returns a Trace::TracerProvider by default' do
       tracer_provider = OpenTelemetry.tracer_provider
-      _(tracer_provider).must_be_instance_of(OpenTelemetry::Trace::TracerProvider)
+      _(tracer_provider).must_be_kind_of(OpenTelemetry::Trace::TracerProvider)
     end
 
     it 'returns the same instance when accessed multiple times' do

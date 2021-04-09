@@ -10,6 +10,7 @@ require 'opentelemetry/error'
 require 'opentelemetry/context'
 require 'opentelemetry/baggage'
 require 'opentelemetry/trace'
+require 'opentelemetry/internal'
 require 'opentelemetry/version'
 
 # OpenTelemetry is an open source observability framework, providing a
@@ -20,7 +21,7 @@ require 'opentelemetry/version'
 module OpenTelemetry
   extend self
 
-  attr_writer :tracer_provider, :propagation, :baggage, :logger, :error_handler
+  attr_writer :propagation, :baggage, :logger, :error_handler
 
   # @return [Object, Logger] configured Logger or a default STDOUT Logger.
   def logger
@@ -41,10 +42,24 @@ module OpenTelemetry
     error_handler.call(exception: exception, message: message)
   end
 
+  # Register the global tracer provider.
+  #
+  # @param [TracerProvider] provider A tracer provider to register as the
+  #   global instance.
+  def tracer_provider=(provider)
+    # TODO: should this use a Mutex?
+    # TODO: should this only allow setting the global once?
+    if @tracer_provider&.instance_of? Internal::ProxyTracerProvider
+      @tracer_provider.delegate = provider
+    end
+    @tracer_provider = provider
+    nil
+  end
+
   # @return [Object, Trace::TracerProvider] registered tracer provider or a
   #   default no-op implementation of the tracer provider.
   def tracer_provider
-    @tracer_provider ||= Trace::TracerProvider.new
+    @tracer_provider ||= Internal::ProxyTracerProvider.new
   end
 
   # @return [Object, Baggage::NoopManager] registered
