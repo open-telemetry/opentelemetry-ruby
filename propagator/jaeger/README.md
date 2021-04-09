@@ -1,9 +1,9 @@
 # opentelemetry-propagator-jaeger
 
-The `opentelemetry-propagator-jaeger` gem contains injectors and extractors for the
-[Jaeger native propagation format][jaeger-spec]  They can be used in
-conjunction with each other as well as with injectors and extractors for
-other formats to support a variety of context propagation scenarios.
+The `opentelemetry-propagator-jaeger` gem contains a propagator for the
+[Jaeger native propagation format][jaeger-spec]  This can be used on its
+own as well as with propagators for other formats to support a variety
+of context propagation scenarios.
 
 ## What is OpenTelemetry?
 

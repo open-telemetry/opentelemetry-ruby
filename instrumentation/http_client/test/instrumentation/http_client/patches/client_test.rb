@@ -16,14 +16,21 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Client do
 
   before do
     exporter.reset
+    @orig_propagation = OpenTelemetry.propagation
+    propagator = OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
+    OpenTelemetry.propagation = propagator
     instrumentation.install({})
     stub_request(:get, 'http://example.com/success').to_return(status: 200)
     stub_request(:post, 'http://example.com/failure').to_return(status: 500)
     stub_request(:get, 'https://example.com/timeout').to_timeout
   end
 
-  # Force re-install of instrumentation
-  after { instrumentation.instance_variable_set(:@installed, false) }
+  after do
+    # Force re-install of instrumentation
+    instrumentation.instance_variable_set(:@installed, false)
+
+    OpenTelemetry.propagation = @orig_propagation
+  end
 
   describe '#do_request' do
     it 'traces a simple request' do

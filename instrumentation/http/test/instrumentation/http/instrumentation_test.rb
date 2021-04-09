@@ -20,6 +20,22 @@ describe OpenTelemetry::Instrumentation::HTTP do
     _(instrumentation.version).wont_be_empty
   end
 
+  describe 'present' do
+    it 'when http gem installed' do
+      _(instrumentation.present?).must_equal(true)
+    end
+
+    it 'when HTTP constant not present' do
+      hide_const('HTTP')
+      _(instrumentation.present?).must_equal(false)
+    end
+
+    it 'when http gem not installed' do
+      allow(Gem).to receive(:loaded_specs).and_return({})
+      _(instrumentation.present?).must_equal(false)
+    end
+  end
+
   describe '#install' do
     it 'accepts argument' do
       _(instrumentation.install({})).must_equal(true)

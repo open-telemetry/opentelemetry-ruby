@@ -15,7 +15,7 @@ module OpenTelemetry
           OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.install({})
 
           app.middleware.insert_after(
-            ActionDispatch::RequestId,
+            0,
             OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware
           )
         end
