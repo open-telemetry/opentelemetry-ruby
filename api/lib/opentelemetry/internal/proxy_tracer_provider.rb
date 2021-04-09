@@ -31,7 +31,7 @@ module OpenTelemetry
       # @param [TracerProvider] provider The tracer provider to delegate to
       def delegate=(provider)
         unless @delegate.nil?
-          OpenTelemetry.logger.warn("Attempt to reset delegate in ProxyTracerProvider ignored.")
+          OpenTelemetry.logger.warn 'Attempt to reset delegate in ProxyTracerProvider ignored.'
           return
         end
 
@@ -39,8 +39,6 @@ module OpenTelemetry
           @delegate = provider
           @registry.each { |key, tracer| tracer.delegate = provider.tracer(key.name, key.version) }
         end
-
-        nil
       end
 
       # Returns a {Tracer} instance.
@@ -52,6 +50,7 @@ module OpenTelemetry
       def tracer(name = nil, version = nil)
         @mutex.synchronize do
           return @delegate.tracer(name, version) unless @delegate.nil?
+
           @registry[Key.new(name, version)] ||= ProxyTracer.new
         end
       end

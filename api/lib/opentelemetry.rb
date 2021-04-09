@@ -49,11 +49,8 @@ module OpenTelemetry
   def tracer_provider=(provider)
     # TODO: should this use a Mutex?
     # TODO: should this only allow setting the global once?
-    if @tracer_provider&.instance_of? Internal::ProxyTracerProvider
-      @tracer_provider.delegate = provider
-    end
+    @tracer_provider.delegate = provider if @tracer_provider&.instance_of? Internal::ProxyTracerProvider
     @tracer_provider = provider
-    nil
   end
 
   # @return [Object, Trace::TracerProvider] registered tracer provider or a
