@@ -14,7 +14,7 @@ Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-b
 
 ### For SDK Authors
 
-The following is a simplified demonstration of how the `OpenTelemetry::Instrumentation.registry` can be used by an SDK to install auto-instrumentation gems as part of it's configuration.  This should not be used as an example of how to implement an SDK as there are large omissions.  For a example of a complete implementation see the `opentelemetry-sdk` gem.
+The following is a simplified demonstration of how the `OpenTelemetry::Instrumentation.registry` can be used by an SDK to install auto-instrumentation gems as part of it's configuration.  This should not be used as an example of how to implement an SDK as there are large omissions.  For an example of a complete implementation see the `opentelemetry-sdk` gem.
 
 ```ruby
 require 'bundler/inline'
@@ -110,9 +110,9 @@ end
 # The OpenTelemetry::Instrumentation::Base class will implicitly add
 # any class that inherits from it to the registry.
 # Note that the name of the instrumentation in the registry will match
-# the class name and it's namespace.  In this example the registry
+# the class name and its namespace.  In this example the registry
 # will contain 'CustomAutoInstrumentation', if it was within
-# a module name `Legacy` it would take the form `Legacy::CustomAutoInstrumentation`.
+# a module named `Legacy`, it would take the form `Legacy::CustomAutoInstrumentation`.
 class CustomAutoInstrumentation < OpenTelemetry::Instrumentation::Base
   # The install hook is provided to apply patches through prepending
   # or using library hooks if available.
