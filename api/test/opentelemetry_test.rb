@@ -30,6 +30,36 @@ describe OpenTelemetry do
     end
   end
 
+  class CustomSpan < OpenTelemetry::Trace::Span
+  end
+
+  class CustomTracer < OpenTelemetry::Trace::Tracer
+    def start_root_span(*)
+      CustomSpan.new
+    end
+  end
+
+  class CustomTracerProvider < OpenTelemetry::Trace::TracerProvider
+    def tracer(name = nil, version = nil)
+      CustomTracer.new
+    end
+  end
+
+  describe '.tracer_provider=' do
+    it 'upgrades default tracers to "real" tracers' do
+      default_tracer = OpenTelemetry.tracer_provider.tracer
+      default_tracer.start_root_span('root').must_be_instance_of(OpenTelemetry::Trace::Span)
+      OpenTelemetry.tracer_provider = CustomTracerProvider.new
+      default_tracer.start_root_span('root').must_be_instance_of(CustomSpan)
+    end
+
+    it 'upgrades the default tracer provider to a "real" tracer provider' do
+      default_tracer_provider = OpenTelemetry.tracer_provider
+      OpenTelemetry.tracer_provider = CustomTracerProvider.new
+      default_tracer_provider.tracer.must_be_instance_of(CustomTracer)
+    end
+  end
+
   describe '.handle_error' do
     after do
       # Ensure we don't leak custom loggers and error handlers to other tests
