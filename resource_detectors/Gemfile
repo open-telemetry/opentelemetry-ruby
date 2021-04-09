@@ -8,6 +8,9 @@ source 'https://rubygems.org'
 
 gemspec
 
+gem 'opentelemetry-instrumentation-base', path: '../instrumentation/base'
+gem 'opentelemetry-sdk', path: '../sdk'
+
 group :development, :test do
   gem 'byebug'
   gem 'pry'

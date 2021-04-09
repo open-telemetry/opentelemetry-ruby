@@ -11,6 +11,7 @@ gemspec
 gem 'opentelemetry-api', path: '../../api'
 gem 'opentelemetry-common', path: '../../common'
 gem 'opentelemetry-instrumentation-active_model_serializers', path: '../active_model_serializers'
+gem 'opentelemetry-instrumentation-base', path: '../base'
 gem 'opentelemetry-instrumentation-concurrent_ruby', path: '../concurrent_ruby'
 gem 'opentelemetry-instrumentation-dalli', path: '../dalli'
 gem 'opentelemetry-instrumentation-delayed_job', path: '../delayed_job'

@@ -7,9 +7,7 @@
 require 'test_helper'
 
 describe OpenTelemetry::Instrumentation::Registry do
-  after do
-    OpenTelemetry.instance_variable_set(:@instrumentation_registry, nil)
-  end
+  after { OpenTelemetry.instance_variable_set(:@registry, nil) }
 
   let(:registry) do
     OpenTelemetry::Instrumentation::Registry.new
