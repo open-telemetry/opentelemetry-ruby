@@ -63,10 +63,16 @@ jobs:
         ports:
           - 27017:27017
       redis:
-        image: redis:6.2
+        image: bitnami/redis:6.2
         ports:
           - 6379:6379
-        options: --requirepass "passw0rd"
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        env:
+          REDIS_PASSWORD: "passw0rd"
       sql:
         image: mysql:5.6
         env:
