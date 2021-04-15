@@ -13,6 +13,7 @@ module OpenTelemetry
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |_config|
           require_dependencies
+          patch
         end
 
         present do
@@ -26,7 +27,7 @@ module OpenTelemetry
         end
 
         def patch
-          ::Koala::Facebook::API.prepend(Patches::Instrumentation)
+          ::Koala::Facebook::API.prepend(Patches::Api)
         end
       end
     end

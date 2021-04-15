@@ -14,15 +14,15 @@ module OpenTelemetry
 
           def graph_call(path, args = {}, verb = 'get', options = {}, &post_processing)
             tracer.in_span(
-              VERBS_TO_SPAN_NAMES[req.method],
-              {
+              VERBS_TO_SPAN_NAMES[verb],
+              attributes: {
                 'koala.verb' => verb,
                 'koala.path' => path
               },
               kind: :client
             ) do |_|
               OpenTelemetry::Common::HTTP::ClientContext.with_attributes('peer.service' => 'facebook') do
-                super(path, args, verb, options, &post_processing)
+                super
               end
             end
           end
