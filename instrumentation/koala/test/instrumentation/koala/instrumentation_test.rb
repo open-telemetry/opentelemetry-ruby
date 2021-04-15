@@ -9,7 +9,7 @@ require 'pry'
 
 require_relative '../../../lib/opentelemetry/instrumentation/koala'
 
-describe OpenTelemetry::Instrumentation::Koala do
+describe OpenTelemetry::Instrumentation::Koala do # rubocop:disable Metrics/BlockLength
   let(:instrumentation) { OpenTelemetry::Instrumentation::Koala::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
