@@ -122,6 +122,10 @@ gems:
     version_rb_path: lib/opentelemetry/instrumentation/net/http/version.rb
     version_constant: [OpenTelemetry, Instrumentation, Net, HTTP, VERSION]
 
+  - name: opentelemetry-instrumentation-pg
+    directory: instrumentation/pg
+    version_constant: [OpenTelemetry, Instrumentation, PG, VERSION]
+
   - name: opentelemetry-instrumentation-rack
     directory: instrumentation/rack
     version_constant: [OpenTelemetry, Instrumentation, Rack, VERSION]
