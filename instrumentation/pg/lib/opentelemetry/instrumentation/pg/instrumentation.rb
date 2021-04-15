@@ -9,6 +9,8 @@ module OpenTelemetry
     module PG
       # The Instrumentation class contains logic to detect and install the Pg instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
+        MINIMUM_VERSION = Gem::Version.new('1.1.0')
+
         install do |_config|
           require_dependencies
           patch_client
@@ -19,7 +21,7 @@ module OpenTelemetry
         end
 
         compatible do
-          Gem.loaded_specs['pg'].version > Gem::Version.new(MIN_PG_GEM_VERSION)
+          Gem.loaded_specs['pg'].version > Gem::Version.new(MINIMUM_VERSION)
         end
 
         option :peer_service, default: nil, validate: :string
