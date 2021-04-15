@@ -3,13 +3,6 @@
 # Copyright The OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
-
-## TODO: Include the supported version to be tested here.
-## Example:
-# appraise 'rack-2.1' do
-#   gem 'rack', '~> 2.1.2'
-# end
-
-# appraise 'rack-2.0' do
-#   gem 'rack', '2.0.8'
-# end
+appraise 'koala-3' do
+  gem 'koala', '~> 3.0.0'
+end

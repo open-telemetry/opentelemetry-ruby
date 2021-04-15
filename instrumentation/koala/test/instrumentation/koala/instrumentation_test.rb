@@ -29,17 +29,6 @@ describe OpenTelemetry::Instrumentation::Koala do # rubocop:disable Metrics/Bloc
     end
   end
 
-  describe 'present' do
-    it 'when koala gem installed' do
-      _(instrumentation.present?).must_equal true
-    end
-
-    it 'when koala gem not installed' do
-      hide_const('Koala')
-      _(instrumentation.present?).must_equal false
-    end
-  end
-
   describe 'install' do
     before do
       exporter.reset
