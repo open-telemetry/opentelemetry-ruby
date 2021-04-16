@@ -73,7 +73,6 @@ jobs:
           --health-retries 5
         env:
           REDIS_PASSWORD: "passw0rd"
-      sql:
       mysql:
         image: mysql:5.6
         env:
