@@ -133,7 +133,7 @@ module OpenTelemetry
         # @return [self] returns itself
         def add_event(name, attributes: nil, timestamp: nil)
           super
-          event = Event.new(name: name, attributes: attributes, timestamp: timestamp || Time.now)
+          event = Event.new(name: name, attributes: truncate_attribute_values(attributes), timestamp: timestamp || Time.now)
 
           @mutex.synchronize do
             if @ended
@@ -316,7 +316,16 @@ module OpenTelemetry
 
           excess = attrs.size - @trace_config.max_attributes_count
           excess.times { attrs.shift } if excess.positive?
+          truncate_attribute_values(attrs)
           nil
+        end
+
+        def truncate_attribute_values(attrs)
+          return if attrs.nil?
+
+          max_attributes_length = @trace_config.max_attributes_length
+          attrs.each { |key, value| attrs[key] = OpenTelemetry::Common::Utilities.truncate(value, max_attributes_length) } if max_attributes_length
+          attrs
         end
 
         def trim_links(links, max_links_count, max_attributes_per_link) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity

@@ -23,7 +23,8 @@ describe OpenTelemetry::SDK::Trace::Span do
       max_events_count: 1,
       max_links_count: 1,
       max_attributes_per_event: 1,
-      max_attributes_per_link: 1
+      max_attributes_per_link: 1,
+      max_attributes_length: 32
     )
   end
   let(:span) do
@@ -66,6 +67,11 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(span.attributes).must_equal('foo' => 'bar')
     end
 
+    it 'truncates attribute value length based if configured' do
+      span.set_attribute('foo', 'oldbaroldbaroldbaroldbaroldbaroldbar')
+      _(span.attributes).must_equal('foo' => 'oldbaroldbaroldbaroldbaroldba...')
+    end
+
     it 'does not set an attribute if span is ended' do
       span.finish
       span.set_attribute('no', 'set')
@@ -94,6 +100,11 @@ describe OpenTelemetry::SDK::Trace::Span do
       span.add_attributes('old' => 'oldbar')
       span.add_attributes('foo' => 'bar', 'bar' => 'baz')
       _(span.attributes).must_equal('bar' => 'baz')
+    end
+
+    it 'truncates attribute value length based if configured' do
+      span.set_attribute('foo', 'oldbaroldbaroldbaroldbaroldbaroldbar')
+      _(span.attributes).must_equal('foo' => 'oldbaroldbaroldbaroldbaroldba...')
     end
 
     it 'does not set an attribute if span is ended' do
@@ -187,6 +198,11 @@ describe OpenTelemetry::SDK::Trace::Span do
     it 'trims event attributes' do
       span.add_event('event', attributes: { '1' => 1, '2' => 2 })
       _(span.events.first.attributes.size).must_equal(1)
+    end
+
+    it 'truncates event attributes values if configured' do
+      span.add_event('event', attributes: { 'foo' => 'oldbaroldbaroldbaroldbaroldbaroldbar' })
+      _(span.events.first.attributes['foo']).must_equal('oldbaroldbaroldbaroldbaroldba...')
     end
 
     it 'trims event attributes with array values' do
@@ -345,6 +361,13 @@ describe OpenTelemetry::SDK::Trace::Span do
                       span_processor, attributes, nil, Time.now, nil, nil)
       _(span.to_span_data.total_recorded_attributes).must_equal(2)
       _(span.attributes.length).must_equal(1)
+    end
+
+    it 'truncates attributes if configured' do
+      attributes = { 'foo': 'oldbaroldbaroldbaroldbaroldbaroldbar' }
+      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, trace_config,
+                      span_processor, attributes, nil, Time.now, nil, nil)
+      _(span.attributes[:foo]).must_equal('oldbaroldbaroldbaroldbaroldba...')
     end
 
     it 'counts attributes' do
