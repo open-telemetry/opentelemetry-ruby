@@ -101,14 +101,6 @@ services:
     <<: *base
     working_dir: /app/instrumentation/rack/example
 
-  ex-instrumentation-redis:
-    <<: *base
-    environment:
-      - REDIS_URL=redis://redis:6379
-    depends_on:
-      - redis
-    working_dir: /app/instrumentation/redis/example
-
   ex-instrumentation-dalli:
     <<: *base
     environment:

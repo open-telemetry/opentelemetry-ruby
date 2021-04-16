@@ -9,7 +9,9 @@ require 'redis'
 require 'opentelemetry/sdk'
 
 require 'minitest/autorun'
-require 'fakeredis/minitest'
+
+ENV['TEST_REDIS_HOST'] ||= '127.0.0.1'
+ENV['TEST_REDIS_PORT'] ||= '6379'
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
