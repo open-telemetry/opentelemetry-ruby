@@ -7,9 +7,7 @@
 require 'test_helper'
 
 describe OpenTelemetry::Instrumentation::Base do
-  after do
-    OpenTelemetry.instance_variable_set(:@instrumentation_registry, nil)
-  end
+  after { OpenTelemetry::Instrumentation.instance_variable_set(:@registry, nil) }
 
   let(:instrumentation) do
     Class.new(OpenTelemetry::Instrumentation::Base) do
@@ -57,8 +55,7 @@ describe OpenTelemetry::Instrumentation::Base do
 
   it 'is auto-registered' do
     instance = instrumentation.instance
-    _(OpenTelemetry.instrumentation_registry.lookup('test_instrumentation'))
-      .must_equal(instance)
+    _(OpenTelemetry::Instrumentation.registry.lookup('test_instrumentation')).must_equal(instance)
   end
 
   describe '.instance' do

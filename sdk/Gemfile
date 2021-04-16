@@ -12,3 +12,4 @@ gemspec
 gem 'opentelemetry-api', path: '../api'
 gem 'opentelemetry-common', path: '../common'
 gem 'opentelemetry-exporter-jaeger', path: '../exporter/jaeger'
+gem 'opentelemetry-instrumentation-base', path: '../instrumentation/base'

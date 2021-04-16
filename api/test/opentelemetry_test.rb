@@ -111,14 +111,6 @@ describe OpenTelemetry do
     end
   end
 
-  describe '.instrumentation_registry' do
-    it 'returns an instance of Instrumentation::Registry' do
-      _(OpenTelemetry.instrumentation_registry).must_be_instance_of(
-        OpenTelemetry::Instrumentation::Registry
-      )
-    end
-  end
-
   describe '.propagation' do
     it 'returns instance of Context::Propagation::NoopTextMapPropagator by default' do
       _(OpenTelemetry.propagation).must_be_instance_of(

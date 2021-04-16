@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# require_relative 'command_serializer'
-
 module OpenTelemetry
   module Instrumentation
     module ActiveModelSerializers

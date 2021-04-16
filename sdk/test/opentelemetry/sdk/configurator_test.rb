@@ -235,7 +235,7 @@ describe OpenTelemetry::SDK::Configurator do
 
     describe 'instrumentation installation' do
       before do
-        OpenTelemetry.instance_variable_set(:@instrumentation_registry, nil)
+        OpenTelemetry::Instrumentation.instance_variable_set(:@registry, nil)
         TestInstrumentation = Class.new(OpenTelemetry::Instrumentation::Base) do
           install { 1 + 1 }
           present { true }
@@ -248,7 +248,7 @@ describe OpenTelemetry::SDK::Configurator do
       end
 
       it 'installs single instrumentation' do
-        registry = OpenTelemetry.instrumentation_registry
+        registry = OpenTelemetry::Instrumentation.registry
         instrumentation = registry.lookup('TestInstrumentation')
         _(instrumentation).wont_be_nil
         _(instrumentation).wont_be(:installed?)
@@ -259,7 +259,7 @@ describe OpenTelemetry::SDK::Configurator do
       end
 
       it 'installs all' do
-        registry = OpenTelemetry.instrumentation_registry
+        registry = OpenTelemetry::Instrumentation.registry
         instrumentation = registry.lookup('TestInstrumentation')
         _(instrumentation).wont_be_nil
         _(instrumentation).wont_be(:installed?)
