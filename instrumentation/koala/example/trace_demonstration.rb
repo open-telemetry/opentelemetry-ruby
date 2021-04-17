@@ -2,7 +2,7 @@
 
 require 'rubygems'
 require 'bundler/setup'
-require 'net/http'
+require 'koala'
 
 Bundler.require
 
