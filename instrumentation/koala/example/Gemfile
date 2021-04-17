@@ -1,0 +1,8 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+gem 'opentelemetry-api', path: '../../../api'
+gem 'opentelemetry-common', path: '../../../common'
+gem 'opentelemetry-instrumentation-koala', path: '../../../instrumentation/koala'
+gem 'opentelemetry-sdk', path: '../../../sdk'

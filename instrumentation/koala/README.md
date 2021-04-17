@@ -1,6 +1,6 @@
 # OpenTelemetry Koala Instrumentation
 
-Todo: Add a description.
+The Koala instrumentation is a community-maintained instrumentation for the [Koala][koala-home] Facebook API library.
 
 ## How do I get started?
 
@@ -44,6 +44,7 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 
 The `opentelemetry-instrumentation-koala` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
 
+[koala-home]: https://github.com/arsduo/koala
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE
