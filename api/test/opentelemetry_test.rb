@@ -9,13 +9,9 @@ require 'tempfile'
 
 describe OpenTelemetry do
   describe '.tracer_provider' do
-    before do
-      @default_tracer_provider = OpenTelemetry.tracer_provider
-    end
-
     after do
       # Ensure we don't leak custom tracer factories and tracers to other tests
-      OpenTelemetry.tracer_provider = @default_tracer_provider
+      OpenTelemetry.tracer_provider = OpenTelemetry::Internal::ProxyTracerProvider.new
     end
 
     it 'returns a Trace::TracerProvider by default' do
@@ -50,13 +46,9 @@ describe OpenTelemetry do
   end
 
   describe '.tracer_provider=' do
-    before do
-      @default_tracer_provider = OpenTelemetry.tracer_provider
-    end
-
     after do
       # Ensure we don't leak custom tracer factories and tracers to other tests
-      OpenTelemetry.tracer_provider = @default_tracer_provider
+      OpenTelemetry.tracer_provider = OpenTelemetry::Internal::ProxyTracerProvider.new
     end
 
     it 'upgrades default tracers to "real" tracers' do
