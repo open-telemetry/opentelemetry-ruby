@@ -46,6 +46,11 @@ describe OpenTelemetry do
   end
 
   describe '.tracer_provider=' do
+    after do
+      # Ensure we don't leak custom tracer factories and tracers to other tests
+      OpenTelemetry.tracer_provider = nil
+    end
+
     it 'upgrades default tracers to "real" tracers' do
       default_tracer = OpenTelemetry.tracer_provider.tracer
       default_tracer.start_root_span('root').must_be_instance_of(OpenTelemetry::Trace::Span)
