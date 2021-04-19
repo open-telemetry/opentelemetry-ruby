@@ -296,13 +296,13 @@ describe OpenTelemetry::Instrumentation::Base do
 
   describe '#tracer' do
     it 'returns a noop api tracer if not installed' do
-      _(instrumentation_with_callbacks.instance.tracer).must_be_instance_of(OpenTelemetry::Trace::Tracer)
+      _(instrumentation_with_callbacks.instance.tracer).must_be_kind_of(OpenTelemetry::Trace::Tracer)
     end
 
     it 'returns named tracer if installed' do
       instance = instrumentation_with_callbacks.instance
       instance.install
-      _(instance.tracer).must_be_instance_of(OpenTelemetry::Trace::Tracer)
+      _(instance.tracer).must_be_kind_of(OpenTelemetry::Trace::Tracer)
     end
   end
 
