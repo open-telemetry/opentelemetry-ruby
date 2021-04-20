@@ -122,6 +122,20 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Instrumentation do
       _(child_span3.kind).must_equal :consumer
     end
 
+    describe 'when the queue_prefix option is set' do
+      let(:config) { { queue_prefix: 'otel:' } }
+
+      it 'sets the queue prefix' do
+        SimpleJob.perform_async
+        SimpleJob.drain
+
+        child_span = exporter.finished_spans.last
+
+        _(root_span.attributes['messaging.destination']).must_equal 'otel:default'
+        _(child_span.attributes['messaging.destination']).must_equal 'otel:default'
+      end
+    end
+
     describe 'uses job class for span names' do
       let(:config) { { enable_job_class_span_names: true } }
 

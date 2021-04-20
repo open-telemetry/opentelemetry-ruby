@@ -33,7 +33,7 @@ module OpenTelemetry
                 'messaging.system' => 'sidekiq',
                 'messaging.sidekiq.job_class' => msg['wrapped']&.to_s || msg['class'],
                 'messaging.message_id' => msg['jid'],
-                'messaging.destination' => msg['queue'],
+                'messaging.destination' => "#{config[:queue_prefix]}#{msg['queue']}",
                 'messaging.destination_kind' => 'queue'
               }
               attributes['peer.service'] = config[:peer_service] if config[:peer_service]

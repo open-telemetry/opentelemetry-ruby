@@ -33,6 +33,7 @@ module OpenTelemetry
         option :trace_poller_wait,           default: false, validate: :boolean
         option :trace_processor_process_one, default: false, validate: :boolean
         option :peer_service,                default: nil,   validate: :string
+        option :queue_prefix,                default: nil,   validate: :string
 
         private
 
