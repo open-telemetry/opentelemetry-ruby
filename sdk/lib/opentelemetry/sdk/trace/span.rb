@@ -70,7 +70,6 @@ module OpenTelemetry
         #
         # @return [self] returns itself
         def set_attribute(key, value)
-          super
           @mutex.synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling set_attribute on an ended Span.')
@@ -99,7 +98,6 @@ module OpenTelemetry
         #
         # @return [self] returns itself
         def add_attributes(attributes)
-          super
           @mutex.synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling add_attributes on an ended Span.')
@@ -132,7 +130,6 @@ module OpenTelemetry
         #
         # @return [self] returns itself
         def add_event(name, attributes: nil, timestamp: nil)
-          super
           event = Event.new(name: name, attributes: truncate_attribute_values(attributes), timestamp: timestamp || Time.now)
 
           @mutex.synchronize do
@@ -179,7 +176,6 @@ module OpenTelemetry
         #
         # @return [void]
         def status=(status)
-          super
           @mutex.synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling status= on an ended Span.')
@@ -199,7 +195,6 @@ module OpenTelemetry
         #
         # @return [void]
         def name=(new_name)
-          super
           @mutex.synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling name= on an ended Span.')
