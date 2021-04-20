@@ -139,7 +139,7 @@ module OpenTelemetry
         def send_bytes(bytes, timeout:) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
           retry_count = 0
           timeout ||= @timeout
-          start_time = OpenTelemetry::Common.timeout_timestamp
+          start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
           around_request do # rubocop:disable Metrics/BlockLength
             request = Net::HTTP::Post.new(@path)
             request.body = if @compression == 'gzip'
