@@ -1,5 +1,15 @@
 # Release History: opentelemetry-api
 
+### v0.17.0 / 2021-04-22
+
+* BREAKING CHANGE: Refactor propagators to add #fields 
+* BREAKING CHANGE: Remove metrics API 
+
+* ADDED: Default noop tracer for instrumentation 
+* FIXED: Refactor propagators to add #fields 
+* FIXED: Remove metrics API 
+* FIXED: Dynamically upgrade global tracer provider 
+
 ### v0.16.0 / 2021-03-17
 
 * ADDED: Span#add_attributes 

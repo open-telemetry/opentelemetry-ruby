@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-mongo
 
+### v0.17.0 / 2021-04-22
+
+* BREAKING CHANGE: Refactor propagators to add #fields 
+
+* ADDED: Mongo instrumentation accepts peer service config attribute. 
+* FIXED: Fix Mongo instrumentation example. 
+* FIXED: Refactor propagators to add #fields 
+
 ### v0.16.0 / 2021-03-17
 
 * FIXED: Example scripts now reference local common lib 
