@@ -4,6 +4,7 @@
 
 * BREAKING CHANGE: Refactor propagators to add #fields 
 * BREAKING CHANGE: Remove metrics API 
+* BREAKING CHANGE: Extract instrumentation base from api (#698)
 
 * ADDED: Default noop tracer for instrumentation 
 * FIXED: Refactor propagators to add #fields 
