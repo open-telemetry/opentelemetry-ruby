@@ -2,8 +2,6 @@
 
 ### v0.17.0 / 2021-04-22
 
-* BREAKING CHANGE: Refactor propagators to add #fields 
-
 * FIXED: Fix Faraday gem dependencies. 
 * FIXED: Refactor propagators to add #fields 
 
