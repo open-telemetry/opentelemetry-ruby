@@ -2,9 +2,15 @@
 
 ### v0.17.0 / 2021-04-22
 
-* BREAKING CHANGE: Refactor propagators to add #fields 
-* BREAKING CHANGE: Remove metrics API 
-* BREAKING CHANGE: Extract instrumentation base from api (#698)
+* BREAKING CHANGE: Replace TextMapInjector/TextMapExtractor pairs with a TextMapPropagator.
+
+  [Check the propagator documentation](https://open-telemetry.github.io/opentelemetry-ruby/) for the new usage.
+* BREAKING CHANGE: Remove metrics API.
+
+  `OpenTelemetry::Metrics` and all of its behavior removed until spec stabilizes.
+* BREAKING CHANGE: Extract instrumentation base from api (#698).
+
+  To take advantage of a base instrumentation class to create your own auto-instrumentation, require and use the `opentelemetry-instrumentation-base` gem.
 
 * ADDED: Default noop tracer for instrumentation 
 * FIXED: Refactor propagators to add #fields 

@@ -2,8 +2,9 @@
 
 ### v0.17.0 / 2021-04-22
 
-* BREAKING CHANGE: Refactor propagators to add #fields 
-* BREAKING CHANGE: Add simple 'recording' attr_accessor to InMemorySpanExporter 
+* BREAKING CHANGE: Replace TextMapInjector/TextMapExtractor pairs with a TextMapPropagator.
+
+  [Check the propagator documentation](https://open-telemetry.github.io/opentelemetry-ruby/) for the new usage.
 
 * ADDED: Add zipkin exporter 
 * ADDED: Processors validate exporters on init. 
