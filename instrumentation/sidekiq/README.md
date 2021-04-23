@@ -36,7 +36,7 @@ Example usage can be seen in the `./example/sidekiq.rb` file [here](https://gith
 ## Development
 
 You'll need Redis installed locally to run the test suite. Once you've
-installed it, start it with the included configuration:
+installed it, it will start and stop automatically when you run `rake`.
 
 ```
 redis-server test/redis.conf

@@ -12,7 +12,7 @@ require 'sidekiq/testing'
 require 'helpers/mock_loader'
 
 ENV['TEST_REDIS_HOST'] ||= '127.0.0.1'
-ENV['TEST_REDIS_PORT'] ||= '6379'
+ENV['TEST_REDIS_PORT'] ||= '16379'
 
 require 'opentelemetry/sdk'
 
