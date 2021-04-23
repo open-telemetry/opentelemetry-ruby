@@ -3,7 +3,4 @@
 ### v0.17.1 / 2021-04-23
 
 * Initial release.
-
-### v0.17.0 / 2021-04-22
-
 * ADDED: Initial postgresql instrumentation
