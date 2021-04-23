@@ -19,7 +19,7 @@ as follows:
 
 | Tracing | Metrics | Logging |
 | ------- | ------- | ------- |
-| Beta    | Alpha   | Not Yet Implemented |
+| Beta    | Not Yet Implemented | Not Yet Implemented |
 
 The current release can be found [here](https://github.com/open-telemetry/opentelemetry-ruby/releases)
 
