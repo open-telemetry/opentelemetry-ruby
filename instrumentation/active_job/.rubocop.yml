@@ -1,4 +1,6 @@
 AllCops:
+  Exclude:
+    - "example/active_job.rb"
   TargetRubyVersion: "2.5.0"
 
 Bundler/OrderedGems:
