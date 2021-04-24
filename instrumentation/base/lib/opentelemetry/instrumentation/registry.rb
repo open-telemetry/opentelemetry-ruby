@@ -45,8 +45,10 @@ module OpenTelemetry
         @lock.synchronize do
           instrumentation_names.each do |instrumentation_name|
             instrumentation = find_instrumentation(instrumentation_name)
-            OpenTelemetry.logger.warn "Could not install #{instrumentation_name} because it was not found" unless instrumentation
-
+            if instrumentation.nil?
+              OpenTelemetry.logger.warn "Could not install #{instrumentation_name} because it was not found"
+              next
+            end
             install_instrumentation(instrumentation, instrumentation_config_map[instrumentation.name])
           end
         end
