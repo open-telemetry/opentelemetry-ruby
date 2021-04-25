@@ -33,6 +33,7 @@ commit_lint:
 gems:
   - name: opentelemetry-instrumentation-base
     directory: instrumentation/base
+    version_rb_path: lib/opentelemetry/instrumentation/version.rb
     version_constant: [OpenTelemetry, Instrumentation, VERSION]
 
   - name: opentelemetry-instrumentation-lmdb
@@ -125,6 +126,10 @@ gems:
     directory: instrumentation/net_http
     version_rb_path: lib/opentelemetry/instrumentation/net/http/version.rb
     version_constant: [OpenTelemetry, Instrumentation, Net, HTTP, VERSION]
+
+  - name: opentelemetry-instrumentation-pg
+    directory: instrumentation/pg
+    version_constant: [OpenTelemetry, Instrumentation, PG, VERSION]
 
   - name: opentelemetry-instrumentation-rack
     directory: instrumentation/rack

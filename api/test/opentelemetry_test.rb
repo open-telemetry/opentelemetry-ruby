@@ -11,12 +11,12 @@ describe OpenTelemetry do
   describe '.tracer_provider' do
     after do
       # Ensure we don't leak custom tracer factories and tracers to other tests
-      OpenTelemetry.tracer_provider = nil
+      OpenTelemetry.tracer_provider = OpenTelemetry::Internal::ProxyTracerProvider.new
     end
 
-    it 'returns instance of Trace::TracerProvider by default' do
+    it 'returns a Trace::TracerProvider by default' do
       tracer_provider = OpenTelemetry.tracer_provider
-      _(tracer_provider).must_be_instance_of(OpenTelemetry::Trace::TracerProvider)
+      _(tracer_provider).must_be_kind_of(OpenTelemetry::Trace::TracerProvider)
     end
 
     it 'returns the same instance when accessed multiple times' do
@@ -30,11 +30,51 @@ describe OpenTelemetry do
     end
   end
 
+  class CustomSpan < OpenTelemetry::Trace::Span
+  end
+
+  class CustomTracer < OpenTelemetry::Trace::Tracer
+    def start_root_span(*)
+      CustomSpan.new
+    end
+  end
+
+  class CustomTracerProvider < OpenTelemetry::Trace::TracerProvider
+    def tracer(name = nil, version = nil)
+      CustomTracer.new
+    end
+  end
+
+  describe '.tracer_provider=' do
+    after do
+      # Ensure we don't leak custom tracer factories and tracers to other tests
+      OpenTelemetry.tracer_provider = OpenTelemetry::Internal::ProxyTracerProvider.new
+    end
+
+    it 'upgrades default tracers to "real" tracers' do
+      default_tracer = OpenTelemetry.tracer_provider.tracer
+      _(default_tracer.start_root_span('root')).must_be_instance_of(OpenTelemetry::Trace::Span)
+      OpenTelemetry.tracer_provider = CustomTracerProvider.new
+      _(default_tracer.start_root_span('root')).must_be_instance_of(CustomSpan)
+    end
+
+    it 'upgrades the default tracer provider to a "real" tracer provider' do
+      default_tracer_provider = OpenTelemetry.tracer_provider
+      OpenTelemetry.tracer_provider = CustomTracerProvider.new
+      _(default_tracer_provider.tracer).must_be_instance_of(CustomTracer)
+    end
+  end
+
   describe '.handle_error' do
+    before do
+      @default_logger = OpenTelemetry.logger
+      @default_error_handler = OpenTelemetry.error_handler
+    end
+
     after do
       # Ensure we don't leak custom loggers and error handlers to other tests
-      OpenTelemetry.logger = nil
-      OpenTelemetry.error_handler = nil
+      OpenTelemetry.logger = @default_logger
+      OpenTelemetry.error_handler = @default_error_handler
     end
 
     it 'logs at error level by default' do
@@ -88,9 +128,13 @@ describe OpenTelemetry do
   end
 
   describe '.baggage' do
+    before do
+      @default_baggage = OpenTelemetry.baggage
+    end
+
     after do
       # Ensure we don't leak custom baggage to other tests
-      OpenTelemetry.baggage = nil
+      OpenTelemetry.baggage = @default_baggage
     end
 
     it 'returns Baggage::NoopManager by default' do
