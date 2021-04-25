@@ -36,13 +36,8 @@ describe OpenTelemetry::Instrumentation::Koala do # rubocop:disable Metrics/Bloc
     end
 
     it 'when koala call made' do
-      stub_request(:get, 'https://graph.facebook.com/me?access_token=fake_token').with(
-        headers: {
-          'Accept' => '*/*',
-          'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-          'User-Agent' => 'Faraday v1.3.0'
-        }
-      ).to_return(status: 200, body: '{"id":"2531656920449469","name":"Timur  Borkhodoev"}', headers: {})
+      stub_request(:get, 'https://graph.facebook.com/me?access_token=fake_token')
+        .to_return(status: 200, body: '{"id":"2531656920449469","name":"Timur  Borkhodoev"}', headers: {})
 
       @graph = Koala::Facebook::API.new('fake_token')
       @graph.get_object('me')
