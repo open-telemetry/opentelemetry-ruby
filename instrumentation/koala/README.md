@@ -50,4 +50,4 @@ The `opentelemetry-instrumentation-koala` gem is distributed under the Apache 2.
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
-[ruby-gitter]: https://gitter.im/open-telemetry/opentelemetry-ruby
+[discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
