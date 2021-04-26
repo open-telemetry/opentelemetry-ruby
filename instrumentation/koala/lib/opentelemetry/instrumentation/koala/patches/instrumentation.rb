@@ -13,17 +13,8 @@ module OpenTelemetry
           VERBS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = "Koala #{k}" }
 
           def graph_call(path, args = {}, verb = 'get', options = {}, &post_processing)
-            tracer.in_span(
-              VERBS_TO_SPAN_NAMES[verb],
-              attributes: {
-                'koala.verb' => verb,
-                'koala.path' => path
-              },
-              kind: :client
-            ) do |_|
-              OpenTelemetry::Common::HTTP::ClientContext.with_attributes('peer.service' => 'facebook') do
-                super
-              end
+            OpenTelemetry::Common::HTTP::ClientContext.with_attributes('peer.service' => 'facebook', 'koala.verb' => verb, 'koala.path' => path) do
+              super
             end
           end
 
