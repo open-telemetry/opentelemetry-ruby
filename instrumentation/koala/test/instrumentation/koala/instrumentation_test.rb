@@ -8,9 +8,11 @@ require 'test_helper'
 require 'pry'
 
 require_relative '../../../lib/opentelemetry/instrumentation/koala'
+require_relative '../../../../net_http/lib/opentelemetry/instrumentation/net/http'
 
 describe OpenTelemetry::Instrumentation::Koala do # rubocop:disable Metrics/BlockLength
   let(:instrumentation) { OpenTelemetry::Instrumentation::Koala::Instrumentation.instance }
+  let(:http_instrumentation) { OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
 
@@ -32,6 +34,7 @@ describe OpenTelemetry::Instrumentation::Koala do # rubocop:disable Metrics/Bloc
   describe 'install' do
     before do
       exporter.reset
+      http_instrumentation.install({})
       instrumentation.install({})
     end
 
