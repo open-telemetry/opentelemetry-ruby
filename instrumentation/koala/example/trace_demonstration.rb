@@ -7,6 +7,7 @@ require 'koala'
 Bundler.require
 
 OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::Net::HTTP'
   c.use 'OpenTelemetry::Instrumentation::Koala'
 end
 

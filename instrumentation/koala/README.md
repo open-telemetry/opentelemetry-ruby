@@ -18,6 +18,7 @@ To use the instrumentation, call `use` with the name of the instrumentation:
 
 ```ruby
 OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::Net::HTTP'
   c.use 'OpenTelemetry::Instrumentation::Koala'
 end
 ```
