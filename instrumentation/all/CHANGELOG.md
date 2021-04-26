@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.17.0 / 2021-04-22
+
+* ADDED: Add instrumentation for postgresql (pg gem) 
+
 ### v0.16.0 / 2021-03-17
 
 * ADDED: Instrument http gem 

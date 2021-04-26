@@ -6,9 +6,8 @@ gem "opentelemetry-api", path: "../../../api"
 gem "sidekiq", "~> 4.2"
 
 group :test do
-  gem "fakeredis", require: "fakeredis/minitest"
   gem "opentelemetry-common", path: "../../../common"
-  gem "opentelemetry-instrumentation-redis"
+  gem "opentelemetry-instrumentation-redis", path: "../../redis"
   gem "opentelemetry-sdk", path: "../../../sdk"
   gem "pry"
   gem "pry-byebug"

@@ -5,12 +5,14 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'minitest/autorun'
-require 'fakeredis/minitest'
 require 'pry'
 
 require 'sidekiq'
 require 'sidekiq/testing'
 require 'helpers/mock_loader'
+
+ENV['TEST_REDIS_HOST'] ||= '127.0.0.1'
+ENV['TEST_REDIS_PORT'] ||= '16379'
 
 require 'opentelemetry/sdk'
 
@@ -22,10 +24,12 @@ OpenTelemetry::SDK.configure do |c|
   c.add_span_processor span_processor
 end
 
-redis_conn = proc {
-  FakeRedis::Redis.new
-}
+redis_url = "redis://#{ENV['TEST_REDIS_HOST']}:#{ENV['TEST_REDIS_PORT']}/0"
 
 Sidekiq.configure_server do |config|
-  config.redis = ConnectionPool.new(size: 1, &redis_conn)
+  config.redis = { password: 'passw0rd', url: redis_url }
+end
+
+Sidekiq.configure_client do |config|
+  config.redis = { password: 'passw0rd', url: redis_url }
 end
