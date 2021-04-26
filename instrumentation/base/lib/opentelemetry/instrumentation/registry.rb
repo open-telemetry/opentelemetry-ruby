@@ -47,9 +47,9 @@ module OpenTelemetry
             instrumentation = find_instrumentation(instrumentation_name)
             if instrumentation.nil?
               OpenTelemetry.logger.warn "Could not install #{instrumentation_name} because it was not found"
-              next
+            else
+              install_instrumentation(instrumentation, instrumentation_config_map[instrumentation.name])
             end
-            install_instrumentation(instrumentation, instrumentation_config_map[instrumentation.name])
           end
         end
       end
