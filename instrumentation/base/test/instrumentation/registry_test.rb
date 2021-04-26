@@ -7,7 +7,14 @@
 require 'test_helper'
 
 describe OpenTelemetry::Instrumentation::Registry do
-  after { OpenTelemetry.instance_variable_set(:@registry, nil) }
+  before do
+    @_logger = OpenTelemetry.logger
+  end
+
+  after do
+    OpenTelemetry.instance_variable_set(:@registry, nil)
+    OpenTelemetry.logger = @_logger
+  end
 
   let(:registry) do
     OpenTelemetry::Instrumentation::Registry.new
@@ -86,6 +93,22 @@ describe OpenTelemetry::Instrumentation::Registry do
 
         _(TestInstrumentation1.instance.config).must_equal(a: 'a')
         _(TestInstrumentation2.instance.config).must_equal(b: 'b')
+      end
+
+      describe 'given an non-existent instrumentation' do
+        before do
+          @log_stream = StringIO.new
+          OpenTelemetry.logger = ::Logger.new(@log_stream)
+        end
+
+        it 'reports a warning' do
+          registry.install(%w[NotInstalled TestInstrumentation2],
+                           'NotInstalled' => {},
+                           'TestInstrumentation2' => { b: 'b' })
+
+          _(@log_stream.string).must_match(/Could not install NotInstalled because it was not found/)
+          _(TestInstrumentation2.instance.config).must_equal(b: 'b')
+        end
       end
     end
   end
