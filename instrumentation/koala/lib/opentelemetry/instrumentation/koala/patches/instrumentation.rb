@@ -17,12 +17,6 @@ module OpenTelemetry
               super
             end
           end
-
-          private
-
-          def tracer
-            Koala::Instrumentation.instance.tracer
-          end
         end
       end
     end
