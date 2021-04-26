@@ -113,10 +113,6 @@ services:
     <<: *base
     working_dir: /app/instrumentation/restclient/example
 
-  ex-instrumentation-sidekiq:
-    <<: *base
-    working_dir: /app/instrumentation/sidekiq/example
-
   ex-instrumentation-sinatra:
     <<: *base
     command: ./start_server.sh

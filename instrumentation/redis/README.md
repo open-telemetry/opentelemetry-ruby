@@ -48,11 +48,7 @@ An example of usage can be seen in [`example/redis.rb`](https://github.com/open-
 ## Development
 
 You'll need Redis installed locally to run the test suite. Once you've
-installed it, start it with the included configuration:
-
-```
-redis-server test/redis.conf
-```
+installed it, it will start and stop automatically when you run `rake`.
 
 ## How can I get involved?
 
