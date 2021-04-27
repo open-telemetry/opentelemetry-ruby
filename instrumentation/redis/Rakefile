@@ -11,10 +11,17 @@ require 'rubocop/rake_task'
 
 RuboCop::RakeTask.new
 
-Rake::TestTask.new :test do |t|
+task :start_redis do
+  @redis_pid = fork { exec 'redis-server test/redis.conf' }
+end
+
+Rake::TestTask.new test: :start_redis do |t|
   t.libs << 'test'
   t.libs << 'lib'
   t.test_files = FileList['test/**/*_test.rb']
+  at_exit do
+    Process.kill('USR1', @redis_pid) if @redis_pid
+  end
 end
 
 YARD::Rake::YardocTask.new do |t|

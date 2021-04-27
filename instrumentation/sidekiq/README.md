@@ -33,7 +33,16 @@ end
 
 Example usage can be seen in the `./example/sidekiq.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/sidekiq/example/sidekiq.rb)
 
-## How can I get invovled?
+## Development
+
+You'll need Redis installed locally to run the test suite. Once you've
+installed it, it will start and stop automatically when you run `rake`.
+
+```
+redis-server test/redis.conf
+```
+
+## How can I get involved?
 
 The `opentelemetry-instrumentation-sidekiq` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.
 
