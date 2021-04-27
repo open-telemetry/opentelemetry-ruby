@@ -13,16 +13,17 @@ module OpenTelemetry
           # by way of its middleware system
           class TracerMiddleware
             def call(_worker, msg, _queue)
-              parent_context = OpenTelemetry.propagation.extract(msg)
-              tracer.in_span(
-                span_name(msg),
-                attributes: build_attributes(msg),
-                with_parent: parent_context,
-                kind: :consumer
-              ) do |span|
-                span.add_event('created_at', timestamp: msg['created_at'])
-                span.add_event('enqueued_at', timestamp: msg['enqueued_at'])
-                yield
+              extracted_context = OpenTelemetry.propagation.extract(msg)
+              OpenTelemetry::Context.with_current(extracted_context) do
+                tracer.in_span(
+                  span_name(msg),
+                  attributes: build_attributes(msg),
+                  kind: :consumer
+                ) do |span|
+                  span.add_event('created_at', timestamp: msg['created_at'])
+                  span.add_event('enqueued_at', timestamp: msg['enqueued_at'])
+                  yield
+                end
               end
             end
 

@@ -40,22 +40,24 @@ class OpenTelemetryMiddleware
     # For attribute naming, see
     # https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-semantic-conventions.md#http-server
 
-    # Span kind MUST be `:server` for a HTTP server span
-    @tracer.in_span(
-      span_name,
-      attributes: {
-        'component' => 'http',
-        'http.method' => env['REQUEST_METHOD'],
-        'http.route' => env['PATH_INFO'],
-        'http.url' => env['REQUEST_URI'],
-      },
-      kind: :server,
-      with_parent: context
-    ) do |span|
-      # Run application stack
-      status, headers, response_body = @app.call(env)
+    # Activate the extracted context
+    OpenTelemetry::Context.with_current(context) do
+      # Span kind MUST be `:server` for a HTTP server span
+      @tracer.in_span(
+        span_name,
+        attributes: {
+          'component' => 'http',
+          'http.method' => env['REQUEST_METHOD'],
+          'http.route' => env['PATH_INFO'],
+          'http.url' => env['REQUEST_URI'],
+        },
+        kind: :server
+      ) do |span|
+        # Run application stack
+        status, headers, response_body = @app.call(env)
 
-      span.set_attribute('http.status_code', status)
+        span.set_attribute('http.status_code', status)
+      end
     end
 
     [status, headers, response_body]
