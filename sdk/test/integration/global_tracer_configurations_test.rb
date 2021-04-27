@@ -20,7 +20,7 @@ describe OpenTelemetry::SDK, 'global_tracer_configurations' do
   let(:finished_spans) { exporter.finished_spans }
 
   before do
-    tracer.with_span(tracer.start_span('root', with_parent: parent_context)) do
+    OpenTelemetry::Trace.with_span(tracer.start_span('root', with_parent: parent_context)) do
       tracer.in_span('child1') {}
       tracer.in_span('child2') {}
     end
