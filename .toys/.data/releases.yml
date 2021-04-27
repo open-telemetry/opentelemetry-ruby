@@ -52,6 +52,10 @@ gems:
     directory: instrumentation/http_client
     version_constant: [OpenTelemetry, Instrumentation, HttpClient, VERSION]
 
+  - name: opentelemetry-instrumentation-koala
+    directory: instrumentation/koala
+    version_constant: [OpenTelemetry, Instrumentation, Koala, VERSION]
+
   - name: opentelemetry-api
     directory: api
     version_rb_path: lib/opentelemetry/version.rb
