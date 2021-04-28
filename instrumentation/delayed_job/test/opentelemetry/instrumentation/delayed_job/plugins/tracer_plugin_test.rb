@@ -77,9 +77,9 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Plugins::TracerPlugin do
 
       _(span.events.size).must_equal 2
       _(span.events[0].name).must_equal 'created_at'
-      _(span.events[0].timestamp).must_be_kind_of Time
+      _(span.events[0].timestamp).must_be_kind_of Integer
       _(span.events[1].name).must_equal 'run_at'
-      _(span.events[1].timestamp).must_be_kind_of Time
+      _(span.events[1].timestamp).must_be_kind_of Integer
     end
 
     describe 'when queue name is set' do
@@ -141,11 +141,11 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Plugins::TracerPlugin do
 
       _(span.events.size).must_equal 3
       _(span.events[0].name).must_equal 'created_at'
-      _(span.events[0].timestamp).must_be_kind_of Time
+      _(span.events[0].timestamp).must_be_kind_of Integer
       _(span.events[1].name).must_equal 'run_at'
-      _(span.events[1].timestamp).must_be_kind_of Time
+      _(span.events[1].timestamp).must_be_kind_of Integer
       _(span.events[2].name).must_equal 'locked_at'
-      _(span.events[2].timestamp).must_be_kind_of Time
+      _(span.events[2].timestamp).must_be_kind_of Integer
     end
 
     describe 'when queue name is set' do
@@ -184,7 +184,7 @@ describe OpenTelemetry::Instrumentation::DelayedJob::Plugins::TracerPlugin do
         _(span.attributes['messaging.delayed_job.name']).must_equal 'ErrorPayload'
         _(span.events.size).must_equal 4
         _(span.events[3].name).must_equal 'exception'
-        _(span.events[3].timestamp).must_be_kind_of Time
+        _(span.events[3].timestamp).must_be_kind_of Integer
         _(span.events[3].attributes['exception.type']).must_equal 'ArgumentError'
         _(span.events[3].attributes['exception.message']).must_equal 'This job failed'
       end
