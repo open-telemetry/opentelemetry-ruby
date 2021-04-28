@@ -1,4 +1,6 @@
 # Release History: opentelemetry-propagator-xray
+### v0.18.0 / 2021-04-28
+* Fix bug on parsing trace id format
 
 ### v0.18.0 / 2021-05-21
 
