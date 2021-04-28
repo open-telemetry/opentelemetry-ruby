@@ -14,3 +14,6 @@ instrumentation/**/*.gemfile.lock
 
 # Vendored gems
 **/vendor/**/*
+
+# IDE Settings
+/.idea/

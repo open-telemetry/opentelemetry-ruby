@@ -16,12 +16,12 @@ describe OpenTelemetry::Propagator::XRay::TextMapPropagator do
   describe('#extract') do
     it 'extracts context with trace id, span id, sampling flag, trace state' do
       parent_context = OpenTelemetry::Context.empty
-      carrier = { 'X-Amzn-Trace-Id' => 'Root=1-80f198e-e56343ba864fe8b2a57d3eff7;Parent=e457b5a2e4d86bd1;Sampled=1;Foo=Bar;Fizz=Buzz' }
+      carrier = { 'X-Amzn-Trace-Id' => 'Root=1-80f198ea-e56343ba864fe8b2a57d3eff;Parent=e457b5a2e4d86bd1;Sampled=1;Foo=Bar;Fizz=Buzz' }
 
       context = propagator.extract(carrier, context: parent_context)
       extracted_context = OpenTelemetry::Trace.current_span(context).context
 
-      _(extracted_context.hex_trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
+      _(extracted_context.hex_trace_id).must_equal('80f198eae56343ba864fe8b2a57d3eff')
       _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
       _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::SAMPLED)
       _(extracted_context.tracestate.to_s).must_equal(OpenTelemetry::Trace::Tracestate.from_string('Foo=Bar,Fizz=Buzz').to_s)
@@ -30,12 +30,12 @@ describe OpenTelemetry::Propagator::XRay::TextMapPropagator do
 
     it 'extracts context with trace id, span id, sampling flag' do
       parent_context = OpenTelemetry::Context.empty
-      carrier = { 'X-Amzn-Trace-Id' => 'Root=1-80f198e-e56343ba864fe8b2a57d3eff7;Parent=e457b5a2e4d86bd1;Sampled=1' }
+      carrier = { 'X-Amzn-Trace-Id' => 'Root=1-80f198ea-e56343ba864fe8b2a57d3eff;Parent=e457b5a2e4d86bd1;Sampled=1' }
 
       context = propagator.extract(carrier, context: parent_context)
       extracted_context = OpenTelemetry::Trace.current_span(context).context
 
-      _(extracted_context.hex_trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
+      _(extracted_context.hex_trace_id).must_equal('80f198eae56343ba864fe8b2a57d3eff')
       _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
       _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::SAMPLED)
       _(extracted_context).must_be(:remote?)
@@ -43,12 +43,12 @@ describe OpenTelemetry::Propagator::XRay::TextMapPropagator do
 
     it 'extracts context with trace id, span id' do
       parent_context = OpenTelemetry::Context.empty
-      carrier = { 'X-Amzn-Trace-Id' => 'Root=1-80f198e-e56343ba864fe8b2a57d3eff7;Parent=e457b5a2e4d86bd1' }
+      carrier = { 'X-Amzn-Trace-Id' => 'Root=1-80f198ea-e56343ba864fe8b2a57d3eff;Parent=e457b5a2e4d86bd1' }
 
       context = propagator.extract(carrier, context: parent_context)
       extracted_context = OpenTelemetry::Trace.current_span(context).context
 
-      _(extracted_context.hex_trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
+      _(extracted_context.hex_trace_id).must_equal('80f198eae56343ba864fe8b2a57d3eff')
       _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
       _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::DEFAULT)
       _(extracted_context).must_be(:remote?)
@@ -56,7 +56,7 @@ describe OpenTelemetry::Propagator::XRay::TextMapPropagator do
 
     it 'converts debug flag to sampled' do
       parent_context = OpenTelemetry::Context.empty
-      carrier = { 'X-Amzn-Trace-Id' => 'Root=1-80f198e-e56343ba864fe8b2a57d3eff7;Parent=e457b5a2e4d86bd1;Sampled=d' }
+      carrier = { 'X-Amzn-Trace-Id' => 'Root=1-80f198ea-e56343ba864fe8b2a57d3eff;Parent=e457b5a2e4d86bd1;Sampled=d' }
 
       context = propagator.extract(carrier, context: parent_context)
       extracted_context = OpenTelemetry::Trace.current_span(context).context
@@ -66,7 +66,7 @@ describe OpenTelemetry::Propagator::XRay::TextMapPropagator do
 
     it 'handles malformed trace id' do
       parent_context = OpenTelemetry::Context.empty
-      carrier = { 'X-Amzn-Trace-Id' => 'Root=180f198e-e56343ba864fe8b2a57d3eff7;Parent=e457b5a2e4d86bd1;Sampled=1' }
+      carrier = { 'X-Amzn-Trace-Id' => 'Root=180f198ea-e56343ba864fe8b2a57d3eff;Parent=e457b5a2e4d86bd1;Sampled=1' }
 
       context = propagator.extract(carrier, context: parent_context)
 
@@ -75,7 +75,7 @@ describe OpenTelemetry::Propagator::XRay::TextMapPropagator do
 
     it 'handles malformed span id' do
       parent_context = OpenTelemetry::Context.empty
-      carrier = { 'X-Amzn-Trace-Id' => 'Root=1-80f198e-e56343ba864fe8b2a57d3eff7;Parent=457b5a2e4d86bd1;Sampled=1' }
+      carrier = { 'X-Amzn-Trace-Id' => 'Root=1-80f198ea-e56343ba864fe8b2a57d3eff;Parent=457b5a2e4d86bd1;Sampled=1' }
 
       context = propagator.extract(carrier, context: parent_context)
 
@@ -86,7 +86,7 @@ describe OpenTelemetry::Propagator::XRay::TextMapPropagator do
   describe '#inject' do
     it 'injects context with sampled trace flags' do
       context = create_context(
-        trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
+        trace_id: '80f198eae56343ba864fe8b2a57d3eff',
         span_id: 'e457b5a2e4d86bd1',
         trace_flags: TraceFlags::SAMPLED
       )
@@ -94,13 +94,13 @@ describe OpenTelemetry::Propagator::XRay::TextMapPropagator do
       carrier = {}
       propagator.inject(carrier, context: context)
 
-      expected_xray = 'Root=1-80f198e-e56343ba864fe8b2a57d3eff7;Parent=e457b5a2e4d86bd1;Sampled=1'
+      expected_xray = 'Root=1-80f198ea-e56343ba864fe8b2a57d3eff;Parent=e457b5a2e4d86bd1;Sampled=1'
       _(carrier['X-Amzn-Trace-Id']).must_equal(expected_xray)
     end
 
     it 'injects context with default trace flags' do
       context = create_context(
-        trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
+        trace_id: '80f198eae56343ba864fe8b2a57d3eff',
         span_id: 'e457b5a2e4d86bd1',
         trace_flags: TraceFlags::DEFAULT
       )
@@ -108,13 +108,13 @@ describe OpenTelemetry::Propagator::XRay::TextMapPropagator do
       carrier = {}
       propagator.inject(carrier, context: context)
 
-      expected_xray = 'Root=1-80f198e-e56343ba864fe8b2a57d3eff7;Parent=e457b5a2e4d86bd1;Sampled=0'
+      expected_xray = 'Root=1-80f198ea-e56343ba864fe8b2a57d3eff;Parent=e457b5a2e4d86bd1;Sampled=0'
       _(carrier['X-Amzn-Trace-Id']).must_equal(expected_xray)
     end
 
     it 'injects debug flag when present' do
       context = create_context(
-        trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
+        trace_id: '80f198eae56343ba864fe8b2a57d3eff',
         span_id: 'e457b5a2e4d86bd1',
         xray_debug: true
       )
@@ -122,7 +122,7 @@ describe OpenTelemetry::Propagator::XRay::TextMapPropagator do
       carrier = {}
       propagator.inject(carrier, context: context)
 
-      expected_xray = 'Root=1-80f198e-e56343ba864fe8b2a57d3eff7;Parent=e457b5a2e4d86bd1;Sampled=d'
+      expected_xray = 'Root=1-80f198ea-e56343ba864fe8b2a57d3eff;Parent=e457b5a2e4d86bd1;Sampled=d'
       _(carrier['X-Amzn-Trace-Id']).must_equal(expected_xray)
     end
 
@@ -140,7 +140,7 @@ describe OpenTelemetry::Propagator::XRay::TextMapPropagator do
 
     it 'no-ops if span id invalid' do
       context = create_context(
-        trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
+        trace_id: '80f198eae56343ba864fe8b2a57d3eff',
         span_id: '0' * 16
       )
 

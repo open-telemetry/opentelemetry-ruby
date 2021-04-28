@@ -76,7 +76,7 @@ module OpenTelemetry
                            end
 
           ot_trace_id = span_context.hex_trace_id
-          xray_trace_id = "1-#{ot_trace_id[0..6]}-#{ot_trace_id[7..ot_trace_id.length]}"
+          xray_trace_id = "1-#{ot_trace_id[0..7]}-#{ot_trace_id[8..ot_trace_id.length]}"
           parent_id = span_context.hex_span_id
 
           xray_value = "Root=#{xray_trace_id};Parent=#{parent_id};Sampled=#{sampling_state}"
@@ -98,7 +98,7 @@ module OpenTelemetry
         # Convert an id from a hex encoded string to byte array. Assumes the input id has already been
         # validated to be 35 characters in length.
         def to_trace_id(hex_id)
-          Array(hex_id[2..8] + hex_id[10..hex_id.length]).pack('H*')
+          Array(hex_id[2..9] + hex_id[11..hex_id.length]).pack('H*')
         end
 
         # Convert an id from a hex encoded string to byte array.
