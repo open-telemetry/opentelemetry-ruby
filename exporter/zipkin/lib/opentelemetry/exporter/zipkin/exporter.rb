@@ -132,7 +132,7 @@ module OpenTelemetry
         def send_spans(zipkin_spans, timeout: nil) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
           retry_count = 0
           timeout ||= @timeout
-          start_time = Time.now
+          start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
           around_request do # rubocop:disable Metrics/BlockLength
             request = Net::HTTP::Post.new(@path)
             request.body = JSON.generate(zipkin_spans)

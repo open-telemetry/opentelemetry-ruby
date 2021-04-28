@@ -101,7 +101,7 @@ module OpenTelemetry
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
           def force_flush(timeout: nil) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
-            start_time = Time.now
+            start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
             snapshot = lock do
               reset_on_fork if @keep_running
               spans.shift(spans.size)
@@ -137,7 +137,7 @@ module OpenTelemetry
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
           def shutdown(timeout: nil)
-            start_time = Time.now
+            start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
             thread = lock do
               @keep_running = false
               @condition.signal

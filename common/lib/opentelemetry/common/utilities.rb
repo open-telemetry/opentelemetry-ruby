@@ -14,11 +14,27 @@ module OpenTelemetry
 
       # Returns nil if timeout is nil, 0 if timeout has expired,
       # or the remaining (positive) time left in seconds.
+      #
+      # @param [Numeric] timeout The timeout in seconds. May be nil.
+      # @param [Numeric] start_time Start time for timeout returned
+      #   by {timeout_timestamp}.
+      #
+      # @return [Numeric] remaining (positive) time left in seconds.
+      #   May be nil.
       def maybe_timeout(timeout, start_time)
         return nil if timeout.nil?
 
-        timeout -= (Time.now - start_time)
+        timeout -= (timeout_timestamp - start_time)
         timeout.positive? ? timeout : 0
+      end
+
+      # Returns a timestamp suitable to pass as the start_time
+      # argument to {maybe_timeout}. This has no meaning outside
+      # of the current process.
+      #
+      # @return [Numeric]
+      def timeout_timestamp
+        Process.clock_gettime(Process::CLOCK_MONOTONIC)
       end
 
       # Encodes a string in utf8

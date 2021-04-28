@@ -66,7 +66,7 @@ module OpenTelemetry
               tracer_provider.active_span_processor,
               attributes,
               links,
-              start_timestamp || Time.now,
+              start_timestamp,
               tracer_provider.resource,
               @instrumentation_library
             )

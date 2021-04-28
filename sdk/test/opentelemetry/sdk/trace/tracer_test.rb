@@ -122,7 +122,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       _(span.name).must_equal(name)
       _(span.kind).must_equal(kind)
       _(span.attributes).must_equal(attributes)
-      _(span.start_timestamp).must_equal(start_timestamp)
+      _(span.start_timestamp).must_equal(exportable_timestamp(start_timestamp))
     end
 
     it 'creates a span with sampler attributes added after supplied attributes' do
@@ -269,7 +269,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       _(span.attributes).must_equal(attributes)
       _(span.parent_span_id).must_equal(span_context.span_id)
       _(span.context.trace_id).must_equal(span_context.trace_id)
-      _(span.start_timestamp).must_equal(start_timestamp)
+      _(span.start_timestamp).must_equal(exportable_timestamp(start_timestamp))
     end
 
     it 'creates a span with sampler attributes added after supplied attributes' do

@@ -146,8 +146,8 @@ describe OpenTelemetry::Exporter::Zipkin::Exporter do
 end
 
 def create_resource_span_data(name: '', kind: nil, status: nil, parent_span_id: OpenTelemetry::Trace::INVALID_SPAN_ID,
-                              total_recorded_attributes: 0, total_recorded_events: 0, total_recorded_links: 0, start_timestamp: Time.now,
-                              end_timestamp: Time.now, attributes: nil, links: nil, events: nil, resource: nil,
+                              total_recorded_attributes: 0, total_recorded_events: 0, total_recorded_links: 0, start_timestamp: exportable_timestamp,
+                              end_timestamp: exportable_timestamp, attributes: nil, links: nil, events: nil, resource: nil,
                               instrumentation_library: OpenTelemetry::SDK::InstrumentationLibrary.new('', 'v0.0.1'),
                               span_id: OpenTelemetry::Trace.generate_span_id, trace_id: OpenTelemetry::Trace.generate_trace_id,
                               trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, tracestate: nil)
