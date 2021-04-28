@@ -70,7 +70,7 @@ describe OpenTelemetry::SDK, 'API_trace' do
     before do
       @local_parent_span = tracer.start_span('local')
       parent_ctx = OpenTelemetry::Trace.context_with_span(@local_parent_span)
-      tracer.in_span('child1', with_parent: parent_ctx) do |child|
+      OpenTelemetry::Trace.with_span(tracer.start_span('child1', with_parent: parent_ctx)) do |child|
         @child_of_local = child
       end
     end
