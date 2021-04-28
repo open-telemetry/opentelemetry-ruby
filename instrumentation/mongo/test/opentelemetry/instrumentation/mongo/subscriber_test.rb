@@ -316,7 +316,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
       refute(span.attributes.key?('db.statement'))
       _(span.events.size).must_equal 1
       _(span.events[0].name).must_equal 'exception'
-      _(span.events[0].timestamp).must_be_kind_of Time
+      _(span.events[0].timestamp).must_be_kind_of Integer
       _(span.events[0].attributes['exception.type']).must_equal 'CommandFailed'
       _(span.events[0].attributes['exception.message']).must_equal 'ns not found (26)'
     end
@@ -355,7 +355,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
         _(span.attributes['db.operation']).must_equal 'saslStart'
         _(span.events.size).must_equal 1
         _(span.events[0].name).must_equal 'exception'
-        _(span.events[0].timestamp).must_be_kind_of Time
+        _(span.events[0].timestamp).must_be_kind_of Integer
         _(span.events[0].attributes['exception.type']).must_equal 'CommandFailed'
         _(span.events[0].attributes['exception.message']).must_match(/mechanism.+PLAIN.+\(2\)/)
       end
