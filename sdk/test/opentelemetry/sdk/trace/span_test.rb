@@ -186,7 +186,7 @@ describe OpenTelemetry::SDK::Trace::Span do
       span.add_event('added', timestamp: ts)
       events = span.events
       _(events.size).must_equal(1)
-      _(events.first.timestamp).must_equal(ts)
+      _(events.first.timestamp).must_equal(exportable_timestamp(ts))
     end
 
     it 'does not add an event if span is ended' do

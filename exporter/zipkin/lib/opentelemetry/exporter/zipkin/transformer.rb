@@ -38,8 +38,8 @@ module OpenTelemetry
         private_constant(:KIND_MAP, :DEFAULT_SERVICE_NAME, :SERVICE_NAME_ATTRIBUTE_KEY, :ERROR_TAG_KEY, :STATUS_CODE_NAME, :STATUS_ERROR, :STATUS_OK, :ATTRIBUTE_PEER_SERVICE, :ATTRIBUTE_NET_PEER_IP, :ATTRIBUTE_NET_PEER_PORT, :ATTRIBUTE_NET_HOST_IP, :ATTRIBUTE_NET_HOST_PORT)
 
         def to_zipkin_span(span_d, resource)
-          start_time = (span_d.start_timestamp.to_f * 1_000_000).to_i
-          duration = (span_d.end_timestamp.to_f * 1_000_000).to_i - start_time
+          start_time = span_d.start_timestamp / 1_000
+          duration = span_d.end_timestamp / 1_000 - start_time
           tags = {}
           service_name = DEFAULT_SERVICE_NAME
           resource.attribute_enumerator.select do |key, value|
@@ -91,7 +91,7 @@ module OpenTelemetry
         def add_conditional_tags(zipkin_span, span_data, tags, service_name)
           zipkin_span['tags'] = tags unless tags.empty?
           zipkin_span['kind'] = KIND_MAP[span_data.kind] unless span_data.kind.nil?
-          zipkin_span['parentId'] = span_data.parent_span_id.unpack1('H*') unless span_data.parent_span_id.nil?
+          zipkin_span['parentId'] = span_data.hex_parent_span_id unless span_data.parent_span_id == OpenTelemetry::Trace::INVALID_SPAN_ID
           zipkin_span['localEndpoint'] = endpoint_from_tags(tags, (span_data.attributes && span_data.attributes[SERVICE_NAME_ATTRIBUTE_KEY]) || service_name)
           # remote endpoint logic https://github.com/open-telemetry/opentelemetry-collector/blob/347cfa9ab21d47240128c58c9bafcc0014bc729d/translator/trace/zipkin/traces_to_zipkinv2.go#L284
           zipkin_span['remoteEndpoint'] = endpoint_from_tags(tags, nil)
@@ -107,12 +107,12 @@ module OpenTelemetry
           events = span_data.events.map do |event|
             if event.attributes.keys.length.zero?
               {
-                timestamp: (event.timestamp.to_f * 1_000_000).to_s,
+                timestamp: (event.timestamp / 1_000).to_s,
                 value: event.name
               }
             else
               {
-                timestamp: (event.timestamp.to_f * 1_000_000).to_s,
+                timestamp: (event.timestamp / 1_000).to_s,
                 value: { event.name => event.attributes.transform_values(&:to_s) }.to_json
               }
             end

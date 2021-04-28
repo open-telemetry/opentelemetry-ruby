@@ -277,13 +277,13 @@ module OpenTelemetry
             parent_span_id: span_data.parent_span_id == OpenTelemetry::Trace::INVALID_SPAN_ID ? nil : span_data.parent_span_id,
             name: span_data.name,
             kind: as_otlp_span_kind(span_data.kind),
-            start_time_unix_nano: as_otlp_timestamp(span_data.start_timestamp),
-            end_time_unix_nano: as_otlp_timestamp(span_data.end_timestamp),
+            start_time_unix_nano: span_data.start_timestamp,
+            end_time_unix_nano: span_data.end_timestamp,
             attributes: span_data.attributes&.map { |k, v| as_otlp_key_value(k, v) },
             dropped_attributes_count: span_data.total_recorded_attributes - span_data.attributes&.size.to_i,
             events: span_data.events&.map do |event|
               Opentelemetry::Proto::Trace::V1::Span::Event.new(
-                time_unix_nano: as_otlp_timestamp(event.timestamp),
+                time_unix_nano: event.timestamp,
                 name: event.name,
                 attributes: event.attributes&.map { |k, v| as_otlp_key_value(k, v) }
                 # TODO: track dropped_attributes_count in Span#append_event
@@ -308,10 +308,6 @@ module OpenTelemetry
               )
             end
           )
-        end
-
-        def as_otlp_timestamp(timestamp)
-          (timestamp.to_r * 1_000_000_000).to_i
         end
 
         def as_otlp_span_kind(kind)

@@ -13,3 +13,7 @@ ensure
   env_to_reset.each_pair { |k, v| ENV[k] = v }
   keys_to_delete.each { |k| ENV.delete(k) }
 end
+
+def exportable_timestamp(time = Time.now)
+  (time.to_r * 1_000_000_000).to_i
+end

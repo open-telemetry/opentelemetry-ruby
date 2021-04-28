@@ -65,8 +65,8 @@ module OpenTelemetry
         end
 
         def encoded_span(span_data) # rubocop:disable Metrics/AbcSize
-          start_time = (span_data.start_timestamp.to_f * 1_000_000).to_i
-          duration = (span_data.end_timestamp.to_f * 1_000_000).to_i - start_time
+          start_time = span_data.start_timestamp / 1_000
+          duration = span_data.end_timestamp / 1_000 - start_time
 
           Thrift::Span.new(
             'traceIdLow' => int64(span_data.trace_id[8, 8]),
@@ -102,7 +102,7 @@ module OpenTelemetry
         def encoded_logs(events)
           events&.map do |event|
             Thrift::Log.new(
-              'timestamp' => (event.timestamp.to_f * 1_000_000).to_i,
+              'timestamp' => event.timestamp / 1_000,
               'fields' => encoded_tags(event.attributes) + encoded_tags('name' => event.name)
             )
           end
