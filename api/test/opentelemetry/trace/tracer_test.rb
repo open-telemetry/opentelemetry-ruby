@@ -62,13 +62,6 @@ describe OpenTelemetry::Trace::Tracer do
       finish_tracer.in_span('wrapper') { |span| mock_span = span }
       mock_span.verify
     end
-
-    it 'yields a span with the parent context' do
-      tracer.in_span('op', with_parent: parent_context) do |span|
-        _(span.context).must_be :valid?
-        _(span.context).must_equal(parent_span_context)
-      end
-    end
   end
 
   describe '#start_root_span' do
