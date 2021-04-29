@@ -25,6 +25,12 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
       false
     end
 
+    def mock.export(spans, timeout: nil); end
+
+    def mock.shutdown(timeout: nil); end
+
+    def mock.force_flush(timeout: nil); end
+
     mock
   end
 
@@ -38,6 +44,7 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
   end
 
   it 'forwards calls to #force_flush to the exporter' do
+    mock_span_exporter.instance_eval { undef :force_flush }
     mock_span_exporter.expect :force_flush, nil, [{ timeout: nil }]
 
     processor.force_flush
@@ -45,6 +52,7 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
   end
 
   it 'forwards recorded spans from #on_finish' do
+    mock_span_exporter.instance_eval { undef :export }
     mock_span_exporter.expect :export, export::SUCCESS, [Array]
 
     processor.on_start(stub_span_recorded, parent_context)
@@ -99,9 +107,18 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
   end
 
   it 'forwards calls to #shutdown to the exporter' do
+    mock_span_exporter.instance_eval { undef :shutdown }
     mock_span_exporter.expect :shutdown, nil, [{ timeout: nil }]
 
     processor.shutdown
     mock_span_exporter.verify
+  end
+
+  it 'raises if exporter is nil' do
+    _(-> { export::SimpleSpanProcessor.new(nil) }).must_raise(ArgumentError)
+  end
+
+  it 'raises if exporter is not an exporter' do
+    _(-> { export::SimpleSpanProcessor.new(exporter: export::NoopSpanExporter.new) }).must_raise(ArgumentError)
   end
 end

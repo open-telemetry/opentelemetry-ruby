@@ -104,6 +104,18 @@ gems, including Rails, Rack, Sinatra, and others, so you can start
 using OpenTelemetry with minimal changes to your application. See the
 [instrumentation README](instrumentation/) for more.
 
+## Who's using OpenTelemetry Ruby?
+
+OpenTelemetry Ruby is in use by a number of companies, including:
+
+- [Heroku](https://heroku.com)
+- [Fulcrum](https://www.fulcrumapp.com/)
+- [Puppet](https://puppet.com/)
+- [Shopify](https://shopify.com)
+- [TableCheck](https://www.tablecheck.com/)
+
+If you would like to add your name to this list, please feel free to submit a pull request.
+
 ## Useful links
 
 - For more information on OpenTelemetry, visit: <https://opentelemetry.io/>

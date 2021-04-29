@@ -29,6 +29,8 @@ module OpenTelemetry
           # @return [SimpleSpanProcessor]
           # @raise ArgumentError if the span_exporter is nil.
           def initialize(span_exporter)
+            raise ArgumentError, "exporter #{span_exporter.inspect} does not appear to be a valid exporter" unless Common::Utilities.valid_exporter?(span_exporter)
+
             @span_exporter = span_exporter
           end
 

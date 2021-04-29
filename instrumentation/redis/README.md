@@ -45,6 +45,11 @@ end
 
 An example of usage can be seen in [`example/redis.rb`](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/redis/example/redis.rb).
 
+## Development
+
+You'll need Redis installed locally to run the test suite. Once you've
+installed it, it will start and stop automatically when you run `rake`.
+
 ## How can I get involved?
 
 The `opentelemetry-instrumentation-redis` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.

@@ -9,9 +9,7 @@ require 'bundler/inline'
 gemfile(true) do
   source 'https://rubygems.org'
 
-  git_source(:github) { |repo| "https://github.com/#{repo}.git" }
-
-  gem 'rails', github: 'rails/rails'
+  gem 'rails'
   gem 'opentelemetry-sdk'
   gem 'opentelemetry-instrumentation-rails'
 end

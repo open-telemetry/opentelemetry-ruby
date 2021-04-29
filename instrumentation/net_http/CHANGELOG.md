@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.17.0 / 2021-04-22
+
+* FIXED: Refactor propagators to add #fields 
+
 ### v0.16.0 / 2021-03-17
 
 * FIXED: Example scripts now reference local common lib 

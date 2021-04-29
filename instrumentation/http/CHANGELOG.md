@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-http
 
+### v0.17.0 / 2021-04-22
+
+* FIXED: Refactor propagators to add #fields 
+
 ### v0.16.2 / 2021-03-29
 
 * FIXED: HTTP instrumenter should check for gem presence 

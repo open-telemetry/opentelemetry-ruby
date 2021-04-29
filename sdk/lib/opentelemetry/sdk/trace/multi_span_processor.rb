@@ -55,7 +55,7 @@ module OpenTelemetry
         # @return [Integer] Export::SUCCESS if no error occurred, Export::FAILURE if
         #   a non-specific failure occurred, Export::TIMEOUT if a timeout occurred.
         def force_flush(timeout: nil)
-          start_time = Time.now
+          start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
           results = @span_processors.map do |processor|
             remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
             return Export::TIMEOUT if remaining_timeout&.zero?
@@ -71,7 +71,7 @@ module OpenTelemetry
         # @return [Integer] Export::SUCCESS if no error occurred, Export::FAILURE if
         #   a non-specific failure occurred, Export::TIMEOUT if a timeout occurred.
         def shutdown(timeout: nil)
-          start_time = Time.now
+          start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
           results = @span_processors.map do |processor|
             remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
             return Export::TIMEOUT if remaining_timeout&.zero?

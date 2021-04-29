@@ -43,7 +43,7 @@ describe OpenTelemetry::Exporter::Jaeger::Encoder do
     attributes = { 'akey' => 'avalue' }
     events = [
       OpenTelemetry::SDK::Trace::Event.new(
-        name: 'event', attributes: { 'ekey' => 'evalue' }
+        'event', { 'ekey' => 'evalue' }, exportable_timestamp
       )
     ]
     span_data = create_span_data(attributes: attributes, events: events)
@@ -66,7 +66,7 @@ describe OpenTelemetry::Exporter::Jaeger::Encoder do
     attributes = { 'akey' => ['avalue'] }
     events = [
       OpenTelemetry::SDK::Trace::Event.new(
-        name: 'event', attributes: { 'ekey' => ['evalue'] }
+        'event', { 'ekey' => ['evalue'] }, exportable_timestamp
       )
     ]
     span_data = create_span_data(attributes: attributes, events: events)
@@ -125,8 +125,8 @@ describe OpenTelemetry::Exporter::Jaeger::Encoder do
       0,
       0,
       0,
-      Time.now,
-      Time.now,
+      exportable_timestamp,
+      exportable_timestamp,
       attributes,
       links,
       events,

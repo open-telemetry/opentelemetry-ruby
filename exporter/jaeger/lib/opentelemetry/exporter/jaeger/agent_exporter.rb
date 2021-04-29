@@ -35,7 +35,7 @@ module OpenTelemetry
         def export(span_data, timeout: nil)
           return FAILURE if @shutdown
 
-          start_time = Time.now
+          start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
           encoded_batches(span_data) do |batch|
             return FAILURE if @shutdown || OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)&.zero?
 

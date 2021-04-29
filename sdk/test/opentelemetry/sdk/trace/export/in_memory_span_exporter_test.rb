@@ -12,7 +12,7 @@ describe OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter do
   let(:span_data1)   { OpenTelemetry::SDK::Trace::SpanData.new(name: 'name1') }
   let(:span_data2)   { OpenTelemetry::SDK::Trace::SpanData.new(name: 'name2') }
 
-  let(:exporter) { export::InMemorySpanExporter.new }
+  let(:exporter) { OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new }
 
   it 'accepts an Array of SpanDatas as argument to #export' do
     exporter.export([span_data1, span_data2])
@@ -69,5 +69,14 @@ describe OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter do
     exporter.shutdown
 
     _(exporter.finished_spans.length).must_equal 0
+  end
+
+  it 'records nothing if #recording is false' do
+    exporter.recording = false
+    exporter.export([span_data1])
+    _(exporter.finished_spans.length).must_equal 0
+
+    # In this test, we're generally recording all the time - restore that state.
+    exporter.recording = true
   end
 end

@@ -26,10 +26,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
 
     # this is currently a noop but this will future proof the test
     @orig_propagation = OpenTelemetry.propagation
-    propagator = OpenTelemetry::Context::Propagation::Propagator.new(
-      OpenTelemetry::Trace::Propagation::TraceContext.text_map_injector,
-      OpenTelemetry::Trace::Propagation::TraceContext.text_map_extractor
-    )
+    propagator = OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
     OpenTelemetry.propagation = propagator
   end
 
@@ -77,6 +74,27 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
         _(span.attributes['db.mongodb.collection']).must_equal 'people'
         refute(span.attributes.key?('db.statement'))
       end
+    end
+  end
+
+  describe 'when peer service has been set in config' do
+    let(:params) { { name: 'FKA Twigs' } }
+
+    include MongoTraceTest
+
+    before do
+      instrumentation.instance_variable_set(
+        :@config, peer_service: 'example:mongo'
+      )
+      client[collection].insert_one(params)
+    end
+
+    after do
+      instrumentation.instance_variable_set(:@config, {})
+    end
+
+    it 'includes it in the span attributes' do
+      _(span.attributes['peer.service']).must_equal 'example:mongo'
     end
   end
 
@@ -298,7 +316,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
       refute(span.attributes.key?('db.statement'))
       _(span.events.size).must_equal 1
       _(span.events[0].name).must_equal 'exception'
-      _(span.events[0].timestamp).must_be_kind_of Time
+      _(span.events[0].timestamp).must_be_kind_of Integer
       _(span.events[0].attributes['exception.type']).must_equal 'CommandFailed'
       _(span.events[0].attributes['exception.message']).must_equal 'ns not found (26)'
     end
@@ -337,7 +355,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
         _(span.attributes['db.operation']).must_equal 'saslStart'
         _(span.events.size).must_equal 1
         _(span.events[0].name).must_equal 'exception'
-        _(span.events[0].timestamp).must_be_kind_of Time
+        _(span.events[0].timestamp).must_be_kind_of Integer
         _(span.events[0].attributes['exception.type']).must_equal 'CommandFailed'
         _(span.events[0].attributes['exception.message']).must_match(/mechanism.+PLAIN.+\(2\)/)
       end

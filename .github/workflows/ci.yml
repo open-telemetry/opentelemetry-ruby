@@ -62,7 +62,18 @@ jobs:
         image: mongo:4.4
         ports:
           - 27017:27017
-      sql:
+      redis:
+        image: bitnami/redis:6.2
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        env:
+          REDIS_PASSWORD: "passw0rd"
+      mysql:
         image: mysql:5.6
         env:
           TEST_MYSQL_USER: root
@@ -73,8 +84,15 @@ jobs:
           MYSQL_PASSWORD: mysql
           MYSQL_USER: mysql
         ports:
-          - 3306
+          - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: --health-cmd="pg_isready" --health-interval=5s --health-timeout=2s --health-retries=3
     steps:
       - name: Setup file system permissions
         run: sudo chmod -R 777 $GITHUB_WORKSPACE /github /__w/_temp
@@ -86,10 +104,17 @@ jobs:
         env:
           TEST_KAFKA_HOST: kafka
           TEST_KAFKA_PORT: 29092
-          TEST_MYSQL_HOST: sql
-          TEST_MYSQL_PORT: ${{ job.services.mysql.ports['3306'] }}
+          TEST_MYSQL_HOST: mysql
+          TEST_MYSQL_PORT: 3306
+          TEST_POSTGRES_PASSWORD: postgres
+          TEST_POSTGRES_USER: postgres
+          TEST_POSTGRES_HOST: postgres
+          TEST_POSTGRES_PORT: 5432
+          TEST_POSTGRES_DB: postgres
           TEST_MEMCACHED_HOST: memcached
           TEST_MEMCACHED_PORT: ${{ job.services.memcached.ports['11211'] }}
           TEST_MONGODB_HOST: mongodb
           TEST_MONGODB_PORT: ${{ job.services.mongodb.ports['27017'] }}
+          TEST_REDIS_HOST: redis
+          TEST_REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
         run: toys ci ${{ matrix.flags }}
