@@ -208,18 +208,26 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
       it 'obfuscates arguments in db.statement' do
         instrumentation.instance_variable_set(:@installed, false)
         instrumentation.install(enable_arg_obfuscation: true)
-        redis = ::Redis.new
+        redis = redis_with_auth
         _(redis.set('K', 'xyz')).must_equal 'OK'
         _(redis.get('K')).must_equal 'xyz'
-        _(exporter.finished_spans.size).must_equal 2
+        _(exporter.finished_spans.size).must_equal 3
 
-        set_span = exporter.finished_spans.first
+        set_span = exporter.finished_spans[0]
+        _(set_span.name).must_equal 'AUTH'
+        _(set_span.attributes['db.system']).must_equal 'redis'
+        _(set_span.attributes['db.statement']).must_equal(
+          'AUTH ?'
+        )
+
+        set_span = exporter.finished_spans[1]
         _(set_span.name).must_equal 'SET'
         _(set_span.attributes['db.system']).must_equal 'redis'
         _(set_span.attributes['db.statement']).must_equal(
           'SET ? ?'
         )
-        set_span = exporter.finished_spans.last
+
+        set_span = exporter.finished_spans[2]
         _(set_span.name).must_equal 'GET'
         _(set_span.attributes['db.system']).must_equal 'redis'
         _(set_span.attributes['db.statement']).must_equal(
