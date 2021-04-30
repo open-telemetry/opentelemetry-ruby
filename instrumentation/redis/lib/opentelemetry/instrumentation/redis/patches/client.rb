@@ -21,8 +21,8 @@ module OpenTelemetry
             ) do |s|
               reply = super(commands)
               if reply.is_a?(::Redis::CommandError)
-                s&.record_exception(reply)
-                s&.status = Trace::Status.new(
+                s.record_exception(reply)
+                s.status = Trace::Status.new(
                   Trace::Status::ERROR,
                   description: "Unhandled exception of type: #{reply.class}"
                 )
