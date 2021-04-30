@@ -40,7 +40,7 @@ To run the example:
 	* `cd example`
 	* `bundle install`
 3. Run the sample client script
-	* `./mongo.rb`
+	* `ruby mongo.rb`
 
 This will run a few MongoDB commands, printing OpenTelemetry traces to the console as it goes.
 

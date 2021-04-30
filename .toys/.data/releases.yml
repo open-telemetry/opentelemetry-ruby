@@ -31,6 +31,11 @@ commit_lint:
 #  *  changelog_path: Path to CHANGLEOG.md relative to the gem directory.
 #     (Required only if it is not in the expected location.)
 gems:
+  - name: opentelemetry-instrumentation-base
+    directory: instrumentation/base
+    version_rb_path: lib/opentelemetry/instrumentation/version.rb
+    version_constant: [OpenTelemetry, Instrumentation, VERSION]
+
   - name: opentelemetry-instrumentation-lmdb
     directory: instrumentation/lmdb
     version_constant: [OpenTelemetry, Instrumentation, LMDB, VERSION]
@@ -46,6 +51,10 @@ gems:
   - name: opentelemetry-instrumentation-http_client
     directory: instrumentation/http_client
     version_constant: [OpenTelemetry, Instrumentation, HttpClient, VERSION]
+
+  - name: opentelemetry-instrumentation-koala
+    directory: instrumentation/koala
+    version_constant: [OpenTelemetry, Instrumentation, Koala, VERSION]
 
   - name: opentelemetry-api
     directory: api
@@ -68,6 +77,10 @@ gems:
   - name: opentelemetry-exporter-otlp
     directory: exporter/otlp
     version_constant: [OpenTelemetry, Exporter, OTLP, VERSION]
+
+  - name: opentelemetry-exporter-zipkin
+    directory: exporter/zipkin
+    version_constant: [OpenTelemetry, Exporter, Zipkin, VERSION]
 
   - name: opentelemetry-instrumentation-active_model_serializers
     directory: instrumentation/active_model_serializers
@@ -114,6 +127,10 @@ gems:
     version_rb_path: lib/opentelemetry/instrumentation/net/http/version.rb
     version_constant: [OpenTelemetry, Instrumentation, Net, HTTP, VERSION]
 
+  - name: opentelemetry-instrumentation-pg
+    directory: instrumentation/pg
+    version_constant: [OpenTelemetry, Instrumentation, PG, VERSION]
+
   - name: opentelemetry-instrumentation-rack
     directory: instrumentation/rack
     version_constant: [OpenTelemetry, Instrumentation, Rack, VERSION]
@@ -153,6 +170,10 @@ gems:
   - name: opentelemetry-propagator-ottrace
     directory: propagator/ottrace
     version_constant: [OpenTelemetry, Propagator, OTTrace, VERSION]
+
+  - name: opentelemetry-propagator-xray
+    directory: propagator/xray
+    version_constant: [OpenTelemetry, Propagator, XRay, VERSION]
 
   - name: opentelemetry-resource_detectors
     directory: resource_detectors

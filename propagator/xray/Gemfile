@@ -1,0 +1,12 @@
+# frozen_string_literal: true
+
+# Copyright OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+source 'https://rubygems.org'
+
+gemspec
+
+gem 'opentelemetry-api', path: '../../api'
+gem 'opentelemetry-instrumentation-base', path: '../../instrumentation/base'

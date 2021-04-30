@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry'
-
 module OpenTelemetry
   module Instrumentation
     module HTTP
@@ -17,7 +15,7 @@ module OpenTelemetry
         end
 
         present do
-          defined?(::HTTP)
+          !(defined?(::HTTP) && Gem.loaded_specs['http']).nil?
         end
 
         def patch

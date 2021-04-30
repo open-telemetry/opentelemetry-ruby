@@ -1,0 +1,27 @@
+AllCops:
+  TargetRubyVersion: "2.5.0"
+  Exclude:
+    - "thrift/**/*"
+    - "vendor/**/*"
+
+Lint/UnusedMethodArgument:
+  Enabled: false
+Metrics/AbcSize:
+  Max: 29
+Metrics/LineLength:
+  Enabled: false
+Metrics/ModuleLength:
+  Max: 130
+Metrics/MethodLength:
+  Max: 25
+Metrics/PerceivedComplexity:
+  Max: 11
+Metrics/CyclomaticComplexity:
+  Max: 8
+Metrics/ParameterLists:
+  Enabled: false
+Naming/FileName:
+  Exclude:
+    - "lib/opentelemetry-exporter-zipkin.rb"
+Style/ModuleFunction:
+  Enabled: false

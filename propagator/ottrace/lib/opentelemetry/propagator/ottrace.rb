@@ -6,6 +6,7 @@
 
 require 'opentelemetry-api'
 require 'opentelemetry/propagator/ottrace/version'
+require 'opentelemetry/propagator/ottrace/text_map_propagator'
 
 # OpenTelemetry is an open source observability framework, providing a
 # general-purpose API, SDK, and related tools required for the instrumentation
@@ -20,27 +21,15 @@ module OpenTelemetry
     module OTTrace
       extend self
 
-      TRACE_ID_HEADER = 'ot-tracer-traceid'
-      SPAN_ID_HEADER = 'ot-tracer-spanid'
-      SAMPLED_HEADER = 'ot-tracer-sampled'
-      BAGGAGE_HEADER_PREFIX = 'ot-baggage-'
+      TEXT_MAP_PROPAGATOR = TextMapPropagator.new
 
-      # https://github.com/open-telemetry/opentelemetry-specification/blob/14d123c121b6caa53bffd011292c42a181c9ca26/specification/context/api-propagators.md#textmap-propagator0
-      VALID_BAGGAGE_HEADER_NAME_CHARS = /^[\^_`a-zA-Z\-0-9!#$%&'*+.|~]+$/.freeze
-      INVALID_BAGGAGE_HEADER_VALUE_CHARS = /[^\t\u0020-\u007E\u0080-\u00FF]/.freeze
+      private_constant :TEXT_MAP_PROPAGATOR
 
-      ## Returns an extractor that extracts context from OTTrace carrier
-      def text_map_extractor
-        TextMapExtractor.new
-      end
-
-      ## Returns an injector that injects context into a carrier
-      def text_map_injector
-        TextMapInjector.new
+      # Returns a text map propagator that propagates context using the
+      # OTTrace format.
+      def text_map_propagator
+        TEXT_MAP_PROPAGATOR
       end
     end
   end
 end
-
-require_relative './ottrace/text_map_injector'
-require_relative './ottrace/text_map_extractor'

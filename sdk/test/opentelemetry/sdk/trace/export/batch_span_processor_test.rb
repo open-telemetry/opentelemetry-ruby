@@ -73,6 +73,14 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       end
     end
 
+    it 'raises if exporter is nil' do
+      _(-> { BatchSpanProcessor.new(nil) }).must_raise(ArgumentError)
+    end
+
+    it 'raises if exporter is not an exporter' do
+      _(-> { BatchSpanProcessor.new(exporter: TestExporter.new) }).must_raise(ArgumentError)
+    end
+
     it 'sets parameters from the environment' do
       bsp = with_env('OTEL_BSP_EXPORT_TIMEOUT' => '4',
                      'OTEL_BSP_SCHEDULE_DELAY' => '3',

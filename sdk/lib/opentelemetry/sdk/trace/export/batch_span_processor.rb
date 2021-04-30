@@ -52,6 +52,7 @@ module OpenTelemetry
                          start_thread_on_boot: String(ENV['OTEL_RUBY_BSP_START_THREAD_ON_BOOT']) !~ /false/i,
                          metrics_reporter: nil)
             raise ArgumentError if max_export_batch_size > max_queue_size
+            raise ArgumentError, "exporter #{exporter.inspect} does not appear to be a valid exporter" unless Common::Utilities.valid_exporter?(exporter)
 
             @exporter = exporter
             @exporter_timeout_seconds = exporter_timeout / 1000.0
@@ -100,7 +101,7 @@ module OpenTelemetry
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
           def force_flush(timeout: nil) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
-            start_time = Time.now
+            start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
             snapshot = lock do
               reset_on_fork if @keep_running
               spans.shift(spans.size)
@@ -136,7 +137,7 @@ module OpenTelemetry
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
           def shutdown(timeout: nil)
-            start_time = Time.now
+            start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
             thread = lock do
               @keep_running = false
               @condition.signal

@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.17.0 / 2021-04-22
+
+* ADDED: Added http.route in rails instrumentation to match the spec 
+* FIXED: Rails example by not using `rails` from git 
+* FIXED: Updated rack middleware position to zero 
+
 ### v0.16.0 / 2021-03-17
 
 * FIXED: Example scripts now reference local common lib 

@@ -77,11 +77,11 @@ module OpenTelemetry
         class Log
           include ::Thrift::Struct, ::Thrift::Struct_Union
           TIMESTAMP = 1
-          FIELDS = 2
+          FIELDS_LIST = 2
 
           FIELDS = {
             TIMESTAMP => {:type => ::Thrift::Types::I64, :name => 'timestamp'},
-            FIELDS => {:type => ::Thrift::Types::LIST, :name => 'fields', :element => {:type => ::Thrift::Types::STRUCT, :class => ::OpenTelemetry::Exporter::Jaeger::Thrift::Tag}}
+            FIELDS_LIST => {:type => ::Thrift::Types::LIST, :name => 'fields', :element => {:type => ::Thrift::Types::STRUCT, :class => ::OpenTelemetry::Exporter::Jaeger::Thrift::Tag}}
           }
 
           def struct_fields; FIELDS; end

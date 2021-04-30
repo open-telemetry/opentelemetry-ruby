@@ -1,5 +1,19 @@
 # Release History: opentelemetry-sdk
 
+### v0.17.0 / 2021-04-22
+
+* BREAKING CHANGE: Replace TextMapInjector/TextMapExtractor pairs with a TextMapPropagator.
+
+  [Check the propagator documentation](https://open-telemetry.github.io/opentelemetry-ruby/) for the new usage.
+
+* ADDED: Add zipkin exporter 
+* ADDED: Processors validate exporters on init. 
+* ADDED: Add configurable truncation of span and event attribute values  
+* ADDED: Add simple 'recording' attr_accessor to InMemorySpanExporter 
+* FIXED: Typo in error message 
+* FIXED: Improve configuration error reporting 
+* FIXED: Refactor propagators to add #fields 
+
 ### v0.16.0 / 2021-03-17
 
 * BREAKING CHANGE: Update SDK BaggageManager to match API 
