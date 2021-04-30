@@ -24,7 +24,7 @@ module OpenTelemetry
                 s.record_exception(reply)
                 s.status = Trace::Status.new(
                   Trace::Status::ERROR,
-                  description: "Unhandled exception of type: #{reply.class}"
+                  description: reply.message
                 )
               end
             end
