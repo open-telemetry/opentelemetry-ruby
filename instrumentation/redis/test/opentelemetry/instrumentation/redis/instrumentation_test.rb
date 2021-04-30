@@ -182,7 +182,22 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
       end
 
       _(exporter.finished_spans.size).must_equal 2
-      _(last_span.name).must_equal 'pipeline'
+      _(last_span.name).must_equal 'SET INCR GET'
+      _(last_span.attributes['db.system']).must_equal 'redis'
+      _(last_span.attributes['db.statement']).must_equal "SET v1 0\nINCR v1\nGET v1"
+      _(last_span.attributes['net.peer.name']).must_equal redis_host
+      _(last_span.attributes['net.peer.port']).must_equal redis_port
+    end
+
+    it 'records a pipeline span on commit' do
+      redis = redis_with_auth
+      redis.queue([:set, 'v1', '0'])
+      redis.queue([:incr, 'v1'])
+      redis.queue([:get, 'v1'])
+      redis.commit
+
+      _(exporter.finished_spans.size).must_equal 2
+      _(last_span.name).must_equal 'SET INCR GET'
       _(last_span.attributes['db.system']).must_equal 'redis'
       _(last_span.attributes['db.statement']).must_equal "SET v1 0\nINCR v1\nGET v1"
       _(last_span.attributes['net.peer.name']).must_equal redis_host

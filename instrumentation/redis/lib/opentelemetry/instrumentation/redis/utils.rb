@@ -15,14 +15,10 @@ module OpenTelemetry
         VALUE_MAX_LEN = 50
         CMD_MAX_LEN = 500
 
-        def format_command(command_args)
-          format_arg(resolve_command_args(command_args).first)
-        end
-
-        def format_pipeline_statement(command_args)
-          command_args[0].commands.map do |args|
-            format_statement(args)
-          end.join("\n")
+        def format_span_name(commands)
+          commands.map do |command|
+            format_arg(resolve_command_args(command).first)
+          end.join(' ')
         end
 
         def format_statement(command_args)
@@ -31,6 +27,10 @@ module OpenTelemetry
 
           cmd = command_args.map { |x| format_arg(x) }.join(' ')
           OpenTelemetry::Common::Utilities.truncate(cmd, CMD_MAX_LEN)
+        end
+
+        def format_statements(commands)
+          commands.map { |command| format_statement(command) }.join("\n")
         end
 
         def format_arg(arg)
