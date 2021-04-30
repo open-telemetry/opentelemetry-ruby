@@ -28,7 +28,9 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
 
   describe 'tracing' do
     before do
-      instrumentation.install
+      # ensure obfuscation is off if it was previously set in a different test
+      options = { enable_arg_obfuscation: false }
+      instrumentation.install(options)
     end
 
     # Instantiate the Redis client with the correct password. Note that this
