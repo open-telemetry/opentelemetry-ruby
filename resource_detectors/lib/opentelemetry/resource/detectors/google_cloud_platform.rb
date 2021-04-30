@@ -22,7 +22,7 @@ module OpenTelemetry
             resource_attributes[resource_constants::CLOUD_RESOURCE[:provider]] = 'gcp'
             resource_attributes[resource_constants::CLOUD_RESOURCE[:account_id]] = gcp_env.project_id
             resource_attributes[resource_constants::CLOUD_RESOURCE[:region]] = gcp_env.instance_attribute('cluster-location')
-            resource_attributes[resource_constants::CLOUD_RESOURCE[:zone]] = gcp_env.instance_zone
+            resource_attributes[resource_constants::CLOUD_RESOURCE[:availability_zone]] = gcp_env.instance_zone
 
             resource_attributes[resource_constants::HOST_RESOURCE[:id]] = gcp_env.lookup_metadata('instance', 'id')
             resource_attributes[resource_constants::HOST_RESOURCE[:name]] = ENV['HOSTNAME'] ||
