@@ -157,7 +157,7 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
         OpenTelemetry::Trace::Status::ERROR
       )
       _(last_span.status.description).must_equal(
-        'Unhandled exception of type: Redis::CommandError'
+        'ERR unknown command `THIS_IS_NOT_A_REDIS_FUNC`, with args beginning with: `THIS_IS_NOT_A_VALID_ARG`,'
       )
     end
 
