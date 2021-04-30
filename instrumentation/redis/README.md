@@ -41,6 +41,18 @@ OpenTelemetry::Instrumentation::Redis.with_attributes('peer.service' => 'cache')
 end
 ```
 
+### Configuration options
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::Redis', {
+    # The obfuscation of arguments in the db.statement attribute is disabled by default.
+    # To enable, set enable_arg_obfuscation to true.
+    enable_arg_obfuscation: false,
+  }
+end
+```
+
 ## Example
 
 An example of usage can be seen in [`example/redis.rb`](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/redis/example/redis.rb).

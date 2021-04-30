@@ -17,7 +17,7 @@ module OpenTelemetry
 
         def format_span_name(commands)
           commands.map do |command|
-            format_arg(resolve_command_args(command).first)
+            format_cmd(resolve_command_args(command).first)
           end.join(' ')
         end
 
@@ -25,8 +25,16 @@ module OpenTelemetry
           command_args = resolve_command_args(command_args)
           return 'AUTH ?' if auth_command?(command_args)
 
-          cmd = command_args.map { |x| format_arg(x) }.join(' ')
-          OpenTelemetry::Common::Utilities.truncate(cmd, CMD_MAX_LEN)
+          cmd = format_cmd(command_args.first)
+          args = command_args[1..-1].map { |arg| format_arg(arg) }
+          statement = args.unshift(cmd).join(' ')
+          OpenTelemetry::Common::Utilities.truncate(statement, CMD_MAX_LEN)
+        end
+
+        def format_cmd(cmd)
+          format_string do
+            cmd.to_s.upcase
+          end
         end
 
         def format_statements(commands)
@@ -34,7 +42,21 @@ module OpenTelemetry
         end
 
         def format_arg(arg)
-          str = arg.is_a?(Symbol) ? arg.to_s.upcase : arg.to_s
+          format_string do
+            obfuscate_arg(arg.to_s)
+          end
+        end
+
+        private
+
+        def obfuscate_arg(arg)
+          return PLACEHOLDER if config[:enable_arg_obfuscation]
+
+          arg
+        end
+
+        def format_string(input = nil)
+          str = block_given? ? yield(input) : input
           str = OpenTelemetry::Common::Utilities.utf8_encode(str, binary: true)
           OpenTelemetry::Common::Utilities.truncate(str, VALUE_MAX_LEN)
         rescue StandardError => e
@@ -54,6 +76,10 @@ module OpenTelemetry
           return command_args.first if command_args.is_a?(Array) && command_args.first.is_a?(Array)
 
           command_args
+        end
+
+        def config
+          ::OpenTelemetry::Instrumentation::Redis::Instrumentation.instance.config
         end
       end
     end
