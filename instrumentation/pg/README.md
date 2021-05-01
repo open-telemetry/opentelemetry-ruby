@@ -47,7 +47,7 @@ OpenTelemetry::SDK.configure do |c|
     # semantic attribute (possibly sanitized, according to the value of `enable_sql_obfuscation`).
     # Optionally, you may disable the inclusion of this attribute entirely by
     # setting this option to false.
-    enable_db_statement_attribute: true,
+    enable_statement_attribute: true,
   }
 end
 ```

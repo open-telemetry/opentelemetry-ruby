@@ -220,8 +220,8 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
       end
     end
 
-    describe 'when enable_db_statement_attribute is false' do
-      let(:config) { { enable_db_statement_attribute: false } }
+    describe 'when enable_statement_attribute is false' do
+      let(:config) { { enable_statement_attribute: false } }
 
       it 'does not include SQL statement as db.statement attribute' do
         sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
