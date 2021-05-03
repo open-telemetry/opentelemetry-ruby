@@ -19,6 +19,12 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
 
   before do
     exporter.reset
+
+    # Force re-install of instrumentation as it may have been set by another test suite
+    instrumentation.instance_variable_set(:@installed, false)
+    # ensure obfuscation is off if it was previously set in a different test
+    options = { enable_statement_obfuscation: false }
+    instrumentation.install(options)
   end
 
   after do
@@ -27,12 +33,6 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
   end
 
   describe 'tracing' do
-    before do
-      # ensure obfuscation is off if it was previously set in a different test
-      options = { enable_statement_obfuscation: false }
-      instrumentation.install(options)
-    end
-
     # Instantiate the Redis client with the correct password. Note that this
     # will generate one extra span on connect because the Redis client will
     # send an AUTH command before doing anything else.
