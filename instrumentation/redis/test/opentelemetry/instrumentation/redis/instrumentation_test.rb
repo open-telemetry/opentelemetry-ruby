@@ -29,7 +29,7 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
   describe 'tracing' do
     before do
       # ensure obfuscation is off if it was previously set in a different test
-      options = { enable_arg_obfuscation: false }
+      options = { enable_statement_obfuscation: false }
       instrumentation.install(options)
     end
 
@@ -206,10 +206,10 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
       _(last_span.attributes['net.peer.port']).must_equal redis_port
     end
 
-    describe 'when enable_arg_obfuscation is enabled' do
+    describe 'when enable_statement_obfuscation is enabled' do
       it 'obfuscates arguments in db.statement' do
         instrumentation.instance_variable_set(:@installed, false)
-        instrumentation.install(enable_arg_obfuscation: true)
+        instrumentation.install(enable_statement_obfuscation: true)
         redis = redis_with_auth
         _(redis.set('K', 'xyz')).must_equal 'OK'
         _(redis.get('K')).must_equal 'xyz'

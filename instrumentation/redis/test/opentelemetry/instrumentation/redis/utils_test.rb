@@ -14,7 +14,7 @@ describe OpenTelemetry::Instrumentation::Redis::Utils do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Redis::Instrumentation.instance }
   before do
     instrumentation.instance_variable_set(:@installed, false)
-    instrumentation.install(enable_arg_obfuscation: false)
+    instrumentation.install(enable_statement_obfuscation: false)
   end
 
   describe '#format_arg' do
@@ -54,7 +54,7 @@ describe OpenTelemetry::Instrumentation::Redis::Utils do
       describe 'with arg obfuscation' do
         before do
           instrumentation.instance_variable_set(:@installed, false)
-          instrumentation.install(enable_arg_obfuscation: true)
+          instrumentation.install(enable_statement_obfuscation: true)
         end
         let(:arg) { 'XYZ' }
         it { _(subject).must_equal('?') }
@@ -104,7 +104,7 @@ describe OpenTelemetry::Instrumentation::Redis::Utils do
     describe 'with arg obfuscation' do
       before do
         instrumentation.instance_variable_set(:@installed, false)
-        instrumentation.install(enable_arg_obfuscation: true)
+        instrumentation.install(enable_statement_obfuscation: true)
       end
       let(:args) { [:set, 'KEY', 'VALUE'] }
       it { _(subject).must_equal('SET ? ?') }

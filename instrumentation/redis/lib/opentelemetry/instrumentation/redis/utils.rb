@@ -50,7 +50,7 @@ module OpenTelemetry
         private
 
         def obfuscate_arg(arg)
-          return PLACEHOLDER if config[:enable_arg_obfuscation]
+          return PLACEHOLDER if config[:enable_statement_obfuscation]
 
           arg
         end
