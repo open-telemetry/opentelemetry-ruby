@@ -50,7 +50,7 @@ module OpenTelemetry
             OpenTelemetry.handle_error(message: "invalid #{kind} attribute key type #{k.class} on span '#{owner}'")
             false
           elsif !valid_value?(v)
-            OpenTelemetry.handle_error(message: "invalid #{kind} attribute value type #{v.class} on span '#{owner}'")
+            OpenTelemetry.handle_error(message: "invalid #{kind} attribute value type #{v.class} for key '#{k}' on span '#{owner}'")
             false
           else
             true
