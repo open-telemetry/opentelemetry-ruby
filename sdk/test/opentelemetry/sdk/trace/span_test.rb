@@ -61,11 +61,11 @@ describe OpenTelemetry::SDK::Trace::Span do
       @_logger = OpenTelemetry.logger
       OpenTelemetry.logger = ::Logger.new(@log_stream)
     end
-  
+
     after do
       OpenTelemetry.logger = @_logger
     end
-  
+
     it 'sets an attribute' do
       span.set_attribute('foo', 'bar')
       _(span.attributes).must_equal('foo' => 'bar')
