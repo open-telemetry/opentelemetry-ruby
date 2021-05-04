@@ -26,6 +26,7 @@ module OpenTelemetry
 
         option :peer_service, default: nil, validate: :string
         option :enable_sql_obfuscation, default: false, validate: :boolean
+        option :enable_statement_attribute, default: true, validate: :boolean
 
         private
 
