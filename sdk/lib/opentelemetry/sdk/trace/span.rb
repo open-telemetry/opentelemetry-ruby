@@ -302,7 +302,7 @@ module OpenTelemetry
         private
 
         def validated_attributes(attrs)
-          return attrs if Internal.valid_attributes?(attrs)
+          return attrs if Internal.valid_attributes?(name, 'span', attrs)
 
           attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
         end
@@ -329,7 +329,7 @@ module OpenTelemetry
           return nil if links.nil?
 
           if links.size <= max_links_count &&
-             links.all? { |link| link.attributes.size <= max_attributes_per_link && Internal.valid_attributes?(link.attributes) }
+             links.all? { |link| link.attributes.size <= max_attributes_per_link && Internal.valid_attributes?(name, 'link', link.attributes) }
             return links.frozen? ? links : links.clone.freeze
           end
 
@@ -346,7 +346,7 @@ module OpenTelemetry
         def append_event(events, event) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           max_events_count = @trace_config.max_events_count
           max_attributes_per_event = @trace_config.max_attributes_per_event
-          valid_attributes = Internal.valid_attributes?(event.attributes)
+          valid_attributes = Internal.valid_attributes?(name, 'event', event.attributes)
 
           # Fast path (likely) common case.
           if events.size < max_events_count &&
