@@ -219,5 +219,25 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.attributes['net.peer.port']).must_equal port.to_s
       end
     end
+
+    describe 'when enable_statement_attribute is false' do
+      let(:config) { { enable_statement_attribute: false } }
+
+      it 'does not include SQL statement as db.statement attribute' do
+        sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+        expect do
+          client.exec(sql)
+        end.must_raise PG::UndefinedTable
+
+        _(span.attributes['db.system']).must_equal 'postgresql'
+        _(span.attributes['db.name']).must_equal 'postgres'
+        _(span.name).must_equal 'SELECT postgres'
+        _(span.attributes['db.operation']).must_equal 'SELECT'
+        _(span.attributes['net.peer.name']).must_equal host.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_s
+
+        _(span.attributes['db.statement']).must_be_nil
+      end
+    end
   end
 end
