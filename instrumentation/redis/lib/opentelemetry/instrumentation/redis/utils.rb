@@ -31,37 +31,39 @@ module OpenTelemetry
           OpenTelemetry::Common::Utilities.truncate(statement, CMD_MAX_LEN)
         end
 
-        def format_cmd(cmd)
-          format_string do
-            cmd.to_s.upcase
-          end
-        end
-
         def format_statements(commands)
           commands.map { |command| format_statement(command) }.join("\n")
         end
 
+        def format_cmd(cmd)
+          str = cmd.to_s.upcase
+          format_string(str)
+        rescue StandardError => e
+          OpenTelemetry.logger.debug("non formattable Redis cmd #{str}: #{e}")
+          PLACEHOLDER
+        end
+
         def format_arg(arg)
-          format_string do
-            obfuscate_arg(arg.to_s)
-          end
+          str = arg.to_s
+          format_string(obfuscate_arg(str))
+        rescue StandardError => e
+          OpenTelemetry.logger.debug("non formattable Redis arg #{str}: #{e}")
+          PLACEHOLDER
         end
 
         private
 
         def obfuscate_arg(arg)
-          return PLACEHOLDER if config[:enable_statement_obfuscation]
-
-          arg
+          if config[:enable_statement_obfuscation]
+            PLACEHOLDER
+          else
+            arg
+          end
         end
 
-        def format_string(input = nil)
-          str = block_given? ? yield(input) : input
-          str = OpenTelemetry::Common::Utilities.utf8_encode(str, binary: true)
+        def format_string(input)
+          str = OpenTelemetry::Common::Utilities.utf8_encode(input, binary: true)
           OpenTelemetry::Common::Utilities.truncate(str, VALUE_MAX_LEN)
-        rescue StandardError => e
-          OpenTelemetry.logger.debug("non formattable Redis arg #{str}: #{e}")
-          PLACEHOLDER
         end
 
         def auth_command?(command_args)
