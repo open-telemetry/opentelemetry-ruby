@@ -190,8 +190,8 @@ module OpenTelemetry
           rescue SocketError
             retry if backoff?(retry_count: retry_count += 1, reason: 'socket_error')
             return FAILURE
-          rescue SystemCallError
-            retry if backoff?(retry_count: retry_count += 1, reason: 'system_call_error')
+          rescue SystemCallError => e
+            retry if backoff?(retry_count: retry_count += 1, reason: e.class.name)
             return FAILURE
           rescue EOFError
             retry if backoff?(retry_count: retry_count += 1, reason: 'eof_error')
