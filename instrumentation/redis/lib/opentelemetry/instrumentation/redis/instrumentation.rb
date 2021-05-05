@@ -20,6 +20,7 @@ module OpenTelemetry
         end
 
         option :peer_service, default: nil, validate: :string
+        option :enable_statement_obfuscation, default: true, validate: :boolean
 
         private
 
