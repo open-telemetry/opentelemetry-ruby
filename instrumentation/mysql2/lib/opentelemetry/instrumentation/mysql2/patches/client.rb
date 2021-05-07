@@ -119,10 +119,10 @@ module OpenTelemetry
 
             attributes = {
               'db.system' => 'mysql',
-              'db.name' => database_name,
               'net.peer.name' => host,
               'net.peer.port' => port
             }
+            attributes['db.name'] = database_name if database_name
             attributes['peer.service'] = config[:peer_service] if config[:peer_service]
             attributes
           end
