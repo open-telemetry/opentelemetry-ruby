@@ -18,7 +18,7 @@ module OpenTelemetry
         def initialize(endpoint: ENV.fetch('OTEL_EXPORTER_JAEGER_ENDPOINT', 'http://localhost:14268/api/traces'),
                        username: ENV['OTEL_EXPORTER_JAEGER_USER'],
                        password: ENV['OTEL_EXPORTER_JAEGER_PASSWORD'],
-                       ssl_verify_mode: ENV.fetch('OTEL_EXPORTER_JAEGER_SSL_VERIFY_MODE', OpenSSL::SSL::VERIFY_PEER))
+                       ssl_verify_mode: ENV.fetch('OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_MODE', OpenSSL::SSL::VERIFY_PEER))
           raise ArgumentError, "invalid url for Jaeger::CollectorExporter #{endpoint}" if invalid_url?(endpoint)
           raise ArgumentError, 'username and password should either both be nil or both be set' if username.nil? != password.nil?
 

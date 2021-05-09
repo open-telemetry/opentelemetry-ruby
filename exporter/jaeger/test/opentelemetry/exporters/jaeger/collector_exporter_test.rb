@@ -60,7 +60,7 @@ describe OpenTelemetry::Exporter::Jaeger::CollectorExporter do
       exp = with_env('OTEL_EXPORTER_JAEGER_ENDPOINT' => 'http://127.0.0.1:1234',
                      'OTEL_EXPORTER_JAEGER_USER' => 'foo',
                      'OTEL_EXPORTER_JAEGER_PASSWORD' => 'bar',
-                     'OTEL_EXPORTER_JAEGER_SSL_VERIFY_MODE' => '0') do
+                     'OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_MODE' => '0') do
         OpenTelemetry::Exporter::Jaeger::CollectorExporter.new
       end
       transport = exp.instance_variable_get(:@transport)
@@ -77,7 +77,7 @@ describe OpenTelemetry::Exporter::Jaeger::CollectorExporter do
       exp = with_env('OTEL_EXPORTER_JAEGER_ENDPOINT' => 'http://127.0.0.1:1234',
                      'OTEL_EXPORTER_JAEGER_USER' => 'foo',
                      'OTEL_EXPORTER_JAEGER_PASSWORD' => 'bar',
-                     'OTEL_EXPORTER_JAEGER_SSL_VERIFY_MODE' => '1') do
+                     'OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_MODE' => '1') do
         OpenTelemetry::Exporter::Jaeger::CollectorExporter.new(endpoint: 'http://192.168.0.1:4321',
                                                                username: 'bar',
                                                                password: 'baz',
