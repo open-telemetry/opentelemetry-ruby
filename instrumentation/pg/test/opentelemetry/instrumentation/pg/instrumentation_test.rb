@@ -239,5 +239,5 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(span.attributes['db.statement']).must_be_nil
       end
     end
-  end
+  end unless ENV['OMIT_SERVICES']
 end

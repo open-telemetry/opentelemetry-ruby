@@ -39,7 +39,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
         host: host,
         port: port,
         database: database,
-        username: 'root',
+        username: username,
         password: password
       )
     end
@@ -151,5 +151,5 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
         _(span.attributes['net.peer.port']).must_equal port.to_s
       end
     end
-  end
+  end unless ENV['OMIT_SERVICES']
 end

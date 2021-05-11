@@ -2,3 +2,5 @@ inherit_from: ../.rubocop.yml
 
 Metrics/BlockLength:
   Enabled: false
+Style/MultilineIfModifier:
+  Enabled: false

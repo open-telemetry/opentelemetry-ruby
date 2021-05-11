@@ -97,4 +97,4 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
       _(span_event.attributes['exception.message']).must_equal 'Dalli::NetworkError'
     end
   end
-end
+end unless ENV['OMIT_SERVICES']
