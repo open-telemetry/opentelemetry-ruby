@@ -15,7 +15,7 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Queue do
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
 
-  let(:url) { ENV.fetch(' RABBITMQ_URL') { 'amqp://guest:guest@rabbitmq:5672' } }
+  let(:url) { ENV.fetch('TEST_RABBITMQ_URL') { 'amqp://guest:guest@rabbitmq:5672' } }
   let(:bunny) { Bunny.new(url) }
   let(:topic) { "topic-#{SecureRandom.uuid}" }
   let(:channel) { bunny.create_channel }
