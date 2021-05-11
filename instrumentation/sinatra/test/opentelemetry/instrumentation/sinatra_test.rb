@@ -132,7 +132,7 @@ describe OpenTelemetry::Instrumentation::Sinatra do
       _(exporter.finished_spans.first.attributes).must_equal(
         'http.method' => 'GET',
         'http.url' => '/missing_example/not_present',
-        'http.status_code' => 404,
+        'http.status_code' => 404
       )
     end
   end
