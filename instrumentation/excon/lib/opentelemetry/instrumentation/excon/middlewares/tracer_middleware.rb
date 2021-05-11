@@ -79,7 +79,6 @@ module OpenTelemetry
                 if datum.key?(:response)
                   response = datum[:response]
                   span.set_attribute('http.status_code', response[:status])
-                  span.set_attribute('http.status_text', response[:reason_phrase])
                   span.status = OpenTelemetry::Trace::Status.http_to_status(
                     response[:status]
                   )
