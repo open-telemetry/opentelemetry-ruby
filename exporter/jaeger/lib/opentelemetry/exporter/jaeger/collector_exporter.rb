@@ -15,13 +15,25 @@ module OpenTelemetry
         FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
         private_constant(:SUCCESS, :FAILURE)
 
+        def self.ssl_verify_mode
+          if ENV.key?('OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_PEER')
+            OpenSSL::SSL::VERIFY_PEER
+          elsif ENV.key?('OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_NONE')
+            OpenSSL::SSL::VERIFY_NONE
+          else
+            OpenSSL::SSL::VERIFY_PEER
+          end
+        end
+
         def initialize(endpoint: ENV.fetch('OTEL_EXPORTER_JAEGER_ENDPOINT', 'http://localhost:14268/api/traces'),
                        username: ENV['OTEL_EXPORTER_JAEGER_USER'],
-                       password: ENV['OTEL_EXPORTER_JAEGER_PASSWORD'])
+                       password: ENV['OTEL_EXPORTER_JAEGER_PASSWORD'],
+                       ssl_verify_mode: CollectorExporter.ssl_verify_mode)
           raise ArgumentError, "invalid url for Jaeger::CollectorExporter #{endpoint}" if invalid_url?(endpoint)
           raise ArgumentError, 'username and password should either both be nil or both be set' if username.nil? != password.nil?
 
-          @transport = ::Thrift::HTTPClientTransport.new(endpoint)
+          transport_opts = { ssl_verify_mode: Integer(ssl_verify_mode) }
+          @transport = ::Thrift::HTTPClientTransport.new(endpoint, transport_opts)
           unless username.nil? || password.nil?
             authorization = Base64.strict_encode64("#{username}:#{password}")
             auth_header = { 'Authorization': "Basic #{authorization}" }
