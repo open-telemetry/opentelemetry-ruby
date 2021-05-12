@@ -97,6 +97,9 @@ jobs:
         ports:
           - 5432:5432
         options: --health-cmd="pg_isready" --health-interval=5s --health-timeout=2s --health-retries=3
+      elasticsearch:
+        image: elasticsearch:7.12.1
+        ports: 9200:9200
     steps:
       - name: Setup file system permissions
         run: sudo chmod -R 777 $GITHUB_WORKSPACE /github /__w/_temp
@@ -122,4 +125,6 @@ jobs:
           TEST_RABBITMQ_URL: amqp://guest:guest@rabbitmq:${{ job.services.rabbitmq.ports['5672'] }}
           TEST_REDIS_HOST: redis
           TEST_REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
+          TEST_ELASTICSEARCH_HOST: elasticsearch
+          TEST_ELASTICSEARCH_PORT: 9200
         run: toys ci ${{ matrix.flags }}

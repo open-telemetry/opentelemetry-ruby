@@ -1,0 +1,8 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+gem 'elasticsearch'
+gem 'opentelemetry-api', path: '../../../api'
+gem 'opentelemetry-instrumentation-elasticsearch', path: '../../../instrumentation/elasticsearch'
+gem 'opentelemetry-sdk', path: '../../../sdk'
