@@ -60,7 +60,6 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
     it 'records attributes' do
       _(first_span.attributes['http.method']).must_equal 'GET'
       _(first_span.attributes['http.status_code']).must_equal 200
-      _(first_span.attributes['http.status_text']).must_equal 'OK'
       _(first_span.attributes['http.target']).must_equal '/'
       _(first_span.status.code).must_equal OpenTelemetry::Trace::Status::OK
       _(first_span.attributes['http.url']).must_be_nil
