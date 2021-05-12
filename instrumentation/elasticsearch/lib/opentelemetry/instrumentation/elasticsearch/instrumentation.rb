@@ -25,7 +25,7 @@ module OpenTelemetry
         end
 
         def patch_client
-          ::Elasticsearch::Transport::Client.send(:include, Patches::Client)
+          ::Elasticsearch::Transport::Client.prepend(Patches::Client)
         end
       end
     end

@@ -17,17 +17,14 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
   let(:host) { ENV.fetch('TEST_ELASTICSEARCH_HOST', '127.0.0.1') }
   let(:port) { ENV.fetch('TEST_ELASTICSEARCH_PORT', '9200').to_i }
   let(:server) { "http://#{host}:#{port}" }
-  let(:unmodified_client) { @unmodified_client }
   let(:client) { Elasticsearch::Client.new(url: server) }
 
   before do
     exporter.reset
-    @unmodified_client = ::Elasticsearch::Transport.dup
+    instrumentation.install
   end
 
   after do
-    ::Elasticsearch.send(:remove_const, :Transport)
-    ::Elasticsearch.const_set('Transport', unmodified_client)
     instrumentation.instance_variable_set(:@installed, false)
   end
 
