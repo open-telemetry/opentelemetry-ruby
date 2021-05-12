@@ -75,14 +75,15 @@ The agent exporter can be configured explicitly in code, as shown above, or via 
 
 The collector exporter can be configured explicitly in code, as shown above, or via environment variables. The configuration parameters, environment variables, and defaults are shown below.
 
-| Parameter          | Environment variable                   | Default                    |
-| ------------------ | -------------------------------------- | -------------------------- |
-| `endpoint:`        | `OTEL_EXPORTER_JAEGER_ENDPOINT`        | `"http://localhost:14268"` |
-| `username:`        | `OTEL_EXPORTER_JAEGER_USER`            | `nil`                      |
-| `password:`        | `OTEL_EXPORTER_JAEGER_PASSWORD`        | `nil`                      |
-| `ssl_verify_mode:` | `OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_MODE` | `OpenSSL::SSL:VERIFY_PEER` |
+| Parameter          | Environment variable                           | Default                    |
+| ------------------ | ---------------------------------------------- | -------------------------- |
+| `endpoint:`        | `OTEL_EXPORTER_JAEGER_ENDPOINT`                | `"http://localhost:14268"` |
+| `username:`        | `OTEL_EXPORTER_JAEGER_USER`                    | `nil`                      |
+| `password:`        | `OTEL_EXPORTER_JAEGER_PASSWORD`                | `nil`                      |
+| `ssl_verify_mode:` | `OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_PEER` or | `OpenSSL::SSL:VERIFY_PEER` |
+|                    | `OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_NONE`    |                            |
 
-`ssl_verify_mode:` parameter values should be flags for server certificate verification: `OpenSSL::SSL:VERIFY_PEER` and `OpenSSL::SSL:VERIFY_NONE` are acceptable. These values can also be supplied, as an environment variable, in an integer value format: `1` for `OpenSSL::SSL:VERIFY_PEER` and `0` for `OpenSSL::SSL:VERIFY_NONE`.  Please see [the Net::HTTP docs](https://ruby-doc.org/stdlib-2.5.1/libdoc/net/http/rdoc/Net/HTTP.html#verify_mode) for more information.
+`ssl_verify_mode:` parameter values should be flags for server certificate verification: `OpenSSL::SSL:VERIFY_PEER` and `OpenSSL::SSL:VERIFY_NONE` are acceptable. These values can also be set using the appropriately named environment variables as shown where `VERIFY_PEER` will take precedence over `VERIFY_NONE`.  Please see [the Net::HTTP docs](https://ruby-doc.org/stdlib-2.5.1/libdoc/net/http/rdoc/Net/HTTP.html#verify_mode) for more information about these flags.
 
 ## How can I get involved?
 

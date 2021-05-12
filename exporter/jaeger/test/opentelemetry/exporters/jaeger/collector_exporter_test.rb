@@ -60,7 +60,7 @@ describe OpenTelemetry::Exporter::Jaeger::CollectorExporter do
       exp = with_env('OTEL_EXPORTER_JAEGER_ENDPOINT' => 'http://127.0.0.1:1234',
                      'OTEL_EXPORTER_JAEGER_USER' => 'foo',
                      'OTEL_EXPORTER_JAEGER_PASSWORD' => 'bar',
-                     'OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_MODE' => '0') do
+                     'OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_NONE' => '1') do
         OpenTelemetry::Exporter::Jaeger::CollectorExporter.new
       end
       transport = exp.instance_variable_get(:@transport)
@@ -73,11 +73,38 @@ describe OpenTelemetry::Exporter::Jaeger::CollectorExporter do
       _(transport.instance_variable_get(:@ssl_verify_mode)).must_equal OpenSSL::SSL::VERIFY_NONE
     end
 
+    describe 'ssl_verify_mode:' do
+      it 'can be set to VERIFY_NONE by an envvar' do
+        exp = with_env('OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_NONE' => 'true') do
+          OpenTelemetry::Exporter::Jaeger::CollectorExporter.new
+        end
+        transport = exp.instance_variable_get(:@transport)
+        _(transport.instance_variable_get(:@ssl_verify_mode)).must_equal OpenSSL::SSL::VERIFY_NONE
+      end
+
+      it 'can be set to VERIFY_PEER by an envvar' do
+        exp = with_env('OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_PEER' => 'true') do
+          OpenTelemetry::Exporter::Jaeger::CollectorExporter.new
+        end
+        transport = exp.instance_variable_get(:@transport)
+        _(transport.instance_variable_get(:@ssl_verify_mode)).must_equal OpenSSL::SSL::VERIFY_PEER
+      end
+
+      it 'VERIFY_PEER will override VERIFY_NONE' do
+        exp = with_env('OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_NONE' => 'true',
+                       'OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_PEER' => 'true') do
+          OpenTelemetry::Exporter::Jaeger::CollectorExporter.new
+        end
+        transport = exp.instance_variable_get(:@transport)
+        _(transport.instance_variable_get(:@ssl_verify_mode)).must_equal OpenSSL::SSL::VERIFY_PEER
+      end
+    end
+
     it 'prefers explicit parameters rather than the environment' do
       exp = with_env('OTEL_EXPORTER_JAEGER_ENDPOINT' => 'http://127.0.0.1:1234',
                      'OTEL_EXPORTER_JAEGER_USER' => 'foo',
                      'OTEL_EXPORTER_JAEGER_PASSWORD' => 'bar',
-                     'OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_MODE' => '1') do
+                     'OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_PEER' => '1') do
         OpenTelemetry::Exporter::Jaeger::CollectorExporter.new(endpoint: 'http://192.168.0.1:4321',
                                                                username: 'bar',
                                                                password: 'baz',
