@@ -336,10 +336,12 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
   describe 'with LDAP/SASL authentication' do
     let(:client) { Mongo::Client.new(["#{TestHelper.host}:#{TestHelper.port}"], client_options) }
     let(:client_options) do
-      { database: TestHelper.database,
+      {
+        database: TestHelper.database,
         auth_mech: :plain,
         user: 'plain_user',
-        password: 'plain_pass' }
+        password: 'plain_pass'
+      }
     end
 
     describe 'which fails' do
@@ -357,7 +359,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
         _(span.events[0].name).must_equal 'exception'
         _(span.events[0].timestamp).must_be_kind_of Integer
         _(span.events[0].attributes['exception.type']).must_equal 'CommandFailed'
-        _(span.events[0].attributes['exception.message']).must_match(/mechanism.+PLAIN.+\(2\)/)
+        _(span.events[0].attributes['exception.message']).must_match(/mechanism.+PLAIN./)
       end
     end
   end
