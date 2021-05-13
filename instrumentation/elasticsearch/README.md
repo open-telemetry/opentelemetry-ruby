@@ -1,6 +1,7 @@
 # OpenTelemetry Elasticsearch Instrumentation
 
-Todo: Add a description.
+The OpenTelemetry Elasticsearch Ruby gem is a community maintained instrumentation for [Elasticsearch][elasticsearch-home]. 
+Elasticsearch is a distributed, RESTful search and analytics engine.
 
 ## How do I get started?
 

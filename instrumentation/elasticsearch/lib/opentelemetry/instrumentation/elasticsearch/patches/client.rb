@@ -42,7 +42,7 @@ module OpenTelemetry
               'elasticsearch.url' => url,
               'elasticsearch.method' => method,
               'elasticsearch.params' => params,
-              'elasticsearch.body' => body
+              'elasticsearch.body' => body || ''
             }.merge(connection_attributes)
           end
 
