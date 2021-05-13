@@ -43,7 +43,6 @@ module OpenTelemetry
               # If so, add additional attributes.
               if response.is_a?(::RestClient::Response)
                 span.set_attribute('http.status_code', response.code)
-                span.set_attribute('http.status_text', ::RestClient::STATUSES[response.code])
                 span.status = OpenTelemetry::Trace::Status.http_to_status(
                   response.code
                 )

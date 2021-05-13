@@ -1,15 +1,19 @@
 # Release History: opentelemetry-instrumentation-restclient
 
+### Unreleased
+
+* FIXED: Removed http.status_text attribute #750
+
 ### v0.17.0 / 2021-04-22
 
-* ADDED: RestClient instrumentation accepts peer service config attribute. 
-* FIXED: Refactor propagators to add #fields 
+* ADDED: RestClient instrumentation accepts peer service config attribute.
+* FIXED: Refactor propagators to add #fields
 
 ### v0.16.0 / 2021-03-17
 
-* FIXED: Remove passwords from http.url 
-* FIXED: Example scripts now reference local common lib 
-* DOCS: Replace Gitter with GitHub Discussions 
+* FIXED: Remove passwords from http.url
+* FIXED: Example scripts now reference local common lib
+* DOCS: Replace Gitter with GitHub Discussions
 
 ### v0.15.0 / 2021-02-18
 
@@ -17,9 +21,9 @@
 
 ### v0.14.0 / 2021-02-03
 
-* BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators 
+* BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators
 
-* ADDED: Replace getter and setter callables and remove rack specific propagators 
+* ADDED: Replace getter and setter callables and remove rack specific propagators
 
 ### v0.13.0 / 2021-01-29
 
@@ -31,7 +35,7 @@
 
 ### v0.11.0 / 2020-12-11
 
-* FIXED: Copyright comments to not reference year 
+* FIXED: Copyright comments to not reference year
 
 ### v0.10.0 / 2020-12-03
 
@@ -39,19 +43,19 @@
 
 ### v0.9.0 / 2020-11-27
 
-* BREAKING CHANGE: Add timeout for force_flush and shutdown 
+* BREAKING CHANGE: Add timeout for force_flush and shutdown
 
-* ADDED: Add timeout for force_flush and shutdown 
+* ADDED: Add timeout for force_flush and shutdown
 
 ### v0.8.0 / 2020-10-27
 
-* BREAKING CHANGE: Move context/span methods to Trace module 
+* BREAKING CHANGE: Move context/span methods to Trace module
 
-* FIXED: Move context/span methods to Trace module 
+* FIXED: Move context/span methods to Trace module
 
 ### v0.7.0 / 2020-10-07
 
-* DOCS: Standardize toplevel docs structure and readme 
+* DOCS: Standardize toplevel docs structure and readme
 
 ### v0.6.0 / 2020-09-10
 

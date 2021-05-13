@@ -19,6 +19,7 @@ describe OpenTelemetry::Exporter::Jaeger::CollectorExporter do
       _(headers).wont_include 'Authorization'
       _(url.host).must_equal 'localhost'
       _(url.port).must_equal 14_268
+      _(transport.instance_variable_get(:@ssl_verify_mode)).must_equal OpenSSL::SSL::VERIFY_PEER
     end
 
     it 'refuses an invalid endpoint' do
@@ -46,10 +47,20 @@ describe OpenTelemetry::Exporter::Jaeger::CollectorExporter do
       _(headers[:Authorization]).must_equal "Basic #{Base64.strict_encode64('foo:bar')}"
     end
 
+    it 'refuses an ssl_verify_mode that cannot be converted to an integer' do
+      assert_raises ArgumentError do
+        OpenTelemetry::Exporter::Jaeger::CollectorExporter.new(ssl_verify_mode: 'foo')
+      end
+      assert_raises TypeError do
+        OpenTelemetry::Exporter::Jaeger::CollectorExporter.new(ssl_verify_mode: nil)
+      end
+    end
+
     it 'sets parameters from the environment' do
       exp = with_env('OTEL_EXPORTER_JAEGER_ENDPOINT' => 'http://127.0.0.1:1234',
                      'OTEL_EXPORTER_JAEGER_USER' => 'foo',
-                     'OTEL_EXPORTER_JAEGER_PASSWORD' => 'bar') do
+                     'OTEL_EXPORTER_JAEGER_PASSWORD' => 'bar',
+                     'OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_NONE' => '1') do
         OpenTelemetry::Exporter::Jaeger::CollectorExporter.new
       end
       transport = exp.instance_variable_get(:@transport)
@@ -59,15 +70,45 @@ describe OpenTelemetry::Exporter::Jaeger::CollectorExporter do
       _(headers[:Authorization]).must_equal "Basic #{Base64.strict_encode64('foo:bar')}"
       _(url.host).must_equal '127.0.0.1'
       _(url.port).must_equal 1_234
+      _(transport.instance_variable_get(:@ssl_verify_mode)).must_equal OpenSSL::SSL::VERIFY_NONE
+    end
+
+    describe 'ssl_verify_mode:' do
+      it 'can be set to VERIFY_NONE by an envvar' do
+        exp = with_env('OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_NONE' => 'true') do
+          OpenTelemetry::Exporter::Jaeger::CollectorExporter.new
+        end
+        transport = exp.instance_variable_get(:@transport)
+        _(transport.instance_variable_get(:@ssl_verify_mode)).must_equal OpenSSL::SSL::VERIFY_NONE
+      end
+
+      it 'can be set to VERIFY_PEER by an envvar' do
+        exp = with_env('OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_PEER' => 'true') do
+          OpenTelemetry::Exporter::Jaeger::CollectorExporter.new
+        end
+        transport = exp.instance_variable_get(:@transport)
+        _(transport.instance_variable_get(:@ssl_verify_mode)).must_equal OpenSSL::SSL::VERIFY_PEER
+      end
+
+      it 'VERIFY_PEER will override VERIFY_NONE' do
+        exp = with_env('OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_NONE' => 'true',
+                       'OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_PEER' => 'true') do
+          OpenTelemetry::Exporter::Jaeger::CollectorExporter.new
+        end
+        transport = exp.instance_variable_get(:@transport)
+        _(transport.instance_variable_get(:@ssl_verify_mode)).must_equal OpenSSL::SSL::VERIFY_PEER
+      end
     end
 
     it 'prefers explicit parameters rather than the environment' do
       exp = with_env('OTEL_EXPORTER_JAEGER_ENDPOINT' => 'http://127.0.0.1:1234',
                      'OTEL_EXPORTER_JAEGER_USER' => 'foo',
-                     'OTEL_EXPORTER_JAEGER_PASSWORD' => 'bar') do
+                     'OTEL_EXPORTER_JAEGER_PASSWORD' => 'bar',
+                     'OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_PEER' => '1') do
         OpenTelemetry::Exporter::Jaeger::CollectorExporter.new(endpoint: 'http://192.168.0.1:4321',
                                                                username: 'bar',
-                                                               password: 'baz')
+                                                               password: 'baz',
+                                                               ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
       end
       transport = exp.instance_variable_get(:@transport)
       headers = transport.instance_variable_get(:@headers)
@@ -76,6 +117,7 @@ describe OpenTelemetry::Exporter::Jaeger::CollectorExporter do
       _(headers[:Authorization]).must_equal "Basic #{Base64.strict_encode64('bar:baz')}"
       _(url.host).must_equal '192.168.0.1'
       _(url.port).must_equal 4_321
+      _(transport.instance_variable_get(:@ssl_verify_mode)).must_equal OpenSSL::SSL::VERIFY_NONE
     end
   end
 
