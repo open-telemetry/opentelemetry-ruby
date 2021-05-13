@@ -15,7 +15,7 @@ module OpenTelemetry
 
         install do |_config|
           require_relative 'patches/base'
-          ::ActiveJob::Base.prepend(Patches::Core)
+          ::ActiveJob::Base.prepend(Patches::Base)
 
           require_relative 'patches/active_job_callbacks'
           ::ActiveJob::Base.prepend(Patches::ActiveJobCallbacks)
