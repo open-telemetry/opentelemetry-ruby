@@ -14,8 +14,8 @@ module OpenTelemetry
         MINIMUM_VERSION = Gem::Version.new('5.2.0')
 
         install do |_config|
-          require_relative 'patches/core'
-          ::ActiveJob::Core.prepend(Patches::Core)
+          require_relative 'patches/base'
+          ::ActiveJob::Base.prepend(Patches::Core)
 
           require_relative 'patches/active_job_callbacks'
           ::ActiveJob::Base.prepend(Patches::ActiveJobCallbacks)
