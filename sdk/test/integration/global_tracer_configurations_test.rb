@@ -16,13 +16,15 @@ describe OpenTelemetry::SDK, 'global_tracer_configurations' do
     end
   end
   let(:tracer) { provider.tracer(__FILE__, sdk::VERSION) }
-  let(:parent_context) { nil }
+  let(:parent_context) { OpenTelemetry::Context.empty }
   let(:finished_spans) { exporter.finished_spans }
 
   before do
-    tracer.in_span('root', with_parent: parent_context) do
-      tracer.in_span('child1') {}
-      tracer.in_span('child2') {}
+    OpenTelemetry::Context.with_current(parent_context) do
+      tracer.in_span('root') do
+        tracer.in_span('child1') {}
+        tracer.in_span('child2') {}
+      end
     end
   end
 

@@ -15,27 +15,23 @@ module OpenTelemetry
           end
 
           def call(env)
-            tracer.in_span(
-              env['PATH_INFO'],
-              attributes: { 'http.method' => env['REQUEST_METHOD'],
-                            'http.url' => env['PATH_INFO'] },
-              kind: :server,
-              with_parent: parent_context(env)
-            ) do |span|
-              app.call(env).tap { |resp| trace_response(span, env, resp) }
+            extracted_context = OpenTelemetry.propagation.extract(
+              env,
+              getter: OpenTelemetry::Context::Propagation.rack_env_getter
+            )
+            OpenTelemetry::Context.with_current(extracted_context) do
+              tracer.in_span(
+                env['PATH_INFO'],
+                attributes: { 'http.method' => env['REQUEST_METHOD'],
+                              'http.url' => env['PATH_INFO'] },
+                kind: :server
+              ) do |span|
+                @app.call(env).tap { |resp| trace_response(span, env, resp) }
+              end
             end
           end
 
           private
-
-          attr_reader :app
-
-          def parent_context(env)
-            OpenTelemetry.propagation.extract(
-              env,
-              getter: OpenTelemetry::Context::Propagation.rack_env_getter
-            )
-          end
 
           def tracer
             OpenTelemetry::Instrumentation::Sinatra::Instrumentation.instance.tracer
@@ -45,7 +41,6 @@ module OpenTelemetry
             status, _headers, _response_body = resp
 
             span.set_attribute('http.status_code', status)
-            span.set_attribute('http.status_text', ::Rack::Utils::HTTP_STATUS_CODES[status])
             span.set_attribute('http.route', env['sinatra.route'].split.last) if env['sinatra.route']
             span.name = env['sinatra.route'] if env['sinatra.route']
             span.status = OpenTelemetry::Trace::Status.http_to_status(status)

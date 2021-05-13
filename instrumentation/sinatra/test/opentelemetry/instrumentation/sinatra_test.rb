@@ -90,7 +90,6 @@ describe OpenTelemetry::Instrumentation::Sinatra do
         'http.method' => 'GET',
         'http.url' => '/endpoint',
         'http.status_code' => 200,
-        'http.status_text' => 'OK',
         'http.route' => '/endpoint'
       )
     end
@@ -118,7 +117,6 @@ describe OpenTelemetry::Instrumentation::Sinatra do
         'http.method' => 'GET',
         'http.url' => '/api/v1/foo/janedoe/',
         'http.status_code' => 200,
-        'http.status_text' => 'OK',
         'http.route' => '/api/v1/foo/:myname/?'
       )
       _(exporter.finished_spans.map(&:name))
@@ -134,8 +132,7 @@ describe OpenTelemetry::Instrumentation::Sinatra do
       _(exporter.finished_spans.first.attributes).must_equal(
         'http.method' => 'GET',
         'http.url' => '/missing_example/not_present',
-        'http.status_code' => 404,
-        'http.status_text' => 'Not Found'
+        'http.status_code' => 404
       )
     end
   end

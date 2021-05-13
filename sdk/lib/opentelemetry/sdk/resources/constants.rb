@@ -196,8 +196,8 @@ module OpenTelemetry
           # A specific geographical location where different entities can run.
           region: 'cloud.region',
 
-          # Zones are a sub set of the region connected through low-latency links.
-          zone: 'cloud.zone'
+          # Availability zones are a sub set of the region connected through low-latency links.
+          availability_zone: 'cloud.availability_zone'
         }.freeze
       end
     end

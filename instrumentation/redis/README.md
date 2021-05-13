@@ -41,6 +41,18 @@ OpenTelemetry::Instrumentation::Redis.with_attributes('peer.service' => 'cache')
 end
 ```
 
+### Configuration options
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::Redis', {
+    # The obfuscation of arguments in the db.statement attribute is enabled by default.
+    # To disable, set enable_statement_obfuscation to false.
+    enable_statement_obfuscation: true,
+  }
+end
+```
+
 ## Example
 
 An example of usage can be seen in [`example/redis.rb`](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/redis/example/redis.rb).
@@ -48,11 +60,7 @@ An example of usage can be seen in [`example/redis.rb`](https://github.com/open-
 ## Development
 
 You'll need Redis installed locally to run the test suite. Once you've
-installed it, start it with the included configuration:
-
-```
-redis-server test/redis.conf
-```
+installed it, it will start and stop automatically when you run `rake`.
 
 ## How can I get involved?
 

@@ -19,6 +19,12 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
 
   before do
     exporter.reset
+
+    # Force re-install of instrumentation as it may have been set by another test suite
+    instrumentation.instance_variable_set(:@installed, false)
+    # ensure obfuscation is off if it was previously set in a different test
+    options = { enable_statement_obfuscation: false }
+    instrumentation.install(options)
   end
 
   after do
@@ -27,10 +33,6 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
   end
 
   describe 'tracing' do
-    before do
-      instrumentation.install
-    end
-
     # Instantiate the Redis client with the correct password. Note that this
     # will generate one extra span on connect because the Redis client will
     # send an AUTH command before doing anything else.
@@ -157,7 +159,7 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
         OpenTelemetry::Trace::Status::ERROR
       )
       _(last_span.status.description).must_equal(
-        'Unhandled exception of type: Redis::CommandError'
+        'ERR unknown command `THIS_IS_NOT_A_REDIS_FUNC`, with args beginning with: `THIS_IS_NOT_A_VALID_ARG`,'
       )
     end
 
@@ -182,11 +184,58 @@ describe OpenTelemetry::Instrumentation::Redis::Instrumentation do
       end
 
       _(exporter.finished_spans.size).must_equal 2
-      _(last_span.name).must_equal 'pipeline'
+      _(last_span.name).must_equal 'SET INCR GET'
       _(last_span.attributes['db.system']).must_equal 'redis'
       _(last_span.attributes['db.statement']).must_equal "SET v1 0\nINCR v1\nGET v1"
       _(last_span.attributes['net.peer.name']).must_equal redis_host
       _(last_span.attributes['net.peer.port']).must_equal redis_port
+    end
+
+    it 'records a pipeline span on commit' do
+      redis = redis_with_auth
+      redis.queue([:set, 'v1', '0'])
+      redis.queue([:incr, 'v1'])
+      redis.queue([:get, 'v1'])
+      redis.commit
+
+      _(exporter.finished_spans.size).must_equal 2
+      _(last_span.name).must_equal 'SET INCR GET'
+      _(last_span.attributes['db.system']).must_equal 'redis'
+      _(last_span.attributes['db.statement']).must_equal "SET v1 0\nINCR v1\nGET v1"
+      _(last_span.attributes['net.peer.name']).must_equal redis_host
+      _(last_span.attributes['net.peer.port']).must_equal redis_port
+    end
+
+    describe 'when enable_statement_obfuscation is enabled' do
+      it 'obfuscates arguments in db.statement' do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install(enable_statement_obfuscation: true)
+        redis = redis_with_auth
+        _(redis.set('K', 'xyz')).must_equal 'OK'
+        _(redis.get('K')).must_equal 'xyz'
+        _(exporter.finished_spans.size).must_equal 3
+
+        set_span = exporter.finished_spans[0]
+        _(set_span.name).must_equal 'AUTH'
+        _(set_span.attributes['db.system']).must_equal 'redis'
+        _(set_span.attributes['db.statement']).must_equal(
+          'AUTH ?'
+        )
+
+        set_span = exporter.finished_spans[1]
+        _(set_span.name).must_equal 'SET'
+        _(set_span.attributes['db.system']).must_equal 'redis'
+        _(set_span.attributes['db.statement']).must_equal(
+          'SET ? ?'
+        )
+
+        set_span = exporter.finished_spans[2]
+        _(set_span.name).must_equal 'GET'
+        _(set_span.attributes['db.system']).must_equal 'redis'
+        _(set_span.attributes['db.statement']).must_equal(
+          'GET ?'
+        )
+      end
     end
   end
 end

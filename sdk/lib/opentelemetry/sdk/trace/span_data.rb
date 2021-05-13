@@ -10,24 +10,24 @@ module OpenTelemetry
     # implementation.
     module Trace
       # SpanData is a Struct containing {Span} data for export.
-      SpanData = Struct.new(:name,
-                            :kind,
-                            :status,
-                            :parent_span_id,
-                            :total_recorded_attributes,
-                            :total_recorded_events,
-                            :total_recorded_links,
-                            :start_timestamp,
-                            :end_timestamp,
-                            :attributes,
-                            :links,
-                            :events,
-                            :resource,
-                            :instrumentation_library,
-                            :span_id,
-                            :trace_id,
-                            :trace_flags,
-                            :tracestate) do
+      SpanData = Struct.new(:name,                      # String
+                            :kind,                      # Symbol: :internal, :producer, :consumer, :client, :server
+                            :status,                    # Status
+                            :parent_span_id,            # String (8 byte binary), may be OpenTelemetry::Trace::INVALID_SPAN_ID
+                            :total_recorded_attributes, # Integer
+                            :total_recorded_events,     # Integer
+                            :total_recorded_links,      # Integer
+                            :start_timestamp,           # Integer nanoseconds since Epoch
+                            :end_timestamp,             # Integer nanoseconds since Epoch
+                            :attributes,                # optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}
+                            :links,                     # optional Array[OpenTelemetry::Trace::Link]
+                            :events,                    # optional Array[Event]
+                            :resource,                  # OpenTelemetry::SDK::Resources::Resource
+                            :instrumentation_library,   # OpenTelemetry::SDK::InstrumentationLibrary
+                            :span_id,                   # String (8 byte binary)
+                            :trace_id,                  # String (16-byte binary)
+                            :trace_flags,               # Integer (8-bit byte of bit flags)
+                            :tracestate) do             # OpenTelemetry::Trace::Tracestate
                               # Returns the lowercase [hex encoded](https://tools.ietf.org/html/rfc4648#section-8) span ID.
                               #
                               # @return [String] A 16-hex-character lowercase string.
@@ -40,6 +40,13 @@ module OpenTelemetry
                               # @return [String] A 32-hex-character lowercase string.
                               def hex_trace_id
                                 trace_id.unpack1('H*')
+                              end
+
+                              # Returns the lowercase [hex encoded](https://tools.ietf.org/html/rfc4648#section-8) parent span ID.
+                              #
+                              # @return [String] A 16-hex-character lowercase string.
+                              def hex_parent_span_id
+                                parent_span_id.unpack1('H*')
                               end
                             end
     end

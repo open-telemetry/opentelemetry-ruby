@@ -79,13 +79,6 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
       )
     end
 
-    it 'sets the reason phrase' do
-      stub_request(:any, 'example.com').to_return(status: [500, 'Internal Server Error'])
-      ::Faraday.new('http://example.com').get('/')
-
-      _(span.attributes['http.status_text']).must_equal 'Internal Server Error'
-    end
-
     it 'merges http client attributes' do
       client_context_attrs = {
         'test.attribute' => 'test.value', 'http.method' => 'OVERRIDE'

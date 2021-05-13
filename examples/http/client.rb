@@ -44,5 +44,4 @@ tracer.in_span(
 
   span.set_attribute('http.url', response.env.url.to_s)
   span.set_attribute('http.status_code', response.status)
-  span.set_attribute('http.status_text', response.reason_phrase)
 end

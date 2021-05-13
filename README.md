@@ -22,6 +22,8 @@ Approvers ([@open-telemetry/ruby-approvers](https://github.com/orgs/open-telemet
 
 - [Robert Laurin](https://github.com/robertlaurin), Shopify
 - [Eric Mustin](https://github.com/ericmustin), Datadog
+- [Ariel Valentin](https://github.com/arielvalentin), GitHub
+- [Andrew Hayworth](https://github.com/ahayworth), GitHub
 
 *Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#approver).*
 

@@ -37,6 +37,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-graphql', '~> 0.17.0'
   spec.add_dependency 'opentelemetry-instrumentation-http', '~> 0.17.0'
   spec.add_dependency 'opentelemetry-instrumentation-http_client', '~> 0.17.0'
+  spec.add_dependency 'opentelemetry-instrumentation-koala', '~> 0.17.0'
   spec.add_dependency 'opentelemetry-instrumentation-lmdb', '~> 0.17.0'
   spec.add_dependency 'opentelemetry-instrumentation-mongo', '~> 0.17.0'
   spec.add_dependency 'opentelemetry-instrumentation-mysql2', '~> 0.17.0'

@@ -86,6 +86,10 @@ jobs:
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+      rabbitmq:
+        image: rabbitmq:3.8-alpine
+        ports:
+          - "5672:5672"
       postgres:
         image: postgres:13
         env:
@@ -115,6 +119,7 @@ jobs:
           TEST_MEMCACHED_PORT: ${{ job.services.memcached.ports['11211'] }}
           TEST_MONGODB_HOST: mongodb
           TEST_MONGODB_PORT: ${{ job.services.mongodb.ports['27017'] }}
+          TEST_RABBITMQ_URL: amqp://guest:guest@rabbitmq:${{ job.services.rabbitmq.ports['5672'] }}
           TEST_REDIS_HOST: redis
           TEST_REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
         run: toys ci ${{ matrix.flags }}

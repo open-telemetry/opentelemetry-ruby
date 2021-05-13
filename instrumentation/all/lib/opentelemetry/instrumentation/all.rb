@@ -7,6 +7,7 @@
 require 'opentelemetry-instrumentation-active_job'
 require 'opentelemetry-instrumentation-lmdb'
 require 'opentelemetry-instrumentation-http'
+require 'opentelemetry-instrumentation-koala'
 require 'opentelemetry-instrumentation-active_model_serializers'
 require 'opentelemetry-instrumentation-concurrent_ruby'
 require 'opentelemetry-instrumentation-dalli'

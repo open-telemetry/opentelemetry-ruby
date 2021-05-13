@@ -35,10 +35,10 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     attributes = { 'akey' => 'avalue', 'bar' => 'baz' }
     events = [
       OpenTelemetry::SDK::Trace::Event.new(
-        name: 'event_with_attribs', attributes: { 'ekey' => 'evalue' }
+        'event_with_attribs', { 'ekey' => 'evalue' }, exportable_timestamp
       ),
       OpenTelemetry::SDK::Trace::Event.new(
-        name: 'event_no_attrib', attributes: nil
+        'event_no_attrib', {}, exportable_timestamp
       )
     ]
 
@@ -49,10 +49,10 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     annotation_one = encoded_span[:annotations].first
     annotation_two = encoded_span[:annotations][1]
 
-    _(annotation_one[:timestamp]).must_equal((events[0].timestamp.to_f * 1_000_000).to_s)
+    _(annotation_one[:timestamp]).must_equal((events[0].timestamp / 1_000).to_s)
     _(annotation_one[:value]).must_equal({ 'event_with_attribs' => { 'ekey' => 'evalue' } }.to_json)
 
-    _(annotation_two[:timestamp]).must_equal((events[1].timestamp.to_f * 1_000_000).to_s)
+    _(annotation_two[:timestamp]).must_equal((events[1].timestamp / 1_000).to_s)
     _(annotation_two[:value]).must_equal('event_no_attrib')
 
     tags = encoded_span['tags']
@@ -63,7 +63,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     attributes = { 'akey' => ['avalue'], 'bar' => 'baz' }
     events = [
       OpenTelemetry::SDK::Trace::Event.new(
-        name: 'event_with_attribs', attributes: { 'ekey' => ['evalue'] }
+        'event_with_attribs', { 'ekey' => ['evalue'] }, exportable_timestamp
       )
     ]
 
@@ -73,7 +73,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
 
     annotation_one = encoded_span[:annotations].first
 
-    _(annotation_one[:timestamp]).must_equal((events[0].timestamp.to_f * 1_000_000).to_s)
+    _(annotation_one[:timestamp]).must_equal((events[0].timestamp / 1000).to_s)
     _(annotation_one[:value]).must_equal({ 'event_with_attribs' => { 'ekey' => '["evalue"]' } }.to_json)
 
     tags = encoded_span['tags']

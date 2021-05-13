@@ -24,6 +24,14 @@ services:
       context: .
     working_dir: /app
 
+  ex-instrumentation-bunny:
+    <<: *base
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    working_dir: /app/instrumentation/bunny/example
+
   ex-instrumentation-concurrent-ruby:
     <<: *base
     working_dir: /app/instrumentation/concurrent_ruby/example
@@ -113,10 +121,6 @@ services:
     <<: *base
     working_dir: /app/instrumentation/restclient/example
 
-  ex-instrumentation-sidekiq:
-    <<: *base
-    working_dir: /app/instrumentation/sidekiq/example
-
   ex-instrumentation-sinatra:
     <<: *base
     command: ./start_server.sh
@@ -154,6 +158,11 @@ services:
     image: redis:5.0-alpine
     volumes:
       - redis_data:/data
+
+  rabbitmq:
+    image: rabbitmq:3.8-alpine
+    ports:
+      - "5672:5672"
 
   memcached:
     image: memcached:alpine

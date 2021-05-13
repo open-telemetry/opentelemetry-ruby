@@ -17,8 +17,9 @@ module OpenTelemetry
       # rubocop:disable Metrics/ClassLength
       class Span < OpenTelemetry::Trace::Span
         DEFAULT_STATUS = OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::UNSET)
+        EMPTY_ATTRIBUTES = {}.freeze
 
-        private_constant(:DEFAULT_STATUS)
+        private_constant :DEFAULT_STATUS, :EMPTY_ATTRIBUTES
 
         # The following readers are intended for the use of SpanProcessors and
         # should not be considered part of the public interface for instrumentation.
@@ -70,7 +71,6 @@ module OpenTelemetry
         #
         # @return [self] returns itself
         def set_attribute(key, value)
-          super
           @mutex.synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling set_attribute on an ended Span.')
@@ -99,7 +99,6 @@ module OpenTelemetry
         #
         # @return [self] returns itself
         def add_attributes(attributes)
-          super
           @mutex.synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling add_attributes on an ended Span.')
@@ -132,8 +131,7 @@ module OpenTelemetry
         #
         # @return [self] returns itself
         def add_event(name, attributes: nil, timestamp: nil)
-          super
-          event = Event.new(name: name, attributes: truncate_attribute_values(attributes), timestamp: timestamp || Time.now)
+          event = Event.new(name, truncate_attribute_values(attributes), wall_clock(timestamp))
 
           @mutex.synchronize do
             if @ended
@@ -179,7 +177,6 @@ module OpenTelemetry
         #
         # @return [void]
         def status=(status)
-          super
           @mutex.synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling status= on an ended Span.')
@@ -199,7 +196,6 @@ module OpenTelemetry
         #
         # @return [void]
         def name=(new_name)
-          super
           @mutex.synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling name= on an ended Span.')
@@ -234,7 +230,7 @@ module OpenTelemetry
               OpenTelemetry.logger.warn('Calling finish on an ended Span.')
               return self
             end
-            @end_timestamp = end_timestamp || Time.now
+            @end_timestamp = wall_clock(end_timestamp)
             @attributes = validated_attributes(@attributes).freeze
             @events.freeze
             @ended = true
@@ -292,7 +288,7 @@ module OpenTelemetry
           @total_recorded_events = 0
           @total_recorded_links = links&.size || 0
           @total_recorded_attributes = attributes&.size || 0
-          @start_timestamp = start_timestamp
+          @start_timestamp = wall_clock(start_timestamp)
           @end_timestamp = nil
           @attributes = attributes.nil? ? nil : Hash[attributes] # We need a mutable copy of attributes.
           trim_span_attributes(@attributes)
@@ -306,7 +302,7 @@ module OpenTelemetry
         private
 
         def validated_attributes(attrs)
-          return attrs if Internal.valid_attributes?(attrs)
+          return attrs if Internal.valid_attributes?(name, 'span', attrs)
 
           attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
         end
@@ -321,7 +317,7 @@ module OpenTelemetry
         end
 
         def truncate_attribute_values(attrs)
-          return if attrs.nil?
+          return EMPTY_ATTRIBUTES if attrs.nil?
 
           max_attributes_length = @trace_config.max_attributes_length
           attrs.each { |key, value| attrs[key] = OpenTelemetry::Common::Utilities.truncate(value, max_attributes_length) } if max_attributes_length
@@ -333,7 +329,7 @@ module OpenTelemetry
           return nil if links.nil?
 
           if links.size <= max_links_count &&
-             links.all? { |link| link.attributes.size <= max_attributes_per_link && Internal.valid_attributes?(link.attributes) }
+             links.all? { |link| link.attributes.size <= max_attributes_per_link && Internal.valid_attributes?(name, 'link', link.attributes) }
             return links.frozen? ? links : links.clone.freeze
           end
 
@@ -350,7 +346,7 @@ module OpenTelemetry
         def append_event(events, event) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           max_events_count = @trace_config.max_events_count
           max_attributes_per_event = @trace_config.max_attributes_per_event
-          valid_attributes = Internal.valid_attributes?(event.attributes)
+          valid_attributes = Internal.valid_attributes?(name, 'event', event.attributes)
 
           # Fast path (likely) common case.
           if events.size < max_events_count &&
@@ -369,9 +365,14 @@ module OpenTelemetry
             attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
             excess = attrs.size - max_attributes_per_event
             excess.times { attrs.shift } if excess.positive?
-            event = Event.new(name: event.name, attributes: attrs, timestamp: event.timestamp)
+            event = Event.new(event.name, attrs.freeze, event.timestamp)
           end
           events << event
+        end
+
+        def wall_clock(timestamp)
+          timestamp = (timestamp.to_r * 1_000_000_000).to_i unless timestamp.nil?
+          timestamp || Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond)
         end
       end
       # rubocop:enable Metrics/ClassLength

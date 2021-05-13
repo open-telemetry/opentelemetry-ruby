@@ -10,36 +10,25 @@ module OpenTelemetry
       module Patches
         # Module to prepend to Redis::Client for instrumentation
         module Client
-          def call(*args, &block)
-            response = nil
-
+          def process(commands)
+            reply = nil
             attributes = client_attributes
-            attributes['db.statement'] = Utils.format_statement(args)
+            attributes['db.statement'] = Utils.format_statements(commands)
             tracer.in_span(
-              Utils.format_command(args),
+              Utils.format_span_name(commands),
               attributes: attributes,
               kind: :client
-            ) do
-              response = super(*args, &block)
+            ) do |s|
+              reply = super(commands)
+              if reply.is_a?(::Redis::CommandError)
+                s.record_exception(reply)
+                s.status = Trace::Status.new(
+                  Trace::Status::ERROR,
+                  description: reply.message
+                )
+              end
             end
-
-            response
-          end
-
-          def call_pipeline(*args, &block)
-            response = nil
-
-            attributes = client_attributes
-            attributes['db.statement'] = Utils.format_pipeline_statement(args)
-            tracer.in_span(
-              'pipeline',
-              attributes: attributes,
-              kind: :client
-            ) do
-              response = super(*args, &block)
-            end
-
-            response
+            reply
           end
 
           private

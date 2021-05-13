@@ -56,6 +56,16 @@ describe OpenTelemetry::SDK::Trace::Span do
   end
 
   describe '#set_attribute' do
+    before do
+      @log_stream = StringIO.new
+      @_logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(@log_stream)
+    end
+
+    after do
+      OpenTelemetry.logger = @_logger
+    end
+
     it 'sets an attribute' do
       span.set_attribute('foo', 'bar')
       _(span.attributes).must_equal('foo' => 'bar')
@@ -87,6 +97,18 @@ describe OpenTelemetry::SDK::Trace::Span do
     it 'accepts an array value' do
       span.set_attribute('foo', [1, 2, 3])
       _(span.attributes).must_equal('foo' => [1, 2, 3])
+    end
+
+    it 'reports an error for an invalid value' do
+      span.set_attribute('foo', :bar)
+      span.finish
+      _(@log_stream.string).must_match(/invalid span attribute value type Symbol for key 'foo' on span 'name'/)
+    end
+
+    it 'reports an error for an invalid key' do
+      span.set_attribute(nil, 'bar')
+      span.finish
+      _(@log_stream.string).must_match(/invalid span attribute key type NilClass on span 'name'/)
     end
   end
 
@@ -186,7 +208,7 @@ describe OpenTelemetry::SDK::Trace::Span do
       span.add_event('added', timestamp: ts)
       events = span.events
       _(events.size).must_equal(1)
-      _(events.first.timestamp).must_equal(ts)
+      _(events.first.timestamp).must_equal(exportable_timestamp(ts))
     end
 
     it 'does not add an event if span is ended' do

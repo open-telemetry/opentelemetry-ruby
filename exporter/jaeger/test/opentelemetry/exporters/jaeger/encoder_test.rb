@@ -39,11 +39,23 @@ describe OpenTelemetry::Exporter::Jaeger::Encoder do
     _(error_tag.vBool).must_equal(true)
   end
 
+  it 'encodes span.links' do
+    span_context = OpenTelemetry::Trace::SpanContext.new
+    span_data = create_span_data(links: [OpenTelemetry::Trace::Link.new(span_context)])
+    encoded_span = Encoder.encoded_span(span_data)
+
+    encoded_reference = encoded_span.references.first
+    _([encoded_reference.spanId].pack('Q>')).must_equal(span_context.span_id)
+    trace_id = [encoded_reference.traceIdHigh, encoded_reference.traceIdLow].pack('Q>Q>')
+    _(trace_id).must_equal(span_context.trace_id)
+    _(encoded_reference.refType).must_equal(OpenTelemetry::Exporter::Jaeger::Thrift::SpanRefType::FOLLOWS_FROM)
+  end
+
   it 'encodes attributes in events and the span' do
     attributes = { 'akey' => 'avalue' }
     events = [
       OpenTelemetry::SDK::Trace::Event.new(
-        name: 'event', attributes: { 'ekey' => 'evalue' }
+        'event', { 'ekey' => 'evalue' }, exportable_timestamp
       )
     ]
     span_data = create_span_data(attributes: attributes, events: events)
@@ -66,7 +78,7 @@ describe OpenTelemetry::Exporter::Jaeger::Encoder do
     attributes = { 'akey' => ['avalue'] }
     events = [
       OpenTelemetry::SDK::Trace::Event.new(
-        name: 'event', attributes: { 'ekey' => ['evalue'] }
+        'event', { 'ekey' => ['evalue'] }, exportable_timestamp
       )
     ]
     span_data = create_span_data(attributes: attributes, events: events)
@@ -125,8 +137,8 @@ describe OpenTelemetry::Exporter::Jaeger::Encoder do
       0,
       0,
       0,
-      Time.now,
-      Time.now,
+      exportable_timestamp,
+      exportable_timestamp,
       attributes,
       links,
       events,

@@ -7,9 +7,15 @@
 require 'test_helper'
 
 require_relative '../../../../lib/opentelemetry/instrumentation/redis/utils'
+require_relative '../../../../lib/opentelemetry/instrumentation/redis/instrumentation'
 
 describe OpenTelemetry::Instrumentation::Redis::Utils do
   let(:utils) { OpenTelemetry::Instrumentation::Redis::Utils }
+  let(:instrumentation) { OpenTelemetry::Instrumentation::Redis::Instrumentation.instance }
+  before do
+    instrumentation.instance_variable_set(:@installed, false)
+    instrumentation.install(enable_statement_obfuscation: false)
+  end
 
   describe '#format_arg' do
     subject { utils.format_arg(arg) }
@@ -43,6 +49,15 @@ describe OpenTelemetry::Instrumentation::Redis::Utils do
       describe 'a string over the limit by a lot' do
         let(:arg) { 'C' * 1000 }
         it { _(subject).must_equal('C' * 47 + '...') }
+      end
+
+      describe 'with arg obfuscation' do
+        before do
+          instrumentation.instance_variable_set(:@installed, false)
+          instrumentation.install(enable_statement_obfuscation: true)
+        end
+        let(:arg) { 'XYZ' }
+        it { _(subject).must_equal('?') }
       end
 
       describe 'an object that can\'t be converted to a string' do
@@ -84,6 +99,15 @@ describe OpenTelemetry::Instrumentation::Redis::Utils do
     describe 'given a nested array' do
       let(:args) { [[:set, 'KEY', 'VALUE']] }
       it { _(subject).must_equal('SET KEY VALUE') }
+    end
+
+    describe 'with arg obfuscation' do
+      before do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install(enable_statement_obfuscation: true)
+      end
+      let(:args) { [:set, 'KEY', 'VALUE'] }
+      it { _(subject).must_equal('SET ? ?') }
     end
   end
 end

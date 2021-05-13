@@ -50,7 +50,7 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
           'cloud.provider' => 'gcp',
           'cloud.account.id' => 'opentelemetry',
           'cloud.region' => 'us-central1',
-          'cloud.zone' => 'us-central1-a',
+          'cloud.availability_zone' => 'us-central1-a',
           'host.id' => 'opentelemetry-test',
           'host.name' => 'opentelemetry-host-name-1',
           'k8s.cluster.name' => 'opentelemetry-cluster',
