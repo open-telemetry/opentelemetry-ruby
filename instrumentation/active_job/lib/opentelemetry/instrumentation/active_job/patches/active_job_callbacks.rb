@@ -17,7 +17,6 @@ module OpenTelemetry
                 span_name = "#{job.class} send"
                 span_attributes = job_attributes(job)
                 otel_tracer.in_span(span_name, attributes: span_attributes, kind: span_kind) do |span|
-                  job.metadata ||= {}
                   OpenTelemetry.propagation.inject(job.metadata)
 
                   block.call

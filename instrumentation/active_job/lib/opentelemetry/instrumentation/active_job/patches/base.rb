@@ -14,20 +14,20 @@ module OpenTelemetry
             base.class_eval do
               attr_accessor :metadata
             end
+          end
 
-            def initialize(*args)
-              @metadata = {}
-              super
-            end
+          def initialize(*args)
+            @metadata = {}
+            super
+          end
 
-            def serialize
-              super.merge({ "metadata" => serialize_arguments(metadata) })
-            end
+          def serialize
+            super.merge({ "metadata" => serialize_arguments(metadata) })
+          end
 
-            def deserialize(job_data)
-              self.metadata = deserialize_arguments(job_data["metadata"])
-              super
-            end
+          def deserialize(job_data)
+            self.metadata = (deserialize_arguments(job_data["metadata"]) || []).to_h
+            super
           end
         end
       end
