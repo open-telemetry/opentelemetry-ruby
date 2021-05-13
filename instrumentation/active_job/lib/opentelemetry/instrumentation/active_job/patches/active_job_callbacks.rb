@@ -18,7 +18,6 @@ module OpenTelemetry
                 span_attributes = job_attributes(job)
                 otel_tracer.in_span(span_name, attributes: span_attributes, kind: span_kind) do |span|
                   OpenTelemetry.propagation.inject(job.metadata)
-
                   block.call
                 end
               end
@@ -29,15 +28,15 @@ module OpenTelemetry
                 span_attributes = job_attributes(job).merge('messaging.operation' => 'process')
 
                 context = OpenTelemetry.propagation.extract(job.metadata)
-                OpenTelemetry::Context.with_current(context) do
-                  otel_tracer.in_span(span_name, attributes: span_attributes, kind: span_kind) do |span|
-                    # We need to set this before calling the block, because we'll be unable to do
-                    # that if the block raises an exception. It's already incremented for us
-                    # before Rails runs the callbacks, so no need for math.
-                    span.set_attribute('messaging.active_job.executions', job.executions)
+                propagation_type = propagation_type_for_job(job)
+                span_links = [OpenTelemetry::Trace::Link.new(context)] if propagation_type == :link
 
-                    block.call
+                if propagation_type == :child
+                  OpenTelemetry::Context.with_current(context) do
+                    execute_job_in_span(span_name, span_attributes, span_kind, span_links, job, block)
                   end
+                else
+                  execute_job_in_span(span_name, span_attributes, span_kind, span_links, job, block)
                 end
               ensure
                 # We may be in a job system (eg: resque) that forks and kills worker processes often.
@@ -49,7 +48,16 @@ module OpenTelemetry
 
           private
 
-          # TODO: Ensure that all the job attributes are correct-ish
+          def execute_job_in_span(name, attributes, kind, links, job, block)
+            otel_tracer.in_span(name, attributes: attributes, links: links, kind: kind) do |span|
+              # We need to set this before calling the block, because we'll be unable to do
+              # that if the block raises an exception. It's already incremented for us
+              # before Rails runs the callbacks, so no need for math.
+              span.set_attribute('messaging.active_job.executions', job.executions)
+              block.call
+            end
+          end
+
           def job_attributes(job)
             otel_attributes = {
               'messaging.destination_kind' => 'queue',
@@ -63,6 +71,10 @@ module OpenTelemetry
             otel_attributes['net.transport'] = 'inproc' if %w[async inline].include?(job.class.queue_adapter_name)
 
             otel_attributes.compact
+          end
+
+          def propagation_type_for_job(job)
+            ActiveJob::Instrumentation.instance.config[job.class.to_s] || :link
           end
 
           def otel_tracer

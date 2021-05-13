@@ -26,6 +26,26 @@ module OpenTelemetry
           Gem.loaded_specs['activejob'].version >= MINIMUM_VERSION
         end
 
+        ## Supported configuration keys for the install config hash:
+        #
+        # The context_propgation key expects a hash of "JobClass" => propgation_option.
+        # When an ActiveJob is executed, the propagation_option will be consulted
+        # to determine how the 'execute' span will relate to the 'enqueue' span.
+        #
+        # propagation_option can be one of:
+        # - :link (default) - the execution span will include a Link to the enqueue span.
+        # - :child - the execution span will be the child of the enqueue span.
+        # - :none - there will be neither a link, or a parent/child relationship between
+        #           the enqueue and execution spans.
+        #
+        # Note that in all cases, the `messaging.message_id` attribute can be used to
+        # manually correlate enqueue and execution spans.
+        #
+        # Example:
+        # { "JobOne" => :link, "JobTwo" => :child, "JobThree" => :none }
+        #
+        option :context_propagation, default: {}, validate: -> (v) { validate_context_propagation(v) }
+
         private
 
         def require_dependencies
@@ -36,6 +56,17 @@ module OpenTelemetry
         def patch_activejob
           ::ActiveJob::Base.prepend(Patches::Base)
           ::ActiveJob::Base.prepend(Patches::ActiveJobCallbacks)
+        end
+
+        def validate_context_propagation(options)
+          return false unless options.is_a? Hash
+          return false unless options.keys.all? { |k| k.is_a? String }
+
+          options.values.each do |v|
+            return false unless [:link, :child, :none].include?(v)
+          end
+
+          return true
         end
       end
     end
