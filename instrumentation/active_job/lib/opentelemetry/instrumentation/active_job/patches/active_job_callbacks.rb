@@ -16,7 +16,9 @@ module OpenTelemetry
                 span_kind = job.class.queue_adapter_name == 'inline' ? :client : :producer
                 span_name = "#{job.class} send"
                 span_attributes = job_attributes(job)
-                otel_tracer.in_span(span_name, attributes: span_attributes, kind: span_kind) do
+                otel_tracer.in_span(span_name, attributes: span_attributes, kind: span_kind) do |span|
+                  OpenTelemetry.propagation.inject(job.metadata)
+
                   block.call
                 end
               end
@@ -26,13 +28,16 @@ module OpenTelemetry
                 span_name = "#{job.class} process"
                 span_attributes = job_attributes(job).merge('messaging.operation' => 'process')
 
-                otel_tracer.in_span(span_name, attributes: span_attributes, kind: span_kind) do |span|
-                  # We need to set this before calling the block, because we'll be unable to do
-                  # that if the block raises an exception. It's already incremented for us
-                  # before Rails runs the callbacks, so no need for math.
-                  span.set_attribute('messaging.active_job.executions', job.executions)
+                context = OpenTelemetry.propagation.extract(job.metadata)
+                OpenTelemetry::Context.with_current(context) do
+                  otel_tracer.in_span(span_name, attributes: span_attributes, kind: span_kind) do |span|
+                    # We need to set this before calling the block, because we'll be unable to do
+                    # that if the block raises an exception. It's already incremented for us
+                    # before Rails runs the callbacks, so no need for math.
+                    span.set_attribute('messaging.active_job.executions', job.executions)
 
-                  block.call
+                    block.call
+                  end
                 end
               ensure
                 # We may be in a job system (eg: resque) that forks and kills worker processes often.
