@@ -44,7 +44,12 @@ module OpenTelemetry
         # Example:
         # { "JobOne" => :link, "JobTwo" => :child, "JobThree" => :none }
         #
-        option :context_propagation, default: {}, validate: -> (v) { validate_context_propagation(v) }
+        option :context_propagation, default: {}, validate: -> (cfg) do
+          return false unless cfg.is_a? Hash
+          return false unless cfg.keys.all? { |k| k.is_a? String }
+
+          return cfg.values.all? { |v| [:link, :child, :none].include?(v) }
+        end
 
         private
 
@@ -59,14 +64,6 @@ module OpenTelemetry
         end
 
         def validate_context_propagation(options)
-          return false unless options.is_a? Hash
-          return false unless options.keys.all? { |k| k.is_a? String }
-
-          options.values.each do |v|
-            return false unless [:link, :child, :none].include?(v)
-          end
-
-          return true
         end
       end
     end

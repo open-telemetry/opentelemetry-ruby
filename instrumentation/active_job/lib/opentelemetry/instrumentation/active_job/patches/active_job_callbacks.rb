@@ -29,14 +29,25 @@ module OpenTelemetry
 
                 context = OpenTelemetry.propagation.extract(job.metadata)
                 propagation_type = propagation_type_for_job(job)
-                span_links = [OpenTelemetry::Trace::Link.new(context)] if propagation_type == :link
 
                 if propagation_type == :child
                   OpenTelemetry::Context.with_current(context) do
-                    execute_job_in_span(span_name, span_attributes, span_kind, span_links, job, block)
+                    otel_tracer.in_span(span_name, attributes: span_attributes, kind: span_kind) do |span|
+                      span.set_attribute('messaging.active_job.executions', job.executions)
+                      block.call
+                    end
                   end
                 else
-                  execute_job_in_span(span_name, span_attributes, span_kind, span_links, job, block)
+                  if propagation_type == :link
+                    span_links = [
+                      OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace.current_span(context).context)
+                    ]
+                  end
+
+                  otel_tracer.in_span(span_name, attributes: span_attributes, links: span_links, kind: span_kind) do |span|
+                    span.set_attribute('messaging.active_job.executions', job.executions)
+                    block.call
+                  end
                 end
               ensure
                 # We may be in a job system (eg: resque) that forks and kills worker processes often.
@@ -47,16 +58,6 @@ module OpenTelemetry
           end
 
           private
-
-          def execute_job_in_span(name, attributes, kind, links, job, block)
-            otel_tracer.in_span(name, attributes: attributes, links: links, kind: kind) do |span|
-              # We need to set this before calling the block, because we'll be unable to do
-              # that if the block raises an exception. It's already incremented for us
-              # before Rails runs the callbacks, so no need for math.
-              span.set_attribute('messaging.active_job.executions', job.executions)
-              block.call
-            end
-          end
 
           def job_attributes(job)
             otel_attributes = {
