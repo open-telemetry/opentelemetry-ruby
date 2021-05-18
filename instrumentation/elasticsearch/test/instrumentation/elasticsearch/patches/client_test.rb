@@ -37,10 +37,10 @@ describe OpenTelemetry::Instrumentation::Elasticsearch::Patches::Client do
       client.search q: 'test'
 
       _(span.name).must_equal 'elasticsearch.query'
-      _(span.attributes['out.host']).must_equal host
-      _(span.attributes['out.port']).must_equal port
-      _(span.attributes['elasticsearch.url']).must_equal '_search'
-      _(span.attributes['elasticsearch.method']).must_equal 'GET'
+      _(span.attributes['http.host']).must_equal host
+      _(span.attributes['net.peer.port']).must_equal port
+      _(span.attributes[http.target']).must_equal '_search'
+      _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['elasticsearch.params']).must_equal '{"q":"test"}'
       _(span.attributes['elasticsearch.body']).must_equal ''
       _(span.attributes['http.status_code']).must_equal 200
