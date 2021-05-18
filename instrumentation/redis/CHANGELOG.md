@@ -2,6 +2,7 @@
 
 ### Unreleased
 
+refactor: simplify redis attribute assignment [#758](https://github.com/open-telemetry/opentelemetry-ruby/pull/758)
 test: split redis instrumentation test [#754](https://github.com/open-telemetry/opentelemetry-ruby/pull/754)
 
 ### v0.17.0 / 2021-04-22
