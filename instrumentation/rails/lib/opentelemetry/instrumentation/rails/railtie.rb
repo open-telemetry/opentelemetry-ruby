@@ -14,7 +14,7 @@ module OpenTelemetry
         config.before_initialize do |app|
           OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.install({})
 
-          app.middleware.insert_after(
+          app.middleware.insert_before(
             0,
             OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware
           )
