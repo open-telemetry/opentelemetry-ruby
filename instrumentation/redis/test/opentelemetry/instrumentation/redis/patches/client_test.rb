@@ -75,17 +75,15 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
 
     it 'after requests' do
       redis = redis_with_auth
-      _(redis.set('K', 'x' * 500)).must_equal 'OK'
-      _(redis.get('K')).must_equal 'x' * 500
+      _(redis.set('K', 'x')).must_equal 'OK'
+      _(redis.get('K')).must_equal 'x'
 
       _(exporter.finished_spans.size).must_equal 3
 
       set_span = exporter.finished_spans[1]
       _(set_span.name).must_equal 'SET'
       _(set_span.attributes['db.system']).must_equal 'redis'
-      _(set_span.attributes['db.statement']).must_equal(
-        'SET K ' + 'x' * 47 + '...'
-      )
+      _(set_span.attributes['db.statement']).must_equal('SET K x')
       _(set_span.attributes['net.peer.name']).must_equal redis_host
       _(set_span.attributes['net.peer.port']).must_equal redis_port
 
@@ -225,15 +223,6 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
       _(last_span.attributes['db.statement']).must_equal 'SET K '
     end
 
-    it 'truncates long command values' do
-      redis = redis_with_auth
-      the_long_value = 'y' * 100
-
-      redis.set('K', the_long_value)
-      _(last_span.name).must_equal 'SET'
-      _(last_span.attributes['db.statement']).must_equal 'SET K ' + 'y' * 47 + '...'
-    end
-
     it 'truncates long db.statements' do
       redis = redis_with_auth
       the_long_value = 'y' * 100
@@ -249,15 +238,11 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
       redis.commit
 
       expected_db_statement = <<~HEREDOC.chomp
-        SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy...
-        SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy...
-        SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy...
-        SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy...
-        SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy...
-        SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy...
-        SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy...
-        SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy...
-        SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyy...
+        SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+        SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+        SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+        SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+        SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy...
       HEREDOC
 
       _(last_span.name).must_equal 'SET SET SET SET SET SET SET SET SET'

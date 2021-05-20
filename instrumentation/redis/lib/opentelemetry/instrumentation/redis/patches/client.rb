@@ -10,9 +10,8 @@ module OpenTelemetry
       module Patches
         # Module to prepend to Redis::Client for instrumentation
         module Client
-          MAX_VALUE_LENGTH = 50
           MAX_STATEMENT_LENGTH = 500
-          private_constant :MAX_VALUE_LENGTH, :MAX_STATEMENT_LENGTH
+          private_constant :MAX_STATEMENT_LENGTH
 
           def process(commands) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
             host = options[:host]
@@ -28,10 +27,12 @@ module OpenTelemetry
             attributes['peer.service'] = config[:peer_service] if config[:peer_service]
             attributes.merge!(OpenTelemetry::Instrumentation::Redis.attributes)
 
-            formatted_commands = format_commands(commands)
-            attributes['db.statement'] = OpenTelemetry::Common::Utilities.truncate(parse_commands(formatted_commands), MAX_STATEMENT_LENGTH)
+            parsed_commands = parse_commands(commands)
+            parsed_commands = OpenTelemetry::Common::Utilities.truncate(parsed_commands, MAX_STATEMENT_LENGTH)
+            parsed_commands = OpenTelemetry::Common::Utilities.utf8_encode(parsed_commands, binary: true)
+            attributes['db.statement'] = parsed_commands
 
-            tracer.in_span(span_name(formatted_commands), attributes: attributes, kind: :client) do |s|
+            tracer.in_span(span_name(commands), attributes: attributes, kind: :client) do |s|
               super(commands).tap do |reply|
                 if reply.is_a?(::Redis::CommandError)
                   s.record_exception(reply)
@@ -46,20 +47,11 @@ module OpenTelemetry
 
           private
 
-          # Ensure all values are properly encoded and truncated before parsing
-          def format_commands(value)
-            return nil if value.nil?
-            return value.map { |v| format_commands(v) } if value.is_a?(Array)
-
-            value = OpenTelemetry::Common::Utilities.utf8_encode(value, binary: true)
-            OpenTelemetry::Common::Utilities.truncate(value, MAX_VALUE_LENGTH)
-          end
-
           # Examples of commands received for parsing
-          # Redis#queue     [[["set", "v1", "0"]], [["incr", "v1"]], [["get", "v1"]]]
-          # Redis#pipeline: [["set", "v1", "0"], ["incr", "v1"], ["get", "v1"]]
-          # Redis#hmset     [["hmset", "hash", "f1", "1234567890.0987654"]]
-          # Redis#set       [["set", "K", "0"]]
+          # Redis#queue     [[[:set, "v1", "0"]], [[:incr, "v1"]], [[:get, "v1"]]]
+          # Redis#pipeline: [[:set, "v1", "0"], [:incr, "v1"], [:get, "v1"]]
+          # Redis#hmset     [[:hmset, "hash", "f1", 1234567890.0987654]]
+          # Redis#set       [[:set, "K", "x"]]
           def parse_commands(commands) # rubocop:disable Metrics/AbcSize
             commands.map do |command|
               # We are checking for the use of Redis#queue command, if we detect the
@@ -70,9 +62,9 @@ module OpenTelemetry
               # If we receive an authentication request command
               # we want to short circuit parsing the commands
               # and return the obfuscated command
-              return 'AUTH ?' if command[0] == 'auth'
+              return 'AUTH ?' if command[0] == :auth
 
-              command[0] = command[0].upcase
+              command[0] = command[0].to_s.upcase
               if config[:enable_statement_obfuscation]
                 command[0] + ' ?' * (command.size - 1)
               else
