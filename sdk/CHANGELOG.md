@@ -2,13 +2,11 @@
 
 ### v1.0.0.rc1 / 2021-05-20
 
-* BREAKING CHANGE: Remove optional parent_context from in_span 
-* BREAKING CHANGE: Replace Time.now with Process.clock_gettime 
+* BREAKING CHANGE: Remove optional parent_context from in_span [#729](https://github.com/open-telemetry/opentelemetry-ruby/pull/729)
+* BREAKING CHANGE: Replace Time.now with Process.clock_gettime [#717](https://github.com/open-telemetry/opentelemetry-ruby/pull/717)
 
-* FIXED: Remove optional parent_context from in_span 
-* FIXED: Replace Time.now with Process.clock_gettime 
-* FIXED: Rename cloud.zone to cloud.availability_zone 
-* FIXED: Improve attribute error messages 
+* FIXED: Rename cloud.zone to cloud.availability_zone [#724](https://github.com/open-telemetry/opentelemetry-ruby/pull/734)
+* FIXED: Improve attribute error messages [#742](https://github.com/open-telemetry/opentelemetry-ruby/pull/742)
 
 ### v0.17.0 / 2021-04-22
 

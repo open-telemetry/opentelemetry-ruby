@@ -2,9 +2,7 @@
 
 ### v1.0.0.rc1 / 2021-05-20
 
-* BREAKING CHANGE: Remove optional parent_context from in_span 
-
-* FIXED: Remove optional parent_context from in_span 
+* BREAKING CHANGE: Remove optional parent_context from in_span [729](https://github.com/open-telemetry/opentelemetry-ruby/pull/729)
 
 ### v0.17.0 / 2021-04-22
 
