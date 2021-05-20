@@ -28,7 +28,7 @@ module OpenTelemetry
 
         ## Supported configuration keys for the install config hash:
         #
-        # correlation_type: controls how the job's execution is traced and related
+        # context_propagation: controls how the job's execution is traced and related
         #   to the trace where the job was enqueued. Can be one of:
         #
         #   - :link (default) - the job will be executed in a separate trace. The
