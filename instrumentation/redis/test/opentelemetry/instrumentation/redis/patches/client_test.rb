@@ -177,7 +177,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
       end
 
       _(exporter.finished_spans.size).must_equal 2
-      _(last_span.name).must_equal 'SET INCR GET'
+      _(last_span.name).must_equal 'PIPELINED'
       _(last_span.attributes['db.system']).must_equal 'redis'
       _(last_span.attributes['db.statement']).must_equal "SET v1 0\nINCR v1\nGET v1"
       _(last_span.attributes['net.peer.name']).must_equal redis_host
@@ -192,7 +192,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
       redis.commit
 
       _(exporter.finished_spans.size).must_equal 2
-      _(last_span.name).must_equal 'SET INCR GET'
+      _(last_span.name).must_equal 'PIPELINED'
       _(last_span.attributes['db.system']).must_equal 'redis'
       _(last_span.attributes['db.statement']).must_equal "SET v1 0\nINCR v1\nGET v1"
       _(last_span.attributes['net.peer.name']).must_equal redis_host
@@ -245,7 +245,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
         SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy...
       HEREDOC
 
-      _(last_span.name).must_equal 'SET SET SET SET SET SET SET SET SET'
+      _(last_span.name).must_equal 'PIPELINED'
       _(last_span.attributes['db.statement'].size).must_equal 500
       _(last_span.attributes['db.statement']).must_equal expected_db_statement
     end

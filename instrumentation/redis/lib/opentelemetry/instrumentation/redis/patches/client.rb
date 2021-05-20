@@ -32,7 +32,13 @@ module OpenTelemetry
             parsed_commands = OpenTelemetry::Common::Utilities.utf8_encode(parsed_commands, binary: true)
             attributes['db.statement'] = parsed_commands
 
-            tracer.in_span(span_name(commands), attributes: attributes, kind: :client) do |s|
+            span_name = if commands.length == 1
+                          commands[0][0].to_s.upcase
+                        else
+                          'PIPELINED'
+                        end
+
+            tracer.in_span(span_name, attributes: attributes, kind: :client) do |s|
               super(commands).tap do |reply|
                 if reply.is_a?(::Redis::CommandError)
                   s.record_exception(reply)
@@ -71,14 +77,6 @@ module OpenTelemetry
                 command.join(' ')
               end
             end.join("\n")
-          end
-
-          def span_name(commands)
-            commands.map do |cmd|
-              cmd = cmd[0] if cmd.is_a?(Array)
-              cmd = cmd[0] if cmd.is_a?(Array)
-              cmd
-            end.join(' ').upcase
           end
 
           def tracer
