@@ -47,8 +47,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       ::ActiveJob::Base.queue_adapter = :async
 
       TestJob.perform_later
-      # We need to ensure that the no-op Test Job actually runs in the background thread
-      sleep 1
+      ::ActiveJob::Base.queue_adapter.shutdown
 
       _(send_span.kind).must_equal(:producer)
       _(process_span.kind).must_equal(:consumer)
@@ -78,7 +77,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         ::ActiveJob::Base.queue_adapter = :async
 
         TestJob.perform_later
-        sleep 1
+        ::ActiveJob::Base.queue_adapter.shutdown
 
         [send_span, process_span].each do |span|
           _(span.attributes['net.transport']).must_equal('inproc')
@@ -119,8 +118,8 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       it 'is set correctly for jobs that do wait' do
         ::ActiveJob::Base.queue_adapter = :async
 
-        job = TestJob.set(wait: 0.5.second).perform_later
-        sleep 1
+        job = TestJob.set(wait: 0.second).perform_later
+        ::ActiveJob::Base.queue_adapter.shutdown
 
         # Only the sending span is a 'scheduled' thing
         _(send_span.attributes['messaging.active_job.scheduled_at']).must_equal(job.scheduled_at)
@@ -147,7 +146,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         ::ActiveJob::Base.queue_adapter = :async
 
         TestJob.perform_later
-        sleep 1
+        ::ActiveJob::Base.queue_adapter.shutdown
 
         [send_span, process_span].each do |span|
           _(span.attributes['messaging.system']).must_equal('async')
@@ -168,7 +167,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         ::ActiveJob::Base.queue_adapter = :async
 
         RetryJob.perform_now
-        sleep 1
+        ::ActiveJob::Base.queue_adapter.shutdown
 
         # 1 enqueue, 2 perform
         _(spans.count).must_equal(3)
@@ -203,7 +202,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         ::ActiveJob::Base.queue_adapter = :async
 
         TestJob.perform_later
-        sleep 1
+        ::ActiveJob::Base.queue_adapter.shutdown
 
         _(send_span.trace_id).wont_equal(process_span.trace_id)
 
@@ -229,7 +228,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         ::ActiveJob::Base.queue_adapter = :async
 
         TestJob.perform_later
-        sleep 1
+        ::ActiveJob::Base.queue_adapter.shutdown
 
         _(process_span.total_recorded_links).must_equal(0)
 
@@ -254,7 +253,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         ::ActiveJob::Base.queue_adapter = :async
 
         TestJob.perform_later
-        sleep 1
+        ::ActiveJob::Base.queue_adapter.shutdown
 
         _(process_span.total_recorded_links).must_equal(0)
 
