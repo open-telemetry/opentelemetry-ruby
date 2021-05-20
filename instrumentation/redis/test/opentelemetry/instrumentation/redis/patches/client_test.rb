@@ -203,7 +203,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
 
     it 'records floats' do
       redis = redis_with_auth
-      redis.hmset("hash", "f1", 1234567890.0987654321)
+      redis.hmset('hash', 'f1', 1_234_567_890.0987654321)
 
       _(last_span.name).must_equal 'HMSET'
       _(last_span.attributes['db.statement']).must_equal 'HMSET hash f1 1234567890.0987654'

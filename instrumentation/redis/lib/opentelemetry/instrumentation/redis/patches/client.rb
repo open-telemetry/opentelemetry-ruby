@@ -55,8 +55,16 @@ module OpenTelemetry
             OpenTelemetry::Common::Utilities.truncate(value, MAX_VALUE_LENGTH)
           end
 
+          # Examples of commands received for parsing
+          # Redis#queue     [[["set", "v1", "0"]], [["incr", "v1"]], [["get", "v1"]]]
+          # Redis#pipeline: [["set", "v1", "0"], ["incr", "v1"], ["get", "v1"]]
+          # Redis#hmset     [["hmset", "hash", "f1", "1234567890.0987654"]]
+          # Redis#set       [["set", "K", "0"]]
           def parse_commands(commands)
             commands.map do |command|
+              # We are checking for the use of Redis#queue command, if we detect the
+              # extra level of array nesting we return the first element so it
+              # can be parsed.
               command = command[0] if command.is_a?(Array) && command[0].is_a?(Array)
 
               # If we receive an authentication request command
