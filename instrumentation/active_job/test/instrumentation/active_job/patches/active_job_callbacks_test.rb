@@ -93,7 +93,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         TestJob.perform_later
 
         [send_span, process_span].each do |span|
-          assert_nil(span.attributes['messaging.active_job.priority'])
+          _(span.attributes['messaging.active_job.priority']).must_be_nil
         end
       end
 
@@ -111,7 +111,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         TestJob.perform_later
 
         [send_span, process_span].each do |span|
-          assert_nil(span.attributes['messaging.active_job.scheduled_at'])
+          _(span.attributes['messaging.active_job.scheduled_at']).must_be_nil
         end
       end
 
@@ -126,7 +126,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         assert(send_span.attributes['messaging.active_job.scheduled_at'])
 
         # The processing span isn't a 'scheduled' thing
-        assert_nil(process_span.attributes['messaging.active_job.scheduled_at'])
+        _(process_span.attributes['messaging.active_job.scheduled_at']).must_be_nil
 
         ::ActiveJob::Base.queue_adapter = :inline
       end
