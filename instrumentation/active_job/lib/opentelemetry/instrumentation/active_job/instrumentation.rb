@@ -41,6 +41,11 @@ module OpenTelemetry
         #
         # Note that in all cases, we will store ActiveJob's Job ID as the `messaging.message_id`
         # attribute, so out-of-band correlation may still be possible depending on your backend system.
+        #
+        # Note that when using the `:inline` ActiveJob queue adapter, then execution
+        # spans will always be children of the enqueueing spans. This is due to the way
+        # ActiveJob immediately executes jobs during the process of "enqueueing" jobs when
+        # using the `:inline` adapter.
         option :context_propagation, default: :link, validate: ->(opt) { %i[link child none].include?(opt) }
 
         private
