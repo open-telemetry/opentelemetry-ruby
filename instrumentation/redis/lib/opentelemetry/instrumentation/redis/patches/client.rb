@@ -46,7 +46,7 @@ module OpenTelemetry
 
           private
 
-          # Ensure all values are properly encoded and truncated before
+          # Ensure all values are properly encoded and truncated before parsing
           def format_commands(value)
             return nil if value.nil?
             return value.map { |v| format_commands(v) } if value.is_a?(Array)
@@ -60,7 +60,7 @@ module OpenTelemetry
           # Redis#pipeline: [["set", "v1", "0"], ["incr", "v1"], ["get", "v1"]]
           # Redis#hmset     [["hmset", "hash", "f1", "1234567890.0987654"]]
           # Redis#set       [["set", "K", "0"]]
-          def parse_commands(commands)
+          def parse_commands(commands) # rubocop:disable Metrics/AbcSize
             commands.map do |command|
               # We are checking for the use of Redis#queue command, if we detect the
               # extra level of array nesting we return the first element so it
@@ -72,9 +72,9 @@ module OpenTelemetry
               # and return the obfuscated command
               return 'AUTH ?' if command[0] == 'auth'
 
-              cmd = command[0].upcase!
+              command[0] = command[0].upcase
               if config[:enable_statement_obfuscation]
-                cmd + ' ?' * command[1..-1].size
+                command[0] + ' ?' * (command.size - 1)
               else
                 command.join(' ')
               end

@@ -186,7 +186,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
       _(last_span.attributes['net.peer.port']).must_equal redis_port
     end
 
-    it 'traces pipeline commands on commit' do
+    it 'traces pipelined commands on commit' do
       redis = redis_with_auth
       redis.queue([:set, 'v1', '0'])
       redis.queue([:incr, 'v1'])
