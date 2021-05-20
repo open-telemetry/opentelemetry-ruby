@@ -51,8 +51,8 @@ module OpenTelemetry
             return nil if value.nil?
             return value.map { |v| format_commands(v) } if value.is_a?(Array)
 
-            value = OpenTelemetry::Common::Utilities.truncate(value, MAX_VALUE_LENGTH)
-            OpenTelemetry::Common::Utilities.utf8_encode(value, binary: true)
+            value = OpenTelemetry::Common::Utilities.utf8_encode(value, binary: true)
+            OpenTelemetry::Common::Utilities.truncate(value, MAX_VALUE_LENGTH)
           end
 
           def parse_commands(commands)

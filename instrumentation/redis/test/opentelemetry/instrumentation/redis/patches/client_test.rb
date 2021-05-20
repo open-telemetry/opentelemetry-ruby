@@ -201,6 +201,14 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
       _(last_span.attributes['net.peer.port']).must_equal redis_port
     end
 
+    it 'records floats' do
+      redis = redis_with_auth
+      redis.hmset("hash", "f1", 1234567890.0987654321)
+
+      _(last_span.name).must_equal 'HMSET'
+      _(last_span.attributes['db.statement']).must_equal 'HMSET hash f1 1234567890.0987654'
+    end
+
     it 'records nil' do
       redis = redis_with_auth
       redis.set('K', nil)
