@@ -11,12 +11,12 @@ module OpenTelemetry
         # Module to prepend to ActiveJob::Base for instrumentation.
         module ActiveJobCallbacks
           def self.prepended(base) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-            base.class_eval do
+            base.class_eval do # rubocop:disable Metrics/BlockLength
               around_enqueue do |job, block|
                 span_kind = job.class.queue_adapter_name == 'inline' ? :client : :producer
                 span_name = "#{job.class} send"
                 span_attributes = job_attributes(job)
-                otel_tracer.in_span(span_name, attributes: span_attributes, kind: span_kind) do |span|
+                otel_tracer.in_span(span_name, attributes: span_attributes, kind: span_kind) do
                   OpenTelemetry.propagation.inject(job.metadata)
                   block.call
                 end

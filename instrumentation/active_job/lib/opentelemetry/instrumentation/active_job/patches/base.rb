@@ -22,11 +22,11 @@ module OpenTelemetry
           end
 
           def serialize
-            super.merge({ "metadata" => serialize_arguments(metadata) })
+            super.merge('metadata' => serialize_arguments(metadata))
           end
 
           def deserialize(job_data)
-            self.metadata = (deserialize_arguments(job_data["metadata"]) || []).to_h
+            self.metadata = (deserialize_arguments(job_data['metadata']) || []).to_h
             super
           end
         end

@@ -41,7 +41,7 @@ module OpenTelemetry
         #
         # Note that in all cases, we will store ActiveJob's Job ID as the `messaging.message_id`
         # attribute, so out-of-band correlation may still be possible depending on your backend system.
-        option :context_propagation, default: :link, validate: -> (opt) { [:link, :child, :none].include?(opt) }
+        option :context_propagation, default: :link, validate: ->(opt) { %i[link child none].include?(opt) }
 
         private
 
@@ -53,9 +53,6 @@ module OpenTelemetry
         def patch_activejob
           ::ActiveJob::Base.prepend(Patches::Base)
           ::ActiveJob::Base.prepend(Patches::ActiveJobCallbacks)
-        end
-
-        def validate_context_propagation(options)
         end
       end
     end

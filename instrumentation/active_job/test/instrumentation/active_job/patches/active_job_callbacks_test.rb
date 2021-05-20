@@ -213,11 +213,11 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
     describe 'when configured to do parent/child spans' do
       before do
-        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, { context_propagation: :child })
+        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, context_propagation: :child)
       end
 
       after do
-        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, { context_propagation: :link })
+        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, context_propagation: :link)
       end
 
       it 'creates a parent/child relationship' do
@@ -237,11 +237,11 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
     describe 'when explicitly configure for no propagation' do
       before do
-        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, { context_propagation: :none })
+        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, context_propagation: :none)
       end
 
       after do
-        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, { context_propagation: :link })
+        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, context_propagation: :link)
       end
 
       it 'skips link creation and does not create parent/child relationship' do

@@ -28,7 +28,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::Base do
 
       job = TestJob.new
       job.deserialize(serialized_job)
-      _(job.metadata).must_equal({ 'foo' => 'bar' })
+      _(job.metadata).must_equal('foo' => 'bar')
     end
   end
 end
