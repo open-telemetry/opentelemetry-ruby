@@ -52,7 +52,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
       _(send_span.kind).must_equal(:producer)
       _(process_span.kind).must_equal(:consumer)
-
+    ensure
       ::ActiveJob::Base.queue_adapter = :inline
     end
   end
@@ -84,6 +84,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
           _(span.attributes['net.transport']).must_equal('inproc')
         end
 
+      ensure
         ::ActiveJob::Base.queue_adapter = :inline
       end
     end
@@ -128,6 +129,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         # The processing span isn't a 'scheduled' thing
         _(process_span.attributes['messaging.active_job.scheduled_at']).must_be_nil
 
+      ensure
         ::ActiveJob::Base.queue_adapter = :inline
       end
     end
@@ -151,6 +153,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
           _(span.attributes['messaging.system']).must_equal('async')
         end
 
+      ensure
         ::ActiveJob::Base.queue_adapter = :inline
       end
     end
@@ -174,6 +177,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         _(span.kind).must_equal(:consumer)
         _(span.attributes['messaging.active_job.executions']).must_equal(2)
 
+      ensure
         ::ActiveJob::Base.queue_adapter = :inline
       end
     end
@@ -207,6 +211,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         _(process_span.links[0].span_context.trace_id).must_equal(send_span.trace_id)
         _(process_span.links[0].span_context.span_id).must_equal(send_span.span_id)
 
+      ensure
         ::ActiveJob::Base.queue_adapter = :inline
       end
     end
@@ -231,6 +236,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         _(send_span.trace_id).must_equal(process_span.trace_id)
         _(process_span.parent_span_id).must_equal(send_span.span_id)
 
+      ensure
         ::ActiveJob::Base.queue_adapter = :inline
       end
     end
@@ -255,6 +261,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         _(send_span.trace_id).wont_equal(process_span.trace_id)
         _(process_span.parent_span_id).wont_equal(send_span.span_id)
 
+      ensure
         ::ActiveJob::Base.queue_adapter = :inline
       end
     end
