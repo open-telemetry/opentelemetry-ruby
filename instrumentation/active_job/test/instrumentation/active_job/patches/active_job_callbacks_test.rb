@@ -188,4 +188,75 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       end
     end
   end
+
+  describe 'context_propagation option' do
+    describe 'link - default' do
+      it 'creates span links in separate traces' do
+        # The inline job adapter executes the job immediately upon enqueuing it
+        # so we can't actually use that in a test - the actual Context.current at time
+        # of execution *will* be the context where the job was enqueued, because rails
+        # ends up doing job.around_enqueue { job.around_perform { block } } inline.
+        ::ActiveJob::Base.queue_adapter = :async
+
+        TestJob.perform_later
+        sleep 1
+
+        _(send_span.trace_id).wont_equal(process_span.trace_id)
+
+        _(process_span.total_recorded_links).must_equal(1)
+        _(process_span.links[0].span_context.trace_id).must_equal(send_span.trace_id)
+        _(process_span.links[0].span_context.span_id).must_equal(send_span.span_id)
+
+        ::ActiveJob::Base.queue_adapter = :inline
+      end
+    end
+
+    describe 'when configured to do parent/child spans' do
+      before do
+        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, { context_propagation: :child })
+      end
+
+      after do
+        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, { context_propagation: :link })
+      end
+
+      it 'creates a parent/child relationship' do
+        ::ActiveJob::Base.queue_adapter = :async
+
+        TestJob.perform_later
+        sleep 1
+
+        _(process_span.total_recorded_links).must_equal(0)
+
+        _(send_span.trace_id).must_equal(process_span.trace_id)
+        _(process_span.parent_span_id).must_equal(send_span.span_id)
+
+        ::ActiveJob::Base.queue_adapter = :inline
+      end
+    end
+
+    describe 'when explicitly configure for no propagation' do
+      before do
+        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, { context_propagation: :none })
+      end
+
+      after do
+        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, { context_propagation: :link })
+      end
+
+      it 'skips link creation and does not create parent/child relationship' do
+        ::ActiveJob::Base.queue_adapter = :async
+
+        TestJob.perform_later
+        sleep 1
+
+        _(process_span.total_recorded_links).must_equal(0)
+
+        _(send_span.trace_id).wont_equal(process_span.trace_id)
+        _(process_span.parent_span_id).wont_equal(send_span.span_id)
+
+        ::ActiveJob::Base.queue_adapter = :inline
+      end
+    end
+  end
 end

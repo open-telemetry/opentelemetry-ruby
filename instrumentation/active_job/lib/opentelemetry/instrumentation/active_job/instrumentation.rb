@@ -28,28 +28,20 @@ module OpenTelemetry
 
         ## Supported configuration keys for the install config hash:
         #
-        # The context_propgation key expects a hash of "JobClass" => propgation_option.
-        # When an ActiveJob is executed, the propagation_option will be consulted
-        # to determine how the 'execute' span will relate to the 'enqueue' span.
+        # correlation_type: controls how the job's execution is traced and related
+        #   to the trace where the job was enqueued. Can be one of:
         #
-        # propagation_option can be one of:
-        # - :link (default) - the execution span will include a Link to the enqueue span.
-        # - :child - the execution span will be the child of the enqueue span.
-        # - :none - there will be neither a link, or a parent/child relationship between
-        #           the enqueue and execution spans.
+        #   - :link (default) - the job will be executed in a separate trace. The
+        #     initial span of the execution trace will be linked to the span that
+        #     enqueued the job, via a Span Link.
+        #   - :child - the job will be executed in the same logical trace, as a direct
+        #     child of the span that enqueued the job.
+        #   - :none - the job's execution will not be explicitly linked to the span that
+        #     enqueued the job.
         #
-        # Note that in all cases, the `messaging.message_id` attribute can be used to
-        # manually correlate enqueue and execution spans.
-        #
-        # Example:
-        # { "JobOne" => :link, "JobTwo" => :child, "JobThree" => :none }
-        #
-        option :context_propagation, default: {}, validate: -> (cfg) do
-          return false unless cfg.is_a? Hash
-          return false unless cfg.keys.all? { |k| k.is_a? String }
-
-          return cfg.values.all? { |v| [:link, :child, :none].include?(v) }
-        end
+        # Note that in all cases, we will store ActiveJob's Job ID as the `messaging.message_id`
+        # attribute, so out-of-band correlation may still be possible depending on your backend system.
+        option :context_propagation, default: :link, validate: -> (opt) { [:link, :child, :none].include?(opt) }
 
         private
 

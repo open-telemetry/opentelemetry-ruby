@@ -27,23 +27,16 @@ module OpenTelemetry
                 span_name = "#{job.class} process"
                 span_attributes = job_attributes(job).merge('messaging.operation' => 'process')
 
-                context = OpenTelemetry.propagation.extract(job.metadata)
-                propagation_type = propagation_type_for_job(job)
+                propagated_context = OpenTelemetry.propagation.extract(job.metadata)
 
-                if propagation_type == :child
-                  OpenTelemetry::Context.with_current(context) do
-                    otel_tracer.in_span(span_name, attributes: span_attributes, kind: span_kind) do |span|
-                      span.set_attribute('messaging.active_job.executions', job.executions)
-                      block.call
-                    end
-                  end
-                else
-                  if propagation_type == :link
-                    span_links = [
-                      OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace.current_span(context).context)
-                    ]
-                  end
+                if config[:context_propagation] == :link
+                  span_links = [
+                    OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace.current_span(propagated_context).context)
+                  ]
+                end
 
+                parent_context = (config[:context_propagation] == :child ? propagated_context : OpenTelemetry::Context.current)
+                OpenTelemetry::Context.with_current(parent_context) do
                   otel_tracer.in_span(span_name, attributes: span_attributes, links: span_links, kind: span_kind) do |span|
                     span.set_attribute('messaging.active_job.executions', job.executions)
                     block.call
@@ -74,12 +67,12 @@ module OpenTelemetry
             otel_attributes.compact
           end
 
-          def propagation_type_for_job(job)
-            ActiveJob::Instrumentation.instance.config[job.class.to_s] || :link
-          end
-
           def otel_tracer
             ActiveJob::Instrumentation.instance.tracer
+          end
+
+          def config
+            ActiveJob::Instrumentation.instance.config
           end
         end
       end
