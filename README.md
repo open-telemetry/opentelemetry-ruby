@@ -20,7 +20,6 @@ The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 
 Approvers ([@open-telemetry/ruby-approvers](https://github.com/orgs/open-telemetry/teams/ruby-approvers)):
 
-- [Robert Laurin](https://github.com/robertlaurin), Shopify
 - [Eric Mustin](https://github.com/ericmustin), Datadog
 - [Ariel Valentin](https://github.com/arielvalentin), GitHub
 - [Andrew Hayworth](https://github.com/ahayworth), GitHub
@@ -29,6 +28,7 @@ Approvers ([@open-telemetry/ruby-approvers](https://github.com/orgs/open-telemet
 
 Maintainers ([@open-telemetry/ruby-maintainers](https://github.com/orgs/open-telemetry/teams/ruby-maintainers)):
 
+- [Robert Laurin](https://github.com/robertlaurin), Shopify
 - [Francis Bogsanyi](https://github.com/fbogsany), Shopify
 - [Matthew Wear](https://github.com/mwear), Lightstep
 - [Daniel Azuma](https://github.com/dazuma), Google
