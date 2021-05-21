@@ -2,6 +2,7 @@
 
 ### Unreleased
 
+* ADDED: Updated API depedency for 1.0.0.rc1
 * test: update test for redis instrumentation refactor [#760](https://github.com/open-telemetry/opentelemetry-ruby/pull/760)
 
 ### v0.17.0 / 2021-04-22

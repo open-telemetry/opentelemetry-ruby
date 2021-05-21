@@ -1,17 +1,21 @@
 # Release History: opentelemetry-instrumentation-graphql
 
+### Unreleased
+
+* ADDED: Updated API depedency for 1.0.0.rc1
+
 ### v0.17.0 / 2021-04-22
 
 * (No significant changes)
 
 ### v0.16.0 / 2021-03-17
 
-* FIXED: Example scripts now reference local common lib 
-* DOCS: Replace Gitter with GitHub Discussions 
+* FIXED: Example scripts now reference local common lib
+* DOCS: Replace Gitter with GitHub Discussions
 
 ### v0.15.0 / 2021-02-18
 
-* ADDED: Add instrumentation config validation 
+* ADDED: Add instrumentation config validation
 
 ### v0.14.0 / 2021-02-03
 

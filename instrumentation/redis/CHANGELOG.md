@@ -2,6 +2,7 @@
 
 ### Unreleased
 
+* ADDED: Updated API depedency for 1.0.0.rc1
 refactor: redis attribute utils [#760](https://github.com/open-telemetry/opentelemetry-ruby/pull/760)
 refactor: simplify redis attribute assignment [#758](https://github.com/open-telemetry/opentelemetry-ruby/pull/758)
 test: split redis instrumentation test [#754](https://github.com/open-telemetry/opentelemetry-ruby/pull/754)
