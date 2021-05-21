@@ -1,16 +1,20 @@
 # Release History: opentelemetry-propagator-b3
 
+### v0.18.0 / 2021-05-21
+
+* ADDED: Updated API depedency for 1.0.0.rc1
+
 ### v0.17.0 / 2021-04-22
 
 * BREAKING CHANGE: Replace TextMapInjector/TextMapExtractor pairs with a TextMapPropagator.
 
   [Check the propagator documentation](https://open-telemetry.github.io/opentelemetry-ruby/) for the new usage.
 
-* FIXED: Refactor propagators to add #fields 
+* FIXED: Refactor propagators to add #fields
 
 ### v0.16.0 / 2021-03-17
 
-* DOCS: Replace Gitter with GitHub Discussions 
+* DOCS: Replace Gitter with GitHub Discussions
 
 ### v0.15.0 / 2021-02-18
 
@@ -18,9 +22,9 @@
 
 ### v0.14.0 / 2021-02-03
 
-* BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators 
+* BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators
 
-* ADDED: Replace getter and setter callables and remove rack specific propagators 
+* ADDED: Replace getter and setter callables and remove rack specific propagators
 
 ### v0.13.0 / 2021-01-29
 
@@ -32,7 +36,7 @@
 
 ### v0.11.0 / 2020-12-11
 
-* FIXED: Copyright comments to not reference year 
+* FIXED: Copyright comments to not reference year
 
 ### v0.10.0 / 2020-12-03
 

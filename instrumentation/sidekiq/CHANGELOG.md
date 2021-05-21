@@ -1,8 +1,13 @@
 # Release History: opentelemetry-instrumentation-sidekiq
 
-### Unreleased
+### v0.18.0 / 2021-05-21
 
-* test: update test for redis instrumentation refactor [#760](https://github.com/open-telemetry/opentelemetry-ruby/pull/760)
+* ADDED: Updated API depedency for 1.0.0.rc1
+* TEST: update test for redis instrumentation refactor [#760](https://github.com/open-telemetry/opentelemetry-ruby/pull/760)
+* BREAKING CHANGE: Remove optional parent_context from in_span
+
+* FIXED: Remove optional parent_context from in_span
+* FIXED: Instrument Redis more thoroughly by patching Client#process.
 
 ### v0.17.0 / 2021-04-22
 
