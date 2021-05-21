@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.18.0 / 2021-05-21
+
+* ADDED: Add koala instrumentation 
+* FIXED: Add bunny instrumentation to releases 
+
 ### v0.17.0 / 2021-04-22
 
 * ADDED: Add instrumentation for postgresql (pg gem) 

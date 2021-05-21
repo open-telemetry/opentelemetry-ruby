@@ -1,5 +1,11 @@
 # Release History: opentelemetry-api
 
+### v1.0.0.rc1 / 2021-05-21
+
+* BREAKING CHANGE: Remove optional parent_context from in_span 
+
+* FIXED: Remove optional parent_context from in_span 
+
 ### v0.17.0 / 2021-04-22
 
 * BREAKING CHANGE: Replace TextMapInjector/TextMapExtractor pairs with a TextMapPropagator.

@@ -4,6 +4,13 @@
 
 * FIXED: Mongodb test failing on error message assertion
 
+### v0.18.0 / 2021-05-21
+
+* BREAKING CHANGE: Replace Time.now with Process.clock_gettime 
+
+* FIXED: Replace Time.now with Process.clock_gettime 
+* FIXED: Mongodb test asserting error message 
+
 ### v0.17.0 / 2021-04-22
 
 * ADDED: Mongo instrumentation accepts peer service config attribute.

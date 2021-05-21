@@ -1,5 +1,15 @@
 # Release History: opentelemetry-sdk
 
+### v1.0.0.rc1 / 2021-05-21
+
+* BREAKING CHANGE: Remove optional parent_context from in_span 
+* BREAKING CHANGE: Replace Time.now with Process.clock_gettime 
+
+* FIXED: Remove optional parent_context from in_span 
+* FIXED: Replace Time.now with Process.clock_gettime 
+* FIXED: Rename cloud.zone to cloud.availability_zone 
+* FIXED: Improve attribute error messages 
+
 ### v0.17.0 / 2021-04-22
 
 * BREAKING CHANGE: Replace TextMapInjector/TextMapExtractor pairs with a TextMapPropagator.
