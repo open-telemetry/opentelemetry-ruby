@@ -1,0 +1,9 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+appraise 'elasticsearch-7.12' do
+  gem 'elasticsearch', '~> 7.12.1'
+end

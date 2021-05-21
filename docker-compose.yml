@@ -126,6 +126,12 @@ services:
     command: ./start_server.sh
     working_dir: /app/instrumentation/sinatra/example
 
+  ex-instrumentation-elasticsearch:
+    <<: *base
+    depends_on:
+      - elasticsearch
+    working_dir: /app/instrumentation/elasticsearch/example
+
   mongo:
     image: mongo:4.4
     expose:
@@ -168,6 +174,13 @@ services:
     image: memcached:alpine
     command: memcached -m 64
 
+  elasticsearch:
+    image: elasticsearch:7.12.1
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/data
+
   sdk:
     <<: *base
     working_dir: /app/sdk
@@ -175,3 +188,4 @@ services:
 volumes:
   bundle:
   redis_data:
+  elasticsearch_data:
