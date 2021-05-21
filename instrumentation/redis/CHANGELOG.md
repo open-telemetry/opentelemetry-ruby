@@ -2,14 +2,15 @@
 
 ### Unreleased
 
+* ADDED: Updated API depedency for 1.0.0.rc1
 refactor: redis attribute utils [#760](https://github.com/open-telemetry/opentelemetry-ruby/pull/760)
 refactor: simplify redis attribute assignment [#758](https://github.com/open-telemetry/opentelemetry-ruby/pull/758)
 test: split redis instrumentation test [#754](https://github.com/open-telemetry/opentelemetry-ruby/pull/754)
 
 ### v0.18.0 / 2021-05-21
 
-* ADDED: Option to obfuscate redis arguments 
-* FIXED: Instrument Redis more thoroughly by patching Client#process. 
+* ADDED: Option to obfuscate redis arguments
+* FIXED: Instrument Redis more thoroughly by patching Client#process.
 
 ### v0.17.0 / 2021-04-22
 

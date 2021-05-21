@@ -1,12 +1,9 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
-### Unreleased
-
-* Fix: Nil value for db.name attribute #744
-
 ### v0.18.0 / 2021-05-21
 
-* FIXED: Nil value for db.name attribute 
+* ADDED: Updated API depedency for 1.0.0.rc1
+* Fix: Nil value for db.name attribute #744
 
 ### v0.17.0 / 2021-04-22
 
