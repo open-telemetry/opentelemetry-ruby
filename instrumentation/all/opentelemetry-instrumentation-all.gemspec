@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 2.5.0'
 
   spec.add_dependency 'opentelemetry-instrumentation-active_model_serializers', '~> 0.17.0'
+  spec.add_dependency 'opentelemetry-instrumentation-bunny', '~> 0.17.0'
   spec.add_dependency 'opentelemetry-instrumentation-concurrent_ruby', '~> 0.17.0'
   spec.add_dependency 'opentelemetry-instrumentation-dalli', '~> 0.17.0'
   spec.add_dependency 'opentelemetry-instrumentation-delayed_job', '~> 0.17.0'
