@@ -75,17 +75,15 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
 
     it 'after requests' do
       redis = redis_with_auth
-      _(redis.set('K', 'x' * 500)).must_equal 'OK'
-      _(redis.get('K')).must_equal 'x' * 500
+      _(redis.set('K', 'x')).must_equal 'OK'
+      _(redis.get('K')).must_equal 'x'
 
       _(exporter.finished_spans.size).must_equal 3
 
       set_span = exporter.finished_spans[1]
       _(set_span.name).must_equal 'SET'
       _(set_span.attributes['db.system']).must_equal 'redis'
-      _(set_span.attributes['db.statement']).must_equal(
-        'SET K ' + 'x' * 47 + '...'
-      )
+      _(set_span.attributes['db.statement']).must_equal('SET K x')
       _(set_span.attributes['net.peer.name']).must_equal redis_host
       _(set_span.attributes['net.peer.port']).must_equal redis_port
 
@@ -136,7 +134,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
       _(set_span.attributes['net.peer.port']).must_equal redis_port
     end
 
-    it 'after error' do
+    it 'records exceptions' do
       expect do
         redis = redis_with_auth
         redis.call 'THIS_IS_NOT_A_REDIS_FUNC', 'THIS_IS_NOT_A_VALID_ARG'
@@ -158,7 +156,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
       )
     end
 
-    it 'records attributes for peer name and port' do
+    it 'records net.peer.name and net.peer.port attributes' do
       expect do
         ::Redis.new(host: 'example.com', port: 8321, timeout: 0.01).auth(password)
       end.must_raise Redis::CannotConnectError
@@ -170,7 +168,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
       _(last_span.attributes['net.peer.port']).must_equal 8321
     end
 
-    it 'after pipeline' do
+    it 'traces pipelined commands' do
       redis = redis_with_auth
       redis.pipelined do |r|
         r.set('v1', '0')
@@ -179,14 +177,14 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
       end
 
       _(exporter.finished_spans.size).must_equal 2
-      _(last_span.name).must_equal 'SET INCR GET'
+      _(last_span.name).must_equal 'PIPELINED'
       _(last_span.attributes['db.system']).must_equal 'redis'
       _(last_span.attributes['db.statement']).must_equal "SET v1 0\nINCR v1\nGET v1"
       _(last_span.attributes['net.peer.name']).must_equal redis_host
       _(last_span.attributes['net.peer.port']).must_equal redis_port
     end
 
-    it 'records a pipeline span on commit' do
+    it 'traces pipelined commands on commit' do
       redis = redis_with_auth
       redis.queue([:set, 'v1', '0'])
       redis.queue([:incr, 'v1'])
@@ -194,11 +192,72 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
       redis.commit
 
       _(exporter.finished_spans.size).must_equal 2
-      _(last_span.name).must_equal 'SET INCR GET'
+      _(last_span.name).must_equal 'PIPELINED'
       _(last_span.attributes['db.system']).must_equal 'redis'
       _(last_span.attributes['db.statement']).must_equal "SET v1 0\nINCR v1\nGET v1"
       _(last_span.attributes['net.peer.name']).must_equal redis_host
       _(last_span.attributes['net.peer.port']).must_equal redis_port
+    end
+
+    it 'records floats' do
+      redis = redis_with_auth
+      redis.hmset('hash', 'f1', 1_234_567_890.0987654321)
+
+      _(last_span.name).must_equal 'HMSET'
+      _(last_span.attributes['db.statement']).must_equal 'HMSET hash f1 1234567890.0987654'
+    end
+
+    it 'records nil' do
+      redis = redis_with_auth
+      redis.set('K', nil)
+
+      _(last_span.name).must_equal 'SET'
+      _(last_span.attributes['db.statement']).must_equal 'SET K '
+    end
+
+    it 'records empty string' do
+      redis = redis_with_auth
+      redis.set('K', '')
+
+      _(last_span.name).must_equal 'SET'
+      _(last_span.attributes['db.statement']).must_equal 'SET K '
+    end
+
+    it 'truncates long db.statements' do
+      redis = redis_with_auth
+      the_long_value = 'y' * 100
+      redis.queue([:set, 'v1', the_long_value])
+      redis.queue([:set, 'v1', the_long_value])
+      redis.queue([:set, 'v1', the_long_value])
+      redis.queue([:set, 'v1', the_long_value])
+      redis.queue([:set, 'v1', the_long_value])
+      redis.queue([:set, 'v1', the_long_value])
+      redis.queue([:set, 'v1', the_long_value])
+      redis.queue([:set, 'v1', the_long_value])
+      redis.queue([:set, 'v1', the_long_value])
+      redis.commit
+
+      expected_db_statement = <<~HEREDOC.chomp
+        SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+        SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+        SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+        SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+        SET v1 yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy...
+      HEREDOC
+
+      _(last_span.name).must_equal 'PIPELINED'
+      _(last_span.attributes['db.statement'].size).must_equal 500
+      _(last_span.attributes['db.statement']).must_equal expected_db_statement
+    end
+
+    it 'encodes invalid byte sequences for db.statement' do
+      redis = redis_with_auth
+
+      # \255 is off-limits https://en.wikipedia.org/wiki/UTF-8#Codepage_layout
+      redis.set('K', "x\255")
+
+      _(last_span.name).must_equal 'SET'
+      _(last_span.attributes['db.statement']).must_equal 'SET K x'
     end
 
     describe 'when enable_statement_obfuscation is enabled' do

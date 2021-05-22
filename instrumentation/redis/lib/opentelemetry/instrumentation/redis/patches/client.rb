@@ -10,6 +10,9 @@ module OpenTelemetry
       module Patches
         # Module to prepend to Redis::Client for instrumentation
         module Client
+          MAX_STATEMENT_LENGTH = 500
+          private_constant :MAX_STATEMENT_LENGTH
+
           def process(commands) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
             host = options[:host]
             port = options[:port]
@@ -23,9 +26,19 @@ module OpenTelemetry
             attributes['db.redis.database_index'] = options[:db] unless options[:db].zero?
             attributes['peer.service'] = config[:peer_service] if config[:peer_service]
             attributes.merge!(OpenTelemetry::Instrumentation::Redis.attributes)
-            attributes['db.statement'] = Utils.format_statements(commands)
 
-            tracer.in_span(Utils.format_span_name(commands), attributes: attributes, kind: :client) do |s|
+            parsed_commands = parse_commands(commands)
+            parsed_commands = OpenTelemetry::Common::Utilities.truncate(parsed_commands, MAX_STATEMENT_LENGTH)
+            parsed_commands = OpenTelemetry::Common::Utilities.utf8_encode(parsed_commands, binary: true)
+            attributes['db.statement'] = parsed_commands
+
+            span_name = if commands.length == 1
+                          commands[0][0].to_s.upcase
+                        else
+                          'PIPELINED'
+                        end
+
+            tracer.in_span(span_name, attributes: attributes, kind: :client) do |s|
               super(commands).tap do |reply|
                 if reply.is_a?(::Redis::CommandError)
                   s.record_exception(reply)
@@ -39,6 +52,32 @@ module OpenTelemetry
           end
 
           private
+
+          # Examples of commands received for parsing
+          # Redis#queue     [[[:set, "v1", "0"]], [[:incr, "v1"]], [[:get, "v1"]]]
+          # Redis#pipeline: [[:set, "v1", "0"], [:incr, "v1"], [:get, "v1"]]
+          # Redis#hmset     [[:hmset, "hash", "f1", 1234567890.0987654]]
+          # Redis#set       [[:set, "K", "x"]]
+          def parse_commands(commands) # rubocop:disable Metrics/AbcSize
+            commands.map do |command|
+              # We are checking for the use of Redis#queue command, if we detect the
+              # extra level of array nesting we return the first element so it
+              # can be parsed.
+              command = command[0] if command.is_a?(Array) && command[0].is_a?(Array)
+
+              # If we receive an authentication request command
+              # we want to short circuit parsing the commands
+              # and return the obfuscated command
+              return 'AUTH ?' if command[0] == :auth
+
+              command[0] = command[0].to_s.upcase
+              if config[:enable_statement_obfuscation]
+                command[0] + ' ?' * (command.size - 1)
+              else
+                command.join(' ')
+              end
+            end.join("\n")
+          end
 
           def tracer
             Redis::Instrumentation.instance.tracer

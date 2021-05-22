@@ -1,7 +1,11 @@
 # Release History: opentelemetry-instrumentation-sinatra
 
-### Unreleased
+### v0.18.0 / 2021-05-21
 
+* ADDED: Updated API depedency for 1.0.0.rc1
+* BREAKING CHANGE: Remove optional parent_context from in_span
+
+* FIXED: Remove optional parent_context from in_span
 * FIXED: Removed http.status_text attribute #750
 
 ### v0.17.0 / 2021-04-22
