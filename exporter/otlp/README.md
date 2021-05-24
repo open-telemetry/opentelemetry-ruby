@@ -65,7 +65,7 @@ end
 
 For additional examples, see the [examples on github][examples-github].
 
-## How can I configure the Jaeger exporter?
+## How can I configure the OTLP exporter?
 
 The collector exporter can be configured explicitly in code, as shown above, or via environment variables. The configuration parameters, environment variables, and defaults are shown below.
 
