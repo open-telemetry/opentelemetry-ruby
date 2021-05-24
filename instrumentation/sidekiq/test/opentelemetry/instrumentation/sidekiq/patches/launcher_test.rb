@@ -47,7 +47,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Launcher do
         launcher.send(:❤)
         span_names = spans.map(&:name)
         _(span_names).must_include('Sidekiq::Launcher#heartbeat')
-        _(span_names).must_include('MULTI SADD EXISTS HMSET EXPIRE RPOP EXEC')
+        _(span_names).must_include('PIPELINED')
       end
 
       describe 'when peer_service config is set' do

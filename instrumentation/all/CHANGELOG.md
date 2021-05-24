@@ -1,19 +1,23 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.18.0 / 2021-05-21
+
+* ADDED: Add koala instrumentation
+
 ### v0.17.0 / 2021-04-22
 
-* ADDED: Add instrumentation for postgresql (pg gem) 
+* ADDED: Add instrumentation for postgresql (pg gem)
 
 ### v0.16.0 / 2021-03-17
 
-* ADDED: Instrument http gem 
-* ADDED: Instrument lmdb gem 
-* FIXED: Example scripts now reference local common lib 
-* DOCS: Replace Gitter with GitHub Discussions 
+* ADDED: Instrument http gem
+* ADDED: Instrument lmdb gem
+* FIXED: Example scripts now reference local common lib
+* DOCS: Replace Gitter with GitHub Discussions
 
 ### v0.15.0 / 2021-02-18
 
-* ADDED: Instrument http client gem 
+* ADDED: Instrument http client gem
 
 ### v0.14.0 / 2021-02-03
 
@@ -29,19 +33,19 @@
 
 ### v0.12.0 / 2020-12-24
 
-* ADDED: Instrument graphql 
+* ADDED: Instrument graphql
 
 ### v0.11.0 / 2020-12-11
 
-* FIXED: Copyright comments to not reference year 
+* FIXED: Copyright comments to not reference year
 
 ### v0.10.0 / 2020-12-03
 
-* FIXED: Otel-instrumentation-all not installing all 
+* FIXED: Otel-instrumentation-all not installing all
 
 ### v0.9.0 / 2020-11-27
 
-* ADDED: Add common helpers 
+* ADDED: Add common helpers
 
 ### v0.8.0 / 2020-10-27
 
@@ -49,7 +53,7 @@
 
 ### v0.7.0 / 2020-10-07
 
-* DOCS: Standardize toplevel docs structure and readme 
+* DOCS: Standardize toplevel docs structure and readme
 
 ### v0.6.0 / 2020-09-10
 

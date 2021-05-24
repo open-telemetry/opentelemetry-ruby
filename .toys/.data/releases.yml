@@ -34,6 +34,10 @@ gems:
   - name: opentelemetry-instrumentation-active_job
     directory: instrumentation/active_job
     version_constant: [OpenTelemetry, Instrumentation, ActiveJob, VERSION]
+    
+  - name: opentelemetry-instrumentation-bunny
+    directory: instrumentation/bunny
+    version_constant: [OpenTelemetry, Instrumentation, Bunny, VERSION]
 
   - name: opentelemetry-instrumentation-base
     directory: instrumentation/base

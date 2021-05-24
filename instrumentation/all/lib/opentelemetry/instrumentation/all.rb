@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry-instrumentation-active_job'
+require 'opentelemetry-instrumentation-bunny'
 require 'opentelemetry-instrumentation-lmdb'
 require 'opentelemetry-instrumentation-http'
 require 'opentelemetry-instrumentation-koala'

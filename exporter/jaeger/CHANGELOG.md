@@ -1,5 +1,14 @@
 # Release History: opentelemetry-exporter-jaeger
 
+### v0.18.0 / 2021-05-21
+
+* BREAKING CHANGE: Replace Time.now with Process.clock_gettime 
+
+* ADDED: Export to jaeger collectors w/ self-signed certs 
+* FIXED: Replace Time.now with Process.clock_gettime 
+* FIXED: Rename constant to hide warning message 
+* FIXED: Index a link trace_id in middle rather than end 
+
 ### v0.17.0 / 2021-04-22
 
 * ADDED: Add zipkin exporter 
