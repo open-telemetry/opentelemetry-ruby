@@ -11,8 +11,8 @@ require_relative '../../../../lib/opentelemetry/instrumentation/active_job'
 describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks do
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
-  let(:send_span) { spans.find { |s| s.name == 'TestJob send' } }
-  let(:process_span) { spans.find { |s| s.name == 'TestJob process' } }
+  let(:send_span) { spans.find { |s| s.name == 'default send' } }
+  let(:process_span) { spans.find { |s| s.name == 'default process' } }
 
   before { exporter.reset }
 
@@ -188,6 +188,38 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         _(span.attributes['messaging.destination_kind']).must_equal('queue')
         _(span.attributes['messaging.system']).must_equal('inline')
         _(span.attributes['messaging.message_id']).must_equal(job.job_id)
+      end
+    end
+  end
+
+  describe 'enable_job_class_span_names option' do
+    describe 'when false - default' do
+      it 'names spans according to the job queue' do
+        TestJob.set(queue: :foo).perform_later
+        send_span = exporter.finished_spans.find { |s| s.name == 'foo send' }
+        _(send_span).wont_be_nil
+
+        process_span = exporter.finished_spans.find { |s| s.name == 'foo process' }
+        _(process_span).wont_be_nil
+      end
+    end
+
+    describe 'when true' do
+      before do
+        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, enable_job_class_span_names: true)
+      end
+
+      after do
+        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, enable_job_class_span_names: false)
+      end
+
+      it 'names span according to the job class' do
+        TestJob.set(queue: :foo).perform_later
+        send_span = exporter.finished_spans.find { |s| s.name == 'TestJob send' }
+        _(send_span).wont_be_nil
+
+        process_span = exporter.finished_spans.find { |s| s.name == 'TestJob process' }
+        _(process_span).wont_be_nil
       end
     end
   end
