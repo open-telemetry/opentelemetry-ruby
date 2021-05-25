@@ -25,6 +25,7 @@ module OpenTelemetry
         end
 
         def hide_query_params(uri)
+          uri = uri.dup
           uri.query = '' if uri.query
 
           uri

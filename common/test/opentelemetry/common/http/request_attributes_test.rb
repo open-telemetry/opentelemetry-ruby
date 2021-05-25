@@ -35,15 +35,23 @@ describe OpenTelemetry::Common::HTTP::RequestAttributes do
     )
   end
 
-  it 'hides query params if config option provided' do
-    attributes = subject.from_request('GET', URI('http://example.com/foo?bar=baz'), hide_query_params: true)
-    _(attributes).must_equal(
-      'http.method' => 'GET',
-      'http.scheme' => 'http',
-      'http.url' => 'http://example.com/foo?',
-      'http.target' => '/foo?',
-      'peer.hostname' => 'example.com',
-      'peer.port' => 80
-    )
+  describe 'if hide_query_params config option provided' do
+    it 'hides query params in attributes' do
+      attributes = subject.from_request('GET', URI('http://example.com/foo?bar=baz'), hide_query_params: true)
+      _(attributes).must_equal(
+        'http.method' => 'GET',
+        'http.scheme' => 'http',
+        'http.url' => 'http://example.com/foo?',
+        'http.target' => '/foo?',
+        'peer.hostname' => 'example.com',
+        'peer.port' => 80
+      )
+    end
+
+    it 'does not alter input uri' do
+      uri = URI('http://example.com/foo?bar=baz')
+      subject.from_request('GET', uri, hide_query_params: true)
+      _(uri.query).must_equal('bar=baz')
+    end
   end
 end
