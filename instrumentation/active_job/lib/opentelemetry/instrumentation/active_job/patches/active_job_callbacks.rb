@@ -14,7 +14,7 @@ module OpenTelemetry
             base.class_eval do # rubocop:disable Metrics/BlockLength
               around_enqueue do |job, block|
                 span_kind = job.class.queue_adapter_name == 'inline' ? :client : :producer
-                span_name = "#{config[:enable_job_class_span_names] ? job.class : job.queue_name} send"
+                span_name = "#{otel_config[:enable_job_class_span_names] ? job.class : job.queue_name} send"
                 span_attributes = job_attributes(job)
                 otel_tracer.in_span(span_name, attributes: span_attributes, kind: span_kind) do
                   OpenTelemetry.propagation.inject(job.metadata)
@@ -24,18 +24,18 @@ module OpenTelemetry
 
               around_perform do |job, block|
                 span_kind = job.class.queue_adapter_name == 'inline' ? :server : :consumer
-                span_name = "#{config[:enable_job_class_span_names] ? job.class : job.queue_name} process"
+                span_name = "#{otel_config[:enable_job_class_span_names] ? job.class : job.queue_name} process"
                 span_attributes = job_attributes(job).merge('messaging.operation' => 'process')
 
                 propagated_context = OpenTelemetry.propagation.extract(job.metadata)
 
-                if config[:context_propagation] == :link
+                if context_propagation_option == :link
                   span_links = [
                     OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace.current_span(propagated_context).context)
                   ]
                 end
 
-                parent_context = (config[:context_propagation] == :child ? propagated_context : OpenTelemetry::Context.current)
+                parent_context = (context_propagation_option == :child ? propagated_context : OpenTelemetry::Context.current)
                 OpenTelemetry::Context.with_current(parent_context) do
                   otel_tracer.in_span(span_name, attributes: span_attributes, links: span_links, kind: span_kind) do |span|
                     span.set_attribute('messaging.active_job.executions', job.executions)
@@ -71,8 +71,14 @@ module OpenTelemetry
             ActiveJob::Instrumentation.instance.tracer
           end
 
-          def config
+          def otel_config
             ActiveJob::Instrumentation.instance.config
+          end
+
+          def context_propagation_option
+            # :link is the default option, but we put the fall-back here explicitly
+            # mainly to make testing things easier.
+            otel_config[:context_propagation] || :link
           end
         end
       end
