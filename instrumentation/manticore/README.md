@@ -49,6 +49,8 @@ Apache 2.0 license. See [LICENSE][license-github] for more information.
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
 
 
+
 TODO read
 https://github.com/open-telemetry/opentelemetry-ruby/blob/da4d74781a06731f4f990458f2410ae314565a77/CONTRIBUTING.md
 https://github.com/open-telemetry/opentelemetry-ruby/blob/da4d74781a06731f4f990458f2410ae314565a77/CODE_OF_CONDUCT.md
+
