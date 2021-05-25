@@ -10,7 +10,7 @@ module OpenTelemetry
       module Patches
         # Module to prepend to ActiveJob::Base for instrumentation.
         module ActiveJobCallbacks
-          def self.prepended(base) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+          def self.prepended(base) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
             base.class_eval do # rubocop:disable Metrics/BlockLength
               around_enqueue do |job, block|
                 span_kind = job.class.queue_adapter_name == 'inline' ? :client : :producer
