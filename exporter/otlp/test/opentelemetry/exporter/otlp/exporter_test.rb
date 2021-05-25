@@ -22,6 +22,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(http.ca_file).must_be_nil
       _(http.use_ssl?).must_equal true
       _(http.address).must_equal 'localhost'
+      _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_PEER
       _(http.port).must_equal 4317
     end
 
@@ -57,6 +58,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                      'OTEL_EXPORTER_OTLP_CERTIFICATE' => '/foo/bar',
                      'OTEL_EXPORTER_OTLP_HEADERS' => 'a=b,c=d',
                      'OTEL_EXPORTER_OTLP_COMPRESSION' => 'gzip',
+                     'OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE' => 'true',
                      'OTEL_EXPORTER_OTLP_TIMEOUT' => '11') do
         OpenTelemetry::Exporter::OTLP::Exporter.new
       end
@@ -68,6 +70,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(http.ca_file).must_equal '/foo/bar'
       _(http.use_ssl?).must_equal false
       _(http.address).must_equal 'localhost'
+      _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_NONE
       _(http.port).must_equal 1234
     end
 
@@ -76,11 +79,13 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                      'OTEL_EXPORTER_OTLP_CERTIFICATE' => '/foo/bar',
                      'OTEL_EXPORTER_OTLP_HEADERS' => 'a:b,c:d',
                      'OTEL_EXPORTER_OTLP_COMPRESSION' => 'flate',
+                     'OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER' => 'true',
                      'OTEL_EXPORTER_OTLP_TIMEOUT' => '11') do
         OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'http://localhost:4321',
                                                     certificate_file: '/baz',
                                                     headers: { 'x' => 'y' },
                                                     compression: 'gzip',
+                                                    ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE,
                                                     timeout: 12)
       end
       _(exp.instance_variable_get(:@headers)).must_equal('x' => 'y')
@@ -90,8 +95,36 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       http = exp.instance_variable_get(:@http)
       _(http.ca_file).must_equal '/baz'
       _(http.use_ssl?).must_equal false
+      _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_NONE
       _(http.address).must_equal 'localhost'
       _(http.port).must_equal 4321
+    end
+  end
+
+  describe 'ssl_verify_mode:' do
+    it 'can be set to VERIFY_NONE by an envvar' do
+      exp = with_env('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE' => 'true') do
+        OpenTelemetry::Exporter::OTLP::Exporter.new
+      end
+      http = exp.instance_variable_get(:@http)
+      _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_NONE
+    end
+
+    it 'can be set to VERIFY_PEER by an envvar' do
+      exp = with_env('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER' => 'true') do
+        OpenTelemetry::Exporter::OTLP::Exporter.new
+      end
+      http = exp.instance_variable_get(:@http)
+      _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_PEER
+    end
+
+    it 'VERIFY_PEER will override VERIFY_NONE' do
+      exp = with_env('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE' => 'true',
+                     'OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER' => 'true') do
+                       OpenTelemetry::Exporter::OTLP::Exporter.new
+                     end
+      http = exp.instance_variable_get(:@http)
+      _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_PEER
     end
   end
 
