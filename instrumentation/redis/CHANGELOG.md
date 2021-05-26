@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-redis
 
+### Unreleased
+
+* ADDED: Configuration option to enable or disable redis root spans [#777](https://github.com/open-telemetry/opentelemetry-ruby/pull/777)
+
 ### v0.18.0 / 2021-05-21
 
 * ADDED: Updated API depedency for 1.0.0.rc1
