@@ -21,7 +21,7 @@ module AppConfig
     new_app.config.eager_load = false
 
     # Prevent tests from creating log/*.log
-    new_app.config.logger = Logger.new('/dev/null')
+    new_app.config.logger = Logger.new(File::NULL)
 
     case Rails.version
     when /^6\.0/

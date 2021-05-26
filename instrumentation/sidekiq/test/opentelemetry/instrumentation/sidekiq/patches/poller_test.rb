@@ -58,7 +58,7 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Poller do
         end
       end
     end
-  end
+  end unless ENV['OMIT_SERVICES']
 
   describe '#wait' do
     it 'does not trace' do

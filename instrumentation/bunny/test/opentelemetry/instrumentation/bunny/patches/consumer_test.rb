@@ -14,7 +14,9 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Consumer do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Bunny::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
-  let(:url) { ENV.fetch(' RABBITMQ_URL') { 'amqp://guest:guest@rabbitmq:5672' } }
+  let(:host) { ENV.fetch('TEST_RABBITMQ_HOST') { 'localhost' } }
+  let(:port) { ENV.fetch('TEST_RABBITMQ_PORT') { '5672' } }
+  let(:url) { ENV.fetch('TEST_RABBITMQ_URL') { "amqp://guest:guest@#{host}:#{port}" } }
   let(:bunny) { Bunny.new(url) }
   let(:topic) { "topic-#{SecureRandom.uuid}" }
   let(:channel) { bunny.create_channel }
@@ -69,4 +71,4 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Consumer do
     _(linked_span_context.trace_id).must_equal(send_span.trace_id)
     _(linked_span_context.span_id).must_equal(send_span.span_id)
   end
-end
+end unless ENV['OMIT_SERVICES']

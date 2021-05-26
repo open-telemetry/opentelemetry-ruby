@@ -46,4 +46,4 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Client do
     _(spans[1].name).must_equal("#{topic} process")
     _(spans[1].kind).must_equal(:consumer)
   end
-end
+end unless ENV['OMIT_SERVICES']

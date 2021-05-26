@@ -72,4 +72,4 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Producer do
       _(spans.first.attributes['messaging.destination']).must_equal(async_topic)
     end
   end
-end
+end unless ENV['OMIT_SERVICES']

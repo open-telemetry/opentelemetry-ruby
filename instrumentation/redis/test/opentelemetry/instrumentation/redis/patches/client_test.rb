@@ -295,4 +295,4 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
       end
     end
   end
-end
+end unless ENV['OMIT_SERVICES']

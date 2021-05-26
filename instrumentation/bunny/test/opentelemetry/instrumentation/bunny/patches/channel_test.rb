@@ -14,7 +14,9 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Channel do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Bunny::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
-  let(:url) { ENV.fetch('RABBITMQ_URL') { 'amqp://guest:guest@rabbitmq:5672' } }
+  let(:host) { ENV.fetch('TEST_RABBITMQ_HOST') { 'localhost' } }
+  let(:port) { ENV.fetch('TEST_RABBITMQ_PORT') { '5672' } }
+  let(:url) { ENV.fetch('TEST_RABBITMQ_URL') { "amqp://guest:guest@#{host}:#{port}" } }
   let(:bunny) { Bunny.new(url) }
   let(:topic) { "topic-#{SecureRandom.uuid}" }
   let(:channel) { bunny.create_channel }
@@ -55,8 +57,8 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Channel do
     _(send_span.attributes['messaging.protocol']).must_equal('AMQP')
     _(send_span.attributes['messaging.protocol_version']).must_equal('0.9.1')
     _(send_span.attributes['messaging.rabbitmq.routing_key']).must_equal('ruby.news')
-    _(send_span.attributes['net.peer.name']).must_equal('rabbitmq')
-    _(send_span.attributes['net.peer.port']).must_equal(5672)
+    _(send_span.attributes['net.peer.name']).must_equal(host)
+    _(send_span.attributes['net.peer.port']).must_equal(port.to_i)
 
     receive_span = spans.find { |span| span.name == "#{topic}.ruby.news receive" }
     _(receive_span).wont_be_nil
@@ -67,8 +69,8 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Channel do
     _(receive_span.attributes['messaging.protocol']).must_equal('AMQP')
     _(receive_span.attributes['messaging.protocol_version']).must_equal('0.9.1')
     _(receive_span.attributes['messaging.rabbitmq.routing_key']).must_equal('ruby.news')
-    _(receive_span.attributes['net.peer.name']).must_equal('rabbitmq')
-    _(receive_span.attributes['net.peer.port']).must_equal(5672)
+    _(receive_span.attributes['net.peer.name']).must_equal(host)
+    _(receive_span.attributes['net.peer.port']).must_equal(port.to_i)
 
     process_span = spans.find { |span| span.name == "#{topic}.ruby.news process" }
     _(process_span).wont_be_nil
@@ -79,4 +81,4 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Channel do
     _(linked_span_context.trace_id).must_equal(send_span.trace_id)
     _(linked_span_context.span_id).must_equal(send_span.span_id)
   end
-end
+end unless ENV['OMIT_SERVICES']

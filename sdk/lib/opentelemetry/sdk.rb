@@ -55,7 +55,7 @@ module OpenTelemetry
     #   Configure everything
     #
     #     OpenTelemetry::SDK.configure do |c|
-    #       c.logger = Logger.new('/dev/null')
+    #       c.logger = Logger.new(File::NULL)
     #       c.add_span_processor SpanProcessor.new(SomeExporter.new)
     #       c.use_all
     #     end
