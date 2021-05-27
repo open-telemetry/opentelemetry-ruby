@@ -260,6 +260,31 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
       _(last_span.attributes['db.statement']).must_equal 'SET K x'
     end
 
+    describe 'when trace_root_spans is disabled' do
+      before do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install(trace_root_spans: false)
+      end
+
+      it 'traces redis spans with a parent' do
+        redis = redis_with_auth
+        OpenTelemetry.tracer_provider.tracer('tester').in_span('a root!') do
+          redis.set('a', 'b')
+        end
+
+        redis_span = exporter.finished_spans.find { |s| s.name == 'SET' }
+        _(redis_span.name).must_equal 'SET'
+        _(redis_span.attributes['db.statement']).must_equal 'SET ? ?'
+      end
+
+      it 'does not trace redis spans without a parent' do
+        redis = redis_with_auth
+        redis.set('a', 'b')
+
+        _(exporter.finished_spans.size).must_equal 0
+      end
+    end
+
     describe 'when enable_statement_obfuscation is enabled' do
       before do
         instrumentation.instance_variable_set(:@installed, false)
