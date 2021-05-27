@@ -6,7 +6,7 @@
 
 require 'test_helper'
 
-require_relative '../../../lib/opentelemetry/instrumentation/<%= instrumentation_name %>'
+require_relative '../../../../lib/opentelemetry/instrumentation/<%= instrumentation_name %>'
 
 describe OpenTelemetry::Instrumentation::<%= pascal_cased_instrumentation_name %> do
   let(:instrumentation) { OpenTelemetry::Instrumentation::<%= pascal_cased_instrumentation_name %>::Instrumentation.instance }
