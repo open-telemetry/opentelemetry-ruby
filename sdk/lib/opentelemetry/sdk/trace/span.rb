@@ -131,7 +131,7 @@ module OpenTelemetry
         #
         # @return [self] returns itself
         def add_event(name, attributes: nil, timestamp: nil)
-          event = Event.new(name, truncate_attribute_values(attributes), wall_clock(timestamp))
+          event = Event.new(name, truncate_attribute_values(attributes), relative_timestamp(timestamp))
 
           @mutex.synchronize do
             if @ended
@@ -233,7 +233,7 @@ module OpenTelemetry
               OpenTelemetry.logger.warn('Calling finish on an ended Span.')
               return self
             end
-            @end_timestamp = wall_clock(end_timestamp)
+            @end_timestamp = relative_timestamp(end_timestamp)
             @attributes = validated_attributes(@attributes).freeze
             @events.freeze
             @ended = true
@@ -276,7 +276,7 @@ module OpenTelemetry
         end
 
         # @api private
-        def initialize(context, parent_context, name, kind, parent_span_id, span_limits, span_processors, attributes, links, start_timestamp, resource, instrumentation_library) # rubocop:disable Metrics/AbcSize
+        def initialize(context, parent_context, parent_span, name, kind, parent_span_id, span_limits, span_processor, attributes, links, start_timestamp, resource, instrumentation_library) # rubocop:disable Metrics/AbcSize
           super(span_context: context)
           @mutex = Mutex.new
           @name = name
@@ -291,7 +291,14 @@ module OpenTelemetry
           @total_recorded_events = 0
           @total_recorded_links = links&.size || 0
           @total_recorded_attributes = attributes&.size || 0
-          @start_timestamp = wall_clock(start_timestamp)
+          @monotonic_start_timestamp = start_timestamp.nil? ? monotonic_now : nil
+          @start_timestamp = if start_timestamp.nil? && parent_span.recording? && parent_span.monotonic_start_timestamp
+                               relative_realtime(parent_span.start_timestamp, parent_span.monotonic_start_timestamp)
+                             elsif start_timestamp.nil?
+                               realtime_now
+                             else
+                               time_in_nanoseconds(start_timestamp)
+                             end
           @end_timestamp = nil
           @attributes = attributes.nil? ? nil : Hash[attributes] # We need a mutable copy of attributes.
           trim_span_attributes(@attributes)
@@ -301,6 +308,10 @@ module OpenTelemetry
         end
 
         # TODO: Java implementation overrides finalize to log if a span isn't finished.
+
+        protected
+
+        attr_reader :monotonic_start_timestamp
 
         private
 
@@ -376,9 +387,27 @@ module OpenTelemetry
           events << event
         end
 
-        def wall_clock(timestamp)
-          timestamp = (timestamp.to_r * 1_000_000_000).to_i unless timestamp.nil?
-          timestamp || Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond)
+        def relative_timestamp(timestamp)
+          return time_in_nanoseconds(timestamp) unless timestamp.nil?
+          return relative_realtime(start_timestamp, monotonic_start_timestamp) unless monotonic_start_timestamp.nil?
+
+          realtime_now
+        end
+
+        def time_in_nanoseconds(timestamp)
+          (timestamp.to_r * 1_000_000_000).to_i
+        end
+
+        def relative_realtime(realtime_base, monotonic_base)
+          realtime_base + (monotonic_now - monotonic_base)
+        end
+
+        def realtime_now
+          Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond)
+        end
+
+        def monotonic_now
+          Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)
         end
       end
       # rubocop:enable Metrics/ClassLength
