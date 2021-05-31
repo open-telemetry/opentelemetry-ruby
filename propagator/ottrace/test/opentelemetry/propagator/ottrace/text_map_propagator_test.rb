@@ -117,6 +117,26 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapPropagator do
       end
     end
 
+    describe 'given a minimal context with uppercase fields' do
+      let(:carrier) do
+        {
+          'ot-tracer-traceid' => trace_id_header.upcase,
+          'ot-tracer-spanid' => span_id_header.upcase,
+          'ot-tracer-sampled' => sampled_header
+        }
+      end
+
+      it 'extracts parent context' do
+        context = propagator.extract(carrier, context: parent_context)
+        extracted_context = OpenTelemetry::Trace.current_span(context).context
+
+        _(extracted_context.hex_trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
+        _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
+        _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::SAMPLED)
+        _(extracted_context).must_be(:remote?)
+      end
+    end
+
     describe 'given a context with sampling disabled' do
       let(:sampled_header) do
         'false'
