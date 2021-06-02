@@ -27,7 +27,7 @@ class RetryJob < ::ActiveJob::Base
 end
 
 ::ActiveJob::Base.queue_adapter = :inline
-::ActiveJob::Base.logger = Logger.new('/dev/null')
+::ActiveJob::Base.logger = Logger.new(File::NULL)
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
