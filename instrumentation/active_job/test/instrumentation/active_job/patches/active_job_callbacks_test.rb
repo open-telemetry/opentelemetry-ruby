@@ -224,7 +224,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     end
   end
 
-  describe 'context_propagation option' do
+  describe 'propagation_style option' do
     describe 'link - default' do
       it 'creates span links in separate traces' do
         # The inline job adapter executes the job immediately upon enqueuing it
@@ -249,11 +249,11 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
     describe 'when configured to do parent/child spans' do
       before do
-        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, context_propagation: :child)
+        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, propagation_style: :child)
       end
 
       after do
-        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, context_propagation: :link)
+        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, propagation_style: :link)
       end
 
       it 'creates a parent/child relationship' do
@@ -274,11 +274,11 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
     describe 'when explicitly configure for no propagation' do
       before do
-        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, context_propagation: :none)
+        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, propagation_style: :none)
       end
 
       after do
-        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, context_propagation: :link)
+        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, propagation_style: :link)
       end
 
       it 'skips link creation and does not create parent/child relationship' do

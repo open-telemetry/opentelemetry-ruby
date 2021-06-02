@@ -32,7 +32,7 @@ module OpenTelemetry
         #   '<job class name> <operation>'. When false (default), the span names
         #   will be set to '<destination / queue name> <operation>'
         #
-        # context_propagation: controls how the job's execution is traced and related
+        # propagation_style: controls how the job's execution is traced and related
         #   to the trace where the job was enqueued. Can be one of:
         #
         #   - :link (default) - the job will be executed in a separate trace. The
@@ -50,7 +50,7 @@ module OpenTelemetry
         # spans will always be children of the enqueueing spans. This is due to the way
         # ActiveJob immediately executes jobs during the process of "enqueueing" jobs when
         # using the `:inline` adapter.
-        option :context_propagation, default: :link, validate: ->(opt) { %i[link child none].include?(opt) }
+        option :propagation_style, default: :link, validate: ->(opt) { %i[link child none].include?(opt) }
         option :job_class_span_names, default: false, validate: :boolean
 
         private
