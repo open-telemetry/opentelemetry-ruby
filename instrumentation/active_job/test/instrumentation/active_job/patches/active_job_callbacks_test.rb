@@ -192,7 +192,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     end
   end
 
-  describe 'enable_job_class_span_names option' do
+  describe 'job_class_span_names option' do
     describe 'when false - default' do
       it 'names spans according to the job queue' do
         TestJob.set(queue: :foo).perform_later
@@ -206,11 +206,11 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
     describe 'when true' do
       before do
-        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, enable_job_class_span_names: true)
+        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, job_class_span_names: true)
       end
 
       after do
-        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, enable_job_class_span_names: false)
+        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, job_class_span_names: false)
       end
 
       it 'names span according to the job class' do

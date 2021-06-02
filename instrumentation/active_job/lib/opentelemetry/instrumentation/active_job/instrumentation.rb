@@ -28,7 +28,7 @@ module OpenTelemetry
 
         ## Supported configuration keys for the install config hash:
         #
-        # enable_job_class_span_names: when true, the span names will be set to
+        # job_class_span_names: when true, the span names will be set to
         #   '<job class name> <operation>'. When false (default), the span names
         #   will be set to '<destination / queue name> <operation>'
         #
@@ -51,7 +51,7 @@ module OpenTelemetry
         # ActiveJob immediately executes jobs during the process of "enqueueing" jobs when
         # using the `:inline` adapter.
         option :context_propagation, default: :link, validate: ->(opt) { %i[link child none].include?(opt) }
-        option :enable_job_class_span_names, default: false, validate: :boolean
+        option :job_class_span_names, default: false, validate: :boolean
 
         private
 
