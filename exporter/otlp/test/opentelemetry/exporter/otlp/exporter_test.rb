@@ -189,6 +189,27 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(result).must_equal(SUCCESS)
     end
 
+    it 'handles encoding errors with poise and grace' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      stub_request(:post, 'https://localhost:4317/v1/traces').to_return(status: 200)
+      span_data = create_span_data(total_recorded_attributes: 1, attributes: { 'a' => "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT) })
+
+      result = exporter.export([span_data])
+
+      # Needed so it doesn't crash the test
+      encoded_logger_output = log_stream.string.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?')
+
+      _(encoded_logger_output).must_match(
+        /ERROR -- : OpenTelemetry error: encoding error for key a and value ?/
+      )
+      _(result).must_equal(SUCCESS)
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
     it 'exports a span from a tracer' do
       stub_post = stub_request(:post, 'https://localhost:4317/v1/traces').to_return(status: 200)
       processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter, max_queue_size: 1, max_export_batch_size: 1)

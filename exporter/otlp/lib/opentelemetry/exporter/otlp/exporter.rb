@@ -341,6 +341,9 @@ module OpenTelemetry
 
         def as_otlp_key_value(key, value)
           Opentelemetry::Proto::Common::V1::KeyValue.new(key: key, value: as_otlp_any_value(value))
+        rescue Encoding::UndefinedConversionError => e
+          OpenTelemetry.handle_error(exception: e, message: "encoding error for key #{key} and value #{value}")
+          Opentelemetry::Proto::Common::V1::KeyValue.new(key: key, value: as_otlp_any_value('Encoding Error'))
         end
 
         def as_otlp_any_value(value)
