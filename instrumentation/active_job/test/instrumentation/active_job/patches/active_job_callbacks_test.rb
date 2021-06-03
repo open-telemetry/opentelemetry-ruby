@@ -9,12 +9,24 @@ require 'test_helper'
 require_relative '../../../../lib/opentelemetry/instrumentation/active_job'
 
 describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks do
+  let(:instrumentation) { OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance }
+  # Technically this is the default. But ActiveJob seems to act oddly if you re-install
+  # the instrumentation over and over again, so we manipulate instance variables to
+  # reset between tests, and that means we should set the default here.
+  let(:config) { { propagation_style: :link } }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
   let(:send_span) { spans.find { |s| s.name == 'default send' } }
   let(:process_span) { spans.find { |s| s.name == 'default process' } }
 
-  before { exporter.reset }
+  before do
+    instrumentation.instance_variable_set(:@config, config)
+    exporter.reset
+  end
+
+  after do
+    instrumentation.instance_variable_set(:@config, config)
+  end
 
   describe 'perform_later' do
     it 'traces enqueuing and processing the job' do
@@ -248,13 +260,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     end
 
     describe 'when configured to do parent/child spans' do
-      before do
-        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, propagation_style: :child)
-      end
-
-      after do
-        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, propagation_style: :link)
-      end
+      let(:config) { { propagation_style: :child } }
 
       it 'creates a parent/child relationship' do
         ::ActiveJob::Base.queue_adapter = :async
@@ -273,13 +279,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     end
 
     describe 'when explicitly configure for no propagation' do
-      before do
-        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, propagation_style: :none)
-      end
-
-      after do
-        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, propagation_style: :link)
-      end
+      let(:config) { { propagation_style: :none } }
 
       it 'skips link creation and does not create parent/child relationship' do
         ::ActiveJob::Base.queue_adapter = :async

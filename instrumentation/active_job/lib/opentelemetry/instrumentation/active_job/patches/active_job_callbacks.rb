@@ -29,13 +29,13 @@ module OpenTelemetry
 
                 propagated_context = OpenTelemetry.propagation.extract(job.metadata)
 
-                if propagation_style == :link
+                if otel_config[:propagation_style] == :link
                   span_links = [
                     OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace.current_span(propagated_context).context)
                   ]
                 end
 
-                parent_context = (propagation_style == :child ? propagated_context : OpenTelemetry::Context.current)
+                parent_context = (otel_config[:propagation_style] == :child ? propagated_context : OpenTelemetry::Context.current)
                 OpenTelemetry::Context.with_current(parent_context) do
                   otel_tracer.in_span(span_name, attributes: span_attributes, links: span_links, kind: span_kind) do |span|
                     span.set_attribute('messaging.active_job.executions', job.executions)
@@ -73,12 +73,6 @@ module OpenTelemetry
 
           def otel_config
             ActiveJob::Instrumentation.instance.config
-          end
-
-          def propagation_style
-            # :link is the default option, but we put the fall-back here explicitly
-            # mainly to make testing things easier.
-            otel_config[:propagation_style] || :link
           end
         end
       end
