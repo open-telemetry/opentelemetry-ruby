@@ -1,5 +1,11 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.18.1 / 2021-06-03
+
+* ADDED: Add a SSL verify mode option for the OTLP exporter 
+* FIXED: Handle OTLP exporter encoding exceptions 
+* DOCS: Remove the OTLP receiver legacy gRPC port(55680) references 
+
 ### v0.18.0 / 2021-05-21
 
 * BREAKING CHANGE: Replace Time.now with Process.clock_gettime 
