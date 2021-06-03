@@ -12,7 +12,6 @@ require 'minitest/autorun'
 require 'webmock/minitest'
 
 # require 'pry'
-# require 'pry-byebug'
 
 class TestJob < ::ActiveJob::Base
   def perform; end
