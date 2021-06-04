@@ -22,6 +22,22 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
     def self.perform(*args); end
   end
 
+  class BaggageTestingJob
+    @queue = :super_urgent
+
+    def self.perform(*args)
+      OpenTelemetry::Trace.current_span['success'] = true if OpenTelemetry.baggage.value('testing_baggage') == 'it_worked'
+    end
+  end
+
+  class ExceptionTestingJob
+    @queue = :super_urgent
+
+    def self.perform(*args)
+      raise 'a little hell'
+    end
+  end
+
   before do
     instrumentation.install(config)
     exporter.reset
@@ -53,8 +69,8 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       _(job_span.trace_id).wont_equal(enqueuer_span.trace_id)
     end
 
-    describe 'when job_class_span_names is enabled' do
-      let(:config) { { job_class_span_names: true } }
+    describe 'when span_naming is job_class' do
+      let(:config) { { span_naming: :job_class } }
 
       it 'uses the job class name for the span name' do
         ::Resque.enqueue(DummyJob)
@@ -80,6 +96,27 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
         _(job_span.parent_span_id).wont_equal(enqueuer_span.span_id)
         _(job_span.trace_id).wont_equal(enqueuer_span.trace_id)
       end
+
+      it 'propagates baggage' do
+        ctx = OpenTelemetry.baggage.set_value('testing_baggage', 'it_worked')
+        OpenTelemetry::Context.with_current(ctx) do
+          ::Resque.enqueue(BaggageTestingJob)
+        end
+
+        work_off_jobs
+
+        _(job_span.attributes['success']).must_equal(true)
+      end
+
+      it 'records exceptions' do
+        ::Resque.enqueue(ExceptionTestingJob)
+        _(-> { work_off_jobs }).must_raise(RuntimeError)
+
+        ev = job_span.events
+        _(ev[0].attributes['exception.type']).must_equal('RuntimeError')
+        _(ev[0].attributes['exception.message']).must_equal('a little hell')
+        _(ev[0].attributes['exception.stacktrace']).wont_be_nil
+      end
     end
 
     describe 'when propagation_style is child' do
@@ -92,6 +129,27 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
         enqueuer_span = finished_spans.first
         _(job_span.parent_span_id).must_equal(enqueuer_span.span_id)
         _(job_span.trace_id).must_equal(enqueuer_span.trace_id)
+      end
+
+      it 'propagates baggage' do
+        ctx = OpenTelemetry.baggage.set_value('testing_baggage', 'it_worked')
+        OpenTelemetry::Context.with_current(ctx) do
+          ::Resque.enqueue(BaggageTestingJob)
+        end
+
+        work_off_jobs
+
+        _(job_span.attributes['success']).must_equal(true)
+      end
+
+      it 'records exceptions' do
+        ::Resque.enqueue(ExceptionTestingJob)
+        _(-> { work_off_jobs }).must_raise(RuntimeError)
+
+        ev = job_span.events
+        _(ev[0].attributes['exception.type']).must_equal('RuntimeError')
+        _(ev[0].attributes['exception.message']).must_equal('a little hell')
+        _(ev[0].attributes['exception.stacktrace']).wont_be_nil
       end
     end
 
@@ -106,6 +164,27 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
 
         _(job_span.parent_span_id).wont_equal(enqueuer_span.span_id)
         _(job_span.trace_id).wont_equal(enqueuer_span.trace_id)
+      end
+
+      it 'propagates baggage' do
+        ctx = OpenTelemetry.baggage.set_value('testing_baggage', 'it_worked')
+        OpenTelemetry::Context.with_current(ctx) do
+          ::Resque.enqueue(BaggageTestingJob)
+        end
+
+        work_off_jobs
+
+        _(job_span.attributes['success']).must_equal(true)
+      end
+
+      it 'records exceptions' do
+        ::Resque.enqueue(ExceptionTestingJob)
+        _(-> { work_off_jobs }).must_raise(RuntimeError)
+
+        ev = job_span.events
+        _(ev[0].attributes['exception.type']).must_equal('RuntimeError')
+        _(ev[0].attributes['exception.message']).must_equal('a little hell')
+        _(ev[0].attributes['exception.stacktrace']).wont_be_nil
       end
     end
   end unless ENV['OMIT_SERVICES']

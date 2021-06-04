@@ -10,7 +10,7 @@ module OpenTelemetry
       module Patches
         # Module to prepend to Resque::Job for instrumentation
         module ResqueJob
-          def perform # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+          def perform # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
             job_class = payload_class_name
 
             attributes = {
@@ -20,25 +20,30 @@ module OpenTelemetry
               'messaging.resque.job_class' => job_class
             }
 
-            span_name = if config[:job_class_span_names]
-                          "#{job_class} process"
-                        else
-                          "#{queue} process"
+            span_name = case config[:span_naming]
+                        when :queue then "#{queue} process"
+                        when :job_class then "#{job_class} process"
+                        else "#{queue} process"
                         end
 
             extracted_context = OpenTelemetry.propagation.extract(@payload)
 
             OpenTelemetry::Context.with_current(extracted_context) do
-              if config[:propagation_style] == :link
+              if config[:propagation_style] == :child
+                tracer.in_span(span_name, attributes: attributes, kind: :consumer) { super }
+              else
                 links = []
                 span_context = OpenTelemetry::Trace.current_span(extracted_context).context
-                links << OpenTelemetry::Trace::Link.new(span_context) if span_context.valid?
-                OpenTelemetry::Trace.with_span(tracer.start_root_span(span_name, attributes: attributes, links: links, kind: :consumer)) do
+                links << OpenTelemetry::Trace::Link.new(span_context) if config[:propagation_style] == :link && span_context.valid?
+                span = tracer.start_root_span(span_name, attributes: attributes, links: links, kind: :consumer)
+                OpenTelemetry::Trace.with_span(span) do
                   super
-                end
-              else
-                tracer.in_span(span_name, attributes: attributes, kind: :consumer) do
-                  super
+                rescue Exception => e # rubocop:disable Lint/RescueException
+                  span&.record_exception(e)
+                  span&.status = OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::ERROR, description: "Unhandled exception of type: #{e.class}")
+                  raise e
+                ensure
+                  span&.finish
                 end
               end
             end

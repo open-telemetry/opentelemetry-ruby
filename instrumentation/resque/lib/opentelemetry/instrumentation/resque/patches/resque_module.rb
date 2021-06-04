@@ -29,10 +29,10 @@ module OpenTelemetry
                 attributes['messaging.resque.job_class'] = job_class
               end
 
-              span_name = if config[:job_class_span_names]
-                            "#{job_class} send"
-                          else
-                            "#{queue} send"
+              span_name = case config[:span_naming]
+                          when :queue then "#{queue} send"
+                          when :job_class then "#{job_class} send"
+                          else "#{queue} send"
                           end
 
               tracer.in_span(span_name, attributes: attributes, kind: :producer) do

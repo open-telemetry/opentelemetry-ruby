@@ -39,8 +39,8 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueModule do
       _(enqueue_span.attributes['messaging.destination_kind']).must_equal('queue')
     end
 
-    describe 'when job_class_span_names is enabled' do
-      let(:config) { { job_class_span_names: true } }
+    describe 'when span_naming is job_class' do
+      let(:config) { { span_naming: :job_class } }
 
       it 'uses the job class name for the span name' do
         ::Resque.enqueue(DummyJob)

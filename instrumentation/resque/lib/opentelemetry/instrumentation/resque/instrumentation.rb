@@ -18,8 +18,8 @@ module OpenTelemetry
           defined?(::Resque)
         end
 
-        option :job_class_span_names, default: false, validate: :boolean
-        option :propagation_style,    default: :link, validate: ->(opt) { %i[link child none].include?(opt) }
+        option :span_naming,       default: :queue, validate: ->(opt) { %I[job_class queue].include?(opt) }
+        option :propagation_style, default: :link,  validate: ->(opt) { %i[link child none].include?(opt) }
 
         private
 
