@@ -159,7 +159,7 @@ module OpenTelemetry
           event_attributes = {
             'exception.type' => exception.class.to_s,
             'exception.message' => exception.message,
-            'exception.stacktrace' => exception.full_message(highlight: false, order: :top)
+            'exception.stacktrace' => exception.full_message(highlight: false, order: :top).encode('UTF-8', invalid: :replace, undef: :replace, replace: '�')
           }
           event_attributes.merge!(attributes) unless attributes.nil?
           add_event('exception', attributes: event_attributes)

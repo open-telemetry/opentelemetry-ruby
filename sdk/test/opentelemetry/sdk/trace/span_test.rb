@@ -290,6 +290,25 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(ev.attributes['bar']).must_equal('baz')
     end
 
+    it 'encodes the stacktrace' do
+      begin
+        raise "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT)
+      rescue StandardError => e
+        span.record_exception(e)
+      end
+
+      events = span.events
+      _(events.size).must_equal(1)
+      ev = events[0]
+
+      _(ev.name).must_equal('exception')
+
+      # If this raises here, it will also raise during encoding
+      # at the time of export.
+      ev.attributes['exception.stacktrace'].encode('UTF-8')
+      _(ev.attributes['exception.stacktrace']).must_include('� (RuntimeError)')
+    end
+
     it 'records multiple errors' do
       3.times { span.record_exception(error) }
       events = span.events
