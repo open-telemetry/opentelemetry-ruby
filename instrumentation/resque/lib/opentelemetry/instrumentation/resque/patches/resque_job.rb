@@ -28,17 +28,18 @@ module OpenTelemetry
 
             extracted_context = OpenTelemetry.propagation.extract(@payload)
 
-            links = []
-            if config[:propagation_style] == :link
-              span_context = OpenTelemetry::Trace.current_span(extracted_context).context
-              links << OpenTelemetry::Trace::Link.new(span_context) if span_context.valid?
-            end
-
-            parent_context = (config[:propagation_style] == :child ? extracted_context : OpenTelemetry::Context.current)
-
-            OpenTelemetry::Context.with_current(parent_context) do
-              tracer.in_span(span_name, attributes: attributes, links: links, kind: :consumer) do
-                super
+            OpenTelemetry::Context.with_current(extracted_context) do
+              if config[:propagation_style] == :link
+                links = []
+                span_context = OpenTelemetry::Trace.current_span(extracted_context).context
+                links << OpenTelemetry::Trace::Link.new(span_context) if span_context.valid?
+                OpenTelemetry::Trace.with_span(tracer.start_root_span(span_name, attributes: attributes, links: links, kind: :consumer)) do
+                  super
+                end
+              else
+                tracer.in_span(span_name, attributes: attributes, kind: :consumer) do
+                  super
+                end
               end
             end
           end
