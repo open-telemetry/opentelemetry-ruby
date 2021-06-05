@@ -116,7 +116,7 @@ module OpenTelemetry
       # at each stage. The setup process is:
       #   - setup logging
       #   - setup propagation
-      #   - setup tracer_provider and meter_provider
+      #   - setup tracer_provider
       #   - install instrumentation
       def configure
         OpenTelemetry.logger = logger
@@ -149,17 +149,17 @@ module OpenTelemetry
       end
 
       def configure_span_processors
-        processors = @span_processors.empty? ? [wrapped_exporter_from_env].compact : @span_processors
+        processors = @span_processors.empty? ? [wrapped_span_exporter_from_env].compact : @span_processors
         processors.each { |p| tracer_provider.add_span_processor(p) }
       end
 
-      def wrapped_exporter_from_env
+      def wrapped_span_exporter_from_env
         exporter = ENV.fetch('OTEL_TRACES_EXPORTER', 'otlp')
         case exporter
         when 'none' then nil
-        when 'otlp' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::OTLP::Exporter')
-        when 'jaeger' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::Jaeger::CollectorExporter')
-        when 'zipkin' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::Zipkin::Exporter')
+        when 'otlp' then fetch_span_exporter(exporter, 'OpenTelemetry::Exporter::OTLP::Exporter')
+        when 'jaeger' then fetch_span_exporter(exporter, 'OpenTelemetry::Exporter::Jaeger::CollectorExporter')
+        when 'zipkin' then fetch_span_exporter(exporter, 'OpenTelemetry::Exporter::Zipkin::Exporter')
         when 'console' then Trace::Export::SimpleSpanProcessor.new(Trace::Export::ConsoleSpanExporter.new)
         else
           OpenTelemetry.logger.warn "The #{exporter} exporter is unknown and cannot be configured, spans will not be exported"
@@ -192,7 +192,7 @@ module OpenTelemetry
         nil
       end
 
-      def fetch_exporter(name, class_name)
+      def fetch_span_exporter(name, class_name)
         Trace::Export::BatchSpanProcessor.new(Kernel.const_get(class_name).new)
       rescue NameError
         OpenTelemetry.logger.warn "The #{name} exporter cannot be configured - please add opentelemetry-exporter-#{name} to your Gemfile, spans will not be exported"
