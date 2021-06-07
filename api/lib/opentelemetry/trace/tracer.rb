@@ -37,7 +37,7 @@ module OpenTelemetry
       end
 
       def start_root_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
-        Span.new
+        Span::INVALID
       end
 
       # Used when a caller wants to manage the activation/deactivation and lifecycle of
@@ -49,12 +49,12 @@ module OpenTelemetry
       #
       # @return [Span]
       def start_span(name, with_parent: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
-        span_context = OpenTelemetry::Trace.current_span(with_parent).context
+        span = OpenTelemetry::Trace.current_span(with_parent)
 
-        if span_context.valid?
-          Span.new(span_context: span_context)
+        if span.context.valid?
+          span
         else
-          Span.new
+          Span::INVALID
         end
       end
     end
