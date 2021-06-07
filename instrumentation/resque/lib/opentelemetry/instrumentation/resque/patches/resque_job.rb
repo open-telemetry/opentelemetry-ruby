@@ -10,7 +10,7 @@ module OpenTelemetry
       module Patches
         # Module to prepend to Resque::Job for instrumentation
         module ResqueJob
-          def perform # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
+          def perform # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
             job_class = payload_class_name
 
             attributes = {
@@ -21,7 +21,6 @@ module OpenTelemetry
             }
 
             span_name = case config[:span_naming]
-                        when :queue then "#{queue} process"
                         when :job_class then "#{job_class} process"
                         else "#{queue} process"
                         end

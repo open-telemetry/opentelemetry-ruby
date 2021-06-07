@@ -30,7 +30,6 @@ module OpenTelemetry
               end
 
               span_name = case config[:span_naming]
-                          when :queue then "#{queue} send"
                           when :job_class then "#{job_class} send"
                           else "#{queue} send"
                           end
