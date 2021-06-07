@@ -1,0 +1,33 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+module OpenTelemetry
+  module Instrumentation
+    module ActionView
+      # The Instrumentation class contains logic to detect and install the ActionView instrumentation
+      class Instrumentation < OpenTelemetry::Instrumentation::Base
+        MINIMUM_VERSION = Gem::Version.new('5.2.0')
+        install do |_config|
+          require_dependencies
+        end
+
+        present do
+          defined?(::ActionView)
+        end
+
+        compatible do
+          Gem.loaded_specs['actionview'].version >= MINIMUM_VERSION
+        end
+
+        private
+
+        def require_dependencies
+          require_relative 'railtie.rb'
+        end
+      end
+    end
+  end
+end

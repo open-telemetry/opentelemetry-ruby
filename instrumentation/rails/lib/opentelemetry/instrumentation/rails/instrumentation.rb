@@ -28,6 +28,8 @@ module OpenTelemetry
 
         def require_dependencies
           require_relative 'patches/action_controller/metal'
+          require_relative 'fanout'
+          require_relative 'span_subscriber'
         end
 
         def require_railtie
