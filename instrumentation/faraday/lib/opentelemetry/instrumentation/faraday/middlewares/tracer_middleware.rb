@@ -50,6 +50,9 @@ module OpenTelemetry
             instrumentation_attrs.merge(
               OpenTelemetry::Common::HTTP::ClientContext.attributes
             )
+          rescue StandardError => e
+            OpenTelemetry.logger.debug("[Faraday] Error creating span attrs: #{e}")
+            {}
           end
 
           def tracer
