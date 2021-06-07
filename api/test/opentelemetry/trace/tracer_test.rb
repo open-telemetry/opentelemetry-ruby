@@ -39,7 +39,6 @@ describe OpenTelemetry::Trace::Tracer do
   describe '#in_span' do
     it 'yields the new span' do
       tracer.in_span('wrapper') do |span|
-        _(span).wont_equal(invalid_span)
         _(OpenTelemetry::Trace.current_span).must_equal(span)
       end
     end
@@ -65,9 +64,10 @@ describe OpenTelemetry::Trace::Tracer do
   end
 
   describe '#start_root_span' do
-    it 'returns a valid span' do
+    it 'returns an invalid unsampled span' do
       span = tracer.start_root_span('root')
-      _(span.context).must_be :valid?
+      _(span.context).wont_be :valid?
+      _(span.context.trace_flags).wont_be :sampled?
     end
   end
 
@@ -78,16 +78,16 @@ describe OpenTelemetry::Trace::Tracer do
       _(span.context).must_equal(parent_span_context)
     end
 
-    it 'returns a span with a new context by default' do
+    it 'returns an invalid unsampled span by default' do
       span = tracer.start_span('op')
-      _(span.context).must_be :valid?
-      _(span.context).wont_equal(OpenTelemetry::Trace.current_span.context)
+      _(span.context).wont_be :valid?
+      _(span.context.trace_flags).wont_be :sampled?
     end
 
-    it 'returns a span with a new context when passed an invalid context' do
+    it 'returns an invalid unsampled span when passed an invalid parent context' do
       span = tracer.start_span('op', with_parent: invalid_parent_context)
-      _(span.context).must_be :valid?
-      _(span.context).wont_equal(invalid_span_context)
+      _(span.context).wont_be :valid?
+      _(span.context.trace_flags).wont_be :sampled?
     end
   end
 end
