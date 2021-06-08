@@ -18,8 +18,8 @@ module OpenTelemetry
       # Propagates context using OTTrace header format
       class TextMapPropagator
         PADDING = '0' * 16
-        VALID_TRACE_ID_REGEX = /^[0-9a-f]{32}$/.freeze
-        VALID_SPAN_ID_REGEX = /^[0-9a-f]{16}$/.freeze
+        VALID_TRACE_ID_REGEX = /^[0-9a-f]{32}$/i.freeze
+        VALID_SPAN_ID_REGEX = /^[0-9a-f]{16}$/i.freeze
         TRACE_ID_64_BIT_WIDTH = 64 / 4
         TRACE_ID_HEADER = 'ot-tracer-traceid'
         SPAN_ID_HEADER = 'ot-tracer-spanid'
@@ -118,7 +118,7 @@ module OpenTelemetry
         end
 
         def baggage
-          OpenTelemetry.baggage
+          OpenTelemetry::Baggage
         end
 
         def inject_span_context(span_context:, carrier:, setter:)

@@ -28,7 +28,7 @@ describe OpenTelemetry::SDK::Configurator do
       _(configurator.logger).must_be_instance_of(Logger)
     end
     it 'assigns the logger to OpenTelemetry.logger' do
-      custom_logger = Logger.new('/dev/null', level: 'ERROR')
+      custom_logger = Logger.new(File::NULL, level: 'ERROR')
       _(OpenTelemetry.logger).wont_equal custom_logger
       OpenTelemetry::SDK.configure { |c| c.logger = custom_logger }
       _(OpenTelemetry.logger).must_equal custom_logger
@@ -106,16 +106,6 @@ describe OpenTelemetry::SDK::Configurator do
   end
 
   describe '#configure' do
-    describe 'baggage' do
-      it 'is an instance of SDK::Baggage::Manager' do
-        configurator.configure
-
-        _(OpenTelemetry.baggage).must_be_instance_of(
-          OpenTelemetry::Baggage::Manager
-        )
-      end
-    end
-
     describe 'propagators' do
       it 'defaults to trace context and baggage' do
         configurator.configure

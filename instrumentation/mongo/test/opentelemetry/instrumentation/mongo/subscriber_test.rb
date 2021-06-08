@@ -363,4 +363,4 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
       end
     end
   end
-end
+end unless ENV['OMIT_SERVICES']
