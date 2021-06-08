@@ -10,8 +10,10 @@ describe OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter do
   export = OpenTelemetry::SDK::Trace::Export
 
   let(:captured_stdout) { StringIO.new }
-  let(:spans)    { [Object.new, Object.new] }
-  let(:exporter) { export::ConsoleSpanExporter.new }
+  let(:span_data1) { OpenTelemetry::SDK::Trace::SpanData.new(name: 'name1') }
+  let(:span_data2) { OpenTelemetry::SDK::Trace::SpanData.new(name: 'name2') }
+  let(:spans)      { [span_data1, span_data2] }
+  let(:exporter)   { export::ConsoleSpanExporter.new }
 
   before do
     @original_stdout = $stdout
@@ -35,7 +37,7 @@ describe OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter do
   it 'outputs to console (stdout)' do
     exporter.export(spans)
 
-    _(captured_stdout.string).must_match(/#<Object:/)
+    _(captured_stdout.string).must_match(/#<struct OpenTelemetry::SDK::Trace::SpanData/)
   end
 
   it 'accepts calls to #force_flush' do

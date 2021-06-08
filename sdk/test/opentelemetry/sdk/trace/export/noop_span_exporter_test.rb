@@ -9,8 +9,10 @@ require 'test_helper'
 describe OpenTelemetry::SDK::Trace::Export::NoopSpanExporter do
   export = OpenTelemetry::SDK::Trace::Export
 
-  let(:spans)    { [Object.new, Object.new] }
-  let(:exporter) { export::NoopSpanExporter.new }
+  let(:span_data1) { OpenTelemetry::SDK::Trace::SpanData.new(name: 'name1') }
+  let(:span_data2) { OpenTelemetry::SDK::Trace::SpanData.new(name: 'name2') }
+  let(:spans)      { [span_data1, span_data2] }
+  let(:exporter)   { export::NoopSpanExporter.new }
 
   it 'accepts an Array of SpanData as arg to #export and succeeds' do
     _(exporter.export(spans)).must_equal export::SUCCESS
