@@ -167,20 +167,23 @@ module OpenTelemetry
 
         # Sets the Status to the Span
         #
-        # If used, this will override the default Span status. Default is OK.
+        # If used, this will override the default Span status. Default has code = Status::UNSET.
         #
-        # Only the value of the last call will be recorded, and implementations
-        # are free to ignore previous calls.
+        # An attempt to set the status with code == Status::UNSET is ignored.
+        # If the status is set with code == Status::OK, any further attempt to set the status
+        # is ignored.
         #
         # @param [Status] status The new status, which overrides the default Span
-        #   status, which is OK.
+        #   status, which has code = Status::UNSET.
         #
         # @return [void]
         def status=(status)
+          return if status.code == OpenTelemetry::Trace::Status::UNSET
+
           @mutex.synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling status= on an ended Span.')
-            else
+            elsif @status.code != OpenTelemetry::Trace::Status::OK
               @status = status
             end
           end
