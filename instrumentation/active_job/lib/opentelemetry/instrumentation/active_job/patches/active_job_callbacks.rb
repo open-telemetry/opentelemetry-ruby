@@ -10,7 +10,7 @@ module OpenTelemetry
       module Patches
         # Module to prepend to ActiveJob::Base for instrumentation.
         module ActiveJobCallbacks
-          def self.prepended(base) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
+          def self.prepended(base) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
             base.class_eval do # rubocop:disable Metrics/BlockLength
               around_enqueue do |job, block|
                 span_kind = job.class.queue_adapter_name == 'inline' ? :client : :producer
@@ -22,24 +22,36 @@ module OpenTelemetry
                 end
               end
 
-              around_perform do |job, block|
+              around_perform do |job, block| # rubocop:disable Metrics/BlockLength
                 span_kind = job.class.queue_adapter_name == 'inline' ? :server : :consumer
                 span_name = "#{otel_config[:span_naming] == :job_class ? job.class : job.queue_name} process"
                 span_attributes = job_attributes(job).merge('messaging.operation' => 'process')
 
-                propagated_context = OpenTelemetry.propagation.extract(job.metadata)
+                extracted_context = OpenTelemetry.propagation.extract(job.metadata)
+                OpenTelemetry::Context.with_current(extracted_context) do
+                  if otel_config[:propagation_style] == :child
+                    otel_tracer.in_span(span_name, attributes: span_attributes, kind: span_kind) do |span|
+                      span.set_attribute('messaging.active_job.executions', job.executions)
+                      block.call
+                    end
+                  else
+                    span_links = []
+                    if otel_config[:propagation_style] == :link
+                      span_context = OpenTelemetry::Trace.current_span(extracted_context).context
+                      span_links << OpenTelemetry::Trace::Link.new(span_context) if span_context.valid?
+                    end
 
-                if otel_config[:propagation_style] == :link
-                  span_links = [
-                    OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace.current_span(propagated_context).context)
-                  ]
-                end
-
-                parent_context = (otel_config[:propagation_style] == :child ? propagated_context : OpenTelemetry::Context.current)
-                OpenTelemetry::Context.with_current(parent_context) do
-                  otel_tracer.in_span(span_name, attributes: span_attributes, links: span_links, kind: span_kind) do |span|
-                    span.set_attribute('messaging.active_job.executions', job.executions)
-                    block.call
+                    root_span = otel_tracer.start_root_span(span_name, attributes: span_attributes, links: span_links, kind: span_kind)
+                    OpenTelemetry::Trace.with_span(root_span) do |span|
+                      span.set_attribute('messaging.active_job.executions', job.executions)
+                      block.call
+                    rescue Exception => e # rubocop:disable Lint/RescueException
+                      span.record_exception(e)
+                      span.status = OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::ERROR, description: "Unhandled exception of type: #{e.class}")
+                      raise e
+                    ensure
+                      root_span.finish
+                    end
                   end
                 end
               ensure
