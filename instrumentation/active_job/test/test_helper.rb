@@ -25,6 +25,12 @@ class RetryJob < ::ActiveJob::Base
   end
 end
 
+class BaggageJob < ::ActiveJob::Base
+  def perform
+    OpenTelemetry::Trace.current_span['success'] = true if OpenTelemetry.baggage.value('testing_baggage') == 'it_worked'
+  end
+end
+
 ::ActiveJob::Base.queue_adapter = :inline
 ::ActiveJob::Base.logger = Logger.new(File::NULL)
 
