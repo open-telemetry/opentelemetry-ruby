@@ -10,6 +10,7 @@ require_relative '../../../lib/opentelemetry/instrumentation/rack'
 
 describe OpenTelemetry::Instrumentation::Rack do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Rack::Instrumentation.instance }
+  let(:new_span) { OpenTelemetry::Trace.non_recording_span(OpenTelemetry::Trace::SpanContext.new) }
 
   it 'has #name' do
     _(instrumentation.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
@@ -32,7 +33,7 @@ describe OpenTelemetry::Instrumentation::Rack do
     end
 
     it 'returns the span when set' do
-      test_span = OpenTelemetry::Trace::Span.new
+      test_span = new_span
       context = OpenTelemetry::Instrumentation::Rack.context_with_span(test_span)
       _(OpenTelemetry::Instrumentation::Rack.current_span(context)).must_equal(test_span)
     end
@@ -40,8 +41,8 @@ describe OpenTelemetry::Instrumentation::Rack do
 
   describe '#with_span' do
     it 'respects context nesting' do
-      test_span = OpenTelemetry::Trace::Span.new
-      test_span2 = OpenTelemetry::Trace::Span.new
+      test_span = new_span
+      test_span2 = new_span
       OpenTelemetry::Instrumentation::Rack.with_span(test_span) do
         _(OpenTelemetry::Instrumentation::Rack.current_span).must_equal(test_span)
 

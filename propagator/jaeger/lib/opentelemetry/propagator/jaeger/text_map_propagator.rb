@@ -98,7 +98,7 @@ module OpenTelemetry
             trace_flags: to_trace_flags(sampling_flags),
             remote: true
           )
-          Trace::Span.new(span_context: span_context)
+          OpenTelemetry::Trace.non_recording_span(span_context)
         end
 
         def context_with_extracted_baggage(carrier, context, getter)

@@ -161,8 +161,8 @@ describe OpenTelemetry::Propagator::B3::Single::TextMapPropagator do
                      trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT,
                      b3_debug: false)
     context = OpenTelemetry::Trace.context_with_span(
-      OpenTelemetry::Trace::Span.new(
-        span_context: OpenTelemetry::Trace::SpanContext.new(
+      OpenTelemetry::Trace.non_recording_span(
+        OpenTelemetry::Trace::SpanContext.new(
           trace_id: Array(trace_id).pack('H*'),
           span_id: Array(span_id).pack('H*'),
           trace_flags: trace_flags

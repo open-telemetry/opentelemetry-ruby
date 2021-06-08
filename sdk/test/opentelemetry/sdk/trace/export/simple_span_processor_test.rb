@@ -9,7 +9,7 @@ require 'test_helper'
 def stub_span_builder(recording: false)
   trace_flags = recording ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
   ctx = OpenTelemetry::Trace::SpanContext.new(trace_flags: trace_flags)
-  span = OpenTelemetry::Trace::Span.new(span_context: ctx)
+  span = OpenTelemetry::Trace.non_recording_span(ctx)
   def span.to_span_data; end
 
   span.define_singleton_method(:recording?) { recording }
