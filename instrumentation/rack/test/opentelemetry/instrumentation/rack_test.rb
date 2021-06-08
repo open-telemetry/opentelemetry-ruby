@@ -54,8 +54,4 @@ describe OpenTelemetry::Instrumentation::Rack do
       end
     end
   end
-
-  def new_span
-    OpenTelemetry::Trace.non_recording_span(OpenTelemetry::Trace::SpanContext.new)
-  end
 end
