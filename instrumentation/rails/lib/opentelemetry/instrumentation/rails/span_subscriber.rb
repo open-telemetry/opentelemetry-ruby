@@ -8,17 +8,21 @@ module OpenTelemetry
   module Instrumentation
     module Rails
       class SpanSubscriber
-        def start(name, id, payload)
+        def initialize(name:, tracer:)
+          @span_name = name.split('.')[0..1].reverse.join(' ').freeze
+          @tracer = tracer
+        end
+
+        def start(_name, _id, payload)
           prev_ctx = OpenTelemetry::Context.current
 
-          span_name = name.split('.')[0..1].reverse.join(' ')
-          span = otel_tracer.start_span(span_name, kind: :internal)
+          span = @tracer.start_span(@span_name, kind: :internal)
           OpenTelemetry::Context.current = OpenTelemetry::Trace.context_with_span(span)
 
           [span, prev_ctx]
         end
 
-        def finish(name, id, payload)
+        def finish(_name, _id, payload)
           span = payload.delete(:__opentelemetry_span)
           prev_ctx = payload.delete(:__opentelemetry_prev_ctx)
           if span && prev_ctx
@@ -38,12 +42,6 @@ module OpenTelemetry
             span.finish
             OpenTelemetry::Context.current = prev_ctx
           end
-        end
-
-        private
-
-        def otel_tracer
-          Rails::Instrumentation.instance.tracer
         end
       end
     end
