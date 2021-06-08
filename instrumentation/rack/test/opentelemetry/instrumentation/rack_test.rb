@@ -10,7 +10,7 @@ require_relative '../../../lib/opentelemetry/instrumentation/rack'
 
 describe OpenTelemetry::Instrumentation::Rack do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Rack::Instrumentation.instance }
-  let(:tracer) { OpenTelemetry.tracer_provider.tracer(__FILE__) }
+  let(:new_span) { OpenTelemetry::Trace.non_recording_span(OpenTelemetry::Trace::SpanContext.new) }
 
   it 'has #name' do
     _(instrumentation.name).must_equal 'OpenTelemetry::Instrumentation::Rack'
