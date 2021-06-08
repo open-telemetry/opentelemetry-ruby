@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.18.1 / 2021-06-08
+
+* FIXED: Missing require to common in faraday 
+
 ### v0.18.0 / 2021-05-21
 
 * ADDED: Updated API depedency for 1.0.0.rc1
