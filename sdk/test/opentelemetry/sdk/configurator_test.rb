@@ -106,16 +106,6 @@ describe OpenTelemetry::SDK::Configurator do
   end
 
   describe '#configure' do
-    describe 'baggage' do
-      it 'is an instance of SDK::Baggage::Manager' do
-        configurator.configure
-
-        _(OpenTelemetry.baggage).must_be_instance_of(
-          OpenTelemetry::Baggage::Manager
-        )
-      end
-    end
-
     describe 'propagators' do
       it 'defaults to trace context and baggage' do
         configurator.configure

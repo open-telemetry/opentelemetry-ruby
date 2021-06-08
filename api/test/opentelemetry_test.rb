@@ -127,34 +127,6 @@ describe OpenTelemetry do
     end
   end
 
-  describe '.baggage' do
-    before do
-      @default_baggage = OpenTelemetry.baggage
-    end
-
-    after do
-      # Ensure we don't leak custom baggage to other tests
-      OpenTelemetry.baggage = @default_baggage
-    end
-
-    it 'returns Baggage::NoopManager by default' do
-      manager = OpenTelemetry.baggage
-      _(manager).must_be_instance_of(OpenTelemetry::Baggage::NoopManager)
-    end
-
-    it 'returns the same instance when accessed multiple times' do
-      _(OpenTelemetry.baggage).must_equal(
-        OpenTelemetry.baggage
-      )
-    end
-
-    it 'returns user specified baggage' do
-      custom_manager = 'a custom baggage'
-      OpenTelemetry.baggage = custom_manager
-      _(OpenTelemetry.baggage).must_equal(custom_manager)
-    end
-  end
-
   describe '.propagation' do
     it 'returns instance of Context::Propagation::NoopTextMapPropagator by default' do
       _(OpenTelemetry.propagation).must_be_instance_of(
