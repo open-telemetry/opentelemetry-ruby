@@ -13,7 +13,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
   # Technically this is the default. But ActiveJob seems to act oddly if you re-install
   # the instrumentation over and over again, so we manipulate instance variables to
   # reset between tests, and that means we should set the default here.
-  let(:config) { { propagation_style: :link } }
+  let(:config) { { propagation_style: :link, span_naming: :queue } }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
   let(:send_span) { spans.find { |s| s.name == 'default send' } }
@@ -204,7 +204,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     end
   end
 
-  describe 'job_class_span_names option' do
+  describe 'span_naming option' do
     describe 'when false - default' do
       it 'names spans according to the job queue' do
         TestJob.set(queue: :foo).perform_later
@@ -217,13 +217,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     end
 
     describe 'when true' do
-      before do
-        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, job_class_span_names: true)
-      end
-
-      after do
-        OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance.instance_variable_set(:@config, job_class_span_names: false)
-      end
+      let(:config) { { propagation_style: :link, span_naming: :job_class } }
 
       it 'names span according to the job class' do
         TestJob.set(queue: :foo).perform_later
@@ -260,7 +254,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     end
 
     describe 'when configured to do parent/child spans' do
-      let(:config) { { propagation_style: :child } }
+      let(:config) { { propagation_style: :child, span_naming: :queue } }
 
       it 'creates a parent/child relationship' do
         ::ActiveJob::Base.queue_adapter = :async
@@ -279,7 +273,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     end
 
     describe 'when explicitly configure for no propagation' do
-      let(:config) { { propagation_style: :none } }
+      let(:config) { { propagation_style: :none, span_naming: :queue } }
 
       it 'skips link creation and does not create parent/child relationship' do
         ::ActiveJob::Base.queue_adapter = :async

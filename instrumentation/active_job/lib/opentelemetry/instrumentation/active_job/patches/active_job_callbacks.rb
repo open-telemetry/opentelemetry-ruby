@@ -14,7 +14,7 @@ module OpenTelemetry
             base.class_eval do # rubocop:disable Metrics/BlockLength
               around_enqueue do |job, block|
                 span_kind = job.class.queue_adapter_name == 'inline' ? :client : :producer
-                span_name = "#{otel_config[:job_class_span_names] ? job.class : job.queue_name} send"
+                span_name = "#{otel_config[:span_naming] == :job_class ? job.class : job.queue_name} send"
                 span_attributes = job_attributes(job)
                 otel_tracer.in_span(span_name, attributes: span_attributes, kind: span_kind) do
                   OpenTelemetry.propagation.inject(job.metadata)
@@ -24,7 +24,7 @@ module OpenTelemetry
 
               around_perform do |job, block|
                 span_kind = job.class.queue_adapter_name == 'inline' ? :server : :consumer
-                span_name = "#{otel_config[:job_class_span_names] ? job.class : job.queue_name} process"
+                span_name = "#{otel_config[:span_naming] == :job_class ? job.class : job.queue_name} process"
                 span_attributes = job_attributes(job).merge('messaging.operation' => 'process')
 
                 propagated_context = OpenTelemetry.propagation.extract(job.metadata)
