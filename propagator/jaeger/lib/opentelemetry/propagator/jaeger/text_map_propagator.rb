@@ -26,11 +26,10 @@ module OpenTelemetry
         FIELDS = [IDENTITY_KEY].freeze
         TRACE_SPAN_IDENTITY_REGEX = /\A(?<trace_id>(?:[0-9a-f]){1,32}):(?<span_id>([0-9a-f]){1,16}):[0-9a-f]{1,16}:(?<sampling_flags>[0-9a-f]{1,2})\z/.freeze
         ZERO_ID_REGEX = /^0+$/.freeze
-        TRACER = OpenTelemetry.tracer_provider.tracer('jaeger-propagator')
 
         private_constant \
           :IDENTITY_KEY, :DEFAULT_FLAG_BIT, :SAMPLED_FLAG_BIT, :DEBUG_FLAG_BIT,
-          :FIELDS, :TRACE_SPAN_IDENTITY_REGEX, :ZERO_ID_REGEX, :TRACER
+          :FIELDS, :TRACE_SPAN_IDENTITY_REGEX, :ZERO_ID_REGEX
 
         # Extract trace context from the supplied carrier.
         # If extraction fails, the original context will be returned
@@ -99,7 +98,7 @@ module OpenTelemetry
             trace_flags: to_trace_flags(sampling_flags),
             remote: true
           )
-          TRACER.non_recording_span(span_context)
+          OpenTelemetry::Trace.non_recording_span(span_context)
         end
 
         def context_with_extracted_baggage(carrier, context, getter)

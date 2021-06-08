@@ -16,11 +16,6 @@ module OpenTelemetry
 
           private_constant :TRACEPARENT_KEY, :TRACESTATE_KEY, :FIELDS
 
-          # Returns a new TextMapPropagator.
-          def initialize
-            @tracer = nil # Lazily initialized to avoid a circular dependency during API initialization.
-          end
-
           # Inject trace context into the supplied carrier.
           #
           # @param [Carrier] carrier The mutable carrier to inject trace context into
@@ -58,7 +53,7 @@ module OpenTelemetry
                                                   trace_flags: tp.flags,
                                                   tracestate: tracestate,
                                                   remote: true)
-            span = tracer.non_recording_span(span_context)
+            span = OpenTelemetry::Trace.non_recording_span(span_context)
             OpenTelemetry::Trace.context_with_span(span)
           rescue OpenTelemetry::Error
             context
@@ -70,12 +65,6 @@ module OpenTelemetry
           # @return [Array<String>] a list of fields that will be used by this propagator.
           def fields
             FIELDS
-          end
-
-          private
-
-          def tracer
-            @tracer ||= OpenTelemetry.tracer_provider.tracer('w3c-trace-context-propagator')
           end
         end
       end

@@ -44,11 +44,9 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapPropagator do
     OpenTelemetry::Trace::TraceFlags::DEFAULT
   end
 
-  let(:tracer) { OpenTelemetry.tracer_provider.tracer }
-
   let(:context) do
     OpenTelemetry::Trace.context_with_span(
-      tracer.non_recording_span(
+      OpenTelemetry::Trace.non_recording_span(
         OpenTelemetry::Trace::SpanContext.new(
           trace_id: Array(trace_id).pack('H*'),
           span_id: Array(span_id).pack('H*'),

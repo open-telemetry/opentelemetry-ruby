@@ -31,7 +31,7 @@ describe OpenTelemetry::Trace::Tracer do
   let(:parent_span_context) { OpenTelemetry::Trace::SpanContext.new }
   let(:parent_context) do
     OpenTelemetry::Trace.context_with_span(
-      tracer.non_recording_span(parent_span_context),
+      OpenTelemetry::Trace.non_recording_span(parent_span_context),
       parent_context: OpenTelemetry::Context.empty
     )
   end

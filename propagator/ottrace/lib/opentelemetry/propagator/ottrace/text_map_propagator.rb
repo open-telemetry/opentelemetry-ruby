@@ -31,11 +31,9 @@ module OpenTelemetry
         VALID_BAGGAGE_HEADER_NAME_CHARS = /^[\^_`a-zA-Z\-0-9!#$%&'*+.|~]+$/.freeze
         INVALID_BAGGAGE_HEADER_VALUE_CHARS = /[^\t\u0020-\u007E\u0080-\u00FF]/.freeze
 
-        TRACER = OpenTelemetry.tracer_provider.tracer('ottrace-propagator')
-
         private_constant :PADDING, :VALID_TRACE_ID_REGEX, :VALID_SPAN_ID_REGEX, :TRACE_ID_64_BIT_WIDTH, :TRACE_ID_HEADER,
                          :SPAN_ID_HEADER, :SAMPLED_HEADER, :BAGGAGE_HEADER_PREFIX, :FIELDS, :VALID_BAGGAGE_HEADER_NAME_CHARS,
-                         :INVALID_BAGGAGE_HEADER_VALUE_CHARS, :TRACER
+                         :INVALID_BAGGAGE_HEADER_VALUE_CHARS
 
         # Extract OTTrace context from the supplied carrier and set the active span
         # in the given context. The original context will be returned if OTTrace
@@ -62,7 +60,7 @@ module OpenTelemetry
             remote: true
           )
 
-          span = TRACER.non_recording_span(span_context)
+          span = OpenTelemetry::Trace.non_recording_span(span_context)
           Trace.context_with_span(span, parent_context: set_baggage(carrier: carrier, context: context, getter: getter))
         end
 

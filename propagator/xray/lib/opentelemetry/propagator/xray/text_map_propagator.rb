@@ -21,7 +21,6 @@ module OpenTelemetry
         XRAY_CONTEXT_REGEX = /\ARoot=(?<trace_id>([a-z0-9\-]{35}))(?:;Parent=(?<span_id>([a-z0-9]{16})))?(?:;Sampled=(?<sampling_state>[01d](?![0-9a-f])))?(?:;(?<trace_state>.*))?\Z/.freeze
         SAMPLED_VALUES = %w[1 d].freeze
         FIELDS = [XRAY_CONTEXT_KEY].freeze
-        TRACER = OpenTelemetry.tracer_provider.tracer('xray-propagator')
 
         private_constant :XRAY_CONTEXT_KEY, :XRAY_CONTEXT_REGEX, :SAMPLED_VALUES, :FIELDS
 
@@ -50,7 +49,7 @@ module OpenTelemetry
             remote: true
           )
 
-          span = TRACER.non_recording_span(span_context)
+          span = OpenTelemetry::Trace.non_recording_span(span_context)
           context = XRay.context_with_debug(context) if match['sampling_state'] == 'd'
           Trace.context_with_span(span, parent_context: context)
         rescue OpenTelemetry::Error
