@@ -59,7 +59,7 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapPropagator do
   end
 
   let(:baggage) do
-    OpenTelemetry.baggage
+    OpenTelemetry::Baggage
   end
 
   let(:propagator) do
@@ -198,14 +198,6 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapPropagator do
     end
 
     describe 'baggage handling' do
-      before do
-        OpenTelemetry.baggage = OpenTelemetry::Baggage::Manager.new
-      end
-
-      after do
-        OpenTelemetry.baggage = nil
-      end
-
       describe 'given valid baggage items' do
         it 'extracts baggage items' do
           carrier_with_baggage = carrier.merge(
@@ -214,8 +206,8 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapPropagator do
           )
 
           context = propagator.extract(carrier_with_baggage, context: parent_context)
-          _(OpenTelemetry.baggage.value('foo', context: context)).must_equal('bar')
-          _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
+          _(OpenTelemetry::Baggage.value('foo', context: context)).must_equal('bar')
+          _(OpenTelemetry::Baggage.value('bar', context: context)).must_equal('baz')
         end
       end
 
@@ -227,8 +219,8 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapPropagator do
           )
 
           context = propagator.extract(carrier_with_baggage, context: parent_context)
-          _(OpenTelemetry.baggage.value('fθθ', context: context)).must_be_nil
-          _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
+          _(OpenTelemetry::Baggage.value('fθθ', context: context)).must_be_nil
+          _(OpenTelemetry::Baggage.value('bar', context: context)).must_equal('baz')
         end
       end
 
@@ -240,8 +232,8 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapPropagator do
           )
 
           context = propagator.extract(carrier_with_baggage, context: parent_context)
-          _(OpenTelemetry.baggage.value('foo', context: context)).must_be_nil
-          _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
+          _(OpenTelemetry::Baggage.value('foo', context: context)).must_be_nil
+          _(OpenTelemetry::Baggage.value('bar', context: context)).must_equal('baz')
         end
       end
     end
@@ -328,14 +320,6 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapPropagator do
     end
 
     describe 'baggage handling' do
-      before do
-        OpenTelemetry.baggage = OpenTelemetry::Baggage::Manager.new
-      end
-
-      after do
-        OpenTelemetry.baggage = nil
-      end
-
       describe 'given valid baggage items' do
         it 'injects baggage items' do
           context_with_baggage = baggage.build(context: context) do |builder|

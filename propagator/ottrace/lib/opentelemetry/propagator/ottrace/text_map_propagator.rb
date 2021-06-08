@@ -120,7 +120,7 @@ module OpenTelemetry
         end
 
         def baggage
-          OpenTelemetry.baggage
+          OpenTelemetry::Baggage
         end
 
         def inject_span_context(span_context:, carrier:, setter:)

@@ -17,3 +17,6 @@ instrumentation/**/*.gemfile.lock
 
 # IDE Settings
 /.idea/
+
+# rbenv configuration
+.ruby-version
