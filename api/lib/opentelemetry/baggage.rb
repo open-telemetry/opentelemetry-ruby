@@ -21,7 +21,7 @@ module OpenTelemetry
     # Used to chain modifications to baggage. The result is a
     # context with an updated baggage. If only a single
     # modification is being made to baggage, use the other
-    # methods on +Manager+, if multiple modifications are being made, use
+    # methods on +Baggage+, if multiple modifications are being made, use
     # this one.
     #
     # @param [optional Context] context The context to update with with new
