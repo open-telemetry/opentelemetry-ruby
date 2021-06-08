@@ -55,7 +55,7 @@ class InstrumentationGenerator < Thor::Group
     gemfile_text = "\ngem '#{instrumentation_gem_name}', path: '../#{instrumentation_name}'"
     insert_into_file("#{instrumentation_all_path}/Gemfile", gemfile_text, after: "gemspec\n")
 
-    gemspec_text = "\n  spec.add_dependency '#{instrumentation_gem_name}', '~> #{opentelemetry_version}'"
+    gemspec_text = "\n  spec.add_dependency '#{instrumentation_gem_name}', '~> 0.0.0'"
     insert_into_file("#{instrumentation_all_path}/opentelemetry-instrumentation-all.gemspec", gemspec_text, after: "spec.required_ruby_version = '>= 2.5.0'\n")
 
     all_rb_text = "\nrequire '#{instrumentation_gem_name}'"
