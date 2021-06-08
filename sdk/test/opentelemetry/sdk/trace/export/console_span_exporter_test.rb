@@ -10,7 +10,7 @@ describe OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter do
   export = OpenTelemetry::SDK::Trace::Export
 
   let(:captured_stdout) { StringIO.new }
-  let(:spans)    { [OpenTelemetry::Trace::Span.new, OpenTelemetry::Trace::Span.new] }
+  let(:spans)    { [Object.new, Object.new] }
   let(:exporter) { export::ConsoleSpanExporter.new }
 
   before do
@@ -22,11 +22,11 @@ describe OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter do
     $stdout = @original_stdout
   end
 
-  it 'accepts an Array of Spans as arg to #export and succeeds' do
+  it 'accepts an Array of SpanData as arg to #export and succeeds' do
     _(exporter.export(spans)).must_equal export::SUCCESS
   end
 
-  it 'accepts an Enumerable of Spans as arg to #export and succeeds' do
+  it 'accepts an Enumerable of SpanData as arg to #export and succeeds' do
     enumerable = Struct.new(:span0, :span1).new(spans[0], spans[1])
 
     _(exporter.export(enumerable)).must_equal export::SUCCESS
@@ -35,7 +35,7 @@ describe OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter do
   it 'outputs to console (stdout)' do
     exporter.export(spans)
 
-    _(captured_stdout.string).must_match(/#<OpenTelemetry::Trace::Span:/)
+    _(captured_stdout.string).must_match(/#<Object:/)
   end
 
   it 'accepts calls to #force_flush' do

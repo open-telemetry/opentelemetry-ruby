@@ -8,13 +8,18 @@ module OpenTelemetry
   module Trace
     module Propagation
       module TraceContext
-        # Propagates baggage using the W3C Trace Context format
+        # Propagates trace context using the W3C Trace Context format
         class TextMapPropagator
           TRACEPARENT_KEY = 'traceparent'
           TRACESTATE_KEY = 'tracestate'
           FIELDS = [TRACEPARENT_KEY, TRACESTATE_KEY].freeze
 
           private_constant :TRACEPARENT_KEY, :TRACESTATE_KEY, :FIELDS
+
+          # Returns a new TextMapPropagator.
+          def initialize
+            @tracer = nil # Lazily initialized to avoid a circular dependency during API initialization.
+          end
 
           # Inject trace context into the supplied carrier.
           #
@@ -53,7 +58,7 @@ module OpenTelemetry
                                                   trace_flags: tp.flags,
                                                   tracestate: tracestate,
                                                   remote: true)
-            span = Trace::Span.new(span_context: span_context)
+            span = tracer.non_recording_span(span_context)
             OpenTelemetry::Trace.context_with_span(span)
           rescue OpenTelemetry::Error
             context
@@ -65,6 +70,12 @@ module OpenTelemetry
           # @return [Array<String>] a list of fields that will be used by this propagator.
           def fields
             FIELDS
+          end
+
+          private
+
+          def tracer
+            @tracer ||= OpenTelemetry.tracer_provider.tracer('w3c-trace-context-propagator')
           end
         end
       end

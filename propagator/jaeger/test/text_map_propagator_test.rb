@@ -9,6 +9,7 @@ require 'opentelemetry-sdk'
 
 describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
   let(:propagator) { OpenTelemetry::Propagator::Jaeger::TextMapPropagator.new }
+  let(:tracer) { OpenTelemetry.tracer_provider.tracer }
 
   before do
     OpenTelemetry::SDK::Configurator.new.configure
@@ -166,8 +167,8 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
                        trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT,
                        jaeger_debug: false)
       context = OpenTelemetry::Trace.context_with_span(
-        OpenTelemetry::Trace::Span.new(
-          span_context: OpenTelemetry::Trace::SpanContext.new(
+        tracer.non_recording_span(
+          OpenTelemetry::Trace::SpanContext.new(
             trace_id: Array(trace_id).pack('H*'),
             span_id: Array(span_id).pack('H*'),
             trace_flags: trace_flags

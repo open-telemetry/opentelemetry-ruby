@@ -9,14 +9,14 @@ require 'test_helper'
 describe OpenTelemetry::SDK::Trace::Export::NoopSpanExporter do
   export = OpenTelemetry::SDK::Trace::Export
 
-  let(:spans)    { [OpenTelemetry::Trace::Span.new, OpenTelemetry::Trace::Span.new] }
+  let(:spans)    { [Object.new, Object.new] }
   let(:exporter) { export::NoopSpanExporter.new }
 
-  it 'accepts an Array of Spans as arg to #export and succeeds' do
+  it 'accepts an Array of SpanData as arg to #export and succeeds' do
     _(exporter.export(spans)).must_equal export::SUCCESS
   end
 
-  it 'accepts an Enumerable of Spans as arg to #export and succeeds' do
+  it 'accepts an Enumerable of SpanData as arg to #export and succeeds' do
     enumerable = Struct.new(:span0, :span1).new(spans[0], spans[1])
 
     _(exporter.export(enumerable)).must_equal export::SUCCESS

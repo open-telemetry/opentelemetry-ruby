@@ -5,9 +5,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'benchmark/ipsa'
-require 'opentelemetry'
+require 'opentelemetry/sdk'
 
-span = OpenTelemetry::Trace::Span.new
+OpenTelemetry::SDK.configure
+tracer = OpenTelemetry.tracer_provider.tracer('bench')
+span = tracer.start_root_span('bench')
 
 attributes = {
   'component' => 'rack',

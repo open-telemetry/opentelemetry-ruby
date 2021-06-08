@@ -28,8 +28,11 @@ module OpenTelemetry
         B3_SAMPLED_KEY = 'X-B3-Sampled'
         B3_FLAGS_KEY = 'X-B3-Flags'
 
+        TRACER = OpenTelemetry.tracer_provider.tracer('b3-propagator')
+
         private_constant :B3_CONTEXT_REGEX, :B3_TRACE_ID_REGEX, :B3_SPAN_ID_REGEX, :SAMPLED_VALUES
         private_constant :B3_CONTEXT_KEY, :B3_TRACE_ID_KEY, :B3_SPAN_ID_KEY, :B3_SAMPLED_KEY, :B3_FLAGS_KEY
+        private_constant :TRACER
 
         # Extract trace context from the supplied carrier. The b3 single header takes
         # precedence over the multi-header format.
@@ -82,7 +85,7 @@ module OpenTelemetry
             remote: true
           )
 
-          span = Trace::Span.new(span_context: span_context)
+          span = TRACER.non_recording_span(span_context)
           context = B3.context_with_debug(context) if debug
           Trace.context_with_span(span, parent_context: context)
         end

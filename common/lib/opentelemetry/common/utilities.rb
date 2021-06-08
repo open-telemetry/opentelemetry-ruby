@@ -12,6 +12,9 @@ module OpenTelemetry
 
       STRING_PLACEHOLDER = ''.encode(::Encoding::UTF_8).freeze
 
+      TRACER = OpenTelemetry.tracer_provider.tracer('opentelemetry-common-utilities', VERSION)
+      private_constant :TRACER
+
       # Returns nil if timeout is nil, 0 if timeout has expired,
       # or the remaining (positive) time left in seconds.
       #
@@ -73,7 +76,7 @@ module OpenTelemetry
       end
 
       def untraced
-        OpenTelemetry::Trace.with_span(OpenTelemetry::Trace::Span.new) { yield }
+        OpenTelemetry::Trace.with_span(TRACER.non_recording_span(OpenTelemetry::Trace::SpanContext.new)) { yield }
       end
 
       # Returns a URL string with userinfo removed.

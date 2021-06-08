@@ -29,16 +29,17 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapPropagator do
       tracestate_key => tracestate_header
     }
   end
+  let(:tracer) { OpenTelemetry.tracer_provider.tracer(__FILE__) }
   let(:context) { Context.empty }
   let(:context_with_tracestate) do
     span_context = SpanContext.new(trace_id: ("\xff" * 16).b, span_id: ("\x11" * 8).b,
                                    tracestate: tracestate_header)
-    span = Span.new(span_context: span_context)
+    span = tracer.non_recording_span(span_context)
     OpenTelemetry::Trace.context_with_span(span, parent_context: Context.empty)
   end
   let(:context_without_tracestate) do
     span_context = SpanContext.new(trace_id: ("\xff" * 16).b, span_id: ("\x11" * 8).b)
-    span = Span.new(span_context: span_context)
+    span = tracer.non_recording_span(span_context)
     OpenTelemetry::Trace.context_with_span(span, parent_context: Context.empty)
   end
 

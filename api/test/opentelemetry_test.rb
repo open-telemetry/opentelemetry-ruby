@@ -8,6 +8,21 @@ require 'test_helper'
 require 'tempfile'
 
 describe OpenTelemetry do
+  class CustomSpan < OpenTelemetry::Trace::Span
+  end
+
+  class CustomTracer < OpenTelemetry::Trace::Tracer
+    def start_root_span(*)
+      CustomSpan.new
+    end
+  end
+
+  class CustomTracerProvider < OpenTelemetry::Trace::TracerProvider
+    def tracer(name = nil, version = nil)
+      CustomTracer.new
+    end
+  end
+
   describe '.tracer_provider' do
     after do
       # Ensure we don't leak custom tracer factories and tracers to other tests
@@ -24,24 +39,9 @@ describe OpenTelemetry do
     end
 
     it 'returns user specified tracer provider' do
-      custom_tracer_provider = 'a custom tracer provider'
+      custom_tracer_provider = CustomTracerProvider.new
       OpenTelemetry.tracer_provider = custom_tracer_provider
       _(OpenTelemetry.tracer_provider).must_equal(custom_tracer_provider)
-    end
-  end
-
-  class CustomSpan < OpenTelemetry::Trace::Span
-  end
-
-  class CustomTracer < OpenTelemetry::Trace::Tracer
-    def start_root_span(*)
-      CustomSpan.new
-    end
-  end
-
-  class CustomTracerProvider < OpenTelemetry::Trace::TracerProvider
-    def tracer(name = nil, version = nil)
-      CustomTracer.new
     end
   end
 
