@@ -33,16 +33,15 @@ class TraceRequestApp < Rails::Application
   Rails.logger  = config.logger
 
   routes.draw do
-    get "/" => "test#index"
+    get '/' => 'test#index'
   end
 end
 
+# A minimal test controller
 class TestController < ActionController::Base
   include Rails.application.routes.url_helpers
 
-  def index
-    render plan: "Home"
-  end
+  def index; end
 end
 
 # Simple setup for demonstration purposes, simple span processor should not be
@@ -52,6 +51,7 @@ span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(
 )
 
 OpenTelemetry::SDK.configure do |c|
+  # At present, the Rails instrumentation is required.
   c.use 'OpenTelemetry::Instrumentation::Rails'
   c.use 'OpenTelemetry::Instrumentation::ActionView'
   c.add_span_processor(span_processor)

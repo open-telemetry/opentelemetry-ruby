@@ -11,8 +11,9 @@ module OpenTelemetry
         render_template.action_view
         render_partial.action_view
         render_collection.action_view
-      ]
+      ].freeze
 
+      # This Railtie sets up subscriptions to relevant ActionView notifications
       class Railtie < ::Rails::Railtie
         config.before_initialize do
           OpenTelemetry::Instrumentation::Rails::Instrumentation.instance.install({})
