@@ -12,6 +12,7 @@ module OpenTelemetry
   class Context
     KEY = :__opentelemetry_context__
     EMPTY_ENTRIES = {}.freeze
+    private_constant :KEY, :EMPTY_ENTRIES
 
     class << self
       # Returns a key used to index a value in a Context
@@ -100,6 +101,13 @@ module OpenTelemetry
         yield ctx, values
       ensure
         detach(prev)
+      end
+
+      # Returns the value associated with key in the current context
+      #
+      # @param [String] key The lookup key
+      def value(key)
+        current.value(key)
       end
 
       def clear

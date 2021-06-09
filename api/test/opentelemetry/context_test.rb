@@ -213,6 +213,17 @@ describe OpenTelemetry::Context do
     end
   end
 
+  describe '.value' do
+    it 'returns the value from the current context' do
+      Context.attach(new_context)
+      _(Context.value(foo_key)).must_equal('bar')
+
+      c2 = Context.current.set_value(bar_key, 'baz')
+      Context.attach(c2)
+      _(Context.value(bar_key)).must_equal('baz')
+    end
+  end
+
   describe '.clear' do
     it 'clears the context' do
       Context.attach(new_context)
