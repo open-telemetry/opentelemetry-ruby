@@ -8,6 +8,7 @@ Install the gem using:
 
 ```
 gem install opentelemetry-instrumentation-action_view
+gem install opentelemetry-instrumentation-rails
 ```
 
 Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-action_view` in your `Gemfile`.
@@ -18,6 +19,7 @@ To use the instrumentation, call `use` with the name of the instrumentation:
 
 ```ruby
 OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::Rails'
   c.use 'OpenTelemetry::Instrumentation::ActionView'
 end
 ```
