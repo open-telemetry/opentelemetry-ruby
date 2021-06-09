@@ -45,7 +45,7 @@ class BaggageTestingJob
   @queue = :super_urgent
 
   def self.perform(*args)
-    OpenTelemetry::Trace.current_span['success'] = true if OpenTelemetry.baggage.value('testing_baggage') == 'it_worked'
+    OpenTelemetry::Trace.current_span['success'] = true if OpenTelemetry::Baggage.value('testing_baggage') == 'it_worked'
   end
 end
 

@@ -94,7 +94,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       end
 
       it 'propagates baggage' do
-        ctx = OpenTelemetry.baggage.set_value('testing_baggage', 'it_worked')
+        ctx = OpenTelemetry::Baggage.set_value('testing_baggage', 'it_worked')
         OpenTelemetry::Context.with_current(ctx) do
           ::Resque.enqueue(BaggageTestingJob)
         end
@@ -128,7 +128,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       end
 
       it 'propagates baggage' do
-        ctx = OpenTelemetry.baggage.set_value('testing_baggage', 'it_worked')
+        ctx = OpenTelemetry::Baggage.set_value('testing_baggage', 'it_worked')
         OpenTelemetry::Context.with_current(ctx) do
           ::Resque.enqueue(BaggageTestingJob)
         end
@@ -163,7 +163,7 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       end
 
       it 'propagates baggage' do
-        ctx = OpenTelemetry.baggage.set_value('testing_baggage', 'it_worked')
+        ctx = OpenTelemetry::Baggage.set_value('testing_baggage', 'it_worked')
         OpenTelemetry::Context.with_current(ctx) do
           ::Resque.enqueue(BaggageTestingJob)
         end
