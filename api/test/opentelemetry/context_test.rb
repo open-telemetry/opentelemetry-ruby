@@ -11,17 +11,118 @@ require 'stringio'
 describe OpenTelemetry::Context do
   Context = OpenTelemetry::Context
 
-  after do
-    Context.clear
-  end
+  after { Context.clear }
 
   let(:foo_key) { Context.create_key('foo') }
   let(:bar_key) { Context.create_key('bar') }
   let(:baz_key) { Context.create_key('baz') }
   let(:new_context) { Context.empty.set_value(foo_key, 'bar') }
 
+  describe '.create_key' do
+    it 'returns a Context::Key' do
+      key = Context.create_key('testing')
+      _(key).must_be_instance_of(Context::Key)
+      _(key.name).must_equal('testing')
+    end
+  end
+
   describe '.current' do
     it 'defaults to the root context' do
+      _(Context.current).must_equal(Context::ROOT)
+    end
+  end
+
+  describe '.attach' do
+    it 'returns a reference to the previous context' do
+      previous_context = Context.attach(new_context)
+      _(previous_context).must_equal(Context::ROOT)
+    end
+
+    it 'sets the current context' do
+      c1 = new_context
+      Context.attach(c1)
+      _(Context.current).must_equal(c1)
+      _(Context.current[foo_key]).must_equal('bar')
+
+      c2 = Context.current.set_value(foo_key, 'c2')
+      Context.attach(c2)
+      _(Context.current).must_equal(c2)
+      _(Context.current[foo_key]).must_equal('c2')
+
+      c3 = Context.current.set_value(foo_key, 'c3')
+      Context.attach(c3)
+      _(Context.current).must_equal(c3)
+      _(Context.current[foo_key]).must_equal('c3')
+    end
+
+    it 'attaching the current context does not create a circular reference' do
+      Context.attach(new_context)
+      Context.attach(Context.current)
+      Context.detach
+      _(Context.current).must_equal(Context::ROOT)
+    end
+  end
+
+  describe '.detach' do
+    before do
+      @log_stream = StringIO.new
+      @_logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(@log_stream)
+    end
+
+    after do
+      OpenTelemetry.logger = @_logger
+    end
+
+    it 'restores the context' do
+      prev = Context.attach(new_context)
+      _(Context.current).must_equal(new_context)
+
+      Context.detach(prev)
+      _(Context.current).must_equal(Context::ROOT)
+
+      _(@log_stream.string).must_be_empty
+    end
+
+    it 'warns mismatched detach calls' do
+      c1 = new_context
+      Context.attach(c1)
+
+      c2 = Context.current.set_value(foo_key, 'c2')
+      c1_token = Context.attach(c2)
+
+      c3 = Context.current.set_value(foo_key, 'c3')
+      Context.attach(c3)
+
+      Context.detach(c1_token)
+
+      _(@log_stream.string).must_match(/Calls to detach should match corresponding calls to attach/)
+    end
+
+    it 'detaches to the parent if no context is provided' do
+      c1 = new_context
+      Context.attach(c1)
+
+      c2 = Context.current.set_value(foo_key, 'c2')
+      Context.attach(c2)
+
+      c3 = Context.current.set_value(foo_key, 'c3')
+      Context.attach(c3)
+
+      _(Context.current).must_equal(c3)
+
+      Context.detach
+      _(Context.current).must_equal(c2)
+
+      Context.detach
+      _(Context.current).must_equal(c1)
+
+      Context.detach
+      _(Context.current).must_equal(Context::ROOT)
+    end
+
+    it 'detaching at the root leaves the root as the current context' do
+      Context.detach
       _(Context.current).must_equal(Context::ROOT)
     end
   end
@@ -85,13 +186,6 @@ describe OpenTelemetry::Context do
     end
   end
 
-  describe '#value' do
-    it 'returns corresponding value for key' do
-      ctx = new_context
-      _(ctx.value(foo_key)).must_equal('bar')
-    end
-  end
-
   describe '.with_values' do
     it 'executes block within new context' do
       orig_ctx = Context.current
@@ -119,6 +213,33 @@ describe OpenTelemetry::Context do
     end
   end
 
+  describe '.clear' do
+    it 'clears the context' do
+      Context.attach(new_context)
+      _(Context.current).must_equal(new_context)
+
+      Context.clear
+
+      _(Context.current).must_equal(Context::ROOT)
+    end
+  end
+
+  describe '#value' do
+    it 'returns corresponding value for key' do
+      ctx = new_context
+      _(ctx.value(foo_key)).must_equal('bar')
+    end
+  end
+
+  describe '#set_value' do
+    it 'returns new context with entry' do
+      c1 = Context.current
+      c2 = c1.set_value(foo_key, 'bar')
+      _(c1.value(foo_key)).must_be_nil
+      _(c2.value(foo_key)).must_equal('bar')
+    end
+  end
+
   describe '#set_values' do
     it 'assigns multiple values' do
       ctx = new_context
@@ -133,15 +254,6 @@ describe OpenTelemetry::Context do
       ctx2 = ctx.set_values(foo_key => 'foobar', bar_key => 'baz')
       _(ctx2.value(foo_key)).must_equal('foobar')
       _(ctx2.value(bar_key)).must_equal('baz')
-    end
-  end
-
-  describe '#update' do
-    it 'returns new context with entry' do
-      c1 = Context.current
-      c2 = c1.set_value(foo_key, 'bar')
-      _(c1.value(foo_key)).must_be_nil
-      _(c2.value(foo_key)).must_equal('bar')
     end
   end
 
