@@ -254,7 +254,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       it 'propagates baggage' do
         ::ActiveJob::Base.queue_adapter = :async
 
-        ctx = OpenTelemetry.baggage.set_value('testing_baggage', 'it_worked')
+        ctx = OpenTelemetry::Baggage.set_value('testing_baggage', 'it_worked')
         OpenTelemetry::Context.with_current(ctx) do
           BaggageJob.perform_later
         end
@@ -291,7 +291,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       it 'propagates baggage' do
         ::ActiveJob::Base.queue_adapter = :async
 
-        ctx = OpenTelemetry.baggage.set_value('testing_baggage', 'it_worked')
+        ctx = OpenTelemetry::Baggage.set_value('testing_baggage', 'it_worked')
         OpenTelemetry::Context.with_current(ctx) do
           BaggageJob.perform_later
         end
@@ -327,7 +327,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       it 'still propagates baggage' do
         ::ActiveJob::Base.queue_adapter = :async
 
-        ctx = OpenTelemetry.baggage.set_value('testing_baggage', 'it_worked')
+        ctx = OpenTelemetry::Baggage.set_value('testing_baggage', 'it_worked')
         OpenTelemetry::Context.with_current(ctx) do
           BaggageJob.perform_later
         end
