@@ -2,6 +2,8 @@
 
 The `opentelemetry-exporter-otlp` gem provides an [OTLP](https://github.com/open-telemetry/opentelemetry-proto) exporter for OpenTelemetry for Ruby. Using `opentelemetry-exporter-otlp`, an application can configure OpenTelemetry to export collected tracing data to [the OpenTelemetry Collector][opentelemetry-collector-home].
 
+This OTLP exporter only supports OTLP/HTTP at this time.
+
 ## What is OpenTelemetry?
 
 [OpenTelemetry][opentelemetry-home] is an open source observability framework, providing a general-purpose API, SDK, and related tools required for the instrumentation of cloud-native software, frameworks, and libraries.
@@ -69,15 +71,17 @@ For additional examples, see the [examples on github][examples-github].
 
 The collector exporter can be configured explicitly in code, as shown above, or via environment variables. The configuration parameters, environment variables, and defaults are shown below.
 
-| Parameter           | Environment variable                         | Default                             |
-| ------------------- | -------------------------------------------- | ----------------------------------- |
-| `endpoint:`         | `OTEL_EXPORTER_OTLP_ENDPOINT`                | `"http://localhost:4317/v1/traces"` |
-| `certificate_file: `| `OTEL_EXPORTER_OTLP_CERTIFICATE`             |                                     |
-| `headers:`          | `OTEL_EXPORTER_OTLP_HEADERS`                 |                                     |
-| `compression:`      | `OTEL_EXPORTER_OTLP_COMPRESSION`             |                                     |
-| `timeout:`          | `OTEL_EXPORTER_OTLP_TIMEOUT`                 | `10`                                |
-| `ssl_verify_mode:`  | `OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER` or | `OpenSSL::SSL:VERIFY_PEER`          |
-|                     | `OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE`    |                                     |
+| Parameter           | Environment variable                         | Default                              |
+| ------------------- | -------------------------------------------- | ------------------------------------ |
+| `endpoint:`         | `OTEL_EXPORTER_OTLP_ENDPOINT`                | `"http://localhost:55681/v1/traces"` |
+| `certificate_file: `| `OTEL_EXPORTER_OTLP_CERTIFICATE`             |                                      |
+| `headers:`          | `OTEL_EXPORTER_OTLP_HEADERS`                 |                                      |
+| `compression:`      | `OTEL_EXPORTER_OTLP_COMPRESSION`             |                                      |
+| `timeout:`          | `OTEL_EXPORTER_OTLP_TIMEOUT`                 | `10`                                 |
+| `ssl_verify_mode:`  | `OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER` or | `OpenSSL::SSL:VERIFY_PEER`           |
+|                     | `OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE`    |                                      |
+
+The default value for `endpoint:` intentionally differs from the specification. Because this exporter does not support OTLP/GRPC, and `4317` is the OpenTelemetry collector's GRPC port, such a configuration would be broken by default. Instead, we set the default port to `55681`, which is the OTLP/HTTP port in the collector.
 
 `ssl_verify_mode:` parameter values should be flags for server certificate verification: `OpenSSL::SSL:VERIFY_PEER` and `OpenSSL::SSL:VERIFY_NONE` are acceptable. These values can also be set using the appropriately named environment variables as shown where `VERIFY_PEER` will take precedence over `VERIFY_NONE`.  Please see [the Net::HTTP docs](https://ruby-doc.org/stdlib-2.5.1/libdoc/net/http/rdoc/Net/HTTP.html#verify_mode) for more information about these flags.
 
