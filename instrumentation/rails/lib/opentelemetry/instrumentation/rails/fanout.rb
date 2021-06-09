@@ -7,12 +7,15 @@
 module OpenTelemetry
   module Instrumentation
     module Rails
+      # This is a replacement for the default Fanout notifications queue, which adds special
+      # handling around returned context from the SpanSubscriber notification handlers.
+      # Used together, it allows us to trace arbitrary ActiveSupport::Notifications safely.
       class Fanout < ::ActiveSupport::Notifications::Fanout
         def start(name, id, payload)
           listeners_for(name).map do |s|
             result = [s]
             state = s.start(name, id, payload)
-            if state.is_a?(Array) && state[0].is_a?(OpenTelemetry::Trace::Span) && state[1].is_a?(OpenTelemetry::Context)
+            if state.is_a?(Array) && state[0].is_a?(OpenTelemetry::Trace::Span) && state[1].is_a?(OpenTelemetry::Context) # rubocop:disable Style/IfUnlessModifier
               result << state
             end
 
@@ -27,10 +30,10 @@ module OpenTelemetry
               s.finish(
                 name,
                 id,
-                payload.merge({
+                payload.merge(
                   __opentelemetry_span: span,
                   __opentelemetry_prev_ctx: prev_ctx
-                })
+                )
               )
             else
               s.finish(name, id, payload)
