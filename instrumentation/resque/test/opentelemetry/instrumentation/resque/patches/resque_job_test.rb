@@ -16,28 +16,6 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
   let(:job_span) { finished_spans.last }
   let(:config) { {} }
 
-  class DummyJob
-    @queue = :super_urgent
-
-    def self.perform(*args); end
-  end
-
-  class BaggageTestingJob
-    @queue = :super_urgent
-
-    def self.perform(*args)
-      OpenTelemetry::Trace.current_span['success'] = true if OpenTelemetry.baggage.value('testing_baggage') == 'it_worked'
-    end
-  end
-
-  class ExceptionTestingJob
-    @queue = :super_urgent
-
-    def self.perform(*args)
-      raise 'a little hell'
-    end
-  end
-
   before do
     instrumentation.install(config)
     exporter.reset
@@ -53,6 +31,17 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
       _(job_span.name).must_equal('super_urgent process')
       _(job_span.attributes['messaging.system']).must_equal('resque')
       _(job_span.attributes['messaging.resque.job_class']).must_equal('DummyJob')
+      _(job_span.attributes['messaging.destination']).must_equal('super_urgent')
+      _(job_span.attributes['messaging.destination_kind']).must_equal('queue')
+    end
+
+    it 'traces when enqueued with Active Job' do
+      DummyJobWithActiveJob.perform_later(1, 2)
+      work_off_jobs
+
+      _(job_span.name).must_equal('super_urgent process')
+      _(job_span.attributes['messaging.system']).must_equal('resque')
+      _(job_span.attributes['messaging.resque.job_class']).must_equal('DummyJobWithActiveJob')
       _(job_span.attributes['messaging.destination']).must_equal('super_urgent')
       _(job_span.attributes['messaging.destination_kind']).must_equal('queue')
     end
@@ -77,6 +66,13 @@ describe OpenTelemetry::Instrumentation::Resque::Patches::ResqueJob do
         work_off_jobs
 
         _(job_span.name).must_equal('DummyJob process')
+      end
+
+      it 'uses the job class name when enqueued with Active Job' do
+        DummyJobWithActiveJob.perform_later(1, 2)
+        work_off_jobs
+
+        _(job_span.name).must_equal('DummyJobWithActiveJob process')
       end
     end
 

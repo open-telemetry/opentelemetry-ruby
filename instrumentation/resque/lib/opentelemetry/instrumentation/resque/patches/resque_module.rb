@@ -19,15 +19,20 @@ module OpenTelemetry
           # Module to prepend to Resque singleton class
           module ClassMethods
             def push(queue, item)
+              # Check if the job is wrapped is being wrapped by ActiveJob
+              # before retrieving the job class name
+              job_class = if item[:args][0]&.is_a?(Hash)
+                            item[:args][0]['job_class']
+                          else
+                            item[:class]
+                          end
+
               attributes = {
                 'messaging.system' => 'resque',
                 'messaging.destination' => queue.to_s,
-                'messaging.destination_kind' => 'queue'
+                'messaging.destination_kind' => 'queue',
+                'messaging.resque.job_class' => job_class
               }
-
-              if (job_class = item[:class])
-                attributes['messaging.resque.job_class'] = job_class
-              end
 
               span_name = case config[:span_naming]
                           when :job_class then "#{job_class} send"

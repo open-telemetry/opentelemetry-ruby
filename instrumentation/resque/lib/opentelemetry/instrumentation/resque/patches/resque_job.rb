@@ -10,8 +10,16 @@ module OpenTelemetry
       module Patches
         # Module to prepend to Resque::Job for instrumentation
         module ResqueJob
-          def perform # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-            job_class = payload_class_name
+          def perform # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+            job_args = args || []
+
+            # Check if the job is wrapped is being wrapped by ActiveJob
+            # before retrieving the job class name
+            job_class = if job_args[0]&.is_a?(Hash)
+                          job_args[0]['job_class']
+                        else
+                          payload_class_name
+                        end
 
             attributes = {
               'messaging.system' => 'resque',
