@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module <%= pascal_cased_instrumentation_name %>
-      VERSION = '<%= opentelemetry_version %>'
+      VERSION = '0.0.0'
     end
   end
 end

@@ -8,7 +8,7 @@ module OpenTelemetry
   module Trace
     module Propagation
       module TraceContext
-        # Propagates baggage using the W3C Trace Context format
+        # Propagates trace context using the W3C Trace Context format
         class TextMapPropagator
           TRACEPARENT_KEY = 'traceparent'
           TRACESTATE_KEY = 'tracestate'
@@ -53,7 +53,7 @@ module OpenTelemetry
                                                   trace_flags: tp.flags,
                                                   tracestate: tracestate,
                                                   remote: true)
-            span = Trace::Span.new(span_context: span_context)
+            span = OpenTelemetry::Trace.non_recording_span(span_context)
             OpenTelemetry::Trace.context_with_span(span)
           rescue OpenTelemetry::Error
             context

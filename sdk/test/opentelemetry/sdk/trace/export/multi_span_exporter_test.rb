@@ -9,7 +9,9 @@ require 'test_helper'
 describe OpenTelemetry::SDK::Trace::Export::MultiSpanExporter do
   export = OpenTelemetry::SDK::Trace::Export
 
-  let(:spans)               { [OpenTelemetry::Trace::Span.new, OpenTelemetry::Trace::Span.new] }
+  let(:span_data1)          { OpenTelemetry::SDK::Trace::SpanData.new(name: 'name1') }
+  let(:span_data2)          { OpenTelemetry::SDK::Trace::SpanData.new(name: 'name2') }
+  let(:spans)               { [span_data1, span_data2] }
 
   let(:mock_span_exporter)  { Minitest::Mock.new }
   let(:mock_span_exporter2) { Minitest::Mock.new }
@@ -28,14 +30,14 @@ describe OpenTelemetry::SDK::Trace::Export::MultiSpanExporter do
     export::MultiSpanExporter.new([])
   end
 
-  it 'accepts an Array of Spans as arg to #export and forwards them' do
+  it 'accepts an Array of SpanData as arg to #export and forwards them' do
     mock_span_exporter.expect(:export, export::SUCCESS) { |a| a.to_a == spans }
 
     _(exporter.export(spans)).must_equal export::SUCCESS
     mock_span_exporter.verify
   end
 
-  it 'accepts an Enumerable of Spans as arg to #export and forwards them' do
+  it 'accepts an Enumerable of SpanData as arg to #export and forwards them' do
     # An anonymous Struct serves as a handy implementor of Enumerable
     enumerable = Struct.new(:span0, :span1).new(spans[0], spans[1])
 
