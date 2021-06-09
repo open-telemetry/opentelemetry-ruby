@@ -1,6 +1,6 @@
 # OpenTelemetry ActionView Instrumentation
 
-Todo: Add a description.
+The ActionView instrumentation is a community-maintained instrumentation for the ActionView portion of the [Ruby on Rails][rails-home] web-application framework.
 
 ## How do I get started?
 
@@ -32,7 +32,7 @@ end
 
 ## Examples
 
-Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/action_view/example/trace_demonstration.rb)
+Example usage can be seen in the `./example/trace_request_demonstration.ru` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/action_view/example/trace_request_demonstration.ru)
 
 ## How can I get involved?
 
@@ -44,6 +44,7 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 
 The `opentelemetry-instrumentation-action_view` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
 
+[rails-home]: https://github.com/rails/rails
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
