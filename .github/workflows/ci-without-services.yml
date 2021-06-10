@@ -32,6 +32,7 @@ jobs:
             # rails omitted because it depends on tzinfo which is not present
             # redis omitted because it depends on redis-server which is not present
             # sidekiq omitted because it depends on redis-server which is not present
+            # resque omitted because it depends on redis-server which is not present
             flags: >-
               --include-simple --include-appraisal --omit-services
               --exclude opentelemetry-instrumentation-ethon
@@ -39,6 +40,7 @@ jobs:
               --exclude opentelemetry-instrumentation-pg
               --exclude opentelemetry-instrumentation-rails
               --exclude opentelemetry-instrumentation-redis
+              --exclude opentelemetry-instrumentation-resque
               --exclude opentelemetry-instrumentation-sidekiq
           - name: Rubocop and build
             os: ubuntu-latest
