@@ -33,9 +33,9 @@ describe OpenTelemetry::Context do
   end
 
   describe '.attach' do
-    it 'returns a reference to the previous context' do
-      previous_context = Context.attach(new_context)
-      _(previous_context).must_equal(Context::ROOT)
+    it 'returns a token to be used when detaching' do
+      c1_token = Context.attach(new_context)
+      _(c1_token).wont_be_nil
     end
 
     it 'sets the current context' do
@@ -55,9 +55,19 @@ describe OpenTelemetry::Context do
       _(Context.current[foo_key]).must_equal('c3')
     end
 
-    it 'attaching the current context does not create a circular reference' do
-      Context.attach(new_context)
+    it 'allows for attaching the same context multiple times' do
+      c1 = new_context
+      Context.attach(c1)
       Context.attach(Context.current)
+      Context.attach(Context.current)
+      Context.attach(Context.current)
+
+      Context.detach
+      _(Context.current).must_equal(c1)
+      Context.detach
+      _(Context.current).must_equal(c1)
+      Context.detach
+      _(Context.current).must_equal(c1)
       Context.detach
       _(Context.current).must_equal(Context::ROOT)
     end
@@ -75,10 +85,10 @@ describe OpenTelemetry::Context do
     end
 
     it 'restores the context' do
-      prev = Context.attach(new_context)
+      c1_token = Context.attach(new_context)
       _(Context.current).must_equal(new_context)
 
-      Context.detach(prev)
+      Context.detach(c1_token)
       _(Context.current).must_equal(Context::ROOT)
 
       _(@log_stream.string).must_be_empty
@@ -86,10 +96,10 @@ describe OpenTelemetry::Context do
 
     it 'warns mismatched detach calls' do
       c1 = new_context
-      Context.attach(c1)
+      c1_token = Context.attach(c1)
 
       c2 = Context.current.set_value(foo_key, 'c2')
-      c1_token = Context.attach(c2)
+      Context.attach(c2)
 
       c3 = Context.current.set_value(foo_key, 'c3')
       Context.attach(c3)
@@ -99,7 +109,7 @@ describe OpenTelemetry::Context do
       _(@log_stream.string).must_match(/Calls to detach should match corresponding calls to attach/)
     end
 
-    it 'detaches to the parent if no context is provided' do
+    it 'detaches to the previous context' do
       c1 = new_context
       Context.attach(c1)
 
@@ -119,11 +129,13 @@ describe OpenTelemetry::Context do
 
       Context.detach
       _(Context.current).must_equal(Context::ROOT)
+      _(@log_stream.string).must_be_empty
     end
 
     it 'detaching at the root leaves the root as the current context' do
       Context.detach
       _(Context.current).must_equal(Context::ROOT)
+      _(@log_stream.string).must_be_empty
     end
   end
 

@@ -35,26 +35,27 @@ module OpenTelemetry
         Thread.current[KEY] = ctx
       end
 
-      # Returns the previous context so that it can be restored
+      # Returns a token to be used with the matching call to detach
       #
       # @param [Context] context The new context
-      # @return [Context] prev The previous context
+      # @return [Integer] A token to be used when detaching
       def attach(context)
-        return current.parent if context == current
-
         prev = current
         self.current = context
-        context.parent = prev
+        stack.push(prev)
+        stack.size
       end
 
-      # Restores the current context to the context supplied or the parent context
-      # if no context is provided
+      # Restores the previous context, if a token is supplied it will
+      # be used to check if the call to detach is balanced with
+      # the original attach call. A warning is logged if the
+      # calls are unbalanced.
       #
-      # @param [Context] previous_context The previous context to restore
-      def detach(previous_context = nil)
-        OpenTelemetry.logger.warn 'Calls to detach should match corresponding calls to attach' if current.parent != previous_context
+      # @param [Integer] token The token provided by the matching call to attach
+      def detach(token = nil)
+        OpenTelemetry.logger.warn 'Calls to detach should match corresponding calls to attach' if token && token != stack.size
 
-        previous_context ||= current.parent || ROOT
+        previous_context = stack.pop || ROOT
         self.current = previous_context
       end
 
@@ -111,19 +112,23 @@ module OpenTelemetry
       end
 
       def clear
+        stack.clear
         self.current = ROOT
       end
 
       def empty
         new(EMPTY_ENTRIES)
       end
-    end
 
-    attr_accessor :parent
+      private
+
+      def stack
+        @stack ||= []
+      end
+    end
 
     def initialize(entries)
       @entries = entries.freeze
-      @parent = parent
     end
 
     # Returns the corresponding value (or nil) for key
