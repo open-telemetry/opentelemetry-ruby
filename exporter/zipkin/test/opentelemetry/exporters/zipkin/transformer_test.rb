@@ -18,7 +18,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
 
   it 'encodes span.status and span.kind' do
     resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo')
-    span_data = create_span_data(attributes: { 'bar' => 'baz' }, status: OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::ERROR), kind: :server)
+    span_data = create_span_data(attributes: { 'bar' => 'baz' }, status: OpenTelemetry::Trace::Status.error, kind: :server)
 
     encoded_span = Transformer.to_zipkin_span(span_data, resource)
 
@@ -82,7 +82,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
 
   describe 'status' do
     it 'encodes status code as strings' do
-      status = OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::OK)
+      status = OpenTelemetry::Trace::Status.ok
 
       resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo')
       span_data = create_span_data(attributes: { 'bar' => 'baz' }, status: status)
@@ -94,7 +94,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
 
     it 'encodes error status code as strings on error tag and status description field' do
       error_description = 'there is as yet insufficient data for a meaningful answer'
-      status = OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::ERROR, description: error_description)
+      status = OpenTelemetry::Trace::Status.error(error_description)
       resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo')
       span_data = create_span_data(attributes: { 'bar' => 'baz' }, status: status)
       encoded_span = Transformer.to_zipkin_span(span_data, resource)

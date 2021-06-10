@@ -83,10 +83,7 @@ module OpenTelemetry
                 end
 
                 if datum.key?(:error)
-                  span.status = OpenTelemetry::Trace::Status.new(
-                    OpenTelemetry::Trace::Status::ERROR,
-                    description: "Request has failed: #{datum[:error]}"
-                  )
+                  span.status = OpenTelemetry::Trace::Status.error("Request has failed: #{datum[:error]}")
                 end
 
                 span.finish

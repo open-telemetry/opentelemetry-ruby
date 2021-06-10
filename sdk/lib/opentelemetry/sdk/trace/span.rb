@@ -16,7 +16,7 @@ module OpenTelemetry
       #
       # rubocop:disable Metrics/ClassLength
       class Span < OpenTelemetry::Trace::Span
-        DEFAULT_STATUS = OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::UNSET)
+        DEFAULT_STATUS = OpenTelemetry::Trace::Status.unset
         EMPTY_ATTRIBUTES = {}.freeze
 
         private_constant :DEFAULT_STATUS, :EMPTY_ATTRIBUTES

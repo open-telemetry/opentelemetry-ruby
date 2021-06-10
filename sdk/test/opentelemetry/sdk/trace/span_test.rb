@@ -324,34 +324,34 @@ describe OpenTelemetry::SDK::Trace::Span do
 
   describe '#status=' do
     it 'sets the status' do
-      span.status = Status.new(Status::ERROR, description: 'cancelled')
+      span.status = Status.error('cancelled')
       _(span.status.description).must_equal('cancelled')
       _(span.status.code).must_equal(Status::ERROR)
     end
 
     it 'does not set the status if span is ended' do
       span.finish
-      span.status = Status.new(Status::ERROR, description: 'cancelled')
+      span.status = Status.error('cancelled')
       _(span.status.code).must_equal(Status::UNSET)
     end
 
     it 'does not set the status if asked to set to UNSET' do
-      span.status = Status.new(Status::ERROR, description: 'cancelled')
-      span.status = Status.new(Status::UNSET, description: 'actually, maybe it is OK?')
+      span.status = Status.error('cancelled')
+      span.status = Status.unset('actually, maybe it is OK?')
       _(span.status.description).must_equal('cancelled')
       _(span.status.code).must_equal(Status::ERROR)
     end
 
     it 'does not override the status once set to OK' do
-      span.status = Status.new(Status::OK, description: 'nothing to see here')
-      span.status = Status.new(Status::ERROR, description: 'cancelled')
+      span.status = Status.ok('nothing to see here')
+      span.status = Status.error('cancelled')
       _(span.status.description).must_equal('nothing to see here')
       _(span.status.code).must_equal(Status::OK)
     end
 
     it 'allows overriding ERROR with OK' do
-      span.status = Status.new(Status::ERROR, description: 'cancelled')
-      span.status = Status.new(Status::OK, description: 'nothing to see here')
+      span.status = Status.error('cancelled')
+      span.status = Status.ok('nothing to see here')
       _(span.status.description).must_equal('nothing to see here')
       _(span.status.code).must_equal(Status::OK)
     end
