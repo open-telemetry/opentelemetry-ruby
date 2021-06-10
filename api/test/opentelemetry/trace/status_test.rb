@@ -9,41 +9,6 @@ require 'test_helper'
 describe OpenTelemetry::Trace::Status do
   let(:trace_status) { OpenTelemetry::Trace::Status }
 
-  describe '.http_to_status' do
-    it 'returns Status' do
-      _(trace_status.http_to_status(200)).must_be_kind_of trace_status
-    end
-
-    def assert_http_to_status(http_code, trace_status_code)
-      _(trace_status.http_to_status(http_code).code).must_equal trace_status_code
-    end
-
-    it 'maps http 1xx codes' do
-      assert_http_to_status(100, trace_status::OK)
-      assert_http_to_status(199, trace_status::OK)
-    end
-
-    it 'maps http 2xx codes' do
-      assert_http_to_status(200, trace_status::OK)
-      assert_http_to_status(299, trace_status::OK)
-    end
-
-    it 'maps http 3xx codes' do
-      assert_http_to_status(300, trace_status::OK)
-      assert_http_to_status(399, trace_status::OK)
-    end
-
-    it 'maps http 4xx codes' do
-      assert_http_to_status(400, trace_status::ERROR)
-      assert_http_to_status(499, trace_status::ERROR)
-    end
-
-    it 'maps http 5xx codes' do
-      assert_http_to_status(500, trace_status::ERROR)
-      assert_http_to_status(599, trace_status::ERROR)
-    end
-  end
-
   describe '.code' do
     it 'reflects the value passed in' do
       status = OpenTelemetry::Trace::Status.new(0)
