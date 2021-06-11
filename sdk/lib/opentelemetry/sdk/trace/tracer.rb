@@ -9,10 +9,6 @@ module OpenTelemetry
     module Trace
       # {Tracer} is the SDK implementation of {OpenTelemetry::Trace::Tracer}.
       class Tracer < OpenTelemetry::Trace::Tracer
-        attr_reader :name
-        attr_reader :version
-        attr_reader :tracer_provider
-
         # @api private
         #
         # Returns a new {Tracer} instance.
@@ -23,8 +19,6 @@ module OpenTelemetry
         #
         # @return [Tracer]
         def initialize(name, version, tracer_provider)
-          @name = name
-          @version = version
           @instrumentation_library = InstrumentationLibrary.new(name, version)
           @tracer_provider = tracer_provider
         end
@@ -42,8 +36,8 @@ module OpenTelemetry
             parent_span_id = parent_span_context.span_id
             trace_id = parent_span_context.trace_id
           end
-          trace_id ||= tracer_provider.id_generator.generate_trace_id
-          sampler = tracer_provider.active_trace_config.sampler
+          trace_id ||= @tracer_provider.id_generator.generate_trace_id
+          sampler = @tracer_provider.active_trace_config.sampler
           result = sampler.should_sample?(trace_id: trace_id, parent_context: with_parent, links: links, name: name, kind: kind, attributes: attributes)
           internal_create_span(result, name, kind, trace_id, parent_span_id, attributes, links, start_timestamp, with_parent)
         end
@@ -51,8 +45,8 @@ module OpenTelemetry
         private
 
         def internal_create_span(result, name, kind, trace_id, parent_span_id, attributes, links, start_timestamp, parent_context) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-          span_id = tracer_provider.id_generator.generate_span_id
-          if result.recording? && !tracer_provider.stopped?
+          span_id = @tracer_provider.id_generator.generate_span_id
+          if result.recording? && !@tracer_provider.stopped?
             trace_flags = result.sampled? ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
             context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: span_id, trace_flags: trace_flags, tracestate: result.tracestate)
             attributes = attributes&.merge(result.attributes) || result.attributes
@@ -62,12 +56,12 @@ module OpenTelemetry
               name,
               kind,
               parent_span_id,
-              tracer_provider.active_trace_config,
-              tracer_provider.active_span_processor,
+              @tracer_provider.active_trace_config,
+              @tracer_provider.active_span_processor,
               attributes,
               links,
               start_timestamp,
-              tracer_provider.resource,
+              @tracer_provider.resource,
               @instrumentation_library
             )
           else

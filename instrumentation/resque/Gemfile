@@ -14,8 +14,6 @@ gem 'opentelemetry-instrumentation-base', path: '../base'
 group :test do
   gem 'activejob'
   gem 'opentelemetry-common', path: '../../common'
-  gem 'opentelemetry-instrumentation-redis', path: '../redis'
   gem 'opentelemetry-sdk', path: '../../sdk'
-  gem 'pry'
   gem 'pry-byebug'
 end
