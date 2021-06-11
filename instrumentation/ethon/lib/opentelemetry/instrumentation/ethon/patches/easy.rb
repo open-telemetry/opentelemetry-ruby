@@ -32,7 +32,7 @@ module OpenTelemetry
             super
           end
 
-          def complete # rubocop:disable Metrics/MethodLength
+          def complete
             begin
               response_options = mirror.options
               response_code = (response_options[:response_code] || response_options[:code]).to_i
