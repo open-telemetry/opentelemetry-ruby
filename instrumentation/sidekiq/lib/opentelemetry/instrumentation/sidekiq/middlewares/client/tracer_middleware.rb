@@ -12,21 +12,7 @@ module OpenTelemetry
           # TracerMiddleware propagates context and instruments Sidekiq client
           # by way of its middleware system
           class TracerMiddleware
-            def call(_worker_class, job, _queue, _redis_pool)
-              tracer.in_span(
-                span_name(job),
-                attributes: build_attributes(job),
-                kind: :producer
-              ) do |span|
-                OpenTelemetry.propagation.inject(job)
-                span.add_event('created_at', timestamp: job['created_at'])
-                yield
-              end
-            end
-
-            private
-
-            def build_attributes(job)
+            def call(_worker_class, job, _queue, _redis_pool) # rubocop:disable Metrics/AbcSize
               attributes = {
                 'messaging.system' => 'sidekiq',
                 'messaging.sidekiq.job_class' => job['wrapped']&.to_s || job['class'],
@@ -35,16 +21,20 @@ module OpenTelemetry
                 'messaging.destination_kind' => 'queue'
               }
               attributes['peer.service'] = config[:peer_service] if config[:peer_service]
-              attributes
-            end
 
-            def span_name(job)
-              if config[:enable_job_class_span_names]
-                "#{job['wrapped']&.to_s || job['class']} enqueue"
-              else
-                "#{job['queue']} send"
+              span_name = case config[:span_naming]
+                          when :job_class then "#{job['wrapped']&.to_s || job['class']} send"
+                          else "#{job['queue']} send"
+                          end
+
+              tracer.in_span(span_name, attributes: attributes, kind: :producer) do |span|
+                OpenTelemetry.propagation.inject(job)
+                span.add_event('created_at', timestamp: job['created_at'])
+                yield
               end
             end
+
+            private
 
             def config
               Sidekiq::Instrumentation.instance.config
