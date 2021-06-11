@@ -35,6 +35,9 @@ module OpenTelemetry
         Thread.current[KEY] = ctx
       end
 
+      # Associates a Context with the caller's current Fiber. Every call to
+      # this operation should be paired with a corresponding call to detach.
+      #
       # Returns a token to be used with the matching call to detach
       #
       # @param [Context] context The new context
@@ -46,17 +49,19 @@ module OpenTelemetry
         stack.size
       end
 
-      # Restores the previous context, if a token is supplied it will
-      # be used to check if the call to detach is balanced with
-      # the original attach call. A warning is logged if the
+      # Restores the previous Context associated with the current Fiber.
+      # The supplied token is used to check if the call to detach is balanced
+      # with a corresponding attach call. A warning is logged if the
       # calls are unbalanced.
       #
       # @param [Integer] token The token provided by the matching call to attach
-      def detach(token = nil)
-        OpenTelemetry.logger.warn 'Calls to detach should match corresponding calls to attach' if token && token != stack.size
+      # @return [Boolean] True if the calls matched, false otherwise
+      def detach(token)
+        calls_matched = (token == stack.size)
+        OpenTelemetry.logger.warn 'Calls to detach should match corresponding calls to attach' unless calls_matched
 
-        previous_context = stack.pop || ROOT
-        self.current = previous_context
+        self.current = stack.pop || ROOT
+        calls_matched
       end
 
       # Executes a block with ctx as the current context. It restores
@@ -65,10 +70,10 @@ module OpenTelemetry
       # @param [Context] ctx The context to be made active
       # @yield [context] Yields context to the block
       def with_current(ctx)
-        prev = attach(ctx)
+        token = attach(ctx)
         yield ctx
       ensure
-        detach(prev)
+        detach(token)
       end
 
       # Execute a block in a new context with key set to value. Restores the
@@ -81,10 +86,10 @@ module OpenTelemetry
       #   the block
       def with_value(key, value)
         ctx = current.set_value(key, value)
-        prev = attach(ctx)
+        token = attach(ctx)
         yield ctx, value
       ensure
-        detach(prev)
+        detach(token)
       end
 
       # Execute a block in a new context where its values are merged with the
@@ -98,10 +103,10 @@ module OpenTelemetry
       #   to the block
       def with_values(values)
         ctx = current.set_values(values)
-        prev = attach(ctx)
+        token = attach(ctx)
         yield ctx, values
       ensure
-        detach(prev)
+        detach(token)
       end
 
       # Returns the value associated with key in the current context
