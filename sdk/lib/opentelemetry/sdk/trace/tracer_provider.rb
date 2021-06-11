@@ -23,7 +23,7 @@ module OpenTelemetry
         #   created by Tracers created by this TracerProvider
         #
         # @return [TracerProvider]
-        def initialize(sampler: sampler_from_environment(Samplers.parent_based(root: Samplers::ALWAYS_ON)), # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def initialize(sampler: sampler_from_environment(Samplers.parent_based(root: Samplers::ALWAYS_ON)),
                        resource: OpenTelemetry::SDK::Resources::Resource.create)
           @mutex = Mutex.new
           @registry = {}
