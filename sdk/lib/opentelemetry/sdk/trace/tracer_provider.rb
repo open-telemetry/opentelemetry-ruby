@@ -12,18 +12,24 @@ module OpenTelemetry
         Key = Struct.new(:name, :version)
         private_constant(:Key)
 
-        attr_accessor :active_trace_config, :id_generator
+        attr_accessor :span_limits, :id_generator, :sampler
         attr_reader :active_span_processor, :stopped, :resource
         alias stopped? stopped
 
         # Returns a new {TracerProvider} instance.
         #
+        # @param [optional Sampler] sampler The sampling policy for new spans
+        # @param [optional Resource] resource The resource to associate with spans
+        #   created by Tracers created by this TracerProvider
+        #
         # @return [TracerProvider]
-        def initialize(resource = OpenTelemetry::SDK::Resources::Resource.create)
+        def initialize(sampler: sampler_from_environment(Samplers.parent_based(root: Samplers::ALWAYS_ON)), # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+                       resource: OpenTelemetry::SDK::Resources::Resource.create)
           @mutex = Mutex.new
           @registry = {}
           @active_span_processor = NoopSpanProcessor.instance
-          @active_trace_config = Config::TraceConfig::DEFAULT
+          @span_limits = SpanLimits::DEFAULT
+          @sampler = sampler
           @id_generator = OpenTelemetry::Trace
           @registered_span_processors = []
           @stopped = false
@@ -98,6 +104,23 @@ module OpenTelemetry
                                        MultiSpanProcessor.new(@registered_span_processors.dup)
                                      end
           end
+        end
+
+        private
+
+        def sampler_from_environment(default_sampler) # rubocop:disable Metrics/CyclomaticComplexity
+          case ENV['OTEL_TRACES_SAMPLER']
+          when 'always_on' then Samplers::ALWAYS_ON
+          when 'always_off' then Samplers::ALWAYS_OFF
+          when 'traceidratio' then Samplers.trace_id_ratio_based(Float(ENV.fetch('OTEL_TRACES_SAMPLER_ARG', 1.0)))
+          when 'parentbased_always_on' then Samplers.parent_based(root: Samplers::ALWAYS_ON)
+          when 'parentbased_always_off' then Samplers.parent_based(root: Samplers::ALWAYS_OFF)
+          when 'parentbased_traceidratio' then Samplers.parent_based(root: Samplers.trace_id_ratio_based(Float(ENV.fetch('OTEL_TRACES_SAMPLER_ARG', 1.0))))
+          else default_sampler
+          end
+        rescue StandardError => e
+          OpenTelemetry.handle_error(exception: e, message: "installing default sampler #{default_sampler.description}")
+          default_sampler
         end
       end
     end
