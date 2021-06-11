@@ -95,12 +95,6 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
       _(tracer1).must_equal(tracer2)
     end
 
-    it 'returns a default name-less version-less tracer' do
-      tracer = tracer_provider.tracer
-      _(tracer.name).must_equal('')
-      _(tracer.version).must_equal('')
-    end
-
     it 'returns different tracers for different names' do
       tracer1 = tracer_provider.tracer('component1', '1.0')
       tracer2 = tracer_provider.tracer('component2', '1.0')
