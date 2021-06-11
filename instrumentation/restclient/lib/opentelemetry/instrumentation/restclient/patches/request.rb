@@ -43,12 +43,12 @@ module OpenTelemetry
               # If so, add additional attributes.
               if response.is_a?(::RestClient::Response)
                 span.set_attribute('http.status_code', response.code)
-                span.status = OpenTelemetry::Trace::Status.error unless (100..399) === response.code.to_i
+                span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(response.code.to_i)
               end
             end
           rescue ::RestClient::ExceptionWithResponse => e
             span.set_attribute('http.status_code', e.http_code)
-            span.status = OpenTelemetry::Trace::Status.error unless (100..399) === e.http_code.to_i
+            span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(e.http_code.to_i)
 
             raise e
           ensure

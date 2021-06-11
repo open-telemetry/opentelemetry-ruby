@@ -79,7 +79,7 @@ module OpenTelemetry
                 if datum.key?(:response)
                   response = datum[:response]
                   span.set_attribute('http.status_code', response[:status])
-                  span.status = OpenTelemetry::Trace::Status.error unless (100..399) === response[:status].to_i
+                  span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(response[:status].to_i)
                 end
 
                 if datum.key?(:error)

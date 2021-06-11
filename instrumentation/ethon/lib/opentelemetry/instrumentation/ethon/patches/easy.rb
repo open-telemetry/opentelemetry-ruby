@@ -42,7 +42,7 @@ module OpenTelemetry
                 @otel_span.status = OpenTelemetry::Trace::Status.error("Request has failed: #{message}")
               else
                 @otel_span.set_attribute('http.status_code', response_code)
-                @otel_span.status = OpenTelemetry::Trace::Status.error unless (100..399) === response_code.to_i
+                @otel_span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(response_code.to_i)
               end
             ensure
               @otel_span.finish
