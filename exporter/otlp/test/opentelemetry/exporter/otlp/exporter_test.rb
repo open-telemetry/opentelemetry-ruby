@@ -132,7 +132,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     let(:exporter) { OpenTelemetry::Exporter::OTLP::Exporter.new }
 
     before do
-      OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new(OpenTelemetry::SDK::Resources::Resource.telemetry_sdk)
+      OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new(resource: OpenTelemetry::SDK::Resources::Resource.telemetry_sdk)
     end
 
     it 'integrates with collector' do
