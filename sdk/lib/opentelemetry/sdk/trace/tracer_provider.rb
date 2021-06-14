@@ -33,7 +33,7 @@ module OpenTelemetry
                        span_limits: SpanLimits::DEFAULT)
           @mutex = Mutex.new
           @registry = {}
-          @active_span_processor = NoopSpanProcessor.instance
+          @active_span_processor = SpanProcessor.new
           @span_limits = span_limits
           @sampler = sampler
           @id_generator = id_generator

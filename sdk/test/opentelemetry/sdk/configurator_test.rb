@@ -164,11 +164,11 @@ describe OpenTelemetry::SDK::Configurator do
     end
 
     describe 'span processors' do
-      it 'defaults to NoopSpanProcessor if no valid exporter is available' do
+      it 'defaults to SpanProcessor if no valid exporter is available' do
         configurator.configure
 
         _(OpenTelemetry.tracer_provider.instance_variable_get(:@active_span_processor)).must_be_instance_of(
-          OpenTelemetry::SDK::Trace::NoopSpanProcessor
+          OpenTelemetry::SDK::Trace::SpanProcessor
         )
       end
 
@@ -205,7 +205,7 @@ describe OpenTelemetry::SDK::Configurator do
         end
 
         _(OpenTelemetry.tracer_provider.instance_variable_get(:@active_span_processor)).must_be_instance_of(
-          OpenTelemetry::SDK::Trace::NoopSpanProcessor
+          OpenTelemetry::SDK::Trace::SpanProcessor
         )
       end
 
