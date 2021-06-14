@@ -57,18 +57,18 @@ describe OpenTelemetry::Context do
 
     it 'allows for attaching the same context multiple times' do
       c1 = new_context
-      Context.attach(c1)
-      Context.attach(Context.current)
-      Context.attach(Context.current)
-      Context.attach(Context.current)
+      token0 = Context.attach(c1)
+      token1 = Context.attach(Context.current)
+      token2 = Context.attach(Context.current)
+      token3 = Context.attach(Context.current)
 
-      Context.detach
+      Context.detach(token0)
       _(Context.current).must_equal(c1)
-      Context.detach
+      Context.detach(token1)
       _(Context.current).must_equal(c1)
-      Context.detach
+      Context.detach(token2)
       _(Context.current).must_equal(c1)
-      Context.detach
+      Context.detach(token3)
       _(Context.current).must_equal(Context::ROOT)
     end
   end
@@ -106,36 +106,36 @@ describe OpenTelemetry::Context do
 
       Context.detach(c1_token)
 
-      _(@log_stream.string).must_match(/Calls to detach should match corresponding calls to attach/)
+      _(@log_stream.string).must_match(/OpenTelemetry error: calls to detach should match corresponding calls to attach/)
     end
 
     it 'detaches to the previous context' do
       c1 = new_context
-      Context.attach(c1)
+      c1_token = Context.attach(c1)
 
       c2 = Context.current.set_value(foo_key, 'c2')
-      Context.attach(c2)
+      c2_token = Context.attach(c2)
 
       c3 = Context.current.set_value(foo_key, 'c3')
-      Context.attach(c3)
+      c3_token = Context.attach(c3)
 
       _(Context.current).must_equal(c3)
 
-      Context.detach
+      Context.detach(c3_token)
       _(Context.current).must_equal(c2)
 
-      Context.detach
+      Context.detach(c2_token)
       _(Context.current).must_equal(c1)
 
-      Context.detach
+      Context.detach(c1_token)
       _(Context.current).must_equal(Context::ROOT)
       _(@log_stream.string).must_be_empty
     end
 
-    it 'detaching at the root leaves the root as the current context' do
-      Context.detach
+    it 'detaching with a junk token leaves the current context as root' do
+      Context.detach('junk')
       _(Context.current).must_equal(Context::ROOT)
-      _(@log_stream.string).must_be_empty
+      _(@log_stream.string).must_match(/OpenTelemetry error: calls to detach should match corresponding calls to attach/)
     end
   end
 
