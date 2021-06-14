@@ -8,13 +8,12 @@ require 'test_helper'
 
 describe OpenTelemetry::SDK::Trace::Span do
   Span = OpenTelemetry::SDK::Trace::Span
-  NoopSpanProcessor = OpenTelemetry::SDK::Trace::NoopSpanProcessor
   SpanKind = OpenTelemetry::Trace::SpanKind
   Status = OpenTelemetry::Trace::Status
   Context = OpenTelemetry::Context
 
   let(:context) { OpenTelemetry::Trace::SpanContext.new }
-  let(:span_processor) { NoopSpanProcessor.instance }
+  let(:span_processor) { OpenTelemetry::SDK::Trace::SpanProcessor.new }
   let(:mock_span_processor) { Minitest::Mock.new }
   let(:span_limits) do
     OpenTelemetry::SDK::Trace::SpanLimits.new(

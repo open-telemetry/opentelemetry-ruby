@@ -10,7 +10,7 @@ module OpenTelemetry
       # Implementation of {OpenTelemetry::Trace::Span} that records trace events.
       #
       # This implementation includes reader methods intended to allow access to
-      # internal state by SpanProcessors (see {NoopSpanProcessor} for the interface).
+      # internal state by {SpanProcessor}s.
       # Instrumentation should use the API provided by {OpenTelemetry::Trace::Span}
       # and should consider {Span} to be write-only.
       #
