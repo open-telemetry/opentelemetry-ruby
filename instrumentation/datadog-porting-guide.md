@@ -32,7 +32,6 @@ bash-5.0$ ruby trace_demonstration.rb
 ## Implementation
 
 * It's ok to use `require_relative` for files that are internal to the project
-* `Span#status` can be set via helper `OpenTelemetry::Trace::Status.http_to_status`
 * Don't load integration implementation (require file) until `install` ('patch')-time
 * Most times, only want to run installation (via `#install`) once, but need to
   consider being able to `reset` somehow for, e.g., testing

@@ -274,7 +274,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       span['i'] = 2
       span['s'] = 'val'
       span['a'] = [3, 4]
-      span.status = OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::ERROR)
+      span.status = OpenTelemetry::Trace::Status.error
       child_ctx = OpenTelemetry::Trace.context_with_span(span)
       client = with_ids(trace_id, client_span_id) { tracer.start_span('client', with_parent: child_ctx, kind: :client, start_timestamp: start_timestamp + 2).finish(end_timestamp: end_timestamp) }
       client_ctx = OpenTelemetry::Trace.context_with_span(client)

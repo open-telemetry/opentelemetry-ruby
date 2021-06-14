@@ -9,82 +9,34 @@ require 'test_helper'
 describe OpenTelemetry::Trace::Status do
   let(:trace_status) { OpenTelemetry::Trace::Status }
 
-  describe '.http_to_status' do
-    it 'returns Status' do
-      _(trace_status.http_to_status(200)).must_be_kind_of trace_status
-    end
-
-    def assert_http_to_status(http_code, trace_status_code)
-      _(trace_status.http_to_status(http_code).code).must_equal trace_status_code
-    end
-
-    it 'maps http 1xx codes' do
-      assert_http_to_status(100, trace_status::OK)
-      assert_http_to_status(199, trace_status::OK)
-    end
-
-    it 'maps http 2xx codes' do
-      assert_http_to_status(200, trace_status::OK)
-      assert_http_to_status(299, trace_status::OK)
-    end
-
-    it 'maps http 3xx codes' do
-      assert_http_to_status(300, trace_status::OK)
-      assert_http_to_status(399, trace_status::OK)
-    end
-
-    it 'maps http 4xx codes' do
-      assert_http_to_status(400, trace_status::ERROR)
-      assert_http_to_status(499, trace_status::ERROR)
-    end
-
-    it 'maps http 5xx codes' do
-      assert_http_to_status(500, trace_status::ERROR)
-      assert_http_to_status(599, trace_status::ERROR)
-    end
-  end
-
   describe '.code' do
     it 'reflects the value passed in' do
-      status = OpenTelemetry::Trace::Status.new(0)
+      status = OpenTelemetry::Trace::Status.ok
       _(status.code).must_equal(0)
     end
   end
 
   describe '.description' do
     it 'is an empty string by default' do
-      status = OpenTelemetry::Trace::Status.new(0)
+      status = OpenTelemetry::Trace::Status.ok
       _(status.description).must_equal('')
     end
 
     it 'reflects the value passed in' do
-      status = OpenTelemetry::Trace::Status.new(0, description: 'ok')
+      status = OpenTelemetry::Trace::Status.ok('ok')
       _(status.description).must_equal('ok')
-    end
-  end
-
-  describe '.initialize' do
-    it 'initializes a Status with required arguments' do
-      status = OpenTelemetry::Trace::Status.new(0, description: 'this is ok')
-      _(status.code).must_equal(0)
-      _(status.description).must_equal('this is ok')
     end
   end
 
   describe '.ok?' do
     it 'reflects code when OK' do
-      ok = OpenTelemetry::Trace::Status::OK
-      status = OpenTelemetry::Trace::Status.new(ok)
+      status = OpenTelemetry::Trace::Status.ok
       _(status.ok?).must_equal(true)
     end
 
     it 'reflects code when not OK' do
-      codes = OpenTelemetry::Trace::Status.constants - %i[OK UNSET]
-      codes.each do |code|
-        code = OpenTelemetry::Trace::Status.const_get(code)
-        status = OpenTelemetry::Trace::Status.new(code)
-        _(status.ok?).must_equal(false)
-      end
+      status = OpenTelemetry::Trace::Status.error
+      _(status.ok?).must_equal(false)
     end
   end
 end

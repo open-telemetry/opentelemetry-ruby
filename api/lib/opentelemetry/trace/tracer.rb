@@ -29,8 +29,7 @@ module OpenTelemetry
         Trace.with_span(span) { |s, c| yield s, c }
       rescue Exception => e # rubocop:disable Lint/RescueException
         span&.record_exception(e)
-        span&.status = Status.new(Status::ERROR,
-                                  description: "Unhandled exception of type: #{e.class}")
+        span&.status = Status.error("Unhandled exception of type: #{e.class}")
         raise e
       ensure
         span&.finish
