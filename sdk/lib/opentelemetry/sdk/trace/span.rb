@@ -276,13 +276,13 @@ module OpenTelemetry
         end
 
         # @api private
-        def initialize(context, parent_context, name, kind, parent_span_id, trace_config, span_processor, attributes, links, start_timestamp, resource, instrumentation_library) # rubocop:disable Metrics/AbcSize
+        def initialize(context, parent_context, name, kind, parent_span_id, span_limits, span_processor, attributes, links, start_timestamp, resource, instrumentation_library) # rubocop:disable Metrics/AbcSize
           super(span_context: context)
           @mutex = Mutex.new
           @name = name
           @kind = kind
           @parent_span_id = parent_span_id.freeze || OpenTelemetry::Trace::INVALID_SPAN_ID
-          @trace_config = trace_config
+          @span_limits = span_limits
           @span_processor = span_processor
           @resource = resource
           @instrumentation_library = instrumentation_library
@@ -296,7 +296,7 @@ module OpenTelemetry
           @attributes = attributes.nil? ? nil : Hash[attributes] # We need a mutable copy of attributes.
           trim_span_attributes(@attributes)
           @events = nil
-          @links = trim_links(links, trace_config.max_links_count, trace_config.max_attributes_per_link)
+          @links = trim_links(links, span_limits.link_count_limit, span_limits.attribute_per_link_count_limit)
           @span_processor.on_start(self, parent_context)
         end
 
@@ -313,7 +313,7 @@ module OpenTelemetry
         def trim_span_attributes(attrs)
           return if attrs.nil?
 
-          excess = attrs.size - @trace_config.max_attributes_count
+          excess = attrs.size - @span_limits.attribute_count_limit
           excess.times { attrs.shift } if excess.positive?
           truncate_attribute_values(attrs)
           nil
@@ -322,51 +322,51 @@ module OpenTelemetry
         def truncate_attribute_values(attrs)
           return EMPTY_ATTRIBUTES if attrs.nil?
 
-          max_attributes_length = @trace_config.max_attributes_length
-          attrs.each { |key, value| attrs[key] = OpenTelemetry::Common::Utilities.truncate(value, max_attributes_length) } if max_attributes_length
+          attribute_length_limit = @span_limits.attribute_length_limit
+          attrs.each { |key, value| attrs[key] = OpenTelemetry::Common::Utilities.truncate(value, attribute_length_limit) } if attribute_length_limit
           attrs
         end
 
-        def trim_links(links, max_links_count, max_attributes_per_link) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def trim_links(links, link_count_limit, attribute_per_link_count_limit) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           # Fast path (likely) common cases.
           return nil if links.nil?
 
-          if links.size <= max_links_count &&
-             links.all? { |link| link.attributes.size <= max_attributes_per_link && Internal.valid_attributes?(name, 'link', link.attributes) }
+          if links.size <= link_count_limit &&
+             links.all? { |link| link.attributes.size <= attribute_per_link_count_limit && Internal.valid_attributes?(name, 'link', link.attributes) }
             return links.frozen? ? links : links.clone.freeze
           end
 
           # Slow path: trim attributes for each Link.
-          links.last(max_links_count).map! do |link|
+          links.last(link_count_limit).map! do |link|
             attrs = Hash[link.attributes] # link.attributes is frozen, so we need an unfrozen copy to adjust.
             attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
-            excess = attrs.size - max_attributes_per_link
+            excess = attrs.size - attribute_per_link_count_limit
             excess.times { attrs.shift } if excess.positive?
             OpenTelemetry::Trace::Link.new(link.span_context, attrs)
           end.freeze
         end
 
         def append_event(events, event) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-          max_events_count = @trace_config.max_events_count
-          max_attributes_per_event = @trace_config.max_attributes_per_event
+          event_count_limit = @span_limits.event_count_limit
+          attribute_per_event_count_limit = @span_limits.attribute_per_event_count_limit
           valid_attributes = Internal.valid_attributes?(name, 'event', event.attributes)
 
           # Fast path (likely) common case.
-          if events.size < max_events_count &&
-             event.attributes.size <= max_attributes_per_event &&
+          if events.size < event_count_limit &&
+             event.attributes.size <= attribute_per_event_count_limit &&
              valid_attributes
             return events << event
           end
 
           # Slow path.
-          excess = events.size + 1 - max_events_count
+          excess = events.size + 1 - event_count_limit
           events.shift(excess) if excess.positive?
 
-          excess = event.attributes.size - max_attributes_per_event
+          excess = event.attributes.size - attribute_per_event_count_limit
           if excess.positive? || !valid_attributes
             attrs = Hash[event.attributes] # event.attributes is frozen, so we need an unfrozen copy to adjust.
             attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
-            excess = attrs.size - max_attributes_per_event
+            excess = attrs.size - attribute_per_event_count_limit
             excess.times { attrs.shift } if excess.positive?
             event = Event.new(event.name, attrs.freeze, event.timestamp)
           end

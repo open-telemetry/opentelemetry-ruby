@@ -7,13 +7,42 @@
 require 'test_helper'
 
 describe OpenTelemetry::SDK::Trace::TracerProvider do
+  let(:samplers) { OpenTelemetry::SDK::Trace::Samplers }
+  let(:subject) { OpenTelemetry::SDK::Trace::TracerProvider }
   let(:tracer_provider) do
-    OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new
+    OpenTelemetry.tracer_provider = subject.new
   end
 
   describe '#initialize' do
-    it 'activates a default TraceConfig' do
-      _(tracer_provider.active_trace_config).must_equal(TraceConfig::DEFAULT)
+    it 'activates a default SpanLimits and Sampler' do
+      _(tracer_provider.span_limits).must_equal(SpanLimits::DEFAULT)
+      _(tracer_provider.sampler).must_equal samplers.parent_based(root: samplers::ALWAYS_ON)
+    end
+
+    it 'configures samplers from environment' do
+      sampler = with_env('OTEL_TRACES_SAMPLER' => 'always_on') { subject.new.sampler }
+      _(sampler).must_equal samplers::ALWAYS_ON
+
+      sampler = with_env('OTEL_TRACES_SAMPLER' => 'always_off') { subject.new.sampler }
+      _(sampler).must_equal samplers::ALWAYS_OFF
+
+      sampler = with_env('OTEL_TRACES_SAMPLER' => 'traceidratio', 'OTEL_TRACES_SAMPLER_ARG' => '0.1') { subject.new.sampler }
+      _(sampler).must_equal samplers.trace_id_ratio_based(0.1)
+
+      sampler = with_env('OTEL_TRACES_SAMPLER' => 'traceidratio') { subject.new.sampler }
+      _(sampler).must_equal samplers.trace_id_ratio_based(1.0)
+
+      sampler = with_env('OTEL_TRACES_SAMPLER' => 'parentbased_always_on') { subject.new.sampler }
+      _(sampler).must_equal samplers.parent_based(root: samplers::ALWAYS_ON)
+
+      sampler = with_env('OTEL_TRACES_SAMPLER' => 'parentbased_always_off') { subject.new.sampler }
+      _(sampler).must_equal samplers.parent_based(root: samplers::ALWAYS_OFF)
+
+      sampler = with_env('OTEL_TRACES_SAMPLER' => 'parentbased_traceidratio', 'OTEL_TRACES_SAMPLER_ARG' => '0.2') { subject.new.sampler }
+      _(sampler).must_equal samplers.parent_based(root: samplers.trace_id_ratio_based(0.2))
+
+      sampler = with_env('OTEL_TRACES_SAMPLER' => 'parentbased_traceidratio') { subject.new.sampler }
+      _(sampler).must_equal samplers.parent_based(root: samplers.trace_id_ratio_based(1.0))
     end
   end
 
