@@ -15,6 +15,8 @@ module OpenTelemetry
     STACK_KEY = :__opentelemetry_context_storage__
     private_constant :KEY, :EMPTY_ENTRIES, :STACK_KEY
 
+    DetachError = Class.new(OpenTelemetry::Error)
+
     class << self
       # Returns a key used to index a value in a Context
       #
@@ -59,7 +61,7 @@ module OpenTelemetry
       # @return [Boolean] True if the calls matched, false otherwise
       def detach(token)
         calls_matched = (token == stack.size)
-        OpenTelemetry.handle_error(message: 'calls to detach should match corresponding calls to attach.') unless calls_matched
+        OpenTelemetry.handle_error(exception: DetachError.new('calls to detach should match corresponding calls to attach.')) unless calls_matched
 
         self.current = stack.pop
         calls_matched

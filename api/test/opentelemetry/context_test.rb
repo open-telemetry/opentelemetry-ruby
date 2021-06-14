@@ -137,6 +137,17 @@ describe OpenTelemetry::Context do
       _(Context.current).must_equal(Context::ROOT)
       _(@log_stream.string).must_match(/OpenTelemetry error: calls to detach should match corresponding calls to attach/)
     end
+
+    it 'with a raising error handler' do
+      OpenTelemetry.error_handler = lambda { |exception: nil, message: nil|
+        raise exception, "OpenTelemetry error: #{[message, exception&.message].compact.join(' - ')}"
+      }
+
+      _(-> { Context.detach('junk') }).must_raise(OpenTelemetry::Context::DetachError)
+
+    ensure
+      OpenTelemetry.error_handler = ->(exception: nil, message: nil) { OpenTelemetry.logger.error("OpenTelemetry error: #{[message, exception&.message].compact.join(' - ')}") }
+    end
   end
 
   describe '.with_current' do
