@@ -13,7 +13,6 @@ describe OpenTelemetry::SDK::Trace::Span do
   Context = OpenTelemetry::Context
 
   let(:context) { OpenTelemetry::Trace::SpanContext.new }
-  let(:span_processor) { OpenTelemetry::SDK::Trace::SpanProcessor.new }
   let(:mock_span_processor) { Minitest::Mock.new }
   let(:span_limits) do
     OpenTelemetry::SDK::Trace::SpanLimits.new(
@@ -27,7 +26,7 @@ describe OpenTelemetry::SDK::Trace::Span do
   end
   let(:span) do
     Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
-             span_processor, nil, nil, Time.now, nil, nil)
+             [], nil, nil, Time.now, nil, nil)
   end
 
   describe '#attributes' do
@@ -382,7 +381,7 @@ describe OpenTelemetry::SDK::Trace::Span do
       mock_span_processor.expect(:on_start, nil) { |_| true }
       span = Span.new(context, Context.empty,
                       'name', SpanKind::INTERNAL, nil, span_limits,
-                      mock_span_processor, nil, nil, Time.now, nil, nil)
+                      [mock_span_processor], nil, nil, Time.now, nil, nil)
       mock_span_processor.expect(:on_finish, nil, [span])
       span.finish
       mock_span_processor.verify
@@ -403,15 +402,11 @@ describe OpenTelemetry::SDK::Trace::Span do
   end
 
   describe '#initialize' do
-    it 'installs the span processor' do
-      _(span.instance_variable_get(:@span_processor)).must_equal(span_processor)
-    end
-
     it 'calls the span processor #on_start callback' do
       yielded_span = nil
       mock_span_processor.expect(:on_start, nil) { |s| yielded_span = s }
       span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
-                      mock_span_processor, nil, nil, Time.now, nil, nil)
+                      [mock_span_processor], nil, nil, Time.now, nil, nil)
       _(yielded_span).must_equal(span)
       mock_span_processor.verify
     end
@@ -419,7 +414,7 @@ describe OpenTelemetry::SDK::Trace::Span do
     it 'trims excess attributes' do
       attributes = { 'foo': 'bar', 'other': 'attr' }
       span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
-                      span_processor, attributes, nil, Time.now, nil, nil)
+                      [], attributes, nil, Time.now, nil, nil)
       _(span.to_span_data.total_recorded_attributes).must_equal(2)
       _(span.attributes.length).must_equal(1)
     end
@@ -427,28 +422,28 @@ describe OpenTelemetry::SDK::Trace::Span do
     it 'truncates attributes if configured' do
       attributes = { 'foo': 'oldbaroldbaroldbaroldbaroldbaroldbar' }
       span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
-                      span_processor, attributes, nil, Time.now, nil, nil)
+                      [], attributes, nil, Time.now, nil, nil)
       _(span.attributes[:foo]).must_equal('oldbaroldbaroldbaroldbaroldba...')
     end
 
     it 'counts attributes' do
       attributes = { 'foo': 'bar', 'other': 'attr' }
       span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
-                      span_processor, attributes, nil, Time.now, nil, nil)
+                      [], attributes, nil, Time.now, nil, nil)
       _(span.to_span_data.total_recorded_attributes).must_equal(2)
     end
 
     it 'counts links' do
       links = [OpenTelemetry::Trace::Link.new(context), OpenTelemetry::Trace::Link.new(context)]
       span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
-                      span_processor, nil, links, Time.now, nil, nil)
+                      [], nil, links, Time.now, nil, nil)
       _(span.to_span_data.total_recorded_links).must_equal(2)
     end
 
     it 'trims excess links' do
       links = [OpenTelemetry::Trace::Link.new(context), OpenTelemetry::Trace::Link.new(context)]
       span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
-                      span_processor, nil, links, Time.now, nil, nil)
+                      [], nil, links, Time.now, nil, nil)
       _(span.links.size).must_equal(1)
     end
   end

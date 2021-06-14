@@ -164,12 +164,10 @@ describe OpenTelemetry::SDK::Configurator do
     end
 
     describe 'span processors' do
-      it 'defaults to SpanProcessor if no valid exporter is available' do
+      it 'defaults to no processors if no valid exporter is available' do
         configurator.configure
 
-        _(OpenTelemetry.tracer_provider.instance_variable_get(:@active_span_processor)).must_be_instance_of(
-          OpenTelemetry::SDK::Trace::SpanProcessor
-        )
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)).must_be_empty
       end
 
       it 'reflects configured value' do
@@ -181,7 +179,7 @@ describe OpenTelemetry::SDK::Configurator do
 
         configurator.configure
 
-        _(OpenTelemetry.tracer_provider.instance_variable_get(:@active_span_processor)).must_be_instance_of(
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors).first).must_be_instance_of(
           OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
         )
       end
@@ -191,10 +189,10 @@ describe OpenTelemetry::SDK::Configurator do
           configurator.configure
         end
 
-        _(OpenTelemetry.tracer_provider.instance_variable_get(:@active_span_processor)).must_be_instance_of(
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors).first).must_be_instance_of(
           OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
         )
-        _(OpenTelemetry.tracer_provider.instance_variable_get(:@active_span_processor).instance_variable_get(:@exporter)).must_be_instance_of(
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors).first.instance_variable_get(:@exporter)).must_be_instance_of(
           OpenTelemetry::Exporter::Jaeger::CollectorExporter
         )
       end
@@ -204,9 +202,7 @@ describe OpenTelemetry::SDK::Configurator do
           configurator.configure
         end
 
-        _(OpenTelemetry.tracer_provider.instance_variable_get(:@active_span_processor)).must_be_instance_of(
-          OpenTelemetry::SDK::Trace::SpanProcessor
-        )
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)).must_be_empty
       end
 
       it 'accepts "console" as an environment variable value' do
@@ -214,10 +210,10 @@ describe OpenTelemetry::SDK::Configurator do
           configurator.configure
         end
 
-        _(OpenTelemetry.tracer_provider.instance_variable_get(:@active_span_processor)).must_be_instance_of(
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors).first).must_be_instance_of(
           OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor
         )
-        _(OpenTelemetry.tracer_provider.instance_variable_get(:@active_span_processor).instance_variable_get(:@span_exporter)).must_be_instance_of(
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors).first.instance_variable_get(:@span_exporter)).must_be_instance_of(
           OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter
         )
       end

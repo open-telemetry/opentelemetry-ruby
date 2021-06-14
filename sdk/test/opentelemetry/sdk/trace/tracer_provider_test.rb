@@ -47,7 +47,8 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
   end
 
   describe '#shutdown' do
-    let(:mock_span_processor) { Minitest::Mock.new }
+    let(:mock_span_processor)  { Minitest::Mock.new }
+    let(:mock_span_processor2) { Minitest::Mock.new }
 
     it 'notifies the span processor' do
       mock_span_processor.expect(:shutdown, nil, [{ timeout: nil }])
@@ -73,16 +74,37 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
       tracer_provider.shutdown
       mock_span_processor.verify
     end
+
+    it 'supports multiple span processors' do
+      mock_span_processor.expect(:shutdown, nil, [{ timeout: nil }])
+      mock_span_processor2.expect(:shutdown, nil, [{ timeout: nil }])
+      tracer_provider.add_span_processor(mock_span_processor)
+      tracer_provider.add_span_processor(mock_span_processor2)
+      tracer_provider.shutdown
+      mock_span_processor.verify
+      mock_span_processor2.verify
+    end
   end
 
   describe '#force_flush' do
-    let(:mock_span_processor) { Minitest::Mock.new }
+    let(:mock_span_processor)  { Minitest::Mock.new }
+    let(:mock_span_processor2) { Minitest::Mock.new }
 
     it 'notifies the span processor' do
       mock_span_processor.expect(:force_flush, nil, [{ timeout: nil }])
       tracer_provider.add_span_processor(mock_span_processor)
       tracer_provider.force_flush
       mock_span_processor.verify
+    end
+
+    it 'supports multiple span processors' do
+      mock_span_processor.expect(:force_flush, nil, [{ timeout: nil }])
+      mock_span_processor2.expect(:force_flush, nil, [{ timeout: nil }])
+      tracer_provider.add_span_processor(mock_span_processor)
+      tracer_provider.add_span_processor(mock_span_processor2)
+      tracer_provider.force_flush
+      mock_span_processor.verify
+      mock_span_processor2.verify
     end
   end
 
