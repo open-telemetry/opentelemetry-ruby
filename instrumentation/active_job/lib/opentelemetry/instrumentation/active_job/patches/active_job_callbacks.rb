@@ -57,7 +57,7 @@ module OpenTelemetry
               ensure
                 # We may be in a job system (eg: resque) that forks and kills worker processes often.
                 # We don't want to lose spans by not flushing any span processors, so we force it here.
-                otel_tracer.tracer_provider.force_flush
+                OpenTelemetry.tracer_provider.force_flush
               end
             end
           end
