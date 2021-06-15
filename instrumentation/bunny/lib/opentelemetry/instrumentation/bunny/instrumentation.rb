@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry-instrumentation-base'
+
 module OpenTelemetry
   module Instrumentation
     module Bunny
