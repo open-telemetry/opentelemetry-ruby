@@ -122,7 +122,7 @@ module OpenTelemetry
       private
 
       def tracer_provider
-        @tracer_provider ||= Trace::TracerProvider.new(@resource)
+        @tracer_provider ||= Trace::TracerProvider.new(resource: @resource)
       end
 
       def check_use_mode!(mode)

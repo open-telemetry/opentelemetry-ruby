@@ -8,27 +8,25 @@ require 'test_helper'
 
 describe OpenTelemetry::SDK::Trace::Span do
   Span = OpenTelemetry::SDK::Trace::Span
-  TraceConfig = OpenTelemetry::SDK::Trace::Config::TraceConfig
-  NoopSpanProcessor = OpenTelemetry::SDK::Trace::NoopSpanProcessor
   SpanKind = OpenTelemetry::Trace::SpanKind
   Status = OpenTelemetry::Trace::Status
   Context = OpenTelemetry::Context
 
   let(:context) { OpenTelemetry::Trace::SpanContext.new }
-  let(:span_processor) { NoopSpanProcessor.instance }
+  let(:span_processor) { OpenTelemetry::SDK::Trace::SpanProcessor.new }
   let(:mock_span_processor) { Minitest::Mock.new }
-  let(:trace_config) do
-    TraceConfig.new(
-      max_attributes_count: 1,
-      max_events_count: 1,
-      max_links_count: 1,
-      max_attributes_per_event: 1,
-      max_attributes_per_link: 1,
-      max_attributes_length: 32
+  let(:span_limits) do
+    OpenTelemetry::SDK::Trace::SpanLimits.new(
+      attribute_count_limit: 1,
+      event_count_limit: 1,
+      link_count_limit: 1,
+      attribute_per_event_count_limit: 1,
+      attribute_per_link_count_limit: 1,
+      attribute_length_limit: 32
     )
   end
   let(:span) do
-    Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, trace_config,
+    Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
              span_processor, nil, nil, Time.now, nil, nil)
   end
 
@@ -249,11 +247,11 @@ describe OpenTelemetry::SDK::Trace::Span do
   end
 
   describe '#record_exception' do
-    let(:trace_config) do
-      TraceConfig.new(
-        max_attributes_count: 10,
-        max_events_count: 5,
-        max_attributes_per_event: 10
+    let(:span_limits) do
+      SpanLimits.new(
+        attribute_count_limit: 10,
+        event_count_limit: 5,
+        attribute_per_event_count_limit: 10
       )
     end
 
@@ -324,14 +322,36 @@ describe OpenTelemetry::SDK::Trace::Span do
 
   describe '#status=' do
     it 'sets the status' do
-      span.status = Status.new(1, description: 'cancelled')
+      span.status = Status.error('cancelled')
       _(span.status.description).must_equal('cancelled')
+      _(span.status.code).must_equal(Status::ERROR)
     end
 
     it 'does not set the status if span is ended' do
       span.finish
-      span.status = Status.new(Status::ERROR, description: 'cancelled')
+      span.status = Status.error('cancelled')
       _(span.status.code).must_equal(Status::UNSET)
+    end
+
+    it 'does not set the status if asked to set to UNSET' do
+      span.status = Status.error('cancelled')
+      span.status = Status.unset('actually, maybe it is OK?')
+      _(span.status.description).must_equal('cancelled')
+      _(span.status.code).must_equal(Status::ERROR)
+    end
+
+    it 'does not override the status once set to OK' do
+      span.status = Status.ok('nothing to see here')
+      span.status = Status.error('cancelled')
+      _(span.status.description).must_equal('nothing to see here')
+      _(span.status.code).must_equal(Status::OK)
+    end
+
+    it 'allows overriding ERROR with OK' do
+      span.status = Status.error('cancelled')
+      span.status = Status.ok('nothing to see here')
+      _(span.status.description).must_equal('nothing to see here')
+      _(span.status.code).must_equal(Status::OK)
     end
   end
 
@@ -361,7 +381,7 @@ describe OpenTelemetry::SDK::Trace::Span do
     it 'calls the span processor #on_finish callback' do
       mock_span_processor.expect(:on_start, nil) { |_| true }
       span = Span.new(context, Context.empty,
-                      'name', SpanKind::INTERNAL, nil, trace_config,
+                      'name', SpanKind::INTERNAL, nil, span_limits,
                       mock_span_processor, nil, nil, Time.now, nil, nil)
       mock_span_processor.expect(:on_finish, nil, [span])
       span.finish
@@ -390,7 +410,7 @@ describe OpenTelemetry::SDK::Trace::Span do
     it 'calls the span processor #on_start callback' do
       yielded_span = nil
       mock_span_processor.expect(:on_start, nil) { |s| yielded_span = s }
-      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, trace_config,
+      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
                       mock_span_processor, nil, nil, Time.now, nil, nil)
       _(yielded_span).must_equal(span)
       mock_span_processor.verify
@@ -398,7 +418,7 @@ describe OpenTelemetry::SDK::Trace::Span do
 
     it 'trims excess attributes' do
       attributes = { 'foo': 'bar', 'other': 'attr' }
-      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, trace_config,
+      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
                       span_processor, attributes, nil, Time.now, nil, nil)
       _(span.to_span_data.total_recorded_attributes).must_equal(2)
       _(span.attributes.length).must_equal(1)
@@ -406,28 +426,28 @@ describe OpenTelemetry::SDK::Trace::Span do
 
     it 'truncates attributes if configured' do
       attributes = { 'foo': 'oldbaroldbaroldbaroldbaroldbaroldbar' }
-      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, trace_config,
+      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
                       span_processor, attributes, nil, Time.now, nil, nil)
       _(span.attributes[:foo]).must_equal('oldbaroldbaroldbaroldbaroldba...')
     end
 
     it 'counts attributes' do
       attributes = { 'foo': 'bar', 'other': 'attr' }
-      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, trace_config,
+      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
                       span_processor, attributes, nil, Time.now, nil, nil)
       _(span.to_span_data.total_recorded_attributes).must_equal(2)
     end
 
     it 'counts links' do
       links = [OpenTelemetry::Trace::Link.new(context), OpenTelemetry::Trace::Link.new(context)]
-      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, trace_config,
+      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
                       span_processor, nil, links, Time.now, nil, nil)
       _(span.to_span_data.total_recorded_links).must_equal(2)
     end
 
     it 'trims excess links' do
       links = [OpenTelemetry::Trace::Link.new(context), OpenTelemetry::Trace::Link.new(context)]
-      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, trace_config,
+      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
                       span_processor, nil, links, Time.now, nil, nil)
       _(span.links.size).must_equal(1)
     end

@@ -4,17 +4,14 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'singleton'
-
 module OpenTelemetry
   module SDK
     module Trace
-      # NoopSpanProcessor is a singleton implementation of the duck type
-      # SpanProcessor that provides synchronous no-op hooks for when a
-      # {Span} is started or when a {Span} is ended.
-      class NoopSpanProcessor
-        include Singleton
-
+      # SpanProcessor describes a duck type and provides synchronous no-op hooks for when a
+      # {Span} is started or when a {Span} is ended. It is not required to subclass this
+      # class to provide an implementation of SpanProcessor, provided the interface is
+      # satisfied.
+      class SpanProcessor
         # Called when a {Span} is started, if the {Span#recording?}
         # returns true.
         #
