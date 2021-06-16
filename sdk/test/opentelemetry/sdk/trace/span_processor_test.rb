@@ -6,8 +6,8 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::SDK::Trace::NoopSpanProcessor do
-  let(:processor) { OpenTelemetry::SDK::Trace::NoopSpanProcessor.instance }
+describe OpenTelemetry::SDK::Trace::SpanProcessor do
+  let(:processor) { OpenTelemetry::SDK::Trace::SpanProcessor.new }
   let(:span)      { nil }
   let(:context)   { nil }
 

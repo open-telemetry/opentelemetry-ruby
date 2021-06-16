@@ -51,7 +51,7 @@ describe OpenTelemetry::SDK, 'API_trace' do
   describe 'tracing child-of-remote spans' do
     let(:context_with_remote_parent) do
       OpenTelemetry::Trace.context_with_span(
-        OpenTelemetry::Trace::Span.new(span_context: remote_span_context),
+        OpenTelemetry::Trace.non_recording_span(remote_span_context),
         parent_context: OpenTelemetry::Context.empty
       )
     end

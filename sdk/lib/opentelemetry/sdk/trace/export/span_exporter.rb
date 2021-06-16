@@ -8,24 +8,25 @@ module OpenTelemetry
   module SDK
     module Trace
       module Export
-        # A noop exporter that demonstrates and documents the SpanExporter
-        # duck type. SpanExporter allows different tracing services to export
+        # SpanExporter describes a duck type. It is not required to subclass this
+        # class to provide an implementation of SpanExporter, provided the interface is
+        # satisfied. SpanExporter allows different tracing services to export
         # recorded data for sampled spans in their own format.
         #
         # To export data an exporter MUST be registered to the {TracerProvider} using
-        # a {SimpleSpanProcessor} or a {BatchSpanProcessor}.
-        class NoopSpanExporter
+        # a {SpanProcessor} implementation.
+        class SpanExporter
           def initialize
             @stopped = false
           end
 
-          # Called to export sampled {Span}s.
+          # Called to export sampled {SpanData}s.
           #
-          # @param [Enumerable<Span>] spans the list of sampled {Span}s to be
+          # @param [Enumerable<SpanData>] span_data the list of sampled {SpanData} to be
           #   exported.
           # @param [optional Numeric] timeout An optional timeout in seconds.
           # @return [Integer] the result of the export.
-          def export(spans, timeout: nil)
+          def export(span_data, timeout: nil)
             return SUCCESS unless @stopped
 
             FAILURE

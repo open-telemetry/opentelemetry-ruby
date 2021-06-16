@@ -29,7 +29,7 @@ module OpenTelemetry
         #   will be used to write context into the carrier, otherwise the default
         #   text map setter will be used.
         def inject(carrier, context: Context.current, setter: Context::Propagation.text_map_setter)
-          baggage = OpenTelemetry.baggage.raw_entries(context: context)
+          baggage = OpenTelemetry::Baggage.raw_entries(context: context)
 
           return if baggage.nil? || baggage.empty?
 
@@ -55,7 +55,7 @@ module OpenTelemetry
 
           entries = header.gsub(/\s/, '').split(',')
 
-          OpenTelemetry.baggage.build(context: context) do |builder|
+          OpenTelemetry::Baggage.build(context: context) do |builder|
             entries.each do |entry|
               # Note metadata is currently unused in OpenTelemetry, but is part
               # the W3C spec where it's referred to as properties. We preserve

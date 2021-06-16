@@ -9,7 +9,7 @@ require 'test_helper'
 def stub_span_builder(recording: false)
   trace_flags = recording ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
   ctx = OpenTelemetry::Trace::SpanContext.new(trace_flags: trace_flags)
-  span = OpenTelemetry::Trace::Span.new(span_context: ctx)
+  span = OpenTelemetry::Trace.non_recording_span(ctx)
   def span.to_span_data; end
 
   span.define_singleton_method(:recording?) { recording }
@@ -68,7 +68,7 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
 
   it 'calls #to_span_data on sampled spans in #on_finish' do
     processor_noop = export::SimpleSpanProcessor.new(
-      export::NoopSpanExporter.new
+      export::SpanExporter.new
     )
 
     mock_trace_flags = Minitest::Mock.new
@@ -85,7 +85,7 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
   end
 
   it 'catches and logs exporter exceptions in #on_finish' do
-    raising_exporter = export::NoopSpanExporter.new
+    raising_exporter = export::SpanExporter.new
 
     def raising_exporter.export(_)
       raise ArgumentError
@@ -119,6 +119,6 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
   end
 
   it 'raises if exporter is not an exporter' do
-    _(-> { export::SimpleSpanProcessor.new(exporter: export::NoopSpanExporter.new) }).must_raise(ArgumentError)
+    _(-> { export::SimpleSpanProcessor.new(exporter: export::SpanExporter.new) }).must_raise(ArgumentError)
   end
 end

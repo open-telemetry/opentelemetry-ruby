@@ -14,25 +14,30 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: Ruby 2.5
-            container: circleci/ruby:2.5-buster
+          - name: Test Linux / Ruby 2.5
+            os: ubuntu-latest
+            ruby: "2.5"
             flags: --include-simple --include-appraisal
-          - name: Ruby 2.6
-            container: circleci/ruby:2.6-buster
+          - name: Test Linux / Ruby 2.6
+            os: ubuntu-latest
+            ruby: "2.6"
             flags: --include-simple --include-appraisal
-          - name: Ruby 2.7
-            container: circleci/ruby:2.7-buster
-            flags: --include-simple --include-appraisal --check-rubocop --check-yard
-          - name: Ruby 3.0
-            container: circleci/ruby:3.0-buster
-            flags: --include-simple --include-appraisal --exclude opentelemetry-exporter-otlp
-          - name: JRuby
-            container: circleci/jruby:latest
-            flags: --include-simple --exclude opentelemetry-resource_detectors --exclude opentelemetry-exporter-otlp
+          - name: Test Linux / Ruby 2.7
+            os: ubuntu-latest
+            ruby: "2.7"
+            flags: --include-simple --include-appraisal
+          - name: Test Linux / Ruby 3.0
+            os: ubuntu-latest
+            ruby: "3.0"
+            flags: --include-simple --include-appraisal
+          - name: Test Linux / JRuby
+            os: ubuntu-latest
+            ruby: jruby
+            # otlp omitted because it depends on protobuf which does not work on JRuby
+            flags: --include-simple --exclude opentelemetry-exporter-otlp
       fail-fast: false
-    name: Test ${{ matrix.name }} (${{ matrix.flags }})
-    runs-on: ubuntu-latest
-    container: ${{ matrix.container }}
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
     env:
       JRUBY_OPTS: --debug
     services:
@@ -47,10 +52,11 @@ jobs:
         image: confluentinc/cp-kafka:latest
         ports:
           - 9092:9092
+          - 29092:29092
         env:
           KAFKA_BROKER_ID: 1
           KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:29092,PLAINTEXT_HOST://localhost:9092
           KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
           KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -76,9 +82,6 @@ jobs:
       mysql:
         image: mysql:5.6
         env:
-          TEST_MYSQL_USER: root
-          TEST_MYSQL_ROOT_PASSWORD: root
-          TEST_MYSQ_DB: mysql
           MYSQL_DATABASE: mysql
           MYSQL_ROOT_PASSWORD: root
           MYSQL_PASSWORD: mysql
@@ -98,28 +101,34 @@ jobs:
           - 5432:5432
         options: --health-cmd="pg_isready" --health-interval=5s --health-timeout=2s --health-retries=3
     steps:
-      - name: Setup file system permissions
-        run: sudo chmod -R 777 $GITHUB_WORKSPACE /github /__w/_temp
+      - name: Install Ruby ${{ matrix.ruby }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "${{ matrix.ruby }}"
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install tools
-        run: gem install --no-document bundler:2.1.4 toys:0.11.4
+        run: gem install --no-document bundler:2.1.4 toys:0.11.5
       - name: Run tests
         env:
-          TEST_KAFKA_HOST: kafka
+          TEST_KAFKA_HOST: "127.0.0.1"
           TEST_KAFKA_PORT: 29092
-          TEST_MYSQL_HOST: mysql
+          TEST_MYSQL_HOST: "127.0.0.1"
           TEST_MYSQL_PORT: 3306
+          TEST_MYSQL_USER: mysql
+          TEST_MYSQL_PASSWORD: mysql
           TEST_POSTGRES_PASSWORD: postgres
           TEST_POSTGRES_USER: postgres
-          TEST_POSTGRES_HOST: postgres
+          TEST_POSTGRES_HOST: localhost
           TEST_POSTGRES_PORT: 5432
           TEST_POSTGRES_DB: postgres
-          TEST_MEMCACHED_HOST: memcached
-          TEST_MEMCACHED_PORT: ${{ job.services.memcached.ports['11211'] }}
-          TEST_MONGODB_HOST: mongodb
-          TEST_MONGODB_PORT: ${{ job.services.mongodb.ports['27017'] }}
-          TEST_RABBITMQ_URL: amqp://guest:guest@rabbitmq:${{ job.services.rabbitmq.ports['5672'] }}
-          TEST_REDIS_HOST: redis
-          TEST_REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
+          TEST_MEMCACHED_HOST: localhost
+          TEST_MEMCACHED_PORT: 11211
+          TEST_MONGODB_HOST: localhost
+          TEST_MONGODB_PORT: 27017
+          TEST_RABBITMQ_HOST: localhost
+          TEST_RABBITMQ_PORT: 5672
+          TEST_RABBITMQ_URL: amqp://guest:guest@localhost:5672
+          TEST_REDIS_HOST: localhost
+          TEST_REDIS_PORT: 6379
         run: toys ci ${{ matrix.flags }}

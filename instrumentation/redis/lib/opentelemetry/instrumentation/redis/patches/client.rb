@@ -13,7 +13,9 @@ module OpenTelemetry
           MAX_STATEMENT_LENGTH = 500
           private_constant :MAX_STATEMENT_LENGTH
 
-          def process(commands) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+          def process(commands) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+            return super unless config[:trace_root_spans] || OpenTelemetry::Trace.current_span.context.valid?
+
             host = options[:host]
             port = options[:port]
 
@@ -42,10 +44,7 @@ module OpenTelemetry
               super(commands).tap do |reply|
                 if reply.is_a?(::Redis::CommandError)
                   s.record_exception(reply)
-                  s.status = Trace::Status.new(
-                    Trace::Status::ERROR,
-                    description: reply.message
-                  )
+                  s.status = Trace::Status.error(reply.message)
                 end
               end
             end

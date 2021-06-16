@@ -9,7 +9,7 @@ module OpenTelemetry
     module Trace
       module Export
         # Implementation of the SpanExporter duck type that simply forwards all
-        # received spans to a collection of SpanExporters.
+        # received SpanDatas to a collection of SpanExporters.
         #
         # Can be used to export to multiple backends using the same
         # SpanProcessor like a {SimpleSpanProcessor} or a
@@ -19,9 +19,10 @@ module OpenTelemetry
             @span_exporters = span_exporters.clone.freeze
           end
 
-          # Called to export sampled {Span}s.
+          # Called to export sampled {SpanData} structs.
           #
-          # @param [Enumerable<Span>] spans the list of sampled {Span}s to be
+          # @param [Enumerable<SpanData>] span_data the
+          #   list of recorded {SpanData} structs to be
           #   exported.
           # @param [optional Numeric] timeout An optional timeout in seconds.
           # @return [Integer] the result of the export.
@@ -44,11 +45,11 @@ module OpenTelemetry
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
           def force_flush(timeout: nil)
             start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
-            results = @span_exporters.map do |processor|
+            results = @span_exporters.map do |span_exporter|
               remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
               return TIMEOUT if remaining_timeout&.zero?
 
-              processor.force_flush(timeout: remaining_timeout)
+              span_exporter.force_flush(timeout: remaining_timeout)
             end
             results.uniq.max || SUCCESS
           end
@@ -61,11 +62,11 @@ module OpenTelemetry
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
           def shutdown(timeout: nil)
             start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
-            results = @span_exporters.map do |processor|
+            results = @span_exporters.map do |span_exporter|
               remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
               return TIMEOUT if remaining_timeout&.zero?
 
-              processor.shutdown(timeout: remaining_timeout)
+              span_exporter.shutdown(timeout: remaining_timeout)
             end
             results.uniq.max || SUCCESS
           end

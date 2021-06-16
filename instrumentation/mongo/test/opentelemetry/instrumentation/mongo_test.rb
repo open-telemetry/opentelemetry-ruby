@@ -71,5 +71,5 @@ describe OpenTelemetry::Instrumentation::Mongo do
       client['people'].find(name: 'Steve').first
       _(exporter.finished_spans.size).must_equal 2
     end
-  end
+  end unless ENV['OMIT_SERVICES']
 end

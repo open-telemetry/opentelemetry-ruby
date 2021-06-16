@@ -8,6 +8,21 @@ require 'test_helper'
 require 'tempfile'
 
 describe OpenTelemetry do
+  class CustomSpan < OpenTelemetry::Trace::Span
+  end
+
+  class CustomTracer < OpenTelemetry::Trace::Tracer
+    def start_root_span(*)
+      CustomSpan.new
+    end
+  end
+
+  class CustomTracerProvider < OpenTelemetry::Trace::TracerProvider
+    def tracer(name = nil, version = nil)
+      CustomTracer.new
+    end
+  end
+
   describe '.tracer_provider' do
     after do
       # Ensure we don't leak custom tracer factories and tracers to other tests
@@ -24,24 +39,9 @@ describe OpenTelemetry do
     end
 
     it 'returns user specified tracer provider' do
-      custom_tracer_provider = 'a custom tracer provider'
+      custom_tracer_provider = CustomTracerProvider.new
       OpenTelemetry.tracer_provider = custom_tracer_provider
       _(OpenTelemetry.tracer_provider).must_equal(custom_tracer_provider)
-    end
-  end
-
-  class CustomSpan < OpenTelemetry::Trace::Span
-  end
-
-  class CustomTracer < OpenTelemetry::Trace::Tracer
-    def start_root_span(*)
-      CustomSpan.new
-    end
-  end
-
-  class CustomTracerProvider < OpenTelemetry::Trace::TracerProvider
-    def tracer(name = nil, version = nil)
-      CustomTracer.new
     end
   end
 
@@ -124,34 +124,6 @@ describe OpenTelemetry do
       ensure
         t.unlink
       end
-    end
-  end
-
-  describe '.baggage' do
-    before do
-      @default_baggage = OpenTelemetry.baggage
-    end
-
-    after do
-      # Ensure we don't leak custom baggage to other tests
-      OpenTelemetry.baggage = @default_baggage
-    end
-
-    it 'returns Baggage::NoopManager by default' do
-      manager = OpenTelemetry.baggage
-      _(manager).must_be_instance_of(OpenTelemetry::Baggage::NoopManager)
-    end
-
-    it 'returns the same instance when accessed multiple times' do
-      _(OpenTelemetry.baggage).must_equal(
-        OpenTelemetry.baggage
-      )
-    end
-
-    it 'returns user specified baggage' do
-      custom_manager = 'a custom baggage'
-      OpenTelemetry.baggage = custom_manager
-      _(OpenTelemetry.baggage).must_equal(custom_manager)
     end
   end
 

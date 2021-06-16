@@ -112,7 +112,6 @@ module OpenTelemetry
       def configure
         OpenTelemetry.logger = logger
         OpenTelemetry.error_handler = error_handler
-        OpenTelemetry.baggage = Baggage::Manager.new
         configure_propagation
         configure_span_processors
         tracer_provider.id_generator = @id_generator
@@ -123,7 +122,7 @@ module OpenTelemetry
       private
 
       def tracer_provider
-        @tracer_provider ||= Trace::TracerProvider.new(@resource)
+        @tracer_provider ||= Trace::TracerProvider.new(resource: @resource)
       end
 
       def check_use_mode!(mode)

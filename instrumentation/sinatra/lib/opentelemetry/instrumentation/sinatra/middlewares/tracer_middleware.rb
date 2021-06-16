@@ -43,7 +43,7 @@ module OpenTelemetry
             span.set_attribute('http.status_code', status)
             span.set_attribute('http.route', env['sinatra.route'].split.last) if env['sinatra.route']
             span.name = env['sinatra.route'] if env['sinatra.route']
-            span.status = OpenTelemetry::Trace::Status.http_to_status(status)
+            span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(status.to_i)
           end
         end
       end

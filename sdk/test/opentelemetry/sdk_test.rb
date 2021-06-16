@@ -10,7 +10,7 @@ describe OpenTelemetry::SDK do
   describe '#configure' do
     after do
       # Ensure we don't leak custom loggers and error handlers to other tests
-      OpenTelemetry.logger = Logger.new('/dev/null')
+      OpenTelemetry.logger = Logger.new(File::NULL)
       OpenTelemetry.error_handler = nil
     end
 
