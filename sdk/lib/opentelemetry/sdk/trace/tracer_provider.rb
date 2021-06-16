@@ -80,7 +80,7 @@ module OpenTelemetry
               processor.shutdown(timeout: remaining_timeout)
             end
             @stopped = true
-            results.uniq.max || Export::SUCCESS
+            results.max || Export::SUCCESS
           end
         end
 
@@ -106,7 +106,7 @@ module OpenTelemetry
 
               processor.force_flush(timeout: remaining_timeout)
             end
-            results.uniq.max || Export::SUCCESS
+            results.max || Export::SUCCESS
           end
         end
 
