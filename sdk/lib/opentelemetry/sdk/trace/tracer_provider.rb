@@ -33,11 +33,10 @@ module OpenTelemetry
                        span_limits: SpanLimits::DEFAULT)
           @mutex = Mutex.new
           @registry = {}
-          @active_span_processor = SpanProcessor.new
+          @span_processors = []
           @span_limits = span_limits
           @sampler = sampler
           @id_generator = id_generator
-          @registered_span_processors = []
           @stopped = false
           @resource = resource
         end
@@ -64,14 +63,24 @@ module OpenTelemetry
         # After this is called all the newly created {Span}s will be no-op.
         #
         # @param [optional Numeric] timeout An optional timeout in seconds.
+        # @return [Integer] Export::SUCCESS if no error occurred, Export::FAILURE if
+        #   a non-specific failure occurred, Export::TIMEOUT if a timeout occurred.
         def shutdown(timeout: nil)
           @mutex.synchronize do
             if @stopped
               OpenTelemetry.logger.warn('calling Tracer#shutdown multiple times.')
-              return
+              return Export::FAILURE
             end
-            @active_span_processor.shutdown(timeout: timeout)
+
+            start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
+            results = @span_processors.map do |processor|
+              remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
+              break [Export::TIMEOUT] if remaining_timeout&.zero?
+
+              processor.shutdown(timeout: remaining_timeout)
+            end
             @stopped = true
+            results.max || Export::SUCCESS
           end
         end
 
@@ -90,7 +99,14 @@ module OpenTelemetry
           @mutex.synchronize do
             return Export::SUCCESS if @stopped
 
-            @active_span_processor.force_flush(timeout: timeout)
+            start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
+            results = @span_processors.map do |processor|
+              remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
+              return Export::TIMEOUT if remaining_timeout&.zero?
+
+              processor.force_flush(timeout: remaining_timeout)
+            end
+            results.max || Export::SUCCESS
           end
         end
 
@@ -103,12 +119,7 @@ module OpenTelemetry
               OpenTelemetry.logger.warn('calling Tracer#add_span_processor after shutdown.')
               return
             end
-            @registered_span_processors << span_processor
-            @active_span_processor = if @registered_span_processors.size == 1
-                                       span_processor
-                                     else
-                                       MultiSpanProcessor.new(@registered_span_processors.dup)
-                                     end
+            @span_processors = @span_processors.dup.push(span_processor)
           end
         end
 
@@ -128,7 +139,7 @@ module OpenTelemetry
               kind,
               parent_span_id,
               @span_limits,
-              @active_span_processor,
+              @span_processors,
               attributes,
               links,
               start_timestamp,

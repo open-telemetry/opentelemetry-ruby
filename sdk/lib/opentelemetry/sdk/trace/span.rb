@@ -238,7 +238,7 @@ module OpenTelemetry
             @events.freeze
             @ended = true
           end
-          @span_processor.on_finish(self)
+          @span_processors.each { |processor| processor.on_finish(self) }
           self
         end
 
@@ -276,14 +276,14 @@ module OpenTelemetry
         end
 
         # @api private
-        def initialize(context, parent_context, name, kind, parent_span_id, span_limits, span_processor, attributes, links, start_timestamp, resource, instrumentation_library) # rubocop:disable Metrics/AbcSize
+        def initialize(context, parent_context, name, kind, parent_span_id, span_limits, span_processors, attributes, links, start_timestamp, resource, instrumentation_library) # rubocop:disable Metrics/AbcSize
           super(span_context: context)
           @mutex = Mutex.new
           @name = name
           @kind = kind
           @parent_span_id = parent_span_id.freeze || OpenTelemetry::Trace::INVALID_SPAN_ID
           @span_limits = span_limits
-          @span_processor = span_processor
+          @span_processors = span_processors
           @resource = resource
           @instrumentation_library = instrumentation_library
           @ended = false
@@ -297,7 +297,7 @@ module OpenTelemetry
           trim_span_attributes(@attributes)
           @events = nil
           @links = trim_links(links, span_limits.link_count_limit, span_limits.attribute_per_link_count_limit)
-          @span_processor.on_start(self, parent_context)
+          @span_processors.each { |processor| processor.on_start(self, parent_context) }
         end
 
         # TODO: Java implementation overrides finalize to log if a span isn't finished.
