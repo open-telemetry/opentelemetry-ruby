@@ -30,6 +30,10 @@ module OpenTelemetry
         #   '<job class name> <operation>'. When `:queue`, the span names
         #   will be set to '<destination / queue name> <operation>'
         #
+        # force_flush: when `true`, all completed spans will be synchronously flushed
+        #   at the end of a job's execution (default: `false`). You will likely wish to
+        #   enable this option for job systems that fork worker processes such as Resque.
+        #
         # propagation_style: controls how the job's execution is traced and related
         #   to the trace where the job was enqueued. Can be one of:
         #
@@ -49,6 +53,7 @@ module OpenTelemetry
         # ActiveJob immediately executes jobs during the process of "enqueueing" jobs when
         # using the `:inline` adapter.
         option :propagation_style, default: :link, validate: ->(opt) { %i[link child none].include?(opt) }
+        option :force_flush, default: false, validate: :boolean
         option :span_naming, default: :queue, validate: ->(opt) { %i[job_class queue].include?(opt) }
 
         private

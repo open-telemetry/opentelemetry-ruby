@@ -10,10 +10,10 @@ require_relative '../../../../lib/opentelemetry/instrumentation/active_job'
 
 describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks do
   let(:instrumentation) { OpenTelemetry::Instrumentation::ActiveJob::Instrumentation.instance }
-  # Technically this is the default. But ActiveJob seems to act oddly if you re-install
-  # the instrumentation over and over again, so we manipulate instance variables to
-  # reset between tests, and that means we should set the default here.
-  let(:config) { { propagation_style: :link, span_naming: :queue } }
+  # Technically these are the defaults. But ActiveJob seems to act oddly if you re-install
+  # the instrumentation over and over again - so we manipulate instance variables to
+  # reset between tests, and that means we should set the defaults here.
+  let(:config) { { propagation_style: :link, force_flush: false, span_naming: :queue } }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
   let(:send_span) { spans.find { |s| s.name == 'default send' } }
@@ -226,6 +226,39 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
         process_span = exporter.finished_spans.find { |s| s.name == 'TestJob process' }
         _(process_span).wont_be_nil
+      end
+    end
+  end
+
+  describe 'force_flush option' do
+    let(:mock_tracer_provider) do
+      mock_tracer_provider = MiniTest::Mock.new
+      mock_tracer_provider.expect(:force_flush, true)
+
+      mock_tracer_provider
+    end
+
+    describe 'false - default' do
+      it 'does not forcibly flush the tracer' do
+        OpenTelemetry.stub(:tracer_provider, mock_tracer_provider) do
+          TestJob.perform_later
+        end
+
+        # We *do not* actually force flush in this case, so we expect the mock
+        # to fail validation - we will not actually call the mocked force_flush method.
+        expect { mock_tracer_provider.verify }.must_raise MockExpectationError
+      end
+    end
+
+    describe 'true' do
+      let(:config) { { propagation_style: :link, force_flush: true, span_naming: :job_class } }
+      it 'does forcibly flush the tracer' do
+        OpenTelemetry.stub(:tracer_provider, mock_tracer_provider) do
+          TestJob.perform_later
+        end
+
+        # Nothing should raise, the mock should be successful, we should have flushed.
+        mock_tracer_provider.verify
       end
     end
   end
