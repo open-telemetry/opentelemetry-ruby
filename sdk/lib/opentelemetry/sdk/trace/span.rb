@@ -331,6 +331,8 @@ module OpenTelemetry
           # Fast path (likely) common cases.
           return nil if links.nil?
 
+          links = links.map{ |link| link.span_context.valid? }
+
           if links.size <= link_count_limit &&
              links.all? { |link| link.attributes.size <= attribute_per_link_count_limit && Internal.valid_attributes?(name, 'link', link.attributes) }
             return links.frozen? ? links : links.clone.freeze
