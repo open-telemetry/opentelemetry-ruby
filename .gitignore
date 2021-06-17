@@ -20,3 +20,6 @@ instrumentation/**/*.gemfile.lock
 
 # rbenv configuration
 .ruby-version
+
+# rvm configuration
+.ruby-gemset
