@@ -44,7 +44,7 @@ module OpenTelemetry
       # Returns a token to be used with the matching call to detach
       #
       # @param [Context] context The new context
-      # @return [Integer] A token to be used when detaching
+      # @return [Object] A token to be used when detaching
       def attach(context)
         prev = current
         self.current = context
@@ -57,7 +57,7 @@ module OpenTelemetry
       # with a corresponding attach call. A warning is logged if the
       # calls are unbalanced.
       #
-      # @param [Integer] token The token provided by the matching call to attach
+      # @param [Object] token The token provided by the matching call to attach
       # @return [Boolean] True if the calls matched, false otherwise
       def detach(token)
         calls_matched = (token == stack.size)
