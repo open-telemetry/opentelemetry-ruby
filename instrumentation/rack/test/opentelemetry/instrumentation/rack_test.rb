@@ -38,20 +38,4 @@ describe OpenTelemetry::Instrumentation::Rack do
       _(OpenTelemetry::Instrumentation::Rack.current_span(context)).must_equal(test_span)
     end
   end
-
-  describe '#with_span' do
-    it 'respects context nesting' do
-      test_span = new_span
-      test_span2 = new_span
-      OpenTelemetry::Instrumentation::Rack.with_span(test_span) do
-        _(OpenTelemetry::Instrumentation::Rack.current_span).must_equal(test_span)
-
-        OpenTelemetry::Instrumentation::Rack.with_span(test_span2) do
-          _(OpenTelemetry::Instrumentation::Rack.current_span).must_equal(test_span2)
-        end
-
-        _(OpenTelemetry::Instrumentation::Rack.current_span).must_equal(test_span)
-      end
-    end
-  end
 end

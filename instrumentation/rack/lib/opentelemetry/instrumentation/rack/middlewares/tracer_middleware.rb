@@ -72,7 +72,7 @@ module OpenTelemetry
               tracer.in_span(request_span_name,
                              attributes: request_span_attributes(env: env),
                              kind: request_span_kind) do |request_span|
-                OpenTelemetry::Instrumentation::Rack.with_span(request_span) do
+                OpenTelemetry::Trace.with_span(request_span) do
                   @app.call(env).tap do |status, headers, response|
                     set_attributes_after_request(request_span, status, headers, response)
                   end
