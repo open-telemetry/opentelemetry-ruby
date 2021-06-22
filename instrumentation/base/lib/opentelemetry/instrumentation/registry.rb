@@ -75,10 +75,11 @@ module OpenTelemetry
       end
 
       def install_instrumentation(instrumentation, config)
+        log_install_messages = ENV['OTEL_RUBY_INSTRUMENTATION_INSTALL_MESSAGES'] != 'false'
         if instrumentation.install(config)
-          OpenTelemetry.logger.info "Instrumentation: #{instrumentation.name} was successfully installed"
+          OpenTelemetry.logger.info "Instrumentation: #{instrumentation.name} was successfully installed" if log_install_messages
         else
-          OpenTelemetry.logger.warn "Instrumentation: #{instrumentation.name} failed to install"
+          OpenTelemetry.logger.warn "Instrumentation: #{instrumentation.name} failed to install" if log_install_messages
         end
       rescue => e # rubocop:disable Style/RescueStandardError
         OpenTelemetry.handle_error(exception: e, message: "Instrumentation: #{instrumentation.name} unhandled exception during install: #{e.backtrace}")
