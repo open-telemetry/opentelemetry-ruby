@@ -15,7 +15,7 @@ module OpenTelemetry
 
       private_constant :USE_MODE_UNSPECIFIED, :USE_MODE_ONE, :USE_MODE_ALL
 
-      attr_writer :logger, :propagators, :error_handler, :id_generator
+      attr_writer :propagators, :error_handler, :id_generator
 
       def initialize
         @instrumentation_names = []
@@ -29,6 +29,10 @@ module OpenTelemetry
 
       def logger
         @logger ||= OpenTelemetry.logger
+      end
+
+      def logger=(new_logger)
+        @logger = ForwardingLogger.new(new_logger, level: ENV['OTEL_LOG_LEVEL'] || Logger::INFO)
       end
 
       def error_handler
