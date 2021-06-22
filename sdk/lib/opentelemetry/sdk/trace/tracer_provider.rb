@@ -8,7 +8,7 @@ module OpenTelemetry
   module SDK
     module Trace
       # {TracerProvider} is the SDK implementation of {OpenTelemetry::Trace::TracerProvider}.
-      class TracerProvider < OpenTelemetry::Trace::TracerProvider
+      class TracerProvider < OpenTelemetry::Trace::TracerProvider # rubocop:disable Metrics/ClassLength
         Key = Struct.new(:name, :version)
         private_constant(:Key)
 
@@ -50,6 +50,7 @@ module OpenTelemetry
         def tracer(name = nil, version = nil)
           name ||= ''
           version ||= ''
+          OpenTelemetry.logger.warn 'calling TracerProvider#tracer without providing a tracer name.' if name.empty?
           @mutex.synchronize { @registry[Key.new(name, version)] ||= Tracer.new(name, version, self) }
         end
 
