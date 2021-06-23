@@ -52,6 +52,7 @@ module OpenTelemetry
         #   if extraction fails
         def extract(carrier, context: Context.current, getter: Context::Propagation.text_map_getter)
           header = getter.get(carrier, BAGGAGE_KEY)
+          return context unless header
 
           entries = header.gsub(/\s/, '').split(',')
 
