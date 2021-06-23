@@ -31,6 +31,11 @@ module OpenTelemetry
         @logger ||= OpenTelemetry.logger
       end
 
+      # Accepts a logger and wraps it in the {ForwardingLogger} which allows
+      # for controlling the severity level emitted by the OpenTelemetry.logger
+      # independently of the supplied logger.
+      #
+      # @param [Logger] new_logger The logger for OpenTelemetry to use
       def logger=(new_logger)
         @logger = ForwardingLogger.new(new_logger, level: ENV['OTEL_LOG_LEVEL'] || Logger::INFO)
       end
