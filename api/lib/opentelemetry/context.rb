@@ -10,10 +10,9 @@ require 'opentelemetry/context/propagation'
 module OpenTelemetry
   # Manages context on a per-fiber basis
   class Context
-    KEY = :__opentelemetry_context__
     EMPTY_ENTRIES = {}.freeze
     STACK_KEY = :__opentelemetry_context_storage__
-    private_constant :KEY, :EMPTY_ENTRIES, :STACK_KEY
+    private_constant :EMPTY_ENTRIES, :STACK_KEY
 
     DetachError = Class.new(OpenTelemetry::Error)
 
@@ -33,10 +32,6 @@ module OpenTelemetry
         stack.last || ROOT
       end
 
-      # @api private
-      def current=(ctx)
-        Thread.current[KEY] = ctx
-      end
 
       # Associates a Context with the caller's current Fiber. Every call to
       # this operation should be paired with a corresponding call to detach.
