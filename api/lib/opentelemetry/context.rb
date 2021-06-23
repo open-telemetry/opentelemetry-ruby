@@ -32,7 +32,6 @@ module OpenTelemetry
         stack.last || ROOT
       end
 
-
       # Associates a Context with the caller's current Fiber. Every call to
       # this operation should be paired with a corresponding call to detach.
       #
@@ -116,7 +115,6 @@ module OpenTelemetry
 
       def clear
         stack.clear
-        self.current = ROOT
       end
 
       def empty
