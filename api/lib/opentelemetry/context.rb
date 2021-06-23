@@ -30,7 +30,7 @@ module OpenTelemetry
       #
       # @return [Context]
       def current
-        Thread.current[KEY] ||= ROOT
+        stack.last || ROOT
       end
 
       # @api private
@@ -46,10 +46,9 @@ module OpenTelemetry
       # @param [Context] context The new context
       # @return [Object] A token to be used when detaching
       def attach(context)
-        prev = current
-        self.current = context
-        stack.push(prev)
-        stack.size
+        s = stack
+        s.push(context)
+        s.size
       end
 
       # Restores the previous Context associated with the current Fiber.
@@ -60,10 +59,11 @@ module OpenTelemetry
       # @param [Object] token The token provided by the matching call to attach
       # @return [Boolean] True if the calls matched, false otherwise
       def detach(token)
-        calls_matched = (token == stack.size)
+        s = stack
+        calls_matched = (token == s.size)
         OpenTelemetry.handle_error(exception: DetachError.new('calls to detach should match corresponding calls to attach.')) unless calls_matched
 
-        self.current = stack.pop
+        s.pop
         calls_matched
       end
 
