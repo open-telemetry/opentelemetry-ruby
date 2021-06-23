@@ -165,7 +165,7 @@ describe OpenTelemetry::Context do
 
     it 'resets context when an exception is raised' do
       c1 = new_context
-      Context.current = c1
+      Context.attach(c1)
 
       _(proc do
         c2 = Context.current.set_value(bar_key, 'baz')
