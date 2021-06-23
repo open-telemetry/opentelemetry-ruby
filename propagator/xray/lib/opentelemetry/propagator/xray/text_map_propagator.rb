@@ -38,6 +38,8 @@ module OpenTelemetry
         #   if extraction fails
         def extract(carrier, context: Context.current, getter: Context::Propagation.text_map_getter)
           header = getter.get(carrier, XRAY_CONTEXT_KEY)
+          return context unless header
+
           match = parse_header(header)
           return context unless match
 
