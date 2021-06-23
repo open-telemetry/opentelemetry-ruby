@@ -1,5 +1,13 @@
 # Release History: opentelemetry-instrumentation-sidekiq
 
+### v0.19.0 / 2021-06-23
+
+* BREAKING CHANGE: Sidekiq propagation config 
+* BREAKING CHANGE: Total order constraint on span.status= 
+
+* FIXED: Sidekiq propagation config 
+* FIXED: Total order constraint on span.status= 
+
 ### v0.18.0 / 2021-05-21
 
 * ADDED: Updated API depedency for 1.0.0.rc1
