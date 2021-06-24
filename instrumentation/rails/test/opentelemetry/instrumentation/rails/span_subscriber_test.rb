@@ -34,22 +34,22 @@ describe OpenTelemetry::Instrumentation::Rails::SpanSubscriber do
   end
 
   it 'finishes the passed span' do
-    span, prev_ctx = subscriber.start('hai', 'abc', {})
-    subscriber.finish('hai', 'abc', __opentelemetry_span: span, __opentelemetry_prev_ctx: prev_ctx)
+    span, token = subscriber.start('hai', 'abc', {})
+    subscriber.finish('hai', 'abc', __opentelemetry_span: span, __opentelemetry_ctx_token: token)
 
     # If it's in exporter.finished_spans ... it's finished.
     _(last_span).wont_be_nil
   end
 
   it 'sets attributes as expected' do
-    span, prev_ctx = subscriber.start('hai', 'abc', {})
+    span, token = subscriber.start('hai', 'abc', {})
     # We only use the finished attributes - could change in the
     # future, perhaps.
     subscriber.finish(
       'hai',
       'abc',
       __opentelemetry_span: span,
-      __opentelemetry_prev_ctx: prev_ctx,
+      __opentelemetry_ctx_token: token,
       simple: 'keys_are_present',
       exception: 'is_not_set_as_attribute',
       nil_values_are_rejected: nil
@@ -62,14 +62,14 @@ describe OpenTelemetry::Instrumentation::Rails::SpanSubscriber do
   end
 
   it 'logs an exception_object correctly' do
-    span, prev_ctx = subscriber.start('hai', 'abc', {})
+    span, token = subscriber.start('hai', 'abc', {})
     # We only use the finished attributes - could change in the
     # future, perhaps.
     subscriber.finish(
       'hai',
       'abc',
       __opentelemetry_span: span,
-      __opentelemetry_prev_ctx: prev_ctx,
+      __opentelemetry_ctx_token: token,
       exception_object: Exception.new('boom')
     )
 

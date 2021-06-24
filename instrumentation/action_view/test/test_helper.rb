@@ -12,6 +12,7 @@ require 'webmock/minitest'
 
 require 'rails'
 require 'action_view'
+require 'opentelemetry-instrumentation-action_view'
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new

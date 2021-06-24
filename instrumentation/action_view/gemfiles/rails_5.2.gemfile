@@ -4,12 +4,11 @@ source "https://rubygems.org"
 
 gem "opentelemetry-api", path: "../../../api"
 gem "opentelemetry-instrumentation-base", path: "../../base"
-gem "rails", "~> 6.0.0"
+gem "rails", "~> 5.2.0"
 
 group :test do
   gem "byebug"
   gem "opentelemetry-common", path: "../../../common"
-  gem "opentelemetry-instrumentation-rack", path: "../../../instrumentation/rack"
   gem "opentelemetry-sdk", path: "../../../sdk"
   gem "pry-byebug"
 end

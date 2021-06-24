@@ -3,6 +3,7 @@
 source "https://rubygems.org"
 
 gem "opentelemetry-api", path: "../../../api"
+gem "opentelemetry-instrumentation-base", path: "../../base"
 gem "rails", "~> 6.1.0"
 
 group :test do
