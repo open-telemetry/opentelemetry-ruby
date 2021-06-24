@@ -46,3 +46,4 @@ module OpenTelemetry
 end
 
 require_relative './xray/version'
+require_relative './aws_xray_trace'
