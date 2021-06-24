@@ -1,24 +1,24 @@
 # Release History: opentelemetry-api
 
+### v1.0.0.rc2 / 2021-06-23
+
+* BREAKING CHANGE: Remove optional parent_context from in_span
+* BREAKING CHANGE: Refactor Baggage to remove Noop*
+* BREAKING CHANGE: Total order constraint on span.status=
+
+* ADDED: Add Tracer.non_recording_span to API
+* FIXED: Remove optional parent_context from in_span
+* FIXED: Reduce span allocation in API
+* FIXED: Refactor Baggage to remove Noop*
+* FIXED: Total order constraint on span.status=
+* FIXED: Return early if carrier is nil
+* FIXED: Update context to match spec
+
 ### v1.0.0.rc1 / 2021-05-21
 
 * BREAKING CHANGE: Remove optional parent_context from in_span 
 
-* FIXED: Remove optional parent_context from in_span 
-
-### v1.0.0.rc2 / 2021-06-23
-
-* BREAKING CHANGE: Remove optional parent_context from in_span 
-* BREAKING CHANGE: Refactor Baggage to remove Noop* 
-* BREAKING CHANGE: Total order constraint on span.status= 
-
-* ADDED: Add Tracer.non_recording_span to API 
-* FIXED: Remove optional parent_context from in_span 
-* FIXED: Reduce span allocation in API 
-* FIXED: Refactor Baggage to remove Noop* 
-* FIXED: Total order constraint on span.status= 
-* FIXED: Return early if carrier is nil 
-* FIXED: Update context to match spec 
+* FIXED: Remove optional parent_context from in_span
 
 ### v0.17.0 / 2021-04-22
 

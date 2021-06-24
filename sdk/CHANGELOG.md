@@ -1,5 +1,26 @@
 # Release History: opentelemetry-sdk
 
+### v1.0.0.rc2 / 2021-06-23
+
+* BREAKING CHANGE: Remove optional parent_context from in_span
+* BREAKING CHANGE: Replace Time.now with Process.clock_gettime
+* BREAKING CHANGE: Refactor Baggage to remove Noop*
+* BREAKING CHANGE: Remove unnecessary readers from SDK Tracer
+* BREAKING CHANGE: Total order constraint on span.status=
+
+* ADDED: Add Tracer.non_recording_span to API
+* ADDED: Add unnamed tracer warning message
+* ADDED: Allow disabling of install messages
+* FIXED: Remove optional parent_context from in_span
+* FIXED: Replace Time.now with Process.clock_gettime
+* FIXED: Rename cloud.zone to cloud.availability_zone
+* FIXED: Improve attribute error messages
+* FIXED: Refactor Baggage to remove Noop*
+* FIXED: Support OTEL_SERVICE_NAME env var
+* FIXED: Remove unnecessary readers from SDK Tracer
+* FIXED: Total order constraint on span.status=
+* FIXED: Flakey tracer provider test
+
 ### v1.0.0.rc1 / 2021-05-21
 
 * BREAKING CHANGE: Remove optional parent_context from in_span
@@ -9,27 +30,6 @@
 * FIXED: Replace Time.now with Process.clock_gettime
 * FIXED: Rename cloud.zone to cloud.availability_zone
 * FIXED: Improve attribute error messages
-
-### v1.0.0.rc2 / 2021-06-23
-
-* BREAKING CHANGE: Remove optional parent_context from in_span 
-* BREAKING CHANGE: Replace Time.now with Process.clock_gettime 
-* BREAKING CHANGE: Refactor Baggage to remove Noop* 
-* BREAKING CHANGE: Remove unnecessary readers from SDK Tracer 
-* BREAKING CHANGE: Total order constraint on span.status= 
-
-* ADDED: Add Tracer.non_recording_span to API 
-* ADDED: Add unnamed tracer warning message 
-* ADDED: Allow disabling of install messages 
-* FIXED: Remove optional parent_context from in_span 
-* FIXED: Replace Time.now with Process.clock_gettime 
-* FIXED: Rename cloud.zone to cloud.availability_zone 
-* FIXED: Improve attribute error messages 
-* FIXED: Refactor Baggage to remove Noop* 
-* FIXED: Support OTEL_SERVICE_NAME env var 
-* FIXED: Remove unnecessary readers from SDK Tracer 
-* FIXED: Total order constraint on span.status= 
-* FIXED: Flakey tracer provider test 
 
 ### v0.17.0 / 2021-04-22
 
