@@ -74,6 +74,7 @@ module OpenTelemetry
 end
 
 require 'opentelemetry/sdk/configurator'
+require 'opentelemetry/sdk/forwarding_logger'
 require 'opentelemetry/sdk/internal'
 require 'opentelemetry/sdk/instrumentation_library'
 require 'opentelemetry/sdk/resources'

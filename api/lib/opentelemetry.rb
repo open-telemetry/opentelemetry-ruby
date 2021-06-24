@@ -24,7 +24,7 @@ module OpenTelemetry
   @mutex = Mutex.new
   @tracer_provider = Internal::ProxyTracerProvider.new
 
-  attr_writer :propagation, :baggage, :logger, :error_handler
+  attr_writer :propagation, :logger, :error_handler
 
   # @return [Object, Logger] configured Logger or a default STDOUT Logger.
   def logger
@@ -63,13 +63,6 @@ module OpenTelemetry
   #   default no-op implementation of the tracer provider.
   def tracer_provider
     @mutex.synchronize { @tracer_provider }
-  end
-
-  # @return [Object, Baggage::NoopManager] registered
-  #   baggage manager or a default no-op implementation of the
-  #   manager.
-  def baggage
-    @baggage ||= Baggage::NoopManager.new
   end
 
   # @return [Context::Propagation::Propagator] a propagator instance

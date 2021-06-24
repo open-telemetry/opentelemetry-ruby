@@ -24,14 +24,41 @@ describe OpenTelemetry::SDK::Configurator do
   end
 
   describe '#logger' do
+    # Reset the logger
+    after { OpenTelemetry.logger = Logger.new(File::NULL) }
+
     it 'returns a logger instance' do
       _(configurator.logger).must_be_instance_of(Logger)
     end
+
     it 'assigns the logger to OpenTelemetry.logger' do
-      custom_logger = Logger.new(File::NULL, level: 'ERROR')
+      custom_logger = Logger.new(File::NULL, level: 'INFO')
       _(OpenTelemetry.logger).wont_equal custom_logger
+
       OpenTelemetry::SDK.configure { |c| c.logger = custom_logger }
-      _(OpenTelemetry.logger).must_equal custom_logger
+      _(OpenTelemetry.logger.instance_variable_get(:@logger)).must_equal custom_logger
+      _(OpenTelemetry.logger).must_be_instance_of(OpenTelemetry::SDK::ForwardingLogger)
+    end
+
+    it 'respects the supplied loggers severity level' do
+      log_stream = StringIO.new
+      custom_logger = Logger.new(log_stream, level: 'ERROR')
+      OpenTelemetry::SDK.configure { |c| c.logger = custom_logger }
+
+      OpenTelemetry.logger.debug('The forwarding logger should forward this message')
+      _(log_stream.string).must_be_empty
+    end
+
+    it 'allows control of the otel log level' do
+      log_stream = StringIO.new
+      custom_logger = Logger.new(log_stream, level: 'DEBUG')
+
+      with_env('OTEL_LOG_LEVEL' => 'ERROR') do
+        OpenTelemetry::SDK.configure { |c| c.logger = custom_logger }
+      end
+
+      OpenTelemetry.logger.warn('The forwarding logger should not forward this message')
+      _(log_stream.string).must_be_empty
     end
   end
 
@@ -106,16 +133,6 @@ describe OpenTelemetry::SDK::Configurator do
   end
 
   describe '#configure' do
-    describe 'baggage' do
-      it 'is an instance of SDK::Baggage::Manager' do
-        configurator.configure
-
-        _(OpenTelemetry.baggage).must_be_instance_of(
-          OpenTelemetry::Baggage::Manager
-        )
-      end
-    end
-
     describe 'propagators' do
       it 'defaults to trace context and baggage' do
         configurator.configure
@@ -174,12 +191,10 @@ describe OpenTelemetry::SDK::Configurator do
     end
 
     describe 'span processors' do
-      it 'defaults to NoopSpanProcessor if no valid exporter is available' do
+      it 'defaults to no processors if no valid exporter is available' do
         configurator.configure
 
-        _(OpenTelemetry.tracer_provider.active_span_processor).must_be_instance_of(
-          OpenTelemetry::SDK::Trace::NoopSpanProcessor
-        )
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)).must_be_empty
       end
 
       it 'reflects configured value' do
@@ -191,7 +206,7 @@ describe OpenTelemetry::SDK::Configurator do
 
         configurator.configure
 
-        _(OpenTelemetry.tracer_provider.active_span_processor).must_be_instance_of(
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors).first).must_be_instance_of(
           OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
         )
       end
@@ -201,10 +216,10 @@ describe OpenTelemetry::SDK::Configurator do
           configurator.configure
         end
 
-        _(OpenTelemetry.tracer_provider.active_span_processor).must_be_instance_of(
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors).first).must_be_instance_of(
           OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
         )
-        _(OpenTelemetry.tracer_provider.active_span_processor.instance_variable_get(:@exporter)).must_be_instance_of(
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors).first.instance_variable_get(:@exporter)).must_be_instance_of(
           OpenTelemetry::Exporter::Jaeger::CollectorExporter
         )
       end
@@ -214,9 +229,7 @@ describe OpenTelemetry::SDK::Configurator do
           configurator.configure
         end
 
-        _(OpenTelemetry.tracer_provider.active_span_processor).must_be_instance_of(
-          OpenTelemetry::SDK::Trace::NoopSpanProcessor
-        )
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)).must_be_empty
       end
 
       it 'accepts "console" as an environment variable value' do
@@ -224,10 +237,10 @@ describe OpenTelemetry::SDK::Configurator do
           configurator.configure
         end
 
-        _(OpenTelemetry.tracer_provider.active_span_processor).must_be_instance_of(
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors).first).must_be_instance_of(
           OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor
         )
-        _(OpenTelemetry.tracer_provider.active_span_processor.instance_variable_get(:@span_exporter)).must_be_instance_of(
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors).first.instance_variable_get(:@span_exporter)).must_be_instance_of(
           OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter
         )
       end

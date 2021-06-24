@@ -60,7 +60,7 @@ module OpenTelemetry
             remote: true
           )
 
-          span = Trace::Span.new(span_context: span_context)
+          span = OpenTelemetry::Trace.non_recording_span(span_context)
           Trace.context_with_span(span, parent_context: set_baggage(carrier: carrier, context: context, getter: getter))
         end
 
@@ -118,7 +118,7 @@ module OpenTelemetry
         end
 
         def baggage
-          OpenTelemetry.baggage
+          OpenTelemetry::Baggage
         end
 
         def inject_span_context(span_context:, carrier:, setter:)

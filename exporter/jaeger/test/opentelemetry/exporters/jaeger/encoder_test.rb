@@ -27,7 +27,7 @@ describe OpenTelemetry::Exporter::Jaeger::Encoder do
   end
 
   it 'encodes span.status and span.kind' do
-    span_data = create_span_data(status: OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::ERROR), kind: :server)
+    span_data = create_span_data(status: OpenTelemetry::Trace::Status.error, kind: :server)
     encoded_span = Encoder.encoded_span(span_data)
 
     _(encoded_span.tags.size).must_equal(2)

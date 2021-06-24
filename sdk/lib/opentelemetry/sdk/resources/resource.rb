@@ -31,7 +31,7 @@ module OpenTelemetry
           end
 
           def default
-            @default ||= create(Constants::SERVICE_RESOURCE[:name] => 'unknown_service').merge(process).merge(telemetry_sdk)
+            @default ||= create(Constants::SERVICE_RESOURCE[:name] => 'unknown_service').merge(process).merge(telemetry_sdk).merge(service_name_from_env)
           end
 
           def telemetry_sdk
@@ -63,6 +63,13 @@ module OpenTelemetry
             }
 
             create(resource_attributes)
+          end
+
+          private
+
+          def service_name_from_env
+            service_name = ENV['OTEL_SERVICE_NAME']
+            create(Constants::SERVICE_RESOURCE[:name] => service_name) unless service_name.nil?
           end
         end
 

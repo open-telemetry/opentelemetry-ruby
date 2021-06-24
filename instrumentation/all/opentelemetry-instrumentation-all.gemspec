@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 2.5.0'
 
   spec.add_dependency 'opentelemetry-instrumentation-action_view', '~> 0.19.0'
+  spec.add_dependency 'opentelemetry-instrumentation-active_job', '~> 0.18.0'
   spec.add_dependency 'opentelemetry-instrumentation-active_model_serializers', '~> 0.18.0'
   spec.add_dependency 'opentelemetry-instrumentation-bunny', '~> 0.18.0'
   spec.add_dependency 'opentelemetry-instrumentation-concurrent_ruby', '~> 0.18.0'
@@ -47,6 +48,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-rack', '~> 0.18.0'
   spec.add_dependency 'opentelemetry-instrumentation-rails', '~> 0.18.0'
   spec.add_dependency 'opentelemetry-instrumentation-redis', '~> 0.19.0'
+  spec.add_dependency 'opentelemetry-instrumentation-resque', '~> 0.18.0'
   spec.add_dependency 'opentelemetry-instrumentation-restclient', '~> 0.18.0'
   spec.add_dependency 'opentelemetry-instrumentation-ruby_kafka', '~> 0.18.0'
   spec.add_dependency 'opentelemetry-instrumentation-sidekiq', '~> 0.18.0'

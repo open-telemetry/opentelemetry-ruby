@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry-instrumentation-action_view'
+require 'opentelemetry-instrumentation-active_job'
 require 'opentelemetry-instrumentation-bunny'
 require 'opentelemetry-instrumentation-lmdb'
 require 'opentelemetry-instrumentation-http'
@@ -26,6 +27,7 @@ require 'opentelemetry-instrumentation-rack'
 require 'opentelemetry-instrumentation-rails'
 require 'opentelemetry-instrumentation-redis'
 require 'opentelemetry-instrumentation-restclient'
+require 'opentelemetry-instrumentation-resque'
 require 'opentelemetry-instrumentation-ruby_kafka'
 require 'opentelemetry-instrumentation-sidekiq'
 require 'opentelemetry-instrumentation-sinatra'

@@ -15,7 +15,7 @@ module OpenTelemetry
 
       private_constant :USE_MODE_UNSPECIFIED, :USE_MODE_ONE, :USE_MODE_ALL
 
-      attr_writer :logger, :propagators, :error_handler, :id_generator
+      attr_writer :propagators, :error_handler, :id_generator
 
       def initialize
         @instrumentation_names = []
@@ -29,6 +29,15 @@ module OpenTelemetry
 
       def logger
         @logger ||= OpenTelemetry.logger
+      end
+
+      # Accepts a logger and wraps it in the {ForwardingLogger} which allows
+      # for controlling the severity level emitted by the OpenTelemetry.logger
+      # independently of the supplied logger.
+      #
+      # @param [Logger] new_logger The logger for OpenTelemetry to use
+      def logger=(new_logger)
+        @logger = ForwardingLogger.new(new_logger, level: ENV['OTEL_LOG_LEVEL'] || Logger::INFO)
       end
 
       def error_handler
@@ -112,7 +121,6 @@ module OpenTelemetry
       def configure
         OpenTelemetry.logger = logger
         OpenTelemetry.error_handler = error_handler
-        OpenTelemetry.baggage = Baggage::Manager.new
         configure_propagation
         configure_span_processors
         tracer_provider.id_generator = @id_generator
@@ -123,7 +131,7 @@ module OpenTelemetry
       private
 
       def tracer_provider
-        @tracer_provider ||= Trace::TracerProvider.new(@resource)
+        @tracer_provider ||= Trace::TracerProvider.new(resource: @resource)
       end
 
       def check_use_mode!(mode)

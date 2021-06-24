@@ -44,10 +44,7 @@ module OpenTelemetry
               super(commands).tap do |reply|
                 if reply.is_a?(::Redis::CommandError)
                   s.record_exception(reply)
-                  s.status = Trace::Status.new(
-                    Trace::Status::ERROR,
-                    description: reply.message
-                  )
+                  s.status = Trace::Status.error(reply.message)
                 end
               end
             end
