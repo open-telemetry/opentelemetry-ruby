@@ -10,8 +10,11 @@ require 'opentelemetry/context/propagation'
 module OpenTelemetry
   # Manages context on a per-fiber basis
   class Context
-    KEY = :__opentelemetry_context__
     EMPTY_ENTRIES = {}.freeze
+    STACK_KEY = :__opentelemetry_context_storage__
+    private_constant :EMPTY_ENTRIES, :STACK_KEY
+
+    DetachError = Class.new(OpenTelemetry::Error)
 
     class << self
       # Returns a key used to index a value in a Context
@@ -26,14 +29,36 @@ module OpenTelemetry
       #
       # @return [Context]
       def current
-        Thread.current[KEY] ||= ROOT
+        stack.last || ROOT
       end
 
-      # Sets the current context
+      # Associates a Context with the caller's current Fiber. Every call to
+      # this operation should be paired with a corresponding call to detach.
       #
-      # @param [Context] ctx The context to be made active
-      def current=(ctx)
-        Thread.current[KEY] = ctx
+      # Returns a token to be used with the matching call to detach
+      #
+      # @param [Context] context The new context
+      # @return [Object] A token to be used when detaching
+      def attach(context)
+        s = stack
+        s.push(context)
+        s.size
+      end
+
+      # Restores the previous Context associated with the current Fiber.
+      # The supplied token is used to check if the call to detach is balanced
+      # with a corresponding attach call. A warning is logged if the
+      # calls are unbalanced.
+      #
+      # @param [Object] token The token provided by the matching call to attach
+      # @return [Boolean] True if the calls matched, false otherwise
+      def detach(token)
+        s = stack
+        calls_matched = (token == s.size)
+        OpenTelemetry.handle_error(exception: DetachError.new('calls to detach should match corresponding calls to attach.')) unless calls_matched
+
+        s.pop
+        calls_matched
       end
 
       # Executes a block with ctx as the current context. It restores
@@ -42,10 +67,10 @@ module OpenTelemetry
       # @param [Context] ctx The context to be made active
       # @yield [context] Yields context to the block
       def with_current(ctx)
-        prev = ctx.attach
+        token = attach(ctx)
         yield ctx
       ensure
-        ctx.detach(prev)
+        detach(token)
       end
 
       # Execute a block in a new context with key set to value. Restores the
@@ -58,10 +83,10 @@ module OpenTelemetry
       #   the block
       def with_value(key, value)
         ctx = current.set_value(key, value)
-        prev = ctx.attach
+        token = attach(ctx)
         yield ctx, value
       ensure
-        ctx.detach(prev)
+        detach(token)
       end
 
       # Execute a block in a new context where its values are merged with the
@@ -75,10 +100,10 @@ module OpenTelemetry
       #   to the block
       def with_values(values)
         ctx = current.set_values(values)
-        prev = ctx.attach
+        token = attach(ctx)
         yield ctx, values
       ensure
-        ctx.detach(prev)
+        detach(token)
       end
 
       # Returns the value associated with key in the current context
@@ -89,16 +114,21 @@ module OpenTelemetry
       end
 
       def clear
-        self.current = ROOT
+        stack.clear
       end
 
       def empty
-        new(nil, EMPTY_ENTRIES)
+        new(EMPTY_ENTRIES)
+      end
+
+      private
+
+      def stack
+        Thread.current[STACK_KEY] ||= []
       end
     end
 
-    def initialize(parent, entries)
-      @parent = parent
+    def initialize(entries)
       @entries = entries.freeze
     end
 
@@ -120,7 +150,7 @@ module OpenTelemetry
     def set_value(key, value)
       new_entries = @entries.dup
       new_entries[key] = value
-      Context.new(self, new_entries)
+      Context.new(new_entries)
     end
 
     # Returns a new Context with the current context's entries merged with the
@@ -131,22 +161,7 @@ module OpenTelemetry
     # @param [Object] value Object to be stored under key
     # @return [Context]
     def set_values(values) # rubocop:disable Naming/AccessorMethodName:
-      Context.new(self, @entries.merge(values))
-    end
-
-    # @api private
-    def attach
-      prev = self.class.current
-      self.class.current = self
-      prev
-    end
-
-    # @api private
-    def detach(ctx_to_attach = nil)
-      OpenTelemetry.logger.warn 'Calls to detach should match corresponding calls to attach' if self.class.current != self
-
-      ctx_to_attach ||= @parent || ROOT
-      ctx_to_attach.attach
+      Context.new(@entries.merge(values))
     end
 
     ROOT = empty.freeze

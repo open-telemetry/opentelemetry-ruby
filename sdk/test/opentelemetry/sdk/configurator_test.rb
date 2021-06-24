@@ -24,14 +24,41 @@ describe OpenTelemetry::SDK::Configurator do
   end
 
   describe '#logger' do
+    # Reset the logger
+    after { OpenTelemetry.logger = Logger.new(File::NULL) }
+
     it 'returns a logger instance' do
       _(configurator.logger).must_be_instance_of(Logger)
     end
+
     it 'assigns the logger to OpenTelemetry.logger' do
-      custom_logger = Logger.new(File::NULL, level: 'ERROR')
+      custom_logger = Logger.new(File::NULL, level: 'INFO')
       _(OpenTelemetry.logger).wont_equal custom_logger
+
       OpenTelemetry::SDK.configure { |c| c.logger = custom_logger }
-      _(OpenTelemetry.logger).must_equal custom_logger
+      _(OpenTelemetry.logger.instance_variable_get(:@logger)).must_equal custom_logger
+      _(OpenTelemetry.logger).must_be_instance_of(OpenTelemetry::SDK::ForwardingLogger)
+    end
+
+    it 'respects the supplied loggers severity level' do
+      log_stream = StringIO.new
+      custom_logger = Logger.new(log_stream, level: 'ERROR')
+      OpenTelemetry::SDK.configure { |c| c.logger = custom_logger }
+
+      OpenTelemetry.logger.debug('The forwarding logger should forward this message')
+      _(log_stream.string).must_be_empty
+    end
+
+    it 'allows control of the otel log level' do
+      log_stream = StringIO.new
+      custom_logger = Logger.new(log_stream, level: 'DEBUG')
+
+      with_env('OTEL_LOG_LEVEL' => 'ERROR') do
+        OpenTelemetry::SDK.configure { |c| c.logger = custom_logger }
+      end
+
+      OpenTelemetry.logger.warn('The forwarding logger should not forward this message')
+      _(log_stream.string).must_be_empty
     end
   end
 
