@@ -1,5 +1,11 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.20.0 / 2021-06-23
+
+* BREAKING CHANGE: Total order constraint on span.status= 
+
+* FIXED: Total order constraint on span.status= 
+
 ### v0.19.0 / 2021-06-03
 
 * ADDED: Add a SSL verify mode option for the OTLP exporter 
