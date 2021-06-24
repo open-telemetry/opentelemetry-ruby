@@ -7,6 +7,8 @@
 module OpenTelemetry
   class Context
     module Propagation
+      # @api private
+      #
       # A no-op text map propagator implementation
       class NoopTextMapPropagator
         EMPTY_LIST = [].freeze

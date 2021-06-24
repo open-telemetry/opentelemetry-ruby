@@ -179,10 +179,10 @@ module OpenTelemetry
           when 'ottrace' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::OTTrace')
           else
             OpenTelemetry.logger.warn "The #{propagator} propagator is unknown and cannot be configured"
-            Context::Propagation::NoopTextMapPropagator.new
+            OpenTelemetry::SDK::Context::Propagation::NoopTextMapPropagator.new
           end
         end
-        OpenTelemetry.propagation = Context::Propagation::CompositeTextMapPropagator.compose_propagators((@propagators || propagators).compact)
+        OpenTelemetry.propagation = OpenTelemetry::Context::Propagation::CompositeTextMapPropagator.compose_propagators((@propagators || propagators).compact)
       end
 
       def fetch_propagator(name, class_name, gem_suffix = name)
