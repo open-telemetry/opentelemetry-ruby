@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware";
+  relpath = '../../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../../_index.html">Index (T)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../../Instrumentation.html" title="OpenTelemetry::Instrumentation (module)">Instrumentation</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Faraday.html" title="OpenTelemetry::Instrumentation::Faraday (module)">Faraday</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Middlewares.html" title="OpenTelemetry::Instrumentation::Faraday::Middlewares (module)">Middlewares</a></span></span>
+     &raquo; 
+    <span class="title">TracerMiddleware</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Faraday::Middleware</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Faraday::Middleware</li>
+          
+            <li class="next">OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/instrumentation/faraday/middlewares/tracer_middleware.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>TracerMiddleware propagates context and instruments Faraday requests by way of its middlware system</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="HTTP_METHODS_SYMBOL_TO_STRING-constant" class="">HTTP_METHODS_SYMBOL_TO_STRING =
+          
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='label'>connect:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>CONNECT</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+  <span class='label'>delete:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>DELETE</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+  <span class='label'>get:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>GET</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+  <span class='label'>head:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>HEAD</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+  <span class='label'>options:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>OPTIONS</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+  <span class='label'>patch:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>PATCH</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+  <span class='label'>post:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>POST</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+  <span class='label'>put:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>PUT</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+  <span class='label'>trace:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>TRACE</span><span class='tstring_end'>&#39;</span></span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#call-instance_method" title="#call (instance method)">#<strong>call</strong>(env)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="call-instance_method">
+  
+    #<strong>call</strong>(env)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/instrumentation/faraday/middlewares/tracer_middleware.rb', line 26</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_env'>env</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_http_method'>http_method</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="#HTTP_METHODS_SYMBOL_TO_STRING-constant" title="OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware::HTTP_METHODS_SYMBOL_TO_STRING (constant)">HTTP_METHODS_SYMBOL_TO_STRING</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_env'>env</span><span class='period'>.</span><span class='id identifier rubyid_method'>method</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='id identifier rubyid_span_creation_attributes'>span_creation_attributes</span><span class='lparen'>(</span>
+    <span class='label'>http_method:</span> <span class='id identifier rubyid_http_method'>http_method</span><span class='comma'>,</span> <span class='label'>url:</span> <span class='id identifier rubyid_env'>env</span><span class='period'>.</span><span class='id identifier rubyid_url'>url</span>
+  <span class='rparen'>)</span>
+  <span class='id identifier rubyid_tracer'>tracer</span><span class='period'>.</span><span class='id identifier rubyid_in_span'>in_span</span><span class='lparen'>(</span>
+    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>HTTP </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_http_method'>http_method</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>attributes:</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='label'>kind:</span> <span class='symbol'>:client</span>
+  <span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_span'>span</span><span class='op'>|</span>
+    <span class='const'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='period'>.</span><span class='id identifier rubyid_propagation'>propagation</span><span class='period'>.</span><span class='id identifier rubyid_inject'>inject</span><span class='lparen'>(</span><span class='id identifier rubyid_env'>env</span><span class='period'>.</span><span class='id identifier rubyid_request_headers'>request_headers</span><span class='rparen'>)</span>
+
+    <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_env'>env</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_on_complete'>on_complete</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_resp'>resp</span><span class='op'>|</span> <span class='id identifier rubyid_trace_response'>trace_response</span><span class='lparen'>(</span><span class='id identifier rubyid_span'>span</span><span class='comma'>,</span> <span class='id identifier rubyid_resp'>resp</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Thu Jun 24 18:41:09 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.3).
+</div>
+
+    </div>
+  </body>
+</html>
