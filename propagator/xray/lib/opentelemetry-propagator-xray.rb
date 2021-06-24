@@ -6,3 +6,4 @@
 
 require 'opentelemetry-api'
 require_relative './opentelemetry/propagator/xray'
+require_relative './opentelemetry/aws_xray_trace'
