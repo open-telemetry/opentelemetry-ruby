@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.19.0 / 2021-06-23
+
+* BREAKING CHANGE: Total order constraint on span.status= 
+
+* FIXED: Total order constraint on span.status= 
+
 ### v0.18.1 / 2021-06-08
 
 * FIXED: Missing require to common in faraday 

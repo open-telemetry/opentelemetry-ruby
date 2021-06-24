@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-redis
 
+### v0.20.0 / 2021-06-23
+
+* BREAKING CHANGE: Total order constraint on span.status= 
+
+* FIXED: Total order constraint on span.status= 
+
 ### v0.19.0 / 2021-05-28
 
 * ADDED: Configuration option to enable or disable redis root spans [#777](https://github.com/open-telemetry/opentelemetry-ruby/pull/777)
