@@ -28,7 +28,7 @@ module OpenTelemetry
     #
     # @return [bytes] a valid span ID.
     def generate_span_id
-      return generate_variable_byte_id(8)
+      generate_variable_byte_id(8)
     end
 
     private
@@ -44,13 +44,14 @@ module OpenTelemetry
     RANDOM = Random.respond_to?(:bytes) ? Random : Random::DEFAULT
 
     def generate_time_byte
-      #get the seconds from epoch, convert to hex, then convert to bytes
+      # get the seconds from epoch, convert to hex, then convert to bytes
       [Time.now.to_i.to_s(16)].pack('H*')
     end
 
     def generate_variable_byte_id(bytes = 8)
       return nil unless bytes.is_a? Numeric
       return nil unless bytes.between?(1, 256)
+
       invalid_id = ("\0" * bytes).b
       loop do
         id = RANDOM.bytes(bytes)
