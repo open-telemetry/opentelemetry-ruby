@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks";
+  relpath = '../../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../../_index.html">Index (A)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../../Instrumentation.html" title="OpenTelemetry::Instrumentation (module)">Instrumentation</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../ActiveJob.html" title="OpenTelemetry::Instrumentation::ActiveJob (module)">ActiveJob</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Patches.html" title="OpenTelemetry::Instrumentation::ActiveJob::Patches (module)">Patches</a></span></span>
+     &raquo; 
+    <span class="title">ActiveJobCallbacks</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/instrumentation/active_job/patches/active_job_callbacks.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Module to prepend to ActiveJob::Base for instrumentation.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+
+
+
+  
+    <h2>
+      Class Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#prepended-class_method" title="prepended (class method)">.<strong>prepended</strong>(base)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="prepended-class_method">
+  
+    .<strong>prepended</strong>(base)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/instrumentation/active_job/patches/active_job_callbacks.rb', line 13</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_prepended'>prepended</span><span class='lparen'>(</span><span class='id identifier rubyid_base'>base</span><span class='rparen'>)</span> <span class='comment'># rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+</span>  <span class='id identifier rubyid_base'>base</span><span class='period'>.</span><span class='id identifier rubyid_class_eval'>class_eval</span> <span class='kw'>do</span> <span class='comment'># rubocop:disable Metrics/BlockLength
+</span>    <span class='id identifier rubyid_around_enqueue'>around_enqueue</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_job'>job</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='op'>|</span>
+      <span class='id identifier rubyid_span_kind'>span_kind</span> <span class='op'>=</span> <span class='id identifier rubyid_job'>job</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_queue_adapter_name'>queue_adapter_name</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>inline</span><span class='tstring_end'>&#39;</span></span> <span class='op'>?</span> <span class='symbol'>:client</span> <span class='op'>:</span> <span class='symbol'>:producer</span>
+      <span class='id identifier rubyid_span_name'>span_name</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_otel_config'>otel_config</span><span class='lbracket'>[</span><span class='symbol'>:span_naming</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='symbol'>:job_class</span> <span class='op'>?</span> <span class='id identifier rubyid_job'>job</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span> <span class='op'>:</span> <span class='id identifier rubyid_job'>job</span><span class='period'>.</span><span class='id identifier rubyid_queue_name'>queue_name</span><span class='embexpr_end'>}</span><span class='tstring_content'> send</span><span class='tstring_end'>&quot;</span></span>
+      <span class='id identifier rubyid_span_attributes'>span_attributes</span> <span class='op'>=</span> <span class='id identifier rubyid_job_attributes'>job_attributes</span><span class='lparen'>(</span><span class='id identifier rubyid_job'>job</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_otel_tracer'>otel_tracer</span><span class='period'>.</span><span class='id identifier rubyid_in_span'>in_span</span><span class='lparen'>(</span><span class='id identifier rubyid_span_name'>span_name</span><span class='comma'>,</span> <span class='label'>attributes:</span> <span class='id identifier rubyid_span_attributes'>span_attributes</span><span class='comma'>,</span> <span class='label'>kind:</span> <span class='id identifier rubyid_span_kind'>span_kind</span><span class='rparen'>)</span> <span class='kw'>do</span>
+        <span class='const'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='period'>.</span><span class='id identifier rubyid_propagation'>propagation</span><span class='period'>.</span><span class='id identifier rubyid_inject'>inject</span><span class='lparen'>(</span><span class='id identifier rubyid_job'>job</span><span class='period'>.</span><span class='id identifier rubyid_metadata'>metadata</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_block'>block</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_around_perform'>around_perform</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_job'>job</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='op'>|</span> <span class='comment'># rubocop:disable Metrics/BlockLength
+</span>      <span class='id identifier rubyid_span_kind'>span_kind</span> <span class='op'>=</span> <span class='id identifier rubyid_job'>job</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_queue_adapter_name'>queue_adapter_name</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>inline</span><span class='tstring_end'>&#39;</span></span> <span class='op'>?</span> <span class='symbol'>:server</span> <span class='op'>:</span> <span class='symbol'>:consumer</span>
+      <span class='id identifier rubyid_span_name'>span_name</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_otel_config'>otel_config</span><span class='lbracket'>[</span><span class='symbol'>:span_naming</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='symbol'>:job_class</span> <span class='op'>?</span> <span class='id identifier rubyid_job'>job</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span> <span class='op'>:</span> <span class='id identifier rubyid_job'>job</span><span class='period'>.</span><span class='id identifier rubyid_queue_name'>queue_name</span><span class='embexpr_end'>}</span><span class='tstring_content'> process</span><span class='tstring_end'>&quot;</span></span>
+      <span class='id identifier rubyid_span_attributes'>span_attributes</span> <span class='op'>=</span> <span class='id identifier rubyid_job_attributes'>job_attributes</span><span class='lparen'>(</span><span class='id identifier rubyid_job'>job</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.operation</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+      <span class='id identifier rubyid_extracted_context'>extracted_context</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='period'>.</span><span class='id identifier rubyid_propagation'>propagation</span><span class='period'>.</span><span class='id identifier rubyid_extract'>extract</span><span class='lparen'>(</span><span class='id identifier rubyid_job'>job</span><span class='period'>.</span><span class='id identifier rubyid_metadata'>metadata</span><span class='rparen'>)</span>
+      <span class='const'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'>Context</span><span class='period'>.</span><span class='id identifier rubyid_with_current'>with_current</span><span class='lparen'>(</span><span class='id identifier rubyid_extracted_context'>extracted_context</span><span class='rparen'>)</span> <span class='kw'>do</span>
+        <span class='kw'>if</span> <span class='id identifier rubyid_otel_config'>otel_config</span><span class='lbracket'>[</span><span class='symbol'>:propagation_style</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='symbol'>:child</span>
+          <span class='id identifier rubyid_otel_tracer'>otel_tracer</span><span class='period'>.</span><span class='id identifier rubyid_in_span'>in_span</span><span class='lparen'>(</span><span class='id identifier rubyid_span_name'>span_name</span><span class='comma'>,</span> <span class='label'>attributes:</span> <span class='id identifier rubyid_span_attributes'>span_attributes</span><span class='comma'>,</span> <span class='label'>kind:</span> <span class='id identifier rubyid_span_kind'>span_kind</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_span'>span</span><span class='op'>|</span>
+            <span class='id identifier rubyid_span'>span</span><span class='period'>.</span><span class='id identifier rubyid_set_attribute'>set_attribute</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.active_job.executions</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_job'>job</span><span class='period'>.</span><span class='id identifier rubyid_executions'>executions</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_block'>block</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span>
+          <span class='kw'>end</span>
+        <span class='kw'>else</span>
+          <span class='id identifier rubyid_span_links'>span_links</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+          <span class='kw'>if</span> <span class='id identifier rubyid_otel_config'>otel_config</span><span class='lbracket'>[</span><span class='symbol'>:propagation_style</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='symbol'>:link</span>
+            <span class='id identifier rubyid_span_context'>span_context</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'>Trace</span><span class='period'>.</span><span class='id identifier rubyid_current_span'>current_span</span><span class='lparen'>(</span><span class='id identifier rubyid_extracted_context'>extracted_context</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_context'>context</span>
+            <span class='id identifier rubyid_span_links'>span_links</span> <span class='op'>&lt;&lt;</span> <span class='const'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'>Trace</span><span class='op'>::</span><span class='const'>Link</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_span_context'>span_context</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_span_context'>span_context</span><span class='period'>.</span><span class='id identifier rubyid_valid?'>valid?</span>
+          <span class='kw'>end</span>
+
+          <span class='id identifier rubyid_root_span'>root_span</span> <span class='op'>=</span> <span class='id identifier rubyid_otel_tracer'>otel_tracer</span><span class='period'>.</span><span class='id identifier rubyid_start_root_span'>start_root_span</span><span class='lparen'>(</span><span class='id identifier rubyid_span_name'>span_name</span><span class='comma'>,</span> <span class='label'>attributes:</span> <span class='id identifier rubyid_span_attributes'>span_attributes</span><span class='comma'>,</span> <span class='label'>links:</span> <span class='id identifier rubyid_span_links'>span_links</span><span class='comma'>,</span> <span class='label'>kind:</span> <span class='id identifier rubyid_span_kind'>span_kind</span><span class='rparen'>)</span>
+          <span class='const'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'>Trace</span><span class='period'>.</span><span class='id identifier rubyid_with_span'>with_span</span><span class='lparen'>(</span><span class='id identifier rubyid_root_span'>root_span</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_span'>span</span><span class='op'>|</span>
+            <span class='id identifier rubyid_span'>span</span><span class='period'>.</span><span class='id identifier rubyid_set_attribute'>set_attribute</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.active_job.executions</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_job'>job</span><span class='period'>.</span><span class='id identifier rubyid_executions'>executions</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_block'>block</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span>
+          <span class='kw'>rescue</span> <span class='const'>Exception</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span> <span class='comment'># rubocop:disable Lint/RescueException
+</span>            <span class='id identifier rubyid_span'>span</span><span class='period'>.</span><span class='id identifier rubyid_record_exception'>record_exception</span><span class='lparen'>(</span><span class='id identifier rubyid_e'>e</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_span'>span</span><span class='period'>.</span><span class='id identifier rubyid_status'>status</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'>Trace</span><span class='op'>::</span><span class='const'>Status</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'>Trace</span><span class='op'>::</span><span class='const'>Status</span><span class='op'>::</span><span class='const'>ERROR</span><span class='comma'>,</span> <span class='label'>description:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unhandled exception of type: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_raise'>raise</span> <span class='id identifier rubyid_e'>e</span>
+          <span class='kw'>ensure</span>
+            <span class='id identifier rubyid_root_span'>root_span</span><span class='period'>.</span><span class='id identifier rubyid_finish'>finish</span>
+          <span class='kw'>end</span>
+        <span class='kw'>end</span>
+      <span class='kw'>end</span>
+    <span class='kw'>ensure</span>
+      <span class='comment'># We may be in a job system (eg: resque) that forks and kills worker processes often.
+</span>      <span class='comment'># We don&#39;t want to lose spans by not flushing any span processors, so we optionally force it here.
+</span>      <span class='const'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='period'>.</span><span class='id identifier rubyid_tracer_provider'>tracer_provider</span><span class='period'>.</span><span class='id identifier rubyid_force_flush'>force_flush</span> <span class='kw'>if</span> <span class='id identifier rubyid_otel_config'>otel_config</span><span class='lbracket'>[</span><span class='symbol'>:force_flush</span><span class='rbracket'>]</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Thu Jun 24 18:38:05 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.3).
+</div>
+
+    </div>
+  </body>
+</html>
