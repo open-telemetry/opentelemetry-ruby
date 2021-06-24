@@ -1,5 +1,9 @@
 # Release History: opentelemetry-resource_detectors
 
+### v0.18.1 / 2021-06-23
+
+* (No significant changes)
+
 ### v0.18.0 / 2021-05-21
 
 * FIXED: Rename cloud.zone to cloud.availability_zone 

@@ -143,7 +143,7 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
     before do
       @log_stream = StringIO.new
       @_logger = OpenTelemetry.logger
-      OpenTelemetry.logger = ::Logger.new(@log_stream)
+      OpenTelemetry.logger = ::Logger.new(@log_stream, level: 'WARN')
     end
 
     after do
