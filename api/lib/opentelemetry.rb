@@ -12,6 +12,7 @@ require 'opentelemetry/baggage'
 require 'opentelemetry/trace'
 require 'opentelemetry/internal'
 require 'opentelemetry/version'
+require 'opentelemetry/aws_xray_trace'
 
 # OpenTelemetry is an open source observability framework, providing a
 # general-purpose API, SDK, and related tools required for the instrumentation
