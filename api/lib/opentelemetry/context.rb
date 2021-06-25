@@ -28,8 +28,9 @@ module OpenTelemetry
       # Returns current context, which is never nil
       #
       # @return [Context]
-      def current
-        stack.last || ROOT
+      def current(thread = Thread.current)
+        # Avoid calling #stack directly so as to not have races in initializing the storage
+        thread[STACK_KEY]&.last || ROOT
       end
 
       # Associates a Context with the caller's current Fiber. Every call to

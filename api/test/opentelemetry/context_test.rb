@@ -333,5 +333,25 @@ describe OpenTelemetry::Context do
         _(Context.current[bar_key]).must_be_nil
       end
     end
+
+    it 'allows accessing the current context for another thread' do
+      another_thread_context = Queue.new
+
+      another_thread = Thread.new do
+        ctx = Context.empty.set_value(foo_key, 'bar')
+        Context.with_current(ctx) do
+          another_thread_context << Context.current
+          sleep
+        end
+      end
+
+      ctx = another_thread_context.pop
+
+      _(Context.current(another_thread)).must_equal(ctx)
+      _(Context.current).wont_equal(ctx)
+
+      another_thread.kill
+      another_thread.join
+    end
   end
 end
