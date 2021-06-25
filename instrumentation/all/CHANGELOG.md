@@ -2,12 +2,9 @@
 
 ### Unreleased
 
+* ADDED: Add resque instrumentation
+* ADDED: Add ActiveJob instrumentation
 * ADDED: Configuration option to enable or disable redis root spans [#777](https://github.com/open-telemetry/opentelemetry-ruby/pull/777)
-
-### v0.19.0 / 2021-06-23
-
-* ADDED: Add resque instrumentation 
-* ADDED: Add ActiveJob instrumentation 
 
 ### v0.18.0 / 2021-05-21
 
