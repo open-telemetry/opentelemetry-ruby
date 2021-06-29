@@ -35,7 +35,7 @@ ENV['OTEL_PROPAGATORS'] ||= 'xray' # Or you can set this as an environment varia
 require 'opentelemetry/propagator/xray'
 
 OpenTelemetry::SDK.configure do |c|
-  c.id_generator = OpenTelemetry::AWSXRayTrace
+  c.id_generator = OpenTelemetry::Propagator::XRay::IDGenerator
 end
 ```
 The propagator and ID generation are independent and do not need to be used in conjunction but can be.

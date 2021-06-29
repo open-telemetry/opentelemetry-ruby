@@ -4,7 +4,7 @@ require 'date'
 require 'test_helper'
 
 describe OpenTelemetry::Trace::SpanContext do
-  let(:id_generator) { OpenTelemetry::AWSXRayTrace }
+  let(:id_generator) { OpenTelemetry::Propagator::XRay::IDGenerator }
 
   describe 'generate trace id in the correct format' do
     it 'must generate 16 in length' do
@@ -25,6 +25,11 @@ describe OpenTelemetry::Trace::SpanContext do
       end
       # Make sure it's valid
       _(date).wont_be_nil
+    end
+    it 'generate_span_id still works' do
+      trace_id = id_generator.generate_span_id
+      # Make sure it's valid
+      _(trace_id).wont_be_nil
     end
   end
 end
