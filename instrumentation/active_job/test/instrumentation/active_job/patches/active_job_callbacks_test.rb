@@ -46,6 +46,21 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     end
   end
 
+  describe 'exception handling' do
+    it 'sets span status to error' do
+      _ { ExceptionJob.perform_now }.must_raise StandardError, 'This job raises an exception'
+      _(process_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      _(process_span.status.description).must_equal 'Unhandled exception of type: StandardError'
+    end
+
+    it 'records the exception' do
+      _ { ExceptionJob.perform_now }.must_raise StandardError, 'This job raises an exception'
+      _(process_span.events.first.name).must_equal 'exception'
+      _(process_span.events.first.attributes['exception.type']).must_equal 'StandardError'
+      _(process_span.events.first.attributes['exception.message']).must_equal 'This job raises an exception'
+    end
+  end
+
   describe 'span kind' do
     it 'sets correct span kinds for inline jobs' do
       TestJob.perform_later
