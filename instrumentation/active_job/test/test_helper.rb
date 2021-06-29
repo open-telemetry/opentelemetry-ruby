@@ -25,6 +25,12 @@ class RetryJob < ::ActiveJob::Base
   end
 end
 
+class ExceptionJob < ::ActiveJob::Base
+  def perform
+    raise StandardError, 'This job raises an exception'
+  end
+end
+
 class BaggageJob < ::ActiveJob::Base
   def perform
     OpenTelemetry::Trace.current_span['success'] = true if OpenTelemetry::Baggage.value('testing_baggage') == 'it_worked'
