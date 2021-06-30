@@ -20,6 +20,7 @@ module OpenTelemetry
             @metadata = {}
             super
           end
+          ruby2_keywords(:initialize) if respond_to?(:ruby2_keywords, true)
 
           def serialize
             super.merge('metadata' => serialize_arguments(metadata))
