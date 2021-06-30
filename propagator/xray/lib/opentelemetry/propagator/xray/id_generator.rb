@@ -20,8 +20,8 @@ module OpenTelemetry
         # @return [bytes] a valid trace ID that is compliant with AWS XRay.
         def generate_trace_id
           time_hi = generate_time_bytes
-          low_and_low = RANDOM.bytes(12)
-          time_hi << low_and_low
+          mid_and_low = RANDOM.bytes(12)
+          time_hi << mid_and_low
         end
 
         # Generates a valid span identifier, an 8-byte string with at least one
@@ -44,9 +44,8 @@ module OpenTelemetry
         # @return [#bytes]
         RANDOM = Random.respond_to?(:bytes) ? Random : Random::DEFAULT
 
+        # Seconds since epoch converted to 4 bytes in big-endian order.
         def generate_time_bytes
-          # get the seconds from epoch, convert to hex, then convert to bytes
-          # big-endian
           [Time.now.to_i].pack('N')
         end
       end
