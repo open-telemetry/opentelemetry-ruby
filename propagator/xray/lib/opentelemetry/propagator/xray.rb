@@ -46,4 +46,4 @@ module OpenTelemetry
 end
 
 require_relative './xray/version'
-require_relative './id_generator'
+require_relative './xray/id_generator'
