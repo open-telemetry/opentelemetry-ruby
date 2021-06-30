@@ -311,7 +311,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       start_time_unix_nano: (start_timestamp.to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
-                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::Ok
+                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_OK
                       )
                     ),
                     Opentelemetry::Proto::Trace::V1::Span.new(
@@ -323,7 +323,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       start_time_unix_nano: ((start_timestamp + 2).to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
-                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::Ok
+                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_OK
                       )
                     ),
                     Opentelemetry::Proto::Trace::V1::Span.new(
@@ -335,7 +335,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       start_time_unix_nano: ((start_timestamp + 5).to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
-                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::Ok
+                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_OK
                       )
                     ),
                     Opentelemetry::Proto::Trace::V1::Span.new(
@@ -382,7 +382,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                         )
                       ],
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
-                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::UnknownError
+                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_ERROR
                       )
                     )
                   ]
@@ -401,7 +401,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       start_time_unix_nano: ((start_timestamp + 3).to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
-                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::Ok
+                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_OK
                       )
                     )
                   ]
