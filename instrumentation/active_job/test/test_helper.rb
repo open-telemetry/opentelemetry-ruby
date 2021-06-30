@@ -37,8 +37,15 @@ class BaggageJob < ::ActiveJob::Base
   end
 end
 
-class KeywordArgsJob < ::ActiveJob::Base
-  def perform(keyword:); end
+class PositionalOnlyArgsJob < ::ActiveJob::Base
+  def perform(arg1, arg2 = 'default'); end
+end
+class KeywordOnlyArgsJob < ::ActiveJob::Base
+  def perform(keyword1: 'default', keyword2:); end
+end
+
+class MixedArgsJob < ::ActiveJob::Base
+  def perform(arg1, arg2, keyword1: 'default', keyword2:); end
 end
 
 ::ActiveJob::Base.queue_adapter = :inline

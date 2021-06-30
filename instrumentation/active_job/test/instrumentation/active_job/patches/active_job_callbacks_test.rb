@@ -47,8 +47,16 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
   end
 
   describe 'compatibility' do
+    it 'works with positional args' do
+      _(PositionalOnlyArgsJob.perform_now('arg1')).must_be_nil # Make sure this runs without raising an error
+    end
+
     it 'works with keyword args' do
-      _(KeywordArgsJob.perform_now(keyword: :keyword)).must_be_nil # Make sure this runs without raising an error
+      _(KeywordOnlyArgsJob.perform_now(keyword2: :keyword2)).must_be_nil # Make sure this runs without raising an error
+    end
+
+    it 'works with mixed args' do
+      _(MixedArgsJob.perform_now('arg1', 'arg2', keyword2: :keyword2)).must_be_nil # Make sure this runs without raising an error
     end
   end
 
