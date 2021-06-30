@@ -46,6 +46,12 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     end
   end
 
+  describe 'compatibility' do
+    it 'works with keyword args' do
+      _(KeywordArgsJob.perform_now(keyword: :keyword)).must_be_nil # Make sure this runs without raising an error
+    end
+  end
+
   describe 'exception handling' do
     it 'sets span status to error' do
       _ { ExceptionJob.perform_now }.must_raise StandardError, 'This job raises an exception'

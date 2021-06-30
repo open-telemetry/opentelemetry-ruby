@@ -37,6 +37,10 @@ class BaggageJob < ::ActiveJob::Base
   end
 end
 
+class KeywordArgsJob < ::ActiveJob::Base
+  def perform(keyword:); end
+end
+
 ::ActiveJob::Base.queue_adapter = :inline
 ::ActiveJob::Base.logger = Logger.new(File::NULL)
 
