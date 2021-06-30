@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+gem 'grpc'
+gem 'opentelemetry-api', path: '../../../api'
+gem 'opentelemetry-instrumentation-grpc', path: '../../../instrumentation/grpc'
+gem 'opentelemetry-sdk', path: '../../../sdk'
+
+gem 'opentelemetry-exporter-otlp', path: '../../../exporter/otlp'
+gem 'pry-byebug'

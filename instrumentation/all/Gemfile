@@ -8,6 +8,7 @@ source 'https://rubygems.org'
 
 gemspec
 
+gem 'opentelemetry-instrumentation-grpc', path: '../grpc'
 gem 'opentelemetry-api', path: '../../api'
 gem 'opentelemetry-common', path: '../../common'
 gem 'opentelemetry-instrumentation-active_job', path: '../active_job'
