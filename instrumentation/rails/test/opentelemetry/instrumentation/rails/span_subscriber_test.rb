@@ -50,15 +50,31 @@ describe OpenTelemetry::Instrumentation::Rails::SpanSubscriber do
       'abc',
       __opentelemetry_span: span,
       __opentelemetry_ctx_token: token,
-      simple: 'keys_are_present',
-      exception: 'is_not_set_as_attribute',
-      nil_values_are_rejected: nil
+      string: 'keys_are_present',
+      numeric_is_fine: 1,
+      boolean_okay?: true,
+      symbols: :are_stringified,
+      empty_array_is_okay: [],
+      homogeneous_arrays_are_fine: %i[one two],
+      heterogeneous_arrays_are_not: [1, false],
+      exception: %w[Exception is_not_set_as_attribute],
+      exception_object: Exception.new('is_not_set_as_attribute'),
+      nil_values_are_rejected: nil,
+      complex_values_are_rejected: { foo: :bar }
     )
 
     _(last_span).wont_be_nil
-    _(last_span.attributes['simple']).must_equal('keys_are_present')
+    _(last_span.attributes['string']).must_equal('keys_are_present')
+    _(last_span.attributes['numeric_is_fine']).must_equal(1)
+    _(last_span.attributes['boolean_okay?']).must_equal(true)
+    _(last_span.attributes['symbols']).must_equal('are_stringified')
+    _(last_span.attributes['empty_array_is_okay']).must_equal([])
+    _(last_span.attributes['homogeneous_arrays_are_fine']).must_equal(%w[one two])
+    _(last_span.attributes.key?('heterogeneous_arrays_are_not')).must_equal(false)
     _(last_span.attributes.key?('exception')).must_equal(false)
+    _(last_span.attributes.key?('exception_object')).must_equal(false)
     _(last_span.attributes.key?('nil_values_are_rejected')).must_equal(false)
+    _(last_span.attributes.key?('complex_values_are_rejected')).must_equal(false)
   end
 
   it 'logs an exception_object correctly' do

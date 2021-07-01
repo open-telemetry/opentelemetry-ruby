@@ -11,6 +11,8 @@ module OpenTelemetry
       # handler which turns notifications into generic spans, taking care to handle
       # context appropriately.
       class SpanSubscriber
+        ALWAYS_VALID_PAYLOAD_TYPES = [TrueClass, FalseClass, String, Numeric, Symbol].freeze
+
         def initialize(name:, tracer:)
           @span_name = name.split('.')[0..1].reverse.join(' ').freeze
           @tracer = tracer
@@ -30,10 +32,10 @@ module OpenTelemetry
           token = payload.delete(:__opentelemetry_ctx_token)
           return unless span && token
 
-          attrs = payload.reject do |k, v|
-            %i[exception exception_object].include?(k) || v.nil?
+          attrs = payload.map do |k, v|
+            [k.to_s, sanitized_value(v)] if valid_payload_key?(k) && valid_payload_value?(v)
           end
-          span.add_attributes(attrs.transform_keys(&:to_s))
+          span.add_attributes(attrs.compact.to_h)
 
           if (e = payload[:exception_object])
             span.record_exception(e)
@@ -42,6 +44,33 @@ module OpenTelemetry
 
           span.finish
           OpenTelemetry::Context.detach(token)
+        end
+
+        private
+
+        def valid_payload_key?(key)
+          %i[exception exception_object].none?(key)
+        end
+
+        def valid_payload_value?(value)
+          if value.is_a?(Array)
+            return true if value.empty?
+
+            value.map(&:class).uniq.size == 1 && ALWAYS_VALID_PAYLOAD_TYPES.any? { |t| value.first.is_a?(t) }
+          else
+            ALWAYS_VALID_PAYLOAD_TYPES.any? { |t| value.is_a?(t) }
+          end
+        end
+
+        # We'll accept symbols as values, but stringify them; and we'll stringify symbols within an array.
+        def sanitized_value(value)
+          if value.is_a?(Array)
+            value.map { |v| v.is_a?(Symbol) ? v.to_s : v }
+          elsif value.is_a?(Symbol)
+            value.to_s
+          else
+            value
+          end
         end
       end
     end
