@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.20.1 / 2021-06-29
+
+* FIXED: Otlp encoding exceptions again 
+
 ### v0.20.0 / 2021-06-23
 
 * BREAKING CHANGE: Total order constraint on span.status= 
