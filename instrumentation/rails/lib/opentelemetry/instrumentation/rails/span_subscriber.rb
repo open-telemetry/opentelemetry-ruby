@@ -48,8 +48,12 @@ module OpenTelemetry
 
         private
 
+        def instrumentation_config
+          Rails::Instrumentation.instance.config
+        end
+
         def valid_payload_key?(key)
-          %i[exception exception_object].none?(key)
+          %i[exception exception_object].none?(key) && instrumentation_config[:disallowed_notification_payload_keys].none?(key)
         end
 
         def valid_payload_value?(value)

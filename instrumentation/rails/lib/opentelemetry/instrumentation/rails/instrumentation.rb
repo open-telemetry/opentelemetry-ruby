@@ -23,6 +23,7 @@ module OpenTelemetry
         end
 
         option :enable_recognize_route, default: false, validate: :boolean
+        option :disallowed_notification_payload_keys, default: [], validate: :array
 
         private
 

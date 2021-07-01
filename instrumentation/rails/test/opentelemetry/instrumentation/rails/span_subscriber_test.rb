@@ -7,7 +7,9 @@
 require 'test_helper'
 
 describe OpenTelemetry::Instrumentation::Rails::SpanSubscriber do
-  let(:tracer) { OpenTelemetry::Instrumentation::Rails::Instrumentation.instance.tracer }
+  let(:instrumentation) { OpenTelemetry::Instrumentation::Rails::Instrumentation.instance }
+  let(:config) { {} }
+  let(:tracer) { instrumentation.tracer }
   let(:exporter) { EXPORTER }
   let(:last_span) { exporter.finished_spans.last }
   let(:subscriber) do
@@ -17,7 +19,11 @@ describe OpenTelemetry::Instrumentation::Rails::SpanSubscriber do
     )
   end
 
-  before { exporter.reset }
+  before do
+    exporter.reset
+    instrumentation.instance_variable_set(:@installed, false)
+    instrumentation.install(config)
+  end
 
   it 'memoizes the span name' do
     span, = subscriber.start('oh.hai', 'abc', {})
@@ -43,8 +49,7 @@ describe OpenTelemetry::Instrumentation::Rails::SpanSubscriber do
 
   it 'sets attributes as expected' do
     span, token = subscriber.start('hai', 'abc', {})
-    # We only use the finished attributes - could change in the
-    # future, perhaps.
+    # We only use the finished attributes - could change in the future, perhaps.
     subscriber.finish(
       'hai',
       'abc',
@@ -96,5 +101,25 @@ describe OpenTelemetry::Instrumentation::Rails::SpanSubscriber do
     event = last_span.events.first
     _(event.name).must_equal('exception')
     _(event.attributes['exception.message']).must_equal('boom')
+  end
+
+  describe 'instrumentation option - disallowed_notification_payload_attributes' do
+    let(:config) { { disallowed_notification_payload_keys: [:foo] } }
+    it 'does not set disallowed attributes from notification payloads' do
+      span, token = subscriber.start('hai', 'abc', {})
+      # We only use the finished attributes - could change in the future, perhaps.
+      subscriber.finish(
+        'hai',
+        'abc',
+        __opentelemetry_span: span,
+        __opentelemetry_ctx_token: token,
+        foo: 'bar',
+        baz: 'bat'
+      )
+
+      _(last_span).wont_be_nil
+      _(last_span.attributes.key?('foo')).must_equal(false)
+      _(last_span.attributes['baz']).must_equal('bat')
+    end
   end
 end
