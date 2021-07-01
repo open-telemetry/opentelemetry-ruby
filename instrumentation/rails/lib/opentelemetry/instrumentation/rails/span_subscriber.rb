@@ -27,11 +27,12 @@ module OpenTelemetry
           [span, token]
         end
 
-        def finish(_name, _id, payload)
+        def finish(_name, _id, payload) # rubocop:disable Metrics/AbcSize
           span = payload.delete(:__opentelemetry_span)
           token = payload.delete(:__opentelemetry_ctx_token)
           return unless span && token
 
+          payload = transform_payload(payload)
           attrs = payload.map do |k, v|
             [k.to_s, sanitized_value(v)] if valid_payload_key?(k) && valid_payload_value?(v)
           end
@@ -50,6 +51,12 @@ module OpenTelemetry
 
         def instrumentation_config
           Rails::Instrumentation.instance.config
+        end
+
+        def transform_payload(payload)
+          return payload if instrumentation_config[:notification_payload_transform].nil?
+
+          instrumentation_config[:notification_payload_transform].call(payload)
         end
 
         def valid_payload_key?(key)

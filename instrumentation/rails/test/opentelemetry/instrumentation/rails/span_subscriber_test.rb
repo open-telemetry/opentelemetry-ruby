@@ -8,7 +8,6 @@ require 'test_helper'
 
 describe OpenTelemetry::Instrumentation::Rails::SpanSubscriber do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Rails::Instrumentation.instance }
-  let(:config) { {} }
   let(:tracer) { instrumentation.tracer }
   let(:exporter) { EXPORTER }
   let(:last_span) { exporter.finished_spans.last }
@@ -22,7 +21,7 @@ describe OpenTelemetry::Instrumentation::Rails::SpanSubscriber do
   before do
     exporter.reset
     instrumentation.instance_variable_set(:@installed, false)
-    instrumentation.install(config)
+    instrumentation.install({})
   end
 
   it 'memoizes the span name' do
@@ -103,11 +102,19 @@ describe OpenTelemetry::Instrumentation::Rails::SpanSubscriber do
     _(event.attributes['exception.message']).must_equal('boom')
   end
 
-  describe 'instrumentation option - disallowed_notification_payload_attributes' do
-    let(:config) { { disallowed_notification_payload_keys: [:foo] } }
+  describe 'instrumentation option - disallowed_notification_payload_keys' do
+    before do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(disallowed_notification_payload_keys: [:foo])
+    end
+
+    after do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install({})
+    end
+
     it 'does not set disallowed attributes from notification payloads' do
       span, token = subscriber.start('hai', 'abc', {})
-      # We only use the finished attributes - could change in the future, perhaps.
       subscriber.finish(
         'hai',
         'abc',
@@ -120,6 +127,34 @@ describe OpenTelemetry::Instrumentation::Rails::SpanSubscriber do
       _(last_span).wont_be_nil
       _(last_span.attributes.key?('foo')).must_equal(false)
       _(last_span.attributes['baz']).must_equal('bat')
+    end
+  end
+
+  describe 'instrumentation option - notification_payload_transform' do
+    let(:transformer_proc) { ->(v) { v.transform_values { 'optimus prime' } } }
+
+    before do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(notification_payload_transform: transformer_proc)
+    end
+
+    after do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install({})
+    end
+
+    it 'allows a callable to transform all payload values' do
+      span, token = subscriber.start('hai', 'abc', {})
+      subscriber.finish(
+        'hai',
+        'abc',
+        __opentelemetry_span: span,
+        __opentelemetry_ctx_token: token,
+        thing: 'a semi truck'
+      )
+
+      _(last_span).wont_be_nil
+      _(last_span.attributes['thing']).must_equal('optimus prime')
     end
   end
 end
