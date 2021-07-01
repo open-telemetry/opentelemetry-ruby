@@ -191,3 +191,8 @@ gems:
     directory: resource_detectors
     version_rb_path: lib/opentelemetry/resource/detectors/version.rb
     version_constant: [OpenTelemetry, Resource, Detectors, VERSION]
+
+  - name: opentelemetry-semantic_conventions
+    directory: semantic_conventions
+    version_rb_path: lib/opentelemetry/semantic_conventions/version.rb
+    version_constant: [OpenTelemetry, SemanticConventions, VERSION]
