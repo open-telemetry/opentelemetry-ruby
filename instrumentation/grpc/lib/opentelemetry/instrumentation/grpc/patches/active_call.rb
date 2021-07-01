@@ -56,7 +56,7 @@ module OpenTelemetry
           # lifecycle of this ActiveCall.
           def maybe_finish_and_close_call_locked
             super
-
+          ensure
             if @call_finished && @span.recording?
               unless status.nil?
                 @span.set_attribute("rpc.grpc.status_code", status.code)
