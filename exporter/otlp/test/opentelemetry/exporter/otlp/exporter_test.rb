@@ -199,12 +199,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
 
       result = exporter.export([span_data])
 
-      # Needed so it doesn't crash the test
-      encoded_logger_output = log_stream.string.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?')
-
-      _(encoded_logger_output).must_match(
-        /ERROR -- : OpenTelemetry error: encoding error for key a and value ?/
+      _(log_stream.string).must_match(
+        /ERROR -- : OpenTelemetry error: encoding error for key a and value �/
       )
+
       _(result).must_equal(SUCCESS)
     ensure
       OpenTelemetry.logger = logger

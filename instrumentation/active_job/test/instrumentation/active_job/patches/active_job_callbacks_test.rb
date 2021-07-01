@@ -46,6 +46,35 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     end
   end
 
+  describe 'compatibility' do
+    it 'works with positional args' do
+      _(PositionalOnlyArgsJob.perform_now('arg1')).must_be_nil # Make sure this runs without raising an error
+    end
+
+    it 'works with keyword args' do
+      _(KeywordOnlyArgsJob.perform_now(keyword2: :keyword2)).must_be_nil # Make sure this runs without raising an error
+    end
+
+    it 'works with mixed args' do
+      _(MixedArgsJob.perform_now('arg1', 'arg2', keyword2: :keyword2)).must_be_nil # Make sure this runs without raising an error
+    end
+  end
+
+  describe 'exception handling' do
+    it 'sets span status to error' do
+      _ { ExceptionJob.perform_now }.must_raise StandardError, 'This job raises an exception'
+      _(process_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      _(process_span.status.description).must_equal 'Unhandled exception of type: StandardError'
+    end
+
+    it 'records the exception' do
+      _ { ExceptionJob.perform_now }.must_raise StandardError, 'This job raises an exception'
+      _(process_span.events.first.name).must_equal 'exception'
+      _(process_span.events.first.attributes['exception.type']).must_equal 'StandardError'
+      _(process_span.events.first.attributes['exception.message']).must_equal 'This job raises an exception'
+    end
+  end
+
   describe 'span kind' do
     it 'sets correct span kinds for inline jobs' do
       TestJob.perform_later
