@@ -9,6 +9,22 @@ module OpenTelemetry
     # The configurator provides defaults and facilitates configuring the
     # SDK for use.
     class Configurator # rubocop:disable Metrics/ClassLength
+      # @api private
+      class NoopTextMapPropagator
+        EMPTY_LIST = [].freeze
+        private_constant(:EMPTY_LIST)
+
+        def inject(carrier, context: Context.current, setter: Context::Propagation.text_map_setter); end
+
+        def extract(carrier, context: Context.current, getter: Context::Propagation.text_map_getter)
+          context
+        end
+
+        def fields
+          EMPTY_LIST
+        end
+      end
+
       USE_MODE_UNSPECIFIED = 0
       USE_MODE_ONE = 1
       USE_MODE_ALL = 2
@@ -179,10 +195,10 @@ module OpenTelemetry
           when 'ottrace' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::OTTrace')
           else
             OpenTelemetry.logger.warn "The #{propagator} propagator is unknown and cannot be configured"
-            OpenTelemetry::SDK::Context::Propagation::NoopTextMapPropagator.new
+            NoopTextMapPropagator.new
           end
         end
-        OpenTelemetry.propagation = OpenTelemetry::Context::Propagation::CompositeTextMapPropagator.compose_propagators((@propagators || propagators).compact)
+        OpenTelemetry.propagation = Context::Propagation::CompositeTextMapPropagator.compose_propagators((@propagators || propagators).compact)
       end
 
       def fetch_propagator(name, class_name, gem_suffix = name)

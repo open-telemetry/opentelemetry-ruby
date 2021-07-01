@@ -146,7 +146,7 @@ describe OpenTelemetry::SDK::Configurator do
       end
 
       it 'is user settable' do
-        propagator = OpenTelemetry::SDK::Context::Propagation::NoopTextMapPropagator.new
+        propagator = OpenTelemetry::SDK::Configurator::NoopTextMapPropagator.new
         configurator.propagators = [propagator]
         configurator.configure
 
@@ -167,7 +167,7 @@ describe OpenTelemetry::SDK::Configurator do
         end
 
         _(OpenTelemetry.propagation).must_be_instance_of(
-          OpenTelemetry::SDK::Context::Propagation::NoopTextMapPropagator
+          OpenTelemetry::SDK::Configurator::NoopTextMapPropagator
         )
       end
     end
@@ -285,7 +285,7 @@ describe OpenTelemetry::SDK::Configurator do
   end
 
   def propagators_for(propagator)
-    if propagator.instance_of? OpenTelemetry::Context::Propagation::CompositeTextMapPropagator
+    if propagator.instance_of? Context::Propagation::CompositeTextMapPropagator
       propagator.instance_variable_get(:@propagators)
     else
       [propagator]
