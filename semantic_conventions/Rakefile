@@ -57,7 +57,6 @@ task :generate do
       puts "Running: #{cmd.join(' ')}"
       `#{cmd.join(' ')}`
     end
-
   end
 
   `sed -i.bak "s/VERSION = '.*'/VERSION = '#{SPEC_VERSION}'/g" lib/opentelemetry/semantic_conventions/version.rb`
