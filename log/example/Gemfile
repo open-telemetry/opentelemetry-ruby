@@ -1,0 +1,5 @@
+source 'https://rubygems.org'
+
+gem "semantic_logger", "~> 4.8"
+gem 'opentelemetry-sdk', path: '../../sdk'
+gem 'opentelemetry-sdk-log', path: '../../log'
