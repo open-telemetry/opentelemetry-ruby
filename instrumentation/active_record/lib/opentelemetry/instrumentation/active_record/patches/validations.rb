@@ -24,6 +24,12 @@ module OpenTelemetry
               super
             end
           end
+
+          private
+
+          def tracer
+            ActiveRecord::Instrumentation.instance.tracer
+          end
         end
       end
     end

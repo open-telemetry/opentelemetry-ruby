@@ -10,16 +10,24 @@ module OpenTelemetry
       module Patches
         # Module to prepend to ActiveRecord::Querying for instrumentation
         module Querying
-          def find_by_sql(sql, binds = [], preparable: nil, &block)
-            tracer.in_span("#{self}.find_by_sql") do
-              super
+          def self.prepended(base)
+            class << base
+              prepend ClassMethods
             end
           end
 
-          private
+          module ClassMethods
+            def find_by_sql(sql, binds = [], preparable: nil, &block)
+              tracer.in_span("#{self}.find_by_sql") do
+                super
+              end
+            end
 
-          def tracer
-            ActiveRecord::Instrumentation.instance.tracer
+            private
+
+            def tracer
+              ActiveRecord::Instrumentation.instance.tracer
+            end
           end
         end
       end

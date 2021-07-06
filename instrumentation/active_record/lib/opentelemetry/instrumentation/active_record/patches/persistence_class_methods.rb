@@ -10,46 +10,54 @@ module OpenTelemetry
       module Patches
         # Module to prepend to ActiveRecord::Persistence::ClassMethods for instrumentation
         module PersistenceClassMethods
-          def create(attributes = nil, &block)
-            tracer.in_span("#{self}.create") do
-              super
+          def self.prepended(base)
+            class << base
+              prepend ClassMethods
             end
           end
 
-          def create!(attributes = nil, &block)
-            tracer.in_span("#{self}.create!") do
-              super
+          module ClassMethods
+            def create(attributes = nil, &block)
+              tracer.in_span("#{self}.create") do
+                super
+              end
             end
-          end
 
-          def instantiate(attributes, column_types = {}, &block)
-            tracer.in_span("#{self}.instantiate") do
-              super
+            def create!(attributes = nil, &block)
+              tracer.in_span("#{self}.create!") do
+                super
+              end
             end
-          end
 
-          def update(id = :all, attributes) # rubocop:disable Style/OptionalArguments
-            tracer.in_span("#{self}.update") do
-              super
+            def instantiate(attributes, column_types = {}, &block)
+              tracer.in_span("#{self}.instantiate") do
+                super
+              end
             end
-          end
 
-          def destroy(id)
-            tracer.in_span("#{self}.destroy") do
-              super
+            def update(id = :all, attributes) # rubocop:disable Style/OptionalArguments
+              tracer.in_span("#{self}.update") do
+                super
+              end
             end
-          end
 
-          def delete(id_or_array)
-            tracer.in_span("#{self}.delete") do
-              super
+            def destroy(id)
+              tracer.in_span("#{self}.destroy") do
+                super
+              end
             end
-          end
 
-          private
+            def delete(id_or_array)
+              tracer.in_span("#{self}.delete") do
+                super
+              end
+            end
 
-          def tracer
-            ActiveRecord::Instrumentation.instance.tracer
+            private
+
+            def tracer
+              ActiveRecord::Instrumentation.instance.tracer
+            end
           end
         end
       end

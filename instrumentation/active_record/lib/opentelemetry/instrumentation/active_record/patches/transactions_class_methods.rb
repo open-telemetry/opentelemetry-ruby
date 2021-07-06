@@ -10,16 +10,24 @@ module OpenTelemetry
       module Patches
         # Module to prepend to ActiveRecord::Transactions::ClassMethods for instrumentation
         module TransactionsClassMethods
-          def transaction(**options, &block)
-            tracer.in_span("#{self}.transaction") do
-              super
+          def self.prepended(base)
+            class << base
+              prepend ClassMethods
             end
           end
 
-          private
+          module ClassMethods
+            def transaction(**options, &block)
+              tracer.in_span("#{self}.transaction") do
+                super
+              end
+            end
 
-          def tracer
-            ActiveRecord::Instrumentation.instance.tracer
+            private
+
+            def tracer
+              ActiveRecord::Instrumentation.instance.tracer
+            end
           end
         end
       end

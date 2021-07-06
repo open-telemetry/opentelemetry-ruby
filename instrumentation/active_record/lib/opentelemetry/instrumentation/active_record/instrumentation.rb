@@ -35,12 +35,23 @@ module OpenTelemetry
         end
 
         def patch
-          ::ActiveRecord::Querying.prepend(Patches::Querying)
-          ::ActiveRecord::Persistence.prepend(Patches::Persistence)
-          ::ActiveRecord::Persistence::ClassMethods.prepend(Patches::PersistenceClassMethods)
-          ::ActiveRecord::Persistence::ClassMethods.prepend(Patches::PersistenceInsertClassMethods) if insert_class_methods_supported?
-          ::ActiveRecord::Transactions::ClassMethods.prepend(Patches::TransactionsClassMethods)
-          ::ActiveRecord::Validations.prepend(Patches::Validations)
+          # ::ActiveRecord::Querying.prepend(Patches::Querying)
+          ::ActiveRecord::Base.prepend(Patches::Querying)
+
+          # ::ActiveRecord::Persistence.prepend(Patches::Persistence)
+          ::ActiveRecord::Base.prepend(Patches::Persistence)
+
+          # ::ActiveRecord::Persistence::ClassMethods.prepend(Patches::PersistenceClassMethods)
+          ::ActiveRecord::Base.prepend(Patches::PersistenceClassMethods)
+
+          # ::ActiveRecord::Persistence::ClassMethods.prepend(Patches::PersistenceInsertClassMethods) if insert_class_methods_supported?
+          ::ActiveRecord::Base.prepend(Patches::PersistenceInsertClassMethods) if insert_class_methods_supported?
+
+          # ::ActiveRecord::Transactions::ClassMethods.prepend(Patches::TransactionsClassMethods)
+          ::ActiveRecord::Base.prepend(Patches::TransactionsClassMethods)
+
+          # ::ActiveRecord::Validations.prepend(Patches::Validations)
+          ::ActiveRecord::Base.prepend(Patches::Validations)
         end
 
         def require_dependencies

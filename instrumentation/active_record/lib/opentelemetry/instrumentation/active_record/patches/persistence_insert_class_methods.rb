@@ -11,46 +11,54 @@ module OpenTelemetry
         # Module to prepend to ActiveRecord::Persistence::ClassMethods for instrumentating
         # insert/upsert class methods added in Rails 6.0
         module PersistenceInsertClassMethods
-          def insert(attributes, returning: nil, unique_by: nil)
-            tracer.in_span("#{self}.insert") do
-              super
+          def self.prepended(base)
+            class << base
+              prepend ClassMethods
             end
           end
 
-          def insert_all(attributes, returning: nil, unique_by: nil)
-            tracer.in_span("#{self}.insert_all") do
-              super
+          module ClassMethods
+            def insert(attributes, returning: nil, unique_by: nil)
+              tracer.in_span("#{self}.insert") do
+                super
+              end
             end
-          end
 
-          def insert!(attributes, returning: nil)
-            tracer.in_span("#{self}.insert!") do
-              super
+            def insert_all(attributes, returning: nil, unique_by: nil)
+              tracer.in_span("#{self}.insert_all") do
+                super
+              end
             end
-          end
 
-          def insert_all!(attributes, returning: nil)
-            tracer.in_span("#{self}.insert_all!") do
-              super
+            def insert!(attributes, returning: nil)
+              tracer.in_span("#{self}.insert!") do
+                super
+              end
             end
-          end
 
-          def upsert(attributes, returning: nil, unique_by: nil)
-            tracer.in_span("#{self}.upsert") do
-              super
+            def insert_all!(attributes, returning: nil)
+              tracer.in_span("#{self}.insert_all!") do
+                super
+              end
             end
-          end
 
-          def upsert_all(attributes, returning: nil, unique_by: nil)
-            tracer.in_span("#{self}.upsert_all") do
-              super
+            def upsert(attributes, returning: nil, unique_by: nil)
+              tracer.in_span("#{self}.upsert") do
+                super
+              end
             end
-          end
 
-          private
+            def upsert_all(attributes, returning: nil, unique_by: nil)
+              tracer.in_span("#{self}.upsert_all") do
+                super
+              end
+            end
 
-          def tracer
-            ActiveRecord::Instrumentation.instance.tracer
+            private
+
+            def tracer
+              ActiveRecord::Instrumentation.instance.tracer
+            end
           end
         end
       end
