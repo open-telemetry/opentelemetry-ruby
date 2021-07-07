@@ -29,6 +29,12 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-common', '~> 0.19.0'
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.18.1'
 
+  # This is an intentionally loose dependency, since we want to be able to
+  # release new versions of opentelemetry-semantic_conventions without requiring
+  # a new SDK release. The requirements of the SDK have been satisifed since the
+  # initial release of opentelemetry-semantic_conventions, so we feel it is safe.
+  spec.add_dependency 'opentelemetry-semantic_conventions'
+
   spec.add_development_dependency 'bundler', '>= 1.17'
   spec.add_development_dependency 'faraday', '~> 0.13'
   spec.add_development_dependency 'minitest', '~> 5.0'

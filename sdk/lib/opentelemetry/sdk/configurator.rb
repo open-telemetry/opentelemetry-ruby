@@ -76,7 +76,7 @@ module OpenTelemetry
       # @param [String] service_name The value to be used as the service name
       def service_name=(service_name)
         self.resource = OpenTelemetry::SDK::Resources::Resource.create(
-          OpenTelemetry::SDK::Resources::Constants::SERVICE_RESOURCE[:name] => service_name
+          OpenTelemetry::SemanticConventions::Resource::SERVICE_NAME => service_name
         )
       end
 
@@ -86,7 +86,7 @@ module OpenTelemetry
       # @param [String] service_version The value to be used as the service version
       def service_version=(service_version)
         self.resource = OpenTelemetry::SDK::Resources::Resource.create(
-          OpenTelemetry::SDK::Resources::Constants::SERVICE_RESOURCE[:version] => service_version
+          OpenTelemetry::SemanticConventions::Resource::SERVICE_VERSION => service_version
         )
       end
 
