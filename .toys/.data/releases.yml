@@ -48,6 +48,10 @@ gems:
     version_rb_path: lib/opentelemetry/instrumentation/version.rb
     version_constant: [OpenTelemetry, Instrumentation, VERSION]
 
+  - name: opentelemetry-instrumentation-active_record
+    directory: instrumentation/active_record
+    version_constant: [OpenTelemetry, Instrumentation, ActiveRecord, VERSION]
+
   - name: opentelemetry-instrumentation-lmdb
     directory: instrumentation/lmdb
     version_constant: [OpenTelemetry, Instrumentation, LMDB, VERSION]

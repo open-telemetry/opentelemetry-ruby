@@ -12,6 +12,9 @@
 # Appraisals
 instrumentation/**/*.gemfile.lock
 
+# Sqlite file for tests
+instrumentation/active_record/db
+
 # Vendored gems
 **/vendor/**/*
 
