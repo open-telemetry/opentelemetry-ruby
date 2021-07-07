@@ -16,5 +16,6 @@ module OpenTelemetry
 end
 
 require 'opentelemetry-instrumentation-rack'
+require 'opentelemetry-instrumentation-active_record'
 require_relative './rails/instrumentation'
 require_relative './rails/version'

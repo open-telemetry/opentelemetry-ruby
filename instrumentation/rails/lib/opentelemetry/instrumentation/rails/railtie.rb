@@ -12,6 +12,7 @@ module OpenTelemetry
       # the Rails application through its initialization hooks
       class Railtie < ::Rails::Railtie
         config.before_initialize do |app|
+          OpenTelemetry::Instrumentation::ActiveRecord::Instrumentation.instance.install({})
           OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.install({})
 
           app.middleware.insert_before(
