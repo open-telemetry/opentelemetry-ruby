@@ -8,7 +8,7 @@ gem "activerecord", "~> 6.1.0"
 
 group :test do
   gem "byebug"
-  gem "mysql2"
+  gem "sqlite3-ruby"
   gem "opentelemetry-common", path: "../../../common"
   gem "opentelemetry-sdk", path: "../../../sdk"
   gem "pry-byebug"

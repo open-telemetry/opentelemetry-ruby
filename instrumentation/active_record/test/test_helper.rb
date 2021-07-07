@@ -21,11 +21,8 @@ OpenTelemetry::SDK.configure do |c|
 end
 
 ActiveRecord::Base.establish_connection(
-  adapter: 'mysql2',
-  host: ENV.fetch('TEST_MYSQL_HOST') { '127.0.0.1' },
-  username: ENV.fetch('TEST_MYSQL_USER') { 'root' },
-  password: ENV.fetch('TEST_MYSQL_PASSWORD') { 'root' },
-  database: ENV.fetch('TEST_MYSQL_DB') { 'mysql' }
+  adapter: 'sqlite3',
+  database: 'db/development.sqlite3'
 )
 
 # Create User model
