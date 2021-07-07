@@ -35,22 +35,20 @@ module OpenTelemetry
         end
 
         def patch
-          # ::ActiveRecord::Querying.prepend(Patches::Querying)
+          # The original approach taken here was to patch each individual module of interest.
+          # However the patches are applied too late in some applications and as a result the
+          # Active Record models will not have the instrumentation patches applied.
+          # Prepending the ActiveRecord::Base class is more consistent in applying
+          # the patches regardless of initialization order.
+          #
+          # Modules to prepend to ActiveRecord::Base are still grouped by the source
+          # module that they are defined in.
+          # Example: Patches::PersistenceClassMethods refers to https://github.com/rails/rails/blob/v6.1.0/activerecord/lib/active_record/persistence.rb#L10
           ::ActiveRecord::Base.prepend(Patches::Querying)
-
-          # ::ActiveRecord::Persistence.prepend(Patches::Persistence)
           ::ActiveRecord::Base.prepend(Patches::Persistence)
-
-          # ::ActiveRecord::Persistence::ClassMethods.prepend(Patches::PersistenceClassMethods)
           ::ActiveRecord::Base.prepend(Patches::PersistenceClassMethods)
-
-          # ::ActiveRecord::Persistence::ClassMethods.prepend(Patches::PersistenceInsertClassMethods) if insert_class_methods_supported?
           ::ActiveRecord::Base.prepend(Patches::PersistenceInsertClassMethods) if insert_class_methods_supported?
-
-          # ::ActiveRecord::Transactions::ClassMethods.prepend(Patches::TransactionsClassMethods)
           ::ActiveRecord::Base.prepend(Patches::TransactionsClassMethods)
-
-          # ::ActiveRecord::Validations.prepend(Patches::Validations)
           ::ActiveRecord::Base.prepend(Patches::Validations)
         end
 

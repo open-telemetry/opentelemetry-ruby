@@ -8,7 +8,8 @@ module OpenTelemetry
   module Instrumentation
     module ActiveRecord
       module Patches
-        # Module to prepend to ActiveRecord::Persistence for instrumentation
+        # Module to prepend to ActiveRecord::Base for instrumentation
+        # contains the ActiveRecord::Persistence methods to be patched
         module Persistence
           def delete
             tracer.in_span("#{self.class}#delete") do

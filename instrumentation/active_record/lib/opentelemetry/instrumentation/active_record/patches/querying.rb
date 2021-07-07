@@ -8,7 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module ActiveRecord
       module Patches
-        # Module to prepend to ActiveRecord::Querying for instrumentation
+        # Module to prepend to ActiveRecord::Base for instrumentation
         module Querying
           def self.prepended(base)
             class << base
@@ -16,6 +16,7 @@ module OpenTelemetry
             end
           end
 
+          # Contains ActiveRecord::Querying to be patched
           module ClassMethods
             def find_by_sql(sql, binds = [], preparable: nil, &block)
               tracer.in_span("#{self}.find_by_sql") do

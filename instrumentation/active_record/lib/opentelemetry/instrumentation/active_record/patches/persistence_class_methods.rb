@@ -8,7 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module ActiveRecord
       module Patches
-        # Module to prepend to ActiveRecord::Persistence::ClassMethods for instrumentation
+        # Module to prepend to ActiveRecord::Base for instrumentation
         module PersistenceClassMethods
           def self.prepended(base)
             class << base
@@ -16,6 +16,7 @@ module OpenTelemetry
             end
           end
 
+          # Contains ActiveRecord::Persistence::ClassMethods to be patched
           module ClassMethods
             def create(attributes = nil, &block)
               tracer.in_span("#{self}.create") do

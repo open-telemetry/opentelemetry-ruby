@@ -8,7 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module ActiveRecord
       module Patches
-        # Module to prepend to ActiveRecord::Transactions::ClassMethods for instrumentation
+        # Module to prepend to ActiveRecord::Base for instrumentation
         module TransactionsClassMethods
           def self.prepended(base)
             class << base
@@ -16,6 +16,7 @@ module OpenTelemetry
             end
           end
 
+          # Contains ActiveRecord::Transactions::ClassMethods to be patched
           module ClassMethods
             def transaction(**options, &block)
               tracer.in_span("#{self}.transaction") do
