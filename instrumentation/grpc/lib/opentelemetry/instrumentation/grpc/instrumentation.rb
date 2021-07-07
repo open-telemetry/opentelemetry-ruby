@@ -15,7 +15,9 @@ module OpenTelemetry
         end
 
         present do
-          defined?(GRPC)
+          # cookpad/grpc_kit redefines GRPC: https://github.com/cookpad/grpc_kit/blob/fb0306867d098f8ebde205257ef017af3312d6e5/lib/grpc.rb
+          # Unfortunately, it does so in a way that is incompatible with the vanilla GRPC libraries.
+          defined?(::GRPC) && !defined?(GrpcKit)
         end
 
         private
