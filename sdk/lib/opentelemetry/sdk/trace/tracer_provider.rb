@@ -33,6 +33,7 @@ module OpenTelemetry
                        span_limits: SpanLimits::DEFAULT)
           @mutex = Mutex.new
           @registry = {}
+          @registry_mutex = Mutex.new
           @span_processors = []
           @span_limits = span_limits
           @sampler = sampler
@@ -51,7 +52,7 @@ module OpenTelemetry
           name ||= ''
           version ||= ''
           OpenTelemetry.logger.warn 'calling TracerProvider#tracer without providing a tracer name.' if name.empty?
-          @mutex.synchronize { @registry[Key.new(name, version)] ||= Tracer.new(name, version, self) }
+          @registry_mutex.synchronize { @registry[Key.new(name, version)] ||= Tracer.new(name, version, self) }
         end
 
         # Attempts to stop all the activity for this {TracerProvider}. Calls

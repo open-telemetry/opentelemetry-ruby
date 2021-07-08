@@ -84,6 +84,15 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
       mock_span_processor.verify
       mock_span_processor2.verify
     end
+
+    it 'does not deadlock if span processor is traced' do
+      span_processor = OpenTelemetry::SDK::Trace::SpanProcessor.new
+      tracer_provider.add_span_processor(span_processor)
+      span_processor.stub(:shutdown, ->(timeout: nil) { tracer_provider.tracer.in_span('shutdown') {} }) do
+        tracer_provider.shutdown
+      end
+      pass 'no deadlock'
+    end
   end
 
   describe '#force_flush' do
