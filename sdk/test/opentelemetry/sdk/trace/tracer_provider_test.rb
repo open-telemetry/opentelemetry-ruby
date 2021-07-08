@@ -88,7 +88,7 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
     it 'does not deadlock if span processor is traced' do
       span_processor = OpenTelemetry::SDK::Trace::SpanProcessor.new
       tracer_provider.add_span_processor(span_processor)
-      span_processor.stub(:shutdown, ->(timeout: nil) { tracer_provider.tracer.in_span('shutdown') {} }) do
+      span_processor.stub(:shutdown, ->(timeout: nil) { tracer_provider.tracer.in_span('shutdown') {} }) do # rubocop:disable Lint/UnusedBlockArgument
         tracer_provider.shutdown
       end
       pass 'no deadlock'
