@@ -16,6 +16,7 @@ group :test do
   gem 'opentelemetry-common', path: '../../common'
   gem 'opentelemetry-instrumentation-redis', path: '../redis'
   gem 'opentelemetry-sdk', path: '../../sdk'
+  gem 'opentelemetry-semantic_conventions', path: '../../semantic_conventions'
   gem 'pry'
   gem 'pry-byebug'
 end
