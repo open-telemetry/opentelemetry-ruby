@@ -165,11 +165,11 @@ module OpenTelemetry
       end
 
       def configure_span_processors
-        processors = @span_processors.empty? ? wrapped_exporter_from_env.compact : @span_processors
+        processors = @span_processors.empty? ? wrapped_exporters_from_env.compact : @span_processors
         processors.each { |p| tracer_provider.add_span_processor(p) }
       end
 
-      def wrapped_exporter_from_env
+      def wrapped_exporters_from_env
         exporters = ENV.fetch('OTEL_TRACES_EXPORTER', 'otlp')
         exporters.split(',').map do |exporter|
           case exporter.strip
