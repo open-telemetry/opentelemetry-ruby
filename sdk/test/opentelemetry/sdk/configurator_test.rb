@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'test_helper'
-require 'opentelemetry/exporter/jaeger'
+require 'opentelemetry/exporter/zipkin'
 
 describe OpenTelemetry::SDK::Configurator do
   let(:configurator) { OpenTelemetry::SDK::Configurator.new }
@@ -212,7 +212,7 @@ describe OpenTelemetry::SDK::Configurator do
       end
 
       it 'can be set by environment variable' do
-        with_env('OTEL_TRACES_EXPORTER' => 'jaeger') do
+        with_env('OTEL_TRACES_EXPORTER' => 'zipkin') do
           configurator.configure
         end
 
@@ -220,7 +220,7 @@ describe OpenTelemetry::SDK::Configurator do
           OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
         )
         _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors).first.instance_variable_get(:@exporter)).must_be_instance_of(
-          OpenTelemetry::Exporter::Jaeger::CollectorExporter
+          OpenTelemetry::Exporter::Zipkin::Exporter
         )
       end
 
