@@ -165,21 +165,23 @@ module OpenTelemetry
       end
 
       def configure_span_processors
-        processors = @span_processors.empty? ? [wrapped_exporter_from_env].compact : @span_processors
+        processors = @span_processors.empty? ? wrapped_exporters_from_env.compact : @span_processors
         processors.each { |p| tracer_provider.add_span_processor(p) }
       end
 
-      def wrapped_exporter_from_env
-        exporter = ENV.fetch('OTEL_TRACES_EXPORTER', 'otlp')
-        case exporter
-        when 'none' then nil
-        when 'otlp' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::OTLP::Exporter')
-        when 'jaeger' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::Jaeger::CollectorExporter')
-        when 'zipkin' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::Zipkin::Exporter')
-        when 'console' then Trace::Export::SimpleSpanProcessor.new(Trace::Export::ConsoleSpanExporter.new)
-        else
-          OpenTelemetry.logger.warn "The #{exporter} exporter is unknown and cannot be configured, spans will not be exported"
-          nil
+      def wrapped_exporters_from_env
+        exporters = ENV.fetch('OTEL_TRACES_EXPORTER', 'otlp')
+        exporters.split(',').map do |exporter|
+          case exporter.strip
+          when 'none' then nil
+          when 'otlp' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::OTLP::Exporter')
+          when 'jaeger' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::Jaeger::CollectorExporter')
+          when 'zipkin' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::Zipkin::Exporter')
+          when 'console' then Trace::Export::SimpleSpanProcessor.new(Trace::Export::ConsoleSpanExporter.new)
+          else
+            OpenTelemetry.logger.warn "The #{exporter} exporter is unknown and cannot be configured, spans will not be exported"
+            nil
+          end
         end
       end
 

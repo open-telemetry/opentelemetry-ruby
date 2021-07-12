@@ -232,6 +232,44 @@ describe OpenTelemetry::SDK::Configurator do
         _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)).must_be_empty
       end
 
+      it 'accepts comma separated list as an environment variable' do
+        with_env('OTEL_TRACES_EXPORTER' => 'zipkin,console') do
+          configurator.configure
+        end
+
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[0]).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
+        )
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[0].instance_variable_get(:@exporter)).must_be_instance_of(
+          OpenTelemetry::Exporter::Zipkin::Exporter
+        )
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[1]).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor
+        )
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[1].instance_variable_get(:@span_exporter)).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter
+        )
+      end
+
+      it 'accepts comma separated list with preceeding or trailing spaces as an environment variable' do
+        with_env('OTEL_TRACES_EXPORTER' => 'zipkin , console') do
+          configurator.configure
+        end
+
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[0]).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
+        )
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[0].instance_variable_get(:@exporter)).must_be_instance_of(
+          OpenTelemetry::Exporter::Zipkin::Exporter
+        )
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[1]).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor
+        )
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[1].instance_variable_get(:@span_exporter)).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter
+        )
+      end
+
       it 'accepts "console" as an environment variable value' do
         with_env('OTEL_TRACES_EXPORTER' => 'console') do
           configurator.configure
