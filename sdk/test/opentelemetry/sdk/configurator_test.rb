@@ -233,7 +233,7 @@ describe OpenTelemetry::SDK::Configurator do
       end
 
       it 'accepts comma separated list as an environment variable' do
-        with_env('OTEL_TRACES_EXPORTER' => 'jaeger,console') do
+        with_env('OTEL_TRACES_EXPORTER' => 'zipkin,console') do
           configurator.configure
         end
 
@@ -241,7 +241,7 @@ describe OpenTelemetry::SDK::Configurator do
           OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
         )
         _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[0].instance_variable_get(:@exporter)).must_be_instance_of(
-          OpenTelemetry::Exporter::Jaeger::CollectorExporter
+          OpenTelemetry::Exporter::Zipkin::Exporter
         )
         _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[1]).must_be_instance_of(
           OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor
@@ -252,7 +252,7 @@ describe OpenTelemetry::SDK::Configurator do
       end
 
       it 'accepts comma separated list with preceeding or trailing spaces as an environment variable' do
-        with_env('OTEL_TRACES_EXPORTER' => 'jaeger , console') do
+        with_env('OTEL_TRACES_EXPORTER' => 'zipkin , console') do
           configurator.configure
         end
 
@@ -260,7 +260,7 @@ describe OpenTelemetry::SDK::Configurator do
           OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
         )
         _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[0].instance_variable_get(:@exporter)).must_be_instance_of(
-          OpenTelemetry::Exporter::Jaeger::CollectorExporter
+          OpenTelemetry::Exporter::Zipkin::Exporter
         )
         _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[1]).must_be_instance_of(
           OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor
