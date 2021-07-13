@@ -35,16 +35,15 @@ Then, configure the SDK to use the OTLP exporter as a span processor, and use th
 require 'opentelemetry/sdk'
 require 'opentelemetry/exporter/otlp'
 
-# Configure the sdk with custom export
-OpenTelemetry::SDK.configure do |c|
-  c.add_span_processor(
-    OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(
-      OpenTelemetry::Exporter::OTLP::Exporter.new(
-        compression: 'gzip'
-      )
-    )
-  )
-end
+# The OTLP exporter is the default, so no configuration is needed.
+# However, it could be manually selected via an environment variable if required:
+#
+# ENV['OTEL_TRACES_EXPORTER'] = 'otlp'
+#
+# You may also configure various settings via environment variables:
+# ENV['OTEL_EXPORTER_OTLP_COMPRESSION'] = 'gzip'
+
+OpenTelemetry::SDK.configure
 
 # To start a trace you need to get a Tracer from the TracerProvider
 tracer = OpenTelemetry.tracer_provider.tracer('my_app_or_gem', '0.1.0')
@@ -67,7 +66,7 @@ For additional examples, see the [examples on github][examples-github].
 
 ## How can I configure the OTLP exporter?
 
-The collector exporter can be configured explicitly in code, as shown above, or via environment variables. The configuration parameters, environment variables, and defaults are shown below.
+The collector exporter can be configured explicitly in code, or via environment variables as shown above. The configuration parameters, environment variables, and defaults are shown below.
 
 | Parameter           | Environment variable                         | Default                             |
 | ------------------- | -------------------------------------------- | ----------------------------------- |

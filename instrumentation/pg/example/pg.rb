@@ -5,9 +5,9 @@ require 'bundler/setup'
 
 Bundler.require
 
-enable_sql_obfuscation = true
+ENV['OTEL_TRACES_EXPORTER'] = 'console'
 OpenTelemetry::SDK.configure do |c|
-  c.use 'OpenTelemetry::Instrumentation::PG', enable_sql_obfuscation: enable_sql_obfuscation
+  c.use 'OpenTelemetry::Instrumentation::PG', enable_sql_obfuscation: true
 end
 
 conn = PG::Connection.open(

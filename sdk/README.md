@@ -29,9 +29,32 @@ Then, configure the SDK according to your desired handling of telemetry data, an
 ```ruby
 require 'opentelemetry/sdk'
 
-# Configure the sdk with default export and context propagation formats
-# see SDK#configure for customizing the setup
+# Configure the sdk with default export and context propagation formats.
 OpenTelemetry::SDK.configure
+
+# Many configuration options may be set via the environment. To use them,
+# set the appropriate variable before calling configure. For example:
+#
+# ENV['OTEL_TRACES_EXPORTER'] = 'console'
+# ENV['OTEL_PROPAGATORS'] = 'ottrace'
+# OpenTelemetry::SDK.configure
+#
+# You may also configure the SDK programmatically, for advanced usage or to
+# enable auto-instrumentation. For example:
+#
+# OpenTelemetry::SDK.configure do |c|
+#   c.service_name = something_calculated_dynamically
+#   c.add_span_processor(
+#     OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(
+#       OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter.new
+#     )
+#   )
+#
+#   c.use 'OpenTelemetry::Instrumentation::Net::HTTP'
+# end
+#
+# Note that the SimpleSpanExporter is not recommended for use in production.
+
 
 # To start a trace you need to get a Tracer from the TracerProvider
 tracer = OpenTelemetry.tracer_provider.tracer('my_app_or_gem', '0.1.0')
