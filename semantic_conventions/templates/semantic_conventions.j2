@@ -1,0 +1,23 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+module OpenTelemetry
+  module SemanticConventions
+    module {{module}}
+      {%- for attribute in attributes | unique(attribute="fqn") %}
+      # {{ attribute.brief | to_doc_brief | regex_replace(pattern="\n", replace="\n      #  ") }}
+      {%- if attribute.note %}
+      # @note {{ attribute.note | to_doc_brief | regex_replace(pattern="\n", replace="\n      #  ") }}
+      {%- endif %}
+      {%- if attribute.deprecated %}
+      # @deprecated {{ attribute.deprecated | to_doc_brief | regex_replace(pattern="\n", replace="\n      #  ") }}
+      {%- endif %}
+      {{ attribute.fqn | to_const_name }} = '{{ attribute.fqn }}'
+{# blank line #}
+      {%- endfor %}
+    end
+  end
+end

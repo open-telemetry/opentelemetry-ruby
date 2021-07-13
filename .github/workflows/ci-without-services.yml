@@ -26,6 +26,7 @@ jobs:
           - name: Test Windows / Ruby 3.0
             os: windows-latest
             ruby: "3.0"
+            # active_record omitted because it depends on tzinfo which is not present
             # ethon omitted because it depends on libcurl which is not present
             # mysql2 omitted because it depends on the mysql C library which is not present
             # pg omitted because it depends on the postgres C library which is not present
@@ -35,6 +36,7 @@ jobs:
             # resque omitted because it depends on redis-server which is not present
             flags: >-
               --include-simple --include-appraisal --omit-services
+              --exclude opentelemetry-instrumentation-active_record
               --exclude opentelemetry-instrumentation-ethon
               --exclude opentelemetry-instrumentation-mysql2
               --exclude opentelemetry-instrumentation-pg

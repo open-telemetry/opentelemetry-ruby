@@ -16,6 +16,7 @@ module OpenTelemetry
         end
 
         config.before_initialize do |app|
+          OpenTelemetry::Instrumentation::ActiveRecord::Instrumentation.instance.install({})
           OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.install({})
 
           app.middleware.insert_before(
