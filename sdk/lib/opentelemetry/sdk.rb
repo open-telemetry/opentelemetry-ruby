@@ -7,6 +7,7 @@
 require 'opentelemetry'
 require 'opentelemetry/common'
 require 'opentelemetry-instrumentation-base'
+require 'opentelemetry-semantic_conventions'
 
 # OpenTelemetry is an open source observability framework, providing a
 # general-purpose API, SDK, and related tools required for the instrumentation

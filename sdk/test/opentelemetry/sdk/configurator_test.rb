@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'test_helper'
-require 'opentelemetry/exporter/jaeger'
+require 'opentelemetry/exporter/zipkin'
 
 describe OpenTelemetry::SDK::Configurator do
   let(:configurator) { OpenTelemetry::SDK::Configurator.new }
@@ -146,7 +146,7 @@ describe OpenTelemetry::SDK::Configurator do
       end
 
       it 'is user settable' do
-        propagator = OpenTelemetry::Context::Propagation::NoopTextMapPropagator.new
+        propagator = OpenTelemetry::SDK::Configurator::NoopTextMapPropagator.new
         configurator.propagators = [propagator]
         configurator.configure
 
@@ -167,7 +167,7 @@ describe OpenTelemetry::SDK::Configurator do
         end
 
         _(OpenTelemetry.propagation).must_be_instance_of(
-          Context::Propagation::NoopTextMapPropagator
+          OpenTelemetry::SDK::Configurator::NoopTextMapPropagator
         )
       end
     end
@@ -212,7 +212,7 @@ describe OpenTelemetry::SDK::Configurator do
       end
 
       it 'can be set by environment variable' do
-        with_env('OTEL_TRACES_EXPORTER' => 'jaeger') do
+        with_env('OTEL_TRACES_EXPORTER' => 'zipkin') do
           configurator.configure
         end
 
@@ -220,7 +220,7 @@ describe OpenTelemetry::SDK::Configurator do
           OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
         )
         _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors).first.instance_variable_get(:@exporter)).must_be_instance_of(
-          OpenTelemetry::Exporter::Jaeger::CollectorExporter
+          OpenTelemetry::Exporter::Zipkin::Exporter
         )
       end
 
@@ -230,6 +230,44 @@ describe OpenTelemetry::SDK::Configurator do
         end
 
         _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)).must_be_empty
+      end
+
+      it 'accepts comma separated list as an environment variable' do
+        with_env('OTEL_TRACES_EXPORTER' => 'zipkin,console') do
+          configurator.configure
+        end
+
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[0]).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
+        )
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[0].instance_variable_get(:@exporter)).must_be_instance_of(
+          OpenTelemetry::Exporter::Zipkin::Exporter
+        )
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[1]).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor
+        )
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[1].instance_variable_get(:@span_exporter)).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter
+        )
+      end
+
+      it 'accepts comma separated list with preceeding or trailing spaces as an environment variable' do
+        with_env('OTEL_TRACES_EXPORTER' => 'zipkin , console') do
+          configurator.configure
+        end
+
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[0]).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor
+        )
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[0].instance_variable_get(:@exporter)).must_be_instance_of(
+          OpenTelemetry::Exporter::Zipkin::Exporter
+        )
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[1]).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor
+        )
+        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[1].instance_variable_get(:@span_exporter)).must_be_instance_of(
+          OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter
+        )
       end
 
       it 'accepts "console" as an environment variable value' do

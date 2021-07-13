@@ -52,6 +52,10 @@ gems:
     version_rb_path: lib/opentelemetry/instrumentation/version.rb
     version_constant: [OpenTelemetry, Instrumentation, VERSION]
 
+  - name: opentelemetry-instrumentation-active_record
+    directory: instrumentation/active_record
+    version_constant: [OpenTelemetry, Instrumentation, ActiveRecord, VERSION]
+
   - name: opentelemetry-instrumentation-lmdb
     directory: instrumentation/lmdb
     version_constant: [OpenTelemetry, Instrumentation, LMDB, VERSION]
@@ -195,3 +199,8 @@ gems:
     directory: resource_detectors
     version_rb_path: lib/opentelemetry/resource/detectors/version.rb
     version_constant: [OpenTelemetry, Resource, Detectors, VERSION]
+
+  - name: opentelemetry-semantic_conventions
+    directory: semantic_conventions
+    version_rb_path: lib/opentelemetry/semantic_conventions/version.rb
+    version_constant: [OpenTelemetry, SemanticConventions, VERSION]

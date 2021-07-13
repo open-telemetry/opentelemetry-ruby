@@ -13,6 +13,7 @@ gem 'opentelemetry-api', path: '../../api'
 gem 'opentelemetry-common', path: '../../common'
 gem 'opentelemetry-instrumentation-active_job', path: '../active_job'
 gem 'opentelemetry-instrumentation-active_model_serializers', path: '../active_model_serializers'
+gem 'opentelemetry-instrumentation-active_record', path: '../active_record'
 gem 'opentelemetry-instrumentation-base', path: '../base'
 gem 'opentelemetry-instrumentation-bunny', path: '../bunny'
 gem 'opentelemetry-instrumentation-concurrent_ruby', path: '../concurrent_ruby'
@@ -41,4 +42,5 @@ gem 'opentelemetry-instrumentation-sinatra', path: '../sinatra'
 
 group :test do
   gem 'opentelemetry-sdk', path: '../../sdk'
+  gem 'opentelemetry-semantic_conventions', path: '../../semantic_conventions'
 end

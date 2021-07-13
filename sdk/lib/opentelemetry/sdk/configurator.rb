@@ -9,6 +9,22 @@ module OpenTelemetry
     # The configurator provides defaults and facilitates configuring the
     # SDK for use.
     class Configurator # rubocop:disable Metrics/ClassLength
+      # @api private
+      class NoopTextMapPropagator
+        EMPTY_LIST = [].freeze
+        private_constant(:EMPTY_LIST)
+
+        def inject(carrier, context: Context.current, setter: Context::Propagation.text_map_setter); end
+
+        def extract(carrier, context: Context.current, getter: Context::Propagation.text_map_getter)
+          context
+        end
+
+        def fields
+          EMPTY_LIST
+        end
+      end
+
       USE_MODE_UNSPECIFIED = 0
       USE_MODE_ONE = 1
       USE_MODE_ALL = 2
@@ -60,7 +76,7 @@ module OpenTelemetry
       # @param [String] service_name The value to be used as the service name
       def service_name=(service_name)
         self.resource = OpenTelemetry::SDK::Resources::Resource.create(
-          OpenTelemetry::SDK::Resources::Constants::SERVICE_RESOURCE[:name] => service_name
+          OpenTelemetry::SemanticConventions::Resource::SERVICE_NAME => service_name
         )
       end
 
@@ -70,7 +86,7 @@ module OpenTelemetry
       # @param [String] service_version The value to be used as the service version
       def service_version=(service_version)
         self.resource = OpenTelemetry::SDK::Resources::Resource.create(
-          OpenTelemetry::SDK::Resources::Constants::SERVICE_RESOURCE[:version] => service_version
+          OpenTelemetry::SemanticConventions::Resource::SERVICE_VERSION => service_version
         )
       end
 
@@ -149,21 +165,23 @@ module OpenTelemetry
       end
 
       def configure_span_processors
-        processors = @span_processors.empty? ? [wrapped_exporter_from_env].compact : @span_processors
+        processors = @span_processors.empty? ? wrapped_exporters_from_env.compact : @span_processors
         processors.each { |p| tracer_provider.add_span_processor(p) }
       end
 
-      def wrapped_exporter_from_env
-        exporter = ENV.fetch('OTEL_TRACES_EXPORTER', 'otlp')
-        case exporter
-        when 'none' then nil
-        when 'otlp' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::OTLP::Exporter')
-        when 'jaeger' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::Jaeger::CollectorExporter')
-        when 'zipkin' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::Zipkin::Exporter')
-        when 'console' then Trace::Export::SimpleSpanProcessor.new(Trace::Export::ConsoleSpanExporter.new)
-        else
-          OpenTelemetry.logger.warn "The #{exporter} exporter is unknown and cannot be configured, spans will not be exported"
-          nil
+      def wrapped_exporters_from_env
+        exporters = ENV.fetch('OTEL_TRACES_EXPORTER', 'otlp')
+        exporters.split(',').map do |exporter|
+          case exporter.strip
+          when 'none' then nil
+          when 'otlp' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::OTLP::Exporter')
+          when 'jaeger' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::Jaeger::CollectorExporter')
+          when 'zipkin' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::Zipkin::Exporter')
+          when 'console' then Trace::Export::SimpleSpanProcessor.new(Trace::Export::ConsoleSpanExporter.new)
+          else
+            OpenTelemetry.logger.warn "The #{exporter} exporter is unknown and cannot be configured, spans will not be exported"
+            nil
+          end
         end
       end
 
@@ -179,7 +197,7 @@ module OpenTelemetry
           when 'ottrace' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::OTTrace')
           else
             OpenTelemetry.logger.warn "The #{propagator} propagator is unknown and cannot be configured"
-            Context::Propagation::NoopTextMapPropagator.new
+            NoopTextMapPropagator.new
           end
         end
         OpenTelemetry.propagation = Context::Propagation::CompositeTextMapPropagator.compose_propagators((@propagators || propagators).compact)

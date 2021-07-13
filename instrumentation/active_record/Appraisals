@@ -1,0 +1,21 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+appraise 'activerecord-6.1' do
+  gem 'activerecord', '~> 6.1.0'
+end
+
+appraise 'activerecord-6.0' do
+  gem 'activerecord', '~> 6.0.0'
+end
+
+# Rails 5.2 is not compatible with Ruby 3.0
+# https://github.com/rails/rails/issues/40938
+if RUBY_VERSION < '3'
+  appraise 'activerecord-5.2' do
+    gem 'activerecord', '~> 5.2.0'
+  end
+end
