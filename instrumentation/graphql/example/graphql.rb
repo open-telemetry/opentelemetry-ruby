@@ -41,6 +41,7 @@ Schema = GraphQL::Schema.define do
   query QueryType
 end
 
+ENV['OTEL_TRACES_EXPORTER'] = 'console'
 OpenTelemetry::SDK.configure do |c|
   c.use_all('OpenTelemetry::Instrumentation::GraphQL' => { schemas: [Schema] })
 end

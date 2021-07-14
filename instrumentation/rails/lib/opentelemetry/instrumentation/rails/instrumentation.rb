@@ -23,11 +23,15 @@ module OpenTelemetry
         end
 
         option :enable_recognize_route, default: false, validate: :boolean
+        option :disallowed_notification_payload_keys, default: [], validate: :array
+        option :notification_payload_transform, default: nil, validate: :callable
 
         private
 
         def require_dependencies
           require_relative 'patches/action_controller/metal'
+          require_relative 'fanout'
+          require_relative 'span_subscriber'
         end
 
         def require_railtie

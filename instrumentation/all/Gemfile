@@ -11,6 +11,7 @@ gemspec
 gem 'opentelemetry-instrumentation-grpc', path: '../grpc'
 gem 'opentelemetry-api', path: '../../api'
 gem 'opentelemetry-common', path: '../../common'
+gem 'opentelemetry-instrumentation-action_view', path: '../action_view'
 gem 'opentelemetry-instrumentation-active_job', path: '../active_job'
 gem 'opentelemetry-instrumentation-active_model_serializers', path: '../active_model_serializers'
 gem 'opentelemetry-instrumentation-active_record', path: '../active_record'

@@ -28,15 +28,9 @@ class TraceRequestApp < Rails::Application
   Rails.logger  = config.logger
 end
 
-# Simple setup for demonstration purposes, simple span processor should not be
-# used in a production environment
-span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(
-  OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter.new
-)
-
+ENV['OTEL_TRACES_EXPORTER'] = 'console'
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Rails'
-  c.add_span_processor(span_processor)
 end
 
 Rails.application.initialize!

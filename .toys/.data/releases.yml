@@ -31,9 +31,9 @@ commit_lint:
 #  *  changelog_path: Path to CHANGLEOG.md relative to the gem directory.
 #     (Required only if it is not in the expected location.)
 gems:
-  - name: opentelemetry-instrumentation-grpc
-    directory: instrumentation/grpc
-    version_constant: [OpenTelemetry, Instrumentation, GRPC, VERSION]
+  - name: opentelemetry-instrumentation-action_view
+    directory: instrumentation/action_view
+    version_constant: [OpenTelemetry, Instrumentation, ActionView, VERSION]
 
   - name: opentelemetry-instrumentation-active_job
     directory: instrumentation/active_job
@@ -133,6 +133,10 @@ gems:
   - name: opentelemetry-instrumentation-faraday
     directory: instrumentation/faraday
     version_constant: [OpenTelemetry, Instrumentation, Faraday, VERSION]
+
+  - name: opentelemetry-instrumentation-grpc
+    directory: instrumentation/grpc
+    version_constant: [OpenTelemetry, Instrumentation, GRPC, VERSION]
 
   - name: opentelemetry-instrumentation-mongo
     directory: instrumentation/mongo

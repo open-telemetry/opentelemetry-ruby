@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry-instrumentation-grpc'
+require 'opentelemetry-instrumentation-action_view'
 require 'opentelemetry-instrumentation-active_job'
 require 'opentelemetry-instrumentation-active_record'
 require 'opentelemetry-instrumentation-bunny'
@@ -19,6 +19,7 @@ require 'opentelemetry-instrumentation-ethon'
 require 'opentelemetry-instrumentation-excon'
 require 'opentelemetry-instrumentation-faraday'
 require 'opentelemetry-instrumentation-graphql'
+require 'opentelemetry-instrumentation-grpc'
 require 'opentelemetry-instrumentation-http_client'
 require 'opentelemetry-instrumentation-mongo'
 require 'opentelemetry-instrumentation-mysql2'
