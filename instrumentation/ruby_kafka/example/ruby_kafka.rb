@@ -12,13 +12,9 @@ Bundler.require
 require 'kafka'
 require 'active_support'
 
-span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(
-  OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter.new
-)
-
+ENV['OTEL_TRACES_EXPORTER'] = 'console'
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::RubyKafka'
-  c.add_span_processor(span_processor)
 end
 
 # Assumes kafka is available

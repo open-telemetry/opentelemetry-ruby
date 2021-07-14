@@ -31,16 +31,14 @@ Then, configure the SDK to use a zipkin exporter as a span processor, and use th
 require 'opentelemetry/sdk'
 require 'opentelemetry/exporter/zipkin'
 
-# Configure the sdk with custom export
-OpenTelemetry::SDK.configure do |c|
-  c.add_span_processor(
-    OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(
-      OpenTelemetry::Exporter::Zipkin::Exporter.new(endpoint: 'http://192.168.0.1:9411/api/v2/spans' )
-    )
-  )
-  c.service_name = 'zipkin-example'
-  c.service_version = '0.15.0'
-end
+# Select the zipkin exporter via environmental variables
+ENV['OTEL_TRACES_EXPORTER'] = 'zipkin'
+
+ENV['OTEL_SERVICE_NAME'] = 'zipkin-example'
+ENV['OTEL_SERVICE_VERSION'] = '0.15.0'
+
+# The zipkin expects an exporter running on localhost:9411 - you may override this if needed:
+# ENV['OTEL_EXPORTER_ZIPKIN_ENDPOINT'] = 'http://some.other.host:12345'
 
 # To start a trace you need to get a Tracer from the TracerProvider
 tracer = OpenTelemetry.tracer_provider.tracer('my_app_or_gem', '0.1.0')
@@ -63,7 +61,7 @@ For additional examples, see the [examples on github][examples-github].
 
 ## How can I configure the Zipkin exporter?
 
-The collector exporter can be configured explicitly in code, as shown above, or via environment variables. The configuration parameters, environment variables, and defaults are shown below.
+The collector exporter can be configured explicitly in code, or via environment variables as shown above. The configuration parameters, environment variables, and defaults are shown below.
 
 | Parameter   | Environment variable                  | Default                    |
 | ----------- | --------------------------------------| -------------------------- |
