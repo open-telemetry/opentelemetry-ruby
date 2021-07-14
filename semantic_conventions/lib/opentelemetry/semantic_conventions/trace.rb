@@ -7,6 +7,10 @@
 module OpenTelemetry
   module SemanticConventions
     module Trace
+      # The full invoked ARN as provided on the `Context` passed to the function (`Lambda-Runtime-Invoked-Function-Arn` header on the `/runtime/invocation/next` applicable)
+      # @note This may be different from `faas.id` if an alias is involved
+      AWS_LAMBDA_INVOKED_ARN = 'aws.lambda.invoked_arn'
+
       # An identifier for the database management system (DBMS) product being used. See below for a list of well-known identifiers
       DB_SYSTEM = 'db.system'
 
@@ -277,9 +281,11 @@ module OpenTelemetry
       RPC_SYSTEM = 'rpc.system'
 
       # The name of the service to which a request is made, as returned by the AWS SDK
+      # @note This is the logical name of the service from the RPC interface perspective, which can be different from the name of any implementing class. The `code.namespace` attribute may be used to store the latter (despite the attribute name, it may include a class name; e.g., class with method actually executing the call on the server side, RPC client stub class on the client side)
       RPC_SERVICE = 'rpc.service'
 
       # The name of the operation corresponding to the request, as returned by the AWS SDK
+      # @note This is the logical name of the method from the RPC interface perspective, which can be different from the name of any implementing method/function. The `code.function` attribute may be used to store the latter (e.g., method actually executing the call on the server side, RPC client stub method on the client side)
       RPC_METHOD = 'rpc.method'
 
       # The keys in the `RequestItems` object field
@@ -375,9 +381,6 @@ module OpenTelemetry
 
       # Protocol version as in `jsonrpc` property of request/response. Since JSON-RPC 1.0 does not specify this, the value can be omitted
       RPC_JSONRPC_VERSION = 'rpc.jsonrpc.version'
-
-      # `method` property from request. Unlike `rpc.method`, this may not relate to the actual method being called. Useful for client-side traces since client does not know what will be called on the server
-      RPC_JSONRPC_METHOD = 'rpc.jsonrpc.method'
 
       # `id` property of request or response. Since protocol allows id to be int, string, `null` or missing (for notifications), value is expected to be cast to string for simplicity. Use empty string in case of `null` value. Omit entirely if this is a notification
       RPC_JSONRPC_REQUEST_ID = 'rpc.jsonrpc.request_id'
