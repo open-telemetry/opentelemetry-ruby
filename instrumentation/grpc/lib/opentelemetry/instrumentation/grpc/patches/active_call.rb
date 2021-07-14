@@ -8,6 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module GRPC
       module Patches
+        # Patches to prepend to ::GRPC::ActiveCall.
         module ActiveCall
           def initialize(call, marshal, unmarshal, deadline, started: true, metadata_received: false, metadata_to_send: nil)
             super
@@ -59,7 +60,7 @@ module OpenTelemetry
           ensure
             if @call_finished && @span.recording?
               unless status.nil?
-                @span.set_attribute("rpc.grpc.status_code", status.code)
+                @span.set_attribute('rpc.grpc.status_code', status.code)
                 @span.status = OpenTelemetry::Trace::Status.error unless status.code == ::GRPC::Core::StatusCodes::OK
               end
               @span.finish

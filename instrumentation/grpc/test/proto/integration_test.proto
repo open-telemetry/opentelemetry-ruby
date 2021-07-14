@@ -1,0 +1,25 @@
+// Copyright The OpenTelemetry Authors
+//
+// SPDX-License-Identifier: Apache-2.0
+
+syntax = "proto3";
+
+package integrationtest;
+
+service IntegrationTest {
+  // Unary request/response
+  rpc EchoOne(Message) returns (Message) {}
+
+  // Server-to-client stream
+  rpc EchoStream(Message) returns (stream Message) {}
+
+  // Client-to-server stream
+  rpc EchoMany(stream Message) returns (Message) {}
+
+  // Client/Server bi-directional streaming
+  rpc EchoChat(stream Message) returns (stream Message) {}
+}
+
+message Message {
+  string text = 1;
+}

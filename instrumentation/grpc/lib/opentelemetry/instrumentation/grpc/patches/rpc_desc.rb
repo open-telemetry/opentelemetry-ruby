@@ -8,13 +8,14 @@ module OpenTelemetry
   module Instrumentation
     module GRPC
       module Patches
+        # Patches to prepend to ::GRPC::RpcDesc.
         module RpcDesc
           # This is the entry point to all server-side calls.
           def run_server_method(active_call, mth, inter_ctx = ::GRPC::InterceptionContext.new)
             attrs = {
-              "rpc.system" => "grpc",
-              "rpc.service" => mth.owner.service_name,
-              "rpc.method" => mth.name.to_s
+              'rpc.system' => 'grpc',
+              'rpc.service' => mth.owner.service_name,
+              'rpc.method' => mth.name.to_s
             }
             context = OpenTelemetry.propagation.extract(active_call.metadata)
             span = tracer.start_span(
@@ -32,6 +33,7 @@ module OpenTelemetry
           end
 
           private
+
           def tracer
             GRPC::Instrumentation.instance.tracer
           end

@@ -8,6 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module GRPC
       module Patches
+        # Patches to prepend to ::GRPC::ClientStub.
         module ClientStub
           # Handles the "unary" client call.
           def request_response(method, req, marshal, unmarshal, deadline: nil, return_op: false, parent: nil, credentials: nil, metadata: {})
@@ -30,14 +31,15 @@ module OpenTelemetry
           end
 
           private
+
           def start_span(method, metadata)
-            method_parts = method.to_s.sub(/^\//, "").split("/")
+            method_parts = method.to_s.sub(%r{^\/}, '').split('/')
             service_name = method_parts.shift
-            method_name = method_parts.join("/")
+            method_name = method_parts.join('/')
             attrs = {
-              "rpc.system" => "grpc",
-              "rpc.service" => service_name.to_s,
-              "rpc.method" => method_name.to_s
+              'rpc.system' => 'grpc',
+              'rpc.service' => service_name.to_s,
+              'rpc.method' => method_name.to_s
             }
 
             span = tracer.start_span(

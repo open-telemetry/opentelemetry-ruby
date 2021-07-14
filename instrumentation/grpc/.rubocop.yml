@@ -3,3 +3,11 @@ inherit_from: ../.rubocop-examples.yml
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-instrumentation-grpc.rb"
+
+AllCops:
+  Exclude:
+    # The examples are basically the upstream route_guide tests and they certainly
+    # do not conform to our style guides, nor does the generated code under example/lib.
+    - "example/**/*"
+    # The generated code in test/lib/* does not conform to our style guide.
+    - "test/lib/*"

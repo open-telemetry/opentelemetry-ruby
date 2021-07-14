@@ -8,17 +8,18 @@ module OpenTelemetry
   module Instrumentation
     module GRPC
       module Patches
+        # Patches to prepend to the ::GRPC::CoreCall, which is a C extension.
         module CoreCall
-          # This is the heart of sending / receiving GRPC messages on the wire,
-          # and it's a C extension. However, we can still intercept it here to
+          # This is the heart of sending / receiving GRPC messages on the wire.
+          # Even though it's a C extension, we can still intercept it here to
           # handle the log message requirements of the OpenTelemetry semantic conventions.
           def run_batch(ops)
             if ops.keys.include?(::GRPC::Core::CallOps::SEND_MESSAGE)
               OpenTelemetry::Trace.current_span.add_event(
-                "message",
+                'message',
                 attributes: {
-                  "message.type" => "SENT",
-                  "message.id" => sent_messages
+                  'message.type' => 'SENT',
+                  'message.id' => sent_messages
                 }
               )
             end
@@ -32,10 +33,10 @@ module OpenTelemetry
             # insofar as the OpenTelemetry semantic conventions are concerned.
             unless ops.keys.none?(::GRPC::Core::CallOps::RECV_MESSAGE) || result.nil? || result.message.nil?
               OpenTelemetry::Trace.current_span.add_event(
-                "message",
+                'message',
                 attributes: {
-                  "message.type" => "RECEIVED",
-                  "message.id" => received_messages
+                  'message.type' => 'RECEIVED',
+                  'message.id' => received_messages
                 }
               )
             end
@@ -44,6 +45,7 @@ module OpenTelemetry
           end
 
           private
+
           def sent_messages
             @sent_messages ||= 0
             @sent_messages += 1

@@ -8,6 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module GRPC
       module Patches
+        # Patches to prepend to ::GRPC::BidiCall
         module BidiCall
           def initialize(call, marshal, unmarshal, metadata_received: false, req_view: nil)
             super
