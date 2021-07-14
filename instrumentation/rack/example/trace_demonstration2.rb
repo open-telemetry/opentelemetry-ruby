@@ -15,6 +15,7 @@ app = ->(_env) { [200, { 'Content-Type' => 'text/plain' }, ['All responses are O
 builder.run app
 
 # demonstrate integration using 'retain_middlware_names' and 'application':
+ENV['OTEL_TRACES_EXPORTER'] = 'console'
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Rack',
         retain_middleware_names: true,

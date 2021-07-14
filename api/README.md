@@ -29,11 +29,11 @@ Then, use the OpenTelemetry interfaces to produces traces and other telemetry da
 ```ruby
 require 'opentelemetry'
 
-# Obtain the current default tracer factory
-factory = OpenTelemetry.tracer_factory
+# Obtain the current default tracer provider
+provider = OpenTelemetry.tracer_provider
 
 # Create a trace
-tracer = factory.tracer('my_app', '1.0')
+tracer = provider.tracer('my_app', '1.0')
 
 # Record spans
 tracer.in_span('my_task') do |task_span|
