@@ -5,7 +5,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  module SemanticConventions
-    VERSION = '1.5.0'
+  module Instrumentation
+    module ActionView
+      VERSION = '0.19.0'
+    end
   end
 end
