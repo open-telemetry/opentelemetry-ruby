@@ -39,7 +39,8 @@ module OpenTelemetry
         end
 
         # Extract remote baggage from the supplied carrier.
-        # If extraction fails, the original context will be returned
+        # If extraction fails or there is no baggage to extract,
+        # then the original context will be returned
         #
         # @param [Carrier] carrier The carrier to get the header from
         # @param [optional Context] context Context to be updated with the baggage
@@ -52,7 +53,7 @@ module OpenTelemetry
         #   if extraction fails
         def extract(carrier, context: Context.current, getter: Context::Propagation.text_map_getter)
           header = getter.get(carrier, BAGGAGE_KEY)
-          return context unless header
+          return context if header.nil? || header.empty?
 
           entries = header.gsub(/\s/, '').split(',')
 
