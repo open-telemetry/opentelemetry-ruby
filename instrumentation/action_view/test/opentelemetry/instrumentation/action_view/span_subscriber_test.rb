@@ -6,13 +6,13 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::Instrumentation::Rails::SpanSubscriber do
-  let(:instrumentation) { OpenTelemetry::Instrumentation::Rails::Instrumentation.instance }
+describe OpenTelemetry::Instrumentation::ActionView::SpanSubscriber do
+  let(:instrumentation) { OpenTelemetry::Instrumentation::ActionView::Instrumentation.instance }
   let(:tracer) { instrumentation.tracer }
   let(:exporter) { EXPORTER }
   let(:last_span) { exporter.finished_spans.last }
   let(:subscriber) do
-    OpenTelemetry::Instrumentation::Rails::SpanSubscriber.new(
+    OpenTelemetry::Instrumentation::ActionView::SpanSubscriber.new(
       name: 'bar.foo',
       tracer: tracer
     )
@@ -30,7 +30,7 @@ describe OpenTelemetry::Instrumentation::Rails::SpanSubscriber do
   end
 
   it 'uses the provided tracer' do
-    subscriber = OpenTelemetry::Instrumentation::Rails::SpanSubscriber.new(
+    subscriber = OpenTelemetry::Instrumentation::ActionView::SpanSubscriber.new(
       name: 'oh.hai',
       tracer: OpenTelemetry.tracer_provider.tracer('foo')
     )

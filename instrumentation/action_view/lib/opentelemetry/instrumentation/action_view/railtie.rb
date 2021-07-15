@@ -16,12 +16,12 @@ module OpenTelemetry
       # This Railtie sets up subscriptions to relevant ActionView notifications
       class Railtie < ::Rails::Railtie
         config.before_initialize do
-          OpenTelemetry::Instrumentation::Rails::Instrumentation.instance.install({})
+          ::ActiveSupport::Notifications.notifier = Fanout.new
         end
 
         config.after_initialize do
           SUBSCRIPTIONS.each do |subscription_name|
-            subscriber = OpenTelemetry::Instrumentation::Rails::SpanSubscriber.new(
+            subscriber = OpenTelemetry::Instrumentation::ActionView::SpanSubscriber.new(
               name: subscription_name,
               tracer: ActionView::Instrumentation.instance.tracer
             )

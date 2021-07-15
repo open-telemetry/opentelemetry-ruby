@@ -6,7 +6,7 @@
 
 module OpenTelemetry
   module Instrumentation
-    module Rails
+    module ActionView
       # This is a replacement for the default Fanout notifications queue, which adds special
       # handling around returned context from the SpanSubscriber notification handlers.
       # Used together, it allows us to trace arbitrary ActiveSupport::Notifications safely.

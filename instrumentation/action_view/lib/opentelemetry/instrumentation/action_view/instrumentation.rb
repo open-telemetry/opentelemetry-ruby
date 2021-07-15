@@ -22,9 +22,14 @@ module OpenTelemetry
           Gem.loaded_specs['actionview'].version >= MINIMUM_VERSION
         end
 
+        option :disallowed_notification_payload_keys, default: [],  validate: :array
+        option :notification_payload_transform,       default: nil, validate: :callable
+
         private
 
         def require_dependencies
+          require_relative 'fanout'
+          require_relative 'span_subscriber'
           require_relative 'railtie'
         end
       end
