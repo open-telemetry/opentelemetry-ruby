@@ -4,10 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-module OpenTelemetry
-  module Instrumentation
-    module ActionView
-      VERSION = '0.1.0'
-    end
+class ExceptionsController < ActionController::Base
+  def show
+    render plain: 'oops', status: :internal_server_error
   end
 end

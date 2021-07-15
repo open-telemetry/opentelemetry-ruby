@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry-instrumentation-action_pack'
 require 'opentelemetry-instrumentation-action_view'
 require 'opentelemetry-instrumentation-active_job'
 require 'opentelemetry-instrumentation-active_record'

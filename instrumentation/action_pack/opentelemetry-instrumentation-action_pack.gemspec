@@ -6,16 +6,16 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'opentelemetry/instrumentation/action_view/version'
+require 'opentelemetry/instrumentation/action_pack/version'
 
 Gem::Specification.new do |spec|
-  spec.name        = 'opentelemetry-instrumentation-action_view'
-  spec.version     = OpenTelemetry::Instrumentation::ActionView::VERSION
+  spec.name        = 'opentelemetry-instrumentation-action_pack'
+  spec.version     = OpenTelemetry::Instrumentation::ActionPack::VERSION
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
-  spec.summary     = 'ActionView instrumentation for the OpenTelemetry framework'
-  spec.description = 'ActionView instrumentation for the OpenTelemetry framework'
+  spec.summary     = 'ActionPack instrumentation for the OpenTelemetry framework'
+  spec.description = 'ActionPack instrumentation for the OpenTelemetry framework'
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby'
   spec.license     = 'Apache-2.0'
 
@@ -25,8 +25,9 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.5.0'
 
-  spec.add_dependency 'opentelemetry-api', '~> 1.0.0.rc1'
-  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.18.0'
+  spec.add_dependency 'opentelemetry-api', '~> 1.0.0.rc2'
+  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.18.1'
+  spec.add_dependency 'opentelemetry-instrumentation-rack', '~> 0.19.0'
 
   spec.add_development_dependency 'appraisal', '~> 2.2.0'
   spec.add_development_dependency 'bundler', '>= 1.17'
@@ -41,9 +42,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
 
   if spec.respond_to?(:metadata)
-    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-action_view/v#{OpenTelemetry::Instrumentation::ActionView::VERSION}/file.CHANGELOG.html"
-    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/instrumentation/action_view'
+    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-action_pack/v#{OpenTelemetry::Instrumentation::ActionPack::VERSION}/file.CHANGELOG.html"
+    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/instrumentation/action_pack'
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/issues'
-    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-action_view/v#{OpenTelemetry::Instrumentation::ActionView::VERSION}"
+    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-action_pack/v#{OpenTelemetry::Instrumentation::ActionPack::VERSION}"
   end
 end
