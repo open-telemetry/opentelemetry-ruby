@@ -33,8 +33,8 @@ jobs:
           - name: Test Linux / JRuby
             os: ubuntu-latest
             ruby: jruby
-            # otlp omitted because it depends on protobuf which does not work on JRuby
-            flags: --include-simple --exclude opentelemetry-exporter-otlp
+            # otlp and grpc omitted because they depend on protobuf which does not work on JRuby
+            flags: --include-simple --exclude opentelemetry-exporter-otlp --exclude opentelemetry-instrumentation-grpc
       fail-fast: false
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}

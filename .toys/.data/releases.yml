@@ -134,6 +134,10 @@ gems:
     directory: instrumentation/faraday
     version_constant: [OpenTelemetry, Instrumentation, Faraday, VERSION]
 
+  - name: opentelemetry-instrumentation-grpc
+    directory: instrumentation/grpc
+    version_constant: [OpenTelemetry, Instrumentation, GRPC, VERSION]
+
   - name: opentelemetry-instrumentation-mongo
     directory: instrumentation/mongo
     version_constant: [OpenTelemetry, Instrumentation, Mongo, VERSION]
