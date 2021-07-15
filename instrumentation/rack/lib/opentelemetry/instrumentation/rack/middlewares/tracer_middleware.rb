@@ -107,9 +107,7 @@ module OpenTelemetry
 
             span = tracer.start_span('http_server.proxy',
                                      with_parent: extracted_context,
-                                     attributes: {
-                                       'start_time' => request_start_time.to_f
-                                     },
+                                     start_timestamp: request_start_time,
                                      kind: :server)
 
             OpenTelemetry::Trace.context_with_span(span, parent_context: extracted_context)

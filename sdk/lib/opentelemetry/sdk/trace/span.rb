@@ -291,13 +291,14 @@ module OpenTelemetry
           @total_recorded_events = 0
           @total_recorded_links = links&.size || 0
           @total_recorded_attributes = attributes&.size || 0
-          @monotonic_start_timestamp = start_timestamp.nil? ? monotonic_now : nil
-          @start_timestamp = if start_timestamp.nil? && parent_span.recording? && parent_span.monotonic_start_timestamp
-                               relative_realtime(parent_span.start_timestamp, parent_span.monotonic_start_timestamp)
-                             elsif start_timestamp.nil?
-                               realtime_now
-                             else
+          @monotonic_start_timestamp = monotonic_now
+          @realtime_start_timestamp = realtime_now
+          @start_timestamp = if start_timestamp
                                time_in_nanoseconds(start_timestamp)
+                             elsif parent_span.recording?
+                               relative_realtime(parent_span.realtime_start_timestamp, parent_span.monotonic_start_timestamp)
+                             else
+                               @realtime_start_timestamp
                              end
           @end_timestamp = nil
           @attributes = attributes.nil? ? nil : Hash[attributes] # We need a mutable copy of attributes.
@@ -311,7 +312,7 @@ module OpenTelemetry
 
         protected
 
-        attr_reader :monotonic_start_timestamp
+        attr_reader :monotonic_start_timestamp, :realtime_start_timestamp
 
         private
 
@@ -389,6 +390,7 @@ module OpenTelemetry
 
         def relative_timestamp(timestamp)
           return time_in_nanoseconds(timestamp) unless timestamp.nil?
+          # TODO francis fix this:
           return relative_realtime(start_timestamp, monotonic_start_timestamp) unless monotonic_start_timestamp.nil?
 
           realtime_now
