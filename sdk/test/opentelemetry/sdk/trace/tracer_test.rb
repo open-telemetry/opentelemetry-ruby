@@ -130,7 +130,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     end
 
     it 'trims link attributes' do
-      tracer_provider.span_limits = SpanLimits.new(attribute_per_link_count_limit: 1)
+      tracer_provider.span_limits = SpanLimits.new(link_attribute_count_limit: 1)
       link = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '1' => 1, '2' => 2)
       span = tracer.start_root_span('root', links: [link])
       _(span.links.first.attributes.size).must_equal(1)
@@ -285,7 +285,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     end
 
     it 'trims link attributes' do
-      tracer_provider.span_limits = SpanLimits.new(attribute_per_link_count_limit: 1)
+      tracer_provider.span_limits = SpanLimits.new(link_attribute_count_limit: 1)
       link = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '1' => 1, '2' => 2)
       span = tracer.start_span('op', with_parent: context, links: [link])
       _(span.links.first.attributes.size).must_equal(1)
