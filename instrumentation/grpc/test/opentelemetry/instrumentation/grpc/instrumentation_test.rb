@@ -184,37 +184,34 @@ describe OpenTelemetry::Instrumentation::GRPC do
           _(span.events.map(&:name).uniq).must_equal(['message'])
         end
 
-        # This is due to the way we're handling client responses: we read them all off in a sequence immediately and so they
-        # end up being ordered from the client's perspective.
-        client_sequence = [
-          ['SENT', 1],
-          ['SENT', 2],
-          ['SENT', 3],
-          ['RECEIVED', 1],
-          ['RECEIVED', 2],
-          ['RECEIVED', 3]
-        ]
-        client_span.events.each_with_index do |event, idx|
-          type, id = client_sequence[idx]
-          _(event.attributes['message.type']).must_equal(type)
-          _(event.attributes['message.id']).must_equal(id)
+        # This bi-directional streaming test is a little flaky if we test for a strict order of sent/received
+        # log entries; because we're really at the mercy of when ruby decides to run each thread here. And, realistically,
+        # even testing across process boundaries would still be at the whim of many things that could change
+        # the actual ordering.
+        #
+        # So, we'll test differently: for each "sent"/"received" message pair (linked by their IDs), we can
+        # assert that the "sent" comes before the "received"; and the event counts must match.
+        _(client_span.events.count).must_equal(server_span.events.count)
+
+        client_send_events = client_span.events.select { |e| e.attributes['message.type'] == 'SENT' }
+        server_send_events = server_span.events.select { |e| e.attributes['message.type'] == 'SENT' }
+
+        client_send_events.each do |client_event|
+          server_event = server_span.events.find do |e|
+            e.attributes['message.type'] == 'RECEIVED' && e.attributes['message.id'] == client_event.attributes['message.id']
+          end
+
+          _(server_event).wont_be_nil
+          _(client_event.timestamp).must_be(:<, server_event.timestamp)
         end
 
-        # However, on the server, we receive and send responses in the order you might otherwise expect.
-        # I recognize this is a little janky, but the message/event handling does work as expected when you run the example
-        # scripts for this instrumentation, so I think it's correct.
-        server_sequence = [
-          ['RECEIVED', 1],
-          ['SENT', 1],
-          ['RECEIVED', 2],
-          ['SENT', 2],
-          ['RECEIVED', 3],
-          ['SENT', 3]
-        ]
-        server_span.events.each_with_index do |event, idx|
-          type, id = server_sequence[idx]
-          _(event.attributes['message.type']).must_equal(type)
-          _(event.attributes['message.id']).must_equal(id)
+        server_send_events.each do |server_event|
+          client_event = client_span.events.find do |e|
+            e.attributes['message.type'] == 'RECEIVED' && e.attributes['message.id'] == server_event.attributes['message.id']
+          end
+
+          _(client_event).wont_be_nil
+          _(server_event.timestamp).must_be(:<, client_event.timestamp)
         end
       end
     end
