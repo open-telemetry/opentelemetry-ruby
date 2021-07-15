@@ -133,7 +133,6 @@ module OpenTelemetry
             trace_id = parent_span_context.trace_id
           end
           name ||= 'empty'
-
           trace_id ||= @id_generator.generate_trace_id
           result = @sampler.should_sample?(trace_id: trace_id, parent_context: parent_context, links: links, name: name, kind: kind, attributes: attributes)
           span_id = @id_generator.generate_span_id
