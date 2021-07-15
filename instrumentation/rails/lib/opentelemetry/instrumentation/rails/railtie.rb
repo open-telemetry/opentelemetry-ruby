@@ -13,14 +13,6 @@ module OpenTelemetry
       class Railtie < ::Rails::Railtie
         config.before_initialize do |app|
           ::ActiveSupport::Notifications.notifier = Fanout.new
-
-          OpenTelemetry::Instrumentation::ActiveRecord::Instrumentation.instance.install({})
-          OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.install({})
-
-          app.middleware.insert_before(
-            0,
-            OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware
-          )
         end
       end
     end

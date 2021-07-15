@@ -6,7 +6,7 @@
 
 module OpenTelemetry
   module Instrumentation
-    module Rails
+    module ActionPack
       module Patches
         module ActionController
           # Module to prepend to ActionController::Metal for instrumentation
@@ -28,7 +28,7 @@ module OpenTelemetry
             end
 
             def instrumentation_config
-              Rails::Instrumentation.instance.config
+              ActionPack::Instrumentation.instance.config
             end
           end
         end

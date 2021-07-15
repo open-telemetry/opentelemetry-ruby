@@ -35,6 +35,10 @@ gems:
     directory: instrumentation/action_view
     version_constant: [OpenTelemetry, Instrumentation, ActionView, VERSION]
 
+  - name: opentelemetry-instrumentation-action_pack
+    directory: instrumentation/action_pack
+    version_constant: [OpenTelemetry, Instrumentation, ActionPack, VERSION]
+
   - name: opentelemetry-instrumentation-active_job
     directory: instrumentation/active_job
     version_constant: [OpenTelemetry, Instrumentation, ActiveJob, VERSION]
