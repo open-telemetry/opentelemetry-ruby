@@ -47,6 +47,29 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
         assert_value(context, 'key:2', 'val2,2')
       end
     end
+
+    describe 'invalid or no-op headers' do
+      it 'returns the same context object when the headers are not present' do
+        carrier = {}
+        empty_context = Context.empty
+        context = propagator.extract(carrier, context: empty_context)
+        _(context.object_id).must_equal(empty_context.object_id)
+      end
+
+      it 'returns the same context object when the baggage value is a 0-length string' do
+        carrier = { header_key => '' }
+        empty_context = Context.empty
+        context = propagator.extract(carrier, context: empty_context)
+        _(context.object_id).must_equal(empty_context.object_id)
+      end
+
+      it 'does not test for an "empty" string and still replaces the context' do
+        carrier = { header_key => '   ' }
+        empty_context = Context.empty
+        context = propagator.extract(carrier, context: empty_context)
+        _(context.object_id).wont_equal(empty_context.object_id)
+      end
+    end
   end
 
   describe '#inject' do
