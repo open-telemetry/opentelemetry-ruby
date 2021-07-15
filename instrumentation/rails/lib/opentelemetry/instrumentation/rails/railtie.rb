@@ -12,8 +12,6 @@ module OpenTelemetry
       # the Rails application through its initialization hooks.
       class Railtie < ::Rails::Railtie
         config.before_initialize do |app|
-          ::ActiveSupport::Notifications.notifier = Fanout.new
-
           OpenTelemetry::Instrumentation::ActiveRecord::Instrumentation.instance.install({})
           OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.install({})
 

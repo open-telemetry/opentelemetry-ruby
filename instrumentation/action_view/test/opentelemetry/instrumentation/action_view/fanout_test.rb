@@ -6,13 +6,13 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::Instrumentation::Rails::Fanout do
-  let(:tracer) { OpenTelemetry::Instrumentation::Rails::Instrumentation.instance.tracer }
+describe OpenTelemetry::Instrumentation::ActionView::Fanout do
+  let(:tracer) { OpenTelemetry::Instrumentation::ActionView::Instrumentation.instance.tracer }
   let(:exporter) { EXPORTER }
   let(:spans) { exporter.finished_spans }
   let(:last_span) { spans.last }
   let(:span_subscriber) do
-    OpenTelemetry::Instrumentation::Rails::SpanSubscriber.new(
+    OpenTelemetry::Instrumentation::ActionView::SpanSubscriber.new(
       name: 'bar.foo',
       tracer: tracer
     )
@@ -20,7 +20,7 @@ describe OpenTelemetry::Instrumentation::Rails::Fanout do
 
   before do
     exporter.reset
-    ::ActiveSupport::Notifications.notifier = OpenTelemetry::Instrumentation::Rails::Fanout.new
+    ::ActiveSupport::Notifications.notifier = OpenTelemetry::Instrumentation::ActionView::Fanout.new
   end
 
   it 'sorts span subscribers first' do
