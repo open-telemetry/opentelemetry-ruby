@@ -19,8 +19,8 @@ describe OpenTelemetry::SDK::Trace::Span do
       attribute_count_limit: 1,
       event_count_limit: 1,
       link_count_limit: 1,
-      attribute_per_event_count_limit: 1,
-      attribute_per_link_count_limit: 1,
+      event_attribute_count_limit: 1,
+      link_attribute_count_limit: 1,
       attribute_length_limit: 32
     )
   end
@@ -250,7 +250,7 @@ describe OpenTelemetry::SDK::Trace::Span do
       SpanLimits.new(
         attribute_count_limit: 10,
         event_count_limit: 5,
-        attribute_per_event_count_limit: 10
+        event_attribute_count_limit: 10
       )
     end
 

@@ -296,7 +296,7 @@ module OpenTelemetry
           @attributes = attributes.nil? ? nil : Hash[attributes] # We need a mutable copy of attributes.
           trim_span_attributes(@attributes)
           @events = nil
-          @links = trim_links(links, span_limits.link_count_limit, span_limits.attribute_per_link_count_limit)
+          @links = trim_links(links, span_limits.link_count_limit, span_limits.link_attribute_count_limit)
           @span_processors.each { |processor| processor.on_start(self, parent_context) }
         end
 
@@ -327,12 +327,12 @@ module OpenTelemetry
           attrs
         end
 
-        def trim_links(links, link_count_limit, attribute_per_link_count_limit) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def trim_links(links, link_count_limit, link_attribute_count_limit) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           # Fast path (likely) common cases.
           return nil if links.nil?
 
           if links.size <= link_count_limit &&
-             links.all? { |link| link.attributes.size <= attribute_per_link_count_limit && Internal.valid_attributes?(name, 'link', link.attributes) }
+             links.all? { |link| link.attributes.size <= link_attribute_count_limit && Internal.valid_attributes?(name, 'link', link.attributes) }
             return links.frozen? ? links : links.clone.freeze
           end
 
@@ -340,7 +340,7 @@ module OpenTelemetry
           links.last(link_count_limit).map! do |link|
             attrs = Hash[link.attributes] # link.attributes is frozen, so we need an unfrozen copy to adjust.
             attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
-            excess = attrs.size - attribute_per_link_count_limit
+            excess = attrs.size - link_attribute_count_limit
             excess.times { attrs.shift } if excess.positive?
             OpenTelemetry::Trace::Link.new(link.span_context, attrs)
           end.freeze
@@ -348,12 +348,12 @@ module OpenTelemetry
 
         def append_event(events, event) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           event_count_limit = @span_limits.event_count_limit
-          attribute_per_event_count_limit = @span_limits.attribute_per_event_count_limit
+          event_attribute_count_limit = @span_limits.event_attribute_count_limit
           valid_attributes = Internal.valid_attributes?(name, 'event', event.attributes)
 
           # Fast path (likely) common case.
           if events.size < event_count_limit &&
-             event.attributes.size <= attribute_per_event_count_limit &&
+             event.attributes.size <= event_attribute_count_limit &&
              valid_attributes
             return events << event
           end
@@ -362,11 +362,11 @@ module OpenTelemetry
           excess = events.size + 1 - event_count_limit
           events.shift(excess) if excess.positive?
 
-          excess = event.attributes.size - attribute_per_event_count_limit
+          excess = event.attributes.size - event_attribute_count_limit
           if excess.positive? || !valid_attributes
             attrs = Hash[event.attributes] # event.attributes is frozen, so we need an unfrozen copy to adjust.
             attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
-            excess = attrs.size - attribute_per_event_count_limit
+            excess = attrs.size - event_attribute_count_limit
             excess.times { attrs.shift } if excess.positive?
             event = Event.new(event.name, attrs.freeze, event.timestamp)
           end
