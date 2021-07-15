@@ -6,9 +6,9 @@
 
 class Application < Rails::Application; end
 require 'action_controller/railtie'
-require 'test_helpers/middlewares'
-require 'test_helpers/controllers'
-require 'test_helpers/routes'
+require_relative 'middlewares'
+require_relative 'controllers'
+require_relative 'routes'
 
 module AppConfig
   extend self
