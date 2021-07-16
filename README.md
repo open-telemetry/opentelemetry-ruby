@@ -111,6 +111,7 @@ using OpenTelemetry with minimal changes to your application. See the
 OpenTelemetry Ruby is in use by a number of companies, including:
 
 - [Heroku](https://heroku.com)
+- [GitHub](https://github.com/)
 - [Fulcrum](https://www.fulcrumapp.com/)
 - [Puppet](https://puppet.com/)
 - [Shopify](https://shopify.com)
