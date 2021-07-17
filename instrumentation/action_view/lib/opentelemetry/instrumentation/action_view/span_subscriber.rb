@@ -6,7 +6,7 @@
 
 module OpenTelemetry
   module Instrumentation
-    module Rails
+    module ActionView
       # The SpanSubscriber is a special ActiveSupport::Notification subscription
       # handler which turns notifications into generic spans, taking care to handle
       # context appropriately.
@@ -50,7 +50,7 @@ module OpenTelemetry
         private
 
         def instrumentation_config
-          Rails::Instrumentation.instance.config
+          ActionView::Instrumentation.instance.config
         end
 
         def transform_payload(payload)
