@@ -11,6 +11,20 @@ describe OpenTelemetry::Exporter::Jaeger::AgentExporter do
       exporter = OpenTelemetry::Exporter::Jaeger::AgentExporter.new(host: '127.0.0.1', port: 6831)
       _(exporter).wont_be_nil
     end
+
+    it 'sets parameters from the environment' do
+      exp = with_env('OTEL_EXPORTER_JAEGER_TIMEOUT' => '42') do
+        OpenTelemetry::Exporter::Jaeger::AgentExporter.new
+      end
+      _(exp.instance_variable_get(:@timeout)).must_equal 42.0
+    end
+
+    it 'prefers explicit parameters rather than the environment' do
+      exp = with_env('OTEL_EXPORTER_JAEGER_TIMEOUT' => '42') do
+        OpenTelemetry::Exporter::Jaeger::AgentExporter.new(timeout: 60)
+      end
+      _(exp.instance_variable_get(:@timeout)).must_equal 60.0
+    end
   end
 
   describe '#export' do
