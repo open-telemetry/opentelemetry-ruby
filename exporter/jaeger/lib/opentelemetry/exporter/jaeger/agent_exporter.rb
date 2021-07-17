@@ -15,6 +15,7 @@ module OpenTelemetry
 
         def initialize(host: ENV.fetch('OTEL_EXPORTER_JAEGER_AGENT_HOST', 'localhost'),
                        port: ENV.fetch('OTEL_EXPORTER_JAEGER_AGENT_PORT', 6831),
+                       timeout: ENV.fetch('OTEL_EXPORTER_JAEGER_TIMEOUT', 10),
                        max_packet_size: 65_000)
           transport = Transport.new(host, port)
           protocol = ::Thrift::CompactProtocol.new(transport)
@@ -23,6 +24,7 @@ module OpenTelemetry
           @shutdown = false
           @sizing_transport = SizingTransport.new
           @sizing_protocol = ::Thrift::CompactProtocol.new(@sizing_transport)
+          @timeout = timeout.to_f
         end
 
         # Called to export sampled {OpenTelemetry::SDK::Trace::SpanData} structs.
@@ -35,6 +37,7 @@ module OpenTelemetry
         def export(span_data, timeout: nil)
           return FAILURE if @shutdown
 
+          timeout ||= @timeout
           start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
           encoded_batches(span_data) do |batch|
             return FAILURE if @shutdown || OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)&.zero?
