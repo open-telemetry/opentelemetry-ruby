@@ -291,20 +291,36 @@ module OpenTelemetry
           @total_recorded_events = 0
           @total_recorded_links = links&.size || 0
           @total_recorded_attributes = attributes&.size || 0
-          @monotonic_start_timestamp = monotonic_now
-          @realtime_start_timestamp = realtime_now
-          @start_timestamp = if start_timestamp
-                               time_in_nanoseconds(start_timestamp)
-                             elsif parent_span.recording?
-                               relative_realtime(parent_span.realtime_start_timestamp, parent_span.monotonic_start_timestamp)
-                             else
-                               @realtime_start_timestamp
-                             end
-          @end_timestamp = nil
           @attributes = attributes.nil? ? nil : Hash[attributes] # We need a mutable copy of attributes.
           trim_span_attributes(@attributes)
           @events = nil
           @links = trim_links(links, span_limits.link_count_limit, span_limits.link_attribute_count_limit)
+
+          # Times are hard. Whenever an explicit timestamp is provided
+          # (for Events or for the Span start_timestamp or end_timestamp),
+          # we use that as the recorded timestamp. An implicit Event timestamp
+          # and end_timestamp is computed as a monotonic clock offset from
+          # the realtime start_timestamp. The realtime start_timestamp is
+          # computed as a monotonic clock offset from the realtime
+          # start_timestamp of its parent span, if available, or it is
+          # fetched from the realtime system clock.
+          #
+          # We therefore have 3 start timestamps. The first two are used
+          # internally (and by child spans) to compute other timestamps.
+          # The last is the start timestamp actually recorded in the
+          # SpanData.
+          @monotonic_start_timestamp = monotonic_now
+          @realtime_start_timestamp = if parent_span.recording?
+                                        relative_realtime(parent_span.realtime_start_timestamp, parent_span.monotonic_start_timestamp)
+                                      else
+                                        realtime_now
+                                      end
+          @start_timestamp = if start_timestamp
+                               time_in_nanoseconds(start_timestamp)
+                             else
+                               @realtime_start_timestamp
+                             end
+          @end_timestamp = nil
           @span_processors.each { |processor| processor.on_start(self, parent_context) }
         end
 
@@ -390,10 +406,8 @@ module OpenTelemetry
 
         def relative_timestamp(timestamp)
           return time_in_nanoseconds(timestamp) unless timestamp.nil?
-          # TODO francis fix this:
-          return relative_realtime(start_timestamp, monotonic_start_timestamp) unless monotonic_start_timestamp.nil?
 
-          realtime_now
+          relative_realtime(realtime_start_timestamp, monotonic_start_timestamp)
         end
 
         def time_in_nanoseconds(timestamp)
