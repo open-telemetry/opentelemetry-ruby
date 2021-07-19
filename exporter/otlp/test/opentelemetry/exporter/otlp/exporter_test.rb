@@ -305,11 +305,11 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       span_id: root_span_id,
                       parent_span_id: nil,
                       name: 'root',
-                      kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::INTERNAL,
+                      kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_INTERNAL,
                       start_time_unix_nano: (start_timestamp.to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
-                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::Ok
+                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_OK
                       )
                     ),
                     Opentelemetry::Proto::Trace::V1::Span.new(
@@ -317,11 +317,11 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       span_id: client_span_id,
                       parent_span_id: child_span_id,
                       name: 'client',
-                      kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::CLIENT,
+                      kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_CLIENT,
                       start_time_unix_nano: ((start_timestamp + 2).to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
-                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::Ok
+                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_OK
                       )
                     ),
                     Opentelemetry::Proto::Trace::V1::Span.new(
@@ -329,11 +329,11 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       span_id: consumer_span_id,
                       parent_span_id: child_span_id,
                       name: 'consumer',
-                      kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::CONSUMER,
+                      kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_CONSUMER,
                       start_time_unix_nano: ((start_timestamp + 5).to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
-                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::Ok
+                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_OK
                       )
                     ),
                     Opentelemetry::Proto::Trace::V1::Span.new(
@@ -341,7 +341,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       span_id: child_span_id,
                       parent_span_id: root_span_id,
                       name: 'child',
-                      kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::PRODUCER,
+                      kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_PRODUCER,
                       start_time_unix_nano: ((start_timestamp + 1).to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
                       attributes: [
@@ -380,7 +380,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                         )
                       ],
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
-                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::UnknownError
+                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_ERROR
                       )
                     )
                   ]
@@ -395,11 +395,11 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       span_id: server_span_id,
                       parent_span_id: client_span_id,
                       name: 'server',
-                      kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SERVER,
+                      kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_SERVER,
                       start_time_unix_nano: ((start_timestamp + 3).to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
-                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::Ok
+                        code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_OK
                       )
                     )
                   ]

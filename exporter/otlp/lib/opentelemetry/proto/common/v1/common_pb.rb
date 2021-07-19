@@ -13,6 +13,7 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
         optional :double_value, :double, 4
         optional :array_value, :message, 5, "opentelemetry.proto.common.v1.ArrayValue"
         optional :kvlist_value, :message, 6, "opentelemetry.proto.common.v1.KeyValueList"
+        optional :bytes_value, :bytes, 7
       end
     end
     add_message "opentelemetry.proto.common.v1.ArrayValue" do

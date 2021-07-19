@@ -321,7 +321,7 @@ module OpenTelemetry
             status: span_data.status&.yield_self do |status|
               # TODO: fix this based on spec update.
               Opentelemetry::Proto::Trace::V1::Status.new(
-                code: status.code == OpenTelemetry::Trace::Status::ERROR ? Opentelemetry::Proto::Trace::V1::Status::StatusCode::UnknownError : Opentelemetry::Proto::Trace::V1::Status::StatusCode::Ok,
+                code: status.code == OpenTelemetry::Trace::Status::ERROR ? Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_ERROR : Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_OK,
                 message: status.description
               )
             end
@@ -330,11 +330,11 @@ module OpenTelemetry
 
         def as_otlp_span_kind(kind)
           case kind
-          when :internal then Opentelemetry::Proto::Trace::V1::Span::SpanKind::INTERNAL
-          when :server then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SERVER
-          when :client then Opentelemetry::Proto::Trace::V1::Span::SpanKind::CLIENT
-          when :producer then Opentelemetry::Proto::Trace::V1::Span::SpanKind::PRODUCER
-          when :consumer then Opentelemetry::Proto::Trace::V1::Span::SpanKind::CONSUMER
+          when :internal then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_INTERNAL
+          when :server then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_SERVER
+          when :client then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_CLIENT
+          when :producer then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_PRODUCER
+          when :consumer then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_CONSUMER
           else Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_UNSPECIFIED
           end
         end
