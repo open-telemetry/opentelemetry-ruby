@@ -21,6 +21,7 @@ module OpenTelemetry
         end
 
         option :peer_service, default: nil, validate: :string
+        option :hide_query_params, default: true, validate: :boolean
 
         private
 

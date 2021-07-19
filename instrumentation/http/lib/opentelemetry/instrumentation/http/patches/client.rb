@@ -4,24 +4,20 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/common/http/request_attributes'
+
 module OpenTelemetry
   module Instrumentation
     module HTTP
       module Patches
         # Module to prepend to HTTP::Client for instrumentation
         module Client
-          def perform(req, options) # rubocop:disable Metrics/AbcSize
+          def perform(req, options)
             uri = req.uri
             request_method = req.verb.to_s.upcase
 
-            attributes = {
-              'http.method' => request_method,
-              'http.scheme' => uri.scheme,
-              'http.target' => uri.path,
-              'http.url' => "#{uri.scheme}://#{uri.host}",
-              'peer.hostname' => uri.host,
-              'peer.port' => uri.port
-            }.merge(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+            attributes = OpenTelemetry::Common::HTTP::RequestAttributes.from_request(request_method, uri, config)
+                                                                       .merge(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
             tracer.in_span("HTTP #{request_method}", attributes: attributes, kind: :client) do |span|
               OpenTelemetry.propagation.inject(req.headers)
@@ -43,6 +39,10 @@ module OpenTelemetry
 
           def tracer
             HTTP::Instrumentation.instance.tracer
+          end
+
+          def config
+            HTTP::Instrumentation.instance.config
           end
         end
       end

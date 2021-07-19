@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/common/http/request_attributes'
+
 module OpenTelemetry
   module Instrumentation
     module Net
@@ -18,16 +20,15 @@ module OpenTelemetry
               # Do not trace recursive call for starting the connection
               return super(req, body, &block) unless started?
 
-              attributes = OpenTelemetry::Common::HTTP::ClientContext.attributes
+              uri = uri_from_req(req)
+              method = req.method
+
+              attributes = OpenTelemetry::Common::HTTP::ClientContext.attributes.merge(
+                OpenTelemetry::Common::HTTP::RequestAttributes.from_request(method, uri, config)
+              )
               tracer.in_span(
-                HTTP_METHODS_TO_SPAN_NAMES[req.method],
-                attributes: attributes.merge(
-                  'http.method' => req.method,
-                  'http.scheme' => USE_SSL_TO_SCHEME[use_ssl?],
-                  'http.target' => req.path,
-                  'peer.hostname' => @address,
-                  'peer.port' => @port
-                ),
+                HTTP_METHODS_TO_SPAN_NAMES[method],
+                attributes: attributes,
                 kind: :client
               ) do |span|
                 OpenTelemetry.propagation.inject(req)
@@ -69,6 +70,14 @@ module OpenTelemetry
 
             def tracer
               Net::HTTP::Instrumentation.instance.tracer
+            end
+
+            def config
+              Net::HTTP::Instrumentation.instance.config
+            end
+
+            def uri_from_req(req)
+              req.uri || URI.join("#{USE_SSL_TO_SCHEME[use_ssl?]}://#{@address}:#{@port}", req.path)
             end
           end
         end
