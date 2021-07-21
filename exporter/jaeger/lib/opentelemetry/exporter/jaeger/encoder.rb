@@ -44,9 +44,13 @@ module OpenTelemetry
         end
 
         def encoded_tags(attributes)
-          attributes&.map do |key, value|
-            encoded_tag(key, value)
-          end || EMPTY_ARRAY
+          if attributes
+            attributes.find_all { |_key, value| value }.map do |key, value|
+              encoded_tag(key, value)
+            end
+          else
+            EMPTY_ARRAY
+          end
         end
 
         def encoded_tag(key, value)
