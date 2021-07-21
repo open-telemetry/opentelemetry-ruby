@@ -199,6 +199,9 @@ module OpenTelemetry
           rescue Net::OpenTimeout, Net::ReadTimeout
             retry if backoff?(retry_count: retry_count += 1, reason: 'timeout')
             return FAILURE
+          rescue OpenSSL::SSL::SSLError
+            retry if backoff?(retry_count: retry_count += 1, reason: 'openssl_error')
+            return FAILURE
           rescue SocketError
             retry if backoff?(retry_count: retry_count += 1, reason: 'socket_error')
             return FAILURE
