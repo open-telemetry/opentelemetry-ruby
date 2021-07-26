@@ -33,8 +33,8 @@ module OpenTelemetry
                   span.status = OpenTelemetry::Trace::Status.error
                   response[:errors].each do |error|
                     span.add_event(
-                      'graphql error',
-                      attributes: error.respond_to?(:to_h) ? { 'error' => error.to_h.to_json } : nil
+                      'graphql.validation.error',
+                      attributes: error.respond_to?(:to_h) ? { 'message' => error.to_h.to_json } : nil
                     )
                   end
                 end

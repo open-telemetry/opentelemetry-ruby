@@ -164,8 +164,8 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
         GRAPHQL
       )
       span = spans.find { |s| s.name == 'graphql.validate' }
-      error = span.events.find { |e| e.name == 'graphql error' }
-      _(error.attributes['error']).must_equal(
+      error = span.events.find { |e| e.name == 'graphql.validation.error' }
+      _(error.attributes['message']).must_equal(
         "{\"message\":\"Field 'nonExistentField' doesn't exist on type 'Query'\",\"locations\":[{\"line\":2,\"column\":13}],\"path\":[\"query\",\"nonExistentField\"],\"extensions\":{\"code\":\"undefinedField\",\"typeName\":\"Query\",\"fieldName\":\"nonExistentField\"}}"
       )
     end
