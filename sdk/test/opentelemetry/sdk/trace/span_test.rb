@@ -452,7 +452,7 @@ describe OpenTelemetry::SDK::Trace::Span do
       links = [OpenTelemetry::Trace::Link.new(invalid_context)]
       span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
                       [], nil, links, Time.now, nil, nil)
-      _(span.links.size).must_equal(0)
+      _(span.links).must_be_empty
     end
   end
 end
