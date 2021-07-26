@@ -332,7 +332,7 @@ module OpenTelemetry
           return nil if links.nil?
 
           if links.size <= link_count_limit &&
-             links.all? { |link| link.attributes.size <= link_attribute_count_limit && Internal.valid_attributes?(name, 'link', link.attributes) }
+             links.all? { |link| link.span_context.valid? && link.attributes.size <= link_attribute_count_limit && Internal.valid_attributes?(name, 'link', link.attributes) }
             return links.frozen? ? links : links.clone.freeze
           end
 
