@@ -331,15 +331,13 @@ module OpenTelemetry
           # Fast path (likely) common cases.
           return nil if links.nil?
 
-          links.filter! { |link| link.span_context.valid? }
-
           if links.size <= link_count_limit &&
              links.all? { |link| link.attributes.size <= link_attribute_count_limit && Internal.valid_attributes?(name, 'link', link.attributes) }
             return links.frozen? ? links : links.clone.freeze
           end
 
           # Slow path: trim attributes for each Link.
-          links.last(link_count_limit).map! do |link|
+          links.select { |link| link.span_context.valid? }.last(link_count_limit).map! do |link|
             attrs = Hash[link.attributes] # link.attributes is frozen, so we need an unfrozen copy to adjust.
             attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
             excess = attrs.size - link_attribute_count_limit
