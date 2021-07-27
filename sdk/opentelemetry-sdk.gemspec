@@ -47,6 +47,14 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'yard', '~> 0.9'
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
 
+  platforms :jruby do
+    gem 'pry-nav'
+  end
+
+  platforms :mri do
+    gem 'pry-byebug'
+  end
+
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-sdk/v#{OpenTelemetry::SDK::VERSION}/file.CHANGELOG.html"
     spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/sdk'
