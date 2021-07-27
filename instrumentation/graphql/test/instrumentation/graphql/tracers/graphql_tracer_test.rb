@@ -155,7 +155,7 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
       end
     end
 
-    it 'traces validate with errors' do
+    it 'traces validate with events' do
       SomeGraphQLAppSchema.execute(
         <<-GRAPHQL
           {
@@ -164,8 +164,8 @@ describe OpenTelemetry::Instrumentation::GraphQL::Tracers::GraphQLTracer do
         GRAPHQL
       )
       span = spans.find { |s| s.name == 'graphql.validate' }
-      error = span.events.find { |e| e.name == 'graphql.validation.error' }
-      _(error.attributes['message']).must_equal(
+      event = span.events.find { |e| e.name == 'graphql.validation.error' }
+      _(event.attributes['message']).must_equal(
         "{\"message\":\"Field 'nonExistentField' doesn't exist on type 'Query'\",\"locations\":[{\"line\":2,\"column\":13}],\"path\":[\"query\",\"nonExistentField\"],\"extensions\":{\"code\":\"undefinedField\",\"typeName\":\"Query\",\"fieldName\":\"nonExistentField\"}}"
       )
     end
