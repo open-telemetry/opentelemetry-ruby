@@ -446,5 +446,13 @@ describe OpenTelemetry::SDK::Trace::Span do
                       [], nil, links, Time.now, nil, nil)
       _(span.links.size).must_equal(1)
     end
+
+    it 'prunes invalid links' do
+      invalid_context = OpenTelemetry::Trace::SpanContext.new(trace_id: OpenTelemetry::Trace::INVALID_TRACE_ID)
+      links = [OpenTelemetry::Trace::Link.new(context), OpenTelemetry::Trace::Link.new(invalid_context)]
+      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
+                      [], nil, links, Time.now, nil, nil)
+      _(span.links.size).must_equal(1)
+    end
   end
 end
