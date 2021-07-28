@@ -30,7 +30,6 @@ module OpenTelemetry
             tracer.in_span(platform_key, attributes: attributes_for(key, data)) do |span|
               yield.tap do |response|
                 if key == 'validate' &&
-                   response.include?(:errors) &&
                    !response[:errors].nil? &&
                    !response[:errors].empty?
                   errors = response[:errors].map do |error|
