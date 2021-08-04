@@ -11,7 +11,7 @@ gemfile(true) do
 
   gem 'rails'
   gem 'opentelemetry-sdk'
-  gem 'opentelemetry-instrumentation-rails'
+  gem 'opentelemetry-instrumentation-action_pack'
 end
 
 require 'action_controller/railtie'
@@ -31,7 +31,7 @@ end
 
 ENV['OTEL_TRACES_EXPORTER'] = 'console'
 OpenTelemetry::SDK.configure do |c|
-  c.use 'OpenTelemetry::Instrumentation::Rails'
+  c.use 'OpenTelemetry::Instrumentation::ActionPack'
 end
 
 Rails.application.initialize!

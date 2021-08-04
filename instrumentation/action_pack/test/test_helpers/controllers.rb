@@ -4,10 +4,5 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-module OpenTelemetry
-  module Instrumentation
-    module ActionView
-      VERSION = '0.1.0'
-    end
-  end
-end
+require_relative 'controllers/example_controller'
+require_relative 'controllers/exceptions_controller'
