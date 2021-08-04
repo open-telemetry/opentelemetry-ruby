@@ -142,7 +142,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       link2 = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '2' => 2)
       span = tracer.start_root_span('root', links: [link1, link2])
       _(span.links.size).must_equal(1)
-      _(span.links.first).must_equal(link2)
+      _(span.links.first).must_equal(link1)
     end
   end
 
@@ -297,7 +297,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       link2 = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '2' => 2)
       span = tracer.start_span('op', with_parent: context, links: [link1, link2])
       _(span.links.size).must_equal(1)
-      _(span.links.first).must_equal(link2)
+      _(span.links.first).must_equal(link1)
     end
   end
 

@@ -182,6 +182,14 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(result).must_equal(FAILURE)
     end
 
+    it 'returns FAILURE when encryption to receiver endpoint fails' do
+      stub_request(:post, 'https://localhost:4317/v1/traces').to_raise(OpenSSL::SSL::SSLError.new('enigma wedged'))
+      span_data = create_span_data
+      exporter.stub(:backoff?, ->(**_) { false }) do
+        _(exporter.export([span_data])).must_equal(FAILURE)
+      end
+    end
+
     it 'exports a span_data' do
       stub_request(:post, 'https://localhost:4317/v1/traces').to_return(status: 200)
       span_data = create_span_data
