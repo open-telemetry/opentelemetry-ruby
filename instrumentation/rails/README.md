@@ -14,15 +14,7 @@ Or, if you use [bundler][bundler-home], include `opentelemetry-instrumentation-r
 
 ## Usage
 
-To use the instrumentation, call `use` with the name of the instrumentation:
-
-```ruby
-OpenTelemetry::SDK.configure do |c|
-  c.use 'OpenTelemetry::Instrumentation::Rails'
-end
-```
-
-Alternatively, you can also call `use_all` to install all the available instrumentation.
+To use the Rails instrumentation, call `use_all` so it installs all the instrumentation gems.
 
 ```ruby
 OpenTelemetry::SDK.configure do |c|
@@ -30,15 +22,14 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
-
 ### Configuration options
 
-The `http.route` attribute is disabled by default because we use [.recognize](https://github.com/rails/rails/blob/v6.1.3/actionpack/lib/action_dispatch/journey/router.rb#L65)
+The Rails instrumentation attempts to mirror the structure of the Ruby on Rails.  It is a collection of instrumentation gems for components of Rails such as Action View, Active Record, Action Pack, etc...
+
+You may want to include all of the Rails instrumentation but disable a single instrumentation gem that it includes.  Here is an example of how you can disable Active Record when using this instrumentation gem.
 ```ruby
 OpenTelemetry::SDK.configure do |c|
-  c.use 'OpenTelemetry::Instrumentation::Rails', {
-    enable_recognize_route: true
-  }
+  c.use_all({ 'OpenTelemetry::Instrumentation::ActiveRecord' => { enabled: false } })
 end
 ```
 

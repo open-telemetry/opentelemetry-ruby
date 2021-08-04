@@ -30,6 +30,17 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+### Configuration options
+
+The `http.route` attribute is disabled by default because we use [.recognize](https://github.com/rails/rails/blob/v6.1.3/actionpack/lib/action_dispatch/journey/router.rb#L65)
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::ActionPack', {
+    enable_recognize_route: true
+  }
+end
+```
+
 ## Examples
 
 Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/action_pack/example/trace_demonstration.ru)
