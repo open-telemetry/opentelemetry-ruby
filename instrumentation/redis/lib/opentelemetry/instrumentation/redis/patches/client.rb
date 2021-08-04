@@ -29,10 +29,12 @@ module OpenTelemetry
             attributes['peer.service'] = config[:peer_service] if config[:peer_service]
             attributes.merge!(OpenTelemetry::Instrumentation::Redis.attributes)
 
-            parsed_commands = parse_commands(commands)
-            parsed_commands = OpenTelemetry::Common::Utilities.truncate(parsed_commands, MAX_STATEMENT_LENGTH)
-            parsed_commands = OpenTelemetry::Common::Utilities.utf8_encode(parsed_commands, binary: true)
-            attributes['db.statement'] = parsed_commands
+            unless config[:db_statement] == :omit
+              parsed_commands = parse_commands(commands)
+              parsed_commands = OpenTelemetry::Common::Utilities.truncate(parsed_commands, MAX_STATEMENT_LENGTH)
+              parsed_commands = OpenTelemetry::Common::Utilities.utf8_encode(parsed_commands, binary: true)
+              attributes['db.statement'] = parsed_commands
+            end
 
             span_name = if commands.length == 1
                           commands[0][0].to_s.upcase
@@ -70,7 +72,7 @@ module OpenTelemetry
               return 'AUTH ?' if command[0] == :auth
 
               command[0] = command[0].to_s.upcase
-              if config[:enable_statement_obfuscation]
+              if config[:db_statement] == :obfuscate
                 command[0] + ' ?' * (command.size - 1)
               else
                 command.join(' ')

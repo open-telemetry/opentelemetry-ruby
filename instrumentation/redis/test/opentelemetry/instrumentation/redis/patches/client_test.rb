@@ -30,7 +30,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
 
   before do
     # ensure obfuscation is off if it was previously set in a different test
-    config = { enable_statement_obfuscation: false }
+    config = { db_statement: :include }
     instrumentation.install(config)
     exporter.reset
   end
@@ -285,10 +285,10 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
       end
     end
 
-    describe 'when enable_statement_obfuscation is enabled' do
+    describe 'when db_statement is :obfuscate' do
       before do
         instrumentation.instance_variable_set(:@installed, false)
-        instrumentation.install(enable_statement_obfuscation: true)
+        instrumentation.install(db_statement: :obfuscate)
       end
 
       it 'obfuscates arguments in db.statement' do
