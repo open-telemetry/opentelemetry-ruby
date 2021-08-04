@@ -53,9 +53,7 @@ module OpenTelemetry
           def query(sql, options = {})
             tracer.in_span(
               database_span_name(sql),
-              attributes: client_attributes.merge(
-                'db.statement' => obfuscate_sql(sql)
-              ),
+              attributes: %I[include obfuscate].include?(config[:db_statement]) ? client_attributes.merge('db.statement' => obfuscate_sql(sql)) : client_attributes,
               kind: :client
             ) do
               super(sql, options)
@@ -65,7 +63,7 @@ module OpenTelemetry
           private
 
           def obfuscate_sql(sql)
-            return sql unless config[:enable_sql_obfuscation]
+            return sql if config[:db_statement] == :include
 
             if sql.size > 2000
               'SQL query too large to remove sensitive data ...'
