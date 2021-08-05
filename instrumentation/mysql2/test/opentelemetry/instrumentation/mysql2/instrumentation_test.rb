@@ -169,5 +169,24 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
         _(span.attributes['net.peer.port']).must_equal port.to_s
       end
     end
+
+    describe 'when enable_sql_obfuscation is enabled' do
+      let(:config) { { enable_sql_obfuscation: true } }
+
+      it 'is compatible with legacy enable_sql_obfuscation option' do
+        sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+        obfuscated_sql = 'SELECT * from users where users.id = ? and users.email = ?'
+        expect do
+          client.query(sql)
+        end.must_raise Mysql2::Error
+
+        _(span.attributes['db.system']).must_equal 'mysql'
+        _(span.attributes['db.name']).must_equal 'mysql'
+        _(span.name).must_equal 'select'
+        _(span.attributes['db.statement']).must_equal obfuscated_sql
+        _(span.attributes['net.peer.name']).must_equal host.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_s
+      end
+    end
   end unless ENV['OMIT_SERVICES']
 end
