@@ -11,13 +11,14 @@ module OpenTelemetry
       # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |config|
-          if config[:enable_sql_obfuscation]
-            config[:db_statement] = :obfuscate
+          if config.include?(:enable_sql_obfuscation)
             OpenTelemetry.logger.warn(
               'Instrumentation mysql2 configuration option enable_sql_obfuscation has been deprecated,' \
               'use db_statement option instead'
             )
           end
+          config[:db_statement] = :obfuscate if config[:enable_sql_obfuscation]
+
           require_dependencies
           patch_client
         end
