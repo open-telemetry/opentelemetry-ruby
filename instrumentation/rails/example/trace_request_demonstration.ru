@@ -18,6 +18,7 @@ require 'action_controller/railtie'
 
 # TraceRequestApp is a minimal Rails application inspired by the Rails
 # bug report template for action controller.
+# https://github.com/rails/rails/blob/v6.0.0/guides/bug_report_templates/action_controller_gem.rb
 # The configuration is compatible with Rails 6.0
 class TraceRequestApp < Rails::Application
   config.root = __dir__
