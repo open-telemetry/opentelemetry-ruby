@@ -29,7 +29,7 @@ module OpenTelemetry
 
             tracer.in_span(platform_key, attributes: attributes_for(key, data)) do |span|
               yield.tap do |response|
-                errors = response[:errors]&.compact&.map { |e| e.to_h.to_json } if key == 'validate'
+                errors = response[:errors]&.compact&.map { |e| e.to_h }&.to_json if key == 'validate'
                 unless errors.nil?
                   span.add_event(
                     'graphql.validation.error',
