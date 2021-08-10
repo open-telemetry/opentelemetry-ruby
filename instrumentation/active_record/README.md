@@ -1,6 +1,6 @@
 # OpenTelemetry ActiveRecord Instrumentation
 
-Todo: Add a description.
+The Active Record instrumentation is a community-maintained instrumentation for the Active Record portion of the [Ruby on Rails][rails-home] web-application framework.
 
 ## How do I get started?
 

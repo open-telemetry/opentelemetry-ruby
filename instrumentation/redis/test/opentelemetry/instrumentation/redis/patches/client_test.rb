@@ -30,7 +30,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
 
   before do
     # ensure obfuscation is off if it was previously set in a different test
-    config = { enable_statement_obfuscation: false }
+    config = { db_statement: :include }
     instrumentation.install(config)
     exporter.reset
   end
@@ -285,10 +285,39 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
       end
     end
 
-    describe 'when enable_statement_obfuscation is enabled' do
+    describe 'when db_statement is :omit' do
       before do
         instrumentation.instance_variable_set(:@installed, false)
-        instrumentation.install(enable_statement_obfuscation: true)
+        instrumentation.install(db_statement: :omit)
+      end
+
+      it 'omits db.statement attribute' do
+        redis = redis_with_auth
+        _(redis.set('K', 'xyz')).must_equal 'OK'
+        _(redis.get('K')).must_equal 'xyz'
+        _(exporter.finished_spans.size).must_equal 3
+
+        set_span = exporter.finished_spans[0]
+        _(set_span.name).must_equal 'AUTH'
+        _(set_span.attributes['db.system']).must_equal 'redis'
+        _(set_span.attributes).wont_include('db.statement')
+
+        set_span = exporter.finished_spans[1]
+        _(set_span.name).must_equal 'SET'
+        _(set_span.attributes['db.system']).must_equal 'redis'
+        _(set_span.attributes).wont_include('db.statement')
+
+        set_span = exporter.finished_spans[2]
+        _(set_span.name).must_equal 'GET'
+        _(set_span.attributes['db.system']).must_equal 'redis'
+        _(set_span.attributes).wont_include('db.statement')
+      end
+    end
+
+    describe 'when db_statement is :obfuscate' do
+      before do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install(db_statement: :obfuscate)
       end
 
       it 'obfuscates arguments in db.statement' do
