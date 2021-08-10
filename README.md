@@ -106,6 +106,10 @@ gems, including Rails, Rack, Sinatra, and others, so you can start
 using OpenTelemetry with minimal changes to your application. See the
 [instrumentation README](instrumentation/) for more.
 
+## Versioning
+
+OpenTelemetry Ruby follows the [versioning and stability document](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/versioning-and-stability.md) in the OpenTelemetry specification. Notably, we adhere to the outlined version numbering exception, which states that experimental signals may have a `0.x` version number.
+
 ## Who's using OpenTelemetry Ruby?
 
 OpenTelemetry Ruby is in use by a number of companies, including:
