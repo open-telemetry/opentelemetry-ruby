@@ -13,11 +13,11 @@ module OpenTelemetry
       # The cloud account ID the resource is assigned to
       CLOUD_ACCOUNT_ID = 'cloud.account.id'
 
-      # The geographical region the resource is running. Refer to your provider's docs to see the available regions, for example [AWS regions](https://aws.amazon.com/about-aws/global-infrastructure/regions_az/), [Azure regions](https://azure.microsoft.com/en-us/global-infrastructure/geographies/), or [Google Cloud regions](https://cloud.google.com/about/locations)
+      # The geographical region the resource is running. Refer to your provider's docs to see the available regions, for example [Alibaba Cloud regions](https://www.alibabacloud.com/help/doc-detail/40654.htm), [AWS regions](https://aws.amazon.com/about-aws/global-infrastructure/regions_az/), [Azure regions](https://azure.microsoft.com/en-us/global-infrastructure/geographies/), or [Google Cloud regions](https://cloud.google.com/about/locations)
       CLOUD_REGION = 'cloud.region'
 
       # Cloud regions often have multiple, isolated locations known as zones to increase availability. Availability zone represents the zone where the resource is running
-      # @note Availability zones are called "zones" on Google Cloud
+      # @note Availability zones are called "zones" on Alibaba Cloud and Google Cloud
       CLOUD_AVAILABILITY_ZONE = 'cloud.availability_zone'
 
       # The cloud platform in use
