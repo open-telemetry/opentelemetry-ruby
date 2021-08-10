@@ -193,6 +193,24 @@ module OpenTelemetry
       # Local hostname or similar, see note below
       NET_HOST_NAME = 'net.host.name'
 
+      # The internet connection type currently being used by the host
+      NET_HOST_CONNECTION_TYPE = 'net.host.connection.type'
+
+      # This describes more details regarding the connection.type. It may be the type of cell technology connection, but it could be used for describing details about a wifi connection
+      NET_HOST_CONNECTION_SUBTYPE = 'net.host.connection.subtype'
+
+      # The name of the mobile carrier
+      NET_HOST_CARRIER_NAME = 'net.host.carrier.name'
+
+      # The mobile carrier country code
+      NET_HOST_CARRIER_MCC = 'net.host.carrier.mcc'
+
+      # The mobile carrier network code
+      NET_HOST_CARRIER_MNC = 'net.host.carrier.mnc'
+
+      # The ISO 3166-1 alpha-2 2-character country code associated with the mobile carrier network
+      NET_HOST_CARRIER_ICC = 'net.host.carrier.icc'
+
       # A string identifying the messaging system
       MESSAGING_SYSTEM = 'messaging.system'
 
