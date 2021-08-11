@@ -23,7 +23,7 @@ module OpenTelemetry
           unless config[:enable_statement_attribute]
             config[:db_statement] = :omit
             OpenTelemetry.logger.warn(
-              'Instrumentation pg configuration option enable_sql_obfuscation has been deprecated,' \
+              'Instrumentation pg configuration option enable_statement_attribute has been deprecated,' \
               'use db_statement option instead'
             )
           end
