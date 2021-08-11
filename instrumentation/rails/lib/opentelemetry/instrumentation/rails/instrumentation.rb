@@ -14,19 +14,12 @@ module OpenTelemetry
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('5.2.0')
 
-        install do |_config|
-          OpenTelemetry::Instrumentation::ActionPack::Instrumentation.instance.install({})
-          OpenTelemetry::Instrumentation::ActionView::Instrumentation.instance.install({})
-          OpenTelemetry::Instrumentation::ActiveRecord::Instrumentation.instance.install({})
-        end
-
-        present do
-          defined?(::Rails)
-        end
-
-        compatible do
-          gem_version >= MINIMUM_VERSION
-        end
+        # This gem requires the instrumentantion gems for the different
+        # components of Rails, as a result it does not have any explicit
+        # work to do in the install step.
+        install { true }
+        present { defined?(::Rails) }
+        compatible { gem_version >= MINIMUM_VERSION }
 
         private
 
