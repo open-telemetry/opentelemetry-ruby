@@ -13,7 +13,7 @@ module OpenTelemetry
       class Subscriber
         THREAD_KEY = :__opentelemetry_mongo_spans__
 
-        def started(event)
+        def started(event) # rubocop:disable Metrics/AbcSize
           # start a trace and store it in the current thread; using the `operation_id`
           # is safe since it's a unique id used to link events together. Also only one
           # thread is involved in this execution so thread-local storage should be safe. Reference:

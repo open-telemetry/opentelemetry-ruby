@@ -16,6 +16,12 @@ describe OpenTelemetry::Instrumentation::Mongo do
     exporter.reset
   end
 
+  after do
+    # Clear previous instrumentation subscribers between test runs
+    Mongo::Monitoring::Global.subscribers['Command'] = [] if defined?(::Mongo::Monitoring::Global)
+    instrumentation.instance_variable_set(:@installed, false)
+  end
+
   describe 'present' do
     it 'when mongo gem installed' do
       _(instrumentation.present?).must_equal true
@@ -43,6 +49,7 @@ describe OpenTelemetry::Instrumentation::Mongo do
     it 'installs the subscriber' do
       klass = OpenTelemetry::Instrumentation::Mongo::Subscriber
       subscribers = Mongo::Monitoring::Global.subscribers['Command']
+
       _(subscribers.size).must_equal 1
       _(subscribers.first).must_be_kind_of klass
     end
