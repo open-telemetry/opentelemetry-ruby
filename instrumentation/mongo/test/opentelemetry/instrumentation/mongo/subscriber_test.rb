@@ -17,10 +17,13 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
   let(:span) { exporter.finished_spans.first }
   let(:client) { TestHelper.client }
   let(:collection) { :artists }
+  # this is fine
+  let(:config) { { db_statement: :include } }
 
   before do
-    instrumentation.install
+    instrumentation.install(config)
     exporter.reset
+    instrumentation.instance_variable_set(:@config, config)
 
     TestHelper.setup_mongo
 
@@ -31,6 +34,7 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
   end
 
   after do
+    instrumentation.instance_variable_set(:@config, {})
     OpenTelemetry.propagation = @orig_propagation
 
     TestHelper.teardown_mongo
@@ -79,18 +83,12 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
 
   describe 'when peer service has been set in config' do
     let(:params) { { name: 'FKA Twigs' } }
+    let(:config) { { peer_service: 'example:mongo' } }
 
     include MongoTraceTest
 
     before do
-      instrumentation.instance_variable_set(
-        :@config, peer_service: 'example:mongo'
-      )
       client[collection].insert_one(params)
-    end
-
-    after do
-      instrumentation.instance_variable_set(:@config, {})
     end
 
     it 'includes it in the span attributes' do

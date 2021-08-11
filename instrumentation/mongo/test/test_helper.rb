@@ -3,7 +3,9 @@
 # Copyright The OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
+$VERBOSE = nil
 
+require 'pry'
 require 'mongo'
 
 require 'opentelemetry/sdk'
