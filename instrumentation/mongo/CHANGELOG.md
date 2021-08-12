@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mongo
 
+### v0.18.2 / 2021-08-12
+
+* FIXED: Flakey mongo test 
+
 ### v0.18.1 / 2021-06-23
 
 * (No significant changes)

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-propagator-b3
 
+### v0.19.1 / 2021-08-12
+
+* (No significant changes)
+
 ### v0.19.0 / 2021-06-23
 
 * ADDED: Add Tracer.non_recording_span to API 

@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.20.0 / 2021-08-12
+
+* ADDED: Instrument active record 
+* ADDED: Add ActionView instrumentation via ActiveSupport::Notifications 
+
 ### v0.19.0 / 2021-06-25
 
 * ADDED: Add resque instrumentation

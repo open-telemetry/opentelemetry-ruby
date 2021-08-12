@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.19.1 / 2021-08-12
+
+* DOCS: Update docs to rely more on environment variable configuration 
+
 ### v0.19.0 / 2021-06-23
 
 * BREAKING CHANGE: Total order constraint on span.status= 

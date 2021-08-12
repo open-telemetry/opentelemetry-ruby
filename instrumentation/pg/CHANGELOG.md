@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.19.0 / 2021-08-12
+
+* ADDED: Add db_statement toggle for postgres 
+* DOCS: Update docs to rely more on environment variable configuration 
+
 ### v0.18.1 / 2021-06-23
 
 * (No significant changes)

@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.19.0 / 2021-08-12
+
+* ADDED: Instrument active record 
+* ADDED: Add ActionView instrumentation via ActiveSupport::Notifications 
+* FIXED: Rails instrumentation to not explicitly install sub gems 
+* DOCS: Update docs to rely more on environment variable configuration 
+
 ### v0.18.1 / 2021-06-23
 
 * FIXED: Updated rack middleware position to zero 
