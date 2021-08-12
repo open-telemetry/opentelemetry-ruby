@@ -11,7 +11,23 @@ module OpenTelemetry
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('1.1.0')
 
-        install do |_config|
+        install do |config|
+          if config[:enable_sql_obfuscation]
+            config[:db_statement] = :obfuscate
+            OpenTelemetry.logger.warn(
+              'Instrumentation pg configuration option enable_sql_obfuscation has been deprecated,' \
+              'use db_statement option instead'
+            )
+          end
+
+          unless config[:enable_statement_attribute]
+            config[:db_statement] = :omit
+            OpenTelemetry.logger.warn(
+              'Instrumentation pg configuration option enable_statement_attribute has been deprecated,' \
+              'use db_statement option instead'
+            )
+          end
+
           require_dependencies
           patch_client
         end
@@ -27,6 +43,7 @@ module OpenTelemetry
         option :peer_service, default: nil, validate: :string
         option :enable_sql_obfuscation, default: false, validate: :boolean
         option :enable_statement_attribute, default: true, validate: :boolean
+        option :db_statement, default: :include, validate: ->(opt) { %I[omit include obfuscate].include?(opt) }
 
         private
 
