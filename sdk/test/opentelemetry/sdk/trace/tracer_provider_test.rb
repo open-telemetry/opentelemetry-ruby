@@ -60,8 +60,8 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
     it 'warns if called more than once' do
       mock_logger = Minitest::Mock.new
       mock_logger.expect(:warn, nil, [String])
+      tracer_provider.shutdown
       OpenTelemetry.stub :logger, mock_logger do
-        tracer_provider.shutdown
         tracer_provider.shutdown
       end
       mock_logger.verify
