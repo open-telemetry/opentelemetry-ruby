@@ -12,7 +12,7 @@ module OpenTelemetry
     module PG
       module Patches
         # Module to prepend to PG::Connection for instrumentation
-        module Connection # rubocop:disable Metrics/ModuleLength
+        module Connection
           PG::Constants::EXEC_ISH_METHODS.each do |method|
             define_method method do |*args|
               span_name, attrs = span_attrs(:query, *args)
@@ -66,15 +66,15 @@ module OpenTelemetry
           # But, getting that metric in line would force us over the
           # module size limit! We can't win here unless we want to start
           # abstracting things into a million pieces.
-          def span_attrs(kind, *args) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+          def span_attrs(kind, *args) # rubocop:disable Metrics/AbcSize
             if kind == :query
               operation = extract_operation(args[0])
-              sql = args[0]
+              sql = obfuscate_sql(args[0])
             else
               statement_name = args[0]
 
               if kind == :prepare
-                sql = args[1]
+                sql = obfuscate_sql(args[1])
                 lru_cache[statement_name] = sql
                 operation = 'PREPARE'
               else
@@ -84,12 +84,7 @@ module OpenTelemetry
             end
 
             attrs = { 'db.operation' => validated_operation(operation), 'db.postgresql.prepared_statement_name' => statement_name }
-            case config[:db_statement]
-            when :include
-              attrs['db.statement'] = sql
-            when :obfuscate
-              attrs['db.statement'] = obfuscate_sql(sql)
-            end
+            attrs['db.statement'] = sql unless config[:db_statement] == :omit
             attrs.reject! { |_, v| v.nil? }
 
             [span_name(operation), client_attributes.merge(attrs)]
@@ -109,6 +104,8 @@ module OpenTelemetry
           end
 
           def obfuscate_sql(sql)
+            return sql unless config[:db_statement] == :obfuscate
+
             # Borrowed from opentelemetry-instrumentation-mysql2
             return 'SQL query too large to remove sensitive data ...' if sql.size > 2000
 
