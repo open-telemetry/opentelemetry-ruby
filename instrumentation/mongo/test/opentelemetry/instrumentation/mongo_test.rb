@@ -12,13 +12,13 @@ describe OpenTelemetry::Instrumentation::Mongo do
   let(:exporter) { EXPORTER }
 
   before do
+    # Clear previous instrumentation subscribers between test runs
+    Mongo::Monitoring::Global.subscribers['Command'] = [] if defined?(::Mongo::Monitoring::Global)
     instrumentation.install
     exporter.reset
   end
 
   after do
-    # Clear previous instrumentation subscribers between test runs
-    Mongo::Monitoring::Global.subscribers['Command'] = [] if defined?(::Mongo::Monitoring::Global)
     instrumentation.instance_variable_set(:@installed, false)
   end
 
