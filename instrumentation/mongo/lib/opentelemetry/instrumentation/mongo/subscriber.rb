@@ -13,15 +13,30 @@ module OpenTelemetry
       class Subscriber
         THREAD_KEY = :__opentelemetry_mongo_spans__
 
-        def started(event)
+        def started(event) # rubocop:disable Metrics/AbcSize
           # start a trace and store it in the current thread; using the `operation_id`
           # is safe since it's a unique id used to link events together. Also only one
           # thread is involved in this execution so thread-local storage should be safe. Reference:
           # https://github.com/mongodb/mongo-ruby-driver/blob/master/lib/mongo/monitoring.rb#L70
           # https://github.com/mongodb/mongo-ruby-driver/blob/master/lib/mongo/monitoring/publishable.rb#L38-L56
+
           collection = get_collection(event.command)
-          attributes = build_attributes(event)
+
+          attributes = {
+            'db.system' => 'mongodb',
+            'db.name' => event.database_name,
+            'db.operation' => event.command_name,
+            'net.peer.name' => event.address.host,
+            'net.peer.port' => event.address.port
+          }
+
+          config = Mongo::Instrumentation.instance.config
+          attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+          # attributes['db.statement'] = CommandSerializer.new(event.command).serialize
+          attributes['db.statement'] = CommandSerializer.new(event.command).serialize if config[:db_statement] == :include
           attributes['db.mongodb.collection'] = collection if collection
+          attributes.compact!
+
           span = tracer.start_span(span_name(collection, event.command_name), attributes: attributes, kind: :client)
           set_span(event, span)
         end
@@ -61,21 +76,6 @@ module OpenTelemetry
           return command_name unless collection
 
           "#{collection}.#{command_name}"
-        end
-
-        def build_attributes(event)
-          attrs = {
-            'db.system' => 'mongodb',
-            'db.name' => event.database_name,
-            'db.operation' => event.command_name,
-            'db.statement' => CommandSerializer.new(event.command).serialize,
-            'net.peer.name' => event.address.host,
-            'net.peer.port' => event.address.port
-          }
-          config = Mongo::Instrumentation.instance.config
-          attrs['peer.service'] = config[:peer_service] if config[:peer_service]
-          attrs.compact!
-          attrs
         end
 
         def get_collection(command)
