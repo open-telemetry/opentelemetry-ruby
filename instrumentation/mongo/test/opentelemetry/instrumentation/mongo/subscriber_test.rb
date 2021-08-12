@@ -20,6 +20,8 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
   let(:config) { {} }
 
   before do
+    # Clear previous instrumentation subscribers between test runs
+    Mongo::Monitoring::Global.subscribers['Command'] = []
     instrumentation.install(config)
     exporter.reset
 
@@ -32,11 +34,8 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
   end
 
   after do
-    # Clear previous instrumentation subscribers between test runs
-    Mongo::Monitoring::Global.subscribers['Command'] = []
     instrumentation.instance_variable_set(:@installed, false)
     OpenTelemetry.propagation = @orig_propagation
-
     TestHelper.teardown_mongo
   end
 
