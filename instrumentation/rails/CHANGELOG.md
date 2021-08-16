@@ -2,10 +2,14 @@
 
 ### v0.19.0 / 2021-08-12
 
-* ADDED: Instrument active record 
-* ADDED: Add ActionView instrumentation via ActiveSupport::Notifications 
-* FIXED: Rails instrumentation to not explicitly install sub gems 
-* DOCS: Update docs to rely more on environment variable configuration 
+* ADDED: Instrument active record
+* ADDED: Add ActionView instrumentation via ActiveSupport::Notifications
+* FIXED: Rails instrumentation to not explicitly install sub gems
+* DOCS: Update docs to rely more on environment variable configuration
+
+* This release adds support for Active Record and Action View.
+* The `enable_recognize_route` configuration option has been moved to the ActionPack gem.
+* See readme for details on how to configure the sub instrumentation gems.
 
 ### v0.18.1 / 2021-06-23
 
