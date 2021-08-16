@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-http
 
+### v0.19.1 / 2021-08-12
+
+* (No significant changes)
+
 ### v0.19.0 / 2021-06-23
 
 * BREAKING CHANGE: Total order constraint on span.status= 

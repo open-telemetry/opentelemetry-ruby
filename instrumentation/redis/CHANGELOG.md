@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-redis
 
+### v0.21.0 / 2021-08-12
+
+* ADDED: Add toggle for redis db.statement attribute 
+
 ### v0.20.0 / 2021-06-23
 
 * BREAKING CHANGE: Total order constraint on span.status= 

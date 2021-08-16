@@ -1,5 +1,22 @@
 # Release History: opentelemetry-api
 
+### v1.0.0.rc3 / 2021-08-12
+
+* BREAKING CHANGE: Remove optional parent_context from in_span
+* BREAKING CHANGE: Refactor Baggage to remove Noop*
+* BREAKING CHANGE: Total order constraint on span.status=
+
+* ADDED: Add Tracer.non_recording_span to API
+* ADDED: Make API's NoopTextMapPropagator private
+* FIXED: Remove optional parent_context from in_span
+* FIXED: Reduce span allocation in API
+* FIXED: Refactor Baggage to remove Noop*
+* FIXED: Total order constraint on span.status=
+* FIXED: Return early if carrier is nil
+* FIXED: Update context to match spec
+* FIXED: Return the original context if the baggage header value is empty
+* DOCS: Update docs to rely more on environment variable configuration
+
 ### v1.0.0.rc2 / 2021-06-23
 
 * BREAKING CHANGE: Remove optional parent_context from in_span [729](https://github.com/open-telemetry/opentelemetry-ruby/pull/729)
