@@ -57,6 +57,10 @@ module OpenTelemetry
               ::Sidekiq::Launcher.prepend(Patches::Launcher)
               ::Sidekiq::Scheduled::Poller.prepend(Patches::Poller)
             end
+
+            config.on(:shutdown) do
+              OpenTelemetry.tracer_provider.shutdown
+            end
           end
         end
 
