@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.20.1 / 2021-08-18
+
+* FIXED: Instrumentation all sidekiq 
+
 ### v0.20.0 / 2021-08-12
 
 * ADDED: Instrument active record 
