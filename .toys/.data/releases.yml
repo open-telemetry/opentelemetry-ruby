@@ -155,6 +155,10 @@ gems:
     directory: instrumentation/pg
     version_constant: [OpenTelemetry, Instrumentation, PG, VERSION]
 
+  - name: opentelemetry-instrumentation-que
+    directory: instrumentation/que
+    version_constant: [OpenTelemetry, Instrumentation, Que, VERSION]
+
   - name: opentelemetry-instrumentation-rack
     directory: instrumentation/rack
     version_constant: [OpenTelemetry, Instrumentation, Rack, VERSION]
