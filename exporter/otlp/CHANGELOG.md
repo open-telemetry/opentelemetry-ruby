@@ -1,5 +1,10 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.20.2 / 2021-08-12
+
+* FIXED: Add rescue for OpenSSL errors during export 
+* DOCS: Update docs to rely more on environment variable configuration 
+
 ### v0.20.1 / 2021-06-29
 
 * FIXED: Otlp encoding exceptions again 

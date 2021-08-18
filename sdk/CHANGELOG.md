@@ -1,5 +1,36 @@
 # Release History: opentelemetry-sdk
 
+### v1.0.0.rc3 / 2021-08-12
+
+* BREAKING CHANGE: Remove optional parent_context from in_span
+* BREAKING CHANGE: Replace Time.now with Process.clock_gettime
+* BREAKING CHANGE: Refactor Baggage to remove Noop*
+* BREAKING CHANGE: Remove unnecessary readers from SDK Tracer
+* BREAKING CHANGE: Total order constraint on span.status=
+* BREAKING CHANGE: Use auto-generated resource constants in sdk and resource_detectors
+* BREAKING CHANGE: Span limits env vars
+
+* ADDED: Add Tracer.non_recording_span to API
+* ADDED: Add unnamed tracer warning message
+* ADDED: Allow disabling of install messages
+* ADDED: Make API's NoopTextMapPropagator private
+* ADDED: Use auto-generated resource constants in sdk and resource_detectors
+* ADDED: Allow selecting multiple exporter
+* ADDED: Add explicit BSP export error
+* FIXED: Remove optional parent_context from in_span
+* FIXED: Replace Time.now with Process.clock_gettime
+* FIXED: Rename cloud.zone to cloud.availability_zone
+* FIXED: Improve attribute error messages
+* FIXED: Refactor Baggage to remove Noop*
+* FIXED: Support OTEL_SERVICE_NAME env var
+* FIXED: Remove unnecessary readers from SDK Tracer
+* FIXED: Total order constraint on span.status=
+* FIXED: Flakey tracer provider test
+* FIXED: Split lock in TracerProvider
+* FIXED: Span limits env vars
+* FIXED: Prune invalid links
+* DOCS: Update docs to rely more on environment variable configuration
+
 ### v1.0.0.rc2 / 2021-06-23
 
 * BREAKING CHANGE: Remove optional parent_context from in_span [729](https://github.com/open-telemetry/opentelemetry-ruby/pull/729)
