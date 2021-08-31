@@ -11,12 +11,11 @@ module OpenTelemetry
         # Module to be prepended to force Faraday to use the middleware by
         # default so the user doesn't have to call `use` for every connection.
         module RackBuilder
-          def adapter(*args)
-            use(:open_telemetry) unless @handlers.any? do |handler|
-              handler.klass == Faraday::Middlewares::TracerMiddleware
+          def initialize(*args, &block)
+            super(*args) do |*bargs|
+              use :open_telemetry
+              block&.call(*bargs)
             end
-
-            super
           end
         end
       end

@@ -17,6 +17,23 @@ describe OpenTelemetry::Instrumentation::Faraday do
     exporter.reset
   end
 
+  describe 'instrumentation' do
+    let(:middleware) { ::Faraday::Middleware.lookup_middleware(:open_telemetry) }
+
+    it 'includes the tracer middleware' do
+      conn = ::Faraday.new('http://example.com')
+      _(conn.builder.handlers.map(&:klass)).must_include middleware
+    end
+
+    it 'positions the tracer middleware first in the list of handlers' do
+      conn = ::Faraday.new('http://example.com') do |f|
+        f.request :authorization, :Bearer, 'abc123'
+        f.request :instrumentation
+      end
+      _(conn.builder.handlers.first.klass).must_equal middleware
+    end
+  end
+
   describe 'tracing' do
     before do
       stub_request(:any, 'example.com')
