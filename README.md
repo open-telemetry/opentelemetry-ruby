@@ -20,7 +20,7 @@ The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 
 Approvers ([@open-telemetry/ruby-approvers](https://github.com/orgs/open-telemetry/teams/ruby-approvers)):
 
-- [Eric Mustin](https://github.com/ericmustin), Datadog
+- [Eric Mustin](https://github.com/ericmustin)
 - [Ariel Valentin](https://github.com/arielvalentin), GitHub
 - [Andrew Hayworth](https://github.com/ahayworth), GitHub
 
