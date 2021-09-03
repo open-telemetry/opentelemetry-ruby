@@ -68,9 +68,8 @@ describe OpenTelemetry::Instrumentation::ActionView::Fanout do
       exporter.reset
       ::ActiveSupport::Notifications.notifier = ActiveSupport::Notifications::Fanout.new
 
-
       notification_fired = false
-      ActiveSupport::Notifications.subscribe('render') do |*args|
+      ActiveSupport::Notifications.subscribe('render') do |*_args|
         notification_fired = true
       end
 
