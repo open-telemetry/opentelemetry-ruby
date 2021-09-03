@@ -3,6 +3,8 @@
 # Copyright The OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
+#
+require 'delegate'
 
 module OpenTelemetry
   module Instrumentation
@@ -10,7 +12,11 @@ module OpenTelemetry
       # This is a replacement for the default Fanout notifications queue, which adds special
       # handling around returned context from the SpanSubscriber notification handlers.
       # Used together, it allows us to trace arbitrary ActiveSupport::Notifications safely.
-      class Fanout < ::ActiveSupport::Notifications::Fanout
+      class Fanout < DelegateClass(::ActiveSupport::Notifications::Fanout)
+        def initialize(notifier = ::ActiveSupport::Notifications::Fanout.new)
+          super(notifier)
+        end
+
         def start(name, id, payload)
           listeners_for(name).map do |s|
             result = [s]

@@ -62,4 +62,23 @@ describe OpenTelemetry::Instrumentation::ActionView::Fanout do
     _(last_span.name).must_equal('foo bar')
     _(last_span.attributes['extra']).must_equal('context')
   end
+
+  describe 'delegate wrapper' do
+    it 'keeps existing subscriptions intact' do
+      exporter.reset
+      ::ActiveSupport::Notifications.notifier = ActiveSupport::Notifications::Fanout.new
+
+
+      notification_fired = false
+      ActiveSupport::Notifications.subscribe('render') do |*args|
+        notification_fired = true
+      end
+
+      ::ActiveSupport::Notifications.notifier = OpenTelemetry::Instrumentation::ActionView::Fanout.new(::ActiveSupport::Notifications.notifier)
+
+      ActiveSupport::Notifications.instrument('render', extra: :information)
+
+      assert notification_fired
+    end
+  end
 end

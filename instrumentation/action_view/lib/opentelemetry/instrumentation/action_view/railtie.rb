@@ -16,7 +16,7 @@ module OpenTelemetry
       # This Railtie sets up subscriptions to relevant ActionView notifications
       class Railtie < ::Rails::Railtie
         config.before_initialize do
-          ::ActiveSupport::Notifications.notifier = Fanout.new
+          ::ActiveSupport::Notifications.notifier = Fanout.new(::ActiveSupport::Notifications.notifier)
         end
 
         config.after_initialize do
