@@ -74,10 +74,13 @@ describe OpenTelemetry::Instrumentation::ActionView::Fanout do
       end
 
       ::ActiveSupport::Notifications.notifier = OpenTelemetry::Instrumentation::ActionView::Fanout.new(::ActiveSupport::Notifications.notifier)
+      ::ActiveSupport::Notifications.subscribe('render', span_subscriber)
 
       ActiveSupport::Notifications.instrument('render', extra: :information)
 
-      assert notification_fired
+      _(last_span).wont_be_nil
+      _(last_span.name).must_equal('foo bar')
+      _(notification_fired).must_equal(true)
     end
   end
 end
