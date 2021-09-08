@@ -30,6 +30,18 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+### Configuration options
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::HTTP', {
+    # Query parameters are hidden by default.
+    # To disable, set hide_query_params to false.
+    hide_query_params: true,
+  }
+end
+```
+
 ## Examples
 
 Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/http/example/trace_demonstration.rb)

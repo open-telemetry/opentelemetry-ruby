@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/common/http/request_attributes'
+
 module OpenTelemetry
   module Instrumentation
     module Faraday
@@ -42,14 +44,10 @@ module OpenTelemetry
           attr_reader :app
 
           def span_creation_attributes(http_method:, url:)
-            instrumentation_attrs = {
-              'http.method' => http_method, 'http.url' => url.to_s
-            }
             config = Faraday::Instrumentation.instance.config
-            instrumentation_attrs['peer.service'] = config[:peer_service] if config[:peer_service]
-            instrumentation_attrs.merge(
-              OpenTelemetry::Common::HTTP::ClientContext.attributes
-            )
+            attributes = OpenTelemetry::Common::HTTP::RequestAttributes.from_request(http_method, url, config)
+            attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+            attributes.merge(OpenTelemetry::Common::HTTP::ClientContext.attributes)
           end
 
           def tracer
