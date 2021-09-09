@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.19.1 / 2021-09-09
+
+* (No significant changes)
+
 ### v0.19.0 / 2021-08-12
 
 * ADDED: Instrument active record
