@@ -38,6 +38,8 @@ module OpenTelemetry
         #   if extraction fails
         def extract(carrier, context: Context.current, getter: Context::Propagation.text_map_getter)
           header = getter.get(carrier, XRAY_CONTEXT_KEY)
+          return context unless header
+
           match = parse_header(header)
           return context unless match
 
@@ -49,7 +51,7 @@ module OpenTelemetry
             remote: true
           )
 
-          span = Trace::Span.new(span_context: span_context)
+          span = OpenTelemetry::Trace.non_recording_span(span_context)
           context = XRay.context_with_debug(context) if match['sampling_state'] == 'd'
           Trace.context_with_span(span, parent_context: context)
         rescue OpenTelemetry::Error

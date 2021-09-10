@@ -17,15 +17,6 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
     OpenTelemetry::Baggage::Propagation::ContextKeys.baggage_key
   end
 
-  before do
-    @original_baggage_mgr = OpenTelemetry.baggage
-    OpenTelemetry.baggage = OpenTelemetry::Baggage::Manager.new
-  end
-
-  after do
-    OpenTelemetry.baggage = @original_baggage_mgr
-  end
-
   describe '#extract' do
     describe 'valid headers' do
       it 'extracts key-value pairs' do
@@ -56,11 +47,34 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
         assert_value(context, 'key:2', 'val2,2')
       end
     end
+
+    describe 'invalid or no-op headers' do
+      it 'returns the same context object when the headers are not present' do
+        carrier = {}
+        empty_context = Context.empty
+        context = propagator.extract(carrier, context: empty_context)
+        _(context.object_id).must_equal(empty_context.object_id)
+      end
+
+      it 'returns the same context object when the baggage value is a 0-length string' do
+        carrier = { header_key => '' }
+        empty_context = Context.empty
+        context = propagator.extract(carrier, context: empty_context)
+        _(context.object_id).must_equal(empty_context.object_id)
+      end
+
+      it 'does not test for an "empty" string and still replaces the context' do
+        carrier = { header_key => '   ' }
+        empty_context = Context.empty
+        context = propagator.extract(carrier, context: empty_context)
+        _(context.object_id).wont_equal(empty_context.object_id)
+      end
+    end
   end
 
   describe '#inject' do
     it 'injects baggage' do
-      context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
+      context = OpenTelemetry::Baggage.build(context: OpenTelemetry::Context.empty) do |b|
         b.set_value('key1', 'val1')
         b.set_value('key2', 'val2')
       end
@@ -72,7 +86,7 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
     end
 
     it 'injects numeric baggage' do
-      context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
+      context = OpenTelemetry::Baggage.build(context: OpenTelemetry::Context.empty) do |b|
         b.set_value('key1', 1)
         b.set_value('key2', 3.14)
       end
@@ -84,7 +98,7 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
     end
 
     it 'injects boolean baggage' do
-      context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
+      context = OpenTelemetry::Baggage.build(context: OpenTelemetry::Context.empty) do |b|
         b.set_value('key1', true)
         b.set_value('key2', false)
       end
@@ -102,7 +116,7 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
     end
 
     it 'injects properties' do
-      context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
+      context = OpenTelemetry::Baggage.build(context: OpenTelemetry::Context.empty) do |b|
         b.set_value('key1', 'val1')
         b.set_value('key2', 'val2', metadata: 'prop1=propval1;prop2=propval2')
       end
@@ -113,7 +127,7 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
     end
 
     it 'enforces max of 180 name-value pairs' do
-      context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
+      context = OpenTelemetry::Baggage.build(context: OpenTelemetry::Context.empty) do |b|
         (0..180).each do |i|
           b.set_value("k#{i}", "v#{i}")
         end
@@ -124,7 +138,7 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
       result = carrier[header_key]
 
       # expect keys indexed from 0 to 180 to be in baggage, but only 0 to 179 in the result
-      _(OpenTelemetry.baggage.value('k180', context: context)).wont_be_nil
+      _(OpenTelemetry::Baggage.value('k180', context: context)).wont_be_nil
       (0...180).each do |i|
         _(result).must_include("k#{i}")
       end
@@ -132,7 +146,7 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
     end
 
     it 'enforces max entry length of 4096' do
-      context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
+      context = OpenTelemetry::Baggage.build(context: OpenTelemetry::Context.empty) do |b|
         b.set_value('key1', 'x' * 4092)
         b.set_value('key2', 'val2')
       end
@@ -151,7 +165,7 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
       keys = (0..81).map { |i| "k#{i.to_s.rjust(48, '0')}" }
       values = (0..81).map { |i| "v#{i.to_s.rjust(48, '0')}" }
 
-      context = OpenTelemetry.baggage.build(context: OpenTelemetry::Context.empty) do |b|
+      context = OpenTelemetry::Baggage.build(context: OpenTelemetry::Context.empty) do |b|
         keys.zip(values).each { |k, v| b.set_value(k, v) }
       end
 
@@ -167,7 +181,7 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
 end
 
 def assert_value(context, key, value, metadata = nil)
-  entry = OpenTelemetry.baggage.raw_entries(context: context)[key]
+  entry = OpenTelemetry::Baggage.raw_entries(context: context)[key]
   _(entry).wont_be_nil
   _(entry.value).must_equal(value)
   _(entry.metadata).must_equal(metadata)

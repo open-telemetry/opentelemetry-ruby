@@ -31,14 +31,14 @@ module OpenTelemetry
           end
 
           def default
-            @default ||= create(Constants::SERVICE_RESOURCE[:name] => 'unknown_service').merge(process).merge(telemetry_sdk)
+            @default ||= create(SemanticConventions::Resource::SERVICE_NAME => 'unknown_service').merge(process).merge(telemetry_sdk).merge(service_name_from_env)
           end
 
           def telemetry_sdk
             resource_attributes = {
-              Constants::TELEMETRY_SDK_RESOURCE[:name] => 'opentelemetry',
-              Constants::TELEMETRY_SDK_RESOURCE[:language] => 'ruby',
-              Constants::TELEMETRY_SDK_RESOURCE[:version] => OpenTelemetry::SDK::VERSION
+              SemanticConventions::Resource::TELEMETRY_SDK_NAME => 'opentelemetry',
+              SemanticConventions::Resource::TELEMETRY_SDK_LANGUAGE => 'ruby',
+              SemanticConventions::Resource::TELEMETRY_SDK_VERSION => OpenTelemetry::SDK::VERSION
             }
 
             resource_pairs = ENV['OTEL_RESOURCE_ATTRIBUTES']
@@ -55,14 +55,21 @@ module OpenTelemetry
 
           def process
             resource_attributes = {
-              Constants::PROCESS_RESOURCE[:pid] => Process.pid,
-              Constants::PROCESS_RESOURCE[:command] => $PROGRAM_NAME,
-              Constants::PROCESS_RUNTIME_RESOURCE[:name] => RUBY_ENGINE,
-              Constants::PROCESS_RUNTIME_RESOURCE[:version] => RUBY_VERSION,
-              Constants::PROCESS_RUNTIME_RESOURCE[:description] => RUBY_DESCRIPTION
+              SemanticConventions::Resource::PROCESS_PID => Process.pid,
+              SemanticConventions::Resource::PROCESS_COMMAND => $PROGRAM_NAME,
+              SemanticConventions::Resource::PROCESS_RUNTIME_NAME => RUBY_ENGINE,
+              SemanticConventions::Resource::PROCESS_RUNTIME_VERSION => RUBY_VERSION,
+              SemanticConventions::Resource::PROCESS_RUNTIME_DESCRIPTION => RUBY_DESCRIPTION
             }
 
             create(resource_attributes)
+          end
+
+          private
+
+          def service_name_from_env
+            service_name = ENV['OTEL_SERVICE_NAME']
+            create(SemanticConventions::Resource::SERVICE_NAME => service_name) unless service_name.nil?
           end
         end
 

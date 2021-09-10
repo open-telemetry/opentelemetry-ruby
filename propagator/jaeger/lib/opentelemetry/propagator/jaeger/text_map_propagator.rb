@@ -72,7 +72,7 @@ module OpenTelemetry
             span_context.hex_trace_id, span_context.hex_span_id, '0', flags
           ].join(':')
           setter.set(carrier, IDENTITY_KEY, trace_span_identity_value)
-          OpenTelemetry.baggage.values(context: context).each do |key, value|
+          OpenTelemetry::Baggage.values(context: context).each do |key, value|
             baggage_key = 'uberctx-' + key
             encoded_value = CGI.escape(value)
             setter.set(carrier, baggage_key, encoded_value)
@@ -98,12 +98,12 @@ module OpenTelemetry
             trace_flags: to_trace_flags(sampling_flags),
             remote: true
           )
-          Trace::Span.new(span_context: span_context)
+          OpenTelemetry::Trace.non_recording_span(span_context)
         end
 
         def context_with_extracted_baggage(carrier, context, getter)
           baggage_key_prefix = 'uberctx-'
-          OpenTelemetry.baggage.build(context: context) do |b|
+          OpenTelemetry::Baggage.build(context: context) do |b|
             getter.keys(carrier).each do |carrier_key|
               baggage_key = carrier_key.start_with?(baggage_key_prefix) && carrier_key[baggage_key_prefix.length..-1]
               next unless baggage_key

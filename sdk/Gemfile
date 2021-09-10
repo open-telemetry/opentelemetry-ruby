@@ -11,5 +11,6 @@ gemspec
 # Use the opentelemetry-api gem from source
 gem 'opentelemetry-api', path: '../api'
 gem 'opentelemetry-common', path: '../common'
-gem 'opentelemetry-exporter-jaeger', path: '../exporter/jaeger'
+gem 'opentelemetry-exporter-zipkin', path: '../exporter/zipkin'
 gem 'opentelemetry-instrumentation-base', path: '../instrumentation/base'
+gem 'opentelemetry-semantic_conventions', path: '../semantic_conventions'

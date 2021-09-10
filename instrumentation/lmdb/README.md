@@ -30,10 +30,6 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
-## Examples
-
-Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/lmdb/example/trace_demonstration.rb)
-
 ## How can I get involved?
 
 The `opentelemetry-instrumentation-lmdb` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.

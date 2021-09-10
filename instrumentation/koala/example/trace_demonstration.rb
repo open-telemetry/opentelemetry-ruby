@@ -6,6 +6,7 @@ require 'koala'
 
 Bundler.require
 
+ENV['OTEL_TRACES_EXPORTER'] = 'console'
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Net::HTTP'
   c.use 'OpenTelemetry::Instrumentation::Koala'

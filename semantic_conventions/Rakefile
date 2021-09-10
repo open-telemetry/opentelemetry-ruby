@@ -1,0 +1,64 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+require 'bundler/gem_tasks'
+require 'rake/testtask'
+require 'yard'
+require 'rubocop/rake_task'
+require 'tmpdir'
+
+SPEC_VERSION = '1.6.0'
+
+RuboCop::RakeTask.new
+
+Rake::TestTask.new :test do |t|
+  t.libs << '../api/lib'
+  t.libs << 'test'
+  t.libs << 'lib'
+  t.test_files = FileList['test/**/*_test.rb']
+end
+
+YARD::Rake::YardocTask.new do |t|
+  t.stats_options = ['--list-undoc']
+end
+
+if RUBY_ENGINE == 'truffleruby'
+  task default: %i[generate test]
+else
+  task default: %i[generate test rubocop yard]
+end
+
+task :generate do
+  cwd = Dir.pwd
+
+  Dir.mktmpdir('opentelemetry-specification', Dir.pwd) do |tmpdir|
+    `git clone https://github.com/open-telemetry/opentelemetry-specification.git #{tmpdir}`
+    Dir.chdir(tmpdir) do
+      `git fetch`
+      `git checkout "v#{SPEC_VERSION}"`
+    end
+
+    %w[trace resource].each do |kind|
+      cmd = %W[
+        docker run --rm
+        -v "#{tmpdir}/semantic_conventions/#{kind}":/source
+        -v "#{cwd}/templates":/templates
+        -v "#{cwd}/lib":/output
+        otel/semconvgen:0.4.1
+        -f /source code
+        --template /templates/semantic_conventions.j2
+        --output /output/opentelemetry/semantic_conventions/#{kind}.rb
+        -Dmodule=#{kind[0].upcase}#{kind[1..-1]}
+      ]
+
+      puts "Running: #{cmd.join(' ')}"
+      `#{cmd.join(' ')}`
+    end
+  end
+
+  `sed -i.bak "s/VERSION = '.*'/VERSION = '#{SPEC_VERSION}'/g" lib/opentelemetry/semantic_conventions/version.rb`
+  `rm lib/opentelemetry/semantic_conventions/version.rb.bak`
+end

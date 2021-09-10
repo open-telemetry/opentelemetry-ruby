@@ -17,9 +17,12 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
   let(:span) { exporter.finished_spans.first }
   let(:client) { TestHelper.client }
   let(:collection) { :artists }
+  let(:config) { {} }
 
   before do
-    instrumentation.install
+    # Clear previous instrumentation subscribers between test runs
+    Mongo::Monitoring::Global.subscribers['Command'] = []
+    instrumentation.install(config)
     exporter.reset
 
     TestHelper.setup_mongo
@@ -31,8 +34,8 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
   end
 
   after do
+    instrumentation.instance_variable_set(:@installed, false)
     OpenTelemetry.propagation = @orig_propagation
-
     TestHelper.teardown_mongo
   end
 
@@ -79,18 +82,12 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
 
   describe 'when peer service has been set in config' do
     let(:params) { { name: 'FKA Twigs' } }
+    let(:config) { { peer_service: 'example:mongo' } }
 
     include MongoTraceTest
 
     before do
-      instrumentation.instance_variable_set(
-        :@config, peer_service: 'example:mongo'
-      )
       client[collection].insert_one(params)
-    end
-
-    after do
-      instrumentation.instance_variable_set(:@config, {})
     end
 
     it 'includes it in the span attributes' do
@@ -304,6 +301,28 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
     end
   end
 
+  describe 'db_statement option' do
+    let(:collection) { :people }
+    let(:config) { { db_statement: :omit } }
+
+    before do
+      # insert a document
+      client[collection].insert_one(name: 'Steve', hobbies: ['hiking'])
+      exporter.reset
+
+      # do #find operation
+      result = client[collection].find(name: 'Steve').first[:hobbies]
+      _(result).must_equal ['hiking']
+    end
+
+    it 'omits db.statement attribute' do
+      _(span.name).must_equal 'people.find'
+      _(span.attributes['db.operation']).must_equal 'find'
+      _(span.attributes['db.mongodb.collection']).must_equal 'people'
+      _(span.attributes).wont_include 'db.statement'
+    end
+  end
+
   describe 'a failed query' do
     before { client[:artists].drop }
 
@@ -363,4 +382,4 @@ describe OpenTelemetry::Instrumentation::Mongo::Subscriber do
       end
     end
   end
-end
+end unless ENV['OMIT_SERVICES']

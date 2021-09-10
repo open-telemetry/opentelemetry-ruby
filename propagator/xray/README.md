@@ -23,6 +23,23 @@ gem install opentelemetry-propagator-xray
 
 Or, if you use [bundler][bundler-home], include `opentelemetry-propagator-xray` in your `Gemfile`.
 
+In your application:
+```
+require 'opentelemetry/propagator/xray'
+# Optional
+ENV['OTEL_PROPAGATORS'] ||= 'xray' # Or you can set this as an environment variable outside of the application
+```
+
+## To generate AWS XRay compliant IDs use the 'OpenTelemetry::AWSXRayTrace' module:
+```
+require 'opentelemetry/propagator/xray'
+
+OpenTelemetry::SDK.configure do |c|
+  c.id_generator = OpenTelemetry::Propagator::XRay::IDGenerator
+end
+```
+The propagator and ID generation are independent and do not need to be used in conjunction but can be.
+
 ## How can I get involved?
 
 The `opentelemetry-propagator-xray` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.

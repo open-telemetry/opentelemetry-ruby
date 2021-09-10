@@ -81,6 +81,14 @@ describe OpenTelemetry::Propagator::XRay::TextMapPropagator do
 
       _(context).must_equal(parent_context)
     end
+    it 'handles missing header gracefully' do
+      parent_context = OpenTelemetry::Context.empty
+      carrier = {}
+
+      context = propagator.extract(carrier, context: parent_context)
+
+      _(context).must_equal(parent_context)
+    end
   end
 
   describe '#inject' do
@@ -156,8 +164,8 @@ describe OpenTelemetry::Propagator::XRay::TextMapPropagator do
                      trace_flags: TraceFlags::DEFAULT,
                      xray_debug: false)
     context = OpenTelemetry::Trace.context_with_span(
-      Span.new(
-        span_context: SpanContext.new(
+      OpenTelemetry::Trace.non_recording_span(
+        SpanContext.new(
           trace_id: Array(trace_id).pack('H*'),
           span_id: Array(span_id).pack('H*'),
           trace_flags: trace_flags

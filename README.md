@@ -20,9 +20,9 @@ The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 
 Approvers ([@open-telemetry/ruby-approvers](https://github.com/orgs/open-telemetry/teams/ruby-approvers)):
 
-- [Eric Mustin](https://github.com/ericmustin), Datadog
+- [Eric Mustin](https://github.com/ericmustin)
 - [Ariel Valentin](https://github.com/arielvalentin), GitHub
-- [Andrew Hayworth](https://github.com/ahayworth), GitHub
+- [Andrew Hayworth](https://github.com/ahayworth)
 
 *Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#approver).*
 
@@ -106,11 +106,16 @@ gems, including Rails, Rack, Sinatra, and others, so you can start
 using OpenTelemetry with minimal changes to your application. See the
 [instrumentation README](instrumentation/) for more.
 
+## Versioning
+
+OpenTelemetry Ruby follows the [versioning and stability document](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/versioning-and-stability.md) in the OpenTelemetry specification. Notably, we adhere to the outlined version numbering exception, which states that experimental signals may have a `0.x` version number.
+
 ## Who's using OpenTelemetry Ruby?
 
 OpenTelemetry Ruby is in use by a number of companies, including:
 
 - [Heroku](https://heroku.com)
+- [GitHub](https://github.com/)
 - [Fulcrum](https://www.fulcrumapp.com/)
 - [Puppet](https://puppet.com/)
 - [Shopify](https://shopify.com)

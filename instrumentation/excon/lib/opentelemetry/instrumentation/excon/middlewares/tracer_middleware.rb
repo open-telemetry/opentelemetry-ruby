@@ -71,7 +71,7 @@ module OpenTelemetry
 
           private
 
-          def handle_response(datum) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+          def handle_response(datum) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity:
             if datum.key?(:otel_span)
               datum[:otel_span].tap do |span|
                 return span if span.end_timestamp
@@ -79,17 +79,10 @@ module OpenTelemetry
                 if datum.key?(:response)
                   response = datum[:response]
                   span.set_attribute('http.status_code', response[:status])
-                  span.status = OpenTelemetry::Trace::Status.http_to_status(
-                    response[:status]
-                  )
+                  span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(response[:status].to_i)
                 end
 
-                if datum.key?(:error)
-                  span.status = OpenTelemetry::Trace::Status.new(
-                    OpenTelemetry::Trace::Status::ERROR,
-                    description: "Request has failed: #{datum[:error]}"
-                  )
-                end
+                span.status = OpenTelemetry::Trace::Status.error("Request has failed: #{datum[:error]}") if datum.key?(:error)
 
                 span.finish
                 datum.delete(:otel_span)

@@ -14,10 +14,10 @@ module OpenTelemetry
             operation = Utils.opname(op, multi?)
             attributes = {
               'db.system' => 'memcached',
-              'db.statement' => Utils.format_command(operation, args),
               'net.peer.name' => hostname,
               'net.peer.port' => port
             }
+            attributes['db.statement'] = Utils.format_command(operation, args) if config[:db_statement] == :include
             attributes['peer.service'] = config[:peer_service] if config[:peer_service]
             tracer.in_span(operation, attributes: attributes, kind: :client) do
               super

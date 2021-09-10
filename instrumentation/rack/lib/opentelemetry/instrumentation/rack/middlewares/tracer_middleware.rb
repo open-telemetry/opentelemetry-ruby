@@ -121,18 +121,11 @@ module OpenTelemetry
               'http.method' => env['REQUEST_METHOD'],
               'http.host' => env['HTTP_HOST'] || 'unknown',
               'http.scheme' => env['rack.url_scheme'],
-              'http.target' => fullpath(env)
+              'http.target' => env['QUERY_STRING'].empty? ? env['PATH_INFO'] : "#{env['PATH_INFO']}?#{env['QUERY_STRING']}"
             }
+
             attributes['http.user_agent'] = env['HTTP_USER_AGENT'] if env['HTTP_USER_AGENT']
-            attributes.merge(allowed_request_headers(env))
-          end
-
-          # e.g., "/webshop/articles/4?s=1":
-          def fullpath(env)
-            query_string = env['QUERY_STRING']
-            path = env['SCRIPT_NAME'] + env['PATH_INFO']
-
-            query_string.empty? ? path : "#{path}?#{query_string}"
+            attributes.merge!(allowed_request_headers(env))
           end
 
           # https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-http.md#name
@@ -153,7 +146,7 @@ module OpenTelemetry
           end
 
           def set_attributes_after_request(span, status, headers, _response)
-            span.status = OpenTelemetry::Trace::Status.http_to_status(status)
+            span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(status.to_i)
             span.set_attribute('http.status_code', status)
 
             # NOTE: if data is available, it would be good to do this:

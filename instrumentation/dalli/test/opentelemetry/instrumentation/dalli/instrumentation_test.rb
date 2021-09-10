@@ -96,5 +96,16 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
       _(span_event.attributes['exception.type']).must_equal 'Dalli::NetworkError'
       _(span_event.attributes['exception.message']).must_equal 'Dalli::NetworkError'
     end
+
+    it 'omits db.statement' do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(db_statement: :omit)
+
+      dalli.set('foo', 'bar')
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.name).must_equal 'set'
+      _(span.attributes).wont_include 'db.statement'
+    end
   end
-end
+end unless ENV['OMIT_SERVICES']

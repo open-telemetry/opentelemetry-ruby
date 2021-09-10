@@ -29,6 +29,7 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
   let(:default_config) { {} }
   let(:config) { default_config }
   let(:env) { {} }
+  let(:uri) { '/' }
 
   before do
     # clear captured spans:
@@ -54,21 +55,33 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
 
   describe '#call' do
     before do
-      Rack::MockRequest.new(rack_builder).get('/', env)
+      Rack::MockRequest.new(rack_builder).get(uri, env)
     end
 
     it 'records attributes' do
       _(first_span.attributes['http.method']).must_equal 'GET'
       _(first_span.attributes['http.status_code']).must_equal 200
       _(first_span.attributes['http.target']).must_equal '/'
-      _(first_span.status.code).must_equal OpenTelemetry::Trace::Status::OK
       _(first_span.attributes['http.url']).must_be_nil
       _(first_span.name).must_equal '/'
       _(first_span.kind).must_equal :server
     end
 
+    it 'does not explicitly set status OK' do
+      _(first_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
+    end
+
     it 'has no parent' do
       _(first_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
+    end
+
+    describe 'when a query is passed in' do
+      let(:uri) { '/endpoint?query=true' }
+
+      it 'records the query path' do
+        _(first_span.attributes['http.target']).must_equal '/endpoint?query=true'
+        _(first_span.name).must_equal '/endpoint'
+      end
     end
 
     describe 'config[:untraced_endpoints]' do

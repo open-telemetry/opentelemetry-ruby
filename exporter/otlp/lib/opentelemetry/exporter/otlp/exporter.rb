@@ -187,6 +187,7 @@ module OpenTelemetry
             when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
               # TODO: decode the body as a google.rpc.Status Protobuf-encoded message when https://github.com/open-telemetry/opentelemetry-collector/issues/1357 is fixed.
               response.body # Read and discard body
+              @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response.code })
               FAILURE
             when Net::HTTPRedirection
               @http.finish
@@ -198,6 +199,9 @@ module OpenTelemetry
             end
           rescue Net::OpenTimeout, Net::ReadTimeout
             retry if backoff?(retry_count: retry_count += 1, reason: 'timeout')
+            return FAILURE
+          rescue OpenSSL::SSL::SSLError
+            retry if backoff?(retry_count: retry_count += 1, reason: 'openssl_error')
             return FAILURE
           rescue SocketError
             retry if backoff?(retry_count: retry_count += 1, reason: 'socket_error')
@@ -234,9 +238,8 @@ module OpenTelemetry
         end
 
         def backoff?(retry_after: nil, retry_count:, reason:)
-          return false if retry_count > RETRY_COUNT
-
           @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => reason })
+          return false if retry_count > RETRY_COUNT
 
           sleep_interval = nil
           unless retry_after.nil?
@@ -341,6 +344,10 @@ module OpenTelemetry
 
         def as_otlp_key_value(key, value)
           Opentelemetry::Proto::Common::V1::KeyValue.new(key: key, value: as_otlp_any_value(value))
+        rescue Encoding::UndefinedConversionError => e
+          encoded_value = value.encode('UTF-8', invalid: :replace, undef: :replace, replace: '�')
+          OpenTelemetry.handle_error(exception: e, message: "encoding error for key #{key} and value #{encoded_value}")
+          Opentelemetry::Proto::Common::V1::KeyValue.new(key: key, value: as_otlp_any_value('Encoding Error'))
         end
 
         def as_otlp_any_value(value)

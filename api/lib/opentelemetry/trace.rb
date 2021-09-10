@@ -81,6 +81,16 @@ module OpenTelemetry
     def with_span(span)
       Context.with_value(CURRENT_SPAN_KEY, span) { |c, s| yield s, c }
     end
+
+    # Wraps a SpanContext with an object implementing the Span interface. This is done in order
+    # to expose a SpanContext as a Span in operations such as in-process Span propagation.
+    #
+    # @param [SpanContext] span_context SpanContext to be wrapped
+    #
+    # @return [Span]
+    def non_recording_span(span_context)
+      Span.new(span_context: span_context)
+    end
   end
 end
 

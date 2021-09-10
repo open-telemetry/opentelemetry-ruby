@@ -12,8 +12,9 @@ gem 'opentelemetry-api', path: '../api'
 gem 'opentelemetry-common', path: '../common'
 gem 'opentelemetry-instrumentation-base', path: '../instrumentation/base'
 gem 'opentelemetry-sdk', path: '../sdk'
+gem 'opentelemetry-semantic_conventions', path: '../semantic_conventions'
 
 group :development, :test do
-  gem 'byebug'
+  gem 'byebug' unless RUBY_PLATFORM == 'java'
   gem 'pry'
 end

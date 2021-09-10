@@ -15,4 +15,4 @@ require 'minitest/autorun'
 require 'opentelemetry/sdk'
 require 'opentelemetry-propagator-ottrace'
 
-OpenTelemetry.logger = Logger.new('/dev/null')
+OpenTelemetry.logger = Logger.new(File::NULL)

@@ -132,7 +132,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     let(:exporter) { OpenTelemetry::Exporter::OTLP::Exporter.new }
 
     before do
-      OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new(OpenTelemetry::SDK::Resources::Resource.telemetry_sdk)
+      OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new(resource: OpenTelemetry::SDK::Resources::Resource.telemetry_sdk)
     end
 
     it 'integrates with collector' do
@@ -182,11 +182,38 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(result).must_equal(FAILURE)
     end
 
+    it 'returns FAILURE when encryption to receiver endpoint fails' do
+      stub_request(:post, 'https://localhost:4317/v1/traces').to_raise(OpenSSL::SSL::SSLError.new('enigma wedged'))
+      span_data = create_span_data
+      exporter.stub(:backoff?, ->(**_) { false }) do
+        _(exporter.export([span_data])).must_equal(FAILURE)
+      end
+    end
+
     it 'exports a span_data' do
       stub_request(:post, 'https://localhost:4317/v1/traces').to_return(status: 200)
       span_data = create_span_data
       result = exporter.export([span_data])
       _(result).must_equal(SUCCESS)
+    end
+
+    it 'handles encoding errors with poise and grace' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      stub_request(:post, 'https://localhost:4317/v1/traces').to_return(status: 200)
+      span_data = create_span_data(total_recorded_attributes: 1, attributes: { 'a' => "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT) })
+
+      result = exporter.export([span_data])
+
+      _(log_stream.string).must_match(
+        /ERROR -- : OpenTelemetry error: encoding error for key a and value �/
+      )
+
+      _(result).must_equal(SUCCESS)
+    ensure
+      OpenTelemetry.logger = logger
     end
 
     it 'exports a span from a tracer' do
@@ -253,7 +280,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       span['i'] = 2
       span['s'] = 'val'
       span['a'] = [3, 4]
-      span.status = OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::ERROR)
+      span.status = OpenTelemetry::Trace::Status.error
       child_ctx = OpenTelemetry::Trace.context_with_span(span)
       client = with_ids(trace_id, client_span_id) { tracer.start_span('client', with_parent: child_ctx, kind: :client, start_timestamp: start_timestamp + 2).finish(end_timestamp: end_timestamp) }
       client_ctx = OpenTelemetry::Trace.context_with_span(client)

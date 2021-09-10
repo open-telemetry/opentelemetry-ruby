@@ -1,5 +1,17 @@
 # Release History: opentelemetry-propagator-ottrace
 
+### v0.19.1 / 2021-08-12
+
+* (No significant changes)
+
+### v0.19.0 / 2021-06-23
+
+* BREAKING CHANGE: Refactor Baggage to remove Noop* 
+
+* ADDED: Add Tracer.non_recording_span to API 
+* FIXED: Support Case Insensitive Trace and Span IDs 
+* FIXED: Refactor Baggage to remove Noop* 
+
 ### v0.18.0 / 2021-05-21
 
 * ADDED: Updated API depedency for 1.0.0.rc1

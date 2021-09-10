@@ -39,7 +39,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
         host: host,
         port: port,
         database: database,
-        username: 'root',
+        username: username,
         password: password
       )
     end
@@ -133,8 +133,8 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
       assert(!span.events.first.attributes['exception.stacktrace'].nil?)
     end
 
-    describe 'when enable_sql_obfuscation is enabled' do
-      let(:config) { { enable_sql_obfuscation: true } }
+    describe 'when db_statement set as obfuscate' do
+      let(:config) { { db_statement: :obfuscate } }
 
       it 'obfuscates SQL parameters in db.statement' do
         sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
@@ -151,5 +151,61 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
         _(span.attributes['net.peer.port']).must_equal port.to_s
       end
     end
-  end
+
+    describe 'when db_statement set as omit' do
+      let(:config) { { db_statement: :omit } }
+
+      it 'omits db.statement attribute' do
+        sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+        expect do
+          client.query(sql)
+        end.must_raise Mysql2::Error
+
+        _(span.attributes['db.system']).must_equal 'mysql'
+        _(span.attributes['db.name']).must_equal 'mysql'
+        _(span.name).must_equal 'select'
+        _(span.attributes).wont_include('db.statement')
+        _(span.attributes['net.peer.name']).must_equal host.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_s
+      end
+    end
+
+    describe 'when enable_sql_obfuscation is enabled' do
+      let(:config) { { enable_sql_obfuscation: true } }
+
+      it 'is compatible with legacy enable_sql_obfuscation option' do
+        sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+        obfuscated_sql = 'SELECT * from users where users.id = ? and users.email = ?'
+        expect do
+          client.query(sql)
+        end.must_raise Mysql2::Error
+
+        _(span.attributes['db.system']).must_equal 'mysql'
+        _(span.attributes['db.name']).must_equal 'mysql'
+        _(span.name).must_equal 'select'
+        _(span.attributes['db.statement']).must_equal obfuscated_sql
+        _(span.attributes['net.peer.name']).must_equal host.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_s
+      end
+    end
+
+    describe 'when enable_sql_obfuscation is enabled with db_statement set' do
+      let(:config) { { enable_sql_obfuscation: true, db_statement: :omit } }
+
+      it 'respects enable_sql_obfuscation when enabled' do
+        sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
+        obfuscated_sql = 'SELECT * from users where users.id = ? and users.email = ?'
+        expect do
+          client.query(sql)
+        end.must_raise Mysql2::Error
+
+        _(span.attributes['db.system']).must_equal 'mysql'
+        _(span.attributes['db.name']).must_equal 'mysql'
+        _(span.name).must_equal 'select'
+        _(span.attributes['db.statement']).must_equal obfuscated_sql
+        _(span.attributes['net.peer.name']).must_equal host.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_s
+      end
+    end
+  end unless ENV['OMIT_SERVICES']
 end
