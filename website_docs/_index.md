@@ -33,12 +33,12 @@ The current release can be found [here][releases]
 - [Ruby API Documentation][ruby-docs]
 - [Examples][examples]
 
-[quick-start]: quick-start.md
+[quick-start]: quick_start.md
 [repository]: https://github.com/open-telemetry/opentelemetry-ruby
 [releases]: https://github.com/open-telemetry/opentelemetry-ruby/releases
 [auto-instrumenation]: https://github.com/open-telemetry/opentelemetry-ruby#instrumentation-libraries
 [context-propagation]: context_propagation.md
 [events]: events.md
-[manual-instrumenation]: manual_instrumentation.md
+[manual-instrumentation]: manual_instrumentation.md
 [ruby-docs]: https://open-telemetry.github.io/opentelemetry-ruby/
 [examples]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/examples

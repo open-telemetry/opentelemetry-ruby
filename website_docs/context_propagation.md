@@ -12,6 +12,8 @@ description: >
 
 This requires _context propagation_, a mechanism where identifiers for a trace are sent to remote processes.
 
+> &#8505; The OpenTelemetry Ruby SDK will take care of context propagation as long as your service is leveraging auto-instrumented libraries. Please refer to the [README][auto-instrumentation] for more details.
+
 In order to propagate trace context over the wire, a propagator must be registered with the OpenTelemetry SDK.
 The W3 TraceContext and Baggage propagators are configured by default.
 Operators may override this value by setting `OTEL_PROPAGATORS` environment variable to a comma separated list of [propagators][propagators].
@@ -26,10 +28,6 @@ Propagators other than `tracecontext` and `baggage` must be added as gem depende
 ```ruby
 gem 'opentelemetry-propagator-b3'
 ```
-
-### Automatic Context Propagation
-
-The OpenTelemetry Ruby SDK will take care of context propagation as long as your service is leveraging auto-instrumented libraries. Please refer to the [README][auto-instrumentation] for more details.
 
 [glossary]: https://opentelemetry.io/docs/concepts/glossary/
 [propagators]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/propagator

@@ -11,12 +11,6 @@ description: >
 Auto-instrumentation is the easiest way to get started with instrumenting your code, but in order to get the most insight into your system, you should add manual instrumentation where appropriate.
 To do this, use the OpenTelemetry SDK to access the currently executing span and add attributes to it, and/or to create new spans.
 
-To add manual instrumentation, you need to add the OpenTelemetry SDK gem to your Gemfile:
-
-```ruby
-gem 'opentelemetry-sdk'
-```
-
 ### Adding Context to Exisiting Spans
 
 It's often beneficial to add context to a currently executing span in a trace.
@@ -40,10 +34,6 @@ In order to get the full picture of what's happening, you will have to add manua
 To do this, grab the tracer from the OpenTelemetry API and generate a span:
 
 ```ruby
-# somewhere within the service, the SDK has been required and configured
-require 'opentelemetry/sdk'
-OpenTelemetry::SDK.configure do ... end
-
 # ...
 
 def search_by(query)

@@ -6,11 +6,11 @@ description: >
   A language-specific implementation of OpenTelemetry in Ruby.
 ---
 
+## Quick Start
+
 [OpenTelemetry for Ruby][repository] can be used to add automatic and manual instrumentation to your applications.
 Automatic instrumentation is enabled by adding [instrumentation packages][auto-instrumentation].
-Manual instrumentation can be added using the OpenTelemetry API.
-
-## Quick Start
+Manual instrumentation can be added using the [OpenTelemetry API][manual-instrumentation].
 
 ### Requirements
 
@@ -51,7 +51,7 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
-Now that you have setup your application to perform tracing you'll need to configure the SDK to export the traces to somewhere that will vizualize them for you.
+Now that you have setup your application to perform tracing, you'll need to configure the SDK to export the traces somewhere. Our example loaded the `OTLP` exporter, which the SDK tries to use by default. Next, we'll use the OpenTelemetry Collector to receive these traces and visualize them using Jaeger and Zipkin!
 
 ### Exporting Traces
 
@@ -82,15 +82,15 @@ Lastly, open a browser and navigate to the [Jaeger UI](http://localhost:16686) o
 
 Adding tracing to a single service is a great first step and although auto-instrumenation provides quite a bit of insight on it's own, OpenTelemetry provides a few more features that will allow you gain even deeper insights!
 
-[Context Propagation][context_propagation] is perhaps one of the most powerful concepts in OpenTelemetry because it will upgrade your single service trace into a _distributed trace_, which makes it possible for OpenTelemetry vendors to visualize a request from end-to-end accross process and network boundaries.
+[Context Propagation][context-propagation] is perhaps one of the most powerful concepts in OpenTelemetry because it will upgrade your single service trace into a _distributed trace_, which makes it possible for OpenTelemetry vendors to visualize a request from end-to-end accross process and network boundaries.
 
 [Span Events][events] allow you to add a human-readable message on a span that represents "something happening" during it's lifetime.
 
-[Manual Instrumentation][manual_instrumentation] will give provide you the ability to enrich your traces with domain specific data.
+[Manual Instrumentation][manual-instrumentation] will give provide you the ability to enrich your traces with domain specific data.
 
 [repository]: https://github.com/open-telemetry/opentelemetry-ruby
-[auto-instrumenation]: https://github.com/open-telemetry/opentelemetry-ruby#instrumentation-libraries
+[auto-instrumentation]: https://github.com/open-telemetry/opentelemetry-ruby#instrumentation-libraries
 [sdk-env]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/protocol/exporter.md#configuration-options
 [context-propagation]: context_propagation.md
 [events]: events.md
-[manual-instrumenation]: manual_instrumentation.md
+[manual-instrumentation]: manual_instrumentation.md
