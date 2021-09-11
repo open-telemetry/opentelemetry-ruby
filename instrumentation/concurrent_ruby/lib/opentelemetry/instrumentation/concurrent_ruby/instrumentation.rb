@@ -16,17 +16,17 @@ module OpenTelemetry
         end
 
         present do
-          defined?(::Concurrent::Future)
+          defined?(::Concurrent::RubyExecutorService) && defined?(::Concurrent::Promises)
         end
 
         private
 
         def require_dependencies
-          require_relative 'patches/future'
+          require_relative 'patches/ruby_executor_service'
         end
 
         def patch
-          ::Concurrent::Future.send(:include, Patches::Future)
+          ::Concurrent::RubyExecutorService.prepend Patches::RubyExecutorService
         end
       end
     end
