@@ -29,6 +29,8 @@ ActiveRecord::Base.establish_connection(
 class User < ActiveRecord::Base
   validate :name_if_present
 
+  scope :recently_created, -> { where('created_at > ?', Time.now - 3600) }
+
   def name_if_present
     errors.add(:base, 'must be otel') if name.present? && name != 'otel'
   end
