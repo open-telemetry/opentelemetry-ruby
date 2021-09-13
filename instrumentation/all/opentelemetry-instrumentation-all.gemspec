@@ -47,6 +47,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-mysql2', '~> 0.19.0'
   spec.add_dependency 'opentelemetry-instrumentation-net_http', '~> 0.19.0'
   spec.add_dependency 'opentelemetry-instrumentation-pg', '~> 0.19.0'
+  spec.add_dependency 'opentelemetry-instrumentation-que', '~> 0.1.0'
   spec.add_dependency 'opentelemetry-instrumentation-rack', '~> 0.19.0'
   spec.add_dependency 'opentelemetry-instrumentation-rails', '~> 0.19.1'
   spec.add_dependency 'opentelemetry-instrumentation-redis', '~> 0.21.0'
