@@ -4,12 +4,16 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/instrumentation_helpers'
+
 module OpenTelemetry
   module Instrumentation
     module Faraday
       # The Instrumentation class contains logic to detect and install the Faraday
       # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
+        include InstrumentationHelpers::HTTP::InstrumentationOptions
+
         install do |_config|
           require_dependencies
           register_tracer_middleware
@@ -21,7 +25,7 @@ module OpenTelemetry
         end
 
         option :peer_service, default: nil, validate: :string
-        option :hide_query_params, default: true, validate: :boolean
+        # option :hide_query_params, default: true, validate: :boolean
 
         private
 
