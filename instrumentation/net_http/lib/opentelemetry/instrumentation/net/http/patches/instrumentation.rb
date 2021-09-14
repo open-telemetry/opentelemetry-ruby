@@ -13,6 +13,8 @@ module OpenTelemetry
         module Patches
           # Module to prepend to Net::HTTP for instrumentation
           module Instrumentation
+            include InstrumentationHelpers::HTTP::RequestAttributes
+
             HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = "HTTP #{k}" }
             USE_SSL_TO_SCHEME = { false => 'http', true => 'https' }.freeze
 
@@ -23,9 +25,7 @@ module OpenTelemetry
               uri = uri_from_req(req)
               method = req.method
 
-              attributes = OpenTelemetry::Common::HTTP::ClientContext.attributes.merge(
-                OpenTelemetry::Common::HTTP::RequestAttributes.from_request(method, uri, config)
-              )
+              attributes = OpenTelemetry::Common::HTTP::ClientContext.attributes.merge(from_request(method, uri, config))
               tracer.in_span(
                 HTTP_METHODS_TO_SPAN_NAMES[method],
                 attributes: attributes,

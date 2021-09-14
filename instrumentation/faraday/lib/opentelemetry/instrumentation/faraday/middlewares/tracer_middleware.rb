@@ -13,6 +13,8 @@ module OpenTelemetry
         # TracerMiddleware propagates context and instruments Faraday requests
         # by way of its middlware system
         class TracerMiddleware < ::Faraday::Middleware
+          include InstrumentationHelpers::HTTP::RequestAttributes
+
           HTTP_METHODS_SYMBOL_TO_STRING = {
             connect: 'CONNECT',
             delete: 'DELETE',
@@ -45,7 +47,7 @@ module OpenTelemetry
 
           def span_creation_attributes(http_method:, url:)
             config = Faraday::Instrumentation.instance.config
-            attributes = OpenTelemetry::Common::HTTP::RequestAttributes.from_request(http_method, url, config)
+            attributes = from_request(http_method, url, config)
             attributes['peer.service'] = config[:peer_service] if config[:peer_service]
             attributes.merge(OpenTelemetry::Common::HTTP::ClientContext.attributes)
           end

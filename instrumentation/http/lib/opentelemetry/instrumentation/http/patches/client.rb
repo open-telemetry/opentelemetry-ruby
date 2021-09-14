@@ -12,12 +12,13 @@ module OpenTelemetry
       module Patches
         # Module to prepend to HTTP::Client for instrumentation
         module Client
+          include InstrumentationHelpers::HTTP::RequestAttributes
+
           def perform(req, options)
             uri = req.uri
             request_method = req.verb.to_s.upcase
 
-            attributes = OpenTelemetry::Common::HTTP::RequestAttributes.from_request(request_method, uri, config)
-                                                                       .merge(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+            attributes = from_request(request_method, uri, config).merge(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
             tracer.in_span("HTTP #{request_method}", attributes: attributes, kind: :client) do |span|
               OpenTelemetry.propagation.inject(req.headers)

@@ -11,7 +11,7 @@ module OpenTelemetry
       module InstrumentationOptions
         extend self
 
-        # option :hide_query_params, default: true, validate: :boolean
+        option :hide_query_params, default: true, validate: :boolean
       end
     end
   end
