@@ -7,6 +7,7 @@
 require 'opentelemetry'
 require 'opentelemetry/common'
 require 'opentelemetry-instrumentation-base'
+require 'opentelemetry/instrumentation_helpers'
 
 module OpenTelemetry
   module Instrumentation

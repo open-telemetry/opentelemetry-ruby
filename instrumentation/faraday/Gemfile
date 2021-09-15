@@ -13,8 +13,8 @@ gem 'opentelemetry-instrumentation-base', path: '../base'
 
 
 group :test do
-  gem 'opentelemetry-instrumentation_helpers', path: '../../instrumentation_helpers'
   gem 'opentelemetry-common', path: '../../common'
+  gem 'opentelemetry-instrumentation_helpers', path: '../../instrumentation_helpers'
   gem 'opentelemetry-sdk', path: '../../sdk'
   gem 'opentelemetry-semantic_conventions', path: '../../semantic_conventions'
 end

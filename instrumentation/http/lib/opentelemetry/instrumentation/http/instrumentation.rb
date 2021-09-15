@@ -9,6 +9,8 @@ module OpenTelemetry
     module HTTP
       # The Instrumentation class contains logic to detect and install the Http instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
+        include InstrumentationHelpers::HTTP::InstrumentationOptions
+
         install do |_config|
           require_dependencies
           patch
@@ -17,8 +19,6 @@ module OpenTelemetry
         present do
           !(defined?(::HTTP) && Gem.loaded_specs['http']).nil?
         end
-
-        option :hide_query_params, default: true, validate: :boolean
 
         def patch
           ::HTTP::Client.prepend(Patches::Client)

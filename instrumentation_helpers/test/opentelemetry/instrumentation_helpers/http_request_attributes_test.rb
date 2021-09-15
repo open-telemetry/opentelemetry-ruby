@@ -9,7 +9,7 @@ require 'test_helper'
 require 'opentelemetry/instrumentation_helpers/http/request_attributes'
 
 describe OpenTelemetry::InstrumentationHelpers::HTTP::RequestAttributes do
-  subject { OpenTelemetry::InstrumentationHelpers::HTTP::RequestAttributes }
+  subject { Class.new.extend(OpenTelemetry::InstrumentationHelpers::HTTP::RequestAttributes) }
 
   it 'returns http attributes matching the spec given input' do
     attributes = subject.from_request('GET', URI('http://example.com/foo?bar=baz'))

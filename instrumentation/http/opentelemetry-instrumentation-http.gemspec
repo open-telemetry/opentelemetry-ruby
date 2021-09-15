@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'opentelemetry-api', '~> 1.0.0.rc3'
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.18.2'
+  spec.add_dependency 'opentelemetry-instrumentation_helpers', '~> 0.20.0'
 
   spec.add_development_dependency 'appraisal', '~> 2.2.0'
   spec.add_development_dependency 'bundler', '>= 1.17'

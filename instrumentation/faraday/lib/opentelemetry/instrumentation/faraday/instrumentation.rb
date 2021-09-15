@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/instrumentation_helpers'
-
 module OpenTelemetry
   module Instrumentation
     module Faraday
@@ -25,7 +23,6 @@ module OpenTelemetry
         end
 
         option :peer_service, default: nil, validate: :string
-        # option :hide_query_params, default: true, validate: :boolean
 
         private
 
