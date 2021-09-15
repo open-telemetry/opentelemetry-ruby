@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/instrumentation_helpers'
-
 module OpenTelemetry
   module Instrumentation
     module HTTP

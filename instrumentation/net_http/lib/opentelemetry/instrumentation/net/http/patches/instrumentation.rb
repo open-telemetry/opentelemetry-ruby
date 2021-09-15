@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/common/http/request_attributes'
-
 module OpenTelemetry
   module Instrumentation
     module Net
