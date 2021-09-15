@@ -138,6 +138,11 @@ gems:
     directory: instrumentation/faraday
     version_constant: [OpenTelemetry, Instrumentation, Faraday, VERSION]
 
+  - name: opentelemetry-instrumentation_helpers
+    directory: instrumentation_helpers
+    version_rb_path: lib/opentelemetry/instrumentation_helpers/version.rb
+    version_constant: [OpenTelemetry, InstrumentationHelpers, VERSION]
+
   - name: opentelemetry-instrumentation-mongo
     directory: instrumentation/mongo
     version_constant: [OpenTelemetry, Instrumentation, Mongo, VERSION]
