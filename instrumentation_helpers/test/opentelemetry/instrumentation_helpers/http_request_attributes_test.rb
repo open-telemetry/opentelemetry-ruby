@@ -6,8 +6,6 @@
 
 require 'test_helper'
 
-require 'opentelemetry/instrumentation_helpers/http/request_attributes'
-
 describe OpenTelemetry::InstrumentationHelpers::HTTP::RequestAttributes do
   subject { Class.new.extend(OpenTelemetry::InstrumentationHelpers::HTTP::RequestAttributes) }
 
