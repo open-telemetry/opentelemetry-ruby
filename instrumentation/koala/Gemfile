@@ -14,7 +14,7 @@ gem 'opentelemetry-instrumentation-base', path: '../base'
 group :test do
   gem 'byebug'
   gem 'opentelemetry-common', path: '../../common'
-  gem 'opentelemetry-instrumentation-net_http', path: '../net_http'
+  gem 'opentelemetry-instrumentation_helpers', path: '../../instrumentation_helpers'
   gem 'opentelemetry-sdk', path: '../../sdk'
   gem 'opentelemetry-semantic_conventions', path: '../../semantic_conventions'
   gem 'pry-byebug'
