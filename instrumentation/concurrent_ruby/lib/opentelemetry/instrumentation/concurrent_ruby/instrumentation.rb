@@ -26,11 +26,8 @@ module OpenTelemetry
         end
 
         def patch
-          if ::Concurrent.on_jruby?
-            ::Concurrent::JavaExecutorService.prepend Patches::ExecutorService
-          else
-            ::Concurrent::RubyExecutorService.prepend Patches::ExecutorService
-          end
+          ::Concurrent::RubyExecutorService.prepend Patches::ExecutorService          
+          ::Concurrent::JavaExecutorService.prepend Patches::ExecutorService if ::Concurrent.on_jruby?
         end
       end
     end
