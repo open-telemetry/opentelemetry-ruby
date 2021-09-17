@@ -16,17 +16,21 @@ module OpenTelemetry
         end
 
         present do
-          defined?(::Concurrent::RubyExecutorService) && defined?(::Concurrent::Promises)
+          defined?(::Concurrent::RubyExecutorService) || defined?(::Concurrent::JavaExecutorService)
         end
 
         private
 
         def require_dependencies
-          require_relative 'patches/ruby_executor_service'
+          require_relative 'patches/executor_service'
         end
 
         def patch
-          ::Concurrent::RubyExecutorService.prepend Patches::RubyExecutorService
+          if ::Concurrent.on_jruby?
+            ::Concurrent::JavaExecutorService.prepend Patches::ExecutorService
+          else
+            ::Concurrent::RubyExecutorService.prepend Patches::ExecutorService
+          end
         end
       end
     end

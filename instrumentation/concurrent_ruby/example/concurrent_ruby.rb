@@ -4,8 +4,6 @@ require 'rubygems'
 require 'bundler/setup'
 
 Bundler.require
-require 'opentelemetry/sdk'
-require 'concurrent-ruby'
 
 ENV['OTEL_TRACES_EXPORTER'] = 'console'
 OpenTelemetry::SDK.configure do |c|
