@@ -41,7 +41,7 @@ module OpenTelemetry
           end
         end
 
-        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'https://localhost:4317/v1/traces'), # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
+        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'https://localhost:4317/v1/traces'), # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
                        certificate_file: config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
                        ssl_verify_mode: Exporter.ssl_verify_mode,
                        headers: config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS'),
@@ -50,7 +50,6 @@ module OpenTelemetry
                        metrics_reporter: nil)
           raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}" if invalid_url?(endpoint)
           raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || compression == 'gzip'
-          raise ArgumentError, 'headers must be comma-separated k=v pairs or a Hash' unless valid_headers?(headers)
 
           @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
                    URI("#{endpoint}/v1/traces")
@@ -66,7 +65,7 @@ module OpenTelemetry
 
           @path = @uri.path
           @headers = case headers
-                     when String then CSV.parse(headers, col_sep: '=', row_sep: ',').to_h
+                     when String then parse_headers(headers)
                      when Hash then headers
                      end
           @timeout = timeout.to_f
@@ -116,16 +115,6 @@ module OpenTelemetry
             return val unless val.nil?
           end
           default
-        end
-
-        def valid_headers?(headers)
-          return true if headers.nil? || headers.is_a?(Hash)
-          return false unless headers.is_a?(String)
-
-          CSV.parse(headers, col_sep: '=', row_sep: ',').to_h
-          true
-        rescue ArgumentError
-          false
         end
 
         def invalid_url?(url)
@@ -366,6 +355,14 @@ module OpenTelemetry
             result.array_value = Opentelemetry::Proto::Common::V1::ArrayValue.new(values: values)
           end
           result
+        end
+
+        def parse_headers(raw)
+          entries = raw.split(',')
+          entries.each_with_object({}) do |entry, headers|
+            k, v = entry.split('=', 2).map(&CGI.method(:unescape))
+            headers[k.strip] = v.strip
+          end
         end
       end
     end

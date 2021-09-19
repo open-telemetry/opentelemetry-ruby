@@ -26,12 +26,6 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(http.port).must_equal 4317
     end
 
-    it 'refuses invalid headers' do
-      assert_raises ArgumentError do
-        OpenTelemetry::Exporter::OTLP::Exporter.new(headers: 'a:b,c')
-      end
-    end
-
     it 'refuses invalid endpoint' do
       assert_raises ArgumentError do
         OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'not a url')
@@ -98,6 +92,61 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_NONE
       _(http.address).must_equal 'localhost'
       _(http.port).must_equal 4321
+    end
+
+    describe 'Headers Environment Variable' do
+      it 'allows any number of the equal sign (=) characters in the value' do
+        exp = with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'a=b,c=d==,e=f') do
+          OpenTelemetry::Exporter::OTLP::Exporter.new
+        end
+        _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd==', 'e' => 'f')
+
+        exp = with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'a=b,c=d==,e=f') do
+          OpenTelemetry::Exporter::OTLP::Exporter.new
+        end
+        _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd==', 'e' => 'f')
+      end
+
+      it 'trims any leading or trailing whitespaces in keys and values' do
+        exp = with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'a =  b  ,c=d , e=f') do
+          OpenTelemetry::Exporter::OTLP::Exporter.new
+        end
+        _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd', 'e' => 'f')
+
+        exp = with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'a =  b  ,c=d , e=f') do
+          OpenTelemetry::Exporter::OTLP::Exporter.new
+        end
+        _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd', 'e' => 'f')
+      end
+
+      it 'decodes values as URL encoded UTF-8 strings' do
+        exp = with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'token=%C3%BCber') do
+          OpenTelemetry::Exporter::OTLP::Exporter.new
+        end
+        _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über')
+
+        exp = with_env('OTEL_EXPORTER_OTLP_HEADERS' => '%C3%BCber=token') do
+          OpenTelemetry::Exporter::OTLP::Exporter.new
+        end
+        _(exp.instance_variable_get(:@headers)).must_equal('über' => 'token')
+
+        exp = with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'token=%C3%BCber') do
+          OpenTelemetry::Exporter::OTLP::Exporter.new
+        end
+        _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über')
+
+        exp = with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => '%C3%BCber=token') do
+          OpenTelemetry::Exporter::OTLP::Exporter.new
+        end
+        _(exp.instance_variable_get(:@headers)).must_equal('über' => 'token')
+      end
+
+      it 'prefers TRACES specific variable' do
+        exp = with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'a=b,c=d==,e=f', 'OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'token=%C3%BCber') do
+          OpenTelemetry::Exporter::OTLP::Exporter.new
+        end
+        _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über')
+      end
     end
   end
 
