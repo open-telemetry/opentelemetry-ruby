@@ -149,15 +149,30 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       end
 
       it 'omits any invalid header values' do
+        logger = OpenTelemetry.logger
+        log_stream = StringIO.new
+        OpenTelemetry.logger = ::Logger.new(log_stream)
+
         exp = with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'a=,c=hi%F3,,token=abc455==afs') do
           OpenTelemetry::Exporter::OTLP::Exporter.new
         end
         _(exp.instance_variable_get(:@headers)).must_equal('token' => 'abc455==afs')
 
+        _(log_stream.string).must_match(
+          /ERROR -- : OpenTelemetry error: c=hi%F3 - invalid byte sequence/
+        )
+
+        log_stream = StringIO.new
+        OpenTelemetry.logger = ::Logger.new(log_stream)
         exp = with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'a=,c=hi%F3,,token=abc455==afs') do
           OpenTelemetry::Exporter::OTLP::Exporter.new
         end
         _(exp.instance_variable_get(:@headers)).must_equal('token' => 'abc455==afs')
+        _(log_stream.string).must_match(
+          /ERROR -- : OpenTelemetry error: c=hi%F3 - invalid byte sequence/
+        )
+      ensure
+        OpenTelemetry.logger = logger
       end
     end
   end
