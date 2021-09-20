@@ -147,6 +147,18 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
         end
         _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über')
       end
+
+      it 'omits any invalid header values' do
+        exp = with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'a=,c=hi%F3,,token=abc455==afs') do
+          OpenTelemetry::Exporter::OTLP::Exporter.new
+        end
+        _(exp.instance_variable_get(:@headers)).must_equal('token' => 'abc455==afs')
+
+        exp = with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'a=,c=hi%F3,,token=abc455==afs') do
+          OpenTelemetry::Exporter::OTLP::Exporter.new
+        end
+        _(exp.instance_variable_get(:@headers)).must_equal('token' => 'abc455==afs')
+      end
     end
   end
 

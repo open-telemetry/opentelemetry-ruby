@@ -359,10 +359,17 @@ module OpenTelemetry
 
         def parse_headers(raw)
           entries = raw.split(',')
-          entries.each_with_object({}) do |entry, headers|
-            k, v = entry.split('=', 2).map(&CGI.method(:unescape))
-            headers[k.strip] = v.strip
-          end
+          entries.each_with_object({}) { |entry, headers|
+            begin
+              k, v = entry.split('=', 2).map(&CGI.method(:unescape))
+              k = k.to_s.strip
+              v = v.to_s.strip
+
+              headers[k] = v unless k.empty? || v.empty?
+            rescue ArgumentError => e
+              OpenTelemetry.handle_error(exception: e, message: entry)
+            end
+          }
         end
       end
     end
