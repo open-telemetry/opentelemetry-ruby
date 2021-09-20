@@ -44,7 +44,7 @@ def search_by(query)
 end
 ```
 
-The `in_span` convience method is unique to Ruby implementation, which reduces some of the boilerplate code that you would have to otherwise write yourself:
+The `in_span` convenience method is unique to Ruby implementation, which reduces some of the boilerplate code that you would have to otherwise write yourself:
 
 ```ruby
 def search_by(query)
