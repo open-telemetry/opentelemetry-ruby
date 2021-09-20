@@ -84,7 +84,7 @@ Adding tracing to a single service is a great first step and although auto-instr
 
 [Context Propagation][context-propagation] is perhaps one of the most powerful concepts in OpenTelemetry because it will upgrade your single service trace into a _distributed trace_, which makes it possible for OpenTelemetry vendors to visualize a request from end-to-end accross process and network boundaries.
 
-[Span Events][events] allow you to add a human-readable message on a span that represents "something happening" during it's lifetime.
+[Span Events][events] allow you to add a human-readable message on a span that represents "something happening" during its lifetime.
 
 [Manual Instrumentation][manual-instrumentation] will give provide you the ability to enrich your traces with domain specific data.
 
