@@ -48,17 +48,16 @@ The `in_span` convience method is unique to Ruby implementation, which reduces s
 
 ```ruby
 def search_by(query)
-  begin
-    span = tracer.start_span("search_by", kind: :internal)
-    OpenTelemetry::Trace.with_span(span) do |span, context|
-      # ... expensive query
-    end
-  rescue Exception => e
-    span&.record_exception(e)
-    span&.status = OpenTelemetry::Trace::Status.error("Unhandled exception of type: #{e.class}")
-    raise e
-  ensure
-    span&.finish
+  span = tracer.start_span("search_by", kind: :internal)
+  OpenTelemetry::Trace.with_span(span) do |span, context|
+    # ... expensive query
+  end
+rescue Exception => e
+  span&.record_exception(e)
+  span&.status = OpenTelemetry::Trace::Status.error("Unhandled exception of type: #{e.class}")
+  raise e
+ensure
+  span&.finish
 end
 ```
 
