@@ -80,7 +80,7 @@ Lastly, open a browser and navigate to the [Jaeger UI](http://localhost:16686) o
 
 ### Achievement Unlocked: Tracing Enabled
 
-Adding tracing to a single service is a great first step and although auto-instrumenation provides quite a bit of insight on it's own, OpenTelemetry provides a few more features that will allow you gain even deeper insights!
+Adding tracing to a single service is a great first step and although auto-instrumenation provides quite a bit of insight on its own, OpenTelemetry provides a few more features that will allow you gain even deeper insights!
 
 [Context Propagation][context-propagation] is perhaps one of the most powerful concepts in OpenTelemetry because it will upgrade your single service trace into a _distributed trace_, which makes it possible for OpenTelemetry vendors to visualize a request from end-to-end accross process and network boundaries.
 
