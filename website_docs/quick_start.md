@@ -22,7 +22,7 @@ In order to follow along, you will need:
 
 ### Installation
 
-The first step add these gems to your Gemfile:
+The first step is to add these gems to your Gemfile:
 
 ```ruby
 gem 'opentelemetry-sdk'
