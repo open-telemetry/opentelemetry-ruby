@@ -44,15 +44,15 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Instrumentation do
       end
     end
 
-    describe "when the installing application bypasses RubyGems" do
+    describe 'when the installing application bypasses RubyGems' do
       it 'falls back to the VERSION constant' do
-        stub_const("Kafka::VERSION", "0.6.9")
+        stub_const('Kafka::VERSION', '0.6.9')
         Gem.stub(:loaded_specs, 'ruby-kafka' => nil) do
           _(instrumentation.compatible?).must_equal false
         end
 
         version = ::OpenTelemetry::Instrumentation::RubyKafka::Instrumentation::MINIMUM_VERSION.version
-        stub_const("Kafka::VERSION", version)
+        stub_const('Kafka::VERSION', version)
         Gem.stub(:loaded_specs, 'ruby-kafka' => nil) do
           _(instrumentation.compatible?).must_equal true
         end
