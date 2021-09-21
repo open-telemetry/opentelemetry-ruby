@@ -31,6 +31,9 @@ module OpenTelemetry
         WRITE_TIMEOUT_SUPPORTED = Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.6')
         private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT, :WRITE_TIMEOUT_SUPPORTED)
 
+        ERROR_MESSAGE_INVALID_HEADERS = 'headers must be comma-separated URL Encoded UTF-8 k=v pairs'
+        private_constant(:ERROR_MESSAGE_INVALID_HEADERS)
+
         def self.ssl_verify_mode
           if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
             OpenSSL::SSL::VERIFY_PEER
@@ -359,16 +362,18 @@ module OpenTelemetry
 
         def parse_headers(raw)
           entries = raw.split(',')
-          entries.each_with_object({}) { |entry, headers|
-            begin
-              k, v = entry.split('=', 2).map(&CGI.method(:unescape))
-              k = k.to_s.strip
-              v = v.to_s.strip
+          raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if entries.empty?
 
-              headers[k] = v unless k.empty? || v.empty?
-            rescue ArgumentError => e
-              OpenTelemetry.handle_error(exception: e, message: entry)
-            end
+          entries.each_with_object({}) { |entry, headers|
+              k, v = entry.split('=', 2).map(&CGI.method(:unescape))
+              begin
+                k = k.to_s.strip
+                v = v.to_s.strip
+              rescue ArgumentError => e
+                raise e, ERROR_MESSAGE_INVALID_HEADERS
+              end
+              raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if k.empty? || v.empty?
+              headers[k] = v
           }
         end
       end

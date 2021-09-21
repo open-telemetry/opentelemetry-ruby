@@ -148,31 +148,68 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
         _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über')
       end
 
-      it 'omits any invalid header values' do
-        logger = OpenTelemetry.logger
-        log_stream = StringIO.new
-        OpenTelemetry.logger = ::Logger.new(log_stream)
+      it 'fails fast when header values are missing' do
+        error = _(){
+                     with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'a = ') do
+                       OpenTelemetry::Exporter::OTLP::Exporter.new
+                     end
+                   }.must_raise(ArgumentError)
+        _(error.message).must_match(/headers/i)
 
-        exp = with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'a=,c=hi%F3,,token=abc455==afs') do
-          OpenTelemetry::Exporter::OTLP::Exporter.new
-        end
-        _(exp.instance_variable_get(:@headers)).must_equal('token' => 'abc455==afs')
+        error = _(){
+                     with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'a = ') do
+                       OpenTelemetry::Exporter::OTLP::Exporter.new
+                     end
+                   }.must_raise(ArgumentError)
+        _(error.message).must_match(/headers/i)
+      end
 
-        _(log_stream.string).must_match(
-          /ERROR -- : OpenTelemetry error: c=hi%F3 - invalid byte sequence/
-        )
+      it 'fails fast when header or values are not found' do
+        error = _(){
+          with_env('OTEL_EXPORTER_OTLP_HEADERS' => ',') do
+            OpenTelemetry::Exporter::OTLP::Exporter.new
+          end
+        }.must_raise(ArgumentError)
+        _(error.message).must_match(/headers/i)
 
-        log_stream = StringIO.new
-        OpenTelemetry.logger = ::Logger.new(log_stream)
-        exp = with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'a=,c=hi%F3,,token=abc455==afs') do
-          OpenTelemetry::Exporter::OTLP::Exporter.new
-        end
-        _(exp.instance_variable_get(:@headers)).must_equal('token' => 'abc455==afs')
-        _(log_stream.string).must_match(
-          /ERROR -- : OpenTelemetry error: c=hi%F3 - invalid byte sequence/
-        )
-      ensure
-        OpenTelemetry.logger = logger
+        error = _(){
+          with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => ',') do
+            OpenTelemetry::Exporter::OTLP::Exporter.new
+          end
+        }.must_raise(ArgumentError)
+        _(error.message).must_match(/headers/i)
+      end
+
+      it 'fails fast when header values contain invalid escape characters' do
+        error = _(){
+          with_env('OTEL_EXPORTER_OTLP_HEADERS' => "c=hi%F3") do
+            OpenTelemetry::Exporter::OTLP::Exporter.new
+          end
+        }.must_raise(ArgumentError)
+        _(error.message).must_match(/headers/i)
+
+        error = _(){
+          with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => "c=hi%F3") do
+            OpenTelemetry::Exporter::OTLP::Exporter.new
+          end
+        }.must_raise(ArgumentError)
+        _(error.message).must_match(/headers/i)
+      end
+
+      it 'fails fast when headers are invalid' do
+        error = _(){
+          with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'this is not a header') do
+            OpenTelemetry::Exporter::OTLP::Exporter.new
+          end
+        }.must_raise(ArgumentError)
+        _(error.message).must_match(/headers/i)
+
+        error = _(){
+          with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'this is not a header') do
+            OpenTelemetry::Exporter::OTLP::Exporter.new
+          end
+        }.must_raise(ArgumentError)
+        _(error.message).must_match(/headers/i)
       end
     end
   end
