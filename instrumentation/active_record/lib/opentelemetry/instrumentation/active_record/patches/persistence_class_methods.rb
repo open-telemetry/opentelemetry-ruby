@@ -30,12 +30,6 @@ module OpenTelemetry
               end
             end
 
-            def instantiate(attributes, column_types = {}, &block)
-              tracer.in_span("#{self}.instantiate") do
-                super
-              end
-            end
-
             def update(id = :all, attributes) # rubocop:disable Style/OptionalArguments
               tracer.in_span("#{self}.update") do
                 super
