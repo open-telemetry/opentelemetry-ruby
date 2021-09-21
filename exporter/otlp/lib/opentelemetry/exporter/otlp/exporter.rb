@@ -31,7 +31,7 @@ module OpenTelemetry
         WRITE_TIMEOUT_SUPPORTED = Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.6')
         private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT, :WRITE_TIMEOUT_SUPPORTED)
 
-        ERROR_MESSAGE_INVALID_HEADERS = 'headers must be comma-separated URL Encoded UTF-8 k=v pairs'
+        ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
         private_constant(:ERROR_MESSAGE_INVALID_HEADERS)
 
         def self.ssl_verify_mode
@@ -44,10 +44,10 @@ module OpenTelemetry
           end
         end
 
-        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'https://localhost:4317/v1/traces'), # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'https://localhost:4317/v1/traces'), # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
                        certificate_file: config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
                        ssl_verify_mode: Exporter.ssl_verify_mode,
-                       headers: config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS'),
+                       headers: config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                        compression: config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION'),
                        timeout: config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
                        metrics_reporter: nil)
@@ -70,6 +70,8 @@ module OpenTelemetry
           @headers = case headers
                      when String then parse_headers(headers)
                      when Hash then headers
+                     else
+                       raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS
                      end
           @timeout = timeout.to_f
           @compression = compression
@@ -153,7 +155,7 @@ module OpenTelemetry
                              bytes
                            end
             request.add_field('Content-Type', 'application/x-protobuf')
-            @headers&.each { |key, value| request.add_field(key, value) }
+            @headers.each { |key, value| request.add_field(key, value) }
 
             remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
             return TIMEOUT if remaining_timeout.zero?
@@ -364,17 +366,18 @@ module OpenTelemetry
           entries = raw.split(',')
           raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if entries.empty?
 
-          entries.each_with_object({}) { |entry, headers|
-              k, v = entry.split('=', 2).map(&CGI.method(:unescape))
-              begin
-                k = k.to_s.strip
-                v = v.to_s.strip
-              rescue ArgumentError => e
-                raise e, ERROR_MESSAGE_INVALID_HEADERS
-              end
-              raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if k.empty? || v.empty?
-              headers[k] = v
-          }
+          entries.each_with_object({}) do |entry, headers|
+            k, v = entry.split('=', 2).map(&CGI.method(:unescape))
+            begin
+              k = k.to_s.strip
+              v = v.to_s.strip
+            rescue ArgumentError => e
+              raise e, ERROR_MESSAGE_INVALID_HEADERS
+            end
+            raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if k.empty? || v.empty?
+
+            headers[k] = v
+          end
         end
       end
     end
