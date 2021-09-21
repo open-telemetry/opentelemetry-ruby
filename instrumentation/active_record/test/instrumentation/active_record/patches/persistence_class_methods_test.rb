@@ -41,14 +41,6 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::PersistenceClass
     end
   end
 
-  describe '.instantiate' do
-    it 'traces' do
-      User.instantiate(updated_at: Time.current, created_at: Time.current)
-      instantiate_span = spans.find { |s| s.name == 'User.instantiate' }
-      _(instantiate_span).wont_be_nil
-    end
-  end
-
   describe '.update' do
     it 'traces' do
       last_user = User.create
