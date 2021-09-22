@@ -1,12 +1,7 @@
 ---
-title: "Ruby Manual Instrumentation"
-weight: 24
-description: >
-  <img width="35" src="https://raw.github.com/open-telemetry/opentelemetry.io/main/iconography/32x32/Ruby_SDK.svg"></img>
-  A language-specific implementation of OpenTelemetry in Ruby.
+title: "Manual Instrumentation"
+weight: 4
 ---
-
-## Adding Manual Instrumentation
 
 Auto-instrumentation is the easiest way to get started with instrumenting your code, but in order to get the most insight into your system, you should add manual instrumentation where appropriate.
 To do this, use the OpenTelemetry SDK to access the currently executing span and add attributes to it, and/or to create new spans.
