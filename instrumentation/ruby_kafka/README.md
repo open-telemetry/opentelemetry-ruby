@@ -40,6 +40,29 @@ The `opentelemetry-instrumentation-ruby_kafka` gem source is [on github][repo-gi
 
 The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us in [GitHub Discussions][discussions-url] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
+### Running Tests
+
+Tests in this package require a running instance of Kafka and Zookeeper, which are made available via `docker-compose`:
+
+```bash
+ruby-kafka $> docker-compose up -d kafka
+ Creating network "ruby_kafka_default" with the default driver
+ Creating ruby_kafka_zookeeper_1 ... done
+ Creating ruby_kafka_kafka_1     ... done
+```
+
+The run tests using `rake`
+
+```bash
+ruby-kafka $> bundle exec rake test
+```
+
+To stop the dependent services
+
+```bash
+ruby-kafka $> docker-compose down
+```
+
 ## License
 
 The `opentelemetry-instrumentation-ruby_kafka` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.

@@ -22,13 +22,13 @@ module OpenTelemetry
         end
 
         compatible do
-          gem_version >= MINIMUM_VERSION
+          (!gem_version.nil? && gem_version >= MINIMUM_VERSION)
         end
 
         private
 
         def gem_version
-          Gem.loaded_specs['ruby-kafka'].version
+          Gem.loaded_specs['ruby-kafka']&.version || Gem::Version.new(Kafka::VERSION)
         end
 
         def require_patches
