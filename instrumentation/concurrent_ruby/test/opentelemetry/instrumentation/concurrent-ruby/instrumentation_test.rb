@@ -17,13 +17,13 @@ describe OpenTelemetry::Instrumentation::ConcurrentRuby::Instrumentation do
 
   before do
     exporter.reset
-    @unmodified_future = ::Concurrent::RubyExecutorService.dup
+    @unmodified_future = ::Concurrent::ThreadPoolExecutor.dup
   end
 
   after do
     # Force re-install of instrumentation
-    ::Concurrent.send(:remove_const, :RubyExecutorService)
-    ::Concurrent.const_set('RubyExecutorService', unmodified_future)
+    ::Concurrent.send(:remove_const, :ThreadPoolExecutor)
+    ::Concurrent.const_set('ThreadPoolExecutor', unmodified_future)
     instrumentation.instance_variable_set(:@installed, false)
   end
 

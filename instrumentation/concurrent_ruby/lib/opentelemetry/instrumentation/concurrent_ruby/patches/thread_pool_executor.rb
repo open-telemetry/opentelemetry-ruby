@@ -8,8 +8,8 @@ module OpenTelemetry
   module Instrumentation
     module ConcurrentRuby
       module Patches
-        # Concurrent::RubyExecutorService or Concurrent::JavaExecutorService patch for instrumentation
-        module ExecutorService
+        # Concurrent::ThreadPoolExecutor patch for instrumentation
+        module ThreadPoolExecutor
           # @see Concurrent::ExecutorService#post
           def post(*args, **kwargs, &task)
             context = OpenTelemetry::Context.current
