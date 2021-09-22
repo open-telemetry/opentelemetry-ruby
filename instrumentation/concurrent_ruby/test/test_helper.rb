@@ -4,9 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'concurrent/executors'
-require 'concurrent/future'
-require 'concurrent/promises'
+require 'concurrent'
 
 require 'opentelemetry/sdk'
 

@@ -51,6 +51,7 @@ describe OpenTelemetry::Instrumentation::ConcurrentRuby::Instrumentation do
     end
 
     it 'propagates context in Promises' do
+      skip 'Concurrent::Promises is not defined' unless ::Concurrent.const_defined?(:Promises)
       outer_span = tracer.start_span('outer_span')
       inner_span = nil
       OpenTelemetry::Trace.with_span(outer_span) do
