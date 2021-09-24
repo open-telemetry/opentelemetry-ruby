@@ -8,6 +8,7 @@ source 'https://rubygems.org'
 
 gemspec
 
+gem 'opentelemetry-instrumentation-rdkafka', path: '../rdkafka'
 gem 'opentelemetry-api', path: '../../api'
 gem 'opentelemetry-common', path: '../../common'
 gem 'opentelemetry-instrumentation-action_pack', path: '../action_pack'
