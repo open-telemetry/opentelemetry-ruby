@@ -16,17 +16,17 @@ module OpenTelemetry
         end
 
         present do
-          defined?(::Concurrent::Future)
+          defined?(::Concurrent::ThreadPoolExecutor)
         end
 
         private
 
         def require_dependencies
-          require_relative 'patches/future'
+          require_relative 'patches/thread_pool_executor'
         end
 
         def patch
-          ::Concurrent::Future.send(:include, Patches::Future)
+          ::Concurrent::ThreadPoolExecutor.prepend Patches::ThreadPoolExecutor
         end
       end
     end

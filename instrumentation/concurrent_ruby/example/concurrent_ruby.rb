@@ -19,3 +19,10 @@ tracer.in_span('outer_span') do
   future.execute
   future.wait
 end
+
+tracer.in_span('outer_span') do
+  future = Concurrent::Promises.future do
+    tracer.in_span('inner_span') {}
+  end
+  future.result
+end

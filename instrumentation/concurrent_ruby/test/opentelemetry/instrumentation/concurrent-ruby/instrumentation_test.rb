@@ -17,13 +17,13 @@ describe OpenTelemetry::Instrumentation::ConcurrentRuby::Instrumentation do
 
   before do
     exporter.reset
-    @unmodified_future = ::Concurrent::Future.dup
+    @unmodified_future = ::Concurrent::ThreadPoolExecutor.dup
   end
 
   after do
     # Force re-install of instrumentation
-    ::Concurrent.send(:remove_const, :Future)
-    ::Concurrent.const_set('Future', unmodified_future)
+    ::Concurrent.send(:remove_const, :ThreadPoolExecutor)
+    ::Concurrent.const_set('ThreadPoolExecutor', unmodified_future)
     instrumentation.instance_variable_set(:@installed, false)
   end
 
@@ -36,13 +36,30 @@ describe OpenTelemetry::Instrumentation::ConcurrentRuby::Instrumentation do
       outer_span = tracer.start_span('outer_span')
       inner_span = nil
       OpenTelemetry::Trace.with_span(outer_span) do
-        future = Concurrent::Future.new do
+        future = ::Concurrent::Future.new do
           inner_span = tracer.start_span('inner_span')
           inner_span.finish
         end
         future.execute
 
         future.wait
+      end
+      outer_span.finish
+
+      _(exporter.finished_spans.size).must_equal 2
+      _(inner_span.parent_span_id).must_equal outer_span.context.span_id
+    end
+
+    it 'propagates context in Promises' do
+      skip 'Concurrent::Promises is not defined' unless ::Concurrent.const_defined?(:Promises)
+      outer_span = tracer.start_span('outer_span')
+      inner_span = nil
+      OpenTelemetry::Trace.with_span(outer_span) do
+        future = ::Concurrent::Promises.future do
+          inner_span = tracer.start_span('inner_span')
+          inner_span.finish
+        end
+        future.value
       end
       outer_span.finish
 
