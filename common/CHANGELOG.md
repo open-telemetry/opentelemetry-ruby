@@ -1,5 +1,9 @@
 
 
+### v0.19.2 / 2021-09-24
+
+* (No significant changes)
+
 ### v0.19.1 / 2021-08-12
 
 * (No significant changes)

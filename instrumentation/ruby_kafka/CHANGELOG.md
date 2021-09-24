@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-ruby_kafka
 
+### v0.18.3 / 2021-09-24
+
+* FIXED: Use Kafka::VERSION fallback for compatibility 
+
 ### v0.18.2 / 2021-08-12
 
 * DOCS: Update docs to rely more on environment variable configuration 

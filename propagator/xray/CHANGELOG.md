@@ -1,5 +1,9 @@
 # Release History: opentelemetry-propagator-xray
 
+### v0.20.1 / 2021-09-24
+
+* (No significant changes)
+
 ### v0.20.0 / 2021-08-12
 
 * ADDED: Xray compliant ids 
