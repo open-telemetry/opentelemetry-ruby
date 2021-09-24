@@ -10,6 +10,18 @@ module OpenTelemetry
       # The SpanSubscriber is a special ActiveSupport::Notification subscription
       # handler which turns notifications into generic spans, taking care to handle
       # context appropriately.
+
+      # A very hacky way to make sure that OpenTelemetry::Instrumentation::ActionView::SpanSubscriber
+      # gets invoked first
+      def self.subscribe(pattern = nil, callable = nil)
+        subscriber = ::ActiveSupport::Notifications::Fanout::Subscribers.new(pattern, callable, false)
+        ::ActiveSupport::Notifications.notifier.synchronize do
+          ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern].unshift(subscriber)
+          ::ActiveSupport::Notifications.notifier.instance_variable_get(:@listeners_for).delete(pattern)
+        end
+        subscriber
+      end
+
       class SpanSubscriber
         ALWAYS_VALID_PAYLOAD_TYPES = [TrueClass, FalseClass, String, Numeric, Symbol].freeze
 
@@ -18,16 +30,20 @@ module OpenTelemetry
           @tracer = tracer
         end
 
-        def start(_name, _id, payload)
+        def start(name, id, payload)
           span = @tracer.start_span(@span_name, kind: :internal)
           token = OpenTelemetry::Context.attach(
             OpenTelemetry::Trace.context_with_span(span)
+          )
+          payload.merge!(
+            __opentelemetry_span: span,
+            __opentelemetry_ctx_token: token
           )
 
           [span, token]
         end
 
-        def finish(_name, _id, payload) # rubocop:disable Metrics/AbcSize
+        def finish(name, id, payload) # rubocop:disable Metrics/AbcSize
           span = payload.delete(:__opentelemetry_span)
           token = payload.delete(:__opentelemetry_ctx_token)
           return unless span && token
