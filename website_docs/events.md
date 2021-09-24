@@ -1,12 +1,7 @@
 ---
-title: "Ruby Span Events"
-weight: 24
-description: >
-  <img width="35" src="https://raw.github.com/open-telemetry/opentelemetry.io/main/iconography/32x32/Ruby_SDK.svg"></img>
-  A language-specific implementation of OpenTelemetry in Ruby.
+title: "Span Events"
+weight: 3
 ---
-
-## Events
 
 An event is a human-readable message on a span that represents "something happening" during it's lifetime. For example, imagine a function that requires exclusive access to a resource that is under a mutex. An event could be created at two points - once, when we try to gain access to the resource, and another when we acquire the mutex.
 

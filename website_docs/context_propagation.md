@@ -1,12 +1,7 @@
 ---
-title: "Ruby Context Propagation"
-weight: 24
-description: >
-  <img width="35" src="https://raw.github.com/open-telemetry/opentelemetry.io/main/iconography/32x32/Ruby_SDK.svg"></img>
-  A language-specific implementation of OpenTelemetry in Ruby.
+title: "Context Propagation"
+weight: 2
 ---
-
-## Context Propagation
 
 > Distributed Tracing tracks the progression of a single Request, called a Trace, as it is handled by Services that make up an Application. A Distributed Trace transverses process, network and security boundaries. [glossary][glossary]
 
