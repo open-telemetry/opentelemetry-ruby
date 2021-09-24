@@ -10,20 +10,28 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the Rdkafka instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |_config|
-          require_dependencies
+          require_patches
+          patch
         end
 
         present do
-          # TODO: Replace true with a definition check of the gem being instrumented
-          # Example: `defined?(::Rack)`
-          true
+          defined?(::Rdkafka)
         end
 
         private
 
-        def require_dependencies
-          # TODO: Include instrumentation dependencies
+        def require_patches
+          require_relative 'patches/producer'
+          # require_relative 'patches/consumer'
+          # require_relative 'patches/client'
         end
+
+        def patch
+          ::Rdkafka::Producer.prepend(Patches::Producer)
+          # ::Kafka::Consumer.prepend(Patches::Consumer)
+          # ::Kafka::Client.prepend(Patches::Client)
+        end
+
       end
     end
   end
