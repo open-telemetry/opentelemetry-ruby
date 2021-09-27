@@ -20,10 +20,13 @@ module OpenTelemetry
               # Do not trace recursive call for starting the connection
               return super(req, body, &block) unless started?
 
-              uri = uri_from_req(req)
               method = req.method
 
-              attributes = OpenTelemetry::Common::HTTP::ClientContext.attributes.merge(from_request(method, uri, config))
+              attributes = OpenTelemetry::Common::HTTP::ClientContext.attributes.merge(
+                from_request(method, req.uri, config,
+                  url: "#{USE_SSL_TO_SCHEME[use_ssl?]}://#{@address}:#{@port}#{req.path}" unless req.uri
+                )
+              )
               tracer.in_span(
                 HTTP_METHODS_TO_SPAN_NAMES[method],
                 attributes: attributes,
@@ -72,10 +75,6 @@ module OpenTelemetry
 
             def config
               Net::HTTP::Instrumentation.instance.config
-            end
-
-            def uri_from_req(req)
-              req.uri || URI.join("#{USE_SSL_TO_SCHEME[use_ssl?]}://#{@address}:#{@port}", req.path)
             end
           end
         end
