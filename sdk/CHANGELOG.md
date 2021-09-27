@@ -1,5 +1,9 @@
 # Release History: opentelemetry-sdk
 
+## Unreleased
+
+* FIXED: Batch Span Processor(BSP) .shutdown returns integer value matching specification
+
 ### v1.0.0.rc3 / 2021-08-12
 
 * BREAKING CHANGE: Remove optional parent_context from in_span
