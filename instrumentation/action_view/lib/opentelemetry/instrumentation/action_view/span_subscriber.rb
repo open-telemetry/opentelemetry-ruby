@@ -6,6 +6,7 @@
 
 module OpenTelemetry
   module Instrumentation
+    # rubocop:disable Style/Documentation
     module ActionView
       # The SpanSubscriber is a special ActiveSupport::Notification subscription
       # handler which turns notifications into generic spans, taking care to handle
@@ -106,4 +107,5 @@ module OpenTelemetry
       end
     end
   end
+  # rubocop:enable Style/Documentation
 end
