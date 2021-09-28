@@ -77,11 +77,14 @@ describe OpenTelemetry::Context do
     before do
       @log_stream = StringIO.new
       @_logger = OpenTelemetry.logger
+      @_error_handler = OpenTelemetry.error_handler
       OpenTelemetry.logger = ::Logger.new(@log_stream)
     end
 
     after do
+      # Ensure we don't leak custom loggers and error handlers to other tests
       OpenTelemetry.logger = @_logger
+      OpenTelemetry.error_handler = @_error_handler
     end
 
     it 'restores the context' do
@@ -144,9 +147,6 @@ describe OpenTelemetry::Context do
       }
 
       _(-> { Context.detach('junk') }).must_raise(OpenTelemetry::Context::DetachError)
-
-    ensure
-      OpenTelemetry.error_handler = ->(exception: nil, message: nil) { OpenTelemetry.logger.error("OpenTelemetry error: #{[message, exception&.message].compact.join(' - ')}") }
     end
   end
 
