@@ -14,17 +14,16 @@ module OpenTelemetry
       # A very hacky way to make sure that OpenTelemetry::Instrumentation::ActionView::SpanSubscriber
       # gets invoked first
       def self.subscribe(pattern = nil, callable = nil)
-        subscriber = ::ActiveSupport::Notifications::Fanout::Subscribers.new(pattern, callable)
+        ActiveSupport::Notifications.subscribe(pattern, callable)
         ::ActiveSupport::Notifications.notifier.synchronize do
-          if Rails::VERSION::MAJOR >= 6
-            ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern].unshift(subscriber)
-            ::ActiveSupport::Notifications.notifier.instance_variable_get(:@listeners_for).delete(pattern)
+          if Rails::VERSION::MAJOR == 6
+            s = ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern].pop
+            ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern].unshift(s)
           else
-            ::ActiveSupport::Notifications.notifier.instance_variable_get(:@subscribers).unshift(subscriber)
-            ::ActiveSupport::Notifications.notifier.instance_variable_get(:@listeners_for).clear
+            s = ::ActiveSupport::Notifications.notifier.instance_variable_get(:@subscribers).pop
+            ::ActiveSupport::Notifications.notifier.instance_variable_get(:@subscribers).unshift(s)
           end
         end
-        subscriber
       end
 
       class SpanSubscriber
