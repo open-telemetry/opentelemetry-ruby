@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.19.3 / 2021-09-29
+
+* (No significant changes)
+
 ### v0.19.2 / 2021-08-18
 
 * FIXED: Rack middleware assuming script_name presence 

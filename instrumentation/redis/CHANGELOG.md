@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-redis
 
+### v0.21.1 / 2021-09-29
+
+* (No significant changes)
+
 ### v0.21.0 / 2021-08-12
 
 * ADDED: Add toggle for redis db.statement attribute 

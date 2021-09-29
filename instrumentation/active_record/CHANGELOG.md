@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_record
 
+### v0.2.1 / 2021-09-29
+
+* (No significant changes)
+
 ### v0.2.0 / 2021-09-29
 
 * ADDED: Trace update_all and delete_all calls in ActiveRecord 

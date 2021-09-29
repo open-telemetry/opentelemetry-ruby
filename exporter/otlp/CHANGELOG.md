@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.20.5 / 2021-09-29
+
+* (No significant changes)
+
 ### v0.20.4 / 2021-09-29
 
 * FIXED: OTLP Export Header Format 
