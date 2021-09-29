@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module ConcurrentRuby
-      VERSION = '0.18.2'
+      VERSION = '0.19.0'
     end
   end
 end
