@@ -38,19 +38,6 @@ describe OpenTelemetry::Instrumentation::ActionView::SpanSubscriber do
     _(span.instrumentation_library.name).must_equal('foo')
   end
 
-  it 'finishes spans even when other subscribers blow up' do
-    ::ActiveSupport::Notifications.subscribe('bar.foo') { raise 'boom' }
-    ::OpenTelemetry::Instrumentation::ActionView.subscribe('bar.foo', subscriber)
-
-    expect do
-      ::ActiveSupport::Notifications.instrument('bar.foo', extra: 'context')
-    end.must_raise RuntimeError
-
-    _(last_span).wont_be_nil
-    _(last_span.name).must_equal('foo bar')
-    _(last_span.attributes['extra']).must_equal('context')
-  end
-
   it 'finishes the passed span' do
     span, token = subscriber.start('hai', 'abc', {})
     subscriber.finish('hai', 'abc', __opentelemetry_span: span, __opentelemetry_ctx_token: token)
