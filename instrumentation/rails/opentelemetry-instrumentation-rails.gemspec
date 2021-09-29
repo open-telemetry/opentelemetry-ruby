@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-action_pack', '~> 0.1.0'
   spec.add_dependency 'opentelemetry-instrumentation-action_view', '~> 0.1.1'
   spec.add_dependency 'opentelemetry-instrumentation-active_record', '~> 0.2.0'
-  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.18.2'
+  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.18.3'
 
   spec.add_development_dependency 'appraisal', '~> 2.2.0'
   spec.add_development_dependency 'bundler', '>= 1.17'
