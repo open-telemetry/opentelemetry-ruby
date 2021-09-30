@@ -31,6 +31,7 @@ jobs:
             # ethon omitted because it depends on libcurl which is not present
             # mysql2 omitted because it depends on the mysql C library which is not present
             # pg omitted because it depends on the postgres C library which is not present
+            # que omitted because it depends on the postgres C library which is not present
             # rails omitted because it depends on tzinfo which is not present
             # redis omitted because it depends on redis-server which is not present
             # sidekiq omitted because it depends on redis-server which is not present
@@ -42,6 +43,7 @@ jobs:
               --exclude opentelemetry-instrumentation-ethon
               --exclude opentelemetry-instrumentation-mysql2
               --exclude opentelemetry-instrumentation-pg
+              --exclude opentelemetry-instrumentation-que
               --exclude opentelemetry-instrumentation-rails
               --exclude opentelemetry-instrumentation-redis
               --exclude opentelemetry-instrumentation-resque
