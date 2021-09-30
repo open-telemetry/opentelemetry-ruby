@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module All
-      VERSION = '0.21.1'
+      VERSION = '0.21.2'
     end
   end
 end

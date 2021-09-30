@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-jaeger
 
+### v0.20.1 / 2021-09-29
+
+* (No significant changes)
+
 ### v0.20.0 / 2021-08-12
 
 * ADDED: OTEL_EXPORTER_JAEGER_TIMEOUT env var 
