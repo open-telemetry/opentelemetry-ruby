@@ -23,7 +23,7 @@ module OpenTelemetry
               method = req.method
 
               options = if req.uri
-                          {}
+                          { uri: req.uri }
                         else
                           {
                             url: "#{USE_SSL_TO_SCHEME[use_ssl?]}://#{@address}:#{@port}#{req.path}",
@@ -35,7 +35,7 @@ module OpenTelemetry
                         end
 
               attributes = OpenTelemetry::Common::HTTP::ClientContext.attributes.merge(
-                from_request(method, config, uri: req.uri, options)
+                from_request(method, config, options)
               )
               tracer.in_span(
                 HTTP_METHODS_TO_SPAN_NAMES[method],
