@@ -47,7 +47,7 @@ module OpenTelemetry
 
           def span_creation_attributes(http_method:, url:)
             config = Faraday::Instrumentation.instance.config
-            attributes = from_request(http_method, config, url)
+            attributes = from_request(http_method, config, uri: url)
             attributes['peer.service'] = config[:peer_service] if config[:peer_service]
             attributes.merge(OpenTelemetry::Common::HTTP::ClientContext.attributes)
           end

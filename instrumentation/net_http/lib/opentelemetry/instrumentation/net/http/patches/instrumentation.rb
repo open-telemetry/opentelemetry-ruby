@@ -35,7 +35,7 @@ module OpenTelemetry
                         end
 
               attributes = OpenTelemetry::Common::HTTP::ClientContext.attributes.merge(
-                from_request(method, config, req.uri, options)
+                from_request(method, config, uri: req.uri, options)
               )
               tracer.in_span(
                 HTTP_METHODS_TO_SPAN_NAMES[method],

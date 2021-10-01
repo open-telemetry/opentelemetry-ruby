@@ -9,7 +9,7 @@ module OpenTelemetry
     module HTTP
       # RequestAttributes contains instrumentation helpers for http instrumentation client requests
       module RequestAttributes
-        def from_request(method, config = {}, uri = nil, scheme: nil, target: nil, url: nil, hostname: nil, port: nil)
+        def from_request(method, config = {}, uri: nil, scheme: nil, target: nil, url: nil, hostname: nil, port: nil)
           {
             'http.method' => method,
             'http.scheme' => scheme || uri&.scheme,
