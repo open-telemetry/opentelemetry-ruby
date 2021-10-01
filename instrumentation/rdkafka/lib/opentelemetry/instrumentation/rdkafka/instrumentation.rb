@@ -22,14 +22,12 @@ module OpenTelemetry
 
         def require_patches
           require_relative 'patches/producer'
-          # require_relative 'patches/consumer'
-          # require_relative 'patches/client'
+          require_relative 'patches/consumer'
         end
 
         def patch
           ::Rdkafka::Producer.prepend(Patches::Producer)
-          # ::Kafka::Consumer.prepend(Patches::Consumer)
-          # ::Kafka::Client.prepend(Patches::Client)
+          ::Rdkafka::Consumer.prepend(Patches::Consumer)
         end
 
       end
