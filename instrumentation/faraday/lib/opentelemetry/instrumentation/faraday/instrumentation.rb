@@ -9,7 +9,7 @@ module OpenTelemetry
     module Faraday
       # The Instrumentation class contains logic to detect and install the Faraday
       # instrumentation
-      class Instrumentation < OpenTelemetry::Instrumentation::Base        
+      class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |_config|
           require_dependencies
           register_tracer_middleware

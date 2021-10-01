@@ -8,7 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module HTTP
       # The Settings class contains logic to generate the appropriate
-      # Faraday default settings
+      # HTTP default settings
       class Settings < OpenTelemetry::Instrumentation::Settings
         include InstrumentationHelpers::HTTP::InstrumentationOptions
 

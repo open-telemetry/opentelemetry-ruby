@@ -16,7 +16,7 @@ module OpenTelemetry
             HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = "HTTP #{k}" }
             USE_SSL_TO_SCHEME = { false => 'http', true => 'https' }.freeze
 
-            def request(req, body = nil, &block)
+            def request(req, body = nil, &block) # rubocop:disable Metrics/AbcSize
               # Do not trace recursive call for starting the connection
               return super(req, body, &block) unless started?
 
