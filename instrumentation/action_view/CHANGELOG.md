@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-action_view
 
+### v0.1.2 / 2021-09-29
+
+* (No significant changes)
+
 ### v0.1.1 / 2021-09-09
 
 * FIXED: Keep Active Support subscriptions intact when patching 

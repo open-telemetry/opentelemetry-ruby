@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-resque
 
+### v0.1.2 / 2021-09-29
+
+* (No significant changes)
+
 ### v0.1.1 / 2021-08-12
 
 * (No significant changes)
