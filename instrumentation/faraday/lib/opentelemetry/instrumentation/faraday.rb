@@ -17,5 +17,6 @@ module OpenTelemetry
   end
 end
 
+require_relative './faraday/settings'
 require_relative './faraday/instrumentation'
 require_relative './faraday/version'

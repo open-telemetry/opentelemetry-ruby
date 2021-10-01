@@ -11,8 +11,6 @@ module OpenTelemetry
     module HttpClient
       # The Instrumentation class contains logic to detect and install the HttpClient instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        include InstrumentationHelpers::HTTP::InstrumentationOptions
-
         install do |_config|
           require_dependencies
           patch
@@ -21,6 +19,12 @@ module OpenTelemetry
         present do
           defined?(::HTTPClient)
         end
+
+        def self.settings
+          @settings ||= HttpClient::Settings.new.defaults
+        end
+
+        apply_options
 
         private
 

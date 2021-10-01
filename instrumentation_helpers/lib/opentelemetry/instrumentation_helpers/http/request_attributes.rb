@@ -10,14 +10,11 @@ module OpenTelemetry
       # RequestAttributes contains instrumentation helpers for http instrumentation client requests
       module RequestAttributes
         def from_request(method, uri = nil, config = {}, scheme: nil, target: nil, url: nil, hostname: nil, port: nil)
-          uri = hide_query_params(uri) if config[:hide_query_params]
-          url = hide_url_query_params(url) if config[:hide_query_params]
-
           {
             'http.method' => method,
             'http.scheme' => scheme || uri&.scheme,
-            'http.target' => target || uri&.request_uri,
-            'http.url' => url || uri&.to_s,
+            'http.target' => hide_query_params(target || uri&.request_uri, config),
+            'http.url' => hide_query_params(url || uri&.to_s, config),
             'peer.hostname' => hostname || uri&.host,
             'peer.port' => port || uri&.port
           }.compact
@@ -25,21 +22,11 @@ module OpenTelemetry
 
         private
 
-        def hide_url_query_params(url)
-          return url unless url.is_a?(String)
-
-          query_param_start = url.index("?")
-
-          return url unless query_param_start
-
-          url[0,query_param_start]
-        end
-
-        def hide_query_params(uri)
-          uri = uri.dup
-          uri.query = '' if uri&.query
-
-          uri
+        def hide_query_params(url_or_path, config)
+          return url_or_path unless config[:hide_query_params]
+          query_param_start = url_or_path.index("?")
+          return url_or_path unless query_param_start
+          url_or_path[0,query_param_start+1]
         end
       end
     end

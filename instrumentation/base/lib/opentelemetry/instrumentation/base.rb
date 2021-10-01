@@ -145,7 +145,7 @@ module OpenTelemetry
         # @param [Callable, Symbol] validate Accepts a callable or a symbol that matches
         # a key in the VALIDATORS hash.  The supported keys are, :array, :boolean,
         # :callable, :integer, :string.
-        def option(name, default:, validate:)
+        def option(name, default:, validate:)            
           validate = VALIDATORS[validate] || validate
           raise ArgumentError, "validate must be #{VALIDATORS.keys.join(', ')}, or a callable" unless validate.respond_to?(:call)
 
@@ -153,9 +153,24 @@ module OpenTelemetry
           @options << { name: name, default: default, validate: validate }
         end
 
+        # Hash of settings allowed for this instrumentation
+        # with key as option name, value as Hash { default: default, validate: validate }
+        # subclasses in specific instrumentation gems can build a Hash of inherited allowed settings
+        def settings
+          @settings ||= Instrumentation::Settings.new.defaults
+        end
+
         def instance
           @instance ||= new(instrumentation_name, instrumentation_version, install_blk,
-                            present_blk, compatible_blk, options)
+                            present_blk, compatible_blk, options, settings)
+        end
+
+        protected
+        
+        def apply_options
+          settings.keys.each do |option_name|
+            option(option_name, default: settings[option_name][:default], validate: settings[option_name][:validate])
+          end
         end
 
         private
@@ -185,7 +200,7 @@ module OpenTelemetry
       alias installed? installed
 
       def initialize(name, version, install_blk, present_blk,
-                     compatible_blk, options)
+                     compatible_blk, options, settings)
         @name = name
         @version = version
         @install_blk = install_blk
@@ -194,6 +209,7 @@ module OpenTelemetry
         @config = {}
         @installed = false
         @options = options
+        @settings = settings
         @tracer = OpenTelemetry::Trace::Tracer.new
       end
 

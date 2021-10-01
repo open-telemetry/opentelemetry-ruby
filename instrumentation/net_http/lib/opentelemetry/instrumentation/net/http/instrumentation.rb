@@ -11,8 +11,6 @@ module OpenTelemetry
         # The Instrumentation class contains logic to detect and install the Net::HTTP
         # instrumentation
         class Instrumentation < OpenTelemetry::Instrumentation::Base
-          include InstrumentationHelpers::HTTP::InstrumentationOptions
-
           install do |_config|
             require_dependencies
             patch
@@ -21,6 +19,12 @@ module OpenTelemetry
           present do
             defined?(::Net::HTTP)
           end
+
+          def self.settings
+            @settings ||= HTTP::Settings.new.defaults
+          end
+
+          apply_options
 
           private
 
