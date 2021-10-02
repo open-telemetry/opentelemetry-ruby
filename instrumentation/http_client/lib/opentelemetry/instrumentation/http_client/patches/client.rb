@@ -14,7 +14,7 @@ module OpenTelemetry
 
           private
 
-          def do_get_block(req, proxy, conn, &block) # rubocop:disable Metrics/AbcSize
+          def do_get_block(req, proxy, conn, &block)
             uri = req.header.request_uri
             request_method = req.header.request_method
             attributes = from_request(request_method, config, uri: uri).merge(OpenTelemetry::Common::HTTP::ClientContext.attributes)

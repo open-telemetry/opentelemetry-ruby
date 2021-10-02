@@ -7,15 +7,16 @@
 module OpenTelemetry
   module InstrumentationHelpers
     module HTTP
-      # Instrumentation options contains instrumentation helpers for http instrumentation client requests
+      # InstrumentationOptions contains instrumentation helpers for http instrumentation client requests
       module InstrumentationOptions
         def self.included(base)
           base.include(ClassMethods)
         end
 
+        # ClassMethods contains inheritable default settings for http client instrumentation
         module ClassMethods
           DEFAULT_SETTINGS = {
-            :hide_query_params => { default: true, validate: :boolean}
+            hide_query_params: { default: true, validate: :boolean }
           }.freeze
 
           def defaults

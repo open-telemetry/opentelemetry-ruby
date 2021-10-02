@@ -13,7 +13,7 @@ module OpenTelemetry
         include InstrumentationHelpers::HTTP::InstrumentationOptions
 
         DEFAULT_SETTINGS = {
-          'peer_service' => { default: nil, validate: :string }
+          peer_service: { default: nil, validate: :string }
         }.freeze
 
         def defaults
