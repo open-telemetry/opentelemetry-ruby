@@ -6,6 +6,7 @@
 
 module OpenTelemetry
   module Instrumentation
+    # Settings to track default and allowed configuration options for an instrumentation
     class Settings
       DEFAULT_SETTINGS = {}.freeze
 

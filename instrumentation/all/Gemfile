@@ -10,7 +10,6 @@ gemspec
 
 gem 'opentelemetry-api', path: '../../api'
 gem 'opentelemetry-common', path: '../../common'
-gem 'opentelemetry-instrumentation_helpers', path: '../../instrumentation_helpers'
 gem 'opentelemetry-instrumentation-action_pack', path: '../action_pack'
 gem 'opentelemetry-instrumentation-action_view', path: '../action_view'
 gem 'opentelemetry-instrumentation-active_job', path: '../active_job'
@@ -42,6 +41,7 @@ gem 'opentelemetry-instrumentation-restclient', path: '../restclient'
 gem 'opentelemetry-instrumentation-ruby_kafka', path: '../ruby_kafka'
 gem 'opentelemetry-instrumentation-sidekiq', path: '../sidekiq'
 gem 'opentelemetry-instrumentation-sinatra', path: '../sinatra'
+gem 'opentelemetry-instrumentation_helpers', path: '../../instrumentation_helpers'
 
 group :test do
   gem 'opentelemetry-sdk', path: '../../sdk'
