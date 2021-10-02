@@ -23,15 +23,15 @@ module OpenTelemetry
               method = req.method
 
               options = if req.uri
-                          { 
+                          {
                             method: method,
                             config: config,
-                            uri: req.uri 
+                            uri: req.uri
                           }
                         else
                           {
                             method: method,
-                            config: config
+                            config: config,
                             url: "#{USE_SSL_TO_SCHEME[use_ssl?]}://#{@address}:#{@port}#{req.path}",
                             scheme: USE_SSL_TO_SCHEME[use_ssl?],
                             target: req.path,
