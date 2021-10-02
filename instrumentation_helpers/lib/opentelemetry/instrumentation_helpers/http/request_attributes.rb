@@ -10,7 +10,7 @@ module OpenTelemetry
       # RequestAttributes contains instrumentation helpers for http instrumentation client requests
       module RequestAttributes
         QUERY_PARAM_START_KEY = '?'
-        def from_request(method, config = {}, uri: nil, scheme: nil, target: nil, url: nil, hostname: nil, port: nil)
+        def from_request(method:, config: {}, uri: nil, scheme: nil, target: nil, url: nil, hostname: nil, port: nil)
           {
             'http.method' => method,
             'http.scheme' => scheme || uri&.scheme,

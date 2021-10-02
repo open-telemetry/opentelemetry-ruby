@@ -10,7 +10,7 @@ describe OpenTelemetry::InstrumentationHelpers::HTTP::RequestAttributes do
   subject { Class.new.extend(OpenTelemetry::InstrumentationHelpers::HTTP::RequestAttributes) }
 
   it 'returns http attributes matching the spec given input' do
-    attributes = subject.from_request('GET', {}, uri: URI('http://example.com/foo?bar=baz'))
+    attributes = subject.from_request(method: 'GET', config: {}, uri: URI('http://example.com/foo?bar=baz'))
     _(attributes).must_equal(
       'http.method' => 'GET',
       'http.scheme' => 'http',
@@ -22,7 +22,7 @@ describe OpenTelemetry::InstrumentationHelpers::HTTP::RequestAttributes do
   end
 
   it 'returns http attributes matching the spec given input' do
-    attributes = subject.from_request('GET', {}, uri: URI('http://example.com/foo?bar=baz'))
+    attributes = subject.from_request(method: 'GET', config: {}, uri: URI('http://example.com/foo?bar=baz'))
     _(attributes).must_equal(
       'http.method' => 'GET',
       'http.scheme' => 'http',
@@ -35,7 +35,7 @@ describe OpenTelemetry::InstrumentationHelpers::HTTP::RequestAttributes do
 
   describe 'if hide_query_params config option provided' do
     it 'hides query params in attributes' do
-      attributes = subject.from_request('GET', { hide_query_params: true }, uri: URI('http://example.com/foo?bar=baz'))
+      attributes = subject.from_request(method: 'GET', config: { hide_query_params: true }, uri: URI('http://example.com/foo?bar=baz'))
       _(attributes).must_equal(
         'http.method' => 'GET',
         'http.scheme' => 'http',
@@ -48,7 +48,7 @@ describe OpenTelemetry::InstrumentationHelpers::HTTP::RequestAttributes do
 
     it 'does not alter input uri' do
       uri = URI('http://example.com/foo?bar=baz')
-      subject.from_request('GET', { hide_query_params: true }, uri: uri)
+      subject.from_request(method: 'GET', config: { hide_query_params: true }, uri: uri)
       _(uri.query).must_equal('bar=baz')
     end
   end
