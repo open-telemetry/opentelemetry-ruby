@@ -181,8 +181,8 @@ describe OpenTelemetry::Instrumentation::ActionView::SpanSubscriber do
     end
 
     it 'finishes spans even when other subscribers blow up' do
-      ::OpenTelemetry::Instrumentation::ActionView.subscribe('bar.foo', subscriber)
       ::ActiveSupport::Notifications.subscribe('bar.foo') { raise 'boom' }
+      ::OpenTelemetry::Instrumentation::ActionView.subscribe('bar.foo', subscriber)
 
       expect do
         ::ActiveSupport::Notifications.instrument('bar.foo', extra: 'context')
