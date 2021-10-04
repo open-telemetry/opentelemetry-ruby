@@ -192,6 +192,11 @@ gems:
     directory: instrumentation/sinatra
     version_constant: [OpenTelemetry, Instrumentation, Sinatra, VERSION]
 
+  - name: opentelemetry-instrumentation_helpers
+    directory: instrumentation_helpers
+    version_rb_path: lib/opentelemetry/instrumentation_helpers/version.rb
+    version_constant: [OpenTelemetry, InstrumentationHelpers, VERSION]
+
   - name: opentelemetry-propagator-b3
     directory: propagator/b3
     version_constant: [OpenTelemetry, Propagator, B3, VERSION]
