@@ -1,0 +1,9 @@
+--no-private
+--title=OpenTelemetry Instrumentation Helpers
+--markup=markdown
+--main=README.md
+./lib/opentelemetry/instrumentation_helpers/**/*.rb
+./lib/opentelemetry/instrumentation_helpers.rb
+-
+README.md
+CHANGELOG.md
