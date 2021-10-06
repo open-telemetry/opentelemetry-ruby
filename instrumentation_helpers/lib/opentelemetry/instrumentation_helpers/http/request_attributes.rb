@@ -18,7 +18,7 @@ module OpenTelemetry
             'http.url' => hide_query_params(url || uri&.to_s, config),
             'peer.hostname' => hostname || uri&.host,
             'peer.port' => port || uri&.port
-          }.compact
+          }.merge(OpenTelemetry::Common::HTTP::ClientContext.attributes).compact
         end
 
         private

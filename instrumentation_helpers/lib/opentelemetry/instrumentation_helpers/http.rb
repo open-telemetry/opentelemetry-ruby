@@ -13,4 +13,3 @@ module OpenTelemetry
 end
 
 require_relative './http/request_attributes'
-require_relative './http/instrumentation_options'

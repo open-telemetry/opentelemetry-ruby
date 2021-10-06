@@ -20,11 +20,7 @@ module OpenTelemetry
           defined?(::HTTPClient)
         end
 
-        def self.settings
-          @settings ||= HttpClient::Settings.new.defaults
-        end
-
-        apply_options
+        option :hide_query_params, default: true, validate: :boolean
 
         private
 

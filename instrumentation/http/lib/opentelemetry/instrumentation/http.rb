@@ -16,6 +16,5 @@ module OpenTelemetry
   end
 end
 
-require_relative './http/settings'
 require_relative './http/instrumentation'
 require_relative './http/version'

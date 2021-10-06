@@ -153,24 +153,9 @@ module OpenTelemetry
           @options << { name: name, default: default, validate: validate }
         end
 
-        # Hash of settings allowed for this instrumentation
-        # with key as option name, value as Hash { default: default, validate: validate }
-        # subclasses in specific instrumentation gems can build a Hash of inherited allowed settings
-        def settings
-          @settings ||= Instrumentation::Settings.new.defaults
-        end
-
         def instance
           @instance ||= new(instrumentation_name, instrumentation_version, install_blk,
-                            present_blk, compatible_blk, options, settings)
-        end
-
-        protected
-
-        def apply_options
-          settings.keys.each do |option_name|
-            option(option_name, default: settings[option_name][:default], validate: settings[option_name][:validate])
-          end
+                            present_blk, compatible_blk, options)
         end
 
         private
@@ -200,7 +185,7 @@ module OpenTelemetry
       alias installed? installed
 
       def initialize(name, version, install_blk, present_blk,
-                     compatible_blk, options, settings)
+                     compatible_blk, options)
         @name = name
         @version = version
         @install_blk = install_blk
@@ -209,7 +194,6 @@ module OpenTelemetry
         @config = {}
         @installed = false
         @options = options
-        @settings = settings
         @tracer = OpenTelemetry::Trace::Tracer.new
       end
 

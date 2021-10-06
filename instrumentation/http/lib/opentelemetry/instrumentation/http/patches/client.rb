@@ -16,7 +16,7 @@ module OpenTelemetry
             uri = req.uri
             request_method = req.verb.to_s.upcase
 
-            attributes = from_request(method: request_method, config: config, uri: uri).merge(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+            attributes = from_request(method: request_method, config: config, uri: uri)
 
             tracer.in_span("HTTP #{request_method}", attributes: attributes, kind: :client) do |span|
               OpenTelemetry.propagation.inject(req.headers)

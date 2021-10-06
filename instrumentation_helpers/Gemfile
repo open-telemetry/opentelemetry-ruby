@@ -12,5 +12,6 @@ gemspec
 gem 'opentelemetry-api', path: '../api'
 
 group :development, :test do
+  gem 'opentelemetry-common', path: '../common'
   gem 'pry'
 end

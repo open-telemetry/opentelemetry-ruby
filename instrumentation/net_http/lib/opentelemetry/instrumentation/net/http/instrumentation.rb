@@ -20,12 +20,6 @@ module OpenTelemetry
             defined?(::Net::HTTP)
           end
 
-          def self.settings
-            @settings ||= HTTP::Settings.new.defaults
-          end
-
-          apply_options
-
           private
 
           def require_dependencies

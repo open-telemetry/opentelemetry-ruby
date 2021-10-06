@@ -20,11 +20,8 @@ module OpenTelemetry
           defined?(::Faraday)
         end
 
-        def self.settings
-          @settings ||= Faraday::Settings.new.defaults
-        end
-
-        apply_options
+        option :peer_service, default: nil, validate: :string
+        option :hide_query_params, default: true, validate: :boolean
 
         private
 
