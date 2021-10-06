@@ -20,6 +20,8 @@ module OpenTelemetry
             defined?(::Net::HTTP)
           end
 
+          option :hide_query_params, default: true, validate: :boolean
+
           private
 
           def require_dependencies
