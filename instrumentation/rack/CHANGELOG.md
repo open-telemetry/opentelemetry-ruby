@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.19.4 / 2021-10-06
+
+* FIXED: Prevent high cardinality rack span name as a default 
+
 ### v0.20.0 / 2021-10-06
 
 * FIXED: Prevent high cardinality rack span name as a default [#973](https://github.com/open-telemetry/opentelemetry-ruby/pull/973)
