@@ -63,10 +63,10 @@ $> git clone git@github.com:open-telemetry/opentelemetry-ruby.git; \
 ```
 
 Next, you'll have to let the SDK know where the collector endpoint is to receive traces.
-Set the [`OTEL_EXPORTER_OTLP_ENDPOINT`][sdk-env] environment variable to `http://localhost:4318/v1/traces`:
+Set the [`OTEL_EXPORTER_OTLP_ENDPOINT`][sdk-env] environment variable to `http://0.0.0.0:4318`:
 
 ```bash
-export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318/v1/traces
+export OTEL_EXPORTER_OTLP_ENDPOINT=http://0.0.0.0:4318
 ```
 
 Now, start up your application and perform a few operations to generate tracing data, e.g. navigate around your web app or kick off background tasks.
