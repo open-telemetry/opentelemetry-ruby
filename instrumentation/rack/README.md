@@ -29,6 +29,25 @@ OpenTelemetry::SDK.configure do |c|
   c.use_all
 end
 ```
+## Controlling span name cardinality
+
+By default we will set the rack span name to match the format "HTTP #{method}" (ie. HTTP GET). There are different ways to control span names with this instrumentation.
+
+### Enriching rack spans
+
+We surface a hook to easily retrieve the rack span within the context of a request so that you can add information to or rename your server span.
+
+This is how the rails controller instrumentation is able to rename the span names to match the controller and action that process the request. See https://github.com/open-telemetry/opentelemetry-ruby/blob/f6fb025bef69f839078748f56516ce38c7d51eb8/instrumentation/action_pack/lib/opentelemetry/instrumentation/action_pack/patches/action_controller/metal.rb#L15-L16 for an example.
+
+### High cardinality example
+
+You can pass in an url quantization lambda that simply uses the URL path, the result is you will end up with high cardinality span names, however this may be acceptable in your deployment and is easy configurable using the following example.
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::Rack', { url_quantization: ->(path, _env) { path.to_s } }
+end
+```
 
 ## Examples
 
