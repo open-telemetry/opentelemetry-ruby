@@ -10,7 +10,7 @@ gemspec
 
 gem 'opentelemetry-api', path: '../../api'
 
-gem 'rspec'
+gem 'rspec', '~>3'
 
 group :test do
   gem 'opentelemetry-common', path: '../../common'

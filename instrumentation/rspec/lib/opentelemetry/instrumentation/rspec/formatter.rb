@@ -12,20 +12,20 @@ module OpenTelemetry
       # An RSpec Formatter that outputs Otel spans
       class Formatter
         attr_reader :output
+
         ::RSpec::Core::Formatters.register self, :example_started, :example_finished, :example_group_started, :example_group_finished, :start, :stop
 
-        def initialize(output, tracer_provider: OpenTelemetry.tracer_provider)
-          @tracer_provider = tracer_provider
+        def initialize(output)
           @spans_and_tokens = []
           @output = ''
         end
 
         def tracer
-          @tracer ||= @tracer_provider.tracer('rspec')
+          @tracer ||= OpenTelemetry.tracer_provider.tracer('RSpec')
         end
 
         def start(notification)
-          span = tracer.start_span('suite')
+          span = tracer.start_span('RSpec suite')
           token = OpenTelemetry::Context.attach(
             OpenTelemetry::Trace.context_with_span(span)
           )
@@ -33,15 +33,13 @@ module OpenTelemetry
         end
 
         def stop(notification)
-          span, token = *@spans_and_tokens.shift
-          return unless span.recording?
-
-          span.finish
-          OpenTelemetry::Context.detach(token)
+          pop_and_finalize_span
         end
 
         def example_group_started(notification)
-          span = tracer.start_span(notification.group.description)
+          group = notification.group
+          description = group.description
+          span = tracer.start_span(description)
           token = OpenTelemetry::Context.attach(
             OpenTelemetry::Trace.context_with_span(span)
           )
@@ -49,11 +47,7 @@ module OpenTelemetry
         end
 
         def example_group_finished(notification)
-          span, token = *@spans_and_tokens.shift
-          return unless span.recording?
-
-          span.finish
-          OpenTelemetry::Context.detach(token)
+          pop_and_finalize_span
         end
 
         def example_started(notification)
@@ -71,8 +65,24 @@ module OpenTelemetry
         end
 
         def example_finished(notification)
+          pop_and_finalize_span do |span|
+            result = notification.example.execution_result
+            notification.example.metadata
+
+            span.set_attribute('result', result.status.to_s)
+
+            if (exception = result.exception)
+              span.record_exception(exception)
+              span.set_attribute('message', exception.message) if exception.is_a? ::RSpec::Expectations::ExpectationNotMetError
+            end
+          end
+        end
+
+        def pop_and_finalize_span
           span, token = *@spans_and_tokens.shift
           return unless span.recording?
+
+          yield span if block_given?
 
           span.finish
           OpenTelemetry::Context.detach(token)
