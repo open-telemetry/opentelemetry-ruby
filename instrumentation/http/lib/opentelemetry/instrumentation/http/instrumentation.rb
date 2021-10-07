@@ -9,6 +9,13 @@ module OpenTelemetry
     module HTTP
       # The Instrumentation class contains logic to detect and install the Http instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
+        DEFAULT_OPTIONS = {
+          hide_query_params: {
+            default: true,
+            validate: :boolean
+          }
+        }.freeze
+
         install do |_config|
           require_dependencies
           patch
@@ -19,6 +26,13 @@ module OpenTelemetry
         end
 
         option :hide_query_params, default: true, validate: :boolean
+
+        def self.default_options
+          if defined?(super)
+            super.merge(DEFAULT_OPTIONS)
+          else 
+          end 
+        end
 
         private
 
