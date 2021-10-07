@@ -69,6 +69,7 @@ module OpenTelemetry
           integer: ->(v) { v.is_a?(Integer) },
           string: ->(v) { v.is_a?(String) }
         }.freeze
+        DEFAULT_OPTIONS = {}.freeze
 
         private_constant :NAME_REGEX, :VALIDATORS
 
@@ -156,6 +157,16 @@ module OpenTelemetry
         def instance
           @instance ||= new(instrumentation_name, instrumentation_version, install_blk,
                             present_blk, compatible_blk, options)
+        end
+
+        def init_options
+          default_options.each do |key|
+            puts key
+          end
+        end
+
+        def default_options
+          DEFAULT_OPTIONS
         end
 
         private
