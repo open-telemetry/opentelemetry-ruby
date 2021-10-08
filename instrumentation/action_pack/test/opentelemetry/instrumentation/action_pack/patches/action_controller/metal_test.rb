@@ -50,13 +50,13 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
   it 'does not set the span name when an exception is raised in middleware' do
     get '/ok?raise_in_middleware'
 
-    _(span.name).must_equal '/ok'
+    _(span.name).must_equal 'HTTP GET'
   end
 
   it 'does not set the span name when the request is redirected in middleware' do
     get '/ok?redirect_in_middleware'
 
-    _(span.name).must_equal '/ok'
+    _(span.name).must_equal 'HTTP GET'
   end
 
   describe 'when the application has exceptions_app configured' do

@@ -6,10 +6,27 @@
 
 module OpenTelemetry
   module Instrumentation
+    # rubocop:disable Style/Documentation
     module ActionView
       # The SpanSubscriber is a special ActiveSupport::Notification subscription
       # handler which turns notifications into generic spans, taking care to handle
       # context appropriately.
+
+      # A very hacky way to make sure that OpenTelemetry::Instrumentation::ActionView::SpanSubscriber
+      # gets invoked first
+      def self.subscribe(pattern = nil, callable = nil)
+        ActiveSupport::Notifications.subscribe(pattern, callable)
+        ::ActiveSupport::Notifications.notifier.synchronize do
+          if ::Rails::VERSION::MAJOR == 6
+            s = ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern].pop
+            ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern].unshift(s)
+          else
+            s = ::ActiveSupport::Notifications.notifier.instance_variable_get(:@subscribers).pop
+            ::ActiveSupport::Notifications.notifier.instance_variable_get(:@subscribers).unshift(s)
+          end
+        end
+      end
+
       class SpanSubscriber
         ALWAYS_VALID_PAYLOAD_TYPES = [TrueClass, FalseClass, String, Numeric, Symbol].freeze
 
@@ -18,16 +35,20 @@ module OpenTelemetry
           @tracer = tracer
         end
 
-        def start(_name, _id, payload)
+        def start(name, id, payload)
           span = @tracer.start_span(@span_name, kind: :internal)
           token = OpenTelemetry::Context.attach(
             OpenTelemetry::Trace.context_with_span(span)
+          )
+          payload.merge!(
+            __opentelemetry_span: span,
+            __opentelemetry_ctx_token: token
           )
 
           [span, token]
         end
 
-        def finish(_name, _id, payload) # rubocop:disable Metrics/AbcSize
+        def finish(name, id, payload) # rubocop:disable Metrics/AbcSize
           span = payload.delete(:__opentelemetry_span)
           token = payload.delete(:__opentelemetry_ctx_token)
           return unless span && token
@@ -86,4 +107,5 @@ module OpenTelemetry
       end
     end
   end
+  # rubocop:enable Style/Documentation
 end
