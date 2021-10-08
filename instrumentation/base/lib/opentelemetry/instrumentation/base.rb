@@ -70,6 +70,7 @@ module OpenTelemetry
           string: ->(v) { v.is_a?(String) }
         }.freeze
         DEFAULT_OPTIONS = {}.freeze
+        DEFAULT_DEPRECATED_OPTIONS = {}.freeze
 
         private_constant :NAME_REGEX, :VALIDATORS
 
@@ -147,11 +148,12 @@ module OpenTelemetry
         # a key in the VALIDATORS hash.  The supported keys are, :array, :boolean,
         # :callable, :integer, :string.
         def option(name, default:, validate:)
-          validate = VALIDATORS[validate] || validate
-          raise ArgumentError, "validate must be #{VALIDATORS.keys.join(', ')}, or a callable" unless validate.respond_to?(:call)
+          validate_proc = VALIDATORS[validate] || validate
+          raise ArgumentError, "validate must be #{VALIDATORS.keys.join(', ')}, or a callable" unless validate_proc.respond_to?(:call)
 
           @options ||= []
-          @options << { name: name, default: default, validate: validate }
+
+          @options << { name: name, default: default, validate: validate_proc, validator_type: (VALIDATORS[validate] ? validate : :callable) }
         end
 
         def instance
@@ -159,14 +161,36 @@ module OpenTelemetry
                             present_blk, compatible_blk, options)
         end
 
-        def init_options
-          default_options.each do |key|
-            puts key
-          end
+        # default options is used to generate and return a Hash of instrumentation specific default options
+        def default_options
+          const_defined?(:DEFAULT_OPTIONS) ? const_get(:DEFAULT_OPTIONS) : DEFAULT_OPTIONS
         end
 
-        def default_options
-          DEFAULT_OPTIONS
+        def default_deprecated_options
+          const_defined?(:DEFAULT_DEPRECATED_OPTIONS) ? const_get(:DEFAULT_DEPRECATED_OPTIONS) : DEFAULT_DEPRECATED_OPTIONS
+        end
+
+        # initialize_default_options is a convienence method that iterates over all available default_options and sets the configuration
+        # options using the option() method.
+        #
+        # @param [Callable] initialize_default_options An optional default options block for this instrumentation
+        # @yieldparam [Hash] default_options The default options for the instrumentation will be yielded to the
+        #   initialize_default_options block, which allows an instrumentation author an extensible hook to customize
+        #   their defaults dynamically. For example,They may want to check a custom environment variable.
+        #   The initialize_default_options block must return a valid default options hash in the format of the DEFAULT_OPTIONS constant.
+        def initialize_default_options(&initialize_default_options)
+          resolved_options = if initialize_default_options
+                               instance_exec(default_options, &initialize_default_options)
+                             else
+                               default_options
+                             end
+
+          raise ArgumentError, 'The initialize_default_options block must return a default options Hash' unless resolved_options.is_a?(::Hash)
+
+          resolved_options.keys.each do |option_name|
+            # set option with resolved values (key, env_var || default, validate)
+            option(option_name, default: resolved_options[option_name][:default], validate: resolved_options[option_name][:validate])
+          end
         end
 
         private
@@ -271,6 +295,7 @@ module OpenTelemetry
       def config_options(user_config) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
         @options ||= {}
         user_config ||= {}
+        user_config = resolve_config_with_env_vars(user_config, @options)
         validated_config = @options.each_with_object({}) do |option, h|
           option_name = option[:name]
           config_value = user_config[option_name]
@@ -313,6 +338,42 @@ module OpenTelemetry
           n << '_ENABLED'
         end
         ENV[var_name] != 'false'
+      end
+
+      def resolve_config_with_env_vars(config, options)
+        env_var_options = options.each_with_object({}) do |option, h|
+          option_name = option[:name]
+
+          # check for normalized `OTEL_RUBY_INSTRUMENTATION_<NORMALIZED_INSTRUMENTATION_NAME>_<NORMALIZED_INSTRUMENTATION_OPTION>` env var
+          env_var_key = get_option_env_var_key(option_name)
+          env_var_value = ENV[env_var_key]
+
+          # unless the validator is a callable, attempt to coerce the environment variable to the type accepted by the validator
+          if env_var_value.nil?
+            h
+          elsif option[:validator_type] == :callable
+            OpenTelemetry.logger.warn("Environment Variable Option #{env_var_key} ignored, callable type options can not be configured via environment variable")
+            h
+          else
+            h[option_name] = OpenTelemetry::Common::Environment::ValidatorTranslation.coerce_env_var(env_var_value, option[:validator_type])
+          end
+        rescue StandardError => e
+          OpenTelemetry.handle_error(exception: e, message: "Instrumentation #{name} unexpected configuration error")
+          h
+        end
+
+        config.merge(env_var_options)
+      end
+
+      def get_option_env_var_key(option_name)
+        var_name = name.dup.tap do |n|
+          n.upcase!
+          n.gsub!('::', '_')
+          n.gsub!('OPENTELEMETRY_', 'OTEL_RUBY_')
+          n << "_#{option_name.to_s.upcase!}"
+        end
+
+        var_name
       end
     end
   end

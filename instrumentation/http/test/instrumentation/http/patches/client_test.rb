@@ -133,5 +133,62 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
       _(exporter.finished_spans.size).must_equal(1)
       _(span.attributes['http.target']).must_equal '/success?foo=bar'
     end
+
+    it 'show query params if disabled via environment variable' do
+      with_env('OTEL_RUBY_INSTRUMENTATION_HTTP_HIDE_QUERY_PARAMS' => 'false') do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install
+        stub_request(:get, 'http://example.com/success?foo=bar').to_return(status: 200)
+        ::HTTP.get('http://example.com/success?foo=bar')
+
+        _(exporter.finished_spans.size).must_equal(1)
+        _(span.attributes['http.target']).must_equal '/success?foo=bar'
+      end
+    end
+
+    it 'hides query params if enabled via environment variable' do
+      with_env('OTEL_RUBY_INSTRUMENTATION_HTTP_HIDE_QUERY_PARAMS' => 'true') do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install
+        stub_request(:get, 'http://example.com/success?foo=bar').to_return(status: 200)
+        ::HTTP.get('http://example.com/success?foo=bar')
+
+        _(exporter.finished_spans.size).must_equal(1)
+        _(span.attributes['http.target']).must_equal '/success?'
+      end
+    end
+
+    it 'overrides local config value when local config is disabled' do
+      with_env('OTEL_RUBY_INSTRUMENTATION_HTTP_HIDE_QUERY_PARAMS' => 'true') do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install(hide_query_params: false)
+        stub_request(:get, 'http://example.com/success?foo=bar').to_return(status: 200)
+        ::HTTP.get('http://example.com/success?foo=bar')
+
+        _(exporter.finished_spans.size).must_equal(1)
+        _(span.attributes['http.target']).must_equal '/success?'
+      end
+    end
+
+    it 'overrides local config value when local config is enabled' do
+      with_env('OTEL_RUBY_INSTRUMENTATION_HTTP_HIDE_QUERY_PARAMS' => 'false') do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install(hide_query_params: true)
+        stub_request(:get, 'http://example.com/success?foo=bar').to_return(status: 200)
+        ::HTTP.get('http://example.com/success?foo=bar')
+
+        _(exporter.finished_spans.size).must_equal(1)
+        _(span.attributes['http.target']).must_equal '/success?foo=bar'
+      end
+    end
+  end
+
+  def with_env(new_env)
+    env_to_reset = ENV.select { |k, _| new_env.key?(k) }
+    keys_to_delete = new_env.keys - ENV.keys
+    new_env.each_pair { |k, v| ENV[k] = v }
+    yield
+    env_to_reset.each_pair { |k, v| ENV[k] = v }
+    keys_to_delete.each { |k| ENV.delete(k) }
   end
 end

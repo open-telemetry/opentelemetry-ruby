@@ -25,14 +25,17 @@ module OpenTelemetry
           !(defined?(::HTTP) && Gem.loaded_specs['http']).nil?
         end
 
-        option :hide_query_params, default: true, validate: :boolean
+        # option :hide_query_params, default: true, validate: :boolean
 
-        def self.default_options
-          if defined?(super)
-            super.merge(DEFAULT_OPTIONS)
-          else 
-          end 
-        end
+        # def self.default_options
+        #   if defined?(super)
+        #     super.merge(DEFAULT_OPTIONS)
+        #   else
+        #     DEFAULT_OPTIONS
+        #   end
+        # end
+
+        initialize_default_options
 
         private
 
