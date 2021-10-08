@@ -42,26 +42,27 @@ module OpenTelemetry
             end
           end
 
-          def each_batch(min_bytes: 1, max_bytes: 10_485_760, max_wait_time: 1, automatically_mark_as_processed: true) # rubocop:disable Metrics/AbcSize
-            super do |batch|
-              attributes = {
-                'messaging.system' => 'kafka',
-                'messaging.destination' => batch.topic,
-                'messaging.destination_kind' => 'topic',
-                'messaging.kafka.partition' => batch.partition,
-                'messaging.kafka.offset_lag' => batch.offset_lag,
-                'messaging.kafka.highwater_mark_offset' => batch.highwater_mark_offset,
-                'messaging.kafka.message_count' => batch.messages.count
-              }
+          def each_batch(max_items: 100, bytes_threshold: Float::INFINITY, timeout_ms: 250, yield_on_error: false, &block)
+            super do |messages, error|
+              if messages.size == 0
+                yield messages, error
+              else
+                attributes = {
+                  'messaging.system' => 'kafka',
+                  'messaging.destination_kind' => 'topic',
+                  'messaging.kafka.message_count' => messages.size
+                }
 
-              links = batch.messages.map do |message|
-                span_context = OpenTelemetry::Trace.current_span(OpenTelemetry.propagation.extract(message.headers)).context
-                OpenTelemetry::Trace::Link.new(span_context) if span_context.valid?
-              end
-              links.compact!
+                links = messages.map do |message|
+                  span_context = OpenTelemetry::Trace.current_span(OpenTelemetry.propagation.extract(message.headers, getter: CustomGetter.new)).context
+                  OpenTelemetry::Trace::Link.new(span_context) if span_context.valid?
+                end
+                links.compact!
 
-              tracer.in_span("#{batch.topic} process", attributes: attributes, links: links, kind: :consumer) do
-                yield batch
+                tracer.in_span("batch process", attributes: attributes, links: links, kind: :consumer) do |span|
+                  span.record_exception(error) if error
+                  yield messages, error
+                end
               end
             end
           end

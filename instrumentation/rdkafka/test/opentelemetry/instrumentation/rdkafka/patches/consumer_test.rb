@@ -6,6 +6,7 @@
 
 require 'test_helper'
 require 'securerandom'
+require 'pry'
 
 require_relative '../../../../../lib/opentelemetry/instrumentation/rdkafka'
 require_relative '../../../../../lib/opentelemetry/instrumentation/rdkafka/patches/consumer'
@@ -118,39 +119,67 @@ describe OpenTelemetry::Instrumentation::Rdkafka::Patches::Consumer do
     end
   end
 
-  # describe '#each_batch' do
-  #   it 'traces each_batch call' do
-  #     kafka.deliver_message('hello', topic: topic)
-  #     kafka.deliver_message('hello2', topic: topic)
-  #
-  #     begin
-  #       consumer.each_batch { |_b| raise 'oops' }
-  #     rescue StandardError # rubocop:disable Lint/HandleExceptions
-  #     end
-  #
-  #     span = spans.find { |s| s.name == "#{topic} process" }
-  #     _(span.name).must_equal("#{topic} process")
-  #     _(span.kind).must_equal(:consumer)
-  #     _(span.attributes['messaging.destination']).must_equal(topic)
-  #     _(span.attributes['messaging.kafka.partition']).must_equal(0)
-  #     _(span.attributes['messaging.kafka.message_count']).must_equal(2)
-  #
-  #     event = span.events.first
-  #     _(event.name).must_equal('exception')
-  #     _(event.attributes['exception.type']).must_equal('RuntimeError')
-  #     _(event.attributes['exception.message']).must_equal('oops')
-  #
-  #     first_link = span.links[0]
-  #     linked_span_context = first_link.span_context
-  #     _(linked_span_context.trace_id).must_equal(spans[0].trace_id)
-  #     _(linked_span_context.span_id).must_equal(spans[0].span_id)
-  #
-  #     second_link = span.links[1]
-  #     linked_span_context = second_link.span_context
-  #     _(linked_span_context.trace_id).must_equal(spans[1].trace_id)
-  #     _(linked_span_context.span_id).must_equal(spans[1].span_id)
-  #
-  #     _(spans.size).must_equal(3)
-  #   end
-  # end
+  describe '#each_batch' do
+    it 'traces each_batch call' do
+      rand_hash = SecureRandom.hex(10)
+      topic_name = "consumer-patch-batch-trace-#{rand_hash}"
+      config  = { :"bootstrap.servers" => "#{host}:#{port}" }
+
+      producer = Rdkafka::Config.new(config).producer
+      delivery_handles = []
+
+      delivery_handles << producer.produce(
+        topic:   topic_name,
+        payload: "wow",
+        key:     "Key 1"
+      )
+
+      delivery_handles << producer.produce(
+        topic:   topic_name,
+        payload: "super",
+        key:     "Key 2"
+      )
+
+      delivery_handles.each(&:wait)
+
+      producer.close
+
+      consumer_config = config.merge({
+                                       :"group.id" => "me",
+                                       "auto.offset.reset": 'smallest', # https://stackoverflow.com/a/51081649
+                                     })
+      consumer = Rdkafka::Config::new(config.merge(consumer_config)).consumer
+      consumer.subscribe(topic_name)
+
+      begin
+        consumer.each_batch(max_items: 2) { |messages|
+          if messages.size > 0
+            raise 'oops'
+          end
+        }
+      rescue StandardError => e # rubocop:disable Lint/HandleExceptions
+      end
+
+      span = spans.find { |s| s.name == "batch process" }
+      _(span.kind).must_equal(:consumer)
+      _(span.attributes['messaging.kafka.message_count']).must_equal(2)
+
+      event = span.events.first
+      _(event.name).must_equal('exception')
+      _(event.attributes['exception.type']).must_equal('RuntimeError')
+      _(event.attributes['exception.message']).must_equal('oops')
+
+      first_link = span.links[0]
+      linked_span_context = first_link.span_context
+      _(linked_span_context.trace_id).must_equal(spans[0].trace_id)
+      _(linked_span_context.span_id).must_equal(spans[0].span_id)
+
+      second_link = span.links[1]
+      linked_span_context = second_link.span_context
+      _(linked_span_context.trace_id).must_equal(spans[1].trace_id)
+      _(linked_span_context.span_id).must_equal(spans[1].span_id)
+
+      _(spans.size).must_equal(3)
+    end
+  end
 end unless ENV['OMIT_SERVICES']
