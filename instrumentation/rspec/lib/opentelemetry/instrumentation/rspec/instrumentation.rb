@@ -11,18 +11,23 @@ module OpenTelemetry
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |_config|
           require_dependencies
+          add_formatter!
         end
 
         present do
-          # TODO: Replace true with a definition check of the gem being instrumented
-          # Example: `defined?(::Rack)`
-          false
+          defined?(::RSpec)
         end
 
         private
 
         def require_dependencies
-          # TODO: Include instrumentation dependencies
+          require_relative './formatter'
+        end
+
+        def add_formatter!
+          ::RSpec.configure do |config|
+            config.add_formatter(Formatter)
+          end
         end
       end
     end

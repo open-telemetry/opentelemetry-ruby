@@ -8,11 +8,11 @@ require 'test_helper'
 
 require_relative '../../../../lib/opentelemetry/instrumentation/rspec'
 
-describe OpenTelemetry::Instrumentation::Rspec do
-  let(:instrumentation) { OpenTelemetry::Instrumentation::Rspec::Instrumentation.instance }
+describe OpenTelemetry::Instrumentation::RSpec do
+  let(:instrumentation) { OpenTelemetry::Instrumentation::RSpec::Instrumentation.instance }
 
   it 'has #name' do
-    _(instrumentation.name).must_equal 'OpenTelemetry::Instrumentation::Rspec'
+    _(instrumentation.name).must_equal 'OpenTelemetry::Instrumentation::RSpec'
   end
 
   it 'has #version' do
@@ -24,6 +24,11 @@ describe OpenTelemetry::Instrumentation::Rspec do
     it 'accepts argument' do
       _(instrumentation.install({})).must_equal(true)
       instrumentation.instance_variable_set(:@installed, false)
+    end
+
+    it 'adds the formatter to RSpec configuration' do
+      _(instrumentation.install({})).must_equal(true)
+      _(RSpec.configuration.formatters.map(&:class)).must_include OpenTelemetry::Instrumentation::RSpec::Formatter
     end
   end
 end
