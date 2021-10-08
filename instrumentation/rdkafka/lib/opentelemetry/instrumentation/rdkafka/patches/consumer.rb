@@ -18,6 +18,7 @@ module OpenTelemetry
             carrier.keys
           end
         end
+        # The Consumer module contains the instrumentation patch for the Consumer class
         module Consumer
           def each
             super do |message|
@@ -44,7 +45,7 @@ module OpenTelemetry
 
           def each_batch(max_items: 100, bytes_threshold: Float::INFINITY, timeout_ms: 250, yield_on_error: false, &block)
             super do |messages, error|
-              if messages.size == 0
+              if messages.empty?
                 yield messages, error
               else
                 attributes = {
@@ -59,7 +60,7 @@ module OpenTelemetry
                 end
                 links.compact!
 
-                tracer.in_span("batch process", attributes: attributes, links: links, kind: :consumer) do |span|
+                tracer.in_span('batch process', attributes: attributes, links: links, kind: :consumer) do |span|
                   span.record_exception(error) if error
                   yield messages, error
                 end

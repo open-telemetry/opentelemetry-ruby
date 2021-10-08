@@ -29,7 +29,6 @@ module OpenTelemetry
           ::Rdkafka::Producer.prepend(Patches::Producer)
           ::Rdkafka::Consumer.prepend(Patches::Consumer)
         end
-
       end
     end
   end

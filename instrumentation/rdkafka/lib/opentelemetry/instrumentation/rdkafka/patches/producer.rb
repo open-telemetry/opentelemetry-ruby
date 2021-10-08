@@ -8,6 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module Rdkafka
       module Patches
+        # The Producer module contains the instrumentation patch the Producer#produce method
         module Producer
           def produce(topic:, payload: nil, key: nil, partition: nil, partition_key: nil, timestamp: nil, headers: nil)
             attributes = {
