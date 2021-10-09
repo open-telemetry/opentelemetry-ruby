@@ -200,6 +200,51 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       bsp = BatchSpanProcessor.new(TestExporter.new, start_thread_on_boot: false)
       bsp.shutdown(timeout: 0)
     end
+
+    it 'returns a SUCCESS status if no error' do
+      test_exporter = TestExporter.new
+      test_exporter.instance_eval do
+        def shutdown(timeout: nil)
+          SUCCESS
+        end
+      end
+
+      bsp = BatchSpanProcessor.new(test_exporter)
+      bsp.on_finish(TestSpan.new)
+      result = bsp.shutdown(timeout: 0)
+
+      _(result).must_equal(SUCCESS)
+    end
+
+    it 'returns a FAILURE status if a non specific export error occurs' do
+      test_exporter = TestExporter.new
+      test_exporter.instance_eval do
+        def shutdown(timeout: nil)
+          FAILURE
+        end
+      end
+
+      bsp = BatchSpanProcessor.new(test_exporter)
+      bsp.on_finish(TestSpan.new)
+      result = bsp.shutdown(timeout: 0)
+
+      _(result).must_equal(FAILURE)
+    end
+
+    it 'returns a TIMEOUT status if a timeout export error occurs' do
+      test_exporter = TestExporter.new
+      test_exporter.instance_eval do
+        def shutdown(timeout: nil)
+          TIMEOUT
+        end
+      end
+
+      bsp = BatchSpanProcessor.new(test_exporter)
+      bsp.on_finish(TestSpan.new)
+      result = bsp.shutdown(timeout: 0)
+
+      _(result).must_equal(TIMEOUT)
+    end
   end
 
   describe 'lifecycle' do
