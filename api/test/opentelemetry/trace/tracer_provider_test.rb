@@ -11,8 +11,8 @@ describe OpenTelemetry::Trace::TracerProvider do
 
   describe '.tracer' do
     it 'returns the same tracer for the same arguments' do
-      tracer1 = tracer_provider.tracer('component', '1.0')
-      tracer2 = tracer_provider.tracer('component', '1.0')
+      tracer1 = tracer_provider.tracer('component', '1.0', 'https://opentelemetry.io/schemas/1.2.0')
+      tracer2 = tracer_provider.tracer('component', '1.0', 'https://opentelemetry.io/schemas/1.2.0')
       _(tracer1).must_equal(tracer2)
     end
   end

@@ -15,7 +15,8 @@ describe OpenTelemetry::SDK, 'global_tracer_configurations' do
       provider.add_span_processor(span_processor)
     end
   end
-  let(:tracer) { provider.tracer(__FILE__, sdk::VERSION) }
+  let(:schema_url) { 'https://opentelemetry.io/schemas/1.3.0' }
+  let(:tracer) { provider.tracer(__FILE__, sdk::VERSION, schema_url) }
   let(:parent_context) { OpenTelemetry::Context.empty }
   let(:finished_spans) { exporter.finished_spans }
 

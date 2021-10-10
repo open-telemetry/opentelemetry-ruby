@@ -9,7 +9,7 @@ module OpenTelemetry
     module Trace
       # {TracerProvider} is the SDK implementation of {OpenTelemetry::Trace::TracerProvider}.
       class TracerProvider < OpenTelemetry::Trace::TracerProvider # rubocop:disable Metrics/ClassLength
-        Key = Struct.new(:name, :version)
+        Key = Struct.new(:name, :version, :schema_url)
         private_constant(:Key)
 
         attr_accessor :span_limits, :id_generator, :sampler
@@ -46,13 +46,15 @@ module OpenTelemetry
         #
         # @param [optional String] name Instrumentation package name
         # @param [optional String] version Instrumentation package version
+        # @param [optional String] schema_url Instrumentation package schema_url of the emitted telemetry
         #
         # @return [Tracer]
-        def tracer(name = nil, version = nil)
+        def tracer(name = nil, version = nil, schema_url = nil)
           name ||= ''
           version ||= ''
+          schema_url ||= ''
           OpenTelemetry.logger.warn 'calling TracerProvider#tracer without providing a tracer name.' if name.empty?
-          @registry_mutex.synchronize { @registry[Key.new(name, version)] ||= Tracer.new(name, version, self) }
+          @registry_mutex.synchronize { @registry[Key.new(name, version, schema_url)] ||= Tracer.new(name, version, schema_url, self) }
         end
 
         # Attempts to stop all the activity for this {TracerProvider}. Calls

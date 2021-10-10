@@ -24,6 +24,7 @@ describe OpenTelemetry::Instrumentation::Registry do
     Class.new(OpenTelemetry::Instrumentation::Base) do
       instrumentation_name 'TestInstrumentation'
       instrumentation_version '0.1.1'
+      instrumentation_schema_url 'https://opentelemetry.io/schemas/1.3.0'
     end
   end
 

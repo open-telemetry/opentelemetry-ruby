@@ -15,7 +15,8 @@ describe OpenTelemetry::SDK, 'API_trace' do
       provider.add_span_processor(span_processor)
     end
   end
-  let(:tracer) { provider.tracer(__FILE__, sdk::VERSION) }
+  let(:schema_url) { 'https://opentelemetry.io/schemas/1.3.0' }
+  let(:tracer) { provider.tracer(__FILE__, sdk::VERSION, schema_url) }
   let(:remote_span_context) do
     OpenTelemetry::Trace::SpanContext.new(remote: true, trace_flags: OpenTelemetry::Trace::TraceFlags::SAMPLED)
   end
