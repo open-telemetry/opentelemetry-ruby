@@ -12,11 +12,18 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
   describe '.detect' do
     let(:detected_resource) { detector.detect }
     let(:detected_resource_attributes) { detected_resource.attribute_enumerator.to_h }
+    let(:detected_resource_schema_url) { detected_resource.schema_url }
     let(:expected_resource_attributes) { {} }
+    let(:expected_resource_schema_url) { "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}" }
 
-    it 'returns an empty resource' do
+    it 'returns empty resource attributes' do
       _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
       _(detected_resource_attributes).must_equal(expected_resource_attributes)
+    end
+
+    it 'returns populated resource schema_url' do
+      _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
+      _(detected_resource_schema_url).must_equal(expected_resource_schema_url)
     end
 
     describe 'when in a gcp environment' do
@@ -60,9 +67,16 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
         }
       end
 
+      let(:expected_resource_schema_url) { "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}" }
+
       it 'returns a resource with gcp attributes' do
         _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
         _(detected_resource_attributes).must_equal(expected_resource_attributes)
+      end
+
+      it 'returns populated resource schema_url' do
+        _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
+        _(detected_resource_schema_url).must_equal(expected_resource_schema_url)
       end
 
       describe 'and a nil resource value is detected' do

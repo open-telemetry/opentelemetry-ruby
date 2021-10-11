@@ -15,11 +15,12 @@ module OpenTelemetry
 
           # Returns a newly created {Resource} with the specified attributes
           #
-          # @param [Hash{String => String, Numeric, Boolean} attributes Hash of key-value pairs to be used
+          # @param [Hash{String => String, Numeric, Boolean}] attributes Hash of key-value pairs to be used
           #   as attributes for this resource
+          # @param [optional String] schema_url Resource schema_url of the application's emitted telemetry
           # @raise [ArgumentError] If attribute keys and values are not strings
           # @return [Resource]
-          def create(attributes = {})
+          def create(attributes = {}, schema_url = nil)
             frozen_attributes = attributes.each_with_object({}) do |(k, v), memo|
               raise ArgumentError, 'attribute keys must be strings' unless k.is_a?(String)
               raise ArgumentError, 'attribute values must be (array of) strings, integers, floats, or booleans' unless Internal.valid_value?(v)
@@ -27,7 +28,9 @@ module OpenTelemetry
               memo[-k] = v.freeze
             end.freeze
 
-            new(frozen_attributes)
+            raise ArgumentError, 'schema_url must be a string' unless schema_url.nil? || schema_url.is_a?(String)
+
+            new(frozen_attributes, schema_url.freeze)
           end
 
           def default
@@ -42,7 +45,15 @@ module OpenTelemetry
             }
 
             resource_pairs = ENV['OTEL_RESOURCE_ATTRIBUTES']
-            return create(resource_attributes) unless resource_pairs.is_a?(String)
+
+            # TODO: Since we're using a specific semcon version, my interpretation of schema_url is that we should define
+            # The schema_url from which that semcon was generated. However, this may be off-spec.
+            # Should we not being doing this at all? Should we be doing this _once_ in default()?
+            # Or should we do it as it's implemented here, ie, everywhere we create a resource where we know the semcon version?
+            # Lets confirm this behavior.
+            telemetry_schema_url = "https://opentelemetry.io/schemas/#{SemanticConventions::VERSION}"
+
+            return create(resource_attributes, telemetry_schema_url) unless resource_pairs.is_a?(String)
 
             resource_pairs.split(',').each do |pair|
               key, value = pair.split('=')
@@ -50,7 +61,7 @@ module OpenTelemetry
             end
 
             resource_attributes.delete_if { |_key, value| value.nil? || value.empty? }
-            create(resource_attributes)
+            create(resource_attributes, telemetry_schema_url)
           end
 
           def process
@@ -62,14 +73,16 @@ module OpenTelemetry
               SemanticConventions::Resource::PROCESS_RUNTIME_DESCRIPTION => RUBY_DESCRIPTION
             }
 
-            create(resource_attributes)
+            process_schema_url = "https://opentelemetry.io/schemas/#{SemanticConventions::VERSION}"
+
+            create(resource_attributes, process_schema_url)
           end
 
           private
 
           def service_name_from_env
             service_name = ENV['OTEL_SERVICE_NAME']
-            create(SemanticConventions::Resource::SERVICE_NAME => service_name) unless service_name.nil?
+            create({ SemanticConventions::Resource::SERVICE_NAME => service_name }, "https://opentelemetry.io/schemas/#{SemanticConventions::VERSION}") unless service_name.nil?
           end
         end
 
@@ -80,9 +93,11 @@ module OpenTelemetry
         #
         # @param [Hash<String, String>] frozen_attributes Frozen-hash of frozen-string
         #  key-value pairs to be used as attributes for this resource
+        # @param [String] schema_url Resource schema_url of the application's emitted telemetry
         # @return [Resource]
-        def initialize(frozen_attributes)
+        def initialize(frozen_attributes, schema_url)
           @attributes = frozen_attributes
+          @schema_url = schema_url
         end
 
         # Returns an enumerator for attributes of this {Resource}
@@ -92,6 +107,14 @@ module OpenTelemetry
           @attribute_enumerator ||= attributes.to_enum
         end
 
+        # Returns a schema_url string for schema_url of this {Resource}
+        # TODO: this is probably unnessary but it would allows us to protect schema_url if we choose to
+        #
+        # @return [String]
+        def schema_url_stringified
+          schema_url.to_s
+        end
+
         # Returns a new, merged {Resource} by merging the current {Resource} with
         # the other {Resource}. In case of a collision, the current {Resource}
         # takes precedence
@@ -99,11 +122,27 @@ module OpenTelemetry
         # @param [Resource] other The other resource to merge
         # @return [Resource] A new resource formed by merging the current resource
         #   with other
-        def merge(other)
+        def merge(other) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           return self unless other.is_a?(Resource)
 
-          self.class.send(:new, attributes.merge(other.attributes).freeze)
+          merged_attributes = attributes.merge(other.attributes).freeze
+          # Order of merge operations defined by Specification
+          # https://github.com/open-telemetry/opentelemetry-specification/blob/49c2f56f3c0468ceb2b69518bcadadd96e0a5a8b/specification/resource/sdk.md#merge
+          merged_schema_url = if schema_url.nil? || schema_url.empty?
+                                other.schema_url
+                              elsif other.schema_url.nil? || other.schema_url.empty?
+                                schema_url
+                              elsif schema_url == other.schema_url
+                                schema_url
+                              else
+                                OpenTelemetry.logger.error("Failed to merge resources: The two schemas #{schema_url} and #{other.schema_url} are incompatible")
+                                nil
+                              end
+
+          self.class.send(:new, merged_attributes, merged_schema_url)
         end
+
+        attr_reader :schema_url
 
         protected
 

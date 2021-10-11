@@ -9,9 +9,20 @@ require 'test_helper'
 describe OpenTelemetry::SDK::Resources::Resource do
   Resource = OpenTelemetry::SDK::Resources::Resource
 
+  before do
+    @log_stream = StringIO.new
+    @_logger = OpenTelemetry.logger
+    OpenTelemetry.logger = ::Logger.new(@log_stream)
+  end
+
+  after do
+    # Ensure we don't leak custom loggers and error handlers to other tests
+    OpenTelemetry.logger = @_logger
+  end
+
   describe '.new' do
     it 'is private' do
-      _(proc { Resource.new('k1' => 'v1') }).must_raise(NoMethodError)
+      _(proc { Resource.new({ 'k1' => 'v1' }, 'some_schema_url') }).must_raise(NoMethodError)
     end
   end
 
@@ -39,6 +50,22 @@ describe OpenTelemetry::SDK::Resources::Resource do
         _(resource.attribute_enumerator.first.last).must_equal(value)
       end
     end
+
+    it 'can be initialized with schema_url' do
+      expected_attributes = { 'k1' => 'v1', 'k2' => 'v2' }
+      expected_schema_url = 'https://opentelemetry.io/schemas/1.6.1'
+      resource = Resource.create(expected_attributes, expected_schema_url)
+      _(resource.schema_url).must_equal(expected_schema_url)
+    end
+
+    it 'can be an empty schema_url' do
+      resource = Resource.create({})
+      assert_nil(resource.schema_url)
+    end
+
+    it 'enforces schema_url is a string' do
+      _(proc { Resource.create({}, 42) }).must_raise(ArgumentError)
+    end
   end
 
   describe '.default' do
@@ -51,7 +78,8 @@ describe OpenTelemetry::SDK::Resources::Resource do
     end
 
     it 'contains telemetry sdk attributes' do
-      resource_attributes = Resource.default.attribute_enumerator.to_h
+      resource_default = Resource.default
+      resource_attributes = resource_default.attribute_enumerator.to_h
       _(resource_attributes).must_include('telemetry.sdk.name')
       _(resource_attributes).must_include('telemetry.sdk.language')
       _(resource_attributes).must_include('telemetry.sdk.version')
@@ -95,14 +123,23 @@ describe OpenTelemetry::SDK::Resources::Resource do
         _(resource_attributes['service.name']).must_equal('svc-ok')
       end
     end
+
+    it 'contains default schema_url' do
+      resource_default = Resource.default
+      resource_schema_url = resource_default.schema_url
+      _(resource_schema_url).must_equal("https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
+    end
   end
 
   describe '.telemetry_sdk' do
     it 'returns a resource for the telemetry sdk' do
-      resource_attributes = Resource.telemetry_sdk.attribute_enumerator.to_h
+      resource_telemetry_sdk = Resource.telemetry_sdk
+      resource_attributes = resource_telemetry_sdk.attribute_enumerator.to_h
+      resource_schema_url = resource_telemetry_sdk.schema_url
       _(resource_attributes['telemetry.sdk.name']).must_equal('opentelemetry')
       _(resource_attributes['telemetry.sdk.language']).must_equal('ruby')
       _(resource_attributes['telemetry.sdk.version']).must_match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}/)
+      _(resource_schema_url).must_equal("https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
     end
 
     describe 'when the environment variable is present' do
@@ -116,10 +153,15 @@ describe OpenTelemetry::SDK::Resources::Resource do
         }
       end
 
+      let(:expected_schema_url) { "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}" }
+
       it 'includes environment resources' do
         with_env('OTEL_RESOURCE_ATTRIBUTES' => 'key1=value1,key2=value2') do
-          resource_attributes = Resource.telemetry_sdk.attribute_enumerator.to_h
+          resource_telemetry_sdk = Resource.telemetry_sdk
+          resource_attributes = resource_telemetry_sdk.attribute_enumerator.to_h
+          resource_schema_url = resource_telemetry_sdk.schema_url
           _(resource_attributes).must_equal(expected_resource_attributes)
+          _(resource_schema_url).must_equal("https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
         end
       end
     end
@@ -136,22 +178,30 @@ describe OpenTelemetry::SDK::Resources::Resource do
       }
     end
 
+    let(:expected_schema_url) { "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}" }
+
     it 'returns a resource for the process and runtime' do
-      resource_attributes = Resource.process.attribute_enumerator.to_h
+      resource_process = Resource.process
+      resource_attributes = resource_process.attribute_enumerator.to_h
+      resource_schema_url = resource_process.schema_url
       _(resource_attributes).must_equal(expected_resource_attributes)
+      _(resource_schema_url).must_equal("https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
     end
   end
 
   describe '#merge' do
     it 'merges two resources into a third' do
-      res1 = Resource.create('k1' => 'v1', 'k2' => 'v2')
-      res2 = Resource.create('k3' => 'v3', 'k4' => 'v4')
+      res1 = Resource.create({ 'k1' => 'v1', 'k2' => 'v2' }, "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
+      res2 = Resource.create({ 'k3' => 'v3', 'k4' => 'v4' }, "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
       res3 = res1.merge(res2)
 
       _(res3.attribute_enumerator.to_h).must_equal('k1' => 'v1', 'k2' => 'v2',
                                                    'k3' => 'v3', 'k4' => 'v4')
       _(res1.attribute_enumerator.to_h).must_equal('k1' => 'v1', 'k2' => 'v2')
       _(res2.attribute_enumerator.to_h).must_equal('k3' => 'v3', 'k4' => 'v4')
+      _(res1.schema_url).must_equal("https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
+      _(res2.schema_url).must_equal("https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
+      _(res3.schema_url).must_equal("https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
     end
 
     it 'overwrites receiver\'s keys' do
@@ -162,6 +212,55 @@ describe OpenTelemetry::SDK::Resources::Resource do
       _(res3.attribute_enumerator.to_h).must_equal('k1' => 'v1',
                                                    'k2' => '2v2',
                                                    'k3' => '2v3')
+    end
+
+    it 'overwrites receiver\'s empty schema_url when merging schema_url is present' do
+      res1 = Resource.create('k1' => 'v1', 'k2' => 'v2')
+      res2 = Resource.create({ 'k2' => '2v2', 'k3' => '2v3' }, "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
+      res3 = res1.merge(res2)
+
+      _(res3.attribute_enumerator.to_h).must_equal('k1' => 'v1',
+                                                   'k2' => '2v2',
+                                                   'k3' => '2v3')
+
+      _(res3.schema_url).must_equal("https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
+    end
+
+    it 'does not overwrite receiver\'s present schema_url when merging schema_url is empty' do
+      res1 = Resource.create({ 'k1' => 'v1', 'k2' => 'v2' }, "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
+      res2 = Resource.create('k2' => '2v2', 'k3' => '2v3')
+      res3 = res1.merge(res2)
+
+      _(res3.attribute_enumerator.to_h).must_equal('k1' => 'v1',
+                                                   'k2' => '2v2',
+                                                   'k3' => '2v3')
+
+      _(res3.schema_url).must_equal("https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
+    end
+
+    it 'does not overwrite receiver\'s present schema_url when merging schema_url is present and matches' do
+      res1 = Resource.create({ 'k1' => 'v1', 'k2' => 'v2' }, "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
+      res2 = Resource.create({ 'k2' => '2v2', 'k3' => '2v3' }, "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
+      res3 = res1.merge(res2)
+
+      _(res3.attribute_enumerator.to_h).must_equal('k1' => 'v1',
+                                                   'k2' => '2v2',
+                                                   'k3' => '2v3')
+
+      _(res3.schema_url).must_equal("https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
+    end
+
+    it 'drops both receiver\'s present schema_url and merging schema_url when present if they do not match and logs an error log' do
+      res1 = Resource.create({ 'k1' => 'v1', 'k2' => 'v2' }, "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
+      res2 = Resource.create({ 'k2' => '2v2', 'k3' => '2v3' }, 'arbitrary_other_other')
+      res3 = res1.merge(res2)
+
+      _(res3.attribute_enumerator.to_h).must_equal('k1' => 'v1',
+                                                   'k2' => '2v2',
+                                                   'k3' => '2v3')
+
+      assert_nil(res3.schema_url)
+      _(@log_stream.string).must_include("ERROR -- : Failed to merge resources: The two schemas https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION} and arbitrary_other_other are incompatible")
     end
   end
 end

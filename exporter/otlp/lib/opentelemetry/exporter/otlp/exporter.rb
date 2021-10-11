@@ -266,6 +266,8 @@ module OpenTelemetry
                   Opentelemetry::Proto::Trace::V1::ResourceSpans.new(
                     resource: Opentelemetry::Proto::Resource::V1::Resource.new(
                       attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
+                      # TODO: when protos are updated
+                      # schema_url: resource.schema_url,
                     ),
                     instrumentation_library_spans: span_datas
                       .group_by(&:instrumentation_library)
@@ -274,6 +276,8 @@ module OpenTelemetry
                           instrumentation_library: Opentelemetry::Proto::Common::V1::InstrumentationLibrary.new(
                             name: il.name,
                             version: il.version
+                            # TODO: when protos are updated
+                            # schema_url: il.schema_url
                           ),
                           spans: sds.map { |sd| as_otlp_span(sd) }
                         )
