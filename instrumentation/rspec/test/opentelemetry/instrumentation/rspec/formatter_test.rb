@@ -69,6 +69,21 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
       end
       _(spans.map(&:name)).must_equal ['example one', 'group description', 'RSpec suite']
     end
+
+    it 'passes context onto child spans' do
+      spans = run_rspec_with_tracing do
+        RSpec.describe('group one') do
+          example('example one') do
+            expect(true).to equal true
+          end
+        end
+      end
+      example_span = spans[0]
+      _(example_span.name).must_equal('example one')
+      group_span = spans[1]
+      _(group_span.name).must_equal('group one')
+      _(example_span.hex_parent_span_id).must_equal(group_span.hex_span_id)
+    end
   end
 
   describe 'exports spans for examples' do
@@ -103,6 +118,23 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
       it 'records when the example passes' do
         _(subject.attributes['result']).must_equal 'passed'
       end
+    end
+
+    it 'passes context onto child spans' do
+      spans = run_rspec_with_tracing do
+        RSpec.describe('group one') do
+          example('example one') do
+            OpenTelemetry.tracer_provider.tracer('example child span').in_span('child span') do
+              expect(true).to equal true
+            end
+          end
+        end
+      end
+      child = spans[0]
+      example_span = spans[1]
+      _(child.name).must_equal('child span')
+      _(example_span.name).must_equal('example one')
+      _(child.hex_parent_span_id).must_equal(example_span.hex_span_id)
     end
 
     describe 'that fail' do
