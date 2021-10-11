@@ -6,11 +6,6 @@
 
 ## TODO: Include the supported version to be tested here.
 ## Example:
-# appraise 'rack-2.1' do
-#   gem 'rack', '~> 2.1.2'
+# appraise 'rspec-3.10' do
+#   gem 'rspec', '~> 3.10.0'
 # end
-
-# appraise 'rack-2.0' do
-#   gem 'rack', '2.0.8'
-# end
-
