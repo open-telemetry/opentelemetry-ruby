@@ -316,22 +316,29 @@ module OpenTelemetry
             end,
             dropped_links_count: span_data.total_recorded_links - span_data.links&.size.to_i,
             status: span_data.status&.yield_self do |status|
-              # TODO: fix this based on spec update.
               Opentelemetry::Proto::Trace::V1::Status.new(
-                code: status.code == OpenTelemetry::Trace::Status::ERROR ? Opentelemetry::Proto::Trace::V1::Status::StatusCode::UnknownError : Opentelemetry::Proto::Trace::V1::Status::StatusCode::Ok,
+                code: as_otlp_status_code(status.code),
                 message: status.description
               )
             end
           )
         end
 
+        def as_otlp_status_code(code)
+          case code
+          when OpenTelemetry::Trace::Status::OK then Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_OK
+          when OpenTelemetry::Trace::Status::ERROR then Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_ERROR
+          else Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_UNSET
+          end
+        end
+
         def as_otlp_span_kind(kind)
           case kind
-          when :internal then Opentelemetry::Proto::Trace::V1::Span::SpanKind::INTERNAL
-          when :server then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SERVER
-          when :client then Opentelemetry::Proto::Trace::V1::Span::SpanKind::CLIENT
-          when :producer then Opentelemetry::Proto::Trace::V1::Span::SpanKind::PRODUCER
-          when :consumer then Opentelemetry::Proto::Trace::V1::Span::SpanKind::CONSUMER
+          when :internal then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_INTERNAL
+          when :server then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_SERVER
+          when :client then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_CLIENT
+          when :producer then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_PRODUCER
+          when :consumer then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_CONSUMER
           else Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_UNSPECIFIED
           end
         end
