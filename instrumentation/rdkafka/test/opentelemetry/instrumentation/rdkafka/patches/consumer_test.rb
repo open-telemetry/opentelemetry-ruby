@@ -20,10 +20,6 @@ unless ENV['OMIT_SERVICES']
     let(:host) { ENV.fetch('TEST_KAFKA_HOST') { '127.0.0.1' } }
     let(:port) { (ENV.fetch('TEST_KAFKA_PORT') { 29_092 }) }
 
-    # let(:kafka) { Kafka.new(["#{host}:#{port}"], client_id: 'opentelemetry-kafka-test') }
-    # let(:topic) { "topic-#{SecureRandom.uuid}" }
-    # let(:producer) { kafka.producer }
-    # let(:consumer) { kafka.consumer(group_id: SecureRandom.uuid, fetcher_max_queue_size: 1) }
 
     before do
       # Clear spans
