@@ -58,6 +58,7 @@ module OpenTelemetry
                 return @app.call(env)
               end
             end
+
             original_env = env.dup
             extracted_context = OpenTelemetry.propagation.extract(
               env,
@@ -141,7 +142,7 @@ module OpenTelemetry
             if (implementation = config[:url_quantization])
               implementation.call(request_uri_or_path_info, env)
             else
-              request_uri_or_path_info
+              "HTTP #{env['REQUEST_METHOD']}"
             end
           end
 
