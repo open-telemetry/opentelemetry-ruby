@@ -36,6 +36,22 @@ end
 
 Example usage can be seen in the `./example/trace_request_demonstration.ru` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/action_view/example/trace_request_demonstration.ru)
 
+## Known issues
+
+ActionView instrumentation uses ActiveSupport notifications and in the case when a subscriber raises in start method an unclosed span would break successive spans ends. Example:
+
+```ruby
+class CrashingEndSubscriber
+  def start(name, id, payload)
+    raise 'boom'
+  end
+
+  def finish(name, id, payload) end
+end
+
+::ActiveSupport::Notifications.subscribe('render_template.action_view', CrashingStartSubscriber.new)
+```
+
 ## How can I get involved?
 
 The `opentelemetry-instrumentation-action_view` gem source is [on github][repo-github], along with related gems including `opentelemetry-api` and `opentelemetry-sdk`.

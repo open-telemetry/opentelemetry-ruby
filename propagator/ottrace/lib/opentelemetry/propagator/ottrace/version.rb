@@ -15,7 +15,7 @@ module OpenTelemetry
   module Propagator
     # Namespace for OpenTelemetry OTTrace propagation
     module OTTrace
-      VERSION = '0.19.1'
+      VERSION = '0.19.2'
     end
   end
 end

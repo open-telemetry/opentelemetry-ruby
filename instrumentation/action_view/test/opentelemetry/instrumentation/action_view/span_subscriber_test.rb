@@ -18,6 +18,14 @@ describe OpenTelemetry::Instrumentation::ActionView::SpanSubscriber do
     )
   end
 
+  class CrashingEndSubscriber
+    def start(name, id, payload) end
+
+    def finish(name, id, payload)
+      raise 'boom'
+    end
+  end
+
   before do
     exporter.reset
     instrumentation.instance_variable_set(:@installed, false)
@@ -83,8 +91,7 @@ describe OpenTelemetry::Instrumentation::ActionView::SpanSubscriber do
 
   it 'logs an exception_object correctly' do
     span, token = subscriber.start('hai', 'abc', {})
-    # We only use the finished attributes - could change in the
-    # future, perhaps.
+    # We only use the finished attributes - could change in the future, perhaps.
     subscriber.finish(
       'hai',
       'abc',
@@ -155,6 +162,55 @@ describe OpenTelemetry::Instrumentation::ActionView::SpanSubscriber do
 
       _(last_span).wont_be_nil
       _(last_span.attributes['thing']).must_equal('optimus prime')
+    end
+  end
+
+  describe 'instrument' do
+    before do
+      ::ActiveSupport::Notifications.unsubscribe('bar.foo')
+    end
+
+    it 'does not trace an event by default' do
+      ::ActiveSupport::Notifications.subscribe('bar.foo') do
+        # pass
+      end
+      ::ActiveSupport::Notifications.instrument('bar.foo', extra: 'context')
+      _(last_span).must_be_nil
+    end
+
+    it 'traces an event when a span subscriber is used' do
+      ::OpenTelemetry::Instrumentation::ActionView.subscribe('bar.foo', subscriber)
+      ::ActiveSupport::Notifications.instrument('bar.foo', extra: 'context')
+
+      _(last_span).wont_be_nil
+      _(last_span.name).must_equal('foo bar')
+      _(last_span.attributes['extra']).must_equal('context')
+    end
+
+    it 'finishes spans even when block subscribers blow up' do
+      ::ActiveSupport::Notifications.subscribe('bar.foo') { raise 'boom' }
+      ::OpenTelemetry::Instrumentation::ActionView.subscribe('bar.foo', subscriber)
+
+      expect do
+        ::ActiveSupport::Notifications.instrument('bar.foo', extra: 'context')
+      end.must_raise RuntimeError
+
+      _(last_span).wont_be_nil
+      _(last_span.name).must_equal('foo bar')
+      _(last_span.attributes['extra']).must_equal('context')
+    end
+
+    it 'finishes spans even when complex subscribers blow up' do
+      ::ActiveSupport::Notifications.subscribe('bar.foo', CrashingEndSubscriber.new)
+      ::OpenTelemetry::Instrumentation::ActionView.subscribe('bar.foo', subscriber)
+
+      expect do
+        ::ActiveSupport::Notifications.instrument('bar.foo', extra: 'context')
+      end.must_raise RuntimeError
+
+      _(last_span).wont_be_nil
+      _(last_span.name).must_equal('foo bar')
+      _(last_span.attributes['extra']).must_equal('context')
     end
   end
 end

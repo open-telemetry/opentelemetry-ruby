@@ -66,5 +66,36 @@ describe OpenTelemetry::Instrumentation::ConcurrentRuby::Instrumentation do
       _(exporter.finished_spans.size).must_equal 2
       _(inner_span.parent_span_id).must_equal outer_span.context.span_id
     end
+
+    it 'propagates context in Async mixins' do
+      skip 'Concurrent::Async is not defined' unless ::Concurrent.const_defined?(:Async)
+      outer_span = tracer.start_span('outer_span')
+      async_inner_span = nil
+      await_inner_span = nil
+
+      worker = Class.new do
+        include Concurrent::Async
+        def initialize(tracer)
+          @tracer = tracer
+        end
+
+        def action
+          inner_span = @tracer.start_span('inner_span')
+          inner_span.finish
+        end
+      end.new(tracer)
+
+      OpenTelemetry::Trace.with_span(outer_span) do
+        result = worker.await.action
+        await_inner_span = result.value
+        result = worker.async.action
+        async_inner_span = result.value
+      end
+      outer_span.finish
+
+      _(exporter.finished_spans.size).must_equal 3
+      _(async_inner_span.parent_span_id).must_equal outer_span.context.span_id
+      _(await_inner_span.parent_span_id).must_equal outer_span.context.span_id
+    end
   end
 end
