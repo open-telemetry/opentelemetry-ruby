@@ -5,16 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 require 'opentelemetry/sdk'
 
-require 'rspec/core/dsl'
-module RSpec
-  module Core
-    module DSL
-      def self.change_global_dsl(&blk)
-        nil
-      end
-    end
-  end
-end
+require_relative 'rspec_patches'
 require 'rspec/core'
 
 require 'minitest/autorun'
