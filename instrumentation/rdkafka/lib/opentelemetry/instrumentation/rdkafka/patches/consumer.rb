@@ -8,7 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module Rdkafka
       module Patches
-        # The Consumer module contains the instrumentation patch for the Consumer class
+        # CustomerGetter for needed for propagation
         class CustomGetter
           def get(carrier, key)
             carrier[key.to_sym]
