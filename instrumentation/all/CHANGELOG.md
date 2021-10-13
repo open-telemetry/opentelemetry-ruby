@@ -1,5 +1,17 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.21.3 / 2021-10-07
+
+* (No significant changes)
+
+### v0.21.2 / 2021-09-29
+
+* (No significant changes)
+
+### v0.21.1 / 2021-09-29
+
+* (No significant changes)
+
 ### v0.21.0 / 2021-09-15
 
 * ADDED: Add Que instrumentation 

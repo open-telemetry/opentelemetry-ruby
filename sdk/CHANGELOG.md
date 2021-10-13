@@ -1,5 +1,9 @@
 # Release History: opentelemetry-sdk
 
+### v1.0.0 / 2021-09-29
+
+* (No significant changes)
+
 ### v1.0.0.rc3 / 2021-08-12
 
 * BREAKING CHANGE: Remove optional parent_context from in_span
