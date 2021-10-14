@@ -257,7 +257,7 @@ module OpenTelemetry
           true
         end
 
-        def encode(span_data) # rubocop:disable Metrics/MethodLength
+        def encode(span_data) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(
             Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
               resource_spans: span_data
@@ -266,9 +266,6 @@ module OpenTelemetry
                   Opentelemetry::Proto::Trace::V1::ResourceSpans.new(
                     resource: Opentelemetry::Proto::Resource::V1::Resource.new(
                       attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
-                      # TODO: when protos are updated to 0.9
-                      # https://github.com/open-telemetry/opentelemetry-proto/releases/tag/v0.9.0
-                      # schema_url: resource.schema_url,
                     ),
                     instrumentation_library_spans: span_datas
                       .group_by(&:instrumentation_library)
@@ -277,12 +274,12 @@ module OpenTelemetry
                           instrumentation_library: Opentelemetry::Proto::Common::V1::InstrumentationLibrary.new(
                             name: il.name,
                             version: il.version
-                            # TODO: when protos are updated
-                            # schema_url: il.schema_url
                           ),
+                          schema_url: il.schema_url,
                           spans: sds.map { |sd| as_otlp_span(sd) }
                         )
-                      end
+                      end,
+                    schema_url: resource.schema_url
                   )
                 end
             )

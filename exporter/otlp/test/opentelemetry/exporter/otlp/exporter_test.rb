@@ -373,8 +373,8 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
         { status: 200 }
       end
 
-      span_data1 = create_span_data(resource: OpenTelemetry::SDK::Resources::Resource.create('k1' => 'v1'))
-      span_data2 = create_span_data(resource: OpenTelemetry::SDK::Resources::Resource.create('k2' => 'v2'))
+      span_data1 = create_span_data(resource: OpenTelemetry::SDK::Resources::Resource.create({ 'k1' => 'v1' }, "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}"))
+      span_data2 = create_span_data(resource: OpenTelemetry::SDK::Resources::Resource.create({ 'k2' => 'v2' }, "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}"))
 
       result = exporter.export([span_data1, span_data2])
 
@@ -386,7 +386,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     it 'translates all the things' do
       stub_request(:post, 'https://localhost:4318/v1/traces').to_return(status: 200)
       processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter)
-      tracer = OpenTelemetry.tracer_provider.tracer('tracer', 'v0.0.1')
+      tracer = OpenTelemetry.tracer_provider.tracer('tracer', 'v0.0.1', "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
       other_tracer = OpenTelemetry.tracer_provider.tracer('other_tracer')
 
       trace_id = OpenTelemetry::Trace.generate_trace_id
@@ -436,6 +436,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                     name: 'tracer',
                     version: 'v0.0.1'
                   ),
+                  schema_url: "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}",
                   spans: [
                     Opentelemetry::Proto::Trace::V1::Span.new(
                       trace_id: trace_id,
@@ -541,7 +542,8 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                     )
                   ]
                 )
-              ]
+              ],
+              schema_url: "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}"
             )
           ]
         )
@@ -564,7 +566,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
   def create_span_data(name: '', kind: nil, status: nil, parent_span_id: OpenTelemetry::Trace::INVALID_SPAN_ID,
                        total_recorded_attributes: 0, total_recorded_events: 0, total_recorded_links: 0, start_timestamp: exportable_timestamp,
                        end_timestamp: exportable_timestamp, attributes: nil, links: nil, events: nil, resource: nil,
-                       instrumentation_library: OpenTelemetry::SDK::InstrumentationLibrary.new('', 'v0.0.1'),
+                       instrumentation_library: OpenTelemetry::SDK::InstrumentationLibrary.new('', 'v0.0.1', "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}"),
                        span_id: OpenTelemetry::Trace.generate_span_id, trace_id: OpenTelemetry::Trace.generate_trace_id,
                        trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, tracestate: nil)
     resource ||= OpenTelemetry::SDK::Resources::Resource.telemetry_sdk
