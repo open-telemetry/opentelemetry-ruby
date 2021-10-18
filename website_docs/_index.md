@@ -1,14 +1,15 @@
 ---
-title: "Ruby"
-weight: 24
+title: Ruby
 description: >
   <img width="35" src="https://raw.github.com/open-telemetry/opentelemetry.io/main/iconography/32x32/Ruby_SDK.svg"></img>
   A language-specific implementation of OpenTelemetry in Ruby.
+aliases: [/ruby, /ruby/metrics, /ruby/tracing]
 cascade:
   github_repo: &repo https://github.com/open-telemetry/opentelemetry-ruby
   github_subdir: website_docs
   path_base_for_github_subdir: content/en/docs/ruby/
   github_project_repo: *repo
+weight: 24
 ---
 
 This is the OpenTelemetry for Ruby documentation. OpenTelemetry is an observability framework -- an API, SDK, and tools that are designed to aid in the generation and collection of application telemetry data such as metrics, logs, and traces.
