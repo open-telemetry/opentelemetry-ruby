@@ -6,13 +6,13 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::Instrumentation::ActionView::SpanSubscriber do
-  let(:instrumentation) { OpenTelemetry::Instrumentation::ActionView::Instrumentation.instance }
+describe OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber do
+  let(:instrumentation) { OpenTelemetry::Instrumentation::ActiveSupport::Instrumentation.instance }
   let(:tracer) { instrumentation.tracer }
   let(:exporter) { EXPORTER }
   let(:last_span) { exporter.finished_spans.last }
   let(:subscriber) do
-    OpenTelemetry::Instrumentation::ActionView::SpanSubscriber.new(
+    OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber.new(
       name: 'bar.foo',
       tracer: tracer
     )
@@ -38,7 +38,7 @@ describe OpenTelemetry::Instrumentation::ActionView::SpanSubscriber do
   end
 
   it 'uses the provided tracer' do
-    subscriber = OpenTelemetry::Instrumentation::ActionView::SpanSubscriber.new(
+    subscriber = OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber.new(
       name: 'oh.hai',
       tracer: OpenTelemetry.tracer_provider.tracer('foo')
     )
@@ -110,9 +110,18 @@ describe OpenTelemetry::Instrumentation::ActionView::SpanSubscriber do
   end
 
   describe 'instrumentation option - disallowed_notification_payload_keys' do
+    let(:subscriber) do
+      OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber.new(
+        name: 'bar.foo',
+        tracer: tracer,
+        notification_payload_transform: nil,
+        disallowed_notification_payload_keys: [:foo]
+      )
+    end
+
     before do
       instrumentation.instance_variable_set(:@installed, false)
-      instrumentation.install(disallowed_notification_payload_keys: [:foo])
+      instrumentation.install({})
     end
 
     after do
@@ -139,10 +148,18 @@ describe OpenTelemetry::Instrumentation::ActionView::SpanSubscriber do
 
   describe 'instrumentation option - notification_payload_transform' do
     let(:transformer_proc) { ->(v) { v.transform_values { 'optimus prime' } } }
+    let(:subscriber) do
+      OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber.new(
+        name: 'bar.foo',
+        tracer: tracer,
+        notification_payload_transform: transformer_proc,
+        disallowed_notification_payload_keys: [:foo]
+      )
+    end
 
     before do
       instrumentation.instance_variable_set(:@installed, false)
-      instrumentation.install(notification_payload_transform: transformer_proc)
+      instrumentation.install({})
     end
 
     after do
@@ -179,7 +196,7 @@ describe OpenTelemetry::Instrumentation::ActionView::SpanSubscriber do
     end
 
     it 'traces an event when a span subscriber is used' do
-      ::OpenTelemetry::Instrumentation::ActionView.subscribe('bar.foo', subscriber)
+      ::OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, 'bar.foo')
       ::ActiveSupport::Notifications.instrument('bar.foo', extra: 'context')
 
       _(last_span).wont_be_nil
@@ -189,7 +206,7 @@ describe OpenTelemetry::Instrumentation::ActionView::SpanSubscriber do
 
     it 'finishes spans even when block subscribers blow up' do
       ::ActiveSupport::Notifications.subscribe('bar.foo') { raise 'boom' }
-      ::OpenTelemetry::Instrumentation::ActionView.subscribe('bar.foo', subscriber)
+      ::OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, 'bar.foo')
 
       expect do
         ::ActiveSupport::Notifications.instrument('bar.foo', extra: 'context')
@@ -202,7 +219,7 @@ describe OpenTelemetry::Instrumentation::ActionView::SpanSubscriber do
 
     it 'finishes spans even when complex subscribers blow up' do
       ::ActiveSupport::Notifications.subscribe('bar.foo', CrashingEndSubscriber.new)
-      ::OpenTelemetry::Instrumentation::ActionView.subscribe('bar.foo', subscriber)
+      ::OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, 'bar.foo')
 
       expect do
         ::ActiveSupport::Notifications.instrument('bar.foo', extra: 'context')
@@ -211,6 +228,16 @@ describe OpenTelemetry::Instrumentation::ActionView::SpanSubscriber do
       _(last_span).wont_be_nil
       _(last_span.name).must_equal('foo bar')
       _(last_span.attributes['extra']).must_equal('context')
+    end
+
+    it 'supports unsubscribe' do
+      obj = ::OpenTelemetry::Instrumentation::ActiveSupport.subscribe(tracer, 'bar.foo')
+      ActiveSupport::Notifications.unsubscribe(obj)
+
+      ::ActiveSupport::Notifications.instrument('bar.foo', extra: 'context')
+
+      _(obj.class).must_equal(ActiveSupport::Notifications::Fanout::Subscribers::Evented)
+      _(last_span).must_be_nil
     end
   end
 end
