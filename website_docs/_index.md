@@ -24,7 +24,7 @@ as follows:
 | ------- | ------- | ------- |
 | Stable | Not Yet Implemented | Not Yet Implemented |
 
-The current release, see [Releases][].
+For the current release, see [Releases][].
 
 ## Who's using OpenTelemetry Ruby?
 
