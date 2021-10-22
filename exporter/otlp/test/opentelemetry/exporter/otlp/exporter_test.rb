@@ -343,6 +343,14 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       OpenTelemetry.logger = logger
     end
 
+    it 'handles Zlib gzip compression errors' do
+      stub_request(:post, 'https://localhost:4318/v1/traces').to_raise(Zlib::DataError.new('data error'))
+      span_data = create_span_data
+      exporter.stub(:backoff?, ->(**_) { false }) do
+        _(exporter.export([span_data])).must_equal(FAILURE)
+      end
+    end
+
     it 'exports a span from a tracer' do
       stub_post = stub_request(:post, 'https://localhost:4318/v1/traces').to_return(status: 200)
       processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter, max_queue_size: 1, max_export_batch_size: 1)

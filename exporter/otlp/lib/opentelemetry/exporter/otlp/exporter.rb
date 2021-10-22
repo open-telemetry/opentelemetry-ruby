@@ -206,6 +206,9 @@ module OpenTelemetry
           rescue EOFError
             retry if backoff?(retry_count: retry_count += 1, reason: 'eof_error')
             return FAILURE
+          rescue Zlib::DataError
+            retry if backoff?(retry_count: retry_count += 1, reason: 'zlib_error')
+            return FAILURE
           end
         ensure
           # Reset timeouts to defaults for the next call.
