@@ -15,6 +15,12 @@ module OpenTelemetry
 
         ::RSpec::Core::Formatters.register self, :example_started, :example_finished, :example_group_started, :example_group_finished, :start, :stop
 
+        @clock = Time.method(:now)
+
+        def self.current_timestamp
+          @clock.call
+        end
+
         def initialize(output)
           @spans_and_tokens = []
           @output = ''
@@ -24,8 +30,12 @@ module OpenTelemetry
           @tracer ||= OpenTelemetry.tracer_provider.tracer('RSpec')
         end
 
+        def current_timestamp
+          self.class.current_timestamp
+        end
+
         def start(notification)
-          span = tracer.start_span('RSpec suite')
+          span = tracer.start_span('RSpec suite', start_timestamp: current_timestamp)
           token = OpenTelemetry::Context.attach(
             OpenTelemetry::Trace.context_with_span(span)
           )
@@ -39,7 +49,7 @@ module OpenTelemetry
         def example_group_started(notification)
           group = notification.group
           description = group.description
-          span = tracer.start_span(description)
+          span = tracer.start_span(description, start_timestamp: current_timestamp)
           token = OpenTelemetry::Context.attach(
             OpenTelemetry::Trace.context_with_span(span)
           )
@@ -57,7 +67,7 @@ module OpenTelemetry
             'full_description' => example.full_description.to_s,
             'described_class' => example.metadata[:described_class].to_s
           }
-          span = tracer.start_span(example.description, attributes: attributes)
+          span = tracer.start_span(example.description, attributes: attributes, start_timestamp: current_timestamp)
           token = OpenTelemetry::Context.attach(
             OpenTelemetry::Trace.context_with_span(span)
           )
@@ -84,7 +94,7 @@ module OpenTelemetry
 
           yield span if block_given?
 
-          span.finish
+          span.finish(end_timestamp: current_timestamp)
           OpenTelemetry::Context.detach(token)
         end
       end

@@ -49,6 +49,22 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
     _(spans.map(&:name)).must_equal ['example string', 'String', 'example one', 'group one', 'example two', 'group two', 'RSpec suite']
   end
 
+  it 'will not be affected by tests that mock time' do
+    current_time = Time.now
+    Time.stub(:now, Time.at(0)) do
+      spans = run_rspec_with_tracing do
+        RSpec.describe('group one') do
+          example('example one') { expect(Time.now).to eq Time.at(0) }
+        end
+      end
+      _(spans.first.name).must_equal 'example one'
+      _(spans.first.attributes['result']).must_equal 'passed'
+      _(spans.first.start_timestamp).wont_equal 0
+      _(spans.first.start_timestamp / 1_000_000_000).must_be_close_to(current_time.to_i)
+      _(spans.first.end_timestamp / 1_000_000_000).must_be_close_to(current_time.to_i)
+    end
+  end
+
   describe 'exports spans for example groups' do
     it 'describes the class if specified' do
       spans = run_rspec_with_tracing do
