@@ -36,10 +36,7 @@ module OpenTelemetry
 
         def start(notification)
           span = tracer.start_span('RSpec suite', start_timestamp: current_timestamp)
-          token = OpenTelemetry::Context.attach(
-            OpenTelemetry::Trace.context_with_span(span)
-          )
-          @spans_and_tokens.unshift([span, token])
+          track_span(span)
         end
 
         def stop(notification)
@@ -47,13 +44,9 @@ module OpenTelemetry
         end
 
         def example_group_started(notification)
-          group = notification.group
-          description = group.description
+          description = notification.group.description
           span = tracer.start_span(description, start_timestamp: current_timestamp)
-          token = OpenTelemetry::Context.attach(
-            OpenTelemetry::Trace.context_with_span(span)
-          )
-          @spans_and_tokens.unshift([span, token])
+          track_span(span)
         end
 
         def example_group_finished(notification)
@@ -68,10 +61,7 @@ module OpenTelemetry
             'described_class' => example.metadata[:described_class].to_s
           }
           span = tracer.start_span(example.description, attributes: attributes, start_timestamp: current_timestamp)
-          token = OpenTelemetry::Context.attach(
-            OpenTelemetry::Trace.context_with_span(span)
-          )
-          @spans_and_tokens.unshift([span, token])
+          track_span(span)
         end
 
         def example_finished(notification)
@@ -86,6 +76,13 @@ module OpenTelemetry
               span.set_attribute('message', exception.message) if exception.is_a? ::RSpec::Expectations::ExpectationNotMetError
             end
           end
+        end
+
+        def track_span(span)
+          token = OpenTelemetry::Context.attach(
+            OpenTelemetry::Trace.context_with_span(span)
+          )
+          @spans_and_tokens.unshift([span, token])
         end
 
         def pop_and_finalize_span
