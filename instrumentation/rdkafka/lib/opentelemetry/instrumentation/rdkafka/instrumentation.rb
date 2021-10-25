@@ -9,6 +9,13 @@ module OpenTelemetry
     module Rdkafka
       # The Instrumentation class contains logic to detect and install the Rdkafka instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
+      
+        MINIMUM_VERSION = Gem::Version.new('0.10.0')
+
+        compatible do
+          Gem.loaded_specs['rdkafka'].version >= MINIMUM_VERSION
+        end
+
         install do |_config|
           require_patches
           patch
