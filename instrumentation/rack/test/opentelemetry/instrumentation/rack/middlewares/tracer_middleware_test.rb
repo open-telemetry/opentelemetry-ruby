@@ -162,7 +162,13 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
     end
 
     describe 'config[:allowed_request_headers]' do
-      let(:env) { Hash('HTTP_FOO_BAR' => 'http foo bar value') }
+      let(:env) do
+        Hash(
+          'CONTENT_LENGTH' => '123',
+          'CONTENT_TYPE' => 'application/json',
+          'HTTP_FOO_BAR' => 'http foo bar value'
+        )
+      end
 
       it 'defaults to nil' do
         _(first_span.attributes['http.request.headers.foo_bar']).must_be_nil
@@ -173,6 +179,22 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
 
         it 'returns attribute' do
           _(first_span.attributes['http.request.headers.foo_bar']).must_equal 'http foo bar value'
+        end
+      end
+
+      describe 'when content-type' do
+        let(:config) { default_config.merge(allowed_request_headers: ['CONTENT_TYPE']) }
+
+        it 'returns attribute' do
+          _(first_span.attributes['http.request.headers.content_type']).must_equal 'application/json'
+        end
+      end
+
+      describe 'when content-length' do
+        let(:config) { default_config.merge(allowed_request_headers: ['CONTENT_LENGTH']) }
+
+        it 'returns attribute' do
+          _(first_span.attributes['http.request.headers.content_length']).must_equal '123'
         end
       end
     end
