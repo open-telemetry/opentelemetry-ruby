@@ -184,6 +184,67 @@ describe OpenTelemetry::Instrumentation::Base do
         _(instance.config).must_equal(expected_config)
       end
 
+      describe 'when environment variables are used to set configuration options' do
+        after do
+          # Force re-install of instrumentation
+          instance.instance_variable_set(:@installed, false)
+        end
+
+        let(:env_controlled_instrumentation) do
+          Class.new(OpenTelemetry::Instrumentation::Base) do
+            DEFAULT_OPTIONS = {
+              first: {
+                default: 'first_default',
+                validate: :string
+              },
+              second: {
+                default: :no,
+                validate: ->(v) { %I[yes no maybe].include?(v) }
+              }
+            }.freeze
+
+            instrumentation_name 'opentelemetry_instrumentation_env_controlled'
+            instrumentation_version '0.0.2'
+
+            present { true }
+            compatible { true }
+            install { true }
+
+            initialize_default_options
+          end
+        end
+
+        let(:instance) { env_controlled_instrumentation.instance }
+
+        it 'installs options defined by environment variable and overrides defaults' do
+          with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_OPTS' => 'first=non_default_value') do
+            instance.install
+            _(instance.config).must_equal(first: 'non_default_value', second: :no)
+          end
+        end
+
+        it 'installs only callable options defined by environment variable that accept a symbol' do
+          with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_OPTS' => 'second=maybe') do
+            instance.install
+            _(instance.config).must_equal(first: 'first_default', second: :maybe)
+          end
+        end
+
+        it 'installs options defined by environment variable and overrides local configuration' do
+          with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_OPTS' => 'first=non_default_value') do
+            instance.install(first: 'another_default')
+            _(instance.config).must_equal(first: 'non_default_value', second: :no)
+          end
+        end
+
+        it 'installs multiple options defined by environment variable' do
+          with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_OPTS' => 'first=non_default_value;second=maybe') do
+            instance.install(first: 'another_default', second: :yes)
+            _(instance.config).must_equal(first: 'non_default_value', second: :maybe)
+          end
+        end
+      end
+
       describe 'when there is an option with a raising validate callable' do
         let(:buggy_instrumentation) do
           Class.new(OpenTelemetry::Instrumentation::Base) do
@@ -203,6 +264,49 @@ describe OpenTelemetry::Instrumentation::Base do
           instance = buggy_instrumentation.instance
           instance.install(first: 'value', second: 'user_value')
           _(instance.config).must_equal(first: 'first_default', second: 'user_value')
+        end
+      end
+
+      describe 'when options are initialized with options helper' do
+        after do
+          # Force re-install of instrumentation
+          instance.instance_variable_set(:@installed, false)
+        end
+
+        let(:improved_instrumentation_format) do
+          Class.new(OpenTelemetry::Instrumentation::Base) do
+            DEFAULT_OPTIONS = {
+              first: {
+                default: 'first_default',
+                validate: :string
+              },
+              second: {
+                default: :no,
+                validate: ->(v) { %I[yes no maybe].include?(v) }
+              }
+            }.freeze
+
+            instrumentation_name 'test_improved_instrumentation'
+            instrumentation_version '0.0.2'
+
+            present { true }
+            compatible { true }
+            install { true }
+
+            initialize_default_options
+          end
+        end
+
+        let(:instance) { improved_instrumentation_format.instance }
+
+        it 'installs options defined in DEFAULT_OPTIONS constant' do
+          instance.install
+          _(instance.config).must_equal(first: 'first_default', second: :no)
+        end
+
+        it 'installs options defined in DEFAULT_OPTIONS constant taking into account user defined configuration' do
+          instance.install(first: 'not_default', second: :maybe)
+          _(instance.config).must_equal(first: 'not_default', second: :maybe)
         end
       end
     end
@@ -327,6 +431,9 @@ describe OpenTelemetry::Instrumentation::Base do
         instance = OTel::Instrumentation::Sinatra::Instrumentation.instance
         _(instance.version).must_equal(OTel::Instrumentation::Sinatra::VERSION)
       end
+    end
+
+    it 'supports configuration options set by environment variable' do
     end
   end
 

@@ -10,6 +10,21 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the Mysql2
       # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
+        DEFAULT_OPTIONS = {
+          peer_service: {
+            default: nil,
+            validate: :string
+          },
+          enable_sql_obfuscation: {
+            default: false,
+            validate: :boolean
+          },
+          db_statement: {
+            default: :include,
+            validate: ->(opt) { %I[omit include obfuscate].include?(opt) }
+          }
+        }.freeze
+
         install do |config|
           if config[:enable_sql_obfuscation]
             config[:db_statement] = :obfuscate
@@ -27,9 +42,7 @@ module OpenTelemetry
           defined?(::Mysql2)
         end
 
-        option :peer_service, default: nil, validate: :string
-        option :enable_sql_obfuscation, default: false, validate: :boolean
-        option :db_statement, default: :include, validate: ->(opt) { %I[omit include obfuscate].include?(opt) }
+        initialize_default_options
 
         private
 
