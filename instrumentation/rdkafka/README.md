@@ -1,6 +1,6 @@
 # OpenTelemetry Rdkafka Instrumentation
 
-Todo: Add a description.
+The Rdkafka instrumentation is a community-maintained instrumentation for [Rdkafka](https://github.com/appsignal/rdkafka-ruby), a client library for Apache Kafka.
 
 ## How do I get started?
 
