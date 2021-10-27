@@ -21,13 +21,14 @@ module OpenTelemetry
           @clock.call
         end
 
-        def initialize(output)
+        def initialize(output = StringIO.new, tracer_provider = OpenTelemetry.tracer_provider)
           @spans_and_tokens = []
-          @output = ''
+          @output = output
+          @tracer_provider = tracer_provider
         end
 
         def tracer
-          @tracer ||= OpenTelemetry.tracer_provider.tracer('RSpec')
+          @tracer ||= @tracer_provider.tracer('RSpec')
         end
 
         def current_timestamp
