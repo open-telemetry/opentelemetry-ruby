@@ -265,7 +265,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
             multi.add(easy)
 
             # local variables for the closure
-            other = ::Ethon::Easy.new(url: 'http://username:password@example.com/test')
+            other = ::Ethon::Easy.new(url: 'test')
             m = multi
             easy.send(:define_singleton_method, :complete) do
               m.add(other)
@@ -276,7 +276,7 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
 
             _(exporter.finished_spans.size).must_equal 2
             _(exporter.finished_spans[0].attributes['http.url']).must_equal nil
-            _(exporter.finished_spans[1].attributes['http.url']).must_equal 'http://example.com/test'
+            _(exporter.finished_spans[1].attributes['http.url']).must_equal 'test'
           end
         end
       end
