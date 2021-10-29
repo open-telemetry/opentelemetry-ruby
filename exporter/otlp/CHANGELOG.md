@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.20.6 / 2021-10-29
+
+* FIXED: Handle otlp exporter race condition gzip errors with retry 
+
 ### v0.20.5 / 2021-09-29
 
 * (No significant changes)

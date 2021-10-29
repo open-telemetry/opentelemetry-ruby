@@ -1,5 +1,9 @@
 # Release History: opentelemetry-sdk
 
+### v1.0.1 / 2021-10-29
+
+* (No significant changes)
+
 ### v1.0.0 / 2021-09-29
 
 * (No significant changes)
