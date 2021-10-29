@@ -285,6 +285,43 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(result).must_equal(TIMEOUT)
     end
 
+    it 'returns FAILURE on unexpected exceptions' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      stub_request(:post, 'https://localhost:4318/v1/traces').to_raise('something unexpected')
+      span_data = create_span_data
+      result = exporter.export([span_data], timeout: 1)
+
+      _(log_stream.string).must_match(
+        /ERROR -- : OpenTelemetry error: unexpected error in OTLP::Exporter#send_bytes - something unexpected/
+      )
+
+      _(result).must_equal(FAILURE)
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
+    it 'handles encoding failures' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      stub_request(:post, 'https://localhost:4318/v1/traces').to_return(status: 200)
+      span_data = create_span_data
+
+      Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.stub(:encode, ->(_) { raise 'a little hell' }) do
+        _(exporter.export([span_data], timeout: 1)).must_equal(FAILURE)
+      end
+
+      _(log_stream.string).must_match(
+        /ERROR -- : OpenTelemetry error: unexpected error in OTLP::Exporter#encode - a little hell/
+      )
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
     it 'returns TIMEOUT on timeout after retrying' do
       stub_request(:post, 'https://localhost:4318/v1/traces').to_timeout.then.to_raise('this should not be reached')
       span_data = create_span_data
