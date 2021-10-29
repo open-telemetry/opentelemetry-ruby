@@ -59,11 +59,13 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       @reported_metrics = {}
     end
 
-    def add_to_counter(metric, increment: 1, labels: {});
+    def add_to_counter(metric, increment: 1, labels: {})
       @reported_metrics[metric] ||= []
       @reported_metrics[metric] << [increment, labels]
     end
+
     def record_value(metric, value:, labels: {}); end
+
     def observe_value(metric, value:, labels: {}); end
   end
 
@@ -381,7 +383,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
       _(metrics_reporter.reported_metrics['otel.bsp.error']).wont_be_nil
       _(metrics_reporter.reported_metrics['otel.bsp.error'][0][0]).must_equal(1)
-      _(metrics_reporter.reported_metrics['otel.bsp.error'][0][1]).must_equal({ "reason" => "RuntimeError" })
+      _(metrics_reporter.reported_metrics['otel.bsp.error'][0][1]).must_equal('reason' => 'RuntimeError')
     end
   end
 
