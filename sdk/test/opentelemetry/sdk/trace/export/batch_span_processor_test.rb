@@ -39,6 +39,34 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     def force_flush(timeout: nil); end
   end
 
+  class NotAnExporter
+  end
+
+  class RaisingExporter
+    def export(batch, timeout: nil)
+      raise 'boom!'
+    end
+
+    def shutdown(timeout: nil); end
+
+    def force_flush(timeout: nil); end
+  end
+
+  class TestMetricsReporter
+    attr_reader :reported_metrics
+
+    def initialize
+      @reported_metrics = {}
+    end
+
+    def add_to_counter(metric, increment: 1, labels: {});
+      @reported_metrics[metric] ||= []
+      @reported_metrics[metric] << [increment, labels]
+    end
+    def record_value(metric, value:, labels: {}); end
+    def observe_value(metric, value:, labels: {}); end
+  end
+
   class TestSpan
     def initialize(id = nil, recording = true)
       trace_flags = recording ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
@@ -78,7 +106,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
 
     it 'raises if exporter is not an exporter' do
-      _(-> { BatchSpanProcessor.new(exporter: TestExporter.new) }).must_raise(ArgumentError)
+      _(-> { BatchSpanProcessor.new(NotAnExporter.new) }).must_raise(ArgumentError)
     end
 
     it 'sets parameters from the environment' do
@@ -338,6 +366,22 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       expected = 100.times.map { |i| i }
 
       _(out).must_equal(expected)
+    end
+  end
+
+  describe 'faulty exporter' do
+    let(:exporter) { RaisingExporter.new }
+    let(:bsp) { BatchSpanProcessor.new(exporter, metrics_reporter: metrics_reporter) }
+    let(:metrics_reporter) { TestMetricsReporter.new }
+
+    it 'reports export failures' do
+      tss = [TestSpan.new, TestSpan.new, TestSpan.new, TestSpan.new]
+      tss.each { |ts| bsp.on_finish(ts) }
+      bsp.shutdown
+
+      _(metrics_reporter.reported_metrics['otel.bsp.error']).wont_be_nil
+      _(metrics_reporter.reported_metrics['otel.bsp.error'][0][0]).must_equal(1)
+      _(metrics_reporter.reported_metrics['otel.bsp.error'][0][1]).must_equal({ "reason" => "RuntimeError" })
     end
   end
 
