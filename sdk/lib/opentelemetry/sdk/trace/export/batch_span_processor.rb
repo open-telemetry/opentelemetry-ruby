@@ -188,18 +188,18 @@ module OpenTelemetry
             report_result(result_code, batch)
             result_code
           rescue => e
-            report_result(FAILURE, batch, exception: e)
+            report_result(FAILURE, batch)
+            @metrics_reporter.add_to_counter('otel.bsp.unexpected_error', labels: { 'exception' => e.class.to_s })
             FAILURE
           end
 
-          def report_result(result_code, batch, exception: nil)
+          def report_result(result_code, batch)
             if result_code == SUCCESS
               @metrics_reporter.add_to_counter('otel.bsp.export.success')
               @metrics_reporter.add_to_counter('otel.bsp.exported_spans', increment: batch.size)
             else
               OpenTelemetry.handle_error(exception: ExportError.new("Unable to export #{batch.size} spans"))
               @metrics_reporter.add_to_counter('otel.bsp.export.failure')
-              @metrics_reporter.add_to_counter('otel.bsp.unexpected_error', labels: { 'exception' => exception.class.to_s }) if exception
               report_dropped_spans(batch.size, reason: 'export-failure')
             end
           end
