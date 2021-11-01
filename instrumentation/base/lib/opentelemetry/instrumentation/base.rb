@@ -336,7 +336,7 @@ module OpenTelemetry
       end
 
       def resolve_config_with_env_vars(config, options)
-        # check for normalized `OTEL_RUBY_INSTRUMENTATION_<NORMALIZED_INSTRUMENTATION_NAME>_OPTS` env var
+        # check for normalized `OTEL_RUBY_INSTRUMENTATION_<NORMALIZED_INSTRUMENTATION_NAME>_CONFIG_OPTS` env var
         instrumentation_name = name
         options_env_var_value = get_options_from_env_var(instrumentation_name)
 
@@ -368,7 +368,7 @@ module OpenTelemetry
           n.upcase!
           n.gsub!('::', '_')
           n.gsub!('OPENTELEMETRY_', 'OTEL_RUBY_')
-          n << '_OPTS'
+          n << '_CONFIG_OPTS'
         end
 
         ENV[var_name]

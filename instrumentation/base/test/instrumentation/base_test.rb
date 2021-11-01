@@ -217,28 +217,28 @@ describe OpenTelemetry::Instrumentation::Base do
         let(:instance) { env_controlled_instrumentation.instance }
 
         it 'installs options defined by environment variable and overrides defaults' do
-          with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_OPTS' => 'first=non_default_value') do
+          with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_CONFIG_OPTS' => 'first=non_default_value') do
             instance.install
             _(instance.config).must_equal(first: 'non_default_value', second: :no)
           end
         end
 
         it 'installs only callable options defined by environment variable that accept a symbol' do
-          with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_OPTS' => 'second=maybe') do
+          with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_CONFIG_OPTS' => 'second=maybe') do
             instance.install
             _(instance.config).must_equal(first: 'first_default', second: :maybe)
           end
         end
 
         it 'installs options defined by environment variable and overrides local configuration' do
-          with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_OPTS' => 'first=non_default_value') do
+          with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_CONFIG_OPTS' => 'first=non_default_value') do
             instance.install(first: 'another_default')
             _(instance.config).must_equal(first: 'non_default_value', second: :no)
           end
         end
 
         it 'installs multiple options defined by environment variable' do
-          with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_OPTS' => 'first=non_default_value;second=maybe') do
+          with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_CONFIG_OPTS' => 'first=non_default_value;second=maybe') do
             instance.install(first: 'another_default', second: :yes)
             _(instance.config).must_equal(first: 'non_default_value', second: :maybe)
           end
