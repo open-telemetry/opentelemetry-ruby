@@ -12,8 +12,8 @@ module OpenTelemetry
         module Connection
           def initialize(req, options)
             attributes = OpenTelemetry::Common::HTTP::ClientContext.attributes.merge(
-              'peer.hostname' => req.uri.host,
-              'peer.port' => req.uri.port
+              'net.peer.name' => req.uri.host,
+              'net.peer.port' => req.uri.port
             )
 
             tracer.in_span('HTTP CONNECT', attributes: attributes) do
