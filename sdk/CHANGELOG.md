@@ -2,7 +2,7 @@
 
 ### v1.0.1 / 2021-10-29
 
-* (No significant changes)
+* FIXED: Add unexpected error handlign in BSP and OTLP exporter (#995)
 
 ### v1.0.0 / 2021-09-29
 

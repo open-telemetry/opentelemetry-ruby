@@ -2,6 +2,7 @@
 
 ### v0.20.6 / 2021-10-29
 
+* FIXED: Add unexpected error handlign in BSP and OTLP exporter (#995)
 * FIXED: Handle otlp exporter race condition gzip errors with retry 
 
 ### v0.20.5 / 2021-09-29
