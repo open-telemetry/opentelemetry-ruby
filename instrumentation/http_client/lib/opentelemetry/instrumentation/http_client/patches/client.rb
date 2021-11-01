@@ -21,8 +21,8 @@ module OpenTelemetry
               'http.scheme' => uri.scheme,
               'http.target' => uri.path,
               'http.url' => url,
-              'peer.hostname' => uri.host,
-              'peer.port' => uri.port
+              'net.peer.name' => uri.host,
+              'net.peer.port' => uri.port
             }.merge(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
             tracer.in_span("HTTP #{request_method}", attributes: attributes, kind: :client) do |span|

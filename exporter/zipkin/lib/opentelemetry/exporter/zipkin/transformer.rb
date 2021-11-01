@@ -29,8 +29,8 @@ module OpenTelemetry
         STATUS_ERROR = 'ERROR'
         STATUS_OK = 'OK'
         ATTRIBUTE_PEER_SERVICE = 'peer.service'
-        ATTRIBUTE_NET_PEER_IP = 'peer.ip'
-        ATTRIBUTE_NET_PEER_PORT = 'peer.port'
+        ATTRIBUTE_NET_PEER_IP = 'net.peer.ip'
+        ATTRIBUTE_NET_PEER_PORT = 'net.peer.port'
         ATTRIBUTE_NET_HOST_IP = 'host.ip'
         ATTRIBUTE_NET_HOST_PORT = 'host.port'
 

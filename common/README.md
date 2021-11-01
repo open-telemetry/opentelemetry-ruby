@@ -40,7 +40,7 @@ tracer.in_span(
     'http.method' => req.method,
     'http.scheme' => USE_SSL_TO_SCHEME[use_ssl?],
     'http.target' => req.path,
-    'peer.hostname' => @address,
+    'net.peer.name' => @address,
     'peer.port' => @port
   ),
   kind: :client

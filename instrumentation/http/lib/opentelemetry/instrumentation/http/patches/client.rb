@@ -19,7 +19,7 @@ module OpenTelemetry
               'http.scheme' => uri.scheme,
               'http.target' => uri.path,
               'http.url' => "#{uri.scheme}://#{uri.host}",
-              'peer.hostname' => uri.host,
+              'net.peer.name' => uri.host,
               'peer.port' => uri.port
             }.merge(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
