@@ -9,8 +9,18 @@ The `opentelemetry-propagator-ottrace` gem contains injectors and extractors for
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
 | `ot-tracer-traceid` | uint64 encoded as a string of 16 hex characters                                                                                        | yes                   |
 | `ot-tracer-spanid`  | uint64 encoded as a string of 16 hex characters                                                                                        | yes                   |
-| `ot-tracer-sampled` | boolean encoded as a string with the values `'true'` or `'false'`                                                                      | no                    |
+| `ot-tracer-sampled` | boolean or bit encoded as a string with the values `'true'`,`'false'`, `'1'`, or `'0'`                                                 | no                    |
 | `ot-baggage-*`      | repeated string to string key-value baggage items; keys are prefixed with `ot-baggage-` and the corresponding value is the raw string. | if baggage is present |
+
+### Sampled Flag vs Bit
+
+The `ot-tracer-sampled` header is a `boolean` encoded string however the Golang SDK incorrectly sets the `ot-tracer-sampled` header to a `bit` flag.
+This and other language SDKs compensate for this by supporting both a `bit` and `boolean` encoded strings upon extraction:
+
+- [Java](https://github.com/open-telemetry/opentelemetry-java/blob/9cea4ef1f92d3186b1bd8296e9daac4281c0f759/extensions/trace-propagators/src/main/java/io/opentelemetry/extension/trace/propagation/Common.java#L41)
+- [Golang](https://github.com/open-telemetry/opentelemetry-go-contrib/blob/b72c2cd63b9a9917554cbcd709e61f5d8541eea5/propagators/ot/ot_propagator.go#L118)
+
+This issue was [fixed](https://github.com/open-telemetry/opentelemetry-go-contrib/pull/1358) however this SDK supports both for backward compatibility with older versions of the Golang propagator.
 
 ### Interop and trace ids
 
