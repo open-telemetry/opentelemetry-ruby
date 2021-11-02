@@ -1,0 +1,18 @@
+AllCops:
+  TargetRubyVersion: "2.5.0"
+
+Lint/UnusedMethodArgument:
+  Enabled: false
+Metrics/AbcSize:
+  Max: 18
+Metrics/LineLength:
+  Enabled: false
+Metrics/MethodLength:
+  Max: 20
+Metrics/ParameterLists:
+  Enabled: false
+Naming/FileName:
+  Exclude:
+    - "lib/opentelemetry-metrics-api.rb"
+Style/ModuleFunction:
+  Enabled: false
