@@ -69,9 +69,8 @@ module OpenTelemetry
           integer: ->(v) { v.is_a?(Integer) },
           string: ->(v) { v.is_a?(String) }
         }.freeze
-        DEFAULT_OPTIONS = {}.freeze
 
-        private_constant :NAME_REGEX, :VALIDATORS, :DEFAULT_OPTIONS
+        private_constant :NAME_REGEX, :VALIDATORS
 
         private :new # rubocop:disable Style/AccessModifierDeclarations
 
@@ -147,12 +146,20 @@ module OpenTelemetry
         # a key in the VALIDATORS hash.  The supported keys are, :array, :boolean,
         # :callable, :integer, :string.
         def option(name, default:, validate:)
-          validate_proc = VALIDATORS[validate] || validate
-          raise ArgumentError, "validate must be #{VALIDATORS.keys.join(', ')}, or a callable" unless validate_proc.respond_to?(:call)
+          validator = VALIDATORS[validate] || validate
+          raise ArgumentError, "validate must be #{VALIDATORS.keys.join(', ')}, or a callable" unless validator.respond_to?(:call) || validator.respond_to?(:include?)
 
           @options ||= []
 
-          @options << { name: name, default: default, validate: validate_proc, validator_type: (VALIDATORS[validate] ? validate : :callable) }
+          validation_type = if VALIDATORS[validate]
+                              validate
+                            elsif validate.respond_to?(:include?)
+                              :enum
+                            else
+                              :callable
+                            end
+
+          @options << { name: name, default: default, validator: validator, validation_type: validation_type }
         end
 
         def instance
@@ -179,34 +186,6 @@ module OpenTelemetry
           mod.const_get(:VERSION)
         rescue NameError
           nil
-        end
-
-        # default options is used to generate and return a Hash of instrumentation specific default options
-        def default_options
-          const_defined?(:DEFAULT_OPTIONS) ? const_get(:DEFAULT_OPTIONS) : DEFAULT_OPTIONS
-        end
-
-        # initialize_default_options is a convienence method that iterates over all available default_options and sets the configuration
-        # options using the option() method.
-        #
-        # @param [Callable] initialize_default_options An optional default options block for this instrumentation
-        # @yieldparam [Hash] default_options The default options for the instrumentation will be yielded to the
-        #   initialize_default_options block, which allows an instrumentation author an extensible hook to customize
-        #   their defaults dynamically. For example,They may want to check a custom environment variable.
-        #   The initialize_default_options block must return a valid default options hash in the format of the DEFAULT_OPTIONS constant.
-        def initialize_default_options(&initialize_default_options)
-          resolved_options = if initialize_default_options
-                               instance_exec(default_options, &initialize_default_options)
-                             else
-                               default_options
-                             end
-
-          raise ArgumentError, 'The initialize_default_options block must return a default options Hash' unless resolved_options.is_a?(::Hash)
-
-          resolved_options.keys.each do |option_name|
-            # set option with resolved values (key, env_var || default, validate)
-            option(option_name, default: resolved_options[option_name][:default], validate: resolved_options[option_name][:validate])
-          end
         end
       end
 
@@ -287,17 +266,24 @@ module OpenTelemetry
       # Invalid configuration values are logged, and replaced by the default.
       #
       # @param [Hash] user_config The user supplied configuration hash
-      def config_options(user_config) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      def config_options(user_config) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         @options ||= {}
         user_config ||= {}
-        user_config = resolve_config_with_env_vars(user_config, @options)
+        config_overrides = config_overrides_from_env
         validated_config = @options.each_with_object({}) do |option, h|
           option_name = option[:name]
           config_value = user_config[option_name]
+          config_override = coerce_env_var(config_overrides[option_name], option[:validation_type]) if config_overrides[option_name]
 
-          value = if config_value.nil?
+          value = if config_value.nil? && config_override.nil?
                     option[:default]
-                  elsif option[:validate].call(config_value)
+                  elsif option[:validator].respond_to?(:include?) && option[:validator].include?(config_override)
+                    config_override
+                  elsif option[:validator].respond_to?(:include?) && option[:validator].include?(config_value)
+                    config_value
+                  elsif option[:validator].respond_to?(:call) && option[:validator].call(config_override)
+                    config_override
+                  elsif option[:validator].respond_to?(:call) && option[:validator].call(config_value)
                     config_value
                   else
                     OpenTelemetry.logger.warn(
@@ -335,103 +321,44 @@ module OpenTelemetry
         ENV[var_name] != 'false'
       end
 
-      def resolve_config_with_env_vars(config, options)
-        # check for normalized `OTEL_RUBY_INSTRUMENTATION_<NORMALIZED_INSTRUMENTATION_NAME>_CONFIG_OPTS` env var
-        instrumentation_name = name
-        options_env_var_value = get_options_from_env_var(instrumentation_name)
-
-        env_var_options = options.each_with_object({}) do |option, h|
-          option_name = option[:name]
-
-          # extract the raw option value from the environment variable string
-          env_var_value = get_option_from_env_var_value(option_name, options_env_var_value)
-
-          # attempt to coerce the environment variable to the type accepted by the validator
-          if env_var_value.nil?
-            h
-          elsif (coerced_value = coerce_env_var(env_var_value, option[:validator_type]))
-            h[option_name] = coerced_value
-          else
-            OpenTelemetry.logger.warn("Environment Variable Option for #{option_name} ignored, certain callable type options can not be configured via environment variable")
-            h
-          end
-        rescue StandardError => e
-          OpenTelemetry.handle_error(exception: e, message: "Instrumentation #{name} unexpected configuration error")
-          h
-        end
-
-        config.merge(env_var_options)
-      end
-
-      def get_options_from_env_var(instrumentation_name)
-        var_name = instrumentation_name.dup.tap do |n|
+      def config_overrides_from_env
+        var_name = name.dup.tap do |n|
           n.upcase!
           n.gsub!('::', '_')
           n.gsub!('OPENTELEMETRY_', 'OTEL_RUBY_')
           n << '_CONFIG_OPTS'
         end
 
-        ENV[var_name]
-      end
+        environment_config_overrides = {}
+        env_config_options = ENV[var_name]&.split(';')
 
-      def get_option_from_env_var_value(option_name, options_string)
-        return if options_string.nil?
+        return environment_config_overrides if env_config_options.nil?
 
-        values_map = options_string.split(';').each_with_object({}) do |value_entry, h|
-          option_key, option_value = value_entry.split('=')
-          h[option_key.to_sym] = option_value.strip
-          h
+        env_config_options.each_with_object(environment_config_overrides) do |env_config_option, eco|
+          parts = env_config_option.split('=')
+          option_name = parts[0].to_sym
+          eco[option_name] = parts[1]
         end
 
-        values_map[option_name]
-      rescue StandardError => e
-        OpenTelemetry.logger.debug "Error extracting #{name} option #{option_name} from environment variable value #{options_string}: #{e.message}"
-        nil
+        environment_config_overrides
       end
 
-      def coerce_env_var(raw_env_var_value, validation_type)
+      def coerce_env_var(env_var, validation_type) # rubocop:disable Metrics/CyclomaticComplexity
         case validation_type
         when :array
-          env_var_to_array(raw_env_var_value)
+          env_var.split(',').map(&:strip)
         when :boolean
-          env_var_to_boolean(raw_env_var_value)
+          env_var.to_s.strip.downcase == 'true'
         when :integer
-          env_var_to_integer(raw_env_var_value)
+          env_var.to_i
         when :string
-          env_var_to_string(raw_env_var_value)
+          env_var.to_s.strip
+        when :enum
+          env_var.to_s.strip.to_sym
         when :callable
-          # callable can represent two states. One, a validation that passes the option into a custom proc
-          # and second is that the option is itself a custom proc. We want to try supporting the first case via env var,
-          # while also preventing garbage values to be passed on the chance someone is attempting the second case.
-          # The tradeoff is that we have to guess what the input into a custom proc would be, in practice every custom proc
-          # used at the moment is an enumerable, so we can try to coerce the option input to a symbol
-          # long term it might make sense to clean this up.
-          env_var_to_symbol(raw_env_var_value)
+          # Should we try to support this?
+          nil
         end
-      end
-
-      def env_var_to_boolean(env_var)
-        env_var.to_s.strip.downcase == 'true'
-      end
-
-      # Returns a integer from an envrionment variable configuration option string
-      def env_var_to_integer(env_var)
-        env_var.to_i
-      end
-
-      # Returns an array from an envrionment variable configuration option string
-      def env_var_to_array(env_var)
-        env_var ? env_var.split(',').map(&:strip) : default
-      end
-
-      # Returns a normalized string from an envrionment variable configuration option string
-      def env_var_to_string(env_var)
-        env_var.to_s.strip
-      end
-
-      # Returns a normalized string from an envrionment variable configuration option string
-      def env_var_to_symbol(env_var)
-        env_var.to_sym
       end
     end
   end
