@@ -17,6 +17,12 @@ module OpenTelemetry
 
             super
           end
+
+          def add(easy)
+            easy.otel_before_request unless easy.otel_span_started?
+
+            super
+          end
         end
       end
     end
