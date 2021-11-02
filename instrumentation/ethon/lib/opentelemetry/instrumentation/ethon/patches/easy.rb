@@ -45,7 +45,7 @@ module OpenTelemetry
                 @otel_span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(response_code.to_i)
               end
             ensure
-              @otel_span.finish
+              @otel_span&.finish
               @otel_span = nil
             end
             super
