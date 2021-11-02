@@ -187,6 +187,10 @@ module OpenTelemetry
             result_code = @export_mutex.synchronize { @exporter.export(batch, timeout: timeout) }
             report_result(result_code, batch)
             result_code
+          rescue StandardError => e
+            report_result(FAILURE, batch)
+            @metrics_reporter.add_to_counter('otel.bsp.error', labels: { 'reason' => e.class.to_s })
+            FAILURE
           end
 
           def report_result(result_code, batch)

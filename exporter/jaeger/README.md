@@ -86,7 +86,7 @@ The collector exporter can be configured explicitly in code, as shown above, or 
 
 | Parameter          | Environment variable                           | Default                    |
 | ------------------ | ---------------------------------------------- | -------------------------- |
-| `endpoint:`        | `OTEL_EXPORTER_JAEGER_ENDPOINT`                | `"http://localhost:14268"` |
+| `endpoint:`        | `OTEL_EXPORTER_JAEGER_ENDPOINT`                | `"http://localhost:14268/api/traces"` |
 | `username:`        | `OTEL_EXPORTER_JAEGER_USER`                    | `nil`                      |
 | `password:`        | `OTEL_EXPORTER_JAEGER_PASSWORD`                | `nil`                      |
 | `ssl_verify_mode:` | `OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_PEER` or | `OpenSSL::SSL:VERIFY_PEER` |
