@@ -123,23 +123,16 @@ describe OpenTelemetry::SDK::Resources::Resource do
         _(resource_attributes['service.name']).must_equal('svc-ok')
       end
     end
-
-    it 'contains default schema_url' do
-      resource_default = Resource.default
-      resource_schema_url = resource_default.schema_url
-      _(resource_schema_url).must_equal("https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
-    end
   end
 
   describe '.telemetry_sdk' do
     it 'returns a resource for the telemetry sdk' do
       resource_telemetry_sdk = Resource.telemetry_sdk
       resource_attributes = resource_telemetry_sdk.attribute_enumerator.to_h
-      resource_schema_url = resource_telemetry_sdk.schema_url
+
       _(resource_attributes['telemetry.sdk.name']).must_equal('opentelemetry')
       _(resource_attributes['telemetry.sdk.language']).must_equal('ruby')
       _(resource_attributes['telemetry.sdk.version']).must_match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}/)
-      _(resource_schema_url).must_equal("https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
     end
 
     describe 'when the environment variable is present' do
@@ -153,15 +146,11 @@ describe OpenTelemetry::SDK::Resources::Resource do
         }
       end
 
-      let(:expected_schema_url) { "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}" }
-
       it 'includes environment resources' do
         with_env('OTEL_RESOURCE_ATTRIBUTES' => 'key1=value1,key2=value2') do
           resource_telemetry_sdk = Resource.telemetry_sdk
           resource_attributes = resource_telemetry_sdk.attribute_enumerator.to_h
-          resource_schema_url = resource_telemetry_sdk.schema_url
           _(resource_attributes).must_equal(expected_resource_attributes)
-          _(resource_schema_url).must_equal("https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
         end
       end
     end
@@ -178,14 +167,10 @@ describe OpenTelemetry::SDK::Resources::Resource do
       }
     end
 
-    let(:expected_schema_url) { "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}" }
-
     it 'returns a resource for the process and runtime' do
       resource_process = Resource.process
       resource_attributes = resource_process.attribute_enumerator.to_h
-      resource_schema_url = resource_process.schema_url
       _(resource_attributes).must_equal(expected_resource_attributes)
-      _(resource_schema_url).must_equal("https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
     end
   end
 

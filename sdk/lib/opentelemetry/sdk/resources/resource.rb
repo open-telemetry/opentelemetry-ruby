@@ -46,14 +46,7 @@ module OpenTelemetry
 
             resource_pairs = ENV['OTEL_RESOURCE_ATTRIBUTES']
 
-            # TODO: Since we're using a specific semcon version, my interpretation of schema_url is that we should define
-            # The schema_url from which that semcon was generated. However, this may be off-spec.
-            # Should we not being doing this at all? Should we be doing this _once_ in default()?
-            # Or should we do it as it's implemented here, ie, everywhere we create a resource where we know the semcon version?
-            # Lets confirm this behavior.
-            telemetry_schema_url = "https://opentelemetry.io/schemas/#{SemanticConventions::VERSION}"
-
-            return create(resource_attributes, telemetry_schema_url) unless resource_pairs.is_a?(String)
+            return create(resource_attributes) unless resource_pairs.is_a?(String)
 
             resource_pairs.split(',').each do |pair|
               key, value = pair.split('=')
@@ -61,7 +54,7 @@ module OpenTelemetry
             end
 
             resource_attributes.delete_if { |_key, value| value.nil? || value.empty? }
-            create(resource_attributes, telemetry_schema_url)
+            create(resource_attributes)
           end
 
           def process
@@ -73,9 +66,7 @@ module OpenTelemetry
               SemanticConventions::Resource::PROCESS_RUNTIME_DESCRIPTION => RUBY_DESCRIPTION
             }
 
-            process_schema_url = "https://opentelemetry.io/schemas/#{SemanticConventions::VERSION}"
-
-            create(resource_attributes, process_schema_url)
+            create(resource_attributes)
           end
 
           private

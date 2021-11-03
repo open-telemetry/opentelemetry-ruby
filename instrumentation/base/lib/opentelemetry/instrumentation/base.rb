@@ -107,8 +107,8 @@ module OpenTelemetry
           end
         end
 
-        # # Optionally set the schema_url of this instrumentation. If not explicitly set,
-        # # the schema_url will default to remaining unset by the instrumentation.
+        # Optionally set the schema_url of this instrumentation. If not explicitly set,
+        # the schema_url will default to remaining unset by the instrumentation.
         def instrumentation_schema_url(instrumentation_schema_url = nil)
           if instrumentation_schema_url
             @instrumentation_schema_url = instrumentation_schema_url
