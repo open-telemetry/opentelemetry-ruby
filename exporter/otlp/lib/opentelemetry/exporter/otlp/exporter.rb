@@ -143,6 +143,8 @@ module OpenTelemetry
         end
 
         def send_bytes(bytes, timeout:) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+          return FAILURE if bytes.nil?
+
           retry_count = 0
           timeout ||= @timeout
           start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
@@ -206,6 +208,13 @@ module OpenTelemetry
           rescue EOFError
             retry if backoff?(retry_count: retry_count += 1, reason: 'eof_error')
             return FAILURE
+          rescue Zlib::DataError
+            retry if backoff?(retry_count: retry_count += 1, reason: 'zlib_error')
+            return FAILURE
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#send_bytes')
+            @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => e.class.to_s })
+            return FAILURE
           end
         ensure
           # Reset timeouts to defaults for the next call.
@@ -257,7 +266,7 @@ module OpenTelemetry
           true
         end
 
-        def encode(span_data) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+        def encode(span_data) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(
             Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
               resource_spans: span_data
@@ -284,6 +293,9 @@ module OpenTelemetry
                 end
             )
           )
+        rescue StandardError => e
+          OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#encode')
+          nil
         end
 
         def as_otlp_span(span_data) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
