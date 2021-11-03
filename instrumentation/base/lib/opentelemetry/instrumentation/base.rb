@@ -107,19 +107,13 @@ module OpenTelemetry
           end
         end
 
-        # Optionally set the schema_url of this instrumentation. If not explicitly set,
-        # the schema_url will default to remaining unset by the instrumentation, and
-        # will use the applicaiton wide (resource) schema_url. If an application wide
-        # (resource) schema_url cannot be found, it defaults to remaining unset and
-        # is set by the OTLP exporter using the schema of the exporter.
-        # TODO: clarify this^, is this correct? where does app wide schema url get used?
-        #
-        # @param [String] instrumentation_schema_url The version of the instrumentation package
+        # # Optionally set the schema_url of this instrumentation. If not explicitly set,
+        # # the schema_url will default to remaining unset by the instrumentation.
         def instrumentation_schema_url(instrumentation_schema_url = nil)
           if instrumentation_schema_url
             @instrumentation_schema_url = instrumentation_schema_url
           else
-            @instrumentation_schema_url ||= infer_schema_url || nil
+            @instrumentation_schema_url ||= nil
           end
         end
 
@@ -191,12 +185,6 @@ module OpenTelemetry
             object.const_get(const)
           end
           mod.const_get(:VERSION)
-        rescue NameError
-          nil
-        end
-
-        def infer_schema_url
-          nil
         rescue NameError
           nil
         end

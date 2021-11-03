@@ -250,16 +250,15 @@ describe OpenTelemetry::SDK::Resources::Resource do
       _(res3.schema_url).must_equal("https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
     end
 
-    it 'drops both receiver\'s present schema_url and merging schema_url when present if they do not match and logs an error log' do
+    it 'returns old resource when both resources schema_url are present and do not match and logs an error log' do
       res1 = Resource.create({ 'k1' => 'v1', 'k2' => 'v2' }, "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}")
       res2 = Resource.create({ 'k2' => '2v2', 'k3' => '2v3' }, 'arbitrary_other_other')
       res3 = res1.merge(res2)
-
       _(res3.attribute_enumerator.to_h).must_equal('k1' => 'v1',
-                                                   'k2' => '2v2',
-                                                   'k3' => '2v3')
+                                                   'k2' => 'v2')
 
-      assert_nil(res3.schema_url)
+      _(res3).must_equal(res1)
+
       _(@log_stream.string).must_include("ERROR -- : Failed to merge resources: The two schemas https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION} and arbitrary_other_other are incompatible")
     end
   end

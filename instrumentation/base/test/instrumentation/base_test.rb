@@ -305,7 +305,7 @@ describe OpenTelemetry::Instrumentation::Base do
 
     describe '#schema_url' do
       it 'defaults to nil' do
-        _(MinimalBase.instance.schema_url).must_equal(nil)
+        assert_nil(MinimalBase.instance.schema_url)
       end
     end
   end
@@ -341,7 +341,7 @@ describe OpenTelemetry::Instrumentation::Base do
     describe '#schema_url' do
       it 'defaults to being unset' do
         instance = OTel::Instrumentation::Sinatra::Instrumentation.instance
-        _(instance.schema_url).must_equal(nil)
+        assert_nil(instance.schema_url)
       end
     end
   end

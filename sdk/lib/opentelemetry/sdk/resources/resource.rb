@@ -107,14 +107,6 @@ module OpenTelemetry
           @attribute_enumerator ||= attributes.to_enum
         end
 
-        # Returns a schema_url string for schema_url of this {Resource}
-        # TODO: this is probably unnessary but it would allows us to protect schema_url if we choose to
-        #
-        # @return [String]
-        def schema_url_stringified
-          schema_url.to_s
-        end
-
         # Returns a new, merged {Resource} by merging the current {Resource} with
         # the other {Resource}. In case of a collision, the current {Resource}
         # takes precedence
@@ -125,7 +117,6 @@ module OpenTelemetry
         def merge(other) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           return self unless other.is_a?(Resource)
 
-          merged_attributes = attributes.merge(other.attributes).freeze
           # Order of merge operations defined by Specification
           # https://github.com/open-telemetry/opentelemetry-specification/blob/49c2f56f3c0468ceb2b69518bcadadd96e0a5a8b/specification/resource/sdk.md#merge
           merged_schema_url = if schema_url.nil? || schema_url.empty?
@@ -136,8 +127,10 @@ module OpenTelemetry
                                 schema_url
                               else
                                 OpenTelemetry.logger.error("Failed to merge resources: The two schemas #{schema_url} and #{other.schema_url} are incompatible")
-                                nil
+                                return self
                               end
+
+          merged_attributes = attributes.merge(other.attributes).freeze
 
           self.class.send(:new, merged_attributes, merged_schema_url)
         end
