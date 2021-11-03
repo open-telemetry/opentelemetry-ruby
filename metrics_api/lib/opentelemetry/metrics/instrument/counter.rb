@@ -8,7 +8,7 @@ module OpenTelemetry
   module Metrics
     module Instrument
       class Counter
-        # TODO
+        def add(increment, attributes: nil); end
       end
     end
   end

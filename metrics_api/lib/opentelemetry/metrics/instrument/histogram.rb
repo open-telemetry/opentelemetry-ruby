@@ -8,7 +8,7 @@ module OpenTelemetry
   module Metrics
     module Instrument
       class Histogram
-        # TODO
+        def record(amount, attributes: nil); end
       end
     end
   end
