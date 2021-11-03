@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry-api'
+require_relative './version'
 
 module OpenTelemetry
   module Instrumentation
@@ -28,7 +29,7 @@ module OpenTelemetry
         end
 
         def tracer
-          @tracer ||= @tracer_provider.tracer('RSpec')
+          @tracer ||= @tracer_provider.tracer('OpenTelemetry::Instrumentation::RSpec', OpenTelemetry::Instrumentation::RSpec::VERSION)
         end
 
         def current_timestamp
