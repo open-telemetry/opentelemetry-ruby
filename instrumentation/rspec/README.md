@@ -1,6 +1,6 @@
-# OpenTelemetry Rspec Instrumentation
+# OpenTelemetry RSpec Instrumentation
 
-Todo: Add a description.
+The RSpec instrumentation is a community-maintained instrumentation for the [RSpec][rspec-home] BDD testing framework.
 
 ## How do I get started?
 
@@ -22,17 +22,36 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
-Alternatively, you can also call `use_all` to install all the available instrumentation.
+Alternatively, you can add it directly to RSpec as a customer formatter:
 
 ```ruby
-OpenTelemetry::SDK.configure do |c|
-  c.use_all
+RSpec.configure do |config|
+  config.formatter = OpenTelemetry::Instrumentation::RSpec::Formatter
 end
 ```
 
+### Using multiple tracer providers
+
+By default the instrumentation will use the global tracer provider.
+
+If you want the instrumentation to use something other than the global tracer provider you can configure the instrumentation with a custom tracer provider using the `OpenTelemetry::Instrumentation::RSpec::Formatter` constructor:
+
+```ruby
+exporter = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
+span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(exporter)
+tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new
+tracer_provider.add_span_processor(span_processor)
+
+RSpec.configure do |config|
+  config.formatter = OpenTelemetry::Instrumentation::RSpec::Formatter.new(config.output_stream, tracer_provider)
+end
+```
+
+If you need to test trace behaviour in your specs then you should be able to use a custom tracer provider and the instrumentation's output should not interfere with your specs.
+
 ## Examples
 
-Example usage can be seen in the `./example/trace_demonstration.rb` file [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/rspec/example/trace_demonstration.rb)
+Example usage can be seen in the `/example` directory [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/rspec/example)
 
 ## How can I get involved?
 
@@ -50,3 +69,4 @@ The `opentelemetry-instrumentation-rspec` gem is distributed under the Apache 2.
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
+[rspec-home]: https://rspec.info
