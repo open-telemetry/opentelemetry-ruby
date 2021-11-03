@@ -13,13 +13,13 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
     EXPORTER.reset
   end
 
-  def run_rspec_configured_with_otel_formatter
+  def run_rspec_configured_with_otel_formatter(formatter = OpenTelemetry::Instrumentation::RSpec::Formatter)
     options = RSpec::Core::ConfigurationOptions.new([])
 
     configuration = RSpec::Core::Configuration.new
 
     runner = RSpec::Core::Runner.new(options, configuration, RSpec::Core::World.new)
-    runner.configuration.formatter = OpenTelemetry::Instrumentation::RSpec::Formatter
+    runner.configuration.formatter = formatter
     yield runner if block_given?
   end
 
@@ -203,6 +203,50 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
 
       it 'records the exception' do
         _(subject.events.first.attributes['exception.message']).must_equal 'my-error-message'
+      end
+    end
+  end
+  describe 'using a custom tracer provider' do
+    describe 'with the formatter' do
+      it 'will sends spans to the connected exporter' do
+        exporter = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
+        span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(exporter)
+        tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new
+        tracer_provider.add_span_processor(span_processor)
+        formatter = OpenTelemetry::Instrumentation::RSpec::Formatter.new(StringIO.new, tracer_provider)
+        run_rspec_configured_with_otel_formatter(formatter) do |runner|
+          group_string = RSpec.describe(String) do
+            example('example string') {}
+          end
+          runner.run_specs([group_string])
+        end
+        spans = exporter.finished_spans
+        _(spans.map(&:name)).must_equal ['example string', 'String', 'RSpec suite']
+        _(EXPORTER.finished_spans).must_equal []
+      end
+
+      it 'will sends spans to the connected exporter' do
+        exporter = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
+        span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(exporter)
+        tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new
+        tracer_provider.add_span_processor(span_processor)
+        tracer = tracer_provider.tracer('foo')
+
+        spans = run_rspec_with_tracing do
+          group_one = RSpec.describe('group one') do
+            example('example one') do
+              tracer.in_span('my first test span')
+            end
+          end
+          group_string = RSpec.describe(String) do
+            example('example string') do
+              tracer.in_span('my second test span')
+            end
+          end
+          [group_one, group_string]
+        end
+        _(exporter.finished_spans.map(&:name)).must_equal ['my first test span', 'my second test span']
+        _(spans.map(&:name)).must_equal ['example one', 'group one', 'example string', 'String', 'RSpec suite']
       end
     end
   end
