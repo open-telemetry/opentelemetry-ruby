@@ -588,7 +588,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                   ]
                 )
               ],
-              schema_url: "https://opentelemetry.io/schemas/#{OpenTelemetry::SemanticConventions::VERSION}"
+              schema_url: nil
             )
           ]
         )
