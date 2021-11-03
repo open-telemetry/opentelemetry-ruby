@@ -110,16 +110,16 @@ module OpenTelemetry
 
           # Order of merge operations defined by Specification
           # https://github.com/open-telemetry/opentelemetry-specification/blob/49c2f56f3c0468ceb2b69518bcadadd96e0a5a8b/specification/resource/sdk.md#merge
-          merged_schema_url = if schema_url.nil? || schema_url.empty?
-                                other.schema_url
-                              elsif other.schema_url.nil? || other.schema_url.empty?
-                                schema_url
-                              elsif schema_url == other.schema_url
-                                schema_url
-                              else
-                                OpenTelemetry.logger.error("Failed to merge resources: The two schemas #{schema_url} and #{other.schema_url} are incompatible")
-                                return self
-                              end
+          if schema_url.nil? || schema_url.empty?
+            merged_schema_url = other.schema_url
+          elsif other.schema_url.nil? || other.schema_url.empty?
+            merged_schema_url = schema_url
+          elsif schema_url == other.schema_url
+            merged_schema_url = schema_url
+          else
+            OpenTelemetry.logger.error("Failed to merge resources: The two schemas #{schema_url} and #{other.schema_url} are incompatible")
+            return self
+          end
 
           merged_attributes = attributes.merge(other.attributes).freeze
 
