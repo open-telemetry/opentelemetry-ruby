@@ -60,6 +60,10 @@ gems:
     directory: instrumentation/active_record
     version_constant: [OpenTelemetry, Instrumentation, ActiveRecord, VERSION]
 
+  - name: opentelemetry-instrumentation-aws_sdk
+    directory: instrumentation/aws_sdk
+    version_constant: [OpenTelemetry, Instrumentation, AwsSdk, VERSION]
+
   - name: opentelemetry-instrumentation-lmdb
     directory: instrumentation/lmdb
     version_constant: [OpenTelemetry, Instrumentation, LMDB, VERSION]
