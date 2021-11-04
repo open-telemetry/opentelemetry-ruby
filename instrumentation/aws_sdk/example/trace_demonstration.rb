@@ -18,4 +18,3 @@ end
 
 client = Aws::SNS::Client.new
 client.publish message: 'ruby sending message to sns'
-
