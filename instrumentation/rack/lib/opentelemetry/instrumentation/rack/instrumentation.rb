@@ -22,14 +22,14 @@ module OpenTelemetry
           defined?(::Rack)
         end
 
-        option :allowed_request_headers,  default: [],    validate: :array
-        option :allowed_response_headers, default: [],    validate: :array
-        option :application,              default: nil,   validate: :callable
-        option :record_frontend_span,     default: false, validate: :boolean
-        option :retain_middleware_names,  default: false, validate: :boolean
-        option :untraced_endpoints,       default: [],    validate: :array
-        option :url_quantization,         default: nil,   validate: :callable
-        option :untraced_requests,        default: nil,   validate: :callable
+        option :allowed_request_headers,  default: [],    validate: { type: :array }
+        option :allowed_response_headers, default: [],    validate: { type: :array }
+        option :application,              default: nil,   validate: { type: :callable }
+        option :record_frontend_span,     default: false, validate: { type: :boolean }
+        option :retain_middleware_names,  default: false, validate: { type: :boolean }
+        option :untraced_endpoints,       default: [],    validate: { type: :array }
+        option :url_quantization,         default: nil,   validate: { type: :callable }
+        option :untraced_requests,        default: nil,   validate: { type: :callable }
 
         private
 

@@ -63,11 +63,12 @@ module OpenTelemetry
       class << self
         NAME_REGEX = /^(?:(?<namespace>[a-zA-Z0-9_:]+):{2})?(?<classname>[a-zA-Z0-9_]+)$/.freeze
         VALIDATORS = {
-          array: ->(v) { v.is_a?(Array) },
-          boolean: ->(v) { v == true || v == false }, # rubocop:disable Style/MultipleComparison
-          callable: ->(v) { v.respond_to?(:call) },
-          integer: ->(v) { v.is_a?(Integer) },
-          string: ->(v) { v.is_a?(String) }
+          array:    ->(v, _) { v.is_a?(Array) },
+          boolean:  ->(v, _) { v == true || v == false }, # rubocop:disable Style/MultipleComparison
+          callable: ->(v, _) { v.respond_to?(:call) },
+          integer:  ->(v, _) { v.is_a?(Integer) },
+          string:   ->(v, _) { v.is_a?(String) },
+          enum:     ->(v, i) { i.include?(v) }
         }.freeze
 
         private_constant :NAME_REGEX, :VALIDATORS
@@ -146,11 +147,11 @@ module OpenTelemetry
         # a key in the VALIDATORS hash.  The supported keys are, :array, :boolean,
         # :callable, :integer, :string.
         def option(name, default:, validate:)
-          validate = VALIDATORS[validate] || validate
-          raise ArgumentError, "validate must be #{VALIDATORS.keys.join(', ')}, or a callable" unless validate.respond_to?(:call)
+          validator = VALIDATORS[validate[:type]] || validate
+          raise ArgumentError, "validate must be #{VALIDATORS.keys.join(', ')}, or a callable" unless validator.respond_to?(:call)
 
           @options ||= []
-          @options << { name: name, default: default, validate: validate }
+          @options << { name: name, default: default, validator: validator, validate: validate }
         end
 
         def instance
@@ -266,7 +267,7 @@ module OpenTelemetry
 
           value = if config_value.nil?
                     option[:default]
-                  elsif option[:validate].call(config_value)
+                  elsif option[:validator].call(config_value, option[:validate][:in])
                     config_value
                   else
                     OpenTelemetry.logger.warn(
