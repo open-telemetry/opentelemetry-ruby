@@ -17,40 +17,42 @@ module OpenTelemetry
 
       private_constant(:COUNTER, :OBSERVABLE_COUNTER, :HISTOGRAM, :OBSERVABLE_GAUGE, :UP_DOWN_COUNTER, :OBSERVABLE_UP_DOWN_COUNTER)
 
+      DuplicateInstrumentError = Class.new(OpenTelemetry::Error)
+
       def initialize
         @mutex = Mutex.new
         @registry = {}
       end
 
       def create_counter(name, unit: nil, description: nil)
-        create_instrument(name) { COUNTER }
+        create_instrument(:counter, name, unit, description, nil) { COUNTER }
       end
 
       def create_observable_counter(name, unit: nil, description: nil, callback:)
-        create_instrument(name) { OBSERVABLE_COUNTER }
+        create_instrument(:observable_counter, name, unit, description, callback) { OBSERVABLE_COUNTER }
       end
 
       def create_histogram(name, unit: nil, description: nil)
-        create_instrument(name) { HISTOGRAM }
+        create_instrument(:histogram, name, unit, description, nil) { HISTOGRAM }
       end
 
       def create_observable_gauge(name, unit: nil, description: nil, callback:)
-        create_instrument(name) { OBSERVABLE_GAUGE }
+        create_instrument(:observable_gauge, name, unit, description, callback) { OBSERVABLE_GAUGE }
       end
 
       def create_up_down_counter(name, unit: nil, description: nil)
-        create_instrument(name) { UP_DOWN_COUNTER }
+        create_instrument(:up_down_counter, name, unit, description, nil) { UP_DOWN_COUNTER }
       end
 
       def create_observable_up_down_counter(name, unit: nil, description: nil, callback:)
-        create_instrument(name) { OBSERVABLE_UP_DOWN_COUNTER }
+        create_instrument(:observable_up_down_counter, name, unit, description, callback) { OBSERVABLE_UP_DOWN_COUNTER }
       end
 
       private
 
-      def create_instrument(name)
+      def create_instrument(kind, name, unit, description, callback)
         @mutex.synchronize do
-          raise 'hell' if @registry.include? name
+          raise DuplicateInstrumentError if @registry.include? name
 
           @registry[name] = yield
         end
