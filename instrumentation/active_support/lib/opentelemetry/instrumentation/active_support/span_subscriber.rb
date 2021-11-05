@@ -30,7 +30,7 @@ module OpenTelemetry
 
         subscriber_object = ::ActiveSupport::Notifications.subscribe(pattern, subscriber)
         ::ActiveSupport::Notifications.notifier.synchronize do
-          if ::ActiveSupport::VERSION::MAJOR == 6
+          if ::Rails::VERSION::MAJOR >= 6
             s = ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern].pop
             ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern].unshift(s)
           else

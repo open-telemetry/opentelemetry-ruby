@@ -36,8 +36,8 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Connection do
 
       _(exporter.finished_spans.size).must_equal(2)
       _(span.name).must_equal 'HTTP CONNECT'
-      _(span.attributes['peer.hostname']).must_equal('localhost')
-      _(span.attributes['peer.port']).wont_be_nil
+      _(span.attributes['net.peer.name']).must_equal('localhost')
+      _(span.attributes['net.peer.port']).wont_be_nil
     ensure
       WebMock.disable_net_connect!
     end

@@ -153,6 +153,38 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapPropagator do
       end
     end
 
+    describe 'given a context with sampling bit set to enabled' do
+      let(:sampled_header) do
+        '1'
+      end
+
+      it 'extracts sampled trace flag' do
+        context = propagator.extract(carrier, context: parent_context)
+        extracted_context = OpenTelemetry::Trace.current_span(context).context
+
+        _(extracted_context.hex_trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
+        _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
+        _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::SAMPLED)
+        _(extracted_context).must_be(:remote?)
+      end
+    end
+
+    describe 'given a context with a sampling bit set to disabled' do
+      let(:sampled_header) do
+        '0'
+      end
+
+      it 'extracts a default trace flag' do
+        context = propagator.extract(carrier, context: parent_context)
+        extracted_context = OpenTelemetry::Trace.current_span(context).context
+
+        _(extracted_context.hex_trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
+        _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
+        _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::DEFAULT)
+        _(extracted_context).must_be(:remote?)
+      end
+    end
+
     describe 'given context with a 64 bit/16 HEXDIGIT trace id' do
       let(:trace_id_header) do
         '64fe8b2a57d3eff7'

@@ -28,6 +28,8 @@ module AppConfig
       apply_rails_6_0_configs(new_app)
     when /^6\.1/
       apply_rails_6_1_configs(new_app)
+    when /^7\./
+      apply_rails_7_configs(new_app)
     end
 
     remove_rack_middleware(new_app) if remove_rack_tracer_middleware
@@ -77,5 +79,16 @@ module AppConfig
   def apply_rails_6_1_configs(application)
     # Required in Rails 6
     application.config.hosts << 'example.org'
+  end
+
+  def apply_rails_7_configs(application)
+    # Required in Rails 7
+    application.config.hosts << 'example.org'
+
+    # Unfreeze values which may have been frozen on previous initializations.
+    ActiveSupport::Dependencies.autoload_paths =
+      ActiveSupport::Dependencies.autoload_paths.dup
+    ActiveSupport::Dependencies.autoload_once_paths =
+      ActiveSupport::Dependencies.autoload_once_paths.dup
   end
 end

@@ -56,7 +56,7 @@ module OpenTelemetry
           span_context = Trace::SpanContext.new(
             trace_id: Array(trace_id).pack('H*'),
             span_id: Array(span_id).pack('H*'),
-            trace_flags: sampled == 'true' ? Trace::TraceFlags::SAMPLED : Trace::TraceFlags::DEFAULT,
+            trace_flags: as_trace_flags(sampled),
             remote: true
           )
 
@@ -88,6 +88,15 @@ module OpenTelemetry
         end
 
         private
+
+        def as_trace_flags(sampled)
+          case sampled
+          when 'true', '1'
+            Trace::TraceFlags::SAMPLED
+          else
+            Trace::TraceFlags::DEFAULT
+          end
+        end
 
         def valid?(trace_id:, span_id:)
           !(VALID_TRACE_ID_REGEX !~ trace_id || VALID_SPAN_ID_REGEX !~ span_id)
