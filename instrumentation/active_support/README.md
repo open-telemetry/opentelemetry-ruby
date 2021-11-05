@@ -1,5 +1,5 @@
 # OpenTelemetry ActiveSupport Instrumentation
-The Active Support instrumentation is a community-maintained instrumentation for the Active Support portion of the [Ruby on Rails](https://rubyonrails.org/) web-application framework.
+The Active Support instrumentation is a community-maintained instrumentation for the Active Support portion of the [Ruby on Rails][rails-home] web-application framework.
 
 ## How do I get started?
 
@@ -48,6 +48,7 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 
 The `opentelemetry-instrumentation-active_support` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
 
+[rails-home]: https://rubyonrails.org
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
