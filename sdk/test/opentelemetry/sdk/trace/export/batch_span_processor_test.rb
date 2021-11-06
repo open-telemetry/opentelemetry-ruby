@@ -39,6 +39,36 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     def force_flush(timeout: nil); end
   end
 
+  class NotAnExporter
+  end
+
+  class RaisingExporter
+    def export(batch, timeout: nil)
+      raise 'boom!'
+    end
+
+    def shutdown(timeout: nil); end
+
+    def force_flush(timeout: nil); end
+  end
+
+  class TestMetricsReporter
+    attr_reader :reported_metrics
+
+    def initialize
+      @reported_metrics = {}
+    end
+
+    def add_to_counter(metric, increment: 1, labels: {})
+      @reported_metrics[metric] ||= []
+      @reported_metrics[metric] << [increment, labels]
+    end
+
+    def record_value(metric, value:, labels: {}); end
+
+    def observe_value(metric, value:, labels: {}); end
+  end
+
   class TestSpan
     def initialize(id = nil, recording = true)
       trace_flags = recording ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
@@ -78,7 +108,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
 
     it 'raises if exporter is not an exporter' do
-      _(-> { BatchSpanProcessor.new(exporter: TestExporter.new) }).must_raise(ArgumentError)
+      _(-> { BatchSpanProcessor.new(NotAnExporter.new) }).must_raise(ArgumentError)
     end
 
     it 'sets parameters from the environment' do
@@ -200,6 +230,51 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       bsp = BatchSpanProcessor.new(TestExporter.new, start_thread_on_boot: false)
       bsp.shutdown(timeout: 0)
     end
+
+    it 'returns a SUCCESS status if no error' do
+      test_exporter = TestExporter.new
+      test_exporter.instance_eval do
+        def shutdown(timeout: nil)
+          SUCCESS
+        end
+      end
+
+      bsp = BatchSpanProcessor.new(test_exporter)
+      bsp.on_finish(TestSpan.new)
+      result = bsp.shutdown(timeout: 0)
+
+      _(result).must_equal(SUCCESS)
+    end
+
+    it 'returns a FAILURE status if a non specific export error occurs' do
+      test_exporter = TestExporter.new
+      test_exporter.instance_eval do
+        def shutdown(timeout: nil)
+          FAILURE
+        end
+      end
+
+      bsp = BatchSpanProcessor.new(test_exporter)
+      bsp.on_finish(TestSpan.new)
+      result = bsp.shutdown(timeout: 0)
+
+      _(result).must_equal(FAILURE)
+    end
+
+    it 'returns a TIMEOUT status if a timeout export error occurs' do
+      test_exporter = TestExporter.new
+      test_exporter.instance_eval do
+        def shutdown(timeout: nil)
+          TIMEOUT
+        end
+      end
+
+      bsp = BatchSpanProcessor.new(test_exporter)
+      bsp.on_finish(TestSpan.new)
+      result = bsp.shutdown(timeout: 0)
+
+      _(result).must_equal(TIMEOUT)
+    end
   end
 
   describe 'lifecycle' do
@@ -293,6 +368,22 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       expected = 100.times.map { |i| i }
 
       _(out).must_equal(expected)
+    end
+  end
+
+  describe 'faulty exporter' do
+    let(:exporter) { RaisingExporter.new }
+    let(:bsp) { BatchSpanProcessor.new(exporter, metrics_reporter: metrics_reporter) }
+    let(:metrics_reporter) { TestMetricsReporter.new }
+
+    it 'reports export failures' do
+      tss = [TestSpan.new, TestSpan.new, TestSpan.new, TestSpan.new]
+      tss.each { |ts| bsp.on_finish(ts) }
+      bsp.shutdown
+
+      _(metrics_reporter.reported_metrics['otel.bsp.error']).wont_be_nil
+      _(metrics_reporter.reported_metrics['otel.bsp.error'][0][0]).must_equal(1)
+      _(metrics_reporter.reported_metrics['otel.bsp.error'][0][1]).must_equal('reason' => 'RuntimeError')
     end
   end
 

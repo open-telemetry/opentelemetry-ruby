@@ -1,0 +1,14 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+appraise 'resque-2.0' do
+  gem 'resque', '~> 2.0.0'
+end
+
+appraise 'resque-1.27' do
+  gem 'resque', '~> 1.27.0'
+  gem 'redis', '3.3.5'
+end

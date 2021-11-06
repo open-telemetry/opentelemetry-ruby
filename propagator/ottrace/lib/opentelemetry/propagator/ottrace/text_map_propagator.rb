@@ -18,8 +18,8 @@ module OpenTelemetry
       # Propagates context using OTTrace header format
       class TextMapPropagator
         PADDING = '0' * 16
-        VALID_TRACE_ID_REGEX = /^[0-9a-f]{32}$/.freeze
-        VALID_SPAN_ID_REGEX = /^[0-9a-f]{16}$/.freeze
+        VALID_TRACE_ID_REGEX = /^[0-9a-f]{32}$/i.freeze
+        VALID_SPAN_ID_REGEX = /^[0-9a-f]{16}$/i.freeze
         TRACE_ID_64_BIT_WIDTH = 64 / 4
         TRACE_ID_HEADER = 'ot-tracer-traceid'
         SPAN_ID_HEADER = 'ot-tracer-spanid'
@@ -56,11 +56,11 @@ module OpenTelemetry
           span_context = Trace::SpanContext.new(
             trace_id: Array(trace_id).pack('H*'),
             span_id: Array(span_id).pack('H*'),
-            trace_flags: sampled == 'true' ? Trace::TraceFlags::SAMPLED : Trace::TraceFlags::DEFAULT,
+            trace_flags: as_trace_flags(sampled),
             remote: true
           )
 
-          span = Trace::Span.new(span_context: span_context)
+          span = OpenTelemetry::Trace.non_recording_span(span_context)
           Trace.context_with_span(span, parent_context: set_baggage(carrier: carrier, context: context, getter: getter))
         end
 
@@ -88,6 +88,15 @@ module OpenTelemetry
         end
 
         private
+
+        def as_trace_flags(sampled)
+          case sampled
+          when 'true', '1'
+            Trace::TraceFlags::SAMPLED
+          else
+            Trace::TraceFlags::DEFAULT
+          end
+        end
 
         def valid?(trace_id:, span_id:)
           !(VALID_TRACE_ID_REGEX !~ trace_id || VALID_SPAN_ID_REGEX !~ span_id)
@@ -118,7 +127,7 @@ module OpenTelemetry
         end
 
         def baggage
-          OpenTelemetry.baggage
+          OpenTelemetry::Baggage
         end
 
         def inject_span_context(span_context:, carrier:, setter:)

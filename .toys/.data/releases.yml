@@ -31,6 +31,26 @@ commit_lint:
 #  *  changelog_path: Path to CHANGLEOG.md relative to the gem directory.
 #     (Required only if it is not in the expected location.)
 gems:
+  - name: opentelemetry-instrumentation-active_support
+    directory: instrumentation/active_support
+    version_constant: [OpenTelemetry, Instrumentation, ActiveSupport, VERSION]
+
+  - name: opentelemetry-instrumentation-action_view
+    directory: instrumentation/action_view
+    version_constant: [OpenTelemetry, Instrumentation, ActionView, VERSION]
+
+  - name: opentelemetry-instrumentation-action_pack
+    directory: instrumentation/action_pack
+    version_constant: [OpenTelemetry, Instrumentation, ActionPack, VERSION]
+
+  - name: opentelemetry-instrumentation-active_job
+    directory: instrumentation/active_job
+    version_constant: [OpenTelemetry, Instrumentation, ActiveJob, VERSION]
+
+  - name: opentelemetry-instrumentation-resque
+    directory: instrumentation/resque
+    version_constant: [OpenTelemetry, Instrumentation, Resque, VERSION]
+
   - name: opentelemetry-instrumentation-bunny
     directory: instrumentation/bunny
     version_constant: [OpenTelemetry, Instrumentation, Bunny, VERSION]
@@ -39,6 +59,10 @@ gems:
     directory: instrumentation/base
     version_rb_path: lib/opentelemetry/instrumentation/version.rb
     version_constant: [OpenTelemetry, Instrumentation, VERSION]
+
+  - name: opentelemetry-instrumentation-active_record
+    directory: instrumentation/active_record
+    version_constant: [OpenTelemetry, Instrumentation, ActiveRecord, VERSION]
 
   - name: opentelemetry-instrumentation-lmdb
     directory: instrumentation/lmdb
@@ -135,6 +159,10 @@ gems:
     directory: instrumentation/pg
     version_constant: [OpenTelemetry, Instrumentation, PG, VERSION]
 
+  - name: opentelemetry-instrumentation-que
+    directory: instrumentation/que
+    version_constant: [OpenTelemetry, Instrumentation, Que, VERSION]
+
   - name: opentelemetry-instrumentation-rack
     directory: instrumentation/rack
     version_constant: [OpenTelemetry, Instrumentation, Rack, VERSION]
@@ -183,3 +211,8 @@ gems:
     directory: resource_detectors
     version_rb_path: lib/opentelemetry/resource/detectors/version.rb
     version_constant: [OpenTelemetry, Resource, Detectors, VERSION]
+
+  - name: opentelemetry-semantic_conventions
+    directory: semantic_conventions
+    version_rb_path: lib/opentelemetry/semantic_conventions/version.rb
+    version_constant: [OpenTelemetry, SemanticConventions, VERSION]

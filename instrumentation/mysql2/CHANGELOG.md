@@ -1,5 +1,21 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
+### v0.19.1 / 2021-09-29
+
+* (No significant changes)
+
+### v0.19.0 / 2021-08-12
+
+* BREAKING CHANGE: Add option for db.statement 
+
+* ADDED: Add option for db.statement 
+* DOCS: Update docs to rely more on environment variable configuration 
+* DOCS: Move to using new db_statement 
+
+### v0.18.1 / 2021-06-23
+
+* (No significant changes)
+
 ### v0.18.0 / 2021-05-21
 
 * ADDED: Updated API depedency for 1.0.0.rc1

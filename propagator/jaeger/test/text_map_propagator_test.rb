@@ -106,8 +106,8 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
       }
 
       context = propagator.extract(carrier, context: parent_context)
-      _(OpenTelemetry.baggage.value('key1', context: context)).must_equal('value1')
-      _(OpenTelemetry.baggage.value('key2', context: context)).must_equal('value2')
+      _(OpenTelemetry::Baggage.value('key1', context: context)).must_equal('value1')
+      _(OpenTelemetry::Baggage.value('key2', context: context)).must_equal('value2')
     end
 
     it 'extracts URL-encoded baggage entries' do
@@ -118,7 +118,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
       }
 
       context = propagator.extract(carrier, context: parent_context)
-      _(OpenTelemetry.baggage.value('key1', context: context)).must_equal('value 1 / blah')
+      _(OpenTelemetry::Baggage.value('key1', context: context)).must_equal('value 1 / blah')
     end
 
     it 'extracts baggage with different keys' do
@@ -136,8 +136,8 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
       )
       span_context = OpenTelemetry::Trace.current_span(context).context
       _(span_context.hex_trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
-      _(OpenTelemetry.baggage.value('key-1', context: context)).must_equal('value1')
-      _(OpenTelemetry.baggage.value('key-2', context: context)).must_equal('value2')
+      _(OpenTelemetry::Baggage.value('key-1', context: context)).must_equal('value1')
+      _(OpenTelemetry::Baggage.value('key-2', context: context)).must_equal('value2')
     end
 
     it 'handles trace ids and span ids that are too long' do
@@ -166,8 +166,8 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
                        trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT,
                        jaeger_debug: false)
       context = OpenTelemetry::Trace.context_with_span(
-        OpenTelemetry::Trace::Span.new(
-          span_context: OpenTelemetry::Trace::SpanContext.new(
+        OpenTelemetry::Trace.non_recording_span(
+          OpenTelemetry::Trace::SpanContext.new(
             trace_id: Array(trace_id).pack('H*'),
             span_id: Array(span_id).pack('H*'),
             trace_flags: trace_flags
@@ -232,7 +232,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
         trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
         span_id: 'e457b5a2e4d86bd1'
       )
-      context = OpenTelemetry.baggage.build(context: context) do |baggage|
+      context = OpenTelemetry::Baggage.build(context: context) do |baggage|
         baggage.set_value('key1', 'value1')
         baggage.set_value('key2', 'value2')
       end
@@ -247,7 +247,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
         trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
         span_id: 'e457b5a2e4d86bd1'
       )
-      context = OpenTelemetry.baggage.build(context: context) do |baggage|
+      context = OpenTelemetry::Baggage.build(context: context) do |baggage|
         baggage.set_value('key1', 'value 1 / blah')
       end
       carrier = {}
@@ -268,7 +268,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
         span_id: 'e457b5a2e4d86bd1',
         trace_flags: OpenTelemetry::Trace::TraceFlags::SAMPLED
       )
-      context = OpenTelemetry.baggage.build(context: context) do |baggage|
+      context = OpenTelemetry::Baggage.build(context: context) do |baggage|
         baggage.set_value('key-1', 'value1')
         baggage.set_value('key-2', 'value2')
       end

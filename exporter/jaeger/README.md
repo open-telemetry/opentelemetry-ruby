@@ -31,18 +31,27 @@ Then, configure the SDK to use a Jaeger exporter as a span processor, and use th
 require 'opentelemetry/sdk'
 require 'opentelemetry/exporter/jaeger'
 
-# Configure the sdk with custom export
-OpenTelemetry::SDK.configure do |c|
-  c.add_span_processor(
-    OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(
-      OpenTelemetry::Exporter::Jaeger::AgentExporter.new(host: '127.0.0.1', port: 6831)
-      # Alternatively, for the collector exporter:
-      # exporter: OpenTelemetry::Exporter::Jaeger::CollectorExporter.new(endpoint: 'http://192.168.0.1:14268/api/traces')
-    )
-  )
-  c.service_name = 'jaeger-example'
-  c.service_version = '0.6.0'
-end
+# Configure the sdk with the Jaeger collector exporter
+ENV['OTEL_TRACES_EXPORTER'] = 'jaeger'
+
+ENV['OTEL_SERVICE_NAME'] = 'jaeger-example'
+ENV['OTEL_SERVICE_VERSION'] = '0.6.0'
+
+# The exporter will connect to localhost:6381 by default. To change:
+# ENV['OTEL_EXPORTER_JAEGER_AGENT_HOST'] = 'some.other.host'
+# ENV['OTEL_EXPORTER_JAEGER_AGENT_PORT'] = 12345
+
+# The SDK reads the environment for configuration, so no additional configuration is needed:
+OpenTelemetry::SDK.configure
+
+# If you need to use the Jaeger Agent exporter, you will need to configure many things manually:
+# OpenTelemetry::SDK.configure do |c|
+#   c.add_span_processor(
+#     OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(
+#       OpenTelemetry::Exporter::Jaeger::AgentExporter.new(host: '127.0.0.1', port: 6831)
+#     )
+#   )
+# end
 
 # To start a trace you need to get a Tracer from the TracerProvider
 tracer = OpenTelemetry.tracer_provider.tracer('my_app_or_gem', '0.1.0')
@@ -77,7 +86,7 @@ The collector exporter can be configured explicitly in code, as shown above, or 
 
 | Parameter          | Environment variable                           | Default                    |
 | ------------------ | ---------------------------------------------- | -------------------------- |
-| `endpoint:`        | `OTEL_EXPORTER_JAEGER_ENDPOINT`                | `"http://localhost:14268"` |
+| `endpoint:`        | `OTEL_EXPORTER_JAEGER_ENDPOINT`                | `"http://localhost:14268/api/traces"` |
 | `username:`        | `OTEL_EXPORTER_JAEGER_USER`                    | `nil`                      |
 | `password:`        | `OTEL_EXPORTER_JAEGER_PASSWORD`                | `nil`                      |
 | `ssl_verify_mode:` | `OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_PEER` or | `OpenSSL::SSL:VERIFY_PEER` |

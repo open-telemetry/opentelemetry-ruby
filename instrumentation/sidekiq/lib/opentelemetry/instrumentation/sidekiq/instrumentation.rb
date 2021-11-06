@@ -27,7 +27,8 @@ module OpenTelemetry
           gem_version >= MINIMUM_VERSION
         end
 
-        option :enable_job_class_span_names, default: false, validate: :boolean
+        option :span_naming,                 default: :queue, validate: ->(opt) { %I[job_class queue].include?(opt) }
+        option :propagation_style,           default: :link,  validate: ->(opt) { %i[link child none].include?(opt) }
         option :trace_launcher_heartbeat,    default: false, validate: :boolean
         option :trace_poller_enqueue,        default: false, validate: :boolean
         option :trace_poller_wait,           default: false, validate: :boolean
@@ -55,6 +56,10 @@ module OpenTelemetry
               ::Sidekiq::Processor.prepend(Patches::Processor)
               ::Sidekiq::Launcher.prepend(Patches::Launcher)
               ::Sidekiq::Scheduled::Poller.prepend(Patches::Poller)
+            end
+
+            config.on(:shutdown) do
+              OpenTelemetry.tracer_provider.shutdown
             end
           end
         end

@@ -1,10 +1,48 @@
 # Release History: opentelemetry-api
 
+### v1.0.0 / 2021-09-29
+
+* (No significant changes)
+
+### v1.0.0.rc3 / 2021-08-12
+
+* BREAKING CHANGE: Remove optional parent_context from in_span
+* BREAKING CHANGE: Refactor Baggage to remove Noop*
+* BREAKING CHANGE: Total order constraint on span.status=
+
+* ADDED: Add Tracer.non_recording_span to API
+* ADDED: Make API's NoopTextMapPropagator private
+* FIXED: Remove optional parent_context from in_span
+* FIXED: Reduce span allocation in API
+* FIXED: Refactor Baggage to remove Noop*
+* FIXED: Total order constraint on span.status=
+* FIXED: Return early if carrier is nil
+* FIXED: Update context to match spec
+* FIXED: Return the original context if the baggage header value is empty
+* DOCS: Update docs to rely more on environment variable configuration
+
+### v1.0.0.rc2 / 2021-06-23
+
+* BREAKING CHANGE: Remove optional parent_context from in_span [729](https://github.com/open-telemetry/opentelemetry-ruby/pull/729)
+* BREAKING CHANGE: Refactor Baggage to remove Noop* [800](https://github.com/open-telemetry/opentelemetry-ruby/pull/800)
+  - The noop baggage manger has been removed.
+  - The baggage management methods are now available through OpenTelemetry::Baggage#method, previously OpenTelemetry.baggage#method
+* BREAKING CHANGE: Total order constraint on span.status= [805](https://github.com/open-telemetry/opentelemetry-ruby/pull/805)
+  - The OpenTelemetry::Trace::Util::HttpToStatus module has been removed as it was incorrectly setting the span status to OK for codes codes in the range 100..399
+  - The HttpToStatus module can be replaced inline as follows `span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(response_code.to_i)`
+  - The `Status.new(code, description:)` initializer has been hidden in favour of simpler constructors for each status code: `Status.ok`, `Status.error` and `Status.unset`. Each constructor takes an optional description.
+
+* ADDED: Add Tracer.non_recording_span to API [799](https://github.com/open-telemetry/opentelemetry-ruby/pull/799)
+* FIXED: Reduce span allocation in API [795](https://github.com/open-telemetry/opentelemetry-ruby/pull/795)
+* FIXED: Return early if carrier is nil [835](https://github.com/open-telemetry/opentelemetry-ruby/pull/835)
+* FIXED: Update context to match spec [807](https://github.com/open-telemetry/opentelemetry-ruby/pull/807)
+  - The `Context.current` setter has been removed and the previously private attach/detach methods are now available as class methods on the context module.
+
 ### v1.0.0.rc1 / 2021-05-21
 
 * BREAKING CHANGE: Remove optional parent_context from in_span 
 
-* FIXED: Remove optional parent_context from in_span 
+* FIXED: Remove optional parent_context from in_span
 
 ### v0.17.0 / 2021-04-22
 

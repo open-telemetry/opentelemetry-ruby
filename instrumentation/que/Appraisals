@@ -1,0 +1,9 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+appraise 'que-1.0' do
+  gem 'que', '1.0.0.beta4'
+end

@@ -6,6 +6,7 @@ require 'httpclient'
 
 Bundler.require
 
+ENV['OTEL_TRACES_EXPORTER'] = 'console'
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::HttpClient'
 end

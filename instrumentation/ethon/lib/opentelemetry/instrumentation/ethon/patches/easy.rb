@@ -32,25 +32,20 @@ module OpenTelemetry
             super
           end
 
-          def complete # rubocop:disable Metrics/MethodLength
+          def complete
             begin
               response_options = mirror.options
               response_code = (response_options[:response_code] || response_options[:code]).to_i
               if response_code.zero?
                 return_code = response_options[:return_code]
                 message = return_code ? ::Ethon::Curl.easy_strerror(return_code) : 'unknown reason'
-                @otel_span.status = OpenTelemetry::Trace::Status.new(
-                  OpenTelemetry::Trace::Status::ERROR,
-                  description: "Request has failed: #{message}"
-                )
+                @otel_span.status = OpenTelemetry::Trace::Status.error("Request has failed: #{message}")
               else
                 @otel_span.set_attribute('http.status_code', response_code)
-                @otel_span.status = OpenTelemetry::Trace::Status.http_to_status(
-                  response_code
-                )
+                @otel_span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(response_code.to_i)
               end
             ensure
-              @otel_span.finish
+              @otel_span&.finish
               @otel_span = nil
             end
             super

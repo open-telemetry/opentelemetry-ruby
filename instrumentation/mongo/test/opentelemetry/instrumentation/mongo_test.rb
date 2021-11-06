@@ -3,7 +3,6 @@
 # Copyright The OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
-
 require_relative '../../test_helper'
 
 require_relative '../../../lib/opentelemetry/instrumentation/mongo/instrumentation'
@@ -13,8 +12,14 @@ describe OpenTelemetry::Instrumentation::Mongo do
   let(:exporter) { EXPORTER }
 
   before do
+    # Clear previous instrumentation subscribers between test runs
+    Mongo::Monitoring::Global.subscribers['Command'] = [] if defined?(::Mongo::Monitoring::Global)
     instrumentation.install
     exporter.reset
+  end
+
+  after do
+    instrumentation.instance_variable_set(:@installed, false)
   end
 
   describe 'present' do
@@ -44,6 +49,7 @@ describe OpenTelemetry::Instrumentation::Mongo do
     it 'installs the subscriber' do
       klass = OpenTelemetry::Instrumentation::Mongo::Subscriber
       subscribers = Mongo::Monitoring::Global.subscribers['Command']
+
       _(subscribers.size).must_equal 1
       _(subscribers.first).must_be_kind_of klass
     end
@@ -71,5 +77,5 @@ describe OpenTelemetry::Instrumentation::Mongo do
       client['people'].find(name: 'Steve').first
       _(exporter.finished_spans.size).must_equal 2
     end
-  end
+  end unless ENV['OMIT_SERVICES']
 end

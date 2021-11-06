@@ -25,19 +25,28 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.5.0'
 
-  spec.add_dependency 'opentelemetry-api', '~> 1.0.0.rc1'
-  spec.add_dependency 'opentelemetry-common', '~> 0.18.0'
-  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.18.0'
+  spec.add_dependency 'opentelemetry-api', '~> 1.0'
+  spec.add_dependency 'opentelemetry-common', '~> 0.19.2'
+  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.18.3'
+
+  # This is an intentionally loose dependency, since we want to be able to
+  # release new versions of opentelemetry-semantic_conventions without requiring
+  # a new SDK release. The requirements of the SDK have been satisifed since the
+  # initial release of opentelemetry-semantic_conventions, so we feel it is safe.
+  spec.add_dependency 'opentelemetry-semantic_conventions'
 
   spec.add_development_dependency 'bundler', '>= 1.17'
   spec.add_development_dependency 'faraday', '~> 0.13'
   spec.add_development_dependency 'minitest', '~> 5.0'
-  spec.add_development_dependency 'opentelemetry-exporter-jaeger', '~> 0.18.0'
+  spec.add_development_dependency 'opentelemetry-exporter-zipkin', '~> 0.19.0'
+  spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake', '~> 12.0'
   spec.add_development_dependency 'rubocop', '~> 0.73.0'
   spec.add_development_dependency 'simplecov', '~> 0.17'
   spec.add_development_dependency 'yard', '~> 0.9'
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
+
+  spec.add_development_dependency 'pry-byebug' unless RUBY_ENGINE == 'jruby'
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-sdk/v#{OpenTelemetry::SDK::VERSION}/file.CHANGELOG.html"

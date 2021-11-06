@@ -8,6 +8,7 @@ require 'test_helper'
 
 describe OpenTelemetry::SDK::Trace::Tracer do
   Tracer = OpenTelemetry::SDK::Trace::Tracer
+  SpanLimits = OpenTelemetry::SDK::Trace::SpanLimits
 
   let(:tracer_provider) { OpenTelemetry::SDK::Trace::TracerProvider.new }
   let(:tracer) do
@@ -16,24 +17,6 @@ describe OpenTelemetry::SDK::Trace::Tracer do
   end
   let(:record_sampler) do
     Samplers::ConstantSampler.new(decision: Decision::RECORD_ONLY, description: 'RecordSampler')
-  end
-
-  describe '#name' do
-    it 'reflects the name passed in' do
-      _(Tracer.new('component', '1.0', tracer_provider).name).must_equal('component')
-    end
-  end
-
-  describe '#version' do
-    it 'reflects the version passed in' do
-      _(Tracer.new('component', '1.0', tracer_provider).version).must_equal('1.0')
-    end
-  end
-
-  describe '#tracer_provider' do
-    it 'reflects the tracer_provider passed in' do
-      _(Tracer.new('component', '1.0', tracer_provider).tracer_provider).must_equal(tracer_provider)
-    end
   end
 
   describe '#start_root_span' do
@@ -59,21 +42,21 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     end
 
     it 'returns a no-op span if sampler says do not record events' do
-      activate_trace_config TraceConfig.new(sampler: Samplers::ALWAYS_OFF)
+      tracer_provider.sampler = Samplers::ALWAYS_OFF
       span = tracer.start_root_span('root')
       _(span.context.trace_flags).wont_be :sampled?
       _(span).wont_be :recording?
     end
 
     it 'returns an unsampled span if sampler says record, but do not sample' do
-      activate_trace_config TraceConfig.new(sampler: record_sampler)
+      tracer_provider.sampler = record_sampler
       span = tracer.start_root_span('root')
       _(span.context.trace_flags).wont_be :sampled?
       _(span).must_be :recording?
     end
 
     it 'returns a sampled span if sampler says sample' do
-      activate_trace_config TraceConfig.new(sampler: Samplers::ALWAYS_ON)
+      tracer_provider.sampler = Samplers::ALWAYS_ON
       span = tracer.start_root_span('root')
       _(span.context.trace_flags).must_be :sampled?
       _(span).must_be :recording?
@@ -96,7 +79,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
           !args[:parent_context].nil? &&
           !OpenTelemetry::Trace.current_span(args[:parent_context]).context.valid?
       end
-      activate_trace_config TraceConfig.new(sampler: mock_sampler)
+      tracer_provider.sampler = mock_sampler
       OpenTelemetry::Trace.stub :generate_trace_id, trace_id do
         tracer.start_root_span(name, attributes: attributes, links: links, kind: kind)
       end
@@ -130,7 +113,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       mock_sampler = Minitest::Mock.new
       result = Result.new(decision: Decision::RECORD_ONLY, attributes: sampler_attributes, tracestate: nil)
       mock_sampler.expect(:should_sample?, result, [Hash])
-      activate_trace_config TraceConfig.new(sampler: mock_sampler)
+      tracer_provider.sampler = mock_sampler
       span = tracer.start_root_span('op', attributes: { '1' => 0, '2' => 2 })
       _(span.attributes).must_equal('1' => 1, '2' => 2)
     end
@@ -147,19 +130,19 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     end
 
     it 'trims link attributes' do
-      activate_trace_config TraceConfig.new(max_attributes_per_link: 1)
+      tracer_provider.span_limits = SpanLimits.new(link_attribute_count_limit: 1)
       link = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '1' => 1, '2' => 2)
       span = tracer.start_root_span('root', links: [link])
       _(span.links.first.attributes.size).must_equal(1)
     end
 
     it 'trims links' do
-      activate_trace_config TraceConfig.new(max_links_count: 1)
+      tracer_provider.span_limits = SpanLimits.new(link_count_limit: 1)
       link1 = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '1' => 1)
       link2 = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '2' => 2)
       span = tracer.start_root_span('root', links: [link1, link2])
       _(span.links.size).must_equal(1)
-      _(span.links.first).must_equal(link2)
+      _(span.links.first).must_equal(link1)
     end
   end
 
@@ -169,7 +152,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     end
     let(:context) do
       OpenTelemetry::Trace.context_with_span(
-        OpenTelemetry::Trace::Span.new(span_context: span_context),
+        OpenTelemetry::Trace.non_recording_span(span_context),
         parent_context: OpenTelemetry::Context.empty
       )
     end
@@ -199,21 +182,21 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     end
 
     it 'returns a no-op span if sampler says do not record events' do
-      activate_trace_config TraceConfig.new(sampler: Samplers::ALWAYS_OFF)
+      tracer_provider.sampler = Samplers::ALWAYS_OFF
       span = tracer.start_span('op', with_parent: context)
       _(span.context.trace_flags).wont_be :sampled?
       _(span).wont_be :recording?
     end
 
     it 'returns an unsampled span if sampler says record, but do not sample' do
-      activate_trace_config TraceConfig.new(sampler: record_sampler)
+      tracer_provider.sampler = record_sampler
       span = tracer.start_span('op', with_parent: context)
       _(span.context.trace_flags).wont_be :sampled?
       _(span).must_be :recording?
     end
 
     it 'returns a sampled span if sampler says sample' do
-      activate_trace_config TraceConfig.new(sampler: Samplers::ALWAYS_ON)
+      tracer_provider.sampler = Samplers::ALWAYS_ON
       span = tracer.start_span('op', with_parent: context)
       _(span.context.trace_flags).must_be :sampled?
       _(span).must_be :recording?
@@ -227,7 +210,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       result = Result.new(decision: Decision::DROP, tracestate: nil)
       mock_sampler = Minitest::Mock.new
       mock_sampler.expect(:should_sample?, result, [{ trace_id: span_context.trace_id, parent_context: context, links: links, name: name, kind: kind, attributes: attributes }])
-      activate_trace_config TraceConfig.new(sampler: mock_sampler)
+      tracer_provider.sampler = mock_sampler
       tracer.start_span(name, with_parent: context, attributes: attributes, links: links, kind: kind)
       mock_sampler.verify
     end
@@ -277,7 +260,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       mock_sampler = Minitest::Mock.new
       result = Result.new(decision: Decision::RECORD_ONLY, attributes: sampler_attributes, tracestate: nil)
       mock_sampler.expect(:should_sample?, result, [Hash])
-      activate_trace_config TraceConfig.new(sampler: mock_sampler)
+      tracer_provider.sampler = mock_sampler
       span = tracer.start_span('op', with_parent: context, attributes: { '1' => 0, '2' => 2 })
       _(span.attributes).must_equal('1' => 1, '2' => 2)
     end
@@ -302,19 +285,19 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     end
 
     it 'trims link attributes' do
-      activate_trace_config TraceConfig.new(max_attributes_per_link: 1)
+      tracer_provider.span_limits = SpanLimits.new(link_attribute_count_limit: 1)
       link = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '1' => 1, '2' => 2)
       span = tracer.start_span('op', with_parent: context, links: [link])
       _(span.links.first.attributes.size).must_equal(1)
     end
 
     it 'trims links' do
-      activate_trace_config TraceConfig.new(max_links_count: 1)
+      tracer_provider.span_limits = SpanLimits.new(link_count_limit: 1)
       link1 = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '1' => 1)
       link2 = OpenTelemetry::Trace::Link.new(OpenTelemetry::Trace::SpanContext.new, '2' => 2)
       span = tracer.start_span('op', with_parent: context, links: [link1, link2])
       _(span.links.size).must_equal(1)
-      _(span.links.first).must_equal(link2)
+      _(span.links.first).must_equal(link1)
     end
   end
 
@@ -335,9 +318,5 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       _(span.status.code).must_equal(OpenTelemetry::Trace::Status::ERROR)
       _(span.status.description).must_equal('Unhandled exception of type: RuntimeError')
     end
-  end
-
-  def activate_trace_config(trace_config)
-    tracer_provider.active_trace_config = trace_config
   end
 end

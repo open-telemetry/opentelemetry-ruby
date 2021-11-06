@@ -1,5 +1,18 @@
 # Release History: opentelemetry-propagator-xray
 
+### v0.20.1 / 2021-09-29
+
+* (No significant changes)
+
+### v0.20.0 / 2021-08-12
+
+* ADDED: Xray compliant ids 
+
+### v0.19.0 / 2021-06-23
+
+* FIXED: XRay propagator null exception (#833)
+* ADDED: Add Tracer.non_recording_span to API 
+
 ### v0.18.0 / 2021-05-21
 
 * ADDED: Updated API depedency for 1.0.0.rc1

@@ -12,30 +12,19 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the Rails
       # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        install do |_config|
-          require_dependencies
-          require_railtie
-          patch_metal
-        end
+        MINIMUM_VERSION = Gem::Version.new('5.2.0')
 
-        present do
-          defined?(::Rails)
-        end
-
-        option :enable_recognize_route, default: false, validate: :boolean
+        # This gem requires the instrumentantion gems for the different
+        # components of Rails, as a result it does not have any explicit
+        # work to do in the install step.
+        install { true }
+        present { defined?(::Rails) }
+        compatible { gem_version >= MINIMUM_VERSION }
 
         private
 
-        def require_dependencies
-          require_relative 'patches/action_controller/metal'
-        end
-
-        def require_railtie
-          require_relative 'railtie'
-        end
-
-        def patch_metal
-          ::ActionController::Metal.prepend(Patches::ActionController::Metal)
+        def gem_version
+          Gem.loaded_specs['actionpack'].version
         end
       end
     end

@@ -25,14 +25,17 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.5.0'
 
-  spec.add_dependency 'opentelemetry-api', '~> 1.0.0.rc1'
-  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.18.0'
-  spec.add_dependency 'opentelemetry-instrumentation-rack', '~> 0.18.0'
+  spec.add_dependency 'opentelemetry-api', '~> 1.0'
+  spec.add_dependency 'opentelemetry-instrumentation-action_pack', '~> 0.1.2'
+  spec.add_dependency 'opentelemetry-instrumentation-action_view', '~> 0.1.3'
+  spec.add_dependency 'opentelemetry-instrumentation-active_record', '~> 0.2.0'
+  spec.add_dependency 'opentelemetry-instrumentation-active_support', '~> 0.1.0'
+  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.18.3'
 
   spec.add_development_dependency 'appraisal', '~> 2.2.0'
   spec.add_development_dependency 'bundler', '>= 1.17'
   spec.add_development_dependency 'minitest', '~> 5.0'
-  spec.add_development_dependency 'opentelemetry-sdk', '~> 1.0.0.rc1'
+  spec.add_development_dependency 'opentelemetry-sdk', '~> 1.0'
   spec.add_development_dependency 'rack-test', '~> 1.1.0'
   spec.add_development_dependency 'rails'
   spec.add_development_dependency 'rake', '~> 12.3.3'

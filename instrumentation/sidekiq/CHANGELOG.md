@@ -1,5 +1,27 @@
 # Release History: opentelemetry-instrumentation-sidekiq
 
+### v0.20.1 / 2021-09-29
+
+* (No significant changes)
+
+### v0.20.0 / 2021-08-18
+
+* ADDED: Gracefully flush provider on sidekiq shutdown event 
+
+### v0.19.1 / 2021-08-12
+
+* (No significant changes)
+
+### v0.19.0 / 2021-06-23
+
+* BREAKING CHANGE: Sidekiq propagation config 
+  - Config option enable_job_class_span_names renamed to span_naming and now expects a symbol of value :job_class, or :queue
+  - The default behaviour is no longer to have one continuous trace for the enqueue and process spans, using links is the new default.  To maintain the previous behaviour the config option propagation_style must be set to :child.
+* BREAKING CHANGE: Total order constraint on span.status= 
+
+* FIXED: Sidekiq propagation config 
+* FIXED: Total order constraint on span.status= 
+
 ### v0.18.0 / 2021-05-21
 
 * ADDED: Updated API depedency for 1.0.0.rc1

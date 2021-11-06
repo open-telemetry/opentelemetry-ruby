@@ -1,0 +1,37 @@
+AllCops:
+  TargetRubyVersion: '2.5.0'
+
+Bundler/OrderedGems:
+  Exclude:
+    - gemfiles/**/*
+Lint/UnusedMethodArgument:
+  Enabled: false
+Metrics/AbcSize:
+  Max: 18
+Metrics/LineLength:
+  Enabled: false
+Metrics/MethodLength:
+  Max: 20
+Metrics/ModuleLength:
+  Enabled: false
+Metrics/ParameterLists:
+  Enabled: false
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - gemfiles/**/*
+Style/ModuleFunction:
+  Enabled: false
+Style/StringLiterals:
+  Exclude:
+    - gemfiles/**/*
+Metrics/BlockLength:
+  Enabled: false
+Naming/FileName:
+  Exclude:
+    - "lib/opentelemetry-semantic_conventions.rb"
+Layout/EmptyLinesAroundModuleBody:
+  Enabled: false
+Layout/TrailingWhitespace:
+  Enabled: false
+Layout/TrailingBlankLines:
+  Enabled: False

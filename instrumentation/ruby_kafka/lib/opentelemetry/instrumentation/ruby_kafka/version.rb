@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module RubyKafka
-      VERSION = '0.18.0'
+      VERSION = '0.18.4'
     end
   end
 end

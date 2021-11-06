@@ -130,4 +130,4 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
       _(spans.size).must_equal(3)
     end
   end
-end
+end unless ENV['OMIT_SERVICES']

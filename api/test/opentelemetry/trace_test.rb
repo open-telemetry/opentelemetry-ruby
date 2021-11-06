@@ -26,7 +26,7 @@ describe OpenTelemetry::Trace do
     end
 
     it 'returns the current span from the provided context' do
-      span = tracer.start_span('a-span')
+      span = OpenTelemetry::Trace.non_recording_span(OpenTelemetry::Trace::SpanContext.new)
       context = OpenTelemetry::Trace.context_with_span(span, parent_context: Context.empty)
       _(OpenTelemetry::Trace.current_span).wont_equal(span)
       _(OpenTelemetry::Trace.current_span(context)).must_equal(span)

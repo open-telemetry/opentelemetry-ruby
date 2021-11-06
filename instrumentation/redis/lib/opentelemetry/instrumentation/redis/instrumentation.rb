@@ -19,8 +19,9 @@ module OpenTelemetry
           defined?(::Redis)
         end
 
-        option :peer_service, default: nil, validate: :string
-        option :enable_statement_obfuscation, default: true, validate: :boolean
+        option :peer_service,                 default: nil,   validate: :string
+        option :trace_root_spans,             default: true,  validate: :boolean
+        option :db_statement,                 default: :obfuscate, validate: ->(opt) { %I[omit include obfuscate].include?(opt) }
 
         private
 

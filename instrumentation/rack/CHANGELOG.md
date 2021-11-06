@@ -1,5 +1,34 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.20.0 / 2021-10-06
+
+* FIXED: Prevent high cardinality rack span name as a default [#973](https://github.com/open-telemetry/opentelemetry-ruby/pull/973)
+
+The default was to set the span name as the path of the request, we have
+corrected this as it was not adhering to the spec requirement using low
+cardinality span names.  You can restore the previous behaviour of high
+cardinality span names by passing in a url quantization function that
+forwards the uri path.  More details on this is available in the readme.
+
+### v0.19.3 / 2021-09-29
+
+* (No significant changes)
+
+### v0.19.2 / 2021-08-18
+
+* FIXED: Rack middleware assuming script_name presence 
+
+### v0.19.1 / 2021-08-12
+
+* DOCS: Update docs to rely more on environment variable configuration 
+
+### v0.19.0 / 2021-06-23
+
+* BREAKING CHANGE: Total order constraint on span.status= 
+
+* ADDED: Add Tracer.non_recording_span to API 
+* FIXED: Total order constraint on span.status= 
+
 ### v0.18.0 / 2021-05-21
 
 * ADDED: Updated API depedency for 1.0.0.rc1

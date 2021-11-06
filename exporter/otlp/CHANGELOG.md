@@ -1,5 +1,43 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.20.6 / 2021-10-29
+
+* FIXED: Add unexpected error handlign in BSP and OTLP exporter (#995)
+* FIXED: Handle otlp exporter race condition gzip errors with retry 
+
+### v0.20.5 / 2021-09-29
+
+* (No significant changes)
+
+### v0.20.4 / 2021-09-29
+
+* FIXED: OTLP Export Header Format 
+
+### v0.20.3 / 2021-08-19
+
+* FIXED: OTLP exporter missing failure metrics 
+
+### v0.20.2 / 2021-08-12
+
+* FIXED: Add rescue for OpenSSL errors during export 
+* DOCS: Update docs to rely more on environment variable configuration 
+
+### v0.20.1 / 2021-06-29
+
+* FIXED: Otlp encoding exceptions again 
+
+### v0.20.0 / 2021-06-23
+
+* BREAKING CHANGE: Total order constraint on span.status= 
+
+* FIXED: Total order constraint on span.status= 
+
+### v0.19.0 / 2021-06-03
+
+* ADDED: Add a SSL verify mode option for the OTLP exporter 
+* FIXED: Handle OTLP exporter encoding exceptions 
+* DOCS: Remove the OTLP receiver legacy gRPC port(55680) references 
+
 ### v0.18.0 / 2021-05-21
 
 * BREAKING CHANGE: Replace Time.now with Process.clock_gettime 

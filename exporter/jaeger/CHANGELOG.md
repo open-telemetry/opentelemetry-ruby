@@ -1,5 +1,20 @@
 # Release History: opentelemetry-exporter-jaeger
 
+### v0.20.1 / 2021-09-29
+
+* (No significant changes)
+
+### v0.20.0 / 2021-08-12
+
+* ADDED: OTEL_EXPORTER_JAEGER_TIMEOUT env var 
+* DOCS: Update docs to rely more on environment variable configuration 
+
+### v0.19.0 / 2021-06-23
+
+* BREAKING CHANGE: Total order constraint on span.status= 
+
+* FIXED: Total order constraint on span.status= 
+
 ### v0.18.0 / 2021-05-21
 
 * BREAKING CHANGE: Replace Time.now with Process.clock_gettime 

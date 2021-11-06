@@ -27,8 +27,18 @@ module OpenTelemetry
           def platform_trace(platform_key, key, data)
             return yield if platform_key.nil?
 
-            tracer.in_span(platform_key, attributes: attributes_for(key, data)) do |_span|
-              yield
+            tracer.in_span(platform_key, attributes: attributes_for(key, data)) do |span|
+              yield.tap do |response|
+                errors = response[:errors]&.compact&.map { |e| e.to_h }&.to_json if key == 'validate'
+                unless errors.nil?
+                  span.add_event(
+                    'graphql.validation.error',
+                    attributes: {
+                      'message' => errors
+                    }
+                  )
+                end
+              end
             end
           end
 

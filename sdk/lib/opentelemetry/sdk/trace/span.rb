@@ -10,13 +10,13 @@ module OpenTelemetry
       # Implementation of {OpenTelemetry::Trace::Span} that records trace events.
       #
       # This implementation includes reader methods intended to allow access to
-      # internal state by SpanProcessors (see {NoopSpanProcessor} for the interface).
+      # internal state by {SpanProcessor}s.
       # Instrumentation should use the API provided by {OpenTelemetry::Trace::Span}
       # and should consider {Span} to be write-only.
       #
       # rubocop:disable Metrics/ClassLength
       class Span < OpenTelemetry::Trace::Span
-        DEFAULT_STATUS = OpenTelemetry::Trace::Status.new(OpenTelemetry::Trace::Status::UNSET)
+        DEFAULT_STATUS = OpenTelemetry::Trace::Status.unset
         EMPTY_ATTRIBUTES = {}.freeze
 
         private_constant :DEFAULT_STATUS, :EMPTY_ATTRIBUTES
@@ -159,7 +159,7 @@ module OpenTelemetry
           event_attributes = {
             'exception.type' => exception.class.to_s,
             'exception.message' => exception.message,
-            'exception.stacktrace' => exception.full_message(highlight: false, order: :top)
+            'exception.stacktrace' => exception.full_message(highlight: false, order: :top).encode('UTF-8', invalid: :replace, undef: :replace, replace: '�')
           }
           event_attributes.merge!(attributes) unless attributes.nil?
           add_event('exception', attributes: event_attributes)
@@ -167,20 +167,23 @@ module OpenTelemetry
 
         # Sets the Status to the Span
         #
-        # If used, this will override the default Span status. Default is OK.
+        # If used, this will override the default Span status. Default has code = Status::UNSET.
         #
-        # Only the value of the last call will be recorded, and implementations
-        # are free to ignore previous calls.
+        # An attempt to set the status with code == Status::UNSET is ignored.
+        # If the status is set with code == Status::OK, any further attempt to set the status
+        # is ignored.
         #
         # @param [Status] status The new status, which overrides the default Span
-        #   status, which is OK.
+        #   status, which has code = Status::UNSET.
         #
         # @return [void]
         def status=(status)
+          return if status.code == OpenTelemetry::Trace::Status::UNSET
+
           @mutex.synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling status= on an ended Span.')
-            else
+            elsif @status.code != OpenTelemetry::Trace::Status::OK
               @status = status
             end
           end
@@ -235,7 +238,7 @@ module OpenTelemetry
             @events.freeze
             @ended = true
           end
-          @span_processor.on_finish(self)
+          @span_processors.each { |processor| processor.on_finish(self) }
           self
         end
 
@@ -273,14 +276,14 @@ module OpenTelemetry
         end
 
         # @api private
-        def initialize(context, parent_context, name, kind, parent_span_id, trace_config, span_processor, attributes, links, start_timestamp, resource, instrumentation_library) # rubocop:disable Metrics/AbcSize
+        def initialize(context, parent_context, name, kind, parent_span_id, span_limits, span_processors, attributes, links, start_timestamp, resource, instrumentation_library) # rubocop:disable Metrics/AbcSize
           super(span_context: context)
           @mutex = Mutex.new
           @name = name
           @kind = kind
           @parent_span_id = parent_span_id.freeze || OpenTelemetry::Trace::INVALID_SPAN_ID
-          @trace_config = trace_config
-          @span_processor = span_processor
+          @span_limits = span_limits
+          @span_processors = span_processors
           @resource = resource
           @instrumentation_library = instrumentation_library
           @ended = false
@@ -293,8 +296,8 @@ module OpenTelemetry
           @attributes = attributes.nil? ? nil : Hash[attributes] # We need a mutable copy of attributes.
           trim_span_attributes(@attributes)
           @events = nil
-          @links = trim_links(links, trace_config.max_links_count, trace_config.max_attributes_per_link)
-          @span_processor.on_start(self, parent_context)
+          @links = trim_links(links, span_limits.link_count_limit, span_limits.link_attribute_count_limit)
+          @span_processors.each { |processor| processor.on_start(self, parent_context) }
         end
 
         # TODO: Java implementation overrides finalize to log if a span isn't finished.
@@ -310,7 +313,7 @@ module OpenTelemetry
         def trim_span_attributes(attrs)
           return if attrs.nil?
 
-          excess = attrs.size - @trace_config.max_attributes_count
+          excess = attrs.size - @span_limits.attribute_count_limit
           excess.times { attrs.shift } if excess.positive?
           truncate_attribute_values(attrs)
           nil
@@ -319,51 +322,54 @@ module OpenTelemetry
         def truncate_attribute_values(attrs)
           return EMPTY_ATTRIBUTES if attrs.nil?
 
-          max_attributes_length = @trace_config.max_attributes_length
-          attrs.each { |key, value| attrs[key] = OpenTelemetry::Common::Utilities.truncate(value, max_attributes_length) } if max_attributes_length
+          attribute_length_limit = @span_limits.attribute_length_limit
+          attrs.each { |key, value| attrs[key] = OpenTelemetry::Common::Utilities.truncate(value, attribute_length_limit) } if attribute_length_limit
           attrs
         end
 
-        def trim_links(links, max_links_count, max_attributes_per_link) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def trim_links(links, link_count_limit, link_attribute_count_limit) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           # Fast path (likely) common cases.
           return nil if links.nil?
 
-          if links.size <= max_links_count &&
-             links.all? { |link| link.attributes.size <= max_attributes_per_link && Internal.valid_attributes?(name, 'link', link.attributes) }
+          if links.size <= link_count_limit &&
+             links.all? { |link| link.span_context.valid? && link.attributes.size <= link_attribute_count_limit && Internal.valid_attributes?(name, 'link', link.attributes) }
             return links.frozen? ? links : links.clone.freeze
           end
 
           # Slow path: trim attributes for each Link.
-          links.last(max_links_count).map! do |link|
+          valid_links = links.select { |link| link.span_context.valid? }
+          excess_link_count = valid_links.size - link_count_limit
+          valid_links.pop(excess_link_count) if excess_link_count.positive?
+          valid_links.map! do |link|
             attrs = Hash[link.attributes] # link.attributes is frozen, so we need an unfrozen copy to adjust.
             attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
-            excess = attrs.size - max_attributes_per_link
+            excess = attrs.size - link_attribute_count_limit
             excess.times { attrs.shift } if excess.positive?
             OpenTelemetry::Trace::Link.new(link.span_context, attrs)
           end.freeze
         end
 
         def append_event(events, event) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-          max_events_count = @trace_config.max_events_count
-          max_attributes_per_event = @trace_config.max_attributes_per_event
+          event_count_limit = @span_limits.event_count_limit
+          event_attribute_count_limit = @span_limits.event_attribute_count_limit
           valid_attributes = Internal.valid_attributes?(name, 'event', event.attributes)
 
           # Fast path (likely) common case.
-          if events.size < max_events_count &&
-             event.attributes.size <= max_attributes_per_event &&
+          if events.size < event_count_limit &&
+             event.attributes.size <= event_attribute_count_limit &&
              valid_attributes
             return events << event
           end
 
           # Slow path.
-          excess = events.size + 1 - max_events_count
+          excess = events.size + 1 - event_count_limit
           events.shift(excess) if excess.positive?
 
-          excess = event.attributes.size - max_attributes_per_event
+          excess = event.attributes.size - event_attribute_count_limit
           if excess.positive? || !valid_attributes
             attrs = Hash[event.attributes] # event.attributes is frozen, so we need an unfrozen copy to adjust.
             attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
-            excess = attrs.size - max_attributes_per_event
+            excess = attrs.size - event_attribute_count_limit
             excess.times { attrs.shift } if excess.positive?
             event = Event.new(event.name, attrs.freeze, event.timestamp)
           end

@@ -35,19 +35,14 @@ end
 ```ruby
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::PG', {
-    # The obfuscation of SQL in the db.statement attribute is disabled by default.
-    # To enable, set enable_sql_obfuscation to true.
-    enable_sql_obfuscation: false,
-
     # You may optionally set a value for 'peer.service', which
     # will be included on all spans from this instrumentation:
     peer_service: 'postgres:readonly',
 
     # By default, this instrumentation includes the executed SQL as the `db.statement`
-    # semantic attribute (possibly sanitized, according to the value of `enable_sql_obfuscation`).
-    # Optionally, you may disable the inclusion of this attribute entirely by
-    # setting this option to false.
-    enable_statement_attribute: true,
+    # semantic attribute. Optionally, you may disable the inclusion of this attribute entirely by
+    # setting this option to :omit or sanitize the attribute by setting to :obfuscate
+    db_statement: :include,
   }
 end
 ```

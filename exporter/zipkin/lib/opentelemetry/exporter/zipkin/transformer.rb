@@ -29,10 +29,10 @@ module OpenTelemetry
         STATUS_ERROR = 'ERROR'
         STATUS_OK = 'OK'
         ATTRIBUTE_PEER_SERVICE = 'peer.service'
-        ATTRIBUTE_NET_PEER_IP = 'peer.ip'
-        ATTRIBUTE_NET_PEER_PORT = 'peer.port'
-        ATTRIBUTE_NET_HOST_IP = 'host.ip'
-        ATTRIBUTE_NET_HOST_PORT = 'host.port'
+        ATTRIBUTE_NET_PEER_IP = 'net.peer.ip'
+        ATTRIBUTE_NET_PEER_PORT = 'net.peer.port'
+        ATTRIBUTE_NET_HOST_IP = 'net.host.ip'
+        ATTRIBUTE_NET_HOST_PORT = 'net.host.port'
 
         DEFAULT_SERVICE_NAME = OpenTelemetry::SDK::Resources::Resource.default.attribute_enumerator.find { |k, _| k == SERVICE_NAME_ATTRIBUTE_KEY }&.last || 'unknown_service'
         private_constant(:KIND_MAP, :DEFAULT_SERVICE_NAME, :SERVICE_NAME_ATTRIBUTE_KEY, :ERROR_TAG_KEY, :STATUS_CODE_NAME, :STATUS_ERROR, :STATUS_OK, :ATTRIBUTE_PEER_SERVICE, :ATTRIBUTE_NET_PEER_IP, :ATTRIBUTE_NET_PEER_PORT, :ATTRIBUTE_NET_HOST_IP, :ATTRIBUTE_NET_HOST_PORT)

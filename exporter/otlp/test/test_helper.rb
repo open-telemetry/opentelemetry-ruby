@@ -12,4 +12,4 @@ require 'opentelemetry/exporter/otlp'
 require 'minitest/autorun'
 require 'webmock/minitest'
 
-OpenTelemetry.logger = Logger.new('/dev/null')
+OpenTelemetry.logger = Logger.new(File::NULL)

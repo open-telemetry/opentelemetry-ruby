@@ -1,5 +1,41 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.21.3 / 2021-10-07
+
+* (No significant changes)
+
+### v0.21.2 / 2021-09-29
+
+* (No significant changes)
+
+### v0.21.1 / 2021-09-29
+
+* (No significant changes)
+
+### v0.21.0 / 2021-09-15
+
+* ADDED: Add Que instrumentation 
+
+### v0.20.2 / 2021-09-09
+
+* (No significant changes)
+
+### v0.20.1 / 2021-08-18
+
+* FIXED: Instrumentation all sidekiq 
+
+### v0.20.0 / 2021-08-12
+
+* ADDED: Instrument active record 
+* ADDED: Add ActionView instrumentation via ActiveSupport::Notifications 
+
+### v0.19.0 / 2021-06-25
+
+* ADDED: Add resque instrumentation
+* ADDED: Add ActiveJob instrumentation
+* ADDED: Configuration option to enable or disable redis root spans [#777](https://github.com/open-telemetry/opentelemetry-ruby/pull/777)
+* FIXED: Broken instrumentation all release 
+
 ### v0.18.0 / 2021-05-21
 
 * ADDED: Add koala instrumentation

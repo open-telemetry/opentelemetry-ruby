@@ -25,8 +25,8 @@ module OpenTelemetry
                   'http.method' => req.method,
                   'http.scheme' => USE_SSL_TO_SCHEME[use_ssl?],
                   'http.target' => req.path,
-                  'peer.hostname' => @address,
-                  'peer.port' => @port
+                  'net.peer.name' => @address,
+                  'net.peer.port' => @port
                 ),
                 kind: :client
               ) do |span|
@@ -51,8 +51,8 @@ module OpenTelemetry
 
               attributes = OpenTelemetry::Common::HTTP::ClientContext.attributes
               tracer.in_span('HTTP CONNECT', attributes: attributes.merge(
-                'peer.hostname' => conn_address,
-                'peer.port' => conn_port
+                'net.peer.name' => conn_address,
+                'net.peer.port' => conn_port
               )) do
                 super
               end
@@ -64,9 +64,7 @@ module OpenTelemetry
               status_code = response.code.to_i
 
               span.set_attribute('http.status_code', status_code)
-              span.status = OpenTelemetry::Trace::Status.http_to_status(
-                status_code
-              )
+              span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(status_code.to_i)
             end
 
             def tracer

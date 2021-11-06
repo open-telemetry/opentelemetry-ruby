@@ -46,8 +46,8 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapPropagator do
 
   let(:context) do
     OpenTelemetry::Trace.context_with_span(
-      OpenTelemetry::Trace::Span.new(
-        span_context: OpenTelemetry::Trace::SpanContext.new(
+      OpenTelemetry::Trace.non_recording_span(
+        OpenTelemetry::Trace::SpanContext.new(
           trace_id: Array(trace_id).pack('H*'),
           span_id: Array(span_id).pack('H*'),
           trace_flags: trace_flags
@@ -57,7 +57,7 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapPropagator do
   end
 
   let(:baggage) do
-    OpenTelemetry.baggage
+    OpenTelemetry::Baggage
   end
 
   let(:propagator) do
@@ -117,12 +117,64 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapPropagator do
       end
     end
 
+    describe 'given a minimal context with uppercase fields' do
+      let(:carrier) do
+        {
+          'ot-tracer-traceid' => trace_id_header.upcase,
+          'ot-tracer-spanid' => span_id_header.upcase,
+          'ot-tracer-sampled' => sampled_header
+        }
+      end
+
+      it 'extracts parent context' do
+        context = propagator.extract(carrier, context: parent_context)
+        extracted_context = OpenTelemetry::Trace.current_span(context).context
+
+        _(extracted_context.hex_trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
+        _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
+        _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::SAMPLED)
+        _(extracted_context).must_be(:remote?)
+      end
+    end
+
     describe 'given a context with sampling disabled' do
       let(:sampled_header) do
         'false'
       end
 
       it 'extracts parent context' do
+        context = propagator.extract(carrier, context: parent_context)
+        extracted_context = OpenTelemetry::Trace.current_span(context).context
+
+        _(extracted_context.hex_trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
+        _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
+        _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::DEFAULT)
+        _(extracted_context).must_be(:remote?)
+      end
+    end
+
+    describe 'given a context with sampling bit set to enabled' do
+      let(:sampled_header) do
+        '1'
+      end
+
+      it 'extracts sampled trace flag' do
+        context = propagator.extract(carrier, context: parent_context)
+        extracted_context = OpenTelemetry::Trace.current_span(context).context
+
+        _(extracted_context.hex_trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
+        _(extracted_context.hex_span_id).must_equal('e457b5a2e4d86bd1')
+        _(extracted_context.trace_flags).must_equal(OpenTelemetry::Trace::TraceFlags::SAMPLED)
+        _(extracted_context).must_be(:remote?)
+      end
+    end
+
+    describe 'given a context with a sampling bit set to disabled' do
+      let(:sampled_header) do
+        '0'
+      end
+
+      it 'extracts a default trace flag' do
         context = propagator.extract(carrier, context: parent_context)
         extracted_context = OpenTelemetry::Trace.current_span(context).context
 
@@ -176,14 +228,6 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapPropagator do
     end
 
     describe 'baggage handling' do
-      before do
-        OpenTelemetry.baggage = OpenTelemetry::Baggage::Manager.new
-      end
-
-      after do
-        OpenTelemetry.baggage = nil
-      end
-
       describe 'given valid baggage items' do
         it 'extracts baggage items' do
           carrier_with_baggage = carrier.merge(
@@ -192,8 +236,8 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapPropagator do
           )
 
           context = propagator.extract(carrier_with_baggage, context: parent_context)
-          _(OpenTelemetry.baggage.value('foo', context: context)).must_equal('bar')
-          _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
+          _(OpenTelemetry::Baggage.value('foo', context: context)).must_equal('bar')
+          _(OpenTelemetry::Baggage.value('bar', context: context)).must_equal('baz')
         end
       end
 
@@ -205,8 +249,8 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapPropagator do
           )
 
           context = propagator.extract(carrier_with_baggage, context: parent_context)
-          _(OpenTelemetry.baggage.value('fθθ', context: context)).must_be_nil
-          _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
+          _(OpenTelemetry::Baggage.value('fθθ', context: context)).must_be_nil
+          _(OpenTelemetry::Baggage.value('bar', context: context)).must_equal('baz')
         end
       end
 
@@ -218,8 +262,8 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapPropagator do
           )
 
           context = propagator.extract(carrier_with_baggage, context: parent_context)
-          _(OpenTelemetry.baggage.value('foo', context: context)).must_be_nil
-          _(OpenTelemetry.baggage.value('bar', context: context)).must_equal('baz')
+          _(OpenTelemetry::Baggage.value('foo', context: context)).must_be_nil
+          _(OpenTelemetry::Baggage.value('bar', context: context)).must_equal('baz')
         end
       end
     end
@@ -306,14 +350,6 @@ describe OpenTelemetry::Propagator::OTTrace::TextMapPropagator do
     end
 
     describe 'baggage handling' do
-      before do
-        OpenTelemetry.baggage = OpenTelemetry::Baggage::Manager.new
-      end
-
-      after do
-        OpenTelemetry.baggage = nil
-      end
-
       describe 'given valid baggage items' do
         it 'injects baggage items' do
           context_with_baggage = baggage.build(context: context) do |builder|

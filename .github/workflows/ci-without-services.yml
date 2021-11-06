@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
+    strategy:
+      matrix:
+        include:
+          - name: Test MacOS / Ruby 3.0
+            os: macos-latest
+            ruby: "3.0"
+            # mysql2 omitted because it depends on the mysql C library which is not present
+            # redis omitted because it depends on redis-server which is not present
+            flags: >-
+              --include-simple --include-appraisal --omit-services
+              --exclude opentelemetry-instrumentation-mysql2
+              --exclude opentelemetry-instrumentation-redis
+          - name: Test Windows / Ruby 3.0
+            os: windows-latest
+            ruby: "3.0"
+            # active_record omitted because it depends on tzinfo which is not present
+            # action_pack omitted because it depends on tzinfo which is not present
+            # ethon omitted because it depends on libcurl which is not present
+            # mysql2 omitted because it depends on the mysql C library which is not present
+            # pg omitted because it depends on the postgres C library which is not present
+            # que omitted because it depends on the postgres C library which is not present
+            # rails omitted because it depends on tzinfo which is not present
+            # redis omitted because it depends on redis-server which is not present
+            # sidekiq omitted because it depends on redis-server which is not present
+            # resque omitted because it depends on redis-server which is not present
+            flags: >-
+              --include-simple --include-appraisal --omit-services
+              --exclude opentelemetry-instrumentation-active_record
+              --exclude opentelemetry-instrumentation-action_pack
+              --exclude opentelemetry-instrumentation-ethon
+              --exclude opentelemetry-instrumentation-mysql2
+              --exclude opentelemetry-instrumentation-pg
+              --exclude opentelemetry-instrumentation-que
+              --exclude opentelemetry-instrumentation-rails
+              --exclude opentelemetry-instrumentation-redis
+              --exclude opentelemetry-instrumentation-resque
+              --exclude opentelemetry-instrumentation-sidekiq
+          - name: Rubocop and build
+            os: ubuntu-latest
+            ruby: "2.7"
+            flags: --include-simple --include-appraisal --no-check-tests --check-rubocop --check-yard --check-build
+      fail-fast: false
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Install Ruby ${{ matrix.ruby }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "${{ matrix.ruby }}"
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install tools
+        run: gem install --no-document bundler:2.1.4 toys:0.11.5
+      - name: Run tests
+        run: toys ci ${{ matrix.flags }}

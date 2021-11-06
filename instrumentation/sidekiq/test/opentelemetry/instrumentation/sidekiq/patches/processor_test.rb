@@ -59,5 +59,5 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Processor do
         end
       end
     end
-  end
+  end unless ENV['OMIT_SERVICES']
 end

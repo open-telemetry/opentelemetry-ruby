@@ -1,5 +1,61 @@
 # Release History: opentelemetry-sdk
 
+### v1.0.1 / 2021-10-29
+
+* FIXED: Add unexpected error handlign in BSP and OTLP exporter (#995)
+
+### v1.0.0 / 2021-09-29
+
+* (No significant changes)
+
+### v1.0.0.rc3 / 2021-08-12
+
+* BREAKING CHANGE: Remove optional parent_context from in_span
+* BREAKING CHANGE: Replace Time.now with Process.clock_gettime
+* BREAKING CHANGE: Refactor Baggage to remove Noop*
+* BREAKING CHANGE: Remove unnecessary readers from SDK Tracer
+* BREAKING CHANGE: Total order constraint on span.status=
+* BREAKING CHANGE: Use auto-generated resource constants in sdk and resource_detectors
+* BREAKING CHANGE: Span limits env vars
+
+* ADDED: Add Tracer.non_recording_span to API
+* ADDED: Add unnamed tracer warning message
+* ADDED: Allow disabling of install messages
+* ADDED: Make API's NoopTextMapPropagator private
+* ADDED: Use auto-generated resource constants in sdk and resource_detectors
+* ADDED: Allow selecting multiple exporter
+* ADDED: Add explicit BSP export error
+* FIXED: Remove optional parent_context from in_span
+* FIXED: Replace Time.now with Process.clock_gettime
+* FIXED: Rename cloud.zone to cloud.availability_zone
+* FIXED: Improve attribute error messages
+* FIXED: Refactor Baggage to remove Noop*
+* FIXED: Support OTEL_SERVICE_NAME env var
+* FIXED: Remove unnecessary readers from SDK Tracer
+* FIXED: Total order constraint on span.status=
+* FIXED: Flakey tracer provider test
+* FIXED: Split lock in TracerProvider
+* FIXED: Span limits env vars
+* FIXED: Prune invalid links
+* DOCS: Update docs to rely more on environment variable configuration
+
+### v1.0.0.rc2 / 2021-06-23
+
+* BREAKING CHANGE: Remove optional parent_context from in_span [729](https://github.com/open-telemetry/opentelemetry-ruby/pull/729)
+* BREAKING CHANGE: Replace Time.now with Process.clock_gettime [717](https://github.com/open-telemetry/opentelemetry-ruby/pull/717)
+* BREAKING CHANGE: Refactor Baggage to remove Noop* [800](https://github.com/open-telemetry/opentelemetry-ruby/pull/800)
+* BREAKING CHANGE: Remove unnecessary readers from SDK Tracer [820](https://github.com/open-telemetry/opentelemetry-ruby/pull/820)
+  - Tracer no longer surfaces attribute readers for the name, version, or tracer_provider
+* BREAKING CHANGE: Total order constraint on span.status= [805](https://github.com/open-telemetry/opentelemetry-ruby/pull/805)
+
+* ADDED: Add Tracer.non_recording_span to API [799](https://github.com/open-telemetry/opentelemetry-ruby/pull/799)
+* ADDED: Add unnamed tracer warning message [830](https://github.com/open-telemetry/opentelemetry-ruby/pull/830)
+* ADDED: Allow disabling of install messages [831](https://github.com/open-telemetry/opentelemetry-ruby/pull/831)
+* FIXED: Rename cloud.zone to cloud.availability_zone [734](https://github.com/open-telemetry/opentelemetry-ruby/pull/734)
+* FIXED: Improve attribute error messages [742](https://github.com/open-telemetry/opentelemetry-ruby/pull/742)
+* FIXED: Support OTEL_SERVICE_NAME env var [806]https://github.com/open-telemetry/opentelemetry-ruby/pull/806
+* FIXED: Flakey tracer provider test
+
 ### v1.0.0.rc1 / 2021-05-21
 
 * BREAKING CHANGE: Remove optional parent_context from in_span

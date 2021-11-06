@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require_relative '../api/lib/opentelemetry/version'
+require_relative '../instrumentation/base/lib/opentelemetry/instrumentation/version'
 require 'thor'
 
 class InstrumentationGenerator < Thor::Group
@@ -36,7 +37,7 @@ class InstrumentationGenerator < Thor::Group
   def test_files
     template('templates/test/.rubocop.yml', "#{instrumentation_path}/test/.rubocop.yml")
     template('templates/test/test_helper.rb', "#{instrumentation_path}/test/test_helper.rb")
-    template('templates/test/instrumentation.rb', "#{instrumentation_path}/test/#{instrumentation_path}/instrumentation_test.rb")
+    template('templates/test/instrumentation.rb', "#{instrumentation_path}/test/opentelemetry/#{instrumentation_path}/instrumentation_test.rb")
   end
 
   def add_to_releases
@@ -54,7 +55,7 @@ class InstrumentationGenerator < Thor::Group
     gemfile_text = "\ngem '#{instrumentation_gem_name}', path: '../#{instrumentation_name}'"
     insert_into_file("#{instrumentation_all_path}/Gemfile", gemfile_text, after: "gemspec\n")
 
-    gemspec_text = "\n  spec.add_dependency '#{instrumentation_gem_name}', '~> #{opentelemetry_version}'"
+    gemspec_text = "\n  spec.add_dependency '#{instrumentation_gem_name}', '~> 0.0.0'"
     insert_into_file("#{instrumentation_all_path}/opentelemetry-instrumentation-all.gemspec", gemspec_text, after: "spec.required_ruby_version = '>= 2.5.0'\n")
 
     all_rb_text = "\nrequire '#{instrumentation_gem_name}'"
@@ -65,6 +66,10 @@ class InstrumentationGenerator < Thor::Group
 
   def opentelemetry_version
     OpenTelemetry::VERSION
+  end
+
+  def instrumentation_base_version
+    OpenTelemetry::Instrumentation::VERSION
   end
 
   def instrumentation_path

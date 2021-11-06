@@ -29,6 +29,7 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
   let(:default_config) { {} }
   let(:config) { default_config }
   let(:env) { {} }
+  let(:uri) { '/' }
 
   before do
     # clear captured spans:
@@ -54,21 +55,33 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
 
   describe '#call' do
     before do
-      Rack::MockRequest.new(rack_builder).get('/', env)
+      Rack::MockRequest.new(rack_builder).get(uri, env)
     end
 
     it 'records attributes' do
       _(first_span.attributes['http.method']).must_equal 'GET'
       _(first_span.attributes['http.status_code']).must_equal 200
       _(first_span.attributes['http.target']).must_equal '/'
-      _(first_span.status.code).must_equal OpenTelemetry::Trace::Status::OK
       _(first_span.attributes['http.url']).must_be_nil
-      _(first_span.name).must_equal '/'
+      _(first_span.name).must_equal 'HTTP GET'
       _(first_span.kind).must_equal :server
+    end
+
+    it 'does not explicitly set status OK' do
+      _(first_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
     end
 
     it 'has no parent' do
       _(first_span.parent_span_id).must_equal OpenTelemetry::Trace::INVALID_SPAN_ID
+    end
+
+    describe 'when a query is passed in' do
+      let(:uri) { '/endpoint?query=true' }
+
+      it 'records the query path' do
+        _(first_span.attributes['http.target']).must_equal '/endpoint?query=true'
+        _(first_span.name).must_equal 'HTTP GET'
+      end
     end
 
     describe 'config[:untraced_endpoints]' do
@@ -78,10 +91,10 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
         it 'does not trace paths listed in the array' do
           Rack::MockRequest.new(rack_builder).get('/ping', env)
 
-          ping_span = finished_spans.find { |s| s.name == '/ping' }
+          ping_span = finished_spans.find { |s| s.attributes['http.target'] == '/ping' }
           _(ping_span).must_be_nil
 
-          root_span = finished_spans.find { |s| s.name == '/' }
+          root_span = finished_spans.find { |s| s.attributes['http.target'] == '/' }
           _(root_span).wont_be_nil
         end
       end
@@ -92,10 +105,10 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
         it 'traces everything' do
           Rack::MockRequest.new(rack_builder).get('/ping', env)
 
-          ping_span = finished_spans.find { |s| s.name == '/ping' }
+          ping_span = finished_spans.find { |s| s.attributes['http.target'] == '/ping' }
           _(ping_span).wont_be_nil
 
-          root_span = finished_spans.find { |s| s.name == '/' }
+          root_span = finished_spans.find { |s| s.attributes['http.target'] == '/' }
           _(root_span).wont_be_nil
         end
       end
@@ -106,10 +119,10 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
         it 'traces everything' do
           Rack::MockRequest.new(rack_builder).get('/ping', env)
 
-          ping_span = finished_spans.find { |s| s.name == '/ping' }
+          ping_span = finished_spans.find { |s| s.attributes['http.target'] == '/ping' }
           _(ping_span).wont_be_nil
 
-          root_span = finished_spans.find { |s| s.name == '/' }
+          root_span = finished_spans.find { |s| s.attributes['http.target'] == '/' }
           _(root_span).wont_be_nil
         end
       end
@@ -125,10 +138,10 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
         it 'does not trace requests in which the callable returns true' do
           Rack::MockRequest.new(rack_builder).get('/assets', env)
 
-          ping_span = finished_spans.find { |s| s.name == '/assets' }
+          ping_span = finished_spans.find { |s| s.attributes['http.target'] == '/assets' }
           _(ping_span).must_be_nil
 
-          root_span = finished_spans.find { |s| s.name == '/' }
+          root_span = finished_spans.find { |s| s.attributes['http.target'] == '/' }
           _(root_span).wont_be_nil
         end
       end
@@ -139,17 +152,23 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
         it 'traces everything' do
           Rack::MockRequest.new(rack_builder).get('/assets', env)
 
-          ping_span = finished_spans.find { |s| s.name == '/assets' }
+          ping_span = finished_spans.find { |s| s.attributes['http.target'] == '/assets' }
           _(ping_span).wont_be_nil
 
-          root_span = finished_spans.find { |s| s.name == '/' }
+          root_span = finished_spans.find { |s| s.attributes['http.target'] == '/' }
           _(root_span).wont_be_nil
         end
       end
     end
 
     describe 'config[:allowed_request_headers]' do
-      let(:env) { Hash('HTTP_FOO_BAR' => 'http foo bar value') }
+      let(:env) do
+        Hash(
+          'CONTENT_LENGTH' => '123',
+          'CONTENT_TYPE' => 'application/json',
+          'HTTP_FOO_BAR' => 'http foo bar value'
+        )
+      end
 
       it 'defaults to nil' do
         _(first_span.attributes['http.request.headers.foo_bar']).must_be_nil
@@ -160,6 +179,22 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
 
         it 'returns attribute' do
           _(first_span.attributes['http.request.headers.foo_bar']).must_equal 'http foo bar value'
+        end
+      end
+
+      describe 'when content-type' do
+        let(:config) { default_config.merge(allowed_request_headers: ['CONTENT_TYPE']) }
+
+        it 'returns attribute' do
+          _(first_span.attributes['http.request.headers.content_type']).must_equal 'application/json'
+        end
+      end
+
+      describe 'when content-length' do
+        let(:config) { default_config.merge(allowed_request_headers: ['CONTENT_LENGTH']) }
+
+        it 'returns attribute' do
+          _(first_span.attributes['http.request.headers.content_length']).must_equal '123'
         end
       end
     end
@@ -232,8 +267,22 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
     end
 
     describe 'without quantization' do
-      it 'span.name is uri path' do
+      it 'span.name defaults to low cardinality name HTTP method' do
+        _(first_span.name).must_equal 'HTTP GET'
+        _(first_span.attributes['http.target']).must_equal '/really_long_url'
+      end
+    end
+
+    describe 'with simple quantization' do
+      let(:quantization_example) do
+        ->(url, _env) { url.to_s }
+      end
+
+      let(:config) { default_config.merge(url_quantization: quantization_example) }
+
+      it 'sets the span.name to the full path' do
         _(first_span.name).must_equal '/really_long_url'
+        _(first_span.attributes['http.target']).must_equal '/really_long_url'
       end
     end
 
