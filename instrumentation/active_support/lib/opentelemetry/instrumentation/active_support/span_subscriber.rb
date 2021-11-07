@@ -7,15 +7,28 @@
 module OpenTelemetry
   module Instrumentation
     # rubocop:disable Style/Documentation
-    module ActionView
+    module ActiveSupport
       # The SpanSubscriber is a special ActiveSupport::Notification subscription
       # handler which turns notifications into generic spans, taking care to handle
       # context appropriately.
 
-      # A very hacky way to make sure that OpenTelemetry::Instrumentation::ActionView::SpanSubscriber
+      # A very hacky way to make sure that OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber
       # gets invoked first
-      def self.subscribe(pattern = nil, callable = nil)
-        ActiveSupport::Notifications.subscribe(pattern, callable)
+      #
+      def self.subscribe( # rubocop:disable Metrics/AbcSize
+        tracer,
+        pattern,
+        notification_payload_transform = nil,
+        disallowed_notification_payload_keys = []
+      )
+        subscriber = OpenTelemetry::Instrumentation::ActiveSupport::SpanSubscriber.new(
+          name: pattern,
+          tracer: tracer,
+          notification_payload_transform: notification_payload_transform,
+          disallowed_notification_payload_keys: disallowed_notification_payload_keys
+        )
+
+        subscriber_object = ::ActiveSupport::Notifications.subscribe(pattern, subscriber)
         ::ActiveSupport::Notifications.notifier.synchronize do
           if ::Rails::VERSION::MAJOR >= 6
             s = ::ActiveSupport::Notifications.notifier.instance_variable_get(:@string_subscribers)[pattern].pop
@@ -25,14 +38,17 @@ module OpenTelemetry
             ::ActiveSupport::Notifications.notifier.instance_variable_get(:@subscribers).unshift(s)
           end
         end
+        subscriber_object
       end
 
       class SpanSubscriber
         ALWAYS_VALID_PAYLOAD_TYPES = [TrueClass, FalseClass, String, Numeric, Symbol].freeze
 
-        def initialize(name:, tracer:)
+        def initialize(name:, tracer:, notification_payload_transform: nil, disallowed_notification_payload_keys: [])
           @span_name = name.split('.')[0..1].reverse.join(' ').freeze
           @tracer = tracer
+          @notification_payload_transform = notification_payload_transform
+          @disallowed_notification_payload_keys = disallowed_notification_payload_keys
         end
 
         def start(name, id, payload)
@@ -70,18 +86,14 @@ module OpenTelemetry
 
         private
 
-        def instrumentation_config
-          ActionView::Instrumentation.instance.config
-        end
-
         def transform_payload(payload)
-          return payload if instrumentation_config[:notification_payload_transform].nil?
+          return payload if @notification_payload_transform.nil?
 
-          instrumentation_config[:notification_payload_transform].call(payload)
+          @notification_payload_transform.call(payload)
         end
 
         def valid_payload_key?(key)
-          %i[exception exception_object].none?(key) && instrumentation_config[:disallowed_notification_payload_keys].none?(key)
+          %i[exception exception_object].none?(key) && @disallowed_notification_payload_keys.none?(key)
         end
 
         def valid_payload_value?(value)
