@@ -357,8 +357,8 @@ module OpenTelemetry
           env_var.to_s.strip.to_sym
         when :callable
           OpenTelemetry.logger.warn(
-            "Instrumentation #{name} configuration option is a :callable and environment variables " \
-            "are not supported. Ignoring raw value: #{env_var}"
+            "Instrumentation #{name} options that accept a callable are not " \
+            "configurable using environment variables. Ignoring raw value: #{env_var}"
           )
           nil
         end
