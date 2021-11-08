@@ -202,6 +202,8 @@ describe OpenTelemetry::Instrumentation::Base do
             option(:first, default: 'first_default', validate: :string)
             option(:second, default: :no, validate: %I[yes no maybe])
             option(:third, default: 1, validate: ->(v) { v <= 10 })
+            option(:forth, default: false, validate: :boolean)
+            option(:fifth, default: true, validate: :boolean)
           end
         end
 
@@ -210,35 +212,42 @@ describe OpenTelemetry::Instrumentation::Base do
         it 'installs options defined by environment variable and overrides defaults' do
           with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_CONFIG_OPTS' => 'first=non_default_value') do
             instance.install
-            _(instance.config).must_equal(first: 'non_default_value', second: :no, third: 1)
+            _(instance.config).must_equal(first: 'non_default_value', second: :no, third: 1, forth: false, fifth: true)
+          end
+        end
+
+        it 'installs boolean type options defined by environment variable and only evalutes the lowercase string "true" to be truthy' do
+          with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_CONFIG_OPTS' => 'first=non_default_value;forth=true;fifth=truthy') do
+            instance.install
+            _(instance.config).must_equal(first: 'non_default_value', second: :no, third: 1, forth: true, fifth: false)
           end
         end
 
         it 'installs only enum options defined by environment variable that accept a symbol' do
           with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_CONFIG_OPTS' => 'second=maybe') do
             instance.install
-            _(instance.config).must_equal(first: 'first_default', second: :maybe, third: 1)
+            _(instance.config).must_equal(first: 'first_default', second: :maybe, third: 1, forth: false, fifth: true)
           end
         end
 
         it 'installs options defined by environment variable and overrides local configuration' do
           with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_CONFIG_OPTS' => 'first=non_default_value') do
             instance.install(first: 'another_default')
-            _(instance.config).must_equal(first: 'non_default_value', second: :no, third: 1)
+            _(instance.config).must_equal(first: 'non_default_value', second: :no, third: 1, forth: false, fifth: true)
           end
         end
 
         it 'installs multiple options defined by environment variable' do
           with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_CONFIG_OPTS' => 'first=non_default_value;second=maybe') do
             instance.install(first: 'another_default', second: :yes)
-            _(instance.config).must_equal(first: 'non_default_value', second: :maybe, third: 1)
+            _(instance.config).must_equal(first: 'non_default_value', second: :maybe, third: 1, forth: false, fifth: true)
           end
         end
 
         it 'does not install callable options defined by environment variable' do
           with_env('OTEL_RUBY_INSTRUMENTATION_ENV_CONTROLLED_CONFIG_OPTS' => 'first=non_default_value;second=maybe;third=5') do
             instance.install(first: 'another_default', second: :yes)
-            _(instance.config).must_equal(first: 'non_default_value', second: :maybe, third: 1)
+            _(instance.config).must_equal(first: 'non_default_value', second: :maybe, third: 1, forth: false, fifth: true)
           end
         end
       end
