@@ -69,7 +69,7 @@ jobs:
         ports:
           - 27017:27017
       redis:
-        image: bitnami/redis:6.2
+        image: bitnami/redis:6.0
         ports:
           - 6379:6379
         options: >-
