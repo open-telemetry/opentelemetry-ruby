@@ -69,7 +69,6 @@ module OpenTelemetry
         def example_finished(notification)
           pop_and_finalize_span do |span|
             result = notification.example.execution_result
-            notification.example.metadata
 
             span.set_attribute('rspec.example.result', result.status.to_s)
 
