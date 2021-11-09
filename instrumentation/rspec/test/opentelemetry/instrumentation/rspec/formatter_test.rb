@@ -58,7 +58,7 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
         end
       end
       _(spans.first.name).must_equal 'example one'
-      _(spans.first.attributes['result']).must_equal 'passed'
+      _(spans.first.attributes['rspec.example.result']).must_equal 'passed'
       _(spans.first.start_timestamp).wont_equal 0
       _(spans.first.start_timestamp / 1_000_000_000).must_be_close_to(current_time.to_i)
       _(spans.first.end_timestamp / 1_000_000_000).must_be_close_to(current_time.to_i)
@@ -124,15 +124,15 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
       end
 
       it 'has a description attribute matches the full example description' do
-        _(subject.attributes['full_description']).must_equal 'group one example one'
+        _(subject.attributes['rspec.example.full_description']).must_equal 'group one example one'
       end
 
       it 'has a description attribute matches the full example description' do
-        _(subject.attributes['location']).must_match %r{\./test/opentelemetry/instrumentation/rspec/formatter_test.rb:\d+}
+        _(subject.attributes['rspec.example.location']).must_match %r{\./test/opentelemetry/instrumentation/rspec/formatter_test.rb:\d+}
       end
 
       it 'records when the example passes' do
-        _(subject.attributes['result']).must_equal 'passed'
+        _(subject.attributes['rspec.example.result']).must_equal 'passed'
       end
     end
 
@@ -161,7 +161,7 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
       end
 
       it 'records when the example fails' do
-        _(subject.attributes['result']).must_equal 'failed'
+        _(subject.attributes['rspec.example.result']).must_equal 'failed'
       end
 
       it 'records the failure message' do
@@ -178,7 +178,8 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
           \e[0m\e[32m+true
           \e[0m
         MESSAGE
-        _(subject.attributes['message']).must_equal message
+        _(subject.attributes['rspec.example.failure_message']).must_equal message
+        _(subject.events.first.attributes['exception.message']).must_equal message
       end
 
       it 'records the exception' do
@@ -194,7 +195,7 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
       end
 
       it 'records when the example fails' do
-        _(subject.attributes['result']).must_equal 'failed'
+        _(subject.attributes['rspec.example.result']).must_equal 'failed'
       end
 
       it 'records the exception' do

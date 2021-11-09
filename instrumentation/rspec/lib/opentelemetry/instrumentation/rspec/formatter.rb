@@ -58,9 +58,9 @@ module OpenTelemetry
         def example_started(notification)
           example = notification.example
           attributes = {
-            'location' => example.location.to_s,
-            'full_description' => example.full_description.to_s,
-            'described_class' => example.metadata[:described_class].to_s
+            'rspec.example.location' => example.location.to_s,
+            'rspec.example.full_description' => example.full_description.to_s,
+            'rspec.example.described_class' => example.metadata[:described_class].to_s
           }
           span = tracer.start_span(example.description, attributes: attributes, start_timestamp: current_timestamp)
           track_span(span)
@@ -71,11 +71,11 @@ module OpenTelemetry
             result = notification.example.execution_result
             notification.example.metadata
 
-            span.set_attribute('result', result.status.to_s)
+            span.set_attribute('rspec.example.result', result.status.to_s)
 
             if (exception = result.exception)
               span.record_exception(exception)
-              span.set_attribute('message', exception.message) if exception.is_a? ::RSpec::Expectations::ExpectationNotMetError
+              span.set_attribute('rspec.example.failure_message', exception.message) if exception.is_a? ::RSpec::Expectations::ExpectationNotMetError
             end
           end
         end
