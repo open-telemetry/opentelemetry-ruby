@@ -183,7 +183,7 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
       end
 
       it 'records the exception' do
-        assert_nil(subject.attributes['exception.type'])
+        _(subject.events.first.attributes['exception.type']).must_equal 'RSpec::Expectations::ExpectationNotMetError'
       end
     end
 
