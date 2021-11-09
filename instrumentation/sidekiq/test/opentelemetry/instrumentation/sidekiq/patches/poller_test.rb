@@ -46,7 +46,8 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Patches::Poller do
         poller.enqueue
         span_names = spans.map(&:name)
         _(span_names).must_include('Sidekiq::Scheduled::Poller#enqueue')
-        _(span_names).must_include('ZRANGEBYSCORE')
+        # Inline Lua uses a different redis client method in 6.3+ https://github.com/mperham/sidekiq/pull/5044
+        _(span_names).must_include('ZRANGEBYSCORE') if Gem.loaded_specs['sidekiq'].version < Gem::Version.new('6.3')
       end
 
       describe 'when peer_service config is set' do
