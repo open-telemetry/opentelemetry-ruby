@@ -30,7 +30,11 @@ module OpenTelemetry
         end
 
         def add_patches
-          ::Dalli::Server.prepend(Patches::Server)
+          if Gem::Version.new(::Dalli::VERSION) < Gem::Version.new('3.0.0')
+            ::Dalli::Server.prepend(Patches::Server)
+          else
+            ::Dalli::Protocol::Binary.prepend(Patches::Server)
+          end
         end
       end
     end

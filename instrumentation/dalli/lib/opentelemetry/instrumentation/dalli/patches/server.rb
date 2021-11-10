@@ -8,7 +8,7 @@ module OpenTelemetry
   module Instrumentation
     module Dalli
       module Patches
-        # Module to prepend to Dalli::Server for instrumentation
+        # Module to prepend to Dalli::Server (or Dalli::Protocol::Binary in 3.0+) for instrumentation
         module Server
           def request(op, *args)
             operation = Utils.opname(op, multi?)
