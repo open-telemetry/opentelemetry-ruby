@@ -56,8 +56,6 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         _(last_span.attributes['aws.region']).must_equal 'us-stubbed-1'
         _(last_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
       end
-
-      # TODO add error test
     end
 
     describe 'S3' do
