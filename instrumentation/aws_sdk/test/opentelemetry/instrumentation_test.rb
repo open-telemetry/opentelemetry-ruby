@@ -62,9 +62,9 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
     describe 'S3' do
       it 'should have correct attributes when success' do
-        sns = Aws::S3::Client.new(stub_responses: { list_buckets: { buckets: [{ name: 'bucket1' }] } })
+        s3 = Aws::S3::Client.new(stub_responses: { list_buckets: { buckets: [{ name: 'bucket1' }] } })
 
-        sns.list_buckets
+        s3.list_buckets
 
         _(last_span.attributes['rpc.system']).must_equal 'aws-api'
         _(last_span.attributes['rpc.service']).must_equal 'S3'
@@ -74,9 +74,9 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
       end
 
       it 'should have correct attributes when error' do
-        sns = Aws::S3::Client.new(stub_responses: { list_buckets: 'NotFound' })
+        s3 = Aws::S3::Client.new(stub_responses: { list_buckets: 'NotFound' })
         ignore_exception {
-          sns.list_buckets
+          s3.list_buckets
         }
 
         _(last_span.attributes['rpc.system']).must_equal 'aws-api'
