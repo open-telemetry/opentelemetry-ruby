@@ -39,7 +39,7 @@ To run the example:
 1. `cd` to the examples directory and install gems
 	* `cd example`
 	* `bundle install`
-3. Run the sample client script
+2. Run the sample client script
 	* `ruby trace_demonstration.rb`
 
 This will run SNS publish command, printing OpenTelemetry traces to the console as it goes.

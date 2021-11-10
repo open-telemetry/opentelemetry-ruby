@@ -51,6 +51,14 @@ module OpenTelemetry
           AwsSdk::Instrumentation.instance.config
         end
       end
+
+      # A Seahorse::Client::Plugin that enables instrumentation for all AWS services
+      class Plugin < Seahorse::Client::Plugin
+        def add_handlers(handlers, config)
+          # run before Seahorse::Client::Plugin::ParamValidator (priority 50)
+          handlers.add Handler, step: :validate, priority: 49
+        end
+      end
     end
   end
 end

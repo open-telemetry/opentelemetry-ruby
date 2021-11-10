@@ -13,7 +13,6 @@ module OpenTelemetry
 
         install do |_config|
           require_relative './handler'
-          require_relative './subscriber'
           require_relative './services'
 
           add_plugin(Seahorse::Client::Base, *loaded_constants)
@@ -38,7 +37,7 @@ module OpenTelemetry
         end
 
         def add_plugin(*targets)
-          targets.each { |klass| klass.add_plugin(Subscriber) }
+          targets.each { |klass| klass.add_plugin(AwsSdk::Plugin) }
         end
 
         def loaded_constants
