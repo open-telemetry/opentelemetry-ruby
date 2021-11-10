@@ -164,6 +164,11 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
         _(subject.attributes['rspec.example.result']).must_equal 'failed'
       end
 
+      it 'records the span status as error' do
+        _(subject.status.ok?).must_equal false
+        _(subject.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      end
+
       it 'records the failure message' do
         message = <<~MESSAGE.rstrip
 
@@ -196,6 +201,11 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
 
       it 'records when the example fails' do
         _(subject.attributes['rspec.example.result']).must_equal 'failed'
+      end
+
+      it 'records the span status as error' do
+        _(subject.status.ok?).must_equal false
+        _(subject.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
       end
 
       it 'records the exception' do
