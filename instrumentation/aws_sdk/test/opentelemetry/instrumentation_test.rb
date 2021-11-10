@@ -54,13 +54,14 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         _(last_span.attributes['rpc.service']).must_equal 'SNS'
         _(last_span.attributes['rpc.method']).must_equal 'Publish'
         _(last_span.attributes['aws.region']).must_equal 'us-stubbed-1'
+        _(last_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
       end
 
       # TODO add error test
     end
 
     describe 'S3' do
-      it 'should have correct attributes' do
+      it 'should have correct attributes when success' do
         sns = Aws::S3::Client.new(stub_responses: { list_buckets: { buckets: [{ name: 'bucket1' }] } })
 
         sns.list_buckets
@@ -69,6 +70,20 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         _(last_span.attributes['rpc.service']).must_equal 'S3'
         _(last_span.attributes['rpc.method']).must_equal 'ListBuckets'
         _(last_span.attributes['aws.region']).must_equal 'us-stubbed-1'
+        _(last_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
+      end
+
+      it 'should have correct attributes when error' do
+        sns = Aws::S3::Client.new(stub_responses: { list_buckets: 'NotFound' })
+        ignore_exception {
+          sns.list_buckets
+        }
+
+        _(last_span.attributes['rpc.system']).must_equal 'aws-api'
+        _(last_span.attributes['rpc.service']).must_equal 'S3'
+        _(last_span.attributes['rpc.method']).must_equal 'ListBuckets'
+        _(last_span.attributes['aws.region']).must_equal 'us-stubbed-1'
+        _(last_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
       end
     end
   end
