@@ -16,5 +16,5 @@ OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::AwsSdk', suppress_internal_instrumentation: false
 end
 
-client = Aws::SNS::Client.new
-client.publish message: 'ruby sending message to sns'
+sns = Aws::SNS::Client.new
+sns.publish message: 'ruby sending message to sns'

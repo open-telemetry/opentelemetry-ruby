@@ -29,8 +29,6 @@ module OpenTelemetry
 
         option :suppress_internal_instrumentation, default: false, validate: :boolean
 
-        private
-
         def gem_version
           if Gem.loaded_specs['aws-sdk']
             Gem.loaded_specs['aws-sdk'].version
@@ -48,19 +46,15 @@ module OpenTelemetry
           # Module#const_get can return a constant from ancestors when there's a miss.
           # If this conincidentally matches another constant, it will attempt to patch
           # the wrong constant, resulting in patch failure.
-          available_services = OpenTelemetry::Instrumentation::AwsSdk.constants & SERVICES.map(&:to_sym)
-
+          available_services = ::Aws.constants & SERVICES.map(&:to_sym)
           available_services.each_with_object([]) do |service, constants|
-            next if OpenTelemetry::Instrumentation::AwsSdk.autoload?(service)
+            next if ::Aws.autoload?(service)
 
             # rubocop:disable RescueModifier
-            constants << OpenTelemetry::Instrumentation::AwsSdk.const_get(service, false).const_get(:Client, false) rescue next
+            constants << ::Aws.const_get(service, false).const_get(:Client, false) rescue next
             # rubocop:enable RescueModifier
           end
         end
-
-        # TODO: Special handling for S3 URL Presigning. S3::Presigner
-        # TODO: SNS / SQS context propagations
       end
     end
   end

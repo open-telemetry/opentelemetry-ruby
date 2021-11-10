@@ -55,6 +55,8 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         _(last_span.attributes['rpc.method']).must_equal 'Publish'
         _(last_span.attributes['aws.region']).must_equal 'us-stubbed-1'
       end
+
+      # TODO add error test
     end
 
     describe 'S3' do
