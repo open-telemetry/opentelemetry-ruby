@@ -18,7 +18,7 @@ module OpenTelemetry
               'net.peer.port' => port
             }
             if config[:db_statement] == :include
-              attributes['db.statement'] = Utils.format_command(operation, args) 
+              attributes['db.statement'] = Utils.format_command(operation, args)
             elsif config[:db_statement] == :obfuscate
               attributes['db.statement'] = "#{operation} ?"
             end
