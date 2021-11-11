@@ -9,8 +9,6 @@ module OpenTelemetry
     module ActionPack
       # The Instrumentation class contains logic to detect and install the ActionPack instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MINIMUM_VERSION = Gem::Version.new('5.2.0')
-
         install do |_config|
           require_railtie
           require_dependencies
@@ -21,16 +19,16 @@ module OpenTelemetry
           defined?(::ActionController)
         end
 
-        compatible do
-          gem_version >= MINIMUM_VERSION
-        end
-
         option :enable_recognize_route, default: false, validate: :boolean
 
         private
 
-        def gem_version
-          Gem.loaded_specs['actionpack'].version
+        def gem_name
+          'actionpack'
+        end
+
+        def minimum_version
+          '5.2.0'
         end
 
         def patch

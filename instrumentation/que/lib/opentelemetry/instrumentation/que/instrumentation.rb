@@ -10,8 +10,6 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the Que
       # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MINIMUM_VERSION = Gem::Version.new('1.0.0.beta4')
-
         install do |_|
           require_dependencies
           patch
@@ -21,10 +19,6 @@ module OpenTelemetry
 
         present do
           defined?(::Que)
-        end
-
-        compatible do
-          gem_version >= MINIMUM_VERSION
         end
 
         ## Supported configuration keys for the install config hash:
@@ -54,8 +48,12 @@ module OpenTelemetry
           require_relative 'patches/que_job'
         end
 
-        def gem_version
-          Gem.loaded_specs['que'].version
+        def gem_name
+          'que'
+        end
+
+        def minimum_version
+          '1.0.0.beta4'
         end
 
         def patch

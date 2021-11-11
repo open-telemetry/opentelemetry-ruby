@@ -9,8 +9,6 @@ module OpenTelemetry
     module ActiveRecord
       # The Instrumentation class contains logic to detect and install the ActiveRecord instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MINIMUM_VERSION = Gem::Version.new('5.2.0')
-
         install do |_config|
           require_dependencies
           patch
@@ -20,18 +18,18 @@ module OpenTelemetry
           defined?(::ActiveRecord)
         end
 
-        compatible do
-          gem_version >= MINIMUM_VERSION
-        end
-
         private
 
         def insert_class_methods_supported?
           gem_version >= Gem::Version.new('6.0.0')
         end
 
-        def gem_version
-          Gem.loaded_specs['activerecord'].version
+        def gem_name
+          'activerecord'
+        end
+
+        def minimum_version
+          '5.2.0'
         end
 
         def patch

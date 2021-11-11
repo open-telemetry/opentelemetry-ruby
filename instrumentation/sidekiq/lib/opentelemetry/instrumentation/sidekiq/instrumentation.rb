@@ -10,8 +10,6 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the Sidekiq
       # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MINIMUM_VERSION = Gem::Version.new('4.2.10')
-
         install do |_config|
           require_dependencies
           add_client_middleware
@@ -21,10 +19,6 @@ module OpenTelemetry
 
         present do
           defined?(::Sidekiq)
-        end
-
-        compatible do
-          gem_version >= MINIMUM_VERSION
         end
 
         option :span_naming,                 default: :queue, validate: ->(opt) { %I[job_class queue].include?(opt) }
@@ -37,8 +31,12 @@ module OpenTelemetry
 
         private
 
-        def gem_version
-          Gem.loaded_specs['sidekiq'].version
+        def gem_name
+          'sidekiq'
+        end
+
+        def minimum_version
+          '4.2.10'
         end
 
         def require_dependencies

@@ -9,8 +9,6 @@ module OpenTelemetry
     module ActiveJob
       # The Instrumentation class contains logic to detect and install the ActiveJob instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MINIMUM_VERSION = Gem::Version.new('5.2.0')
-
         install do |_config|
           require_dependencies
           patch_activejob
@@ -18,10 +16,6 @@ module OpenTelemetry
 
         present do
           defined?(::ActiveJob)
-        end
-
-        compatible do
-          Gem.loaded_specs['activejob'].version >= MINIMUM_VERSION
         end
 
         ## Supported configuration keys for the install config hash:
@@ -57,6 +51,14 @@ module OpenTelemetry
         option :span_naming, default: :queue, validate: ->(opt) { %i[job_class queue].include?(opt) }
 
         private
+
+        def gem_name
+          'activejob'
+        end
+
+        def minimum_version
+          '5.2.0'
+        end
 
         def require_dependencies
           require_relative 'patches/base'

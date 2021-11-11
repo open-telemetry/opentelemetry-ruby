@@ -19,6 +19,14 @@ module OpenTelemetry
 
         private
 
+        def gem_name
+          'activesupport'
+        end
+
+        def minimum_version
+          '5.2.0'
+        end
+
         def require_dependencies
           require_relative 'span_subscriber'
         end

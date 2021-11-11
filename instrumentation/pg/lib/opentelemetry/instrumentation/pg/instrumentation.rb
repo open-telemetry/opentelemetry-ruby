@@ -9,8 +9,6 @@ module OpenTelemetry
     module PG
       # The Instrumentation class contains logic to detect and install the Pg instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MINIMUM_VERSION = Gem::Version.new('1.1.0')
-
         install do |config|
           if config[:enable_sql_obfuscation]
             config[:db_statement] = :obfuscate
@@ -36,16 +34,20 @@ module OpenTelemetry
           defined?(::PG)
         end
 
-        compatible do
-          Gem.loaded_specs['pg'].version > Gem::Version.new(MINIMUM_VERSION)
-        end
-
         option :peer_service, default: nil, validate: :string
         option :enable_sql_obfuscation, default: false, validate: :boolean
         option :enable_statement_attribute, default: true, validate: :boolean
         option :db_statement, default: :include, validate: ->(opt) { %I[omit include obfuscate].include?(opt) }
 
         private
+
+        def gem_name
+          "pg"
+        end
+
+        def minimum_version
+          '1.1.0'
+        end
 
         def require_dependencies
           require_relative 'patches/connection'
