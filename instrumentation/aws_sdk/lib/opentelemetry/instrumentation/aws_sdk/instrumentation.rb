@@ -52,7 +52,7 @@ module OpenTelemetry
             begin
               constants << ::Aws.const_get(service, false).const_get(:Client, false)
             rescue StandardError => e
-              OpenTelemetry.logger.warn e
+              OpenTelemetry.logger.warn("Constant could not be loaded: #{e}")
             end
           end
         end
