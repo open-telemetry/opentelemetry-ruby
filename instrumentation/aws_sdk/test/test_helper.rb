@@ -18,10 +18,3 @@ OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::AwsSdk'
   c.add_span_processor span_processor
 end
-
-def ignore_exception
-  begin
-    yield  
-  rescue Exception
-  end
-end

@@ -73,14 +73,16 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
       it 'should have correct attributes when error' do
         s3 = Aws::S3::Client.new(stub_responses: { list_buckets: 'NotFound' })
-        ignore_exception {
-          s3.list_buckets
-        }
 
-        _(last_span.attributes['rpc.system']).must_equal 'aws-api'
-        _(last_span.attributes['rpc.service']).must_equal 'S3'
-        _(last_span.attributes['rpc.method']).must_equal 'ListBuckets'
-        _(last_span.attributes['aws.region']).must_equal 'us-stubbed-1'
+        begin
+          s3.list_buckets
+        rescue StandardError
+          _(last_span.attributes['rpc.system']).must_equal 'aws-api'
+          _(last_span.attributes['rpc.service']).must_equal 'S3'
+          _(last_span.attributes['rpc.method']).must_equal 'ListBuckets'
+          _(last_span.attributes['aws.region']).must_equal 'us-stubbed-1'
+        end
+
         _(last_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
       end
     end
