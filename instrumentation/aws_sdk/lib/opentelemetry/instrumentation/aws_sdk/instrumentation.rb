@@ -49,9 +49,11 @@ module OpenTelemetry
           available_services.each_with_object([]) do |service, constants|
             next if ::Aws.autoload?(service)
 
-            # rubocop:disable Style/RescueModifier
-            constants << ::Aws.const_get(service, false).const_get(:Client, false) rescue next
-            # rubocop:enable Style/RescueModifier
+            begin
+              constants << ::Aws.const_get(service, false).const_get(:Client, false)
+            rescue StandardError => e
+              OpenTelemetry.logger.warn e
+            end
           end
         end
       end
