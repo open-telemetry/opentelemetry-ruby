@@ -76,9 +76,10 @@ end
 
 #### Semantic Attributes
 
-Semantic Attributes are attributes that are defined by the OpenTelemetry Specification in order to provide a shared set of attribute keys across multiple languages, frameworks, and runtimes for common concepts like HTTP methods, status codes, user agents, and more. These attributes are available in the [Semantic Conventions gem][semconv-gem].
+Semantic Attributes are attributes that are defined by the [OpenTelemetry Specification][] in order to provide a shared set of attribute keys across multiple languages, frameworks, and runtimes for common concepts like HTTP methods, status codes, user agents, and more. These attributes are available in the [Semantic Conventions gem][semconv-gem].
 
-Tracing semantic conventions can be found in [this document][semconv-spec]
+For details, see [Trace semantic conventions][semconv-spec].
 
+[OpenTelemetry Specification]: {{< relref "/docs/reference/specification" >}}
 [semconv-gem]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/semantic_conventions
-[semconv-spec]: https://github.com/open-telemetry/opentelemetry-specification/tree/main/specification/trace/semantic_conventions
+[semconv-spec]: {{< relref "/docs/reference/specification/trace/semantic_conventions" >}}
