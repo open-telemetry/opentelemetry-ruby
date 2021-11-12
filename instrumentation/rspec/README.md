@@ -49,6 +49,10 @@ end
 
 If you need to test trace behaviour in your specs then you should be able to use a custom tracer provider and the instrumentation's output should not interfere with your specs.
 
+### Sampling
+
+To avoid spans from being dropped, which will mean you lose insight into your specs, you may want to set sampling to 'ALWAYS_ON'. The easiest way to do this is by setting the `OTEL_TRACES_SAMPLER` environment variable to `always_on`.
+
 ## Examples
 
 Example usage can be seen in the `/example` directory [here](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/rspec/example)
