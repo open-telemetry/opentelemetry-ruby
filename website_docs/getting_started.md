@@ -85,7 +85,7 @@ Adding tracing to a single service is a great first step and although auto-instr
 
 [repository]: https://github.com/open-telemetry/opentelemetry-ruby
 [auto-instrumentation]: https://github.com/open-telemetry/opentelemetry-ruby#instrumentation-libraries
-[sdk-env]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/protocol/exporter.md#configuration-options
+[sdk-env]: {{< relref "/docs/reference/specification/protocol/exporter#configuration-options" >}}
 [context-propagation]: ../context_propagation
 [events]: ../events
 [manual-instrumentation]: ../manual_instrumentation
