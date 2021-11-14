@@ -10,7 +10,8 @@ module OpenTelemetry
       # Generates Spans for all interactions with AwsSdk
       class Handler < Seahorse::Client::Handler
         def call(context)
-          span_name, attributes = calculate_span(context)
+          span_name = get_span_name(context)
+          attributes = get_span_attributes(context)
 
           tracer.in_span(span_name, kind: OpenTelemetry::Trace::SpanKind::CLIENT, attributes: attributes) do |span|
             execute = proc {
@@ -30,17 +31,22 @@ module OpenTelemetry
           end
         end
 
-        def calculate_span(context)
-          service_name = context.client.class.api.metadata['serviceId'] || context.client.class.to_s.split('::')[1]
-          span_name = "#{service_name}.#{context.operation.name}"
-          attributes = {
+        def get_service_name(context)
+          context.client.class.api.metadata['serviceId'] || context&.client&.class.to_s.split('::')[1]
+        end
+
+        def get_span_name(context)
+          service_name = get_service_name(context)
+          "#{service_name}.#{context.operation.name}"
+        end
+
+        def get_span_attributes(context)
+          {
             'aws.region' => context.config.region,
             OpenTelemetry::SemanticConventions::Trace::RPC_SYSTEM => 'aws-api',
             OpenTelemetry::SemanticConventions::Trace::RPC_METHOD => context.operation.name,
-            OpenTelemetry::SemanticConventions::Trace::RPC_SERVICE => service_name
+            OpenTelemetry::SemanticConventions::Trace::RPC_SERVICE => get_service_name(context)
           }
-
-          [span_name, attributes]
         end
 
         def tracer
