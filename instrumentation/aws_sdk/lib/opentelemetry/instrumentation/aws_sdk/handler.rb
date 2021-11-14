@@ -31,22 +31,25 @@ module OpenTelemetry
           end
         end
 
-        def get_service_name(context)
-          context.client.class.api.metadata['serviceId'] || context&.client&.class.to_s.split('::')[1]
-        end
-
-        def get_span_name(context)
-          service_name = get_service_name(context)
-          "#{service_name}.#{context.operation.name}"
-        end
-
         def get_span_attributes(context)
           {
             'aws.region' => context.config.region,
             OpenTelemetry::SemanticConventions::Trace::RPC_SYSTEM => 'aws-api',
-            OpenTelemetry::SemanticConventions::Trace::RPC_METHOD => context.operation.name,
+            OpenTelemetry::SemanticConventions::Trace::RPC_METHOD => get_operation(context),
             OpenTelemetry::SemanticConventions::Trace::RPC_SERVICE => get_service_name(context)
           }
+        end
+
+        def get_service_name(context)
+          context&.client.class.api.metadata['serviceId'] || context&.client.class.to_s.split('::')[1]
+        end
+
+        def get_operation(context)
+          context&.operation&.name
+        end
+
+        def get_span_name(context)
+          "#{get_service_name(context)}.#{get_operation(context)}"
         end
 
         def tracer
