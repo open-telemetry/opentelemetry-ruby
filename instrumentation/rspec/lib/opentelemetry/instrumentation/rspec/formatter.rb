@@ -75,7 +75,7 @@ module OpenTelemetry
             if (exception = result.exception)
               span.record_exception(exception)
               span.set_attribute('rspec.example.failure_message', exception.message) if exception.is_a? ::RSpec::Expectations::ExpectationNotMetError
-              span.status = OpenTelemetry::Trace::Status.error
+              span.status = OpenTelemetry::Trace::Status.error(exception.message)
             end
           end
         end

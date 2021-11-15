@@ -184,6 +184,7 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
           \e[0m
         MESSAGE
         _(subject.attributes['rspec.example.failure_message']).must_equal message
+        _(subject.status.description).must_equal message
         _(subject.events.first.attributes['exception.message']).must_equal message
       end
 
