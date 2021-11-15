@@ -17,7 +17,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(exp.instance_variable_get(:@headers)).must_be_empty
       _(exp.instance_variable_get(:@timeout)).must_equal 10.0
       _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
-      _(exp.instance_variable_get(:@compression)).must_be_nil
+      _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
       http = exp.instance_variable_get(:@http)
       _(http.ca_file).must_be_nil
       _(http.use_ssl?).must_equal true
