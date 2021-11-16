@@ -12,8 +12,8 @@ module OpenTelemetry
         MINIMUM_VERSION = Gem::Version.new('2.0')
 
         install do |_config|
-          require_relative './handler'
-          require_relative './services'
+          require_relative 'handler'
+          require_relative 'services'
 
           add_plugin(Seahorse::Client::Base, *loaded_constants)
         end
