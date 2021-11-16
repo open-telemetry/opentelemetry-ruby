@@ -17,7 +17,12 @@ module OpenTelemetry
               'net.peer.name' => hostname,
               'net.peer.port' => port
             }
-            attributes['db.statement'] = Utils.format_command(operation, args) if config[:db_statement] == :include
+            if config[:db_statement] == :include
+              attributes['db.statement'] = Utils.format_command(operation, args)
+            elsif config[:db_statement] == :obfuscate
+              attributes['db.statement'] = "#{operation} ?"
+            end
+
             attributes['peer.service'] = config[:peer_service] if config[:peer_service]
             tracer.in_span(operation, attributes: attributes, kind: :client) do
               super
