@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-dalli
 
+### v0.19.1 / 2021-09-29
+
+* (No significant changes)
+
 ### v0.19.0 / 2021-08-12
 
 * ADDED: Add configuration options for dalli 

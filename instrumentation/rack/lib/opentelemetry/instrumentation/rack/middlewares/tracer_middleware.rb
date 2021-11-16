@@ -18,7 +18,13 @@ module OpenTelemetry
           class << self
             def allowed_rack_request_headers
               @allowed_rack_request_headers ||= Array(config[:allowed_request_headers]).each_with_object({}) do |header, memo|
-                memo["HTTP_#{header.to_s.upcase.gsub(/[-\s]/, '_')}"] = build_attribute_name('http.request.headers.', header)
+                key = header.to_s.upcase.gsub(/[-\s]/, '_')
+                case key
+                when 'CONTENT_TYPE', 'CONTENT_LENGTH'
+                  memo[key] = build_attribute_name('http.request.headers.', header)
+                else
+                  memo["HTTP_#{key}"] = build_attribute_name('http.request.headers.', header)
+                end
               end
             end
 
@@ -58,6 +64,7 @@ module OpenTelemetry
                 return @app.call(env)
               end
             end
+
             original_env = env.dup
             extracted_context = OpenTelemetry.propagation.extract(
               env,
@@ -141,7 +148,7 @@ module OpenTelemetry
             if (implementation = config[:url_quantization])
               implementation.call(request_uri_or_path_info, env)
             else
-              request_uri_or_path_info
+              "HTTP #{env['REQUEST_METHOD']}"
             end
           end
 

@@ -146,9 +146,9 @@ module OpenTelemetry
 
             thread&.join(timeout)
             force_flush(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
-            @exporter.shutdown(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
             dropped_spans = lock { spans.size }
             report_dropped_spans(dropped_spans, reason: 'terminating') if dropped_spans.positive?
+            @exporter.shutdown(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
           end
 
           private
@@ -187,6 +187,10 @@ module OpenTelemetry
             result_code = @export_mutex.synchronize { @exporter.export(batch, timeout: timeout) }
             report_result(result_code, batch)
             result_code
+          rescue StandardError => e
+            report_result(FAILURE, batch)
+            @metrics_reporter.add_to_counter('otel.bsp.error', labels: { 'reason' => e.class.to_s })
+            FAILURE
           end
 
           def report_result(result_code, batch)

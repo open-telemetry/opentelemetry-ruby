@@ -1,5 +1,18 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.20.6 / 2021-10-29
+
+* FIXED: Add unexpected error handlign in BSP and OTLP exporter (#995)
+* FIXED: Handle otlp exporter race condition gzip errors with retry 
+
+### v0.20.5 / 2021-09-29
+
+* (No significant changes)
+
+### v0.20.4 / 2021-09-29
+
+* FIXED: OTLP Export Header Format 
+
 ### v0.20.3 / 2021-08-19
 
 * FIXED: OTLP exporter missing failure metrics 

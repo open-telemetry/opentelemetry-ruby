@@ -7,13 +7,18 @@ require 'opentelemetry/proto/common/v1/common_pb'
 require 'opentelemetry/proto/resource/v1/resource_pb'
 Google::Protobuf::DescriptorPool.generated_pool.build do
   add_file("opentelemetry/proto/trace/v1/trace.proto", :syntax => :proto3) do
+    add_message "opentelemetry.proto.trace.v1.TracesData" do
+      repeated :resource_spans, :message, 1, "opentelemetry.proto.trace.v1.ResourceSpans"
+    end
     add_message "opentelemetry.proto.trace.v1.ResourceSpans" do
       optional :resource, :message, 1, "opentelemetry.proto.resource.v1.Resource"
       repeated :instrumentation_library_spans, :message, 2, "opentelemetry.proto.trace.v1.InstrumentationLibrarySpans"
+      optional :schema_url, :string, 3
     end
     add_message "opentelemetry.proto.trace.v1.InstrumentationLibrarySpans" do
       optional :instrumentation_library, :message, 1, "opentelemetry.proto.common.v1.InstrumentationLibrary"
       repeated :spans, :message, 2, "opentelemetry.proto.trace.v1.Span"
+      optional :schema_url, :string, 3
     end
     add_message "opentelemetry.proto.trace.v1.Span" do
       optional :trace_id, :bytes, 1
@@ -47,34 +52,40 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
     end
     add_enum "opentelemetry.proto.trace.v1.Span.SpanKind" do
       value :SPAN_KIND_UNSPECIFIED, 0
-      value :INTERNAL, 1
-      value :SERVER, 2
-      value :CLIENT, 3
-      value :PRODUCER, 4
-      value :CONSUMER, 5
+      value :SPAN_KIND_INTERNAL, 1
+      value :SPAN_KIND_SERVER, 2
+      value :SPAN_KIND_CLIENT, 3
+      value :SPAN_KIND_PRODUCER, 4
+      value :SPAN_KIND_CONSUMER, 5
     end
     add_message "opentelemetry.proto.trace.v1.Status" do
-      optional :code, :enum, 1, "opentelemetry.proto.trace.v1.Status.StatusCode"
+      optional :deprecated_code, :enum, 1, "opentelemetry.proto.trace.v1.Status.DeprecatedStatusCode"
       optional :message, :string, 2
+      optional :code, :enum, 3, "opentelemetry.proto.trace.v1.Status.StatusCode"
+    end
+    add_enum "opentelemetry.proto.trace.v1.Status.DeprecatedStatusCode" do
+      value :DEPRECATED_STATUS_CODE_OK, 0
+      value :DEPRECATED_STATUS_CODE_CANCELLED, 1
+      value :DEPRECATED_STATUS_CODE_UNKNOWN_ERROR, 2
+      value :DEPRECATED_STATUS_CODE_INVALID_ARGUMENT, 3
+      value :DEPRECATED_STATUS_CODE_DEADLINE_EXCEEDED, 4
+      value :DEPRECATED_STATUS_CODE_NOT_FOUND, 5
+      value :DEPRECATED_STATUS_CODE_ALREADY_EXISTS, 6
+      value :DEPRECATED_STATUS_CODE_PERMISSION_DENIED, 7
+      value :DEPRECATED_STATUS_CODE_RESOURCE_EXHAUSTED, 8
+      value :DEPRECATED_STATUS_CODE_FAILED_PRECONDITION, 9
+      value :DEPRECATED_STATUS_CODE_ABORTED, 10
+      value :DEPRECATED_STATUS_CODE_OUT_OF_RANGE, 11
+      value :DEPRECATED_STATUS_CODE_UNIMPLEMENTED, 12
+      value :DEPRECATED_STATUS_CODE_INTERNAL_ERROR, 13
+      value :DEPRECATED_STATUS_CODE_UNAVAILABLE, 14
+      value :DEPRECATED_STATUS_CODE_DATA_LOSS, 15
+      value :DEPRECATED_STATUS_CODE_UNAUTHENTICATED, 16
     end
     add_enum "opentelemetry.proto.trace.v1.Status.StatusCode" do
-      value :Ok, 0
-      value :Cancelled, 1
-      value :UnknownError, 2
-      value :InvalidArgument, 3
-      value :DeadlineExceeded, 4
-      value :NotFound, 5
-      value :AlreadyExists, 6
-      value :PermissionDenied, 7
-      value :ResourceExhausted, 8
-      value :FailedPrecondition, 9
-      value :Aborted, 10
-      value :OutOfRange, 11
-      value :Unimplemented, 12
-      value :InternalError, 13
-      value :Unavailable, 14
-      value :DataLoss, 15
-      value :Unauthenticated, 16
+      value :STATUS_CODE_UNSET, 0
+      value :STATUS_CODE_OK, 1
+      value :STATUS_CODE_ERROR, 2
     end
   end
 end
@@ -83,6 +94,7 @@ module Opentelemetry
   module Proto
     module Trace
       module V1
+        TracesData = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.TracesData").msgclass
         ResourceSpans = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.ResourceSpans").msgclass
         InstrumentationLibrarySpans = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.InstrumentationLibrarySpans").msgclass
         Span = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.Span").msgclass
@@ -90,6 +102,7 @@ module Opentelemetry
         Span::Link = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.Span.Link").msgclass
         Span::SpanKind = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.Span.SpanKind").enummodule
         Status = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.Status").msgclass
+        Status::DeprecatedStatusCode = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.Status.DeprecatedStatusCode").enummodule
         Status::StatusCode = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.Status.StatusCode").enummodule
       end
     end

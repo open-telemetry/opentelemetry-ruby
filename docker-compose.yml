@@ -105,6 +105,18 @@ services:
     <<: *base
     working_dir: /app/instrumentation/net_http/example
 
+  ex-instrumentation-que:
+    <<: *base
+    environment:
+      - TEST_POSTGRES_PASSWORD=postgres
+      - TEST_POSTGRES_USER=postgres
+      - TEST_POSTGRES_HOST=postgres
+      - TEST_POSTGRES_PORT=5432
+      - TEST_POSTGRES_DB=postgres
+    depends_on:
+      - postgres
+    working_dir: /app/instrumentation/que
+
   ex-instrumentation-rack:
     <<: *base
     working_dir: /app/instrumentation/rack/example
@@ -167,6 +179,29 @@ services:
   memcached:
     image: memcached:alpine
     command: memcached -m 64
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    ports:
+      - 2181:2181
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:29092,PLAINTEXT_HOST://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
 
   sdk:
     <<: *base

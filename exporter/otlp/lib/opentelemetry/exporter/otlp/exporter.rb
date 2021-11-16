@@ -31,6 +31,9 @@ module OpenTelemetry
         WRITE_TIMEOUT_SUPPORTED = Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.6')
         private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT, :WRITE_TIMEOUT_SUPPORTED)
 
+        ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
+        private_constant(:ERROR_MESSAGE_INVALID_HEADERS)
+
         def self.ssl_verify_mode
           if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
             OpenSSL::SSL::VERIFY_PEER
@@ -41,16 +44,15 @@ module OpenTelemetry
           end
         end
 
-        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'https://localhost:4317/v1/traces'), # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
+        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'https://localhost:4318/v1/traces'), # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
                        certificate_file: config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
                        ssl_verify_mode: Exporter.ssl_verify_mode,
-                       headers: config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS'),
+                       headers: config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                        compression: config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION'),
                        timeout: config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
                        metrics_reporter: nil)
           raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}" if invalid_url?(endpoint)
           raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || compression == 'gzip'
-          raise ArgumentError, 'headers must be comma-separated k=v pairs or a Hash' unless valid_headers?(headers)
 
           @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
                    URI("#{endpoint}/v1/traces")
@@ -66,8 +68,10 @@ module OpenTelemetry
 
           @path = @uri.path
           @headers = case headers
-                     when String then CSV.parse(headers, col_sep: '=', row_sep: ',').to_h
+                     when String then parse_headers(headers)
                      when Hash then headers
+                     else
+                       raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS
                      end
           @timeout = timeout.to_f
           @compression = compression
@@ -118,16 +122,6 @@ module OpenTelemetry
           default
         end
 
-        def valid_headers?(headers)
-          return true if headers.nil? || headers.is_a?(Hash)
-          return false unless headers.is_a?(String)
-
-          CSV.parse(headers, col_sep: '=', row_sep: ',').to_h
-          true
-        rescue ArgumentError
-          false
-        end
-
         def invalid_url?(url)
           return true if url.nil? || url.strip.empty?
 
@@ -149,6 +143,8 @@ module OpenTelemetry
         end
 
         def send_bytes(bytes, timeout:) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+          return FAILURE if bytes.nil?
+
           retry_count = 0
           timeout ||= @timeout
           start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
@@ -161,7 +157,7 @@ module OpenTelemetry
                              bytes
                            end
             request.add_field('Content-Type', 'application/x-protobuf')
-            @headers&.each { |key, value| request.add_field(key, value) }
+            @headers.each { |key, value| request.add_field(key, value) }
 
             remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
             return TIMEOUT if remaining_timeout.zero?
@@ -211,6 +207,13 @@ module OpenTelemetry
             return FAILURE
           rescue EOFError
             retry if backoff?(retry_count: retry_count += 1, reason: 'eof_error')
+            return FAILURE
+          rescue Zlib::DataError
+            retry if backoff?(retry_count: retry_count += 1, reason: 'zlib_error')
+            return FAILURE
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#send_bytes')
+            @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => e.class.to_s })
             return FAILURE
           end
         ensure
@@ -263,7 +266,7 @@ module OpenTelemetry
           true
         end
 
-        def encode(span_data) # rubocop:disable Metrics/MethodLength
+        def encode(span_data) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(
             Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
               resource_spans: span_data
@@ -288,6 +291,9 @@ module OpenTelemetry
                 end
             )
           )
+        rescue StandardError => e
+          OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#encode')
+          nil
         end
 
         def as_otlp_span(span_data) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
@@ -322,22 +328,29 @@ module OpenTelemetry
             end,
             dropped_links_count: span_data.total_recorded_links - span_data.links&.size.to_i,
             status: span_data.status&.yield_self do |status|
-              # TODO: fix this based on spec update.
               Opentelemetry::Proto::Trace::V1::Status.new(
-                code: status.code == OpenTelemetry::Trace::Status::ERROR ? Opentelemetry::Proto::Trace::V1::Status::StatusCode::UnknownError : Opentelemetry::Proto::Trace::V1::Status::StatusCode::Ok,
+                code: as_otlp_status_code(status.code),
                 message: status.description
               )
             end
           )
         end
 
+        def as_otlp_status_code(code)
+          case code
+          when OpenTelemetry::Trace::Status::OK then Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_OK
+          when OpenTelemetry::Trace::Status::ERROR then Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_ERROR
+          else Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_UNSET
+          end
+        end
+
         def as_otlp_span_kind(kind)
           case kind
-          when :internal then Opentelemetry::Proto::Trace::V1::Span::SpanKind::INTERNAL
-          when :server then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SERVER
-          when :client then Opentelemetry::Proto::Trace::V1::Span::SpanKind::CLIENT
-          when :producer then Opentelemetry::Proto::Trace::V1::Span::SpanKind::PRODUCER
-          when :consumer then Opentelemetry::Proto::Trace::V1::Span::SpanKind::CONSUMER
+          when :internal then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_INTERNAL
+          when :server then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_SERVER
+          when :client then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_CLIENT
+          when :producer then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_PRODUCER
+          when :consumer then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_CONSUMER
           else Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_UNSPECIFIED
           end
         end
@@ -366,6 +379,24 @@ module OpenTelemetry
             result.array_value = Opentelemetry::Proto::Common::V1::ArrayValue.new(values: values)
           end
           result
+        end
+
+        def parse_headers(raw)
+          entries = raw.split(',')
+          raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if entries.empty?
+
+          entries.each_with_object({}) do |entry, headers|
+            k, v = entry.split('=', 2).map(&CGI.method(:unescape))
+            begin
+              k = k.to_s.strip
+              v = v.to_s.strip
+            rescue ArgumentError => e
+              raise e, ERROR_MESSAGE_INVALID_HEADERS
+            end
+            raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if k.empty? || v.empty?
+
+            headers[k] = v
+          end
         end
       end
     end
