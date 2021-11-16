@@ -70,7 +70,7 @@ The collector exporter can be configured explicitly in code, or via environment 
 
 | Parameter           | Environment variable                         | Default                             |
 | ------------------- | -------------------------------------------- | ----------------------------------- |
-| `endpoint:`         | `OTEL_EXPORTER_OTLP_ENDPOINT`                | `"http://localhost:4317/v1/traces"` |
+| `endpoint:`         | `OTEL_EXPORTER_OTLP_ENDPOINT`                | `"http://localhost:4318/v1/traces"` |
 | `certificate_file: `| `OTEL_EXPORTER_OTLP_CERTIFICATE`             |                                     |
 | `headers:`          | `OTEL_EXPORTER_OTLP_HEADERS`                 |                                     |
 | `compression:`      | `OTEL_EXPORTER_OTLP_COMPRESSION`             |                                     |

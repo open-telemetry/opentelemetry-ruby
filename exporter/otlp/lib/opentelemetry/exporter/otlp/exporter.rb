@@ -44,7 +44,7 @@ module OpenTelemetry
           end
         end
 
-        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'https://localhost:4317/v1/traces'), # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'https://localhost:4318/v1/traces'), # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
                        certificate_file: config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
                        ssl_verify_mode: Exporter.ssl_verify_mode,
                        headers: config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
@@ -143,6 +143,8 @@ module OpenTelemetry
         end
 
         def send_bytes(bytes, timeout:) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+          return FAILURE if bytes.nil?
+
           retry_count = 0
           timeout ||= @timeout
           start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
@@ -206,6 +208,13 @@ module OpenTelemetry
           rescue EOFError
             retry if backoff?(retry_count: retry_count += 1, reason: 'eof_error')
             return FAILURE
+          rescue Zlib::DataError
+            retry if backoff?(retry_count: retry_count += 1, reason: 'zlib_error')
+            return FAILURE
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#send_bytes')
+            @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => e.class.to_s })
+            return FAILURE
           end
         ensure
           # Reset timeouts to defaults for the next call.
@@ -257,7 +266,7 @@ module OpenTelemetry
           true
         end
 
-        def encode(span_data) # rubocop:disable Metrics/MethodLength
+        def encode(span_data) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(
             Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
               resource_spans: span_data
@@ -282,6 +291,9 @@ module OpenTelemetry
                 end
             )
           )
+        rescue StandardError => e
+          OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#encode')
+          nil
         end
 
         def as_otlp_span(span_data) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
@@ -316,22 +328,29 @@ module OpenTelemetry
             end,
             dropped_links_count: span_data.total_recorded_links - span_data.links&.size.to_i,
             status: span_data.status&.yield_self do |status|
-              # TODO: fix this based on spec update.
               Opentelemetry::Proto::Trace::V1::Status.new(
-                code: status.code == OpenTelemetry::Trace::Status::ERROR ? Opentelemetry::Proto::Trace::V1::Status::StatusCode::UnknownError : Opentelemetry::Proto::Trace::V1::Status::StatusCode::Ok,
+                code: as_otlp_status_code(status.code),
                 message: status.description
               )
             end
           )
         end
 
+        def as_otlp_status_code(code)
+          case code
+          when OpenTelemetry::Trace::Status::OK then Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_OK
+          when OpenTelemetry::Trace::Status::ERROR then Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_ERROR
+          else Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_UNSET
+          end
+        end
+
         def as_otlp_span_kind(kind)
           case kind
-          when :internal then Opentelemetry::Proto::Trace::V1::Span::SpanKind::INTERNAL
-          when :server then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SERVER
-          when :client then Opentelemetry::Proto::Trace::V1::Span::SpanKind::CLIENT
-          when :producer then Opentelemetry::Proto::Trace::V1::Span::SpanKind::PRODUCER
-          when :consumer then Opentelemetry::Proto::Trace::V1::Span::SpanKind::CONSUMER
+          when :internal then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_INTERNAL
+          when :server then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_SERVER
+          when :client then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_CLIENT
+          when :producer then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_PRODUCER
+          when :consumer then Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_CONSUMER
           else Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_UNSPECIFIED
           end
         end

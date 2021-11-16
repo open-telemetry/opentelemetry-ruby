@@ -31,6 +31,10 @@ commit_lint:
 #  *  changelog_path: Path to CHANGLEOG.md relative to the gem directory.
 #     (Required only if it is not in the expected location.)
 gems:
+  - name: opentelemetry-instrumentation-active_support
+    directory: instrumentation/active_support
+    version_constant: [OpenTelemetry, Instrumentation, ActiveSupport, VERSION]
+
   - name: opentelemetry-instrumentation-action_view
     directory: instrumentation/action_view
     version_constant: [OpenTelemetry, Instrumentation, ActionView, VERSION]

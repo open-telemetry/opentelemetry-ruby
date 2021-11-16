@@ -15,9 +15,7 @@ module OpenTelemetry
           def perform(req, options)
             uri = req.uri
             request_method = req.verb.to_s.upcase
-
             attributes = from_request(method: request_method, config: config, uri: uri)
-
             tracer.in_span("HTTP #{request_method}", attributes: attributes, kind: :client) do |span|
               OpenTelemetry.propagation.inject(req.headers)
               super.tap do |response|
