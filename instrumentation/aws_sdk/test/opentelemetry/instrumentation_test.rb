@@ -83,7 +83,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
           _(last_span.attributes['rpc.service']).must_equal 'S3'
           _(last_span.attributes['rpc.method']).must_equal 'ListBuckets'
           _(last_span.attributes['aws.region']).must_equal 'us-stubbed-1'
-          assert_nil last_span.attributes['db.system']
+         _(last_span.attributes['db.system']).must_be_nil
         end
 
         _(last_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
