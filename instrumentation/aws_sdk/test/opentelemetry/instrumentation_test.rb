@@ -54,6 +54,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         _(last_span.attributes['rpc.service']).must_equal 'SNS'
         _(last_span.attributes['rpc.method']).must_equal 'Publish'
         _(last_span.attributes['aws.region']).must_equal 'us-stubbed-1'
+        _(last_span.attributes['db.system']).must_equal nil
         _(last_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
       end
     end
@@ -68,6 +69,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         _(last_span.attributes['rpc.service']).must_equal 'S3'
         _(last_span.attributes['rpc.method']).must_equal 'ListBuckets'
         _(last_span.attributes['aws.region']).must_equal 'us-stubbed-1'
+        _(last_span.attributes['db.system']).must_equal nil
         _(last_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
       end
 
@@ -81,9 +83,21 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
           _(last_span.attributes['rpc.service']).must_equal 'S3'
           _(last_span.attributes['rpc.method']).must_equal 'ListBuckets'
           _(last_span.attributes['aws.region']).must_equal 'us-stubbed-1'
+          _(last_span.attributes['db.system']).must_equal nil
         end
 
         _(last_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      end
+    end
+
+    describe 'dynamodb' do
+      it 'should have db.system attribute' do
+        dynamodb_client = Aws::DynamoDB::Client.new(stub_responses: true)
+
+        dynamodb_client.list_tables
+
+        _(last_span.attributes['rpc.system']).must_equal 'aws-api'
+        _(last_span.attributes['db.system']).must_equal 'dynamodb'
       end
     end
   end

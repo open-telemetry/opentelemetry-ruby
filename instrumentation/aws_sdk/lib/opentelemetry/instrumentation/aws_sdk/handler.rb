@@ -32,12 +32,15 @@ module OpenTelemetry
         end
 
         def get_span_attributes(context)
-          {
+          span_attributes = {
             'aws.region' => context.config.region,
             OpenTelemetry::SemanticConventions::Trace::RPC_SYSTEM => 'aws-api',
             OpenTelemetry::SemanticConventions::Trace::RPC_METHOD => get_operation(context),
             OpenTelemetry::SemanticConventions::Trace::RPC_SERVICE => get_service_name(context)
           }
+
+          db_attributes = DbHelper.get_db_attributes(context, get_service_name(context), get_operation(context))
+          span_attributes.merge(db_attributes)
         end
 
         def get_service_name(context)
