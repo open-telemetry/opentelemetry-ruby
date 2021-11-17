@@ -30,6 +30,7 @@ require 'opentelemetry/resource/detectors'
 # For a specific platform
 OpenTelemetry::SDK.configure do |c|
   c.resource = OpenTelemetry::Resource::Detectors::GoogleCloudPlatform.detect
+  c.resource = OpenTelemetry::Resource::Detectors::Deployment.detect
 end
 
 # Or if you would like for it to run all detectors available
