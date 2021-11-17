@@ -17,7 +17,7 @@ module OpenTelemetry
                 private
 
                 def get_rails_deployment_environment
-                    # rails extrace env like this:
+                    # rails extract env like this:
                     # https://github.com/rails/rails/blob/5647a9c1ced68d20338552d47a3b755e10a271c4/railties/lib/rails.rb#L74
                     # ActiveSupport::EnvironmentInquirer.new(ENV["RAILS_ENV"].presence || ENV["RACK_ENV"].presence || "development")
                     if defined?(::Rails::env)
