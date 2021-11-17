@@ -9,7 +9,7 @@ module OpenTelemetry
 
         def detect
           resource_attributes = {}
-          deployment_environment = get_rails_deployment_environment || get_rack_env
+          deployment_environment = rails_deployment_environment || rack_env
           resource_attributes[::OpenTelemetry::SemanticConventions::Resource::DEPLOYMENT_ENVIRONMENT] = deployment_environment.to_str if deployment_environment
           OpenTelemetry::SDK::Resources::Resource.create(resource_attributes)
         end

@@ -2,7 +2,7 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
+describe OpenTelemetry::Resource::Detectors::Deployment do
   let(:detector) { OpenTelemetry::Resource::Detectors::Deployment }
 
   describe '.detect' do
