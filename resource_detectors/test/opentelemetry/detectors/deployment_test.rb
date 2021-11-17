@@ -17,13 +17,9 @@ describe OpenTelemetry::Resource::Detectors::Deployment do
 
     describe 'when in a rack environment' do
       it 'returns a resource with rack environment' do
-        old_env = ENV['RACK_ENV']
-        ENV['RACK_ENV'] = 'env from test'
-        begin
+        with_env('RACK_ENV' => 'env from test') do
           _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
           _(detected_resource_attributes).must_equal('deployment.environment' => 'env from test')
-        ensure
-          ENV['RACK_ENV'] = old_env
         end
       end
     end
