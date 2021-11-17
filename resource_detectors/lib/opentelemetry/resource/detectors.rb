@@ -7,6 +7,7 @@
 require 'opentelemetry/sdk'
 require 'opentelemetry/resource/detectors/version'
 require 'opentelemetry/resource/detectors/google_cloud_platform'
+require 'opentelemetry/resource/detectors/deployment'
 require 'opentelemetry/resource/detectors/auto_detector'
 
 # OpenTelemetry is an open source observability framework, providing a
