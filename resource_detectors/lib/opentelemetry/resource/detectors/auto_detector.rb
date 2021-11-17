@@ -13,7 +13,7 @@ module OpenTelemetry
 
         DETECTORS = [
           OpenTelemetry::Resource::Detectors::GoogleCloudPlatform,
-          OpenTelemetry::Resource::Detectors::Deployment,
+          OpenTelemetry::Resource::Detectors::Deployment
         ].freeze
 
         def detect
