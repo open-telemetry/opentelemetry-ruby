@@ -21,7 +21,7 @@ describe OpenTelemetry::Resource::Detectors::Deployment do
         ENV['RACK_ENV'] = 'env from test'
         begin
           _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-          _(detected_resource_attributes).must_equal({ 'deployment.environment' => 'env from test' })
+          _(detected_resource_attributes).must_equal('deployment.environment' => 'env from test')
         ensure
           ENV['RACK_ENV'] = old_env
         end
