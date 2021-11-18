@@ -19,7 +19,7 @@ describe OpenTelemetry::Resource::Detectors::Deployment do
 
     describe 'when rails is used' do
       it 'return rails env when present' do
-        module MockRails  # rubocop:disable Lint/ConstantDefinitionInBlock
+        module MockRails # rubocop:disable Lint/ConstantDefinitionInBlock
           def self.env
             'env from rails'
           end
