@@ -24,7 +24,7 @@ as follows:
 | ------- | ------- | ------- |
 | Stable | Not Yet Implemented | Not Yet Implemented |
 
-For the current release, see [Releases][].
+{{% latest_release "ruby" /%}}
 
 ## Who's using OpenTelemetry Ruby?
 
@@ -46,6 +46,5 @@ If you would like to add your name to this list, please feel free to submit a pu
 - [Examples][]
 
 [repository]: https://github.com/open-telemetry/opentelemetry-ruby
-[releases]: https://github.com/open-telemetry/opentelemetry-ruby/releases
 [ruby-docs]: https://open-telemetry.github.io/opentelemetry-ruby/
 [examples]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/examples
