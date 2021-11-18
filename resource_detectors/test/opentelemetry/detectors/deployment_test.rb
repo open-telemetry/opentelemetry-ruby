@@ -19,7 +19,7 @@ describe OpenTelemetry::Resource::Detectors::Deployment do
 
     describe 'when rails is used' do
       it 'return rails env when present' do
-        module MockRails # rubocop:disable Lint/ConstantDefinitionInBlock
+        module MockRails
           def self.env
             'env from rails'
           end
@@ -35,7 +35,7 @@ describe OpenTelemetry::Resource::Detectors::Deployment do
 
     describe 'when sinatra is used' do
       it 'return sinatra env if already required' do
-        module MockSinatraBase  # rubocop:disable Lint/ConstantDefinitionInBlock
+        module MockSinatraBase
           def self.environment
             'env from sinatra'
           end
@@ -49,7 +49,7 @@ describe OpenTelemetry::Resource::Detectors::Deployment do
       end
 
       it 'when sinatra not yet initialized, but environment set in ENV' do
-        with_env({ 'APP_ENV' => 'env from sinatra environment variables' }) do
+        with_env('APP_ENV' => 'env from sinatra environment variables') do
           _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
           _(detected_resource_attributes).must_equal('deployment.environment' => 'env from sinatra environment variables')
         end
