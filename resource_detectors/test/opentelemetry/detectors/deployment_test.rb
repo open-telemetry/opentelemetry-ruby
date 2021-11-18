@@ -19,7 +19,13 @@ describe OpenTelemetry::Resource::Detectors::Deployment do
 
     describe 'when rails is used' do
       it 'return rails env when present' do
-        allow(::Rails).to receive(:env).and_return('env from rails')
+        module MockRails  # rubocop:disable Lint/ConstantDefinitionInBlock
+          def self.env
+            'env from rails'
+          end
+        end
+
+        stub_const('::Rails', MockRails)
         with_env({}) do
           _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
           _(detected_resource_attributes).must_equal('deployment.environment' => 'env from rails')
