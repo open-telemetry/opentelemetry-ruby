@@ -11,8 +11,10 @@ describe OpenTelemetry::Resource::Detectors::Deployment do
     let(:expected_resource_attributes) { {} }
 
     it 'returns an empty resource' do
-      _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-      _(detected_resource_attributes).must_equal(expected_resource_attributes)
+      with_env({}) do
+        _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
+        _(detected_resource_attributes).must_equal(expected_resource_attributes)
+      end
     end
 
     describe 'when rails is used' do
@@ -20,7 +22,7 @@ describe OpenTelemetry::Resource::Detectors::Deployment do
         allow(::Rails).to receive(:env).and_return('env from rails')
         with_env({}) do
           _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
-          _(detected_resource_attributes).must_equal('deployment.environment' => 'env from rails')          
+          _(detected_resource_attributes).must_equal('deployment.environment' => 'env from rails')
         end
       end
     end
