@@ -12,10 +12,7 @@ module OpenTelemetry
         MINIMUM_VERSION = Gem::Version.new('2.0')
 
         install do |_config|
-          require_relative 'handler'
-          require_relative 'services'
-          require_relative 'db_helper'
-
+          require_dependencies
           add_plugin(Seahorse::Client::Base, *loaded_constants)
         end
 
@@ -28,6 +25,13 @@ module OpenTelemetry
         end
 
         option :suppress_internal_instrumentation, default: false, validate: :boolean
+
+        private
+
+        def require_dependencies
+          require_relative 'handler'
+          require_relative 'services'
+        end
 
         def gem_version
           if Gem.loaded_specs['aws-sdk']

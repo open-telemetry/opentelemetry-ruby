@@ -9,51 +9,34 @@ module OpenTelemetry
     module AwsSdk
       # Generates Spans for all interactions with AwsSdk
       class Handler < Seahorse::Client::Handler
-        def call(context)
-          span_name = get_span_name(context)
-          attributes = get_span_attributes(context)
+        def call(context) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+          return super unless context
 
-          tracer.in_span(span_name, kind: OpenTelemetry::Trace::SpanKind::CLIENT, attributes: attributes) do |span|
-            execute = proc {
-              super(context).tap do |response|
-                if (err = response.error)
-                  span.record_exception(err)
-                  span.status = Trace::Status.error(err)
-                end
-              end
-            }
+          service_name = context.client.class.api.metadata['serviceId'] || context.client.class.to_s.split('::')[1]
+          operation = context.operation&.name
+          attributes = {
+            'aws.region' => context.config.region,
+            OpenTelemetry::SemanticConventions::Trace::RPC_SYSTEM => 'aws-api',
+            OpenTelemetry::SemanticConventions::Trace::RPC_METHOD => operation,
+            OpenTelemetry::SemanticConventions::Trace::RPC_SERVICE => service_name
+          }
+          attributes[SemanticConventions::Trace::DB_SYSTEM] = 'dynamodb' if service_name == 'DynamoDB'
 
+          tracer.in_span("#{service_name}.#{operation}", attributes: attributes, kind: OpenTelemetry::Trace::SpanKind::CLIENT) do |span|
             if instrumentation_config[:suppress_internal_instrumentation]
-              OpenTelemetry::Common::Utilities.untraced(&execute)
+              OpenTelemetry::Common::Utilities.untraced { super }
             else
-              execute.call
+              super
+            end.tap do |response|
+              if (err = response.error)
+                span.record_exception(err)
+                span.status = Trace::Status.error(err)
+              end
             end
           end
         end
 
-        def get_span_attributes(context)
-          span_attributes = {
-            'aws.region' => context.config.region,
-            OpenTelemetry::SemanticConventions::Trace::RPC_SYSTEM => 'aws-api',
-            OpenTelemetry::SemanticConventions::Trace::RPC_METHOD => get_operation(context),
-            OpenTelemetry::SemanticConventions::Trace::RPC_SERVICE => get_service_name(context)
-          }
-
-          db_attributes = DbHelper.get_db_attributes(context, get_service_name(context), get_operation(context))
-          span_attributes.merge(db_attributes)
-        end
-
-        def get_service_name(context)
-          context&.client.class.api.metadata['serviceId'] || context&.client.class.to_s.split('::')[1]
-        end
-
-        def get_operation(context)
-          context&.operation&.name
-        end
-
-        def get_span_name(context)
-          "#{get_service_name(context)}.#{get_operation(context)}"
-        end
+        private
 
         def tracer
           AwsSdk::Instrumentation.instance.tracer
