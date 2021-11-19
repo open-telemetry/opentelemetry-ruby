@@ -10,7 +10,7 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the
       # KafkaRuby instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        instrumented_gem "ruby-kafka"
+        instrumented_gem "ruby_kafka"
 
         install do |_config|
           require_patches
