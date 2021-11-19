@@ -162,14 +162,18 @@ module OpenTelemetry
           @options << { name: name, default: default, validator: validator, validation_type: validation_type }
         end
 
+        def instrumented_gem_name=(name)
+          @instrumented_gem_name = name
+        end
+
         def instance
-          @instance ||= new(instrumentation_name, instrumentation_version, install_blk,
+          @instance ||= new(instrumentation_name, instrumentation_version, instrumented_gem_name, install_blk,
                             present_blk, compatible_blk, options)
         end
 
         private
 
-        attr_reader :install_blk, :present_blk, :compatible_blk, :options
+        attr_reader :install_blk, :present_blk, :compatible_blk, :options, :instrumented_gem_name
 
         def infer_name
           @inferred_name ||= if (md = name.match(NAME_REGEX)) # rubocop:disable Naming/MemoizedInstanceVariableName
@@ -189,14 +193,15 @@ module OpenTelemetry
         end
       end
 
-      attr_reader :name, :version, :config, :installed, :tracer
+      attr_reader :name, :version, :instrumented_gem_name, :config, :installed, :tracer
 
       alias installed? installed
 
-      def initialize(name, version, install_blk, present_blk,
+      def initialize(name, version, instrumented_gem_name, install_blk, present_blk,
                      compatible_blk, options)
         @name = name
         @version = version
+        @instrumented_gem_name = instrumented_gem_name
         @install_blk = install_blk
         @present_blk = present_blk
         @compatible_blk = compatible_blk
@@ -241,9 +246,13 @@ module OpenTelemetry
       # Calls the compatible block of the Instrumentation subclasses, if no block is provided
       # it's assumed to be compatible
       def compatible?
-        return true unless @compatible_blk
+        return true unless @instrumented_gem_name || @compatible_blk
 
-        instance_exec(&@compatible_blk)
+        if @compatible_blk
+          instance_exec(&@compatible_blk)
+        else
+          compatible_version?
+        end
       end
 
       # Whether this instrumentation is enabled. It first checks to see if it's enabled
@@ -259,6 +268,22 @@ module OpenTelemetry
       end
 
       private
+
+      def compatible_version?
+        instrumentation_gem_requirement&.satisfied_by?(
+          find_gemspec_by(@instrumented_gem_name)&.version
+        )
+      end
+
+      def find_gemspec_by(gem_name)
+        Gem.loaded_specs[gem_name] || Gem::Specification.find_by_name(gem_name)
+      end
+
+      def instrumentation_gem_requirement
+        instrumentation_gemspec = find_gemspec_by("opentelemetry-instrumentation-#{@instrumented_gem_name}")
+        supported_gemspec = instrumentation_gemspec.development_dependencies.find { |spec| spec.name == @instrumented_gem_name }
+        supported_gemspec&.requirement
+      end
 
       # The config_options method is responsible for validating that the user supplied
       # config hash is valid.
