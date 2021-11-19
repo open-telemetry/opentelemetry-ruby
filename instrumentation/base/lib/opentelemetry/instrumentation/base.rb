@@ -162,7 +162,7 @@ module OpenTelemetry
           @options << { name: name, default: default, validator: validator, validation_type: validation_type }
         end
 
-        def instrumented_gem_name=(name)
+        def instrumented_gem(name)
           @instrumented_gem_name = name
         end
 
