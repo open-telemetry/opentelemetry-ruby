@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+## TODO: Include the supported version to be tested here.
+## Example:
+# appraise 'rspec-3.10' do
+#   gem 'rspec', '~> 3.10.0'
+# end
