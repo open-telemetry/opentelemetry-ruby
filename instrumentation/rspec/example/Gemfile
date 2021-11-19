@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+gem 'opentelemetry-api', path: '../../../api'
+gem 'opentelemetry-common', path: '../../../common'
+gem 'opentelemetry-instrumentation-concurrent_ruby', path: '../../../instrumentation/concurrent_ruby'
+gem 'opentelemetry-sdk', path: '../../../sdk'
+
+gem 'rspec'

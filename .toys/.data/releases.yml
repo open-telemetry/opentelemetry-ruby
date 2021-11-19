@@ -64,6 +64,10 @@ gems:
     directory: instrumentation/active_record
     version_constant: [OpenTelemetry, Instrumentation, ActiveRecord, VERSION]
 
+  - name: opentelemetry-instrumentation-aws_sdk
+    directory: instrumentation/aws_sdk
+    version_constant: [OpenTelemetry, Instrumentation, AwsSdk, VERSION]
+
   - name: opentelemetry-instrumentation-lmdb
     directory: instrumentation/lmdb
     version_constant: [OpenTelemetry, Instrumentation, LMDB, VERSION]
@@ -178,6 +182,10 @@ gems:
   - name: opentelemetry-instrumentation-restclient
     directory: instrumentation/restclient
     version_constant: [OpenTelemetry, Instrumentation, RestClient, VERSION]
+
+  - name: opentelemetry-instrumentation-rspec
+    directory: instrumentation/rspec
+    version_constant: [OpenTelemetry, Instrumentation, RSpec, VERSION]
 
   - name: opentelemetry-instrumentation-ruby_kafka
     directory: instrumentation/ruby_kafka

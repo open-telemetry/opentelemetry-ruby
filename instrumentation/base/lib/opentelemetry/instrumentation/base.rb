@@ -146,11 +146,20 @@ module OpenTelemetry
         # a key in the VALIDATORS hash.  The supported keys are, :array, :boolean,
         # :callable, :integer, :string.
         def option(name, default:, validate:)
-          validate = VALIDATORS[validate] || validate
-          raise ArgumentError, "validate must be #{VALIDATORS.keys.join(', ')}, or a callable" unless validate.respond_to?(:call)
+          validator = VALIDATORS[validate] || validate
+          raise ArgumentError, "validate must be #{VALIDATORS.keys.join(', ')}, or a callable" unless validator.respond_to?(:call) || validator.respond_to?(:include?)
 
           @options ||= []
-          @options << { name: name, default: default, validate: validate }
+
+          validation_type = if VALIDATORS[validate]
+                              validate
+                            elsif validate.respond_to?(:include?)
+                              :enum
+                            else
+                              :callable
+                            end
+
+          @options << { name: name, default: default, validator: validator, validation_type: validation_type }
         end
 
         def instance
@@ -257,16 +266,24 @@ module OpenTelemetry
       # Invalid configuration values are logged, and replaced by the default.
       #
       # @param [Hash] user_config The user supplied configuration hash
-      def config_options(user_config) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      def config_options(user_config) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         @options ||= {}
         user_config ||= {}
+        config_overrides = config_overrides_from_env
         validated_config = @options.each_with_object({}) do |option, h|
           option_name = option[:name]
           config_value = user_config[option_name]
+          config_override = coerce_env_var(config_overrides[option_name], option[:validation_type]) if config_overrides[option_name]
 
-          value = if config_value.nil?
+          value = if config_value.nil? && config_override.nil?
                     option[:default]
-                  elsif option[:validate].call(config_value)
+                  elsif option[:validator].respond_to?(:include?) && option[:validator].include?(config_override)
+                    config_override
+                  elsif option[:validator].respond_to?(:include?) && option[:validator].include?(config_value)
+                    config_value
+                  elsif option[:validator].respond_to?(:call) && option[:validator].call(config_override)
+                    config_override
+                  elsif option[:validator].respond_to?(:call) && option[:validator].call(config_value)
                     config_value
                   else
                     OpenTelemetry.logger.warn(
@@ -302,6 +319,49 @@ module OpenTelemetry
           n << '_ENABLED'
         end
         ENV[var_name] != 'false'
+      end
+
+      def config_overrides_from_env
+        var_name = name.dup.tap do |n|
+          n.upcase!
+          n.gsub!('::', '_')
+          n.gsub!('OPENTELEMETRY_', 'OTEL_RUBY_')
+          n << '_CONFIG_OPTS'
+        end
+
+        environment_config_overrides = {}
+        env_config_options = ENV[var_name]&.split(';')
+
+        return environment_config_overrides if env_config_options.nil?
+
+        env_config_options.each_with_object(environment_config_overrides) do |env_config_option, eco|
+          parts = env_config_option.split('=')
+          option_name = parts[0].to_sym
+          eco[option_name] = parts[1]
+        end
+
+        environment_config_overrides
+      end
+
+      def coerce_env_var(env_var, validation_type) # rubocop:disable Metrics/CyclomaticComplexity
+        case validation_type
+        when :array
+          env_var.split(',').map(&:strip)
+        when :boolean
+          env_var.to_s.strip.downcase == 'true'
+        when :integer
+          env_var.to_i
+        when :string
+          env_var.to_s.strip
+        when :enum
+          env_var.to_s.strip.to_sym
+        when :callable
+          OpenTelemetry.logger.warn(
+            "Instrumentation #{name} options that accept a callable are not " \
+            "configurable using environment variables. Ignoring raw value: #{env_var}"
+          )
+          nil
+        end
       end
     end
   end
