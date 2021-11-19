@@ -1,0 +1,61 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+appraise 'aws-sdk-3.1' do
+  gem 'aws-sdk', '~> 3.1'
+end
+
+appraise 'aws-sdk-3.0' do
+  gem 'aws-sdk', '~> 3.0'
+end
+
+appraise 'aws-sdk-2.11' do
+  gem 'aws-sdk', '~> 2.11'
+end
+
+appraise 'aws-sdk-2.10' do
+  gem 'aws-sdk', '~> 2.10'
+end
+
+appraise 'aws-sdk-2.9' do
+  gem 'aws-sdk', '~> 2.9'
+end
+
+appraise 'aws-sdk-2.8' do
+  gem 'aws-sdk', '~> 2.8'
+end
+
+appraise 'aws-sdk-2.7' do
+  gem 'aws-sdk', '~> 2.7'
+end
+
+appraise 'aws-sdk-2.6' do
+  gem 'aws-sdk', '~> 2.6'
+end
+
+appraise 'aws-sdk-2.5' do
+  gem 'aws-sdk', '~> 2.5'
+end
+
+appraise 'aws-sdk-2.4' do
+  gem 'aws-sdk', '~> 2.4'
+end
+
+appraise 'aws-sdk-2.3' do
+  gem 'aws-sdk', '~> 2.3'
+end
+
+appraise 'aws-sdk-2.2' do
+  gem 'aws-sdk', '~> 2.2'
+end
+
+appraise 'aws-sdk-2.1' do
+  gem 'aws-sdk', '~> 2.1'
+end
+
+appraise 'aws-sdk-2.0' do
+  gem 'aws-sdk', '~> 2.0'
+end
