@@ -241,25 +241,9 @@ module OpenTelemetry
       # Calls the compatible block of the Instrumentation subclasses, if no block is provided
       # it's assumed to be compatible
       def compatible?
-        if @compatible_blk
-          instance_exec(&@compatible_blk)
-        else
-          gem_version >= Gem::Version.new(minimum_version)
-        end
-      end
+        return true unless @compatible_blk
 
-      def gem_version
-        Gem.loaded_specs[gem_name]&.version || Gem::Version.new(gem_version_fallback)
-      end
-
-      def gem_name; end
-
-      def minimum_version
-        '0.0.0'
-      end
-
-      def gem_version_fallback
-        '0.0.0'
+        instance_exec(&@compatible_blk)
       end
 
       # Whether this instrumentation is enabled. It first checks to see if it's enabled

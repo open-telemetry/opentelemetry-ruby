@@ -9,23 +9,25 @@ module OpenTelemetry
     module ActiveModelSerializers
       # Instrumentation class that detects and installs the ActiveModelSerializers instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
+        MINIMUM_VERSION = Gem::Version.new('0.10.0')
+
         install do |_config|
           require_dependencies
           register_event_handler
         end
 
         present do
-          !defined?(::ActiveModelSerializers).nil? && !defined?(::ActiveSupport::Notifications).nil?
+          !defined?(::ActiveModelSerializers).nil?
+        end
+
+        compatible do
+          !defined?(::ActiveSupport::Notifications).nil? && gem_version >= MINIMUM_VERSION
         end
 
         private
 
-        def gem_name
-          'active_model_serializers'
-        end
-
-        def minimum_version
-          '0.10.0'
+        def gem_version
+          Gem.loaded_specs['active_model_serializers'].version
         end
 
         def require_dependencies
