@@ -1,6 +1,6 @@
 # OpenTelemetry Manticore Instrumentation
 
-The OpenTelemetry RestClient gem is a community maintained instrumentation for the [RestClient][manticore-home] library.
+The OpenTelemetry RestClient gem is a community maintained instrumentation for the [Manticore][manticore-home] library.
 
 ## How do I get started?
 
@@ -21,6 +21,18 @@ OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Manticore'
 end
 ```
+
+To install instrumentation with interested headers
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::Manticore', {'record_request_headers_list'=>['Connection'], 'record_response_headers_list' => ['content-length']
+  # In span, request headers conventions are logged with prefix http.request.*.
+  #   Ex: http.request.connection = 'Keep-Alive'
+  # In span, response headers conventions are logged with prefix http.response.*.
+  #   Ex: http.response.content-length = '512'
+end
+```
+
 
 Alternatively, you can also call `use_all` to install all the available instrumentation.
 
@@ -47,10 +59,3 @@ Apache 2.0 license. See [LICENSE][license-github] for more information.
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
-
-
-
-TODO read
-https://github.com/open-telemetry/opentelemetry-ruby/blob/da4d74781a06731f4f990458f2410ae314565a77/CONTRIBUTING.md
-https://github.com/open-telemetry/opentelemetry-ruby/blob/da4d74781a06731f4f990458f2410ae314565a77/CODE_OF_CONDUCT.md
-

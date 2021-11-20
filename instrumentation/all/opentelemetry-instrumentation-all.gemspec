@@ -44,6 +44,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-http_client', '~> 0.19.2'
   spec.add_dependency 'opentelemetry-instrumentation-koala', '~> 0.18.3'
   spec.add_dependency 'opentelemetry-instrumentation-lmdb', '~> 0.19.1'
+  spec.add_dependency 'opentelemetry-instrumentation-manticore', '~> 0.1.0'
   spec.add_dependency 'opentelemetry-instrumentation-mongo', '~> 0.18.3'
   spec.add_dependency 'opentelemetry-instrumentation-mysql2', '~> 0.19.1'
   spec.add_dependency 'opentelemetry-instrumentation-net_http', '~> 0.19.2'

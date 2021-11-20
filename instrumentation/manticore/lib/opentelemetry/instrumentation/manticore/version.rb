@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Manticore
-      VERSION = '0.17.0'
+      VERSION = '0.1.0'
     end
   end
 end

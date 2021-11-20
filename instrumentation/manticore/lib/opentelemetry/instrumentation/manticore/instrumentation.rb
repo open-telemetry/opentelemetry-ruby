@@ -7,35 +7,30 @@
 module OpenTelemetry
   module Instrumentation
     module Manticore
-      # The Instrumentation class contains logic to detect and install the Manticore instrumentation
+      # The Instrumentation class contains logic to detect dependencies and install the Manticore instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         present do
-          defined?(::Manticore::Client) && defined?(::Manticore::Response)
+          (defined?(::Manticore::Response) && RUBY_PLATFORM == 'java')
         end
 
         install do |_config|
           require_dependencies
-          patch_response
+          patch
         end
 
-        option :sanitize_headers, default:%w[authorization signature oauth_signature], validate: :array
-        option :record_all_response_headers, default: false, validate: :boolean
-        option :record_all_request_headers, default: false, validate: :boolean
+        # Optional list of headers client may want to record as part of the span
+        option "record_request_headers_list", default: [], validate: :array
+        option "record_response_headers_list", default: [], validate: :array
 
         private
 
         def require_dependencies
           require_relative 'util/wrapped_request'
-          require_relative 'util/wrapped_response'
           require_relative 'patches/response'
         end
 
-        def patch_response
+        def patch
           ::Manticore::Response.prepend(Patches::Response)
-          ::Manticore::Response.class_eval do
-            alias_method :call_without_otel_trace!, :call
-            alias_method :call, :call_with_otel_trace!
-          end
         end
       end
     end
