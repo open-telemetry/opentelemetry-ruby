@@ -302,11 +302,15 @@ module OpenTelemetry
 
       # Checks compatability of `library_name` against the `development_dependency` declared in  instrumentations gemspec
       def compatible_version?
-        instrumentation_spec = Gem.loaded_specs[instrumentation_gem_name] || Gem::Specification.find_by_name(instrumentation_gem_name)
-        library_spec = Gem.loaded_specs[library_name] || Gem::Specification.find_by_name(library_name)
+        begin
+          instrumentation_spec = Gem.loaded_specs[instrumentation_gem_name] || Gem::Specification.find_by_name(instrumentation_gem_name)
+          library_spec = Gem.loaded_specs[library_name] || Gem::Specification.find_by_name(library_name)
 
-        dependency = instrumentation_spec&.development_dependencies&.find { |spec| spec.name == library_spec.name }
-        dependency&.requirement&.satisfied_by?(library_spec.version) == true
+          dependency = instrumentation_spec.development_dependencies.find { |spec| spec.name == library_spec.name }
+          dependency&.requirement&.satisfied_by?(library_spec.version) == true
+        rescue Gem::MissingSpecError
+          return false
+        end
       end
 
       # The config_options method is responsible for validating that the user supplied

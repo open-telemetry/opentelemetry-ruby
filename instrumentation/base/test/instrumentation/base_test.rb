@@ -216,9 +216,18 @@ describe OpenTelemetry::Instrumentation::Base do
         end
 
         describe 'when the library is not installed' do
+          let(:loaded_specs) do
+            { instrumentation_gem_name => instrumentation_gem_spec }
+          end
+
           it 'returns false' do
             Gem.stub(:loaded_specs, {}) do
-              Gem::Specification.stub(:find_by_name, ->(_) { nil }) do
+              gem_finder = lambda do |name|
+                raise Gem::MissingSpecError.new(name, name) unless loaded_specs[name]
+                loaded_specs[name]
+              end
+
+              Gem::Specification.stub(:find_by_name, gem_finder) do
                 _(instrumentation.instance.compatible?).must_equal(false)
               end
             end
