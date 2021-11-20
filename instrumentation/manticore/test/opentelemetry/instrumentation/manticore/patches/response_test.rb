@@ -99,10 +99,9 @@ describe OpenTelemetry::Instrumentation::Manticore::Instrumentation do
       it 'sets failure span attributes' do
         allow(client.client).to receive(:execute).and_raise(Manticore::ManticoreException)
         client.get('http://localhost:31000/raise_exception').code
-        _(span.attributes['http.exception']).must_equal('Manticore::ManticoreException')
-        _(span.attributes['http.status_code']).must_equal(500)
-        _(span.attributes['http.status_text']).must_equal('Internal Server Error')
-        _(span.attributes['http.target']).must_equal('/raise_exception')
+        span_exception = span.events.first.attributes
+        _(span_exception['exception.type']).must_equal('Manticore::ManticoreException')
+        _(span_exception['exception.stacktrace']).wont_be_nil
       end
     end
   end

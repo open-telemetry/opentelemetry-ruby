@@ -29,10 +29,7 @@ module OpenTelemetry
             # .super() somehow becomes missing for async requests. Below works for sync and async requests.
             self.method(:call).super_method.call
           rescue ::Manticore::ManticoreException => e
-            span.set_attribute('http.status_code', 500)
-            span.set_attribute('http.status_text', 'Internal Server Error')
-            span.set_attribute('http.exception', e.message)
-            span.status = OpenTelemetry::Trace::Status.error
+            span.record_exception(e)
           ensure
             span.finish
           end
