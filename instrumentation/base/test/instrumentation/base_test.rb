@@ -123,104 +123,104 @@ describe OpenTelemetry::Instrumentation::Base do
         _(instance.compatible?).must_equal(true)
       end
     end
-  end
 
-  describe '#compatible_version?' do
-    let(:instrumentation) do
-      Class.new(OpenTelemetry::Instrumentation::Base) do
-        instrumentation_name 'OpenTelemetry::Instrumentation::Example::Instrumentation'
-        instrumentation_version '0.0.1'
-        library_name 'example'
-      end
-    end
-
-    let(:library_name) do
-      'example'
-    end
-
-    let(:library_gem_spec_version) do
-      '1.3.8.beta2'
-    end
-
-    let(:instrumentation_gem_name) do
-      "opentelemetry-instrumentation-#{library_name}"
-    end
-
-    describe 'when comparing gemspecs' do
-      let(:library_gem_spec) do
-        Gem::Specification.new do |spec|
-          spec.name = library_name
-          spec.version = library_gem_spec_version
+    describe 'with a library name' do
+      let(:instrumentation) do
+        Class.new(OpenTelemetry::Instrumentation::Base) do
+          instrumentation_name 'OpenTelemetry::Instrumentation::Example::Instrumentation'
+          instrumentation_version '0.0.1'
+          library_name 'example'
         end
       end
 
-      let(:instrumentation_gem_spec) do
-        Gem::Specification.new do |spec|
-          spec.name = instrumentation_gem_name
-          spec.add_development_dependency library_name, '~> 1.1', '< 1.3.9'
-        end
+      let(:library_name) do
+        'example'
       end
 
-      let(:loaded_specs) do
-        {
-          instrumentation_gem_name => instrumentation_gem_spec,
-          library_name => library_gem_spec
-        }
+      let(:library_gem_spec_version) do
+        '1.3.8.beta2'
       end
 
-      describe 'when gems are activated' do
-        describe 'with compatible versions' do
-          it 'returns true' do
-            Gem.stub(:loaded_specs, loaded_specs) do
-              _(instrumentation.instance.compatible?).must_equal(true)
-            end
+      let(:instrumentation_gem_name) do
+        "opentelemetry-instrumentation-#{library_name}"
+      end
+
+      describe 'when comparing gemspecs' do
+        let(:library_gem_spec) do
+          Gem::Specification.new do |spec|
+            spec.name = library_name
+            spec.version = library_gem_spec_version
           end
         end
 
-        describe 'with incompatible versions' do
-          let(:library_gem_spec_version) do
-            '1.3.9'
-          end
-
-          it 'returns false' do
-            Gem.stub(:loaded_specs, loaded_specs) do
-             _(instrumentation.instance.compatible?).must_equal(false)
-            end
+        let(:instrumentation_gem_spec) do
+          Gem::Specification.new do |spec|
+            spec.name = instrumentation_gem_name
+            spec.add_development_dependency library_name, '~> 1.1', '< 1.3.9'
           end
         end
-      end
 
-      describe 'when gems were not activated (e.g. without using bundler)' do
-        describe 'with compatible versions' do
-          it 'returns true' do
-            Gem.stub(:loaded_specs, {}) do
-              Gem::Specification.stub(:find_by_name, ->(name) { loaded_specs[name] } ) do
+        let(:loaded_specs) do
+          {
+            instrumentation_gem_name => instrumentation_gem_spec,
+            library_name => library_gem_spec
+          }
+        end
+
+        describe 'when gems are activated' do
+          describe 'with compatible versions' do
+            it 'returns true' do
+              Gem.stub(:loaded_specs, loaded_specs) do
                 _(instrumentation.instance.compatible?).must_equal(true)
               end
             end
           end
-        end
 
-        describe 'with incompatible versions' do
-          let(:library_gem_spec_version) do
-            '1.3.9'
-          end
+          describe 'with incompatible versions' do
+            let(:library_gem_spec_version) do
+              '1.3.9'
+            end
 
-          it 'returns false' do
-            Gem.stub(:loaded_specs, {}) do
-              Gem::Specification.stub(:find_by_name, ->(name) { loaded_specs[name] } ) do
-               _(instrumentation.instance.compatible?).must_equal(false)
+            it 'returns false' do
+              Gem.stub(:loaded_specs, loaded_specs) do
+              _(instrumentation.instance.compatible?).must_equal(false)
               end
             end
           end
         end
-      end
 
-      describe 'when the library is not installed' do
-        it 'returns false' do
-          Gem.stub(:loaded_specs, {}) do
-            Gem::Specification.stub(:find_by_name, ->(name) { nil } ) do
-             _(instrumentation.instance.compatible?).must_equal(false)
+        describe 'when gems were not activated (e.g. without using bundler)' do
+          describe 'with compatible versions' do
+            it 'returns true' do
+              Gem.stub(:loaded_specs, {}) do
+                Gem::Specification.stub(:find_by_name, ->(name) { loaded_specs[name] } ) do
+                  _(instrumentation.instance.compatible?).must_equal(true)
+                end
+              end
+            end
+          end
+
+          describe 'with incompatible versions' do
+            let(:library_gem_spec_version) do
+              '1.3.9'
+            end
+
+            it 'returns false' do
+              Gem.stub(:loaded_specs, {}) do
+                Gem::Specification.stub(:find_by_name, ->(name) { loaded_specs[name] } ) do
+                _(instrumentation.instance.compatible?).must_equal(false)
+                end
+              end
+            end
+          end
+        end
+
+        describe 'when the library is not installed' do
+          it 'returns false' do
+            Gem.stub(:loaded_specs, {}) do
+              Gem::Specification.stub(:find_by_name, ->(name) { nil } ) do
+              _(instrumentation.instance.compatible?).must_equal(false)
+              end
             end
           end
         end
