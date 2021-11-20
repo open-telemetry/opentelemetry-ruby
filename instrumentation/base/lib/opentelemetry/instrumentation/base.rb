@@ -308,7 +308,8 @@ module OpenTelemetry
 
           dependency = instrumentation_spec.development_dependencies.find { |spec| spec.name == library_spec.name }
           dependency&.requirement&.satisfied_by?(library_spec.version) == true
-        rescue Gem::MissingSpecError
+        rescue Gem::MissingSpecError => e
+          OpenTelemetry.handle_error(message: 'Instrumentation Compatibility Check Error', exception: e)
           return false
         end
       end
