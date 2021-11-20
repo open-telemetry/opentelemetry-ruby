@@ -126,6 +126,14 @@ describe OpenTelemetry::Instrumentation::Base do
   end
 
   describe '#compatible_version?' do
+    let(:instrumentation) do
+      Class.new(OpenTelemetry::Instrumentation::Base) do
+        instrumentation_name 'OpenTelemetry::Instrumentation::Example::Instrumentation'
+        instrumentation_version '0.0.1'
+        library_name 'example'
+      end
+    end
+
     let(:library_name) do
       'example'
     end
@@ -139,10 +147,7 @@ describe OpenTelemetry::Instrumentation::Base do
     end
 
     def compatible_version?
-      instrumentation_spec = Gem.loaded_specs[instrumentation_gem_name] || Gem::Specification.find_by_name(instrumentation_gem_name)
-      library_spec = Gem.loaded_specs[library_name] || Gem::Specification.find_by_name(library_name)
-      dependency = instrumentation_spec.development_dependencies.find { |spec| spec.name == library_spec.name }
-      dependency.requirement.satisfied_by?(library_gem_spec.version)
+      instrumentation.instance.compatible_version?
     end
 
     describe 'when comparing gemspecs' do

@@ -107,6 +107,10 @@ module OpenTelemetry
           end
         end
 
+        def library_name(library_name=nil)
+          @library_name ||= library_name
+        end
+
         # The install block for this instrumentation. This will be where you install
         # instrumentation, either by framework hook or applying a monkey patch.
         #
@@ -163,7 +167,7 @@ module OpenTelemetry
         end
 
         def instance
-          @instance ||= new(instrumentation_name, instrumentation_version, install_blk,
+          @instance ||= new(instrumentation_name, instrumentation_version, library_name, install_blk,
                             present_blk, compatible_blk, options)
         end
 
@@ -189,11 +193,11 @@ module OpenTelemetry
         end
       end
 
-      attr_reader :name, :version, :config, :installed, :tracer
+      attr_reader :name, :version, :config, :installed, :tracer, :library_name, :instrumentation_gem_name
 
       alias installed? installed
 
-      def initialize(name, version, install_blk, present_blk,
+      def initialize(name, version, library_name, install_blk, present_blk,
                      compatible_blk, options)
         @name = name
         @version = version
@@ -204,6 +208,8 @@ module OpenTelemetry
         @installed = false
         @options = options
         @tracer = OpenTelemetry::Trace::Tracer.new
+        @library_name = library_name
+        @instrumentation_gem_name = @library_name.nil? ? nil : "opentelemetry-instrumentation-#{@library_name}"
       end
 
       # Install instrumentation with the given config. The present? and compatible?
@@ -256,6 +262,13 @@ module OpenTelemetry
         return config[:enabled] if config&.key?(:enabled)
 
         true
+      end
+
+      def compatible_version?
+        instrumentation_spec = Gem.loaded_specs[instrumentation_gem_name] || Gem::Specification.find_by_name(instrumentation_gem_name)
+        library_spec = Gem.loaded_specs[library_name] || Gem::Specification.find_by_name(library_name)
+        dependency = instrumentation_spec.development_dependencies.find { |spec| spec.name == library_spec.name }
+        dependency.requirement.satisfied_by?(library_spec.version)
       end
 
       private
