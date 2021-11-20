@@ -123,6 +123,71 @@ describe OpenTelemetry::Instrumentation::Base do
         _(instance.compatible?).must_equal(true)
       end
     end
+
+    describe 'when comparing gemspecs' do
+      # let(:instrumentation) do
+      #   Class.new(OpenTelemetry::Instrumentation::Base) do
+      #     library_name 'example'
+      #     instrumentation_name 'opentelemetry-instrumentation-example'
+      #     instrumentation_version '1.0.0'
+      #   end
+      # end
+
+      let(:library_gem_spec_version) do
+        '1.3.8.beta2'
+      end
+
+      let(:library_gem_spec) do
+        Gem::Specification.new do |spec|
+          spec.name = 'example'
+          spec.version = library_gem_spec_version
+        end
+      end
+
+      let(:instrumentation_gem_spec) do
+        Gem::Specification.new do |spec|
+          spec.name = 'opentelemetry-instrumentation-example'
+          spec.add_development_dependency 'example', '~> 1.1', '< 1.3.9'
+        end
+      end
+
+      let(:loaded_specs) do
+        {
+          "opentelemetry-instrumentation-example" => instrumentation_gem_spec,
+          "example" => library_gem_spec
+        }
+      end
+
+      describe 'when gems are activated' do
+        describe 'with compatible versions' do
+          it 'retruns true' do
+            Gem.stub(:loaded_specs, loaded_specs) do
+              instrumentation_spec = Gem.loaded_specs['opentelemetry-instrumentation-example']
+              library_spec = Gem.loaded_specs['example']
+              dependency = instrumentation_spec.development_dependencies.find { |spec| spec.name == library_spec.name }
+              compatible_version = dependency.requirement.satisfied_by?(library_gem_spec.version)
+              _(compatible_version).must_equal(true)
+            end
+          end
+        end
+
+        describe 'with incompatible versions' do
+          let(:library_gem_spec_version) do
+            '1.3.9'
+          end
+
+          it 'returns false' do
+            Gem.stub(:loaded_specs, loaded_specs) do
+              instrumentation_spec = Gem.loaded_specs['opentelemetry-instrumentation-example']
+              library_spec = Gem.loaded_specs['example']
+              dependency = instrumentation_spec.development_dependencies.find { |spec| spec.name == library_spec.name }
+              compatible_version = dependency.requirement.satisfied_by?(library_gem_spec.version)
+              _(compatible_version).must_equal(false)
+            end
+          end
+        end
+      end
+    end
   end
 
   describe '#install' do
