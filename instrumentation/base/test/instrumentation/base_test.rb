@@ -124,15 +124,18 @@ describe OpenTelemetry::Instrumentation::Base do
       end
     end
 
-    describe 'when comparing gemspecs' do
-      # let(:instrumentation) do
-      #   Class.new(OpenTelemetry::Instrumentation::Base) do
-      #     library_name 'example'
-      #     instrumentation_name 'opentelemetry-instrumentation-example'
-      #     instrumentation_version '1.0.0'
-      #   end
-      # end
+    let(:library_name) do
+      'example'
+    end
 
+    def compatible_version?
+      instrumentation_spec = Gem.loaded_specs["opentelemetry-instrumentation-#{library_name}"]
+      library_spec = Gem.loaded_specs[library_name]
+      dependency = instrumentation_spec.development_dependencies.find { |spec| spec.name == library_spec.name }
+      compatible_version = dependency.requirement.satisfied_by?(library_gem_spec.version)
+    end
+
+    describe 'when comparing gemspecs' do
       let(:library_gem_spec_version) do
         '1.3.8.beta2'
       end
@@ -162,11 +165,7 @@ describe OpenTelemetry::Instrumentation::Base do
         describe 'with compatible versions' do
           it 'retruns true' do
             Gem.stub(:loaded_specs, loaded_specs) do
-              instrumentation_spec = Gem.loaded_specs['opentelemetry-instrumentation-example']
-              library_spec = Gem.loaded_specs['example']
-              dependency = instrumentation_spec.development_dependencies.find { |spec| spec.name == library_spec.name }
-              compatible_version = dependency.requirement.satisfied_by?(library_gem_spec.version)
-              _(compatible_version).must_equal(true)
+              _(compatible_version?).must_equal(true)
             end
           end
         end
@@ -178,11 +177,7 @@ describe OpenTelemetry::Instrumentation::Base do
 
           it 'returns false' do
             Gem.stub(:loaded_specs, loaded_specs) do
-              instrumentation_spec = Gem.loaded_specs['opentelemetry-instrumentation-example']
-              library_spec = Gem.loaded_specs['example']
-              dependency = instrumentation_spec.development_dependencies.find { |spec| spec.name == library_spec.name }
-              compatible_version = dependency.requirement.satisfied_by?(library_gem_spec.version)
-              _(compatible_version).must_equal(false)
+             _(compatible_version?).must_equal(false)
             end
           end
         end
