@@ -247,9 +247,12 @@ module OpenTelemetry
       # Calls the compatible block of the Instrumentation subclasses, if no block is provided
       # it's assumed to be compatible
       def compatible?
-        return true unless @compatible_blk
-
-        instance_exec(&@compatible_blk)
+        return true unless @compatible_blk || library_name
+        if @compatible_blk
+          instance_exec(&@compatible_blk)
+        else
+          compatible_version?
+        end
       end
 
       # Whether this instrumentation is enabled. It first checks to see if it's enabled
@@ -264,14 +267,14 @@ module OpenTelemetry
         true
       end
 
+      private
+
       def compatible_version?
         instrumentation_spec = Gem.loaded_specs[instrumentation_gem_name] || Gem::Specification.find_by_name(instrumentation_gem_name)
         library_spec = Gem.loaded_specs[library_name] || Gem::Specification.find_by_name(library_name)
         dependency = instrumentation_spec.development_dependencies.find { |spec| spec.name == library_spec.name }
         dependency.requirement.satisfied_by?(library_spec.version)
       end
-
-      private
 
       # The config_options method is responsible for validating that the user supplied
       # config hash is valid.
