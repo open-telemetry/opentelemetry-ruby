@@ -146,10 +146,6 @@ describe OpenTelemetry::Instrumentation::Base do
       "opentelemetry-instrumentation-#{library_name}"
     end
 
-    def compatible_version?
-      instrumentation.instance.compatible_version?
-    end
-
     describe 'when comparing gemspecs' do
       let(:library_gem_spec) do
         Gem::Specification.new do |spec|
@@ -176,7 +172,7 @@ describe OpenTelemetry::Instrumentation::Base do
         describe 'with compatible versions' do
           it 'returns true' do
             Gem.stub(:loaded_specs, loaded_specs) do
-              _(compatible_version?).must_equal(true)
+              _(instrumentation.instance.compatible_version?).must_equal(true)
             end
           end
         end
@@ -188,7 +184,7 @@ describe OpenTelemetry::Instrumentation::Base do
 
           it 'returns false' do
             Gem.stub(:loaded_specs, loaded_specs) do
-             _(compatible_version?).must_equal(false)
+             _(instrumentation.instance.compatible_version?).must_equal(false)
             end
           end
         end
@@ -199,7 +195,7 @@ describe OpenTelemetry::Instrumentation::Base do
           it 'returns true' do
             Gem.stub(:loaded_specs, {}) do
               Gem::Specification.stub(:find_by_name, ->(name) { loaded_specs[name] } ) do
-                _(compatible_version?).must_equal(true)
+                _(instrumentation.instance.compatible_version?).must_equal(true)
               end
             end
           end
@@ -213,7 +209,7 @@ describe OpenTelemetry::Instrumentation::Base do
           it 'returns false' do
             Gem.stub(:loaded_specs, {}) do
               Gem::Specification.stub(:find_by_name, ->(name) { loaded_specs[name] } ) do
-               _(compatible_version?).must_equal(false)
+               _(instrumentation.instance.compatible_version?).must_equal(false)
               end
             end
           end
