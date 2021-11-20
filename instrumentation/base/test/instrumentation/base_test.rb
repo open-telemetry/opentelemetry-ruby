@@ -183,7 +183,7 @@ describe OpenTelemetry::Instrumentation::Base do
 
             it 'returns false' do
               Gem.stub(:loaded_specs, loaded_specs) do
-              _(instrumentation.instance.compatible?).must_equal(false)
+                _(instrumentation.instance.compatible?).must_equal(false)
               end
             end
           end
@@ -193,7 +193,7 @@ describe OpenTelemetry::Instrumentation::Base do
           describe 'with compatible versions' do
             it 'returns true' do
               Gem.stub(:loaded_specs, {}) do
-                Gem::Specification.stub(:find_by_name, ->(name) { loaded_specs[name] } ) do
+                Gem::Specification.stub(:find_by_name, ->(name) { loaded_specs[name] }) do
                   _(instrumentation.instance.compatible?).must_equal(true)
                 end
               end
@@ -207,8 +207,8 @@ describe OpenTelemetry::Instrumentation::Base do
 
             it 'returns false' do
               Gem.stub(:loaded_specs, {}) do
-                Gem::Specification.stub(:find_by_name, ->(name) { loaded_specs[name] } ) do
-                _(instrumentation.instance.compatible?).must_equal(false)
+                Gem::Specification.stub(:find_by_name, ->(name) { loaded_specs[name] }) do
+                  _(instrumentation.instance.compatible?).must_equal(false)
                 end
               end
             end
@@ -218,9 +218,23 @@ describe OpenTelemetry::Instrumentation::Base do
         describe 'when the library is not installed' do
           it 'returns false' do
             Gem.stub(:loaded_specs, {}) do
-              Gem::Specification.stub(:find_by_name, ->(name) { nil } ) do
-              _(instrumentation.instance.compatible?).must_equal(false)
+              Gem::Specification.stub(:find_by_name, ->(_) { nil }) do
+                _(instrumentation.instance.compatible?).must_equal(false)
               end
+            end
+          end
+        end
+
+        describe 'when library is not declared as a development dependency' do
+          let(:instrumentation_gem_spec) do
+            Gem::Specification.new do |spec|
+              spec.name = instrumentation_gem_name
+            end
+          end
+
+          it 'returns false' do
+            Gem.stub(:loaded_specs, loaded_specs) do
+              _(instrumentation.instance.compatible?).must_equal(false)
             end
           end
         end

@@ -134,7 +134,7 @@ module OpenTelemetry
         #
         # Set this value in lieu writing a custom compatible block.
         # @param [String] library_name must match the gem specification name of the instrumented library
-        def library_name(library_name=nil)
+        def library_name(library_name = nil)
           @library_name ||= library_name
         end
 
@@ -278,6 +278,7 @@ module OpenTelemetry
       # - a `library_name` use to compare gemspecs
       def compatible?
         return true unless @compatible_blk || library_name
+
         if @compatible_blk
           instance_exec(&@compatible_blk)
         else
@@ -304,10 +305,8 @@ module OpenTelemetry
         instrumentation_spec = Gem.loaded_specs[instrumentation_gem_name] || Gem::Specification.find_by_name(instrumentation_gem_name)
         library_spec = Gem.loaded_specs[library_name] || Gem::Specification.find_by_name(library_name)
 
-        return false if instrumentation_spec.nil? || library_spec.nil?
-
-        dependency = instrumentation_spec.development_dependencies.find { |spec| spec.name == library_spec.name }
-        dependency.requirement.satisfied_by?(library_spec.version)
+        dependency = instrumentation_spec&.development_dependencies&.find { |spec| spec.name == library_spec.name }
+        dependency&.requirement&.satisfied_by?(library_spec.version) == true
       end
 
       # The config_options method is responsible for validating that the user supplied
