@@ -12,14 +12,15 @@ module OpenTelemetry
     # it with +OpenTelemetry.instrumentation_registry+ and make it available for
     # discovery and installation by an SDK.
     #
-    # A typical subclass of Base will provide an install block, a present
-    # block, and possibly a compatible block. Below is an
-    # example:
+    # A typical subclass of Base will provide a library name, an install block, a present block, e.g.:
     #
     # module OpenTelemetry
     #   module Instrumentation
     #     module Sinatra
     #       class Instrumentation < OpenTelemetry::Instrumentation::Base
+    #         # Declare instrumented library:
+    #         library_name 'sinatra'
+    #
     #         install do |config|
     #           # install instrumentation, either by library hook or applying
     #           # a monkey patch
@@ -29,10 +30,32 @@ module OpenTelemetry
     #         present do
     #           defined?(::Sinatra)
     #         end
+    #       end
+    #     end
+    #   end
+    # end
+    #
+    # In cases where the instrumentation is not able to use `library_name` to check against gem specifications,
+    # subclasses may provide a custom code block to check compatibility at start up time, e.g.
+    #
+    # module OpenTelemetry
+    #   module Instrumentation
+    #     module CustomLibrary
+    #       class Instrumentation < OpenTelemetry::Instrumentation::Base
+    #         MIN_VERSION = '3.2.1'
+    #         install do |config|
+    #           # install instrumentation, either by library hook or applying
+    #           # a monkey patch
+    #         end
+    #
+    #         # determine if the target library is present
+    #         present do
+    #           defined?(::CustomLibrary)
+    #         end
     #
     #         # if the target library is present, is it compatible?
     #         compatible do
-    #           Gem.loaded_specs['sinatra'].version > MIN_VERSION
+    #           ::CustomLibrary::VERSION > MIN_VERSION
     #         end
     #       end
     #     end
@@ -107,6 +130,10 @@ module OpenTelemetry
           end
         end
 
+        # Optionally set the library name being instrumented.
+        #
+        # Set this value in lieu writing a custom compatible block.
+        # @param [String] library_name must match the gem specification name of the instrumented library
         def library_name(library_name=nil)
           @library_name ||= library_name
         end
@@ -244,8 +271,11 @@ module OpenTelemetry
         instance_exec(&@present_blk)
       end
 
-      # Calls the compatible block of the Instrumentation subclasses, if no block is provided
-      # it's assumed to be compatible
+      # Checks compatability of this instrumentation with its designated library
+      #
+      # Subclasses are compatible by default unless they specify
+      # - a custom compatible block
+      # - a `library_name` use to compare gemspecs
       def compatible?
         return true unless @compatible_blk || library_name
         if @compatible_blk
@@ -269,9 +299,13 @@ module OpenTelemetry
 
       private
 
+      # Checks compatability of `library_name` against the `development_dependency` declared in  instrumentations gemspec
       def compatible_version?
         instrumentation_spec = Gem.loaded_specs[instrumentation_gem_name] || Gem::Specification.find_by_name(instrumentation_gem_name)
         library_spec = Gem.loaded_specs[library_name] || Gem::Specification.find_by_name(library_name)
+
+        return false if instrumentation_spec.nil? || library_spec.nil?
+
         dependency = instrumentation_spec.development_dependencies.find { |spec| spec.name == library_spec.name }
         dependency.requirement.satisfied_by?(library_spec.version)
       end
