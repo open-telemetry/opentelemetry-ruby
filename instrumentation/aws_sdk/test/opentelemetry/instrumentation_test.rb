@@ -100,5 +100,64 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         _(last_span.attributes['db.system']).must_equal 'dynamodb'
       end
     end
+
+    describe 'sqs' do
+      it 'should have messaging attributes for send_message' do
+        sqs_client = Aws::SQS::Client.new(stub_responses: true)
+
+        sqs_client.send_message message_body: 'msg', queue_url: 'https://sqs.fake.amazonaws.com/1/queue-name'
+
+        _(last_span.attributes['rpc.system']).must_equal 'aws-api'
+        _(last_span.attributes['messaging.system']).must_equal 'aws.sqs'
+        _(last_span.attributes['messaging.destination_kind']).must_equal 'queue'
+        _(last_span.attributes['messaging.destination']).must_equal 'queue-name'
+        _(last_span.attributes['messaging.url']).must_equal 'https://sqs.fake.amazonaws.com/1/queue-name'
+      end
+
+      it 'should have messaging attributes for send_message_batch' do
+        sqs_client = Aws::SQS::Client.new(stub_responses: true)
+
+        entries = [
+          {
+            id: 'Message1',
+            message_body: 'This is the first message.'
+          },
+          {
+            id: 'Message2',
+            message_body: 'This is the second message.',
+            message_attributes: {
+              "attr1": {
+                "data_type": 'String',
+                "string_value": 'value1'
+              }
+            }
+          }
+        ]
+
+        sqs_client.send_message_batch(
+          queue_url: 'https://sqs.fake.amazonaws.com/1/queue-name',
+          entries: entries
+        )
+
+        _(last_span.attributes['rpc.system']).must_equal 'aws-api'
+        _(last_span.attributes['messaging.system']).must_equal 'aws.sqs'
+        _(last_span.attributes['messaging.destination_kind']).must_equal 'queue'
+        _(last_span.attributes['messaging.destination']).must_equal 'queue-name'
+        _(last_span.attributes['messaging.url']).must_equal 'https://sqs.fake.amazonaws.com/1/queue-name'
+      end
+    end
+
+    describe 'sns' do
+      it 'should have messaging attributes for publish' do
+        sns_client = Aws::SNS::Client.new(stub_responses: true)
+
+        sns_client.publish message: 'msg', topic_arn: 'arn:aws:sns:fake:123:topic-name'
+
+        _(last_span.attributes['rpc.system']).must_equal 'aws-api'
+        _(last_span.attributes['messaging.system']).must_equal 'aws.sns'
+        _(last_span.attributes['messaging.destination_kind']).must_equal 'topic'
+        _(last_span.attributes['messaging.destination']).must_equal 'topic-name'
+      end
+    end
   end
 end
