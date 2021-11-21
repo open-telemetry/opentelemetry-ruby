@@ -300,19 +300,26 @@ module OpenTelemetry
 
       private
 
-      # Checks compatability of `library_name` against the `development_dependency` declared in  instrumentations gemspec
+      # EXPERIMENTAL: Checks compatability of `library_name` against the `development_dependency` declared in instrumentations gemspec
+      #
+      # This method will first search `Gem.loaded_specs` to locate gemspecs that have already been required by RubyGems or Bundler.
+      # In the case the gems were not loaded, or do not use RubyGems/Bundler, it will fallback to searching for installed gems via `Gem::Specification.find_by_name`.
+      #
+      # Instrumentation authors are encouraged to implement a `present` block to ensure the constants are availble to use in monkey patches.
+      #
+      # See https://github.com/DataDog/dd-trace-rb/pull/1510
+      # rubocop:disable Metrics/AbcSize
       def compatible_version?
-        begin
-          instrumentation_spec = Gem.loaded_specs[instrumentation_gem_name] || Gem::Specification.find_by_name(instrumentation_gem_name)
-          library_spec = Gem.loaded_specs[library_name] || Gem::Specification.find_by_name(library_name)
+        instrumentation_spec = Gem.loaded_specs[instrumentation_gem_name] || Gem::Specification.find_by_name(instrumentation_gem_name)
+        library_spec = Gem.loaded_specs[library_name] || Gem::Specification.find_by_name(library_name)
 
-          dependency = instrumentation_spec.development_dependencies.find { |spec| spec.name == library_spec.name }
-          dependency&.requirement&.satisfied_by?(library_spec.version) == true
-        rescue Gem::MissingSpecError => e
-          OpenTelemetry.handle_error(message: 'Instrumentation Compatibility Check Error', exception: e)
-          return false
-        end
+        dependency = instrumentation_spec.development_dependencies.find { |spec| spec.name == library_name }
+        dependency&.requirement&.satisfied_by?(library_spec&.version) == true
+      rescue Gem::MissingSpecError => e
+        OpenTelemetry.handle_error(message: 'Instrumentation Compatibility Check Error', exception: e)
+        false
       end
+      # rubocop:enable Metrics/AbcSize
 
       # The config_options method is responsible for validating that the user supplied
       # config hash is valid.

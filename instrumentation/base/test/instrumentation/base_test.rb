@@ -224,6 +224,7 @@ describe OpenTelemetry::Instrumentation::Base do
             Gem.stub(:loaded_specs, {}) do
               gem_finder = lambda do |name|
                 raise Gem::MissingSpecError.new(name, name) unless loaded_specs[name]
+
                 loaded_specs[name]
               end
 
