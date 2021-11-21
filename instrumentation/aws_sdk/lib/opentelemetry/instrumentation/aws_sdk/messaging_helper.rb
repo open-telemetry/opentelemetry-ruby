@@ -32,19 +32,19 @@ module OpenTelemetry
             'unknown'
           end
 
-          def apply_sqs_attributes(attributes, context, operation)
+          def apply_sqs_attributes(attributes, context, client_method)
             attributes[SemanticConventions::Trace::MESSAGING_SYSTEM] = 'aws.sqs'
             attributes[SemanticConventions::Trace::MESSAGING_DESTINATION_KIND] = 'queue'
             attributes[SemanticConventions::Trace::MESSAGING_DESTINATION] = queue_name(context)
             attributes[SemanticConventions::Trace::MESSAGING_URL] = context.metadata[:original_params][:queue_url]
 
-            attributes[SemanticConventions::Trace::MESSAGING_OPERATION] = 'receive' if operation == 'ReceiveMessage'
+            attributes[SemanticConventions::Trace::MESSAGING_OPERATION] = 'receive' if client_method == 'SQS.ReceiveMessage'
           end
 
-          def apply_sns_attributes(attributes, context, operation)
+          def apply_sns_attributes(attributes, context, client_method)
             attributes[SemanticConventions::Trace::MESSAGING_SYSTEM] = 'aws.sns'
 
-            return unless operation == 'Publish'
+            return unless client_method == 'SNS.Publish'
 
             attributes[SemanticConventions::Trace::MESSAGING_DESTINATION_KIND] = 'topic'
             attributes[SemanticConventions::Trace::MESSAGING_DESTINATION] = queue_name(context)

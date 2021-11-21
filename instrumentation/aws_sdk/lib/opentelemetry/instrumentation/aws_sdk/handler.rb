@@ -27,8 +27,8 @@ module OpenTelemetry
             OpenTelemetry::SemanticConventions::Trace::RPC_SERVICE => service_name
           }
           attributes[SemanticConventions::Trace::DB_SYSTEM] = 'dynamodb' if service_name == 'DynamoDB'
-          MessagingHelper.apply_sqs_attributes(attributes, context, operation) if service_name == 'SQS'
-          MessagingHelper.apply_sns_attributes(attributes, context, operation) if service_name == 'SNS'
+          MessagingHelper.apply_sqs_attributes(attributes, context, client_method) if service_name == 'SQS'
+          MessagingHelper.apply_sns_attributes(attributes, context, client_method) if service_name == 'SNS'
 
           tracer.in_span(span_name(context, client_method), attributes: attributes, kind: span_kind(service_name, operation)) do |span|
             inject_context(context, client_method)
