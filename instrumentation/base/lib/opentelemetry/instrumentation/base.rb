@@ -310,8 +310,8 @@ module OpenTelemetry
       # See https://github.com/DataDog/dd-trace-rb/pull/1510
       # rubocop:disable Metrics/AbcSize
       def compatible_version?
-        instrumentation_spec = Gem.loaded_specs[instrumentation_gem_name] || Gem::Specification.find_by_name(instrumentation_gem_name)
-        library_spec = Gem.loaded_specs[library_name] || Gem::Specification.find_by_name(library_name)
+        instrumentation_spec = Gem.loaded_specs.fetch(instrumentation_gem_name) { Gem::Specification.find_by_name(instrumentation_gem_name) }
+        library_spec = Gem.loaded_specs.fetch(library_name) { Gem::Specification.find_by_name(library_name) }
 
         dependency = instrumentation_spec.development_dependencies.find { |spec| spec.name == library_name }
         dependency&.requirement&.satisfied_by?(library_spec&.version) == true
