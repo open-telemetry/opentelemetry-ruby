@@ -58,8 +58,15 @@ module OpenTelemetry
         def inject_context(context, client_method)
           return unless [SQS_SEND_MESSAGE, SQS_SEND_MESSAGE_BATCH, SNS_PUBLISH].include? client_method
 
-          context.params[:message_attributes] ||= {}
-          OpenTelemetry.propagation.inject(context.params[:message_attributes], setter: MessageAttributeSetter)
+          if client_method == SQS_SEND_MESSAGE_BATCH
+            context.params[:entries].each do |entry|
+              entry[:message_attributes] ||= {}
+              OpenTelemetry.propagation.inject(entry[:message_attributes], setter: MessageAttributeSetter)
+            end
+          else
+            context.params[:message_attributes] ||= {}
+            OpenTelemetry.propagation.inject(context.params[:message_attributes], setter: MessageAttributeSetter)
+          end
         end
 
         def span_kind(service_name, client_method)
