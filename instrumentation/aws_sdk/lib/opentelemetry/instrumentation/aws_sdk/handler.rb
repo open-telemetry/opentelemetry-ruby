@@ -14,7 +14,7 @@ module OpenTelemetry
         SQS_RECEIVE_MESSAGE = 'SQS.ReceiveMessage'
         SNS_PUBLISH = 'SNS.Publish'
 
-        def call(context) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        def call(context) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           return super unless context
 
           service_name = context.client.class.api.metadata['serviceId'] || context.client.class.to_s.split('::')[1]
@@ -27,6 +27,8 @@ module OpenTelemetry
             OpenTelemetry::SemanticConventions::Trace::RPC_SERVICE => service_name
           }
           attributes[SemanticConventions::Trace::DB_SYSTEM] = 'dynamodb' if service_name == 'DynamoDB'
+          MessagingHelper.apply_sqs_attributes(attributes, context, operation) if service_name == 'SQS'
+          MessagingHelper.apply_sns_attributes(attributes, context, operation) if service_name == 'SNS'
 
           tracer.in_span(span_name(context, client_method), attributes: attributes, kind: span_kind(service_name, operation)) do |span|
             inject_context(context, client_method)
