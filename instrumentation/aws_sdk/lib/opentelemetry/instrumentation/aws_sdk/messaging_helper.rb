@@ -10,7 +10,7 @@ module OpenTelemetry
       # MessagingHelper class provides methods for calculating messaging span attributes
       class MessagingHelper
         class << self
-          def queue_name(context)
+          def queue_name(context) # rubocop:disable Metrics/CyclomaticComplexity
             topic_arn = context.metadata[:original_params][:topic_arn]
             target_arn = context.metadata[:original_params][:target_arn]
             phone_number = context.metadata[:original_params][:phone_number]
