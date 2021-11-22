@@ -29,6 +29,7 @@ module OpenTelemetry
             # .super() somehow becomes missing for async requests. Below works for sync and async requests.
             self.method(:call).super_method.call
           rescue ::Manticore::ManticoreException => e
+            OpenTelemetry.logger.debug("Errored during tracing: #{e}")
             span.record_exception(e)
           ensure
             span.finish
@@ -62,9 +63,6 @@ module OpenTelemetry
                                             Manticore::Instrumentation.instance.config["record_request_headers_list"],
                                             'http.request')
             attr.merge(header_attr)
-          rescue StandardError => e
-            OpenTelemetry.logger.debug("Error while fetching request attributes: #{e}",)
-            {}
           end
 
           # @param [Manticore::Response] response A @response instance object after an outgoing call is attempted
