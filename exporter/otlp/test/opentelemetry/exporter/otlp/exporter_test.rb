@@ -414,7 +414,8 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     it 'batches per resource' do
       etsr = nil
       stub_post = stub_request(:post, 'https://localhost:4318/v1/traces').to_return do |request|
-        etsr = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(request.body)
+        proto = Zlib.gunzip(request.body)
+        etsr = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(proto)
         { status: 200 }
       end
 
@@ -593,7 +594,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       )
 
       assert_requested(:post, 'https://localhost:4318/v1/traces') do |req|
-        req.body == encoded_etsr
+        req.body == Zlib.gzip(encoded_etsr)
       end
     end
   end
