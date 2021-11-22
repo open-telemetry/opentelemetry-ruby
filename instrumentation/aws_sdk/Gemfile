@@ -1,0 +1,19 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+source 'https://rubygems.org'
+
+gemspec
+
+gem 'opentelemetry-api', path: '../../api'
+gem 'opentelemetry-instrumentation-base', path: '../base'
+
+group :test do
+  gem 'opentelemetry-common', path: '../../common'
+  gem 'opentelemetry-sdk', path: '../../sdk'
+  gem 'opentelemetry-semantic_conventions', path: '../../semantic_conventions'
+  gem 'webrick', '~> 1.7'
+end
