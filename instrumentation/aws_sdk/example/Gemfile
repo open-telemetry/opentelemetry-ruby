@@ -1,0 +1,8 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+gem 'aws-sdk'
+gem 'opentelemetry-api', path: '../../../api'
+gem 'opentelemetry-instrumentation-aws_sdk', path: '../../../instrumentation/aws_sdk'
+gem 'opentelemetry-sdk', path: '../../../sdk'
