@@ -10,7 +10,6 @@ on:
 
 jobs:
   test:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     strategy:
       matrix:
         include:
