@@ -13,7 +13,8 @@ module OpenTelemetry
       # The cloud account ID the resource is assigned to
       CLOUD_ACCOUNT_ID = 'cloud.account.id'
 
-      # The geographical region the resource is running. Refer to your provider's docs to see the available regions, for example [Alibaba Cloud regions](https://www.alibabacloud.com/help/doc-detail/40654.htm), [AWS regions](https://aws.amazon.com/about-aws/global-infrastructure/regions_az/), [Azure regions](https://azure.microsoft.com/en-us/global-infrastructure/geographies/), or [Google Cloud regions](https://cloud.google.com/about/locations)
+      # The geographical region the resource is running
+      # @note Refer to your provider's docs to see the available regions, for example [Alibaba Cloud regions](https://www.alibabacloud.com/help/doc-detail/40654.htm), [AWS regions](https://aws.amazon.com/about-aws/global-infrastructure/regions_az/), [Azure regions](https://azure.microsoft.com/en-us/global-infrastructure/geographies/), [Google Cloud regions](https://cloud.google.com/about/locations), or [Tencent Cloud regions](https://intl.cloud.tencent.com/document/product/213/6091)
       CLOUD_REGION = 'cloud.region'
 
       # Cloud regions often have multiple, isolated locations known as zones to increase availability. Availability zone represents the zone where the resource is running
@@ -60,7 +61,7 @@ module OpenTelemetry
       # @note See the [log stream ARN format documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/iam-access-control-overview-cwl.html#CWL_ARN_Format). One log group can contain several log streams, so these ARNs necessarily identify both a log group and a log stream
       AWS_LOG_STREAM_ARNS = 'aws.log.stream.arns'
 
-      # Container name
+      # Container name used by container runtime
       CONTAINER_NAME = 'container.name'
 
       # Container ID. Usually a UUID, as for example used to [identify Docker containers](https://docs.docker.com/engine/reference/run/#container-identification). The UUID might be abbreviated
@@ -170,8 +171,11 @@ module OpenTelemetry
       # The name of the Pod
       K8S_POD_NAME = 'k8s.pod.name'
 
-      # The name of the Container in a Pod template
+      # The name of the Container from Pod specification, must be unique within a Pod. Container runtime usually uses different globally unique name (`container.name`)
       K8S_CONTAINER_NAME = 'k8s.container.name'
+
+      # Number of times the container was restarted. This attribute can be used to identify a particular container (running or stopped) within a container spec
+      K8S_CONTAINER_RESTART_COUNT = 'k8s.container.restart_count'
 
       # The UID of the ReplicaSet
       K8S_REPLICASET_UID = 'k8s.replicaset.uid'
