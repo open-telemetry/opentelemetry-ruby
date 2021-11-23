@@ -39,7 +39,7 @@ module OpenTelemetry
             end.tap do |response|
               if (err = response.error)
                 span.record_exception(err)
-                span.status = Trace::Status.error(err)
+                span.status = Trace::Status.error(err.to_s)
               end
             end
           end
