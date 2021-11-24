@@ -11,10 +11,10 @@ module OpenTelemetry
       class MessagingHelper
         class << self
           def queue_name(context) # rubocop:disable Metrics/CyclomaticComplexity
-            topic_arn = params(context, :topic_arn)
-            target_arn = params(context, :target_arn)
-            phone_number = params(context, :phone_number)
-            queue_url = params(context, :queue_url)
+            topic_arn = context.params[:topic_arn]
+            target_arn = context.params[:target_arn]
+            phone_number = context.params[:phone_number]
+            queue_url = context.params[:queue_url]
 
             if topic_arn || target_arn
               arn = topic_arn || target_arn
@@ -36,7 +36,7 @@ module OpenTelemetry
             attributes[SemanticConventions::Trace::MESSAGING_SYSTEM] = 'aws.sqs'
             attributes[SemanticConventions::Trace::MESSAGING_DESTINATION_KIND] = 'queue'
             attributes[SemanticConventions::Trace::MESSAGING_DESTINATION] = queue_name(context)
-            attributes[SemanticConventions::Trace::MESSAGING_URL] = params(context, :queue_url)
+            attributes[SemanticConventions::Trace::MESSAGING_URL] = context.params[:queue_url]
 
             attributes[SemanticConventions::Trace::MESSAGING_OPERATION] = 'receive' if client_method == 'SQS.ReceiveMessage'
           end
@@ -48,10 +48,6 @@ module OpenTelemetry
 
             attributes[SemanticConventions::Trace::MESSAGING_DESTINATION_KIND] = 'topic'
             attributes[SemanticConventions::Trace::MESSAGING_DESTINATION] = queue_name(context)
-          end
-
-          def params(context, param)
-            defined?(context.metadata[:original_params][param]) ? context.metadata[:original_params][param] : context.params[param]
           end
         end
       end
