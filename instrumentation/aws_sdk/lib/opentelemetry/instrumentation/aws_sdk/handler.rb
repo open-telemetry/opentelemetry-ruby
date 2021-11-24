@@ -59,13 +59,11 @@ module OpenTelemetry
           return unless [SQS_SEND_MESSAGE, SQS_SEND_MESSAGE_BATCH, SNS_PUBLISH].include? client_method
 
           if client_method == SQS_SEND_MESSAGE_BATCH
-            # TODO
             context.params[:entries].each do |entry|
               entry[:message_attributes] ||= {}
               OpenTelemetry.propagation.inject(entry[:message_attributes], setter: MessageAttributeSetter)
             end
           else
-            # TODO
             context.params[:message_attributes] ||= {}
             OpenTelemetry.propagation.inject(context.params[:message_attributes], setter: MessageAttributeSetter)
           end
