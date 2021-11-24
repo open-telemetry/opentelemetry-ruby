@@ -201,7 +201,7 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(events.first.attributes).must_equal(attrs)
     end
 
-    it 'add event with timestamp' do
+    it 'uses the provided timestamp' do
       ts = Time.now
       span.add_event('added', timestamp: ts)
       events = span.events
@@ -209,7 +209,7 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(events.first.timestamp).must_equal(exportable_timestamp(ts))
     end
 
-    it 'uses relative time when there is no timestamp' do
+    it 'sets the end timestamp relative to the span start' do
       timestamp = Time.new('2021-11-23 12:00:00.000000 -0600')
       timestamp_in_nano = exportable_timestamp(timestamp)
       clock_ids_expected = [Process::CLOCK_MONOTONIC, Process::CLOCK_REALTIME]
@@ -400,9 +400,34 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(span.finish).must_equal(span)
     end
 
-    it 'sets the end timestamp' do
-      span.finish
-      _(span.to_span_data.end_timestamp).wont_be_nil
+    it 'uses the provided end timestamp' do
+      ts = Time.now
+      _(span.finish(end_timestamp: ts)).must_equal(span)
+      _(span.end_timestamp).must_equal(exportable_timestamp(ts))
+    end
+
+    it 'sets the end timestamp relative to the start time' do
+      timestamp = Time.new('2021-11-23 12:00:00.000000 -0600')
+      timestamp_in_nano = exportable_timestamp(timestamp)
+      clock_ids_expected = [Process::CLOCK_MONOTONIC, Process::CLOCK_REALTIME]
+      return_values = [500_000_000_000_000, timestamp_in_nano]
+      clock_gettime_mock = lambda do |clock_id, unit|
+        _(clock_id).must_equal(clock_ids_expected.shift)
+        _(unit).must_equal(:nanosecond)
+        return_values.shift
+      end
+
+      # Create a span with deterministic time values stored on it.
+      test_span = Process.stub(:clock_gettime, clock_gettime_mock) do
+        Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'span', SpanKind::INTERNAL, nil, span_limits, [], nil, nil, timestamp, nil, nil)
+      end
+
+      Process.stub(:clock_gettime, 500_000_000_000_000 + 100) do
+        test_span.finish
+        # The expect timestamp is that of the parent offset by
+        # the drift in the monotonic clock
+        _(test_span.end_timestamp).must_equal(timestamp_in_nano + 100)
+      end
     end
 
     it 'calls the span processor #on_finish callback' do
