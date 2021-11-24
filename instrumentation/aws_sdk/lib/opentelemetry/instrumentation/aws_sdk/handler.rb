@@ -18,7 +18,7 @@ module OpenTelemetry
           return super unless context
 
           service_name = context.client.class.to_s.split('::')[1]
-          operation = context.operation&.name || context.operation_name
+          operation = context.operation&.name
           client_method = "#{service_name}.#{operation}"
           attributes = {
             'aws.region' => context.config.region,
