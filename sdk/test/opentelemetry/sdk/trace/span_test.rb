@@ -454,5 +454,101 @@ describe OpenTelemetry::SDK::Trace::Span do
                       [], nil, links, Time.now, nil, nil)
       _(span.links.size).must_equal(1)
     end
+
+    it 'when a timestamp is provided it converts it into nanoseconds' do
+      # Because we are providing a timestamp we don't need to control
+      # any of the time values being set on the parent span we just
+      # want to make sure our test span has a recording parent span.
+      parent_span = Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'parent span', SpanKind::INTERNAL, nil, span_limits, [], nil, nil, Time.now, nil, nil)
+
+      timestamp = Time.new('2021-11-23 12:00:00.000000 -0600')
+      expected_timestamp = 1_609_480_800_000_000_000
+
+      # Again because we're explicitly passing in the timestamp
+      # we don't expect any of the calculations to be performed
+      # so we just need to assert that the value is being converted
+      # into nanoseconds.
+      test_span = Span.new(context, Context.empty, parent_span, 'child span', SpanKind::INTERNAL, nil, span_limits, [], nil, [], timestamp, nil, nil)
+      _(test_span.start_timestamp).must_equal(expected_timestamp)
+    end
+
+    it 'when parent_span is recording and no start timestamp is provided it uses relative_realtime' do
+      # All this setup is so that we can generate a parent span
+      # with deterministic time values.
+      parent_time = Time.new('2021-11-23 12:00:00.000000 -0600')
+      parent_time_in_nano = 1_609_480_800_000_000_000
+      monotic_return_value = 500_000_000_000_000
+      clock_ids_expected = [Process::CLOCK_MONOTONIC, Process::CLOCK_REALTIME]
+      return_values = [monotic_return_value, parent_time_in_nano]
+      clock_gettime_mock = lambda do |clock_id, unit|
+        _(clock_id).must_equal(clock_ids_expected.shift)
+        _(unit).must_equal(:nanosecond)
+        return_values.shift
+      end
+
+      parent_span = Process.stub(:clock_gettime, clock_gettime_mock) do
+        Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'parent span', SpanKind::INTERNAL, nil, span_limits, [], nil, nil, parent_time, nil, nil)
+      end
+
+      clock_ids_expected = [Process::CLOCK_MONOTONIC, Process::CLOCK_MONOTONIC]
+      # Add a bit of time drift to see check if the relative time is accurately offset
+      # from the parent span timestamp
+      return_values = [monotic_return_value + 100, monotic_return_value + 200]
+      clock_gettime_mock = lambda do |clock_id, unit|
+        _(clock_id).must_equal(clock_ids_expected.shift)
+        _(unit).must_equal(:nanosecond)
+        return_values.shift
+      end
+
+      _(parent_span.recording?).must_equal(true)
+      Process.stub(:clock_gettime, clock_gettime_mock) do
+        test_span = Span.new(
+          context,
+          Context.empty,
+          parent_span,
+          'child span',
+          SpanKind::INTERNAL,
+          nil,
+          span_limits,
+          [],
+          nil,
+          [],
+          nil,
+          nil,
+          nil
+        )
+
+        # We expect to see the start_timestamp to be the parent span timestamp
+        # with the same offset we returned with our stubbed
+        # monotonic_now value we returned above
+        _(test_span.start_timestamp).must_equal(parent_time_in_nano + 200)
+      end
+    end
+
+    it 'when parent_span is not recording and no start timestamp provided it uses realtime_now' do
+      non_recording_span = OpenTelemetry::Trace.non_recording_span(span.context)
+
+      # This is awkwardly testing the internal implementation by expecting
+      # specific calls to Process.clock_gettime and asserting the arguments
+      # are being called in the expected order.
+      realtime_return_value = 1_609_480_800_000_000_000
+      monotic_return_value = 500_000_000_000_000
+      clock_ids_expected = [Process::CLOCK_MONOTONIC, Process::CLOCK_REALTIME]
+      return_values = [monotic_return_value, realtime_return_value]
+      clock_gettime_mock = lambda do |clock_id, unit|
+        _(clock_id).must_equal(clock_ids_expected.shift)
+        _(unit).must_equal(:nanosecond)
+        return_values.shift
+      end
+
+      Process.stub(:clock_gettime, clock_gettime_mock) do
+        test_span = Span.new(context, Context.empty, non_recording_span, 'name', SpanKind::INTERNAL, nil, span_limits, [], nil, [], nil, nil, nil)
+
+        # We expect for the timestamp to be the value returned from
+        # the call to realtime_now as we have no timestamp and no parent
+        # span time to try and get a relative offset from.
+        _(test_span.start_timestamp).must_equal(realtime_return_value)
+      end
+    end
   end
 end
