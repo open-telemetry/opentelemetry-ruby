@@ -24,15 +24,21 @@ module OpenTelemetry
         end
 
         def start_root_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
-          parent_context = Context.empty
-          parent_span = Span::INVALID
-          @tracer_provider.internal_create_span(name, kind, attributes, links, start_timestamp, parent_context, parent_span, @instrumentation_library)
+          start_span(name, with_parent: Context.empty, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind)
         end
 
         def start_span(name, with_parent: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
-          parent_context = with_parent || Context.current
-          parent_span = OpenTelemetry::Trace.current_span(parent_context)
-          @tracer_provider.internal_create_span(name, kind, attributes, links, start_timestamp, parent_context, parent_span, @instrumentation_library)
+          name ||= 'empty'
+
+          with_parent ||= Context.current
+          parent_span = OpenTelemetry::Trace.current_span(with_parent)
+          parent_span_context = OpenTelemetry::Trace.current_span(with_parent).context
+          if parent_span_context.valid?
+            parent_span_id = parent_span_context.span_id
+            trace_id = parent_span_context.trace_id
+          end
+
+          @tracer_provider.internal_create_span(name, kind, trace_id, parent_span_id, attributes, links, start_timestamp, with_parent, parent_span, @instrumentation_library)
         end
       end
     end
