@@ -23,7 +23,7 @@ module OpenTelemetry
       # span and reraised.
       # @yield [span, context] yields the newly created span and a context containing the
       #   span to the block.
-      def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
+      def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: :internal)
         span = nil
         span = start_span(name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind)
         Trace.with_span(span) { |s, c| yield s, c }
@@ -35,7 +35,7 @@ module OpenTelemetry
         span&.finish
       end
 
-      def start_root_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
+      def start_root_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: :internal)
         Span::INVALID
       end
 
@@ -47,7 +47,7 @@ module OpenTelemetry
       # @param [optional Context] with_parent Explicitly managed parent context
       #
       # @return [Span]
-      def start_span(name, with_parent: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
+      def start_span(name, with_parent: nil, attributes: nil, links: nil, start_timestamp: nil, kind: :internal)
         span = OpenTelemetry::Trace.current_span(with_parent)
 
         if span.context.valid?

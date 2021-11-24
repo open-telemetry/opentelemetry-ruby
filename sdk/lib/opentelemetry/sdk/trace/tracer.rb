@@ -23,11 +23,11 @@ module OpenTelemetry
           @tracer_provider = tracer_provider
         end
 
-        def start_root_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
+        def start_root_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: :internal)
           start_span(name, with_parent: Context.empty, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind)
         end
 
-        def start_span(name, with_parent: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
+        def start_span(name, with_parent: nil, attributes: nil, links: nil, start_timestamp: nil, kind: :internal)
           name ||= 'empty'
 
           with_parent ||= Context.current
