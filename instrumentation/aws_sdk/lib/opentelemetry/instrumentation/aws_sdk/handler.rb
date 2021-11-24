@@ -17,8 +17,8 @@ module OpenTelemetry
         def call(context) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           return super unless context
 
-          service_name = context.client.class.api.metadata['serviceId'] || context.client.class.to_s.split('::')[1]
-          operation = context.operation&.name
+          service_name = context.client.class.name.split('::')[1]
+          operation = context.operation&.name || context.operation_name
           client_method = "#{service_name}.#{operation}"
           attributes = {
             'aws.region' => context.config.region,
@@ -59,11 +59,13 @@ module OpenTelemetry
           return unless [SQS_SEND_MESSAGE, SQS_SEND_MESSAGE_BATCH, SNS_PUBLISH].include? client_method
 
           if client_method == SQS_SEND_MESSAGE_BATCH
+            # TODO
             context.params[:entries].each do |entry|
               entry[:message_attributes] ||= {}
               OpenTelemetry.propagation.inject(entry[:message_attributes], setter: MessageAttributeSetter)
             end
           else
+            # TODO
             context.params[:message_attributes] ||= {}
             OpenTelemetry.propagation.inject(context.params[:message_attributes], setter: MessageAttributeSetter)
           end
