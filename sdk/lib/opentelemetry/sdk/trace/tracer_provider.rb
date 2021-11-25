@@ -126,7 +126,7 @@ module OpenTelemetry
         end
 
         # @api private
-        def internal_create_span(name, kind, trace_id, parent_span_id, attributes, links, start_timestamp, parent_context, instrumentation_library) # rubocop:disable Metrics/MethodLength
+        def internal_create_span(name, kind, trace_id, parent_span_id, attributes, links, start_timestamp, parent_context, instrumentation_library) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
           trace_id ||= @id_generator.generate_trace_id
           kind ||= :internal
           result = @sampler.should_sample?(trace_id: trace_id, parent_context: parent_context, links: links, name: name, kind: kind, attributes: attributes)
