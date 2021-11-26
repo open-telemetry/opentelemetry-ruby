@@ -209,15 +209,17 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(events.first.timestamp).must_equal(exportable_timestamp(ts))
     end
 
-    it 'sets the end timestamp relative to the span start' do
+    it 'sets the implicit event timestamp relative to the span start' do
       timestamp = Time.new('2021-11-23 12:00:00.000000 -0600')
       timestamp_in_nano = exportable_timestamp(timestamp)
-      clock_ids_expected = [Process::CLOCK_MONOTONIC, Process::CLOCK_REALTIME]
-      return_values = [500_000_000_000_000, timestamp_in_nano]
+      timestamps = {
+        Process::CLOCK_MONOTONIC => 500_000_000_000_000,
+        Process::CLOCK_REALTIME => timestamp_in_nano
+      }
       clock_gettime_mock = lambda do |clock_id, unit|
-        _(clock_id).must_equal(clock_ids_expected.shift)
+        _(timestamps).must_include(clock_id)
         _(unit).must_equal(:nanosecond)
-        return_values.shift
+        timestamps[clock_id]
       end
 
       # Create a span with deterministic time values stored on it.
