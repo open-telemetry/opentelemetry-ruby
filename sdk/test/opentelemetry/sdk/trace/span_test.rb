@@ -201,8 +201,8 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(events.first.attributes).must_equal(attrs)
     end
 
-    it 'uses the provided timestamp' do
-      ts = Time.now
+    it 'honours an explicit timestamp' do
+      ts = Time.new('2021-11-23 12:00:00.000000 -0600')
       span.add_event('added', timestamp: ts)
       events = span.events
       _(events.size).must_equal(1)
@@ -210,37 +210,19 @@ describe OpenTelemetry::SDK::Trace::Span do
     end
 
     it 'sets the implicit event timestamp relative to the span start' do
-      timestamp = Time.new('2021-11-23 12:00:00.000000 -0600')
-      timestamp_in_nano = exportable_timestamp(timestamp)
-      timestamps = {
-        Process::CLOCK_MONOTONIC => 500_000_000_000_000,
-        Process::CLOCK_REALTIME => timestamp_in_nano
-      }
-
-      clock_gettime_mock = lambda do |clock_id, unit|
-        _(timestamps).must_include(clock_id)
-        _(unit).must_equal(:nanosecond)
-        timestamps[clock_id]
-      end
-
       # Create a span with deterministic time values stored on it.
-      test_span = Process.stub(:clock_gettime, clock_gettime_mock) do
-        Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'span', SpanKind::INTERNAL, nil, span_limits, [], nil, nil, timestamp, nil, nil)
+      test_span = mock_gettime(monotonic: 100, realtime: 1_000) do
+        Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'span', SpanKind::INTERNAL, nil, span_limits, [], nil, nil, nil, nil, nil)
       end
 
-      timestamps = {
-        Process::CLOCK_MONOTONIC => 500_000_000_000_000 + 100,
-        Process::CLOCK_REALTIME => 0
-      }
-
-      Process.stub(:clock_gettime, clock_gettime_mock) do
+      mock_gettime(monotonic: 200, realtime: 1_000_000) do
         test_span.add_event('record something with relative time')
         event = test_span.events[0]
         _(event).wont_be_nil
 
         # The expect timestamp is that of the parent offset by
         # the drift in the monotonic clock
-        _(event.timestamp).must_equal(timestamp_in_nano + 100)
+        _(event.timestamp).must_equal(1_000 + 100)
       end
     end
 
@@ -408,42 +390,23 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(span.finish).must_equal(span)
     end
 
-    it 'uses the provided end timestamp' do
+    it 'honours an explicit end timestamp' do
       ts = Time.new('2021-11-23 12:00:00.000000 -0600')
       _(span.finish(end_timestamp: ts)).must_equal(span)
       _(span.end_timestamp).must_equal(exportable_timestamp(ts))
     end
 
     it 'sets the end timestamp relative to the start time' do
-      timestamp = Time.new('2021-11-23 12:00:00.000000 -0600')
-      timestamp_in_nano = exportable_timestamp(timestamp)
-
-      timestamps = {
-        Process::CLOCK_MONOTONIC => 500_000_000_000_000,
-        Process::CLOCK_REALTIME => timestamp_in_nano
-      }
-
-      clock_gettime_mock = lambda do |clock_id, unit|
-        _(timestamps).must_include(clock_id)
-        _(unit).must_equal(:nanosecond)
-        timestamps[clock_id]
-      end
-
       # Create a span with deterministic time values stored on it.
-      test_span = Process.stub(:clock_gettime, clock_gettime_mock) do
-        Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'span', SpanKind::INTERNAL, nil, span_limits, [], nil, nil, timestamp, nil, nil)
+      test_span = mock_gettime(monotonic: 100, realtime: 1_000) do
+        Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'span', SpanKind::INTERNAL, nil, span_limits, [], nil, nil, nil, nil, nil)
       end
 
-      timestamps = {
-        Process::CLOCK_MONOTONIC => 500_000_000_000_000 + 100,
-        Process::CLOCK_REALTIME => timestamp_in_nano
-      }
-
-      Process.stub(:clock_gettime, clock_gettime_mock) do
+      mock_gettime(monotonic: 200, realtime: 1_000_000) do
         test_span.finish
         # The expect timestamp is that of the parent offset by
         # the drift in the monotonic clock
-        _(test_span.end_timestamp).must_equal(timestamp_in_nano + 100)
+        _(test_span.end_timestamp).must_equal(1_000 + 100)
       end
     end
 
@@ -525,89 +488,54 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(span.links.size).must_equal(1)
     end
 
-    it 'when a timestamp is provided it converts it into nanoseconds' do
-      # Because we are providing a timestamp we don't need to control
-      # any of the time values being set on the parent span we just
-      # want to make sure our test span has a recording parent span.
-      parent_span = Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'parent span', SpanKind::INTERNAL, nil, span_limits, [], nil, nil, Time.now, nil, nil)
-
+    it 'honours an explicit timestamp' do
       timestamp = Time.new('2021-11-23 12:00:00.000000 -0600')
-      expected_timestamp = exportable_timestamp(timestamp)
-
-      # Again because we're explicitly passing in the timestamp
-      # we don't expect any of the calculations to be performed
-      # so we just need to assert that the value is being converted
-      # into nanoseconds.
-      test_span = Span.new(context, Context.empty, parent_span, 'child span', SpanKind::INTERNAL, nil, span_limits, [], nil, [], timestamp, nil, nil)
-      _(test_span.start_timestamp).must_equal(expected_timestamp)
+      test_span = Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'child span', SpanKind::INTERNAL, nil, span_limits, [], nil, [], timestamp, nil, nil)
+      _(test_span.start_timestamp).must_equal(exportable_timestamp(timestamp))
     end
 
-    it 'when parent_span is recording and no start timestamp is provided it uses relative_realtime' do
-      # All this setup is so that we can generate a parent span
-      # with deterministic time values.
-      parent_time = Time.new('2021-11-23 12:00:00.000000 -0600')
-      parent_time_in_nano = exportable_timestamp(parent_time)
-
-      timestamps = {
-        Process::CLOCK_MONOTONIC => 500_000_000_000_000,
-        Process::CLOCK_REALTIME => parent_time_in_nano
-      }
-
-      clock_gettime_mock = lambda do |clock_id, unit|
-        _(timestamps).must_include(clock_id)
-        _(unit).must_equal(:nanosecond)
-        timestamps[clock_id]
-      end
-
-      parent_span = Process.stub(:clock_gettime, clock_gettime_mock) do
-        Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'parent span', SpanKind::INTERNAL, nil, span_limits, [], nil, nil, parent_time, nil, nil)
-      end
-
-      # Add a bit of time drift to see check if the relative time is accurately offset
-      # from the parent span timestamp
-      timestamps = {
-        Process::CLOCK_MONOTONIC => 500_000_000_000_000 + 200,
-        Process::CLOCK_REALTIME => parent_time_in_nano
-      }
-      clock_gettime_mock = lambda do |clock_id, unit|
-        _(timestamps).must_include(clock_id)
-        _(unit).must_equal(:nanosecond)
-        timestamps[clock_id]
+    it 'uses the monotonic offset from the parent_span realtime start timestamp when parent_span is recording' do
+      parent_span = mock_gettime(monotonic: 100, realtime: 1_000) do
+        Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'parent span', SpanKind::INTERNAL, nil, span_limits, [], nil, nil, nil, nil, nil)
       end
 
       _(parent_span.recording?).must_equal(true)
-      Process.stub(:clock_gettime, clock_gettime_mock) do
+      mock_gettime(monotonic: 200, realtime: 1_000_000) do
         test_span = Span.new(context, Context.empty, parent_span, 'child span', SpanKind::INTERNAL, nil, span_limits, [], nil, [], nil, nil, nil)
 
         # We expect to see the start_timestamp to be the parent span timestamp
         # with the same offset we returned with our stubbed
         # monotonic_now value we returned above
-        _(test_span.start_timestamp).must_equal(parent_time_in_nano + 200)
+        _(test_span.start_timestamp).must_equal(1_000 + 100)
       end
     end
 
-    it 'when parent_span is not recording and no start timestamp provided it uses realtime_now' do
+    it 'uses the realtime clock when the parent_span is not recording' do
       non_recording_span = OpenTelemetry::Trace.non_recording_span(span.context)
 
-      timestamps = {
-        Process::CLOCK_MONOTONIC => 500_000_000_000_000 + 200,
-        Process::CLOCK_REALTIME => 1_609_480_800_000_000_000
-      }
-
-      clock_gettime_mock = lambda do |clock_id, unit|
-        _(timestamps).must_include(clock_id)
-        _(unit).must_equal(:nanosecond)
-        timestamps[clock_id]
-      end
-
-      Process.stub(:clock_gettime, clock_gettime_mock) do
+      mock_gettime(monotonic: 100, realtime: 1_000) do
         test_span = Span.new(context, Context.empty, non_recording_span, 'name', SpanKind::INTERNAL, nil, span_limits, [], nil, [], nil, nil, nil)
 
         # We expect for the timestamp to be the value returned from
         # the call to realtime_now as we have no timestamp and no parent
         # span time to try and get a relative offset from.
-        _(test_span.start_timestamp).must_equal(timestamps[Process::CLOCK_REALTIME])
+        _(test_span.start_timestamp).must_equal(1_000)
       end
     end
+  end
+
+  def mock_gettime(monotonic:, realtime:)
+    timestamps = {
+      Process::CLOCK_MONOTONIC => monotonic,
+      Process::CLOCK_REALTIME => realtime
+    }
+
+    clock_gettime_mock = lambda do |clock_id, unit|
+      _(timestamps).must_include(clock_id)
+      _(unit).must_equal(:nanosecond)
+      timestamps[clock_id]
+    end
+
+    Process.stub(:clock_gettime, clock_gettime_mock) { yield }
   end
 end
