@@ -44,7 +44,7 @@ module OpenTelemetry
           end
         end
 
-        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'https://localhost:4318/v1/traces'), # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
+        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'https://localhost:4318/v1/traces'), # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
                        certificate_file: config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
                        ssl_verify_mode: Exporter.ssl_verify_mode,
                        headers: config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
@@ -60,11 +60,7 @@ module OpenTelemetry
                    URI(endpoint)
                  end
 
-          @http = Net::HTTP.new(@uri.host, @uri.port)
-          @http.use_ssl = @uri.scheme == 'https'
-          @http.verify_mode = ssl_verify_mode
-          @http.ca_file = certificate_file unless certificate_file.nil?
-          @http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
+          @http = http_connection(@uri, ssl_verify_mode, certificate_file)
 
           @path = @uri.path
           @headers = case headers
@@ -113,6 +109,15 @@ module OpenTelemetry
         end
 
         private
+
+        def http_connection(uri, ssl_verify_mode, certificate_file)
+          http = Net::HTTP.new(uri.host, uri.port)
+          http.use_ssl = uri.scheme == 'https'
+          http.verify_mode = ssl_verify_mode
+          http.ca_file = certificate_file unless certificate_file.nil?
+          http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
+          http
+        end
 
         def config_opt(*env_vars, default: nil)
           env_vars.each do |env_var|
