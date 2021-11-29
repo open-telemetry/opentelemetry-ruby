@@ -8,10 +8,11 @@ gem "activerecord", "~> 6.0.0"
 
 group :test do
   gem "byebug"
-  gem "sqlite3-ruby"
   gem "opentelemetry-common", path: "../../../common"
   gem "opentelemetry-sdk", path: "../../../sdk"
+  gem "opentelemetry-semantic_conventions", path: "../../../semantic_conventions"
   gem "pry-byebug"
+  gem "sqlite3-ruby"
 end
 
 gemspec path: "../"
