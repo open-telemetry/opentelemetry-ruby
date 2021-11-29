@@ -17,7 +17,7 @@ module OpenTelemetry
           def call(env)
             extracted_context = OpenTelemetry.propagation.extract(
               env,
-              getter: OpenTelemetry::Context::Propagation.rack_env_getter
+              getter: OpenTelemetry::Common::Propagation.rack_env_getter
             )
             OpenTelemetry::Context.with_current(extracted_context) do
               tracer.in_span(
