@@ -68,7 +68,7 @@ module OpenTelemetry
             original_env = env.dup
             extracted_context = OpenTelemetry.propagation.extract(
               env,
-              getter: OpenTelemetry::Context::Propagation.rack_env_getter
+              getter: OpenTelemetry::Common::Propagation.rack_env_getter
             )
             frontend_context = create_frontend_span(env, extracted_context)
 
