@@ -60,11 +60,7 @@ module OpenTelemetry
                    URI(endpoint)
                  end
 
-          @http = Net::HTTP.new(@uri.host, @uri.port)
-          @http.use_ssl = @uri.scheme == 'https'
-          @http.verify_mode = ssl_verify_mode
-          @http.ca_file = certificate_file unless certificate_file.nil?
-          @http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
+          @http = http_connection(@uri, ssl_verify_mode, certificate_file)
 
           @path = @uri.path
           @headers = case headers
@@ -113,6 +109,15 @@ module OpenTelemetry
         end
 
         private
+
+        def http_connection(uri, ssl_verify_mode, certificate_file)
+          http = Net::HTTP.new(uri.host, uri.port)
+          http.use_ssl = uri.scheme == 'https'
+          http.verify_mode = ssl_verify_mode
+          http.ca_file = certificate_file unless certificate_file.nil?
+          http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
+          http
+        end
 
         def config_opt(*env_vars, default: nil)
           env_vars.each do |env_var|
