@@ -134,6 +134,7 @@ module OpenTelemetry
           end
           name ||= 'empty'
           trace_id ||= @id_generator.generate_trace_id
+          kind ||= :internal
           result = @sampler.should_sample?(trace_id: trace_id, parent_context: parent_context, links: links, name: name, kind: kind, attributes: attributes)
           span_id = @id_generator.generate_span_id
           if result.recording? && !@stopped

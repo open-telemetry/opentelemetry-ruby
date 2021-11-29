@@ -24,6 +24,10 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       _(tracer.start_root_span(nil).name).wont_be_nil
     end
 
+    it 'defaults to span kind internal when not specified' do
+      _(tracer.start_root_span(nil).kind).must_equal(:internal)
+    end
+
     it 'returns a valid span' do
       span = tracer.start_root_span('root')
       _(span.context).must_be :valid?
