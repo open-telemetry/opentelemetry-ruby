@@ -3,15 +3,16 @@
 source "https://rubygems.org"
 
 gem "opentelemetry-api", path: "../../../api"
+gem "opentelemetry-instrumentation-base", path: "../../base"
 gem "activerecord", "~> 5.2.0"
 
 group :test do
   gem "byebug"
-  gem "mysql2"
   gem "opentelemetry-common", path: "../../../common"
-  gem "opentelemetry-instrumentation-mysql2", path: "../../mysql2"
   gem "opentelemetry-sdk", path: "../../../sdk"
+  gem "opentelemetry-semantic_conventions", path: "../../../semantic_conventions"
   gem "pry-byebug"
+  gem "sqlite3-ruby"
 end
 
 gemspec path: "../"
