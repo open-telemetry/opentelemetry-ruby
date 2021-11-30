@@ -38,6 +38,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'webmock', '~> 3.7.6'
   spec.add_development_dependency 'yard', '~> 0.9'
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
+  # TODO Add semantic version constraints
+  spec.add_development_dependency '<%= instrumentation_name %>'
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-<%= instrumentation_name %>/v#{OpenTelemetry::Instrumentation::<%= pascal_cased_instrumentation_name %>::VERSION}/file.CHANGELOG.html"
