@@ -30,7 +30,7 @@ module OpenTelemetry
           MessagingHelper.apply_sqs_attributes(attributes, context, client_method) if service_name == 'SQS'
           MessagingHelper.apply_sns_attributes(attributes, context, client_method) if service_name == 'SNS'
 
-          tracer.in_span(span_name(context, client_method), attributes: attributes, kind: span_kind(operation)) do |span|
+          tracer.in_span(span_name(context, client_method), attributes: attributes, kind: span_kind(client_method)) do |span|
             inject_context(context, client_method)
             if instrumentation_config[:suppress_internal_instrumentation]
               OpenTelemetry::Common::Utilities.untraced { super }
