@@ -80,7 +80,7 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
       dalli.set('foo', 'bar')
       exporter.reset
 
-      dalli.instance_variable_get(:@ring).servers.first.stub(:write, ->(_bytes) { raise Dalli::NetworkError }) do
+      dalli.instance_variable_get(:@ring).servers.first.stub(:write, ->(_bytes) { raise Dalli::DalliError }) do
         dalli.get_multi('foo', 'bar')
       end
 
@@ -93,8 +93,8 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
 
       span_event = span.events.first
       _(span_event.name).must_equal 'exception'
-      _(span_event.attributes['exception.type']).must_equal 'Dalli::NetworkError'
-      _(span_event.attributes['exception.message']).must_equal 'Dalli::NetworkError'
+      _(span_event.attributes['exception.type']).must_equal 'Dalli::DalliError'
+      _(span_event.attributes['exception.message']).must_equal 'Dalli::DalliError'
     end
 
     it 'omits db.statement' do
@@ -106,6 +106,17 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'set'
       _(span.attributes).wont_include 'db.statement'
+    end
+
+    it 'obfuscates db.statement' do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(db_statement: :obfuscate)
+
+      dalli.set('foo', 'bar')
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.name).must_equal 'set'
+      _(span.attributes['db.statement']).must_equal 'set ?'
     end
   end
 end unless ENV['OMIT_SERVICES']

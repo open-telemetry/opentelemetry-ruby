@@ -1,9 +1,9 @@
 ---
-title: "Context Propagation"
+title: Context Propagation
 weight: 2
 ---
 
-> Distributed Tracing tracks the progression of a single Request, called a Trace, as it is handled by Services that make up an Application. A Distributed Trace transverses process, network and security boundaries. [glossary][glossary]
+> Distributed Tracing tracks the progression of a single Request, called a Trace, as it is handled by Services that make up an Application. A Distributed Trace transverses process, network and security boundaries. [Glossary][]
 
 This requires _context propagation_, a mechanism where identifiers for a trace are sent to remote processes.
 
@@ -24,6 +24,6 @@ Propagators other than `tracecontext` and `baggage` must be added as gem depende
 gem 'opentelemetry-propagator-b3'
 ```
 
-[glossary]: https://opentelemetry.io/docs/concepts/glossary/
+[glossary]: /docs/concepts/glossary/
 [propagators]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/propagator
 [auto-instrumentation]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/instrumentation

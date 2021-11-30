@@ -3,3 +3,7 @@
 appraise 'dalli-2.7' do
   gem 'dalli', '~> 2.7'
 end
+
+appraise 'dalli-3.0' do
+  gem 'dalli', '~> 3.0'
+end

@@ -18,7 +18,13 @@ module OpenTelemetry
           class << self
             def allowed_rack_request_headers
               @allowed_rack_request_headers ||= Array(config[:allowed_request_headers]).each_with_object({}) do |header, memo|
-                memo["HTTP_#{header.to_s.upcase.gsub(/[-\s]/, '_')}"] = build_attribute_name('http.request.headers.', header)
+                key = header.to_s.upcase.gsub(/[-\s]/, '_')
+                case key
+                when 'CONTENT_TYPE', 'CONTENT_LENGTH'
+                  memo[key] = build_attribute_name('http.request.headers.', header)
+                else
+                  memo["HTTP_#{key}"] = build_attribute_name('http.request.headers.', header)
+                end
               end
             end
 
@@ -62,7 +68,7 @@ module OpenTelemetry
             original_env = env.dup
             extracted_context = OpenTelemetry.propagation.extract(
               env,
-              getter: OpenTelemetry::Context::Propagation.rack_env_getter
+              getter: OpenTelemetry::Common::Propagation.rack_env_getter
             )
             frontend_context = create_frontend_span(env, extracted_context)
 
@@ -101,9 +107,7 @@ module OpenTelemetry
 
             span = tracer.start_span('http_server.proxy',
                                      with_parent: extracted_context,
-                                     attributes: {
-                                       'start_time' => request_start_time.to_f
-                                     },
+                                     start_timestamp: request_start_time,
                                      kind: :server)
 
             OpenTelemetry::Trace.context_with_span(span, parent_context: extracted_context)

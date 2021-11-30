@@ -11,6 +11,7 @@ describe OpenTelemetry::SDK::Trace::Span do
   SpanKind = OpenTelemetry::Trace::SpanKind
   Status = OpenTelemetry::Trace::Status
   Context = OpenTelemetry::Context
+  SpanLimits = OpenTelemetry::SDK::Trace::SpanLimits
 
   let(:context) { OpenTelemetry::Trace::SpanContext.new }
   let(:mock_span_processor) { Minitest::Mock.new }
@@ -25,7 +26,7 @@ describe OpenTelemetry::SDK::Trace::Span do
     )
   end
   let(:span) do
-    Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
+    Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'name', SpanKind::INTERNAL, nil, span_limits,
              [], nil, nil, Time.now, nil, nil)
   end
 
@@ -200,12 +201,29 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(events.first.attributes).must_equal(attrs)
     end
 
-    it 'add event with timestamp' do
-      ts = Time.now
+    it 'honours an explicit timestamp' do
+      ts = Time.new('2021-11-23 12:00:00.000000 -0600')
       span.add_event('added', timestamp: ts)
       events = span.events
       _(events.size).must_equal(1)
       _(events.first.timestamp).must_equal(exportable_timestamp(ts))
+    end
+
+    it 'sets the implicit event timestamp relative to the span start' do
+      # Create a span with deterministic time values stored on it.
+      test_span = mock_gettime(monotonic: 100, realtime: 1_000) do
+        Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'span', SpanKind::INTERNAL, nil, span_limits, [], nil, nil, nil, nil, nil)
+      end
+
+      mock_gettime(monotonic: 200, realtime: 1_000_000) do
+        test_span.add_event('record something with relative time')
+        event = test_span.events[0]
+        _(event).wont_be_nil
+
+        # The expect timestamp is that of the parent offset by
+        # the drift in the monotonic clock
+        _(event.timestamp).must_equal(1_000 + 100)
+      end
     end
 
     it 'does not add an event if span is ended' do
@@ -372,14 +390,29 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(span.finish).must_equal(span)
     end
 
-    it 'sets the end timestamp' do
-      span.finish
-      _(span.to_span_data.end_timestamp).wont_be_nil
+    it 'honours an explicit end timestamp' do
+      ts = Time.new('2021-11-23 12:00:00.000000 -0600')
+      _(span.finish(end_timestamp: ts)).must_equal(span)
+      _(span.end_timestamp).must_equal(exportable_timestamp(ts))
+    end
+
+    it 'sets the end timestamp relative to the start time' do
+      # Create a span with deterministic time values stored on it.
+      test_span = mock_gettime(monotonic: 100, realtime: 1_000) do
+        Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'span', SpanKind::INTERNAL, nil, span_limits, [], nil, nil, nil, nil, nil)
+      end
+
+      mock_gettime(monotonic: 200, realtime: 1_000_000) do
+        test_span.finish
+        # The expect timestamp is that of the parent offset by
+        # the drift in the monotonic clock
+        _(test_span.end_timestamp).must_equal(1_000 + 100)
+      end
     end
 
     it 'calls the span processor #on_finish callback' do
       mock_span_processor.expect(:on_start, nil) { |_| true }
-      span = Span.new(context, Context.empty,
+      span = Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID,
                       'name', SpanKind::INTERNAL, nil, span_limits,
                       [mock_span_processor], nil, nil, Time.now, nil, nil)
       mock_span_processor.expect(:on_finish, nil, [span])
@@ -405,7 +438,7 @@ describe OpenTelemetry::SDK::Trace::Span do
     it 'calls the span processor #on_start callback' do
       yielded_span = nil
       mock_span_processor.expect(:on_start, nil) { |s| yielded_span = s }
-      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
+      span = Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'name', SpanKind::INTERNAL, nil, span_limits,
                       [mock_span_processor], nil, nil, Time.now, nil, nil)
       _(yielded_span).must_equal(span)
       mock_span_processor.verify
@@ -413,7 +446,7 @@ describe OpenTelemetry::SDK::Trace::Span do
 
     it 'trims excess attributes' do
       attributes = { 'foo': 'bar', 'other': 'attr' }
-      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
+      span = Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'name', SpanKind::INTERNAL, nil, span_limits,
                       [], attributes, nil, Time.now, nil, nil)
       _(span.to_span_data.total_recorded_attributes).must_equal(2)
       _(span.attributes.length).must_equal(1)
@@ -421,28 +454,28 @@ describe OpenTelemetry::SDK::Trace::Span do
 
     it 'truncates attributes if configured' do
       attributes = { 'foo': 'oldbaroldbaroldbaroldbaroldbaroldbar' }
-      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
+      span = Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'name', SpanKind::INTERNAL, nil, span_limits,
                       [], attributes, nil, Time.now, nil, nil)
       _(span.attributes[:foo]).must_equal('oldbaroldbaroldbaroldbaroldba...')
     end
 
     it 'counts attributes' do
       attributes = { 'foo': 'bar', 'other': 'attr' }
-      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
+      span = Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'name', SpanKind::INTERNAL, nil, span_limits,
                       [], attributes, nil, Time.now, nil, nil)
       _(span.to_span_data.total_recorded_attributes).must_equal(2)
     end
 
     it 'counts links' do
       links = [OpenTelemetry::Trace::Link.new(context), OpenTelemetry::Trace::Link.new(context)]
-      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
+      span = Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'name', SpanKind::INTERNAL, nil, span_limits,
                       [], nil, links, Time.now, nil, nil)
       _(span.to_span_data.total_recorded_links).must_equal(2)
     end
 
     it 'trims excess links' do
       links = [OpenTelemetry::Trace::Link.new(context), OpenTelemetry::Trace::Link.new(context)]
-      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
+      span = Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'name', SpanKind::INTERNAL, nil, span_limits,
                       [], nil, links, Time.now, nil, nil)
       _(span.links.size).must_equal(1)
     end
@@ -450,9 +483,59 @@ describe OpenTelemetry::SDK::Trace::Span do
     it 'prunes invalid links' do
       invalid_context = OpenTelemetry::Trace::SpanContext.new(trace_id: OpenTelemetry::Trace::INVALID_TRACE_ID)
       links = [OpenTelemetry::Trace::Link.new(context), OpenTelemetry::Trace::Link.new(invalid_context)]
-      span = Span.new(context, Context.empty, 'name', SpanKind::INTERNAL, nil, span_limits,
+      span = Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'name', SpanKind::INTERNAL, nil, span_limits,
                       [], nil, links, Time.now, nil, nil)
       _(span.links.size).must_equal(1)
     end
+
+    it 'honours an explicit timestamp' do
+      timestamp = Time.new('2021-11-23 12:00:00.000000 -0600')
+      test_span = Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'child span', SpanKind::INTERNAL, nil, span_limits, [], nil, [], timestamp, nil, nil)
+      _(test_span.start_timestamp).must_equal(exportable_timestamp(timestamp))
+    end
+
+    it 'uses the monotonic offset from the parent_span realtime start timestamp when parent_span is recording' do
+      parent_span = mock_gettime(monotonic: 100, realtime: 1_000) do
+        Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'parent span', SpanKind::INTERNAL, nil, span_limits, [], nil, nil, nil, nil, nil)
+      end
+
+      _(parent_span.recording?).must_equal(true)
+      mock_gettime(monotonic: 200, realtime: 1_000_000) do
+        test_span = Span.new(context, Context.empty, parent_span, 'child span', SpanKind::INTERNAL, nil, span_limits, [], nil, [], nil, nil, nil)
+
+        # We expect to see the start_timestamp to be the parent span timestamp
+        # with the same offset we returned with our stubbed
+        # monotonic_now value we returned above
+        _(test_span.start_timestamp).must_equal(1_000 + 100)
+      end
+    end
+
+    it 'uses the realtime clock when the parent_span is not recording' do
+      non_recording_span = OpenTelemetry::Trace.non_recording_span(span.context)
+
+      mock_gettime(monotonic: 100, realtime: 1_000) do
+        test_span = Span.new(context, Context.empty, non_recording_span, 'name', SpanKind::INTERNAL, nil, span_limits, [], nil, [], nil, nil, nil)
+
+        # We expect for the timestamp to be the value returned from
+        # the call to realtime_now as we have no timestamp and no parent
+        # span time to try and get a relative offset from.
+        _(test_span.start_timestamp).must_equal(1_000)
+      end
+    end
+  end
+
+  def mock_gettime(monotonic:, realtime:)
+    timestamps = {
+      Process::CLOCK_MONOTONIC => monotonic,
+      Process::CLOCK_REALTIME => realtime
+    }
+
+    clock_gettime_mock = lambda do |clock_id, unit|
+      _(timestamps).must_include(clock_id)
+      _(unit).must_equal(:nanosecond)
+      timestamps[clock_id]
+    end
+
+    Process.stub(:clock_gettime, clock_gettime_mock) { yield }
   end
 end

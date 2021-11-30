@@ -259,6 +259,26 @@ describe OpenTelemetry::Instrumentation::Ethon::Instrumentation do
             _(exporter.finished_spans.size).must_equal 2
           end
         end
+
+        describe 'with calls to add while running' do
+          it 'creates extra traces for each extra valid call to add' do
+            multi.add(easy)
+
+            # local variables for the closure
+            other = ::Ethon::Easy.new(url: 'test')
+            m = multi
+            easy.send(:define_singleton_method, :complete) do
+              m.add(other)
+              super()
+            end
+
+            multi.perform
+
+            _(exporter.finished_spans.size).must_equal 2
+            _(exporter.finished_spans[0].attributes['http.url']).must_equal nil
+            _(exporter.finished_spans[1].attributes['http.url']).must_equal 'test'
+          end
+        end
       end
     end
   end
