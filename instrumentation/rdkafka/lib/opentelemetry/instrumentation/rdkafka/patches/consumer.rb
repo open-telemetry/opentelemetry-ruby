@@ -8,16 +8,6 @@ module OpenTelemetry
   module Instrumentation
     module Rdkafka
       module Patches
-        # CustomerGetter for needed for propagation
-        class CustomGetter
-          def get(carrier, key)
-            carrier[key.to_sym]
-          end
-
-          def keys(carrier)
-            carrier.keys
-          end
-        end
         # The Consumer module contains the instrumentation patch for the Consumer class
         module Consumer
           def each
@@ -31,7 +21,7 @@ module OpenTelemetry
               }
 
               attributes['messaging.kafka.message_key'] = message.key if message.key
-              parent_context = OpenTelemetry.propagation.extract(message.headers, getter: CustomGetter.new)
+              parent_context = OpenTelemetry.propagation.extract(message.headers, getter: OpenTelemetry::Common::Propagation.symbol_key_getter)
               span_context = OpenTelemetry::Trace.current_span(parent_context).context
               links = [OpenTelemetry::Trace::Link.new(span_context)] if span_context.valid?
 
@@ -55,13 +45,16 @@ module OpenTelemetry
                 }
 
                 links = messages.map do |message|
-                  span_context = OpenTelemetry::Trace.current_span(OpenTelemetry.propagation.extract(message.headers, getter: CustomGetter.new)).context
+                  span_context = OpenTelemetry::Trace.current_span(OpenTelemetry.propagation.extract(message.headers, getter: OpenTelemetry::Common::Propagation.symbol_key_getter)).context
                   OpenTelemetry::Trace::Link.new(span_context) if span_context.valid?
                 end
                 links.compact!
 
                 tracer.in_span('batch process', attributes: attributes, links: links, kind: :consumer) do |span|
-                  span.record_exception(error) if error
+                  if error
+                    span.record_exception(error)
+                    span.status = OpenTelemetry::Trace::Status.error("Unhandled exception of type: #{e.class}") 
+                  end
                   yield messages, error
                 end
               end

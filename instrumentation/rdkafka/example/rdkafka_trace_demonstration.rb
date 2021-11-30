@@ -7,9 +7,6 @@ gemfile(true) do
   gem "ffi"
   gem "rdkafka", '0.10.0'
   gem 'opentelemetry-instrumentation-rdkafka', path: '../'
-  # gem "rails", :path => "vendor/rails"
-
-  # gem 'example'
 end
 
 host = ENV.fetch('TEST_KAFKA_HOST') { '127.0.0.1' }
