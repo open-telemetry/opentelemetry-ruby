@@ -80,7 +80,7 @@ describe OpenTelemetry::Instrumentation::Dalli::Instrumentation do
       dalli.set('foo', 'bar')
       exporter.reset
 
-      dalli.instance_variable_get(:@ring).servers.first.stub(:write, ->(_bytes) { raise Dalli::DalliError }) do
+      dalli.instance_variable_get(:@ring).servers.first.stub(write: ->(_bytes) { raise Dalli::DalliError }, sock: ->(_bytes) { raise Dalli::DalliError }) do
         dalli.get_multi('foo', 'bar')
       end
 
