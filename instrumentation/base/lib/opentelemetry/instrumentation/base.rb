@@ -19,7 +19,7 @@ module OpenTelemetry
     #     module Sinatra
     #       class Instrumentation < OpenTelemetry::Instrumentation::Base
     #         # Declare instrumented library:
-    #         library_name 'sinatra'
+    #         instrumented_library_name 'sinatra'
     #
     #         install do |config|
     #           # install instrumentation, either by library hook or applying
@@ -35,7 +35,7 @@ module OpenTelemetry
     #   end
     # end
     #
-    # In cases where the instrumentation is not able to use `library_name` to check against gem specifications,
+    # In cases where the instrumentation is not able to use `instrumented_library_name` to check against gem specifications,
     # subclasses may provide a custom code block to check compatibility at start up time, e.g.
     #
     # module OpenTelemetry
@@ -133,9 +133,9 @@ module OpenTelemetry
         # Optionally set the library name being instrumented.
         #
         # Set this value in lieu writing a custom compatible block.
-        # @param [String] library_name must match the gem specification name of the instrumented library
-        def library_name(library_name = nil)
-          @library_name ||= library_name
+        # @param [String] instrumented_library_name must match the gem specification name of the instrumented library
+        def instrumented_library_name(instrumented_library_name = nil)
+          @instrumented_library_name ||= instrumented_library_name
         end
 
         # The install block for this instrumentation. This will be where you install
@@ -194,7 +194,7 @@ module OpenTelemetry
         end
 
         def instance
-          @instance ||= new(instrumentation_name, instrumentation_version, library_name, install_blk,
+          @instance ||= new(instrumentation_name, instrumentation_version, instrumented_library_name, install_blk,
                             present_blk, compatible_blk, options)
         end
 
@@ -220,11 +220,11 @@ module OpenTelemetry
         end
       end
 
-      attr_reader :name, :version, :config, :installed, :tracer, :library_name, :instrumentation_gem_name
+      attr_reader :name, :version, :config, :installed, :tracer, :instrumented_library_name, :instrumentation_gem_name
 
       alias installed? installed
 
-      def initialize(name, version, library_name, install_blk, present_blk,
+      def initialize(name, version, instrumented_library_name, install_blk, present_blk,
                      compatible_blk, options)
         @name = name
         @version = version
@@ -235,8 +235,8 @@ module OpenTelemetry
         @installed = false
         @options = options
         @tracer = OpenTelemetry::Trace::Tracer.new
-        @library_name = library_name
-        @instrumentation_gem_name = @library_name.nil? ? nil : "opentelemetry-instrumentation-#{@library_name}"
+        @instrumented_library_name = instrumented_library_name
+        @instrumentation_gem_name = @instrumented_library_name.nil? ? nil : "opentelemetry-instrumentation-#{@instrumented_library_name}"
       end
 
       # Install instrumentation with the given config. The present? and compatible?
@@ -275,9 +275,9 @@ module OpenTelemetry
       #
       # Subclasses are compatible by default unless they specify
       # - a custom compatible block
-      # - a `library_name` use to compare gemspecs
+      # - a `instrumented_library_name` use to compare gemspecs
       def compatible?
-        return true unless @compatible_blk || library_name
+        return true unless @compatible_blk || instrumented_library_name
 
         if @compatible_blk
           instance_exec(&@compatible_blk)
@@ -300,7 +300,7 @@ module OpenTelemetry
 
       private
 
-      # EXPERIMENTAL: Checks compatability of `library_name` against the `development_dependency` declared in instrumentations gemspec
+      # EXPERIMENTAL: Checks compatability of `instrumented_library_name` against the `development_dependency` declared in instrumentations gemspec
       #
       # This method will first search `Gem.loaded_specs` to locate gemspecs that have already been required by RubyGems or Bundler.
       # In the case the gems were not loaded, or do not use RubyGems/Bundler, it will fallback to searching for installed gems via `Gem::Specification.find_by_name`.
@@ -311,9 +311,9 @@ module OpenTelemetry
       # rubocop:disable Metrics/AbcSize
       def compatible_version?
         instrumentation_spec = Gem.loaded_specs.fetch(instrumentation_gem_name) { Gem::Specification.find_by_name(instrumentation_gem_name) }
-        library_spec = Gem.loaded_specs.fetch(library_name) { Gem::Specification.find_by_name(library_name) }
+        library_spec = Gem.loaded_specs.fetch(instrumented_library_name) { Gem::Specification.find_by_name(instrumented_library_name) }
 
-        dependency = instrumentation_spec.development_dependencies.find { |spec| spec.name == library_name }
+        dependency = instrumentation_spec.development_dependencies.find { |spec| spec.name == instrumented_library_name }
         dependency&.requirement&.satisfied_by?(library_spec&.version) == true
       rescue Gem::MissingSpecError => e
         OpenTelemetry.handle_error(message: 'Instrumentation Compatibility Check Error', exception: e)

@@ -129,11 +129,11 @@ describe OpenTelemetry::Instrumentation::Base do
         Class.new(OpenTelemetry::Instrumentation::Base) do
           instrumentation_name 'OpenTelemetry::Instrumentation::Example::Instrumentation'
           instrumentation_version '0.0.1'
-          library_name 'example'
+          instrumented_library_name 'example'
         end
       end
 
-      let(:library_name) do
+      let(:instrumented_library_name) do
         'example'
       end
 
@@ -142,13 +142,13 @@ describe OpenTelemetry::Instrumentation::Base do
       end
 
       let(:instrumentation_gem_name) do
-        "opentelemetry-instrumentation-#{library_name}"
+        "opentelemetry-instrumentation-#{instrumented_library_name}"
       end
 
       describe 'when comparing gemspecs' do
         let(:library_gem_spec) do
           Gem::Specification.new do |spec|
-            spec.name = library_name
+            spec.name = instrumented_library_name
             spec.version = library_gem_spec_version
           end
         end
@@ -156,14 +156,14 @@ describe OpenTelemetry::Instrumentation::Base do
         let(:instrumentation_gem_spec) do
           Gem::Specification.new do |spec|
             spec.name = instrumentation_gem_name
-            spec.add_development_dependency library_name, '~> 1.1', '< 1.3.9'
+            spec.add_development_dependency instrumented_library_name, '~> 1.1', '< 1.3.9'
           end
         end
 
         let(:loaded_specs) do
           {
             instrumentation_gem_name => instrumentation_gem_spec,
-            library_name => library_gem_spec
+            instrumented_library_name => library_gem_spec
           }
         end
 
