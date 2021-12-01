@@ -58,34 +58,26 @@
       </div>
 
       <div id="content"><div id='filecontents'>
-<h1 id="label-Release+History-3A+opentelemetry-instrumentation-sidekiq">Release History: opentelemetry-instrumentation-sidekiq</h1>
+<h1 id="label-Release+History-3A+opentelemetry-instrumentation-sinatra">Release History: opentelemetry-instrumentation-sinatra</h1>
 
-<h3 id="label-v0.20.1+-2F+2021-09-29">v0.20.1 / 2021-09-29</h3>
+<h3 id="label-v0.19.3+-2F+2021-12-01">v0.19.3 / 2021-12-01</h3>
 <ul><li>
-<p>(No significant changes)</p>
+<p>FIXED: Sinatra to stop using api env getter</p>
 </li></ul>
 
-<h3 id="label-v0.20.0+-2F+2021-08-18">v0.20.0 / 2021-08-18</h3>
+<h3 id="label-v0.19.2+-2F+2021-09-29">v0.19.2 / 2021-09-29</h3>
 <ul><li>
-<p>ADDED: Gracefully flush provider on sidekiq shutdown event</p>
+<p>(No significant changes)</p>
 </li></ul>
 
 <h3 id="label-v0.19.1+-2F+2021-08-12">v0.19.1 / 2021-08-12</h3>
 <ul><li>
-<p>(No significant changes)</p>
+<p>DOCS: Update docs to rely more on environment variable configuration</p>
 </li></ul>
 
 <h3 id="label-v0.19.0+-2F+2021-06-23">v0.19.0 / 2021-06-23</h3>
 <ul><li>
-<p>BREAKING CHANGE: Sidekiq propagation config</p>
-</li><li>
-<p>Config option enable_job_class_span_names renamed to span_naming and now expects a symbol of value :job_class, or :queue</p>
-</li><li>
-<p>The default behaviour is no longer to have one continuous trace for the enqueue and process spans, using links is the new default. To maintain the previous behaviour the config option propagation_style must be set to :child.</p>
-</li><li>
 <p>BREAKING CHANGE: Total order constraint on span.status=</p>
-</li><li>
-<p>FIXED: Sidekiq propagation config</p>
 </li><li>
 <p>FIXED: Total order constraint on span.status=</p>
 </li></ul>
@@ -94,18 +86,16 @@
 <ul><li>
 <p>ADDED: Updated API depedency for 1.0.0.rc1</p>
 </li><li>
-<p>TEST: update test for redis instrumentation refactor <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/760">#760</a></p>
-</li><li>
 <p>BREAKING CHANGE: Remove optional parent_context from in_span</p>
 </li><li>
 <p>FIXED: Remove optional parent_context from in_span</p>
 </li><li>
-<p>FIXED: Instrument Redis more thoroughly by patching Client#process.</p>
+<p>FIXED: Removed http.status_text attribute #750</p>
 </li></ul>
 
 <h3 id="label-v0.17.0+-2F+2021-04-22">v0.17.0 / 2021-04-22</h3>
 <ul><li>
-<p>ADDED: Accept config for sidekiq peer service attribute</p>
+<p>(No significant changes)</p>
 </li></ul>
 
 <h3 id="label-v0.16.0+-2F+2021-03-17">v0.16.0 / 2021-03-17</h3>
@@ -117,7 +107,7 @@
 
 <h3 id="label-v0.15.0+-2F+2021-02-18">v0.15.0 / 2021-02-18</h3>
 <ul><li>
-<p>ADDED: Add instrumentation config validation</p>
+<p>(No significant changes)</p>
 </li></ul>
 
 <h3 id="label-v0.14.0+-2F+2021-02-03">v0.14.0 / 2021-02-03</h3>
@@ -129,11 +119,7 @@
 
 <h3 id="label-v0.13.0+-2F+2021-01-29">v0.13.0 / 2021-01-29</h3>
 <ul><li>
-<p>ADDED: Instrument sidekiq background work</p>
-</li><li>
-<p>FIXED: Adjust Sidekiq middlewares to match semantic conventions</p>
-</li><li>
-<p>FIXED: Set minimum compatible version and use untraced helper</p>
+<p>(No significant changes)</p>
 </li></ul>
 
 <h3 id="label-v0.12.0+-2F+2020-12-24">v0.12.0 / 2020-12-24</h3>
@@ -160,14 +146,19 @@
 
 <h3 id="label-v0.8.0+-2F+2020-10-27">v0.8.0 / 2020-10-27</h3>
 <ul><li>
-<p>(No significant changes)</p>
+<p>BREAKING CHANGE: Remove &#39;canonical&#39; from status codes</p>
+</li><li>
+<p>FIXED: Remove &#39;canonical&#39; from status codes</p>
+</li></ul>
+
+<h3 id="label-v0.7.1+-2F+2020-10-08">v0.7.1 / 2020-10-08</h3>
+<ul><li>
+<p>FIXED: Set span name to sinatra.route</p>
 </li></ul>
 
 <h3 id="label-v0.7.0+-2F+2020-10-07">v0.7.0 / 2020-10-07</h3>
 <ul><li>
-<p>DOCS: Adding README for Sidekiq instrumentation</p>
-</li><li>
-<p>DOCS: Remove duplicate reference in Sidekiq README</p>
+<p>FIXED: Default to sinatra.route for span name</p>
 </li><li>
 <p>DOCS: Standardize toplevel docs structure and readme</p>
 </li></ul>
@@ -179,7 +170,7 @@
 </div></div>
 
       <div id="footer">
-  Generated on Wed Dec  1 21:30:44 2021 by
+  Generated on Wed Dec  1 21:30:48 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.27 (ruby-2.7.5).
 </div>

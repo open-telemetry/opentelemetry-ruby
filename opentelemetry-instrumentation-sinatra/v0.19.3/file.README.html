@@ -28,7 +28,7 @@
   </head>
   <body>
     <div class="nav_wrap">
-      <iframe id="nav" src="class_list.html?1"></iframe>
+      <iframe id="nav" src="file_list.html?1"></iframe>
       <div id="resizer"></div>
     </div>
 
@@ -58,25 +58,35 @@
       </div>
 
       <div id="content"><div id='filecontents'>
-<h1 id="label-OpenTelemetry+Sidekiq+Instrumentation">OpenTelemetry Sidekiq Instrumentation</h1>
+<h1 id="label-Sinatra+Instrumentation">Sinatra Instrumentation</h1>
 
-<p>The Sidekiq instrumentation is a community-maintained instrumentation for the <a href="https://github.com/mperham/sidekiq">Sidekiq</a> Ruby jobs system.</p>
+<p>The Sinatra instrumentation is a community-maintained instrumentation for the <a href="http://sinatrarb.com">Sinatra</a> Web Framework.</p>
 
 <h2 id="label-How+do+I+get+started-3F">How do I get started?</h2>
 
 <p>Install the gem using:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_gem'>gem</span> <span class='id identifier rubyid_install'>install</span> <span class='id identifier rubyid_opentelemetry'>opentelemetry</span><span class='op'>-</span><span class='id identifier rubyid_instrumentation'>instrumentation</span><span class='op'>-</span><span class='id identifier rubyid_sidekiq'>sidekiq</span>
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_gem'>gem</span> <span class='id identifier rubyid_install'>install</span> <span class='id identifier rubyid_opentelemetry'>opentelemetry</span><span class='op'>-</span><span class='id identifier rubyid_instrumentation'>instrumentation</span><span class='op'>-</span><span class='id identifier rubyid_sinatra'>sinatra</span>
 </code></pre>
 
-<p>Or, if you use <a href="https://bundler.io">bundler</a>, include <code>opentelemetry-instrumentation-sidekiq</code> in your <code>Gemfile</code>.</p>
+<p>Or, if you use <a href="https://bundler.io">bundler</a>, include <code>opentelemetry-instrumentation-sinatra</code> to your <code>Gemfile</code>.</p>
 
 <h2 id="label-Usage">Usage</h2>
 
-<p>To use the instrumentation, call <code>use</code> with the name of the instrumentation:</p>
+<p>To install the instrumentation, add the gem to your Gemfile:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'>SDK</span><span class='period'>.</span><span class='id identifier rubyid_configure'>configure</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_c'>c</span><span class='op'>|</span>
-  <span class='id identifier rubyid_c'>c</span><span class='period'>.</span><span class='id identifier rubyid_use'>use</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>OpenTelemetry::Instrumentation::Sidekiq</span><span class='tstring_end'>&#39;</span></span>
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_gem'>gem</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>opentelemetry-instrumentation-sinatra</span><span class='tstring_end'>&#39;</span></span>
+</code></pre>
+
+<p>Then call <code>use</code> with the name of the instrumentation:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>rubygems</span><span class='tstring_end'>&#39;</span></span>
+<span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>bundler/setup</span><span class='tstring_end'>&#39;</span></span>
+
+<span class='const'>Bundler</span><span class='period'>.</span><span class='id identifier rubyid_require'>require</span>
+
+<span class='const'><span class='object_link'><a href="OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'>SDK</span><span class='period'>.</span><span class='id identifier rubyid_configure'>configure</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_c'>c</span><span class='op'>|</span>
+  <span class='id identifier rubyid_c'>c</span><span class='period'>.</span><span class='id identifier rubyid_use'>use</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>OpenTelemetry::Instrumentation::Sinatra</span><span class='tstring_end'>&#39;</span></span>
 <span class='kw'>end</span>
 </code></pre>
 
@@ -87,30 +97,19 @@
 <span class='kw'>end</span>
 </code></pre>
 
-<h2 id="label-Examples">Examples</h2>
-
-<p>Example usage can be seen in the <code>./example/sidekiq.rb</code> file <a href="https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/sidekiq/example/sidekiq.rb">here</a></p>
-
-<h2 id="label-Development">Development</h2>
-
-<p>You&#39;ll need Redis installed locally to run the test suite. Once you&#39;ve installed it, it will start and stop automatically when you run <code>rake</code>.</p>
-
-<pre class="code ruby"><code class="ruby">redis-server test/redis.conf
-</code></pre>
-
 <h2 id="label-How+can+I+get+involved-3F">How can I get involved?</h2>
 
-<p>The <code>opentelemetry-instrumentation-sidekiq</code> gem source is <a href="https://github.com/open-telemetry/opentelemetry-ruby">on github</a>, along with related gems including <code>opentelemetry-api</code> and <code>opentelemetry-sdk</code>.</p>
+<p>The <code>opentelemetry-instrumentation-sinatra</code> gem source is <a href="https://github.com/open-telemetry/opentelemetry-ruby">on github</a>, along with related gems including <code>opentelemetry-api</code> and <code>opentelemetry-sdk</code>.</p>
 
 <p>The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us in <a href="https://github.com/open-telemetry/opentelemetry-ruby/discussions">GitHub Discussions</a> or attending our weekly meeting. See the <a href="https://github.com/open-telemetry/community#community-meetings">meeting calendar</a> for dates and times. For more information on this and other language SIGs, see the OpenTelemetry <a href="https://github.com/open-telemetry/community#ruby-sig">community page</a>.</p>
 
 <h2 id="label-License">License</h2>
 
-<p>The <code>opentelemetry-instrumentation-sidekiq</code> gem is distributed under the Apache 2.0 license. See <a href="https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE">LICENSE</a> for more information.</p>
+<p>The <code>opentelemetry-instrumentation-sinatra</code> gem is distributed under the Apache 2.0 license. See <a href="https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE">LICENSE</a> for more information.</p>
 </div></div>
 
       <div id="footer">
-  Generated on Wed Dec  1 21:30:43 2021 by
+  Generated on Wed Dec  1 21:30:48 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.27 (ruby-2.7.5).
 </div>
