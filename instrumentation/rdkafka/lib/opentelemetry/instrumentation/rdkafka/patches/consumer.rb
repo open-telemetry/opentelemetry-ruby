@@ -51,10 +51,6 @@ module OpenTelemetry
                 links.compact!
 
                 tracer.in_span('batch process', attributes: attributes, links: links, kind: :consumer) do |span|
-                  if error
-                    span.record_exception(error)
-                    span.status = OpenTelemetry::Trace::Status.error("Unhandled exception of type: #{e.class}") 
-                  end
                   yield messages, error
                 end
               end
