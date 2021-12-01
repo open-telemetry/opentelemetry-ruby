@@ -68,7 +68,7 @@ module OpenTelemetry
             original_env = env.dup
             extracted_context = OpenTelemetry.propagation.extract(
               env,
-              getter: OpenTelemetry::Context::Propagation.rack_env_getter
+              getter: OpenTelemetry::Common::Propagation.rack_env_getter
             )
             frontend_context = create_frontend_span(env, extracted_context)
 
@@ -107,9 +107,7 @@ module OpenTelemetry
 
             span = tracer.start_span('http_server.proxy',
                                      with_parent: extracted_context,
-                                     attributes: {
-                                       'start_time' => request_start_time.to_f
-                                     },
+                                     start_timestamp: request_start_time,
                                      kind: :server)
 
             OpenTelemetry::Trace.context_with_span(span, parent_context: extracted_context)
