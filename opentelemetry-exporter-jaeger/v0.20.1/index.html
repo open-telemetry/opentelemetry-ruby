@@ -138,7 +138,7 @@
 
 <p>The collector exporter can be configured explicitly in code, as shown above, or via environment variables. The configuration parameters, environment variables, and defaults are shown below.</p>
 
-<p>| Parameter | Environment variable | Default | | —————— | ———————————————- | ————————– | | <code>endpoint:</code> | <code>OTEL_EXPORTER_JAEGER_ENDPOINT</code> | <code>&quot;http://localhost:14268&quot;</code> | | <code>username:</code> | <code>OTEL_EXPORTER_JAEGER_USER</code> | <code>nil</code> | | <code>password:</code> | <code>OTEL_EXPORTER_JAEGER_PASSWORD</code> | <code>nil</code> | | <code>ssl_verify_mode:</code> | <code>OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_PEER</code> or | <code>OpenSSL::SSL:VERIFY_PEER</code> | | | <code>OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_NONE</code> | |</p>
+<p>| Parameter | Environment variable | Default | | —————— | ———————————————- | ————————– | | <code>endpoint:</code> | <code>OTEL_EXPORTER_JAEGER_ENDPOINT</code> | <code>&quot;http://localhost:14268/api/traces&quot;</code> | | <code>username:</code> | <code>OTEL_EXPORTER_JAEGER_USER</code> | <code>nil</code> | | <code>password:</code> | <code>OTEL_EXPORTER_JAEGER_PASSWORD</code> | <code>nil</code> | | <code>ssl_verify_mode:</code> | <code>OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_PEER</code> or | <code>OpenSSL::SSL:VERIFY_PEER</code> | | | <code>OTEL_RUBY_EXPORTER_JAEGER_SSL_VERIFY_NONE</code> | |</p>
 
 <p><code>ssl_verify_mode:</code> parameter values should be flags for server certificate verification: <code>OpenSSL::SSL:VERIFY_PEER</code> and <code>OpenSSL::SSL:VERIFY_NONE</code> are acceptable. These values can also be set using the appropriately named environment variables as shown where <code>VERIFY_PEER</code> will take precedence over <code>VERIFY_NONE</code>. Please see <a href="https://ruby-doc.org/stdlib-2.5.1/libdoc/net/http/rdoc/Net/HTTP.html#verify_mode">the Net::HTTP docs</a> for more information about these flags.</p>
 
@@ -154,9 +154,9 @@
 </div></div>
 
       <div id="footer">
-  Generated on Thu Sep 30 15:13:27 2021 by
+  Generated on Wed Dec  1 21:28:02 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-2.7.4).
+  0.9.27 (ruby-2.7.5).
 </div>
 
     </div>
