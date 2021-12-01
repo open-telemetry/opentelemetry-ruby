@@ -33,7 +33,7 @@ delivery_handles.each(&:wait)
 consumer_config = {
   :"bootstrap.servers" => server,
   :"group.id" => "ruby-test",
-  "auto.offset.reset": 'smallest',
+  :"auto.offset.reset" => 'smallest',
 }
 consumer = Rdkafka::Config.new(consumer_config).consumer
 consumer.subscribe("ruby-test-topic-#{rand_hash}")
