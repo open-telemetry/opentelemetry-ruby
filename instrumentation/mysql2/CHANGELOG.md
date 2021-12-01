@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
+### v0.20.0 / 2021-12-01
+
+* ADDED: Add default options config helper + env var config option support 
+
 ### v0.19.1 / 2021-09-29
 
 * (No significant changes)

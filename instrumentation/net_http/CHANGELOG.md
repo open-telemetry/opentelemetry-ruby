@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.19.3 / 2021-12-01
+
+* FIXED: Change net attribute names to match the semantic conventions spec for http 
+
 ### v0.19.2 / 2021-09-29
 
 * (No significant changes)

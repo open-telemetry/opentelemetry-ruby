@@ -1,5 +1,9 @@
 # Release History: opentelemetry-api
 
+### v1.0.1 / 2021-12-01
+
+* FIXED: Deprecate api rack env getter 
+
 ### v1.0.0 / 2021-09-29
 
 * (No significant changes)
