@@ -58,35 +58,77 @@
       </div>
 
       <div id="content"><div id='filecontents'>
-<h1 id="label-Release+History-3A+opentelemetry-instrumentation-active_model_serializers">Release History: opentelemetry-instrumentation-active_model_serializers</h1>
+<h1 id="label-Release+History-3A+opentelemetry-instrumentation-all">Release History: opentelemetry-instrumentation-all</h1>
 
-<h3 id="label-v0.18.3+-2F+2021-09-29">v0.18.3 / 2021-09-29</h3>
+<h3 id="label-v0.22.0+-2F+2021-12-01">v0.22.0 / 2021-12-01</h3>
+<ul><li>
+<p>ADDED: Move activesupport notification subsciber out of action_view gem</p>
+</li></ul>
+
+<h3 id="label-v0.21.3+-2F+2021-10-07">v0.21.3 / 2021-10-07</h3>
 <ul><li>
 <p>(No significant changes)</p>
 </li></ul>
 
-<h3 id="label-v0.18.2+-2F+2021-08-12">v0.18.2 / 2021-08-12</h3>
+<h3 id="label-v0.21.2+-2F+2021-09-29">v0.21.2 / 2021-09-29</h3>
 <ul><li>
 <p>(No significant changes)</p>
 </li></ul>
 
-<h3 id="label-v0.18.1+-2F+2021-06-23">v0.18.1 / 2021-06-23</h3>
+<h3 id="label-v0.21.1+-2F+2021-09-29">v0.21.1 / 2021-09-29</h3>
 <ul><li>
 <p>(No significant changes)</p>
+</li></ul>
+
+<h3 id="label-v0.21.0+-2F+2021-09-15">v0.21.0 / 2021-09-15</h3>
+<ul><li>
+<p>ADDED: Add Que instrumentation</p>
+</li></ul>
+
+<h3 id="label-v0.20.2+-2F+2021-09-09">v0.20.2 / 2021-09-09</h3>
+<ul><li>
+<p>(No significant changes)</p>
+</li></ul>
+
+<h3 id="label-v0.20.1+-2F+2021-08-18">v0.20.1 / 2021-08-18</h3>
+<ul><li>
+<p>FIXED: Instrumentation all sidekiq</p>
+</li></ul>
+
+<h3 id="label-v0.20.0+-2F+2021-08-12">v0.20.0 / 2021-08-12</h3>
+<ul><li>
+<p>ADDED: Instrument active record</p>
+</li><li>
+<p>ADDED: Add ActionView instrumentation via ActiveSupport::Notifications</p>
+</li></ul>
+
+<h3 id="label-v0.19.0+-2F+2021-06-25">v0.19.0 / 2021-06-25</h3>
+<ul><li>
+<p>ADDED: Add resque instrumentation</p>
+</li><li>
+<p>ADDED: Add ActiveJob instrumentation</p>
+</li><li>
+<p>ADDED: Configuration option to enable or disable redis root spans <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/777">#777</a></p>
+</li><li>
+<p>FIXED: Broken instrumentation all release</p>
 </li></ul>
 
 <h3 id="label-v0.18.0+-2F+2021-05-21">v0.18.0 / 2021-05-21</h3>
 <ul><li>
-<p>ADDED: Updated API depedency for 1.0.0.rc1</p>
+<p>ADDED: Add koala instrumentation</p>
 </li></ul>
 
 <h3 id="label-v0.17.0+-2F+2021-04-22">v0.17.0 / 2021-04-22</h3>
 <ul><li>
-<p>FIXED: Refactor propagators to add #fields</p>
+<p>ADDED: Add instrumentation for postgresql (pg gem)</p>
 </li></ul>
 
 <h3 id="label-v0.16.0+-2F+2021-03-17">v0.16.0 / 2021-03-17</h3>
 <ul><li>
+<p>ADDED: Instrument http gem</p>
+</li><li>
+<p>ADDED: Instrument lmdb gem</p>
+</li><li>
 <p>FIXED: Example scripts now reference local common lib</p>
 </li><li>
 <p>DOCS: Replace Gitter with GitHub Discussions</p>
@@ -94,14 +136,12 @@
 
 <h3 id="label-v0.15.0+-2F+2021-02-18">v0.15.0 / 2021-02-18</h3>
 <ul><li>
-<p>(No significant changes)</p>
+<p>ADDED: Instrument http client gem</p>
 </li></ul>
 
 <h3 id="label-v0.14.0+-2F+2021-02-03">v0.14.0 / 2021-02-03</h3>
 <ul><li>
-<p>BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators</p>
-</li><li>
-<p>ADDED: Replace getter and setter callables and remove rack specific propagators</p>
+<p>(No significant changes)</p>
 </li></ul>
 
 <h3 id="label-v0.13.0+-2F+2021-01-29">v0.13.0 / 2021-01-29</h3>
@@ -109,9 +149,14 @@
 <p>(No significant changes)</p>
 </li></ul>
 
+<h3 id="label-v0.12.1+-2F+2021-01-13">v0.12.1 / 2021-01-13</h3>
+<ul><li>
+<p>ADDED: Instrument RubyKafka</p>
+</li></ul>
+
 <h3 id="label-v0.12.0+-2F+2020-12-24">v0.12.0 / 2020-12-24</h3>
 <ul><li>
-<p>(No significant changes)</p>
+<p>ADDED: Instrument graphql</p>
 </li></ul>
 
 <h3 id="label-v0.11.0+-2F+2020-12-11">v0.11.0 / 2020-12-11</h3>
@@ -119,24 +164,34 @@
 <p>FIXED: Copyright comments to not reference year</p>
 </li></ul>
 
-<h3 id="label-v0.10.1+-2F+2020-12-09">v0.10.1 / 2020-12-09</h3>
+<h3 id="label-v0.10.0+-2F+2020-12-03">v0.10.0 / 2020-12-03</h3>
 <ul><li>
-<p>FIXED: Active_model_serializers installer</p>
+<p>FIXED: Otel-instrumentation-all not installing all</p>
 </li></ul>
 
-<h3 id="label-v0.10.0+-2F+2020-12-03">v0.10.0 / 2020-12-03</h3>
+<h3 id="label-v0.9.0+-2F+2020-11-27">v0.9.0 / 2020-11-27</h3>
+<ul><li>
+<p>ADDED: Add common helpers</p>
+</li></ul>
+
+<h3 id="label-v0.8.0+-2F+2020-10-27">v0.8.0 / 2020-10-27</h3>
 <ul><li>
 <p>(No significant changes)</p>
 </li></ul>
 
-<h3 id="label-v0.9.0+-2F+2020-11-03">v0.9.0 / 2020-11-03</h3>
+<h3 id="label-v0.7.0+-2F+2020-10-07">v0.7.0 / 2020-10-07</h3>
 <ul><li>
-<p>Initial release of Active Model Serializers instrumenter (ported from Datadog)</p>
+<p>DOCS: Standardize toplevel docs structure and readme</p>
+</li></ul>
+
+<h3 id="label-v0.6.0+-2F+2020-09-10">v0.6.0 / 2020-09-10</h3>
+<ul><li>
+<p>Now depends on version 0.6.x of all the individual instrumentation gems.</p>
 </li></ul>
 </div></div>
 
       <div id="footer">
-  Generated on Wed Dec  1 21:28:22 2021 by
+  Generated on Wed Dec  1 21:28:27 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.27 (ruby-2.7.5).
 </div>
