@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.20.1 / 2021-12-01
+
+* FIXED: [Instruentation Rack] Log content type http header 
+* FIXED: Use monotonic clock where possible 
+* FIXED: Rack to stop using api env getter 
+
 ### v0.20.0 / 2021-10-06
 
 * FIXED: Prevent high cardinality rack span name as a default [#973](https://github.com/open-telemetry/opentelemetry-ruby/pull/973)

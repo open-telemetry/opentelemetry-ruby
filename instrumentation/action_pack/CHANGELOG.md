@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+### v0.1.3 / 2021-12-01
+
+* FIXED: Instrumentation of Rails 7 
+
 ### v0.1.2 / 2021-10-06
 
 * FIXED: Prevent high cardinality rack span name as a default 
