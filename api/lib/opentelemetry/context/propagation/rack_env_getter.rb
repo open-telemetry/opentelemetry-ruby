@@ -19,8 +19,6 @@ module OpenTelemetry
         # Converts key into a rack-normalized key and reads it from the carrier.
         # Useful for extract operations.
         def get(carrier, key)
-          OpenTelemetry.logger.warn('OpenTelemetry::Context::Propagation::RackEnvGetter has been deprecated \
-            use OpenTelemetry::Common::Propagation::RackEnvGetter from the opentelemetry-common gem instead.')
           carrier[to_rack_key(key)] || carrier[key]
         end
 
@@ -28,8 +26,6 @@ module OpenTelemetry
         # form to the original. The resulting keys will be lowercase and
         # underscores will be replaced with dashes.
         def keys(carrier)
-          OpenTelemetry.logger.warn('OpenTelemetry::Context::Propagation::RackEnvGetter has been deprecated \
-            use OpenTelemetry::Common::Propagation::RackEnvGetter from the opentelemetry-common gem instead.')
           carrier.keys.map(&method(:from_rack_key))
         end
 
