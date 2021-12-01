@@ -38,10 +38,17 @@ def prepare_que
     host: ENV.fetch('TEST_POSTGRES_HOST', '127.0.0.1'),
     port: ENV.fetch('TEST_POSTGRES_PORT', '5432'),
     user: ENV.fetch('TEST_POSTGRES_USER', 'postgres'),
-    database: ENV.fetch('TEST_POSTGRES_DB', 'postgres'),
+    database: database_name,
     password: ENV.fetch('TEST_POSTGRES_PASSWORD', 'postgres')
   )
 
   Que.connection = ActiveRecord
   Que.migrate!(version: 4)
+
+  # Make sure the que_jobs table is empty before running tests.
+  ActiveRecord::Base.connection.execute('TRUNCATE que_jobs')
+end
+
+def database_name
+  ENV.fetch('TEST_POSTGRES_DB', 'postgres')
 end

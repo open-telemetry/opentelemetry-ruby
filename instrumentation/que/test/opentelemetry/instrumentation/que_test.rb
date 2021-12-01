@@ -5,16 +5,19 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'test_helper'
+require 'opentelemetry-instrumentation-pg'
 
 require_relative '../../../lib/opentelemetry/instrumentation/que/instrumentation'
 
 describe OpenTelemetry::Instrumentation::Que do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Que::Instrumentation.instance }
+  let(:pg_instrumentation) { OpenTelemetry::Instrumentation::PG::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:config) { { propagation_style: :link } }
 
   before do
     prepare_que
+    pg_instrumentation.install
     instrumentation.install
     instrumentation.instance_variable_set(:@config, config)
     exporter.reset
@@ -24,23 +27,23 @@ describe OpenTelemetry::Instrumentation::Que do
     it 'creates a span' do
       TestJobAsync.enqueue
 
-      _(exporter.finished_spans.size).must_equal(1)
+      _(finished_spans.size).must_equal(1)
 
-      span = exporter.finished_spans.last
+      span = finished_spans.last
       _(span.kind).must_equal(:producer)
     end
 
     it 'names the created span' do
       TestJobAsync.enqueue
 
-      span = exporter.finished_spans.last
+      span = finished_spans.last
       _(span.name).must_equal('TestJobAsync send')
     end
 
     it 'records attributes' do
       TestJobAsync.enqueue
 
-      attributes = exporter.finished_spans.last.attributes
+      attributes = finished_spans.last.attributes
       _(attributes['messaging.system']).must_equal('que')
       _(attributes['messaging.destination']).must_equal('default')
       _(attributes['messaging.destination_kind']).must_equal('queue')
@@ -59,19 +62,19 @@ describe OpenTelemetry::Instrumentation::Que do
     end
 
     it 'creates a span' do
-      _(exporter.finished_spans.size).must_equal(1)
+      _(finished_spans.size).must_equal(1)
 
-      span = exporter.finished_spans.last
+      span = finished_spans.last
       _(span.kind).must_equal(:consumer)
     end
 
     it 'names the created span' do
-      span = exporter.finished_spans.last
+      span = finished_spans.last
       _(span.name).must_equal('TestJobAsync process')
     end
 
     it 'records attributes' do
-      attributes = exporter.finished_spans.last.attributes
+      attributes = finished_spans.last.attributes
       _(attributes['messaging.system']).must_equal('que')
       _(attributes['messaging.destination']).must_equal('default')
       _(attributes['messaging.destination_kind']).must_equal('queue')
@@ -91,7 +94,7 @@ describe OpenTelemetry::Instrumentation::Que do
     end
 
     it 'marks the span as failed' do
-      span = exporter.finished_spans.last
+      span = finished_spans.last
       _(span.status.ok?).must_equal(false)
     end
   end
@@ -103,29 +106,29 @@ describe OpenTelemetry::Instrumentation::Que do
     it 'creates two spans' do
       TestJobSync.enqueue
 
-      _(exporter.finished_spans.size).must_equal(2)
+      _(finished_spans.size).must_equal(2)
 
-      span1 = exporter.finished_spans.last
+      span1 = finished_spans.last
       _(span1.kind).must_equal(:producer)
 
-      span2 = exporter.finished_spans.first
+      span2 = finished_spans.first
       _(span2.kind).must_equal(:consumer)
     end
 
     it 'names the created span' do
       TestJobSync.enqueue
 
-      span1 = exporter.finished_spans.last
+      span1 = finished_spans.last
       _(span1.name).must_equal('TestJobSync send')
 
-      span2 = exporter.finished_spans.first
+      span2 = finished_spans.first
       _(span2.name).must_equal('TestJobSync process')
     end
 
     it 'records attributes' do
       TestJobSync.enqueue
 
-      attributes = exporter.finished_spans.first.attributes
+      attributes = finished_spans.first.attributes
       _(attributes['messaging.system']).must_equal('que')
       _(attributes['messaging.destination']).must_equal('default')
       _(attributes['messaging.destination_kind']).must_equal('queue')
@@ -168,10 +171,10 @@ describe OpenTelemetry::Instrumentation::Que do
         job = TestJobAsync.enqueue
         Que.run_job_middleware(job) { job.tap(&:_run) }
 
-        _(exporter.finished_spans.size).must_equal(2)
+        _(finished_spans.size).must_equal(2)
 
-        send_span = exporter.finished_spans.first
-        process_span = exporter.finished_spans.last
+        send_span = finished_spans.first
+        process_span = finished_spans.last
 
         _(send_span.trace_id).wont_equal(process_span.trace_id)
 
@@ -188,10 +191,10 @@ describe OpenTelemetry::Instrumentation::Que do
         job = TestJobAsync.enqueue
         Que.run_job_middleware(job) { job.tap(&:_run) }
 
-        _(exporter.finished_spans.size).must_equal(2)
+        _(finished_spans.size).must_equal(2)
 
-        send_span = exporter.finished_spans.first
-        process_span = exporter.finished_spans.last
+        send_span = finished_spans.first
+        process_span = finished_spans.last
 
         _(send_span.trace_id).must_equal(process_span.trace_id)
         _(process_span.parent_span_id).must_equal(send_span.span_id)
@@ -218,10 +221,10 @@ describe OpenTelemetry::Instrumentation::Que do
         job = TestJobAsync.enqueue
         Que.run_job_middleware(job) { job.tap(&:_run) }
 
-        _(exporter.finished_spans.size).must_equal(2)
+        _(finished_spans.size).must_equal(2)
 
-        send_span = exporter.finished_spans.first
-        process_span = exporter.finished_spans.last
+        send_span = finished_spans.first
+        process_span = finished_spans.last
 
         _(send_span.trace_id).wont_equal(process_span.trace_id)
         _(send_span.total_recorded_links).must_equal(0)
@@ -230,8 +233,61 @@ describe OpenTelemetry::Instrumentation::Que do
     end
   end
 
+  describe 'que poller' do
+    describe 'when trace_poller is enabled' do
+      let(:config) { { trace_poller: true } }
+
+      it 'traces calls to Que::Poller#poll' do
+        spans = run_one_locker_cycle
+        spans = spans.sort_by(&:name)
+
+        root_span = spans.detect { |span| span.name == 'Que::Poller#poll' }
+        _(root_span.parent_span_id).must_equal(OpenTelemetry::Trace::INVALID_SPAN_ID)
+
+        other_spans = spans - [root_span]
+        _(other_spans.count.positive?).must_equal(true)
+
+        other_spans.each do |other_span|
+          _(other_span.parent_span_id).must_equal(root_span.span_id)
+        end
+      end
+    end
+
+    describe 'when trace_poller is disabled' do
+      let(:config) { { trace_poller: false } }
+
+      it 'does not create any spans' do
+        spans = run_one_locker_cycle
+        _(spans).must_equal([])
+      end
+    end
+  end
+
+  def finished_spans(include_pg: false)
+    if include_pg
+      exporter.finished_spans
+    else
+      exporter.finished_spans.reject { |span| span.name =~ /#{database_name}/ }
+    end
+  end
+
   def last_record_in_database
     require 'que/active_record/model'
     Que::ActiveRecord::Model.last
+  end
+
+  def run_one_locker_cycle
+    poll_interval = 0.1 # in seconds
+    locker = Que::Locker.new(poll_interval: poll_interval, wait_period: 0.001)
+
+    # Clear all the startup spans
+    sleep 0.05
+    exporter.reset
+
+    sleep poll_interval
+    finished_spans = finished_spans(include_pg: true)
+    locker.stop!
+
+    finished_spans
   end
 end unless ENV['OMIT_SERVICES']
