@@ -346,7 +346,7 @@
       <span class='ivar'>@otel_span</span><span class='period'>.</span><span class='id identifier rubyid_status'>status</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'>Trace</span><span class='op'>::</span><span class='const'>Status</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span> <span class='kw'>unless</span> <span class='lparen'>(</span><span class='int'>100</span><span class='op'>..</span><span class='int'>399</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_response_code'>response_code</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='rparen'>)</span>
     <span class='kw'>end</span>
   <span class='kw'>ensure</span>
-    <span class='ivar'>@otel_span</span><span class='period'>.</span><span class='id identifier rubyid_finish'>finish</span>
+    <span class='ivar'>@otel_span</span><span class='op'>&amp;.</span><span class='id identifier rubyid_finish'>finish</span>
     <span class='ivar'>@otel_span</span> <span class='op'>=</span> <span class='kw'>nil</span>
   <span class='kw'>end</span>
   <span class='kw'>super</span>
@@ -605,9 +605,9 @@
 </div>
 
       <div id="footer">
-  Generated on Thu Sep 30 15:14:21 2021 by
+  Generated on Wed Dec  1 21:28:50 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-2.7.4).
+  0.9.27 (ruby-2.7.5).
 </div>
 
     </div>
