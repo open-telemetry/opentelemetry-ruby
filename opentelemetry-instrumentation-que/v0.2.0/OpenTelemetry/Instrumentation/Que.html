@@ -4,7 +4,7 @@
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>
-  Module: OpenTelemetry::Instrumentation::PG
+  Module: OpenTelemetry::Instrumentation::Que
   
     &mdash; OpenTelemetry
   
@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="../../css/common.css" type="text/css" />
 
 <script type="text/javascript">
-  pathId = "OpenTelemetry::Instrumentation::PG";
+  pathId = "OpenTelemetry::Instrumentation::Que";
   relpath = '../../';
 </script>
 
@@ -36,10 +36,10 @@
       <div id="header">
         <div id="menu">
   
-    <a href="../../_index.html">Index (P)</a> &raquo;
+    <a href="../../_index.html">Index (Q)</a> &raquo;
     <span class='title'><span class='object_link'><a href="../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Instrumentation.html" title="OpenTelemetry::Instrumentation (module)">Instrumentation</a></span></span>
      &raquo; 
-    <span class="title">PG</span>
+    <span class="title">Que</span>
   
 </div>
 
@@ -59,7 +59,7 @@
         <div class="clear"></div>
       </div>
 
-      <div id="content"><h1>Module: OpenTelemetry::Instrumentation::PG
+      <div id="content"><h1>Module: OpenTelemetry::Instrumentation::Que
   
   
   
@@ -78,8 +78,8 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/opentelemetry/instrumentation/pg.rb<span class="defines">,<br />
-  lib/opentelemetry/instrumentation/pg/version.rb,<br /> lib/opentelemetry/instrumentation/pg/constants.rb,<br /> lib/opentelemetry/instrumentation/pg/lru_cache.rb,<br /> lib/opentelemetry/instrumentation/pg/instrumentation.rb,<br /> lib/opentelemetry/instrumentation/pg/patches/connection.rb</span>
+    <dd>lib/opentelemetry/instrumentation/que.rb<span class="defines">,<br />
+  lib/opentelemetry/instrumentation/que/version.rb,<br /> lib/opentelemetry/instrumentation/que/tag_setter.rb,<br /> lib/opentelemetry/instrumentation/que/patches/poller.rb,<br /> lib/opentelemetry/instrumentation/que/instrumentation.rb,<br /> lib/opentelemetry/instrumentation/que/patches/que_job.rb,<br /> lib/opentelemetry/instrumentation/que/middlewares/server_middleware.rb</span>
 </dd>
   </dl>
   
@@ -88,7 +88,7 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     
-<p>Contains the OpenTelemetry instrumentation for the Pg gem</p>
+<p>Contains the OpenTelemetry instrumentation for the Que gem</p>
 
 
   </div>
@@ -100,11 +100,11 @@
 <p class="children">
   
     
-      <strong class="modules">Modules:</strong> <span class='object_link'><a href="PG/Constants.html" title="OpenTelemetry::Instrumentation::PG::Constants (module)">Constants</a></span>, <span class='object_link'><a href="PG/Patches.html" title="OpenTelemetry::Instrumentation::PG::Patches (module)">Patches</a></span>
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Que/Middlewares.html" title="OpenTelemetry::Instrumentation::Que::Middlewares (module)">Middlewares</a></span>, <span class='object_link'><a href="Que/Patches.html" title="OpenTelemetry::Instrumentation::Que::Patches (module)">Patches</a></span>
     
   
     
-      <strong class="classes">Classes:</strong> <span class='object_link'><a href="PG/Instrumentation.html" title="OpenTelemetry::Instrumentation::PG::Instrumentation (class)">Instrumentation</a></span>, <span class='object_link'><a href="PG/LruCache.html" title="OpenTelemetry::Instrumentation::PG::LruCache (class)">LruCache</a></span>
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Que/Instrumentation.html" title="OpenTelemetry::Instrumentation::Que::Instrumentation (class)">Instrumentation</a></span>, <span class='object_link'><a href="Que/TagSetter.html" title="OpenTelemetry::Instrumentation::Que::TagSetter (class)">TagSetter</a></span>
     
   
 </p>
@@ -120,7 +120,7 @@
         <dt id="VERSION-constant" class="">VERSION =
           
         </dt>
-        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0.19.1</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0.2.0</span><span class='tstring_end'>&#39;</span></span></pre></dd>
       
     </dl>
   
@@ -136,7 +136,7 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Dec  1 21:29:39 2021 by
+  Generated on Wed Dec  1 21:29:44 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.27 (ruby-2.7.5).
 </div>
