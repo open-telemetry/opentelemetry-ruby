@@ -4,7 +4,6 @@ require 'securerandom'
 gemfile(true) do
   source 'https://rubygems.org'
 
-  gem "ffi"
   gem "rdkafka", '0.10.0'
   gem 'opentelemetry-instrumentation-rdkafka', path: '../'
 end
