@@ -3,6 +3,7 @@
 # Copyright The OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
+def ruby2_keywords(*) end if RUBY_VERSION < '2.7'
 
 module OpenTelemetry
   module Instrumentation
@@ -19,39 +20,39 @@ module OpenTelemetry
 
           # Contains ActiveRecord::Persistence::ClassMethods to be patched
           module ClassMethods
-            def insert(attributes, returning: nil, unique_by: nil)
+            ruby2_keywords def insert(*args)
               tracer.in_span("#{self}.insert") do
-                super
+                super(*args)
               end
             end
 
-            def insert_all(attributes, returning: nil, unique_by: nil)
+            ruby2_keywords def insert_all(*args)
               tracer.in_span("#{self}.insert_all") do
-                super
+                super(*args)
               end
             end
 
-            def insert!(attributes, returning: nil)
+            ruby2_keywords def insert!(*args)
               tracer.in_span("#{self}.insert!") do
-                super
+                super(*args)
               end
             end
 
-            def insert_all!(attributes, returning: nil)
+            ruby2_keywords def insert_all!(*args)
               tracer.in_span("#{self}.insert_all!") do
-                super
+                super(*args)
               end
             end
 
-            def upsert(attributes, returning: nil, unique_by: nil)
+            ruby2_keywords def upsert(*args)
               tracer.in_span("#{self}.upsert") do
-                super
+                super(*args)
               end
             end
 
-            def upsert_all(attributes, returning: nil, unique_by: nil)
+            ruby2_keywords def upsert_all(*args)
               tracer.in_span("#{self}.upsert_all") do
-                super
+                super(*args)
               end
             end
 
