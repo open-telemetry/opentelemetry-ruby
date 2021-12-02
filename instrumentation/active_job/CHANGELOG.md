@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_job
 
+### v0.1.5 / 2021-12-02
+
+* (No significant changes)
+
 ### v0.1.4 / 2021-09-29
 
 * (No significant changes)
