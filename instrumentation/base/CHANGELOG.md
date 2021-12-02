@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-base
 
+### v0.19.0 / 2021-12-01
+
+* ADDED: Add default options config helper + env var config option support 
+
 ### v0.18.3 / 2021-09-29
 
 * (No significant changes)

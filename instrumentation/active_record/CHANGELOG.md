@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_record
 
+### v0.2.2 / 2021-12-01
+
+* FIXED: Add max supported version for active record 
+
 ### v0.2.1 / 2021-09-29
 
 * (No significant changes)

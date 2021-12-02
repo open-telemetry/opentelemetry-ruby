@@ -39,12 +39,14 @@ module OpenTelemetry
         #     direct child of the span that enqueued the job.
         #   - :none - the job's execution will not be explicitly linked to the
         #     span that enqueued the job.
+        # trace_poller: controls whether Que Poller is traced or not.
         #
         # Note that in all cases, we will store Que's Job ID as the
         # `messaging.message_id` attribute, so out-of-band correlation may
         # still be possible depending on your backend system.
         #
         option :propagation_style, default: :link, validate: ->(opt) { %i[link child none].include?(opt) }
+        option :trace_poller,      default: false, validate: :boolean
 
         private
 
@@ -52,6 +54,7 @@ module OpenTelemetry
           require_relative 'tag_setter'
           require_relative 'middlewares/server_middleware'
           require_relative 'patches/que_job'
+          require_relative 'patches/poller'
         end
 
         def gem_version
@@ -60,6 +63,7 @@ module OpenTelemetry
 
         def patch
           ::Que::Job.prepend(Patches::QueJob)
+          ::Que::Poller.prepend(Patches::Poller)
         end
       end
     end
