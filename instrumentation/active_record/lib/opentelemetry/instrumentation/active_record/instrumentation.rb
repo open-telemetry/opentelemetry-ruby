@@ -60,6 +60,7 @@ module OpenTelemetry
         end
 
         def require_dependencies
+          require 'ruby2_keywords'
           require_relative 'patches/querying'
           require_relative 'patches/persistence'
           require_relative 'patches/persistence_class_methods'
