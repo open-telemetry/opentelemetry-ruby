@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sidekiq
 
+### v0.20.2 / 2021-12-02
+
+* (No significant changes)
+
 ### v0.20.1 / 2021-09-29
 
 * (No significant changes)
