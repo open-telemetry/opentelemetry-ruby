@@ -3,8 +3,6 @@
 # Copyright The OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
-def ruby2_keywords(*) end if RUBY_VERSION < '2.7'
-
 module OpenTelemetry
   module Instrumentation
     module ActiveRecord
