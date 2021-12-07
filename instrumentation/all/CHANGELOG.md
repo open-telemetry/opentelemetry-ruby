@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.22.0 / 2021-12-01
+
+* ADDED: Move activesupport notification subsciber out of action_view gem 
+
 ### v0.21.3 / 2021-10-07
 
 * (No significant changes)

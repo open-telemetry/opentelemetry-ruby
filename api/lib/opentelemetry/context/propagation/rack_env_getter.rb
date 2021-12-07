@@ -7,6 +7,9 @@
 module OpenTelemetry
   class Context
     module Propagation
+      # @deprecated Use the rack env getter found in the
+      # opentelemetry-common gem instead.
+
       # The RackEnvGetter class provides a common methods for reading
       # keys from a rack environment. It abstracts away the rack-normalization
       # process so that keys can be looked up without having to transform them

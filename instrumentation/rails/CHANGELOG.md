@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.20.0 / 2021-12-01
+
+* ADDED: Move activesupport notification subsciber out of action_view gem 
+* FIXED: Instrumentation of Rails 7 
+
 ### v0.19.4 / 2021-10-06
 
 * (No significant changes)

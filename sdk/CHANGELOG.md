@@ -1,5 +1,10 @@
 # Release History: opentelemetry-sdk
 
+### v1.0.2 / 2021-12-01
+
+* FIXED: Default span kind 
+* FIXED: Use monotonic clock where possible 
+
 ### v1.0.1 / 2021-10-29
 
 * FIXED: Add unexpected error handlign in BSP and OTLP exporter (#995)
