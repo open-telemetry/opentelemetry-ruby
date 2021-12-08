@@ -26,6 +26,13 @@ module OpenTelemetry
         'write_noop' => 'noop',
         'version' => 'version',
         'send_multiget' => 'getkq',
+        # TODO: add better support for PipelinedGetter
+        # In dalli 3.1, multiget has been refactored to use a more robust PipelinedGetter class.
+        # The `pipelined_get` method has been introduced to the Dalli::Server to support this new class.
+        # If PipelinedGetter makes instrumentation of multi operations easier, we should then migrate
+        # instrumentation to Dalli::Client, since it seems to be a more stable chokepoint.
+        # For now we're just ensuring we support this new Dalli::Server method.
+        'pipelined_get' => 'getkq',
         'append' => 'append',
         'prepend' => 'prepend',
         'stats' => 'stat',
