@@ -47,8 +47,10 @@ end
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Redis', {
     # The obfuscation of arguments in the db.statement attribute is enabled by default.
-    # To disable, set enable_statement_obfuscation to false.
-    enable_statement_obfuscation: true,
+    # To show full query, set db_statement to :include.
+    # To obfuscation, set db_statement to :obfuscate.
+    # To remove tag, set db_statement to :omit
+    db_statement: :include,
   }
 end
 ```
