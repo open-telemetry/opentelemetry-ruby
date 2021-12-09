@@ -20,7 +20,7 @@ module OpenTelemetry
                 'messaging.kafka.offset' => message.offset
               }
 
-              attributes['messaging.kafka.message_key'] = message.key if message.key
+              attributes['messaging.kafka.message_key'] = Utils.encode_message_key(message.key) if message.key
 
               parent_context = OpenTelemetry.propagation.extract(message.headers)
               span_context = OpenTelemetry::Trace.current_span(parent_context).context
