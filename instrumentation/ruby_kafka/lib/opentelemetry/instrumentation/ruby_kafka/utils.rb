@@ -11,12 +11,13 @@ module OpenTelemetry
       module Utils
         module_function
 
-        def encode_message_key(key)
-          return key if key.encoding == Encoding::UTF_8 && key.valid_encoding?
+        def extract_message_key(key)
+          # skip encode if already valid utf8
+          return key if key.nil? || (key.encoding == Encoding::UTF_8 && key.valid_encoding?)
 
           key.encode(Encoding::UTF_8)
         rescue Encoding::UndefinedConversionError
-          key.unpack1('H*')
+          nil
         end
       end
     end

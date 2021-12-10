@@ -19,7 +19,9 @@ module OpenTelemetry
               'messaging.destination_kind' => 'topic'
             }
 
-            attributes['messaging.kafka.message_key'] = Utils.encode_message_key(key) if key
+            message_key = Utils.extract_message_key(key)
+            attributes['messaging.kafka.message_key'] = message_key if message_key
+
             attributes['messaging.kafka.partition'] = partition if partition
 
             tracer.in_span("#{topic} send", attributes: attributes, kind: :producer) do
@@ -37,7 +39,8 @@ module OpenTelemetry
                 'messaging.kafka.partition' => message.partition
               }
 
-              attributes['messaging.kafka.message_key'] = Utils.encode_message_key(message.key) if message.key
+              message_key = Utils.extract_message_key(message.key)
+              attributes['messaging.kafka.message_key'] = message_key if message_key
 
               parent_context = OpenTelemetry.propagation.extract(message.headers)
               OpenTelemetry::Context.with_current(parent_context) do

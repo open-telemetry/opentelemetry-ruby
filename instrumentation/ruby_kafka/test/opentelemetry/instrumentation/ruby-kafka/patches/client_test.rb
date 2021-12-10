@@ -60,11 +60,11 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Client do
     end
 
     send_spans = spans.select { |s| s.name == "#{topic} send" }
-    _(send_spans[0].attributes['messaging.kafka.message_key']).must_equal('af0fef')
+    _(send_spans[0].attributes).wont_include('messaging.kafka.message_key')
     _(send_spans[1].attributes['messaging.kafka.message_key']).must_equal('foobarbaz')
 
     process_spans = spans.select { |s| s.name == "#{topic} process" }
-    _(process_spans[0].attributes['messaging.kafka.message_key']).must_equal('af0fef')
+    _(process_spans[0].attributes).wont_include('messaging.kafka.message_key')
     _(process_spans[1].attributes['messaging.kafka.message_key']).must_equal('foobarbaz')
   end
 end unless ENV['OMIT_SERVICES']

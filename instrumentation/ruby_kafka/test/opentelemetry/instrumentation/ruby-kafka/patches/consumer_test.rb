@@ -110,7 +110,7 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
 
       # First pair for send and process spans
       first_process_span = process_spans[0]
-      _(first_process_span.attributes['messaging.kafka.message_key']).must_equal('af0fef')
+      _(first_process_span.attributes).wont_include('messaging.kafka.message_key')
 
       second_process_span = process_spans[1]
       _(second_process_span.attributes['messaging.kafka.message_key']).must_equal('foobarbaz')
