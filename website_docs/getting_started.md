@@ -46,7 +46,7 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
-The call `c.use_all()` enables all instrumentations in the `instrumentation/all` package. To see how to configure this to be per-library, see [configuring specific instrumentation libraries](automatic_instrumentation.md#configuring-specific-instrumentation-libraries).
+The call `c.use_all()` enables all instrumentations in the `instrumentation/all` package. If you have more advanced configuration needs, see [configuring specific instrumentation libraries](configuring_automatic_instrumentation.md#configuring-specific-instrumentation-libraries).
 
 Now that you have setup your application to perform tracing, you'll need to configure the SDK to export the traces somewhere. Our example loaded the `OTLP` exporter, which the SDK tries to use by default. Next, we'll use the OpenTelemetry Collector to receive these traces and visualize them using Jaeger and Zipkin!
 

@@ -1,6 +1,6 @@
 ---
 title: Context Propagation
-weight: 3
+weight: 2
 ---
 
 > Distributed Tracing tracks the progression of a single Request, called a Trace, as it is handled by Services that make up an Application. A Distributed Trace transverses process, network and security boundaries. [Glossary][]

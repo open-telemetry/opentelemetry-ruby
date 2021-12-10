@@ -1,6 +1,6 @@
 ---
-title: Automatic instrumentation
-weight: 2
+title: Configuring automatic instrumentation
+weight: 5
 ---
 
 Automatic instrumentation in ruby is done via instrumentation packages, and most commonly, the `opentelemetry-instrumentation-all` package. These are alled Instrumentation Libraries.
