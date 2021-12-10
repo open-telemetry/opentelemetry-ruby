@@ -1,6 +1,6 @@
 ---
 title: "Manual Instrumentation"
-weight: 4
+weight: 2
 ---
 
 Auto-instrumentation is the easiest way to get started with instrumenting your code, but in order to get the most insight into your system, you should add manual instrumentation where appropriate.
