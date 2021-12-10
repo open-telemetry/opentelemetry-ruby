@@ -79,7 +79,7 @@ Lastly, open a browser and navigate to the [Jaeger UI](http://localhost:16686) o
 
 Adding tracing to a single service is a great first step and although auto-instrumentation provides quite a bit of insight on its own, OpenTelemetry provides a few more features that will allow you gain even deeper insights!
 
-[Automatic Instrumentation][manual-instrumentation] .
+[Automatic Instrumentation][auto-instrumentation] .
 
 [Manual Instrumentation][manual-instrumentation] will give provide you the ability to enrich your traces with domain specific data.
 
