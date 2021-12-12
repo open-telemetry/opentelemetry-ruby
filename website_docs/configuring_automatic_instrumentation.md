@@ -3,13 +3,13 @@ title: Configuring automatic instrumentation
 weight: 5
 ---
 
-Automatic instrumentation in ruby is done via instrumentation packages, and most commonly, the `opentelemetry-instrumentation-all` package. These are alled Instrumentation Libraries.
+Automatic instrumentation in ruby is done via instrumentation packages, and most commonly, the `opentelemetry-instrumentation-all` package. These are called Instrumentation Libraries.
 
 For example, if you are using Rails and enable instrumentation, your running Rails app will automatically generate telemetry data for inbound requests to your controllers.
 
 ### Configuring all instrumentation libraries
 
-The recommended way to use instrumentation libraries is to simply use the `opentelemetry-instrumentation-all` package:
+The recommended way to use instrumentation libraries is to use the `opentelemetry-instrumentation-all` package:
 
 ```console
 gem 'opentelemetry-sdk'
@@ -17,7 +17,7 @@ gem 'opentelemetry-exporter-otlp'
 gem 'opentelemetry-instrumentation-all'
 ```
 
-and configure it early in your application lifecycle (for Rails apps, this would be in the Rails initializer):
+and configure it early in your application lifecycle. See the example below using a Rails initializer:
 
 ```ruby
 # config/initializers/opentelemetry.rb
