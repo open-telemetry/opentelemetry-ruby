@@ -32,6 +32,24 @@ end
 
 This will install all instrumentation libraries and enable the ones that match up to libraries you're using in your app.
 
+### Overriding configuration for specific instrumentation libraries
+
+If you are enabling all instrumentation but want to override the configuration for a specific one, call `use_all` with a configuration map parameter, where the key represents the library, and the value is its specific configuration parameter.
+
+For example, here's how you can install all instrumentations _except_ the `Redis` instrumentation into your app:
+
+```ruby
+require 'opentelemetry/sdk'
+require 'opentelemetry/instrumentation/all'
+
+OpenTelemetry::SDK.configure do |c|
+  config = {'OpenTelemetry::Instrumentation::Redis' => { enabled: false }}
+  c.use_all(config)
+end
+```
+
+To override more instrumentation, add another entry in the `config` map.
+
 ### Configuring specific instrumentation libraries
 
 If you prefer more selectively installing and using only specific instrumentation libraries, you can do that too. For example, here's how to use only `Sinatra` and `Faraday`, with `Farady` being configured with an additional configuration parameter.
@@ -56,21 +74,6 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
-### Overriding configuration for specific instrumentation libraries
-
-If you are enabling all instrumentation but want to override the configuration for a specific one, call `use_all` with a configuration parameter:
-
-```ruby
-require 'opentelemetry/sdk'
-
-# install all compatible instrumentation with per instrumentation configuration overrides
-OpenTelemetry::SDK.configure do |c|
-  c.use_all('OpenTelemetry::Instrumentation::SomeInstrumentation' => { opt: 'value' })
-end
-```
-
-This will configure all instrumentation libraries to be used with default values, and `SomeInstrumentation` configuration will be overridden with the value you provide.
-
 ### Next steps
 
-Instrumentation libraries are the easiest way to generate lots of useful telemetry data about your ruby apps. But they don't generate data specific to your application's logic! To do that, you'll need to enrich the automatic instrumentation from instrumentation libraries with [manual instrumentation](manual_instrumentation.md)
+Instrumentation libraries are the easiest way to generate lots of useful telemetry data about your ruby apps. But they don't generate data specific to your application's logic! To do that, you'll need to enrich the automatic instrumentation from instrumentation libraries with [manual instrumentation](manual_instrumentation)
