@@ -17,7 +17,7 @@ module OpenTelemetry
         def call(context) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           return super unless context
 
-          service_name = context.client.class.to_s.split('::')[1]
+          service_name = context.client.class.api.metadata['serviceId'] || context.client.class.to_s.split('::')[1]
           operation = context.operation&.name
           client_method = "#{service_name}.#{operation}"
           attributes = {

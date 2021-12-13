@@ -53,7 +53,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         _(last_span.attributes['rpc.system']).must_equal 'aws-api'
         _(last_span.attributes['rpc.service']).must_equal 'SNS'
         _(last_span.attributes['rpc.method']).must_equal 'Publish'
-        _(last_span.attributes['aws.region']).must_equal 'us-stubbed-1'
+        _(last_span.attributes['aws.region']).must_include 'stubbed'
         _(last_span.attributes['db.system']).must_be_nil
         _(last_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
       end
@@ -68,7 +68,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         _(last_span.attributes['rpc.system']).must_equal 'aws-api'
         _(last_span.attributes['rpc.service']).must_equal 'S3'
         _(last_span.attributes['rpc.method']).must_equal 'ListBuckets'
-        _(last_span.attributes['aws.region']).must_equal 'us-stubbed-1'
+        _(last_span.attributes['aws.region']).must_include 'stubbed'
         _(last_span.attributes['db.system']).must_be_nil
         _(last_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
       end
@@ -82,7 +82,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
           _(last_span.attributes['rpc.system']).must_equal 'aws-api'
           _(last_span.attributes['rpc.service']).must_equal 'S3'
           _(last_span.attributes['rpc.method']).must_equal 'ListBuckets'
-          _(last_span.attributes['aws.region']).must_equal 'us-stubbed-1'
+          _(last_span.attributes['aws.region']).must_include 'stubbed'
           _(last_span.attributes['db.system']).must_be_nil
         end
 
@@ -160,6 +160,9 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
       end
 
       it 'should handle phone numbers' do
+        # skip if using aws-sdk version before phone_number supported (v2.3.18)
+        return if Gem::Version.new('2.3.18') > instrumentation.gem_version
+
         sns_client = Aws::SNS::Client.new(stub_responses: true)
 
         sns_client.publish message: 'msg', phone_number: '123456'
