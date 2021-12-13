@@ -158,6 +158,15 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         _(last_span.attributes['messaging.destination_kind']).must_equal 'topic'
         _(last_span.attributes['messaging.destination']).must_equal 'topic-name'
       end
+
+      it 'should handle phone numbers' do
+        sns_client = Aws::SNS::Client.new(stub_responses: true)
+
+        sns_client.publish message: 'msg', phone_number: '123456'
+
+        _(last_span.attributes['messaging.destination']).must_equal 'phone_number'
+        _(last_span.name).must_equal 'phone_number send'
+      end
     end
   end
 

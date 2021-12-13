@@ -25,7 +25,7 @@ module OpenTelemetry
               end
             end
 
-            return phone_number if phone_number
+            return 'phone_number' if phone_number
 
             return queue_url.split('/')[-1] if queue_url
 
