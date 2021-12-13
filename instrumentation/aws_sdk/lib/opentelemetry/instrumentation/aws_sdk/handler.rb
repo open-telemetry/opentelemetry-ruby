@@ -57,6 +57,7 @@ module OpenTelemetry
 
         def inject_context(context, client_method)
           return unless [SQS_SEND_MESSAGE, SQS_SEND_MESSAGE_BATCH, SNS_PUBLISH].include? client_method
+          return unless instrumentation_config[:inject_messaging_context]
 
           if client_method == SQS_SEND_MESSAGE_BATCH
             context.params[:entries].each do |entry|
