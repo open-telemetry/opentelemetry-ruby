@@ -22,6 +22,16 @@ module OpenTelemetry
           end
         end
       end
+
+      # The MessageAttributeGetter class provides methods for getting tracing information from SQS message.
+      #
+      # @example
+      #   OpenTelemetry.propagation.extract(message, getter: MessageAttributeGetter)
+      class MessageAttributeGetter
+        def self.get(carrier, key)
+          return carrier[key][:string_value] if carrier[key][:data_type] == 'String'
+        end
+      end
     end
   end
 end
