@@ -76,4 +76,4 @@ end
 
 ### Next steps
 
-Instrumentation libraries are the easiest way to generate lots of useful telemetry data about your ruby apps. But they don't generate data specific to your application's logic! To do that, you'll need to enrich the automatic instrumentation from instrumentation libraries with [manual instrumentation](manual_instrumentation)
+Instrumentation libraries are the easiest way to generate lots of useful telemetry data about your ruby apps. But they don't generate data specific to your application's logic! To do that, you'll need to enrich the automatic instrumentation from instrumentation libraries with [manual instrumentation](manual_instrumentation).
