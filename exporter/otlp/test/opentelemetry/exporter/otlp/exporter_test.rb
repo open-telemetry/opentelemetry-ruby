@@ -53,7 +53,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
         { envar: 'OTEL_EXPORTER_OTLP_COMPRESSION', value: 'gzip' },
         { envar: 'OTEL_EXPORTER_OTLP_COMPRESSION', value: 'none' },
         { envar: 'OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', value: 'gzip' },
-        { envar: 'OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', value: 'none' },
+        { envar: 'OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', value: 'none' }
       ].each do |example|
         with_env(example[:envar] => example[:value]) do
           exp = OpenTelemetry::Exporter::OTLP::Exporter.new
