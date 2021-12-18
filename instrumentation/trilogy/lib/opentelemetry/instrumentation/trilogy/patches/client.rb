@@ -48,8 +48,28 @@ module OpenTelemetry
 
           FULL_SQL_REGEXP = Regexp.union(MYSQL_COMPONENTS.map { |component| COMPONENTS_REGEX_MAP[component] })
 
+          def initialize(**kwargs)
+            @_otel_net_peer_name = kwargs[:host]
+            super
+          end
+
           def query(sql)
-            attributes = client_attributes
+            tracer.in_span(
+              database_span_name(sql),
+              attributes: client_attributes(sql),
+              kind: :client
+            ) do
+              super(sql)
+            end
+          end
+
+          private
+
+          def client_attributes(sql)
+            attributes = {
+              ::OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM => 'mysql',
+              ::OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => net_peer_name
+            }
 
             case config[:db_statement]
             when :obfuscate
@@ -58,16 +78,8 @@ module OpenTelemetry
               attributes[::OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT] = sql
             end
 
-            tracer.in_span(
-              database_span_name(sql),
-              attributes: attributes,
-              kind: :client
-            ) do
-              super(sql)
-            end
+            attributes
           end
-
-          private
 
           def obfuscate_sql(sql)
             if sql.size > 2000
@@ -104,10 +116,14 @@ module OpenTelemetry
             'mysql'
           end
 
-          def client_attributes
-            attributes = { ::OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM => 'mysql' }
-            attributes[::OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME] = @connected_host if defined?(@connected_host)
-            attributes
+          def net_peer_name
+            if defined?(@connected_host)
+              @connected_host
+            elsif @_otel_net_peer_name
+              @_otel_net_peer_name
+            else
+              'unknown sock'
+            end
           end
 
           def tracer

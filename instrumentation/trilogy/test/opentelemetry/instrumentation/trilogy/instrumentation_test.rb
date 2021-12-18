@@ -95,7 +95,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_NAME]).must_be_nil
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'SELECT ?'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_be_nil
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
       end
 
       it 'extracts statement type' do
@@ -125,7 +125,7 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(span.name).must_equal 'select'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
         _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'select @@hostname'
-        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_be_nil
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal(host)
 
         client.query('SELECT 1')
 
@@ -134,6 +134,37 @@ describe OpenTelemetry::Instrumentation::Trilogy do
         _(last_span.name).must_equal 'select'
         _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
         _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'SELECT ?'
+        _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).wont_equal(host)
+        _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal client.connected_host
+      end
+    end
+
+    describe 'when quering using unix domain socket' do
+      let(:client) do
+        ::Trilogy.new(
+          username: username,
+          password: password,
+          ssl: false
+        )
+      end
+
+      it 'spans will include the net.peer.name attribute' do
+        skip 'requires setup of a mysql host using uds connections'
+        _(client.connected_host).wont_be_nil
+
+        _(span.name).must_equal 'select'
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'select @@hostname'
+        _(span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_match(/sock/)
+
+        client.query('SELECT 1')
+
+        last_span = exporter.finished_spans.last
+
+        _(last_span.name).must_equal 'select'
+        _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM]).must_equal 'mysql'
+        _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::DB_STATEMENT]).must_equal 'SELECT ?'
+        _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).wont_equal(/sock/)
         _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME]).must_equal client.connected_host
       end
     end
