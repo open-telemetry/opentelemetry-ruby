@@ -74,7 +74,8 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
       end
 
       it 'should have correct attributes when error' do
-        s3 = Aws::S3::Client.new(stub_responses: { list_buckets: 'NotFound' })
+        s3 = Aws::S3::Client.new(stub_responses: true)
+        s3.stub_responses(:list_buckets, 'NotFound')
 
         begin
           s3.list_buckets
