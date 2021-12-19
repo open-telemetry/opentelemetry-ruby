@@ -5,7 +5,7 @@ module OpenTelemetry
     module Trilogy
       module Patches
         # Module to prepend to Trilogy for instrumentation
-        module Client
+        module Client # rubocop:disable Metrics/ModuleLength
           QUERY_NAMES = [
             'set names',
             'select',
@@ -70,6 +70,8 @@ module OpenTelemetry
               ::OpenTelemetry::SemanticConventions::Trace::DB_SYSTEM => 'mysql',
               ::OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => net_peer_name
             }
+
+            attributes[::OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE] = config[:peer_service] unless config[:peer_service].nil?
 
             case config[:db_statement]
             when :obfuscate

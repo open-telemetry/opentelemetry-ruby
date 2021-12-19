@@ -14,6 +14,21 @@ describe OpenTelemetry::Instrumentation::Trilogy do
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
   let(:config) { {} }
+  let(:client) do
+    ::Trilogy.new(
+      host: host,
+      port: port,
+      username: username,
+      password: password,
+      ssl: false
+    )
+  end
+
+  let(:host) { ENV.fetch('TEST_MYSQL_HOST', '127.0.0.1') }
+  let(:port) { ENV.fetch('TEST_MYSQL_PORT', '3306').to_i }
+  let(:database) { ENV.fetch('TEST_MYSQL_DB', 'mysql') }
+  let(:username) { ENV.fetch('TEST_MYSQL_USER', 'root') }
+  let(:password) { ENV.fetch('TEST_MYSQL_PASSWORD', 'root') }
 
   before do
     exporter.reset
@@ -34,9 +49,20 @@ describe OpenTelemetry::Instrumentation::Trilogy do
   end
 
   describe '#install' do
-    it 'accepts argument' do
-      _(instrumentation.install({})).must_equal(true)
+    it 'accepts peer service name from config' do
       instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(peer_service: 'readonly:mysql')
+      client.query('SELECT 1')
+
+      _(span.attributes[::OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE]).must_equal 'readonly:mysql'
+    end
+
+    it 'omits peer service by default' do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install({})
+      client.query('SELECT 1')
+
+      _(span.attributes.keys).wont_include(::OpenTelemetry::SemanticConventions::Trace::PEER_SERVICE)
     end
   end
 
@@ -67,22 +93,6 @@ describe OpenTelemetry::Instrumentation::Trilogy do
   end
 
   describe 'tracing' do
-    let(:client) do
-      ::Trilogy.new(
-        host: host,
-        port: port,
-        username: username,
-        password: password,
-        ssl: false
-      )
-    end
-
-    let(:host) { ENV.fetch('TEST_MYSQL_HOST', '127.0.0.1') }
-    let(:port) { ENV.fetch('TEST_MYSQL_PORT', '3306').to_i }
-    let(:database) { ENV.fetch('TEST_MYSQL_DB', 'mysql') }
-    let(:username) { ENV.fetch('TEST_MYSQL_USER', 'root') }
-    let(:password) { ENV.fetch('TEST_MYSQL_PASSWORD', 'root') }
-
     before do
       instrumentation.install(config)
     end
