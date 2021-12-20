@@ -35,6 +35,10 @@ gems:
     directory: instrumentation/rdkafka
     version_constant: [OpenTelemetry, Instrumentation, Rdkafka, VERSION]
 
+  - name: opentelemetry-instrumentation-trilogy
+    directory: instrumentation/trilogy
+    version_constant: [OpenTelemetry, Instrumentation, Trilogy, VERSION]
+
   - name: opentelemetry-instrumentation-active_support
     directory: instrumentation/active_support
     version_constant: [OpenTelemetry, Instrumentation, ActiveSupport, VERSION]
