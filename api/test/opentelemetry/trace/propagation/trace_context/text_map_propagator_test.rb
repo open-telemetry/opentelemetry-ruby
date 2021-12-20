@@ -67,6 +67,14 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapPropagator do
       ctx = propagator.extract({}, context: context) { invalid_traceparent_header }
       _(ctx).must_equal(context)
     end
+
+    it 'should apply current span on argument context' do
+      key = Context.create_key('key1')
+      ctx = Context::ROOT.set_value(key, 'value1')
+      extracted_ctx = propagator.extract(carrier, context: ctx) { |c, k| c[k] }
+
+      _(extracted_ctx.value(key)).must_equal('value1')
+    end
   end
 
   describe '#inject' do
