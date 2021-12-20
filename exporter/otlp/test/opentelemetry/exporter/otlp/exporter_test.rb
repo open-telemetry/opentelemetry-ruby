@@ -41,10 +41,25 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       assert_raises ArgumentError do
         OpenTelemetry::Exporter::OTLP::Exporter.new(compression: 'flate')
       end
-      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(compression: 'gzip')
-      _(exp).wont_be_nil
       exp = OpenTelemetry::Exporter::OTLP::Exporter.new(compression: nil)
-      _(exp).wont_be_nil
+      _(exp.instance_variable_get(:@compression)).must_be_nil
+
+      %w[gzip none].each do |compression|
+        exp = OpenTelemetry::Exporter::OTLP::Exporter.new(compression: compression)
+        _(exp.instance_variable_get(:@compression)).must_equal(compression)
+      end
+
+      [
+        { envar: 'OTEL_EXPORTER_OTLP_COMPRESSION', value: 'gzip' },
+        { envar: 'OTEL_EXPORTER_OTLP_COMPRESSION', value: 'none' },
+        { envar: 'OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', value: 'gzip' },
+        { envar: 'OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', value: 'none' }
+      ].each do |example|
+        with_env(example[:envar] => example[:value]) do
+          exp = OpenTelemetry::Exporter::OTLP::Exporter.new
+          _(exp.instance_variable_get(:@compression)).must_equal(example[:value])
+        end
+      end
     end
 
     it 'sets parameters from the environment' do

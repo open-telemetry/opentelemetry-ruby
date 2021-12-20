@@ -19,10 +19,12 @@ jobs:
             ruby: "3.0"
             # mysql2 omitted because it depends on the mysql C library which is not present
             # redis omitted because it depends on redis-server which is not present
+            # trilogy omitted because it depends on the mysql C library which is not present
             flags: >-
               --include-simple --include-appraisal --omit-services
               --exclude opentelemetry-instrumentation-mysql2
               --exclude opentelemetry-instrumentation-redis
+              --exclude opentelemetry-instrumentation-trilogy
           - name: Test Windows / Ruby 3.0
             os: windows-latest
             ruby: "3.0"
@@ -34,8 +36,9 @@ jobs:
             # que omitted because it depends on the postgres C library which is not present
             # rails omitted because it depends on tzinfo which is not present
             # redis omitted because it depends on redis-server which is not present
-            # sidekiq omitted because it depends on redis-server which is not present
             # resque omitted because it depends on redis-server which is not present
+            # sidekiq omitted because it depends on redis-server which is not present
+            # trilogy omitted because it depends on the mysql C library which is not present
             flags: >-
               --include-simple --include-appraisal --omit-services
               --exclude opentelemetry-instrumentation-active_record
@@ -48,6 +51,7 @@ jobs:
               --exclude opentelemetry-instrumentation-redis
               --exclude opentelemetry-instrumentation-resque
               --exclude opentelemetry-instrumentation-sidekiq
+              --exclude opentelemetry-instrumentation-trilogy
           - name: Rubocop and build
             os: ubuntu-latest
             ruby: "2.7"

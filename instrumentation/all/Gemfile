@@ -43,6 +43,7 @@ gem 'opentelemetry-instrumentation-restclient', path: '../restclient'
 gem 'opentelemetry-instrumentation-ruby_kafka', path: '../ruby_kafka'
 gem 'opentelemetry-instrumentation-sidekiq', path: '../sidekiq'
 gem 'opentelemetry-instrumentation-sinatra', path: '../sinatra'
+gem 'opentelemetry-instrumentation-trilogy', path: '../trilogy'
 
 group :test do
   gem 'opentelemetry-sdk', path: '../../sdk'
