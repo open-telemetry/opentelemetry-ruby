@@ -93,6 +93,30 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Consumer do
 
       _(spans.size).must_equal(4)
     end
+
+    it 'encodes messages keys depending on input format' do
+      kafka.deliver_message('hello', key: "\xAF\x0F\xEF", topic: topic)
+      kafka.deliver_message('hello2', key: 'foobarbaz', topic: topic)
+
+      begin
+        counter = 0
+        consumer.each_message do |_msg|
+          counter += 1
+          break if counter >= 2
+        end
+      end
+
+      process_spans = spans.select { |s| s.name == "#{topic} process" }
+
+      # First pair for send and process spans
+      first_process_span = process_spans[0]
+      _(first_process_span.attributes).wont_include('messaging.kafka.message_key')
+
+      second_process_span = process_spans[1]
+      _(second_process_span.attributes['messaging.kafka.message_key']).must_equal('foobarbaz')
+
+      _(spans.size).must_equal(4)
+    end
   end
 
   describe '#each_batch' do
