@@ -55,8 +55,9 @@ module OpenTelemetry
           AwsSdk::Instrumentation.instance.config
         end
 
+        SEND_MESSAGE_CLIENT_METHODS = [SQS_SEND_MESSAGE, SQS_SEND_MESSAGE_BATCH, SNS_PUBLISH].freeze
         def inject_context(context, client_method)
-          return unless [SQS_SEND_MESSAGE, SQS_SEND_MESSAGE_BATCH, SNS_PUBLISH].include? client_method
+          return unless SEND_MESSAGE_CLIENT_METHODS.include? client_method
           return unless instrumentation_config[:inject_messaging_context]
 
           if client_method == SQS_SEND_MESSAGE_BATCH
