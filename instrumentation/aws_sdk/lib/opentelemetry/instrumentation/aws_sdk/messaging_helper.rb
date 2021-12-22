@@ -18,10 +18,7 @@ module OpenTelemetry
 
             if topic_arn || target_arn
               arn = topic_arn || target_arn
-              begin
-                return arn.split(':')[-1]
-              rescue StandardError
-                return arn
+              return arn.split(':')[-1]
               end
             end
 
