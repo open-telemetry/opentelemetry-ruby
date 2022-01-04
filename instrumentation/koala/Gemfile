@@ -13,6 +13,7 @@ gem 'opentelemetry-instrumentation-base', path: '../base'
 
 group :test do
   gem 'byebug'
+  gem 'faraday', '<2.0'
   gem 'opentelemetry-common', path: '../../common'
   gem 'opentelemetry-sdk', path: '../../sdk'
   gem 'opentelemetry-semantic_conventions', path: '../../semantic_conventions'
