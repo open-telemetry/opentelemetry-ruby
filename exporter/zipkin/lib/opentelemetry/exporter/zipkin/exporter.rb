@@ -156,29 +156,31 @@ module OpenTelemetry
 
             case response
             when Net::HTTPAccepted, Net::HTTPOK
-              response.body # Read and discard body
               SUCCESS
             when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
-              response.body # Read and discard body
+              OpenTelemetry.logger.debug("Zipkin Exporter #{response.code} #{@path}")
               redo if backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1, reason: response.code)
               FAILURE
             when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
-              response.body # Read and discard body
+              OpenTelemetry.logger.debug("Zipkin Exporter #{response.code} #{@path}")
               redo if backoff?(retry_count: retry_count += 1, reason: response.code)
               FAILURE
             when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
+              OpenTelemetry.logger.debug("Zipkin Exporter #{response.code} #{@path}")
               # TODO: decode the body as a google.rpc.Status Protobuf-encoded message when https://github.com/open-telemetry/opentelemetry-collector/issues/1357 is fixed.
-              response.body # Read and discard body
               FAILURE
             when Net::HTTPRedirection
+              OpenTelemetry.logger.debug("Zipkin Exporter #{response.code} #{@path}")
               @http.finish
               handle_redirect(response['location'])
               redo if backoff?(retry_after: 0, retry_count: retry_count += 1, reason: response.code)
             else
+              OpenTelemetry.logger.debug("Zipkin Exporter #{response.code} #{@path}")
               @http.finish
               FAILURE
             end
           rescue Net::OpenTimeout, Net::ReadTimeout
+            OpenTelemetry.logger.debug('Zipkin Exporter Read Timeout')
             retry if backoff?(retry_count: retry_count += 1, reason: 'timeout')
             return FAILURE
           end
