@@ -268,7 +268,7 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
       it 'leaves status code unset' do
         _(first_span.attributes['http.status_code']).must_equal 404
         _(first_span.kind).must_equal :server
-        _(first_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+        _(first_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
       end
     end
   end
