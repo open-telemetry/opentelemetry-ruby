@@ -25,7 +25,7 @@ gem 'opentelemetry-exporter-otlp'
 gem 'opentelemetry-instrumentation-all'
 ```
 
-The inclusion of `opentelemetry-instrumentation-all` in the above list provides instrumentations for several frameworks such as Rails and Sinatra as well as database drivers and HTTP [libraries][auto-instrumentation].
+The inclusion of `opentelemetry-instrumentation-all` provides [instrumentations](auto-instrumentation) for Rails, Sinatra, several HTTP libraries, and more.
 
 ### Initialization
 
@@ -46,6 +46,8 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+The call `c.use_all()` enables all instrumentations in the `instrumentation/all` package. If you have more advanced configuration needs, see [configuring specific instrumentation libraries](configure-specific-libraries).
+
 Now that you have setup your application to perform tracing, you'll need to configure the SDK to export the traces somewhere. Our example loaded the `OTLP` exporter, which the SDK tries to use by default. Next, we'll use the OpenTelemetry Collector to receive these traces and visualize them using Jaeger and Zipkin!
 
 ### Exporting Traces
@@ -58,7 +60,7 @@ First, start up an example system:
 
 ```console
 $ git clone git@github.com:open-telemetry/opentelemetry-ruby.git; \
-    cd open-telemetry-ruby/examples/otel-collector; \
+    cd opentelemetry-ruby/examples/otel-collector; \
        docker-compose up -d
 ```
 
@@ -83,9 +85,13 @@ Adding tracing to a single service is a great first step and although auto-instr
 
 [Manual Instrumentation][manual-instrumentation] will give provide you the ability to enrich your traces with domain specific data.
 
+[Automatic Instrumentation][auto-instrumentation]
+
+
 [repository]: https://github.com/open-telemetry/opentelemetry-ruby
 [auto-instrumentation]: https://github.com/open-telemetry/opentelemetry-ruby#instrumentation-libraries
 [sdk-env]: {{< relref "/docs/reference/specification/protocol/exporter#configuration-options" >}}
 [context-propagation]: ../context_propagation
 [events]: ../events
 [manual-instrumentation]: ../manual_instrumentation
+[configure-specific-libraries](configuring_automatic_instrumentation#configuring-specific-instrumentation-libraries)
