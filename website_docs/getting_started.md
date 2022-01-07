@@ -58,7 +58,7 @@ First, start up an example system:
 
 ```console
 $ git clone git@github.com:open-telemetry/opentelemetry-ruby.git; \
-    cd open-telemetry-ruby/examples/otel-collector; \
+    cd opentelemetry-ruby/examples/otel-collector; \
        docker-compose up -d
 ```
 
