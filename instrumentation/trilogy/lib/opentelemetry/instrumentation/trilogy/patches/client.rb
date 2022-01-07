@@ -48,8 +48,8 @@ module OpenTelemetry
 
           FULL_SQL_REGEXP = Regexp.union(MYSQL_COMPONENTS.map { |component| COMPONENTS_REGEX_MAP[component] })
 
-          def initialize(**kwargs)
-            @_otel_net_peer_name = kwargs[:host]
+          def initialize(args)
+            @_otel_net_peer_name = args[:host]
             super
           end
 
