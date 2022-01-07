@@ -14,14 +14,17 @@ describe OpenTelemetry::Instrumentation::Trilogy do
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
   let(:config) { {} }
-  let(:client) do
-    ::Trilogy.new(
+  let(:driver_options) do
+    {
       host: host,
       port: port,
       username: username,
       password: password,
       ssl: false
-    )
+    }
+  end
+  let(:client) do
+    ::Trilogy.new(driver_options)
   end
 
   let(:host) { ENV.fetch('TEST_MYSQL_HOST', '127.0.0.1') }
