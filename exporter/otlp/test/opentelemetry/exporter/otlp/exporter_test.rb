@@ -20,7 +20,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
       http = exp.instance_variable_get(:@http)
       _(http.ca_file).must_be_nil
-      _(http.use_ssl?).must_equal true
+      _(http.use_ssl?).must_equal false
       _(http.address).must_equal 'localhost'
       _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_PEER
       _(http.port).must_equal 4318
@@ -63,7 +63,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     end
 
     it 'sets parameters from the environment' do
-      exp = with_env('OTEL_EXPORTER_OTLP_ENDPOINT' => 'http://localhost:1234',
+      exp = with_env('OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234',
                      'OTEL_EXPORTER_OTLP_CERTIFICATE' => '/foo/bar',
                      'OTEL_EXPORTER_OTLP_HEADERS' => 'a=b,c=d',
                      'OTEL_EXPORTER_OTLP_COMPRESSION' => 'gzip',
@@ -77,7 +77,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
       http = exp.instance_variable_get(:@http)
       _(http.ca_file).must_equal '/foo/bar'
-      _(http.use_ssl?).must_equal false
+      _(http.use_ssl?).must_equal true
       _(http.address).must_equal 'localhost'
       _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_NONE
       _(http.port).must_equal 1234
