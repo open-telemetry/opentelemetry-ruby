@@ -14,8 +14,14 @@ end
 
 # Rails 5.2 is not compatible with Ruby 3.0
 # https://github.com/rails/rails/issues/40938
-if RUBY_VERSION < '3'
+if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('3')
   appraise 'activerecord-5.2' do
     gem 'activerecord', '~> 5.2.0'
+  end
+end
+
+if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.7.0')
+  appraise 'activerecord-7.0' do
+    gem 'activerecord', '~> 7.0.0'
   end
 end
