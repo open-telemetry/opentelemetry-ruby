@@ -11,6 +11,8 @@ module OpenTelemetry
         module Patches
           # Module to prepend to Net::HTTP for instrumentation
           module Instrumentation
+            include OpenTelemetry::SemanticConventions::Trace
+
             HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = "HTTP #{k}" }
             USE_SSL_TO_SCHEME = { false => 'http', true => 'https' }.freeze
 
@@ -22,11 +24,11 @@ module OpenTelemetry
               tracer.in_span(
                 HTTP_METHODS_TO_SPAN_NAMES[req.method],
                 attributes: attributes.merge(
-                  'http.method' => req.method,
-                  'http.scheme' => USE_SSL_TO_SCHEME[use_ssl?],
-                  'http.target' => req.path,
-                  'net.peer.name' => @address,
-                  'net.peer.port' => @port
+                  HTTP_METHOD => req.method,
+                  HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
+                  HTTP_TARGET => req.path,
+                  NET_PEER_NAME => @address,
+                  NET_PEER_PORT => @port
                 ),
                 kind: :client
               ) do |span|
@@ -51,8 +53,8 @@ module OpenTelemetry
 
               attributes = OpenTelemetry::Common::HTTP::ClientContext.attributes
               tracer.in_span('HTTP CONNECT', attributes: attributes.merge(
-                'net.peer.name' => conn_address,
-                'net.peer.port' => conn_port
+                NET_PEER_NAME => conn_address,
+                NET_PEER_PORT => conn_port
               )) do
                 super
               end
@@ -63,7 +65,7 @@ module OpenTelemetry
 
               status_code = response.code.to_i
 
-              span.set_attribute('http.status_code', status_code)
+              span.set_attribute(HTTP_STATUS_CODE, status_code)
               span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(status_code.to_i)
             end
 
