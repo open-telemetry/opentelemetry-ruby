@@ -11,8 +11,6 @@ module OpenTelemetry
         module Patches
           # Module to prepend to Net::HTTP for instrumentation
           module Instrumentation
-            include OpenTelemetry::SemanticConventions::Trace
-
             HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = "HTTP #{k}" }
             USE_SSL_TO_SCHEME = { false => 'http', true => 'https' }.freeze
 
@@ -24,11 +22,11 @@ module OpenTelemetry
               tracer.in_span(
                 HTTP_METHODS_TO_SPAN_NAMES[req.method],
                 attributes: attributes.merge(
-                  HTTP_METHOD => req.method,
-                  HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
-                  HTTP_TARGET => req.path,
-                  NET_PEER_NAME => @address,
-                  NET_PEER_PORT => @port
+                  OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => req.method,
+                  OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
+                  OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
+                  OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
+                  OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port
                 ),
                 kind: :client
               ) do |span|
@@ -53,8 +51,8 @@ module OpenTelemetry
 
               attributes = OpenTelemetry::Common::HTTP::ClientContext.attributes
               tracer.in_span('HTTP CONNECT', attributes: attributes.merge(
-                NET_PEER_NAME => conn_address,
-                NET_PEER_PORT => conn_port
+                OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => conn_address,
+                OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => conn_port
               )) do
                 super
               end
@@ -65,7 +63,7 @@ module OpenTelemetry
 
               status_code = response.code.to_i
 
-              span.set_attribute(HTTP_STATUS_CODE, status_code)
+              span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, status_code)
               span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(status_code.to_i)
             end
 
