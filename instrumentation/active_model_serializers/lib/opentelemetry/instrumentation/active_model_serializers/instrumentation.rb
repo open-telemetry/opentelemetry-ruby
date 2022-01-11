@@ -35,7 +35,7 @@ module OpenTelemetry
         end
 
         def register_event_handler
-          ActiveSupport::Notifications.subscribe(event_name) do |_name, start, finish, _id, payload|
+          ::ActiveSupport::Notifications.subscribe(event_name) do |_name, start, finish, _id, payload|
             EventHandler.handle(start, finish, payload)
           end
         end

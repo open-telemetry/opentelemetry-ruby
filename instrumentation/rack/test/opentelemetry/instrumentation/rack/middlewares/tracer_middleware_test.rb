@@ -259,6 +259,18 @@ describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
         end
       end
     end
+
+    describe '#called with 400 level http status code' do
+      let(:app) do
+        ->(_env) { [404, { 'Foo-Bar' => 'foo bar response header' }, ['Not Found']] }
+      end
+
+      it 'leaves status code unset' do
+        _(first_span.attributes['http.status_code']).must_equal 404
+        _(first_span.kind).must_equal :server
+        _(first_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
+      end
+    end
   end
 
   describe 'config[:quantization]' do

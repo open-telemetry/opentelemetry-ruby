@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.21.1 / 2021-12-31
+
+* FIXED: Allow OTLP Exporter compression value of `none` 
+
 ### v0.21.0 / 2021-12-01
 
 * ADDED: Exporter should use gzip compression by default 
