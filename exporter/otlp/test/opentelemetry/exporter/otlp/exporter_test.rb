@@ -348,7 +348,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       end
 
       exporter.stub(:backoff?, backoff_stubbed_call) do
-        _(exporter.export([span_data], timeout: 0.1)).must_equal(TIMEOUT)
+        _(exporter.export([span_data], timeout: 0.1)).must_equal(FAILURE)
       end
     ensure
       @retry_count = 0
