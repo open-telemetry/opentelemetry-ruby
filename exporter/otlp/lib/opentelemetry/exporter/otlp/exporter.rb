@@ -22,7 +22,6 @@ module OpenTelemetry
       class Exporter # rubocop:disable Metrics/ClassLength
         SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
         FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
-        TIMEOUT = OpenTelemetry::SDK::Trace::Export::TIMEOUT
         private_constant(:SUCCESS, :FAILURE, :TIMEOUT)
 
         # Default timeouts in seconds.
@@ -165,7 +164,7 @@ module OpenTelemetry
             @headers.each { |key, value| request.add_field(key, value) }
 
             remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
-            return TIMEOUT if remaining_timeout.zero?
+            return FAILURE if remaining_timeout.zero?
 
             @http.open_timeout = remaining_timeout
             @http.read_timeout = remaining_timeout

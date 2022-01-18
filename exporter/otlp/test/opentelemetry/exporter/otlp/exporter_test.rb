@@ -8,7 +8,6 @@ require 'test_helper'
 describe OpenTelemetry::Exporter::OTLP::Exporter do
   SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
   FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
-  TIMEOUT = OpenTelemetry::SDK::Trace::Export::TIMEOUT
 
   describe '#initialize' do
     it 'initializes with defaults' do
@@ -297,7 +296,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 200)
       span_data = create_span_data
       result = exporter.export([span_data], timeout: 0)
-      _(result).must_equal(TIMEOUT)
+      _(result).must_equal(FAILURE)
     end
 
     it 'returns FAILURE on unexpected exceptions' do
