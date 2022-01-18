@@ -22,7 +22,7 @@ module OpenTelemetry
       class Exporter # rubocop:disable Metrics/ClassLength
         SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
         FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
-        private_constant(:SUCCESS, :FAILURE, :TIMEOUT)
+        private_constant(:SUCCESS, :FAILURE)
 
         # Default timeouts in seconds.
         KEEP_ALIVE_TIMEOUT = 30
