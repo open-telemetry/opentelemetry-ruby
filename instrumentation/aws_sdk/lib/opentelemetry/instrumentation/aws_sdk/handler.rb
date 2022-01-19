@@ -55,7 +55,7 @@ module OpenTelemetry
           AwsSdk::Instrumentation.instance.config
         end
 
-        def service_name(context)
+        def service_name(context) # rubocop:disable Metrics/AbcSize
           # Support aws-sdk v2.0.x, which 'metadata' has a setter method only
           return context.client.class.to_s.split('::')[1] if ::Seahorse::Model::Api.instance_method(:metadata).parameters.length.positive?
 
