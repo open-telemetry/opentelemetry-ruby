@@ -13,16 +13,16 @@ module OpenTelemetry
           def queue_name(context)
             topic_arn = context.params[:topic_arn]
             target_arn = context.params[:target_arn]
-            phone_number = context.params[:phone_number]
-            queue_url = context.params[:queue_url]
 
             if topic_arn || target_arn
               arn = topic_arn || target_arn
               return arn.split(':')[-1]
             end
 
+            phone_number = context.params[:phone_number]
             return 'phone_number' if phone_number
 
+            queue_url = context.params[:queue_url]
             return queue_url.split('/')[-1] if queue_url
 
             'unknown'
