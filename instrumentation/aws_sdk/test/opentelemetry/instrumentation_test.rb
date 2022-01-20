@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'httpclient'
 require 'test_helper'
 
 describe OpenTelemetry::Instrumentation::AwsSdk do
@@ -55,6 +56,9 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         _(last_span.attributes['rpc.method']).must_equal 'Publish'
         _(last_span.attributes['aws.region']).must_include 'stubbed'
         _(last_span.attributes['db.system']).must_be_nil
+
+        _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE]).must_equal HTTP::Status::OK
+
         _(last_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
       end
     end
@@ -70,6 +74,9 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
         _(last_span.attributes['rpc.method']).must_equal 'ListBuckets'
         _(last_span.attributes['aws.region']).must_include 'stubbed'
         _(last_span.attributes['db.system']).must_be_nil
+
+        _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE]).must_equal HTTP::Status::OK
+
         _(last_span.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
       end
 
@@ -87,6 +94,8 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
           _(last_span.attributes['db.system']).must_be_nil
         end
 
+        _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE]).must_equal HTTP::Status::BAD_REQUEST
+
         _(last_span.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
       end
     end
@@ -99,6 +108,8 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
         _(last_span.attributes['rpc.system']).must_equal 'aws-api'
         _(last_span.attributes['db.system']).must_equal 'dynamodb'
+
+        _(last_span.attributes[OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE]).must_equal HTTP::Status::OK
       end
     end
 

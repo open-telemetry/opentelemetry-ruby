@@ -37,6 +37,9 @@ module OpenTelemetry
             else
               super
             end.tap do |response|
+              span.set_attribute(OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE,
+                                 context.http_response.status_code)
+
               if (err = response.error)
                 span.record_exception(err)
                 span.status = Trace::Status.error(err.to_s)
