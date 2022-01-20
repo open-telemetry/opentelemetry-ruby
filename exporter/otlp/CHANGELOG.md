@@ -1,5 +1,10 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.21.2 / 2022-01-19
+
+* FIXED: Default scheme for OTLP endpoint 
+* FIXED: Remove TIMEOUT status from OTLP exporter (#1087)
+
 ### v0.21.1 / 2021-12-31
 
 * FIXED: Allow OTLP Exporter compression value of `none` 

@@ -24,14 +24,8 @@ module OpenTelemetry
           gem_version >= MINIMUM_VERSION
         end
 
+        option :inject_messaging_context, default: false, validate: :boolean
         option :suppress_internal_instrumentation, default: false, validate: :boolean
-
-        private
-
-        def require_dependencies
-          require_relative 'handler'
-          require_relative 'services'
-        end
 
         def gem_version
           if Gem.loaded_specs['aws-sdk']
@@ -39,6 +33,15 @@ module OpenTelemetry
           elsif Gem.loaded_specs['aws-sdk-core']
             Gem.loaded_specs['aws-sdk-core'].version
           end
+        end
+
+        private
+
+        def require_dependencies
+          require_relative 'handler'
+          require_relative 'services'
+          require_relative 'message_attributes'
+          require_relative 'messaging_helper'
         end
 
         def add_plugin(*targets)

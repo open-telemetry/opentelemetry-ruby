@@ -14,6 +14,8 @@ require 'minitest/autorun'
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
 span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)
 
+OpenTelemetry.logger = Logger.new(File::NULL)
+
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::AwsSdk'
   c.add_span_processor span_processor
