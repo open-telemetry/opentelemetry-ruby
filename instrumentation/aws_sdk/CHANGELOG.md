@@ -2,7 +2,7 @@
 
 ### v0.2.1 / 2022-01-21
 
-* (No significant changes)
+* ADDED: attach HTTP status code to AWS spans
 
 ### v0.2.0 / 2022-01-20
 
