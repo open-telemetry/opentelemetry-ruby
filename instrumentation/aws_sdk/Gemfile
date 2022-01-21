@@ -12,7 +12,6 @@ gem 'opentelemetry-api', path: '../../api'
 gem 'opentelemetry-instrumentation-base', path: '../base'
 
 group :test do
-  gem 'httpclient'
   gem 'opentelemetry-common', path: '../../common'
   gem 'opentelemetry-sdk', path: '../../sdk'
   gem 'opentelemetry-semantic_conventions', path: '../../semantic_conventions'
