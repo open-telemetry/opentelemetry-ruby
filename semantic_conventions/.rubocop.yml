@@ -8,7 +8,7 @@ Lint/UnusedMethodArgument:
   Enabled: false
 Metrics/AbcSize:
   Max: 18
-Metrics/LineLength:
+Layout/LineLength:
   Enabled: false
 Metrics/MethodLength:
   Max: 20
@@ -33,5 +33,5 @@ Layout/EmptyLinesAroundModuleBody:
   Enabled: false
 Layout/TrailingWhitespace:
   Enabled: false
-Layout/TrailingBlankLines:
+Layout/TrailingEmptyLines:
   Enabled: False

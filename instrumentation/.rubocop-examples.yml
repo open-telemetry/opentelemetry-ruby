@@ -10,7 +10,7 @@ Metrics/AbcSize:
   Max: 18
   Exclude:
     - "**/test/**/*"
-Metrics/LineLength:
+Layout/LineLength:
   Enabled: false
 Metrics/MethodLength:
   Max: 20

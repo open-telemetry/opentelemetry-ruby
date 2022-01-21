@@ -2,7 +2,7 @@ inherit_from: ../.rubocop.yml
 
 Metrics/BlockLength:
   Enabled: false
-Metrics/LineLength:
+Layout/LineLength:
   Enabled: false
 Style/MethodCallWithoutArgsParentheses:
   Exclude:

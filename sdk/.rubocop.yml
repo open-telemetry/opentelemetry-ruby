@@ -5,7 +5,7 @@ Lint/UnusedMethodArgument:
   Enabled: false
 Metrics/AbcSize:
   Max: 18
-Metrics/LineLength:
+Layout/LineLength:
   Enabled: false
 Metrics/MethodLength:
   Max: 21

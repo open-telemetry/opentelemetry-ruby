@@ -3,5 +3,5 @@ inherit_from: ../.rubocop-examples.yml
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-instrumentation-dalli.rb"
-Naming/UncommunicativeMethodParamName:
+Naming/MethodParameterName:
   Enabled: false

@@ -8,7 +8,7 @@ Metrics/BlockLength:
   Exclude:
     - 'opentelemetry-propagator-jaeger.gemspec'
     - 'test/**/*_test.rb'
-Metrics/LineLength:
+Layout/LineLength:
   Enabled: false
 Metrics/MethodLength:
   Max: 20
