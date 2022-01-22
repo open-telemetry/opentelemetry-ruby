@@ -94,4 +94,4 @@ Adding tracing to a single service is a great first step and although auto-instr
 [context-propagation]: ../context_propagation
 [events]: ../events
 [manual-instrumentation]: ../manual_instrumentation
-[configure-specific-libraries]({{< relref "configuring_automatic_instrumentation#configuring-specific-instrumentation-libraries" >}})
+[configure-specific-libraries]: {{< relref "configuring_automatic_instrumentation#configuring-specific-instrumentation-libraries" >}}
