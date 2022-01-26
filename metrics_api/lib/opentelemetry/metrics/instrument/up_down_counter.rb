@@ -7,6 +7,7 @@
 module OpenTelemetry
   module Metrics
     module Instrument
+      # No-op implementation of UpDownCounter.
       class UpDownCounter
         # Increment or decrement the UpDownCounter by a fixed amount.
         #

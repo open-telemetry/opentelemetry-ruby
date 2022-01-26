@@ -7,6 +7,7 @@
 module OpenTelemetry
   module Metrics
     module Instrument
+      # No-op implementation of ObservableGauge.
       class ObservableGauge
         # TODO
       end

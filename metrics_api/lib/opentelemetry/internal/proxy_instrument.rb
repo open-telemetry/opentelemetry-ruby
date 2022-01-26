@@ -19,19 +19,19 @@ module OpenTelemetry
 
       def upgrade_with(meter)
         @delegate = case @kind
-        when :counter, :histogram, :up_down_counter
-          meter.send("create_#{@kind}", @name, unit: @unit, description: @desc)
-        when :observable_counter, :observable_gauge, :observable_up_down_counter
-          meter.send("create_#{@kind}", @name, unit: @unit, description: @desc, callback: @callback)
-        end 
+                    when :counter, :histogram, :up_down_counter
+                      meter.send("create_#{@kind}", @name, unit: @unit, description: @desc)
+                    when :observable_counter, :observable_gauge, :observable_up_down_counter
+                      meter.send("create_#{@kind}", @name, unit: @unit, description: @desc, callback: @callback)
+                    end
       end
 
       def add(amount, attributes: nil)
-        @delegate.add(amount, attributes: attributes) unless @delegate.nil?
+        @delegate&.add(amount, attributes: attributes)
       end
 
       def record(amount, attributes: nil)
-        @delegate.record(amount, attributes: attributes) unless @delegate.nil?
+        @delegate&.record(amount, attributes: attributes)
       end
     end
   end

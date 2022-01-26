@@ -15,7 +15,7 @@ module OpenTelemetry
       UP_DOWN_COUNTER = Instrument::UpDownCounter.new
       OBSERVABLE_UP_DOWN_COUNTER = Instrument::ObservableUpDownCounter.new
 
-      NAME_REGEX = /^[a-zA-Z][-.\w]{0,62}$/
+      NAME_REGEX = /^[a-zA-Z][-.\w]{0,62}$/.freeze
 
       private_constant(:COUNTER, :OBSERVABLE_COUNTER, :HISTOGRAM, :OBSERVABLE_GAUGE, :UP_DOWN_COUNTER, :OBSERVABLE_UP_DOWN_COUNTER)
 
@@ -60,7 +60,7 @@ module OpenTelemetry
           raise DuplicateInstrumentError if @registry.include? name
           raise InstrumentNameError if name.nil?
           raise InstrumentNameError if name.empty?
-          raise InstrumentNameError if !NAME_REGEX.match?(name)
+          raise InstrumentNameError unless NAME_REGEX.match?(name)
           raise InstrumentUnitError if unit && (!unit.ascii_only? || unit.size > 63)
           raise InstrumentDescriptionError if description && (description.size > 1023 || !utf8mb3_encoding?(description))
 
@@ -69,8 +69,8 @@ module OpenTelemetry
       end
 
       def utf8mb3_encoding?(string)
-        string.force_encoding("UTF-8").valid_encoding? &&
-        !!string.each_char { |c| return false if c.bytesize >= 4 }
+        string.force_encoding('UTF-8').valid_encoding? &&
+          string.each_char { |c| return false if c.bytesize >= 4 }
       end
     end
   end

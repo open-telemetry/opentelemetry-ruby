@@ -43,8 +43,8 @@ describe OpenTelemetry::Metrics::Meter do
 
     it 'instrument name must belong to alphanumeric characters, _, ., and -' do
       meter.create_counter('a_-..-_a')
-       _(-> { meter.create_counter('a@') }).must_raise(INSTRUMENT_NAME_ERROR)
-       _(-> { meter.create_counter('a!') }).must_raise(INSTRUMENT_NAME_ERROR)
+      _(-> { meter.create_counter('a@') }).must_raise(INSTRUMENT_NAME_ERROR)
+      _(-> { meter.create_counter('a!') }).must_raise(INSTRUMENT_NAME_ERROR)
     end
 
     it 'instrument unit must be ASCII' do

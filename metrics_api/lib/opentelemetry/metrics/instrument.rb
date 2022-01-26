@@ -13,8 +13,8 @@ require 'opentelemetry/metrics/instrument/up_down_counter'
 
 module OpenTelemetry
   module Metrics
+    # Instruments are used to report Measurements.
     module Instrument
     end
   end
 end
-
