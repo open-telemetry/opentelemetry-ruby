@@ -10,7 +10,6 @@ require 'opentelemetry/metrics/version'
 require 'opentelemetry/internal/proxy_instrument'
 require 'opentelemetry/internal/proxy_meter_provider'
 require 'opentelemetry/internal/proxy_meter'
-require 'opentelemetry/internal/proxy_instrument'
 
 # OpenTelemetry is an open source observability framework, providing a
 # general-purpose API, SDK, and related tools required for the instrumentation
