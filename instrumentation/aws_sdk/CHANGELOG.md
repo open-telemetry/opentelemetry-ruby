@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-aws_sdk
 
+### v0.2.2 / 2022-01-26
+
+* (No significant changes)
+
 ### v0.2.1 / 2022-01-21
 
 * ADDED: attach HTTP status code to AWS spans
