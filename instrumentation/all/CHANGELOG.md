@@ -4,6 +4,7 @@
 
 * ADDED: Add Trilogy Auto Instrumentation 
 * FIXED: `ActiveSupport` constant conflict in Active Model Serializers instrumentation 
+* FIXED: add missing require for aws_sdk instrumentation #1054
 
 ### v0.22.0 / 2021-12-01
 
