@@ -12,5 +12,5 @@ gem 'opentelemetry-api', path: '../api'
 
 group :test, :development do
   gem 'pry'
-  gem 'pry-byebug'
+  gem 'pry-byebug' unless RUBY_ENGINE == 'jruby'
 end
