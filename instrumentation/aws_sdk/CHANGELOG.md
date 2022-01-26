@@ -2,7 +2,7 @@
 
 ### v0.2.2 / 2022-01-26
 
-* (No significant changes)
+* FIXED: add missing require for aws_sdk in instrumentation all #1054
 
 ### v0.2.1 / 2022-01-21
 
