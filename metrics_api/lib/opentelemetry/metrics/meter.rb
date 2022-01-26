@@ -15,9 +15,14 @@ module OpenTelemetry
       UP_DOWN_COUNTER = Instrument::UpDownCounter.new
       OBSERVABLE_UP_DOWN_COUNTER = Instrument::ObservableUpDownCounter.new
 
+      NAME_REGEX = /^[a-zA-Z][-.\w]{0,62}$/
+
       private_constant(:COUNTER, :OBSERVABLE_COUNTER, :HISTOGRAM, :OBSERVABLE_GAUGE, :UP_DOWN_COUNTER, :OBSERVABLE_UP_DOWN_COUNTER)
 
       DuplicateInstrumentError = Class.new(OpenTelemetry::Error)
+      InstrumentNameError = Class.new(OpenTelemetry::Error)
+      InstrumentUnitError = Class.new(OpenTelemetry::Error)
+      InstrumentDescriptionError = Class.new(OpenTelemetry::Error)
 
       def initialize
         @mutex = Mutex.new
@@ -53,9 +58,19 @@ module OpenTelemetry
       def create_instrument(kind, name, unit, description, callback)
         @mutex.synchronize do
           raise DuplicateInstrumentError if @registry.include? name
+          raise InstrumentNameError if name.nil?
+          raise InstrumentNameError if name.empty?
+          raise InstrumentNameError if !NAME_REGEX.match?(name)
+          raise InstrumentUnitError if unit && (!unit.ascii_only? || unit.size > 63)
+          raise InstrumentDescriptionError if description && (description.size > 1023 || !utf8mb3_encoding?(description))
 
           @registry[name] = yield
         end
+      end
+
+      def utf8mb3_encoding?(string)
+        string.force_encoding("UTF-8").valid_encoding? &&
+        !!string.each_char { |c| return false if c.bytesize >= 4 }
       end
     end
   end

@@ -7,3 +7,10 @@
 source 'https://rubygems.org'
 
 gemspec
+
+gem 'opentelemetry-api', path: '../api'
+
+group :test, :development do
+  gem 'pry'
+  gem 'pry-byebug'
+end
