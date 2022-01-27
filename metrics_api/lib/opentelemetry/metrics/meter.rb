@@ -56,13 +56,14 @@ module OpenTelemetry
       private
 
       def create_instrument(kind, name, unit, description, callback)
+        raise InstrumentNameError if name.nil?
+        raise InstrumentNameError if name.empty?
+        raise InstrumentNameError unless NAME_REGEX.match?(name)
+        raise InstrumentUnitError if unit && (!unit.ascii_only? || unit.size > 63)
+        raise InstrumentDescriptionError if description && (description.size > 1023 || !utf8mb3_encoding?(description))
+
         @mutex.synchronize do
           raise DuplicateInstrumentError if @registry.include? name
-          raise InstrumentNameError if name.nil?
-          raise InstrumentNameError if name.empty?
-          raise InstrumentNameError unless NAME_REGEX.match?(name)
-          raise InstrumentUnitError if unit && (!unit.ascii_only? || unit.size > 63)
-          raise InstrumentDescriptionError if description && (description.size > 1023 || !utf8mb3_encoding?(description))
 
           @registry[name] = yield
         end
