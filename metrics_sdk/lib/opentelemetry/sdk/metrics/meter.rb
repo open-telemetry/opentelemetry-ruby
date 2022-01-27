@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  module MetricsSDK
+  module SDK
     # The Metrics module contains the OpenTelemetry metrics reference
     # implementation.
     module Metrics
@@ -27,7 +27,7 @@ module OpenTelemetry
         end
 
         def create_counter(name, unit: nil, description: nil)
-          create_instrument(:counter, name, unit, description, nil) { OpenTelemetry::MetricsSDK::Metrics::Instrument::Counter.new }
+          create_instrument(:counter, name, unit, description, nil) { OpenTelemetry::SDK::Metrics::Instrument::Counter.new }
         end
       end
     end

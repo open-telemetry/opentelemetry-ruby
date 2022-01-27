@@ -6,7 +6,7 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::MetricsSDK do
+describe OpenTelemetry::SDK do
   describe '#configure' do
     after do
       # Ensure we don't leak custom loggers and error handlers to other tests
@@ -19,11 +19,11 @@ describe OpenTelemetry::MetricsSDK do
       meter = meter_provider.meter("test")
       instrument = meter.create_counter("a_counter")
 
-      OpenTelemetry::MetricsSDK.configure
+      OpenTelemetry::SDK.configure
 
-      _(meter_provider.instance_variable_get(:@delegate)).must_be_instance_of OpenTelemetry::MetricsSDK::Metrics::MeterProvider
-      _(meter.instance_variable_get(:@delegate)).must_be_instance_of OpenTelemetry::MetricsSDK::Metrics::Meter
-      _(instrument.instance_variable_get(:@delegate)).must_be_instance_of OpenTelemetry::MetricsSDK::Metrics::Instrument::Counter
+      _(meter_provider.instance_variable_get(:@delegate)).must_be_instance_of OpenTelemetry::SDK::Metrics::MeterProvider
+      _(meter.instance_variable_get(:@delegate)).must_be_instance_of OpenTelemetry::SDK::Metrics::Meter
+      _(instrument.instance_variable_get(:@delegate)).must_be_instance_of OpenTelemetry::SDK::Metrics::Instrument::Counter
     end
 
     it 'sends the original configuration error to the error handler' do
@@ -35,11 +35,11 @@ describe OpenTelemetry::MetricsSDK do
         received_message = message
       end
 
-      OpenTelemetry::MetricsSDK.configure do |config|
+      OpenTelemetry::SDK.configure do |config|
         config.do_something
       end
 
-      _(received_exception).must_be_instance_of OpenTelemetry::MetricsSDK::ConfigurationError
+      _(received_exception).must_be_instance_of OpenTelemetry::SDK::ConfigurationError
       _(received_message).must_match(/unexpected configuration error due to undefined method `do_something/)
     end
   end

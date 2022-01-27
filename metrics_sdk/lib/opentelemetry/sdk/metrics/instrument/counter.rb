@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  module MetricsSDK
+  module SDK
     module Metrics
       module Instrument
         # {Counter} is the SDK implementation of {OpenTelemetry::Metrics::Counter}.
