@@ -5,9 +5,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  module Instrumentation
-    module AwsSdk
-      VERSION = '0.2.2'
+  module Metrics
+    module Instrument
+      # No-op implementation of ObservableGauge.
+      class ObservableGauge
+        # TODO
+      end
     end
   end
 end

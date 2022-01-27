@@ -5,9 +5,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  module Instrumentation
-    module AwsSdk
-      VERSION = '0.2.2'
-    end
+  module Metrics
+    ## Current OpenTelemetry metrics version
+    VERSION = '0.0.1'
   end
 end
