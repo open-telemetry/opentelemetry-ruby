@@ -17,7 +17,7 @@ module OpenTelemetry
           def call(env)
             extracted_context = OpenTelemetry.propagation.extract(
               env,
-              getter: OpenTelemetry::Context::Propagation.rack_env_getter
+              getter: OpenTelemetry::Common::Propagation.rack_env_getter
             )
             OpenTelemetry::Context.with_current(extracted_context) do
               tracer.in_span(
@@ -43,7 +43,7 @@ module OpenTelemetry
             span.set_attribute('http.status_code', status)
             span.set_attribute('http.route', env['sinatra.route'].split.last) if env['sinatra.route']
             span.name = env['sinatra.route'] if env['sinatra.route']
-            span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(status.to_i)
+            span.status = OpenTelemetry::Trace::Status.error unless (100..499).include?(status.to_i)
           end
         end
       end

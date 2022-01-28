@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mongo
 
+### v0.18.4 / 2021-12-02
+
+* (No significant changes)
+
 ### v0.18.3 / 2021-09-29
 
 * (No significant changes)

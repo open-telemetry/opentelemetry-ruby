@@ -5,4 +5,5 @@
 # SPDX-License-Identifier: Apache-2.0
 appraise 'koala-3' do
   gem 'koala', '~> 3.0.0'
+  gem 'faraday', '< 2.0'
 end

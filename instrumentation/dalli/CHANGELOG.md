@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-dalli
 
+### v0.20.0 / 2021-12-01
+
+* ADDED: Add dalli obfuscation for db_statement 
+* FIXED: Resolve Dalli::Server deprecation in 3.0+ 
+
 ### v0.19.1 / 2021-09-29
 
 * (No significant changes)

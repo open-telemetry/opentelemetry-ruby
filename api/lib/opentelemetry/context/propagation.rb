@@ -67,9 +67,13 @@ module OpenTelemetry
         TEXT_MAP_SETTER
       end
 
+      # @deprecated Use the rack env getter found in the
+      # opentelemetry-common gem instead.
       # Returns a {RackEnvGetter} instance suitable for reading values from a
       # Rack environment.
       def rack_env_getter
+        OpenTelemetry.logger.warn('OpenTelemetry::Context::Propagation.rack_env_getter has been deprecated \
+          use OpenTelemetry::Common::Propagation.rack_env_getter from the opentelemetry-common gem instead.')
         RACK_ENV_GETTER
       end
     end

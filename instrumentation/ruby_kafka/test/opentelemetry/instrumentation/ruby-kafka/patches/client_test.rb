@@ -46,4 +46,25 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Patches::Client do
     _(spans[1].name).must_equal("#{topic} process")
     _(spans[1].kind).must_equal(:consumer)
   end
+
+  it 'encodes message keys' do
+    invalid_utf8_key = String.new("\xAF\x0F\xEF", encoding: 'ASCII-8BIT')
+    kafka.deliver_message('hello', key: invalid_utf8_key, topic: topic)
+    kafka.deliver_message('hello2', key: 'foobarbaz', topic: topic)
+    begin
+      counter = 0
+      kafka.each_message(topic: topic) do |_msg|
+        counter += 1
+        break if counter >= 2
+      end
+    end
+
+    send_spans = spans.select { |s| s.name == "#{topic} send" }
+    _(send_spans[0].attributes).wont_include('messaging.kafka.message_key')
+    _(send_spans[1].attributes['messaging.kafka.message_key']).must_equal('foobarbaz')
+
+    process_spans = spans.select { |s| s.name == "#{topic} process" }
+    _(process_spans[0].attributes).wont_include('messaging.kafka.message_key')
+    _(process_spans[1].attributes['messaging.kafka.message_key']).must_equal('foobarbaz')
+  end
 end unless ENV['OMIT_SERVICES']

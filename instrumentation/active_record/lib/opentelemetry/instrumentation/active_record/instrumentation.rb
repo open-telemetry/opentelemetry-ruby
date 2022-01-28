@@ -10,6 +10,7 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the ActiveRecord instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         MINIMUM_VERSION = Gem::Version.new('5.2.0')
+        MAX_MAJOR_VERSION = 7
 
         install do |_config|
           require_dependencies
@@ -21,7 +22,11 @@ module OpenTelemetry
         end
 
         compatible do
-          gem_version >= MINIMUM_VERSION
+          # We know that releases after MAX_MAJOR_VERSION are unstable so we
+          # check the major version number of the gem installed to make sure we
+          # do not install on a pre-release or full release of the latest
+          # if it exceeds the MAX_MAJOR_VERSION version.
+          gem_version >= MINIMUM_VERSION && gem_version.segments[0] <= MAX_MAJOR_VERSION
         end
 
         private
@@ -55,6 +60,7 @@ module OpenTelemetry
         end
 
         def require_dependencies
+          require 'ruby2_keywords'
           require_relative 'patches/querying'
           require_relative 'patches/persistence'
           require_relative 'patches/persistence_class_methods'

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-propagator-jaeger
 
+### v0.19.3 / 2021-12-01
+
+* FIXED: Deprecate api rack env getter 
+
 ### v0.19.2 / 2021-09-29
 
 * (No significant changes)

@@ -132,7 +132,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
       context = propagator.extract(
         carrier,
         context: parent_context,
-        getter: OpenTelemetry::Context::Propagation.rack_env_getter
+        getter: OpenTelemetry::Common::Propagation.rack_env_getter
       )
       span_context = OpenTelemetry::Trace.current_span(context).context
       _(span_context.hex_trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')

@@ -30,6 +30,10 @@ jobs:
             os: ubuntu-latest
             ruby: "3.0"
             flags: --include-simple --include-appraisal
+          - name: Test Linux / Ruby 3.1
+            os: ubuntu-latest
+            ruby: "3.1"
+            flags: --include-simple --include-appraisal
           - name: Test Linux / JRuby
             os: ubuntu-latest
             ruby: jruby

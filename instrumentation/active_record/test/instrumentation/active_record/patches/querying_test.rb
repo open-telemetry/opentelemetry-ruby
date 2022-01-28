@@ -17,7 +17,7 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::Querying do
 
   describe 'find_by_sql' do
     it 'traces' do
-      User.first
+      User.find_by_sql('SELECT * FROM users')
 
       find_span = spans.find { |s| s.name == 'User.find_by_sql' }
       _(find_span).wont_be_nil

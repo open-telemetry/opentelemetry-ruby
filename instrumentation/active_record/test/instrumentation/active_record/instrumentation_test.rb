@@ -22,8 +22,20 @@ describe OpenTelemetry::Instrumentation::ActiveRecord do
   end
 
   describe 'compatible' do
-    it 'when unsupported gem version is installed' do
+    it 'when a version below the minimum supported gem version is installed' do
       Gem.stub(:loaded_specs, 'activerecord' => Gem::Specification.new { |s| s.version = '4.2.0' }) do
+        _(instrumentation.compatible?).must_equal false
+      end
+    end
+
+    it 'when a version above the maximum supported gem version is installed' do
+      Gem.stub(:loaded_specs, 'activerecord' => Gem::Specification.new { |s| s.version = '8.0.0' }) do
+        _(instrumentation.compatible?).must_equal false
+      end
+    end
+
+    it 'it treats pre releases as being equivalent to a full release' do
+      Gem.stub(:loaded_specs, 'activerecord' => Gem::Specification.new { |s| s.version = '8.0.0.alpha' }) do
         _(instrumentation.compatible?).must_equal false
       end
     end

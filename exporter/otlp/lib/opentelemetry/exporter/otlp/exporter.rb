@@ -22,8 +22,7 @@ module OpenTelemetry
       class Exporter # rubocop:disable Metrics/ClassLength
         SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
         FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
-        TIMEOUT = OpenTelemetry::SDK::Trace::Export::TIMEOUT
-        private_constant(:SUCCESS, :FAILURE, :TIMEOUT)
+        private_constant(:SUCCESS, :FAILURE)
 
         # Default timeouts in seconds.
         KEEP_ALIVE_TIMEOUT = 30
@@ -44,15 +43,15 @@ module OpenTelemetry
           end
         end
 
-        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'https://localhost:4318/v1/traces'), # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
+        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4318/v1/traces'), # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
                        certificate_file: config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
                        ssl_verify_mode: Exporter.ssl_verify_mode,
                        headers: config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
-                       compression: config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION'),
+                       compression: config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                        timeout: config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
                        metrics_reporter: nil)
           raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}" if invalid_url?(endpoint)
-          raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || compression == 'gzip'
+          raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
           @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
                    URI("#{endpoint}/v1/traces")
@@ -60,11 +59,7 @@ module OpenTelemetry
                    URI(endpoint)
                  end
 
-          @http = Net::HTTP.new(@uri.host, @uri.port)
-          @http.use_ssl = @uri.scheme == 'https'
-          @http.verify_mode = ssl_verify_mode
-          @http.ca_file = certificate_file unless certificate_file.nil?
-          @http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
+          @http = http_connection(@uri, ssl_verify_mode, certificate_file)
 
           @path = @uri.path
           @headers = case headers
@@ -114,6 +109,15 @@ module OpenTelemetry
 
         private
 
+        def http_connection(uri, ssl_verify_mode, certificate_file)
+          http = Net::HTTP.new(uri.host, uri.port)
+          http.use_ssl = uri.scheme == 'https'
+          http.verify_mode = ssl_verify_mode
+          http.ca_file = certificate_file unless certificate_file.nil?
+          http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
+          http
+        end
+
         def config_opt(*env_vars, default: nil)
           env_vars.each do |env_var|
             val = ENV[env_var]
@@ -160,7 +164,7 @@ module OpenTelemetry
             @headers.each { |key, value| request.add_field(key, value) }
 
             remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
-            return TIMEOUT if remaining_timeout.zero?
+            return FAILURE if remaining_timeout.zero?
 
             @http.open_timeout = remaining_timeout
             @http.read_timeout = remaining_timeout
