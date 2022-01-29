@@ -10,6 +10,7 @@
 **/.byebug_history
 
 # Appraisals
+opentelemetry-rails/**/*.gemfile.lock
 instrumentation/**/*.gemfile.lock
 
 # Sqlite file for tests
@@ -23,3 +24,5 @@ instrumentation/active_record/db
 
 # rbenv configuration
 .ruby-version
+
+tags
