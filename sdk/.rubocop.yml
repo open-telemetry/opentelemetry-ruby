@@ -5,6 +5,12 @@ Lint/UnusedMethodArgument:
   Enabled: false
 Metrics/AbcSize:
   Enabled: false
+Metrics/ClassLength:
+  Exclude:
+    - 'lib/opentelemetry/sdk/configurator.rb'
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - 'lib/opentelemetry/sdk/configurator.rb'
 Metrics/LineLength:
   Enabled: false
 Metrics/MethodLength:

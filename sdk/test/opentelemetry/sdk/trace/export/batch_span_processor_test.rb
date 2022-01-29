@@ -150,14 +150,16 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
 
     it 'spawns a thread on boot by default' do
-      mock = MiniTest::Mock.new
-      mock.expect(:call, nil)
+      OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => nil) do
+        mock = MiniTest::Mock.new
+        mock.expect(:call, nil)
 
-      Thread.stub(:new, mock) do
-        BatchSpanProcessor.new(TestExporter.new)
+        Thread.stub(:new, mock) do
+          BatchSpanProcessor.new(TestExporter.new)
+        end
+
+        mock.verify
       end
-
-      mock.verify
     end
 
     it 'spawns a thread on boot if OTEL_RUBY_BSP_START_THREAD_ON_BOOT is true' do
@@ -324,25 +326,27 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
   describe 'export retry' do
     it 'should not retry on FAILURE exports' do
-      te = TestExporter.new(status_codes: [FAILURE, SUCCESS])
+      OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => nil) do
+        te = TestExporter.new(status_codes: [FAILURE, SUCCESS])
 
-      bsp = BatchSpanProcessor.new(te,
-                                   schedule_delay: 999,
-                                   max_queue_size: 6,
-                                   max_export_batch_size: 3)
+        bsp = BatchSpanProcessor.new(te,
+                                     schedule_delay: 999,
+                                     max_queue_size: 6,
+                                     max_export_batch_size: 3)
 
-      tss = [TestSpan.new, TestSpan.new, TestSpan.new, TestSpan.new]
-      tss.each { |ts| bsp.on_finish(ts) }
+        tss = [TestSpan.new, TestSpan.new, TestSpan.new, TestSpan.new]
+        tss.each { |ts| bsp.on_finish(ts) }
 
-      # Ensure that our work thread has time to loop
-      sleep(1)
-      bsp.shutdown
+        # Ensure that our work thread has time to loop
+        sleep(1)
+        bsp.shutdown
 
-      _(te.batches.size).must_equal(1)
-      _(te.batches[0].size).must_equal(1)
+        _(te.batches.size).must_equal(1)
+        _(te.batches[0].size).must_equal(1)
 
-      _(te.failed_batches.size).must_equal(1)
-      _(te.failed_batches[0].size).must_equal(3)
+        _(te.failed_batches.size).must_equal(1)
+        _(te.failed_batches[0].size).must_equal(3)
+      end
     end
   end
 

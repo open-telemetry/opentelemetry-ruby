@@ -11,6 +11,7 @@ gemspec
 group :test, :development do
   gem 'opentelemetry-api', path: '../api'
   gem 'opentelemetry-common', path: '../common'
+  gem 'opentelemetry-exporter-otlp', path: '../exporter/otlp'
   gem 'opentelemetry-exporter-zipkin', path: '../exporter/zipkin'
   gem 'opentelemetry-registry', path: '../registry'
   gem 'opentelemetry-semantic_conventions', path: '../semantic_conventions'

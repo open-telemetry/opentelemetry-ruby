@@ -8,7 +8,7 @@ module OpenTelemetry
   module SDK
     # The configurator provides defaults and facilitates configuring the
     # SDK for use.
-    class Configurator # rubocop:disable Metrics/ClassLength
+    class Configurator
       # @api private
       class NoopTextMapPropagator
         EMPTY_LIST = [].freeze
@@ -31,7 +31,7 @@ module OpenTelemetry
 
       private_constant :USE_MODE_UNSPECIFIED, :USE_MODE_ONE, :USE_MODE_ALL
 
-      attr_writer :propagators, :error_handler, :id_generator
+      attr_writer :propagators, :error_handler, :id_generator, :trace_metrics_reporter_provider
 
       def initialize
         @instrumentation_names = []
@@ -41,6 +41,7 @@ module OpenTelemetry
         @use_mode = USE_MODE_UNSPECIFIED
         @resource = Resources::Resource.default
         @id_generator = OpenTelemetry::Trace
+        @trace_metrics_reporter_provider = -> { ::OpenTelemetry::SDK::Trace::Export::MetricsReporter }
       end
 
       def logger
@@ -172,7 +173,7 @@ module OpenTelemetry
         processors.each { |p| tracer_provider.add_span_processor(p) }
       end
 
-      def wrapped_exporters_from_env # rubocop:disable Metrics/CyclomaticComplexity
+      def wrapped_exporters_from_env
         exporters = ENV.fetch('OTEL_TRACES_EXPORTER', 'otlp')
         exporters.split(',').map do |exporter|
           case exporter.strip
@@ -196,7 +197,7 @@ module OpenTelemetry
         end
       end
 
-      def configure_propagation # rubocop:disable Metrics/CyclomaticComplexity
+      def configure_propagation
         propagators = ENV.fetch('OTEL_PROPAGATORS', 'tracecontext,baggage').split(',').uniq.collect do |propagator|
           case propagator
           when 'tracecontext' then OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
@@ -223,10 +224,21 @@ module OpenTelemetry
       end
 
       def fetch_exporter(name, class_name)
-        Trace::Export::BatchSpanProcessor.new(Kernel.const_get(class_name).new)
+        options = { metrics_reporter: new_metrics_reporter }
+        Trace::Export::BatchSpanProcessor.new(Kernel.const_get(class_name).new(**options), **options)
       rescue NameError
         OpenTelemetry.logger.warn "The #{name} exporter cannot be configured - please add opentelemetry-exporter-#{name} to your Gemfile, spans will not be exported"
         nil
+      end
+
+      def new_metrics_reporter
+        reporter = @trace_metrics_reporter_provider.call
+        if reporter&.is_a?(::OpenTelemetry::SDK::Trace::Export::MetricsReporter)
+          reporter
+        else
+          OpenTelemetry.logger.warn('The trace metrics reporter provider must return an instance of OpenTelemetry::SDK::Trace::Export::MetricsReporter, SDK performance metrics will not be reported')
+          nil
+        end
       end
     end
   end

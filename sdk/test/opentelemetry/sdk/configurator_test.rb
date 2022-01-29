@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'test_helper'
+require 'opentelemetry/exporter/otlp'
 require 'opentelemetry/exporter/zipkin'
 
 describe OpenTelemetry::SDK::Configurator do
@@ -211,10 +212,59 @@ describe OpenTelemetry::SDK::Configurator do
     end
 
     describe 'span processors' do
-      it 'defaults to no processors if no valid exporter is available' do
+      it 'uses default metrics reporter provider' do
         configurator.configure
 
-        _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)).must_be_empty
+        processor = OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[0]
+        _(processor).must_be_instance_of(OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor)
+        _(processor.instance_variable_get(:@metrics_reporter)).must_be_same_as(OpenTelemetry::SDK::Trace::Export::MetricsReporter)
+
+        exporter = processor.instance_variable_get(:@exporter)
+        _(exporter).must_be_instance_of(OpenTelemetry::Exporter::OTLP::Exporter)
+        _(exporter.instance_variable_get(:@metrics_reporter)).must_be_same_as(OpenTelemetry::SDK::Trace::Export::MetricsReporter)
+      end
+
+      describe 'given an invalid metrics reporter' do
+        it 'uses default metrics reporter provider' do
+          reporter = Object.new
+
+          configurator.trace_metrics_reporter_provider = -> { reporter }
+          configurator.configure
+
+          processor = OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[0]
+          _(processor).must_be_instance_of(OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor)
+          _(processor.instance_variable_get(:@metrics_reporter)).must_be_same_as(::OpenTelemetry::SDK::Trace::Export::MetricsReporter)
+
+          exporter = processor.instance_variable_get(:@exporter)
+          _(exporter).must_be_instance_of(OpenTelemetry::Exporter::OTLP::Exporter)
+          _(exporter.instance_variable_get(:@metrics_reporter)).must_be_same_as(::OpenTelemetry::SDK::Trace::Export::MetricsReporter)
+        end
+      end
+
+      describe 'given a custom trace metrics reporter provider' do
+        it 'injects the reporter in the batch span processor and OTLP exporter' do
+          reporter = Object.new
+          reporter.extend(OpenTelemetry::SDK::Trace::Export::MetricsReporter)
+
+          configurator.trace_metrics_reporter_provider = -> { reporter }
+          configurator.configure
+
+          processor = OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)[0]
+          _(processor).must_be_instance_of(OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor)
+          _(processor.instance_variable_get(:@metrics_reporter)).must_be_same_as(reporter)
+
+          exporter = processor.instance_variable_get(:@exporter)
+          _(exporter).must_be_instance_of(OpenTelemetry::Exporter::OTLP::Exporter)
+          _(exporter.instance_variable_get(:@metrics_reporter)).must_be_same_as(reporter)
+        end
+      end
+
+      it 'defaults to no processors if no valid exporter is available' do
+        hide_const('OpenTelemetry::SDK::Trace::Export::OTLP::Exporter') do
+          configurator.configure
+
+          _(OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)).must_be_empty
+        end
       end
 
       it 'reflects configured value' do
@@ -363,7 +413,7 @@ describe OpenTelemetry::SDK::Configurator do
   end
 
   def propagators_for(propagator)
-    if propagator.instance_of? Context::Propagation::CompositeTextMapPropagator
+    if propagator.instance_of? OpenTelemetry::Context::Propagation::CompositeTextMapPropagator
       propagator.instance_variable_get(:@propagators)
     else
       [propagator]
