@@ -72,15 +72,12 @@ Server: RubyLocalServer
 
 {"message":"parallel requests"}
         HEREDOC
-        local_server.save_mock('GET', '/parallel', response)
-        f1 = client.parallel.get('http://localhost:31000/parallel')
-        f2 = client.parallel.get('http://localhost:31000/parallel')
-        [f1, f2].each do |f|
-          f.on_complete do |e|
-            spans = exporter.finished_spans.select { |e| e.attributes['http.target'] == '/parallel' }
-            _(exporter.finished_spans.size).must_equal(2)
-          end
-        end
+        local_server.save_mock('GET', '/parallel1', response)
+        local_server.save_mock('GET', '/parallel2', response)
+        f1 = client.parallel.get('http://localhost:31000/parallel1')
+        f2 = client.parallel.get('http://localhost:31000/parallel2')
+        assert_async_spans(f1, exporter, '/parallel1')
+        assert_async_spans(f2, exporter, '/parallel2')
       end
     end
     describe 'when Manticore makes a two batch requests' do
@@ -92,15 +89,12 @@ Server: RubyLocalServer
 
 {"message":"batch requests"}
         HEREDOC
-        local_server.save_mock('GET', '/batch', response)
-        f1 = client.batch.get('http://localhost:31000/batch')
-        f2 = client.batch.get('http://localhost:31000/batch')
-        [f1, f2].each do |f|
-          f.on_complete do |e|
-            spans = exporter.finished_spans.select { |e| e.attributes['http.target'] == '/batch' }
-            _(exporter.finished_spans.size).must_equal(2)
-          end
-        end
+        local_server.save_mock('GET', '/batch1', response)
+        local_server.save_mock('GET', '/batch2', response)
+        f1 = client.batch.get('http://localhost:31000/batch1')
+        f2 = client.batch.get('http://localhost:31000/batch2')
+        assert_async_spans(f1, exporter, '/batch1')
+        assert_async_spans(f2, exporter, '/batch2')
       end
     end
     describe 'when Manticore makes two future requests' do
@@ -112,15 +106,12 @@ Server: RubyLocalServer
 
 {"message":"future requests"}
         HEREDOC
-        local_server.save_mock('GET', '/futures', response)
-        f1 = client.background.get('http://localhost:31000/futures')
-        f2 = client.background.get('http://localhost:31000/futures')
-        [f1, f2].each do |f|
-          f.on_complete do |e|
-            spans = exporter.finished_spans.select { |e| e.attributes['http.target'] == '/futures' }
-            _(exporter.finished_spans.size).must_equal(2)
-          end
-        end
+        local_server.save_mock('GET', '/futures1', response)
+        local_server.save_mock('GET', '/futures2', response)
+        f1 = client.background.get('http://localhost:31000/futures1')
+        f2 = client.background.get('http://localhost:31000/futures2')
+        assert_async_spans(f1, exporter, '/futures1')
+        assert_async_spans(f1, exporter, '/futures2')
       end
     end
 

@@ -25,3 +25,10 @@ OpenTelemetry::SDK.configure do |c|
   c.add_span_processor(span_processor)
   c.service_name = 'spec test'
 end
+
+def assert_async_spans(request, exporter, http_target, span_size=2)
+  request.on_complete do |e|
+    spans = exporter.finished_spans.select { |e| e.attributes['http.target'] == http_target }
+    _(spans.size).must_equal(span_size)
+  end
+end
