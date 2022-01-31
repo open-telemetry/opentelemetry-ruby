@@ -3,3 +3,6 @@ inherit_from: ../.rubocop-examples.yml
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-instrumentation-manticore.rb"
+    - "test/test_helper.rb"
+    - "test/local_server.rb"
+    - "example/**.rb"

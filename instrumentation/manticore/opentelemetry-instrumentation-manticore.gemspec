@@ -31,13 +31,13 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'appraisal', '~> 2.2.0'
   spec.add_development_dependency 'bundler', '>= 1.17'
+  spec.add_development_dependency 'manticore', '~> 0.7.0'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'opentelemetry-sdk', '~> 1.0'
-  spec.add_development_dependency 'pry', '>= 0.14.0'
-  spec.add_development_dependency 'manticore', '>= 0.7.0'
+  spec.add_development_dependency 'pry'
+  spec.add_development_dependency 'rspec-mocks'
   spec.add_development_dependency 'rubocop', '~> 0.73.0'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
-  spec.add_development_dependency 'rspec-mocks'
   spec.add_development_dependency 'yard', '~> 0.9'
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
 

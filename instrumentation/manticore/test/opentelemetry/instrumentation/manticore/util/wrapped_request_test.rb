@@ -4,7 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-
 require 'test_helper'
 require_relative '../../../../local_server'
 require_relative '../../../../../lib/opentelemetry/instrumentation/manticore/util/wrapped_request'
@@ -19,7 +18,7 @@ describe 'OpenTelemetry::Instrumentation::Manticore::Util::WrappedRequest' do
   end
 
   describe '#.new is invoked and Manticore::Client::Request is passed' do
-    let(:uri) {'http://localhost:31000' }
+    let(:uri) { 'http://localhost:31000' }
     let(:wrapped_request) do
       LocalServer.start_server
       client = Manticore::Client.new
@@ -60,6 +59,5 @@ describe 'OpenTelemetry::Instrumentation::Manticore::Util::WrappedRequest' do
         _(wrapped_request.method).must_equal('GET')
       end
     end
-
   end
 end

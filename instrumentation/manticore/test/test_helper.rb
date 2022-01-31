@@ -13,7 +13,6 @@ require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
 require 'pry'
 
-
 Bundler.require
 
 # global opentelemetry-sdk setup:
@@ -26,9 +25,9 @@ OpenTelemetry::SDK.configure do |c|
   c.service_name = 'spec test'
 end
 
-def assert_async_spans(request, exporter, http_target, span_size=2)
-  request.on_complete do |e|
-    spans = exporter.finished_spans.select { |e| e.attributes['http.target'] == http_target }
+def assert_async_spans(request, exporter, http_target, span_size = 2)
+  request.on_complete do |_|
+    spans = exporter.finished_spans.select { |s| s.attributes['http.target'] == http_target }
     _(spans.size).must_equal(span_size)
   end
 end

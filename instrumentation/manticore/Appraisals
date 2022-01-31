@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 appraise 'manticore-0.7' do
-  gem 'manticore', '~> 0.7.1'
+  gem 'manticore', '~> 0.7.0'
 end
 
 appraise 'manticore-0.6' do

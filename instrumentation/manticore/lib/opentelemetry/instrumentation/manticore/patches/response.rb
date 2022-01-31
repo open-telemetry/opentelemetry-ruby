@@ -27,7 +27,7 @@ module OpenTelemetry
               annotate_span_with_response!(span, response)
             end
             # .super() somehow becomes missing for async requests. Below works for sync and async requests.
-            self.method(:call).super_method.call
+            method(:call).super_method.call
           rescue ::Manticore::ManticoreException => e
             OpenTelemetry.logger.debug("Errored during tracing: #{e}")
             span.record_exception(e)
@@ -57,9 +57,10 @@ module OpenTelemetry
               'net.peer.name' => uri.host,
               'net.peer.port' => uri.port
             }
-            return attr if Manticore::Instrumentation.instance.config["allowed_request_headers"].empty?
+            return attr if Manticore::Instrumentation.instance.config['allowed_request_headers'].empty?
+
             header_attr = header_attributes(wrapped_request.headers,
-                                            Manticore::Instrumentation.instance.config["allowed_request_headers"],
+                                            Manticore::Instrumentation.instance.config['allowed_request_headers'],
                                             'http.request')
             attr.merge(header_attr)
           end
@@ -71,9 +72,10 @@ module OpenTelemetry
               'http.status_code' => response.code,
               'http.status_text' => response.message
             }
-            return attr if Manticore::Instrumentation.instance.config["allowed_response_headers"].empty?
+            return attr if Manticore::Instrumentation.instance.config['allowed_response_headers'].empty?
+
             header_attr = header_attributes(response.headers,
-                                            Manticore::Instrumentation.instance.config["allowed_response_headers"],
+                                            Manticore::Instrumentation.instance.config['allowed_response_headers'],
                                             'http.response')
             attr.merge(header_attr)
           end
@@ -85,6 +87,7 @@ module OpenTelemetry
           # @return [Hash] A duplicated headers attributes hash to be added to the span
           def header_attributes(headers, record_headers_list = [], request_type = 'http.request')
             return {} if headers.empty? || record_headers_list.empty?
+
             attr = {}
             record_list = headers.keys & record_headers_list
             record_list.each do |key|

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module OpenTelemetry
   module Instrumentation
     module Manticore
@@ -9,6 +11,7 @@ module OpenTelemetry
           # @param [Manticore::Client::Request] request
           def initialize(request)
             raise ArgumentError, 'expected a http request but received nil' if request.nil?
+
             @request = request
           end
 
@@ -37,4 +40,3 @@ module OpenTelemetry
     end
   end
 end
-

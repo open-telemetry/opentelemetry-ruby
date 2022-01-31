@@ -19,8 +19,8 @@ module OpenTelemetry
         end
 
         # Optional list of headers client may want to record as part of the span
-        option "allowed_request_headers", default: [], validate: :array
-        option "allowed_response_headers", default: [], validate: :array
+        option 'allowed_request_headers', default: [], validate: :array
+        option 'allowed_response_headers', default: [], validate: :array
 
         private
 
