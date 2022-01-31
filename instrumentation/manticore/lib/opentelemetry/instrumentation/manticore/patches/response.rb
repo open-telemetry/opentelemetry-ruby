@@ -13,7 +13,7 @@ module OpenTelemetry
           # Hooks into the #.call function which is executed for any verbs like:
           #   [:get, :post, :put, :options, :header]
           # Executes for async and sync requests.
-          # It has direct to Manticore::Response methods and instance variables.
+          # It has direct access to Manticore::Response methods and instance variables.
           # Take great care of any unintentional mutations:
           # [@request, @response, .on_complete] - are being invoked directly from Manticore::Response
           def call
@@ -50,7 +50,6 @@ module OpenTelemetry
           def request_attributes(wrapped_request)
             uri = URI.parse(wrapped_request.uri)
             attr = {
-              'library' => 'Manticore',
               'http.method' => wrapped_request.method,
               'http.scheme' => uri.scheme,
               'http.target' => uri.path,
@@ -58,9 +57,9 @@ module OpenTelemetry
               'net.peer.name' => uri.host,
               'net.peer.port' => uri.port
             }
-            return attr if Manticore::Instrumentation.instance.config["record_request_headers_list"].empty?
+            return attr if Manticore::Instrumentation.instance.config["allowed_request_headers"].empty?
             header_attr = header_attributes(wrapped_request.headers,
-                                            Manticore::Instrumentation.instance.config["record_request_headers_list"],
+                                            Manticore::Instrumentation.instance.config["allowed_request_headers"],
                                             'http.request')
             attr.merge(header_attr)
           end
@@ -72,15 +71,15 @@ module OpenTelemetry
               'http.status_code' => response.code,
               'http.status_text' => response.message
             }
-            return attr if Manticore::Instrumentation.instance.config["record_response_headers_list"].empty?
+            return attr if Manticore::Instrumentation.instance.config["allowed_response_headers"].empty?
             header_attr = header_attributes(response.headers,
-                                            Manticore::Instrumentation.instance.config["record_response_headers_list"],
+                                            Manticore::Instrumentation.instance.config["allowed_response_headers"],
                                             'http.response')
             attr.merge(header_attr)
           end
 
           # @param [OpenTelemetry::Instrumentation::Manticore::Util::WrappedRequest.headers] headers receives the headers hash of the manticore request object
-          # @param [Array] record_headers_list an array that should include a list of interested headers that would like to be recorded. The headers provided should be from either 'record_response_headers_list' or 'record_request_headers_list' configured when starting the instrumentation installation.
+          # @param [Array] record_headers_list an array that should include a list of interested headers that would like to be recorded. The headers provided should be from either 'allowed_response_headers' or 'allowed_request_headers' configured when starting the instrumentation installation.
           # @param [String] request_type a string that prefix of all the keys to be recorded in the attribute. The string should only be 'http.request' or 'http.response' This is specified in
           # `https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/http.md#http-request-and-response-headers`.
           # @return [Hash] A duplicated headers attributes hash to be added to the span
@@ -89,7 +88,7 @@ module OpenTelemetry
             attr = {}
             record_list = headers.keys & record_headers_list
             record_list.each do |key|
-              attr["#{request_type}.#{key}"] = headers[key]
+              attr["#{request_type}.header.#{key}"] = headers[key]
             end
             attr
           end

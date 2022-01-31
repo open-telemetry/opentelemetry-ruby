@@ -10,9 +10,9 @@ class LocalServer
   class << self
     def default_response
       <<-HEREDOC
-      HTTP/1.1 200 OK
+HTTP/1.1 200 OK
 
-      default good response
+default good response
       HEREDOC
     end
 

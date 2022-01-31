@@ -3,7 +3,6 @@
 # Copyright The OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
-
 require 'test_helper'
 require_relative '../../../../local_server'
 require_relative '../../../../../lib/opentelemetry/instrumentation/manticore'
@@ -14,7 +13,7 @@ describe OpenTelemetry::Instrumentation::Manticore::Instrumentation do
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
   let(:local_server) { LocalServer }
-  let(:client) {Manticore::Client.new}
+  let(:client) { Manticore::Client.new }
 
   before do
     exporter.reset
@@ -23,6 +22,7 @@ describe OpenTelemetry::Instrumentation::Manticore::Instrumentation do
 
   describe 'tracing' do
     before do
+      exporter.reset
       instrumentation.install
     end
 
@@ -48,9 +48,9 @@ describe OpenTelemetry::Instrumentation::Manticore::Instrumentation do
     describe 'when request is returned with failure code' do
       it 'stores attributes correctly' do
         response = <<-HEREDOC
-        HTTP/1.1 500 Internal Server Error
+HTTP/1.1 500 Internal Server Error
 
-        default good response
+default good response
         HEREDOC
         local_server.save_mock('GET', '/failure', response)
         ::Manticore.get('http://localhost:31000/failure').body
@@ -63,36 +63,79 @@ describe OpenTelemetry::Instrumentation::Manticore::Instrumentation do
       end
     end
 
-    describe 'when Manticore requests two requests in parallel' do
-      it 'creates two spans' do
-        client.parallel.get('http://localhost:31000/success')
-        client.parallel.get('http://localhost:31000/success')
-        client.execute!
-        _(exporter.finished_spans.size).must_equal(2)
+    describe 'when Manticore makes a two parallel requests' do
+      it 'creates at least two spans' do
+        response = <<-HEREDOC
+HTTP/1.1 200 OK
+Server: RubyLocalServer
+
+
+{"message":"parallel requests"}
+        HEREDOC
+        local_server.save_mock('GET', '/parallel', response)
+        f1 = client.parallel.get('http://localhost:31000/parallel')
+        f2 = client.parallel.get('http://localhost:31000/parallel')
+        [f1,f2].each {|e| e.call}
+        spans = exporter.finished_spans.select {|e| e.attributes['http.target'] == '/parallel'}
+        assert_gte(spans.size, 2)
+      end
+    end
+    describe 'when Manticore makes a two batch requests' do
+      it 'creates at least two spans' do
+        response = <<-HEREDOC
+HTTP/1.1 200 OK
+Server: RubyLocalServer
+
+
+{"message":"batch requests"}
+        HEREDOC
+        local_server.save_mock('GET', '/batch', response)
+        f1 = client.batch.get('http://localhost:31000/batch')
+        f2 = client.batch.get('http://localhost:31000/batch')
+        [f1,f2].each {|e| e.call}
+        spans = exporter.finished_spans.select {|e| e.attributes['http.target'] == '/batch'}
+        assert_gte(spans.size, 2)
+      end
+    end
+    describe 'when Manticore makes two future requests' do
+      it 'creates at least two spans' do
+        response = <<-HEREDOC
+HTTP/1.1 200 OK
+Server: RubyLocalServer
+
+
+{"message":"future requests"}
+        HEREDOC
+        local_server.save_mock('GET', '/futures', response)
+        f1 = client.background.get('http://localhost:31000/futures')
+        f2 = client.background.get('http://localhost:31000/futures')
+        [f1,f2].each {|e| e.call}
+        spans = exporter.finished_spans.select {|e| e.attributes['http.target'] == '/futures'}
+        assert_gte(spans.size, 2)
       end
     end
 
-    it 'accepts record_request_headers_list from config' do
+    it 'accepts allowed_request_headers from config' do
       instrumentation.instance_variable_set(:@installed, false)
-      instrumentation.install({ "record_request_headers_list" => ['Connection'] })
-      ::Manticore.get('http://localhost:31000/record_request_headers_list').body
+      instrumentation.install({ "allowed_request_headers" => ['Connection'] })
+      ::Manticore.get('http://localhost:31000/allowed_request_headers').body
       # Manticore default behavior is to keep connection alive via the header 'Connection'
-      _(span.attributes['http.request.Connection']).wont_be_empty
+      _(span.attributes['http.request.header.Connection']).wont_be_empty
     end
 
-    it 'accepts record_response_headers_list from config' do
+    it 'accepts allowed_response_headers from config' do
       instrumentation.instance_variable_set(:@installed, false)
-      instrumentation.install({ "record_response_headers_list" => ['server'] })
+      instrumentation.install({ "allowed_response_headers" => ['server'] })
       response = <<-HEREDOC
-      HTTP/1.1 200 OK
-      Server: RubyLocalServer
+HTTP/1.1 200 OK
+Server: RubyLocalServer
 
 
-      default good response
+default good response
       HEREDOC
-      local_server.save_mock('GET', '/record_response_headers_list', response)
-      ::Manticore.get('http://localhost:31000/record_response_headers_list').body
-      _(span.attributes['http.response.server']).must_equal('RubyLocalServer')
+      local_server.save_mock('GET', '/allowed_response_headers', response)
+      ::Manticore.get('http://localhost:31000/allowed_response_headers').body
+      _(span.attributes['http.response.header.server']).must_equal('RubyLocalServer')
     end
 
     describe 'when manticore raises ManticoreException' do
