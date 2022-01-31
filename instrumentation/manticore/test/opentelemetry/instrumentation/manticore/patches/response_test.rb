@@ -64,7 +64,7 @@ default good response
     end
 
     describe 'when Manticore makes a two parallel requests' do
-      it 'creates at least two spans' do
+      it 'creates two spans for each requests' do
         response = <<-HEREDOC
 HTTP/1.1 200 OK
 Server: RubyLocalServer
@@ -75,13 +75,16 @@ Server: RubyLocalServer
         local_server.save_mock('GET', '/parallel', response)
         f1 = client.parallel.get('http://localhost:31000/parallel')
         f2 = client.parallel.get('http://localhost:31000/parallel')
-        [f1,f2].each {|e| e.call}
-        spans = exporter.finished_spans.select {|e| e.attributes['http.target'] == '/parallel'}
-        assert_gte(spans.size, 2)
+        [f1, f2].each do |f|
+          f.on_complete do |e|
+            spans = exporter.finished_spans.select { |e| e.attributes['http.target'] == '/parallel' }
+            _(exporter.finished_spans.size).must_equal(2)
+          end
+        end
       end
     end
     describe 'when Manticore makes a two batch requests' do
-      it 'creates at least two spans' do
+      it 'creates two span for each requests' do
         response = <<-HEREDOC
 HTTP/1.1 200 OK
 Server: RubyLocalServer
@@ -92,13 +95,16 @@ Server: RubyLocalServer
         local_server.save_mock('GET', '/batch', response)
         f1 = client.batch.get('http://localhost:31000/batch')
         f2 = client.batch.get('http://localhost:31000/batch')
-        [f1,f2].each {|e| e.call}
-        spans = exporter.finished_spans.select {|e| e.attributes['http.target'] == '/batch'}
-        assert_gte(spans.size, 2)
+        [f1, f2].each do |f|
+          f.on_complete do |e|
+            spans = exporter.finished_spans.select { |e| e.attributes['http.target'] == '/batch' }
+            _(exporter.finished_spans.size).must_equal(2)
+          end
+        end
       end
     end
     describe 'when Manticore makes two future requests' do
-      it 'creates at least two spans' do
+      it 'creates at least two spans for each requests' do
         response = <<-HEREDOC
 HTTP/1.1 200 OK
 Server: RubyLocalServer
@@ -109,9 +115,12 @@ Server: RubyLocalServer
         local_server.save_mock('GET', '/futures', response)
         f1 = client.background.get('http://localhost:31000/futures')
         f2 = client.background.get('http://localhost:31000/futures')
-        [f1,f2].each {|e| e.call}
-        spans = exporter.finished_spans.select {|e| e.attributes['http.target'] == '/futures'}
-        assert_gte(spans.size, 2)
+        [f1, f2].each do |f|
+          f.on_complete do |e|
+            spans = exporter.finished_spans.select { |e| e.attributes['http.target'] == '/futures' }
+            _(exporter.finished_spans.size).must_equal(2)
+          end
+        end
       end
     end
 

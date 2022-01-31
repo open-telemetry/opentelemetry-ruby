@@ -25,7 +25,3 @@ OpenTelemetry::SDK.configure do |c|
   c.add_span_processor(span_processor)
   c.service_name = 'spec test'
 end
-
-def assert_gte(a, b)
-  assert_operator a, :>=, b
-end
