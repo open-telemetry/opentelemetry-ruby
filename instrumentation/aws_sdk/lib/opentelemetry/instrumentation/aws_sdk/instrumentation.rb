@@ -24,6 +24,7 @@ module OpenTelemetry
           gem_version >= MINIMUM_VERSION
         end
 
+        option :extract_messaging_context, default: false, validate: :boolean
         option :inject_messaging_context, default: false, validate: :boolean
         option :suppress_internal_instrumentation, default: false, validate: :boolean
 

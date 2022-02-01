@@ -30,8 +30,10 @@ module OpenTelemetry
           MessagingHelper.apply_sqs_attributes(attributes, context, client_method) if service_name == 'SQS'
           MessagingHelper.apply_sns_attributes(attributes, context, client_method) if service_name == 'SNS'
 
+          prepare_extract_context(context, client_method)
           tracer.in_span(span_name(context, client_method), attributes: attributes, kind: span_kind(client_method)) do |span|
             inject_context(context, client_method)
+
             if instrumentation_config[:suppress_internal_instrumentation]
               OpenTelemetry::Common::Utilities.untraced { super }
             else
@@ -44,6 +46,8 @@ module OpenTelemetry
                 span.record_exception(err)
                 span.status = Trace::Status.error(err.to_s)
               end
+
+              MessagingHelper.create_sqs_processing_spans(context, tracer, response.messages) if client_method == SQS_RECEIVE_MESSAGE && response.respond_to?(:messages)
             end
           end
         end
@@ -81,6 +85,13 @@ module OpenTelemetry
           end
         end
 
+        def prepare_extract_context(context, client_method)
+          return unless client_method == SQS_RECEIVE_MESSAGE
+          return unless instrumentation_config[:extract_messaging_context]
+
+          context.params[:message_attribute_names] = ['All']
+        end
+
         def span_kind(client_method)
           case client_method
           when SQS_SEND_MESSAGE, SQS_SEND_MESSAGE_BATCH, SNS_PUBLISH
@@ -95,9 +106,9 @@ module OpenTelemetry
         def span_name(context, client_method)
           case client_method
           when SQS_SEND_MESSAGE, SQS_SEND_MESSAGE_BATCH, SNS_PUBLISH
-            "#{MessagingHelper.queue_name(context)} send"
+            "#{MessagingHelper.destination_name(context)} send"
           when SQS_RECEIVE_MESSAGE
-            "#{MessagingHelper.queue_name(context)} receive"
+            "#{MessagingHelper.destination_name(context)} receive"
           else
             client_method
           end
