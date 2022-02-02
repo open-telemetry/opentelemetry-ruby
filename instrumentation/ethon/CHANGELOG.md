@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-ethon
 
+### v0.19.4 / 2022-02-02
+
+* FIXED: Excessive hash creation on context attr merging 
+
 ### v0.19.3 / 2021-12-02
 
 * (No significant changes)

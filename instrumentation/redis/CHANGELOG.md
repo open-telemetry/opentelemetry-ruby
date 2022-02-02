@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-redis
 
+### v0.21.3 / 2022-02-02
+
+* FIXED: Prevent redis instrumentation from mutating the command 
+
 ### v0.21.2 / 2021-12-01
 
 * (No significant changes)
