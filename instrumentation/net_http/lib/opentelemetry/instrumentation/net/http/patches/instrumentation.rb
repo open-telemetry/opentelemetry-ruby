@@ -18,16 +18,17 @@ module OpenTelemetry
               # Do not trace recursive call for starting the connection
               return super(req, body, &block) unless started?
 
-              attributes = OpenTelemetry::Common::HTTP::ClientContext.attributes
+              attributes = {
+                OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => req.method,
+                OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
+                OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
+                OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
+                OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port
+              }.merge(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+
               tracer.in_span(
                 HTTP_METHODS_TO_SPAN_NAMES[req.method],
-                attributes: attributes.merge(
-                  OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => req.method,
-                  OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
-                  OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
-                  OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
-                  OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port
-                ),
+                attributes: attributes,
                 kind: :client
               ) do |span|
                 OpenTelemetry.propagation.inject(req)

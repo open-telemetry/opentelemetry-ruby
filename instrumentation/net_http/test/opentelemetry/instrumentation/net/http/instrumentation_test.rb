@@ -102,7 +102,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
     end
 
     it 'merges http client attributes' do
-      OpenTelemetry::Common::HTTP::ClientContext.with_attributes('peer.service' => 'foo') do
+      OpenTelemetry::Common::HTTP::ClientContext.with_attributes('peer.service' => 'foo', 'http.target' => 'REDACTED') do
         ::Net::HTTP.get('example.com', '/success')
       end
 
@@ -111,7 +111,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200
-      _(span.attributes['http.target']).must_equal '/success'
+      _(span.attributes['http.target']).must_equal 'REDACTED'
       _(span.attributes['net.peer.name']).must_equal 'example.com'
       _(span.attributes['net.peer.port']).must_equal 80
       _(span.attributes['peer.service']).must_equal 'foo'
