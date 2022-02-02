@@ -74,7 +74,9 @@ module OpenTelemetry
               if config[:db_statement] == :obfuscate
                 command[0].to_s.upcase + ' ?' * (command.size - 1)
               else
-                command[0].to_s.upcase + " " +  command[1..-1].join(' ')
+                command_copy = command.dup
+                command_copy[0] = command_copy[0].to_s.upcase
+                command_copy.join(' ')
               end
             end.join("\n")
           end
