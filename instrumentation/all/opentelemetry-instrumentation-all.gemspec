@@ -39,7 +39,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-instrumentation-delayed_job', '~> 0.18.3'
   spec.add_dependency 'opentelemetry-instrumentation-ethon', '~> 0.19.2'
   spec.add_dependency 'opentelemetry-instrumentation-excon', '~> 0.19.2'
-  spec.add_dependency 'opentelemetry-instrumentation-faraday', '~> 0.19.2'
+  spec.add_dependency 'opentelemetry-instrumentation-faraday', '~> 0.20.0'
   spec.add_dependency 'opentelemetry-instrumentation-graphql', '~> 0.19.1'
   spec.add_dependency 'opentelemetry-instrumentation-http', '~> 0.19.2'
   spec.add_dependency 'opentelemetry-instrumentation-http_client', '~> 0.19.2'

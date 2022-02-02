@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-http
 
+### v0.19.4 / 2022-02-02
+
+* FIXED: Excessive hash creation on context attr merging 
+
 ### v0.19.3 / 2021-12-01
 
 * FIXED: Change net attribute names to match the semantic conventions spec for http 
