@@ -24,7 +24,7 @@ module OpenTelemetry
                 OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
                 OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
                 OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port
-              }.merge(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+              }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
               tracer.in_span(
                 HTTP_METHODS_TO_SPAN_NAMES[req.method],
@@ -50,11 +50,12 @@ module OpenTelemetry
                 conn_port    = port
               end
 
-              attributes = OpenTelemetry::Common::HTTP::ClientContext.attributes
-              tracer.in_span('HTTP CONNECT', attributes: attributes.merge(
+              attributes = {
                 OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => conn_address,
                 OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => conn_port
-              )) do
+              }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+
+              tracer.in_span('HTTP CONNECT', attributes: attributes) do
                 super
               end
             end
