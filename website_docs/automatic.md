@@ -1,6 +1,8 @@
 ---
-title: Configuring automatic instrumentation
-weight: 5
+title: Automatic instrumentation
+linkTitle: Automatic
+spelling: cSpell:ignore faraday sinatra
+weight: 2
 ---
 
 Automatic instrumentation in ruby is done via instrumentation packages, and most commonly, the `opentelemetry-instrumentation-all` package. These are called Instrumentation Libraries.
@@ -52,7 +54,7 @@ To override more instrumentation, add another entry in the `config` map.
 
 ### Configuring specific instrumentation libraries
 
-If you prefer more selectively installing and using only specific instrumentation libraries, you can do that too. For example, here's how to use only `Sinatra` and `Faraday`, with `Farady` being configured with an additional configuration parameter.
+If you prefer more selectively installing and using only specific instrumentation libraries, you can do that too. For example, here's how to use only `Sinatra` and `Faraday`, with `Faraday` being configured with an additional configuration parameter.
 
 First, install the specific instrumentation libraries you know you want to use:
 
@@ -76,4 +78,4 @@ end
 
 ### Next steps
 
-Instrumentation libraries are the easiest way to generate lots of useful telemetry data about your ruby apps. But they don't generate data specific to your application's logic! To do that, you'll need to enrich the automatic instrumentation from instrumentation libraries with [manual instrumentation](manual_instrumentation).
+Instrumentation libraries are the easiest way to generate lots of useful telemetry data about your ruby apps. But they don't generate data specific to your application's logic! To do that, you'll need to enrich the automatic instrumentation from instrumentation libraries with [manual instrumentation](../manual).

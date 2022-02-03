@@ -1,5 +1,6 @@
 ---
 title: Context Propagation
+spelling: cSpell:ignore tracecontext
 weight: 2
 ---
 

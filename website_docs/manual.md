@@ -1,5 +1,6 @@
 ---
-title: "Manual Instrumentation"
+title: Manual Instrumentation
+linkTitle: Manual
 weight: 4
 ---
 
