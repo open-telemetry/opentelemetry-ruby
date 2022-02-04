@@ -1,5 +1,6 @@
 ---
 title: Getting Started
+aliases: [/docs/instrumentation/ruby/getting_started]
 weight: 1
 ---
 

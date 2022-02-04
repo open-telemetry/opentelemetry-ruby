@@ -1,5 +1,6 @@
 ---
 title: Context Propagation
+aliases: [/docs/instrumentation/ruby/context_propagation]
 spelling: cSpell:ignore tracecontext
 weight: 2
 ---
