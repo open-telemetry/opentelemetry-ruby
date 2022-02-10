@@ -15,7 +15,7 @@ describe OpenTelemetry::SDK do
       meter = meter_provider.meter("test")
       instrument = meter.create_counter("a_counter")
 
-      # Calls before the SDK is configured return ProxY implementations
+      # Calls before the SDK is configured return Proxy implementations
       _(meter_provider).must_be_instance_of OpenTelemetry::Internal::ProxyMeterProvider
       _(meter).must_be_instance_of OpenTelemetry::Internal::ProxyMeter
       _(instrument).must_be_instance_of OpenTelemetry::Internal::ProxyInstrument

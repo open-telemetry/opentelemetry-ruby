@@ -17,9 +17,8 @@ module OpenTelemetry
         #
         # @param [String] name Instrumentation package name
         # @param [String] version Instrumentation package version
-        # @param [TracerProvider] tracer_provider TracerProvider that initialized the tracer
         #
-        # @return [Tracer]
+        # @return [Meter]
         def initialize(name, version)
           @mutex = Mutex.new
           @registry = {}
