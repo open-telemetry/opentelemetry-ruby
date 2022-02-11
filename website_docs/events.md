@@ -1,5 +1,6 @@
 ---
-title: "Span Events"
+title: Span Events
+spelling: cSpell:ignore mutex SIGHUP
 weight: 3
 ---
 
