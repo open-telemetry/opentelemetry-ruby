@@ -16,6 +16,9 @@ module OpenTelemetry
               rack_span.name = "#{self.class.name}##{name}" if rack_span.context.valid? && !request.env['action_dispatch.exception']
 
               add_rails_route(rack_span, request) if instrumentation_config[:enable_recognize_route]
+
+              rack_span.set_attribute('http.target', request.filtered_path)
+
               super(name, request, response)
             end
 
