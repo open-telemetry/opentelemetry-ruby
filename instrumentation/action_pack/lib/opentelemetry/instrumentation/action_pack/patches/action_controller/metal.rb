@@ -13,11 +13,13 @@ module OpenTelemetry
           module Metal
             def dispatch(name, request, response)
               rack_span = OpenTelemetry::Instrumentation::Rack.current_span
-              rack_span.name = "#{self.class.name}##{name}" if rack_span.context.valid? && !request.env['action_dispatch.exception']
+              if rack_span.recording?
+                rack_span.name = "#{self.class.name}##{name}" unless request.env['action_dispatch.exception']
 
-              add_rails_route(rack_span, request) if instrumentation_config[:enable_recognize_route]
+                add_rails_route(rack_span, request) if instrumentation_config[:enable_recognize_route]
 
-              rack_span.set_attribute('http.target', request.filtered_path)
+                rack_span.set_attribute('http.target', request.filtered_path)
+              end
 
               super(name, request, response)
             end
