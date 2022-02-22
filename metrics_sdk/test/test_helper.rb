@@ -23,3 +23,12 @@ def reset_metrics_sdk
   OpenTelemetry.logger = Logger.new(File::NULL)
   OpenTelemetry.error_handler = nil
 end
+
+def with_test_logger
+  log_stream = StringIO.new
+  original_logger = OpenTelemetry.logger
+  OpenTelemetry.logger = ::Logger.new(log_stream)
+  yield log_stream
+ensure
+  OpenTelemetry.logger = original_logger
+end
