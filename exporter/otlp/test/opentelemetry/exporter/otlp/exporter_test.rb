@@ -61,6 +61,28 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       end
     end
 
+    it 'only allows http/protobuf protocol via environment variable and defaults to http/protobuf' do
+      with_env('OTEL_EXPORTER_OTLP_TRACES_PROTOCOL' => 'grpc') do
+        assert_raises ArgumentError do
+          OpenTelemetry::Exporter::OTLP::Exporter.new
+        end
+      end
+
+      with_env('OTEL_EXPORTER_OTLP_PROTOCOL' => 'http/json') do
+        assert_raises ArgumentError do
+          OpenTelemetry::Exporter::OTLP::Exporter.new
+        end
+      end
+
+      with_env('OTEL_EXPORTER_OTLP_TRACES_PROTOCOL' => 'http/protobuf') do
+        exp = OpenTelemetry::Exporter::OTLP::Exporter.new
+        _(exp.instance_variable_get(:@protocol)).must_equal('http/protobuf')
+      end
+
+      exp = OpenTelemetry::Exporter::OTLP::Exporter.new
+      _(exp.instance_variable_get(:@protocol)).must_equal('http/protobuf')
+    end
+
     it 'sets parameters from the environment' do
       exp = with_env('OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234',
                      'OTEL_EXPORTER_OTLP_CERTIFICATE' => '/foo/bar',

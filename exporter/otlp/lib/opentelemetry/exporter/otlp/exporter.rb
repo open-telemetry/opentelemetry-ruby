@@ -43,7 +43,7 @@ module OpenTelemetry
           end
         end
 
-        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4318/v1/traces'), # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4318/v1/traces'), # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity,  Metrics/AbcSize
                        certificate_file: config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
                        ssl_verify_mode: Exporter.ssl_verify_mode,
                        headers: config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
@@ -52,6 +52,9 @@ module OpenTelemetry
                        metrics_reporter: nil)
           raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}" if invalid_url?(endpoint)
           raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
+
+          @protocol = config_opt('OTEL_EXPORTER_OTLP_TRACES_PROTOCOL', 'OTEL_EXPORTER_OTLP_PROTOCOL', default: 'http/protobuf')
+          raise ArgumentError, "unsupported protocol for OTLP::Exporter #{@protocol}" if @protocol != 'http/protobuf'
 
           @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
                    URI("#{endpoint}/v1/traces")
