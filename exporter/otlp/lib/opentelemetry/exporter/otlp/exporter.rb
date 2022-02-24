@@ -53,7 +53,7 @@ module OpenTelemetry
           raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}" if invalid_url?(endpoint)
           raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
-          # TODO: add _METRICS protocol env var support when metrics api/sdk is added.
+          # TODO: add OTEL_EXPORTER_OTLP_METRICS_PROTOCOL protocol env var support when metrics api/sdk is added.
           # This may need to be moved to sdk/configurator.rb when grpc and http/json options are added, if added as unique gems.
           @protocol = config_opt('OTEL_EXPORTER_OTLP_TRACES_PROTOCOL', 'OTEL_EXPORTER_OTLP_PROTOCOL', default: 'http/protobuf')
           raise ArgumentError, "unsupported protocol for OTLP::Exporter #{@protocol}" if @protocol != 'http/protobuf'
