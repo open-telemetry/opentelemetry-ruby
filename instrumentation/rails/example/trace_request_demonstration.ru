@@ -25,8 +25,8 @@ class TraceRequestApp < Rails::Application
   config.hosts << 'example.org'
   secrets.secret_key_base = 'secret_key_base'
   config.eager_load = false
+  config.action_controller.default_protect_from_forgery = true
   config.logger = Logger.new($stdout)
-  Rails.logger  = config.logger
 end
 
 ENV['OTEL_TRACES_EXPORTER'] = 'console'
