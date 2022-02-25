@@ -58,17 +58,17 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
     end
 
     it 'invokes shutdown on all registered Metric Readers' do
-      mock_metric_reader_1 = Minitest::Mock.new
-      mock_metric_reader_2 = Minitest::Mock.new
-      mock_metric_reader_1.expect(:shutdown, nil, [{ timeout: nil }])
-      mock_metric_reader_2.expect(:shutdown, nil, [{ timeout: nil }])
+      mock_metric_reader1 = Minitest::Mock.new
+      mock_metric_reader2 = Minitest::Mock.new
+      mock_metric_reader1.expect(:shutdown, nil, [{ timeout: nil }])
+      mock_metric_reader2.expect(:shutdown, nil, [{ timeout: nil }])
 
-      OpenTelemetry.meter_provider.add_metric_reader(mock_metric_reader_1)
-      OpenTelemetry.meter_provider.add_metric_reader(mock_metric_reader_2)
+      OpenTelemetry.meter_provider.add_metric_reader(mock_metric_reader1)
+      OpenTelemetry.meter_provider.add_metric_reader(mock_metric_reader2)
       OpenTelemetry.meter_provider.shutdown
 
-      mock_metric_reader_1.verify
-      mock_metric_reader_2.verify
+      mock_metric_reader1.verify
+      mock_metric_reader2.verify
     end
   end
 
@@ -82,17 +82,17 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
     end
 
     it 'invokes force_flush on all registered Metric Readers' do
-      mock_metric_reader_1 = Minitest::Mock.new
-      mock_metric_reader_2 = Minitest::Mock.new
-      mock_metric_reader_1.expect(:force_flush, nil, [{ timeout: nil }])
-      mock_metric_reader_2.expect(:force_flush, nil, [{ timeout: nil }])
-      OpenTelemetry.meter_provider.add_metric_reader(mock_metric_reader_1)
-      OpenTelemetry.meter_provider.add_metric_reader(mock_metric_reader_2)
+      mock_metric_reader1 = Minitest::Mock.new
+      mock_metric_reader2 = Minitest::Mock.new
+      mock_metric_reader1.expect(:force_flush, nil, [{ timeout: nil }])
+      mock_metric_reader2.expect(:force_flush, nil, [{ timeout: nil }])
+      OpenTelemetry.meter_provider.add_metric_reader(mock_metric_reader1)
+      OpenTelemetry.meter_provider.add_metric_reader(mock_metric_reader2)
 
       OpenTelemetry.meter_provider.force_flush
 
-      mock_metric_reader_1.verify
-      mock_metric_reader_2.verify
+      mock_metric_reader1.verify
+      mock_metric_reader2.verify
     end
   end
 
@@ -109,6 +109,9 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
   end
 
   describe '#add_view' do
-    # TODO
+    it 'adds a view' do
+      # TODO
+      # OpenTelemetry.meter_provider.add_view
+    end
   end
 end

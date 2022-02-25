@@ -42,7 +42,6 @@ module OpenTelemetry
         # Attempts to stop all the activity for this {MeterProvider}.
         #
         # Calls MetricReader#shutdown for all registered MetricReaders.
-        # Calls MetricExporter#shutdown for all registered MetricExporters.
         #
         # After this is called all the newly created {Meter}s will be no-op.
         #
@@ -56,11 +55,13 @@ module OpenTelemetry
               Export::FAILURE
             else
               start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
-
               results = @metric_readers.map do |metric_reader|
                 remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
-                break [Export::TIMEOUT] if remaining_timeout&.zero?
-                metric_reader.shutdown(timeout: remaining_timeout)
+                if remaining_timeout&.zero?
+                  Export::TIMEOUT
+                else
+                  metric_reader.shutdown(timeout: remaining_timeout)
+                end
               end
 
               @stopped = true
@@ -80,16 +81,21 @@ module OpenTelemetry
         #   a non-specific failure occurred, Export::TIMEOUT if a timeout occurred.
         def force_flush(timeout: nil)
           @mutex.synchronize do
-            return Export::SUCCESS if @stopped
+            if @stopped
+              Export::SUCCESS
+            else
+              start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
+              results = @metric_readers.map do |metric_reader|
+                remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
+                if remaining_timeout&.zero?
+                  Export::TIMEOUT
+                else
+                  metric_reader.force_flush(timeout: remaining_timeout)
+                end
+              end
 
-            start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
-            results = @metric_readers.map do |metric_reader|
-              remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
-              return Export::TIMEOUT if remaining_timeout&.zero?
-
-              metric_reader.force_flush(timeout: remaining_timeout)
+              results.max || Export::SUCCESS
             end
-            results.max || Export::SUCCESS
           end
         end
 
@@ -100,10 +106,11 @@ module OpenTelemetry
           @mutex.synchronize do
             if @stopped
               OpenTelemetry.logger.warn('calling MetricProvider#add_metric_reader after shutdown.')
-              return
+            else
+              @metric_readers.push(metric_reader)
             end
 
-            @metric_readers = @metric_readers.push(metric_reader)
+            nil
           end
         end
 
