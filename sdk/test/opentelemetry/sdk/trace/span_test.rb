@@ -488,6 +488,12 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(span.links.size).must_equal(1)
     end
 
+    it 'truncate link attributes' do
+      links = [OpenTelemetry::Trace::Link.new(context, { 'foo' => 'oldbaroldbaroldbaroldbaroldbaroldbar' })]
+      span = Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'name', SpanKind::INTERNAL, nil, span_limits, [], nil, links, Time.now, nil, nil)
+      _(span.links.first.attributes['foo']).must_equal('oldbaroldbaroldbaroldbaroldba...')
+    end
+
     it 'honours an explicit timestamp' do
       timestamp = Time.now
       test_span = Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'child span', SpanKind::INTERNAL, nil, span_limits, [], nil, [], timestamp, nil, nil)

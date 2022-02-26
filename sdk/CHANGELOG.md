@@ -1,5 +1,12 @@
 # Release History: opentelemetry-sdk
 
+### Unreleased
+
+* FIXED: Env var OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT is used to configure the
+  attribute length limit for attributes in an event
+* ADDED: Attributes in links will be truncated if
+  OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT env var is set
+
 ### v1.0.2 / 2021-12-01
 
 * FIXED: Default span kind 

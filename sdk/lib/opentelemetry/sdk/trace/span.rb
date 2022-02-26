@@ -131,7 +131,7 @@ module OpenTelemetry
         #
         # @return [self] returns itself
         def add_event(name, attributes: nil, timestamp: nil)
-          event = Event.new(name, truncate_attribute_values(attributes), relative_timestamp(timestamp))
+          event = Event.new(name, truncate_attribute_values(attributes, @span_limits.attribute_length_limit), relative_timestamp(timestamp))
 
           @mutex.synchronize do
             if @ended
@@ -294,7 +294,7 @@ module OpenTelemetry
           @attributes = attributes.nil? ? nil : Hash[attributes] # We need a mutable copy of attributes.
           trim_span_attributes(@attributes)
           @events = nil
-          @links = trim_links(links, span_limits.link_count_limit, span_limits.link_attribute_count_limit)
+          @links = trim_links(links, span_limits.link_count_limit, span_limits.link_attribute_count_limit, span_limits.attribute_length_limit)
 
           # Times are hard. Whenever an explicit timestamp is provided
           # (for Events or for the Span start_timestamp or end_timestamp),
@@ -343,24 +343,23 @@ module OpenTelemetry
 
           excess = attrs.size - @span_limits.attribute_count_limit
           excess.times { attrs.shift } if excess.positive?
-          truncate_attribute_values(attrs)
+          truncate_attribute_values(attrs, @span_limits.span_attribute_length_limit)
           nil
         end
 
-        def truncate_attribute_values(attrs)
+        def truncate_attribute_values(attrs, attribute_length_limit)
           return EMPTY_ATTRIBUTES if attrs.nil?
 
-          attribute_length_limit = @span_limits.attribute_length_limit
           attrs.each { |key, value| attrs[key] = OpenTelemetry::Common::Utilities.truncate(value, attribute_length_limit) } if attribute_length_limit
           attrs
         end
 
-        def trim_links(links, link_count_limit, link_attribute_count_limit) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def trim_links(links, link_count_limit, link_attribute_count_limit, attribute_length_limit) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           # Fast path (likely) common cases.
           return nil if links.nil?
 
           if links.size <= link_count_limit &&
-             links.all? { |link| link.span_context.valid? && link.attributes.size <= link_attribute_count_limit && Internal.valid_attributes?(name, 'link', link.attributes) }
+             links.all? { |link| link.span_context.valid? && link.attributes.size <= link_attribute_count_limit && Internal.valid_attributes?(name, 'link', link.attributes, attribute_length_limit) }
             return links.frozen? ? links : links.clone.freeze
           end
 
@@ -373,7 +372,7 @@ module OpenTelemetry
             attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
             excess = attrs.size - link_attribute_count_limit
             excess.times { attrs.shift } if excess.positive?
-            OpenTelemetry::Trace::Link.new(link.span_context, attrs)
+            OpenTelemetry::Trace::Link.new(link.span_context, truncate_attribute_values(attrs, attribute_length_limit))
           end.freeze
         end
 

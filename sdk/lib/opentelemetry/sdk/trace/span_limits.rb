@@ -12,8 +12,11 @@ module OpenTelemetry
         # The global default max number of attributes per {Span}.
         attr_reader :attribute_count_limit
 
-        # The global default max length of attribute value per {Span}.
+        # The global default max length of attribute value per {Span}, {Event} and {Link}.
         attr_reader :attribute_length_limit
+
+        # The max length of attribute value per {Span}.
+        attr_reader :span_attribute_length_limit
 
         # The global default max number of {OpenTelemetry::SDK::Trace::Event}s per {Span}.
         attr_reader :event_count_limit
@@ -32,8 +35,9 @@ module OpenTelemetry
         # @return [SpanLimits] with the desired values.
         # @raise [ArgumentError] if any of the max numbers are not positive.
         def initialize(attribute_count_limit: Integer(ENV.fetch('OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT', 128)), # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-                       attribute_length_limit: ENV.fetch('OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT',
+                       attribute_length_limit: ENV.fetch('OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT',
                                                          ENV['OTEL_RUBY_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT']),
+                       span_attribute_length_limit: ENV['OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT'],
                        event_count_limit: Integer(ENV.fetch('OTEL_SPAN_EVENT_COUNT_LIMIT', 128)),
                        link_count_limit: Integer(ENV.fetch('OTEL_SPAN_LINK_COUNT_LIMIT', 128)),
                        event_attribute_count_limit: Integer(ENV.fetch('OTEL_EVENT_ATTRIBUTE_COUNT_LIMIT', 128)),
@@ -47,6 +51,7 @@ module OpenTelemetry
 
           @attribute_count_limit = attribute_count_limit
           @attribute_length_limit = attribute_length_limit.nil? ? nil : Integer(attribute_length_limit)
+          @span_attribute_length_limit = span_attribute_length_limit.nil? ? @attribute_length_limit : Integer(span_attribute_length_limit)
           @event_count_limit = event_count_limit
           @link_count_limit = link_count_limit
           @event_attribute_count_limit = event_attribute_count_limit
