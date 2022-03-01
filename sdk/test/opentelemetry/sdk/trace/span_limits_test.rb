@@ -53,7 +53,7 @@ describe OpenTelemetry::SDK::Trace::SpanLimits do
         _(config.attribute_count_limit).must_equal 1
         _(config.event_count_limit).must_equal 2
         _(config.link_count_limit).must_equal 3
-        _(config.attribute_length_limit).must_equal nil
+        assert_nil config.attribute_length_limit
         _(config.span_attribute_length_limit).must_equal 32
         _(config.event_attribute_count_limit).must_equal 5
         _(config.link_attribute_count_limit).must_equal 6
