@@ -10,18 +10,13 @@ module OpenTelemetry
       module Patches
         # Module to prepend to HTTP::Client for instrumentation
         module Client
-          def perform(req, options) # rubocop:disable Metrics/AbcSize
+          include Common::HTTP::RequestAttributes
+
+          def perform(req, options)
             uri = req.uri
             request_method = req.verb.to_s.upcase
 
-            attributes = {
-              'http.method' => request_method,
-              'http.scheme' => uri.scheme,
-              'http.target' => uri.path,
-              'http.url' => "#{uri.scheme}://#{uri.host}",
-              'net.peer.name' => uri.host,
-              'net.peer.port' => uri.port
-            }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+            attributes = from_request(method: request_method, config: config, uri: uri)
 
             tracer.in_span("HTTP #{request_method}", attributes: attributes, kind: :client) do |span|
               OpenTelemetry.propagation.inject(req.headers)
@@ -43,6 +38,10 @@ module OpenTelemetry
 
           def tracer
             HTTP::Instrumentation.instance.tracer
+          end
+
+          def config
+            HTTP::Instrumentation.instance.config
           end
         end
       end

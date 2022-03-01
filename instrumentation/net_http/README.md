@@ -30,6 +30,18 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+### Configuration options
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::Net::HTTP', {
+    # Query parameters are hidden by default.
+    # To disable, set hide_query_params to false.
+    hide_query_params: true,
+  }
+end
+```
+
 ## Example
 
 An example of usage can be seen in [`example/net_http.rb`](https://github.com/open-telemetry/opentelemetry-ruby/blob/main/instrumentation/net_http/example/net_http.rb).

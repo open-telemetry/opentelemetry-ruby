@@ -24,7 +24,7 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
     @orig_propagation = OpenTelemetry.propagation
     propagator = OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
     OpenTelemetry.propagation = propagator
-    instrumentation.install
+    instrumentation.install({})
   end
 
   after do
@@ -40,21 +40,86 @@ describe OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation do
     end
 
     it 'after request with success code' do
-      ::Net::HTTP.get('example.com', '/success')
+      stub_request(:get, 'http://example.com/success?foo=bar').to_return(status: 200)
+      ::Net::HTTP.get('example.com', '/success?foo=bar')
 
       _(exporter.finished_spans.size).must_equal 1
       _(span.name).must_equal 'HTTP GET'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.scheme']).must_equal 'http'
       _(span.attributes['http.status_code']).must_equal 200
-      _(span.attributes['http.target']).must_equal '/success'
+      _(span.attributes['http.target']).must_equal '/success?'
       _(span.attributes['net.peer.name']).must_equal 'example.com'
       _(span.attributes['net.peer.port']).must_equal 80
       assert_requested(
         :get,
-        'http://example.com/success',
+        'http://example.com/success?foo=bar',
         headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
+    end
+
+    it 'after URI request with success code' do
+      stub_request(:get, 'http://example.com/success?foo=bar').to_return(status: 200)
+      ::Net::HTTP.get(URI('http://example.com/success?foo=bar'))
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.name).must_equal 'HTTP GET'
+      _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.scheme']).must_equal 'http'
+      _(span.attributes['http.status_code']).must_equal 200
+      _(span.attributes['http.target']).must_equal '/success?'
+      _(span.attributes['net.peer.name']).must_equal 'example.com'
+      _(span.attributes['net.peer.port']).must_equal 80
+      assert_requested(
+        :get,
+        'http://example.com/success?foo=bar',
+        headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+      )
+    end
+
+    describe 'with hide_query_params disabled' do
+      before do
+        # Force re-install of instrumentation
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install(hide_query_params: false)
+      end
+      it 'includes the query params in the target attribute' do
+        stub_request(:get, 'http://example.com/success?foo=bar').to_return(status: 200)
+        ::Net::HTTP.get('example.com', '/success?foo=bar')
+
+        _(exporter.finished_spans.size).must_equal 1
+        _(span.name).must_equal 'HTTP GET'
+        _(span.attributes['http.method']).must_equal 'GET'
+        _(span.attributes['http.scheme']).must_equal 'http'
+        _(span.attributes['http.status_code']).must_equal 200
+        _(span.attributes['http.target']).must_equal '/success?foo=bar'
+        _(span.attributes['net.peer.name']).must_equal 'example.com'
+        _(span.attributes['net.peer.port']).must_equal 80
+        assert_requested(
+          :get,
+          'http://example.com/success?foo=bar',
+          headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+        )
+      end
+
+      it 'includes the query params in the target attribute after URI request' do
+        stub_request(:get, 'http://example.com/success?foo=bar').to_return(status: 200)
+        ::Net::HTTP.get(URI('http://example.com/success?foo=bar'))
+
+        _(exporter.finished_spans.size).must_equal 1
+        _(span.name).must_equal 'HTTP GET'
+        _(span.attributes['http.method']).must_equal 'GET'
+        _(span.attributes['http.scheme']).must_equal 'http'
+        _(span.attributes['http.status_code']).must_equal 200
+        _(span.attributes['http.target']).must_equal '/success?foo=bar'
+        _(span.attributes['net.peer.name']).must_equal 'example.com'
+        _(span.attributes['net.peer.port']).must_equal 80
+        assert_requested(
+          :get,
+          'http://example.com/success?foo=bar',
+          headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+        )
+      end
     end
 
     it 'after request with failure code' do

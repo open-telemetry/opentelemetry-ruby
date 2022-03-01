@@ -19,7 +19,7 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Client do
     @orig_propagation = OpenTelemetry.propagation
     propagator = OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
     OpenTelemetry.propagation = propagator
-    instrumentation.install({})
+    instrumentation.install(hide_query_params: true)
     stub_request(:get, 'http://example.com/success').to_return(status: 200)
     stub_request(:post, 'http://example.com/failure').to_return(status: 500)
     stub_request(:get, 'https://example.com/timeout').to_timeout
@@ -122,6 +122,28 @@ describe OpenTelemetry::Instrumentation::HttpClient::Patches::Client do
         'http://example.com/success',
         headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
       )
+    end
+
+    it 'hide query params if enabled' do
+      stub_request(:get, 'http://example.com/success?foo=bar').to_return(status: 200)
+      http = HTTPClient.new
+      http.receive_timeout = 1
+      http.get('http://example.com/success?foo=bar')
+
+      _(exporter.finished_spans.size).must_equal(1)
+      _(span.attributes['http.target']).must_equal '/success?'
+    end
+
+    it 'show query params if disabled' do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(hide_query_params: false)
+      stub_request(:get, 'http://example.com/success?foo=bar').to_return(status: 200)
+      http = HTTPClient.new
+      http.receive_timeout = 1
+      http.get('http://example.com/success?foo=bar')
+
+      _(exporter.finished_spans.size).must_equal(1)
+      _(span.attributes['http.target']).must_equal '/success?foo=bar'
     end
   end
 end

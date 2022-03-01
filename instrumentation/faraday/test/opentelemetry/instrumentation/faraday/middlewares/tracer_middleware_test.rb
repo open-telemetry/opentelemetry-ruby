@@ -19,6 +19,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
     ::Faraday.new('http://username:password@example.com') do |builder|
       builder.adapter(:test) do |stub|
         stub.get('/success') { |_| [200, {}, 'OK'] }
+        stub.get('/success?foo=bar') { |_| [200, {}, 'OK'] }
         stub.get('/failure') { |_| [500, {}, 'OK'] }
         stub.get('/not_found') { |_| [404, {}, 'OK'] }
       end
@@ -41,19 +42,30 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
   describe 'first span' do
     before do
       instrumentation.install
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(hide_query_params: true)
     end
 
     it 'has http 200 attributes' do
-      response = client.get('/success')
+      response = client.get('/success?foo=bar')
 
       _(span.name).must_equal 'HTTP GET'
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.status_code']).must_equal 200
-      _(span.attributes['http.url']).must_equal 'http://example.com/success'
+      _(span.attributes['http.url']).must_equal 'http://example.com/success?'
       _(span.attributes['net.peer.name']).must_equal 'example.com'
       _(response.env.request_headers['Traceparent']).must_equal(
         "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
       )
+    end
+
+    it 'does not hide query params when hide_query_params is false' do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(hide_query_params: false)
+
+      client.get('/success?foo=bar')
+
+      _(span.attributes['http.url']).must_equal 'http://example.com/success?foo=bar'
     end
 
     it 'has http.status_code 404' do

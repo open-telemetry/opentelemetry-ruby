@@ -20,6 +20,7 @@ module OpenTelemetry
           defined?(::Faraday)
         end
 
+        option :hide_query_params, default: true, validate: :boolean
         option :peer_service, default: nil, validate: :string
 
         private

@@ -18,6 +18,8 @@ module OpenTelemetry
           !(defined?(::HTTP) && Gem.loaded_specs['http']).nil?
         end
 
+        option :hide_query_params, default: true, validate: :boolean
+
         def patch
           ::HTTP::Client.prepend(Patches::Client)
           ::HTTP::Connection.prepend(Patches::Connection)

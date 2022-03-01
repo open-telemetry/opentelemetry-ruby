@@ -11,20 +11,35 @@ module OpenTelemetry
         module Patches
           # Module to prepend to Net::HTTP for instrumentation
           module Instrumentation
+            include Common::HTTP::RequestAttributes
+
             HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |h, k| h[k] = "HTTP #{k}" }
             USE_SSL_TO_SCHEME = { false => 'http', true => 'https' }.freeze
 
-            def request(req, body = nil, &block)
+            def request(req, body = nil, &block) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
               # Do not trace recursive call for starting the connection
               return super(req, body, &block) unless started?
 
-              attributes = {
-                OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD => req.method,
-                OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME => USE_SSL_TO_SCHEME[use_ssl?],
-                OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET => req.path,
-                OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME => @address,
-                OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT => @port
-              }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
+              method = req.method
+
+              options = if req.uri
+                          {
+                            method: method,
+                            config: config,
+                            uri: req.uri
+                          }
+                        else
+                          {
+                            method: method,
+                            config: config,
+                            url: "#{USE_SSL_TO_SCHEME[use_ssl?]}://#{@address}:#{@port}#{req.path}",
+                            scheme: USE_SSL_TO_SCHEME[use_ssl?],
+                            target: req.path,
+                            hostname: @address,
+                            port: @port
+                          }
+                        end
+              attributes = from_request(**options)
 
               tracer.in_span(
                 HTTP_METHODS_TO_SPAN_NAMES[req.method],
@@ -71,6 +86,10 @@ module OpenTelemetry
 
             def tracer
               Net::HTTP::Instrumentation.instance.tracer
+            end
+
+            def config
+              Net::HTTP::Instrumentation.instance.config
             end
           end
         end

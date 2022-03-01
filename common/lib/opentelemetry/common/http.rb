@@ -13,3 +13,4 @@ module OpenTelemetry
 end
 
 require_relative './http/client_context'
+require_relative './http/request_attributes'

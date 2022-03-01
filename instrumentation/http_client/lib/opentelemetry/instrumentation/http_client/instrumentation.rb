@@ -20,6 +20,8 @@ module OpenTelemetry
           defined?(::HTTPClient)
         end
 
+        option :hide_query_params, default: true, validate: :boolean
+
         private
 
         def patch
