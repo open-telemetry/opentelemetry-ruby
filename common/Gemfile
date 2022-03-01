@@ -10,6 +10,7 @@ gemspec
 
 # Use the opentelemetry-api gem from source
 gem 'opentelemetry-api', path: '../api'
+gem 'opentelemetry-semantic_conventions', path: '../semantic_conventions'
 
 group :development, :test do
   gem 'pry'
