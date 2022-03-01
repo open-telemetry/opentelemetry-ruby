@@ -16,7 +16,7 @@ describe OpenTelemetry::Common::HTTP::RequestAttributes do
       'http.scheme' => 'http',
       'http.url' => 'http://example.com/foo?bar=baz',
       'http.target' => '/foo?bar=baz',
-      'net.peer.hostname' => 'example.com',
+      'net.peer.name' => 'example.com',
       'net.peer.port' => 80
     )
   end
@@ -28,7 +28,7 @@ describe OpenTelemetry::Common::HTTP::RequestAttributes do
       'http.scheme' => 'http',
       'http.url' => 'http://example.com/foo?bar=baz',
       'http.target' => '/foo?bar=baz',
-      'net.peer.hostname' => 'example.com',
+      'net.peer.name' => 'example.com',
       'net.peer.port' => 80
     )
   end
@@ -41,7 +41,7 @@ describe OpenTelemetry::Common::HTTP::RequestAttributes do
         'http.scheme' => 'http',
         'http.url' => 'http://example.com/foo?',
         'http.target' => '/foo?',
-        'net.peer.hostname' => 'example.com',
+        'net.peer.name' => 'example.com',
         'net.peer.port' => 80
       )
     end
