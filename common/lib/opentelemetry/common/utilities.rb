@@ -69,7 +69,7 @@ module OpenTelemetry
       #
       # @return [String]
       def truncate(string, size)
-        string.size > size ? "#{string[0...size - 3]}..." : string
+        string.is_a?(String) && string.size > size ? "#{string[0...size - 3]}..." : string
       end
 
       def untraced
