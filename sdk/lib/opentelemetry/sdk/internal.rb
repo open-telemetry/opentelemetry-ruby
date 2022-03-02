@@ -20,8 +20,8 @@ module OpenTelemetry
         key.instance_of?(String)
       end
 
-      def valid_simple_value?(value)
-        value.instance_of?(String) || value == false || value == true || value.is_a?(Numeric)
+      def valid_simple_value?(value, length_limit = nil)
+        (value.instance_of?(String) && (length_limit.nil? || value.length <= length_limit)) || value == false || value == true || value.is_a?(Numeric)
       end
 
       def valid_array_value?(value)
@@ -40,16 +40,16 @@ module OpenTelemetry
         end
       end
 
-      def valid_value?(value)
-        valid_simple_value?(value) || valid_array_value?(value)
+      def valid_value?(value, length_limit = nil)
+        valid_simple_value?(value, length_limit) || valid_array_value?(value)
       end
 
-      def valid_attributes?(owner, kind, attrs, length_limit: nil)
+      def valid_attributes?(owner, kind, attrs, length_limit = nil)
         attrs.nil? || attrs.all? do |k, v|
           if !valid_key?(k)
             OpenTelemetry.handle_error(message: "invalid #{kind} attribute key type #{k.class} on span '#{owner}'")
             false
-          elsif !valid_value?(v) || (!length_limit.nil? && v.is_a?(String) && v.length > length_limit)
+          elsif !valid_value?(v, length_limit)
             OpenTelemetry.handle_error(message: "invalid #{kind} attribute value type #{v.class} for key '#{k}' on span '#{owner}'")
             false
           else
