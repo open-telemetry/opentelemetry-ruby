@@ -80,6 +80,11 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(span.attributes).must_equal('foo' => 'oldbaroldbaroldbaroldbaroldba...')
     end
 
+    it 'truncates elements of attribute value array based if configured' do
+      span.set_attribute('foo', ['not too long', 'oldbaroldbaroldbaroldbaroldbaroldbar'])
+      _(span.attributes).must_equal('foo' => ['not too long', 'oldbaroldbaroldbaroldbaroldba...'])
+    end
+
     it 'does not set an attribute if span is ended' do
       span.finish
       span.set_attribute('no', 'set')

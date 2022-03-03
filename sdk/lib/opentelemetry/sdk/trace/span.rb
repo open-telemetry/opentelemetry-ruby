@@ -347,11 +347,22 @@ module OpenTelemetry
           nil
         end
 
+        def truncate(value, limit)
+          case value
+              when Array
+                value.map { |x| OpenTelemetry::Common::Utilities.truncate(x, limit) }
+              when String
+                OpenTelemetry::Common::Utilities.truncate(value, limit)
+              else
+                value
+          end
+        end
+
         def truncate_attribute_values(attrs)
           return EMPTY_ATTRIBUTES if attrs.nil?
 
           attribute_length_limit = @span_limits.attribute_length_limit
-          attrs.each { |key, value| attrs[key] = OpenTelemetry::Common::Utilities.truncate(value, attribute_length_limit) } if attribute_length_limit
+          attrs.each { |key, value| attrs[key] = truncate(value, attribute_length_limit) } if attribute_length_limit
           attrs
         end
 
