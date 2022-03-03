@@ -102,6 +102,11 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(span.attributes).must_equal('foo' => [1, 2, 3])
     end
 
+    it 'accepts floats even if attribute length limit is configured' do
+      span.set_attribute('foo', 1.23)
+      _(span.attributes).must_equal('foo' => 1.23)
+    end
+
     it 'reports an error for an invalid value' do
       span.set_attribute('foo', :bar)
       span.finish
