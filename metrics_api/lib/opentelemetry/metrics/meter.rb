@@ -60,7 +60,7 @@ module OpenTelemetry
         raise InstrumentNameError if name.empty?
         raise InstrumentNameError unless NAME_REGEX.match?(name)
         raise InstrumentUnitError if unit && (!unit.ascii_only? || unit.size > 63)
-        raise InstrumentDescriptionError if description && (description.size > 1023 || !utf8mb3_encoding?(description))
+        raise InstrumentDescriptionError if description && (description.size > 1023 || !utf8mb3_encoding?(description.dup))
 
         @mutex.synchronize do
           raise DuplicateInstrumentError if @registry.include? name
