@@ -30,5 +30,22 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::Base do
       job.deserialize(serialized_job)
       _(job.metadata).must_equal('foo' => 'bar')
     end
+
+    it 'must handle empty metadata' do
+      job = TestJob.new
+      serialized_job = job.serialize
+      job = TestJob.new
+      job.deserialize(serialized_job)
+      _(job.metadata).must_equal({})
+    end
+
+    it 'must handle missing metadata' do
+      job = TestJob.new
+      serialized_job = job.serialize
+      serialized_job.delete('metadata')
+      job = TestJob.new
+      job.deserialize(serialized_job)
+      _(job.metadata).must_equal({})
+    end
   end
 end

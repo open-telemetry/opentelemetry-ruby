@@ -27,7 +27,7 @@ module OpenTelemetry
           end
 
           def deserialize(job_data)
-            self.metadata = (deserialize_arguments(job_data['metadata']) || []).to_h
+            self.metadata = deserialize_arguments(job_data['metadata'] || []).to_h
             super
           end
         end
