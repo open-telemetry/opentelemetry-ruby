@@ -13,7 +13,7 @@ module OpenTelemetry
       module GoogleCloudPlatform
         extend self
 
-        def detect # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+        def detect # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
           gcp_env = Google::Cloud::Env.new
           resource_attributes = {}
 
@@ -38,11 +38,28 @@ module OpenTelemetry
             resource_attributes[OpenTelemetry::SemanticConventions::Resource::CONTAINER_NAME] = ENV['CONTAINER_NAME']
           end
 
+          if gcp_env.knative?
+            resource_attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_PROVIDER] = 'gcp'
+            resource_attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_ACCOUNT_ID] = gcp_env.project_id
+            resource_attributes[OpenTelemetry::SemanticConventions::Resource::FAAS_NAME] = gcp_env.knative_service_id
+            resource_attributes[OpenTelemetry::SemanticConventions::Resource::FAAS_VERSION] = gcp_env.knative_service_revision
+            zone = gcp_env.instance_zone
+            resource_attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_REGION] = get_region zone
+            resource_attributes[OpenTelemetry::SemanticConventions::Resource::CLOUD_AVAILABILITY_ZONE] = zone
+          end
+
           resource_attributes.delete_if { |_key, value| value.nil? || value.empty? }
           OpenTelemetry::SDK::Resources::Resource.create(resource_attributes)
         end
 
         private
+
+        def get_region(zone)
+          return if zone.nil? || zone.empty?
+
+          split_arr = zone.split('-', 3)
+          split_arr[0].concat('-', split_arr[1])
+        end
 
         def safe_gethostname
           Socket.gethostname
