@@ -50,7 +50,7 @@ module OpenTelemetry
                 end
                 links.compact!
 
-                tracer.in_span('batch process', attributes: attributes, links: links, kind: :consumer) do |span|
+                tracer.in_span('batch process', attributes: attributes, links: links, kind: :consumer) do
                   yield messages, error
                 end
               end
