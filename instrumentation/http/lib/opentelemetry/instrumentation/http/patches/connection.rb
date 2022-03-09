@@ -11,10 +11,10 @@ module OpenTelemetry
         # Module to prepend to HTTP::Connection for instrumentation
         module Connection
           def initialize(req, options)
-            attributes = OpenTelemetry::Common::HTTP::ClientContext.attributes.merge(
+            attributes = {
               'net.peer.name' => req.uri.host,
               'net.peer.port' => req.uri.port
-            )
+            }.merge!(OpenTelemetry::Common::HTTP::ClientContext.attributes)
 
             tracer.in_span('HTTP CONNECT', attributes: attributes) do
               super

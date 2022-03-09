@@ -29,13 +29,13 @@ describe OpenTelemetry::Instrumentation::ActiveRecord do
     end
 
     it 'when a version above the maximum supported gem version is installed' do
-      Gem.stub(:loaded_specs, 'activerecord' => Gem::Specification.new { |s| s.version = '7.0.0' }) do
+      Gem.stub(:loaded_specs, 'activerecord' => Gem::Specification.new { |s| s.version = '8.0.0' }) do
         _(instrumentation.compatible?).must_equal false
       end
     end
 
     it 'it treats pre releases as being equivalent to a full release' do
-      Gem.stub(:loaded_specs, 'activerecord' => Gem::Specification.new { |s| s.version = '7.0.0.alpha' }) do
+      Gem.stub(:loaded_specs, 'activerecord' => Gem::Specification.new { |s| s.version = '8.0.0.alpha' }) do
         _(instrumentation.compatible?).must_equal false
       end
     end

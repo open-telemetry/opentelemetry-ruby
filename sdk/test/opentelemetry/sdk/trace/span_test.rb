@@ -202,7 +202,7 @@ describe OpenTelemetry::SDK::Trace::Span do
     end
 
     it 'honours an explicit timestamp' do
-      ts = Time.new('2021-11-23 12:00:00.000000 -0600')
+      ts = Time.now
       span.add_event('added', timestamp: ts)
       events = span.events
       _(events.size).must_equal(1)
@@ -391,7 +391,7 @@ describe OpenTelemetry::SDK::Trace::Span do
     end
 
     it 'honours an explicit end timestamp' do
-      ts = Time.new('2021-11-23 12:00:00.000000 -0600')
+      ts = Time.now
       _(span.finish(end_timestamp: ts)).must_equal(span)
       _(span.end_timestamp).must_equal(exportable_timestamp(ts))
     end
@@ -489,7 +489,7 @@ describe OpenTelemetry::SDK::Trace::Span do
     end
 
     it 'honours an explicit timestamp' do
-      timestamp = Time.new('2021-11-23 12:00:00.000000 -0600')
+      timestamp = Time.now
       test_span = Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'child span', SpanKind::INTERNAL, nil, span_limits, [], nil, [], timestamp, nil, nil)
       _(test_span.start_timestamp).must_equal(exportable_timestamp(timestamp))
     end

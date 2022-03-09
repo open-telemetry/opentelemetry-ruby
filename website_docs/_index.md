@@ -7,7 +7,7 @@ aliases: [/ruby, /ruby/metrics, /ruby/tracing]
 cascade:
   github_repo: &repo https://github.com/open-telemetry/opentelemetry-ruby
   github_subdir: website_docs
-  path_base_for_github_subdir: content/en/docs/ruby/
+  path_base_for_github_subdir: content/en/docs/instrumentation/ruby/
   github_project_repo: *repo
 weight: 24
 ---
