@@ -405,4 +405,18 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       end
     end
   end
+
+  describe 'perform.active_job notifications' do
+    it 'makes the tracing context available in notifications' do
+      skip 'This feature only works on ActiveJob v6.x because notifications in ActiveJob v7 happen after callbacks.' if ActiveJob::VERSION::MAJOR >= 7
+
+      context = nil
+      callback = proc { context = OpenTelemetry::Trace.current_span.context }
+      ActiveSupport::Notifications.subscribed(callback, 'perform.active_job') do
+        TestJob.perform_now
+      end
+
+      _(context).must_be :valid?
+    end
+  end
 end

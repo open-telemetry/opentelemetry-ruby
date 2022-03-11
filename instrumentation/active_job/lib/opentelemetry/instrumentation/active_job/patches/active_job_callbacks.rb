@@ -22,7 +22,7 @@ module OpenTelemetry
                 end
               end
 
-              around_perform do |job, block| # rubocop:disable Metrics/BlockLength
+              around_perform(prepend: true) do |job, block| # rubocop:disable Metrics/BlockLength
                 span_kind = job.class.queue_adapter_name == 'inline' ? :server : :consumer
                 span_name = "#{otel_config[:span_naming] == :job_class ? job.class : job.queue_name} process"
                 span_attributes = job_attributes(job).merge('messaging.operation' => 'process')
