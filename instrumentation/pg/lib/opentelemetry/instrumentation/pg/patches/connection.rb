@@ -66,7 +66,7 @@ module OpenTelemetry
           # But, getting that metric in line would force us over the
           # module size limit! We can't win here unless we want to start
           # abstracting things into a million pieces.
-          def span_attrs(kind, *args) # rubocop:disable Metrics/AbcSize
+          def span_attrs(kind, *args) # rubocop:disable Metrics/AbcSize, Metrics/PerceivedComplexity
             if kind == :query
               operation = extract_operation(args[0])
               sql = obfuscate_sql(args[0])
