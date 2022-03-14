@@ -9,8 +9,7 @@ gem "activejob", "~> 5.2.0"
 group :test do
   gem "opentelemetry-common", path: "../../../common"
   gem "opentelemetry-sdk", path: "../../../sdk"
-  gem "pry"
-  gem "pry-byebug"
+  gem "opentelemetry-semantic_conventions", path: "../../../semantic_conventions"
 end
 
 gemspec path: "../"
