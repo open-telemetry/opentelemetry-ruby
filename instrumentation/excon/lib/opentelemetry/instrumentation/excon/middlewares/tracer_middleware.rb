@@ -10,13 +10,16 @@ module OpenTelemetry
       module Middlewares
         # Excon middleware for instrumentation
         class TracerMiddleware < ::Excon::Middleware::Base
+          HTTP_METHODS_TO_UPPERCASE = Hash.new { |hash, key| hash[key] = key.to_s.upcase }
+          HTTP_METHODS_TO_SPAN_NAMES = Hash.new { |hash, key| hash[key] = "HTTP #{key}" }
+
           def request_call(datum)
             begin
               unless datum.key?(:otel_span)
-                http_method = datum[:method].to_s.upcase
+                http_method = HTTP_METHODS_TO_UPPERCASE[datum[:method]]
                 attributes = span_creation_attributes(datum, http_method)
                 tracer.start_span(
-                  "HTTP #{http_method}",
+                  HTTP_METHODS_TO_SPAN_NAMES[http_method],
                   attributes: attributes,
                   kind: :client
                 ).tap do |span|
