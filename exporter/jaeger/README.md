@@ -80,7 +80,7 @@ The agent exporter can be configured explicitly in code, as shown above, or via 
 | ------------------ | --------------------------------- | ------------- |
 | `host:`            | `OTEL_EXPORTER_JAEGER_AGENT_HOST` | `"localhost"` |
 | `port:`            | `OTEL_EXPORTER_JAEGER_AGENT_PORT` | `6831`        |
-| `max_packet_size:` |                                   | 65000         |
+| `max_packet_size:` |                                   | 64000         |
 
 The collector exporter can be configured explicitly in code, as shown above, or via environment variables. The configuration parameters, environment variables, and defaults are shown below.
 

@@ -61,7 +61,7 @@ describe OpenTelemetry::Exporter::Jaeger::AgentExporter do
       exporter = OpenTelemetry::Exporter::Jaeger::AgentExporter.new(host: '127.0.0.1', port: socket.addr[1])
       span_data = create_span_data
       result = exporter.export([span_data])
-      packet = socket.recvfrom(65_000)
+      packet = socket.recvfrom(64_000)
       socket.close
       _(result).must_equal(OpenTelemetry::SDK::Trace::Export::SUCCESS)
       _(packet).wont_be_nil
@@ -75,7 +75,7 @@ describe OpenTelemetry::Exporter::Jaeger::AgentExporter do
       OpenTelemetry.tracer_provider.add_span_processor(processor)
       OpenTelemetry.tracer_provider.tracer.start_root_span('foo').finish
       OpenTelemetry.tracer_provider.shutdown
-      packet = socket.recvfrom(65_000)
+      packet = socket.recvfrom(64_000)
       socket.close
       _(packet).wont_be_nil
     end
@@ -86,8 +86,8 @@ describe OpenTelemetry::Exporter::Jaeger::AgentExporter do
       exporter = OpenTelemetry::Exporter::Jaeger::AgentExporter.new(host: '127.0.0.1', port: socket.addr[1], max_packet_size: 128)
       span_data = 3.times.map { create_span_data }
       result = exporter.export(span_data)
-      packet1 = socket.recvfrom(65_000)
-      packet2 = socket.recvfrom(65_000)
+      packet1 = socket.recvfrom(64_000)
+      packet2 = socket.recvfrom(64_000)
       socket.close
 
       _(result).must_equal(OpenTelemetry::SDK::Trace::Export::SUCCESS)
@@ -104,8 +104,8 @@ describe OpenTelemetry::Exporter::Jaeger::AgentExporter do
       span_data2 = create_span_data(resource: OpenTelemetry::SDK::Resources::Resource.create('k2' => 'v2'))
 
       result = exporter.export([span_data1, span_data2])
-      packet1 = socket.recvfrom(65_000)
-      packet2 = socket.recvfrom(65_000)
+      packet1 = socket.recvfrom(64_000)
+      packet2 = socket.recvfrom(64_000)
       socket.close
 
       _(result).must_equal(OpenTelemetry::SDK::Trace::Export::SUCCESS)

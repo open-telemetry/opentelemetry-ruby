@@ -16,7 +16,7 @@ module OpenTelemetry
         def initialize(host: ENV.fetch('OTEL_EXPORTER_JAEGER_AGENT_HOST', 'localhost'),
                        port: ENV.fetch('OTEL_EXPORTER_JAEGER_AGENT_PORT', 6831),
                        timeout: ENV.fetch('OTEL_EXPORTER_JAEGER_TIMEOUT', 10),
-                       max_packet_size: 65_000)
+                       max_packet_size: 64_000)
           transport = Transport.new(host, port)
           protocol = ::Thrift::CompactProtocol.new(transport)
           @client = Thrift::Agent::Client.new(protocol)
