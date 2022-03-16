@@ -24,47 +24,45 @@ module OpenTelemetry
             end
           end
 
-          # rubocop:disable Layout/IndentationWidth
           def perform_now # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-                job = self
-                span_kind = job.class.queue_adapter_name == 'inline' ? :server : :consumer
-                span_name = "#{otel_config[:span_naming] == :job_class ? job.class : job.queue_name} process"
-                span_attributes = job_attributes(job).merge('messaging.operation' => 'process')
-                executions_count = (job.executions || 0) + 1 # because we run before the count is incremented in ActiveJob::Execution
+            job = self
+            span_kind = job.class.queue_adapter_name == 'inline' ? :server : :consumer
+            span_name = "#{otel_config[:span_naming] == :job_class ? job.class : job.queue_name} process"
+            span_attributes = job_attributes(job).merge('messaging.operation' => 'process')
+            executions_count = (job.executions || 0) + 1 # because we run before the count is incremented in ActiveJob::Execution
 
-                extracted_context = OpenTelemetry.propagation.extract(job.metadata)
-                OpenTelemetry::Context.with_current(extracted_context) do
-                  if otel_config[:propagation_style] == :child
-                    otel_tracer.in_span(span_name, attributes: span_attributes, kind: span_kind) do |span|
-                      span.set_attribute('messaging.active_job.executions', executions_count)
-                      super
-                    end
-                  else
-                    span_links = []
-                    if otel_config[:propagation_style] == :link
-                      span_context = OpenTelemetry::Trace.current_span(extracted_context).context
-                      span_links << OpenTelemetry::Trace::Link.new(span_context) if span_context.valid?
-                    end
-
-                    root_span = otel_tracer.start_root_span(span_name, attributes: span_attributes, links: span_links, kind: span_kind)
-                    OpenTelemetry::Trace.with_span(root_span) do |span|
-                      span.set_attribute('messaging.active_job.executions', executions_count)
-                      super
-                    rescue Exception => e # rubocop:disable Lint/RescueException
-                      span.record_exception(e)
-                      span.status = OpenTelemetry::Trace::Status.error("Unhandled exception of type: #{e.class}")
-                      raise e
-                    ensure
-                      root_span.finish
-                    end
-                  end
+            extracted_context = OpenTelemetry.propagation.extract(job.metadata)
+            OpenTelemetry::Context.with_current(extracted_context) do
+              if otel_config[:propagation_style] == :child
+                otel_tracer.in_span(span_name, attributes: span_attributes, kind: span_kind) do |span|
+                  span.set_attribute('messaging.active_job.executions', executions_count)
+                  super
                 end
+              else
+                span_links = []
+                if otel_config[:propagation_style] == :link
+                  span_context = OpenTelemetry::Trace.current_span(extracted_context).context
+                  span_links << OpenTelemetry::Trace::Link.new(span_context) if span_context.valid?
+                end
+
+                root_span = otel_tracer.start_root_span(span_name, attributes: span_attributes, links: span_links, kind: span_kind)
+                OpenTelemetry::Trace.with_span(root_span) do |span|
+                  span.set_attribute('messaging.active_job.executions', executions_count)
+                  super
+                rescue Exception => e # rubocop:disable Lint/RescueException
+                  span.record_exception(e)
+                  span.status = OpenTelemetry::Trace::Status.error("Unhandled exception of type: #{e.class}")
+                  raise e
+                ensure
+                  root_span.finish
+                end
+              end
+            end
           ensure
-                # We may be in a job system (eg: resque) that forks and kills worker processes often.
-                # We don't want to lose spans by not flushing any span processors, so we optionally force it here.
-                OpenTelemetry.tracer_provider.force_flush if otel_config[:force_flush]
+            # We may be in a job system (eg: resque) that forks and kills worker processes often.
+            # We don't want to lose spans by not flushing any span processors, so we optionally force it here.
+            OpenTelemetry.tracer_provider.force_flush if otel_config[:force_flush]
           end
-          # rubocop:enable Layout/IndentationWidth
 
           private
 
