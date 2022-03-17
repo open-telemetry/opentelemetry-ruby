@@ -16,3 +16,5 @@ Naming/FileName:
     - "lib/opentelemetry-sdk.rb"
 Style/ModuleFunction:
   Enabled: false
+Style/BracesAroundHashParameters:
+  Enabled: false
