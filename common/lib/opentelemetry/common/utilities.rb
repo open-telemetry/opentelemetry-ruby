@@ -72,6 +72,17 @@ module OpenTelemetry
         string.size > size ? "#{string[0...size - 3]}..." : string
       end
 
+      def truncate_attribute_value(value, limit)
+        case value
+        when Array
+          value.map { |x| truncate_attribute_value(x, limit) }
+        when String
+          truncate(value, limit)
+        else
+          value
+        end
+      end
+
       def untraced
         OpenTelemetry::Trace.with_span(OpenTelemetry::Trace.non_recording_span(OpenTelemetry::Trace::SpanContext.new)) { yield }
       end
