@@ -353,9 +353,7 @@ module OpenTelemetry
           attribute_length_limit = @span_limits.attribute_length_limit
           return attrs if attribute_length_limit.nil?
 
-          attrs.each do |key, value|
-            attrs[key] = OpenTelemetry::Common::Utilities.truncate_attribute_value(value, attribute_length_limit) if value.is_a?(String)
-          end
+          attrs.transform_values! { |value| OpenTelemetry::Common::Utilities.truncate_attribute_value(value, attribute_length_limit) }
           attrs
         end
 
