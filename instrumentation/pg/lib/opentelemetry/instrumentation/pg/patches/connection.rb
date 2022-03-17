@@ -69,12 +69,12 @@ module OpenTelemetry
           def span_attrs(kind, *args) # rubocop:disable Metrics/AbcSize
             if kind == :query
               operation = extract_operation(args[0])
-              sql = obfuscate_sql(args[0])
+              sql = obfuscate_sql(args[0]).to_s
             else
               statement_name = args[0]
 
               if kind == :prepare
-                sql = obfuscate_sql(args[1])
+                sql = obfuscate_sql(args[1]).to_s
                 lru_cache[statement_name] = sql
                 operation = 'PREPARE'
               else
@@ -84,7 +84,7 @@ module OpenTelemetry
             end
 
             attrs = { 'db.operation' => validated_operation(operation), 'db.postgresql.prepared_statement_name' => statement_name }
-            attrs['db.statement'] = sql&.to_s unless config[:db_statement] == :omit
+            attrs['db.statement'] = sql unless config[:db_statement] == :omit
             attrs.reject! { |_, v| v.nil? }
 
             [span_name(operation), client_attributes.merge(attrs)]
