@@ -25,13 +25,12 @@ module OpenTelemetry
           end
 
           def perform_now # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-            job = self
-            span_kind = job.class.queue_adapter_name == 'inline' ? :server : :consumer
-            span_name = "#{otel_config[:span_naming] == :job_class ? job.class : job.queue_name} process"
-            span_attributes = job_attributes(job).merge('messaging.operation' => 'process')
-            executions_count = (job.executions || 0) + 1 # because we run before the count is incremented in ActiveJob::Execution
+            span_kind = self.class.queue_adapter_name == 'inline' ? :server : :consumer
+            span_name = "#{otel_config[:span_naming] == :job_class ? self.class : self.queue_name} process"
+            span_attributes = job_attributes(self).merge('messaging.operation' => 'process')
+            executions_count = (self.executions || 0) + 1 # because we run before the count is incremented in ActiveJob::Execution
 
-            extracted_context = OpenTelemetry.propagation.extract(job.metadata)
+            extracted_context = OpenTelemetry.propagation.extract(self.metadata)
             OpenTelemetry::Context.with_current(extracted_context) do
               if otel_config[:propagation_style] == :child
                 otel_tracer.in_span(span_name, attributes: span_attributes, kind: span_kind) do |span|
