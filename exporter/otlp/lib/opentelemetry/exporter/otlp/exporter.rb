@@ -10,6 +10,8 @@ require 'net/http'
 require 'csv'
 require 'zlib'
 
+require 'google/rpc/status_pb'
+
 require 'opentelemetry/proto/common/v1/common_pb'
 require 'opentelemetry/proto/resource/v1/resource_pb'
 require 'opentelemetry/proto/trace/v1/trace_pb'
@@ -232,7 +234,11 @@ module OpenTelemetry
 
         def log_status(body)
           status = Google::Rpc::Status.decode(body)
-          OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{status.details}}")
+          details = status.details.map do |detail|
+            klass_or_nil = ::Google::Protobuf::DescriptorPool.generated_pool.lookup(detail.type_name).msgclass
+            detail.unpack(klass_or_nil) if klass_or_nil
+          end.compact
+          OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}}")
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
         end
