@@ -55,7 +55,7 @@ module OpenTelemetry
           destination = OpenTelemetry::Instrumentation::Bunny::PatchHelpers.destination_name(exchange, routing_key)
           destination_kind = OpenTelemetry::Instrumentation::Bunny::PatchHelpers.destination_kind(channel, exchange)
           span.name = "#{destination} receive"
-          span['messaging.destination'] = exchange
+          span['messaging.destination'] = exchange.to_s
           span['messaging.destination_kind'] = destination_kind
           span['messaging.rabbitmq.routing_key'] = routing_key if routing_key
           span['messaging.operation'] = 'receive'
@@ -66,7 +66,7 @@ module OpenTelemetry
         def self.basic_attributes(channel, transport, exchange, routing_key)
           attributes = {
             'messaging.system' => 'rabbitmq',
-            'messaging.destination' => exchange,
+            'messaging.destination' => exchange.to_s,
             'messaging.destination_kind' => destination_kind(channel, exchange),
             'messaging.protocol' => 'AMQP',
             'messaging.protocol_version' => ::Bunny.protocol_version,

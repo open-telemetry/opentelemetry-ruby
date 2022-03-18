@@ -20,7 +20,7 @@ describe OpenTelemetry::Instrumentation::Bunny::Patches::Channel do
   let(:bunny) { Bunny.new(url) }
   let(:topic) { "topic-#{SecureRandom.uuid}" }
   let(:channel) { bunny.create_channel }
-  let(:exchange) { channel.topic(topic, auto_delete: true) }
+  let(:exchange) { channel.topic(topic.to_sym, auto_delete: true) }
 
   before do
     bunny.start
