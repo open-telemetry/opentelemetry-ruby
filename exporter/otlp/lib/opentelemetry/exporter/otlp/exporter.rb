@@ -185,8 +185,7 @@ module OpenTelemetry
               redo if backoff?(retry_count: retry_count += 1, reason: response.code)
               FAILURE
             when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
-              # TODO: decode the body as a google.rpc.Status Protobuf-encoded message when https://github.com/open-telemetry/opentelemetry-collector/issues/1357 is fixed.
-              response.body # Read and discard body
+              log_status(response.body)
               @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response.code })
               FAILURE
             when Net::HTTPRedirection
@@ -229,6 +228,13 @@ module OpenTelemetry
 
         def handle_redirect(location)
           # TODO: figure out destination and reinitialize @http and @path
+        end
+
+        def log_status(body)
+          status = Google::Rpc::Status.decode(body)
+          OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{status.details}}")
+        rescue StandardError => e
+          OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
         end
 
         def measure_request_duration

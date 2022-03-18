@@ -395,6 +395,26 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       OpenTelemetry.logger = logger
     end
 
+    it 'logs rpc.Status on bad request' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      status = Google::Rpc::Status.encode(Google::Rpc::Status.new(code: 1, message: 'bad request', details: ["bad", 42]))
+      stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 400, body: status)
+      span_data = create_span_data
+
+      result = exporter.export([span_data])
+
+      _(log_stream.string).must_match(
+        /ERROR -- : OpenTelemetry error: OTLP exporter received rpc.Status{message=bad request, details=["bad", 42]}/
+      )
+
+      _(result).must_equal(FAILURE)
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
     it 'handles Zlib gzip compression errors' do
       stub_request(:post, 'http://localhost:4318/v1/traces').to_raise(Zlib::DataError.new('data error'))
       span_data = create_span_data
