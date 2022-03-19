@@ -10,7 +10,6 @@
 **/.byebug_history
 
 # Appraisals
-opentelemetry-rails/**/*.gemfile.lock
 instrumentation/**/*.gemfile.lock
 
 # Sqlite file for tests

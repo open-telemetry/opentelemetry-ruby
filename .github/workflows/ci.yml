@@ -17,11 +17,11 @@ jobs:
           - name: Test Linux / Ruby 2.5
             os: ubuntu-latest
             ruby: "2.5"
-            flags: --include-simple --include-appraisal --exclude opentelemetry-rails
+            flags: --include-simple --include-appraisal
           - name: Test Linux / Ruby 2.6
             os: ubuntu-latest
             ruby: "2.6"
-            flags: --include-simple --include-appraisal --exclude opentelemetry-rails
+            flags: --include-simple --include-appraisal
           - name: Test Linux / Ruby 2.7
             os: ubuntu-latest
             ruby: "2.7"
