@@ -45,7 +45,10 @@ module OpenTelemetry
           # @return [Context] context updated with extracted baggage, or the original context
           #   if extraction fails
           def extract(carrier, context: Context.current, getter: Context::Propagation.text_map_getter)
-            tp = TraceParent.from_string(getter.get(carrier, TRACEPARENT_KEY))
+            trace_parent_value = getter.get(carrier, TRACEPARENT_KEY)
+            return context unless trace_parent_value
+
+            tp = TraceParent.from_string(trace_parent_value)
             tracestate = Tracestate.from_string(getter.get(carrier, TRACESTATE_KEY))
 
             span_context = Trace::SpanContext.new(trace_id: tp.trace_id,
