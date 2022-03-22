@@ -45,7 +45,7 @@ module OpenTelemetry
         # `messaging.message_id` attribute, so out-of-band correlation may
         # still be possible depending on your backend system.
         #
-        option :propagation_style, default: :link, validate: ->(opt) { %i[link child none].include?(opt) }
+        option :propagation_style, default: :link, validate: %i[link child none]
         option :trace_poller,      default: false, validate: :boolean
 
         private
