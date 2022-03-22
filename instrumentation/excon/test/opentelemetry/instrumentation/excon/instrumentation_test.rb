@@ -143,5 +143,23 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
 
       _(span.attributes['peer.service']).must_equal 'example:custom'
     end
+
+
+    it 'accepts string method' do
+      ::Excon.new('http://example.com').request(:path => '/success', :method => 'GET')
+
+      _(exporter.finished_spans.size).must_equal 1
+      _(span.name).must_equal 'HTTP GET'
+      _(span.attributes['http.method']).must_equal 'GET'
+      _(span.attributes['http.status_code']).must_equal 200
+      _(span.attributes['http.scheme']).must_equal 'http'
+      _(span.attributes['http.host']).must_equal 'example.com'
+      _(span.attributes['http.target']).must_equal '/success'
+      assert_requested(
+        :get,
+        'http://example.com/success',
+        headers: { 'Traceparent' => "00-#{span.hex_trace_id}-#{span.hex_span_id}-01" }
+      )
+    end
   end
 end
