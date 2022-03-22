@@ -9,11 +9,11 @@ module OpenTelemetry
     # Attributecontains common helpers for atribute propagation
     # Various classes should extend this module to get `with_attributes`
     # functionality scoped to that class.
-    module AttributePropagation
+    module ClassScopedAttributes
       extend self
 
       def current_attributes_hash
-        @current_attributes_hash ||= Context.create_key("current-attributes-hash-#{self.name}")
+        @current_attributes_hash ||= Context.create_key("#{self.name}-current-attributes-hash")
       end
 
       # Returns the attributes hash representing the context found

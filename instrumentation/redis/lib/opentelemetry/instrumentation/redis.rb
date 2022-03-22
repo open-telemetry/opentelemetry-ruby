@@ -12,7 +12,7 @@ module OpenTelemetry
   module Instrumentation
     # Contains the OpenTelemetry instrumentation for the Redis gem
     module Redis
-      extend OpenTelemetry::Common::AttributePropagation
+      extend OpenTelemetry::Common::ClassScopedAttributes
     end
   end
 end
