@@ -35,12 +35,11 @@ describe OpenTelemetry::Instrumentation::Mongo do
 
   describe 'compatible' do
     it 'when older gem version installed' do
-      allow_any_instance_of(Bundler::StubSpecification).to receive(:version).and_return(Gem::Version.new('2.4.3'))
+      stub_const('::Mongo::VERSION', '2.4.3')
       _(instrumentation.compatible?).must_equal false
     end
 
     it 'when future gem version installed' do
-      allow_any_instance_of(Bundler::StubSpecification).to receive(:version).and_return(Gem::Version.new('3.0.0'))
       _(instrumentation.compatible?).must_equal true
     end
   end

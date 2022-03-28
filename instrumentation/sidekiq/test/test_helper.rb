@@ -9,6 +9,7 @@ require 'sidekiq/testing'
 require 'opentelemetry/sdk'
 
 require 'minitest/autorun'
+require 'rspec/mocks/minitest_integration'
 require 'helpers/mock_loader'
 require 'active_job'
 require 'pry'
