@@ -43,7 +43,7 @@ module OpenTelemetry
         option :peer_service, default: nil, validate: :string
         option :enable_sql_obfuscation, default: false, validate: :boolean
         option :enable_statement_attribute, default: true, validate: :boolean
-        option :db_statement, default: :include, validate: ->(opt) { %I[omit include obfuscate].include?(opt) }
+        option :db_statement, default: :include, validate: %I[omit include obfuscate]
 
         private
 
