@@ -30,5 +30,14 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::Base do
       job.deserialize(serialized_job)
       _(job.metadata).must_equal('foo' => 'bar')
     end
+
+    it 'handles jobs queued without instrumentation' do # e.g. during a rolling deployment
+      job = TestJob.new
+      serialized_job = job.serialize
+      serialized_job.delete('metadata')
+
+      job = TestJob.new
+      job.deserialize(serialized_job) # should not raise an error
+    end
   end
 end

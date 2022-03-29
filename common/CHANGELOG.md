@@ -1,4 +1,6 @@
+### Unreleased
 
+* FIXED: Check that a variable is a string before truncating
 
 ### v0.19.3 / 2021-12-01
 

@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'test_helper'
+require 'active_record'
 require 'pg'
 
 require_relative '../../../../lib/opentelemetry/instrumentation/pg'
@@ -123,6 +124,20 @@ describe OpenTelemetry::Instrumentation::PG::Instrumentation do
         _(last_span.attributes['db.postgresql.prepared_statement_name']).must_equal 'foo'
         _(last_span.attributes['net.peer.name']).must_equal host.to_s
         _(last_span.attributes['net.peer.port']).must_equal port.to_s
+      end
+    end
+
+    %i[exec query sync_exec async_exec].each do |method|
+      it "after request using Arel (with method: #{method})" do
+        client.send(method, Arel.sql('SELECT 1'))
+
+        _(span.name).must_equal 'SELECT postgres'
+        _(span.attributes['db.system']).must_equal 'postgresql'
+        _(span.attributes['db.name']).must_equal 'postgres'
+        _(span.attributes['db.statement']).must_equal 'SELECT 1'
+        _(span.attributes['db.operation']).must_equal 'SELECT'
+        _(span.attributes['net.peer.name']).must_equal host.to_s
+        _(span.attributes['net.peer.port']).must_equal port.to_s
       end
     end
 
