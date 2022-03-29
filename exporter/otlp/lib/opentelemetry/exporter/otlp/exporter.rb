@@ -10,6 +10,8 @@ require 'net/http'
 require 'csv'
 require 'zlib'
 
+require 'google/rpc/status_pb'
+
 require 'opentelemetry/proto/common/v1/common_pb'
 require 'opentelemetry/proto/resource/v1/resource_pb'
 require 'opentelemetry/proto/trace/v1/trace_pb'
@@ -185,8 +187,7 @@ module OpenTelemetry
               redo if backoff?(retry_count: retry_count += 1, reason: response.code)
               FAILURE
             when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
-              # TODO: decode the body as a google.rpc.Status Protobuf-encoded message when https://github.com/open-telemetry/opentelemetry-collector/issues/1357 is fixed.
-              response.body # Read and discard body
+              log_status(response.body)
               @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response.code })
               FAILURE
             when Net::HTTPRedirection
@@ -229,6 +230,17 @@ module OpenTelemetry
 
         def handle_redirect(location)
           # TODO: figure out destination and reinitialize @http and @path
+        end
+
+        def log_status(body)
+          status = Google::Rpc::Status.decode(body)
+          details = status.details.map do |detail|
+            klass_or_nil = ::Google::Protobuf::DescriptorPool.generated_pool.lookup(detail.type_name).msgclass
+            detail.unpack(klass_or_nil) if klass_or_nil
+          end.compact
+          OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}}")
+        rescue StandardError => e
+          OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
         end
 
         def measure_request_duration
