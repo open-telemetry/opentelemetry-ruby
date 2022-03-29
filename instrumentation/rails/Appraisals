@@ -11,16 +11,22 @@ if RUBY_VERSION < '3'
   end
 end
 
-appraise 'rails-6.0' do
-  gem 'rails', '~> 6.0.0'
-end
+if Gem::Requirement.new('>= 2.7.0', '< 3.1').satisfied_by?(Gem::Version.new(RUBY_VERSION))
+  appraise 'rails-6.0' do
+    gem 'rails', '~> 6.0.0'
+  end
 
-appraise 'rails-6.1' do
-  gem 'rails', '~> 6.1.0'
-end
+  appraise 'rails-6.1' do
+    gem 'rails', '~> 6.1.0'
+  end
 
-if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.7.0')
   appraise 'rails-7.0' do
     gem 'rails', '~> 7.0.0'
+  end
+end
+
+if Gem::Requirement.new('>= 3.1').satisfied_by?(Gem::Version.new(RUBY_VERSION))
+  appraise 'rails-7.0.ruby.3.1' do
+    gem 'rails', '~> 7.0.1'
   end
 end

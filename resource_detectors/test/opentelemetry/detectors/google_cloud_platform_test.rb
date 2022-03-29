@@ -33,6 +33,11 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
         gcp_env_mock.expect(:instance_attribute, 'opentelemetry-cluster', %w[cluster-name])
         gcp_env_mock.expect(:kubernetes_engine?, true)
         gcp_env_mock.expect(:kubernetes_engine_namespace_id, 'default')
+        gcp_env_mock.expect(:knative?, true)
+        gcp_env_mock.expect(:project_id, project_id)
+        gcp_env_mock.expect(:knative_service_id, 'test-google-cloud-function')
+        gcp_env_mock.expect(:knative_service_revision, '2')
+        gcp_env_mock.expect(:instance_zone, 'us-central1-a')
 
         Socket.stub(:gethostname, 'opentelemetry-test') do
           old_hostname = ENV['HOSTNAME']
@@ -56,7 +61,9 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
           'k8s.cluster.name' => 'opentelemetry-cluster',
           'k8s.namespace.name' => 'default',
           'k8s.pod.name' => 'opentelemetry-host-name-1',
-          'k8s.node.name' => 'opentelemetry-node-1'
+          'k8s.node.name' => 'opentelemetry-node-1',
+          'faas.name' => 'test-google-cloud-function',
+          'faas.version' => '2'
         }
       end
 

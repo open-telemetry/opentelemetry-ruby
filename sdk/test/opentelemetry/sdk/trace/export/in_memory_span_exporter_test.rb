@@ -9,8 +9,8 @@ require 'test_helper'
 describe OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter do
   export = OpenTelemetry::SDK::Trace::Export
 
-  let(:span_data1)   { OpenTelemetry::SDK::Trace::SpanData.new(name: 'name1') }
-  let(:span_data2)   { OpenTelemetry::SDK::Trace::SpanData.new(name: 'name2') }
+  let(:span_data1)   { OpenTelemetry::SDK::Trace::SpanData.new({ name: 'name1' }) }
+  let(:span_data2)   { OpenTelemetry::SDK::Trace::SpanData.new({ name: 'name2' }) }
 
   let(:exporter) { OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new }
 
