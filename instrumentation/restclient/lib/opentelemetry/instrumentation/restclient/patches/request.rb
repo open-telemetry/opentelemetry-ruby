@@ -21,7 +21,7 @@ module OpenTelemetry
           def trace_request # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
             http_method = method.upcase
             instrumentation_attrs = {
-              'http.method' => http_method,
+              'http.method' => http_method.to_s,
               'http.url' => OpenTelemetry::Common::Utilities.cleanse_url(url)
             }
             config = RestClient::Instrumentation.instance.config

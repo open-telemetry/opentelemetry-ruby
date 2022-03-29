@@ -52,9 +52,9 @@ module OpenTelemetry
         # spans will always be children of the enqueueing spans. This is due to the way
         # ActiveJob immediately executes jobs during the process of "enqueueing" jobs when
         # using the `:inline` adapter.
-        option :propagation_style, default: :link, validate: ->(opt) { %i[link child none].include?(opt) }
+        option :propagation_style, default: :link, validate: %i[link child none]
         option :force_flush, default: false, validate: :boolean
-        option :span_naming, default: :queue, validate: ->(opt) { %i[job_class queue].include?(opt) }
+        option :span_naming, default: :queue, validate: %i[job_class queue]
 
         private
 
