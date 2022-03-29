@@ -11,11 +11,22 @@ require 'rubocop/rake_task'
 
 RuboCop::RakeTask.new
 
-Rake::TestTask.new :test do |t|
-  t.libs << 'test'
-  t.libs << 'lib'
-  t.test_files = FileList['test/**/*_test.rb']
+namespace :test do
+  Rake::TestTask.new :instrumentation do |t|
+    t.libs << 'lib'
+    t.libs << 'test/instrumentation'
+    t.test_files = FileList['test/instrumentation/**/*_test.rb']
+  end
+
+  Rake::TestTask.new :railtie do |t|
+    t.libs << 'lib'
+    t.libs << 'test/railtie'
+    t.test_files = FileList['test/railtie/**/*_test.rb']
+  end
 end
+
+desc 'Run all tests'
+task test: %i[test:instrumentation test:railtie]
 
 YARD::Rake::YardocTask.new do |t|
   t.stats_options = ['--list-undoc']

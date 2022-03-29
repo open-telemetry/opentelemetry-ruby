@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 require 'test_helper'
+require 'google/protobuf/wrappers_pb'
+require 'google/protobuf/well_known_types'
 
 describe OpenTelemetry::Exporter::OTLP::Exporter do
   SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
@@ -391,6 +393,27 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       )
 
       _(result).must_equal(SUCCESS)
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
+    it 'logs rpc.Status on bad request' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      details = [::Google::Protobuf::Any.pack(::Google::Protobuf::StringValue.new(value: 'you are a bad request'))]
+      status = ::Google::Rpc::Status.encode(::Google::Rpc::Status.new(code: 1, message: 'bad request', details: details))
+      stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 400, body: status)
+      span_data = create_span_data
+
+      result = exporter.export([span_data])
+
+      _(log_stream.string).must_match(
+        /ERROR -- : OpenTelemetry error: OTLP exporter received rpc.Status{message=bad request, details=\[.*you are a bad request.*\]}/
+      )
+
+      _(result).must_equal(FAILURE)
     ensure
       OpenTelemetry.logger = logger
     end
