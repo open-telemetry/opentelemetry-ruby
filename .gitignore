@@ -23,3 +23,5 @@ instrumentation/active_record/db
 
 # rbenv configuration
 .ruby-version
+
+tags

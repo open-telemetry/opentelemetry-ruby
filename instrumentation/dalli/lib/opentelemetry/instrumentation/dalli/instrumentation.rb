@@ -20,7 +20,7 @@ module OpenTelemetry
         end
 
         option :peer_service, default: nil, validate: :string
-        option :db_statement, default: :include, validate: ->(opt) { %I[omit obfuscate include].include?(opt) }
+        option :db_statement, default: :include, validate: %I[omit obfuscate include]
 
         private
 
