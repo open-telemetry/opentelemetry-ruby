@@ -45,6 +45,7 @@ module OpenTelemetry
         #   if extraction fails
         def extract(carrier, context: Context.current, getter: Context::Propagation.text_map_getter)
           header = getter.get(carrier, IDENTITY_KEY)
+          return context unless header
           return context unless (match = header.match(TRACE_SPAN_IDENTITY_REGEX))
           return context if match['trace_id'] =~ ZERO_ID_REGEX
           return context if match['span_id'] =~ ZERO_ID_REGEX
