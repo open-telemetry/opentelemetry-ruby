@@ -9,7 +9,7 @@ module OpenTelemetry
     module AwsSdk
       # Instrumentation class that detects and installs the AwsSdk instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MINIMUM_VERSION = Gem::Version.new('2.0')
+        MINIMUM_VERSION = Gem::Version.new('3.0')
 
         install do |_config|
           require_dependencies

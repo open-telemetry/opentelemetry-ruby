@@ -29,9 +29,7 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
     end
 
     it 'returns true for supported gem versions' do
-      Gem.stub(:loaded_specs, 'aws-sdk' => Gem::Specification.new { |s| s.version = minimum_version }) do
-        _(instrumentation.compatible?).must_equal true
-      end
+      _(instrumentation.compatible?).must_equal true
     end
   end
 
