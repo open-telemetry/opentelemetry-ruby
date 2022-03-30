@@ -50,6 +50,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.url']).must_equal 'http://example.com/success'
+      _(span.attributes['net.peer.name']).must_equal 'example.com'
       _(response.env.request_headers['Traceparent']).must_equal(
         "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
       )
@@ -62,6 +63,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.status_code']).must_equal 404
       _(span.attributes['http.url']).must_equal 'http://example.com/not_found'
+      _(span.attributes['net.peer.name']).must_equal 'example.com'
       _(response.env.request_headers['Traceparent']).must_equal(
         "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
       )
@@ -74,6 +76,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
       _(span.attributes['http.method']).must_equal 'GET'
       _(span.attributes['http.status_code']).must_equal 500
       _(span.attributes['http.url']).must_equal 'http://example.com/failure'
+      _(span.attributes['net.peer.name']).must_equal 'example.com'
       _(response.env.request_headers['Traceparent']).must_equal(
         "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"
       )
@@ -91,6 +94,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
       _(span.attributes['http.method']).must_equal 'OVERRIDE'
       _(span.attributes['http.status_code']).must_equal 200
       _(span.attributes['http.url']).must_equal 'http://example.com/success'
+      _(span.attributes['net.peer.name']).must_equal 'example.com'
       _(span.attributes['test.attribute']).must_equal 'test.value'
       _(response.env.request_headers['Traceparent']).must_equal(
         "00-#{span.hex_trace_id}-#{span.hex_span_id}-01"

@@ -99,6 +99,13 @@ describe OpenTelemetry::Instrumentation::ActionPack::Patches::ActionController::
     end
   end
 
+  it 'sets filters `http.target`' do
+    get '/ok?param_to_be_filtered=bar&unfiltered_param=baz', {}
+    _(last_response.body).must_equal 'actually ok'
+    _(last_response.ok?).must_equal true
+    _(span.attributes['http.target']).must_equal '/ok?param_to_be_filtered=[FILTERED]&unfiltered_param=baz'
+  end
+
   describe 'when the application does not have the tracing rack middleware' do
     let(:rails_app) { AppConfig.initialize_app(remove_rack_tracer_middleware: true) }
 

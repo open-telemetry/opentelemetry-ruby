@@ -37,7 +37,7 @@ describe OpenTelemetry::Instrumentation::ActiveRecord::Patches::PersistenceClass
       _(create_span).wont_be_nil
       create_span_event = create_span.events.first
       _(create_span_event.attributes['exception.type']).must_equal('ActiveModel::UnknownAttributeError')
-      _(create_span_event.attributes['exception.message']).must_equal('unknown attribute \'attreeboot\' for User.')
+      _(create_span_event.attributes['exception.message']).must_include('unknown attribute \'attreeboot\' for User.')
     end
   end
 

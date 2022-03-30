@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.23.0 / 2022-01-26
+
+* ADDED: Add Trilogy Auto Instrumentation 
+* FIXED: `ActiveSupport` constant conflict in Active Model Serializers instrumentation 
+* FIXED: add missing require for aws_sdk instrumentation #1054
+
 ### v0.22.0 / 2021-12-01
 
 * ADDED: Move activesupport notification subsciber out of action_view gem 

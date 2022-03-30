@@ -23,6 +23,8 @@ module AppConfig
     # Prevent tests from creating log/*.log
     new_app.config.logger = Logger.new(File::NULL)
 
+    new_app.config.filter_parameters = [:param_to_be_filtered]
+
     case Rails.version
     when /^6\.0/
       apply_rails_6_0_configs(new_app)

@@ -22,8 +22,7 @@ module OpenTelemetry
       class Exporter # rubocop:disable Metrics/ClassLength
         SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
         FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
-        TIMEOUT = OpenTelemetry::SDK::Trace::Export::TIMEOUT
-        private_constant(:SUCCESS, :FAILURE, :TIMEOUT)
+        private_constant(:SUCCESS, :FAILURE)
 
         # Default timeouts in seconds.
         KEEP_ALIVE_TIMEOUT = 30
@@ -44,7 +43,7 @@ module OpenTelemetry
           end
         end
 
-        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'https://localhost:4318/v1/traces'), # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4318/v1/traces'), # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
                        certificate_file: config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
                        ssl_verify_mode: Exporter.ssl_verify_mode,
                        headers: config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
@@ -165,7 +164,7 @@ module OpenTelemetry
             @headers.each { |key, value| request.add_field(key, value) }
 
             remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
-            return TIMEOUT if remaining_timeout.zero?
+            return FAILURE if remaining_timeout.zero?
 
             @http.open_timeout = remaining_timeout
             @http.read_timeout = remaining_timeout
