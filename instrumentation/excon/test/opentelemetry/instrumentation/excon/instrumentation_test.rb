@@ -59,6 +59,13 @@ describe OpenTelemetry::Instrumentation::Excon::Instrumentation do
       )
     end
 
+    specify 'after request with capital-letters HTTP method' do
+      ::Excon.new('http://example.com/success')
+             .request(method: 'GET')
+
+      _(span.attributes['http.method']).must_equal 'GET'
+    end
+
     it 'after request with failure code' do
       ::Excon.get('http://example.com/failure')
 

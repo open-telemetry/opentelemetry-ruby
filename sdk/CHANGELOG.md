@@ -1,5 +1,9 @@
 # Release History: opentelemetry-sdk
 
+### Unreleased
+
+* ADDED: Truncate the strings in an array attribute value if length_limit is configured
+
 ### v1.0.2 / 2021-12-01
 
 * FIXED: Default span kind 

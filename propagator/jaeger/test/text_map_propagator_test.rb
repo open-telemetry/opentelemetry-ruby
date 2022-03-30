@@ -156,6 +156,13 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
       )
       extracted_context_must_equal_parent_context('00:00:0:1')
     end
+
+    it 'handles missing trace context' do
+      parent_context = OpenTelemetry::Context.empty
+      carrier = {}
+      context = propagator.extract(carrier, context: parent_context)
+      _(context).must_equal(parent_context)
+    end
   end
 
   describe '#inject' do

@@ -405,4 +405,33 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       end
     end
   end
+
+  describe 'active_job callbacks' do
+    it 'makes the tracing context available in before_perform callbacks' do
+      CallbacksJob.perform_now
+
+      _(CallbacksJob.context_before).wont_be_nil
+      _(CallbacksJob.context_before).must_be :valid?
+    end
+
+    it 'makes the tracing context available in after_perform callbacks' do
+      CallbacksJob.perform_now
+
+      _(CallbacksJob.context_after).wont_be_nil
+      _(CallbacksJob.context_after).must_be :valid?
+    end
+  end
+
+  describe 'perform.active_job notifications' do
+    it 'makes the tracing context available in notifications' do
+      context = nil
+      callback = proc { context = OpenTelemetry::Trace.current_span.context }
+      ActiveSupport::Notifications.subscribed(callback, 'perform.active_job') do
+        TestJob.perform_now
+      end
+
+      _(context).wont_be_nil
+      _(context).must_be :valid?
+    end
+  end
 end

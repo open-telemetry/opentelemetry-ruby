@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'active_record'
 require 'pg'
 
 require 'opentelemetry/sdk'
