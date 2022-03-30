@@ -6,8 +6,22 @@ require 'securerandom'
 gemfile(true) do
   source 'https://rubygems.org'
 
-  gem 'rdkafka', '0.10.0'
+  gem 'opentelemetry-api', path: '../../../api'
+  gem 'opentelemetry-instrumentation-base', path: '../../../instrumentation/base'
   gem 'opentelemetry-instrumentation-rdkafka', path: '../'
+  gem 'opentelemetry-sdk', path: '../../../sdk'
+  gem 'rdkafka', '0.10.0'
+end
+
+require 'opentelemetry-api'
+require 'opentelemetry-sdk'
+require 'opentelemetry-instrumentation-rdkafka'
+require 'rdkafka'
+
+ENV['OTEL_TRACES_EXPORTER'] ||= 'console'
+
+OpenTelemetry::SDK.configure do |c|
+  c.use 'OpenTelemetry::Instrumentation::Rdkafka'
 end
 
 host = ENV.fetch('TEST_KAFKA_HOST') { '127.0.0.1' }
