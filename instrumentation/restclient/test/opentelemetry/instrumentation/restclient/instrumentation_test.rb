@@ -104,5 +104,11 @@ describe OpenTelemetry::Instrumentation::RestClient::Instrumentation do
       end
       _(span.attributes['peer.service']).must_equal 'example:custom'
     end
+
+    it 'creates valid http method span attribute when method is a Symbol' do
+      ::RestClient::Request.execute(method: :get, url: 'http://username:password@example.com/success')
+
+      _(span.attributes['http.method']).must_equal 'GET'
+    end
   end
 end

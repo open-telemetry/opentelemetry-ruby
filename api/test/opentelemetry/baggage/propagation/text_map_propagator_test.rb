@@ -184,5 +184,9 @@ def assert_value(context, key, value, metadata = nil)
   entry = OpenTelemetry::Baggage.raw_entries(context: context)[key]
   _(entry).wont_be_nil
   _(entry.value).must_equal(value)
-  _(entry.metadata).must_equal(metadata)
+  if metadata.nil?
+    _(entry.metadata).must_be_nil
+  else
+    _(entry.metadata).must_equal(metadata)
+  end
 end
