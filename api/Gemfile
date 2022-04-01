@@ -7,3 +7,7 @@
 source 'https://rubygems.org'
 
 gemspec
+
+group :test, :development do
+  gem 'opentelemetry-test-helpers', path: '../test_helpers'
+end

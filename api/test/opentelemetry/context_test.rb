@@ -74,71 +74,69 @@ describe OpenTelemetry::Context do
   end
 
   describe '.detach' do
-    before do
-      @log_stream = StringIO.new
-      @_logger = OpenTelemetry.logger
-      @_error_handler = OpenTelemetry.error_handler
-      OpenTelemetry.logger = ::Logger.new(@log_stream)
-    end
-
-    after do
-      # Ensure we don't leak custom loggers and error handlers to other tests
-      OpenTelemetry.logger = @_logger
-      OpenTelemetry.error_handler = @_error_handler
-    end
+    before { @_error_handler = OpenTelemetry.error_handler }
+    after { OpenTelemetry.error_handler = @_error_handler }
 
     it 'restores the context' do
-      c1_token = Context.attach(new_context)
-      _(Context.current).must_equal(new_context)
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        c1_token = Context.attach(new_context)
+        _(Context.current).must_equal(new_context)
 
-      Context.detach(c1_token)
-      _(Context.current).must_equal(Context::ROOT)
+        Context.detach(c1_token)
+        _(Context.current).must_equal(Context::ROOT)
 
-      _(@log_stream.string).must_be_empty
+        _(log_stream.string).must_be_empty
+      end
     end
 
     it 'warns mismatched detach calls' do
-      c1 = new_context
-      c1_token = Context.attach(c1)
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        c1 = new_context
+        c1_token = Context.attach(c1)
 
-      c2 = Context.current.set_value(foo_key, 'c2')
-      Context.attach(c2)
+        c2 = Context.current.set_value(foo_key, 'c2')
+        Context.attach(c2)
 
-      c3 = Context.current.set_value(foo_key, 'c3')
-      Context.attach(c3)
+        c3 = Context.current.set_value(foo_key, 'c3')
+        Context.attach(c3)
 
-      Context.detach(c1_token)
+        Context.detach(c1_token)
 
-      _(@log_stream.string).must_match(/OpenTelemetry error: calls to detach should match corresponding calls to attach/)
+        _(log_stream.string).must_match(/OpenTelemetry error: calls to detach should match corresponding calls to attach/)
+      end
     end
 
     it 'detaches to the previous context' do
-      c1 = new_context
-      c1_token = Context.attach(c1)
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        c1 = new_context
+        c1_token = Context.attach(c1)
 
-      c2 = Context.current.set_value(foo_key, 'c2')
-      c2_token = Context.attach(c2)
+        c2 = Context.current.set_value(foo_key, 'c2')
+        c2_token = Context.attach(c2)
 
-      c3 = Context.current.set_value(foo_key, 'c3')
-      c3_token = Context.attach(c3)
+        c3 = Context.current.set_value(foo_key, 'c3')
+        c3_token = Context.attach(c3)
 
-      _(Context.current).must_equal(c3)
+        _(Context.current).must_equal(c3)
 
-      Context.detach(c3_token)
-      _(Context.current).must_equal(c2)
+        Context.detach(c3_token)
+        _(Context.current).must_equal(c2)
 
-      Context.detach(c2_token)
-      _(Context.current).must_equal(c1)
+        Context.detach(c2_token)
+        _(Context.current).must_equal(c1)
 
-      Context.detach(c1_token)
-      _(Context.current).must_equal(Context::ROOT)
-      _(@log_stream.string).must_be_empty
+        Context.detach(c1_token)
+        _(Context.current).must_equal(Context::ROOT)
+        _(log_stream.string).must_be_empty
+      end
     end
 
     it 'detaching with a junk token leaves the current context as root' do
-      Context.detach('junk')
-      _(Context.current).must_equal(Context::ROOT)
-      _(@log_stream.string).must_match(/OpenTelemetry error: calls to detach should match corresponding calls to attach/)
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        Context.detach('junk')
+        _(Context.current).must_equal(Context::ROOT)
+        _(log_stream.string).must_match(/OpenTelemetry error: calls to detach should match corresponding calls to attach/)
+      end
     end
 
     it 'with a raising error handler' do
