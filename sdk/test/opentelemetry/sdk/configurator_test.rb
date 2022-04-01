@@ -41,24 +41,26 @@ describe OpenTelemetry::SDK::Configurator do
     end
 
     it 'respects the supplied loggers severity level' do
-      log_stream = StringIO.new
-      custom_logger = Logger.new(log_stream, level: 'ERROR')
-      OpenTelemetry::SDK.configure { |c| c.logger = custom_logger }
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        custom_logger = Logger.new(log_stream, level: 'ERROR')
+        OpenTelemetry::SDK.configure { |c| c.logger = custom_logger }
 
-      OpenTelemetry.logger.debug('The forwarding logger should forward this message')
-      _(log_stream.string).must_be_empty
+        OpenTelemetry.logger.debug('The forwarding logger should forward this message')
+        _(log_stream.string).must_be_empty
+      end
     end
 
     it 'allows control of the otel log level' do
-      log_stream = StringIO.new
-      custom_logger = Logger.new(log_stream, level: 'DEBUG')
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        custom_logger = Logger.new(log_stream, level: 'DEBUG')
 
-      with_env('OTEL_LOG_LEVEL' => 'ERROR') do
-        OpenTelemetry::SDK.configure { |c| c.logger = custom_logger }
+        OpenTelemetry::TestHelpers.with_env('OTEL_LOG_LEVEL' => 'ERROR') do
+          OpenTelemetry::SDK.configure { |c| c.logger = custom_logger }
+        end
+
+        OpenTelemetry.logger.warn('The forwarding logger should not forward this message')
+        _(log_stream.string).must_be_empty
       end
-
-      OpenTelemetry.logger.warn('The forwarding logger should not forward this message')
-      _(log_stream.string).must_be_empty
     end
   end
 
@@ -80,7 +82,7 @@ describe OpenTelemetry::SDK::Configurator do
       end
 
       it 'uses the user provided resources' do
-        with_env('OTEL_RESOURCE_ATTRIBUTES' => 'important_value=100') do
+        OpenTelemetry::TestHelpers.with_env('OTEL_RESOURCE_ATTRIBUTES' => 'important_value=100') do
           configurator.resource = OpenTelemetry::SDK::Resources::Resource.create('important_value' => '25')
           _(configurator_resource_attributes).must_equal(expected_resource_attributes)
         end
@@ -154,7 +156,7 @@ describe OpenTelemetry::SDK::Configurator do
       end
 
       it 'can be set by environment variable' do
-        with_env('OTEL_PROPAGATORS' => 'baggage') do
+        OpenTelemetry::TestHelpers.with_env('OTEL_PROPAGATORS' => 'baggage') do
           configurator.configure
         end
 
@@ -162,7 +164,7 @@ describe OpenTelemetry::SDK::Configurator do
       end
 
       it 'defaults to none with invalid env var' do
-        with_env('OTEL_PROPAGATORS' => 'unladen_swallow') do
+        OpenTelemetry::TestHelpers.with_env('OTEL_PROPAGATORS' => 'unladen_swallow') do
           configurator.configure
         end
 
@@ -212,7 +214,7 @@ describe OpenTelemetry::SDK::Configurator do
       end
 
       it 'can be set by environment variable' do
-        with_env('OTEL_TRACES_EXPORTER' => 'zipkin') do
+        OpenTelemetry::TestHelpers.with_env('OTEL_TRACES_EXPORTER' => 'zipkin') do
           configurator.configure
         end
 
@@ -225,7 +227,7 @@ describe OpenTelemetry::SDK::Configurator do
       end
 
       it 'accepts "none" as an environment variable value' do
-        with_env('OTEL_TRACES_EXPORTER' => 'none') do
+        OpenTelemetry::TestHelpers.with_env('OTEL_TRACES_EXPORTER' => 'none') do
           configurator.configure
         end
 
@@ -233,7 +235,7 @@ describe OpenTelemetry::SDK::Configurator do
       end
 
       it 'accepts comma separated list as an environment variable' do
-        with_env('OTEL_TRACES_EXPORTER' => 'zipkin,console') do
+        OpenTelemetry::TestHelpers.with_env('OTEL_TRACES_EXPORTER' => 'zipkin,console') do
           configurator.configure
         end
 
@@ -252,7 +254,7 @@ describe OpenTelemetry::SDK::Configurator do
       end
 
       it 'accepts comma separated list with preceeding or trailing spaces as an environment variable' do
-        with_env('OTEL_TRACES_EXPORTER' => 'zipkin , console') do
+        OpenTelemetry::TestHelpers.with_env('OTEL_TRACES_EXPORTER' => 'zipkin , console') do
           configurator.configure
         end
 
@@ -271,7 +273,7 @@ describe OpenTelemetry::SDK::Configurator do
       end
 
       it 'accepts "console" as an environment variable value' do
-        with_env('OTEL_TRACES_EXPORTER' => 'console') do
+        OpenTelemetry::TestHelpers.with_env('OTEL_TRACES_EXPORTER' => 'console') do
           configurator.configure
         end
 
