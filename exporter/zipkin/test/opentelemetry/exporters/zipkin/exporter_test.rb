@@ -36,9 +36,9 @@ describe OpenTelemetry::Exporter::Zipkin::Exporter do
     end
 
     it 'sets parameters from the environment' do
-      exp = with_env('OTEL_EXPORTER_ZIPKIN_ENDPOINT' => 'http://127.0.0.1:1234',
-                     'OTEL_EXPORTER_ZIPKIN_TRACES_HEADERS' => 'foo=bar,c=d',
-                     'OTEL_EXPORTER_ZIPKIN_TRACES_TIMEOUT' => '20') do
+      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_ZIPKIN_ENDPOINT' => 'http://127.0.0.1:1234',
+                                                'OTEL_EXPORTER_ZIPKIN_TRACES_HEADERS' => 'foo=bar,c=d',
+                                                'OTEL_EXPORTER_ZIPKIN_TRACES_TIMEOUT' => '20') do
         OpenTelemetry::Exporter::Zipkin::Exporter.new
       end
       timeout = exp.instance_variable_get(:@timeout)
@@ -52,9 +52,9 @@ describe OpenTelemetry::Exporter::Zipkin::Exporter do
     end
 
     it 'prefers explicit parameters rather than the environment' do
-      exp = with_env('OTEL_EXPORTER_ZIPKIN_ENDPOINT' => 'http://127.0.0.1:1234',
-                     'OTEL_EXPORTER_ZIPKIN_TRACES_HEADERS' => 'foo=bar,c=d',
-                     'OTEL_EXPORTER_ZIPKIN_TRACES_TIMEOUT' => '20') do
+      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_ZIPKIN_ENDPOINT' => 'http://127.0.0.1:1234',
+                                                'OTEL_EXPORTER_ZIPKIN_TRACES_HEADERS' => 'foo=bar,c=d',
+                                                'OTEL_EXPORTER_ZIPKIN_TRACES_TIMEOUT' => '20') do
         OpenTelemetry::Exporter::Zipkin::Exporter.new(endpoint: 'http://localhost:4321',
                                                       headers: { 'x' => 'y' },
                                                       timeout: 12)
@@ -146,8 +146,8 @@ describe OpenTelemetry::Exporter::Zipkin::Exporter do
 end
 
 def create_resource_span_data(name: '', kind: nil, status: nil, parent_span_id: OpenTelemetry::Trace::INVALID_SPAN_ID,
-                              total_recorded_attributes: 0, total_recorded_events: 0, total_recorded_links: 0, start_timestamp: exportable_timestamp,
-                              end_timestamp: exportable_timestamp, attributes: nil, links: nil, events: nil, resource: nil,
+                              total_recorded_attributes: 0, total_recorded_events: 0, total_recorded_links: 0, start_timestamp: OpenTelemetry::TestHelpers.exportable_timestamp,
+                              end_timestamp: OpenTelemetry::TestHelpers.exportable_timestamp, attributes: nil, links: nil, events: nil, resource: nil,
                               instrumentation_library: OpenTelemetry::SDK::InstrumentationLibrary.new('', 'v0.0.1'),
                               span_id: OpenTelemetry::Trace.generate_span_id, trace_id: OpenTelemetry::Trace.generate_trace_id,
                               trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, tracestate: nil)
