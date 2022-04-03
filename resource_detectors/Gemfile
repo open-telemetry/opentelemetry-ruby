@@ -10,7 +10,7 @@ gemspec
 
 gem 'opentelemetry-api', path: '../api'
 gem 'opentelemetry-common', path: '../common'
-gem 'opentelemetry-instrumentation-base', path: '../instrumentation/base'
+gem 'opentelemetry-registry', path: '../registry'
 gem 'opentelemetry-sdk', path: '../sdk'
 gem 'opentelemetry-semantic_conventions', path: '../semantic_conventions'
 
