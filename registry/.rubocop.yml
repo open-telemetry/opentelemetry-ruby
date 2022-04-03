@@ -1,0 +1,5 @@
+inherit_from: ../.rubocop-examples.yml
+
+Naming/FileName:
+  Exclude:
+    - "lib/opentelemetry-instrumentation-registry.rb"
