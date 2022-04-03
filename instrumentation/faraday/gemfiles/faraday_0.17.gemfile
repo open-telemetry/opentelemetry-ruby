@@ -3,10 +3,14 @@
 source "https://rubygems.org"
 
 gem "opentelemetry-api", path: "../../../api"
+gem "opentelemetry-instrumentation-base", path: "../../base"
+gem "opentelemetry-registry", path: "../../../registry"
 gem "faraday", "0.17.0"
 
 group :test do
+  gem "opentelemetry-common", path: "../../../common"
   gem "opentelemetry-sdk", path: "../../../sdk"
+  gem "opentelemetry-semantic_conventions", path: "../../../semantic_conventions"
 end
 
 gemspec path: "../"

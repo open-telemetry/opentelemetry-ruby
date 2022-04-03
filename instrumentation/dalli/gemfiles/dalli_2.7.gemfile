@@ -4,6 +4,7 @@ source "https://rubygems.org"
 
 gem "opentelemetry-api", path: "../../../api"
 gem "opentelemetry-instrumentation-base", path: "../../base"
+gem "opentelemetry-registry", path: "../../../registry"
 gem "dalli", "~> 2.7"
 
 group :test do

@@ -3,10 +3,16 @@
 source "https://rubygems.org"
 
 gem "opentelemetry-api", path: "../../../api"
+gem "opentelemetry-instrumentation-base", path: "../../base"
+gem "opentelemetry-registry", path: "../../../registry"
 gem "rack", "2.0.8"
 
 group :test do
+  gem "byebug"
+  gem "opentelemetry-common", path: "../../../common"
   gem "opentelemetry-sdk", path: "../../../sdk"
+  gem "opentelemetry-semantic_conventions", path: "../../../semantic_conventions"
+  gem "pry-byebug"
 end
 
 gemspec path: "../"

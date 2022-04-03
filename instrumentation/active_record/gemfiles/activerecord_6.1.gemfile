@@ -9,6 +9,7 @@ gem "activerecord", "~> 6.1.0"
 group :test do
   gem "byebug"
   gem "opentelemetry-common", path: "../../../common"
+  gem "opentelemetry-registry", path: "../../../registry"
   gem "opentelemetry-sdk", path: "../../../sdk"
   gem "opentelemetry-semantic_conventions", path: "../../../semantic_conventions"
   gem "pry-byebug"

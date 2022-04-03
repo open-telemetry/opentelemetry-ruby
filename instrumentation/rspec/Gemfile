@@ -10,6 +10,7 @@ gemspec
 
 gem 'opentelemetry-api', path: '../../api'
 gem 'opentelemetry-instrumentation-base', path: '../base'
+gem 'opentelemetry-registry', path: '../../registry'
 
 gem 'rspec', '~>3'
 

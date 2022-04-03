@@ -10,6 +10,7 @@ group :test do
   gem "opentelemetry-common", path: "../../../common"
   gem "opentelemetry-instrumentation-base", path: "../../../instrumentation/base"
   gem "opentelemetry-instrumentation-rack", path: "../../../instrumentation/rack"
+  gem "opentelemetry-registry", path: "../../../registry"
   gem "opentelemetry-sdk", path: "../../../sdk"
   gem "opentelemetry-semantic_conventions", path: "../../../semantic_conventions"
   gem "pry-byebug"

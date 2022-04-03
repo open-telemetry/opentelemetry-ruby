@@ -10,6 +10,7 @@ gemspec
 
 gem 'opentelemetry-api', path: '../../api'
 gem 'opentelemetry-common', path: '../../common'
+gem 'opentelemetry-registry', path: '../registry'
 gem 'opentelemetry-instrumentation-action_pack', path: '../action_pack'
 gem 'opentelemetry-instrumentation-action_view', path: '../action_view'
 gem 'opentelemetry-instrumentation-active_job', path: '../active_job'

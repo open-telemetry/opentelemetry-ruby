@@ -8,8 +8,10 @@ require 'simplecov'
 SimpleCov.start
 SimpleCov.minimum_coverage 85
 
-require 'opentelemetry/instrumentation'
 require 'opentelemetry-test-helpers'
+require 'opentelemetry-instrumentation-base'
+
 require 'minitest/autorun'
+require 'rspec/mocks/minitest_integration'
 
 OpenTelemetry.logger = Logger.new(File::NULL)

@@ -3,11 +3,14 @@
 source "https://rubygems.org"
 
 gem "opentelemetry-api", path: "../../../api"
-gem "delayed_job", "~> 4.1"
+gem "opentelemetry-instrumentation-base", path: "../../base"
+gem "opentelemetry-registry", path: "../../../registry"
+gem "delayed_job", "~> 4.1.0"
 
 group :test do
+  gem "opentelemetry-common", path: "../../../common"
   gem "opentelemetry-sdk", path: "../../../sdk"
-  gem "pry"
+  gem "opentelemetry-semantic_conventions", path: "../../../semantic_conventions"
 end
 
 gemspec path: "../"
