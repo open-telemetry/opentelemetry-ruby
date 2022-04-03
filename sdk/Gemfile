@@ -17,4 +17,6 @@ gem 'opentelemetry-semantic_conventions', path: '../semantic_conventions'
 
 group :test, :development do
   gem 'opentelemetry-test-helpers', path: '../test_helpers'
+  # TODO: Update tests to remove dependency on Base classes
+  gem 'opentelemetry-instrumentation-base', path: '../instrumentation/base'
 end
