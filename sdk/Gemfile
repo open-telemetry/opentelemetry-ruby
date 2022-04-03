@@ -12,7 +12,7 @@ gemspec
 gem 'opentelemetry-api', path: '../api'
 gem 'opentelemetry-common', path: '../common'
 gem 'opentelemetry-exporter-zipkin', path: '../exporter/zipkin'
-gem 'opentelemetry-instrumentation-base', path: '../instrumentation/base'
+gem 'opentelemetry-registry', path: '../registry'
 gem 'opentelemetry-semantic_conventions', path: '../semantic_conventions'
 
 group :test, :development do
