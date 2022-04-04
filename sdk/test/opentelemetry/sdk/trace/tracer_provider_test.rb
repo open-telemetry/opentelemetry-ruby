@@ -20,28 +20,28 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
     end
 
     it 'configures samplers from environment' do
-      sampler = with_env('OTEL_TRACES_SAMPLER' => 'always_on') { subject.new.sampler }
+      sampler = OpenTelemetry::TestHelpers.with_env('OTEL_TRACES_SAMPLER' => 'always_on') { subject.new.sampler }
       _(sampler).must_equal samplers::ALWAYS_ON
 
-      sampler = with_env('OTEL_TRACES_SAMPLER' => 'always_off') { subject.new.sampler }
+      sampler = OpenTelemetry::TestHelpers.with_env('OTEL_TRACES_SAMPLER' => 'always_off') { subject.new.sampler }
       _(sampler).must_equal samplers::ALWAYS_OFF
 
-      sampler = with_env('OTEL_TRACES_SAMPLER' => 'traceidratio', 'OTEL_TRACES_SAMPLER_ARG' => '0.1') { subject.new.sampler }
+      sampler = OpenTelemetry::TestHelpers.with_env('OTEL_TRACES_SAMPLER' => 'traceidratio', 'OTEL_TRACES_SAMPLER_ARG' => '0.1') { subject.new.sampler }
       _(sampler).must_equal samplers.trace_id_ratio_based(0.1)
 
-      sampler = with_env('OTEL_TRACES_SAMPLER' => 'traceidratio') { subject.new.sampler }
+      sampler = OpenTelemetry::TestHelpers.with_env('OTEL_TRACES_SAMPLER' => 'traceidratio') { subject.new.sampler }
       _(sampler).must_equal samplers.trace_id_ratio_based(1.0)
 
-      sampler = with_env('OTEL_TRACES_SAMPLER' => 'parentbased_always_on') { subject.new.sampler }
+      sampler = OpenTelemetry::TestHelpers.with_env('OTEL_TRACES_SAMPLER' => 'parentbased_always_on') { subject.new.sampler }
       _(sampler).must_equal samplers.parent_based(root: samplers::ALWAYS_ON)
 
-      sampler = with_env('OTEL_TRACES_SAMPLER' => 'parentbased_always_off') { subject.new.sampler }
+      sampler = OpenTelemetry::TestHelpers.with_env('OTEL_TRACES_SAMPLER' => 'parentbased_always_off') { subject.new.sampler }
       _(sampler).must_equal samplers.parent_based(root: samplers::ALWAYS_OFF)
 
-      sampler = with_env('OTEL_TRACES_SAMPLER' => 'parentbased_traceidratio', 'OTEL_TRACES_SAMPLER_ARG' => '0.2') { subject.new.sampler }
+      sampler = OpenTelemetry::TestHelpers.with_env('OTEL_TRACES_SAMPLER' => 'parentbased_traceidratio', 'OTEL_TRACES_SAMPLER_ARG' => '0.2') { subject.new.sampler }
       _(sampler).must_equal samplers.parent_based(root: samplers.trace_id_ratio_based(0.2))
 
-      sampler = with_env('OTEL_TRACES_SAMPLER' => 'parentbased_traceidratio') { subject.new.sampler }
+      sampler = OpenTelemetry::TestHelpers.with_env('OTEL_TRACES_SAMPLER' => 'parentbased_traceidratio') { subject.new.sampler }
       _(sampler).must_equal samplers.parent_based(root: samplers.trace_id_ratio_based(1.0))
     end
   end
@@ -149,21 +149,13 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
   end
 
   describe '#tracer' do
-    before do
-      @log_stream = StringIO.new
-      @_logger = OpenTelemetry.logger
-      OpenTelemetry.logger = ::Logger.new(@log_stream, level: 'WARN')
-    end
-
-    after do
-      OpenTelemetry.logger = @_logger
-    end
-
     it 'returns the same tracer for the same arguments' do
-      tracer1 = tracer_provider.tracer('component', '1.0')
-      tracer2 = tracer_provider.tracer('component', '1.0')
-      _(tracer1).must_equal(tracer2)
-      _(@log_stream.string).must_be_empty
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        tracer1 = tracer_provider.tracer('component', '1.0')
+        tracer2 = tracer_provider.tracer('component', '1.0')
+        _(tracer1).must_equal(tracer2)
+        _(log_stream.string).must_be_empty
+      end
     end
 
     it 'returns different tracers for different names' do
@@ -179,8 +171,10 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
     end
 
     it 'warn when no name is passed for the tracer' do
-      tracer_provider.tracer
-      _(@log_stream.string).must_match(/calling TracerProvider#tracer without providing a tracer name./)
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        tracer_provider.tracer
+        _(log_stream.string).must_match(/calling TracerProvider#tracer without providing a tracer name./)
+      end
     end
   end
 end

@@ -13,14 +13,14 @@ describe OpenTelemetry::Exporter::Jaeger::AgentExporter do
     end
 
     it 'sets parameters from the environment' do
-      exp = with_env('OTEL_EXPORTER_JAEGER_TIMEOUT' => '42') do
+      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_JAEGER_TIMEOUT' => '42') do
         OpenTelemetry::Exporter::Jaeger::AgentExporter.new
       end
       _(exp.instance_variable_get(:@timeout)).must_equal 42.0
     end
 
     it 'prefers explicit parameters rather than the environment' do
-      exp = with_env('OTEL_EXPORTER_JAEGER_TIMEOUT' => '42') do
+      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_JAEGER_TIMEOUT' => '42') do
         OpenTelemetry::Exporter::Jaeger::AgentExporter.new(timeout: 60)
       end
       _(exp.instance_variable_get(:@timeout)).must_equal 60.0

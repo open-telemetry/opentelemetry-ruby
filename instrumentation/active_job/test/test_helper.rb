@@ -7,6 +7,7 @@
 require 'active_job'
 require 'opentelemetry-instrumentation-active_job'
 require 'opentelemetry/sdk'
+require 'opentelemetry-test-helpers'
 
 require 'minitest/autorun'
 require 'webmock/minitest'

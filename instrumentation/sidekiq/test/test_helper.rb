@@ -6,7 +6,9 @@
 
 require 'sidekiq'
 require 'sidekiq/testing'
+
 require 'opentelemetry/sdk'
+require 'opentelemetry-test-helpers'
 
 require 'minitest/autorun'
 require 'helpers/mock_loader'

@@ -7,6 +7,7 @@
 require 'excon'
 
 require 'opentelemetry/sdk'
+require 'opentelemetry-test-helpers'
 
 require 'minitest/autorun'
 require 'webmock/minitest'

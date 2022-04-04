@@ -17,7 +17,7 @@ class OpenTelemetry::Instrumentation::Rails::RailtieTest < ActiveSupport::TestCa
   end
 
   test 'configures a default instance of the SDK' do
-    with_env('OTEL_SERVICE_NAME' => nil) do
+    OpenTelemetry::TestHelpers.with_env('OTEL_SERVICE_NAME' => nil) do
       run_initializer
       assert_instance_of(OpenTelemetry::SDK::Trace::TracerProvider, OpenTelemetry.tracer_provider)
       assert_same(Rails.logger, OpenTelemetry.logger.instance_variable_get('@logger'))
@@ -25,7 +25,7 @@ class OpenTelemetry::Instrumentation::Rails::RailtieTest < ActiveSupport::TestCa
   end
 
   test 'uses standard OTel environment variables for SDK configuration' do
-    with_env('OTEL_SERVICE_NAME' => 'test_service_name') do
+    OpenTelemetry::TestHelpers.with_env('OTEL_SERVICE_NAME' => 'test_service_name') do
       run_initializer
 
       actual_attributes = find_resource_attributes(Resource::SERVICE_NAME)
