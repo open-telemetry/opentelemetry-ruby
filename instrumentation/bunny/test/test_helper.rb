@@ -8,6 +8,7 @@ require 'securerandom'
 require 'bunny'
 
 require 'opentelemetry/sdk'
+require 'opentelemetry-test-helpers'
 
 require 'pry'
 require 'minitest/autorun'

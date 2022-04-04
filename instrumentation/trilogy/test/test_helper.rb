@@ -7,7 +7,10 @@
 ENV['OTEL_LOG_LEVEL'] ||= 'fatal'
 
 require 'trilogy'
+
 require 'opentelemetry/sdk'
+require 'opentelemetry-test-helpers'
+
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
 require 'pry'
