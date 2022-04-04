@@ -11,7 +11,7 @@ gemspec
 gem 'opentelemetry-api', path: '../../api'
 gem 'opentelemetry-instrumentation-base', path: '../base'
 
-group :test do
+group :test, :development do
   gem 'byebug'
   gem 'opentelemetry-common', path: '../../common'
   gem 'opentelemetry-instrumentation-action_pack', path: '../../instrumentation/action_pack'
@@ -21,5 +21,6 @@ group :test do
   gem 'opentelemetry-instrumentation-rack', path: '../../instrumentation/rack'
   gem 'opentelemetry-sdk', path: '../../sdk'
   gem 'opentelemetry-semantic_conventions', path: '../../semantic_conventions'
+  gem 'opentelemetry-test-helpers', path: '../../test_helpers'
   gem 'pry-byebug'
 end
