@@ -33,7 +33,7 @@ describe OpenTelemetry::TestHelpers do
   describe '.with_test_logger' do
     it 'temporarily captures log output for inspection' do
       OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
-        OpenTelemetry.logger.warn("danger, danger")
+        OpenTelemetry.logger.warn('danger, danger')
         _(log_stream.string).must_match(/danger, danger/)
       end
     end

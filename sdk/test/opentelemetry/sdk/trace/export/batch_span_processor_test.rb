@@ -113,9 +113,9 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
     it 'sets parameters from the environment' do
       bsp = OpenTelemetry::TestHelpers.with_env('OTEL_BSP_EXPORT_TIMEOUT' => '4',
-                                 'OTEL_BSP_SCHEDULE_DELAY' => '3',
-                                 'OTEL_BSP_MAX_QUEUE_SIZE' => '2',
-                                 'OTEL_BSP_MAX_EXPORT_BATCH_SIZE' => '1') do
+                                                'OTEL_BSP_SCHEDULE_DELAY' => '3',
+                                                'OTEL_BSP_MAX_QUEUE_SIZE' => '2',
+                                                'OTEL_BSP_MAX_EXPORT_BATCH_SIZE' => '1') do
         BatchSpanProcessor.new(TestExporter.new)
       end
       _(bsp.instance_variable_get(:@exporter_timeout_seconds)).must_equal 0.004
@@ -126,9 +126,9 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
     it 'prefers explicit parameters rather than the environment' do
       bsp = OpenTelemetry::TestHelpers.with_env('OTEL_BSP_EXPORT_TIMEOUT' => '4',
-                                 'OTEL_BSP_SCHEDULE_DELAY' => '3',
-                                 'OTEL_BSP_MAX_QUEUE_SIZE' => '2',
-                                 'OTEL_BSP_MAX_EXPORT_BATCH_SIZE' => '1') do
+                                                'OTEL_BSP_SCHEDULE_DELAY' => '3',
+                                                'OTEL_BSP_MAX_QUEUE_SIZE' => '2',
+                                                'OTEL_BSP_MAX_EXPORT_BATCH_SIZE' => '1') do
         BatchSpanProcessor.new(TestExporter.new,
                                exporter_timeout: 10,
                                schedule_delay: 9,

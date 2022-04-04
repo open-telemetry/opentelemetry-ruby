@@ -21,12 +21,12 @@ describe OpenTelemetry::SDK::Trace::SpanLimits do
 
     it 'reflects environment variables' do
       OpenTelemetry::TestHelpers.with_env('OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT' => '1',
-                           'OTEL_SPAN_EVENT_COUNT_LIMIT' => '2',
-                           'OTEL_SPAN_LINK_COUNT_LIMIT' => '3',
-                           'OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '32',
-                           'OTEL_EVENT_ATTRIBUTE_COUNT_LIMIT' => '5',
-                           'OTEL_LINK_ATTRIBUTE_COUNT_LIMIT' => '6',
-                           'OTEL_TRACES_SAMPLER' => 'always_on') do
+                                          'OTEL_SPAN_EVENT_COUNT_LIMIT' => '2',
+                                          'OTEL_SPAN_LINK_COUNT_LIMIT' => '3',
+                                          'OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '32',
+                                          'OTEL_EVENT_ATTRIBUTE_COUNT_LIMIT' => '5',
+                                          'OTEL_LINK_ATTRIBUTE_COUNT_LIMIT' => '6',
+                                          'OTEL_TRACES_SAMPLER' => 'always_on') do
         config = subject.new
         _(config.attribute_count_limit).must_equal 1
         _(config.event_count_limit).must_equal 2
@@ -39,12 +39,12 @@ describe OpenTelemetry::SDK::Trace::SpanLimits do
 
     it 'reflects old environment variable for attribute value length limit' do
       OpenTelemetry::TestHelpers.with_env('OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT' => '1',
-                           'OTEL_SPAN_EVENT_COUNT_LIMIT' => '2',
-                           'OTEL_SPAN_LINK_COUNT_LIMIT' => '3',
-                           'OTEL_RUBY_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '32',
-                           'OTEL_EVENT_ATTRIBUTE_COUNT_LIMIT' => '5',
-                           'OTEL_LINK_ATTRIBUTE_COUNT_LIMIT' => '6',
-                           'OTEL_TRACES_SAMPLER' => 'always_on') do
+                                          'OTEL_SPAN_EVENT_COUNT_LIMIT' => '2',
+                                          'OTEL_SPAN_LINK_COUNT_LIMIT' => '3',
+                                          'OTEL_RUBY_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '32',
+                                          'OTEL_EVENT_ATTRIBUTE_COUNT_LIMIT' => '5',
+                                          'OTEL_LINK_ATTRIBUTE_COUNT_LIMIT' => '6',
+                                          'OTEL_TRACES_SAMPLER' => 'always_on') do
         config = subject.new
         _(config.attribute_count_limit).must_equal 1
         _(config.event_count_limit).must_equal 2
@@ -56,12 +56,12 @@ describe OpenTelemetry::SDK::Trace::SpanLimits do
     end
     it 'reflects explicit overrides' do
       OpenTelemetry::TestHelpers.with_env('OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT' => '1',
-                           'OTEL_SPAN_EVENT_COUNT_LIMIT' => '2',
-                           'OTEL_SPAN_LINK_COUNT_LIMIT' => '3',
-                           'OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '4',
-                           'OTEL_EVENT_ATTRIBUTE_COUNT_LIMIT' => '5',
-                           'OTEL_LINK_ATTRIBUTE_COUNT_LIMIT' => '6',
-                           'OTEL_TRACES_SAMPLER' => 'always_on') do
+                                          'OTEL_SPAN_EVENT_COUNT_LIMIT' => '2',
+                                          'OTEL_SPAN_LINK_COUNT_LIMIT' => '3',
+                                          'OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '4',
+                                          'OTEL_EVENT_ATTRIBUTE_COUNT_LIMIT' => '5',
+                                          'OTEL_LINK_ATTRIBUTE_COUNT_LIMIT' => '6',
+                                          'OTEL_TRACES_SAMPLER' => 'always_on') do
         config = subject.new(attribute_count_limit: 10,
                              event_count_limit: 11,
                              link_count_limit: 12,

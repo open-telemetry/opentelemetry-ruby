@@ -7,6 +7,8 @@
 require 'logger'
 
 module OpenTelemetry
+  # The TestHelpers module contains a collection of test helpers for the various
+  # OpenTelemetry Ruby gems.
   module TestHelpers
     extend self
     NULL_LOGGER = Logger.new(File::NULL)
