@@ -12,10 +12,6 @@ module OpenTelemetry
     module ClassScopedAttributes
       extend self
 
-      def current_attributes_key
-        @current_attributes_key ||= Context.create_key("#{self.name}-current-attributes-hash")
-      end
-
       # Returns the attributes hash found in the optional context or the
       # current context if none is provided.
       #
@@ -48,6 +44,12 @@ module OpenTelemetry
       def with_attributes(attributes_hash)
         attributes_hash = attributes.merge(attributes_hash)
         Context.with_value(current_attributes_key, attributes_hash) { |c, h| yield h, c }
+      end
+
+      private
+
+      def current_attributes_key
+        @current_attributes_key ||= Context.create_key("#{self.name}-current-attributes-hash")
       end
     end
   end
