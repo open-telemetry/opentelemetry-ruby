@@ -6,7 +6,7 @@
 
 module OpenTelemetry
   module Common
-    # Attributecontains common helpers for atribute propagation
+    # ClassScopedAttributes contains common helpers for attribute propagation
     # Various classes should extend this module to get `with_attributes`
     # functionality scoped to that class.
     module ClassScopedAttributes
