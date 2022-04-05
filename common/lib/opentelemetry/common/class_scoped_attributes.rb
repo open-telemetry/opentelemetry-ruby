@@ -12,8 +12,8 @@ module OpenTelemetry
     module ClassScopedAttributes
       extend self
 
-      def current_attributes_hash
-        @current_attributes_hash ||= Context.create_key("#{self.name}-current-attributes-hash")
+      def current_attributes_key
+        @current_attributes_key ||= Context.create_key("#{self.name}-current-attributes-hash")
       end
 
       # Returns the attributes hash found in the optional context or the
@@ -23,7 +23,7 @@ module OpenTelemetry
       #   attributes hash. Defaults to Context.current
       def attributes(context = nil)
         context ||= Context.current
-        context.value(current_attributes_hash) || {}
+        context.value(current_attributes_key) || {}
       end
 
       # Returns a context containing the merged attributes hash, derived from the
@@ -33,7 +33,7 @@ module OpenTelemetry
       #   the returned context
       def context_with_attributes(attributes_hash, parent_context: Context.current)
         attributes_hash = attributes(parent_context).merge(attributes_hash)
-        parent_context.set_value(current_attributes_hash, attributes_hash)
+        parent_context.set_value(current_attributes_key, attributes_hash)
       end
 
       # Activates/deactivates the merged attributes hash within the current Context,
@@ -47,7 +47,7 @@ module OpenTelemetry
       #   attributes hash to the block.
       def with_attributes(attributes_hash)
         attributes_hash = attributes.merge(attributes_hash)
-        Context.with_value(current_attributes_hash, attributes_hash) { |c, h| yield h, c }
+        Context.with_value(current_attributes_key, attributes_hash) { |c, h| yield h, c }
       end
     end
   end
