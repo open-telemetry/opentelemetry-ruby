@@ -42,7 +42,7 @@ module OpenTelemetry
       # On exit, the attributes hash that was active before calling this method
       # will be reactivated.
       #
-      # @param [Span] span the span to activate
+      # @param [Hash] attributes_hash attributes to merge into the current attributes hash
       # @yield [Hash, Context] yields attributes hash and a context containing the
       #   attributes hash to the block.
       def with_attributes(attributes_hash)
