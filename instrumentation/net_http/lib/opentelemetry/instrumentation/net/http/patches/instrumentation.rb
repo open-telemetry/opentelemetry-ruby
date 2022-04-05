@@ -22,6 +22,8 @@ module OpenTelemetry
 
               method = req.method
 
+              # req.uri is not garaunteed to be present as this library 
+              # also accepts a path only parameter which is a string
               options = if req.uri
                           {
                             method: method,

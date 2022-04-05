@@ -116,7 +116,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
       )
     end
 
-    it 'hide query params if enabled' do
+    it 'hides query params if enabled' do
       stub_request(:get, 'http://example.com/success?foo=bar').to_return(status: 200)
       ::HTTP.get('http://example.com/success?foo=bar')
 
@@ -124,7 +124,7 @@ describe OpenTelemetry::Instrumentation::HTTP::Patches::Client do
       _(span.attributes['http.target']).must_equal '/success?'
     end
 
-    it 'show query params if disabled' do
+    it 'shows query params if disabled' do
       instrumentation.instance_variable_set(:@installed, false)
       instrumentation.install(hide_query_params: false)
       stub_request(:get, 'http://example.com/success?foo=bar').to_return(status: 200)
