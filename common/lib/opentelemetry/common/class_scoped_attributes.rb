@@ -16,8 +16,8 @@ module OpenTelemetry
         @current_attributes_hash ||= Context.create_key("#{self.name}-current-attributes-hash")
       end
 
-      # Returns the attributes hash representing the context found
-      # in the optional context or the current context if none is provided.
+      # Returns the attributes hash found in the optional context or the
+      # current context if none is provided.
       #
       # @param [optional Context] context The context to lookup the current
       #   attributes hash. Defaults to Context.current
