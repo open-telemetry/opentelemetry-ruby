@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'BigDecimal'
 module OpenTelemetry
   module SDK
     # @api private
@@ -20,8 +21,12 @@ module OpenTelemetry
         key.instance_of?(String)
       end
 
+      def valid_numeric?(value)
+        value.is_a?(Integer) || value.is_a?(Float) || value.is_a?(Rational) || value.is_a?(Complex) || value.is_a?(BigDecimal)
+      end
+
       def valid_simple_value?(value)
-        value.instance_of?(String) || value == false || value == true || value.is_a?(Numeric)
+        value.instance_of?(String) || value == false || value == true || valid_numeric?(value)
       end
 
       def valid_array_value?(value)
@@ -34,7 +39,7 @@ module OpenTelemetry
         when TrueClass, FalseClass
           value.all? { |v| boolean?(v) }
         when Numeric
-          value.all? { |v| v.is_a?(Numeric) }
+          value.all? { |v| valid_numeric?(v) }
         else
           false
         end
