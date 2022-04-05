@@ -7,8 +7,8 @@
 require 'simplecov'
 SimpleCov.start
 
+require 'opentelemetry-test-helpers'
 require 'opentelemetry/exporter/zipkin'
-require 'opentelemetry/common/test_helpers'
 require 'minitest/autorun'
 require 'webmock/minitest'
 
@@ -21,8 +21,8 @@ def create_span_data(status: nil, kind: nil, attributes: nil, events: nil, links
     0,
     0,
     0,
-    exportable_timestamp,
-    exportable_timestamp,
+    OpenTelemetry::TestHelpers.exportable_timestamp,
+    OpenTelemetry::TestHelpers.exportable_timestamp,
     attributes,
     links,
     events,

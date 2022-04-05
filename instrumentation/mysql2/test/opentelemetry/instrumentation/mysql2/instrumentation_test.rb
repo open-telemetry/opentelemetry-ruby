@@ -211,7 +211,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
     describe 'when db_statement is configured via environment variable' do
       describe 'when db_statement set as omit' do
         it 'omits db.statement attribute' do
-          with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'db_statement=omit;') do
+          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'db_statement=omit;') do
             instrumentation.instance_variable_set(:@installed, false)
             instrumentation.install
             sql = "SELECT * from users where users.id = 1 and users.email = 'test@test.com'"
@@ -231,7 +231,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
 
       describe 'when db_statement set as obfuscate' do
         it 'obfuscates SQL parameters in db.statement' do
-          with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'db_statement=obfuscate;') do
+          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'db_statement=obfuscate;') do
             instrumentation.instance_variable_set(:@installed, false)
             instrumentation.install
 
@@ -255,7 +255,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
         let(:config) { { db_statement: :omit } }
 
         it 'overrides local config and obfuscates SQL parameters in db.statement' do
-          with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'db_statement=obfuscate') do
+          OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_INSTRUMENTATION_MYSQL2_CONFIG_OPTS' => 'db_statement=obfuscate') do
             instrumentation.instance_variable_set(:@installed, false)
             instrumentation.install
 

@@ -97,7 +97,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
     it 'raises if OTEL_BSP_EXPORT_TIMEOUT env var is not numeric' do
       assert_raises ArgumentError do
-        with_env('OTEL_BSP_EXPORT_TIMEOUT' => 'foo') do
+        OpenTelemetry::TestHelpers.with_env('OTEL_BSP_EXPORT_TIMEOUT' => 'foo') do
           BatchSpanProcessor.new(TestExporter.new)
         end
       end
@@ -112,10 +112,10 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
 
     it 'sets parameters from the environment' do
-      bsp = with_env('OTEL_BSP_EXPORT_TIMEOUT' => '4',
-                     'OTEL_BSP_SCHEDULE_DELAY' => '3',
-                     'OTEL_BSP_MAX_QUEUE_SIZE' => '2',
-                     'OTEL_BSP_MAX_EXPORT_BATCH_SIZE' => '1') do
+      bsp = OpenTelemetry::TestHelpers.with_env('OTEL_BSP_EXPORT_TIMEOUT' => '4',
+                                                'OTEL_BSP_SCHEDULE_DELAY' => '3',
+                                                'OTEL_BSP_MAX_QUEUE_SIZE' => '2',
+                                                'OTEL_BSP_MAX_EXPORT_BATCH_SIZE' => '1') do
         BatchSpanProcessor.new(TestExporter.new)
       end
       _(bsp.instance_variable_get(:@exporter_timeout_seconds)).must_equal 0.004
@@ -125,10 +125,10 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
 
     it 'prefers explicit parameters rather than the environment' do
-      bsp = with_env('OTEL_BSP_EXPORT_TIMEOUT' => '4',
-                     'OTEL_BSP_SCHEDULE_DELAY' => '3',
-                     'OTEL_BSP_MAX_QUEUE_SIZE' => '2',
-                     'OTEL_BSP_MAX_EXPORT_BATCH_SIZE' => '1') do
+      bsp = OpenTelemetry::TestHelpers.with_env('OTEL_BSP_EXPORT_TIMEOUT' => '4',
+                                                'OTEL_BSP_SCHEDULE_DELAY' => '3',
+                                                'OTEL_BSP_MAX_QUEUE_SIZE' => '2',
+                                                'OTEL_BSP_MAX_EXPORT_BATCH_SIZE' => '1') do
         BatchSpanProcessor.new(TestExporter.new,
                                exporter_timeout: 10,
                                schedule_delay: 9,
@@ -165,7 +165,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       mock.expect(:call, nil)
 
       Thread.stub(:new, mock) do
-        with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => 'true') do
+        OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => 'true') do
           BatchSpanProcessor.new(TestExporter.new)
         end
       end
@@ -178,7 +178,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       mock.expect(:call, nil) { assert false }
 
       Thread.stub(:new, mock) do
-        with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => 'false') do
+        OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => 'false') do
           BatchSpanProcessor.new(TestExporter.new)
         end
       end
@@ -189,7 +189,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       mock.expect(:call, nil) { assert false }
 
       Thread.stub(:new, mock) do
-        with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => 'true') do
+        OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => 'true') do
           BatchSpanProcessor.new(TestExporter.new,
                                  start_thread_on_boot: false)
         end

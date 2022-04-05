@@ -8,6 +8,7 @@ require 'active_support/all'
 require 'active_model_serializers'
 
 require 'opentelemetry/sdk'
+require 'opentelemetry-test-helpers'
 
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'

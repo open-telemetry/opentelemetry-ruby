@@ -8,6 +8,7 @@ require 'active_record'
 require 'pg'
 
 require 'opentelemetry/sdk'
+require 'opentelemetry-test-helpers'
 
 require 'minitest/autorun'
 

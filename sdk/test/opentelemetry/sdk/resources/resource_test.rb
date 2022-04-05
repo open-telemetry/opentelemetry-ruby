@@ -73,7 +73,7 @@ describe OpenTelemetry::SDK::Resources::Resource do
     end
 
     it 'allows overriding the default service.name with the OTEL_SERVICE_NAME environment variable' do
-      with_env('OTEL_SERVICE_NAME' => 'svc') do
+      OpenTelemetry::TestHelpers.with_env('OTEL_SERVICE_NAME' => 'svc') do
         resource_attributes = Resource.default.attribute_enumerator.to_h
         _(resource_attributes).must_include('service.name')
         _(resource_attributes['service.name']).must_equal('svc')
@@ -81,7 +81,7 @@ describe OpenTelemetry::SDK::Resources::Resource do
     end
 
     it 'allows overriding the default service.name with the OTEL_RESOURCE_ATTRIBUTES environment variable' do
-      with_env('OTEL_RESOURCE_ATTRIBUTES' => 'service.name=svc') do
+      OpenTelemetry::TestHelpers.with_env('OTEL_RESOURCE_ATTRIBUTES' => 'service.name=svc') do
         resource_attributes = Resource.default.attribute_enumerator.to_h
         _(resource_attributes).must_include('service.name')
         _(resource_attributes['service.name']).must_equal('svc')
@@ -89,7 +89,7 @@ describe OpenTelemetry::SDK::Resources::Resource do
     end
 
     it 'lets the OTEL_SERVICE_NAME environment variable take precedence over the OTEL_RESOURCE_ATTRIBUTES environment variable' do
-      with_env('OTEL_SERVICE_NAME' => 'svc-ok', 'OTEL_RESOURCE_ATTRIBUTES' => 'service.name=svc-bad') do
+      OpenTelemetry::TestHelpers.with_env('OTEL_SERVICE_NAME' => 'svc-ok', 'OTEL_RESOURCE_ATTRIBUTES' => 'service.name=svc-bad') do
         resource_attributes = Resource.default.attribute_enumerator.to_h
         _(resource_attributes).must_include('service.name')
         _(resource_attributes['service.name']).must_equal('svc-ok')
@@ -117,7 +117,7 @@ describe OpenTelemetry::SDK::Resources::Resource do
       end
 
       it 'includes environment resources' do
-        with_env('OTEL_RESOURCE_ATTRIBUTES' => 'key1=value1,key2=value2') do
+        OpenTelemetry::TestHelpers.with_env('OTEL_RESOURCE_ATTRIBUTES' => 'key1=value1,key2=value2') do
           resource_attributes = Resource.telemetry_sdk.attribute_enumerator.to_h
           _(resource_attributes).must_equal(expected_resource_attributes)
         end

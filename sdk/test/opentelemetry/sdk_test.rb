@@ -8,11 +8,7 @@ require 'test_helper'
 
 describe OpenTelemetry::SDK do
   describe '#configure' do
-    after do
-      # Ensure we don't leak custom loggers and error handlers to other tests
-      OpenTelemetry.logger = Logger.new(File::NULL)
-      OpenTelemetry.error_handler = nil
-    end
+    after { OpenTelemetry::TestHelpers.reset_opentelemetry }
 
     it 'logs the original error when a configuration error occurs' do
       received_exception = nil
