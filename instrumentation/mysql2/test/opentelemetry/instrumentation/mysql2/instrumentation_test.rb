@@ -79,7 +79,7 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
         end
       end
 
-      it 'sets span attribures according to with_attributes hash' do
+      it 'sets span attributes according to with_attributes hash' do
         OpenTelemetry::Instrumentation::Mysql2.with_attributes(attributes) do
           client.query("SELECT 1")
         end
