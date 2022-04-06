@@ -284,6 +284,26 @@ describe OpenTelemetry::SDK::Configurator do
           OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter
         )
       end
+
+      it 'warns on unsupported otlp transport protocol grpc' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_TRACES_EXPORTER' => 'otlp', 'OTEL_EXPORTER_OTLP_TRACES_PROTOCOL' => 'grpc') do
+          OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+            configurator.configure
+
+            _(log_stream.string).must_match(/The grpc transport protocol is not supported by the OTLP exporter/)
+          end
+        end
+      end
+
+      it 'warns on unsupported otlp transport protocol http/json' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_TRACES_EXPORTER' => 'otlp', 'OTEL_EXPORTER_OTLP_TRACES_PROTOCOL' => 'http/json') do
+          OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+            configurator.configure
+
+            _(log_stream.string).must_match(%r{The http/json transport protocol is not supported by the OTLP exporter})
+          end
+        end
+      end
     end
 
     describe 'instrumentation installation' do
