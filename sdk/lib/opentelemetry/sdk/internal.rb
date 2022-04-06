@@ -21,7 +21,7 @@ module OpenTelemetry
       end
 
       def numeric?(value)
-        value.is_a?(Integer) || value.is_a?(Float)
+        value.instance_of?(Integer) || value.instance_of?(Float)
       end
 
       def valid_simple_value?(value)
