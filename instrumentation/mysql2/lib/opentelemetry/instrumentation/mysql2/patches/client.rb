@@ -58,7 +58,6 @@ module OpenTelemetry
             when :obfuscate
               attributes['db.statement'] = obfuscate_sql(sql)
             end
-
             tracer.in_span(
               database_span_name(sql),
               attributes: attributes.merge(OpenTelemetry::Instrumentation::Mysql2.attributes),
