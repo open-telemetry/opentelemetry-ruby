@@ -1,8 +1,12 @@
 # OpenTelemetry Registry Instrumentation
 
-The instrumentation Registry contains information about instrumentation available and facilitates discovery, installation and configuration.
+The instrumentation Registry contains information about available instrumentation, facilitates discovery, installation, and configuration.
 
-This functionality is primarily useful for SDK and Iistrumentation implementors.
+The Registry allows for instrumentation to avoid depending directly on a specific SDK implementation.
+
+The SDK depends on the Registry, the instrumentation Base class depends on the Registry, and auto instrumentation libraries extend the instrumentation Base class. 
+
+The motivation for decoupling the Registry (and by extension the instrumentation) from a specific SDK implementation means that anyone can implement their own OpenTelemetry API compatible SDK, and they could continue to use community made instrumentation.
 
 ## How do I get started?
 
