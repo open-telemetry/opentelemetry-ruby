@@ -20,12 +20,12 @@ module OpenTelemetry
         key.instance_of?(String)
       end
 
-      def valid_numeric?(value)
+      def numeric?(value)
         value.is_a?(Integer) || value.is_a?(Float)
       end
 
       def valid_simple_value?(value)
-        value.instance_of?(String) || value == false || value == true || valid_numeric?(value)
+        value.instance_of?(String) || value == false || value == true || numeric?(value)
       end
 
       def valid_array_value?(value)
@@ -38,7 +38,7 @@ module OpenTelemetry
         when TrueClass, FalseClass
           value.all? { |v| boolean?(v) }
         when Numeric
-          value.all? { |v| valid_numeric?(v) }
+          value.all? { |v| numeric?(v) }
         else
           false
         end
