@@ -46,9 +46,8 @@ end
 ```ruby
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Mysql2', {
-    # By default, this instrumentation includes the executed SQL as the `db.statement`
-    # semantic attribute. Optionally, you may disable the inclusion of this attribute entirely by
-    # setting this option to :omit or sanitize the attribute by setting to :obfuscate
+    # The obfuscation of SQL in the db.statement attribute is disabled by default.
+    # To enable, set db_statement to :obfuscate.
     db_statement: :obfuscate,
   }
 end
