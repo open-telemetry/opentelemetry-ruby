@@ -91,6 +91,10 @@ module OpenTelemetry
       # @note It's recommended this value represents a human readable version of the device model rather than a machine readable alternative
       DEVICE_MODEL_NAME = 'device.model.name'
 
+      # The name of the device manufacturer
+      # @note The Android OS provides this field via [Build](https://developer.android.com/reference/android/os/Build#MANUFACTURER). iOS apps SHOULD hardcode the value `Apple`
+      DEVICE_MANUFACTURER = 'device.manufacturer'
+
       # The name of the single function that this runtime instance executes
       # @note This is the name of the function as configured/deployed on the FaaS platform and is usually different from the name of the callback function (which may be stored in the [`code.namespace`/`code.function`](../../trace/semantic_conventions/span-general.md#source-code-attributes) span attributes)
       FAAS_NAME = 'faas.name'
