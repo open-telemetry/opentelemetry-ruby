@@ -12,6 +12,5 @@ module OpenTelemetry
   # The instrumentation module contains functionality to register and install
   # instrumentation
   module Instrumentation
-
   end
 end

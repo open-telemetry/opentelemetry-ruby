@@ -15,5 +15,6 @@ group :test, :development do
   gem 'opentelemetry-common', path: '../common'
   gem 'opentelemetry-exporter-zipkin', path: '../exporter/zipkin'
   gem 'opentelemetry-instrumentation-base', path: '../instrumentation/base'
+  gem 'opentelemetry-registry', path: '../registry'
   gem 'opentelemetry-semantic_conventions', path: '../semantic_conventions'
 end
