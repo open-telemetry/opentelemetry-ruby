@@ -9,6 +9,7 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'opentelemetry-api', path: '../../api'
+gem 'opentelemetry-registry', path: '../../registry'
 
 group :test do
   gem 'opentelemetry-common', path: '../../common'
