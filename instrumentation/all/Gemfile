@@ -45,6 +45,7 @@ gem 'opentelemetry-instrumentation-ruby_kafka', path: '../ruby_kafka'
 gem 'opentelemetry-instrumentation-sidekiq', path: '../sidekiq'
 gem 'opentelemetry-instrumentation-sinatra', path: '../sinatra'
 gem 'opentelemetry-instrumentation-trilogy', path: '../trilogy'
+gem 'opentelemetry-registry', path: '../../registry'
 
 group :test do
   gem 'active_model_serializers'
