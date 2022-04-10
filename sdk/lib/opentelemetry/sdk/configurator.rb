@@ -169,12 +169,20 @@ module OpenTelemetry
         processors.each { |p| tracer_provider.add_span_processor(p) }
       end
 
-      def wrapped_exporters_from_env
+      def wrapped_exporters_from_env # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize
         exporters = ENV.fetch('OTEL_TRACES_EXPORTER', 'otlp')
         exporters.split(',').map do |exporter|
           case exporter.strip
           when 'none' then nil
-          when 'otlp' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::OTLP::Exporter')
+          when 'otlp'
+            otlp_protocol = ENV['OTEL_EXPORTER_OTLP_TRACES_PROTOCOL'] || ENV['OTEL_EXPORTER_OTLP_PROTOCOL'] || 'http/protobuf'
+
+            if otlp_protocol != 'http/protobuf'
+              OpenTelemetry.logger.warn "The #{otlp_protocol} transport protocol is not supported by the OTLP exporter, spans will not be exported."
+              nil
+            else
+              fetch_exporter(exporter, 'OpenTelemetry::Exporter::OTLP::Exporter')
+            end
           when 'jaeger' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::Jaeger::CollectorExporter')
           when 'zipkin' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::Zipkin::Exporter')
           when 'console' then Trace::Export::SimpleSpanProcessor.new(Trace::Export::ConsoleSpanExporter.new)

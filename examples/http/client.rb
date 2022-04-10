@@ -26,7 +26,7 @@ connection = Faraday.new("http://#{host}:4567")
 url = '/hello'
 
 # For attribute naming, see:
-# https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-semantic-conventions.md#http-client
+# https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/http.md
 
 # Span name should be set to URI path value:
 tracer.in_span(

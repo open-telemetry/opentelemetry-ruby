@@ -6,6 +6,7 @@
 require 'active_record'
 require 'opentelemetry-instrumentation-active_record'
 require 'opentelemetry/sdk'
+require 'opentelemetry-test-helpers'
 
 require 'minitest/autorun'
 require 'webmock/minitest'

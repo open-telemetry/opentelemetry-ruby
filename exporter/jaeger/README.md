@@ -37,7 +37,7 @@ ENV['OTEL_TRACES_EXPORTER'] = 'jaeger'
 ENV['OTEL_SERVICE_NAME'] = 'jaeger-example'
 ENV['OTEL_SERVICE_VERSION'] = '0.6.0'
 
-# The exporter will connect to localhost:6381 by default. To change:
+# The exporter will connect to localhost:6831 by default. To change:
 # ENV['OTEL_EXPORTER_JAEGER_AGENT_HOST'] = 'some.other.host'
 # ENV['OTEL_EXPORTER_JAEGER_AGENT_PORT'] = 12345
 

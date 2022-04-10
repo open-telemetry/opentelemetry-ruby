@@ -7,6 +7,7 @@
 require 'active_job'
 require 'opentelemetry-instrumentation-active_job'
 require 'opentelemetry/sdk'
+require 'opentelemetry-test-helpers'
 
 require 'minitest/autorun'
 require 'webmock/minitest'
@@ -46,6 +47,25 @@ end
 
 class MixedArgsJob < ::ActiveJob::Base
   def perform(arg1, arg2, keyword1: 'default', keyword2:); end
+end
+
+class CallbacksJob < TestJob
+  class << self
+    attr_accessor :context_before, :context_after
+  end
+
+  def initialize(*)
+    self.class.context_before = self.class.context_after = nil
+    super
+  end
+
+  before_perform(prepend: true) do
+    self.class.context_before = OpenTelemetry::Trace.current_span.context
+  end
+
+  after_perform do
+    self.class.context_after = OpenTelemetry::Trace.current_span.context
+  end
 end
 
 ::ActiveJob::Base.queue_adapter = :inline

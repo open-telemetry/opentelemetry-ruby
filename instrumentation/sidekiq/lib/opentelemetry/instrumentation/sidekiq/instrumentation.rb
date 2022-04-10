@@ -27,8 +27,8 @@ module OpenTelemetry
           gem_version >= MINIMUM_VERSION
         end
 
-        option :span_naming,                 default: :queue, validate: ->(opt) { %I[job_class queue].include?(opt) }
-        option :propagation_style,           default: :link,  validate: ->(opt) { %i[link child none].include?(opt) }
+        option :span_naming,                 default: :queue, validate: %I[job_class queue]
+        option :propagation_style,           default: :link,  validate: %i[link child none]
         option :trace_launcher_heartbeat,    default: false, validate: :boolean
         option :trace_poller_enqueue,        default: false, validate: :boolean
         option :trace_poller_wait,           default: false, validate: :boolean

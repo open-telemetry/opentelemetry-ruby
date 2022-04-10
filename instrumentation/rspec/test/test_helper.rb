@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 require 'opentelemetry/sdk'
+require 'opentelemetry-test-helpers'
 
 require_relative 'rspec_patches'
 require 'rspec/core'

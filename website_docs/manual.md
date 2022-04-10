@@ -1,5 +1,7 @@
 ---
-title: "Manual Instrumentation"
+title: Manual Instrumentation
+linkTitle: Manual
+aliases: [/docs/instrumentation/ruby/manual_instrumentation]
 weight: 4
 ---
 

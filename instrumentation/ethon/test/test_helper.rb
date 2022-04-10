@@ -7,6 +7,7 @@
 require 'ethon'
 
 require 'opentelemetry/sdk'
+require 'opentelemetry-test-helpers'
 
 require 'minitest/autorun'
 

@@ -54,16 +54,6 @@ describe OpenTelemetry::SDK::Trace::Span do
   end
 
   describe '#set_attribute' do
-    before do
-      @log_stream = StringIO.new
-      @_logger = OpenTelemetry.logger
-      OpenTelemetry.logger = ::Logger.new(@log_stream)
-    end
-
-    after do
-      OpenTelemetry.logger = @_logger
-    end
-
     it 'sets an attribute' do
       span.set_attribute('foo', 'bar')
       _(span.attributes).must_equal('foo' => 'bar')
@@ -78,6 +68,11 @@ describe OpenTelemetry::SDK::Trace::Span do
     it 'truncates attribute value length based if configured' do
       span.set_attribute('foo', 'oldbaroldbaroldbaroldbaroldbaroldbar')
       _(span.attributes).must_equal('foo' => 'oldbaroldbaroldbaroldbaroldba...')
+    end
+
+    it 'truncates elements of attribute value array based if configured' do
+      span.set_attribute('foo', ['not too long', 'oldbaroldbaroldbaroldbaroldbaroldbar'])
+      _(span.attributes).must_equal('foo' => ['not too long', 'oldbaroldbaroldbaroldbaroldba...'])
     end
 
     it 'does not set an attribute if span is ended' do
@@ -97,16 +92,42 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(span.attributes).must_equal('foo' => [1, 2, 3])
     end
 
+    it 'accepts floats even if attribute length limit is configured' do
+      span.set_attribute('foo', 1.23)
+      _(span.attributes).must_equal('foo' => 1.23)
+    end
+
     it 'reports an error for an invalid value' do
-      span.set_attribute('foo', :bar)
-      span.finish
-      _(@log_stream.string).must_match(/invalid span attribute value type Symbol for key 'foo' on span 'name'/)
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        span.set_attribute('foo', :bar)
+        span.finish
+        _(log_stream.string).must_match(/invalid span attribute value type Symbol for key 'foo' on span 'name'/)
+      end
+    end
+
+    it 'reports an error for a non-standard library Numeric subclass, which is invalid' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        numeric_klass = Class.new(Numeric) {}
+        span.set_attribute('foo', numeric_klass.new)
+        span.finish
+        _(log_stream.string).must_match(/invalid span attribute value type #<Class(.*)for key 'foo' on span 'name'/)
+      end
+    end
+
+    it 'reports an error for a NilClass value, which is invalid' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        span.set_attribute('foo', nil)
+        span.finish
+        _(log_stream.string).must_match(/invalid span attribute value type NilClass for key 'foo' on span 'name'/)
+      end
     end
 
     it 'reports an error for an invalid key' do
-      span.set_attribute(nil, 'bar')
-      span.finish
-      _(@log_stream.string).must_match(/invalid span attribute key type NilClass on span 'name'/)
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        span.set_attribute(nil, 'bar')
+        span.finish
+        _(log_stream.string).must_match(/invalid span attribute key type NilClass on span 'name'/)
+      end
     end
   end
 
@@ -161,6 +182,14 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(events.first.attributes).must_equal(attrs)
     end
 
+    it 'does not keep nil-valued attributes' do
+      attrs = { 'foo' => nil }
+      span.add_event('added', attributes: attrs)
+      events = span.events
+      _(events.size).must_equal(1)
+      _(events.first.attributes).must_equal({})
+    end
+
     it 'accepts array-valued attributes' do
       attrs = { 'foo' => [1, 2, 3] }
       span.add_event('added', attributes: attrs)
@@ -206,7 +235,7 @@ describe OpenTelemetry::SDK::Trace::Span do
       span.add_event('added', timestamp: ts)
       events = span.events
       _(events.size).must_equal(1)
-      _(events.first.timestamp).must_equal(exportable_timestamp(ts))
+      _(events.first.timestamp).must_equal(OpenTelemetry::TestHelpers.exportable_timestamp(ts))
     end
 
     it 'sets the implicit event timestamp relative to the span start' do
@@ -393,7 +422,7 @@ describe OpenTelemetry::SDK::Trace::Span do
     it 'honours an explicit end timestamp' do
       ts = Time.now
       _(span.finish(end_timestamp: ts)).must_equal(span)
-      _(span.end_timestamp).must_equal(exportable_timestamp(ts))
+      _(span.end_timestamp).must_equal(OpenTelemetry::TestHelpers.exportable_timestamp(ts))
     end
 
     it 'sets the end timestamp relative to the start time' do
@@ -491,7 +520,7 @@ describe OpenTelemetry::SDK::Trace::Span do
     it 'honours an explicit timestamp' do
       timestamp = Time.now
       test_span = Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'child span', SpanKind::INTERNAL, nil, span_limits, [], nil, [], timestamp, nil, nil)
-      _(test_span.start_timestamp).must_equal(exportable_timestamp(timestamp))
+      _(test_span.start_timestamp).must_equal(OpenTelemetry::TestHelpers.exportable_timestamp(timestamp))
     end
 
     it 'uses the monotonic offset from the parent_span realtime start timestamp when parent_span is recording' do

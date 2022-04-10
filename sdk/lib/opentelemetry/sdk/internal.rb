@@ -13,15 +13,19 @@ module OpenTelemetry
       extend self
 
       def boolean?(value)
-        value.is_a?(TrueClass) || value.is_a?(FalseClass)
+        value.instance_of?(TrueClass) || value.instance_of?(FalseClass)
       end
 
       def valid_key?(key)
         key.instance_of?(String)
       end
 
+      def numeric?(value)
+        value.instance_of?(Integer) || value.instance_of?(Float)
+      end
+
       def valid_simple_value?(value)
-        value.instance_of?(String) || value == false || value == true || value.is_a?(Numeric)
+        value.instance_of?(String) || boolean?(value) || numeric?(value)
       end
 
       def valid_array_value?(value)
@@ -34,7 +38,7 @@ module OpenTelemetry
         when TrueClass, FalseClass
           value.all? { |v| boolean?(v) }
         when Numeric
-          value.all? { |v| v.is_a?(Numeric) }
+          value.all? { |v| numeric?(v) }
         else
           false
         end

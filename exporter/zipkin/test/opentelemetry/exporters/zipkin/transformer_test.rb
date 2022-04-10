@@ -35,10 +35,10 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     attributes = { 'akey' => 'avalue', 'bar' => 'baz' }
     events = [
       OpenTelemetry::SDK::Trace::Event.new(
-        'event_with_attribs', { 'ekey' => 'evalue' }, exportable_timestamp
+        'event_with_attribs', { 'ekey' => 'evalue' }, OpenTelemetry::TestHelpers.exportable_timestamp
       ),
       OpenTelemetry::SDK::Trace::Event.new(
-        'event_no_attrib', {}, exportable_timestamp
+        'event_no_attrib', {}, OpenTelemetry::TestHelpers.exportable_timestamp
       )
     ]
 
@@ -63,7 +63,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     attributes = { 'akey' => ['avalue'], 'bar' => 'baz' }
     events = [
       OpenTelemetry::SDK::Trace::Event.new(
-        'event_with_attribs', { 'ekey' => ['evalue'] }, exportable_timestamp
+        'event_with_attribs', { 'ekey' => ['evalue'] }, OpenTelemetry::TestHelpers.exportable_timestamp
       )
     ]
 
