@@ -21,34 +21,38 @@ module OpenTelemetry
         extend self
 
         def encode(span_data) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-          Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(
-            Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
-              resource_spans: span_data
-                .group_by(&:resource)
-                .map do |resource, span_datas|
-                  Opentelemetry::Proto::Trace::V1::ResourceSpans.new(
-                    resource: Opentelemetry::Proto::Resource::V1::Resource.new(
-                      attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
-                    ),
-                    instrumentation_library_spans: span_datas
-                      .group_by(&:instrumentation_library)
-                      .map do |il, sds|
-                        Opentelemetry::Proto::Trace::V1::InstrumentationLibrarySpans.new(
-                          instrumentation_library: Opentelemetry::Proto::Common::V1::InstrumentationLibrary.new(
-                            name: il.name,
-                            version: il.version
-                          ),
-                          spans: sds.map { |sd| as_otlp_span(sd) }
-                        )
-                      end
-                  )
-                end
-            )
-          )
+          Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(as_etsr(span_data))
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#encode')
           nil
         end
+
+        def as_etsr(span_data)
+          Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
+            resource_spans: span_data
+              .group_by(&:resource)
+              .map do |resource, span_datas|
+                Opentelemetry::Proto::Trace::V1::ResourceSpans.new(
+                  resource: Opentelemetry::Proto::Resource::V1::Resource.new(
+                    attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
+                  ),
+                  instrumentation_library_spans: span_datas
+                    .group_by(&:instrumentation_library)
+                    .map do |il, sds|
+                      Opentelemetry::Proto::Trace::V1::InstrumentationLibrarySpans.new(
+                        instrumentation_library: Opentelemetry::Proto::Common::V1::InstrumentationLibrary.new(
+                          name: il.name,
+                          version: il.version
+                        ),
+                        spans: sds.map { |sd| as_otlp_span(sd) }
+                      )
+                    end
+                )
+              end
+          )
+        end
+
+        private
 
         def as_otlp_span(span_data) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
           Opentelemetry::Proto::Trace::V1::Span.new(
