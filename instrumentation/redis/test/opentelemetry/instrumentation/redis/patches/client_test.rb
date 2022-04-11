@@ -348,5 +348,70 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
         )
       end
     end
+
+    describe 'when record_value_size is set' do
+      before(:each) do
+        instrumentation.instance_variable_set(:@installed, false)
+        instrumentation.install(record_value_size: true)
+      end
+
+      it 'calculates value size for SET_VALUE_SIZE commands' do
+        redis = redis_with_auth
+        redis.set('K', 'xyz')
+        set_span = exporter.finished_spans.find { |x| x.name == 'SET' }
+        _(set_span.attributes['db.set_value_size_bytes']).must_equal('xyz'.bytesize)
+      end
+
+      it 'calculates value size for GET_VALUE_SIZE commands' do
+        redis = redis_with_auth
+        redis.set('K', 'xyz')
+        redis.get('K')
+        set_span = exporter.finished_spans.find { |x| x.name == 'SET' }
+        _(set_span.attributes['db.set_value_size_bytes']).must_equal('xyz'.bytesize)
+      end
+
+      it 'does not calculate value size for other commands' do
+        ::Redis.new(host: redis_host, port: redis_port).auth(password)
+        set_span = exporter.finished_spans.find { |x| x.name == 'AUTH' }
+        _(assert_nil(set_span.attributes['db.set_value_size_bytes']))
+      end
+
+      it 'still obfuscates auth db statement' do
+        ::Redis.new(host: redis_host, port: redis_port).auth(password)
+
+        _(last_span.attributes['db.statement']).must_equal 'AUTH ?'
+      end
+
+      it 'still obfuscates non-auth db statement' do
+        redis = redis_with_auth
+        _(redis.set('K', 'xyz')).must_equal 'OK'
+
+        set_span = exporter.finished_spans[1]
+        _(set_span.name).must_equal 'SET'
+        _(set_span.attributes['db.system']).must_equal 'redis'
+        _(set_span.attributes['db.statement']).must_equal(
+          'SET ? ?'
+        )
+        _(set_span.attributes['db.set_value_size_bytes']).must_equal(
+          'xyz'.bytesize
+        )
+      end
+    end
+
+    it 'sets retrieved_value_size_bites on pipelined commands' do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(record_value_size: true)
+      redis = redis_with_auth
+      redis.pipelined do |r|
+        r.set('v1', "✅")
+        r.set('v2', "✅")
+        r.get('v2')
+      end
+
+      _(exporter.finished_spans.size).must_equal 2
+      _(last_span.name).must_equal 'PIPELINED'
+      _(last_span.attributes['db.set_value_size_bytes']).must_equal(2*"✅".b.bytesize)
+      _(last_span.attributes['db.retrieved_value_size_bytes']).must_equal("✅".b.bytesize)
+    end
   end
 end unless ENV['OMIT_SERVICES']

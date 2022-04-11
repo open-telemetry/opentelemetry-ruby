@@ -22,6 +22,7 @@ module OpenTelemetry
         option :peer_service,                 default: nil,   validate: :string
         option :trace_root_spans,             default: true,  validate: :boolean
         option :db_statement,                 default: :obfuscate, validate: %I[omit include obfuscate]
+        option :record_value_size,            default: false, validate: :boolean
 
         private
 

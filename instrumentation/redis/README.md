@@ -51,6 +51,9 @@ OpenTelemetry::SDK.configure do |c|
     # To obfuscate, set db_statement to :obfuscate.
     # To omit the attribute, set db_statement to :omit.
     db_statement: :include,
+    # To report the size of keys being set and retrieved for certain operations
+    # set record_value_size to true
+    record_value_size: true,
   }
 end
 ```
