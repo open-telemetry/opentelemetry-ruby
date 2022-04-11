@@ -16,8 +16,6 @@ module OpenTelemetry
           private_constant :MAX_STATEMENT_LENGTH
 
           def call_pipelined(pipeline)
-            # Not sure why below `process` is not passing args to super.
-            # Replicating that here for now.
             return super unless config[:trace_root_spans] || OpenTelemetry::Trace.current_span.context.valid?
 
             # Earlier redis versions pass a command array instead of a pipeline
