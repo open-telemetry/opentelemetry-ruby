@@ -18,8 +18,8 @@ module OpenTelemetry
           def call_pipelined(pipeline)
             return super unless config[:trace_root_spans] || OpenTelemetry::Trace.current_span.context.valid?
 
-            # Earlier redis versions pass a command array instead of a pipeline
-            # object, so set commands to a variable
+            # Earlier redis-rb versions pass a command array instead of a
+            # pipeline object, so set commands to a variable
             commands = pipeline.respond_to?(:commands) ? pipeline.commands : pipeline
 
             attributes = span_attributes(commands)
