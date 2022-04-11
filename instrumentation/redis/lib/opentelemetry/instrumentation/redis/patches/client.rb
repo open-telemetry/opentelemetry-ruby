@@ -84,8 +84,8 @@ module OpenTelemetry
               attributes['db.statement'] = parsed_commands
             end
 
-            if config[:record_value_size] && value_size = sent_value_size(commands, SET_VALUE_SIZE_COMMANDS)
-              attributes['db.set_value_size_bytes'] = value_size
+            if config[:record_value_size]
+              attributes['db.set_value_size_bytes'] = sent_value_size(commands, SET_VALUE_SIZE_COMMANDS)
             end
 
             attributes
@@ -140,12 +140,11 @@ module OpenTelemetry
           end
 
           def sent_value_size(commands, commands_to_record)
-            value_size = nil
+            value_size = 0
             commands.map do |command|
               command = command[0] if command.is_a?(Array) && command[0].is_a?(Array)
               return nil if command[0] == :auth
               if commands_to_record.include?(command[0])
-                value_size ||= 0
                 value_size += calculate_bytesize(command[-1])
               end
             end
