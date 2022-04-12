@@ -8,6 +8,7 @@ require 'delayed_job'
 require 'delayed_job_active_record'
 
 require 'opentelemetry/sdk'
+require 'opentelemetry-test-helpers'
 
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'

@@ -7,6 +7,7 @@
 require 'aws-sdk'
 require 'opentelemetry-instrumentation-aws_sdk'
 require 'opentelemetry/sdk'
+require 'opentelemetry-test-helpers'
 
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'

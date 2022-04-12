@@ -8,6 +8,7 @@ require 'active_support'
 require 'kafka'
 
 require 'opentelemetry/sdk'
+require 'opentelemetry-test-helpers'
 
 require 'pry'
 require 'minitest/autorun'

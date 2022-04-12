@@ -101,6 +101,11 @@ gems:
     version_rb_path: lib/opentelemetry/version.rb
     version_constant: [OpenTelemetry, VERSION]
 
+  - name: opentelemetry-registry
+    directory: registry
+    version_rb_path: lib/opentelemetry/instrumentation/registry/version.rb
+    version_constant: [OpenTelemetry, Instrumentation, Registry, VERSION]
+
   - name: opentelemetry-sdk
     directory: sdk
     version_constant: [OpenTelemetry, SDK, VERSION]
