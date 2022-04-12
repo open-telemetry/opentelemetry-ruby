@@ -11,6 +11,25 @@ module OpenTelemetry
       # @note This may be different from `faas.id` if an alias is involved
       AWS_LAMBDA_INVOKED_ARN = 'aws.lambda.invoked_arn'
 
+      # The [event_id](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md#id) uniquely identifies the event
+      CLOUDEVENTS_EVENT_ID = 'cloudevents.event_id'
+
+      # The [source](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md#source-1) identifies the context in which an event happened
+      CLOUDEVENTS_EVENT_SOURCE = 'cloudevents.event_source'
+
+      # The [version of the CloudEvents specification](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md#specversion) which the event uses
+      CLOUDEVENTS_EVENT_SPEC_VERSION = 'cloudevents.event_spec_version'
+
+      # The [event_type](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md#type) contains a value describing the type of event related to the originating occurrence
+      CLOUDEVENTS_EVENT_TYPE = 'cloudevents.event_type'
+
+      # The [subject](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md#subject) of the event in the context of the event producer (identified by source)
+      CLOUDEVENTS_EVENT_SUBJECT = 'cloudevents.event_subject'
+
+      # Parent-child Reference type
+      # @note The causal relationship between a child Span and a parent Span
+      OPENTRACING_REF_TYPE = 'opentracing.ref_type'
+
       # An identifier for the database management system (DBMS) product being used. See below for a list of well-known identifiers
       DB_SYSTEM = 'db.system'
 
@@ -23,8 +42,8 @@ module OpenTelemetry
       # The fully-qualified class name of the [Java Database Connectivity (JDBC)](https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/) driver used to connect
       DB_JDBC_DRIVER_CLASSNAME = 'db.jdbc.driver_classname'
 
-      # If no [tech-specific attribute](#call-level-attributes-for-specific-technologies) is defined, this attribute is used to report the name of the database being accessed. For commands that switch the database, this should be set to the target database (even if the command fails)
-      # @note In some SQL databases, the database name to be used is called "schema name"
+      # This attribute is used to report the name of the database being accessed. For commands that switch the database, this should be set to the target database (even if the command fails)
+      # @note In some SQL databases, the database name to be used is called "schema name". In case there are multiple layers that could be considered for database name (e.g. Oracle instance name and schema name), the database name to be used is the more specific layer (e.g. Oracle schema name)
       DB_NAME = 'db.name'
 
       # The database statement being executed
@@ -51,16 +70,13 @@ module OpenTelemetry
       # @note If setting a `db.mssql.instance_name`, `net.peer.port` is no longer required (but still recommended if non-standard)
       DB_MSSQL_INSTANCE_NAME = 'db.mssql.instance_name'
 
-      # The name of the keyspace being accessed. To be used instead of the generic `db.name` attribute
-      DB_CASSANDRA_KEYSPACE = 'db.cassandra.keyspace'
-
       # The fetch size used for paging, i.e. how many rows will be returned at once
       DB_CASSANDRA_PAGE_SIZE = 'db.cassandra.page_size'
 
       # The consistency level of the query. Based on consistency values from [CQL](https://docs.datastax.com/en/cassandra-oss/3.0/cassandra/dml/dmlConfigConsistency.html)
       DB_CASSANDRA_CONSISTENCY_LEVEL = 'db.cassandra.consistency_level'
 
-      # The name of the primary table that the operation is acting upon, including the schema name (if applicable)
+      # The name of the primary table that the operation is acting upon, including the keyspace name (if applicable)
       # @note This mirrors the db.sql.table attribute but references cassandra rather than sql. It is not recommended to attempt any client-side parsing of `db.statement` just to get this property, but it should be set if it is provided by the library being instrumented. If the operation is acting upon an anonymous table, or more than one table, this value MUST NOT be set
       DB_CASSANDRA_TABLE = 'db.cassandra.table'
 
@@ -76,16 +92,13 @@ module OpenTelemetry
       # The data center of the coordinating node for a query
       DB_CASSANDRA_COORDINATOR_DC = 'db.cassandra.coordinator.dc'
 
-      # The [HBase namespace](https://hbase.apache.org/book.html#_namespace) being accessed. To be used instead of the generic `db.name` attribute
-      DB_HBASE_NAMESPACE = 'db.hbase.namespace'
-
       # The index of the database being accessed as used in the [`SELECT` command](https://redis.io/commands/select), provided as an integer. To be used instead of the generic `db.name` attribute
       DB_REDIS_DATABASE_INDEX = 'db.redis.database_index'
 
       # The collection being accessed within the database stated in `db.name`
       DB_MONGODB_COLLECTION = 'db.mongodb.collection'
 
-      # The name of the primary table that the operation is acting upon, including the schema name (if applicable)
+      # The name of the primary table that the operation is acting upon, including the database name (if applicable)
       # @note It is not recommended to attempt any client-side parsing of `db.statement` just to get this property, but it should be set if it is provided by the library being instrumented. If the operation is acting upon an anonymous table, or more than one table, this value MUST NOT be set
       DB_SQL_TABLE = 'db.sql.table'
 
@@ -109,7 +122,7 @@ module OpenTelemetry
       #  whether it will escape the scope of a span.
       #  However, it is trivial to know that an exception
       #  will escape, if one checks for an active exception just before ending the span,
-      #  as done in the [example above](#exception-end-example).
+      #  as done in the [example above](#recording-an-exception).
       #  
       #  It follows that an exception may still escape the scope of the span
       #  even if the `exception.escaped` attribute was not set or set to false,
@@ -117,7 +130,16 @@ module OpenTelemetry
       #  clear whether the exception will escape
       EXCEPTION_ESCAPED = 'exception.escaped'
 
-      # Type of the trigger on which the function is executed
+      # Type of the trigger which caused this function execution
+      # @note For the server/consumer span on the incoming side,
+      #  `faas.trigger` MUST be set.
+      #  
+      #  Clients invoking FaaS instances usually cannot set `faas.trigger`,
+      #  since they would typically need to look in the payload to determine
+      #  the event type. If clients set it, it should be the same as the
+      #  trigger that corresponding incoming would have (i.e., this has
+      #  nothing to do with the underlying transport used to make the API
+      #  call to invoke the lambda, which is often HTTP)
       FAAS_TRIGGER = 'faas.trigger'
 
       # The execution ID of the current function execution
@@ -145,7 +167,8 @@ module OpenTelemetry
       # The full request target as passed in a HTTP request line or equivalent
       HTTP_TARGET = 'http.target'
 
-      # The value of the [HTTP host header](https://tools.ietf.org/html/rfc7230#section-5.4). When the header is empty or not present, this attribute should be the same
+      # The value of the [HTTP host header](https://tools.ietf.org/html/rfc7230#section-5.4). An empty Host header should also be reported, see note
+      # @note When the header is present but empty the attribute SHOULD be set to the empty string. Note that this is a valid situation that is expected in certain cases, according the aforementioned [section of RFC 7230](https://tools.ietf.org/html/rfc7230#section-5.4). When the header is not set the attribute MUST NOT be set
       HTTP_HOST = 'http.host'
 
       # The URI scheme identifying the used protocol
@@ -173,6 +196,9 @@ module OpenTelemetry
       # The size of the uncompressed response payload body after transport decoding. Not set if transport encoding not used
       HTTP_RESPONSE_CONTENT_LENGTH_UNCOMPRESSED = 'http.response_content_length_uncompressed'
 
+      # The ordinal number of request re-sending attempt
+      HTTP_RETRY_COUNT = 'http.retry_count'
+
       # The primary server name of the matched virtual host. This should be obtained via configuration. If no such configuration can be obtained, this attribute MUST NOT be set ( `net.host.name` should be used instead)
       # @note `http.url` is usually not readily available on the server side but would have to be assembled in a cumbersome and sometimes lossy process from other information (see e.g. open-telemetry/opentelemetry-python/pull/148). It is thus preferred to supply the raw data that is available
       HTTP_SERVER_NAME = 'http.server_name'
@@ -181,7 +207,17 @@ module OpenTelemetry
       HTTP_ROUTE = 'http.route'
 
       # The IP address of the original client behind all proxies, if known (e.g. from [X-Forwarded-For](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-For))
-      # @note This is not necessarily the same as `net.peer.ip`, which would identify the network-level peer, which may be a proxy
+      # @note This is not necessarily the same as `net.peer.ip`, which would
+      #  identify the network-level peer, which may be a proxy.
+      #  
+      #  This attribute should be set when a source of information different
+      #  from the one used for `net.peer.ip`, is available even if that other
+      #  source just confirms the same value as `net.peer.ip`.
+      #  Rationale: For `net.peer.ip`, one typically does not know if it
+      #  comes from a proxy, reverse proxy, or the actual client. Setting
+      #  `http.client_ip` when it's the same as `net.peer.ip` means that
+      #  one is at least somewhat confident that the address is not that of
+      #  the closest proxy
       HTTP_CLIENT_IP = 'http.client_ip'
 
       # Like `net.peer.ip` but for the host IP. Useful in case of a multi-IP host
@@ -375,6 +411,9 @@ module OpenTelemetry
       # A string identifying the kind of message consumption as defined in the [Operation names](#operation-names) section above. If the operation is "send", this attribute MUST NOT be set, since the operation can be inferred from the span kind in that case
       MESSAGING_OPERATION = 'messaging.operation'
 
+      # The identifier for the consumer receiving a message. For Kafka, set it to `{messaging.kafka.consumer_group} - {messaging.kafka.client_id}`, if both are present, or only `messaging.kafka.consumer_group`. For brokers, such as RabbitMQ and Artemis, set it to the `client_id` of the client consuming the message
+      MESSAGING_CONSUMER_ID = 'messaging.consumer_id'
+
       # RabbitMQ message routing key
       MESSAGING_RABBITMQ_ROUTING_KEY = 'messaging.rabbitmq.routing_key'
 
@@ -394,6 +433,27 @@ module OpenTelemetry
       # A boolean that is true if the message is a tombstone
       MESSAGING_KAFKA_TOMBSTONE = 'messaging.kafka.tombstone'
 
+      # Namespace of RocketMQ resources, resources in different namespaces are individual
+      MESSAGING_ROCKETMQ_NAMESPACE = 'messaging.rocketmq.namespace'
+
+      # Name of the RocketMQ producer/consumer group that is handling the message. The client type is identified by the SpanKind
+      MESSAGING_ROCKETMQ_CLIENT_GROUP = 'messaging.rocketmq.client_group'
+
+      # The unique identifier for each client
+      MESSAGING_ROCKETMQ_CLIENT_ID = 'messaging.rocketmq.client_id'
+
+      # Type of message
+      MESSAGING_ROCKETMQ_MESSAGE_TYPE = 'messaging.rocketmq.message_type'
+
+      # The secondary classifier of message besides topic
+      MESSAGING_ROCKETMQ_MESSAGE_TAG = 'messaging.rocketmq.message_tag'
+
+      # Key(s) of message, another way to mark message besides message id
+      MESSAGING_ROCKETMQ_MESSAGE_KEYS = 'messaging.rocketmq.message_keys'
+
+      # Model of message consumption. This only applies to consumer spans
+      MESSAGING_ROCKETMQ_CONSUMPTION_MODEL = 'messaging.rocketmq.consumption_model'
+
       # The [numeric status code](https://github.com/grpc/grpc/blob/v1.33.2/doc/statuscodes.md) of the gRPC request
       RPC_GRPC_STATUS_CODE = 'rpc.grpc.status_code'
 
@@ -408,6 +468,19 @@ module OpenTelemetry
 
       # `error.message` property of response if it is an error response
       RPC_JSONRPC_ERROR_MESSAGE = 'rpc.jsonrpc.error_message'
+
+      # Whether this is a received or sent message
+      MESSAGE_TYPE = 'message.type'
+
+      # MUST be calculated as two different counters starting from `1` one for sent messages and one for received message
+      # @note This way we guarantee that the values will be consistent between different implementations
+      MESSAGE_ID = 'message.id'
+
+      # Compressed size of the message in bytes
+      MESSAGE_COMPRESSED_SIZE = 'message.compressed_size'
+
+      # Uncompressed size of the message in bytes
+      MESSAGE_UNCOMPRESSED_SIZE = 'message.uncompressed_size'
 
     end
   end
