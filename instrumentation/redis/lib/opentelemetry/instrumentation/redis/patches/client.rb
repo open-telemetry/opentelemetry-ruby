@@ -67,6 +67,11 @@ module OpenTelemetry
 
           private
 
+          # Returns a hash of attributes to be added to a span. The config
+          # settings determine the inclusion of some attributes
+          #
+          # @param commands [Array<Array>] the commands being run within span
+          # @return [Hash] attributes
           def span_attributes(commands) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
             host = options[:host]
             port = options[:port]
@@ -99,15 +104,21 @@ module OpenTelemetry
             attributes
           end
 
-          # We are checking for a command passed in via Redis#queue command,
-          # which have an extra level of array nesting. If that happens, we
-          # return the first element so that it can be parsed.
+          # Removes the outer array from commands that were issued via
+          # Redis#queue command, which have an extra level of array nesting.
+          #
+          # @param commands [Array] an array to potentially unnest
+          # @return [Array] command as a flat array
           def extract_queued_command(command)
             return command[0] if command.is_a?(Array) && command[0].is_a?(Array)
 
             command
           end
 
+          # Returns the number of bytes required to transmit the value to Redis
+          # over the wire.
+          #
+          # @return [Integer] bytes
           def calculate_bytesize(value) # rubocop:disable Metrics/CyclomaticComplexity
             case value
             when ::Redis::CommandError
@@ -129,11 +140,16 @@ module OpenTelemetry
             end
           end
 
+          # Returns size of values being set in commands_to_record
+          #
           # Examples of commands received for parsing
           # Redis#queue     [[[:set, "v1", "0"]], [[:incr, "v1"]], [[:get, "v1"]]]
           # Redis#pipeline: [[:set, "v1", "0"], [:incr, "v1"], [:get, "v1"]]
           # Redis#hmset     [[:hmset, "hash", "f1", 1234567890.0987654]]
           # Redis#set       [[:set, "K", "x"]]
+          #
+          # @param commands [Array<Array>] the commands to be processed
+          # @return [String] sanitized, Stringified version of commands
           def parse_commands(commands) # rubocop:disable Metrics/AbcSize
             commands.map do |command|
               command = extract_queued_command(command)
