@@ -37,7 +37,7 @@ module OpenTelemetry
         end
 
         compatible do
-          Gem.loaded_specs['pg'].version > Gem::Version.new(MINIMUM_VERSION)
+          gem_version > Gem::Version.new(MINIMUM_VERSION)
         end
 
         option :peer_service, default: nil, validate: :string
@@ -46,6 +46,10 @@ module OpenTelemetry
         option :db_statement, default: :include, validate: %I[omit include obfuscate]
 
         private
+
+        def gem_version
+          Gem::Version.new(::PG::VERSION)
+        end
 
         def require_dependencies
           require_relative 'patches/connection'

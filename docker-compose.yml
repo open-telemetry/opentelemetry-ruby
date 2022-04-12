@@ -167,9 +167,13 @@ services:
       - "5432:5432"
 
   redis:
-    image: redis:5.0-alpine
+    image: bitnami/redis:6.2
+    environment:
+      - REDIS_PASSWORD=passw0rd
     volumes:
       - redis_data:/data
+    ports:
+      - "16379:6379"
 
   rabbitmq:
     image: rabbitmq:3.8-alpine
@@ -179,6 +183,8 @@ services:
   memcached:
     image: memcached:alpine
     command: memcached -m 64
+    ports:
+     - "11211:11211"
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest

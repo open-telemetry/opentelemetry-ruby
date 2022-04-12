@@ -23,15 +23,29 @@ describe OpenTelemetry::Instrumentation::AwsSdk do
 
   describe '#compatible' do
     it 'returns false for unsupported gem versions' do
-      Gem.stub(:loaded_specs, 'aws-sdk' => Gem::Specification.new { |s| s.version = '1.0.0' }) do
+      Gem.stub(:loaded_specs, 'aws-sdk-core' => nil, 'aws-sdk' => nil) do
+        hide_const('::Aws::CORE_GEM_VERSION')
+        _(instrumentation.compatible?).must_equal false
+      end
+
+      Gem.stub(:loaded_specs, 'aws-sdk-core' => nil, 'aws-sdk' => Gem::Specification.new { |s| s.version = '1.0.0' }) do
+        hide_const('::Aws::CORE_GEM_VERSION')
+        _(instrumentation.compatible?).must_equal false
+      end
+
+      Gem.stub(:loaded_specs, 'aws-sdk-core' => Gem::Specification.new { |s| s.version = '1.0.0' }, 'aws-sdk' => nil) do
+        hide_const('::Aws::CORE_GEM_VERSION')
+        _(instrumentation.compatible?).must_equal false
+      end
+
+      Gem.stub(:loaded_specs, 'aws-sdk-core' => nil, 'aws-sdk' => nil) do
+        stub_const('::Aws::CORE_GEM_VERSION', '1.9.9')
         _(instrumentation.compatible?).must_equal false
       end
     end
 
     it 'returns true for supported gem versions' do
-      Gem.stub(:loaded_specs, 'aws-sdk' => Gem::Specification.new { |s| s.version = minimum_version }) do
-        _(instrumentation.compatible?).must_equal true
-      end
+      _(instrumentation.compatible?).must_equal true
     end
   end
 

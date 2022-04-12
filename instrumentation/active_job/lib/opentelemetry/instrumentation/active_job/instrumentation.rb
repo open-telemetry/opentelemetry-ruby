@@ -21,7 +21,7 @@ module OpenTelemetry
         end
 
         compatible do
-          Gem.loaded_specs['activejob'].version >= MINIMUM_VERSION
+          gem_version >= MINIMUM_VERSION
         end
 
         ## Supported configuration keys for the install config hash:
@@ -57,6 +57,10 @@ module OpenTelemetry
         option :span_naming, default: :queue, validate: %i[job_class queue]
 
         private
+
+        def gem_version
+          ::ActiveJob.version
+        end
 
         def require_dependencies
           require_relative 'patches/base'

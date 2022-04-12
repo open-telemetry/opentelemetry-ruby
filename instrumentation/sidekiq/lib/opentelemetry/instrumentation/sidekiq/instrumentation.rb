@@ -38,7 +38,7 @@ module OpenTelemetry
         private
 
         def gem_version
-          Gem.loaded_specs['sidekiq'].version
+          Gem::Version.new(::Sidekiq::VERSION)
         end
 
         def require_dependencies
