@@ -9,13 +9,13 @@ module OpenTelemetry
     module Redis
       module Patches
         # Module to prepend to Redis::Client for instrumentation
-        module Client
+        module Client # rubocop:disable Metrics/ModuleLength
           SET_VALUE_SIZE_COMMANDS = %i[set].freeze
           RETRIEVED_VALUE_SIZE_COMMANDS = %i[get mget].freeze
           MAX_STATEMENT_LENGTH = 500
           private_constant :MAX_STATEMENT_LENGTH
 
-          def call_pipelined(pipeline)
+          def call_pipelined(pipeline) # rubocop:disable Metrics/AbcSize
             return super unless config[:trace_root_spans] || OpenTelemetry::Trace.current_span.context.valid?
 
             # Earlier redis-rb versions pass a command array instead of a
@@ -66,7 +66,7 @@ module OpenTelemetry
 
           private
 
-          def span_attributes(commands)
+          def span_attributes(commands) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
             host = options[:host]
             port = options[:port]
 
@@ -167,7 +167,7 @@ module OpenTelemetry
               # command[0] is the operation (e.g. SET)
               next unless commands_to_record.include?(command[0])
 
-              # command[-1] is (naïveley), the value being set by the
+              # command[-1] is (naiveley), the value being set by the
               # operation, when that operation is a setter
               # @todo(address setting hash keys/values)
               value_size += calculate_bytesize(command[-1])
