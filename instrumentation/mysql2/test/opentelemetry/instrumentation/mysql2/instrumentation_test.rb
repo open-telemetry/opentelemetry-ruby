@@ -81,10 +81,10 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
 
       it 'sets span attributes according to with_attributes hash' do
         OpenTelemetry::Instrumentation::Mysql2.with_attributes(attributes) do
-          client.query("SELECT 1")
+          client.query('SELECT 1')
         end
 
-        _(span.attributes['db.statement']).must_equal "foobar" 
+        _(span.attributes['db.statement']).must_equal 'foobar'
       end
     end
 
