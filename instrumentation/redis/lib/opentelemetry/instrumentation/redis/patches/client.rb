@@ -49,6 +49,7 @@ module OpenTelemetry
             # If commands length > 1, it's a pipelined command, so we're
             # creating span in call_pipelined
             return super unless commands.length == 1
+
             span_name = commands[0][0].to_s.upcase
 
             tracer.in_span(span_name, attributes: attributes, kind: :client) do |s|
@@ -58,9 +59,7 @@ module OpenTelemetry
                   s.status = Trace::Status.error(reply.message)
                 end
 
-                if config[:record_value_size]
-                  s['db.retrieved_value_size'] = retrieved_value_size(reply, commands, RETRIEVED_VALUE_SIZE_COMMANDS)
-                end
+                s['db.retrieved_value_size'] = retrieved_value_size(reply, commands, RETRIEVED_VALUE_SIZE_COMMANDS) if config[:record_value_size]
               end
             end
           end
