@@ -10,7 +10,7 @@ module OpenTelemetry
       module Patches
         # Module to prepend to Redis::Client for instrumentation
         module Client # rubocop:disable Metrics/ModuleLength
-          SET_VALUE_SIZE_COMMANDS = %i[set].freeze
+          SET_VALUE_SIZE_COMMANDS = %i[hset set].freeze
           RETRIEVED_VALUE_SIZE_COMMANDS = %i[get mget].freeze
           MAX_STATEMENT_LENGTH = 500
           private_constant :MAX_STATEMENT_LENGTH
@@ -184,10 +184,15 @@ module OpenTelemetry
               # command[0] is the operation (e.g. SET)
               next unless commands_to_record.include?(command[0])
 
-              # command[-1] is (naiveley), the value being set by the
-              # operation, when that operation is a setter
-              # @todo(address setting hash keys/values)
-              value_size += calculate_bytesize(command[-1])
+              case command[0]
+              when :set
+                value_size += calculate_bytesize(command[-1])
+              when :hset
+                # hset command arrays contain an arbitrary # of key/value pairs
+                # so everything in the array to calculate_bytesize except for
+                # command[0] (the command) and command[1] (the name of the hash)
+                value_size += calculate_bytesize(command[2..-1])
+              end
             end
 
             value_size

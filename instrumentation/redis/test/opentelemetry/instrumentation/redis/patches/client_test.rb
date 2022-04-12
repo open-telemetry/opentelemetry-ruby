@@ -361,6 +361,14 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
         _(set_span.attributes['db.set_value_size_bytes']).must_equal('xyz'.bytesize)
       end
 
+      it 'calculates value size for hset' do
+        redis = redis_with_auth
+        redis.hset('mycoolhash', 'key1', 'value1', 'key2', 'value2')
+        hset_span = exporter.finished_spans.find { |x| x.name == 'HSET' }
+        _(hset_span.attributes['db.set_value_size_bytes']).must_equal(
+          ('key1' + 'value1' + 'key2' + 'value2').bytesize)
+      end
+
       it 'calculates value size for GET_VALUE_SIZE commands' do
         redis = redis_with_auth
         redis.set('K', 'xyz')
