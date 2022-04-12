@@ -46,13 +46,10 @@ module OpenTelemetry
 
             attributes = span_attributes(commands)
 
-            span_name = if commands.length == 1
-                          commands[0][0].to_s.upcase
-                        else
-                          # this is a Pipelined command, so we already created
-                          # a span in call_pipelined. No need to create another.
-                          return super
-                        end
+            # If commands length > 1, it's a pipelined command, so we're
+            # creating span in call_pipelined
+            return super unless commands.length == 1
+            span_name = commands[0][0].to_s.upcase
 
             tracer.in_span(span_name, attributes: attributes, kind: :client) do |s|
               super(commands).tap do |reply|
