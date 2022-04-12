@@ -33,15 +33,12 @@ describe OpenTelemetry::Instrumentation::RubyKafka::Instrumentation do
 
   describe 'compatible' do
     it 'when older gem version installed' do
-      Gem.stub(:loaded_specs, 'ruby-kafka' => Gem::Specification.new { |s| s.version = '0.6.8' }) do
-        _(instrumentation.compatible?).must_equal false
-      end
+      stub_const('Kafka::VERSION', '0.6.8')
+      _(instrumentation.compatible?).must_equal false
     end
 
     it 'when future gem version installed' do
-      Gem.stub(:loaded_specs, 'ruby-kafka' => Gem::Specification.new { |s| s.version = '1.7.0' }) do
-        _(instrumentation.compatible?).must_equal true
-      end
+      _(instrumentation.compatible?).must_equal true
     end
 
     describe 'when the installing application bypasses RubyGems' do

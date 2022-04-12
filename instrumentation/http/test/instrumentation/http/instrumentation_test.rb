@@ -29,11 +29,6 @@ describe OpenTelemetry::Instrumentation::HTTP do
       hide_const('HTTP')
       _(instrumentation.present?).must_equal(false)
     end
-
-    it 'when http gem not installed' do
-      allow(Gem).to receive(:loaded_specs).and_return({})
-      _(instrumentation.present?).must_equal(false)
-    end
   end
 
   describe '#install' do

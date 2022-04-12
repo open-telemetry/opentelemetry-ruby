@@ -21,14 +21,13 @@ module OpenTelemetry
         end
 
         compatible do
-          gem_version >= MINIMUM_VERSION
+          # Version is hardcoded in the gemspec
+          # https://github.com/collectiveidea/delayed_job/blob/master/delayed_job.gemspec#L16
+          gem_version = Gem.loaded_specs['delayed_job']&.version
+          gem_version && gem_version >= MINIMUM_VERSION
         end
 
         private
-
-        def gem_version
-          Gem.loaded_specs['delayed_job'].version
-        end
 
         def require_dependencies
           require_relative 'plugins/tracer_plugin'

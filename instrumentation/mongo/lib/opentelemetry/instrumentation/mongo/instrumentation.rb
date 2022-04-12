@@ -30,7 +30,7 @@ module OpenTelemetry
         private
 
         def gem_version
-          Gem.loaded_specs['mongo']&.version
+          Gem::Version.new(::Mongo::VERSION)
         end
 
         def require_dependencies
