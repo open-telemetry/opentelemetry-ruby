@@ -10,8 +10,8 @@ module OpenTelemetry
       module Patches
         # Module to prepend to Redis::Client for instrumentation
         module Client
-          SET_VALUE_SIZE_COMMANDS = %i[set]
-          RETRIEVED_VALUE_SIZE_COMMANDS = %i[get mget]
+          SET_VALUE_SIZE_COMMANDS = %i[set].freeze
+          RETRIEVED_VALUE_SIZE_COMMANDS = %i[get mget].freeze
           MAX_STATEMENT_LENGTH = 500
           private_constant :MAX_STATEMENT_LENGTH
 
@@ -23,18 +23,27 @@ module OpenTelemetry
             commands = pipeline.respond_to?(:commands) ? pipeline.commands : pipeline
 
             attributes = span_attributes(commands)
-            tracer.in_span('PIPELINED', attributes: attributes, kind: :client) do |s|
-              super(pipeline).tap do |responses|
-                if config[:record_value_size]
-                  retrieved_value_size = retrieved_value_size(responses, commands, RETRIEVED_VALUE_SIZE_COMMANDS)
-                  s['db.retrieved_value_size_bytes'] = retrieved_value_size
-                end
+            span = tracer.start_span('PIPELINED', attributes: attributes, kind: :client)
+            super(pipeline).tap do |responses|
+              if config[:record_value_size]
+                retrieved_value_size = retrieved_value_size(
+                  responses, commands,
+                  RETRIEVED_VALUE_SIZE_COMMANDS
+                )
+                span['db.retrieved_value_size_bytes'] = retrieved_value_size
               end
+            rescue Exception => e # rubocop:disable Lint/RescueException
+              span.record_exception(e)
+              span.status = OpenTelemetry::Trace::Status.error(e.message)
+              raise e
+            ensure
+              span.finish
             end
           end
 
-          def process(commands) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+          def process(commands) # rubocop:disable Metrics/AbcSize
             return super unless config[:trace_root_spans] || OpenTelemetry::Trace.current_span.context.valid?
+
             attributes = span_attributes(commands)
 
             span_name = if commands.length == 1
@@ -53,8 +62,7 @@ module OpenTelemetry
                 end
 
                 if config[:record_value_size]
-                  value_size = retrieved_value_size(reply, commands, RETRIEVED_VALUE_SIZE_COMMANDS)
-                  s['db.retrieved_value_size'] = value_size if value_size > 0
+                  s['db.retrieved_value_size'] = retrieved_value_size(reply, commands, RETRIEVED_VALUE_SIZE_COMMANDS)
                 end
               end
             end
@@ -85,10 +93,22 @@ module OpenTelemetry
             end
 
             if config[:record_value_size]
-              attributes['db.set_value_size_bytes'] = sent_value_size(commands, SET_VALUE_SIZE_COMMANDS)
+              attributes['db.set_value_size_bytes'] = sent_value_size(
+                commands,
+                SET_VALUE_SIZE_COMMANDS
+              )
             end
 
             attributes
+          end
+
+          # We are checking for a command passed in via Redis#queue command,
+          # which have an extra level of array nesting. If that happens, we
+          # return the first element so that it can be parsed.
+          def extract_queued_command(command)
+            return command[0] if command.is_a?(Array) && command[0].is_a?(Array)
+
+            command
           end
 
           def calculate_bytesize(value) # rubocop:disable Metrics/CyclomaticComplexity
@@ -119,10 +139,7 @@ module OpenTelemetry
           # Redis#set       [[:set, "K", "x"]]
           def parse_commands(commands) # rubocop:disable Metrics/AbcSize
             commands.map do |command|
-              # We are checking for the use of Redis#queue command, if we detect the
-              # extra level of array nesting we return the first element so it
-              # can be parsed.
-              command = command[0] if command.is_a?(Array) && command[0].is_a?(Array)
+              command = extract_queued_command(command)
 
               # If we receive an authentication request command
               # we want to short circuit parsing the commands
@@ -139,30 +156,49 @@ module OpenTelemetry
             end.join("\n")
           end
 
+          # Returns size of values being set in commands_to_record
+          #
+          # @param commands [Array<Array>]
+          # @param commands_to_record [Array<Symbol>]
+          # @return [Integer] size (in bytes) of values being set in
+          #   commands_to_record
           def sent_value_size(commands, commands_to_record)
             value_size = 0
             commands.map do |command|
-              command = command[0] if command.is_a?(Array) && command[0].is_a?(Array)
-              return nil if command[0] == :auth
-              if commands_to_record.include?(command[0])
-                value_size += calculate_bytesize(command[-1])
-              end
+              command = extract_queued_command(command)
+              return 0 if command[0] == :auth
+
+              # command[0] is the operation (e.g. SET)
+              next unless commands_to_record.include?(command[0])
+
+              # command[-1] is (naïveley), the value being set by the
+              # operation, when that operation is a setter
+              # @todo(address setting hash keys/values)
+              value_size += calculate_bytesize(command[-1])
             end
+
             value_size
           end
 
+          # Returns size of values being set in commands_to_record
+          #
+          # @param reply [Array<String>]
+          # @param commands [Array<Array>]
+          # @param commands_to_record [Array<Symbol>]
+          # @return [Integer] size (in bytes) of values being set in
+          #   commands_to_record
           def retrieved_value_size(reply, commands, commands_to_record)
             value_size = 0
 
             if commands.length == 1
-              # Not a pipelined command, just calculate bytesize on reply
-              command = commands[0][0] if commands[0].is_a?(Array) && commands[0][0].is_a?(Array)
+              # commands is a nested array, like [[:set, "v1", "ok"]]
               value_size = calculate_bytesize(reply) if commands_to_record.include?(commands[0][0])
             else
-              # Pipelined command, return nil. Since we use same attr for the
-              # bytes we SET and the bytes we GET, we can't reasonably make
-              # sense of the reply.
+              # Pipelined or queued command. An array of arrays, like:
+              # [[:set, "v1", "0"], [:incr, "v1"], [:get, "v1"]] (pipelined)
+              # [[[:set, "v1", "0"]], [[:incr, "v1"]], [[:get, "v1"]]] (queued)
               commands.each_with_index do |command, i|
+                command = extract_queued_command(command)
                 value_size += retrieved_value_size(reply[i], [command], commands_to_record)
               end
             end

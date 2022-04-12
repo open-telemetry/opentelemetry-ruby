@@ -24,8 +24,7 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
     redis_options[:password] = password
     redis_options[:host] = redis_host
     redis_options[:port] = redis_port
-    redis = ::Redis.new(redis_options)
-    redis
+    ::Redis.new(redis_options)
   end
 
   before do
@@ -370,10 +369,10 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
         _(set_span.attributes['db.set_value_size_bytes']).must_equal('xyz'.bytesize)
       end
 
-      it 'does not calculate value size for other commands' do
+      it 'does not sets value size to 0 for other commands' do
         ::Redis.new(host: redis_host, port: redis_port).auth(password)
         set_span = exporter.finished_spans.find { |x| x.name == 'AUTH' }
-        _(assert_nil(set_span.attributes['db.set_value_size_bytes']))
+        _(set_span.attributes['db.set_value_size_bytes']).must_equal(0)
       end
 
       it 'still obfuscates auth db statement' do
@@ -403,15 +402,15 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
       instrumentation.install(record_value_size: true)
       redis = redis_with_auth
       redis.pipelined do |r|
-        r.set('v1', "✅")
-        r.set('v2', "✅")
+        r.set('v1', '✅')
+        r.set('v2', '✅')
         r.get('v2')
       end
 
       _(exporter.finished_spans.size).must_equal 2
       _(last_span.name).must_equal 'PIPELINED'
-      _(last_span.attributes['db.set_value_size_bytes']).must_equal(2*"✅".b.bytesize)
-      _(last_span.attributes['db.retrieved_value_size_bytes']).must_equal("✅".b.bytesize)
+      _(last_span.attributes['db.set_value_size_bytes']).must_equal(2 * '✅'.b.bytesize)
+      _(last_span.attributes['db.retrieved_value_size_bytes']).must_equal('✅'.b.bytesize)
     end
   end
 end unless ENV['OMIT_SERVICES']
