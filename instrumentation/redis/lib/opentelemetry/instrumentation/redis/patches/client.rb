@@ -46,8 +46,9 @@ module OpenTelemetry
 
             attributes = span_attributes(commands)
 
-            # If commands length > 1, it's a pipelined command, so we're
-            # creating span in call_pipelined
+            # If commands length != 1, we're processing a pipelined command. In
+            # that case, we can return super, since call_pipeline is already
+            # monkey-patched to start a span.
             return super unless commands.length == 1
 
             span_name = commands[0][0].to_s.upcase
