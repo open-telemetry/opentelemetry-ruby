@@ -58,7 +58,7 @@ module OpenTelemetry
         end
 
         def gem_version
-          Gem.loaded_specs['que'].version
+          Gem::Version.new(::Que::VERSION)
         end
 
         def patch

@@ -30,6 +30,17 @@ OpenTelemetry::SDK.configure do |c|
 end
 ```
 
+The `mysql2` instrumentation allows the user to supply additional attributes via the `with_attributes` method. This makes it possible to supply additional attributes on mysql2 spans. Attributes supplied in `with_attributes` supersede those automatically generated within `mysql2`'s automatic instrumentation. If you supply a `db.statement` attribute in `with_attributes`, this library's `:db_statement` configuration will not be applied.
+
+```ruby
+require 'opentelemetry/instrumentation/mysql2'
+
+client = Mysql2::Client.new(:host => "localhost", :username => "root")
+OpenTelemetry::Instrumentation::Mysql2.with_attributes('pizzatoppings' => 'mushrooms') do
+  client.query("SELECT 1")
+end
+```
+
 ### Configuration options
 
 ```ruby

@@ -10,7 +10,7 @@ require 'yard'
 require 'rubocop/rake_task'
 require 'tmpdir'
 
-SPEC_VERSION = '1.8.0'
+SPEC_VERSION = '1.10.0'
 
 RuboCop::RakeTask.new
 
@@ -47,7 +47,7 @@ task :generate do
         -v "#{tmpdir}/semantic_conventions/#{kind}":/source
         -v "#{cwd}/templates":/templates
         -v "#{cwd}/lib":/output
-        otel/semconvgen:0.4.1
+        otel/semconvgen:0.11.1
         -f /source code
         --template /templates/semantic_conventions.j2
         --output /output/opentelemetry/semantic_conventions/#{kind}.rb

@@ -11,6 +11,7 @@ require 'opentelemetry/sdk'
 require 'opentelemetry-test-helpers'
 
 require 'minitest/autorun'
+require 'rspec/mocks/minitest_integration'
 require 'helpers/mock_loader'
 require 'active_job'
 require 'pry'

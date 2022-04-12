@@ -28,7 +28,7 @@ module OpenTelemetry
         private
 
         def gem_version
-          Gem.loaded_specs['ruby-kafka']&.version || Gem::Version.new(Kafka::VERSION)
+          Gem::Version.new(Kafka::VERSION)
         end
 
         def require_patches

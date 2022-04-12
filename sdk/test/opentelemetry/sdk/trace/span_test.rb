@@ -105,6 +105,23 @@ describe OpenTelemetry::SDK::Trace::Span do
       end
     end
 
+    it 'reports an error for a non-standard library Numeric subclass, which is invalid' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        numeric_klass = Class.new(Numeric) {}
+        span.set_attribute('foo', numeric_klass.new)
+        span.finish
+        _(log_stream.string).must_match(/invalid span attribute value type #<Class(.*)for key 'foo' on span 'name'/)
+      end
+    end
+
+    it 'reports an error for a NilClass value, which is invalid' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        span.set_attribute('foo', nil)
+        span.finish
+        _(log_stream.string).must_match(/invalid span attribute value type NilClass for key 'foo' on span 'name'/)
+      end
+    end
+
     it 'reports an error for an invalid key' do
       OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
         span.set_attribute(nil, 'bar')
@@ -163,6 +180,14 @@ describe OpenTelemetry::SDK::Trace::Span do
       events = span.events
       _(events.size).must_equal(1)
       _(events.first.attributes).must_equal(attrs)
+    end
+
+    it 'does not keep nil-valued attributes' do
+      attrs = { 'foo' => nil }
+      span.add_event('added', attributes: attrs)
+      events = span.events
+      _(events.size).must_equal(1)
+      _(events.first.attributes).must_equal({})
     end
 
     it 'accepts array-valued attributes' do
