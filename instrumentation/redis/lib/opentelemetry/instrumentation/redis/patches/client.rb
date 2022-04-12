@@ -200,17 +200,17 @@ module OpenTelemetry
 
           # Returns size of values being set in commands_to_record
           #
-          # @param reply [Array<String>]
+          # @param value [Array<String>]
           # @param commands [Array<Array>]
           # @param commands_to_record [Array<Symbol>]
           # @return [Integer] size (in bytes) of values being set in
           #   commands_to_record
-          def retrieved_value_size(reply, commands, commands_to_record)
+          def retrieved_value_size(value, commands, commands_to_record)
             value_size = 0
 
             commands.each_with_index do |command, i|
               command = extract_queued_command(command)
-              value_size += calculate_bytesize(reply[i]) if commands_to_record.include?(command[0])
+              value_size += calculate_bytesize(value[i]) if commands_to_record.include?(command[0])
             end
 
             value_size
