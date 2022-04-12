@@ -65,10 +65,10 @@ describe OpenTelemetry::Instrumentation::Mysql2::Instrumentation do
 
       _(span.attributes['peer.service']).must_equal 'readonly:mysql'
     end
-  
+
     describe '.attributes' do
       let(:attributes) { { 'db.statement' => 'foobar' } }
-  
+
       it 'returns an empty hash by default' do
         _(OpenTelemetry::Instrumentation::Mysql2.attributes).must_equal({})
       end
