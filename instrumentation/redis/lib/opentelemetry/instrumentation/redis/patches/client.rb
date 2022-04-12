@@ -60,7 +60,7 @@ module OpenTelemetry
                   s.status = Trace::Status.error(reply.message)
                 end
 
-                s['db.retrieved_value_size'] = retrieved_value_size(reply, commands, RETRIEVED_VALUE_SIZE_COMMANDS) if config[:record_value_size]
+                s['db.retrieved_value_size'] = retrieved_value_size([reply], commands, RETRIEVED_VALUE_SIZE_COMMANDS) if config[:record_value_size]
               end
             end
           end
@@ -187,17 +187,9 @@ module OpenTelemetry
           def retrieved_value_size(reply, commands, commands_to_record)
             value_size = 0
 
-            if commands.length == 1
-              # commands is a nested array, like [[:set, "v1", "ok"]]
-              value_size = calculate_bytesize(reply) if commands_to_record.include?(commands[0][0])
-            else
-              # Pipelined or queued command. An array of arrays, like:
-              # [[:set, "v1", "0"], [:incr, "v1"], [:get, "v1"]] (pipelined)
-              # [[[:set, "v1", "0"]], [[:incr, "v1"]], [[:get, "v1"]]] (queued)
-              commands.each_with_index do |command, i|
-                command = extract_queued_command(command)
-                value_size += retrieved_value_size(reply[i], [command], commands_to_record)
-              end
+            commands.each_with_index do |command, i|
+              command = extract_queued_command(command)
+              value_size += calculate_bytesize(reply[i]) if commands_to_record.include?(command[0])
             end
 
             value_size
