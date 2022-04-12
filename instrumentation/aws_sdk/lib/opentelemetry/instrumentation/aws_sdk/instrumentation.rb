@@ -9,7 +9,7 @@ module OpenTelemetry
     module AwsSdk
       # Instrumentation class that detects and installs the AwsSdk instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MINIMUM_VERSION = Gem::Version.new('2.0')
+        MINIMUM_VERSION = Gem::Version.new('2.0.0')
 
         install do |_config|
           require_dependencies
@@ -21,7 +21,7 @@ module OpenTelemetry
         end
 
         compatible do
-          gem_version >= MINIMUM_VERSION
+          !gem_version.nil? && gem_version >= MINIMUM_VERSION
         end
 
         option :inject_messaging_context, default: false, validate: :boolean
@@ -32,6 +32,8 @@ module OpenTelemetry
             Gem.loaded_specs['aws-sdk'].version
           elsif Gem.loaded_specs['aws-sdk-core']
             Gem.loaded_specs['aws-sdk-core'].version
+          elsif defined?(::Aws::CORE_GEM_VERSION)
+            Gem::Version.new(::Aws::CORE_GEM_VERSION)
           end
         end
 

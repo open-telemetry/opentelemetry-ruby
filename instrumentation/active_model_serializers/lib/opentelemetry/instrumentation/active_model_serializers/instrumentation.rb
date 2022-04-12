@@ -27,7 +27,7 @@ module OpenTelemetry
         private
 
         def gem_version
-          Gem.loaded_specs['active_model_serializers'].version
+          Gem::Version.new(::ActiveModel::Serializer::VERSION)
         end
 
         def require_dependencies
