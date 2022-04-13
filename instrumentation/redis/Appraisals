@@ -1,5 +1,25 @@
 # frozen_string_literal: true
 
+appraise 'redis-4.6' do
+  gem 'redis', '~> 4.1.0'
+end
+
+appraise 'redis-4.5' do
+  gem 'redis', '~> 4.1.0'
+end
+
+appraise 'redis-4.4' do
+  gem 'redis', '~> 4.1.0'
+end
+
+appraise 'redis-4.3' do
+  gem 'redis', '~> 4.1.0'
+end
+
+appraise 'redis-4.2' do
+  gem 'redis', '~> 4.1.0'
+end
+
 appraise 'redis-4.1' do
   gem 'redis', '~> 4.1.0'
 end
