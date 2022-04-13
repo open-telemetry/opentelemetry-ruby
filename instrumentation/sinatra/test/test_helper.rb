@@ -6,7 +6,8 @@
 
 require 'sinatra'
 
-require 'opentelemetry/sdk'
+require 'opentelemetry-sdk'
+require 'opentelemetry-instrumentation-sinatra'
 require 'opentelemetry-test-helpers'
 
 require 'minitest/autorun'
