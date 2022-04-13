@@ -6,12 +6,14 @@
 
 require 'koala'
 
-require 'opentelemetry/sdk'
+require 'opentelemetry-sdk'
+require 'opentelemetry-instrumentation-koala'
 require 'opentelemetry-test-helpers'
 
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
+require 'pry'
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
