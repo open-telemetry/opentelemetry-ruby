@@ -4,7 +4,8 @@ source "https://rubygems.org"
 
 gem "opentelemetry-api", path: "../../../api"
 gem "opentelemetry-instrumentation-base", path: "../../base"
-gem "http", "~> 4.4.0"
+gem "koala", "~> 3.0.0"
+gem "faraday", "< 2.0"
 
 group :test do
   gem "byebug"
