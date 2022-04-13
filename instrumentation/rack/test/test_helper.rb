@@ -6,7 +6,8 @@
 
 require 'rack'
 
-require 'opentelemetry/sdk'
+require 'opentelemetry-sdk'
+require 'opentelemetry-instrumentation-rack'
 require 'opentelemetry-test-helpers'
 
 require 'pry'
