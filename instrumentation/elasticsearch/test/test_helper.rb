@@ -6,8 +6,10 @@
 
 require 'opentelemetry/sdk'
 
+require 'debug'
+require 'elasticsearch'
+require_relative '../../faraday/lib/opentelemetry-instrumentation-faraday'
 require 'minitest/autorun'
-require 'webmock/minitest'
 
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new

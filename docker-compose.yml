@@ -40,6 +40,10 @@ services:
     <<: *base
     working_dir: /app/instrumentation/delayed_job/example
 
+  ex-instrumentation-elasticsearch:
+    <<: *base
+    working_dir: /app/instrumentation/elasticsearch/example
+
   ex-instrumentation-ethon:
     <<: *base
     working_dir: /app/instrumentation/ethon/example
@@ -208,7 +212,17 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
-
+  elasticsearch:
+    image: elasticsearch:8.1.2
+    expose:
+      - "9200"
+    ports:
+      - "9200:9200"
+    environment:
+      xpack.security.enabled: "false"
+      discovery.type: "single-node"
+    volumes:
+      - elasticsearch_data:/data
   sdk:
     <<: *base
     working_dir: /app/sdk
@@ -216,3 +230,4 @@ services:
 volumes:
   bundle:
   redis_data:
+  elasticsearch_data:
