@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.5.0'
 
+  spec.add_dependency 'opentelemetry-instrumentation-elasticsearch', '~> 0.0.0'
   spec.add_dependency 'opentelemetry-instrumentation-action_pack', '~> 0.1.3'
   spec.add_dependency 'opentelemetry-instrumentation-action_view', '~> 0.2.0'
   spec.add_dependency 'opentelemetry-instrumentation-active_job', '~> 0.1.4'
