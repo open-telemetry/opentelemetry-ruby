@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'ruby2_keywords'
 
   spec.add_development_dependency 'activerecord'
-  spec.add_development_dependency 'appraisal', '~> 2.2.0'
+  spec.add_development_dependency 'appraisal', '~> 2.4'
   spec.add_development_dependency 'bundler', '>= 1.17'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'opentelemetry-sdk', '~> 1.0'

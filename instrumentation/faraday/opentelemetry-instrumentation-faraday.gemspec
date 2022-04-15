@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-common', '~> 0.19.3'
   spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.19.0'
 
-  spec.add_development_dependency 'appraisal', '~> 2.2.0'
+  spec.add_development_dependency 'appraisal', '~> 2.4'
   spec.add_development_dependency 'bundler', '>= 1.17'
   spec.add_development_dependency 'faraday', '~> 0.17.0'
   spec.add_development_dependency 'minitest', '~> 5.0'
