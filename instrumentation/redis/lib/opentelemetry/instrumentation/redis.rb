@@ -14,7 +14,7 @@ module OpenTelemetry
     module Redis
       extend self
 
-      CURRENT_ATTRIBUTES_HASH = Context.create_key('current-attributes-hash')
+      CURRENT_ATTRIBUTES_HASH = Context.create_key('redis-attributes-hash')
 
       private_constant :CURRENT_ATTRIBUTES_HASH
 
