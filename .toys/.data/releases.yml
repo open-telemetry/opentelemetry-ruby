@@ -237,3 +237,8 @@ gems:
     directory: semantic_conventions
     version_rb_path: lib/opentelemetry/semantic_conventions/version.rb
     version_constant: [OpenTelemetry, SemanticConventions, VERSION]
+
+  - name: opentelemetry-test-helpers
+    directory: test_helpers
+    version_rb_path: lib/opentelemetry/test_helpers/version.rb
+    version_constant: [OpenTelemetry, TestHelpers, VERSION]
