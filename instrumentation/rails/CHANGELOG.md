@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-rails
 
+### v0.21.0 / 2022-04-29
+
+* ADDED: OTel Railtie 
+* FIXED: RubyGems Fallback 
+
 ### v0.20.0 / 2021-12-01
 
 * ADDED: Move activesupport notification subsciber out of action_view gem 

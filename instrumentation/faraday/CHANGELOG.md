@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.20.1 / 2022-04-29
+
+* (No significant changes)
+
 ### v0.20.0 / 2022-02-02
 
 * ADDED: Add net.peer.name to faraday instrumentation 

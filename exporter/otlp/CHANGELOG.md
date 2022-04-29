@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.21.3 / 2022-04-29
+
+* (No significant changes)
+
 ### v0.21.2 / 2022-01-19
 
 * FIXED: Default scheme for OTLP endpoint 
