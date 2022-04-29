@@ -404,6 +404,21 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
       end
     end
 
+    it 'sets retrieved_value_size_bites on queued commands' do
+      instrumentation.instance_variable_set(:@installed, false)
+      instrumentation.install(record_value_size: true)
+      redis = redis_with_auth
+      redis.queue([:set, 'v1', '0'])
+      redis.queue([:incr, 'v1'])
+      redis.queue([:get, 'v1'])
+      redis.commit
+
+      _(exporter.finished_spans.size).must_equal 2
+      _(last_span.name).must_equal 'PIPELINED'
+      _(last_span.attributes['db.set_value_size_bytes']).must_equal('0'.bytesize)
+      _(last_span.attributes['db.retrieved_value_size_bytes']).must_equal('0'.bytesize)
+    end
+
     it 'sets retrieved_value_size_bites on pipelined commands' do
       instrumentation.instance_variable_set(:@installed, false)
       instrumentation.install(record_value_size: true)
