@@ -1,11 +1,8 @@
 # Release History: opentelemetry-sdk
 
-### Unreleased
-
-* ADDED: Truncate the strings in an array attribute value if length_limit is configured
-
 ### v1.0.3 / 2022-05-02
 
+* ADDED: Truncate the strings in an array attribute value if length_limit is configured
 * FIXED: Update attribute length limit env var name to match spec 
 * FIXED: Warning about Struct initialization in Ruby 3.2+ 
 * FIXED: Warn on unsupported otlp transport protocols 
