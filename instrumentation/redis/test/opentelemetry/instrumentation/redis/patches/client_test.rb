@@ -363,9 +363,21 @@ describe OpenTelemetry::Instrumentation::Redis::Patches::Client do
 
       it 'calculates value size for hset' do
         redis = redis_with_auth
-        redis.hset('mycoolhash', 'key1', 'value1', 'key2', 'value2')
+        redis.hset('mycoolhash', 'key', 'value')
         hset_span = exporter.finished_spans.find { |x| x.name == 'HSET' }
-        _(hset_span.attributes['db.set_value_size_bytes']).must_equal('key1value1key2value2'.bytesize)
+        _(hset_span.attributes['db.set_value_size_bytes']).must_equal('keyvalue'.bytesize)
+      end
+
+      it 'calculates value size for multiple values set with hset' do
+        redis = redis_with_auth
+
+        # Starting in Redis 4.2.0, you can call hset with multiple hash values
+        # We only want to run this test if the method's arity is > 3
+        if redis.method(:hset).arity > 3
+          redis.hset('mycoolhash', 'key1', 'value1', 'key2', 'value2')
+          hset_span = exporter.finished_spans.find { |x| x.name == 'HSET' }
+          _(hset_span.attributes['db.set_value_size_bytes']).must_equal('key1value1key2value2'.bytesize)
+        end
       end
 
       it 'calculates value size for GET_VALUE_SIZE commands' do
