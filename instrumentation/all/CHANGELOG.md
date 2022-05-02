@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-all
 
+### v0.24.0 / 2022-05-02
+
+* ADDED: Adds instrumentation for rdkafka 
+* FIXED: Add rdkafka to all 
+
 ### v0.23.0 / 2022-01-26
 
 * ADDED: Add Trilogy Auto Instrumentation 

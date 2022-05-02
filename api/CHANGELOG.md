@@ -1,5 +1,9 @@
 # Release History: opentelemetry-api
 
+### v1.0.2 / 2022-05-02
+
+* FIXED: Text map propagator extraction should use argument context 
+
 ### v1.0.1 / 2021-12-01
 
 * FIXED: Deprecate api rack env getter 
