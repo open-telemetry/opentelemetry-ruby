@@ -121,20 +121,22 @@
 
     <dl class="constants">
       
-        <dt id="HTTP_METHODS_SYMBOL_TO_STRING-constant" class="">HTTP_METHODS_SYMBOL_TO_STRING =
+        <dt id="HTTP_METHODS_TO_UPPERCASE-constant" class="">HTTP_METHODS_TO_UPPERCASE =
           
         </dt>
-        <dd><pre class="code"><span class='lbrace'>{</span>
-  <span class='label'>connect:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>CONNECT</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
-  <span class='label'>delete:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>DELETE</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
-  <span class='label'>get:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>GET</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
-  <span class='label'>head:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>HEAD</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
-  <span class='label'>options:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>OPTIONS</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
-  <span class='label'>patch:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>PATCH</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
-  <span class='label'>post:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>POST</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
-  <span class='label'>put:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>PUT</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
-  <span class='label'>trace:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>TRACE</span><span class='tstring_end'>&#39;</span></span>
-<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+        <dd><pre class="code"><span class='qwords_beg'>%w[</span><span class='tstring_content'>connect</span><span class='words_sep'> </span><span class='tstring_content'>delete</span><span class='words_sep'> </span><span class='tstring_content'>get</span><span class='words_sep'> </span><span class='tstring_content'>head</span><span class='words_sep'> </span><span class='tstring_content'>options</span><span class='words_sep'> </span><span class='tstring_content'>patch</span><span class='words_sep'> </span><span class='tstring_content'>post</span><span class='words_sep'> </span><span class='tstring_content'>put</span><span class='words_sep'> </span><span class='tstring_content'>trace</span><span class='tstring_end'>]</span></span><span class='period'>.</span><span class='id identifier rubyid_each_with_object'>each_with_object</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_method'>method</span><span class='comma'>,</span> <span class='id identifier rubyid_hash'>hash</span><span class='op'>|</span>
+  <span class='id identifier rubyid_uppercase_method'>uppercase_method</span> <span class='op'>=</span> <span class='id identifier rubyid_method'>method</span><span class='period'>.</span><span class='id identifier rubyid_upcase'>upcase</span>
+  <span class='id identifier rubyid_hash'>hash</span><span class='lbracket'>[</span><span class='id identifier rubyid_method'>method</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_uppercase_method'>uppercase_method</span>
+  <span class='id identifier rubyid_hash'>hash</span><span class='lbracket'>[</span><span class='id identifier rubyid_method'>method</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_uppercase_method'>uppercase_method</span>
+  <span class='id identifier rubyid_hash'>hash</span><span class='lbracket'>[</span><span class='id identifier rubyid_uppercase_method'>uppercase_method</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_uppercase_method'>uppercase_method</span>
+<span class='kw'>end</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="HTTP_METHODS_TO_SPAN_NAMES-constant" class="">HTTP_METHODS_TO_SPAN_NAMES =
+          
+        </dt>
+        <dd><pre class="code"><span class='const'><span class='object_link'><a href="#HTTP_METHODS_TO_UPPERCASE-constant" title="OpenTelemetry::Instrumentation::Excon::Middlewares::TracerMiddleware::HTTP_METHODS_TO_UPPERCASE (constant)">HTTP_METHODS_TO_UPPERCASE</a></span></span><span class='period'>.</span><span class='id identifier rubyid_values'>values</span><span class='period'>.</span><span class='id identifier rubyid_each_with_object'>each_with_object</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_uppercase_method'>uppercase_method</span><span class='comma'>,</span> <span class='id identifier rubyid_hash'>hash</span><span class='op'>|</span>
+  <span class='id identifier rubyid_hash'>hash</span><span class='lbracket'>[</span><span class='id identifier rubyid_uppercase_method'>uppercase_method</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>HTTP </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_uppercase_method'>uppercase_method</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
       
     </dl>
   
@@ -288,6 +290,7 @@
       <pre class="lines">
 
 
+59
 60
 61
 62
@@ -297,11 +300,10 @@
 66
 67
 68
-69
-70</pre>
+69</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/opentelemetry/instrumentation/excon/middlewares/tracer_middleware.rb', line 60</span>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/instrumentation/excon/middlewares/tracer_middleware.rb', line 59</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_around_default_stack'>around_default_stack</span>
   <span class='op'>::</span><span class='const'>Excon</span><span class='period'>.</span><span class='id identifier rubyid_defaults'>defaults</span><span class='lbracket'>[</span><span class='symbol'>:middlewares</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_dup'>dup</span><span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_default_stack'>default_stack</span><span class='op'>|</span>
@@ -340,13 +342,13 @@
       <pre class="lines">
 
 
+53
 54
 55
-56
-57</pre>
+56</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/opentelemetry/instrumentation/excon/middlewares/tracer_middleware.rb', line 54</span>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/instrumentation/excon/middlewares/tracer_middleware.rb', line 53</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_error_call'>error_call</span><span class='lparen'>(</span><span class='id identifier rubyid_datum'>datum</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_handle_response'>handle_response</span><span class='lparen'>(</span><span class='id identifier rubyid_datum'>datum</span><span class='rparen'>)</span>
@@ -372,6 +374,7 @@
       <pre class="lines">
 
 
+24
 25
 26
 27
@@ -392,19 +395,18 @@
 42
 43
 44
-45
-46</pre>
+45</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/opentelemetry/instrumentation/excon/middlewares/tracer_middleware.rb', line 25</span>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/instrumentation/excon/middlewares/tracer_middleware.rb', line 24</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_request_call'>request_call</span><span class='lparen'>(</span><span class='id identifier rubyid_datum'>datum</span><span class='rparen'>)</span>
   <span class='kw'>begin</span>
     <span class='kw'>unless</span> <span class='id identifier rubyid_datum'>datum</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:otel_span</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_http_method'>http_method</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="#HTTP_METHODS_SYMBOL_TO_STRING-constant" title="OpenTelemetry::Instrumentation::Excon::Middlewares::TracerMiddleware::HTTP_METHODS_SYMBOL_TO_STRING (constant)">HTTP_METHODS_SYMBOL_TO_STRING</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_datum'>datum</span><span class='lbracket'>[</span><span class='symbol'>:method</span><span class='rbracket'>]</span><span class='rbracket'>]</span>
+      <span class='id identifier rubyid_http_method'>http_method</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="#HTTP_METHODS_TO_UPPERCASE-constant" title="OpenTelemetry::Instrumentation::Excon::Middlewares::TracerMiddleware::HTTP_METHODS_TO_UPPERCASE (constant)">HTTP_METHODS_TO_UPPERCASE</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_datum'>datum</span><span class='lbracket'>[</span><span class='symbol'>:method</span><span class='rbracket'>]</span><span class='rbracket'>]</span>
       <span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='id identifier rubyid_span_creation_attributes'>span_creation_attributes</span><span class='lparen'>(</span><span class='id identifier rubyid_datum'>datum</span><span class='comma'>,</span> <span class='id identifier rubyid_http_method'>http_method</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_tracer'>tracer</span><span class='period'>.</span><span class='id identifier rubyid_start_span'>start_span</span><span class='lparen'>(</span>
-        <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>HTTP </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_http_method'>http_method</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+        <span class='const'><span class='object_link'><a href="#HTTP_METHODS_TO_SPAN_NAMES-constant" title="OpenTelemetry::Instrumentation::Excon::Middlewares::TracerMiddleware::HTTP_METHODS_TO_SPAN_NAMES (constant)">HTTP_METHODS_TO_SPAN_NAMES</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_http_method'>http_method</span><span class='rbracket'>]</span><span class='comma'>,</span>
         <span class='label'>attributes:</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span>
         <span class='label'>kind:</span> <span class='symbol'>:client</span>
       <span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_span'>span</span><span class='op'>|</span>
@@ -440,14 +442,14 @@
       <pre class="lines">
 
 
+47
 48
 49
 50
-51
-52</pre>
+51</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/opentelemetry/instrumentation/excon/middlewares/tracer_middleware.rb', line 48</span>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/instrumentation/excon/middlewares/tracer_middleware.rb', line 47</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_response_call'>response_call</span><span class='lparen'>(</span><span class='id identifier rubyid_datum'>datum</span><span class='rparen'>)</span>
   <span class='ivar'>@stack</span><span class='period'>.</span><span class='id identifier rubyid_response_call'>response_call</span><span class='lparen'>(</span><span class='id identifier rubyid_datum'>datum</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_d'>d</span><span class='op'>|</span>
@@ -464,9 +466,9 @@
 </div>
 
       <div id="footer">
-  Generated on Thu Feb  3 00:50:47 2022 by
+  Generated on Mon May  2 23:32:12 2022 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.27 (ruby-2.7.5).
+  0.9.27 (ruby-2.7.6).
 </div>
 
     </div>
