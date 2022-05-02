@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: OpenTelemetry::Instrumentation::ActiveJob::Instrumentation
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::Instrumentation::ActiveJob::Instrumentation";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (I)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Instrumentation.html" title="OpenTelemetry::Instrumentation (module)">Instrumentation</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../ActiveJob.html" title="OpenTelemetry::Instrumentation::ActiveJob (module)">ActiveJob</a></span></span>
+     &raquo; 
+    <span class="title">Instrumentation</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: OpenTelemetry::Instrumentation::ActiveJob::Instrumentation
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Base</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Base</li>
+          
+            <li class="next">OpenTelemetry::Instrumentation::ActiveJob::Instrumentation</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/instrumentation/active_job/instrumentation.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>The Instrumentation class contains logic to detect and install the ActiveJob instrumentation</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="MINIMUM_VERSION-constant" class="">MINIMUM_VERSION =
+          
+        </dt>
+        <dd><pre class="code"><span class='const'>Gem</span><span class='op'>::</span><span class='const'>Version</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>5.2.0</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#propagation_style-instance_method" title="#propagation_style (instance method)">#<strong>propagation_style</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Supported configuration keys for the install config hash:.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="propagation_style-instance_method">
+  
+    #<strong>propagation_style</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Supported configuration keys for the install config hash:</p>
+
+<p>span_naming: when <code>:job_class</code>, the span names will be set to  &#39;&lt;job class name&gt; &lt;operation&gt;&#39;. When <code>:queue</code>, the span names  will be set to &#39;&lt;destination / queue name&gt; &lt;operation&gt;&#39;</p>
+
+<p>force_flush: when <code>true</code>, all completed spans will be synchronously flushed  at the end of a job&#39;s execution (default: <code>false</code>). You will likely wish to  enable this option for job systems that fork worker processes such as Resque.</p>
+
+<p>propagation_style: controls how the job&#39;s execution is traced and related  to the trace where the job was enqueued. Can be one of:</p>
+<ul><li>
+<p>:link (default) - the job will be executed in a separate trace. The initial span of the execution trace will be linked to the span that enqueued the job, via a Span Link.</p>
+</li><li>
+<p>:child - the job will be executed in the same logical trace, as a direct child of the span that enqueued the job.</p>
+</li><li>
+<p>:none - the job&#39;s execution will not be explicitly linked to the span that enqueued the job.</p>
+</li></ul>
+
+<p>Note that in all cases, we will store ActiveJob&#39;s Job ID as the <code>messaging.message_id</code> attribute, so out-of-band correlation may still be possible depending on your backend system.</p>
+
+<p>Note that when using the <code>:inline</code> ActiveJob queue adapter, then execution spans will always be children of the enqueueing spans. This is due to the way ActiveJob immediately executes jobs during the process of “enqueueing” jobs when using the <code>:inline</code> adapter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+55</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/instrumentation/active_job/instrumentation.rb', line 55</span>
+
+<span class='id identifier rubyid_option'>option</span> <span class='symbol'>:propagation_style</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='symbol'>:link</span><span class='comma'>,</span> <span class='label'>validate:</span> <span class='qsymbols_beg'>%i[</span><span class='tstring_content'>link</span><span class='words_sep'> </span><span class='tstring_content'>child</span><span class='words_sep'> </span><span class='tstring_content'>none</span><span class='tstring_end'>]</span></span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Mon May  2 23:29:23 2022 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.27 (ruby-2.7.6).
+</div>
+
+    </div>
+  </body>
+</html>
