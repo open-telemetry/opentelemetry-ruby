@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module AwsSdk
-      VERSION = '0.2.2'
+      VERSION = '0.2.3'
     end
   end
 end

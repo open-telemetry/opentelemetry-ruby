@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.20.0 / 2022-05-02
+
+* ADDED: Validate Using Enums 
+* FIXED: Update pg instrumentation to handle non primitive argument 
+* FIXED: RubyGems Fallback 
+
 ### v0.19.2 / 2021-12-02
 
 * (No significant changes)

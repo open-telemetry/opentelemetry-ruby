@@ -1,5 +1,12 @@
 # Release History: opentelemetry-instrumentation-active_job
 
+### v0.2.0 / 2022-05-02
+
+* ADDED: Validate Using Enums 
+* ADDED: Make the context available in ActiveJob notifications 
+* FIXED: Fix deserialization of jobs that are missing metadata 
+* FIXED: RubyGems Fallback 
+
 ### v0.1.5 / 2021-12-02
 
 * (No significant changes)

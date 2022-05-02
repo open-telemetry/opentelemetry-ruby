@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-dalli
 
+### v0.21.0 / 2022-05-02
+
+* ADDED: Validate Using Enums 
+
 ### v0.20.0 / 2021-12-01
 
 * ADDED: Add dalli obfuscation for db_statement 

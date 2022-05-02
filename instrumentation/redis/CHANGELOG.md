@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-redis
 
+### v0.22.0 / 2022-05-02
+
+* ADDED: Validate Using Enums 
+* FIXED: Add appraisals for redis 4.2-4.6 
+
 ### v0.21.3 / 2022-02-02
 
 * FIXED: Prevent redis instrumentation from mutating the command 

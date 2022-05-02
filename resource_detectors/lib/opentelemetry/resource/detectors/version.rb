@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Resource
     module Detectors
-      VERSION = '0.19.1'
+      VERSION = '0.20.0'
     end
   end
 end

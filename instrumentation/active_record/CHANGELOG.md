@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-active_record
 
+### v0.3.0 / 2022-05-02
+
+* ADDED: Make ActiveRecord 7 compatible 
+* FIXED: RubyGems Fallback 
+
 ### v0.2.2 / 2021-12-01
 
 * FIXED: Add max supported version for active record 

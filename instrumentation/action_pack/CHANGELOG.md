@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+### v0.1.4 / 2022-05-02
+
+* FIXED: Use rails request's filtered path as http.target attribute 
+* FIXED: RubyGems Fallback 
+
 ### v0.1.3 / 2021-12-01
 
 * FIXED: Instrumentation of Rails 7 
