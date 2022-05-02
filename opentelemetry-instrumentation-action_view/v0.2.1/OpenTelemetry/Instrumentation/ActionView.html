@@ -4,7 +4,7 @@
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>
-  Module: OpenTelemetry::Instrumentation::Trilogy
+  Module: OpenTelemetry::Instrumentation::ActionView
   
     &mdash; OpenTelemetry
   
@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="../../css/common.css" type="text/css" />
 
 <script type="text/javascript">
-  pathId = "OpenTelemetry::Instrumentation::Trilogy";
+  pathId = "OpenTelemetry::Instrumentation::ActionView";
   relpath = '../../';
 </script>
 
@@ -36,10 +36,10 @@
       <div id="header">
         <div id="menu">
   
-    <a href="../../_index.html">Index (T)</a> &raquo;
+    <a href="../../_index.html">Index (A)</a> &raquo;
     <span class='title'><span class='object_link'><a href="../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Instrumentation.html" title="OpenTelemetry::Instrumentation (module)">Instrumentation</a></span></span>
      &raquo; 
-    <span class="title">Trilogy</span>
+    <span class="title">ActionView</span>
   
 </div>
 
@@ -59,7 +59,7 @@
         <div class="clear"></div>
       </div>
 
-      <div id="content"><h1>Module: OpenTelemetry::Instrumentation::Trilogy
+      <div id="content"><h1>Module: OpenTelemetry::Instrumentation::ActionView
   
   
   
@@ -78,8 +78,8 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/opentelemetry/instrumentation/trilogy.rb<span class="defines">,<br />
-  lib/opentelemetry/instrumentation/trilogy/version.rb,<br /> lib/opentelemetry/instrumentation/trilogy/patches/client.rb,<br /> lib/opentelemetry/instrumentation/trilogy/instrumentation.rb</span>
+    <dd>lib/opentelemetry/instrumentation/action_view.rb<span class="defines">,<br />
+  lib/opentelemetry/instrumentation/action_view/railtie.rb,<br /> lib/opentelemetry/instrumentation/action_view/version.rb,<br /> lib/opentelemetry/instrumentation/action_view/instrumentation.rb</span>
 </dd>
   </dl>
   
@@ -88,7 +88,7 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     
-<p>Contains the OpenTelemetry instrumentation for the Trilogy gem</p>
+<p>Contains the OpenTelemetry instrumentation for the ActionView gem</p>
 
 
   </div>
@@ -100,11 +100,9 @@
 <p class="children">
   
     
-      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Trilogy/Patches.html" title="OpenTelemetry::Instrumentation::Trilogy::Patches (module)">Patches</a></span>
-    
   
     
-      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Trilogy/Instrumentation.html" title="OpenTelemetry::Instrumentation::Trilogy::Instrumentation (class)">Instrumentation</a></span>
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="ActionView/Instrumentation.html" title="OpenTelemetry::Instrumentation::ActionView::Instrumentation (class)">Instrumentation</a></span>, <span class='object_link'><a href="ActionView/Railtie.html" title="OpenTelemetry::Instrumentation::ActionView::Railtie (class)">Railtie</a></span>
     
   
 </p>
@@ -117,10 +115,19 @@
 
     <dl class="constants">
       
+        <dt id="SUBSCRIPTIONS-constant" class="">SUBSCRIPTIONS =
+          
+        </dt>
+        <dd><pre class="code"><span class='qwords_beg'>%w[</span><span class='words_sep'>
+  </span><span class='tstring_content'>render_template.action_view</span><span class='words_sep'>
+  </span><span class='tstring_content'>render_partial.action_view</span><span class='words_sep'>
+  </span><span class='tstring_content'>render_collection.action_view</span><span class='words_sep'>
+</span><span class='tstring_end'>]</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
         <dt id="VERSION-constant" class="">VERSION =
           
         </dt>
-        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0.50.1</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0.2.1</span><span class='tstring_end'>&#39;</span></span></pre></dd>
       
     </dl>
   
@@ -136,7 +143,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon May  2 23:28:49 2022 by
+  Generated on Mon May  2 23:29:09 2022 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.27 (ruby-2.7.6).
 </div>
