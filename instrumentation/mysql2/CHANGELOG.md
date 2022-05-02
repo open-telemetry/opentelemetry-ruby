@@ -4,6 +4,10 @@
 
 * ADDED: `with_attributes` method for context propagation
 
+### v0.20.1 / 2022-05-02
+
+* (No significant changes)
+
 ### v0.20.0 / 2021-12-01
 
 * ADDED: Add default options config helper + env var config option support 
