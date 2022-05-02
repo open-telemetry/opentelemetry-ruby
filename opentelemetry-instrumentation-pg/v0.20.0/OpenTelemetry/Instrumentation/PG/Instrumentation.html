@@ -4,7 +4,7 @@
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>
-  Module: OpenTelemetry::Instrumentation::Net::HTTP
+  Class: OpenTelemetry::Instrumentation::PG::Instrumentation
   
     &mdash; OpenTelemetry
   
@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
 
 <script type="text/javascript">
-  pathId = "OpenTelemetry::Instrumentation::Net::HTTP";
+  pathId = "OpenTelemetry::Instrumentation::PG::Instrumentation";
   relpath = '../../../';
 </script>
 
@@ -36,10 +36,10 @@
       <div id="header">
         <div id="menu">
   
-    <a href="../../../_index.html">Index (H)</a> &raquo;
-    <span class='title'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Instrumentation.html" title="OpenTelemetry::Instrumentation (module)">Instrumentation</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Net.html" title="OpenTelemetry::Instrumentation::Net (module)">Net</a></span></span>
+    <a href="../../../_index.html">Index (I)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Instrumentation.html" title="OpenTelemetry::Instrumentation (module)">Instrumentation</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../PG.html" title="OpenTelemetry::Instrumentation::PG (module)">PG</a></span></span>
      &raquo; 
-    <span class="title">HTTP</span>
+    <span class="title">Instrumentation</span>
   
 </div>
 
@@ -59,12 +59,30 @@
         <div class="clear"></div>
       </div>
 
-      <div id="content"><h1>Module: OpenTelemetry::Instrumentation::Net::HTTP
+      <div id="content"><h1>Class: OpenTelemetry::Instrumentation::PG::Instrumentation
   
   
   
 </h1>
 <div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Base</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Base</li>
+          
+            <li class="next">OpenTelemetry::Instrumentation::PG::Instrumentation</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
   
 
   
@@ -78,9 +96,7 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/opentelemetry/instrumentation/net/http.rb<span class="defines">,<br />
-  lib/opentelemetry/instrumentation/net/http/version.rb,<br /> lib/opentelemetry/instrumentation/net/http/instrumentation.rb,<br /> lib/opentelemetry/instrumentation/net/http/patches/instrumentation.rb</span>
-</dd>
+    <dd>lib/opentelemetry/instrumentation/pg/instrumentation.rb</dd>
   </dl>
   
 </div>
@@ -88,7 +104,7 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     
-<p>Contains the OpenTelemetry instrumentation for the Net::HTTP gem</p>
+<p>The Instrumentation class contains logic to detect and install the Pg instrumentation</p>
 
 
   </div>
@@ -96,19 +112,7 @@
 <div class="tags">
   
 
-</div><h2>Defined Under Namespace</h2>
-<p class="children">
-  
-    
-      <strong class="modules">Modules:</strong> <span class='object_link'><a href="HTTP/Patches.html" title="OpenTelemetry::Instrumentation::Net::HTTP::Patches (module)">Patches</a></span>
-    
-  
-    
-      <strong class="classes">Classes:</strong> <span class='object_link'><a href="HTTP/Instrumentation.html" title="OpenTelemetry::Instrumentation::Net::HTTP::Instrumentation (class)">Instrumentation</a></span>
-    
-  
-</p>
-
+</div>
   
     <h2>
       Constant Summary
@@ -117,10 +121,10 @@
 
     <dl class="constants">
       
-        <dt id="VERSION-constant" class="">VERSION =
+        <dt id="MINIMUM_VERSION-constant" class="">MINIMUM_VERSION =
           
         </dt>
-        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0.19.4</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+        <dd><pre class="code"><span class='const'>Gem</span><span class='op'>::</span><span class='const'>Version</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>1.1.0</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span></pre></dd>
       
     </dl>
   
@@ -132,11 +136,12 @@
 
 
 
+  
 
 </div>
 
       <div id="footer">
-  Generated on Mon May  2 23:32:30 2022 by
+  Generated on Mon May  2 23:32:43 2022 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.27 (ruby-2.7.6).
 </div>
