@@ -12,7 +12,7 @@ end
 
 $LOAD_PATH.unshift File.expand_path('../lib', __dir__)
 require 'minitest/autorun'
-require 'opentelemetry/sdk'
+require 'opentelemetry-api'
 require 'opentelemetry-propagator-ottrace'
 
 OpenTelemetry.logger = Logger.new(File::NULL)

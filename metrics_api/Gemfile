@@ -8,9 +8,8 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'opentelemetry-api', path: '../api'
-
 group :test, :development do
+  gem 'opentelemetry-api', path: '../api'
   gem 'pry'
   gem 'pry-byebug' unless RUBY_ENGINE == 'jruby'
 end
