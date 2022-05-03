@@ -2,12 +2,10 @@
 
 source "https://rubygems.org"
 
-gem "opentelemetry-api", path: "../../../api"
 gem "sinatra", "2.1.0"
 
 group :test do
-  gem "opentelemetry-common", path: "../../../common"
-  gem "opentelemetry-sdk", path: "../../../sdk"
+  gem "opentelemetry-instrumentation-base", path: "../../base"
 end
 
 gemspec path: "../"

@@ -2,7 +2,8 @@
 
 source "https://rubygems.org"
 
-gem "graphql", "~> 1.9.0"
+gem "koala", "~> 3.0.0"
+gem "faraday", "< 2.0"
 
 group :test do
   gem "opentelemetry-instrumentation-base", path: "../../base"
