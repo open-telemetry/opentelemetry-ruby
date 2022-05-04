@@ -13,7 +13,7 @@ Manual instrumentation can be added using the [OpenTelemetry API][manual].
 These instructions will explain how to set up automatic and manual instrumentation for a Ruby service.
 In order to follow along, you will need:
 
-- Ruby 2.5 or higher
+- Ruby 2.7 or higher
 - Docker Compose
 
 ### Installation
