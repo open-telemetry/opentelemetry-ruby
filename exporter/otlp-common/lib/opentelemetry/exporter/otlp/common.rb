@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry'
 require 'opentelemetry/exporter/otlp/common/version'
 
 require 'google/rpc/status_pb'
@@ -20,14 +21,29 @@ module OpenTelemetry
       module Common # rubocop:disable Metrics/ModuleLength
         extend self
 
-        def encode(span_data) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        # As encoded etsr (ExportTraceServiceRequest)
+        #
+        # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] span_data the
+        #   list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
+        #   encoded.
+        #
+        # @return [String] returns an encoded ETSR of the provided span data
+        def as_encoded_etsr(span_data)
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(as_etsr(span_data))
         rescue StandardError => e
-          OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#encode')
+          OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Common#as_encoded_etsr')
           nil
         end
 
-        def as_etsr(span_data)
+        # As etsr (ExportTraceServiceRequest)
+        #
+        # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] span_data the
+        #   list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
+        #   encoded.
+        #
+        # @return [Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest]
+        #   returns an ETSR of the provided span data
+        def as_etsr(span_data) # rubocop:disable Metrics/MethodLength
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
             resource_spans: span_data
               .group_by(&:resource)
