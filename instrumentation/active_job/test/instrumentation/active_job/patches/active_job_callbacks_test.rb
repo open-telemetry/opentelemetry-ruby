@@ -174,10 +174,17 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
     describe 'messaging.system' do
       it 'is set correctly for the inline adapter' do
+        begin
+          ::ActiveJob::Base.queue_adapter.shutdown
+        rescue StandardError
+          nil
+        end
+
+        ::ActiveJob::Base.queue_adapter = :inline
         TestJob.perform_later
 
         [send_span, process_span].each do |span|
-          _(span.attributes['messaging.system']).must_equal('async')
+          _(span.attributes['messaging.system']).must_equal('inline')
         end
       end
 
@@ -203,8 +210,8 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
           nil
         end
 
-        span = spans.filter { |s| s.kind == :consumer }.max(&:end_timestamp)
-        _(span.attributes['messaging.active_job.executions']).must_equal(2)
+        executions = spans.filter { |s| s.kind == :consumer }.map{ span.attributes['messaging.active_job.executions'] }.sum
+        _(executions).must_equal(3) # total of 3 runs. The initial and 2 retries.
       end
     end
 
