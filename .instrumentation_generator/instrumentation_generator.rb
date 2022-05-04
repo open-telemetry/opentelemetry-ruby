@@ -56,7 +56,7 @@ class InstrumentationGenerator < Thor::Group
     insert_into_file("#{instrumentation_all_path}/Gemfile", gemfile_text, after: "gemspec\n")
 
     gemspec_text = "\n  spec.add_dependency '#{instrumentation_gem_name}', '~> 0.0.0'"
-    insert_into_file("#{instrumentation_all_path}/opentelemetry-instrumentation-all.gemspec", gemspec_text, after: "spec.required_ruby_version = '>= 2.5.0'\n")
+    insert_into_file("#{instrumentation_all_path}/opentelemetry-instrumentation-all.gemspec", gemspec_text, after: "spec.required_ruby_version = '>= 2.6.0'\n")
 
     all_rb_text = "\nrequire '#{instrumentation_gem_name}'"
     insert_into_file("#{instrumentation_all_path}/lib/opentelemetry/instrumentation/all.rb", all_rb_text, after: "# SPDX-License-Identifier: Apache-2.0\n")
