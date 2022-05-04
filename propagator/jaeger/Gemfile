@@ -12,4 +12,3 @@ group :test do
   gem 'opentelemetry-api', path: '../../api'
   gem 'opentelemetry-sdk', path: '../../sdk'
 end
-
