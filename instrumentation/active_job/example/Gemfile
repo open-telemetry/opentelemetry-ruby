@@ -3,6 +3,6 @@
 source 'https://rubygems.org'
 
 gem 'activejob'
-gem 'opentelemetry-api', path: '../../../api'
-gem 'opentelemetry-instrumentation-active_job', path: '../../../instrumentation/active_job'
-gem 'opentelemetry-sdk', path: '../../../sdk'
+gem 'opentelemetry-api'
+gem 'opentelemetry-instrumentation-active_job'
+gem 'opentelemetry-sdk'

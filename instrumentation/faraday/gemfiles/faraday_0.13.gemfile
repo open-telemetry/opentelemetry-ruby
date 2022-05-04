@@ -2,11 +2,10 @@
 
 source "https://rubygems.org"
 
-gem "opentelemetry-api", path: "../../../api"
 gem "faraday", "0.13.1"
 
 group :test do
-  gem "opentelemetry-sdk", path: "../../../sdk"
+  gem "opentelemetry-instrumentation-base", path: "../../base"
 end
 
 gemspec path: "../"

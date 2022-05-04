@@ -9,9 +9,7 @@ require 'test_helper'
 describe OpenTelemetry::SDK::Trace::TracerProvider do
   let(:samplers) { OpenTelemetry::SDK::Trace::Samplers }
   let(:subject) { OpenTelemetry::SDK::Trace::TracerProvider }
-  let(:tracer_provider) do
-    OpenTelemetry.tracer_provider = subject.new
-  end
+  let(:tracer_provider) { subject.new }
 
   describe '#initialize' do
     it 'activates a default SpanLimits and Sampler' do
