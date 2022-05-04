@@ -70,7 +70,7 @@ end
 
 def handle_gem(gem_name, has_appraisal)
   individual_test("#{gem_name}: bundle",
-                  ["bundle", "install", "--jobs=3", "--retry=3"])
+                  ["bundle", "install", "--jobs=3", "--retry=3", "--quiet"])
   unless no_check_tests
     if has_appraisal
       individual_test("#{gem_name}: appraisal",

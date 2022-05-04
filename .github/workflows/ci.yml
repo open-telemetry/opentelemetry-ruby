@@ -112,7 +112,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install tools
-        run: gem install --no-document bundler:2.1.4 toys:0.11.5
+        run: gem install --no-document bundler toys:0.11.5
       - name: Run tests
         env:
           TEST_KAFKA_HOST: "127.0.0.1"

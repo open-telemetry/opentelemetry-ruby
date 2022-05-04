@@ -2,11 +2,10 @@
 
 source "https://rubygems.org"
 
-gem "opentelemetry-api", path: "../../../api"
 gem "mysql2"
 
-group :test do
-  gem "opentelemetry-sdk", path: "../../../sdk"
+group :test, :development do
+  gem "opentelemetry-instrumentation-base", path: "../../base"
 end
 
 gemspec path: "../"

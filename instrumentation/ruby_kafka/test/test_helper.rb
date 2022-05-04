@@ -4,7 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'active_support'
 require 'kafka'
 
 require 'opentelemetry/sdk'
