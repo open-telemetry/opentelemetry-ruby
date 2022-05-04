@@ -13,17 +13,7 @@ module OpenTelemetry
 
     CURRENT_SPAN_KEY = Context.create_key('current-span')
 
-    # Random number generator for generating IDs. This is an object that can
-    # respond to `#bytes` and uses the system PRNG. The current logic is
-    # compatible with Ruby 2.5 (which does not implement the `Random.bytes`
-    # class method) and with Ruby 3.0+ (which deprecates `Random::DEFAULT`).
-    # When we drop support for Ruby 2.5, this can simply be replaced with
-    # the class `Random`.
-    #
-    # @return [#bytes]
-    RANDOM = Random.respond_to?(:bytes) ? Random : Random::DEFAULT
-
-    private_constant :CURRENT_SPAN_KEY, :RANDOM
+    private_constant :CURRENT_SPAN_KEY
 
     # An invalid trace identifier, a 16-byte string with all zero bytes.
     INVALID_TRACE_ID = ("\0" * 16).b
@@ -37,7 +27,7 @@ module OpenTelemetry
     # @return [String] a valid trace ID.
     def generate_trace_id
       loop do
-        id = RANDOM.bytes(16)
+        id = Random.bytes(16)
         return id unless id == INVALID_TRACE_ID
       end
     end
@@ -48,7 +38,7 @@ module OpenTelemetry
     # @return [String] a valid span ID.
     def generate_span_id
       loop do
-        id = RANDOM.bytes(8)
+        id = Random.bytes(8)
         return id unless id == INVALID_SPAN_ID
       end
     end
