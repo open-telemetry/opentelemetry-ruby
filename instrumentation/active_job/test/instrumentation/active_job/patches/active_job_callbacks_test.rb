@@ -210,7 +210,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
           nil
         end
 
-        executions = spans.filter { |s| s.kind == :consumer }.map{ span.attributes['messaging.active_job.executions'] }.sum
+        executions = spans.filter { |s| s.kind == :consumer }.map { span.attributes['messaging.active_job.executions'] }.sum
         _(executions).must_equal(3) # total of 3 runs. The initial and 2 retries.
       end
     end
