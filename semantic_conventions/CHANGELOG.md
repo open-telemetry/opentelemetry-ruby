@@ -1,5 +1,9 @@
 # Release History: opentelemetry-semantic_conventions
 
+### v1.8.1 / 2022-05-04
+
+* (No significant changes)
+
 ### v1.8.0 / 2022-01-06
 
 * (No significant changes)
