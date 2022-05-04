@@ -32,19 +32,9 @@ module OpenTelemetry
           ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
           private_constant(:ERROR_MESSAGE_INVALID_HEADERS)
 
-          def self.ssl_verify_mode
-            if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
-              OpenSSL::SSL::VERIFY_PEER
-            elsif ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE')
-              OpenSSL::SSL::VERIFY_NONE
-            else
-              OpenSSL::SSL::VERIFY_PEER
-            end
-          end
-
           def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4318/v1/traces'), # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
                          certificate_file: config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
-                         ssl_verify_mode: Exporter.ssl_verify_mode,
+                         ssl_verify_mode: fetch_ssl_verify_mode,
                          headers: config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                          compression: config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                          timeout: config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
@@ -107,6 +97,16 @@ module OpenTelemetry
           end
 
           private
+
+          def fetch_ssl_verify_mode
+            if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
+              OpenSSL::SSL::VERIFY_PEER
+            elsif ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE')
+              OpenSSL::SSL::VERIFY_NONE
+            else
+              OpenSSL::SSL::VERIFY_PEER
+            end
+          end
 
           def http_connection(uri, ssl_verify_mode, certificate_file)
             http = Net::HTTP.new(uri.host, uri.port)
