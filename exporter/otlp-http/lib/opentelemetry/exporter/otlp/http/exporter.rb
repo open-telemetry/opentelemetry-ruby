@@ -83,7 +83,7 @@ module OpenTelemetry
           def export(span_data, timeout: nil)
             return FAILURE if @shutdown
 
-            send_bytes(OpenTelemetry::Exporter::OTLP::Common.encode(span_data), timeout: timeout)
+            send_bytes(OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr(span_data), timeout: timeout)
           end
 
           # Called when {OpenTelemetry::SDK::Trace::TracerProvider#force_flush} is called, if

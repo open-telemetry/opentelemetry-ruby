@@ -28,18 +28,3 @@ if RUBY_ENGINE == 'truffleruby'
 else
   task default: %i[test rubocop yard]
 end
-
-PROTOBUF_FILES = [
-  'common/v1/common.proto',
-  'resource/v1/resource.proto',
-  'trace/v1/trace.proto',
-  'collector/trace/v1/trace_service.proto'
-].freeze
-
-task :update_protobuf do
-  system('git clone https://github.com/open-telemetry/opentelemetry-proto')
-  PROTOBUF_FILES.each do |file|
-    system("protoc --ruby_out=lib/ --proto_path=opentelemetry-proto opentelemetry/proto/#{file}")
-  end
-  system('rm -rf opentelemetry-proto')
-end

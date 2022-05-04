@@ -1,6 +1,6 @@
-# opentelemetry-exporter-otlp
+# opentelemetry-exporter-otlp-http
 
-The `opentelemetry-exporter-otlp` gem provides an [OTLP](https://github.com/open-telemetry/opentelemetry-proto) exporter for OpenTelemetry for Ruby. Using `opentelemetry-exporter-otlp`, an application can configure OpenTelemetry to export collected tracing data to [the OpenTelemetry Collector][opentelemetry-collector-home].
+The `opentelemetry-exporter-otlp-http` gem provides an [OTLP](https://github.com/open-telemetry/opentelemetry-proto) over http exporter for OpenTelemetry for Ruby. Using `opentelemetry-exporter-otlp-http`, an application can configure OpenTelemetry to export collected tracing data to [the OpenTelemetry Collector][opentelemetry-collector-home].
 
 ## What is OpenTelemetry?
 
@@ -10,13 +10,13 @@ OpenTelemetry provides a single set of APIs, libraries, agents, and collector se
 
 ## How does this gem fit in?
 
-The `opentelemetry-exporter-otlp` gem is a plugin that provides OTLP export. To export to the OpenTelemetry Collector, an application can include this gem along with `opentelemetry-sdk`, and configure the `SDK` to use the provided OTLP exporter as a span processor.
+The `opentelemetry-exporter-otlp-http` gem is a plugin that provides OTLP export. To export to the OpenTelemetry Collector, an application can include this gem along with `opentelemetry-sdk`, and configure the `SDK` to use the provided OTLP exporter as a span processor.
 
 Generally, *libraries* that produce telemetry data should avoid depending directly on specific exporter, deferring that choice to the application developer.
 
 ### Supported protocol version
 
-This gem supports the [v0.4.0 release](https://github.com/open-telemetry/opentelemetry-proto/releases/tag/v0.4.0) of OTLP.
+This gem supports the [v0.11.0 release](https://github.com/open-telemetry/opentelemetry-proto/releases/tag/v0.11.0) of OTLP.
 
 ## How do I get started?
 
@@ -24,7 +24,7 @@ Install the gem using:
 
 ```
 gem install opentelemetry-sdk
-gem install opentelemetry-exporter-otlp
+gem install opentelemetry-exporter-otlp-http
 ```
 
 Or, if you use [bundler][bundler-home], include `opentelemetry-sdk` in your `Gemfile`.
@@ -82,13 +82,13 @@ The collector exporter can be configured explicitly in code, or via environment 
 
 ## How can I get involved?
 
-The `opentelemetry-exporter-otlp` gem source is [on github][repo-github], along with related gems including `opentelemetry-sdk`.
+The `opentelemetry-exporter-otlp-http` gem source is [on github][repo-github], along with related gems including `opentelemetry-sdk`.
 
 The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us in [GitHub Discussions][discussions-url] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
 ## License
 
-The `opentelemetry-exporter-otlp` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
+The `opentelemetry-exporter-otlp-http` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
 
 
 [opentelemetry-collector-home]: https://opentelemetry.io/docs/collector/about/
