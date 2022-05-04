@@ -28,7 +28,11 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
   end
 
   after do
-    ::ActiveJob::Base.queue_adapter.shutdown rescue nil
+    begin
+      ::ActiveJob::Base.queue_adapter.shutdown
+    rescue StandardError
+      nil
+    end
     ::ActiveJob::Base.queue_adapter = :inline
     instrumentation.instance_variable_set(:@config, config)
   end
@@ -82,7 +86,11 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
   describe 'span kind' do
     it 'sets correct span kinds for inline jobs' do
-      ::ActiveJob::Base.queue_adapter.shutdown rescue nil
+      begin
+        ::ActiveJob::Base.queue_adapter.shutdown
+      rescue StandardError
+        nil
+      end
       ::ActiveJob::Base.queue_adapter = :inline
 
       TestJob.perform_later
@@ -189,9 +197,13 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       end
 
       it 'tracks correctly for jobs that do retry' do
-        RetryJob.perform_later rescue nil
+        begin
+          RetryJob.perform_later
+        rescue StandardError
+          nil
+        end
 
-        span = spans.filter{ |s| s.kind == :consumer }.sort { |a| a.end_timestamp }.last
+        span = spans.filter { |s| s.kind == :consumer }.max(&:end_timestamp)
         _(span.attributes['messaging.active_job.executions']).must_equal(2)
       end
     end
