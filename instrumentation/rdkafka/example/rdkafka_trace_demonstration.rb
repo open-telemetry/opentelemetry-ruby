@@ -6,10 +6,10 @@ require 'securerandom'
 gemfile(true) do
   source 'https://rubygems.org'
 
-  gem 'opentelemetry-api', path: '../../../api'
-  gem 'opentelemetry-instrumentation-base', path: '../../../instrumentation/base'
-  gem 'opentelemetry-instrumentation-rdkafka', path: '../'
-  gem 'opentelemetry-sdk', path: '../../../sdk'
+  gem 'opentelemetry-api'
+  gem 'opentelemetry-instrumentation-base'
+  gem 'opentelemetry-instrumentation-rdkafka'
+  gem 'opentelemetry-sdk'
   gem 'rdkafka', '0.10.0'
 end
 

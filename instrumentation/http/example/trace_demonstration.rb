@@ -4,10 +4,10 @@ require 'bundler/inline'
 
 gemfile(true) do
   source 'https://rubygems.org'
-  gem 'opentelemetry-api', path: '../../../api'
-  gem 'opentelemetry-instrumentation-base', path: '../../../instrumentation/base'
-  gem 'opentelemetry-instrumentation-http', path: '../../../instrumentation/http'
-  gem 'opentelemetry-sdk', path: '../../../sdk'
+  gem 'opentelemetry-api'
+  gem 'opentelemetry-instrumentation-base'
+  gem 'opentelemetry-instrumentation-http'
+  gem 'opentelemetry-sdk'
   gem 'http'
 end
 
