@@ -170,22 +170,10 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
       end
 
       it 'records the failure message' do
-        message = <<~MESSAGE.rstrip
-
-          expected: false
-               got: true
-
-          (compared using eql?)
-
-          Diff:\e[0m
-          \e[0m\e[34m@@ -1 +1 @@
-          \e[0m\e[31m-false
-          \e[0m\e[32m+true
-          \e[0m
-        MESSAGE
-        _(subject.attributes['rspec.example.failure_message']).must_equal message
-        _(subject.status.description).must_equal message
-        _(subject.events.first.attributes['exception.message']).must_equal message
+        expected_message_pattern = /expected: false.*\s+got: true/
+        _(subject.attributes['rspec.example.failure_message']).must_match expected_message_pattern
+        _(subject.status.description).must_match expected_message_pattern
+        _(subject.events.first.attributes['exception.message']).must_match expected_message_pattern
       end
 
       it 'records the exception' do
