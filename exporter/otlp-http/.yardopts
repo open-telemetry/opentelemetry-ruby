@@ -1,5 +1,5 @@
 --no-private
---title=OpenTelemetry OTLP Common
+--title=OpenTelemetry OTLP HTTP
 --markup=markdown
 --main=README.md
 ./lib/opentelemetry/exporter/otlp/http/**/*.rb
