@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-http
 
+### v0.19.6 / 2022-05-05
+
+* (No significant changes)
+
 ### v0.19.5 / 2022-05-02
 
 * FIXED: RubyGems Fallback 
