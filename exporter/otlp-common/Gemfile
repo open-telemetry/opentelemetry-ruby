@@ -8,10 +8,8 @@ source 'https://rubygems.org'
 
 gemspec
 
-# Use the opentelemetry-api gem from source
-gem 'opentelemetry-api', path: '../../api'
-
 group :test, :development do
+  gem 'opentelemetry-api', path: '../../api'
   gem 'opentelemetry-sdk', path: '../../sdk'
   gem 'opentelemetry-test-helpers', path: '../../test_helpers'
 end
