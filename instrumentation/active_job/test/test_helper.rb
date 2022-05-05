@@ -3,6 +3,7 @@
 # Copyright The OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
+ENV['OTEL_LOG_LEVEL'] ||= 'fatal'
 
 require 'active_job'
 require 'opentelemetry-instrumentation-active_job'
@@ -78,5 +79,4 @@ span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPO
 OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::ActiveJob'
   c.add_span_processor span_processor
-  c.logger = Logger.new(File::NULL)
 end
