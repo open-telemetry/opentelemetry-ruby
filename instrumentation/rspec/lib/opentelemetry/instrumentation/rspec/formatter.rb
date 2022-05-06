@@ -72,12 +72,17 @@ module OpenTelemetry
 
             span.set_attribute('rspec.example.result', result.status.to_s)
 
-            if (exception = result.exception)
-              span.record_exception(exception)
-              span.set_attribute('rspec.example.failure_message', exception.message) if exception.is_a? ::RSpec::Expectations::ExpectationNotMetError
-              span.status = OpenTelemetry::Trace::Status.error(exception.message)
-            end
+            add_exception_and_failures(span, result.exception)
           end
+        end
+
+        def add_exception_and_failures(span, exception)
+          return if exception.nil?
+
+          exception_message = strip_console_codes(exception.message)
+          span.set_attribute('rspec.example.failure_message', exception_message) if exception.is_a? ::RSpec::Expectations::ExpectationNotMetError
+          span.record_exception(exception, attributes: { 'exception.message' => exception_message })
+          span.status = OpenTelemetry::Trace::Status.error(exception_message)
         end
 
         def track_span(span)
@@ -95,6 +100,10 @@ module OpenTelemetry
 
           span.finish(end_timestamp: current_timestamp)
           OpenTelemetry::Context.detach(token)
+        end
+
+        def strip_console_codes(string)
+          string.gsub(/\e\[([;\d]+)?m/, '')
         end
       end
     end

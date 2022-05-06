@@ -170,10 +170,21 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
       end
 
       it 'records the failure message' do
-        expected_message_pattern = /expected: false.*\s+got: true/
-        _(subject.attributes['rspec.example.failure_message']).must_match expected_message_pattern
-        _(subject.status.description).must_match expected_message_pattern
-        _(subject.events.first.attributes['exception.message']).must_match expected_message_pattern
+        message = <<~MESSAGE
+
+          expected: false
+               got: true
+
+          (compared using eql?)
+
+          Diff:
+          @@ -1 +1 @@
+          -false
+          +true
+        MESSAGE
+        _(subject.attributes['rspec.example.failure_message']).must_equal message
+        _(subject.status.description).must_equal message
+        _(subject.events.first.attributes['exception.message']).must_equal message
       end
 
       it 'records the exception' do
@@ -195,10 +206,12 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
       it 'records the span status as error' do
         _(subject.status.ok?).must_equal false
         _(subject.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+        _(subject.status.description).must_equal 'my-error-message'
       end
 
       it 'records the exception' do
-        _(subject.events.first.attributes['exception.type']).must_equal 'RuntimeError'
+        _(subject.events[0].attributes['exception.type']).must_equal 'RuntimeError'
+        _(subject.events[0].attributes['exception.message']).must_equal 'my-error-message'
       end
 
       it 'records the exception' do
@@ -206,6 +219,7 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
       end
     end
   end
+
   describe 'using a custom tracer provider' do
     describe 'with the formatter' do
       it 'will sends spans to the connected exporter' do
