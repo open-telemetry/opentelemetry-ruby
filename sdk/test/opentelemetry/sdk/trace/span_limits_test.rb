@@ -5,18 +5,33 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'test_helper'
-
+require 'pry'
 describe OpenTelemetry::SDK::Trace::SpanLimits do
-  let(:subject) { OpenTelemetry::SDK::Trace::SpanLimits }
+  let(:span_limits) { OpenTelemetry::SDK::Trace::SpanLimits.new }
 
   describe '#initialize' do
     it 'provides defaults' do
-      config = subject.new
-      _(config.attribute_count_limit).must_equal 128
-      _(config.event_count_limit).must_equal 128
-      _(config.link_count_limit).must_equal 128
-      _(config.event_attribute_count_limit).must_equal 128
-      _(config.link_attribute_count_limit).must_equal 128
+      _(span_limits.attribute_count_limit).must_equal 128
+      _(span_limits.event_count_limit).must_equal 128
+      _(span_limits.link_count_limit).must_equal 128
+      _(span_limits.event_attribute_count_limit).must_equal 128
+      _(span_limits.link_attribute_count_limit).must_equal 128
+    end
+
+    it 'prioritizes specific environment varibles for attribute value length limits' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '35',
+                                          'OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '33',
+                                          'OTEL_EVENT_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '32') do
+        _(span_limits.attribute_length_limit).must_equal 33
+        _(span_limits.event_attribute_length_limit).must_equal 32
+      end
+    end
+
+    it 'uses general attribute value length limits in the absence of more specific ones' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '35') do
+        _(span_limits.attribute_length_limit).must_equal 35
+        _(span_limits.event_attribute_length_limit).must_equal 35
+      end
     end
 
     it 'reflects environment variables' do
@@ -27,13 +42,13 @@ describe OpenTelemetry::SDK::Trace::SpanLimits do
                                           'OTEL_EVENT_ATTRIBUTE_COUNT_LIMIT' => '5',
                                           'OTEL_LINK_ATTRIBUTE_COUNT_LIMIT' => '6',
                                           'OTEL_TRACES_SAMPLER' => 'always_on') do
-        config = subject.new
-        _(config.attribute_count_limit).must_equal 1
-        _(config.event_count_limit).must_equal 2
-        _(config.link_count_limit).must_equal 3
-        _(config.attribute_length_limit).must_equal 32
-        _(config.event_attribute_count_limit).must_equal 5
-        _(config.link_attribute_count_limit).must_equal 6
+        _(span_limits.attribute_count_limit).must_equal 1
+        _(span_limits.event_count_limit).must_equal 2
+        _(span_limits.link_count_limit).must_equal 3
+        _(span_limits.attribute_length_limit).must_equal 32
+        _(span_limits.event_attribute_count_limit).must_equal 5
+        _(span_limits.event_attribute_length_limit).must_be_nil
+        _(span_limits.link_attribute_count_limit).must_equal 6
       end
     end
 
@@ -45,13 +60,13 @@ describe OpenTelemetry::SDK::Trace::SpanLimits do
                                           'OTEL_EVENT_ATTRIBUTE_COUNT_LIMIT' => '5',
                                           'OTEL_LINK_ATTRIBUTE_COUNT_LIMIT' => '6',
                                           'OTEL_TRACES_SAMPLER' => 'always_on') do
-        config = subject.new
-        _(config.attribute_count_limit).must_equal 1
-        _(config.event_count_limit).must_equal 2
-        _(config.link_count_limit).must_equal 3
-        _(config.attribute_length_limit).must_equal 32
-        _(config.event_attribute_count_limit).must_equal 5
-        _(config.link_attribute_count_limit).must_equal 6
+        _(span_limits.attribute_count_limit).must_equal 1
+        _(span_limits.event_count_limit).must_equal 2
+        _(span_limits.link_count_limit).must_equal 3
+        _(span_limits.attribute_length_limit).must_equal 32
+        _(span_limits.event_attribute_count_limit).must_equal 5
+        _(span_limits.event_attribute_length_limit).must_be_nil
+        _(span_limits.link_attribute_count_limit).must_equal 6
       end
     end
 
@@ -61,20 +76,23 @@ describe OpenTelemetry::SDK::Trace::SpanLimits do
                                           'OTEL_SPAN_LINK_COUNT_LIMIT' => '3',
                                           'OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '4',
                                           'OTEL_EVENT_ATTRIBUTE_COUNT_LIMIT' => '5',
+                                          'OTEL_EVENT_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '32',
                                           'OTEL_LINK_ATTRIBUTE_COUNT_LIMIT' => '6',
                                           'OTEL_TRACES_SAMPLER' => 'always_on') do
-        config = subject.new(attribute_count_limit: 10,
-                             event_count_limit: 11,
-                             link_count_limit: 12,
-                             event_attribute_count_limit: 13,
-                             link_attribute_count_limit: 14,
-                             attribute_length_limit: 32)
-        _(config.attribute_count_limit).must_equal 10
-        _(config.event_count_limit).must_equal 11
-        _(config.link_count_limit).must_equal 12
-        _(config.event_attribute_count_limit).must_equal 13
-        _(config.link_attribute_count_limit).must_equal 14
-        _(config.attribute_length_limit).must_equal 32
+        span_limits = OpenTelemetry::SDK::Trace::SpanLimits.new(attribute_count_limit: 10,
+                                                                event_count_limit: 11,
+                                                                link_count_limit: 12,
+                                                                event_attribute_count_limit: 13,
+                                                                event_attribute_length_limit: 40,
+                                                                link_attribute_count_limit: 14,
+                                                                attribute_length_limit: 32)
+        _(span_limits.attribute_count_limit).must_equal 10
+        _(span_limits.event_count_limit).must_equal 11
+        _(span_limits.link_count_limit).must_equal 12
+        _(span_limits.event_attribute_count_limit).must_equal 13
+        _(span_limits.event_attribute_length_limit).must_equal 40
+        _(span_limits.link_attribute_count_limit).must_equal 14
+        _(span_limits.attribute_length_limit).must_equal 32
       end
     end
 

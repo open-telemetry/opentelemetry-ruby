@@ -137,7 +137,7 @@ module OpenTelemetry
         #
         # @return [self] returns itself
         def add_event(name, attributes: nil, timestamp: nil)
-          event = Event.new(name, truncate_attribute_values(attributes), relative_timestamp(timestamp))
+          event = Event.new(name, truncate_attribute_values(attributes, @span_limits.event_attribute_length_limit), relative_timestamp(timestamp))
 
           @mutex.synchronize do
             if @ended
@@ -349,14 +349,12 @@ module OpenTelemetry
 
           excess = attrs.size - @span_limits.attribute_count_limit
           excess.times { attrs.shift } if excess.positive?
-          truncate_attribute_values(attrs)
+          truncate_attribute_values(attrs, @span_limits.attribute_length_limit)
           nil
         end
 
-        def truncate_attribute_values(attrs)
+        def truncate_attribute_values(attrs, attribute_length_limit)
           return EMPTY_ATTRIBUTES if attrs.nil?
-
-          attribute_length_limit = @span_limits.attribute_length_limit
           return attrs if attribute_length_limit.nil?
 
           attrs.transform_values! { |value| OpenTelemetry::Common::Utilities.truncate_attribute_value(value, attribute_length_limit) }
