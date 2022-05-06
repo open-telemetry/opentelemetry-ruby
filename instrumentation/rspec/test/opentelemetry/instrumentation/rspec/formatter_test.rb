@@ -192,6 +192,89 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
       end
     end
 
+    describe 'that fail and error' do
+      subject do
+        run_example do
+          example('example one') { expect(true).to eql false }
+          after { raise 'my-error-message' }
+        end
+      end
+
+      it 'records when the example fails' do
+        _(subject.attributes['rspec.example.result']).must_equal 'failed'
+      end
+
+      it 'records the span status as error' do
+        _(subject.status.ok?).must_equal false
+        _(subject.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      end
+
+      it 'records the failure message' do
+        message = <<~MESSAGE
+
+          expected: false
+               got: true
+
+          (compared using eql?)
+
+          Diff:
+          @@ -1 +1 @@
+          -false
+          +true
+        MESSAGE
+        _(subject.attributes['rspec.example.failure_message']).must_equal message
+        _(subject.status.description).must_equal "#{message}\n\nmy-error-message"
+        _(subject.events[0].attributes['exception.message']).must_equal message
+        _(subject.events[1].attributes['exception.message']).must_equal 'my-error-message'
+      end
+
+      it 'records the exception' do
+        _(subject.events.first.attributes['exception.type']).must_equal 'RSpec::Expectations::ExpectationNotMetError'
+      end
+    end
+
+    describe 'that fail twice' do
+      subject do
+        run_example do
+          example('example one') { expect(true).to eql false }
+          after { expect(true).to eql false }
+        end
+      end
+
+      it 'records when the example fails' do
+        _(subject.attributes['rspec.example.result']).must_equal 'failed'
+      end
+
+      it 'records the span status as error' do
+        _(subject.status.ok?).must_equal false
+        _(subject.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      end
+
+      it 'records the failure message' do
+        message = <<~MESSAGE
+
+          expected: false
+               got: true
+
+          (compared using eql?)
+
+          Diff:
+          @@ -1 +1 @@
+          -false
+          +true
+        MESSAGE
+        expected_failure_message = "#{message}\n\n#{message}"
+        _(subject.attributes['rspec.example.failure_message']).must_equal expected_failure_message
+        _(subject.events[0].attributes['exception.message']).must_equal message
+        _(subject.events[1].attributes['exception.message']).must_equal message
+        _(subject.status.description).must_equal expected_failure_message
+      end
+
+      it 'records the exception' do
+        _(subject.events.first.attributes['exception.type']).must_equal 'RSpec::Expectations::ExpectationNotMetError'
+      end
+    end
+
     describe 'that error' do
       subject do
         run_example do
@@ -213,9 +296,34 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
         _(subject.events[0].attributes['exception.type']).must_equal 'RuntimeError'
         _(subject.events[0].attributes['exception.message']).must_equal 'my-error-message'
       end
+    end
 
-      it 'records the exception' do
-        _(subject.events.first.attributes['exception.message']).must_equal 'my-error-message'
+    describe 'that error twice' do
+      subject do
+        run_example do
+          example('example one') { raise 'my-error-message' }
+          after { raise 'another-error' }
+        end
+      end
+
+      it 'records when the example fails' do
+        _(subject.attributes['rspec.example.result']).must_equal 'failed'
+      end
+
+      it 'records the span status as error' do
+        _(subject.status.ok?).must_equal false
+        _(subject.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+        _(subject.status.description).must_equal "my-error-message\n\nanother-error"
+      end
+
+      it 'records the first exception' do
+        _(subject.events[0].attributes['exception.type']).must_equal 'RuntimeError'
+        _(subject.events[0].attributes['exception.message']).must_equal 'my-error-message'
+      end
+
+      it 'records the second exception' do
+        _(subject.events[1].attributes['exception.type']).must_equal 'RuntimeError'
+        _(subject.events[1].attributes['exception.message']).must_equal 'another-error'
       end
     end
   end

@@ -80,9 +80,18 @@ module OpenTelemetry
           return if exception.nil?
 
           exception_message = strip_console_codes(exception.message)
-          span.set_attribute('rspec.example.failure_message', exception_message) if exception.is_a? ::RSpec::Expectations::ExpectationNotMetError
-          span.record_exception(exception, attributes: { 'exception.message' => exception_message })
           span.status = OpenTelemetry::Trace::Status.error(exception_message)
+
+          span.set_attribute('rspec.example.failure_message', exception_message) if exception.is_a? ::RSpec::Expectations::ExpectationNotMetError
+
+          if exception.is_a? ::RSpec::Core::MultipleExceptionError
+            exception.all_exceptions.each do |error|
+              record_stripped_exception(span, error)
+            end
+            span.set_attribute('rspec.example.failure_message', multiple_failure_message(exception)) if exception.failures.any?
+          else
+            span.record_exception(exception, attributes: { 'exception.message' => exception_message })
+          end
         end
 
         def track_span(span)
@@ -102,8 +111,17 @@ module OpenTelemetry
           OpenTelemetry::Context.detach(token)
         end
 
+        def record_stripped_exception(span, error)
+          error_message = strip_console_codes(error.message)
+          span.record_exception(error, attributes: { 'exception.message' => error_message })
+        end
+
         def strip_console_codes(string)
           string.gsub(/\e\[([;\d]+)?m/, '')
+        end
+
+        def multiple_failure_message(exception)
+          exception.failures.map(&:message).map(&method(:strip_console_codes)).join("\n\n")
         end
       end
     end
