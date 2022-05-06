@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module HttpClient
-      VERSION = '0.19.4'
+      VERSION = '0.19.5'
     end
   end
 end
