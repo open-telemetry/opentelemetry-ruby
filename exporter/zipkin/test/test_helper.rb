@@ -12,15 +12,15 @@ require 'opentelemetry/exporter/zipkin'
 require 'minitest/autorun'
 require 'webmock/minitest'
 
-def create_span_data(status: nil, kind: nil, attributes: nil, events: nil, links: nil, instrumentation_library: OpenTelemetry::SDK::InstrumentationLibrary.new('vendorlib', '0.0.0'), trace_id: OpenTelemetry::Trace.generate_trace_id, trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, tracestate: nil)
+def create_span_data(status: nil, kind: nil, attributes: nil, total_recorded_attributes: 0, events: nil, total_recorded_events: 0, links: nil, total_recorded_links: 0, instrumentation_library: OpenTelemetry::SDK::InstrumentationLibrary.new('vendorlib', '0.0.0'), trace_id: OpenTelemetry::Trace.generate_trace_id, trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, tracestate: nil)
   OpenTelemetry::SDK::Trace::SpanData.new(
     '',
     kind,
     status,
     OpenTelemetry::Trace::INVALID_SPAN_ID,
-    0,
-    0,
-    0,
+    total_recorded_attributes,
+    total_recorded_events,
+    total_recorded_links,
     OpenTelemetry::TestHelpers.exportable_timestamp,
     OpenTelemetry::TestHelpers.exportable_timestamp,
     attributes,
