@@ -33,7 +33,7 @@ Then, configure the SDK to use the OTLP exporter as a span processor, and use th
 
 ```ruby
 require 'opentelemetry/sdk'
-require 'opentelemetry/exporter/otlp'
+require 'opentelemetry/exporter/otlp/http'
 
 # The OTLP exporter is the default, so no configuration is needed.
 # However, it could be manually selected via an environment variable if required:
