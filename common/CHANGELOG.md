@@ -4,7 +4,7 @@
 
 ### v0.19.4 / 2022-05-08
 
-* (No significant changes)
+* FIXED: Attribute length limit. only truncate strings and strings in arrays
 
 ### v0.19.3 / 2021-12-01
 
