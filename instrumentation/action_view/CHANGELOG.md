@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-action_view
 
+### v0.2.1 / 2022-05-02
+
+* FIXED: RubyGems Fallback 
+
 ### v0.2.0 / 2021-12-01
 
 * ADDED: Move activesupport notification subsciber out of action_view gem 

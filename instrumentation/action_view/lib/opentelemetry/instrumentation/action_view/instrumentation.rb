@@ -19,13 +19,17 @@ module OpenTelemetry
         end
 
         compatible do
-          Gem.loaded_specs['actionview'].version >= MINIMUM_VERSION
+          gem_version >= MINIMUM_VERSION
         end
 
         option :disallowed_notification_payload_keys, default: [],  validate: :array
         option :notification_payload_transform,       default: nil, validate: :callable
 
         private
+
+        def gem_version
+          ::ActionView.version
+        end
 
         def require_dependencies
           require_relative 'railtie'

@@ -32,7 +32,7 @@ module OpenTelemetry
     #
     #         # if the target library is present, is it compatible?
     #         compatible do
-    #           Gem.loaded_specs['sinatra'].version > MIN_VERSION
+    #           Gem::Version.new(Sinatra::VERSION)) > MIN_VERSION
     #         end
     #       end
     #     end

@@ -36,7 +36,7 @@ module OpenTelemetry
         end
 
         def gem_version
-          Gem.loaded_specs['activerecord'].version
+          ::ActiveRecord.version
         end
 
         def patch

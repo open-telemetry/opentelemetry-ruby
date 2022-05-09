@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-que
 
+### v0.3.0 / 2022-05-02
+
+* ADDED: Validate Using Enums 
+* FIXED: RubyGems Fallback 
+
 ### v0.2.0 / 2021-12-01
 
 * ADDED: Instrument Que poller 

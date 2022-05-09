@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-base
 
+### v0.20.0 / 2022-05-02
+
+* ADDED: Validate Using Enums 
+* FIXED: RubyGems Fallback 
+
 ### v0.19.0 / 2021-12-01
 
 * ADDED: Add default options config helper + env var config option support 
