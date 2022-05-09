@@ -64,7 +64,7 @@ module OpenTelemetry
           def extract_links(sqs_message)
             extracted_context = OpenTelemetry.propagation.extract(sqs_message.message_attributes, context: Context::ROOT, getter: MessageAttributeGetter)
             span_context = OpenTelemetry::Trace.current_span(extracted_context).context
-  
+
             span_context.valid? ? [OpenTelemetry::Trace::Link.new(span_context)] : []
           end
         end
