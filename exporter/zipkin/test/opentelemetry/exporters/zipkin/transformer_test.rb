@@ -69,7 +69,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
       'otel.library.name' => 'vendorlib',
       'otel.dropped_attributes_count' => '1',
       'otel.dropped_events_count' => '1',
-      'otel.dropped_links_count' => '1',
+      'otel.dropped_links_count' => '1'
     )
   end
 

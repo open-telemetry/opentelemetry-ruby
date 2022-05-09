@@ -80,7 +80,7 @@ describe OpenTelemetry::Exporter::Jaeger::Encoder do
     expected_tags = [
       { key: 'otel.dropped_attributes_count', value: 1, type: OpenTelemetry::Exporter::Jaeger::Thrift::TagType::LONG },
       { key: 'otel.dropped_events_count', value: 1, type: OpenTelemetry::Exporter::Jaeger::Thrift::TagType::LONG },
-      { key: 'otel.dropped_links_count', value: 1, type: OpenTelemetry::Exporter::Jaeger::Thrift::TagType::LONG },
+      { key: 'otel.dropped_links_count', value: 1, type: OpenTelemetry::Exporter::Jaeger::Thrift::TagType::LONG }
     ]
     expected_tags.each_with_index do |expected_tag, idx|
       tag = encoded_span.tags[idx]
