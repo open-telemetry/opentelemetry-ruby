@@ -1,6 +1,6 @@
 # opentelemetry-exporter-otlp-http
 
-The `opentelemetry-exporter-otlp-http` gem provides an [OTLP](https://github.com/open-telemetry/opentelemetry-proto) over http exporter for OpenTelemetry for Ruby. Using `opentelemetry-exporter-otlp-http`, an application can configure OpenTelemetry to export collected tracing data to [the OpenTelemetry Collector][opentelemetry-collector-home].
+The `opentelemetry-exporter-otlp-http` gem provides an [OTLP](https://github.com/open-telemetry/opentelemetry-proto) over HTTP exporter for OpenTelemetry for Ruby. Using `opentelemetry-exporter-otlp-http`, an application can configure OpenTelemetry to export collected tracing data to [the OpenTelemetry Collector][opentelemetry-collector-home].
 
 ## What is OpenTelemetry?
 
