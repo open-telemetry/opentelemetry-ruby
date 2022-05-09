@@ -13,7 +13,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
   let(:tracer_provider) { OpenTelemetry::SDK::Trace::TracerProvider.new }
   let(:tracer) do
     OpenTelemetry.tracer_provider = tracer_provider
-    OpenTelemetry.tracer_provider.tracer('component-tracer', '1.0.0')
+    OpenTelemetry.tracer_provider.tracer('component-tracer', '1.0.0', 'https://http.cat/404')
   end
   let(:record_sampler) do
     Samplers::ConstantSampler.new(decision: Decision::RECORD_ONLY, description: 'RecordSampler')
@@ -241,6 +241,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       span = tracer.start_span('span', with_parent: context)
       _(span.instrumentation_library.name).must_equal('component-tracer')
       _(span.instrumentation_library.version).must_equal('1.0.0')
+      _(span.instrumentation_library.schema_url).must_equal('https://http.cat/404')
     end
 
     it 'creates a span with all supplied parameters' do

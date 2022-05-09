@@ -292,6 +292,7 @@ module OpenTelemetry
                     resource: Opentelemetry::Proto::Resource::V1::Resource.new(
                       attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
                     ),
+                    schema_url: resource.schema_url,
                     instrumentation_library_spans: span_datas
                       .group_by(&:instrumentation_library)
                       .map do |il, sds|
@@ -300,7 +301,8 @@ module OpenTelemetry
                             name: il.name,
                             version: il.version
                           ),
-                          spans: sds.map { |sd| as_otlp_span(sd) }
+                          spans: sds.map { |sd| as_otlp_span(sd) },
+                          schema_url: il.schema_url
                         )
                       end
                   )

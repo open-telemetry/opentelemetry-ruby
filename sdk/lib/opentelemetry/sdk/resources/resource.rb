@@ -15,11 +15,14 @@ module OpenTelemetry
 
           # Returns a newly created {Resource} with the specified attributes
           #
-          # @param [Hash{String => String, Numeric, Boolean} attributes Hash of key-value pairs to be used
+          # @param [Hash{String => String, Numeric, Boolean}] attributes Hash of key-value pairs to be used
           #   as attributes for this resource
+          # @param [String] Specifies the Schema URL that should be recorded in the emitted resource.
           # @raise [ArgumentError] If attribute keys and values are not strings
           # @return [Resource]
-          def create(attributes = {})
+          def create(attributes = {}, schema_url = '')
+            raise ArgumentError, 'Schema url must be a string' unless schema_url.is_a?(String)
+
             frozen_attributes = attributes.each_with_object({}) do |(k, v), memo|
               raise ArgumentError, 'attribute keys must be strings' unless k.is_a?(String)
               raise ArgumentError, 'attribute values must be (array of) strings, integers, floats, or booleans' unless Internal.valid_value?(v)
@@ -27,7 +30,7 @@ module OpenTelemetry
               memo[-k] = v.freeze
             end.freeze
 
-            new(frozen_attributes)
+            new(frozen_attributes, schema_url)
           end
 
           def default
@@ -81,8 +84,9 @@ module OpenTelemetry
         # @param [Hash<String, String>] frozen_attributes Frozen-hash of frozen-string
         #  key-value pairs to be used as attributes for this resource
         # @return [Resource]
-        def initialize(frozen_attributes)
+        def initialize(frozen_attributes, schema_url)
           @attributes = frozen_attributes
+          @schema_url = schema_url
         end
 
         # Returns an enumerator for attributes of this {Resource}
@@ -93,8 +97,9 @@ module OpenTelemetry
         end
 
         # Returns a new, merged {Resource} by merging the current {Resource} with
-        # the other {Resource}. In case of a collision, the current {Resource}
-        # takes precedence
+        # the other {Resource}. In case of an attributes collision, the other {Resource}
+        # takes precedence. If two incompatible schema urls are given, then the schema
+        # URL of the resulting resource will be unset.
         #
         # @param [Resource] other The other resource to merge
         # @return [Resource] A new resource formed by merging the current resource
@@ -102,11 +107,24 @@ module OpenTelemetry
         def merge(other)
           return self unless other.is_a?(Resource)
 
-          self.class.send(:new, attributes.merge(other.attributes).freeze)
+          # This is slightly verbose, but tries to follow the definition in the spec closely.
+          new_schema_url = if schema_url == ''
+            other.schema_url
+          elsif other.schema_url == '' || schema_url == other.schema_url
+            schema_url
+          elsif schema_url != other.schema_url
+            # According to the spec: The resulting resource is undefined, and its contents are implementation-specific.
+            # We choose to simply un-set the resource URL and log a warning about it, and allow the attributes to merge.
+            OpenTelemetry.logger.warn("Merging resources with schema version '#{schema_url}' and '#{other.schema_url}' is undefined.")
+            ''
+          end
+
+          self.class.send(:new, attributes.merge(other.attributes).freeze, new_schema_url)
         end
 
-        protected
+        attr_reader :schema_url
 
+        protected
         attr_reader :attributes
       end
     end

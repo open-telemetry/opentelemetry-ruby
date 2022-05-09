@@ -70,8 +70,9 @@ describe OpenTelemetry::SDK::Configurator do
     let(:expected_resource_attributes) { default_resource_attributes.merge('test_key' => 'test_value') }
 
     it 'merges the resource' do
-      configurator.resource = OpenTelemetry::SDK::Resources::Resource.create('test_key' => 'test_value')
+      configurator.resource = OpenTelemetry::SDK::Resources::Resource.create({'test_key' => 'test_value'}, 'https://http.cat/404')
       _(configurator_resource_attributes).must_equal(expected_resource_attributes)
+      _(configurator_resource.schema_url).must_equal('https://http.cat/404')
     end
 
     describe 'when there is a resource key collision' do

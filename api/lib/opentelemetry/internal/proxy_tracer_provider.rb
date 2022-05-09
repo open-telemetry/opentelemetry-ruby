@@ -13,7 +13,7 @@ module OpenTelemetry
     # It delegates to a "real" TracerProvider after the global tracer provider is registered.
     # It returns {ProxyTracer} instances until the delegate is installed.
     class ProxyTracerProvider < Trace::TracerProvider
-      Key = Struct.new(:name, :version)
+      Key = Struct.new(:name, :version, :schema_url)
       private_constant(:Key)
 
       # Returns a new {ProxyTracerProvider} instance.
@@ -37,7 +37,7 @@ module OpenTelemetry
 
         @mutex.synchronize do
           @delegate = provider
-          @registry.each { |key, tracer| tracer.delegate = provider.tracer(key.name, key.version) }
+          @registry.each { |key, tracer| tracer.delegate = provider.tracer(key.name, key.version, key.schema_url) }
         end
       end
 
@@ -45,13 +45,14 @@ module OpenTelemetry
       #
       # @param [optional String] name Instrumentation package name
       # @param [optional String] version Instrumentation package version
+      # @param [optional String] schema_url Schema URL to be recorded with traces
       #
       # @return [Tracer]
-      def tracer(name = nil, version = nil)
+      def tracer(name = nil, version = nil, schema_url = nil)
         @mutex.synchronize do
-          return @delegate.tracer(name, version) unless @delegate.nil?
+          return @delegate.tracer(name, version, schema_url) unless @delegate.nil?
 
-          @registry[Key.new(name, version)] ||= ProxyTracer.new
+          @registry[Key.new(name, version, schema_url)] ||= ProxyTracer.new
         end
       end
     end

@@ -20,6 +20,13 @@ describe OpenTelemetry::SDK::Resources::Resource do
       expected_attributes = { 'k1' => 'v1', 'k2' => 'v2' }
       resource = Resource.create(expected_attributes)
       _(resource.attribute_enumerator.to_h).must_equal(expected_attributes)
+      _(resource.schema_url).must_equal('')
+    end
+
+    it 'can be initialized with a schema_url' do
+      resource = Resource.create({}, 'https://http.cat/404')
+      _(resource.attribute_enumerator.to_h).must_equal({})
+      _(resource.schema_url).must_equal('https://http.cat/404')
     end
 
     it 'can be empty' do
@@ -29,6 +36,10 @@ describe OpenTelemetry::SDK::Resources::Resource do
 
     it 'enforces keys are strings' do
       _(proc { Resource.create(k1: 'v1') }).must_raise(ArgumentError)
+    end
+
+    it 'enforces that schema_url is a string' do
+      _(proc { Resource.create({}, 12345) }).must_raise(ArgumentError)
     end
 
     it 'enforces values are strings, ints, floats, or booleans' do
@@ -162,6 +173,59 @@ describe OpenTelemetry::SDK::Resources::Resource do
       _(res3.attribute_enumerator.to_h).must_equal('k1' => 'v1',
                                                    'k2' => '2v2',
                                                    'k3' => '2v3')
+    end
+
+    it 'uses the new resource\'s schema url when the old resource\'s schema url is empty' do
+      res1 = Resource.create({})
+      res2 = Resource.create({}, 'https://http.cat/404')
+      res3 = res1.merge(res2)
+      _(res3.schema_url).must_equal('https://http.cat/404')
+    end
+
+    it 'uses the old resource\'s schema url when the new resource\'s schema url is empty' do
+      res1 = Resource.create({}, 'https://http.cat/404')
+      res2 = Resource.create({})
+      res3 = res1.merge(res2)
+      _(res3.schema_url).must_equal('https://http.cat/404')
+    end
+
+    it 'keeps the same schema_url if both are the same' do
+      res1 = Resource.create({})
+      res2 = Resource.create({})
+      res3 = res1.merge(res2)
+      _(res3.schema_url).must_equal('')
+
+      res1 = Resource.create({}, 'https://http.cat/404')
+      res2 = Resource.create({}, 'https://http.cat/404')
+      res3 = res1.merge(res2)
+      _(res3.schema_url).must_equal('https://http.cat/404')
+    end
+
+    describe 'when schema urls are in conflict' do
+      before do
+        @default_logger = OpenTelemetry.logger
+      end
+
+      after do
+        OpenTelemetry.logger = @default_logger
+      end
+
+      it 'logs a warning and discards the schema url' do
+        logger = Struct.new(:messages) do
+          def warn(message)
+            messages << message
+          end
+        end
+        OpenTelemetry.logger = logger.new([])
+
+        res1 = Resource.create({}, 'https://http.cat/200')
+        res2 = Resource.create({}, 'https://http.cat/404')
+        res3 = res1.merge(res2)
+        _(res3.schema_url).must_equal('')
+        _(OpenTelemetry.logger.messages).must_equal([
+          "Merging resources with schema version 'https://http.cat/200' and 'https://http.cat/404' is undefined."
+        ])
+      end
     end
   end
 end

@@ -8,6 +8,7 @@ module OpenTelemetry
   module SDK
     # InstrumentationLibrary is a struct containing library information for export.
     InstrumentationLibrary = Struct.new(:name,
-                                        :version)
+                                        :version,
+                                        :schema_url)
   end
 end

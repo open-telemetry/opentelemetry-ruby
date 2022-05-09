@@ -467,6 +467,35 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(etsr.resource_spans.length).must_equal(2)
     end
 
+    it 'can encode resource schema_urls' do
+      etsr = nil
+      stub_post = stub_request(:post, 'http://localhost:4318/v1/traces').to_return do |request|
+        proto = Zlib.gunzip(request.body)
+        etsr = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(proto)
+        { status: 200 }
+      end
+
+      span_data1 = create_span_data(
+        resource: OpenTelemetry::SDK::Resources::Resource.create({'k1' => 'v1'}, 'https://http.cat/200'),
+        instrumentation_library: OpenTelemetry::SDK::InstrumentationLibrary.new('', 'v0.0.1', 'https://http.cat/429')
+      )
+      span_data2 = create_span_data(
+        resource: OpenTelemetry::SDK::Resources::Resource.create({'k2' => 'v2'}, 'https://http.cat/404'),
+        instrumentation_library: OpenTelemetry::SDK::InstrumentationLibrary.new('', 'v0.0.1', 'https://http.cat/451')
+      )
+      result = exporter.export([span_data1, span_data2])
+
+      _(result).must_equal(SUCCESS)
+      assert_requested(stub_post)
+
+      _(etsr.resource_spans.length).must_equal(2)
+      _(etsr.resource_spans[0].schema_url).must_equal('https://http.cat/200')
+      _(etsr.resource_spans[0].instrumentation_library_spans[0].schema_url).must_equal('https://http.cat/429')
+
+      _(etsr.resource_spans[1].schema_url).must_equal('https://http.cat/404')
+      _(etsr.resource_spans[1].instrumentation_library_spans[0].schema_url).must_equal('https://http.cat/451')
+    end
+
     it 'translates all the things' do
       stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 200)
       processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter)
