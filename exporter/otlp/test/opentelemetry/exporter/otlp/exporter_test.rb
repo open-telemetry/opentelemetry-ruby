@@ -476,11 +476,11 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       end
 
       span_data1 = create_span_data(
-        resource: OpenTelemetry::SDK::Resources::Resource.create({'k1' => 'v1'}, 'https://http.cat/200'),
+        resource: OpenTelemetry::SDK::Resources::Resource.create({ 'k1' => 'v1' }, 'https://http.cat/200'),
         instrumentation_library: OpenTelemetry::SDK::InstrumentationLibrary.new('', 'v0.0.1', 'https://http.cat/429')
       )
       span_data2 = create_span_data(
-        resource: OpenTelemetry::SDK::Resources::Resource.create({'k2' => 'v2'}, 'https://http.cat/404'),
+        resource: OpenTelemetry::SDK::Resources::Resource.create({ 'k2' => 'v2' }, 'https://http.cat/404'),
         instrumentation_library: OpenTelemetry::SDK::InstrumentationLibrary.new('', 'v0.0.1', 'https://http.cat/451')
       )
       result = exporter.export([span_data1, span_data2])

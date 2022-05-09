@@ -39,7 +39,7 @@ describe OpenTelemetry::SDK::Resources::Resource do
     end
 
     it 'enforces that schema_url is a string' do
-      _(proc { Resource.create({}, 12345) }).must_raise(ArgumentError)
+      _(proc { Resource.create({}, :test) }).must_raise(ArgumentError)
     end
 
     it 'enforces values are strings, ints, floats, or booleans' do
@@ -222,9 +222,7 @@ describe OpenTelemetry::SDK::Resources::Resource do
         res2 = Resource.create({}, 'https://http.cat/404')
         res3 = res1.merge(res2)
         _(res3.schema_url).must_equal('')
-        _(OpenTelemetry.logger.messages).must_equal([
-          "Merging resources with schema version 'https://http.cat/200' and 'https://http.cat/404' is undefined."
-        ])
+        _(OpenTelemetry.logger.messages.first).must_equal("Merging resources with schema version 'https://http.cat/200' and 'https://http.cat/404' is undefined.")
       end
     end
   end

@@ -104,20 +104,23 @@ module OpenTelemetry
         # @param [Resource] other The other resource to merge
         # @return [Resource] A new resource formed by merging the current resource
         #   with other
-        def merge(other)
+        def merge(other) # rubocop:disable Metrics/AbcSize
           return self unless other.is_a?(Resource)
 
           # This is slightly verbose, but tries to follow the definition in the spec closely.
           new_schema_url = if schema_url == ''
-            other.schema_url
-          elsif other.schema_url == '' || schema_url == other.schema_url
-            schema_url
-          elsif schema_url != other.schema_url
-            # According to the spec: The resulting resource is undefined, and its contents are implementation-specific.
-            # We choose to simply un-set the resource URL and log a warning about it, and allow the attributes to merge.
-            OpenTelemetry.logger.warn("Merging resources with schema version '#{schema_url}' and '#{other.schema_url}' is undefined.")
-            ''
-          end
+                             other.schema_url
+                           elsif other.schema_url == '' || schema_url == other.schema_url
+                             schema_url
+                           elsif schema_url != other.schema_url
+                             # According to the spec: The resulting resource is undefined, and its contents are implementation-specific.
+                             # We choose to simply un-set the resource URL and log a warning about it, and allow the attributes to merge.
+                             OpenTelemetry.logger.warn(
+                               "Merging resources with schema version '#{schema_url}' and '#{other.schema_url}' is undefined."
+                             )
+
+                             ''
+                           end
 
           self.class.send(:new, attributes.merge(other.attributes).freeze, new_schema_url)
         end
@@ -125,6 +128,7 @@ module OpenTelemetry
         attr_reader :schema_url
 
         protected
+
         attr_reader :attributes
       end
     end
