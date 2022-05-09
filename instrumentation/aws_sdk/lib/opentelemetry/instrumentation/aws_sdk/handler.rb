@@ -47,7 +47,7 @@ module OpenTelemetry
                 span.status = Trace::Status.error(err.to_s)
               end
 
-              MessagingHelper.create_sqs_processing_spans(context, tracer, response.messages) if client_method == SQS_RECEIVE_MESSAGE && response.respond_to?(:messages)
+              MessagingHelper.create_sqs_processing_spans(context, tracer, response.messages) if instrumentation_config[:extract_messaging_context] && client_method == SQS_RECEIVE_MESSAGE && response.respond_to?(:messages)
             end
           end
         end
