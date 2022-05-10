@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-net_http
 
+### v0.19.5 / 2022-05-05
+
+* (No significant changes)
+
 ### v0.19.4 / 2022-02-02
 
 * FIXED: Clientcontext attrs overwrite in net::http 
