@@ -2,6 +2,10 @@
 
 * FIXED: Check that a variable is a string before truncating
 
+### v0.19.4 / 2022-05-08
+
+* FIXED: Attribute length limit. only truncate strings and strings in arrays
+
 ### v0.19.3 / 2021-12-01
 
 * FIXED: Change net attribute names to match the semantic conventions spec for http 
