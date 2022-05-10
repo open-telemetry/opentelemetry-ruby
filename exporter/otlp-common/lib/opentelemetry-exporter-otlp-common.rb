@@ -4,8 +4,4 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-module OpenTelemetry
-  module Common
-    VERSION = '0.19.4'
-  end
-end
+require 'opentelemetry/exporter/otlp/common'
