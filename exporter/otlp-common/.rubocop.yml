@@ -1,0 +1,21 @@
+AllCops:
+  TargetRubyVersion: "2.6.0"
+  Exclude:
+    - "lib/opentelemetry/proto/**/*"
+    - "vendor/**/*"
+
+Lint/UnusedMethodArgument:
+  Enabled: false
+Metrics/AbcSize:
+  Max: 18
+Metrics/LineLength:
+  Enabled: false
+Metrics/MethodLength:
+  Max: 21
+Metrics/ParameterLists:
+  Enabled: false
+Naming/FileName:
+  Exclude:
+    - "lib/opentelemetry-exporter-otlp-common.rb"
+Style/ModuleFunction:
+  Enabled: false
