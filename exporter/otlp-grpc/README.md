@@ -16,7 +16,7 @@ Generally, *libraries* that produce telemetry data should avoid depending direct
 
 ### Supported protocol version
 
-This gem supports the [v0.4.0 release](https://github.com/open-telemetry/opentelemetry-proto/releases/tag/v0.4.0) of OTLP.
+This gem supports the [v0.11.0 release](https://github.com/open-telemetry/opentelemetry-proto/releases/tag/v0.11.0) of OTLP.
 
 ## How do I get started?
 
@@ -29,21 +29,18 @@ gem install opentelemetry-exporter-otlp-grpc
 
 Or, if you use [bundler][bundler-home], include `opentelemetry-sdk` in your `Gemfile`.
 
-Then, configure the SDK to use the OTLP exporter as a span processor, and use the OpenTelemetry interfaces to produces traces and other information. Following is a basic example.
+Then, configure the SDK to use the OTLP GRPC exporter as a span processor, and use the OpenTelemetry interfaces to produces traces and other information. Following is a basic example.
 
 ```ruby
 require 'opentelemetry/sdk'
-require 'opentelemetry/exporter/otlp'
+require 'opentelemetry/exporter/otlp/grpc'
 
-# The OTLP exporter is the default, so no configuration is needed.
-# However, it could be manually selected via an environment variable if required:
-#
-# ENV['OTEL_TRACES_EXPORTER'] = 'otlp'
-#
-# You may also configure various settings via environment variables:
-# ENV['OTEL_EXPORTER_OTLP_COMPRESSION'] = 'gzip'
+exporter = OpenTelemetry::Exporter::OTLP::GRPC::Exporter.new
+span_processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter)
 
-OpenTelemetry::SDK.configure
+OpenTelemetry::SDK.configure do |c|
+  c.add_span_processor(span_processor)
+end
 
 # To start a trace you need to get a Tracer from the TracerProvider
 tracer = OpenTelemetry.tracer_provider.tracer('my_app_or_gem', '0.1.0')
@@ -71,7 +68,6 @@ The collector exporter can be configured explicitly in code, or via environment 
 | Parameter           | Environment variable                         | Default                             |
 | ------------------- | -------------------------------------------- | ----------------------------------- |
 | `endpoint:`         | `OTEL_EXPORTER_OTLP_ENDPOINT`                | `"http://localhost:4318/v1/traces"` |
-
 
 ## How can I get involved?
 
