@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'active_support/core_ext/kernel/reporting'
 require 'delayed_job'
 require 'delayed_job_active_record'
 
