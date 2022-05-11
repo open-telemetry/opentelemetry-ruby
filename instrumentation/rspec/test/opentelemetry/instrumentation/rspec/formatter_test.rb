@@ -60,8 +60,8 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
       _(spans.first.name).must_equal 'example one'
       _(spans.first.attributes['rspec.example.result']).must_equal 'passed'
       _(spans.first.start_timestamp).wont_equal 0
-      _(spans.first.start_timestamp / 1_000_000_000).must_be_close_to(current_time.to_i)
-      _(spans.first.end_timestamp / 1_000_000_000).must_be_close_to(current_time.to_i)
+      _(spans.first.start_timestamp / 1_000_000_000).must_be_close_to(current_time.to_i, 10)
+      _(spans.first.end_timestamp / 1_000_000_000).must_be_close_to(current_time.to_i, 10)
     end
   end
 
