@@ -146,7 +146,7 @@ describe OpenTelemetry::Instrumentation::Que do
         end
         first = 'first-argument'
         second = 'second-argument'
-        job_class.enqueue(first, second, job_class: 'LastHashParameter')
+        job_class.enqueue(first, second, job_options: { job_class: 'LastHashParameter' })
 
         model = last_record_in_database
         _(model.data['tags'].size).must_equal(1)
@@ -159,7 +159,7 @@ describe OpenTelemetry::Instrumentation::Que do
         end
         first = 'first-argument'
         second = 'second-argument'
-        job_class.enqueue(first, second, job_class: 'LastHashParameterWithTags', tags: ['high-priority'])
+        job_class.enqueue(first, second, job_options: { job_class: 'LastHashParameterWithTags', tags: ['high-priority'] })
 
         model = last_record_in_database
         _(model.data['tags'].size).must_equal(2)
@@ -211,7 +211,7 @@ describe OpenTelemetry::Instrumentation::Que do
         end
         first = 'first-argument'
         second = 'second-argument'
-        job_class.enqueue(first, second, job_class: 'PropagationStyleSetToNone')
+        job_class.enqueue(first, second, job_options: { job_class: 'PropagationStyleSetToNone' })
 
         model = last_record_in_database
         _(model.data['tags']).must_be_nil

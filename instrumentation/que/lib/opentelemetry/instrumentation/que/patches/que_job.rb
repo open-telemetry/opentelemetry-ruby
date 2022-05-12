@@ -18,7 +18,7 @@ module OpenTelemetry
 
           # Module to prepend to Que singleton class
           module ClassMethods
-            def enqueue(*args, tags: nil, **arg_opts)
+            def enqueue(*args, job_options: {}, **arg_opts)
               tracer = Que::Instrumentation.instance.tracer
               otel_config = Que::Instrumentation.instance.config
 
@@ -37,12 +37,14 @@ module OpenTelemetry
                 # The second option (which we are using here) is to use tags.
                 # They also are not meant for tracing information but they are
                 # much safer to use than modifying the payload.
+                tags = job_options[:tags]
                 if otel_config[:propagation_style] != :none
                   tags ||= []
                   OpenTelemetry.propagation.inject(tags, setter: TagSetter)
                 end
 
-                job = super(*args, tags: tags, **arg_opts)
+                job_options = job_options.merge(tags: tags)
+                job = super(*args, job_options: job_options, **arg_opts)
 
                 span.name = "#{job.que_attrs[:job_class]} send"
                 span.add_attributes(QueJob.job_attributes(job))

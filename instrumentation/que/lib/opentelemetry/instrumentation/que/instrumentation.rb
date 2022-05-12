@@ -10,7 +10,7 @@ module OpenTelemetry
       # The Instrumentation class contains logic to detect and install the Que
       # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
-        MINIMUM_VERSION = Gem::Version.new('1.0.0.beta4')
+        MINIMUM_VERSION = Gem::Version.new('1.2.0')
 
         install do |_|
           require_dependencies

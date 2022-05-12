@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'opentelemetry-sdk', '~> 1.0'
   spec.add_development_dependency 'opentelemetry-test-helpers'
   spec.add_development_dependency 'pg', '~> 1.1'
-  spec.add_development_dependency 'que', '~> 1.0.0.beta4'
+  spec.add_development_dependency 'que', '~> 1.2.0'
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rubocop', '~> 0.73.0'
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
