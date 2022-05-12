@@ -50,7 +50,7 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
     end
 
     it 'returns a timeout response when it times out' do
-      mock_metric_reader = Minitest::Mock.new
+      mock_metric_reader = new_mock_reader
       mock_metric_reader.expect(:nothing_gets_called_because_it_times_out_first, nil)
       OpenTelemetry.meter_provider.add_metric_reader(mock_metric_reader)
 
@@ -58,8 +58,8 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
     end
 
     it 'invokes shutdown on all registered Metric Readers' do
-      mock_metric_reader1 = Minitest::Mock.new
-      mock_metric_reader2 = Minitest::Mock.new
+      mock_metric_reader1 = new_mock_reader
+      mock_metric_reader2 = new_mock_reader
       mock_metric_reader1.expect(:shutdown, nil, [{ timeout: nil }])
       mock_metric_reader2.expect(:shutdown, nil, [{ timeout: nil }])
 
@@ -74,7 +74,7 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
 
   describe '#force_flush' do
     it 'returns a timeout response when it times out' do
-      mock_metric_reader = Minitest::Mock.new
+      mock_metric_reader = new_mock_reader
       mock_metric_reader.expect(:nothing_gets_called_because_it_times_out_first, nil)
       OpenTelemetry.meter_provider.add_metric_reader(mock_metric_reader)
 
@@ -82,8 +82,8 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
     end
 
     it 'invokes force_flush on all registered Metric Readers' do
-      mock_metric_reader1 = Minitest::Mock.new
-      mock_metric_reader2 = Minitest::Mock.new
+      mock_metric_reader1 = new_mock_reader
+      mock_metric_reader2 = new_mock_reader
       mock_metric_reader1.expect(:force_flush, nil, [{ timeout: nil }])
       mock_metric_reader2.expect(:force_flush, nil, [{ timeout: nil }])
       OpenTelemetry.meter_provider.add_metric_reader(mock_metric_reader1)
@@ -99,7 +99,7 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
   describe '#add_metric_reader' do
     it 'adds a metric reader' do
       metric_reader = OpenTelemetry::SDK::Metrics::Export::MetricReader.new(
-        OpenTelemetry::SDK::Metrics::Export::ConsoleExporter.new
+        OpenTelemetry::SDK::Metrics::Export::ConsoleMetricExporter.new
       )
 
       OpenTelemetry.meter_provider.add_metric_reader(metric_reader)
@@ -113,5 +113,11 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
       # TODO
       # OpenTelemetry.meter_provider.add_view
     end
+  end
+
+  private
+
+  def new_mock_reader
+    Minitest::Mock.new(OpenTelemetry::SDK::Metrics::Export::MetricReader.new(nil))
   end
 end

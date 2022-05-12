@@ -13,7 +13,9 @@ module OpenTelemetry
   end
 end
 
+require 'opentelemetry/sdk/metrics/configuration_patch'
+require 'opentelemetry/sdk/metrics/export'
 require 'opentelemetry/sdk/metrics/instrument'
 require 'opentelemetry/sdk/metrics/meter'
 require 'opentelemetry/sdk/metrics/meter_provider'
-require 'opentelemetry/sdk/metrics/configuration_patch'
+require 'opentelemetry/sdk/metrics/state'

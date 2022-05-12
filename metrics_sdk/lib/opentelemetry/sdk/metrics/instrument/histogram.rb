@@ -12,11 +12,12 @@ module OpenTelemetry
         class Histogram < OpenTelemetry::Metrics::Instrument::Histogram
           attr_reader :name, :unit, :description
 
-          def initialize(name, unit, description, meter)
+          def initialize(name, unit, description, metric_store_registry, instrumentation_library)
             @name = name
             @unit = unit
             @description = description
-            @meter = meter
+            @metric_store_registry = metric_store_registry
+            @instrumentation_library = instrumentation_library
           end
 
           # Updates the statistics with the specified amount.

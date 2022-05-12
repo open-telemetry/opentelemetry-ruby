@@ -14,13 +14,14 @@ module OpenTelemetry
         Key = Struct.new(:name, :version)
         private_constant(:Key)
 
+        attr_reader :metric_store_registry
+
         def initialize(resource: OpenTelemetry::SDK::Resources::Resource.create)
           @mutex = Mutex.new
           @registry = {}
           @stopped = false
-
           @metric_readers = []
-          @views = []
+          @metric_store_registry = State::MetricStoreRegistry.new(resource)
         end
 
         # Returns a {Meter} instance.
@@ -107,6 +108,7 @@ module OpenTelemetry
             if @stopped
               OpenTelemetry.logger.warn('calling MetricProvider#add_metric_reader after shutdown.')
             else
+              metric_reader.metric_store = @metric_store_registry.add_metric_store
               @metric_readers.push(metric_reader)
             end
 

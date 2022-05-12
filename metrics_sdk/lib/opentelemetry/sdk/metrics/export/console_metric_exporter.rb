@@ -8,7 +8,7 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Export
-        class ConsoleExporter
+        class ConsoleMetricExporter
           PREFERRED_TEMPORALITY = 'delta'
 
           def export(metrics)

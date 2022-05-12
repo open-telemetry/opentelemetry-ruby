@@ -12,11 +12,12 @@ module OpenTelemetry
         class UpDownCounter < OpenTelemetry::Metrics::Instrument::UpDownCounter
           attr_reader :name, :unit, :description
 
-          def initialize(name, unit, description, meter)
+          def initialize(name, unit, description, metric_store_registry, instrumentation_library)
             @name = name
             @unit = unit
             @description = description
-            @meter = meter
+            @metric_store_registry = metric_store_registry
+            @instrumentation_library = instrumentation_library
           end
 
           # Increment or decrement the UpDownCounter by a fixed amount.
