@@ -248,6 +248,7 @@ jobs:
           gem: "${{ matrix.gem }}"
           ruby: "jruby"
 
+  # These builds require sidecar services (postgres, redis, etc) in order to run their test suites.
   instrumentation_with_services:
     strategy:
       fail-fast: false
