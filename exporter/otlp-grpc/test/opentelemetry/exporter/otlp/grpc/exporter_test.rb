@@ -11,6 +11,7 @@ describe OpenTelemetry::Exporter::OTLP::GRPC::Exporter do
 
   describe '#exporter' do
     it 'integrates with collector' do
+      skip unless ENV['TRACING_INTEGRATION_TEST']
       span_data = create_span_data
       exporter = OpenTelemetry::Exporter::OTLP::GRPC::Exporter.new(endpoint: 'http://localhost:4317')
       result = exporter.export([span_data])
