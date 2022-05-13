@@ -38,4 +38,3 @@ module OpenTelemetry
     end
   end
 end
-

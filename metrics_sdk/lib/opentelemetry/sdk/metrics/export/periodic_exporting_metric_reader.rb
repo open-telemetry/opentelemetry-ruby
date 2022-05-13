@@ -9,7 +9,6 @@ module OpenTelemetry
     module Metrics
       module Export
         class PeriodicExportingMetricReader < MetricReader
-
           # exporter - the push exporter where the metrics are sent to.
           # exportIntervalMillis - the time interval in milliseconds between two consecutive exports. The default value is 60000 (milliseconds).
           # exportTimeoutMillis - how long the export can run before it is cancelled. The default value is 30000 (milliseconds).

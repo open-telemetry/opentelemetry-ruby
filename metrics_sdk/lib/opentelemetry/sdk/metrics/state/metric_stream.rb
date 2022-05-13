@@ -20,11 +20,11 @@ module OpenTelemetry
 
           def update(measurement)
             @mutex.synchronize do
-              if @data_points[measurement.attributes]
-                @data_points[measurement.attributes] = data_point + measurement.value
-              else
-                @data_points[measurement.attributes] = measurement.value
-              end
+              @data_points[measurement.attributes] = if @data_points[measurement.attributes]
+                                                       data_point + measurement.value
+                                                     else
+                                                       measurement.value
+                                                     end
             end
           end
 

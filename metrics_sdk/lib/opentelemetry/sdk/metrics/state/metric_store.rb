@@ -35,11 +35,7 @@ module OpenTelemetry
             # and takeup a lock on the aggregator
 
             metric_stream = @mutex.synchronize do
-              if @metric_streams[instrument.to_s]
-                @metric_streams[instrument.to_s]
-              else
-                @metric_streams[instrument.to_s] = MetricStream.new(instrument, resource)
-              end
+              @metric_streams[instrument.to_s] || @metric_streams[instrument.to_s] = MetricStream.new(instrument, resource)
             end
 
             metric_stream.update(measurement)

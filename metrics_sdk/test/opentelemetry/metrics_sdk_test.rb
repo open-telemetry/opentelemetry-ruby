@@ -12,8 +12,8 @@ describe OpenTelemetry::SDK do
 
     it 'upgrades the API MeterProvider, Meters, and Instruments' do
       meter_provider = OpenTelemetry.meter_provider
-      meter = meter_provider.meter("test")
-      instrument = meter.create_counter("a_counter")
+      meter = meter_provider.meter('test')
+      instrument = meter.create_counter('a_counter')
 
       # Calls before the SDK is configured return Proxy implementations
       _(meter_provider).must_be_instance_of OpenTelemetry::Internal::ProxyMeterProvider
@@ -30,7 +30,7 @@ describe OpenTelemetry::SDK do
       # Calls after the SDK is configured now return the SDK implementations directly
       _(OpenTelemetry.meter_provider).must_be_instance_of OpenTelemetry::SDK::Metrics::MeterProvider
       _(OpenTelemetry.meter_provider.meter('test')).must_be_instance_of OpenTelemetry::SDK::Metrics::Meter
-      _(OpenTelemetry.meter_provider.meter('test').create_counter("b_counter")).must_be_instance_of OpenTelemetry::SDK::Metrics::Instrument::Counter
+      _(OpenTelemetry.meter_provider.meter('test').create_counter('b_counter')).must_be_instance_of OpenTelemetry::SDK::Metrics::Instrument::Counter
     end
 
     it 'sends the original configuration error to the error handler' do
@@ -42,9 +42,7 @@ describe OpenTelemetry::SDK do
         received_message = message
       end
 
-      OpenTelemetry::SDK.configure do |config|
-        config.do_something
-      end
+      OpenTelemetry::SDK.configure(&:do_something)
 
       _(received_exception).must_be_instance_of OpenTelemetry::SDK::ConfigurationError
       _(received_message).must_match(/unexpected configuration error due to undefined method `do_something/)

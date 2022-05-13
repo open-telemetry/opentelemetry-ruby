@@ -11,8 +11,8 @@ describe OpenTelemetry::SDK do
     before { reset_metrics_sdk }
 
     it 'emits metrics' do
-      meter = OpenTelemetry.meter_provider.meter("test")
-      instrument = meter.create_counter("b_counter")
+      meter = OpenTelemetry.meter_provider.meter('test')
+      instrument = meter.create_counter('b_counter')
 
       OpenTelemetry::SDK.configure
 

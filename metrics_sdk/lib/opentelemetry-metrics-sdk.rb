@@ -7,4 +7,3 @@
 require 'opentelemetry/sdk'
 require 'opentelemetry-metrics-api'
 require 'opentelemetry/sdk/metrics'
-

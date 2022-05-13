@@ -8,7 +8,6 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Aggregation
-
       end
     end
   end

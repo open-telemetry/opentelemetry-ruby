@@ -9,8 +9,8 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'opentelemetry-api', path: '../api'
-gem 'opentelemetry-sdk', path: '../sdk'
 gem 'opentelemetry-metrics-api', path: '../metrics_api'
+gem 'opentelemetry-sdk', path: '../sdk'
 
 group :test, :development do
   gem 'pry'

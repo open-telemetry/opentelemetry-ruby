@@ -7,5 +7,4 @@
 require 'test_helper'
 
 describe OpenTelemetry::SDK::Metrics::Instrument::Counter do
-
 end

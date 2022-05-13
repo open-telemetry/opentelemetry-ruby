@@ -10,7 +10,6 @@ module OpenTelemetry
       # The ConfiguratorPatch implements a hook to configure the metrics
       # portion of the SDK.
       module ConfiguratorPatch
-
         private
 
         # The metrics_configuration_hook method is where we define the setup process
