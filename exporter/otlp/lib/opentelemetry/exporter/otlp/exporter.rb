@@ -187,7 +187,7 @@ module OpenTelemetry
               redo if backoff?(retry_count: retry_count += 1, reason: response.code)
               FAILURE
             when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
-              log_status(response.body)
+              log_status(response)
               @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response.code })
               FAILURE
             when Net::HTTPRedirection
@@ -232,15 +232,27 @@ module OpenTelemetry
           # TODO: figure out destination and reinitialize @http and @path
         end
 
-        def log_status(body)
-          status = Google::Rpc::Status.decode(body)
-          details = status.details.map do |detail|
-            klass_or_nil = ::Google::Protobuf::DescriptorPool.generated_pool.lookup(detail.type_name).msgclass
-            detail.unpack(klass_or_nil) if klass_or_nil
-          end.compact
-          OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}}")
-        rescue StandardError => e
-          OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
+        def log_status(response) # rubocop:disable Metrics/AbcSize
+          content_type = response['Content-Type']
+          code = response.code
+          body = response.body
+
+          http_status_message = "http.code=#{code} http.content_type='#{content_type}'"
+          case content_type
+          when 'text/plain; charset=utf-8'
+            OpenTelemetry.handle_error(message: "OTLP exporter received http.body='#{body}' #{http_status_message}")
+          else
+            begin
+              status = Google::Rpc::Status.decode(body)
+              details = status.details.map do |detail|
+                klass_or_nil = ::Google::Protobuf::DescriptorPool.generated_pool.lookup(detail.type_name).msgclass
+                detail.unpack(klass_or_nil) if klass_or_nil
+              end.compact
+              OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}} #{http_status_message}")
+            rescue StandardError => e
+              OpenTelemetry.handle_error(exception: e, message: "unexpected error decoding rpc.Status in OTLP::Exporter#log_status #{http_status_message}")
+            end
+          end
         end
 
         def measure_request_duration
