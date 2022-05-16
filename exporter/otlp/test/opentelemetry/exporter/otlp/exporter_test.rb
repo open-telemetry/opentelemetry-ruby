@@ -410,7 +410,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       result = exporter.export([span_data])
 
       _(log_stream.string).must_match(
-        %r{ERROR -- : OpenTelemetry error: OTLP exporter received rpc.Status{message=bad request, details=\[.*you are a bad request.*\]} http\.code=400 http.content_type='application\/x-protobuf'}
+        /ERROR -- : OpenTelemetry error: OTLP exporter received rpc.Status{message=bad request, details=\[.*you are a bad request.*\]}/
       )
 
       _(result).must_equal(FAILURE)
@@ -418,18 +418,18 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       OpenTelemetry.logger = logger
     end
 
-    it 'logs body on bad request with plain/text content type' do
+    it 'logs a specific message when there is a 404' do
       log_stream = StringIO.new
       logger = OpenTelemetry.logger
       OpenTelemetry.logger = ::Logger.new(log_stream)
 
-      stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 404, body: "Not Found\n", headers: { 'Content-Type' => 'text/plain; charset=utf-8' })
+      stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 404, body: "Not Found\n")
       span_data = create_span_data
 
       result = exporter.export([span_data])
 
       _(log_stream.string).must_match(
-        %r{ERROR -- : OpenTelemetry error: OTLP exporter received http.body='Not Found\n' http\.code=404 http.content_type='text\/plain; charset=utf-8'}
+        %r{ERROR -- : OpenTelemetry error: OTLP exporter received http\.code=404 for uri: '/v1/traces'}
       )
 
       _(result).must_equal(FAILURE)
