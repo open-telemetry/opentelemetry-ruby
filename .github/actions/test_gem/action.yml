@@ -1,0 +1,130 @@
+name: Test Gem
+description: Tests a specific Gem
+inputs:
+  gem:
+    description: Gem to test
+    required: true
+    type: string
+  ruby:
+    description: Ruby version to use
+    required: true
+    type: string
+  yard:
+    description: Run YARD documentation
+    required: false
+    type: boolean
+    default: false
+  rubocop:
+    description: Run Rubocop
+    required: false
+    type: boolean
+    default: false
+  build:
+    description: Build gem
+    required: false
+    type: boolean
+    default: false
+
+runs:
+  using: composite
+  steps:
+    - name: Setup
+      id: setup
+      shell: bash
+      run: |
+        dir=$(find . -iname '${{ inputs.gem }}.gemspec' -exec dirname {} \;)
+        echo "::set-output name=dir::${dir}"
+
+        # We install multiple ruby versions here, and that makes for some
+        # annoying bundler conflicts when we get to the JRuby step. Removing
+        # the lockfile slows things down a bit, but we should still get most
+        # of the benefits of bundler caching.
+        rm -f "${dir}/Gemfile.lock"
+
+        echo "::set-output name=cache_key::mri"
+        if [[ "${{ inputs.ruby }}" == "jruby" ]]; then
+          echo "::set-output name=cache_key::jruby"
+        fi
+
+        echo "::set-output name=appraisals::false"
+        if [[ -f "${dir}/Appraisals" ]]; then
+          echo "::set-output name=appraisals::true"
+        fi
+
+    # Install ruby and bundle dependencies and cache!
+    # ...but not for appraisals, sadly.
+    - name: Install Ruby ${{ inputs.ruby }} with dependencies
+      if: "${{ steps.setup.outputs.appraisals == 'false' }}"
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "${{ inputs.ruby }}"
+        working-directory: "${{ steps.setup.outputs.dir }}"
+        bundler-cache: true
+        cache-version: "v1-${{ steps.setup.outputs.cache_key }}"
+
+    # If we're using appraisals, do it all manually.
+    - name: Install Ruby ${{ inputs.ruby }} without dependencies
+      if: "${{ steps.setup.outputs.appraisals == 'true' }}"
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "${{ inputs.ruby }}"
+    - name: Install dependencies and appraisals
+      if: "${{ steps.setup.outputs.appraisals == 'true' }}"
+      shell: bash
+      run: |
+        cd "${{ steps.setup.outputs.dir }}"
+        bundle install
+        bundle exec appraisal install
+
+    - name: Test Gem
+      shell: bash
+      run: |
+        cd "${{ steps.setup.outputs.dir }}"
+
+        if [[ -f "Appraisals" ]]; then
+          bundle exec appraisal rake test
+        else
+          bundle exec rake test
+        fi
+      env:
+        TEST_KAFKA_HOST: "127.0.0.1"
+        TEST_KAFKA_PORT: 29092
+        TEST_MYSQL_HOST: "127.0.0.1"
+        TEST_MYSQL_PORT: 3306
+        TEST_MYSQL_USER: mysql
+        TEST_MYSQL_PASSWORD: mysql
+        TEST_POSTGRES_PASSWORD: postgres
+        TEST_POSTGRES_USER: postgres
+        TEST_POSTGRES_HOST: localhost
+        TEST_POSTGRES_PORT: 5432
+        TEST_POSTGRES_DB: postgres
+        TEST_MEMCACHED_HOST: localhost
+        TEST_MEMCACHED_PORT: 11211
+        TEST_MONGODB_HOST: localhost
+        TEST_MONGODB_PORT: 27017
+        TEST_RABBITMQ_HOST: localhost
+        TEST_RABBITMQ_PORT: 5672
+        TEST_RABBITMQ_URL: amqp://guest:guest@localhost:5672
+        TEST_REDIS_HOST: localhost
+        TEST_REDIS_PORT: 6379
+
+    - name: YARD
+      shell: bash
+      if: "${{ inputs.yard == 'true' }}"
+      run: |
+        cd "${{ steps.setup.outputs.dir }}"
+        bundle exec rake yard
+
+    - name: Rubocop
+      shell: bash
+      if: "${{ inputs.rubocop == 'true' }}"
+      run: |
+        cd "${{ steps.setup.outputs.dir }}"
+        bundle exec rake rubocop
+
+    - name: Build Gem
+      shell: bash
+      if: "${{ inputs.build == 'true' }}"
+      run: |
+        cd "${{ steps.setup.outputs.dir }}"
+        gem build ${{ inputs.gem }}.gemspec
