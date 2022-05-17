@@ -54,5 +54,25 @@ module OpenTelemetry
       env_to_reset.each_pair { |k, v| ENV[k] = v }
       keys_to_delete.each { |k| ENV.delete(k) }
     end
+
+    def with_ids(trace_id, span_id)
+      OpenTelemetry::Trace.stub(:generate_trace_id, trace_id) do
+        OpenTelemetry::Trace.stub(:generate_span_id, span_id) do
+          yield
+        end
+      end
+    end
+
+    def create_span_data(name: '', kind: nil, status: nil, parent_span_id: OpenTelemetry::Trace::INVALID_SPAN_ID,
+                         total_recorded_attributes: 0, total_recorded_events: 0, total_recorded_links: 0, start_timestamp: OpenTelemetry::TestHelpers.exportable_timestamp,
+                         end_timestamp: OpenTelemetry::TestHelpers.exportable_timestamp, attributes: nil, links: nil, events: nil, resource: nil,
+                         instrumentation_library: OpenTelemetry::SDK::InstrumentationLibrary.new('', 'v0.0.1'),
+                         span_id: OpenTelemetry::Trace.generate_span_id, trace_id: OpenTelemetry::Trace.generate_trace_id,
+                         trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, tracestate: nil)
+      resource ||= OpenTelemetry::SDK::Resources::Resource.telemetry_sdk
+      OpenTelemetry::SDK::Trace::SpanData.new(name, kind, status, parent_span_id, total_recorded_attributes,
+                                              total_recorded_events, total_recorded_links, start_timestamp, end_timestamp,
+                                              attributes, links, events, resource, instrumentation_library, span_id, trace_id, trace_flags, tracestate)
+    end
   end
 end
