@@ -1,0 +1,9 @@
+--no-private
+--title=OpenTelemetry OTLP GRPC
+--markup=markdown
+--main=README.md
+./lib/opentelemetry/exporter/otlp/grpc/**/*.rb
+./lib/opentelemetry/exporter/otlp/grpc.rb
+-
+README.md
+CHANGELOG.md
