@@ -9,8 +9,9 @@
 **/.DS_Store
 **/.byebug_history
 
+
 # Appraisals
-instrumentation/**/*.gemfile.lock
+instrumentation/**/gemfiles
 
 # Sqlite file for tests
 instrumentation/active_record/db

@@ -3,6 +3,7 @@
 # Copyright The OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
+ENV['OTEL_LOG_LEVEL'] ||= 'fatal'
 
 require 'active_job'
 require 'opentelemetry-instrumentation-active_job'
