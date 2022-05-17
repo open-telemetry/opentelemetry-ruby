@@ -60,4 +60,38 @@ describe OpenTelemetry::Common::Utilities do
       _(common_utils.valid_exporter?({})).must_equal false
     end
   end
+
+  describe '#invalid_url?' do
+    it 'returns true if it is an invalid uri' do
+      _(common_utils.invalid_url?('123:123')).must_equal(true)
+    end
+
+    it 'returns false if it is a valid uri' do
+      _(common_utils.invalid_url?('http://example.com')).must_equal(false)
+    end
+  end
+
+  describe '#config_opt' do
+    it 'returns the env var' do
+      OpenTelemetry::TestHelpers.with_env('a' => 'b') do
+        _(common_utils.config_opt('a', default: 'bar')).must_equal('b')
+      end
+    end
+
+    it 'returns the first requested env var' do
+      OpenTelemetry::TestHelpers.with_env('a' => 'b', 'c' => 'd') do
+        _(common_utils.config_opt('a', 'b', default: 'bar')).must_equal('b')
+      end
+    end
+
+    it 'returns the second requested env var if the first is not set' do
+      OpenTelemetry::TestHelpers.with_env('c' => 'd') do
+        _(common_utils.config_opt('a', 'c', default: 'bar')).must_equal('d')
+      end
+    end
+
+    it 'returns the default value when no env var is set' do
+      _(common_utils.config_opt('a', 'b', default: 'foo')).must_equal('foo')
+    end
+  end
 end
