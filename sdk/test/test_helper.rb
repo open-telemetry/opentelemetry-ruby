@@ -8,8 +8,9 @@ require 'simplecov'
 SimpleCov.start
 SimpleCov.minimum_coverage 85
 
-require 'opentelemetry/test_helpers'
-require 'opentelemetry/sdk'
+require 'opentelemetry-test-helpers'
+require 'opentelemetry-sdk'
+require 'opentelemetry-instrumentation-base'
 require 'minitest/autorun'
 require 'pry'
 
