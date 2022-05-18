@@ -424,7 +424,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       OpenTelemetry.logger = ::Logger.new(log_stream)
 
       stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 404, body: "Not Found\n")
-      span_data = create_span_data
+      span_data = OpenTelemetry::TestHelpers.create_span_data
 
       result = exporter.export([span_data])
 
