@@ -113,7 +113,7 @@ module OpenTelemetry
         ENV.values_at(*env_vars).compact.fetch(0, default)
       end
 
-      # Returns a true if the provided url is invalid
+      # Returns a true if the provided url is valid
       #
       # @param [String] url the URL string to test validity
       #
