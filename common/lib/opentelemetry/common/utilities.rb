@@ -110,11 +110,7 @@ module OpenTelemetry
       #
       # @returns [String]
       def config_opt(*env_vars, default: nil)
-        env_vars.each do |env_var|
-          val = ENV[env_var]
-          return val unless val.nil?
-        end
-        default
+        ENV.values_at(env_vars).compact.fetch(0, default)
       end
 
       # Returns a true if the provided url is invalid
