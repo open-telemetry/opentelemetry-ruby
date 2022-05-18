@@ -110,7 +110,7 @@ module OpenTelemetry
       #
       # @returns [String]
       def config_opt(*env_vars, default: nil)
-        ENV.values_at(env_vars).compact.fetch(0, default)
+        ENV.values_at(*env_vars).compact.fetch(0, default)
       end
 
       # Returns a true if the provided url is invalid
@@ -118,13 +118,13 @@ module OpenTelemetry
       # @param [String] url the URL string to test validity
       #
       # @return [boolean]
-      def invalid_url?(url)
+      def valid_url?(url)
         return true if url.nil? || url.strip.empty?
 
         URI(url)
-        false
-      rescue URI::InvalidURIError
         true
+      rescue URI::InvalidURIError
+        false
       end
 
       # Returns true if exporter is a valid exporter.

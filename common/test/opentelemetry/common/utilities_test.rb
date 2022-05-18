@@ -61,13 +61,13 @@ describe OpenTelemetry::Common::Utilities do
     end
   end
 
-  describe '#invalid_url?' do
-    it 'returns true if it is an invalid uri' do
-      _(common_utils.invalid_url?('123:123')).must_equal(true)
+  describe '#valid_url?' do
+    it 'returns false if it is not a valid uri' do
+      _(common_utils.valid_url?('123:123')).must_equal(false)
     end
 
-    it 'returns false if it is a valid uri' do
-      _(common_utils.invalid_url?('http://example.com')).must_equal(false)
+    it 'returns true if it is a valid uri' do
+      _(common_utils.valid_url?('http://example.com')).must_equal(true)
     end
   end
 
