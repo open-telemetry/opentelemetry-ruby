@@ -119,7 +119,7 @@ module OpenTelemetry
       #
       # @return [boolean]
       def valid_url?(url)
-        return true if url.nil? || url.strip.empty?
+        return false if url.nil? || url.strip.empty?
 
         URI(url)
         true
