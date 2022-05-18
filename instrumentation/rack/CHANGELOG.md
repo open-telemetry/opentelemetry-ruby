@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-rack
 
+### v0.20.3 / 2022-05-18
+
+* (No significant changes)
+
 ### v0.20.2 / 2022-05-02
 
 * FIXED: Update server instrumentation to not reflect 400 status as error 

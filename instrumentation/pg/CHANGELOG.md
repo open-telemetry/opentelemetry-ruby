@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-pg
 
+### v0.20.1 / 2022-05-18
+
+* (No significant changes)
+
 ### v0.20.0 / 2022-05-02
 
 * ADDED: Validate Using Enums 

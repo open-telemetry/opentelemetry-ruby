@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sidekiq
 
+### v0.21.1 / 2022-05-18
+
+* (No significant changes)
+
 ### v0.21.0 / 2022-05-02
 
 * ADDED: Validate Using Enums 

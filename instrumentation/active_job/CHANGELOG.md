@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_job
 
+### v0.2.1 / 2022-05-18
+
+* (No significant changes)
+
 ### v0.2.0 / 2022-05-02
 
 * ADDED: Validate Using Enums 

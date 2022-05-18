@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_model_serializers
 
+### v0.18.6 / 2022-05-18
+
+* (No significant changes)
+
 ### v0.18.5 / 2022-05-02
 
 * FIXED: `ActiveSupport` constant conflict in Active Model Serializers instrumentation 

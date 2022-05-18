@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-faraday
 
+### v0.20.2 / 2022-05-18
+
+* (No significant changes)
+
 ### v0.20.1 / 2022-05-03
 
 * (No significant changes)

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-propagator-xray
 
+### v0.20.2 / 2022-05-18
+
+* (No significant changes)
+
 ### v0.20.1 / 2021-09-29
 
 * (No significant changes)

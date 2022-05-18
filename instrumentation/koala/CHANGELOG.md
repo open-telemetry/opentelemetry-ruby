@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-koala
 
+### v0.18.6 / 2022-05-18
+
+* (No significant changes)
+
 ### v0.18.5 / 2022-05-05
 
 * (No significant changes)

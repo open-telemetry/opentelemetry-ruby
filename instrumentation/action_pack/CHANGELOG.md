@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-action_pack
 
+### v0.1.5 / 2022-05-18
+
+* (No significant changes)
+
 ### v0.1.4 / 2022-05-02
 
 * FIXED: Use rails request's filtered path as http.target attribute 
