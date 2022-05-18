@@ -25,7 +25,7 @@ module OpenTelemetry
           def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4317/v1/traces'),
                          timeout: config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
                          metrics_reporter: nil)
-            raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}" if invalid_url?(endpoint)
+            raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
 
             uri = URI(endpoint)
 
@@ -80,15 +80,6 @@ module OpenTelemetry
               return val unless val.nil?
             end
             default
-          end
-
-          def invalid_url?(url)
-            return true if url.nil? || url.strip.empty?
-
-            URI(url)
-            false
-          rescue URI::InvalidURIError
-            true
           end
         end
       end

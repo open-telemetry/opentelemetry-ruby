@@ -30,7 +30,7 @@ module OpenTelemetry
         def initialize(endpoint: config_opt('OTEL_EXPORTER_ZIPKIN_ENDPOINT', default: 'http://localhost:9411/api/v2/spans'),
                        headers: config_opt('OTEL_EXPORTER_ZIPKIN_TRACES_HEADERS', 'OTEL_EXPORTER_ZIPKIN_HEADERS'),
                        timeout: config_opt('OTEL_EXPORTER_ZIPKIN_TRACES_TIMEOUT', 'OTEL_EXPORTER_ZIPKIN_TIMEOUT', default: 10))
-          raise ArgumentError, "invalid url for Zipkin::Exporter #{endpoint}" if invalid_url?(endpoint)
+          raise ArgumentError, "invalid url for Zipkin::Exporter #{endpoint}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
           raise ArgumentError, 'headers must be comma-separated k=v pairs or a Hash' unless valid_headers?(headers)
 
           @uri = if endpoint == ENV['OTEL_EXPORTER_ZIPKIN_ENDPOINT']
@@ -108,15 +108,6 @@ module OpenTelemetry
 
         def around_request
           OpenTelemetry::Common::Utilities.untraced { yield }
-        end
-
-        def invalid_url?(url)
-          return true if url.nil? || url.strip.empty?
-
-          URI(url)
-          false
-        rescue URI::InvalidURIError
-          true
         end
 
         def valid_headers?(headers)

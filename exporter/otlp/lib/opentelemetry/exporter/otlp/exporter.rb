@@ -52,7 +52,7 @@ module OpenTelemetry
                        compression: config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                        timeout: config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
                        metrics_reporter: nil)
-          raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}" if invalid_url?(endpoint)
+          raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
           raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
           @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
@@ -126,15 +126,6 @@ module OpenTelemetry
             return val unless val.nil?
           end
           default
-        end
-
-        def invalid_url?(url)
-          return true if url.nil? || url.strip.empty?
-
-          URI(url)
-          false
-        rescue URI::InvalidURIError
-          true
         end
 
         # The around_request is a private method that provides an extension
