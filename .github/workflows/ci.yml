@@ -65,6 +65,8 @@ jobs:
         gem:
           - opentelemetry-exporter-jaeger
           - opentelemetry-exporter-otlp
+          - opentelemetry-exporter-otlp-http
+          - opentelemetry-exporter-otlp-grpc
           - opentelemetry-exporter-zipkin
         os:
           - ubuntu-latest
