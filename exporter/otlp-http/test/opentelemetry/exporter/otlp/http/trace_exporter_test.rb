@@ -7,13 +7,13 @@ require 'test_helper'
 require 'google/protobuf/wrappers_pb'
 require 'google/protobuf/well_known_types'
 
-describe OpenTelemetry::Exporter::OTLP::HTTP::Exporter do
+describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
   SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
   FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
 
   describe '#initialize' do
     it 'initializes with defaults' do
-      exp = OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+      exp = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
       _(exp).wont_be_nil
       _(exp.instance_variable_get(:@headers)).must_be_empty
       _(exp.instance_variable_get(:@timeout)).must_equal 10.0
@@ -29,24 +29,24 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::Exporter do
 
     it 'refuses invalid endpoint' do
       assert_raises ArgumentError do
-        OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new(endpoint: 'not a url')
+        OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(endpoint: 'not a url')
       end
     end
 
     it 'uses endpoints path if provided' do
-      exp = OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new(endpoint: 'https://localhost/custom/path')
+      exp = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(endpoint: 'https://localhost/custom/path')
       _(exp.instance_variable_get(:@path)).must_equal '/custom/path'
     end
 
     it 'only allows gzip compression or none' do
       assert_raises ArgumentError do
-        OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new(compression: 'flate')
+        OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(compression: 'flate')
       end
-      exp = OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new(compression: nil)
+      exp = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(compression: nil)
       _(exp.instance_variable_get(:@compression)).must_be_nil
 
       %w[gzip none].each do |compression|
-        exp = OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new(compression: compression)
+        exp = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(compression: compression)
         _(exp.instance_variable_get(:@compression)).must_equal(compression)
       end
 
@@ -57,7 +57,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::Exporter do
         { envar: 'OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', value: 'none' }
       ].each do |example|
         OpenTelemetry::TestHelpers.with_env(example[:envar] => example[:value]) do
-          exp = OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+          exp = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
           _(exp.instance_variable_get(:@compression)).must_equal(example[:value])
         end
       end
@@ -70,7 +70,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::Exporter do
                                                 'OTEL_EXPORTER_OTLP_COMPRESSION' => 'gzip',
                                                 'OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE' => 'true',
                                                 'OTEL_EXPORTER_OTLP_TIMEOUT' => '11') do
-        OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+        OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
       end
       _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd')
       _(exp.instance_variable_get(:@timeout)).must_equal 11.0
@@ -91,12 +91,12 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::Exporter do
                                                 'OTEL_EXPORTER_OTLP_COMPRESSION' => 'flate',
                                                 'OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER' => 'true',
                                                 'OTEL_EXPORTER_OTLP_TIMEOUT' => '11') do
-        OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new(endpoint: 'http://localhost:4321',
-                                                          certificate_file: '/baz',
-                                                          headers: { 'x' => 'y' },
-                                                          compression: 'gzip',
-                                                          ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE,
-                                                          timeout: 12)
+        OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(endpoint: 'http://localhost:4321',
+                                                               certificate_file: '/baz',
+                                                               headers: { 'x' => 'y' },
+                                                               compression: 'gzip',
+                                                               ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE,
+                                                               timeout: 12)
       end
       _(exp.instance_variable_get(:@headers)).must_equal('x' => 'y')
       _(exp.instance_variable_get(:@timeout)).must_equal 12.0
@@ -111,134 +111,134 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::Exporter do
     end
 
     it 'restricts explicit headers to a String or Hash' do
-      exp = OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new(headers: { 'token' => 'über' })
+      exp = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(headers: { 'token' => 'über' })
       _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über')
 
-      exp = OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new(headers: 'token=%C3%BCber')
+      exp = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(headers: 'token=%C3%BCber')
       _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über')
 
-      error = _() {
-        exp = OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new(headers: Object.new)
+      error = _ do
+        exp = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(headers: Object.new)
         _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über')
-      }.must_raise(ArgumentError)
+      end.must_raise(ArgumentError)
       _(error.message).must_match(/headers/i)
     end
 
     describe 'Headers Environment Variable' do
       it 'allows any number of the equal sign (=) characters in the value' do
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'a=b,c=d==,e=f') do
-          OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+          OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
         end
         _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd==', 'e' => 'f')
 
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'a=b,c=d==,e=f') do
-          OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+          OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
         end
         _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd==', 'e' => 'f')
       end
 
       it 'trims any leading or trailing whitespaces in keys and values' do
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'a =  b  ,c=d , e=f') do
-          OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+          OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
         end
         _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd', 'e' => 'f')
 
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'a =  b  ,c=d , e=f') do
-          OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+          OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
         end
         _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd', 'e' => 'f')
       end
 
       it 'decodes values as URL encoded UTF-8 strings' do
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'token=%C3%BCber') do
-          OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+          OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
         end
         _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über')
 
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => '%C3%BCber=token') do
-          OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+          OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
         end
         _(exp.instance_variable_get(:@headers)).must_equal('über' => 'token')
 
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'token=%C3%BCber') do
-          OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+          OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
         end
         _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über')
 
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => '%C3%BCber=token') do
-          OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+          OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
         end
         _(exp.instance_variable_get(:@headers)).must_equal('über' => 'token')
       end
 
       it 'prefers TRACES specific variable' do
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'a=b,c=d==,e=f', 'OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'token=%C3%BCber') do
-          OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+          OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
         end
         _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über')
       end
 
       it 'fails fast when header values are missing' do
-        error = _() {
+        error = _ do
           OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'a = ') do
-            OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+            OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
           end
-        }.must_raise(ArgumentError)
+        end.must_raise(ArgumentError)
         _(error.message).must_match(/headers/i)
 
-        error = _() {
+        error = _ do
           OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'a = ') do
-            OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+            OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
           end
-        }.must_raise(ArgumentError)
+        end.must_raise(ArgumentError)
         _(error.message).must_match(/headers/i)
       end
 
       it 'fails fast when header or values are not found' do
-        error = _() {
+        error = _ do
           OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => ',') do
-            OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+            OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
           end
-        }.must_raise(ArgumentError)
+        end.must_raise(ArgumentError)
         _(error.message).must_match(/headers/i)
 
-        error = _() {
+        error = _ do
           OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => ',') do
-            OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+            OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
           end
-        }.must_raise(ArgumentError)
+        end.must_raise(ArgumentError)
         _(error.message).must_match(/headers/i)
       end
 
       it 'fails fast when header values contain invalid escape characters' do
-        error = _() {
+        error = _ do
           OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'c=hi%F3') do
-            OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+            OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
           end
-        }.must_raise(ArgumentError)
+        end.must_raise(ArgumentError)
         _(error.message).must_match(/headers/i)
 
-        error = _() {
+        error = _ do
           OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'c=hi%F3') do
-            OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+            OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
           end
-        }.must_raise(ArgumentError)
+        end.must_raise(ArgumentError)
         _(error.message).must_match(/headers/i)
       end
 
       it 'fails fast when headers are invalid' do
-        error = _() {
+        error = _ do
           OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'this is not a header') do
-            OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+            OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
           end
-        }.must_raise(ArgumentError)
+        end.must_raise(ArgumentError)
         _(error.message).must_match(/headers/i)
 
-        error = _() {
+        error = _ do
           OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'this is not a header') do
-            OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+            OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
           end
-        }.must_raise(ArgumentError)
+        end.must_raise(ArgumentError)
         _(error.message).must_match(/headers/i)
       end
     end
@@ -247,7 +247,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::Exporter do
   describe 'ssl_verify_mode:' do
     it 'can be set to VERIFY_NONE by an envvar' do
       exp = OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE' => 'true') do
-        OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+        OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
       end
       http = exp.instance_variable_get(:@http)
       _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_NONE
@@ -255,7 +255,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::Exporter do
 
     it 'can be set to VERIFY_PEER by an envvar' do
       exp = OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER' => 'true') do
-        OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+        OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
       end
       http = exp.instance_variable_get(:@http)
       _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_PEER
@@ -264,7 +264,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::Exporter do
     it 'VERIFY_PEER will override VERIFY_NONE' do
       exp = OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE' => 'true',
                                                 'OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER' => 'true') do
-        OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new
+        OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
       end
       http = exp.instance_variable_get(:@http)
       _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_PEER
@@ -272,7 +272,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::Exporter do
   end
 
   describe '#export' do
-    let(:exporter) { OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new }
+    let(:exporter) { OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new }
 
     before do
       OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new(resource: OpenTelemetry::SDK::Resources::Resource.telemetry_sdk)
@@ -282,7 +282,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::Exporter do
       skip unless ENV['TRACING_INTEGRATION_TEST']
       WebMock.disable_net_connect!(allow: 'localhost')
       span_data = OpenTelemetry::TestHelpers.create_span_data
-      exporter = OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new(endpoint: 'http://localhost:4318', compression: 'gzip')
+      exporter = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(endpoint: 'http://localhost:4318/v1/traces', compression: 'gzip')
       result = exporter.export([span_data])
       _(result).must_equal(SUCCESS)
     end
@@ -363,7 +363,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::Exporter do
     end
 
     it 'returns FAILURE when encryption to receiver endpoint fails' do
-      exporter = OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new(endpoint: 'https://localhost:4318/v1/traces')
+      exporter = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(endpoint: 'https://localhost:4318/v1/traces')
       stub_request(:post, 'https://localhost:4318/v1/traces').to_raise(OpenSSL::SSL::SSLError.new('enigma wedged'))
       span_data = OpenTelemetry::TestHelpers.create_span_data
       exporter.stub(:backoff?, ->(**_) { false }) do
@@ -436,7 +436,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::Exporter do
     end
 
     it 'compresses with gzip if enabled' do
-      exporter = OpenTelemetry::Exporter::OTLP::HTTP::Exporter.new(compression: 'gzip')
+      exporter = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(compression: 'gzip')
       stub_post = stub_request(:post, 'http://localhost:4318/v1/traces').to_return do |request|
         Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(Zlib.gunzip(request.body))
         { status: 200 }
