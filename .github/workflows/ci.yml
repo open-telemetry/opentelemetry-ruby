@@ -77,6 +77,8 @@ jobs:
           # Doesn't build on macos
           - os: macos-latest
             gem: opentelemetry-exporter-jaeger
+          - os: windows-latest
+            gem: opentelemetry-exporter-otlp-grpc
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
