@@ -27,9 +27,9 @@ module OpenTelemetry
         WRITE_TIMEOUT_SUPPORTED = Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.6')
         private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT, :WRITE_TIMEOUT_SUPPORTED)
 
-        def initialize(endpoint: config_opt('OTEL_EXPORTER_ZIPKIN_ENDPOINT', default: 'http://localhost:9411/api/v2/spans'),
-                       headers: config_opt('OTEL_EXPORTER_ZIPKIN_TRACES_HEADERS', 'OTEL_EXPORTER_ZIPKIN_HEADERS'),
-                       timeout: config_opt('OTEL_EXPORTER_ZIPKIN_TRACES_TIMEOUT', 'OTEL_EXPORTER_ZIPKIN_TIMEOUT', default: 10))
+        def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_ZIPKIN_ENDPOINT', default: 'http://localhost:9411/api/v2/spans'),
+                       headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_ZIPKIN_TRACES_HEADERS', 'OTEL_EXPORTER_ZIPKIN_HEADERS'),
+                       timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_ZIPKIN_TRACES_TIMEOUT', 'OTEL_EXPORTER_ZIPKIN_TIMEOUT', default: 10))
           raise ArgumentError, "invalid url for Zipkin::Exporter #{endpoint}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
           raise ArgumentError, 'headers must be comma-separated k=v pairs or a Hash' unless valid_headers?(headers)
 
@@ -93,14 +93,6 @@ module OpenTelemetry
         end
 
         private
-
-        def config_opt(*env_vars, default: nil)
-          env_vars.each do |env_var|
-            val = ENV[env_var]
-            return val unless val.nil?
-          end
-          default
-        end
 
         def encode_spans(span_data)
           span_data.map! { |span| Transformer.to_zipkin_span(span, span.resource) }

@@ -22,8 +22,8 @@ module OpenTelemetry
           FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
           private_constant(:SUCCESS, :FAILURE)
 
-          def initialize(endpoint: config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4317/v1/traces'),
-                         timeout: config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
+          def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4317/v1/traces'),
+                         timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
                          metrics_reporter: nil)
             raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
 
@@ -70,16 +70,6 @@ module OpenTelemetry
           def shutdown(timeout: nil)
             @shutdown = true
             SUCCESS
-          end
-
-          private
-
-          def config_opt(*env_vars, default: nil)
-            env_vars.each do |env_var|
-              val = ENV[env_var]
-              return val unless val.nil?
-            end
-            default
           end
         end
       end
