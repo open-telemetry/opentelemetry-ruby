@@ -18,7 +18,7 @@ module OpenTelemetry
     module OTLP
       module HTTP
         # An OpenTelemetry trace exporter that sends spans over HTTP as Protobuf encoded OTLP ExportTraceServiceRequests.
-        class Exporter # rubocop:disable Metrics/ClassLength
+        class TraceExporter # rubocop:disable Metrics/ClassLength
           SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
           FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
           private_constant(:SUCCESS, :FAILURE)

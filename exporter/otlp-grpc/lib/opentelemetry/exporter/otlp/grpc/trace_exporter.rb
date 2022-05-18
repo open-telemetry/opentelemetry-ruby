@@ -17,7 +17,7 @@ module OpenTelemetry
     module OTLP
       module GRPC
         # An OpenTelemetry trace exporter that sends spans over GRPC.
-        class Exporter
+        class TraceExporter
           SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
           FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
           private_constant(:SUCCESS, :FAILURE)
