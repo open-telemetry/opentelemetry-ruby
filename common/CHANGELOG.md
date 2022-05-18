@@ -1,5 +1,9 @@
 # Release History: opentelemetry-common
 
+### v0.19.6 / 2022-05-18
+
+* (No significant changes)
+
 ### v0.19.5 / 2022-05-10
 
 * FIXED: Common changelog 
