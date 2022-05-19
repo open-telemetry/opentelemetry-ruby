@@ -20,5 +20,5 @@ module OpenTelemetry
   end
 end
 
-require 'opentelemetry/exporter/otlp/grpc/exporter'
+require 'opentelemetry/exporter/otlp/grpc/trace_exporter'
 require 'opentelemetry/exporter/otlp/grpc/version'
