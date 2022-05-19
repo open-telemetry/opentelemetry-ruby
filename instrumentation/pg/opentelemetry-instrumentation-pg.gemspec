@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 2.6.0'
 
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
-  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.20.0'
+  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.21.0'
 
   spec.add_development_dependency 'activerecord'
   spec.add_development_dependency 'appraisal', '~> 2.2.0'

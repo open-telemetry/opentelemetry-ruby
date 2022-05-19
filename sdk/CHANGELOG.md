@@ -1,6 +1,6 @@
 # Release History: opentelemetry-sdk
 
-### v2.0.0 / 2022-05-18
+### v1.1.0 / 2022-05-18
 
 * BREAKING CHANGE: This requires upgrading both the SDK and Instrumentation gem in tandem
 
@@ -8,15 +8,15 @@
 ### v1.0.3 / 2022-05-02
 
 * ADDED: Truncate the strings in an array attribute value if length_limit is configured
-* FIXED: Update attribute length limit env var name to match spec 
-* FIXED: Warning about Struct initialization in Ruby 3.2+ 
-* FIXED: Warn on unsupported otlp transport protocols 
-* FIXED: Only allow certain types of Numeric values as attribute values. 
+* FIXED: Update attribute length limit env var name to match spec
+* FIXED: Warning about Struct initialization in Ruby 3.2+
+* FIXED: Warn on unsupported otlp transport protocols
+* FIXED: Only allow certain types of Numeric values as attribute values.
 
 ### v1.0.2 / 2021-12-01
 
-* FIXED: Default span kind 
-* FIXED: Use monotonic clock where possible 
+* FIXED: Default span kind
+* FIXED: Use monotonic clock where possible
 
 ### v1.0.1 / 2021-10-29
 
