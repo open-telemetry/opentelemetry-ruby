@@ -2,7 +2,7 @@
 
 ### v0.22.0 / 2022-05-18
 
-* ADDED: Otlp grpc 
+* (No significant changes)
 
 ### v0.21.3 / 2022-05-12
 
