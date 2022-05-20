@@ -23,6 +23,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Install Toys
         run: "gem install --no-document toys"
+      - name: Validate OpenTelemetry internal gem dependencies
+        run: "rake each:validate_otel_dependencies"
       - name: Open release pull request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
