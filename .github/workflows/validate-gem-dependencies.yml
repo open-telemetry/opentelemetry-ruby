@@ -1,0 +1,24 @@
+name: Validate Gem Dependencies
+
+on:
+  push:
+    branches:
+      - 'release/*'
+
+jobs:
+  validate_gems:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
+    env:
+      ruby_version: "2.7"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Ruby ${{ env.ruby_version }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.ruby_version }}
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Install rubygems API
+        run: "gem install --no-document gems"
+      - name: Validate OpenTelemetry internal gem dependencies
+        run: "rake each:validate_otel_dependencies"
