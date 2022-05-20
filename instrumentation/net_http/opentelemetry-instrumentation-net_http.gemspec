@@ -27,11 +27,11 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
   spec.add_dependency 'opentelemetry-common', '~> 0.19.3'
-  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.20.0'
+  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.21'
 
   spec.add_development_dependency 'bundler', '>= 1.17'
   spec.add_development_dependency 'minitest', '~> 5.0'
-  spec.add_development_dependency 'opentelemetry-sdk', '~> 1.0'
+  spec.add_development_dependency 'opentelemetry-sdk', '~> 1.1'
   spec.add_development_dependency 'opentelemetry-test-helpers'
   spec.add_development_dependency 'rake', '~> 13.0.1'
   spec.add_development_dependency 'rubocop', '~> 0.73.0'
