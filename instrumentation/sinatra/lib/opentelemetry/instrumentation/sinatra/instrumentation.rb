@@ -13,6 +13,8 @@ module OpenTelemetry
       # instrumentation
       class Instrumentation < OpenTelemetry::Instrumentation::Base
         install do |_|
+          OpenTelemetry::Instrumentation::Rack::Instrumentation.instance.install({})
+
           ::Sinatra::Base.register Extensions::TracerExtension
         end
 

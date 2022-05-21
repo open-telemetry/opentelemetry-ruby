@@ -87,10 +87,12 @@ describe OpenTelemetry::Instrumentation::Sinatra do
       get '/one/endpoint'
 
       _(exporter.finished_spans.first.attributes).must_equal(
+        'http.host' => 'example.org',
         'http.method' => 'GET',
-        'http.url' => '/endpoint',
+        'http.route' => '/endpoint',
+        'http.scheme' => 'http',
         'http.status_code' => 200,
-        'http.route' => '/endpoint'
+        'http.target' => '/endpoint'
       )
     end
 
@@ -114,8 +116,10 @@ describe OpenTelemetry::Instrumentation::Sinatra do
 
       _(exporter.finished_spans.size).must_equal 1
       _(exporter.finished_spans.first.attributes).must_equal(
+        'http.host' => 'example.org',
         'http.method' => 'GET',
-        'http.url' => '/api/v1/foo/janedoe/',
+        'http.target' => '/api/v1/foo/janedoe/',
+        'http.scheme' => 'http',
         'http.status_code' => 200,
         'http.route' => '/api/v1/foo/:myname/?'
       )
@@ -130,9 +134,11 @@ describe OpenTelemetry::Instrumentation::Sinatra do
 
       _(exporter.finished_spans.first.status.code).must_equal OpenTelemetry::Trace::Status::UNSET
       _(exporter.finished_spans.first.attributes).must_equal(
+        'http.host' => 'example.org',
         'http.method' => 'GET',
-        'http.url' => '/missing_example/not_present',
-        'http.status_code' => 404
+        'http.scheme' => 'http',
+        'http.status_code' => 404,
+        'http.target' => '/missing_example/not_present'
       )
     end
   end

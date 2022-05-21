@@ -28,7 +28,7 @@ module OpenTelemetry
                 end
               end
             end
-
+            app.use OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware
             app.use Middlewares::TracerMiddleware
           end
         end
