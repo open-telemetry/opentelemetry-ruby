@@ -20,7 +20,7 @@ describe OpenTelemetry::SDK::Resources::Resource do
       expected_attributes = { 'k1' => 'v1', 'k2' => 'v2' }
       resource = Resource.create(expected_attributes)
       _(resource.attribute_enumerator.to_h).must_equal(expected_attributes)
-      _(resource.schema_url).must_equal('')
+      _(resource.schema_url).must_be_nil
     end
 
     it 'can be initialized with a schema_url' do
@@ -193,7 +193,7 @@ describe OpenTelemetry::SDK::Resources::Resource do
       res1 = Resource.create({})
       res2 = Resource.create({})
       res3 = res1.merge(res2)
-      _(res3.schema_url).must_equal('')
+      _(res3.schema_url).must_be_nil
 
       res1 = Resource.create({}, 'https://http.cat/404')
       res2 = Resource.create({}, 'https://http.cat/404')
@@ -221,7 +221,7 @@ describe OpenTelemetry::SDK::Resources::Resource do
         res1 = Resource.create({}, 'https://http.cat/200')
         res2 = Resource.create({}, 'https://http.cat/404')
         res3 = res1.merge(res2)
-        _(res3.schema_url).must_equal('')
+        _(res3.schema_url).must_be_nil
         _(OpenTelemetry.logger.messages.first).must_equal("Merging resources with schema version 'https://http.cat/200' and 'https://http.cat/404' is undefined.")
       end
     end

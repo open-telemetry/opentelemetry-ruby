@@ -19,9 +19,10 @@ module OpenTelemetry
           #   as attributes for this resource
           # @param [String] Specifies the Schema URL that should be recorded in the emitted resource.
           # @raise [ArgumentError] If attribute keys and values are not strings
+          # @raise [ArgumentError] If the schema URL is given but it is not a string.
           # @return [Resource]
-          def create(attributes = {}, schema_url = '')
-            raise ArgumentError, 'Schema url must be a string' unless schema_url.is_a?(String)
+          def create(attributes = {}, schema_url = nil)
+            raise ArgumentError, 'If given, schema url must be a string' unless schema_url.nil? || schema_url.is_a?(String)
 
             frozen_attributes = attributes.each_with_object({}) do |(k, v), memo|
               raise ArgumentError, 'attribute keys must be strings' unless k.is_a?(String)
@@ -83,10 +84,11 @@ module OpenTelemetry
         #
         # @param [Hash<String, String>] frozen_attributes Frozen-hash of frozen-string
         #  key-value pairs to be used as attributes for this resource
+        # @param [String] frozen_schema_url Frozen schema URL for this resource
         # @return [Resource]
-        def initialize(frozen_attributes, schema_url)
+        def initialize(frozen_attributes, frozen_schema_url)
           @attributes = frozen_attributes
-          @schema_url = schema_url
+          @schema_url = frozen_schema_url
         end
 
         # Returns an enumerator for attributes of this {Resource}
@@ -108,9 +110,9 @@ module OpenTelemetry
           return self unless other.is_a?(Resource)
 
           # This is slightly verbose, but tries to follow the definition in the spec closely.
-          new_schema_url = if schema_url == ''
+          new_schema_url = if schema_url.nil?
                              other.schema_url
-                           elsif other.schema_url == '' || schema_url == other.schema_url
+                           elsif other.schema_url.nil? || schema_url == other.schema_url
                              schema_url
                            elsif schema_url != other.schema_url
                              # According to the spec: The resulting resource is undefined, and its contents are implementation-specific.
@@ -119,10 +121,10 @@ module OpenTelemetry
                                "Merging resources with schema version '#{schema_url}' and '#{other.schema_url}' is undefined."
                              )
 
-                             ''
+                             nil
                            end
 
-          self.class.send(:new, attributes.merge(other.attributes).freeze, new_schema_url)
+          self.class.send(:new, attributes.merge(other.attributes).freeze, new_schema_url.freeze)
         end
 
         attr_reader :schema_url
