@@ -7,8 +7,10 @@
 module OpenTelemetry
   module Exporter
     module OTLP
-      ## Current OpenTelemetry OTLP exporter version
-      VERSION = '0.21.3'
+      module GRPC
+        ## Current OpenTelemetry OTLP exporter grpc version
+        VERSION = '0.0.0'
+      end
     end
   end
 end

@@ -6,11 +6,11 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'opentelemetry/exporter/otlp/version'
+require 'opentelemetry/exporter/otlp/grpc/version'
 
 Gem::Specification.new do |spec|
-  spec.name        = 'opentelemetry-exporter-otlp'
-  spec.version     = OpenTelemetry::Exporter::OTLP::VERSION
+  spec.name        = 'opentelemetry-exporter-otlp-grpc'
+  spec.version     = OpenTelemetry::Exporter::OTLP::GRPC::VERSION
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
@@ -23,14 +23,13 @@ Gem::Specification.new do |spec|
                ::Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 2.6.0'
+  spec.required_ruby_version = '>= 2.5.0'
 
-  spec.add_dependency 'google-protobuf', '~> 3.19'
-  spec.add_dependency 'googleapis-common-protos-types', '~> 1.3'
+  spec.add_dependency 'grpc'
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
   spec.add_dependency 'opentelemetry-common', '~> 0.19.6'
+  spec.add_dependency 'opentelemetry-exporter-otlp-common'
   spec.add_dependency 'opentelemetry-sdk', '~> 1.0'
-  spec.add_dependency 'opentelemetry-semantic_conventions'
 
   spec.add_development_dependency 'bundler', '>= 1.17'
   spec.add_development_dependency 'faraday', '~> 0.13'
@@ -45,9 +44,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
 
   if spec.respond_to?(:metadata)
-    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-exporter-otlp/v#{OpenTelemetry::Exporter::OTLP::VERSION}/file.CHANGELOG.html"
-    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/exporter/otlp'
+    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-exporter-otlp-grpc/v#{OpenTelemetry::Exporter::OTLP::GRPC::VERSION}/file.CHANGELOG.html"
+    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/exporter/otlp-grpc'
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/issues'
-    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-exporter-otlp/v#{OpenTelemetry::Exporter::OTLP::VERSION}"
+    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-exporter-otlp-grpc/v#{OpenTelemetry::Exporter::OTLP::GRPC::VERSION}"
   end
 end

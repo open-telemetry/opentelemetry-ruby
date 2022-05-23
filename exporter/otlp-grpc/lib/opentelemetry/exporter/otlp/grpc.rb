@@ -13,12 +13,12 @@
 module OpenTelemetry
   module Exporter
     module OTLP
-      # HTTP contains the implementation for the OTLP over HTTP exporters
-      module HTTP
+      # GRPC contains the implementation for the OTLP over GRPC exporter
+      module GRPC
       end
     end
   end
 end
 
-require 'opentelemetry/exporter/otlp/http/trace_exporter'
-require 'opentelemetry/exporter/otlp/http/version'
+require 'opentelemetry/exporter/otlp/grpc/trace_exporter'
+require 'opentelemetry/exporter/otlp/grpc/version'
