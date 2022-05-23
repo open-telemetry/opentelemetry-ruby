@@ -30,7 +30,7 @@ module OpenTelemetry
               memo[-k] = v.freeze
             end.freeze
 
-            new(frozen_attributes, schema_url)
+            new(frozen_attributes, schema_url.freeze)
           end
 
           def default
