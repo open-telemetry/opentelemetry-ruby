@@ -13,7 +13,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
   let(:tracer_provider) { OpenTelemetry::SDK::Trace::TracerProvider.new }
   let(:tracer) do
     OpenTelemetry.tracer_provider = tracer_provider
-    OpenTelemetry.tracer_provider.tracer('component-tracer', '1.0.0', 'https://http.cat/404')
+    OpenTelemetry.tracer_provider.tracer('component-tracer', '1.0.0', schema_url: 'https://http.cat/404')
   end
   let(:record_sampler) do
     Samplers::ConstantSampler.new(decision: Decision::RECORD_ONLY, description: 'RecordSampler')

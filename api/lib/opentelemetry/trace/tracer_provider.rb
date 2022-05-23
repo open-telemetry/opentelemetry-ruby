@@ -15,7 +15,7 @@ module OpenTelemetry
       # @param [optional String] schema_url Schema URL to be recorded with traces
       #
       # @return [Tracer]
-      def tracer(name = nil, version = nil, schema_url = nil)
+      def tracer(name = nil, version = nil, schema_url: nil)
         @tracer ||= Tracer.new
       end
     end

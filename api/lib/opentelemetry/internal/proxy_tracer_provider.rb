@@ -37,7 +37,7 @@ module OpenTelemetry
 
         @mutex.synchronize do
           @delegate = provider
-          @registry.each { |key, tracer| tracer.delegate = provider.tracer(key.name, key.version, key.schema_url) }
+          @registry.each { |key, tracer| tracer.delegate = provider.tracer(key.name, key.version, schema_url: key.schema_url) }
         end
       end
 
@@ -48,9 +48,9 @@ module OpenTelemetry
       # @param [optional String] schema_url Schema URL to be recorded with traces
       #
       # @return [Tracer]
-      def tracer(name = nil, version = nil, schema_url = nil)
+      def tracer(name = nil, version = nil, schema_url: nil)
         @mutex.synchronize do
-          return @delegate.tracer(name, version, schema_url) unless @delegate.nil?
+          return @delegate.tracer(name, version, schema_url: schema_url) unless @delegate.nil?
 
           @registry[Key.new(name, version, schema_url)] ||= ProxyTracer.new
         end

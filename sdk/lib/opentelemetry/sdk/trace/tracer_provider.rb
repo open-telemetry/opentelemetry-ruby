@@ -49,10 +49,9 @@ module OpenTelemetry
         # @param [optional String] schema_url Schema URL to be recorded with traces
         #
         # @return [Tracer]
-        def tracer(name = nil, version = nil, schema_url = nil)
+        def tracer(name = nil, version = nil, schema_url: nil)
           name ||= ''
           version ||= ''
-          schema_url ||= ''
           OpenTelemetry.logger.warn 'calling TracerProvider#tracer without providing a tracer name.' if name.empty?
           @registry_mutex.synchronize { @registry[Key.new(name, version, schema_url)] ||= Tracer.new(name, version, schema_url, self) }
         end

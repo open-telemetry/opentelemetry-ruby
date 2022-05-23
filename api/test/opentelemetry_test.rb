@@ -18,7 +18,7 @@ describe OpenTelemetry do
   end
 
   class CustomTracerProvider < OpenTelemetry::Trace::TracerProvider
-    def tracer(name = nil, version = nil, schema_url = nil)
+    def tracer(name = nil, version = nil, schema_url: nil)
       CustomTracer.new
     end
   end

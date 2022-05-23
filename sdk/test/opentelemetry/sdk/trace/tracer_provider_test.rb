@@ -149,8 +149,8 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
   describe '#tracer' do
     it 'returns the same tracer for the same arguments' do
       OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
-        tracer1 = tracer_provider.tracer('component', '1.0', 'https://http.cat/404')
-        tracer2 = tracer_provider.tracer('component', '1.0', 'https://http.cat/404')
+        tracer1 = tracer_provider.tracer('component', '1.0', schema_url: 'https://http.cat/404')
+        tracer2 = tracer_provider.tracer('component', '1.0', schema_url: 'https://http.cat/404')
         _(tracer1).must_equal(tracer2)
         _(log_stream.string).must_be_empty
       end
@@ -169,8 +169,8 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
     end
 
     it 'returns different tracers for different schemas' do
-      tracer1 = tracer_provider.tracer('component', '1.0', 'https://http.cat/404')
-      tracer2 = tracer_provider.tracer('component', '1.0', 'https://http.cat/200')
+      tracer1 = tracer_provider.tracer('component', '1.0', schema_url: 'https://http.cat/404')
+      tracer2 = tracer_provider.tracer('component', '1.0', schema_url: 'https://http.cat/200')
       _(tracer1).wont_equal(tracer2)
     end
 
