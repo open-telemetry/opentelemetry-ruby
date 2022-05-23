@@ -22,9 +22,18 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
   before do
     instrumentation.instance_variable_set(:@config, config)
     exporter.reset
+
+    ::ActiveJob::Base.queue_adapter = :async
+    ::ActiveJob::Base.queue_adapter.immediate = true
   end
 
   after do
+    begin
+      ::ActiveJob::Base.queue_adapter.shutdown
+    rescue StandardError
+      nil
+    end
+    ::ActiveJob::Base.queue_adapter = :inline
     instrumentation.instance_variable_set(:@config, config)
   end
 
@@ -77,6 +86,13 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
   describe 'span kind' do
     it 'sets correct span kinds for inline jobs' do
+      begin
+        ::ActiveJob::Base.queue_adapter.shutdown
+      rescue StandardError
+        nil
+      end
+      ::ActiveJob::Base.queue_adapter = :inline
+
       TestJob.perform_later
 
       _(send_span.kind).must_equal(:client)
@@ -84,16 +100,10 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
     end
 
     it 'sets correct span kinds for all other jobs' do
-      # Change the queue adapter so we get the right behavior
-      ::ActiveJob::Base.queue_adapter = :async
-
       TestJob.perform_later
-      ::ActiveJob::Base.queue_adapter.shutdown
 
       _(send_span.kind).must_equal(:producer)
       _(process_span.kind).must_equal(:consumer)
-    ensure
-      ::ActiveJob::Base.queue_adapter = :inline
     end
   end
 
@@ -115,17 +125,11 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       end
 
       it 'is set correctly for async jobs' do
-        ::ActiveJob::Base.queue_adapter = :async
-
         TestJob.perform_later
-        ::ActiveJob::Base.queue_adapter.shutdown
 
         [send_span, process_span].each do |span|
           _(span.attributes['net.transport']).must_equal('inproc')
         end
-
-      ensure
-        ::ActiveJob::Base.queue_adapter = :inline
       end
     end
 
@@ -157,10 +161,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       end
 
       it 'is set correctly for jobs that do wait' do
-        ::ActiveJob::Base.queue_adapter = :async
-
         job = TestJob.set(wait: 0.second).perform_later
-        ::ActiveJob::Base.queue_adapter.shutdown
 
         # Only the sending span is a 'scheduled' thing
         _(send_span.attributes['messaging.active_job.scheduled_at']).must_equal(job.scheduled_at)
@@ -168,14 +169,18 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
         # The processing span isn't a 'scheduled' thing
         _(process_span.attributes['messaging.active_job.scheduled_at']).must_be_nil
-
-      ensure
-        ::ActiveJob::Base.queue_adapter = :inline
       end
     end
 
     describe 'messaging.system' do
       it 'is set correctly for the inline adapter' do
+        begin
+          ::ActiveJob::Base.queue_adapter.shutdown
+        rescue StandardError
+          nil
+        end
+
+        ::ActiveJob::Base.queue_adapter = :inline
         TestJob.perform_later
 
         [send_span, process_span].each do |span|
@@ -184,17 +189,11 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       end
 
       it 'is set correctly for the async adapter' do
-        ::ActiveJob::Base.queue_adapter = :async
-
         TestJob.perform_later
-        ::ActiveJob::Base.queue_adapter.shutdown
 
         [send_span, process_span].each do |span|
           _(span.attributes['messaging.system']).must_equal('async')
         end
-
-      ensure
-        ::ActiveJob::Base.queue_adapter = :inline
       end
     end
 
@@ -205,20 +204,14 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       end
 
       it 'tracks correctly for jobs that do retry' do
-        ::ActiveJob::Base.queue_adapter = :async
+        begin
+          RetryJob.perform_later
+        rescue StandardError
+          nil
+        end
 
-        RetryJob.perform_now
-        ::ActiveJob::Base.queue_adapter.shutdown
-
-        # 1 enqueue, 2 perform
-        _(spans.count).must_equal(3)
-
-        span = spans.last
-        _(span.kind).must_equal(:consumer)
-        _(span.attributes['messaging.active_job.executions']).must_equal(2)
-
-      ensure
-        ::ActiveJob::Base.queue_adapter = :inline
+        executions = spans.filter { |s| s.kind == :consumer }.sum { |s| s.attributes['messaging.active_job.executions'] }
+        _(executions).must_equal(3) # total of 3 runs. The initial and 2 retries.
       end
     end
 
@@ -227,7 +220,7 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
 
       [send_span, process_span].each do |span|
         _(span.attributes['messaging.destination_kind']).must_equal('queue')
-        _(span.attributes['messaging.system']).must_equal('inline')
+        _(span.attributes['messaging.system']).must_equal('async')
         _(span.attributes['messaging.message_id']).must_equal(job.job_id)
       end
     end
@@ -299,28 +292,20 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       # of execution *will* be the context where the job was enqueued, because rails
       # ends up doing job.around_enqueue { job.around_perform { block } } inline.
       it 'creates span links in separate traces' do
-        ::ActiveJob::Base.queue_adapter = :async
-
         TestJob.perform_later
-        ::ActiveJob::Base.queue_adapter.shutdown
 
         _(send_span.trace_id).wont_equal(process_span.trace_id)
 
         _(process_span.total_recorded_links).must_equal(1)
         _(process_span.links[0].span_context.trace_id).must_equal(send_span.trace_id)
         _(process_span.links[0].span_context.span_id).must_equal(send_span.span_id)
-      ensure
-        ::ActiveJob::Base.queue_adapter = :inline
       end
 
       it 'propagates baggage' do
-        ::ActiveJob::Base.queue_adapter = :async
-
         ctx = OpenTelemetry::Baggage.set_value('testing_baggage', 'it_worked')
         OpenTelemetry::Context.with_current(ctx) do
           BaggageJob.perform_later
         end
-        ::ActiveJob::Base.queue_adapter.shutdown
 
         _(send_span.trace_id).wont_equal(process_span.trace_id)
 
@@ -328,8 +313,6 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
         _(process_span.links[0].span_context.trace_id).must_equal(send_span.trace_id)
         _(process_span.links[0].span_context.span_id).must_equal(send_span.span_id)
         _(process_span.attributes['success']).must_equal(true)
-      ensure
-        ::ActiveJob::Base.queue_adapter = :inline
       end
     end
 
@@ -337,35 +320,24 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       let(:config) { { propagation_style: :child, span_naming: :queue } }
 
       it 'creates a parent/child relationship' do
-        ::ActiveJob::Base.queue_adapter = :async
-
         TestJob.perform_later
-        ::ActiveJob::Base.queue_adapter.shutdown
 
         _(process_span.total_recorded_links).must_equal(0)
 
         _(send_span.trace_id).must_equal(process_span.trace_id)
         _(process_span.parent_span_id).must_equal(send_span.span_id)
-      ensure
-        ::ActiveJob::Base.queue_adapter = :inline
       end
 
       it 'propagates baggage' do
-        ::ActiveJob::Base.queue_adapter = :async
-
         ctx = OpenTelemetry::Baggage.set_value('testing_baggage', 'it_worked')
         OpenTelemetry::Context.with_current(ctx) do
           BaggageJob.perform_later
         end
-        ::ActiveJob::Base.queue_adapter.shutdown
-
         _(process_span.total_recorded_links).must_equal(0)
 
         _(send_span.trace_id).must_equal(process_span.trace_id)
         _(process_span.parent_span_id).must_equal(send_span.span_id)
         _(process_span.attributes['success']).must_equal(true)
-      ensure
-        ::ActiveJob::Base.queue_adapter = :inline
       end
     end
 
@@ -373,35 +345,25 @@ describe OpenTelemetry::Instrumentation::ActiveJob::Patches::ActiveJobCallbacks 
       let(:config) { { propagation_style: :none, span_naming: :queue } }
 
       it 'skips link creation and does not create parent/child relationship' do
-        ::ActiveJob::Base.queue_adapter = :async
-
         TestJob.perform_later
-        ::ActiveJob::Base.queue_adapter.shutdown
 
         _(process_span.total_recorded_links).must_equal(0)
 
         _(send_span.trace_id).wont_equal(process_span.trace_id)
         _(process_span.parent_span_id).wont_equal(send_span.span_id)
-      ensure
-        ::ActiveJob::Base.queue_adapter = :inline
       end
 
       it 'still propagates baggage' do
-        ::ActiveJob::Base.queue_adapter = :async
-
         ctx = OpenTelemetry::Baggage.set_value('testing_baggage', 'it_worked')
         OpenTelemetry::Context.with_current(ctx) do
           BaggageJob.perform_later
         end
-        ::ActiveJob::Base.queue_adapter.shutdown
 
         _(process_span.total_recorded_links).must_equal(0)
 
         _(send_span.trace_id).wont_equal(process_span.trace_id)
         _(process_span.parent_span_id).wont_equal(send_span.span_id)
         _(process_span.attributes['success']).must_equal(true)
-      ensure
-        ::ActiveJob::Base.queue_adapter = :inline
       end
     end
   end
