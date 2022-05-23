@@ -30,10 +30,10 @@ module OpenTelemetry
           #
           # @param [SpanExporter] exporter the (duck type) SpanExporter to where the
           #   recorded Spans are pushed after batching.
-          # @param [Numeric] exporter_timeout the delay interval between two
-          #   consecutive exports. Defaults to the value of the OTEL_BSP_EXPORT_TIMEOUT
+          # @param [Numeric] exporter_timeout the maximum allowed time to export data.
+          #   Defaults to the value of the OTEL_BSP_EXPORT_TIMEOUT
           #   environment variable, if set, or 30,000 (30 seconds).
-          # @param [Numeric] schedule_delay the maximum allowed time to export data.
+          # @param [Numeric] schedule_delay the delay interval between two consecutive exports.
           #   Defaults to the value of the OTEL_BSP_SCHEDULE_DELAY environment
           #   variable, if set, or 5,000 (5 seconds).
           # @param [Integer] max_queue_size the maximum queue size in spans.
