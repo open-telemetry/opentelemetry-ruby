@@ -4,10 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'faraday'
-
-require 'opentelemetry/sdk'
-require 'opentelemetry-test-helpers'
+require 'bundler/setup'
+Bundler.require(:development, :test)
 
 require 'minitest/autorun'
 require 'webmock/minitest'
@@ -17,5 +15,6 @@ EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
 span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)
 
 OpenTelemetry::SDK.configure do |c|
+  c.error_handler = ->(exception:, message:) { raise(exception || message) }
   c.add_span_processor span_processor
 end

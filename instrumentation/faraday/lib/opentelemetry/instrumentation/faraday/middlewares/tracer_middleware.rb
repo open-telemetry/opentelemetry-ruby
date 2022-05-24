@@ -44,9 +44,9 @@ module OpenTelemetry
           def span_creation_attributes(http_method:, url:)
             instrumentation_attrs = {
               'http.method' => http_method,
-              'http.url' => url.to_s,
-              'net.peer.name' => url.host
+              'http.url' => url.to_s
             }
+            instrumentation_attrs['net.peer.name'] = url.host unless url.host.nil?
             config = Faraday::Instrumentation.instance.config
             instrumentation_attrs['peer.service'] = config[:peer_service] if config[:peer_service]
             instrumentation_attrs.merge!(
