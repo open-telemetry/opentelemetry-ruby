@@ -33,7 +33,11 @@ module OpenTelemetry
             # Creates a new {TraceParent} from a supplied {Trace::SpanContext}
             # @param [SpanContext] ctx The span context
             # @return [TraceParent] a trace parent
+            # @raise [InvalidTraceIDError] on an invalid trace_id
+            # @raise [InvalidSpanIDError] on an invalid span_id
             def from_span_context(ctx)
+              raise InvalidSpanIDError if ctx.span_id.nil?
+              raise InvalidTraceIDError if ctx.trace_id.nil?
               new(trace_id: ctx.trace_id, span_id: ctx.span_id, flags: ctx.trace_flags)
             end
 

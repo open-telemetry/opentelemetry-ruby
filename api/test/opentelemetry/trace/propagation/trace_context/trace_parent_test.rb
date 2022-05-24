@@ -22,6 +22,17 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TraceParent do
     it 'should be lowercase' do
       _(good.to_s).must_equal good.to_s.downcase
     end
+
+    it 'should make a traceparent from a span context with empty span' do
+      sp = OpenTelemetry::Trace::SpanContext.new(span_id: nil)
+      
+      _(proc {
+        TraceParent.from_span_context(sp)
+      }).must_raise TraceParent::InvalidSpanIDError
+      
+      # tp = TraceParent.from_span_context(sp)
+      # _(tp.to_s).must_equal ""
+    end
   end
 
   it 'should make a traceparent from a span context' do
