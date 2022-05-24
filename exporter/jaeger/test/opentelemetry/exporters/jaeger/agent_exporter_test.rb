@@ -100,8 +100,8 @@ describe OpenTelemetry::Exporter::Jaeger::AgentExporter do
       socket.bind('127.0.0.1', 0)
       exporter = OpenTelemetry::Exporter::Jaeger::AgentExporter.new(host: '127.0.0.1', port: socket.addr[1], max_packet_size: 128)
 
-      span_data1 = create_span_data(resource: OpenTelemetry::SDK::Resources::Resource.create('k1' => 'v1'))
-      span_data2 = create_span_data(resource: OpenTelemetry::SDK::Resources::Resource.create('k2' => 'v2'))
+      span_data1 = create_span_data(resource: OpenTelemetry::SDK::Resources::Resource.create({ 'k1' => 'v1' }))
+      span_data2 = create_span_data(resource: OpenTelemetry::SDK::Resources::Resource.create({ 'k2' => 'v2' }))
 
       result = exporter.export([span_data1, span_data2])
       packet1 = socket.recvfrom(65_000)

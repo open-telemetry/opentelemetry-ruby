@@ -9,7 +9,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
   Transformer = OpenTelemetry::Exporter::Zipkin::Transformer
 
   it 'encodes a span_data but not resource' do
-    resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo', 'bar_not_copied' => 'baz_not_capied')
+    resource = OpenTelemetry::SDK::Resources::Resource.create({ 'service.name' => 'foo', 'bar_not_copied' => 'baz_not_capied' })
     encoded_span = Transformer.to_zipkin_span(create_span_data(attributes: { 'bar' => 'baz' }), resource)
     _(encoded_span[:name]).must_equal('')
     _(encoded_span['localEndpoint']['serviceName']).must_equal('foo')
@@ -17,7 +17,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
   end
 
   it 'encodes span.status and span.kind' do
-    resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo')
+    resource = OpenTelemetry::SDK::Resources::Resource.create({ 'service.name' => 'foo' })
     span_data = create_span_data(attributes: { 'bar' => 'baz' }, status: OpenTelemetry::Trace::Status.error, kind: :server)
 
     encoded_span = Transformer.to_zipkin_span(span_data, resource)
@@ -42,7 +42,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
       )
     ]
 
-    resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo')
+    resource = OpenTelemetry::SDK::Resources::Resource.create({ 'service.name' => 'foo' })
     span_data = create_span_data(attributes: attributes, events: events)
     encoded_span = Transformer.to_zipkin_span(span_data, resource)
 
@@ -67,7 +67,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
       )
     ]
 
-    resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo')
+    resource = OpenTelemetry::SDK::Resources::Resource.create({ 'service.name' => 'foo' })
     span_data = create_span_data(attributes: attributes, events: events)
     encoded_span = Transformer.to_zipkin_span(span_data, resource)
 
@@ -84,7 +84,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     it 'encodes status code as strings' do
       status = OpenTelemetry::Trace::Status.ok
 
-      resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo')
+      resource = OpenTelemetry::SDK::Resources::Resource.create({ 'service.name' => 'foo' })
       span_data = create_span_data(attributes: { 'bar' => 'baz' }, status: status)
       encoded_span = Transformer.to_zipkin_span(span_data, resource)
 
@@ -95,7 +95,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     it 'encodes error status code as strings on error tag and status description field' do
       error_description = 'there is as yet insufficient data for a meaningful answer'
       status = OpenTelemetry::Trace::Status.error(error_description)
-      resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo')
+      resource = OpenTelemetry::SDK::Resources::Resource.create({ 'service.name' => 'foo' })
       span_data = create_span_data(attributes: { 'bar' => 'baz' }, status: status)
       encoded_span = Transformer.to_zipkin_span(span_data, resource)
 
@@ -107,7 +107,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
   describe 'instrumentation library' do
     it 'encodes library and version when set' do
       lib = OpenTelemetry::SDK::InstrumentationLibrary.new('mylib', '0.1.0')
-      resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo')
+      resource = OpenTelemetry::SDK::Resources::Resource.create({ 'service.name' => 'foo' })
       span_data = create_span_data(attributes: { 'bar' => 'baz' }, instrumentation_library: lib)
       encoded_span = Transformer.to_zipkin_span(span_data, resource)
 
@@ -118,7 +118,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
 
     it 'skips nil values' do
       lib = OpenTelemetry::SDK::InstrumentationLibrary.new('mylib')
-      resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo')
+      resource = OpenTelemetry::SDK::Resources::Resource.create({ 'service.name' => 'foo' })
       span_data = create_span_data(attributes: { 'bar' => 'baz' }, instrumentation_library: lib)
       encoded_span = Transformer.to_zipkin_span(span_data, resource)
 

@@ -21,7 +21,7 @@ module OpenTelemetry
           # @raise [ArgumentError] If attribute keys and values are not strings
           # @raise [ArgumentError] If the schema URL is given but it is not a string.
           # @return [Resource]
-          def create(attributes = {}, schema_url = nil)
+          def create(attributes = {}, schema_url: nil)
             raise ArgumentError, 'If given, schema url must be a string' unless schema_url.nil? || schema_url.is_a?(String)
 
             frozen_attributes = attributes.each_with_object({}) do |(k, v), memo|
@@ -35,7 +35,7 @@ module OpenTelemetry
           end
 
           def default
-            @default ||= create(SemanticConventions::Resource::SERVICE_NAME => 'unknown_service').merge(process).merge(telemetry_sdk).merge(service_name_from_env)
+            @default ||= create({ SemanticConventions::Resource::SERVICE_NAME => 'unknown_service' }).merge(process).merge(telemetry_sdk).merge(service_name_from_env)
           end
 
           def telemetry_sdk
@@ -73,7 +73,7 @@ module OpenTelemetry
 
           def service_name_from_env
             service_name = ENV['OTEL_SERVICE_NAME']
-            create(SemanticConventions::Resource::SERVICE_NAME => service_name) unless service_name.nil?
+            create({ SemanticConventions::Resource::SERVICE_NAME => service_name }) unless service_name.nil?
           end
         end
 

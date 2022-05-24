@@ -70,7 +70,7 @@ describe OpenTelemetry::SDK::Configurator do
     let(:expected_resource_attributes) { default_resource_attributes.merge('test_key' => 'test_value') }
 
     it 'merges the resource' do
-      configurator.resource = OpenTelemetry::SDK::Resources::Resource.create({ 'test_key' => 'test_value' }, 'https://http.cat/404')
+      configurator.resource = OpenTelemetry::SDK::Resources::Resource.create({ 'test_key' => 'test_value' }, schema_url: 'https://http.cat/404')
       _(configurator_resource_attributes).must_equal(expected_resource_attributes)
       _(configurator_resource.schema_url).must_equal('https://http.cat/404')
     end
@@ -84,7 +84,7 @@ describe OpenTelemetry::SDK::Configurator do
 
       it 'uses the user provided resources' do
         OpenTelemetry::TestHelpers.with_env('OTEL_RESOURCE_ATTRIBUTES' => 'important_value=100') do
-          configurator.resource = OpenTelemetry::SDK::Resources::Resource.create('important_value' => '25')
+          configurator.resource = OpenTelemetry::SDK::Resources::Resource.create({ 'important_value' => '25' })
           _(configurator_resource_attributes).must_equal(expected_resource_attributes)
         end
       end
