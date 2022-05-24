@@ -123,6 +123,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
         _(span.attributes['peer.service']).must_equal 'example:custom'
       end
     end
+
     describe 'given a client without a base url' do
       let(:client) do
         ::Faraday.new do |builder|
@@ -134,7 +135,6 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
 
       it 'omits missing attributes' do
         response = client.get('/success')
-        # debugger
 
         _(span.name).must_equal 'HTTP GET'
         _(span.attributes['http.method']).must_equal 'GET'
