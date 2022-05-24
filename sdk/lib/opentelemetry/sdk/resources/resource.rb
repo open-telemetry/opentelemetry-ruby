@@ -114,7 +114,7 @@ module OpenTelemetry
                              other.schema_url
                            elsif other.schema_url.nil? || schema_url == other.schema_url
                              schema_url
-                           elsif schema_url != other.schema_url
+                           else
                              # According to the spec: The resulting resource is undefined, and its contents are implementation-specific.
                              # We choose to simply un-set the resource URL and log a warning about it, and allow the attributes to merge.
                              OpenTelemetry.logger.warn(
