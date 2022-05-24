@@ -16,7 +16,9 @@ module OpenTelemetry
           end
 
           def call(env)
-            @app.call(env).tap { trace_response(env) }
+            @app.call(env)
+          ensure
+            trace_response(env)
           end
 
           def trace_response(env)

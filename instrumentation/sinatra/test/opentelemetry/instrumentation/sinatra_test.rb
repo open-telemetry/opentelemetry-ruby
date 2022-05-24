@@ -20,6 +20,10 @@ describe OpenTelemetry::Instrumentation::Sinatra do
         '1'
       end
 
+      get '/error' do
+        raise
+      end
+
       template :foo_template do
         'Foo Template'
       end
@@ -139,6 +143,19 @@ describe OpenTelemetry::Instrumentation::Sinatra do
         'http.scheme' => 'http',
         'http.status_code' => 404,
         'http.target' => '/missing_example/not_present'
+      )
+    end
+
+    it 'does correctly name spans when the app raises errors' do
+      get '/one/error'
+
+      _(exporter.finished_spans.first.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      _(exporter.finished_spans.first.attributes).must_equal(
+        'http.host' => 'example.org',
+        'http.method' => 'GET',
+        'http.route' => '/error',
+        'http.scheme' => 'http',
+        'http.target' => '/error'
       )
     end
   end
