@@ -9,6 +9,8 @@ module OpenTelemetry
     module Trace
       # {Tracer} is the SDK implementation of {OpenTelemetry::Trace::Tracer}.
       class Tracer < OpenTelemetry::Trace::Tracer
+        DEFAULT_SPAN_NAME = 'empty'
+
         # @api private
         #
         # Returns a new {Tracer} instance.
@@ -28,17 +30,12 @@ module OpenTelemetry
         end
 
         def start_span(name, with_parent: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
-          name ||= 'empty'
+          name ||= DEFAULT_SPAN_NAME
 
           with_parent ||= Context.current
           parent_span = OpenTelemetry::Trace.current_span(with_parent)
-          parent_span_context = OpenTelemetry::Trace.current_span(with_parent).context
-          if parent_span_context.valid?
-            parent_span_id = parent_span_context.span_id
-            trace_id = parent_span_context.trace_id
-          end
 
-          @tracer_provider.internal_create_span(name, kind, trace_id, parent_span_id, attributes, links, start_timestamp, with_parent, parent_span, @instrumentation_library)
+          @tracer_provider.internal_create_span(name, kind, attributes, links, start_timestamp, with_parent, parent_span, @instrumentation_library)
         end
       end
     end
