@@ -29,11 +29,11 @@ module OpenTelemetry
 
         def start_span(name, with_parent: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
           name ||= 'empty'
-
+          kind ||= :internal
           with_parent ||= Context.current
-          parent_span = OpenTelemetry::Trace.current_span(with_parent)
 
-          @tracer_provider.internal_create_span(name, kind, attributes, links, start_timestamp, with_parent, parent_span, @instrumentation_library)
+
+          @tracer_provider.internal_create_span(name, kind, attributes, links, start_timestamp, with_parent, @instrumentation_library)
         end
       end
     end
