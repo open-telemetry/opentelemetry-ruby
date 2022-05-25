@@ -146,10 +146,11 @@ describe OpenTelemetry::Instrumentation::Sinatra do
       )
     end
 
-    it 'does correctly name spans when the app raises errors' do
+    it 'does correctly name spans and add attributes when the app raises errors' do
       get '/one/error'
 
       _(exporter.finished_spans.first.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      _(exporter.finished_spans.first.name).must_equal('GET /error')
       _(exporter.finished_spans.first.attributes).must_equal(
         'http.host' => 'example.org',
         'http.method' => 'GET',
