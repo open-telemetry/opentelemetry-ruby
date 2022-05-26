@@ -6,7 +6,7 @@
 
 require 'test_helper'
 
-require_relative '../../../lib/opentelemetry/instrumentation/faraday/instrumentation'
+require_relative '../../../lib/opentelemetry/instrumentation/faraday'
 
 describe OpenTelemetry::Instrumentation::Faraday do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Faraday::Instrumentation.instance }
