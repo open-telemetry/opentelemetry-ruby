@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-action_view
 
+### v0.2.2 / 2022-05-26
+
+* FIXED: Broken test file requirements 
+
 ### v0.2.1 / 2022-05-02
 
 * FIXED: RubyGems Fallback 

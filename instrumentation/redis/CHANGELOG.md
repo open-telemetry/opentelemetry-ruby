@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-redis
 
+### v0.22.1 / 2022-05-26
+
+* FIXED: Broken test file requirements 
+
 ### v0.22.0 / 2022-05-02
 
 * ADDED: Validate Using Enums 

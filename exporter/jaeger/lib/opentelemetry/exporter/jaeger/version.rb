@@ -8,7 +8,7 @@ module OpenTelemetry
   module Exporter
     module Jaeger
       ## Current OpenTelemetry Jaeger exporter version
-      VERSION = '0.20.2'
+      VERSION = '0.20.3'
     end
   end
 end

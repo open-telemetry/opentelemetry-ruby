@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mongo
 
+### v0.19.1 / 2022-05-26
+
+* FIXED: Broken test file requirements 
+
 ### v0.19.0 / 2022-05-02
 
 * ADDED: Validate Using Enums 

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-active_record
 
+### v0.3.1 / 2022-05-26
+
+* FIXED: Broken test file requirements 
+
 ### v0.3.0 / 2022-05-02
 
 * ADDED: Make ActiveRecord 7 compatible 

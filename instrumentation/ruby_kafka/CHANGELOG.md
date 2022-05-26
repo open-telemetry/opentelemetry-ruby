@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-ruby_kafka
 
+### v0.18.7 / 2022-05-26
+
+* FIXED: Broken test file requirements 
+
 ### v0.18.6 / 2022-05-02
 
 * FIXED: RubyGems Fallback 

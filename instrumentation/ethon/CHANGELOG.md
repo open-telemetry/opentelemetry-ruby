@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-ethon
 
+### v0.19.6 / 2022-05-26
+
+* FIXED: Broken test file requirements 
+
 ### v0.19.5 / 2022-05-05
 
 * (No significant changes)
