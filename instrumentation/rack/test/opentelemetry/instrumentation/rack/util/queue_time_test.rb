@@ -6,9 +6,6 @@
 
 require 'test_helper'
 
-require 'rack'
-require_relative '../../../../../lib/opentelemetry/instrumentation/rack/util/queue_time'
-
 describe OpenTelemetry::Instrumentation::Rack::Util::QueueTime do
   let(:described_class) { OpenTelemetry::Instrumentation::Rack::Util::QueueTime }
 

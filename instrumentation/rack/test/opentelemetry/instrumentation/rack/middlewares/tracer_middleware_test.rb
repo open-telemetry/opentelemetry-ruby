@@ -7,8 +7,6 @@
 require 'test_helper'
 
 # require Instrumentation so .install method is found:
-require_relative '../../../../../lib/opentelemetry/instrumentation/rack'
-require_relative '../../../../../lib/opentelemetry/instrumentation/rack/instrumentation'
 require_relative '../../../../../lib/opentelemetry/instrumentation/rack/middlewares/tracer_middleware'
 
 describe OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware do
