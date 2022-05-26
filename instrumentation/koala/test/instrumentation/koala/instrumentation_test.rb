@@ -7,7 +7,6 @@
 require 'test_helper'
 require 'pry'
 
-require_relative '../../../lib/opentelemetry/instrumentation/koala'
 require_relative '../../../../net_http/lib/opentelemetry/instrumentation/net/http'
 
 describe OpenTelemetry::Instrumentation::Koala do # rubocop:disable Metrics/BlockLength

@@ -6,8 +6,6 @@
 
 require 'test_helper'
 
-require_relative '../../../../lib/opentelemetry/instrumentation/rack/instrumentation'
-
 describe OpenTelemetry::Instrumentation::Rack::Instrumentation do
   let(:instrumentation_class) { OpenTelemetry::Instrumentation::Rack::Instrumentation }
   let(:instrumentation) { instrumentation_class.instance }

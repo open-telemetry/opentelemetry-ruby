@@ -9,6 +9,8 @@ require 'opentelemetry-test-helpers'
 
 require 'minitest/autorun'
 
+require_relative '../lib/opentelemetry-instrumentation-que'
+
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
 span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)

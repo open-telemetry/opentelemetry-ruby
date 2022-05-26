@@ -6,8 +6,6 @@
 
 require_relative '../../test_helper'
 
-require_relative '../../../lib/opentelemetry/instrumentation/delayed_job/instrumentation'
-
 describe OpenTelemetry::Instrumentation::DelayedJob do
   let(:instrumentation) { OpenTelemetry::Instrumentation::DelayedJob::Instrumentation.instance }
   let(:exporter) { EXPORTER }

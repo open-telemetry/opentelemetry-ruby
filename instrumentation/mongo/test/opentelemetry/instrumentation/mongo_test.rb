@@ -5,8 +5,6 @@
 # SPDX-License-Identifier: Apache-2.0
 require_relative '../../test_helper'
 
-require_relative '../../../lib/opentelemetry/instrumentation/mongo/instrumentation'
-
 describe OpenTelemetry::Instrumentation::Mongo do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Mongo::Instrumentation.instance }
   let(:exporter) { EXPORTER }

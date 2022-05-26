@@ -7,7 +7,6 @@
 require_relative '../../../../test_helper'
 
 # require Instrumentation so .install method is found:
-require_relative '../../../../../lib/opentelemetry/instrumentation/delayed_job'
 require_relative '../../../../../lib/opentelemetry/instrumentation/delayed_job/plugins/tracer_plugin'
 
 describe OpenTelemetry::Instrumentation::DelayedJob::Plugins::TracerPlugin do
