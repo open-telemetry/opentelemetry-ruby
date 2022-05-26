@@ -6,8 +6,6 @@
 
 require_relative '../../test_helper'
 
-require_relative '../../../lib/opentelemetry/instrumentation/active_model_serializers'
-
 describe OpenTelemetry::Instrumentation::ActiveModelSerializers do
   let(:instrumentation) { OpenTelemetry::Instrumentation::ActiveModelSerializers::Instrumentation.instance }
   let(:exporter) { EXPORTER }

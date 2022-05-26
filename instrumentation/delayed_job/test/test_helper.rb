@@ -15,6 +15,8 @@ require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
 
+require_relative '../lib/opentelemetry-instrumentation-delayed_job'
+
 # global opentelemetry-sdk setup:
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
 span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)

@@ -7,8 +7,6 @@
 require 'test_helper'
 require 'opentelemetry-instrumentation-pg'
 
-require_relative '../../../lib/opentelemetry/instrumentation/que'
-
 describe OpenTelemetry::Instrumentation::Que do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Que::Instrumentation.instance }
   let(:pg_instrumentation) { OpenTelemetry::Instrumentation::PG::Instrumentation.instance }

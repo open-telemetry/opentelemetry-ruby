@@ -7,7 +7,6 @@
 require 'test_helper'
 
 # require Instrumentation so .install method is found:
-require_relative '../../../../../lib/opentelemetry/instrumentation/faraday'
 require_relative '../../../../../lib/opentelemetry/instrumentation/faraday/middlewares/tracer_middleware'
 
 describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware do
