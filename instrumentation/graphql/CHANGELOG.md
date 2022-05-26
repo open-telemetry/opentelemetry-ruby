@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-graphql
 
+### v0.19.4 / 2022-05-26
+
+* FIXED: Broken test file requirements 
+
 ### v0.19.3 / 2022-05-05
 
 * (No significant changes)

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-aws_sdk
 
+### v0.2.4 / 2022-05-26
+
+* FIXED: Broken test file requirements 
+
 ### v0.2.3 / 2022-05-02
 
 * FIXED: RubyGems Fallback 

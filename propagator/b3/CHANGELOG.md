@@ -1,5 +1,9 @@
 # Release History: opentelemetry-propagator-b3
 
+### v0.19.3 / 2022-05-26
+
+* (No significant changes)
+
 ### v0.19.2 / 2021-09-29
 
 * (No significant changes)
