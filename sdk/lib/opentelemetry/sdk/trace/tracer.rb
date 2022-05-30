@@ -32,7 +32,6 @@ module OpenTelemetry
           kind ||= :internal
           with_parent ||= Context.current
 
-
           @tracer_provider.internal_create_span(name, kind, attributes, links, start_timestamp, with_parent, @instrumentation_library)
         end
       end
