@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
   spec.add_dependency 'opentelemetry-common', '~> 0.19.3'
-  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.20.0'
+  spec.add_dependency 'opentelemetry-registry', '~> 0.1'
 
   # This is an intentionally loose dependency, since we want to be able to
   # release new versions of opentelemetry-semantic_conventions without requiring
@@ -39,6 +39,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'faraday', '~> 0.13'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'opentelemetry-exporter-zipkin', '~> 0.19.0'
+  spec.add_development_dependency 'opentelemetry-instrumentation-base', '~> 0.20'
   spec.add_development_dependency 'opentelemetry-test-helpers'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake', '~> 12.0'

@@ -30,7 +30,7 @@ module OpenTelemetry
                        password: ENV['OTEL_EXPORTER_JAEGER_PASSWORD'],
                        timeout: ENV.fetch('OTEL_EXPORTER_JAEGER_TIMEOUT', 10),
                        ssl_verify_mode: CollectorExporter.ssl_verify_mode)
-          raise ArgumentError, "invalid url for Jaeger::CollectorExporter #{endpoint}" if invalid_url?(endpoint)
+          raise ArgumentError, "invalid url for Jaeger::CollectorExporter #{endpoint}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
           raise ArgumentError, 'username and password should either both be nil or both be set' if username.nil? != password.nil?
 
           transport_opts = { ssl_verify_mode: Integer(ssl_verify_mode) }
@@ -87,15 +87,6 @@ module OpenTelemetry
         end
 
         private
-
-        def invalid_url?(url)
-          return true if url.nil? || url.strip.empty?
-
-          URI(url)
-          false
-        rescue URI::InvalidURIError
-          true
-        end
 
         def encoded_batches(span_data)
           span_data.group_by(&:resource).map do |resource, spans|
