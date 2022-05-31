@@ -12,9 +12,8 @@ require 'rubocop/rake_task'
 RuboCop::RakeTask.new
 
 task :start_redis do
-  unless `which redis-server`.empty?
-    @redis_pid = fork { exec 'redis-server test/redis.conf' }
-  end
+  redis_exists = `which redis-server`.lines.any?
+  @redis_pid = fork { exec 'redis-server test/redis.conf' } if redis_exists
 end
 
 Rake::TestTask.new test: :start_redis do |t|
