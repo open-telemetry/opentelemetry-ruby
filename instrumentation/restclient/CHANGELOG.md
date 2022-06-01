@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-restclient
 
+### v0.19.4 / 2022-05-02
+
+* FIXED: Restclient invalid span attribute type Symbol 
+
 ### v0.19.3 / 2021-12-02
 
 * (No significant changes)

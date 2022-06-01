@@ -60,8 +60,8 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
       _(spans.first.name).must_equal 'example one'
       _(spans.first.attributes['rspec.example.result']).must_equal 'passed'
       _(spans.first.start_timestamp).wont_equal 0
-      _(spans.first.start_timestamp / 1_000_000_000).must_be_close_to(current_time.to_i)
-      _(spans.first.end_timestamp / 1_000_000_000).must_be_close_to(current_time.to_i)
+      _(spans.first.start_timestamp / 1_000_000_000).must_be_close_to(current_time.to_i, 10)
+      _(spans.first.end_timestamp / 1_000_000_000).must_be_close_to(current_time.to_i, 10)
     end
   end
 
@@ -170,22 +170,104 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
       end
 
       it 'records the failure message' do
-        message = <<~MESSAGE.rstrip
+        message = <<~MESSAGE
 
           expected: false
                got: true
 
           (compared using eql?)
 
-          Diff:\e[0m
-          \e[0m\e[34m@@ -1 +1 @@
-          \e[0m\e[31m-false
-          \e[0m\e[32m+true
-          \e[0m
+          Diff:
+          @@ -1 +1 @@
+          -false
+          +true
         MESSAGE
         _(subject.attributes['rspec.example.failure_message']).must_equal message
         _(subject.status.description).must_equal message
         _(subject.events.first.attributes['exception.message']).must_equal message
+      end
+
+      it 'records the exception' do
+        _(subject.events.first.attributes['exception.type']).must_equal 'RSpec::Expectations::ExpectationNotMetError'
+      end
+    end
+
+    describe 'that fail and error' do
+      subject do
+        run_example do
+          example('example one') { expect(true).to eql false }
+          after { raise 'my-error-message' }
+        end
+      end
+
+      it 'records when the example fails' do
+        _(subject.attributes['rspec.example.result']).must_equal 'failed'
+      end
+
+      it 'records the span status as error' do
+        _(subject.status.ok?).must_equal false
+        _(subject.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      end
+
+      it 'records the failure message' do
+        message = <<~MESSAGE
+
+          expected: false
+               got: true
+
+          (compared using eql?)
+
+          Diff:
+          @@ -1 +1 @@
+          -false
+          +true
+        MESSAGE
+        _(subject.attributes['rspec.example.failure_message']).must_equal message
+        _(subject.status.description).must_equal "#{message}\n\nmy-error-message"
+        _(subject.events[0].attributes['exception.message']).must_equal message
+        _(subject.events[1].attributes['exception.message']).must_equal 'my-error-message'
+      end
+
+      it 'records the exception' do
+        _(subject.events.first.attributes['exception.type']).must_equal 'RSpec::Expectations::ExpectationNotMetError'
+      end
+    end
+
+    describe 'that fail twice' do
+      subject do
+        run_example do
+          example('example one') { expect(true).to eql false }
+          after { expect(true).to eql false }
+        end
+      end
+
+      it 'records when the example fails' do
+        _(subject.attributes['rspec.example.result']).must_equal 'failed'
+      end
+
+      it 'records the span status as error' do
+        _(subject.status.ok?).must_equal false
+        _(subject.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+      end
+
+      it 'records the failure message' do
+        message = <<~MESSAGE
+
+          expected: false
+               got: true
+
+          (compared using eql?)
+
+          Diff:
+          @@ -1 +1 @@
+          -false
+          +true
+        MESSAGE
+        expected_failure_message = "#{message}\n\n#{message}"
+        _(subject.attributes['rspec.example.failure_message']).must_equal expected_failure_message
+        _(subject.events[0].attributes['exception.message']).must_equal message
+        _(subject.events[1].attributes['exception.message']).must_equal message
+        _(subject.status.description).must_equal expected_failure_message
       end
 
       it 'records the exception' do
@@ -207,17 +289,45 @@ describe OpenTelemetry::Instrumentation::RSpec::Formatter do
       it 'records the span status as error' do
         _(subject.status.ok?).must_equal false
         _(subject.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+        _(subject.status.description).must_equal 'my-error-message'
       end
 
       it 'records the exception' do
-        _(subject.events.first.attributes['exception.type']).must_equal 'RuntimeError'
+        _(subject.events[0].attributes['exception.type']).must_equal 'RuntimeError'
+        _(subject.events[0].attributes['exception.message']).must_equal 'my-error-message'
+      end
+    end
+
+    describe 'that error twice' do
+      subject do
+        run_example do
+          example('example one') { raise 'my-error-message' }
+          after { raise 'another-error' }
+        end
       end
 
-      it 'records the exception' do
-        _(subject.events.first.attributes['exception.message']).must_equal 'my-error-message'
+      it 'records when the example fails' do
+        _(subject.attributes['rspec.example.result']).must_equal 'failed'
+      end
+
+      it 'records the span status as error' do
+        _(subject.status.ok?).must_equal false
+        _(subject.status.code).must_equal OpenTelemetry::Trace::Status::ERROR
+        _(subject.status.description).must_equal "my-error-message\n\nanother-error"
+      end
+
+      it 'records the first exception' do
+        _(subject.events[0].attributes['exception.type']).must_equal 'RuntimeError'
+        _(subject.events[0].attributes['exception.message']).must_equal 'my-error-message'
+      end
+
+      it 'records the second exception' do
+        _(subject.events[1].attributes['exception.type']).must_equal 'RuntimeError'
+        _(subject.events[1].attributes['exception.message']).must_equal 'another-error'
       end
     end
   end
+
   describe 'using a custom tracer provider' do
     describe 'with the formatter' do
       it 'will sends spans to the connected exporter' do

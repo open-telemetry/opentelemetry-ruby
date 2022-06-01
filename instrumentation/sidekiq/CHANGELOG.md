@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-sidekiq
 
+### v0.21.0 / 2022-05-02
+
+* ADDED: Validate Using Enums 
+* FIXED: RubyGems Fallback 
+
 ### v0.20.2 / 2021-12-02
 
 * (No significant changes)

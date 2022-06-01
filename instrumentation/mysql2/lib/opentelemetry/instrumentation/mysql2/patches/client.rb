@@ -60,7 +60,7 @@ module OpenTelemetry
             end
             tracer.in_span(
               database_span_name(sql),
-              attributes: attributes,
+              attributes: attributes.merge!(OpenTelemetry::Instrumentation::Mysql2.attributes),
               kind: :client
             ) do
               super(sql, options)

@@ -6,8 +6,6 @@
 
 require_relative '../../test_helper'
 
-require_relative '../../../lib/opentelemetry/instrumentation/active_model_serializers/instrumentation'
-
 describe OpenTelemetry::Instrumentation::ActiveModelSerializers do
   let(:instrumentation) { OpenTelemetry::Instrumentation::ActiveModelSerializers::Instrumentation.instance }
   let(:exporter) { EXPORTER }
@@ -30,12 +28,11 @@ describe OpenTelemetry::Instrumentation::ActiveModelSerializers do
 
   describe 'compatible' do
     it 'when older gem version installed' do
-      allow_any_instance_of(Bundler::StubSpecification).to receive(:version).and_return(Gem::Version.new('0.9.4'))
+      stub_const('::ActiveModel::Serializer::VERSION', '0.9.4')
       _(instrumentation.compatible?).must_equal false
     end
 
     it 'when future gem version installed' do
-      allow_any_instance_of(Bundler::StubSpecification).to receive(:version).and_return(Gem::Version.new('0.11.0'))
       _(instrumentation.compatible?).must_equal true
     end
   end

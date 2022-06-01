@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-mysql2
 
+### v0.20.1 / 2022-05-03
+
+* ADDED: `with_attributes` method for context propagation
+
 ### v0.20.0 / 2021-12-01
 
 * ADDED: Add default options config helper + env var config option support 

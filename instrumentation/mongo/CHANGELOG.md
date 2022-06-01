@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-mongo
 
+### v0.19.0 / 2022-05-02
+
+* ADDED: Validate Using Enums 
+* FIXED: RubyGems Fallback 
+
 ### v0.18.4 / 2021-12-02
 
 * (No significant changes)

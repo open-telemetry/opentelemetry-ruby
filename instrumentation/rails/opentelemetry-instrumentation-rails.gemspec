@@ -23,19 +23,19 @@ Gem::Specification.new do |spec|
                ::Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 2.5.0'
+  spec.required_ruby_version = '>= 2.6.0'
 
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
-  spec.add_dependency 'opentelemetry-instrumentation-action_pack', '~> 0.1.3'
-  spec.add_dependency 'opentelemetry-instrumentation-action_view', '~> 0.2.0'
-  spec.add_dependency 'opentelemetry-instrumentation-active_record', '~> 0.2.2'
+  spec.add_dependency 'opentelemetry-instrumentation-action_pack', '~> 0.1.4'
+  spec.add_dependency 'opentelemetry-instrumentation-action_view', '~> 0.2.1'
+  spec.add_dependency 'opentelemetry-instrumentation-active_record', '~> 0.3.0'
   spec.add_dependency 'opentelemetry-instrumentation-active_support', '~> 0.1.0'
-  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.19.0'
+  spec.add_dependency 'opentelemetry-instrumentation-base', '~> 0.21.0'
 
   spec.add_development_dependency 'appraisal', '~> 2.2.0'
   spec.add_development_dependency 'bundler', '>= 1.17'
   spec.add_development_dependency 'minitest', '~> 5.0'
-  spec.add_development_dependency 'opentelemetry-sdk', '~> 1.0'
+  spec.add_development_dependency 'opentelemetry-sdk', '~> 1.1'
   spec.add_development_dependency 'opentelemetry-test-helpers'
   spec.add_development_dependency 'rack-test', '~> 1.1.0'
   spec.add_development_dependency 'rails'

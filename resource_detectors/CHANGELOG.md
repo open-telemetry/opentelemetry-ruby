@@ -1,5 +1,9 @@
 # Release History: opentelemetry-resource_detectors
 
+### v0.20.0 / 2022-05-02
+
+* ADDED: Added Google Cloud Function Resource Detection 
+
 ### v0.19.1 / 2021-09-29
 
 * (No significant changes)

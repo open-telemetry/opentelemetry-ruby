@@ -6,12 +6,12 @@
 
 source 'https://rubygems.org'
 
+# DO NOT ADD DEPENDENCIES HERE!
+# Please declare a minimum development dependency in the gemspec,
+# then target specific versions in the Appraisals file.
+
 gemspec
 
-gem 'opentelemetry-api', path: '../../api'
-
 group :test do
-  gem 'opentelemetry-common', path: '../../common'
-  gem 'opentelemetry-sdk', path: '../../sdk'
-  gem 'opentelemetry-semantic_conventions', path: '../../semantic_conventions'
+  gem 'opentelemetry-instrumentation-base', path: '../base'
 end

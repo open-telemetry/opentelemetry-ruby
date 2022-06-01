@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Instrumentation
     module Mysql2
-      VERSION = '0.20.0'
+      VERSION = '0.20.1'
     end
   end
 end

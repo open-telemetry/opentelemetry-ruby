@@ -30,7 +30,7 @@ module OpenTelemetry
         private
 
         def gem_version
-          Gem.loaded_specs['actionpack'].version
+          ::ActionPack.version
         end
 
         def patch

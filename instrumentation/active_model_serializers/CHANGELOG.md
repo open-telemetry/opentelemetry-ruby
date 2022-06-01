@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-active_model_serializers
 
+### v0.18.5 / 2022-05-02
+
+* FIXED: `ActiveSupport` constant conflict in Active Model Serializers instrumentation 
+* FIXED: RubyGems Fallback 
+
 ### v0.18.4 / 2021-12-02
 
 * (No significant changes)

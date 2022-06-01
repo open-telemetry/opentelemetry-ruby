@@ -1,6 +1,17 @@
-### Unreleased
+# Release History: opentelemetry-common
+
+### v0.19.6 / 2022-05-18
+
+* (No significant changes)
+
+### v0.19.5 / 2022-05-10
+
+* FIXED: Common changelog 
+
+### v0.19.4 / 2022-05-08
 
 * FIXED: Check that a variable is a string before truncating
+* FIXED: Attribute length limit. only truncate strings and strings in arrays
 
 ### v0.19.3 / 2021-12-01
 

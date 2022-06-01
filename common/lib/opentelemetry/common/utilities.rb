@@ -101,6 +101,32 @@ module OpenTelemetry
         url
       end
 
+      # Returns the first non nil environment variable requested,
+      # or the default value if provided.
+      #
+      # @param [String] env_vars The environment variable(s) to retrieve
+      # @param default The fallback value to return if the requested
+      #  env var(s) are not present
+      #
+      # @returns [String]
+      def config_opt(*env_vars, default: nil)
+        ENV.values_at(*env_vars).compact.fetch(0, default)
+      end
+
+      # Returns a true if the provided url is valid
+      #
+      # @param [String] url the URL string to test validity
+      #
+      # @return [boolean]
+      def valid_url?(url)
+        return false if url.nil? || url.strip.empty?
+
+        URI(url)
+        true
+      rescue URI::InvalidURIError
+        false
+      end
+
       # Returns true if exporter is a valid exporter.
       def valid_exporter?(exporter)
         exporter && %i[export shutdown force_flush].all? { |m| exporter.respond_to?(m) }

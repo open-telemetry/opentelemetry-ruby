@@ -8,13 +8,11 @@ source 'https://rubygems.org'
 
 gemspec
 
-# Use the opentelemetry-api gem from source
-gem 'opentelemetry-api', path: '../api'
-gem 'opentelemetry-common', path: '../common'
-gem 'opentelemetry-exporter-zipkin', path: '../exporter/zipkin'
-gem 'opentelemetry-instrumentation-base', path: '../instrumentation/base'
-gem 'opentelemetry-semantic_conventions', path: '../semantic_conventions'
-
 group :test, :development do
+  gem 'opentelemetry-api', path: '../api'
+  gem 'opentelemetry-common', path: '../common'
+  gem 'opentelemetry-exporter-zipkin', path: '../exporter/zipkin'
+  gem 'opentelemetry-registry', path: '../registry'
+  gem 'opentelemetry-semantic_conventions', path: '../semantic_conventions'
   gem 'opentelemetry-test-helpers', path: '../test_helpers'
 end

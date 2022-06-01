@@ -21,9 +21,8 @@ describe OpenTelemetry::Instrumentation::Sidekiq::Instrumentation do
 
   describe 'compatible' do
     it 'when older gem version installed' do
-      Gem.stub(:loaded_specs, 'sidekiq' => Gem::Specification.new { |s| s.version = '4.2.8' }) do
-        _(instrumentation.compatible?).must_equal false
-      end
+      stub_const('::Sidekiq::VERSION', '4.2.8')
+      _(instrumentation.compatible?).must_equal false
     end
 
     it 'when future gem version installed' do

@@ -4,9 +4,3 @@ source 'https://rubygems.org'
 
 # Specify your gem's dependencies in opentelemetry-propragator-ottrace.gemspec
 gemspec
-
-gem 'opentelemetry-api', path: '../../api'
-gem 'opentelemetry-common', path: '../../common'
-gem 'opentelemetry-instrumentation-base', path: '../../instrumentation/base'
-gem 'opentelemetry-sdk', path: '../../sdk'
-gem 'opentelemetry-semantic_conventions', path: '../../semantic_conventions'
