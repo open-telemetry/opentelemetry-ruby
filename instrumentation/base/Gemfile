@@ -7,3 +7,8 @@
 source 'https://rubygems.org'
 
 gemspec
+
+group :development, :test do
+  # Use opentelemetry-api from source
+  gem 'opentelemetry-api', path: '../../api'
+end

@@ -13,6 +13,7 @@ describe OpenTelemetry::Instrumentation::Base do
     Class.new(OpenTelemetry::Instrumentation::Base) do
       instrumentation_name 'test_instrumentation'
       instrumentation_version '0.1.1'
+      instrumentation_schema_url 'https://opentelemetry.io/schemas/1.3.0'
     end
   end
 
@@ -24,6 +25,7 @@ describe OpenTelemetry::Instrumentation::Base do
 
       instrumentation_name 'test_instrumentation'
       instrumentation_version '0.1.1'
+      instrumentation_schema_url 'https://opentelemetry.io/schemas/1.3.0'
 
       present do
         @present_called = true
@@ -69,6 +71,7 @@ describe OpenTelemetry::Instrumentation::Base do
       Class.new(OpenTelemetry::Instrumentation::Base) do
         instrumentation_name 'test_buggy_instrumentation'
         instrumentation_version '0.0.1'
+        instrumentation_schema_url 'https://opentelemetry.io/schemas/1.3.0'
 
         option :a, default: 'b', validate: true
       end
@@ -88,6 +91,12 @@ describe OpenTelemetry::Instrumentation::Base do
   describe '#version' do
     it 'returns instrumentation version' do
       _(instrumentation.instance.version).must_equal('0.1.1')
+    end
+  end
+
+  describe '#schema_url' do
+    it 'returns instrumentation schema_url' do
+      _(instrumentation.instance.schema_url).must_equal('https://opentelemetry.io/schemas/1.3.0')
     end
   end
 
@@ -190,6 +199,7 @@ describe OpenTelemetry::Instrumentation::Base do
           Class.new(OpenTelemetry::Instrumentation::Base) do
             instrumentation_name 'opentelemetry_instrumentation_env_controlled'
             instrumentation_version '0.0.2'
+            instrumentation_schema_url 'https://opentelemetry.io/schemas/1.3.0'
 
             present { true }
             compatible { true }
@@ -404,6 +414,12 @@ describe OpenTelemetry::Instrumentation::Base do
         _(MinimalBase.instance.version).must_equal('0.0.0')
       end
     end
+
+    describe '#schema_url' do
+      it 'defaults to nil' do
+        _(MinimalBase.instance.schema_url).must_be_nil
+      end
+    end
   end
 
   describe '#tracer' do
@@ -420,7 +436,7 @@ describe OpenTelemetry::Instrumentation::Base do
 
   describe 'namespaced instrumentation' do
     before do
-      define_instrumentation_subclass('OTel::Instrumentation::Sinatra::Instrumentation', '2.1.0')
+      define_instrumentation_subclass('OTel::Instrumentation::Sinatra::Instrumentation', '2.1.0', 'https://opentelemetry.io/schemas/1.3.0')
     end
 
     after do
@@ -440,9 +456,16 @@ describe OpenTelemetry::Instrumentation::Base do
         _(instance.version).must_equal(OTel::Instrumentation::Sinatra::VERSION)
       end
     end
+
+    describe '#schema_url' do
+      it 'defaults to being unset' do
+        instance = OTel::Instrumentation::Sinatra::Instrumentation.instance
+        _(instance.schema_url).must_be_nil
+      end
+    end
   end
 
-  def define_instrumentation_subclass(name, version = nil)
+  def define_instrumentation_subclass(name, version = nil, schema_url = nil)
     names = name.split('::').map(&:to_sym)
     names.inject(Object) do |object, const|
       if const == names[-1]

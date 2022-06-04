@@ -7,11 +7,12 @@
 require 'test_helper'
 
 class FakeInstrumentation
-  attr_reader :name, :version, :config
+  attr_reader :name, :version, :schema_url, :config
 
-  def initialize(name, version)
+  def initialize(name, version, schema_url)
     @name = name
     @version = version
+    @schema_url = schema_url
     @install = false
     @config = nil
   end
@@ -45,11 +46,11 @@ describe OpenTelemetry::Instrumentation::Registry do
   end
 
   let(:instrumentation_1) do
-    FakeInstrumentation.new('TestInstrumentation1', '0.1.1')
+    FakeInstrumentation.new('TestInstrumentation1', '0.1.1', 'https://opentelemetry.io/schemas/1.3.0')
   end
 
   let(:instrumentation_2) do
-    FakeInstrumentation.new('TestInstrumentation2', '0.3.2')
+    FakeInstrumentation.new('TestInstrumentation2', '0.3.2', 'https://opentelemetry.io/schemas/1.3.0')
   end
 
   let(:instrumentations) do

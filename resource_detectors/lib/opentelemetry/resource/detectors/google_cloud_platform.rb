@@ -49,7 +49,7 @@ module OpenTelemetry
           end
 
           resource_attributes.delete_if { |_key, value| value.nil? || value.empty? }
-          OpenTelemetry::SDK::Resources::Resource.create(resource_attributes)
+          OpenTelemetry::SDK::Resources::Resource.create(resource_attributes, schema_url: nil)
         end
 
         private

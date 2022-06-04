@@ -107,6 +107,18 @@ module OpenTelemetry
           end
         end
 
+        # Optionally set the schema_url of this instrumentation. If not explicitly set,
+        # the schema_url will default to remaining unset by the instrumentation.
+        #
+        # @param [String] instrumentation_schema_url The schema_url of the instrumentation package
+        def instrumentation_schema_url(instrumentation_schema_url = nil)
+          if instrumentation_schema_url
+            @instrumentation_schema_url = instrumentation_schema_url
+          else
+            @instrumentation_schema_url ||= nil
+          end
+        end
+
         # The install block for this instrumentation. This will be where you install
         # instrumentation, either by framework hook or applying a monkey patch.
         #
@@ -163,7 +175,7 @@ module OpenTelemetry
         end
 
         def instance
-          @instance ||= new(instrumentation_name, instrumentation_version, install_blk,
+          @instance ||= new(instrumentation_name, instrumentation_version, instrumentation_schema_url, install_blk,
                             present_blk, compatible_blk, options)
         end
 
@@ -189,14 +201,15 @@ module OpenTelemetry
         end
       end
 
-      attr_reader :name, :version, :config, :installed, :tracer
+      attr_reader :name, :version, :schema_url, :config, :installed, :tracer
 
       alias installed? installed
 
-      def initialize(name, version, install_blk, present_blk,
+      def initialize(name, version, schema_url, install_blk, present_blk,
                      compatible_blk, options)
         @name = name
         @version = version
+        @schema_url = schema_url
         @install_blk = install_blk
         @present_blk = present_blk
         @compatible_blk = compatible_blk
@@ -217,7 +230,7 @@ module OpenTelemetry
 
         @config = config_options(config)
         instance_exec(@config, &@install_blk)
-        @tracer = OpenTelemetry.tracer_provider.tracer(name, version)
+        @tracer = OpenTelemetry.tracer_provider.tracer(name, version, schema_url: schema_url)
         @installed = true
       end
 

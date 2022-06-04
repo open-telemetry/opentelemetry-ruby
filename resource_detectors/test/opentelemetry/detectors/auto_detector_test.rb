@@ -15,6 +15,7 @@ describe OpenTelemetry::Resource::Detectors::AutoDetector do
   describe '.detect' do
     it 'returns detected resources' do
       _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
+      _(detected_resource.schema_url).must_be_nil
       _(detected_resource_attributes).must_equal(expected_resource_attributes)
     end
   end

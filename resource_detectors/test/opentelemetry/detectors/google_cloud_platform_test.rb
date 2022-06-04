@@ -16,6 +16,7 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
 
     it 'returns an empty resource' do
       _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
+      _(detected_resource.schema_url).must_be_nil
       _(detected_resource_attributes).must_equal(expected_resource_attributes)
     end
 
@@ -70,6 +71,9 @@ describe OpenTelemetry::Resource::Detectors::GoogleCloudPlatform do
       it 'returns a resource with gcp attributes' do
         _(detected_resource).must_be_instance_of(OpenTelemetry::SDK::Resources::Resource)
         _(detected_resource_attributes).must_equal(expected_resource_attributes)
+
+        # We should only change the schema_url when we are certain we're complying with a specific version.
+        _(detected_resource.schema_url).must_be_nil
       end
 
       describe 'and a nil resource value is detected' do

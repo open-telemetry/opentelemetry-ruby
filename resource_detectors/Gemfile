@@ -11,4 +11,6 @@ gemspec
 group :development, :test do
   gem 'byebug' unless RUBY_PLATFORM == 'java'
   gem 'pry'
+
+  gem 'opentelemetry-sdk', path: '../sdk'
 end
