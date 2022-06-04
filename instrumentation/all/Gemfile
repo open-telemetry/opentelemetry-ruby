@@ -44,4 +44,5 @@ group :test do
   gem 'opentelemetry-instrumentation-sidekiq', path: '../sidekiq'
   gem 'opentelemetry-instrumentation-sinatra', path: '../sinatra'
   gem 'opentelemetry-instrumentation-trilogy', path: '../trilogy'
+  gem 'opentelemetry-sdk', path: '../../sdk'
 end
