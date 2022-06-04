@@ -9,6 +9,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
+  gem 'opentelemetry-api', path: '../../api'
   gem 'opentelemetry-instrumentation-action_pack', path: '../action_pack'
   gem 'opentelemetry-instrumentation-action_view', path: '../action_view'
   gem 'opentelemetry-instrumentation-active_job', path: '../active_job'
@@ -44,5 +45,4 @@ group :test do
   gem 'opentelemetry-instrumentation-sidekiq', path: '../sidekiq'
   gem 'opentelemetry-instrumentation-sinatra', path: '../sinatra'
   gem 'opentelemetry-instrumentation-trilogy', path: '../trilogy'
-  gem 'opentelemetry-sdk', path: '../../sdk'
 end
