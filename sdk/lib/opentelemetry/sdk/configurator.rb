@@ -193,7 +193,7 @@ module OpenTelemetry
         end
       end
 
-      def configure_propagation # rubocop:disable Metrics/CyclomaticComplexity
+      def configure_propagation # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize
         propagators = ENV.fetch('OTEL_PROPAGATORS', 'tracecontext,baggage').split(',').uniq.collect do |propagator|
           case propagator
           when 'tracecontext' then OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
