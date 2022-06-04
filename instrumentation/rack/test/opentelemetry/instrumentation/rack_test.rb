@@ -6,8 +6,6 @@
 
 require 'test_helper'
 
-require_relative '../../../lib/opentelemetry/instrumentation/rack'
-
 describe OpenTelemetry::Instrumentation::Rack do
   let(:instrumentation) { OpenTelemetry::Instrumentation::Rack::Instrumentation.instance }
   let(:new_span) { OpenTelemetry::Trace.non_recording_span(OpenTelemetry::Trace::SpanContext.new) }

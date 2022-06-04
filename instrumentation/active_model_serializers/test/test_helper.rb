@@ -14,6 +14,8 @@ require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
 require 'webmock/minitest'
 
+require_relative '../lib/opentelemetry-instrumentation-active_model_serializers'
+
 # disable logging
 ActiveModelSerializers.logger.level = Logger::Severity::UNKNOWN
 

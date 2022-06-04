@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-base
 
+### v0.21.0 / 2022-05-26
+
+* BREAKING CHANGE: This requires upgrading both the SDK and Instrumentation gem in tandem
+
+
 ### v0.20.0 / 2022-05-02
 
 * ADDED: Validate Using Enums 
