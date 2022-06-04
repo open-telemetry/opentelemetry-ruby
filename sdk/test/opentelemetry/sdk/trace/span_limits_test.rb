@@ -54,6 +54,7 @@ describe OpenTelemetry::SDK::Trace::SpanLimits do
         _(config.link_attribute_count_limit).must_equal 6
       end
     end
+
     it 'reflects explicit overrides' do
       OpenTelemetry::TestHelpers.with_env('OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT' => '1',
                                           'OTEL_SPAN_EVENT_COUNT_LIMIT' => '2',
@@ -73,6 +74,26 @@ describe OpenTelemetry::SDK::Trace::SpanLimits do
         _(config.link_count_limit).must_equal 12
         _(config.event_attribute_count_limit).must_equal 13
         _(config.link_attribute_count_limit).must_equal 14
+        _(config.attribute_length_limit).must_equal 32
+      end
+    end
+
+    it 'reflects generic attribute env vars' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_ATTRIBUTE_COUNT_LIMIT' => '1',
+                                          'OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '32') do
+        config = subject.new
+        _(config.attribute_count_limit).must_equal 1
+        _(config.attribute_length_limit).must_equal 32
+      end
+    end
+
+    it 'prefers model-specific attribute env vars over generic attribute env vars' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT' => '1',
+                                          'OTEL_ATTRIBUTE_COUNT_LIMIT' => '2',
+                                          'OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '32',
+                                          'OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '33') do
+        config = subject.new
+        _(config.attribute_count_limit).must_equal 1
         _(config.attribute_length_limit).must_equal 32
       end
     end
