@@ -163,7 +163,17 @@ describe OpenTelemetry::SDK::Configurator do
         _(OpenTelemetry.propagation).must_equal(OpenTelemetry::Baggage::Propagation.text_map_propagator)
       end
 
-      it 'defaults to none with invalid env var' do
+      it 'supports "none" as an environment variable' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_PROPAGATORS' => 'none') do
+          configurator.configure
+        end
+
+        _(OpenTelemetry.propagation).must_be_instance_of(
+          OpenTelemetry::SDK::Configurator::NoopTextMapPropagator
+        )
+      end
+
+      it 'defaults to noop with invalid env var' do
         OpenTelemetry::TestHelpers.with_env('OTEL_PROPAGATORS' => 'unladen_swallow') do
           configurator.configure
         end
