@@ -6,8 +6,7 @@
 
 require_relative '../../../test_helper'
 
-# require Instrumentation so .install method is found:
-require_relative '../../../../lib/opentelemetry/instrumentation/active_model_serializers'
+# require instrumentation so we do not have to depend on the install hook being called
 require_relative '../../../../lib/opentelemetry/instrumentation/active_model_serializers/event_handler'
 
 describe OpenTelemetry::Instrumentation::ActiveModelSerializers::EventHandler do

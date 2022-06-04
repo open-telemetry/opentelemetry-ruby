@@ -6,8 +6,6 @@
 
 require 'test_helper'
 
-require_relative '../../../lib/opentelemetry/instrumentation/sinatra/instrumentation'
-
 describe OpenTelemetry::Instrumentation::Sinatra do
   include Rack::Test::Methods
 
