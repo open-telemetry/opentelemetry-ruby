@@ -75,9 +75,7 @@ module OpenTelemetry
       # calls to this setter.
       # @param [String] service_name The value to be used as the service name
       def service_name=(service_name)
-        self.resource = OpenTelemetry::SDK::Resources::Resource.create({
-          OpenTelemetry::SemanticConventions::Resource::SERVICE_NAME => service_name
-        })
+        self.resource = OpenTelemetry::SDK::Resources::Resource.create({ OpenTelemetry::SemanticConventions::Resource::SERVICE_NAME => service_name }) # rubocop:disable Style/BracesAroundHashParameters
       end
 
       # Accepts a string that is merged in as the service.version resource attribute.
@@ -85,9 +83,7 @@ module OpenTelemetry
       # calls to this setter.
       # @param [String] service_version The value to be used as the service version
       def service_version=(service_version)
-        self.resource = OpenTelemetry::SDK::Resources::Resource.create({
-          OpenTelemetry::SemanticConventions::Resource::SERVICE_VERSION => service_version
-        })
+        self.resource = OpenTelemetry::SDK::Resources::Resource.create({ OpenTelemetry::SemanticConventions::Resource::SERVICE_VERSION => service_version }) # rubocop:disable Style/BracesAroundHashParameters
       end
 
       # Install an instrumentation with specificied optional +config+.

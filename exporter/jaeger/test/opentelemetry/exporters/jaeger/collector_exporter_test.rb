@@ -168,8 +168,8 @@ describe OpenTelemetry::Exporter::Jaeger::CollectorExporter do
       stub_post = stub_request(:post, DEFAULT_JAEGER_COLLECTOR_ENDPOINT).to_return(status: 200)
       exporter = OpenTelemetry::Exporter::Jaeger::CollectorExporter.new
 
-      span_data1 = create_span_data(resource: OpenTelemetry::SDK::Resources::Resource.create({ 'k1' => 'v1' }))
-      span_data2 = create_span_data(resource: OpenTelemetry::SDK::Resources::Resource.create({ 'k2' => 'v2' }))
+      span_data1 = create_span_data(resource: OpenTelemetry::SDK::Resources::Resource.create({ 'k1' => 'v1' })) # rubocop:disable Style/BracesAroundHashParameters
+      span_data2 = create_span_data(resource: OpenTelemetry::SDK::Resources::Resource.create({ 'k2' => 'v2' })) # rubocop:disable Style/BracesAroundHashParameters
 
       result = exporter.export([span_data1, span_data2])
       _(result).must_equal(OpenTelemetry::SDK::Trace::Export::SUCCESS)

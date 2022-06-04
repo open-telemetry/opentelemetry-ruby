@@ -457,8 +457,8 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
         { status: 200 }
       end
 
-      span_data1 = OpenTelemetry::TestHelpers.create_span_data(resource: OpenTelemetry::SDK::Resources::Resource.create({ 'k1' => 'v1' }))
-      span_data2 = OpenTelemetry::TestHelpers.create_span_data(resource: OpenTelemetry::SDK::Resources::Resource.create({ 'k2' => 'v2' }))
+      span_data1 = OpenTelemetry::TestHelpers.create_span_data(resource: OpenTelemetry::SDK::Resources::Resource.create({ 'k1' => 'v1' })) # rubocop:disable Style/BracesAroundHashParameters
+      span_data2 = OpenTelemetry::TestHelpers.create_span_data(resource: OpenTelemetry::SDK::Resources::Resource.create({ 'k2' => 'v2' })) # rubocop:disable Style/BracesAroundHashParameters
 
       result = exporter.export([span_data1, span_data2])
 

@@ -15,7 +15,7 @@ describe OpenTelemetry::Exporter::Jaeger::Encoder do
   end
 
   it 'encodes a resource' do
-    resource = OpenTelemetry::SDK::Resources::Resource.create({ 'service.name' => 'foo', 'bar' => 'baz' })
+    resource = OpenTelemetry::SDK::Resources::Resource.create({ 'service.name' => 'foo', 'bar' => 'baz' }) # rubocop:disable Style/BracesAroundHashParameters
     encoded_process = Encoder.encoded_process(resource)
     _(encoded_process.serviceName).must_equal('foo')
     _(encoded_process.tags.size).must_equal(1)
