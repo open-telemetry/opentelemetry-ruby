@@ -9,6 +9,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :test, :development do
+  gem 'opentelemetry-sdk', path: '../../sdk'
   gem 'opentelemetry-instrumentation-action_pack', path: '../../instrumentation/action_pack'
   gem 'opentelemetry-instrumentation-action_view', path: '../../instrumentation/action_view'
   gem 'opentelemetry-instrumentation-active_record', path: '../../instrumentation/active_record'
