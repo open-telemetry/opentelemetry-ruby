@@ -56,6 +56,12 @@ jobs:
         with:
           gem: "${{ matrix.gem }}"
           ruby: "jruby"
+      - name: "Test truffleruby"
+        if: "${{ matrix.os == 'ubuntu-latest' }}"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "truffleruby"
 
   exporters:
     strategy:
@@ -103,6 +109,20 @@ jobs:
         with:
           gem: "${{ matrix.gem }}"
           ruby: "jruby"
+      - name: "Truffleruby Filter"
+        id: truffleruby_skip
+        shell: bash
+        run: |
+          echo "::set-output name=skip::false"
+          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp" ]] && echo "::set-output name=skip::true"
+          # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
+          true
+      - name: "Test truffleruby"
+        if: "${{ matrix.os == 'ubuntu-latest' && steps.truffleruby_skip.outputs.skip == 'false' }}"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "truffleruby"
 
   propagators:
     strategy:
@@ -145,3 +165,9 @@ jobs:
         with:
           gem: "${{ matrix.gem }}"
           ruby: "jruby"
+      - name: "Test truffleruby"
+        if: "${{ matrix.os == 'ubuntu-latest' }}"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "truffleruby"
