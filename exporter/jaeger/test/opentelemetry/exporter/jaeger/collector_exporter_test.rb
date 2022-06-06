@@ -4,14 +4,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 require 'test_helper'
-require 'minitest/mock'
 
 DEFAULT_JAEGER_COLLECTOR_ENDPOINT = 'http://localhost:14268/api/traces'
 
 describe OpenTelemetry::Exporter::Jaeger::CollectorExporter do
-  let(:metrics_reporter) { MiniTest::Mock.new }
+  let(:metrics_reporter) { double }
   before(:each) do
-    metrics_reporter.expect(:record_value, true) { |_name, _labels| true }
+    allow(metrics_reporter).to receive(:record_value)
   end
 
   describe '#initialize' do
@@ -184,9 +183,7 @@ describe OpenTelemetry::Exporter::Jaeger::CollectorExporter do
 
     describe '#metrics_reporter' do
       it 'reports metrics for failures' do
-        metrics_reporter.expect(:add_to_counter,
-                                true,
-                                ['otel.jaeger_exporter.failure', labels: { 'reason' => 'Thrift::TransportException' }])
+        expect(metrics_reporter).to receive(:add_to_counter).with('otel.jaeger_exporter.failure', labels: { 'reason' => 'Thrift::TransportException' })
 
         stub_post = stub_request(:post, DEFAULT_JAEGER_COLLECTOR_ENDPOINT).to_return(status: 500)
         exporter = OpenTelemetry::Exporter::Jaeger::CollectorExporter.new(
@@ -199,9 +196,7 @@ describe OpenTelemetry::Exporter::Jaeger::CollectorExporter do
       end
 
       it 'reports metrics for timeouts' do
-        metrics_reporter.expect(:add_to_counter,
-                                true,
-                                ['otel.jaeger_exporter.failure', labels: { 'reason' => 'Net::OpenTimeout' }])
+        expect(metrics_reporter).to receive(:add_to_counter).with('otel.jaeger_exporter.failure', labels: { 'reason' => 'Net::OpenTimeout' })
 
         stub_post = stub_request(:post, DEFAULT_JAEGER_COLLECTOR_ENDPOINT).to_timeout
         exporter = OpenTelemetry::Exporter::Jaeger::CollectorExporter.new(
@@ -214,11 +209,7 @@ describe OpenTelemetry::Exporter::Jaeger::CollectorExporter do
       end
 
       it 'records request duration' do
-        metrics_reporter = MiniTest::Mock.new
-        metrics_reporter.expect(:record_value, true) do |name, labels|
-          _(name).must_equal 'otel.jaeger_exporter.request_duration'
-          _(labels[:value].class).must_equal(Float)
-        end
+        expect(metrics_reporter).to receive(:record_value).with('otel.jaeger_exporter.request_duration', hash_including(value: kind_of(Float)))
         stub_post = stub_request(:post, DEFAULT_JAEGER_COLLECTOR_ENDPOINT).to_return(status: 200)
 
         exporter = OpenTelemetry::Exporter::Jaeger::CollectorExporter.new(
