@@ -213,21 +213,6 @@ describe OpenTelemetry::Exporter::Jaeger::CollectorExporter do
         assert_requested(stub_post)
       end
 
-      it 'reports metrics for timeouts' do
-        metrics_reporter.expect(:add_to_counter,
-                                true,
-                                ['otel.jaeger_exporter.failure', labels: { 'reason' => 'Net::OpenTimeout' }])
-
-        stub_post = stub_request(:post, DEFAULT_JAEGER_COLLECTOR_ENDPOINT).to_timeout
-        exporter = OpenTelemetry::Exporter::Jaeger::CollectorExporter.new(
-          metrics_reporter: metrics_reporter
-        )
-        span_data = create_span_data
-        result = exporter.export([span_data])
-        _(result).must_equal(OpenTelemetry::SDK::Trace::Export::FAILURE)
-        assert_requested(stub_post)
-      end
-
       it 'records request duration' do
         metrics_reporter = MiniTest::Mock.new
         metrics_reporter.expect(:record_value, true) do |name, labels|
