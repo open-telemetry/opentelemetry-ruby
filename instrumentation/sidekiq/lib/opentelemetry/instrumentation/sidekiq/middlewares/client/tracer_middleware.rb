@@ -20,9 +20,9 @@ module OpenTelemetry
                 'messaging.destination' => job['queue'],
                 'messaging.destination_kind' => 'queue'
               }
-              attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+              attributes['peer.service'] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
 
-              span_name = case config[:span_naming]
+              span_name = case instrumentation_config[:span_naming]
                           when :job_class then "#{job['wrapped']&.to_s || job['class']} send"
                           else "#{job['queue']} send"
                           end
@@ -36,7 +36,7 @@ module OpenTelemetry
 
             private
 
-            def config
+            def instrumentation_config
               Sidekiq::Instrumentation.instance.config
             end
 

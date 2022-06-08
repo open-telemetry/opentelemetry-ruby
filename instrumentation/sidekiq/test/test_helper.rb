@@ -12,9 +12,17 @@ require 'opentelemetry-test-helpers'
 
 require 'minitest/autorun'
 require 'rspec/mocks/minitest_integration'
-require 'helpers/mock_loader'
 require 'active_job'
 require 'pry'
+
+# Sidekiq changed its loading mechanism in 6.5.0, but we still want to test the
+# older versions. We can eliminate the first part of this conditional when we no
+# longer support Sidekiq 6.4.x versions.
+if Gem::Version.new(Sidekiq::VERSION) < Gem::Version.new("6.5.0")
+  require 'helpers/mock_loader'
+else
+  require 'helpers/mock_loader_new_launcher'
+end
 
 # OpenTelemetry SDK config for testing
 EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new

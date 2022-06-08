@@ -21,16 +21,16 @@ module OpenTelemetry
                 'messaging.destination_kind' => 'queue',
                 'messaging.operation' => 'process'
               }
-              attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+              attributes['peer.service'] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
 
-              span_name = case config[:span_naming]
+              span_name = case instrumentation_config[:span_naming]
                           when :job_class then "#{msg['wrapped']&.to_s || msg['class']} process"
                           else "#{msg['queue']} process"
                           end
 
               extracted_context = OpenTelemetry.propagation.extract(msg)
               OpenTelemetry::Context.with_current(extracted_context) do
-                if config[:propagation_style] == :child
+                if instrumentation_config[:propagation_style] == :child
                   tracer.in_span(span_name, attributes: attributes, kind: :consumer) do |span|
                     span.add_event('created_at', timestamp: msg['created_at'])
                     span.add_event('enqueued_at', timestamp: msg['enqueued_at'])
@@ -39,7 +39,7 @@ module OpenTelemetry
                 else
                   links = []
                   span_context = OpenTelemetry::Trace.current_span(extracted_context).context
-                  links << OpenTelemetry::Trace::Link.new(span_context) if config[:propagation_style] == :link && span_context.valid?
+                  links << OpenTelemetry::Trace::Link.new(span_context) if instrumentation_config[:propagation_style] == :link && span_context.valid?
                   span = tracer.start_root_span(span_name, attributes: attributes, links: links, kind: :consumer)
                   OpenTelemetry::Trace.with_span(span) do
                     span.add_event('created_at', timestamp: msg['created_at'])
@@ -58,7 +58,7 @@ module OpenTelemetry
 
             private
 
-            def config
+            def instrumentation_config
               Sidekiq::Instrumentation.instance.config
             end
 

@@ -11,9 +11,9 @@ module OpenTelemetry
         # The Poller module contains instrumentation for the enqueue and wait methods
         module Poller
           def enqueue
-            if config[:trace_poller_enqueue]
+            if instrumentation_config[:trace_poller_enqueue]
               attributes = {}
-              attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+              attributes['peer.service'] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
               tracer.in_span('Sidekiq::Scheduled::Poller#enqueue', attributes: attributes) { super }
             else
               OpenTelemetry::Common::Utilities.untraced { super }
@@ -23,7 +23,7 @@ module OpenTelemetry
           private
 
           def wait
-            if config[:trace_poller_wait]
+            if instrumentation_config[:trace_poller_wait]
               tracer.in_span('Sidekiq::Scheduled::Poller#wait') { super }
             else
               OpenTelemetry::Common::Utilities.untraced { super }
@@ -34,7 +34,7 @@ module OpenTelemetry
             Sidekiq::Instrumentation.instance.tracer
           end
 
-          def config
+          def instrumentation_config
             Sidekiq::Instrumentation.instance.config
           end
         end
