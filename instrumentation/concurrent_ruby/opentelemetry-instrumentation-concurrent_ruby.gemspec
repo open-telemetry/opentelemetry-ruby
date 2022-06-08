@@ -40,9 +40,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
 
   if spec.respond_to?(:metadata)
-    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-concurrent_ruby/v#{OpenTelemetry::Instrumentation::ConcurrentRuby::VERSION}/file.CHANGELOG.html"
+    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-concurrent_ruby/v#{spec.version}/file.CHANGELOG.html"
     spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/instrumentation/concurrent_ruby'
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/issues'
-    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-concurrent_ruby/v#{OpenTelemetry::Instrumentation::ConcurrentRuby::VERSION}"
+    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-instrumentation-concurrent_ruby/v#{spec.version}"
   end
 end
