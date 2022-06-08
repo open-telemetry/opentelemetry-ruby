@@ -18,7 +18,7 @@ require 'pry'
 # Sidekiq changed its loading mechanism in 6.5.0, but we still want to test the
 # older versions. We can eliminate the first part of this conditional when we no
 # longer support Sidekiq 6.4.x versions.
-if Gem::Version.new(Sidekiq::VERSION) < Gem::Version.new("6.5.0")
+if Gem::Version.new(Sidekiq::VERSION) < Gem::Version.new('6.5.0')
   require 'helpers/mock_loader'
 else
   require 'helpers/mock_loader_new_launcher'
