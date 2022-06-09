@@ -44,7 +44,7 @@ module OpenTelemetry
           def span_creation_attributes(http_method:, url:)
             instrumentation_attrs = {
               'http.method' => http_method,
-              'http.url' => url.to_s,
+              'http.url' => OpenTelemetry::Common::Utilities.cleanse_url(url.to_s),
               'net.peer.name' => url.host
             }
             config = Faraday::Instrumentation.instance.config

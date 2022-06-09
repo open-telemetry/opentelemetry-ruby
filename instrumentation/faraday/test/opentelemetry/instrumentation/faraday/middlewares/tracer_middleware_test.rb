@@ -13,9 +13,10 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
   let(:instrumentation) { OpenTelemetry::Instrumentation::Faraday::Instrumentation.instance }
   let(:exporter) { EXPORTER }
   let(:span) { exporter.finished_spans.first }
+  let(:base_url) { 'http://username:password@example.com' }
 
   let(:client) do
-    ::Faraday.new('http://username:password@example.com') do |builder|
+    ::Faraday.new(base_url) do |builder|
       builder.adapter(:test) do |stub|
         stub.get('/success') { |_| [200, {}, 'OK'] }
         stub.get('/failure') { |_| [500, {}, 'OK'] }
@@ -43,7 +44,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
     end
 
     it 'has http 200 attributes' do
-      response = client.get('/success')
+      response = client.run_request(:get, "#{base_url}/success", nil, {})
 
       _(span.name).must_equal 'HTTP GET'
       _(span.attributes['http.method']).must_equal 'GET'
@@ -56,7 +57,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
     end
 
     it 'has http.status_code 404' do
-      response = client.get('/not_found')
+      response = client.run_request(:get, "#{base_url}/not_found", nil, {})
 
       _(span.name).must_equal 'HTTP GET'
       _(span.attributes['http.method']).must_equal 'GET'
@@ -69,7 +70,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
     end
 
     it 'has http.status_code 500' do
-      response = client.get('/failure')
+      response = client.run_request(:get, "#{base_url}/failure", nil, {})
 
       _(span.name).must_equal 'HTTP GET'
       _(span.attributes['http.method']).must_equal 'GET'
@@ -86,7 +87,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
         'test.attribute' => 'test.value', 'http.method' => 'OVERRIDE'
       }
       response = OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
-        client.get('/success')
+        client.run_request(:get, "#{base_url}/success", nil, {})
       end
 
       _(span.name).must_equal 'HTTP GET'
@@ -104,7 +105,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
       instrumentation.instance_variable_set(:@installed, false)
       instrumentation.install(peer_service: 'example:faraday')
 
-      client.get('/success')
+      client.run_request(:get, "#{base_url}/success", nil, {})
 
       _(span.attributes['peer.service']).must_equal 'example:faraday'
     end
@@ -115,7 +116,7 @@ describe OpenTelemetry::Instrumentation::Faraday::Middlewares::TracerMiddleware 
 
       client_context_attrs = { 'peer.service' => 'example:custom' }
       OpenTelemetry::Common::HTTP::ClientContext.with_attributes(client_context_attrs) do
-        client.get('/success')
+        client.run_request(:get, "#{base_url}/success", nil, {})
       end
 
       _(span.attributes['peer.service']).must_equal 'example:custom'
