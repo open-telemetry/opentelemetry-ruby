@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-resque
 
+### v0.3.0 / 2022-06-09
+
+* FIXED: Broken test file requirements 
+
 ### v0.2.0 / 2022-05-02
 
 * ADDED: Validate Using Enums 

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-jaeger
 
+### v0.21.0 / 2022-06-09
+
+* (No significant changes)
+
 ### v0.20.2 / 2022-05-02
 
 * DOCS: Fix exporter port in Jaeger exporter readme 

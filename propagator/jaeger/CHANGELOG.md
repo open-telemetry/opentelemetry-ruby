@@ -1,5 +1,9 @@
 # Release History: opentelemetry-propagator-jaeger
 
+### v0.20.0 / 2022-06-09
+
+* (No significant changes)
+
 ### v0.19.4 / 2022-05-02
 
 * FIXED: Jaeger propagator doesn't handle missing trace id header 

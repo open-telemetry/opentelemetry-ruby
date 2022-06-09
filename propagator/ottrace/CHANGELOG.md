@@ -1,5 +1,9 @@
 # Release History: opentelemetry-propagator-ottrace
 
+### v0.20.0 / 2022-06-09
+
+* (No significant changes)
+
 ### v0.19.3 / 2021-10-29
 
 * FIXED: Add Support fo OTTrace Bit Encoded Sampled Flags 
