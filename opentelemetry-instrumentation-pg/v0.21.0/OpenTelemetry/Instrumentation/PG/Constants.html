@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: OpenTelemetry::Instrumentation::PG::Constants
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::Instrumentation::PG::Constants";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (C)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Instrumentation.html" title="OpenTelemetry::Instrumentation (module)">Instrumentation</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../PG.html" title="OpenTelemetry::Instrumentation::PG (module)">PG</a></span></span>
+     &raquo; 
+    <span class="title">Constants</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: OpenTelemetry::Instrumentation::PG::Constants
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/instrumentation/pg/constants.rb</dd>
+  </dl>
+  
+</div>
+
+
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="SQL_COMMANDS-constant" class="">SQL_COMMANDS =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>A list of SQL commands, from: <a href="https://www.postgresql.org/docs/current/sql-commands.html">www.postgresql.org/docs/current/sql-commands.html</a> Commands are truncated to their first word, and all duplicates are removed, This favors brevity and low-cardinality over descriptiveness.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='qwords_beg'>%w[</span><span class='words_sep'>
+  </span><span class='tstring_content'>ABORT</span><span class='words_sep'>
+  </span><span class='tstring_content'>ALTER</span><span class='words_sep'>
+  </span><span class='tstring_content'>ANALYZE</span><span class='words_sep'>
+  </span><span class='tstring_content'>BEGIN</span><span class='words_sep'>
+  </span><span class='tstring_content'>CALL</span><span class='words_sep'>
+  </span><span class='tstring_content'>CHECKPOINT</span><span class='words_sep'>
+  </span><span class='tstring_content'>CLOSE</span><span class='words_sep'>
+  </span><span class='tstring_content'>CLUSTER</span><span class='words_sep'>
+  </span><span class='tstring_content'>COMMENT</span><span class='words_sep'>
+  </span><span class='tstring_content'>COMMIT</span><span class='words_sep'>
+  </span><span class='tstring_content'>COPY</span><span class='words_sep'>
+  </span><span class='tstring_content'>CREATE</span><span class='words_sep'>
+  </span><span class='tstring_content'>DEALLOCATE</span><span class='words_sep'>
+  </span><span class='tstring_content'>DECLARE</span><span class='words_sep'>
+  </span><span class='tstring_content'>DELETE</span><span class='words_sep'>
+  </span><span class='tstring_content'>DISCARD</span><span class='words_sep'>
+  </span><span class='tstring_content'>DO</span><span class='words_sep'>
+  </span><span class='tstring_content'>DROP</span><span class='words_sep'>
+  </span><span class='tstring_content'>END</span><span class='words_sep'>
+  </span><span class='tstring_content'>EXECUTE</span><span class='words_sep'>
+  </span><span class='tstring_content'>EXPLAIN</span><span class='words_sep'>
+  </span><span class='tstring_content'>FETCH</span><span class='words_sep'>
+  </span><span class='tstring_content'>GRANT</span><span class='words_sep'>
+  </span><span class='tstring_content'>IMPORT</span><span class='words_sep'>
+  </span><span class='tstring_content'>INSERT</span><span class='words_sep'>
+  </span><span class='tstring_content'>LISTEN</span><span class='words_sep'>
+  </span><span class='tstring_content'>LOAD</span><span class='words_sep'>
+  </span><span class='tstring_content'>LOCK</span><span class='words_sep'>
+  </span><span class='tstring_content'>MOVE</span><span class='words_sep'>
+  </span><span class='tstring_content'>NOTIFY</span><span class='words_sep'>
+  </span><span class='tstring_content'>PREPARE</span><span class='words_sep'>
+  </span><span class='tstring_content'>PREPARE</span><span class='words_sep'>
+  </span><span class='tstring_content'>REASSIGN</span><span class='words_sep'>
+  </span><span class='tstring_content'>REFRESH</span><span class='words_sep'>
+  </span><span class='tstring_content'>REINDEX</span><span class='words_sep'>
+  </span><span class='tstring_content'>RELEASE</span><span class='words_sep'>
+  </span><span class='tstring_content'>RESET</span><span class='words_sep'>
+  </span><span class='tstring_content'>REVOKE</span><span class='words_sep'>
+  </span><span class='tstring_content'>ROLLBACK</span><span class='words_sep'>
+  </span><span class='tstring_content'>SAVEPOINT</span><span class='words_sep'>
+  </span><span class='tstring_content'>SECURITY</span><span class='words_sep'>
+  </span><span class='tstring_content'>SELECT</span><span class='words_sep'>
+  </span><span class='tstring_content'>SELECT</span><span class='words_sep'>
+  </span><span class='tstring_content'>SET</span><span class='words_sep'>
+  </span><span class='tstring_content'>SHOW</span><span class='words_sep'>
+  </span><span class='tstring_content'>START</span><span class='words_sep'>
+  </span><span class='tstring_content'>TRUNCATE</span><span class='words_sep'>
+  </span><span class='tstring_content'>UNLISTEN</span><span class='words_sep'>
+  </span><span class='tstring_content'>UPDATE</span><span class='words_sep'>
+  </span><span class='tstring_content'>VACUUM</span><span class='words_sep'>
+  </span><span class='tstring_content'>VALUES</span><span class='words_sep'>
+</span><span class='tstring_end'>]</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="COMPONENTS_REGEX_MAP-constant" class="">COMPONENTS_REGEX_MAP =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>From: <a href="https://github.com/newrelic/newrelic-ruby-agent/blob/9787095d4b5b2d8fcaf2fdbd964ed07c731a8b6b/lib/new_relic/agent/database/obfuscation_helpers.rb#L9-L34">github.com/newrelic/newrelic-ruby-agent/blob/9787095d4b5b2d8fcaf2fdbd964ed07c731a8b6b/lib/new_relic/agent/database/obfuscation_helpers.rb#L9-L34</a></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='label'>single_quotes:</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>&#39;(?:[^&#39;]|&#39;&#39;)*?(?:\\&#39;.*|&#39;(?!&#39;))</span><span class='regexp_end'>/</span></span><span class='comma'>,</span>
+  <span class='label'>dollar_quotes:</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>(\$(?!\d)[^$]*?\$).*?(?:\1|$)</span><span class='regexp_end'>/</span></span><span class='comma'>,</span>
+  <span class='label'>uuids:</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\{?(?:[0-9a-fA-F]\-*){32}\}?</span><span class='regexp_end'>/</span></span><span class='comma'>,</span>
+  <span class='label'>numeric_literals:</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>-?\b(?:[0-9]+\.)?[0-9]+([eE][+-]?[0-9]+)?\b</span><span class='regexp_end'>/</span></span><span class='comma'>,</span>
+  <span class='label'>boolean_literals:</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\b(?:true|false|null)\b</span><span class='regexp_end'>/i</span></span><span class='comma'>,</span>
+  <span class='label'>comments:</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>(?:#|--).*?(?=\r|\n|$)</span><span class='regexp_end'>/i</span></span><span class='comma'>,</span>
+  <span class='label'>multi_line_comments:</span> <span class='tstring'><span class='regexp_beg'>%r{</span><span class='tstring_content'>\/\*(?:[^\/]|\/[^*])*?(?:\*\/|\/\*.*)</span><span class='regexp_end'>}</span></span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="POSTGRES_COMPONENTS-constant" class="">POSTGRES_COMPONENTS =
+          
+        </dt>
+        <dd><pre class="code"><span class='qsymbols_beg'>%i[</span><span class='words_sep'>
+  </span><span class='tstring_content'>single_quotes</span><span class='words_sep'>
+  </span><span class='tstring_content'>dollar_quotes</span><span class='words_sep'>
+  </span><span class='tstring_content'>uuids</span><span class='words_sep'>
+  </span><span class='tstring_content'>numeric_literals</span><span class='words_sep'>
+  </span><span class='tstring_content'>boolean_literals</span><span class='words_sep'>
+  </span><span class='tstring_content'>comments</span><span class='words_sep'>
+  </span><span class='tstring_content'>multi_line_comments</span><span class='words_sep'>
+</span><span class='tstring_end'>]</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="UNMATCHED_PAIRS_REGEX-constant" class="">UNMATCHED_PAIRS_REGEX =
+          
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='regexp_beg'>%r{</span><span class='tstring_content'>&#39;|\/\*|\*\/|\$(?!\?)</span><span class='regexp_end'>}</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="EXEC_ISH_METHODS-constant" class="">EXEC_ISH_METHODS =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>These are all alike in that they will have a SQL statement as the first parameter. That statement may possibly be parameterized, but we can still use it - the obfuscation code will just transform $1 -&gt; $? in that case (which is fine enough).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='qsymbols_beg'>%i[</span><span class='words_sep'>
+  </span><span class='tstring_content'>exec</span><span class='words_sep'>
+  </span><span class='tstring_content'>query</span><span class='words_sep'>
+  </span><span class='tstring_content'>sync_exec</span><span class='words_sep'>
+  </span><span class='tstring_content'>async_exec</span><span class='words_sep'>
+  </span><span class='tstring_content'>exec_params</span><span class='words_sep'>
+  </span><span class='tstring_content'>async_exec_params</span><span class='words_sep'>
+  </span><span class='tstring_content'>sync_exec_params</span><span class='words_sep'>
+</span><span class='tstring_end'>]</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="PREPARE_ISH_METHODS-constant" class="">PREPARE_ISH_METHODS =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The following methods all take a statement name as the first parameter, and a SQL statement as the second - and possibly further parameters after that. We can trace them all alike.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='qsymbols_beg'>%i[</span><span class='words_sep'>
+  </span><span class='tstring_content'>prepare</span><span class='words_sep'>
+  </span><span class='tstring_content'>async_prepare</span><span class='words_sep'>
+  </span><span class='tstring_content'>sync_prepare</span><span class='words_sep'>
+</span><span class='tstring_end'>]</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="EXEC_PREPARED_ISH_METHODS-constant" class="">EXEC_PREPARED_ISH_METHODS =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The following methods take a prepared statement name as their first parameter - everything after that is either potentially quite sensitive (an array of bind params) or not useful to us. We trace them all alike.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='qsymbols_beg'>%i[</span><span class='words_sep'>
+  </span><span class='tstring_content'>exec_prepared</span><span class='words_sep'>
+  </span><span class='tstring_content'>async_exec_prepared</span><span class='words_sep'>
+  </span><span class='tstring_content'>sync_exec_prepared</span><span class='words_sep'>
+</span><span class='tstring_end'>]</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+
+
+</div>
+
+      <div id="footer">
+  Generated on Thu Jun  9 21:29:25 2022 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.28 (ruby-2.7.6).
+</div>
+
+    </div>
+  </body>
+</html>
