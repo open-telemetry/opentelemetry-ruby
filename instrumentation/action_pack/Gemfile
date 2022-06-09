@@ -9,7 +9,6 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
-  # TODO: uncomment
-  # gem 'opentelemetry-instrumentation-base', path: '../../instrumentation/base'
+  gem 'opentelemetry-instrumentation-base', path: '../../instrumentation/base'
   gem 'pry-byebug'
 end
