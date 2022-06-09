@@ -4,7 +4,7 @@
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>
-  Class: OpenTelemetry::Instrumentation::Rails::Railtie
+  Class: OpenTelemetry::Instrumentation::Redis::Instrumentation
   
     &mdash; OpenTelemetry
   
@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
 
 <script type="text/javascript">
-  pathId = "OpenTelemetry::Instrumentation::Rails::Railtie";
+  pathId = "OpenTelemetry::Instrumentation::Redis::Instrumentation";
   relpath = '../../../';
 </script>
 
@@ -36,10 +36,10 @@
       <div id="header">
         <div id="menu">
   
-    <a href="../../../_index.html">Index (R)</a> &raquo;
-    <span class='title'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Instrumentation.html" title="OpenTelemetry::Instrumentation (module)">Instrumentation</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Rails.html" title="OpenTelemetry::Instrumentation::Rails (module)">Rails</a></span></span>
+    <a href="../../../_index.html">Index (I)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Instrumentation.html" title="OpenTelemetry::Instrumentation (module)">Instrumentation</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Redis.html" title="OpenTelemetry::Instrumentation::Redis (module)">Redis</a></span></span>
      &raquo; 
-    <span class="title">Railtie</span>
+    <span class="title">Instrumentation</span>
   
 </div>
 
@@ -59,7 +59,7 @@
         <div class="clear"></div>
       </div>
 
-      <div id="content"><h1>Class: OpenTelemetry::Instrumentation::Rails::Railtie
+      <div id="content"><h1>Class: OpenTelemetry::Instrumentation::Redis::Instrumentation
   
   
   
@@ -69,14 +69,14 @@
   <dl>
     <dt>Inherits:</dt>
     <dd>
-      <span class="inheritName">Rails::Railtie</span>
+      <span class="inheritName">Base</span>
       
         <ul class="fullTree">
           <li>Object</li>
           
-            <li class="next">Rails::Railtie</li>
+            <li class="next">Base</li>
           
-            <li class="next">OpenTelemetry::Instrumentation::Rails::Railtie</li>
+            <li class="next">OpenTelemetry::Instrumentation::Redis::Instrumentation</li>
           
         </ul>
         <a href="#" class="inheritanceTree">show all</a>
@@ -96,7 +96,7 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/opentelemetry/instrumentation/rails/railtie.rb</dd>
+    <dd>lib/opentelemetry/instrumentation/redis/instrumentation.rb</dd>
   </dl>
   
 </div>
@@ -104,11 +104,7 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     
-<p>Railtie automatically configure the OpentTelemetry SDK</p>
-
-<p>This railtie will set defaults for the following environment variables: <code>OTEL_SERVICE_NAME</code> - if unset, will default to the Rails application name <code>OTEL_RESOURCE_ATTRIBUTES</code> - if unset, will set the deployment environment to the current Rails environment</p>
-
-<p>This will also set the <code>OpenTelemetry.logger</code> to the Rails logger.</p>
+<p>The Instrumentation class contains logic to detect and install the Redis instrumentation</p>
 
 
   </div>
@@ -129,7 +125,7 @@
 </div>
 
       <div id="footer">
-  Generated on Thu Jun  9 21:29:46 2022 by
+  Generated on Thu Jun  9 21:29:50 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-2.7.6).
 </div>

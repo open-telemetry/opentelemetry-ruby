@@ -79,7 +79,7 @@
   <dl>
     <dt>Defined in:</dt>
     <dd>lib/opentelemetry/instrumentation.rb<span class="defines">,<br />
-  lib/opentelemetry/instrumentation/rails.rb,<br /> lib/opentelemetry/instrumentation/rails/railtie.rb,<br /> lib/opentelemetry/instrumentation/rails/version.rb,<br /> lib/opentelemetry/instrumentation/rails/instrumentation.rb</span>
+  lib/opentelemetry/instrumentation/redis.rb,<br /> lib/opentelemetry/instrumentation/redis/version.rb,<br /> lib/opentelemetry/instrumentation/redis/patches/client.rb,<br /> lib/opentelemetry/instrumentation/redis/instrumentation.rb</span>
 </dd>
   </dl>
   
@@ -88,6 +88,8 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     
+<p>“Instrumentation” are specified by <a href="https://github.com/open-telemetry/opentelemetry-specification/blob/784635d01d8690c8f5fcd1f55bdbc8a13cf2f4f2/specification/glossary.md#instrumentation-library">github.com/open-telemetry/opentelemetry-specification/blob/784635d01d8690c8f5fcd1f55bdbc8a13cf2f4f2/specification/glossary.md#instrumentation-library</a></p>
+
 <p>Instrumentation should be able to handle the case when the library is not installed on a user&#39;s system.</p>
 
 
@@ -100,7 +102,7 @@
 <p class="children">
   
     
-      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Instrumentation/Rails.html" title="OpenTelemetry::Instrumentation::Rails (module)">Rails</a></span>
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Instrumentation/Redis.html" title="OpenTelemetry::Instrumentation::Redis (module)">Redis</a></span>
     
   
     
@@ -118,7 +120,7 @@
 </div>
 
       <div id="footer">
-  Generated on Thu Jun  9 21:29:46 2022 by
+  Generated on Thu Jun  9 21:29:50 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-2.7.6).
 </div>
