@@ -1,6 +1,6 @@
 # Release History: opentelemetry-instrumentation-que
 
-### v0.40 / 2022-06-09
+### v0.4.0 / 2022-06-09
 
 * FIXED: Broken test file requirements 
 
