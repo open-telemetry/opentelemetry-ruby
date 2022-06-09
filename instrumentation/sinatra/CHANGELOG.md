@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sinatra
 
+### v0.20.0 / 2022-06-09
+
+* FIXED: Broken test file requirements 
+
 ### v0.19.4 / 2022-05-02
 
 * FIXED: Update server instrumentation to not reflect 400 status as error 

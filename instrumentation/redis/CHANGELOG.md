@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-redis
 
+### v0.23.0 / 2022-06-09
+
+* FIXED: Broken test file requirements 
+
 ### v0.22.1 / 2022-06-09
 
 * FIXED: Broken test file requirements 

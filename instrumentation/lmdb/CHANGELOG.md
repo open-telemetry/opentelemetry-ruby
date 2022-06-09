@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-lmdb
 
+### v0.21.0 / 2022-06-09
+
+* FIXED: Broken test file requirements 
+
 ### v0.20.0 / 2022-05-02
 
 * ADDED: Validate Using Enums 
