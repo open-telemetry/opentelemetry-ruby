@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-trilogy
 
+### v0.51.0 / 2022-06-09
+
+* Upgrading Base dependency version
+* FIXED: Broken test file requirements 
+
 ### v0.50.2 / 2022-05-05
 
 * (No significant changes)

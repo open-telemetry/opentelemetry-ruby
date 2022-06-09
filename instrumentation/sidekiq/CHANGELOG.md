@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-sidekiq
 
+### v0.22.0 / 2022-06-09
+
+* Upgrading Base dependency version
+
 ### v0.21.1 / 2022-06-09
 
 * FIXED: Broken test file requirements 
