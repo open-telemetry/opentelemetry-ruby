@@ -13,9 +13,9 @@ module OpenTelemetry
           private
 
           def process_one
-            if config[:trace_processor_process_one]
+            if instrumentation_config[:trace_processor_process_one]
               attributes = {}
-              attributes['peer.service'] = config[:peer_service] if config[:peer_service]
+              attributes['peer.service'] = instrumentation_config[:peer_service] if instrumentation_config[:peer_service]
               tracer.in_span('Sidekiq::Processor#process_one', attributes: attributes) { super }
             else
               OpenTelemetry::Common::Utilities.untraced { super }
@@ -26,7 +26,7 @@ module OpenTelemetry
             Sidekiq::Instrumentation.instance.tracer
           end
 
-          def config
+          def instrumentation_config
             Sidekiq::Instrumentation.instance.config
           end
         end
