@@ -2,7 +2,7 @@
 
 ### v0.22.0 / 2022-06-09
 
-* (No significant changes)
+* Upgrading Base dependency version
 
 ### v0.21.1 / 2022-06-09
 

@@ -2,6 +2,7 @@
 
 ### v0.19.0 / 2022-06-09
 
+* Upgrading Base dependency version
 * FIXED: Rails 7.0.3 test suite incompatibility 
 * FIXED: Broken test file requirements 
 
