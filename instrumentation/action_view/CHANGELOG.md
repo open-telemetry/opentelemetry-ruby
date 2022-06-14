@@ -1,5 +1,10 @@
 # Release History: opentelemetry-instrumentation-action_view
 
+### v0.3.0 / 2022-06-09
+
+* Upgrading Base dependency version
+* FIXED: Broken test file requirements 
+
 ### v0.2.1 / 2022-05-02
 
 * FIXED: RubyGems Fallback 

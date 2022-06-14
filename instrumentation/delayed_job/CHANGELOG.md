@@ -1,5 +1,11 @@
 # Release History: opentelemetry-instrumentation-delayed_job
 
+### v0.19.0 / 2022-06-09
+
+* Upgrading Base dependency version
+* FIXED: Rails 7.0.3 test suite incompatibility 
+* FIXED: Broken test file requirements 
+
 ### v0.18.5 / 2022-05-02
 
 * FIXED: RubyGems Fallback 
