@@ -134,15 +134,17 @@ module OpenTelemetry
             retry_count = 0
             timeout ||= @timeout
             start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
+            request_body = if @compression == 'gzip'
+                             Zlib.gzip(bytes)
+                           else
+                             bytes
+                           end
+
             around_request do # rubocop:disable Metrics/BlockLength
               request = Net::HTTP::Post.new(@path)
-              request.body = if @compression == 'gzip'
-                               request.add_field('Content-Encoding', 'gzip')
-                               Zlib.gzip(bytes)
-                             else
-                               bytes
-                             end
+              request.body = request_body
               request.add_field('Content-Type', 'application/x-protobuf')
+              request.add_field('Content-Encoding', 'gzip') if @compression == 'gzip'
               @headers.each { |key, value| request.add_field(key, value) }
 
               remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
