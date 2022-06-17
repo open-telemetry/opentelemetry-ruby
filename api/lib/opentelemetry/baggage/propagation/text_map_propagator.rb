@@ -51,7 +51,7 @@ module OpenTelemetry
         #
         # @return [Context] context updated with extracted baggage, or the original context
         #   if extraction fails
-        def extract(carrier, context: Context.current, getter: Context::Propagation.text_map_getter)
+        def extract(carrier, context: Context.current, getter: Context::Propagation.text_map_getter) # rubocop:disable Metrics/AbcSize
           header = getter.get(carrier, BAGGAGE_KEY)
           return context if header.nil? || header.empty?
 
