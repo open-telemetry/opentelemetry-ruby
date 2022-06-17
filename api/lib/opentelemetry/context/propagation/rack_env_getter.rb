@@ -32,7 +32,7 @@ module OpenTelemetry
         private
 
         def to_rack_key(key)
-          ret = "HTTP_#{key}"
+          ret = "HTTP_" + key # rubocop:disable Style/StringConcatenation, Style/StringLiterals
           ret.tr!('-', '_')
           ret.upcase!
           ret
