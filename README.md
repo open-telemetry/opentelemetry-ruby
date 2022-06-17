@@ -8,7 +8,8 @@ The Ruby [OpenTelemetry](https://opentelemetry.io/) client.
 
 - [Getting Started][getting-started]
 - [Contributing](#contributing)
-- [Contrib Repository]](#contrib-repository)
+- [Contrib Repository](#contrib-repository)
+- [Instrumentation Libraries][contrib-instrumentation]
 - [Versioning](#versioning)
 - [Useful links](#useful-links)
 - [License](#license)
@@ -45,7 +46,7 @@ Maintainers ([@open-telemetry/ruby-maintainers](https://github.com/orgs/open-tel
 
 ## Contrib Repository
 
-The contrib repository contains instrumentation libraries for many popular Ruby gems, including Rails, Rack, Sinatra, and others, so you can start using OpenTelemetry with minimal changes to your application. See the instrumentation [README][contrib-repo] for more details.
+The contrib repository contains instrumentation libraries for many popular Ruby gems, including Rails, Rack, Sinatra, and others, so you can start using OpenTelemetry with minimal changes to your application. See the [contrib README][contrib-repo] for more details.
 
 ## Versioning
 
@@ -62,6 +63,7 @@ Apache 2.0 - See [LICENSE][license-url] for more information.
 
 [ci-image]: https://github.com/open-telemetry/opentelemetry-ruby/workflows/CI/badge.svg?event=push
 [contrib-repo]: https://github.com/open-telemetry/opentelemetry-ruby-contrib
+[contrib-instrumentations]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation
 [examples-github]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/examples
 [getting-started]: https://opentelemetry.io/docs/ruby/
 [issues-good-first-issue]: https://github.com/open-telemetry/opentelemetry-ruby/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22
