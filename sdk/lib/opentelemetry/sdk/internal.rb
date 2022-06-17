@@ -28,7 +28,7 @@ module OpenTelemetry
         value.instance_of?(String) || boolean?(value) || numeric?(value)
       end
 
-      def valid_array_value?(value)
+      def valid_array_value?(value) # rubocop:disable Metrics/CyclomaticComplexity
         return false unless value.is_a?(Array)
         return true if value.empty?
 

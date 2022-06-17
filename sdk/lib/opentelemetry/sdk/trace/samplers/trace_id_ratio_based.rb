@@ -39,7 +39,7 @@ module OpenTelemetry
           private
 
           def sample?(trace_id)
-            @probability == 1.0 || trace_id[8, 8].unpack1('Q>') < @id_upper_bound
+            @probability == 1.0 || trace_id[8, 8].unpack1('Q>') < @id_upper_bound # rubocop:disable Lint/FloatComparison
           end
         end
       end

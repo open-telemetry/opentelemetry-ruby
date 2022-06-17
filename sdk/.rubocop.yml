@@ -16,5 +16,8 @@ Naming/FileName:
     - "lib/opentelemetry-sdk.rb"
 Style/ModuleFunction:
   Enabled: false
-Style/BracesAroundHashParameters:
+Lint/ConstantDefinitionInBlock:
+  Exclude:
+    - "test/**/*"
+Lint/MissingSuper:
   Enabled: false

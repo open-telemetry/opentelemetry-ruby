@@ -19,8 +19,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       @failed_batches = []
     end
 
-    attr_reader :batches
-    attr_reader :failed_batches
+    attr_reader :batches, :failed_batches
 
     def export(batch, timeout: nil)
       # If status codes is empty, its a success for less verbose testing
@@ -70,7 +69,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
   end
 
   class TestSpan
-    def initialize(id = nil, recording = true)
+    def initialize(id = nil, recording = true) # rubocop:disable Style/OptionalBooleanParameter
       trace_flags = recording ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
       @context = OpenTelemetry::Trace::SpanContext.new(trace_flags: trace_flags)
       @id = id
