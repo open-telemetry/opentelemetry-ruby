@@ -14,6 +14,9 @@ require 'opentelemetry/proto/resource/v1/resource_pb'
 require 'opentelemetry/proto/trace/v1/trace_pb'
 require 'opentelemetry/proto/collector/trace/v1/trace_service_pb'
 
+require 'opentelemetry/proto/metrics/v1/metrics_pb'
+require 'opentelemetry/proto/collector/metrics/v1/metrics_service_pb'
+
 module OpenTelemetry
   module Exporter
     module OTLP
@@ -68,7 +71,66 @@ module OpenTelemetry
           )
         end
 
+        def as_encoded_emsr(metric_data)
+          Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.encode(as_emsr(metric_data))
+        end
+
+        def as_emsr(metric_data)
+          Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.new(
+            resource_metrics: metric_data
+              .group_by(&:resource)
+              .map do |resource, metric_datas|
+                Opentelemetry::Proto::Metrics::V1::ResourceMetrics.new(
+                  resource: Opentelemetry::Proto::Resource::V1::Resource.new(
+                    attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
+                  ),
+                  instrumentation_library_metrics: metric_datas
+                  .group_by(&:instrumentation_library)
+                  .map do |il, mds|
+                    Opentelemetry::Proto::Metrics::V1::InstrumentationLibraryMetrics.new(
+                      instrumentation_library: Opentelemetry::Proto::Common::V1::InstrumentationLibrary.new(
+                        name: il.name,
+                        version: il.version
+                      ),
+                      metrics: mds.group_by.map do |metric_stream|
+                        as_otlp_metric(metric_stream)
+                      end
+                    )
+                  end
+                )
+              end
+          )
+        end
+
         private
+
+        def as_otlp_metric(metric_stream)
+          case metric_stream.instrument_kind
+          when :counter then as_sum_metric(metric_stream)
+          end
+        end
+
+        def as_sum_metric(metric_stream)
+          Opentelemetry::Proto::Metrics::V1::Metric.new(
+            name: metric_stream.name,
+            description: metric_stream.description,
+            unit: metric_stream.unit,
+            sum: Opentelemetry::Proto::Metrics::V1::Sum.new(
+              data_points: metric_stream.data_points.map { |attr, val| as_sum_data_point(attr, val) }
+            ),
+          )
+        end
+
+        def as_sum_data_point(attributes, value)
+          Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(
+            attributes: attributes&.map { |k, v| as_otlp_key_value(k, v) },
+            as_int: value
+          )
+        end
+
+        def as_otlp_string_key_value(key, value)
+          Opentelemetry::Proto::Common::V1::StringKeyValue.new(key: key, value: value)
+        end
 
         def as_otlp_span(span_data) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
           Opentelemetry::Proto::Trace::V1::Span.new(

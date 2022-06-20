@@ -18,26 +18,12 @@ describe OpenTelemetry::SDK::Metrics::Meter do
     end
   end
 
-  # describe '#create_observable_counter' do
-  #   it 'creates a observable_counter instrument' do
-  #     instrument = meter.create_observable_counter('a_observable_counter', unit: 'minutes', description: 'useful description', callback: nil)
-  #     _(instrument).must_be_instance_of OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter
-  #   end
-  # end
-
   describe '#create_histogram' do
     it 'creates a histogram instrument' do
       instrument = meter.create_histogram('a_histogram', unit: 'minutes', description: 'useful description')
       _(instrument).must_be_instance_of OpenTelemetry::SDK::Metrics::Instrument::Histogram
     end
   end
-
-  # describe '#create_observable_gauge' do
-  #   it 'creates a observable_gauge instrument' do
-  #     instrument = meter.create_observable_gauge('a_observable_gauge', unit: 'minutes', description: 'useful description', callback: nil)
-  #     _(instrument).must_be_instance_of OpenTelemetry::SDK::Metrics::Instrument::ObservableGauge
-  #   end
-  # end
 
   describe '#create_up_down_counter' do
     it 'creates a up_down_counter instrument' do
@@ -46,10 +32,30 @@ describe OpenTelemetry::SDK::Metrics::Meter do
     end
   end
 
-  # describe '#create_observable_up_down_counter' do
-  #   it 'creates a observable_up_down_counter instrument' do
-  #     instrument = meter.create_observable_up_down_counter('a_observable_up_down_counter', unit: 'minutes', description: 'useful description', callback: nil)
-  #     _(instrument).must_be_instance_of OpenTelemetry::SDK::Metrics::Instrument::ObservableUpDownCounter
-  #   end
-  # end
+  describe '#create_observable_counter' do
+    it 'creates a observable_counter instrument' do
+      # TODO: Implement observable instruments
+      skip
+      instrument = meter.create_observable_counter('a_observable_counter', unit: 'minutes', description: 'useful description', callback: nil)
+      _(instrument).must_be_instance_of OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter
+    end
+  end
+
+  describe '#create_observable_gauge' do
+    it 'creates a observable_gauge instrument' do
+      # TODO: Implement observable instruments
+      skip
+      instrument = meter.create_observable_gauge('a_observable_gauge', unit: 'minutes', description: 'useful description', callback: nil)
+      _(instrument).must_be_instance_of OpenTelemetry::SDK::Metrics::Instrument::ObservableGauge
+    end
+  end
+
+  describe '#create_observable_up_down_counter' do
+    it 'creates a observable_up_down_counter instrument' do
+      # TODO: Implement observable instruments
+      skip
+      instrument = meter.create_observable_up_down_counter('a_observable_up_down_counter', unit: 'minutes', description: 'useful description', callback: nil)
+      _(instrument).must_be_instance_of OpenTelemetry::SDK::Metrics::Instrument::ObservableUpDownCounter
+    end
+  end
 end

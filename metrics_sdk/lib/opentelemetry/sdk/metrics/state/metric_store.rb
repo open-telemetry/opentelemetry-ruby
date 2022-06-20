@@ -11,34 +11,26 @@ module OpenTelemetry
         class MetricStore
           def initialize
             @mutex = Mutex.new
-            # @epoch_start_time = now
-            @metric_streams = {}
+            @epoch_start_time = Time.now.to_i
+            @epoch_end_time = nil;
+            @metric_streams = []
           end
 
           def collect
             # this probably needs to take the mutex, take a snapshot of state, (reset state?), release the mutex
-            # end_time = now
-            @metric_streams.map do |_k, metric_stream|
-              metric_stream
+            @mutex.synchronize do
+              [
+                @end_time = Time.now.to_i,
+                @metric_streams,
+                @epoch_start_time = @end_time,
+              ]
+              @metric_streams
             end
-            # @epoch_start_time = end_time
           end
 
-          def record(measurement, instrument, resource)
-            # compute metric stream name
-            # find or create the metric stream
-            # run aggregation on the metric stream
-
-            # need to block on lookup or creation
-            # if aggregation is quick hold the lock?
-            # otherwise we want to release the lock for the lookup/creation
-            # and takeup a lock on the aggregator
-
-            metric_stream = @mutex.synchronize do
-              @metric_streams[instrument.to_s] || @metric_streams[instrument.to_s] = MetricStream.new(instrument, resource)
-            end
-
-            metric_stream.update(measurement)
+          def add_metric_stream(metric_stream)
+            @metric_streams = @metric_streams.dup.push(metric_stream)
+            nil
           end
         end
       end

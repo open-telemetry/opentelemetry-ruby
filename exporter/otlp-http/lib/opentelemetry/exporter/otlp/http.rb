@@ -21,4 +21,5 @@ module OpenTelemetry
 end
 
 require 'opentelemetry/exporter/otlp/http/trace_exporter'
+require 'opentelemetry/exporter/otlp/http/metric_exporter'
 require 'opentelemetry/exporter/otlp/http/version'

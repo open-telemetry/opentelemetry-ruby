@@ -9,15 +9,12 @@ module OpenTelemetry
     module Metrics
       module Instrument
         # {Histogram} is the SDK implementation of {OpenTelemetry::Metrics::Histogram}.
-        class Histogram < OpenTelemetry::Metrics::Instrument::Histogram
-          attr_reader :name, :unit, :description
-
-          def initialize(name, unit, description, metric_store_registry, instrumentation_library)
-            @name = name
-            @unit = unit
-            @description = description
-            @metric_store_registry = metric_store_registry
-            @instrumentation_library = instrumentation_library
+        class Histogram < OpenTelemetry::SDK::Metrics::Instrument::SynchronousInstrument
+          # Returns the instrument kind as a Symbol
+          #
+          # @return [Symbol]
+          def instrument_kind
+            :histogram
           end
 
           # Updates the statistics with the specified amount.
@@ -27,7 +24,9 @@ module OpenTelemetry
           #   Values must be non-nil and (array of) string, boolean or numeric type.
           #   Array values must not contain nil elements and all elements must be of
           #   the same basic type (string, numeric, boolean).
-          def record(amount, attributes: nil); end
+          def record(amount, attributes: nil);
+            update(OpenTelemetry::Metrics::Measurement.new(increment, attributes))
+          end
         end
       end
     end

@@ -9,6 +9,7 @@
 # # SimpleCov.minimum_coverage 85
 
 require 'opentelemetry-metrics-sdk'
+require 'opentelemetry-test-helpers'
 require 'minitest/autorun'
 require 'pry'
 

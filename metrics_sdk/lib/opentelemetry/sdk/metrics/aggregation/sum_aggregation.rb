@@ -9,6 +9,7 @@ module OpenTelemetry
     module Metrics
       module Aggregation
         class SumAggregation
+
         end
       end
     end

@@ -14,6 +14,8 @@ group :test, :development do
   gem 'opentelemetry-api', path: '../../api'
   gem 'opentelemetry-exporter-otlp-common', path: '../otlp-common'
   gem 'opentelemetry-sdk', path: '../../sdk'
+  gem 'opentelemetry-metrics-sdk', path: '../../metrics_sdk'
+  gem 'opentelemetry-metrics-api', path: '../../metrics_api'
   gem 'opentelemetry-semantic_conventions', path: '../../semantic_conventions'
   gem 'opentelemetry-test-helpers', path: '../../test_helpers'
 end

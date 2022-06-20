@@ -9,15 +9,12 @@ module OpenTelemetry
     module Metrics
       module Instrument
         # {Counter} is the SDK implementation of {OpenTelemetry::Metrics::Counter}.
-        class Counter < OpenTelemetry::Metrics::Instrument::Counter
-          attr_reader :name, :unit, :description, :instrumentation_library
-
-          def initialize(name, unit, description, metric_store_registry, instrumentation_library)
-            @name = name
-            @unit = unit
-            @description = description
-            @metric_store_registry = metric_store_registry
-            @instrumentation_library = instrumentation_library
+        class Counter < OpenTelemetry::SDK::Metrics::Instrument::SynchronousInstrument
+          # Returns the instrument kind as a Symbol
+          #
+          # @return [Symbol]
+          def instrument_kind
+            :counter
           end
 
           # Increment the Counter by a fixed amount.
@@ -27,10 +24,9 @@ module OpenTelemetry
           #   Values must be non-nil and (array of) string, boolean or numeric type.
           #   Array values must not contain nil elements and all elements must be of
           #   the same basic type (string, numeric, boolean).
-          def add(increment, attributes: nil)
-            @metric_store_registry.produce(
-              OpenTelemetry::Metrics::Measurement.new(increment, attributes),
-              self
+          def add(increment, attributes: {})
+            update(
+              OpenTelemetry::Metrics::Measurement.new(increment, attributes)
             )
           end
         end

@@ -106,6 +106,34 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
 
       _(OpenTelemetry.meter_provider.instance_variable_get(:@metric_readers)).must_equal([metric_reader])
     end
+
+    it 'associates the metric store with instruments created before the metric reader' do
+      meter_a = OpenTelemetry.meter_provider.meter('a').create_counter('meter_a')
+
+      metric_reader_a = OpenTelemetry::SDK::Metrics::Export::MetricReader.new(OpenTelemetry::SDK::Metrics::Export::ConsoleMetricExporter.new)
+      OpenTelemetry.meter_provider.add_metric_reader(metric_reader_a)
+
+      metric_reader_b = OpenTelemetry::SDK::Metrics::Export::MetricReader.new(OpenTelemetry::SDK::Metrics::Export::ConsoleMetricExporter.new)
+      OpenTelemetry.meter_provider.add_metric_reader(metric_reader_b)
+
+      _(meter_a.instance_variable_get(:@metric_streams).size).must_equal(2)
+      _(metric_reader_a.metric_store.instance_variable_get(:@metric_streams).size).must_equal(1)
+      _(metric_reader_b.metric_store.instance_variable_get(:@metric_streams).size).must_equal(1)
+    end
+
+    it 'associates the metric store with instruments created after the metric reader' do
+      metric_reader_a = OpenTelemetry::SDK::Metrics::Export::MetricReader.new(OpenTelemetry::SDK::Metrics::Export::ConsoleMetricExporter.new)
+      OpenTelemetry.meter_provider.add_metric_reader(metric_reader_a)
+
+      metric_reader_b = OpenTelemetry::SDK::Metrics::Export::MetricReader.new(OpenTelemetry::SDK::Metrics::Export::ConsoleMetricExporter.new)
+      OpenTelemetry.meter_provider.add_metric_reader(metric_reader_b)
+
+      meter_a = OpenTelemetry.meter_provider.meter('a').create_counter('meter_a')
+
+      _(meter_a.instance_variable_get(:@metric_streams).size).must_equal(2)
+      _(metric_reader_a.metric_store.instance_variable_get(:@metric_streams).size).must_equal(1)
+      _(metric_reader_b.metric_store.instance_variable_get(:@metric_streams).size).must_equal(1)
+    end
   end
 
   describe '#add_view' do

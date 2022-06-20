@@ -14,14 +14,14 @@ module OpenTelemetry
         Key = Struct.new(:name, :version)
         private_constant(:Key)
 
-        attr_reader :metric_store_registry
+        attr_reader :resource, :metric_readers
 
         def initialize(resource: OpenTelemetry::SDK::Resources::Resource.create)
           @mutex = Mutex.new
-          @registry = {}
+          @meter_registry = {}
           @stopped = false
           @metric_readers = []
-          @metric_store_registry = State::MetricStoreRegistry.new(resource)
+          @resource = resource
         end
 
         # Returns a {Meter} instance.
@@ -36,7 +36,7 @@ module OpenTelemetry
             OpenTelemetry.logger.warn 'calling MeterProvider#meter after shutdown, a noop meter will be returned.'
             OpenTelemetry::Metrics::Meter.new
           else
-            @mutex.synchronize { @registry[Key.new(name, version)] ||= Meter.new(name, version, self) }
+            @mutex.synchronize { @meter_registry[Key.new(name, version)] ||= Meter.new(name, version, self) }
           end
         end
 
@@ -108,8 +108,12 @@ module OpenTelemetry
             if @stopped
               OpenTelemetry.logger.warn('calling MetricProvider#add_metric_reader after shutdown.')
             else
-              metric_reader.metric_store = @metric_store_registry.add_metric_store
               @metric_readers.push(metric_reader)
+              @meter_registry.each do |_k, meter|
+                meter.instrument_registry.each do |_n, instrument|
+                  instrument.register_with_new_metric_store(metric_reader.metric_store)
+                end
+              end
             end
 
             nil

@@ -11,11 +11,12 @@ module OpenTelemetry
         class InMemoryMetricPullExporter < MetricReader
           PREFERRED_TEMPORALITY = 'delta'
 
-          attr_reader :metric_snapshots
+          attr_reader :metric_snapshots, :metric_store
 
           def initialize
             @metric_snapshots = []
             @mutex = Mutex.new
+            @metric_store = OpenTelemetry::SDK::Metrics::State::MetricStore.new
           end
 
           def pull

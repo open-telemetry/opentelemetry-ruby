@@ -7,6 +7,41 @@
 require 'test_helper'
 
 describe OpenTelemetry::Exporter::OTLP::Common do
+  describe '#as_emsr' do
+    it 'batches per resource' do
+      il = OpenTelemetry::SDK::InstrumentationLibrary.new('test_scope', 'v0.0.1')
+      r = OpenTelemetry::SDK::Resources::Resource.telemetry_sdk
+
+      il2 = OpenTelemetry::SDK::InstrumentationLibrary.new('secondary_scope', 'v0.0.2')
+      r2 = OpenTelemetry::SDK::Resources::Resource.telemetry_sdk
+      metrics = [
+        create_metric_stream(name: 'test_instrumenta', value: 10, attributes: {'foo'=>'bar'}, resource: r, instrumentation_library: il),
+        create_metric_stream(name: 'test_instrumenta', value: 10, attributes: {'foo'=>'bar'}, resource: r2, instrumentation_library: il2),
+        create_metric_stream(name: 'test_instrumentb', value: 10, attributes: {'foo'=>'bar'}, resource: r2, instrumentation_library: il2),
+      ]
+
+      emsr = OpenTelemetry::Exporter::OTLP::Common.as_emsr(metrics)
+
+      _(emsr.resource_metrics.length).must_equal(2)
+      _(emsr.resource_metrics[0].instrumentation_library_metrics[0].metrics.length).must_equal(1)
+      _(emsr.resource_metrics[1].instrumentation_library_metrics[0].metrics.length).must_equal(2)
+    end
+
+    def create_metric_stream(name: 'test_instrument', description: 'a wonderful instrument', unit: 'cm', instrument_kind: :counter, value: 1, attributes: {}, resource: OpenTelemetry::SDK::Resources::Resource.telemetry_sdk, instrumentation_library: OpenTelemetry::SDK::InstrumentationLibrary.new('test_scope', 'v0.0.1'))
+      OpenTelemetry::SDK::Metrics::State::MetricStream.new(
+        name,
+        description,
+        unit,
+        instrument_kind,
+        value,
+        attributes,
+        resource,
+        instrumentation_library,
+      )
+    end
+  end
+
+
   describe '#as_encoded_etsr' do
     it 'handles encoding errors with poise and grace' do
       OpenTelemetry::TestHelpers.with_test_logger do |log_stream|

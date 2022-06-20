@@ -11,5 +11,7 @@ gemspec
 group :test, :development do
   gem 'opentelemetry-api', path: '../../api'
   gem 'opentelemetry-sdk', path: '../../sdk'
+  gem 'opentelemetry-metrics-sdk', path: '../../metrics_sdk'
+  gem 'opentelemetry-metrics-api', path: '../../metrics_api'
   gem 'opentelemetry-test-helpers', path: '../../test_helpers'
 end

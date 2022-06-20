@@ -9,37 +9,49 @@ module OpenTelemetry
     module Metrics
       module State
         class MetricStream
-          attr_reader :instrument, :resource
+          attr_reader :name, :description, :unit, :instrument_kind, :resource, :instrumentation_library, :data_points
 
-          def initialize(instrument, resource)
-            @instrument = instrument
+          def initialize(
+            name,
+            description,
+            unit,
+            instrument_kind,
+            resource,
+            instrumentation_library
+          )
+            @name = name
+            @description = description
+            @unit = unit
+            @instrument_kind = instrument_kind
             @resource = resource
+            @instrumentation_library = instrumentation_library
+
             @data_points = {}
             @mutex = Mutex.new
           end
 
           def update(measurement)
             @mutex.synchronize do
-              @data_points[measurement.attributes] = if @data_points[measurement.attributes]
-                                                       data_point + measurement.value
-                                                     else
-                                                       measurement.value
-                                                     end
+              if @data_points[measurement.attributes]
+                @data_points[measurement.attributes] = @data_points[measurement.attributes] + measurement.value
+              else
+                @data_points[measurement.attributes] = measurement.value
+              end
             end
           end
 
           def to_s
-            metric_stream_string = String.new
-            metric_stream_string << "name=#{instrument.name}"
-            metric_stream_string << " description=#{instrument.description}" if instrument.description
-            metric_stream_string << " unit=#{instrument.unit}" if instrument.unit
-            map = @data_points.map do |attributes, value|
-              str = String.new
-              str << metric_stream_string
-              str << " attributes=#{attributes}" if attributes
-              str << " #{value}"
-            end
-            map.join("\n")
+            instrument_info = String.new
+            instrument_info << "name=#{@name}"
+            instrument_info << " description=#{@description}" if @description
+            instrument_info << " unit=#{@unit}" if @unit
+            @data_points.map do |attributes, value|
+              metric_stream_string = String.new
+              metric_stream_string << instrument_info
+              metric_stream_string << " attributes=#{attributes}" if attributes
+              metric_stream_string << " #{value}"
+              metric_stream_string
+            end.join("\n")
           end
         end
       end

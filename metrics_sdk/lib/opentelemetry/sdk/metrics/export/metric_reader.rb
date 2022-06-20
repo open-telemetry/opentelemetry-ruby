@@ -9,21 +9,15 @@ module OpenTelemetry
     module Metrics
       module Export
         class MetricReader
+          attr_reader :metric_store
+
           def initialize(exporter)
             @exporter = exporter
+            @metric_store = OpenTelemetry::SDK::Metrics::State::MetricStore.new
           end
 
           def collect
             @metric_store.collect
-          end
-
-          # @api private
-          def metric_store=(metric_store)
-            if defined?(:@metric_store) && !@metric_store.nil?
-              OpenTelemetry.handle_error(message: 'repeated attempts to set metric_store on metric reader')
-            else
-              @metric_store = metric_store
-            end
           end
 
           def shutdown(timeout: nil)
