@@ -9,7 +9,7 @@ The Ruby [OpenTelemetry](https://opentelemetry.io/) client.
 - [Getting Started][getting-started]
 - [Contributing](#contributing)
 - [Contrib Repository](#contrib-repository)
-- [Instrumentation Libraries][contrib-instrumentation]
+- [Instrumentation Libraries][contrib-instrumentations]
 - [Versioning](#versioning)
 - [Useful links](#useful-links)
 - [License](#license)

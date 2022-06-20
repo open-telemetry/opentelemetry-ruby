@@ -28,4 +28,4 @@ gem 'opentelemetry-propagator-b3'
 
 [glossary]: /docs/concepts/glossary/
 [propagators]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/propagator
-[auto-instrumentation]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/instrumentation
+[auto-instrumentation]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation
