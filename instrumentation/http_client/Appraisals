@@ -1,9 +1,0 @@
-# frozen_string_literal: true
-
-# Copyright The OpenTelemetry Authors
-#
-# SPDX-License-Identifier: Apache-2.0
-
-appraise 'httpclient-2.8' do
-  gem 'httpclient', '~> 2.8.0'
-end

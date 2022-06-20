@@ -1,7 +1,0 @@
-inherit_from: ../.rubocop-examples.yml
-
-Naming/FileName:
-  Exclude:
-    - "example/ruby_kafka.rb"
-    - "lib/opentelemetry-instrumentation-ruby_kafka.rb"
-    - "lib/opentelemetry/instrumentation/ruby_kafka.rb"

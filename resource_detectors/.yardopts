@@ -1,9 +1,0 @@
---no-private
---title=OpenTelemetry Resource Detectors
---markup=markdown
---main=README.md
-./lib/opentelemetry/resource/detectors/**/*.rb
-./lib/opentelemetry/resource/detectors.rb
--
-README.md
-CHANGELOG.md

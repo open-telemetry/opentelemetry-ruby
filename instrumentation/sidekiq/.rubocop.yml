@@ -1,9 +1,0 @@
-inherit_from: ../.rubocop-examples.yml
-
-Style/AsciiComments:
-  Enabled: false
-Naming/AsciiIdentifiers:
-  Enabled: false
-Naming/FileName:
-  Exclude:
-    - "lib/opentelemetry-instrumentation-sidekiq.rb"
