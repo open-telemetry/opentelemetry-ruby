@@ -133,6 +133,7 @@ module OpenTelemetry
 
         def send_bytes(bytes, timeout:) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
           return FAILURE if bytes.nil?
+
           @metrics_reporter.record_value('otel.otlp_exporter.message.uncompressed_size', value: bytes.bytesize)
 
           request = Net::HTTP::Post.new(@path)
