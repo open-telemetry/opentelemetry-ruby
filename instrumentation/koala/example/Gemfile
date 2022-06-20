@@ -1,8 +1,0 @@
-# frozen_string_literal: true
-
-source 'https://rubygems.org'
-
-gem 'opentelemetry-api'
-gem 'opentelemetry-common'
-gem 'opentelemetry-instrumentation-koala'
-gem 'opentelemetry-sdk'

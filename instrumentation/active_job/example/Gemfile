@@ -1,8 +1,0 @@
-# frozen_string_literal: true
-
-source 'https://rubygems.org'
-
-gem 'activejob'
-gem 'opentelemetry-api'
-gem 'opentelemetry-instrumentation-active_job'
-gem 'opentelemetry-sdk'

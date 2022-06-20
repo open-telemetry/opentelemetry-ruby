@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.22.0 / 2022-06-09
+
+* ADDED: Otlp grpc 
+
 ### v0.21.3 / 2022-05-12
 
 * (No significant changes)
