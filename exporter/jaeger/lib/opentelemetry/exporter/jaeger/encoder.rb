@@ -64,9 +64,22 @@ module OpenTelemetry
           )
         end
 
-        def encoded_span(span_data) # rubocop:disable Metrics/AbcSize
+        def encoded_span(span_data) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
           start_time = span_data.start_timestamp / 1_000
           duration = span_data.end_timestamp / 1_000 - start_time
+
+          tags = encoded_tags(span_data.attributes) +
+                 encoded_status(span_data.status) +
+                 encoded_kind(span_data.kind) +
+                 encoded_instrumentation_library(span_data.instrumentation_library)
+
+          dropped_attributes_count = span_data.total_recorded_attributes - span_data.attributes&.size.to_i
+          dropped_events_count = span_data.total_recorded_events - span_data.events&.size.to_i
+          dropped_links_count = span_data.total_recorded_links - span_data.links&.size.to_i
+
+          tags << encoded_tag('otel.dropped_attributes_count', dropped_attributes_count) if dropped_attributes_count.positive?
+          tags << encoded_tag('otel.dropped_events_count', dropped_events_count) if dropped_events_count.positive?
+          tags << encoded_tag('otel.dropped_links_count', dropped_links_count) if dropped_links_count.positive?
 
           Thrift::Span.new(
             'traceIdLow' => int64(span_data.trace_id[8, 8]),
@@ -78,10 +91,7 @@ module OpenTelemetry
             'flags' => span_data.trace_flags.sampled? ? 1 : 0,
             'startTime' => start_time,
             'duration' => duration,
-            'tags' => encoded_tags(span_data.attributes) +
-                encoded_status(span_data.status) +
-                encoded_kind(span_data.kind) +
-                encoded_instrumentation_library(span_data.instrumentation_library),
+            'tags' => tags,
             'logs' => encoded_logs(span_data.events)
           )
         end
