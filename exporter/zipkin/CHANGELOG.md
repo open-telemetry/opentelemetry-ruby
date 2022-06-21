@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-zipkin
 
+### v0.20.0 / 2022-06-09
+
+* (No significant changes)
+
 ### v0.19.3 / 2021-12-01
 
 * FIXED: Change net attribute names to match the semantic conventions spec for http 
