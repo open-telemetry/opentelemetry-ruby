@@ -59,6 +59,28 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     _(tags).must_equal('akey' => 'avalue', 'bar' => 'baz', 'otel.library.version' => '0.0.0', 'otel.library.name' => 'vendorlib')
   end
 
+  it 'records dropped attribute, event, and links counts when things were dropped' do
+    resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo')
+    span_data = create_span_data(total_recorded_attributes: 1, total_recorded_events: 1, total_recorded_links: 1)
+    encoded_span = Transformer.to_zipkin_span(span_data, resource)
+    tags = encoded_span['tags']
+    _(tags).must_equal(
+      'otel.library.version' => '0.0.0',
+      'otel.library.name' => 'vendorlib',
+      'otel.dropped_attributes_count' => '1',
+      'otel.dropped_events_count' => '1',
+      'otel.dropped_links_count' => '1'
+    )
+  end
+
+  it 'does not record dropped attribute, event, or link counts when things were not dropped' do
+    resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo')
+    span_data = create_span_data
+    encoded_span = Transformer.to_zipkin_span(span_data, resource)
+    tags = encoded_span['tags']
+    _(tags).must_equal('otel.library.version' => '0.0.0', 'otel.library.name' => 'vendorlib')
+  end
+
   it 'encodes array attribute values in events and the span as JSON strings' do
     attributes = { 'akey' => ['avalue'], 'bar' => 'baz' }
     events = [

@@ -193,7 +193,7 @@ module OpenTelemetry
         end
       end
 
-      def configure_propagation # rubocop:disable Metrics/CyclomaticComplexity
+      def configure_propagation # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize
         propagators = ENV.fetch('OTEL_PROPAGATORS', 'tracecontext,baggage').split(',').uniq.collect do |propagator|
           case propagator
           when 'tracecontext' then OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
@@ -203,6 +203,7 @@ module OpenTelemetry
           when 'jaeger' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::Jaeger')
           when 'xray' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::XRay')
           when 'ottrace' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::OTTrace')
+          when 'none' then NoopTextMapPropagator.new
           else
             OpenTelemetry.logger.warn "The #{propagator} propagator is unknown and cannot be configured"
             NoopTextMapPropagator.new

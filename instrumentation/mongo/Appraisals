@@ -1,9 +1,0 @@
-# frozen_string_literal: true
-
-# Copyright The OpenTelemetry Authors
-#
-# SPDX-License-Identifier: Apache-2.0
-
-appraise 'mongo-2.13' do
-  gem 'mongo', '~> 2.13.0'
-end
