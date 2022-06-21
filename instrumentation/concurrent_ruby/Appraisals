@@ -1,9 +1,0 @@
-# frozen_string_literal: true
-
-appraise 'concurrent-ruby-1.1' do
-  gem 'concurrent-ruby', '~> 1.1.6'
-end
-
-appraise 'concurrent-ruby-1.0' do
-  gem 'concurrent-ruby', '~> 1.0.5'
-end

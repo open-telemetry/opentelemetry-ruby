@@ -134,20 +134,25 @@ module OpenTelemetry
         def send_bytes(bytes, timeout:) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
           return FAILURE if bytes.nil?
 
+          @metrics_reporter.record_value('otel.otlp_exporter.message.uncompressed_size', value: bytes.bytesize)
+
+          request = Net::HTTP::Post.new(@path)
+          if @compression == 'gzip'
+            request.add_field('Content-Encoding', 'gzip')
+            body = Zlib.gzip(bytes)
+            @metrics_reporter.record_value('otel.otlp_exporter.message.compressed_size', value: body.bytesize)
+          else
+            body = bytes
+          end
+          request.body = body
+          request.add_field('Content-Type', 'application/x-protobuf')
+          @headers.each { |key, value| request.add_field(key, value) }
+
           retry_count = 0
           timeout ||= @timeout
           start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
-          around_request do # rubocop:disable Metrics/BlockLength
-            request = Net::HTTP::Post.new(@path)
-            request.body = if @compression == 'gzip'
-                             request.add_field('Content-Encoding', 'gzip')
-                             Zlib.gzip(bytes)
-                           else
-                             bytes
-                           end
-            request.add_field('Content-Type', 'application/x-protobuf')
-            @headers.each { |key, value| request.add_field(key, value) }
 
+          around_request do # rubocop:disable Metrics/BlockLength
             remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
             return FAILURE if remaining_timeout.zero?
 

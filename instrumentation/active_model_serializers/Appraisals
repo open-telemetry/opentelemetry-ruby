@@ -1,9 +1,0 @@
-# frozen_string_literal: true
-
-# Copyright The OpenTelemetry Authors
-#
-# SPDX-License-Identifier: Apache-2.0
-
-appraise 'active_model_serializers_0.10' do
-  gem 'active_model_serializers', '~> 0.10.0'
-end

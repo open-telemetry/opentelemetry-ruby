@@ -1,8 +1,0 @@
-# frozen_string_literal: true
-
-source 'https://rubygems.org'
-
-gem 'aws-sdk'
-gem 'opentelemetry-api'
-gem 'opentelemetry-instrumentation-aws_sdk'
-gem 'opentelemetry-sdk'

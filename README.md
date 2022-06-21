@@ -8,7 +8,8 @@ The Ruby [OpenTelemetry](https://opentelemetry.io/) client.
 
 - [Getting Started][getting-started]
 - [Contributing](#contributing)
-- [Instrumentation Libraries](#instrumentation-libraries)
+- [Contrib Repository](#contrib-repository)
+- [Instrumentation Libraries][contrib-instrumentations]
 - [Versioning](#versioning)
 - [Useful links](#useful-links)
 - [License](#license)
@@ -27,9 +28,10 @@ The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 
 Approvers ([@open-telemetry/ruby-approvers](https://github.com/orgs/open-telemetry/teams/ruby-approvers)):
 
-- [Eric Mustin](https://github.com/ericmustin)
+- [Eric Mustin](https://github.com/ericmustin), Shopify
 - [Ariel Valentin](https://github.com/arielvalentin), GitHub
-- [Andrew Hayworth](https://github.com/ahayworth)
+- [Andrew Hayworth](https://github.com/ahayworth), Shopify
+- [Sam Handler](https://github.com/plantfansam), Shopify
 
 *Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#approver).*
 
@@ -42,12 +44,9 @@ Maintainers ([@open-telemetry/ruby-maintainers](https://github.com/orgs/open-tel
 
 *Find more about the maintainer role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#maintainer).*
 
-## Instrumentation Libraries
+## Contrib Repository
 
-This repository contains instrumentation libraries for many popular Ruby
-gems, including Rails, Rack, Sinatra, and others, so you can start
-using OpenTelemetry with minimal changes to your application. See the
-[instrumentation README](instrumentation/) for more.
+The contrib repository contains instrumentation libraries for many popular Ruby gems, including Rails, Rack, Sinatra, and others, so you can start using OpenTelemetry with minimal changes to your application. See the [contrib README][contrib-repo] for more details.
 
 ## Versioning
 
@@ -63,6 +62,8 @@ OpenTelemetry Ruby follows the [versioning and stability document][otel-versioni
 Apache 2.0 - See [LICENSE][license-url] for more information.
 
 [ci-image]: https://github.com/open-telemetry/opentelemetry-ruby/workflows/CI/badge.svg?event=push
+[contrib-repo]: https://github.com/open-telemetry/opentelemetry-ruby-contrib
+[contrib-instrumentations]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation
 [examples-github]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/examples
 [getting-started]: https://opentelemetry.io/docs/ruby/
 [issues-good-first-issue]: https://github.com/open-telemetry/opentelemetry-ruby/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22
@@ -70,7 +71,6 @@ Apache 2.0 - See [LICENSE][license-url] for more information.
 [license-image]: https://img.shields.io/badge/license-Apache_2.0-green.svg?style=flat
 [license-url]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
-[opentelemetry-instrumentation-all-publishing]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/instrumentation/all#publishing
 [slack-image]: https://img.shields.io/badge/slack-@cncf/otel/ruby-brightgreen.svg?logo=slack
 [slack-url]: https://cloud-native.slack.com/archives/C01NWKKMKMY
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
