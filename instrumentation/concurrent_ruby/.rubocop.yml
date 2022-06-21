@@ -1,7 +1,0 @@
-inherit_from: ../.rubocop-examples.yml
-
-Naming/FileName:
-  Exclude:
-    - "example/concurrent_ruby.rb"
-    - "lib/opentelemetry-instrumentation-concurrent_ruby.rb"
-    - "lib/opentelemetry/instrumentation/concurrent_ruby.rb"
