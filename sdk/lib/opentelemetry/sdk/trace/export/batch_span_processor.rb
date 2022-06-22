@@ -74,7 +74,7 @@ module OpenTelemetry
           def on_start(_span, _parent_context); end
 
           # Adds a span to the batch. Thread-safe; may block on lock.
-          def on_finish(span) # rubocop:disable Metrics/AbcSize
+          def on_finish(span)
             return unless span.context.trace_flags.sampled?
 
             lock do
@@ -155,7 +155,7 @@ module OpenTelemetry
 
           attr_reader :spans, :max_queue_size, :batch_size
 
-          def work # rubocop:disable Metrics/AbcSize
+          def work
             loop do
               batch = lock do
                 @condition.wait(@mutex, @delay_seconds) if spans.size < batch_size && @keep_running
