@@ -128,7 +128,7 @@ module OpenTelemetry
             OpenTelemetry::Common::Utilities.untraced { yield }
           end
 
-          def send_bytes(bytes, timeout:) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+          def send_bytes(bytes, timeout:) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
             return FAILURE if bytes.nil?
 
             retry_count = 0

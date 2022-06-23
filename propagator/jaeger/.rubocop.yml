@@ -3,7 +3,7 @@ AllCops:
 Lint/UnusedMethodArgument:
   Enabled: false
 Metrics/AbcSize:
-  Max: 18
+  Enabled: false
 Metrics/BlockLength:
   Exclude:
     - 'opentelemetry-propagator-jaeger.gemspec'

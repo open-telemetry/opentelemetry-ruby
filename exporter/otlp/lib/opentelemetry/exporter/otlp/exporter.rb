@@ -131,7 +131,7 @@ module OpenTelemetry
           OpenTelemetry::Common::Utilities.untraced { yield }
         end
 
-        def send_bytes(bytes, timeout:) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+        def send_bytes(bytes, timeout:) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
           return FAILURE if bytes.nil?
 
           @metrics_reporter.record_value('otel.otlp_exporter.message.uncompressed_size', value: bytes.bytesize)
@@ -270,7 +270,7 @@ module OpenTelemetry
           true
         end
 
-        def encode(span_data) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        def encode(span_data) # rubocop:disable Metrics/MethodLength
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(
             Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
               resource_spans: span_data
@@ -300,7 +300,7 @@ module OpenTelemetry
           nil
         end
 
-        def as_otlp_span(span_data) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        def as_otlp_span(span_data) # rubocop:disable Metrics/MethodLength
           Opentelemetry::Proto::Trace::V1::Span.new(
             trace_id: span_data.trace_id,
             span_id: span_data.span_id,

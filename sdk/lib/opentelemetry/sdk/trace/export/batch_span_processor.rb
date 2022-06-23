@@ -74,7 +74,7 @@ module OpenTelemetry
           def on_start(_span, _parent_context); end
 
           # Adds a span to the batch. Thread-safe; may block on lock.
-          def on_finish(span) # rubocop:disable Metrics/AbcSize
+          def on_finish(span)
             return unless span.context.trace_flags.sampled?
 
             lock do
@@ -100,7 +100,7 @@ module OpenTelemetry
           # @param [optional Numeric] timeout An optional timeout in seconds.
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
-          def force_flush(timeout: nil) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
+          def force_flush(timeout: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
             start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
             snapshot = lock do
               reset_on_fork if @keep_running
@@ -155,7 +155,7 @@ module OpenTelemetry
 
           attr_reader :spans, :max_queue_size, :batch_size
 
-          def work # rubocop:disable Metrics/AbcSize
+          def work
             loop do
               batch = lock do
                 @condition.wait(@mutex, @delay_seconds) if spans.size < batch_size && @keep_running

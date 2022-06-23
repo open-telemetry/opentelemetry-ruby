@@ -62,10 +62,6 @@ gems:
     directory: exporter/zipkin
     version_constant: [OpenTelemetry, Exporter, Zipkin, VERSION]
 
-  - name: opentelemetry-instrumentation-active_model_serializers
-    directory: instrumentation/active_model_serializers
-    version_constant: [OpenTelemetry, Instrumentation, ActiveModelSerializers, VERSION]
-
   - name: opentelemetry-propagator-b3
     directory: propagator/b3
     version_constant: [OpenTelemetry, Propagator, B3, VERSION]
