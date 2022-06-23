@@ -1,5 +1,10 @@
 # Release History: opentelemetry-sdk
 
+### v1.1.0 / 2022-05-26
+
+* BREAKING CHANGE: This requires upgrading both the SDK and Instrumentation gem in tandem
+
+
 ### v1.0.3 / 2022-05-02
 
 * ADDED: Truncate the strings in an array attribute value if length_limit is configured
