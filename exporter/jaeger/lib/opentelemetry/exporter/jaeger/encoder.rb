@@ -64,7 +64,7 @@ module OpenTelemetry
           )
         end
 
-        def encoded_span(span_data) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        def encoded_span(span_data) # rubocop:disable Metrics/MethodLength
           start_time = span_data.start_timestamp / 1_000
           duration = span_data.end_timestamp / 1_000 - start_time
 

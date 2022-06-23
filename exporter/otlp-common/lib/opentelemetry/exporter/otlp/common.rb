@@ -70,7 +70,7 @@ module OpenTelemetry
 
         private
 
-        def as_otlp_span(span_data) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        def as_otlp_span(span_data) # rubocop:disable Metrics/MethodLength
           Opentelemetry::Proto::Trace::V1::Span.new(
             trace_id: span_data.trace_id,
             span_id: span_data.span_id,
