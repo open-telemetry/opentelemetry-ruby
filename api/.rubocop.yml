@@ -4,7 +4,7 @@ AllCops:
 Lint/UnusedMethodArgument:
   Enabled: false
 Metrics/AbcSize:
-  Max: 18
+  Enabled: false
 Metrics/LineLength:
   Enabled: false
 Metrics/MethodLength:
@@ -14,5 +14,13 @@ Metrics/ParameterLists:
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-api.rb"
+Lint/MissingSuper:
+  Enabled: false
+Lint/ConstantDefinitionInBlock:
+  Exclude:
+    - "test/**/*"
+Style/StringConcatenation:
+  Exclude:
+    - "test/**/*"
 Style/ModuleFunction:
   Enabled: false

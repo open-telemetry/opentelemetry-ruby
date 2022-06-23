@@ -276,7 +276,7 @@ module OpenTelemetry
         end
 
         # @api private
-        def initialize(context, parent_context, parent_span, name, kind, parent_span_id, span_limits, span_processors, attributes, links, start_timestamp, resource, instrumentation_library) # rubocop:disable Metrics/AbcSize,  Metrics/CyclomaticComplexity, Metrics/MethodLength,  Metrics/PerceivedComplexity
+        def initialize(context, parent_context, parent_span, name, kind, parent_span_id, span_limits, span_processors, attributes, links, start_timestamp, resource, instrumentation_library) # rubocop:disable  Metrics/CyclomaticComplexity, Metrics/MethodLength,  Metrics/PerceivedComplexity
           super(span_context: context)
           @mutex = Mutex.new
           @name = name
@@ -357,7 +357,7 @@ module OpenTelemetry
           attrs
         end
 
-        def trim_links(links, link_count_limit, link_attribute_count_limit) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def trim_links(links, link_count_limit, link_attribute_count_limit) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           # Fast path (likely) common cases.
           return nil if links.nil?
 
@@ -379,7 +379,7 @@ module OpenTelemetry
           end.freeze
         end
 
-        def append_event(events, event) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def append_event(events, event) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           event_count_limit = @span_limits.event_count_limit
           event_attribute_count_limit = @span_limits.event_attribute_count_limit
           valid_attributes = Internal.valid_attributes?(name, 'event', event.attributes)

@@ -7,9 +7,7 @@ Bundler/OrderedGems:
 Lint/UnusedMethodArgument:
   Enabled: false
 Metrics/AbcSize:
-  Max: 18
-  Exclude:
-    - "**/test/**/*"
+  Enabled: false
 Metrics/LineLength:
   Enabled: false
 Metrics/MethodLength:

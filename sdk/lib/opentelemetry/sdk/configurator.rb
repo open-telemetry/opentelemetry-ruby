@@ -169,7 +169,7 @@ module OpenTelemetry
         processors.each { |p| tracer_provider.add_span_processor(p) }
       end
 
-      def wrapped_exporters_from_env # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize
+      def wrapped_exporters_from_env # rubocop:disable Metrics/CyclomaticComplexity
         exporters = ENV.fetch('OTEL_TRACES_EXPORTER', 'otlp')
         exporters.split(',').map do |exporter|
           case exporter.strip
@@ -193,7 +193,7 @@ module OpenTelemetry
         end
       end
 
-      def configure_propagation # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize
+      def configure_propagation # rubocop:disable Metrics/CyclomaticComplexity
         propagators = ENV.fetch('OTEL_PROPAGATORS', 'tracecontext,baggage').split(',').uniq.collect do |propagator|
           case propagator
           when 'tracecontext' then OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
