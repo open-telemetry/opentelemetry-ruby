@@ -28,7 +28,7 @@ module OpenTelemetry
 
   # @return [Object, Logger] configured Logger or a default STDOUT Logger.
   def logger
-    @logger ||= Logger.new(STDOUT, level: ENV['OTEL_LOG_LEVEL'] || Logger::INFO)
+    @logger ||= Logger.new($stdout, level: ENV['OTEL_LOG_LEVEL'] || Logger::INFO)
   end
 
   # @return [Callable] configured error handler or a default that logs the

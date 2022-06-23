@@ -11,7 +11,7 @@ module OpenTelemetry
     # specification https://www.w3.org/TR/trace-context/
     class Tracestate
       class << self
-        private :new # rubocop:disable Style/AccessModifierDeclarations
+        private :new
 
         # Returns a newly created Tracestate parsed from the header provided.
         #
