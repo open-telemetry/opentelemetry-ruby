@@ -64,6 +64,9 @@ jobs:
         gem:
           - opentelemetry-exporter-jaeger
           - opentelemetry-exporter-otlp
+          - opentelemetry-exporter-otlp-common
+          - opentelemetry-exporter-otlp-grpc
+          - opentelemetry-exporter-otlp-http
           - opentelemetry-exporter-zipkin
         os:
           - ubuntu-latest
@@ -73,6 +76,8 @@ jobs:
           # Doesn't build on macos
           - os: macos-latest
             gem: opentelemetry-exporter-jaeger
+          - os: windows-latest
+            gem: opentelemetry-exporter-otlp-grpc
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -97,8 +102,19 @@ jobs:
           yard: true
           rubocop: true
           build: true
+      - name: "JRuby Filter"
+        id: jruby_skip
+        shell: bash
+        run: |
+          echo "::set-output name=skip::false"
+          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp"        ]] && echo "::set-output name=skip::true"
+          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-common" ]] && echo "::set-output name=skip::true"
+          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-http"   ]] && echo "::set-output name=skip::true"
+          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-grpc"   ]] && echo "::set-output name=skip::true"
+          # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
+          true
       - name: "Test JRuby"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
+        if: "${{ matrix.os == 'ubuntu-latest' && steps.jruby_skip.outputs.skip == 'false' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
