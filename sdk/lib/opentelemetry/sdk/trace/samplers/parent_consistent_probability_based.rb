@@ -18,8 +18,7 @@ module OpenTelemetry
         # Sampler argument, which is the Sampler to use in case the
         # ParentConsistentProbabilityBased Sampler is called for a root span.
         class ParentConsistentProbabilityBased
-          DECIMAL = /\A\d+\z/.freeze
-          private_constant(:DECIMAL)
+          include ConsistentProbabilityTraceState
 
           def initialize(root)
             @root = root
@@ -56,35 +55,6 @@ module OpenTelemetry
           protected
 
           attr_reader :root
-
-          private
-
-          def validate_tracestate(span_context)
-            sampled = span_context.trace_flags.sampled?
-            tracestate = span_context.tracestate
-            ot = OpenTelemetry::SDK::Trace::Tracestate.from_tracestate(tracestate)
-            r = decimal(ot.value('r'))
-            p = decimal(ot.value('p'))
-            new_ot = ot
-            new_ot = ot.delete('p') if !p.nil? && p > 63
-            new_ot = ot.delete('p').delete('r') if !r.nil? && r > 62
-            new_ot = ot.delete('p') if !p.nil? && !r.nil? && !invariant(p, r, sampled)
-            if new_ot != ot
-              new_ot.this_is_a_deliberately_terrible_name_please_bikeshed(tracestate)
-            else
-              tracestate
-            end
-          end
-
-          def invariant(p, r, sampled)
-            ((p <= r) == sampled) || (sampled && (p == 63))
-          end
-
-          def decimal(s)
-            return nil if s.nil? || !DECIMAL.match?(s)
-
-            s.to_i
-          end
         end
       end
     end
