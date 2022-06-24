@@ -46,7 +46,7 @@ Maintainers ([@open-telemetry/ruby-maintainers](https://github.com/orgs/open-tel
 
 ## Contrib Repository
 
-The [opentelemetry-ruby-contrib repository](https://github.com/open-telemetry/opentelemetry-ruby-contrib) contains instrumentation libraries for many popular Ruby gems, including Rails, Rack, Sinatra, and others, so you can start using OpenTelemetry with minimal changes to your application. See the [contrib README][contrib-repo] for more details.
+The [opentelemetry-ruby-contrib repository][contrib-repo] contains instrumentation libraries for many popular Ruby gems, including Rails, Rack, Sinatra, and others, so you can start using OpenTelemetry with minimal changes to your application. See the [contrib README][contrib-repo] for more details.
 
 ## Versioning
 
