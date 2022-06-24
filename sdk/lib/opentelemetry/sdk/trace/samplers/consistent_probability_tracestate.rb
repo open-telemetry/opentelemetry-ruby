@@ -25,6 +25,7 @@ module OpenTelemetry
             new_ot = ot
             new_ot = ot.delete('p') if !p.nil? && p > 63
             new_ot = ot.delete('p').delete('r') if !r.nil? && r > 62
+            r = nil if !r.nil? && r > 62 # TODO: clean up this logic
             new_ot = ot.delete('p') if !p.nil? && !r.nil? && !invariant(p, r, sampled)
             new_ot = yield new_ot, r, p if block_given?
             if new_ot != ot
