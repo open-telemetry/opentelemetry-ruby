@@ -92,7 +92,7 @@ module OpenTelemetry
                         name: il.name,
                         version: il.version
                       ),
-                      metrics: mds.group_by.map do |metric_stream|
+                      metrics: mds.map do |metric_stream|
                         as_otlp_metric(metric_stream)
                       end
                     )
@@ -116,20 +116,37 @@ module OpenTelemetry
             description: metric_stream.description,
             unit: metric_stream.unit,
             sum: Opentelemetry::Proto::Metrics::V1::Sum.new(
-              data_points: metric_stream.data_points.map { |attr, val| as_sum_data_point(attr, val) }
+              data_points: metric_stream.data_points.map do |attributes, value|
+                Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(
+                  start_time_unix_nano: metric_stream.start_time_unix_nano,
+                  time_unix_nano: metric_stream.time_unix_nano,
+                  attributes: attributes&.map { |k, v| as_otlp_key_value(k, v) },
+                  as_int: value
+                )
+              end
             ),
           )
         end
 
-        def as_sum_data_point(attributes, value)
-          Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(
-            attributes: attributes&.map { |k, v| as_otlp_key_value(k, v) },
-            as_int: value
+        def as_histogram_metric(metric_stream)
+          Opentelemetry::Proto::Metrics::V1::Metric.new(
+            name: metric_stream.name,
+            description: metric_stream.description,
+            unit: metric_stream.unit,
+            histogram: Opentelemetry::Proto::Metrics::V1::Histogram.new(
+              data_points: metric_stream.data_points.map do |attributes, value|
+                Opentelemetry::Proto::Metrics::V1::HistogramDataPoint.new(
+                  start_time_unix_nano: metric_stream.start_time_unix_nano,
+                  time_unix_nano: metric_stream.time_unix_nano,
+                  attributes: attributes&.map { |k, v| as_otlp_key_value(k, v) },
+                  sum: sum,
+                  count: count,
+                  bucket_counts: bucket_counts.map { |bc| bc },
+                  explicit_bounds: explicit_bounds.map { |eb| eb },
+                )
+              end
+            ),
           )
-        end
-
-        def as_otlp_string_key_value(key, value)
-          Opentelemetry::Proto::Common::V1::StringKeyValue.new(key: key, value: value)
         end
 
         def as_otlp_span(span_data) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
