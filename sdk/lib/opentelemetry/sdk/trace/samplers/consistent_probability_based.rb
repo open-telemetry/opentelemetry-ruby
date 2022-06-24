@@ -61,6 +61,7 @@ module OpenTelemetry
                 else
                   decision = Decision::DROP
                 end
+                ot
               end
               Result.new(decision: decision, tracestate: tracestate)
             end
