@@ -100,7 +100,10 @@ module OpenTelemetry
       # @return [Tracestate] self, if unchanged, or a new Tracestate containing
       #   the new or updated key/value pair.
       def set_value(key, value)
-        return self unless VALID_KEY.match?(key) && VALID_VALUE.match?(value)
+        unless VALID_KEY.match?(key) && VALID_VALUE.match?(value)
+          OpenTelemetry.logger.debug("Invalid Tracestate member - #{key} : #{value}")
+          return self
+        end
 
         h = Hash[@hash]
         h[key] = value
