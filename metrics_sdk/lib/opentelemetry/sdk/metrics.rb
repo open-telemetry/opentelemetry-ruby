@@ -13,6 +13,7 @@ module OpenTelemetry
   end
 end
 
+require 'opentelemetry/sdk/metrics/aggregation'
 require 'opentelemetry/sdk/metrics/configuration_patch'
 require 'opentelemetry/sdk/metrics/export'
 require 'opentelemetry/sdk/metrics/instrument'

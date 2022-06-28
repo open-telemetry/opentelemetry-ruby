@@ -8,15 +8,19 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Export
-        class InMemoryMetricPullExporter < MetricReader
-          PREFERRED_TEMPORALITY = 'delta'
-
+        # The InMemoryMetricPullExporter behaves as a Metric Reader and Exporter.
+        # To be used for testing purposes, not production.
+        class InMemoryMetricPullExporter
           attr_reader :metric_snapshots, :metric_store
 
           def initialize
             @metric_snapshots = []
             @mutex = Mutex.new
             @metric_store = OpenTelemetry::SDK::Metrics::State::MetricStore.new
+          end
+
+          def collect
+            @metric_store.collect
           end
 
           def pull
@@ -40,10 +44,6 @@ module OpenTelemetry
 
           def shutdown
             SUCCESS
-          end
-
-          def preferred_temporality
-            PREFERRED_TEMPORALITY
           end
         end
       end

@@ -10,6 +10,8 @@ module OpenTelemetry
       module Instrument
         # {Counter} is the SDK implementation of {OpenTelemetry::Metrics::Counter}.
         class Counter < OpenTelemetry::SDK::Metrics::Instrument::SynchronousInstrument
+          DEFAULT_AGGREGATION = OpenTelemetry::SDK::Metrics::Aggregation::SUM
+
           # Returns the instrument kind as a Symbol
           #
           # @return [Symbol]
@@ -25,9 +27,18 @@ module OpenTelemetry
           #   Array values must not contain nil elements and all elements must be of
           #   the same basic type (string, numeric, boolean).
           def add(increment, attributes: {})
-            update(
-              OpenTelemetry::Metrics::Measurement.new(increment, attributes)
-            )
+            if increment.negative?
+              OpenTelemetry.logger.warn("#{@name} received a negative value")
+            else
+              update(
+                OpenTelemetry::Metrics::Measurement.new(increment, attributes),
+                DEFAULT_AGGREGATION
+              )
+            end
+            nil
+          rescue => e
+            OpenTelemetry.handle_error(exception: e)
+            nil
           end
         end
       end

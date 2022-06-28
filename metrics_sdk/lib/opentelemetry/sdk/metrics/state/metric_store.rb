@@ -11,7 +11,7 @@ module OpenTelemetry
         class MetricStore
           def initialize
             @mutex = Mutex.new
-            @epoch_start_time = Time.now.to_i
+            @epoch_start_time = now_in_nano
             @epoch_end_time = nil;
             @metric_streams = []
           end
@@ -19,18 +19,22 @@ module OpenTelemetry
           def collect
             # this probably needs to take the mutex, take a snapshot of state, (reset state?), release the mutex
             @mutex.synchronize do
-              [
-                @end_time = Time.now.to_i,
-                @metric_streams,
-                @epoch_start_time = @end_time,
-              ]
-              @metric_streams
+              @epoch_end_time = now_in_nano
+              snapshot = @metric_streams.map { |ms| ms.collect(@epoch_start_time, @epoch_end_time)}
+              @epoch_start_time = @epoch_end_time
+              snapshot
             end
           end
 
           def add_metric_stream(metric_stream)
             @metric_streams = @metric_streams.dup.push(metric_stream)
             nil
+          end
+
+          private
+
+          def now_in_nano
+            (Time.now.to_r * 1_000_000_000).to_i
           end
         end
       end

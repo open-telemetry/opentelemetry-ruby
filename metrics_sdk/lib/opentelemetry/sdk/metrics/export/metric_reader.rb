@@ -11,8 +11,7 @@ module OpenTelemetry
         class MetricReader
           attr_reader :metric_store
 
-          def initialize(exporter)
-            @exporter = exporter
+          def initialize
             @metric_store = OpenTelemetry::SDK::Metrics::State::MetricStore.new
           end
 

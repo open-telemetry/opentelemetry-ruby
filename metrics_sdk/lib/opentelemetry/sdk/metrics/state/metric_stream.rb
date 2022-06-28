@@ -9,31 +9,47 @@ module OpenTelemetry
     module Metrics
       module State
         class MetricStream
-          attr_reader :name, :description, :unit, :instrument_kind, :resource, :instrumentation_library, :data_points
+          attr_reader :name, :description, :unit, :instrument_kind, :instrumentation_library, :data_points
 
           def initialize(
             name,
             description,
             unit,
             instrument_kind,
-            resource,
+            meter_provider,
             instrumentation_library
           )
             @name = name
             @description = description
             @unit = unit
             @instrument_kind = instrument_kind
-            @resource = resource
+            @meter_provider = meter_provider
             @instrumentation_library = instrumentation_library
 
             @data_points = {}
             @mutex = Mutex.new
           end
 
-          def update(measurement)
+          def collect(start_time, end_time)
+            @mutex.synchronize do
+              MetricData.new(
+                @name,
+                @description,
+                @unit,
+                @instrument_kind,
+                @meter_provider.resource,
+                @instrumentation_library,
+                @data_points.dup,
+                start_time,
+                end_time
+              )
+            end
+          end
+
+          def update(measurement, aggregation)
             @mutex.synchronize do
               if @data_points[measurement.attributes]
-                @data_points[measurement.attributes] = @data_points[measurement.attributes] + measurement.value
+                @data_points[measurement.attributes] = aggregation.call(@data_points[measurement.attributes], measurement.value)
               else
                 @data_points[measurement.attributes] = measurement.value
               end

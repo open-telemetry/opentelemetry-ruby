@@ -98,9 +98,7 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
 
   describe '#add_metric_reader' do
     it 'adds a metric reader' do
-      metric_reader = OpenTelemetry::SDK::Metrics::Export::MetricReader.new(
-        OpenTelemetry::SDK::Metrics::Export::ConsoleMetricExporter.new
-      )
+      metric_reader = OpenTelemetry::SDK::Metrics::Export::MetricReader.new
 
       OpenTelemetry.meter_provider.add_metric_reader(metric_reader)
 
@@ -110,10 +108,10 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
     it 'associates the metric store with instruments created before the metric reader' do
       meter_a = OpenTelemetry.meter_provider.meter('a').create_counter('meter_a')
 
-      metric_reader_a = OpenTelemetry::SDK::Metrics::Export::MetricReader.new(OpenTelemetry::SDK::Metrics::Export::ConsoleMetricExporter.new)
+      metric_reader_a = OpenTelemetry::SDK::Metrics::Export::MetricReader.new
       OpenTelemetry.meter_provider.add_metric_reader(metric_reader_a)
 
-      metric_reader_b = OpenTelemetry::SDK::Metrics::Export::MetricReader.new(OpenTelemetry::SDK::Metrics::Export::ConsoleMetricExporter.new)
+      metric_reader_b = OpenTelemetry::SDK::Metrics::Export::MetricReader.new
       OpenTelemetry.meter_provider.add_metric_reader(metric_reader_b)
 
       _(meter_a.instance_variable_get(:@metric_streams).size).must_equal(2)
@@ -122,10 +120,10 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
     end
 
     it 'associates the metric store with instruments created after the metric reader' do
-      metric_reader_a = OpenTelemetry::SDK::Metrics::Export::MetricReader.new(OpenTelemetry::SDK::Metrics::Export::ConsoleMetricExporter.new)
+      metric_reader_a = OpenTelemetry::SDK::Metrics::Export::MetricReader.new
       OpenTelemetry.meter_provider.add_metric_reader(metric_reader_a)
 
-      metric_reader_b = OpenTelemetry::SDK::Metrics::Export::MetricReader.new(OpenTelemetry::SDK::Metrics::Export::ConsoleMetricExporter.new)
+      metric_reader_b = OpenTelemetry::SDK::Metrics::Export::MetricReader.new
       OpenTelemetry.meter_provider.add_metric_reader(metric_reader_b)
 
       meter_a = OpenTelemetry.meter_provider.meter('a').create_counter('meter_a')
@@ -136,16 +134,12 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
     end
   end
 
-  describe '#add_view' do
-    it 'adds a view' do
-      # TODO
-      # OpenTelemetry.meter_provider.add_view
-    end
-  end
+  # TODO:OpenTelemetry.meter_provider.add_view
+  describe '#add_view' do;  end
 
   private
 
   def new_mock_reader
-    Minitest::Mock.new(OpenTelemetry::SDK::Metrics::Export::MetricReader.new(nil))
+    Minitest::Mock.new(OpenTelemetry::SDK::Metrics::Export::MetricReader.new)
   end
 end

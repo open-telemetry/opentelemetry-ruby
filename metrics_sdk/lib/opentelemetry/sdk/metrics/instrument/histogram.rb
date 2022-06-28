@@ -10,6 +10,8 @@ module OpenTelemetry
       module Instrument
         # {Histogram} is the SDK implementation of {OpenTelemetry::Metrics::Histogram}.
         class Histogram < OpenTelemetry::SDK::Metrics::Instrument::SynchronousInstrument
+          DEFAULT_AGGREGATION = OpenTelemetry::SDK::Metrics::Aggregation::EXPLICIT_BUCKET_HISTOGRAM
+
           # Returns the instrument kind as a Symbol
           #
           # @return [Symbol]
@@ -25,7 +27,11 @@ module OpenTelemetry
           #   Array values must not contain nil elements and all elements must be of
           #   the same basic type (string, numeric, boolean).
           def record(amount, attributes: nil);
-            update(OpenTelemetry::Metrics::Measurement.new(increment, attributes))
+            update(OpenTelemetry::Metrics::Measurement.new(amount, attributes))
+            nil
+          rescue => e
+            OpenTelemetry.handle_error(exception: e)
+            nil
           end
         end
       end

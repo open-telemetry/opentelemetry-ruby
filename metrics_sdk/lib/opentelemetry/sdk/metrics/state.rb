@@ -13,5 +13,6 @@ module OpenTelemetry
   end
 end
 
+require 'opentelemetry/sdk/metrics/state/metric_data'
 require 'opentelemetry/sdk/metrics/state/metric_store'
 require 'opentelemetry/sdk/metrics/state/metric_stream'

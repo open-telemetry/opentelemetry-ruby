@@ -14,6 +14,7 @@ module OpenTelemetry
             @unit = unit
             @description = description
             @instrumentation_library = instrumentation_library
+            @meter_provider = meter_provider
             @metric_streams = []
 
             meter_provider.metric_readers.each do |metric_reader|
@@ -27,7 +28,7 @@ module OpenTelemetry
               @description,
               @unit,
               instrument_kind,
-              nil, #meter_provider.resource,
+              @meter_provider,
               @instrumentation_library
             )
             @metric_streams << ms
@@ -36,9 +37,9 @@ module OpenTelemetry
 
           private
 
-          def update(measurement)
+          def update(measurement, aggregation)
             @metric_streams.each do |ms|
-              ms.update(measurement)
+              ms.update(measurement, aggregation)
             end
           end
         end

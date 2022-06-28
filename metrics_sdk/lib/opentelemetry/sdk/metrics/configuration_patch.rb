@@ -15,7 +15,7 @@ module OpenTelemetry
         # The metrics_configuration_hook method is where we define the setup process
         # for metrics SDK.
         def metrics_configuration_hook
-          OpenTelemetry.meter_provider = Metrics::MeterProvider.new
+          OpenTelemetry.meter_provider = Metrics::MeterProvider.new(resource: @resource)
         end
       end
     end
