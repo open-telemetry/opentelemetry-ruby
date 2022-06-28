@@ -26,6 +26,7 @@ module OpenTelemetry
           @meter_provider = meter_provider
         end
 
+        # @api private
         def add_metric_reader(metric_reader)
           @instrument_registry.each do |_n, instrument|
             instrument.register_with_new_metric_store(metric_reader.metric_store)

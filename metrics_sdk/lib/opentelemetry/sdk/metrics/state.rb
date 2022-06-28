@@ -7,6 +7,10 @@
 module OpenTelemetry
   module SDK
     module Metrics
+      # @api private
+      #
+      # The State module provides SDK internal functionality that is not a part of the
+      # public API.
       module State
       end
     end

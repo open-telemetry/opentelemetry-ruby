@@ -8,6 +8,10 @@ module OpenTelemetry
   module SDK
     module Metrics
       module State
+        # @api private
+        #
+        # The MetricStream class provides SDK internal functionality that is not a part of the
+        # public API.
         class MetricStream
           attr_reader :name, :description, :unit, :instrument_kind, :instrumentation_library, :data_points
 
@@ -48,11 +52,11 @@ module OpenTelemetry
 
           def update(measurement, aggregation)
             @mutex.synchronize do
-              if @data_points[measurement.attributes]
-                @data_points[measurement.attributes] = aggregation.call(@data_points[measurement.attributes], measurement.value)
-              else
-                @data_points[measurement.attributes] = measurement.value
-              end
+              @data_points[measurement.attributes] = if @data_points[measurement.attributes]
+                                                       aggregation.call(@data_points[measurement.attributes], measurement.value)
+                                                     else
+                                                       measurement.value
+                                                     end
             end
           end
 

@@ -8,6 +8,8 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Instrument
+        # {SynchronousInstrument} contains the common functionality shared across
+        # the synchronous instruments SDK instruments.
         class SynchronousInstrument
           def initialize(name, unit, description, instrumentation_library, meter_provider)
             @name = name
@@ -22,6 +24,7 @@ module OpenTelemetry
             end
           end
 
+          # @api private
           def register_with_new_metric_store(metric_store)
             ms = OpenTelemetry::SDK::Metrics::State::MetricStream.new(
               @name,

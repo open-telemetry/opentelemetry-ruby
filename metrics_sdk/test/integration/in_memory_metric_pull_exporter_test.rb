@@ -34,12 +34,10 @@ describe OpenTelemetry::SDK do
       _(last_snapshot[0].description).must_equal('a small amount of something')
       _(last_snapshot[0].instrumentation_library.name).must_equal('test')
       _(last_snapshot[0].data_points).must_equal(
-        {
-          {} => 1,
-          { 'a' => 'b' } => 4,
-          { 'b' => 'c' } => 3,
-          { 'd' => 'e' } => 4
-        }
+        {} => 1,
+        { 'a' => 'b' } => 4,
+        { 'b' => 'c' } => 3,
+        { 'd' => 'e' } => 4
       )
     end
   end

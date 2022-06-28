@@ -9,6 +9,8 @@ require 'opentelemetry/sdk/metrics/aggregation/histogram'
 module OpenTelemetry
   module SDK
     module Metrics
+      # The Aggregation module contains the OpenTelemetry metrics reference
+      # aggregation implementations.
       module Aggregation
         extend self
 

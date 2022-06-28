@@ -36,7 +36,7 @@ module OpenTelemetry
               )
             end
             nil
-          rescue => e
+          rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
             nil
           end

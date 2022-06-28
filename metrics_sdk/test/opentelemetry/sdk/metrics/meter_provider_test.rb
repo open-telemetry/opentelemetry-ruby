@@ -134,8 +134,9 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
     end
   end
 
-  # TODO:OpenTelemetry.meter_provider.add_view
-  describe '#add_view' do;  end
+  # TODO: OpenTelemetry.meter_provider.add_view
+  describe '#add_view' do
+  end
 
   private
 

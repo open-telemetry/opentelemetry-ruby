@@ -32,7 +32,7 @@ module OpenTelemetry
               DEFAULT_AGGREGATION
             )
             nil
-          rescue => e
+          rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
             nil
           end

@@ -8,6 +8,9 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Export
+        # MetricReader provides a minimal example implementation.
+        # It is not required to subclass this class to provide an implementation
+        # of MetricReader, provided the interface is satisfied.
         class MetricReader
           attr_reader :metric_store
 
@@ -20,11 +23,11 @@ module OpenTelemetry
           end
 
           def shutdown(timeout: nil)
-            SUCCESS
+            Export::SUCCESS
           end
 
           def force_flush(timeout: nil)
-            SUCCESS
+            Export::SUCCESS
           end
         end
       end
