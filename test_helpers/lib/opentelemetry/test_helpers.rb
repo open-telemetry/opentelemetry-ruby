@@ -63,28 +63,6 @@ module OpenTelemetry
       end
     end
 
-    def create_metric_stream(
-      name: 'test_instrument',
-      description: 'a wonderful instrument',
-      unit: 'ms',
-      instrument_kind: :counter,
-      value: 1,
-      attributes: {},
-      resource: OpenTelemetry::SDK::Resources::Resource.telemetry_sdk,
-      instrumentation_library: OpenTelemetry::SDK::InstrumentationLibrary.new('test_scope', 'v0.0.1')
-    )
-      ms = OpenTelemetry::SDK::Metrics::State::MetricStream.new(
-        name,
-        description,
-        unit,
-        instrument_kind,
-        resource,
-        instrumentation_library,
-      )
-      ms.update(OpenTelemetry::Metrics::Measurement.new(value, attributes))
-      ms
-    end
-
     def create_span_data(name: '', kind: nil, status: nil, parent_span_id: OpenTelemetry::Trace::INVALID_SPAN_ID,
                          total_recorded_attributes: 0, total_recorded_events: 0, total_recorded_links: 0, start_timestamp: OpenTelemetry::TestHelpers.exportable_timestamp,
                          end_timestamp: OpenTelemetry::TestHelpers.exportable_timestamp, attributes: nil, links: nil, events: nil, resource: nil,
