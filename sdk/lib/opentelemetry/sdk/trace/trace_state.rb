@@ -19,7 +19,7 @@ module OpenTelemetry
           #
           # @param [OpenTelemetry::Trace::Tracestate] tracestate
           # @return [TraceState] A new TraceState instance or DEFAULT
-          def from_tracestate(tracestate) # rubocop:disable Metrics/CyclomaticComplexity:
+          def from_tracestate(tracestate) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
             return DEFAULT if tracestate.empty?
 
             ot = tracestate.value('ot')
@@ -118,7 +118,7 @@ module OpenTelemetry
           end
 
           # TODO: length limit
-  
+
           h = Hash[@hash]
           h[key] = value
           self.class.create(h)

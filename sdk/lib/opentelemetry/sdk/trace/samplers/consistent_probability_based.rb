@@ -34,7 +34,7 @@ module OpenTelemetry
           # @api private
           #
           # See {Samplers}.
-          def should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:)
+          def should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:) # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
             parent_span_context = OpenTelemetry::Trace.current_span(parent_context).context
             if !parent_span_context.valid?
               r = generate_r(trace_id)
@@ -48,8 +48,8 @@ module OpenTelemetry
               end
             else
               decision = nil
-              tracestate = validate_tracestate(parent_span_context) do |ot, r|
-                if r.nil?
+              tracestate = validate_tracestate(parent_span_context) do |ot, parent_r|
+                if parent_r.nil?
                   # TODO: warn the user that a potentially inconsistent trace is being produced
                   r = generate_r(trace_id)
                   ot.set_value('r', r.to_s)

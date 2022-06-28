@@ -16,7 +16,7 @@ module OpenTelemetry
           DECIMAL = /\A\d+\z/.freeze
           private_constant(:DECIMAL)
 
-          def validate_tracestate(span_context)
+          def validate_tracestate(span_context) # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
             sampled = span_context.trace_flags.sampled?
             tracestate = span_context.tracestate
             ot = OpenTelemetry::SDK::Trace::Tracestate.from_tracestate(tracestate)
@@ -35,12 +35,12 @@ module OpenTelemetry
             end
           end
 
-          def invariant(p, r, sampled)
+          def invariant(p, r, sampled) # rubocop:disable Naming/UncommunicativeMethodParamName
             ((p <= r) == sampled) || (sampled && (p == 63))
           end
 
-          def decimal(s)
-            s.to_i if !s.nil? && DECIMAL.match?(s)
+          def decimal(str)
+            str.to_i if !str.nil? && DECIMAL.match?(str)
           end
         end
       end
