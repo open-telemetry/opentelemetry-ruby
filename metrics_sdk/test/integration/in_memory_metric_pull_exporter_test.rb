@@ -17,7 +17,7 @@ describe OpenTelemetry::SDK do
       OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
 
       meter = OpenTelemetry.meter_provider.meter('test')
-      instrument = meter.create_counter('b_counter')
+      instrument = meter.create_counter('b_counter', unit: 'smidgen', description: 'a small amount of something')
 
       instrument.add(1)
       instrument.add(2, attributes: { 'a' => 'b' })
@@ -30,7 +30,17 @@ describe OpenTelemetry::SDK do
 
       _(last_snapshot).wont_be_empty
       _(last_snapshot[0].name).must_equal('b_counter')
+      _(last_snapshot[0].unit).must_equal('smidgen')
+      _(last_snapshot[0].description).must_equal('a small amount of something')
       _(last_snapshot[0].instrumentation_library.name).must_equal('test')
+      _(last_snapshot[0].data_points).must_equal(
+        {
+          {} => 1,
+          { 'a' => 'b' } => 4,
+          { 'b' => 'c' } => 3,
+          { 'd' => 'e' } => 4
+        }
+      )
     end
   end
 end
