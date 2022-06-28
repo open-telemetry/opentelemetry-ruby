@@ -10,7 +10,7 @@ module OpenTelemetry
     # status code in conjunction with an optional descriptive message.
     class Status
       class << self
-        private :new # rubocop:disable Style/AccessModifierDeclarations
+        private :new
 
         # Returns a newly created {Status} with code == UNSET and an optional
         # description.

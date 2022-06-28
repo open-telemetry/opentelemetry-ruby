@@ -131,23 +131,28 @@ module OpenTelemetry
           OpenTelemetry::Common::Utilities.untraced { yield }
         end
 
-        def send_bytes(bytes, timeout:) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+        def send_bytes(bytes, timeout:) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
           return FAILURE if bytes.nil?
+
+          @metrics_reporter.record_value('otel.otlp_exporter.message.uncompressed_size', value: bytes.bytesize)
+
+          request = Net::HTTP::Post.new(@path)
+          if @compression == 'gzip'
+            request.add_field('Content-Encoding', 'gzip')
+            body = Zlib.gzip(bytes)
+            @metrics_reporter.record_value('otel.otlp_exporter.message.compressed_size', value: body.bytesize)
+          else
+            body = bytes
+          end
+          request.body = body
+          request.add_field('Content-Type', 'application/x-protobuf')
+          @headers.each { |key, value| request.add_field(key, value) }
 
           retry_count = 0
           timeout ||= @timeout
           start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
-          around_request do # rubocop:disable Metrics/BlockLength
-            request = Net::HTTP::Post.new(@path)
-            request.body = if @compression == 'gzip'
-                             request.add_field('Content-Encoding', 'gzip')
-                             Zlib.gzip(bytes)
-                           else
-                             bytes
-                           end
-            request.add_field('Content-Type', 'application/x-protobuf')
-            @headers.each { |key, value| request.add_field(key, value) }
 
+          around_request do # rubocop:disable Metrics/BlockLength
             remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
             return FAILURE if remaining_timeout.zero?
 
@@ -168,6 +173,10 @@ module OpenTelemetry
             when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
               response.body # Read and discard body
               redo if backoff?(retry_count: retry_count += 1, reason: response.code)
+              FAILURE
+            when Net::HTTPNotFound
+              OpenTelemetry.handle_error(message: "OTLP exporter received http.code=404 for uri: '#{@path}'")
+              @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response.code })
               FAILURE
             when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
               log_status(response.body)
@@ -265,7 +274,7 @@ module OpenTelemetry
           true
         end
 
-        def encode(span_data) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        def encode(span_data) # rubocop:disable Metrics/MethodLength
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(
             Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
               resource_spans: span_data
@@ -295,7 +304,7 @@ module OpenTelemetry
           nil
         end
 
-        def as_otlp_span(span_data) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        def as_otlp_span(span_data) # rubocop:disable Metrics/MethodLength
           Opentelemetry::Proto::Trace::V1::Span.new(
             trace_id: span_data.trace_id,
             span_id: span_data.span_id,

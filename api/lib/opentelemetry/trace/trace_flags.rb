@@ -11,7 +11,7 @@ module OpenTelemetry
     # boolean {sampled?} {https://www.w3.org/TR/trace-context/#trace-flags flag}.
     class TraceFlags
       class << self
-        private :new # rubocop:disable Style/AccessModifierDeclarations
+        private :new
 
         # Returns a newly created {TraceFlags} with the specified flags.
         #
