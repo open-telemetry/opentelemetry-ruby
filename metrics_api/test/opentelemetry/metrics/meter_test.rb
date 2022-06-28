@@ -20,7 +20,7 @@ describe OpenTelemetry::Metrics::Meter do
       OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
         meter.create_counter('a_counter')
         meter.create_counter('a_counter')
-        _(log_stream.string).must_match(/duplicate instrument registration occured for instrument a_counter/)
+        _(log_stream.string).must_match(/duplicate instrument registration occurred for instrument a_counter/)
       end
     end
 
