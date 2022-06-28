@@ -109,11 +109,7 @@ module OpenTelemetry
               OpenTelemetry.logger.warn('calling MetricProvider#add_metric_reader after shutdown.')
             else
               @metric_readers.push(metric_reader)
-              @meter_registry.each do |_k, meter|
-                meter.instrument_registry.each do |_n, instrument|
-                  instrument.register_with_new_metric_store(metric_reader.metric_store)
-                end
-              end
+              @meter_registry.each_value { |meter| meter.add_metric_reader(metric_reader) }
             end
 
             nil

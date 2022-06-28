@@ -24,8 +24,6 @@ module OpenTelemetry
       InstrumentUnitError = Class.new(OpenTelemetry::Error)
       InstrumentDescriptionError = Class.new(OpenTelemetry::Error)
 
-      attr_reader :instrument_registry
-
       def initialize
         @mutex = Mutex.new
         @instrument_registry = {}
@@ -66,7 +64,7 @@ module OpenTelemetry
 
         @mutex.synchronize do
           if @instrument_registry.include? name
-            OpenTelemetry.logger.warn("duplicate instrument registration occured for instrument #{name}")
+            OpenTelemetry.logger.warn("duplicate instrument registration occurred for instrument #{name}")
           end
 
           @instrument_registry[name] = yield
