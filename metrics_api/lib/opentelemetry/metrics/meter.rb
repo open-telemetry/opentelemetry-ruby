@@ -63,9 +63,7 @@ module OpenTelemetry
         raise InstrumentDescriptionError if description && (description.size > 1023 || !utf8mb3_encoding?(description.dup))
 
         @mutex.synchronize do
-          if @instrument_registry.include? name
-            OpenTelemetry.logger.warn("duplicate instrument registration occurred for instrument #{name}")
-          end
+          OpenTelemetry.logger.warn("duplicate instrument registration occurred for instrument #{name}") if @instrument_registry.include? name
 
           @instrument_registry[name] = yield
         end

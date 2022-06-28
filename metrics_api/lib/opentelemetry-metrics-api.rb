@@ -17,7 +17,6 @@ require 'opentelemetry/internal/proxy_meter'
 #
 # The OpenTelemetry module provides global accessors for telemetry objects.
 module OpenTelemetry
-
   @meter_provider = Internal::ProxyMeterProvider.new
 
   # Register the global meter provider.
