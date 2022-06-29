@@ -10,7 +10,7 @@ require 'yard'
 require 'rubocop/rake_task'
 require 'tmpdir'
 
-SPEC_VERSION = '1.10.0'
+SPEC_VERSION = '1.12.0'
 
 RuboCop::RakeTask.new
 

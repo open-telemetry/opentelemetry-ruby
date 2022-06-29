@@ -7,6 +7,19 @@
 module OpenTelemetry
   module SemanticConventions
     module Resource
+      # Array of brand name and version separated by a space
+      # @note This value is intended to be taken from the [UA client hints API](https://wicg.github.io/ua-client-hints/#interface) (navigator.userAgentData.brands)
+      BROWSER_BRANDS = 'browser.brands'
+
+      # The platform on which the browser is running
+      # @note This value is intended to be taken from the [UA client hints API](https://wicg.github.io/ua-client-hints/#interface) (navigator.userAgentData.platform). If unavailable, the legacy `navigator.platform` API SHOULD NOT be used instead and this attribute SHOULD be left unset in order for the values to be consistent.
+      #  The list of possible values is defined in the [W3C User-Agent Client Hints specification](https://wicg.github.io/ua-client-hints/#sec-ch-ua-platform). Note that some (but not all) of these values can overlap with values in the [os.type and os.name attributes](./os.md). However, for consistency, the values in the `browser.platform` attribute should capture the exact value that the user agent provides
+      BROWSER_PLATFORM = 'browser.platform'
+
+      # Full user-agent string provided by the browser
+      # @note The user-agent value SHOULD be provided only from browsers that do not have a mechanism to retrieve brands and platform individually from the User-Agent Client Hints API. To retrieve the value, the legacy `navigator.userAgent` API can be used
+      BROWSER_USER_AGENT = 'browser.user_agent'
+
       # Name of the cloud provider
       CLOUD_PROVIDER = 'cloud.provider'
 
@@ -96,24 +109,41 @@ module OpenTelemetry
       DEVICE_MANUFACTURER = 'device.manufacturer'
 
       # The name of the single function that this runtime instance executes
-      # @note This is the name of the function as configured/deployed on the FaaS platform and is usually different from the name of the callback function (which may be stored in the [`code.namespace`/`code.function`](../../trace/semantic_conventions/span-general.md#source-code-attributes) span attributes)
+      # @note This is the name of the function as configured/deployed on the FaaS
+      #  platform and is usually different from the name of the callback
+      #  function (which may be stored in the
+      #  [`code.namespace`/`code.function`](../../trace/semantic_conventions/span-general.md#source-code-attributes)
+      #  span attributes).
+      #  
+      #  For some cloud providers, the above definition is ambiguous. The following
+      #  definition of function name MUST be used for this attribute
+      #  (and consequently the span name) for the listed cloud providers/products:
+      #  
+      #  * **Azure:**  The full name `<FUNCAPP>/<FUNC>`, i.e., function app name
+      #    followed by a forward slash followed by the function name (this form
+      #    can also be seen in the resource JSON for the function).
+      #    This means that a span attribute MUST be used, as an Azure function
+      #    app can host multiple functions that would usually share
+      #    a TracerProvider (see also the `faas.id` attribute)
       FAAS_NAME = 'faas.name'
 
       # The unique ID of the single function that this runtime instance executes
-      # @note Depending on the cloud provider, use:
+      # @note On some cloud providers, it may not be possible to determine the full ID at startup,
+      #  so consider setting `faas.id` as a span attribute instead.
+      #  
+      #  The exact value to use for `faas.id` depends on the cloud provider:
       #  
       #  * **AWS Lambda:** The function [ARN](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html).
-      #  Take care not to use the "invoked ARN" directly but replace any
-      #  [alias suffix](https://docs.aws.amazon.com/lambda/latest/dg/configuration-aliases.html) with the resolved function version, as the same runtime instance may be invokable with multiple
-      #  different aliases.
+      #    Take care not to use the "invoked ARN" directly but replace any
+      #    [alias suffix](https://docs.aws.amazon.com/lambda/latest/dg/configuration-aliases.html)
+      #    with the resolved function version, as the same runtime instance may be invokable with
+      #    multiple different aliases.
       #  * **GCP:** The [URI of the resource](https://cloud.google.com/iam/docs/full-resource-names)
-      #  * **Azure:** The [Fully Qualified Resource ID](https://docs.microsoft.com/en-us/rest/api/resources/resources/get-by-id).
-      #  
-      #  On some providers, it may not be possible to determine the full ID at startup,
-      #  which is why this field cannot be made required. For example, on AWS the account ID
-      #  part of the ARN is not available without calling another AWS API
-      #  which may be deemed too slow for a short-running lambda function.
-      #  As an alternative, consider setting `faas.id` as a span attribute instead
+      #  * **Azure:** The [Fully Qualified Resource ID](https://docs.microsoft.com/en-us/rest/api/resources/resources/get-by-id) of the invoked function,
+      #    *not* the function app, having the form
+      #    `/subscriptions/<SUBSCIPTION_GUID>/resourceGroups/<RG>/providers/Microsoft.Web/sites/<FUNCAPP>/functions/<FUNC>`.
+      #    This means that a span attribute MUST be used, as an Azure function app can host multiple functions that would usually share
+      #    a TracerProvider
       FAAS_ID = 'faas.id'
 
       # The immutable version of the function being executed

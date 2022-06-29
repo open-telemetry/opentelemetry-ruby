@@ -55,6 +55,7 @@ module OpenTelemetry
       DB_OPERATION = 'db.operation'
 
       # Remote hostname or similar, see note below
+      # @note `net.peer.name` SHOULD NOT be set if capturing it would require an extra DNS lookup
       NET_PEER_NAME = 'net.peer.name'
 
       # Remote address of the peer (dotted decimal for IPv4 or [RFC5952](https://tools.ietf.org/html/rfc5952) for IPv6)
