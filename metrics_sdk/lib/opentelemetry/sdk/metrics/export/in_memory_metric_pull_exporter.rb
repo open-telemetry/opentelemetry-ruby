@@ -10,17 +10,13 @@ module OpenTelemetry
       module Export
         # The InMemoryMetricPullExporter behaves as a Metric Reader and Exporter.
         # To be used for testing purposes, not production.
-        class InMemoryMetricPullExporter
-          attr_reader :metric_snapshots, :metric_store
+        class InMemoryMetricPullExporter < MetricReader
+          attr_reader :metric_snapshots
 
           def initialize
+            super
             @metric_snapshots = []
             @mutex = Mutex.new
-            @metric_store = OpenTelemetry::SDK::Metrics::State::MetricStore.new
-          end
-
-          def collect
-            @metric_store.collect
           end
 
           def pull
