@@ -174,6 +174,10 @@ module OpenTelemetry
               response.body # Read and discard body
               redo if backoff?(retry_count: retry_count += 1, reason: response.code)
               FAILURE
+            when Net::HTTPNotFound
+              OpenTelemetry.handle_error(message: "OTLP exporter received http.code=404 for uri: '#{@path}'")
+              @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response.code })
+              FAILURE
             when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
               log_status(response.body)
               @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response.code })
