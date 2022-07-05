@@ -11,5 +11,6 @@ module OpenTelemetry
 end
 
 require 'opentelemetry/metrics/instrument'
+require 'opentelemetry/metrics/measurement'
 require 'opentelemetry/metrics/meter'
 require 'opentelemetry/metrics/meter_provider'
