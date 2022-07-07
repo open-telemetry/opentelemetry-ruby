@@ -110,6 +110,24 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(http.port).must_equal 4321
     end
 
+    it 'appends the correct path if OTEL_EXPORTER_OTLP_ENDPOINT has a trailing slash' do
+      exp = OpenTelemetry::TestHelpers.with_env(
+        'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234/'
+      ) do
+        OpenTelemetry::Exporter::OTLP::Exporter.new()
+      end
+      _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
+    end
+
+    it 'appends the correct path if OTEL_EXPORTER_OTLP_ENDPOINT does not have a trailing slash' do
+      exp = OpenTelemetry::TestHelpers.with_env(
+        'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234'
+      ) do
+        OpenTelemetry::Exporter::OTLP::Exporter.new()
+      end
+      _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
+    end
+
     it 'restricts explicit headers to a String or Hash' do
       exp = OpenTelemetry::Exporter::OTLP::Exporter.new(headers: { 'token' => 'über' })
       _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über')
