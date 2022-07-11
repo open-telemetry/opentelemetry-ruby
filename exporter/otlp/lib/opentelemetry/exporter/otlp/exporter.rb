@@ -58,7 +58,7 @@ module OpenTelemetry
           raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
           @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
-                   URI(File.join(endpoint, TRACES_PATH))
+                   URI.join(endpoint, 'v1/traces')
                  else
                    URI(endpoint)
                  end
