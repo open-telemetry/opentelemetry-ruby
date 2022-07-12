@@ -17,7 +17,12 @@ module OpenTelemetry
           attr_reader :description
 
           def initialize(probability)
-            # TODO: probability should be 0 if it is < 2**-62
+            if probability < 2e-62
+              @probability = @p_floor = @p_ceil = @p_ceil_probability = 0
+              @description = 'ConsistentProbabilityBased{0}'
+              return
+            end
+
             @probability = probability
             @p_floor = (Math.frexp(probability)[1] - 1).abs
             @p_ceil = @p_floor + 1
@@ -39,7 +44,7 @@ module OpenTelemetry
             if !parent_span_context.valid?
               r = generate_r(trace_id)
               p = probabilistic_p
-              if p < r
+              if p <= r
                 tracestate = TraceState.from_hash({ 'p' => p.to_s, 'r' => r.to_s })
                 Result.new(decision: Decision::RECORD_AND_SAMPLE, tracestate: tracestate)
               else
@@ -55,7 +60,7 @@ module OpenTelemetry
                   ot.set_value('r', r.to_s)
                 end
                 p = probabilistic_p
-                if p < r
+                if p <= r
                   ot.set_value('p', p.to_s)
                   decision = Decision::RECORD_AND_SAMPLE
                 else
