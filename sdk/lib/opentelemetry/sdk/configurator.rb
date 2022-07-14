@@ -137,10 +137,13 @@ module OpenTelemetry
         configure_span_processors
         tracer_provider.id_generator = @id_generator
         OpenTelemetry.tracer_provider = tracer_provider
+        metrics_configuration_hook
         install_instrumentation
       end
 
       private
+
+      def metrics_configuration_hook; end
 
       def tracer_provider
         @tracer_provider ||= Trace::TracerProvider.new(resource: @resource)
@@ -165,7 +168,7 @@ module OpenTelemetry
         processors.each { |p| tracer_provider.add_span_processor(p) }
       end
 
-      def wrapped_exporters_from_env # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize
+      def wrapped_exporters_from_env # rubocop:disable Metrics/CyclomaticComplexity
         exporters = ENV.fetch('OTEL_TRACES_EXPORTER', 'otlp')
         exporters.split(',').map do |exporter|
           case exporter.strip
@@ -199,6 +202,7 @@ module OpenTelemetry
           when 'jaeger' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::Jaeger')
           when 'xray' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::XRay')
           when 'ottrace' then fetch_propagator(propagator, 'OpenTelemetry::Propagator::OTTrace')
+          when 'none' then NoopTextMapPropagator.new
           else
             OpenTelemetry.logger.warn "The #{propagator} propagator is unknown and cannot be configured"
             NoopTextMapPropagator.new

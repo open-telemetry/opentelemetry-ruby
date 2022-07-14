@@ -1,5 +1,13 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.23.0 / 2022-06-23
+
+* ADDED: Report bundle size stats in exporter; also don't re-gzip unnecessarily 
+
+### v0.22.0 / 2022-06-09
+
+* ADDED: Otlp grpc 
+
 ### v0.21.3 / 2022-05-12
 
 * (No significant changes)

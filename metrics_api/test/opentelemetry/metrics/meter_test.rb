@@ -16,10 +16,12 @@ describe OpenTelemetry::Metrics::Meter do
   let(:meter) { meter_provider.meter('test-meter') }
 
   describe 'creating an instrument' do
-    it 'instrument name must be unique' do
-      meter.create_counter('a_counter')
-      _(-> { meter.create_counter('a_counter') }).must_raise(DUPLICATE_INSTRUMENT_ERROR)
-      _(-> { meter.create_histogram('a_counter') }).must_raise(DUPLICATE_INSTRUMENT_ERROR)
+    it 'duplicate instrument registration logs a warning' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        meter.create_counter('a_counter')
+        meter.create_counter('a_counter')
+        _(log_stream.string).must_match(/duplicate instrument registration occurred for instrument a_counter/)
+      end
     end
 
     it 'instrument name must not be nil' do

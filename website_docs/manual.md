@@ -76,6 +76,10 @@ end
 > &#9888; Spans are thread safe data structures that require locks when they are mutated.
 > You should therefore avoid calling `set_attribute` multiple times and instead assign attributes in bulk with a Hash, either during span creation or with `add_attributes` on an existing span.
 
+> &#9888; Sampling decisions happen at the moment of span creation.
+> If your sampler considers span attributes when deciding to sample a span, then you _must_ pass those attributes as part of span creation. Any attributes added after creation will not be seen by the sampler, because the sampling decision has already been made.
+
+
 #### Semantic Attributes
 
 Semantic Attributes are attributes that are defined by the [OpenTelemetry Specification][] in order to provide a shared set of attribute keys across multiple languages, frameworks, and runtimes for common concepts like HTTP methods, status codes, user agents, and more. These attributes are available in the [Semantic Conventions gem][semconv-gem].

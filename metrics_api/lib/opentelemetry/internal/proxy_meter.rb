@@ -29,7 +29,7 @@ module OpenTelemetry
         @mutex.synchronize do
           if @delegate.nil?
             @delegate = meter
-            @registry.each_value { |instrument| instrument.upgrade_with(meter) }
+            @instrument_registry.each_value { |instrument| instrument.upgrade_with(meter) }
           else
             OpenTelemetry.logger.warn 'Attempt to reset delegate in ProxyMeter ignored.'
           end

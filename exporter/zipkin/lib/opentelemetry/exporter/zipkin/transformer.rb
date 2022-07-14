@@ -88,7 +88,14 @@ module OpenTelemetry
           end
         end
 
-        def add_conditional_tags(zipkin_span, span_data, tags, service_name)
+        def add_conditional_tags(zipkin_span, span_data, tags, service_name) # rubocop:disable Metrics/CyclomaticComplexity
+          dropped_attributes_count = span_data.total_recorded_attributes - span_data.attributes&.size.to_i
+          dropped_events_count = span_data.total_recorded_events - span_data.events&.size.to_i
+          dropped_links_count = span_data.total_recorded_links - span_data.links&.size.to_i
+          tags['otel.dropped_attributes_count'] = dropped_attributes_count.to_s if dropped_attributes_count.positive?
+          tags['otel.dropped_events_count'] = dropped_events_count.to_s if dropped_events_count.positive?
+          tags['otel.dropped_links_count'] = dropped_links_count.to_s if dropped_links_count.positive?
+
           zipkin_span['tags'] = tags unless tags.empty?
           zipkin_span['kind'] = KIND_MAP[span_data.kind] unless span_data.kind.nil?
           zipkin_span['parentId'] = span_data.hex_parent_span_id unless span_data.parent_span_id == OpenTelemetry::Trace::INVALID_SPAN_ID

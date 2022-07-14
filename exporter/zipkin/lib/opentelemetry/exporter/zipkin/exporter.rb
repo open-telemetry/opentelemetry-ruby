@@ -112,7 +112,7 @@ module OpenTelemetry
           false
         end
 
-        def send_spans(zipkin_spans, timeout: nil) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+        def send_spans(zipkin_spans, timeout: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
           retry_count = 0
           timeout ||= @timeout
           start_time = OpenTelemetry::Common::Utilities.timeout_timestamp

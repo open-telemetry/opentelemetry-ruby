@@ -74,6 +74,28 @@ describe OpenTelemetry::Exporter::Jaeger::Encoder do
     )
   end
 
+  it 'records dropped attribute, event, and links counts when things were dropped' do
+    span_data = create_span_data(total_recorded_attributes: 1, total_recorded_events: 1, total_recorded_links: 1)
+    encoded_span = Encoder.encoded_span(span_data)
+    expected_tags = [
+      { key: 'otel.dropped_attributes_count', value: 1, type: OpenTelemetry::Exporter::Jaeger::Thrift::TagType::LONG },
+      { key: 'otel.dropped_events_count', value: 1, type: OpenTelemetry::Exporter::Jaeger::Thrift::TagType::LONG },
+      { key: 'otel.dropped_links_count', value: 1, type: OpenTelemetry::Exporter::Jaeger::Thrift::TagType::LONG }
+    ]
+    expected_tags.each_with_index do |expected_tag, idx|
+      tag = encoded_span.tags[idx]
+      _(tag.key).must_equal(expected_tag[:key])
+      _(tag.vType).must_equal(expected_tag[:type])
+      _(tag.vLong).must_equal(expected_tag[:value])
+    end
+  end
+
+  it 'does not record dropped attribute, event, or link counts when things were not dropped' do
+    span_data = create_span_data
+    encoded_span = Encoder.encoded_span(span_data)
+    _(encoded_span.tags).must_equal([])
+  end
+
   it 'encodes array attribute values in events and the span as JSON strings' do
     attributes = { 'akey' => ['avalue'] }
     events = [
@@ -128,15 +150,15 @@ describe OpenTelemetry::Exporter::Jaeger::Encoder do
     end
   end
 
-  def create_span_data(status: nil, kind: nil, attributes: nil, events: nil, links: nil, instrumentation_library: nil, trace_id: OpenTelemetry::Trace.generate_trace_id, trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, tracestate: nil)
+  def create_span_data(status: nil, kind: nil, attributes: nil, total_recorded_attributes: 0, events: nil, total_recorded_events: 0, links: nil, total_recorded_links: 0, instrumentation_library: nil, trace_id: OpenTelemetry::Trace.generate_trace_id, trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, tracestate: nil)
     OpenTelemetry::SDK::Trace::SpanData.new(
       '',
       kind,
       status,
       OpenTelemetry::Trace::INVALID_SPAN_ID,
-      0,
-      0,
-      0,
+      total_recorded_attributes,
+      total_recorded_events,
+      total_recorded_links,
       OpenTelemetry::TestHelpers.exportable_timestamp,
       OpenTelemetry::TestHelpers.exportable_timestamp,
       attributes,

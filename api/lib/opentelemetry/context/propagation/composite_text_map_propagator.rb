@@ -14,7 +14,7 @@ module OpenTelemetry
       # initialization.
       class CompositeTextMapPropagator
         class << self
-          private :new # rubocop:disable Style/AccessModifierDeclarations
+          private :new
 
           # Returns a Propagator that extracts using the provided extractors
           # and injectors.

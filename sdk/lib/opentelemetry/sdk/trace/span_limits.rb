@@ -31,13 +31,12 @@ module OpenTelemetry
         #
         # @return [SpanLimits] with the desired values.
         # @raise [ArgumentError] if any of the max numbers are not positive.
-        def initialize(attribute_count_limit: Integer(ENV.fetch('OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT', 128)), # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-                       attribute_length_limit: ENV.fetch('OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT',
-                                                         ENV['OTEL_RUBY_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT']),
-                       event_count_limit: Integer(ENV.fetch('OTEL_SPAN_EVENT_COUNT_LIMIT', 128)),
-                       link_count_limit: Integer(ENV.fetch('OTEL_SPAN_LINK_COUNT_LIMIT', 128)),
-                       event_attribute_count_limit: Integer(ENV.fetch('OTEL_EVENT_ATTRIBUTE_COUNT_LIMIT', 128)),
-                       link_attribute_count_limit: Integer(ENV.fetch('OTEL_LINK_ATTRIBUTE_COUNT_LIMIT', 128)))
+        def initialize(attribute_count_limit: Integer(OpenTelemetry::Common::Utilities.config_opt('OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT', 'OTEL_ATTRIBUTE_COUNT_LIMIT', default: 128)), # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+                       attribute_length_limit: OpenTelemetry::Common::Utilities.config_opt('OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT', 'OTEL_RUBY_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT', 'OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT'),
+                       event_count_limit: Integer(OpenTelemetry::Common::Utilities.config_opt('OTEL_SPAN_EVENT_COUNT_LIMIT', default: 128)),
+                       link_count_limit: Integer(OpenTelemetry::Common::Utilities.config_opt('OTEL_SPAN_LINK_COUNT_LIMIT', default: 128)),
+                       event_attribute_count_limit: Integer(OpenTelemetry::Common::Utilities.config_opt('OTEL_EVENT_ATTRIBUTE_COUNT_LIMIT', default: 128)),
+                       link_attribute_count_limit: Integer(OpenTelemetry::Common::Utilities.config_opt('OTEL_LINK_ATTRIBUTE_COUNT_LIMIT', default: 128)))
           raise ArgumentError, 'attribute_count_limit must be positive' unless attribute_count_limit.positive?
           raise ArgumentError, 'attribute_length_limit must not be less than 32' unless attribute_length_limit.nil? || Integer(attribute_length_limit) >= 32
           raise ArgumentError, 'event_count_limit must be positive' unless event_count_limit.positive?
