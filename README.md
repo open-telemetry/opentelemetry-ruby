@@ -14,6 +14,14 @@ The Ruby [OpenTelemetry](https://opentelemetry.io/) client.
 - [Useful links](#useful-links)
 - [License](#license)
 
+## Project Status
+
+| Signal  | Status | Project |
+| ------- | ------ | ------- |
+| Traces  | Stable | N/A     |
+| Metrics | N/A    | N/A     |
+| Logs    | N/A    | N/A     |
+
 ## Contributing
 
 We'd love your help! Use tags [good first issue][issues-good-first-issue] and
