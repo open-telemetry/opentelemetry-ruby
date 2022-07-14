@@ -60,7 +60,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
   end
 
   it 'records dropped attribute, event, and links counts when things were dropped' do
-    resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo')
+    resource = OpenTelemetry::SDK::Resources::Resource.create({ 'service.name' => 'foo' }) # rubocop:disable Style/BracesAroundHashParameters
     span_data = create_span_data(total_recorded_attributes: 1, total_recorded_events: 1, total_recorded_links: 1)
     encoded_span = Transformer.to_zipkin_span(span_data, resource)
     tags = encoded_span['tags']
@@ -74,7 +74,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
   end
 
   it 'does not record dropped attribute, event, or link counts when things were not dropped' do
-    resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo')
+    resource = OpenTelemetry::SDK::Resources::Resource.create({ 'service.name' => 'foo' }) # rubocop:disable Style/BracesAroundHashParameters
     span_data = create_span_data
     encoded_span = Transformer.to_zipkin_span(span_data, resource)
     tags = encoded_span['tags']
