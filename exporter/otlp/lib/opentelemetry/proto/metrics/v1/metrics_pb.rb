@@ -12,7 +12,13 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
     end
     add_message "opentelemetry.proto.metrics.v1.ResourceMetrics" do
       optional :resource, :message, 1, "opentelemetry.proto.resource.v1.Resource"
-      repeated :instrumentation_library_metrics, :message, 2, "opentelemetry.proto.metrics.v1.InstrumentationLibraryMetrics"
+      repeated :scope_metrics, :message, 2, "opentelemetry.proto.metrics.v1.ScopeMetrics"
+      repeated :instrumentation_library_metrics, :message, 1000, "opentelemetry.proto.metrics.v1.InstrumentationLibraryMetrics"
+      optional :schema_url, :string, 3
+    end
+    add_message "opentelemetry.proto.metrics.v1.ScopeMetrics" do
+      optional :scope, :message, 1, "opentelemetry.proto.common.v1.InstrumentationScope"
+      repeated :metrics, :message, 2, "opentelemetry.proto.metrics.v1.Metric"
       optional :schema_url, :string, 3
     end
     add_message "opentelemetry.proto.metrics.v1.InstrumentationLibraryMetrics" do
@@ -25,11 +31,8 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
       optional :description, :string, 2
       optional :unit, :string, 3
       oneof :data do
-        optional :int_gauge, :message, 4, "opentelemetry.proto.metrics.v1.IntGauge"
         optional :gauge, :message, 5, "opentelemetry.proto.metrics.v1.Gauge"
-        optional :int_sum, :message, 6, "opentelemetry.proto.metrics.v1.IntSum"
         optional :sum, :message, 7, "opentelemetry.proto.metrics.v1.Sum"
-        optional :int_histogram, :message, 8, "opentelemetry.proto.metrics.v1.IntHistogram"
         optional :histogram, :message, 9, "opentelemetry.proto.metrics.v1.Histogram"
         optional :exponential_histogram, :message, 10, "opentelemetry.proto.metrics.v1.ExponentialHistogram"
         optional :summary, :message, 11, "opentelemetry.proto.metrics.v1.Summary"
@@ -56,7 +59,6 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
     end
     add_message "opentelemetry.proto.metrics.v1.NumberDataPoint" do
       repeated :attributes, :message, 7, "opentelemetry.proto.common.v1.KeyValue"
-      repeated :labels, :message, 1, "opentelemetry.proto.common.v1.StringKeyValue"
       optional :start_time_unix_nano, :fixed64, 2
       optional :time_unix_nano, :fixed64, 3
       repeated :exemplars, :message, 5, "opentelemetry.proto.metrics.v1.Exemplar"
@@ -68,28 +70,31 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
     end
     add_message "opentelemetry.proto.metrics.v1.HistogramDataPoint" do
       repeated :attributes, :message, 9, "opentelemetry.proto.common.v1.KeyValue"
-      repeated :labels, :message, 1, "opentelemetry.proto.common.v1.StringKeyValue"
       optional :start_time_unix_nano, :fixed64, 2
       optional :time_unix_nano, :fixed64, 3
       optional :count, :fixed64, 4
-      optional :sum, :double, 5
+      proto3_optional :sum, :double, 5
       repeated :bucket_counts, :fixed64, 6
       repeated :explicit_bounds, :double, 7
       repeated :exemplars, :message, 8, "opentelemetry.proto.metrics.v1.Exemplar"
       optional :flags, :uint32, 10
+      proto3_optional :min, :double, 11
+      proto3_optional :max, :double, 12
     end
     add_message "opentelemetry.proto.metrics.v1.ExponentialHistogramDataPoint" do
       repeated :attributes, :message, 1, "opentelemetry.proto.common.v1.KeyValue"
       optional :start_time_unix_nano, :fixed64, 2
       optional :time_unix_nano, :fixed64, 3
       optional :count, :fixed64, 4
-      optional :sum, :double, 5
+      proto3_optional :sum, :double, 5
       optional :scale, :sint32, 6
       optional :zero_count, :fixed64, 7
       optional :positive, :message, 8, "opentelemetry.proto.metrics.v1.ExponentialHistogramDataPoint.Buckets"
       optional :negative, :message, 9, "opentelemetry.proto.metrics.v1.ExponentialHistogramDataPoint.Buckets"
       optional :flags, :uint32, 10
       repeated :exemplars, :message, 11, "opentelemetry.proto.metrics.v1.Exemplar"
+      proto3_optional :min, :double, 12
+      proto3_optional :max, :double, 13
     end
     add_message "opentelemetry.proto.metrics.v1.ExponentialHistogramDataPoint.Buckets" do
       optional :offset, :sint32, 1
@@ -97,7 +102,6 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
     end
     add_message "opentelemetry.proto.metrics.v1.SummaryDataPoint" do
       repeated :attributes, :message, 7, "opentelemetry.proto.common.v1.KeyValue"
-      repeated :labels, :message, 1, "opentelemetry.proto.common.v1.StringKeyValue"
       optional :start_time_unix_nano, :fixed64, 2
       optional :time_unix_nano, :fixed64, 3
       optional :count, :fixed64, 4
@@ -111,7 +115,6 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
     end
     add_message "opentelemetry.proto.metrics.v1.Exemplar" do
       repeated :filtered_attributes, :message, 7, "opentelemetry.proto.common.v1.KeyValue"
-      repeated :filtered_labels, :message, 1, "opentelemetry.proto.common.v1.StringKeyValue"
       optional :time_unix_nano, :fixed64, 2
       optional :span_id, :bytes, 4
       optional :trace_id, :bytes, 5
@@ -119,42 +122,6 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
         optional :as_double, :double, 3
         optional :as_int, :sfixed64, 6
       end
-    end
-    add_message "opentelemetry.proto.metrics.v1.IntDataPoint" do
-      repeated :labels, :message, 1, "opentelemetry.proto.common.v1.StringKeyValue"
-      optional :start_time_unix_nano, :fixed64, 2
-      optional :time_unix_nano, :fixed64, 3
-      optional :value, :sfixed64, 4
-      repeated :exemplars, :message, 5, "opentelemetry.proto.metrics.v1.IntExemplar"
-    end
-    add_message "opentelemetry.proto.metrics.v1.IntGauge" do
-      repeated :data_points, :message, 1, "opentelemetry.proto.metrics.v1.IntDataPoint"
-    end
-    add_message "opentelemetry.proto.metrics.v1.IntSum" do
-      repeated :data_points, :message, 1, "opentelemetry.proto.metrics.v1.IntDataPoint"
-      optional :aggregation_temporality, :enum, 2, "opentelemetry.proto.metrics.v1.AggregationTemporality"
-      optional :is_monotonic, :bool, 3
-    end
-    add_message "opentelemetry.proto.metrics.v1.IntHistogramDataPoint" do
-      repeated :labels, :message, 1, "opentelemetry.proto.common.v1.StringKeyValue"
-      optional :start_time_unix_nano, :fixed64, 2
-      optional :time_unix_nano, :fixed64, 3
-      optional :count, :fixed64, 4
-      optional :sum, :sfixed64, 5
-      repeated :bucket_counts, :fixed64, 6
-      repeated :explicit_bounds, :double, 7
-      repeated :exemplars, :message, 8, "opentelemetry.proto.metrics.v1.IntExemplar"
-    end
-    add_message "opentelemetry.proto.metrics.v1.IntHistogram" do
-      repeated :data_points, :message, 1, "opentelemetry.proto.metrics.v1.IntHistogramDataPoint"
-      optional :aggregation_temporality, :enum, 2, "opentelemetry.proto.metrics.v1.AggregationTemporality"
-    end
-    add_message "opentelemetry.proto.metrics.v1.IntExemplar" do
-      repeated :filtered_labels, :message, 1, "opentelemetry.proto.common.v1.StringKeyValue"
-      optional :time_unix_nano, :fixed64, 2
-      optional :value, :sfixed64, 3
-      optional :span_id, :bytes, 4
-      optional :trace_id, :bytes, 5
     end
     add_enum "opentelemetry.proto.metrics.v1.AggregationTemporality" do
       value :AGGREGATION_TEMPORALITY_UNSPECIFIED, 0
@@ -174,6 +141,7 @@ module Opentelemetry
       module V1
         MetricsData = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.MetricsData").msgclass
         ResourceMetrics = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.ResourceMetrics").msgclass
+        ScopeMetrics = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.ScopeMetrics").msgclass
         InstrumentationLibraryMetrics = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.InstrumentationLibraryMetrics").msgclass
         Metric = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.Metric").msgclass
         Gauge = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.Gauge").msgclass
@@ -188,12 +156,6 @@ module Opentelemetry
         SummaryDataPoint = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.SummaryDataPoint").msgclass
         SummaryDataPoint::ValueAtQuantile = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.SummaryDataPoint.ValueAtQuantile").msgclass
         Exemplar = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.Exemplar").msgclass
-        IntDataPoint = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.IntDataPoint").msgclass
-        IntGauge = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.IntGauge").msgclass
-        IntSum = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.IntSum").msgclass
-        IntHistogramDataPoint = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.IntHistogramDataPoint").msgclass
-        IntHistogram = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.IntHistogram").msgclass
-        IntExemplar = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.IntExemplar").msgclass
         AggregationTemporality = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.AggregationTemporality").enummodule
         DataPointFlags = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.DataPointFlags").enummodule
       end

@@ -23,7 +23,15 @@ module OpenTelemetry
 
         # The following readers are intended for the use of SpanProcessors and
         # should not be considered part of the public interface for instrumentation.
-        attr_reader :name, :status, :kind, :parent_span_id, :start_timestamp, :end_timestamp, :links, :resource, :instrumentation_library
+        attr_reader :name, :status, :kind, :parent_span_id, :start_timestamp, :end_timestamp, :links, :resource, :instrumentation_scope
+
+        # Returns an InstrumentationLibrary struct for backwards compatibility.
+        # @deprecated Please use instrumentation_scope instead.
+        #
+        # @return InstrumentationLibrary
+        def instrumentation_library
+          @instrumentation_library ||= InstrumentationLibrary.new(@instrumentation_scope.name, @instrumentation_scope.version)
+        end
 
         # Return a frozen copy of the current attributes. This is intended for
         # use of SpanProcessors and should not be considered part of the public
@@ -267,7 +275,7 @@ module OpenTelemetry
             @links,
             @events,
             @resource,
-            @instrumentation_library,
+            @instrumentation_scope,
             context.span_id,
             context.trace_id,
             context.trace_flags,
@@ -276,7 +284,7 @@ module OpenTelemetry
         end
 
         # @api private
-        def initialize(context, parent_context, parent_span, name, kind, parent_span_id, span_limits, span_processors, attributes, links, start_timestamp, resource, instrumentation_library) # rubocop:disable  Metrics/CyclomaticComplexity, Metrics/MethodLength,  Metrics/PerceivedComplexity
+        def initialize(context, parent_context, parent_span, name, kind, parent_span_id, span_limits, span_processors, attributes, links, start_timestamp, resource, instrumentation_scope) # rubocop:disable  Metrics/CyclomaticComplexity, Metrics/MethodLength,  Metrics/PerceivedComplexity
           super(span_context: context)
           @mutex = Mutex.new
           @name = name
@@ -285,7 +293,7 @@ module OpenTelemetry
           @span_limits = span_limits
           @span_processors = span_processors
           @resource = resource
-          @instrumentation_library = instrumentation_library
+          @instrumentation_scope = instrumentation_scope
           @ended = false
           @status = DEFAULT_STATUS
           @total_recorded_events = 0

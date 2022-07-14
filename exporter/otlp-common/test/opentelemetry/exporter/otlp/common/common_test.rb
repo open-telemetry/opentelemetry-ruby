@@ -36,8 +36,8 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data1, span_data2, span_data3])
 
       _(etsr.resource_spans.length).must_equal(2)
-      _(etsr.resource_spans[0].instrumentation_library_spans[0].spans.length).must_equal(1)
-      _(etsr.resource_spans[1].instrumentation_library_spans[0].spans.length).must_equal(2)
+      _(etsr.resource_spans[0].scope_spans[0].spans.length).must_equal(1)
+      _(etsr.resource_spans[1].scope_spans[0].spans.length).must_equal(2)
     end
 
     it 'translates all the things' do
@@ -98,9 +98,9 @@ describe OpenTelemetry::Exporter::OTLP::Common do
                   Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'telemetry.sdk.version', value: Opentelemetry::Proto::Common::V1::AnyValue.new(string_value: OpenTelemetry::SDK::VERSION))
                 ]
               ),
-              instrumentation_library_spans: [
-                Opentelemetry::Proto::Trace::V1::InstrumentationLibrarySpans.new(
-                  instrumentation_library: Opentelemetry::Proto::Common::V1::InstrumentationLibrary.new(
+              scope_spans: [
+                Opentelemetry::Proto::Trace::V1::ScopeSpans.new(
+                  scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
                     name: 'tracer',
                     version: 'v0.0.1'
                   ),
@@ -190,8 +190,8 @@ describe OpenTelemetry::Exporter::OTLP::Common do
                     )
                   ]
                 ),
-                Opentelemetry::Proto::Trace::V1::InstrumentationLibrarySpans.new(
-                  instrumentation_library: Opentelemetry::Proto::Common::V1::InstrumentationLibrary.new(
+                Opentelemetry::Proto::Trace::V1::ScopeSpans.new(
+                  scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
                     name: 'other_tracer'
                   ),
                   spans: [

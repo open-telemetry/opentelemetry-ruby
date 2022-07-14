@@ -12,7 +12,13 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
     end
     add_message "opentelemetry.proto.trace.v1.ResourceSpans" do
       optional :resource, :message, 1, "opentelemetry.proto.resource.v1.Resource"
-      repeated :instrumentation_library_spans, :message, 2, "opentelemetry.proto.trace.v1.InstrumentationLibrarySpans"
+      repeated :scope_spans, :message, 2, "opentelemetry.proto.trace.v1.ScopeSpans"
+      repeated :instrumentation_library_spans, :message, 1000, "opentelemetry.proto.trace.v1.InstrumentationLibrarySpans"
+      optional :schema_url, :string, 3
+    end
+    add_message "opentelemetry.proto.trace.v1.ScopeSpans" do
+      optional :scope, :message, 1, "opentelemetry.proto.common.v1.InstrumentationScope"
+      repeated :spans, :message, 2, "opentelemetry.proto.trace.v1.Span"
       optional :schema_url, :string, 3
     end
     add_message "opentelemetry.proto.trace.v1.InstrumentationLibrarySpans" do
@@ -59,28 +65,8 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
       value :SPAN_KIND_CONSUMER, 5
     end
     add_message "opentelemetry.proto.trace.v1.Status" do
-      optional :deprecated_code, :enum, 1, "opentelemetry.proto.trace.v1.Status.DeprecatedStatusCode"
       optional :message, :string, 2
       optional :code, :enum, 3, "opentelemetry.proto.trace.v1.Status.StatusCode"
-    end
-    add_enum "opentelemetry.proto.trace.v1.Status.DeprecatedStatusCode" do
-      value :DEPRECATED_STATUS_CODE_OK, 0
-      value :DEPRECATED_STATUS_CODE_CANCELLED, 1
-      value :DEPRECATED_STATUS_CODE_UNKNOWN_ERROR, 2
-      value :DEPRECATED_STATUS_CODE_INVALID_ARGUMENT, 3
-      value :DEPRECATED_STATUS_CODE_DEADLINE_EXCEEDED, 4
-      value :DEPRECATED_STATUS_CODE_NOT_FOUND, 5
-      value :DEPRECATED_STATUS_CODE_ALREADY_EXISTS, 6
-      value :DEPRECATED_STATUS_CODE_PERMISSION_DENIED, 7
-      value :DEPRECATED_STATUS_CODE_RESOURCE_EXHAUSTED, 8
-      value :DEPRECATED_STATUS_CODE_FAILED_PRECONDITION, 9
-      value :DEPRECATED_STATUS_CODE_ABORTED, 10
-      value :DEPRECATED_STATUS_CODE_OUT_OF_RANGE, 11
-      value :DEPRECATED_STATUS_CODE_UNIMPLEMENTED, 12
-      value :DEPRECATED_STATUS_CODE_INTERNAL_ERROR, 13
-      value :DEPRECATED_STATUS_CODE_UNAVAILABLE, 14
-      value :DEPRECATED_STATUS_CODE_DATA_LOSS, 15
-      value :DEPRECATED_STATUS_CODE_UNAUTHENTICATED, 16
     end
     add_enum "opentelemetry.proto.trace.v1.Status.StatusCode" do
       value :STATUS_CODE_UNSET, 0
@@ -96,13 +82,13 @@ module Opentelemetry
       module V1
         TracesData = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.TracesData").msgclass
         ResourceSpans = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.ResourceSpans").msgclass
+        ScopeSpans = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.ScopeSpans").msgclass
         InstrumentationLibrarySpans = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.InstrumentationLibrarySpans").msgclass
         Span = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.Span").msgclass
         Span::Event = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.Span.Event").msgclass
         Span::Link = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.Span.Link").msgclass
         Span::SpanKind = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.Span.SpanKind").enummodule
         Status = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.Status").msgclass
-        Status::DeprecatedStatusCode = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.Status.DeprecatedStatusCode").enummodule
         Status::StatusCode = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.Status.StatusCode").enummodule
       end
     end

@@ -23,7 +23,7 @@ module OpenTelemetry
                             :links,                     # optional Array[OpenTelemetry::Trace::Link]
                             :events,                    # optional Array[Event]
                             :resource,                  # OpenTelemetry::SDK::Resources::Resource
-                            :instrumentation_library,   # OpenTelemetry::SDK::InstrumentationLibrary
+                            :instrumentation_scope,     # OpenTelemetry::SDK::InstrumentationScope
                             :span_id,                   # String (8 byte binary)
                             :trace_id,                  # String (16-byte binary)
                             :trace_flags,               # Integer (8-bit byte of bit flags)
@@ -47,6 +47,17 @@ module OpenTelemetry
                               # @return [String] A 16-hex-character lowercase string.
                               def hex_parent_span_id
                                 parent_span_id.unpack1('H*')
+                              end
+
+                              # Returns an InstrumentationLibrary struct for backwards compatibility.
+                              # @deprecated Please use instrumentation_scope instead.
+                              #
+                              # @return InstrumentationLibrary
+                              def instrumentation_library
+                                @instrumentation_library ||= InstrumentationLibrary.new(
+                                  @instrumentation_scope.name,
+                                  @instrumentation_scope.version
+                                )
                               end
                             end
     end

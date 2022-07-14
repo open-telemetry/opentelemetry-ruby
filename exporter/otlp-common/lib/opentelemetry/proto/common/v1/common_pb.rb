@@ -26,11 +26,11 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
       optional :key, :string, 1
       optional :value, :message, 2, "opentelemetry.proto.common.v1.AnyValue"
     end
-    add_message "opentelemetry.proto.common.v1.StringKeyValue" do
-      optional :key, :string, 1
-      optional :value, :string, 2
-    end
     add_message "opentelemetry.proto.common.v1.InstrumentationLibrary" do
+      optional :name, :string, 1
+      optional :version, :string, 2
+    end
+    add_message "opentelemetry.proto.common.v1.InstrumentationScope" do
       optional :name, :string, 1
       optional :version, :string, 2
     end
@@ -45,8 +45,8 @@ module Opentelemetry
         ArrayValue = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.common.v1.ArrayValue").msgclass
         KeyValueList = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.common.v1.KeyValueList").msgclass
         KeyValue = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.common.v1.KeyValue").msgclass
-        StringKeyValue = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.common.v1.StringKeyValue").msgclass
         InstrumentationLibrary = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.common.v1.InstrumentationLibrary").msgclass
+        InstrumentationScope = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.common.v1.InstrumentationScope").msgclass
       end
     end
   end

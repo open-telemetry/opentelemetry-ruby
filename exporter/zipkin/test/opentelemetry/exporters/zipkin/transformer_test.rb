@@ -13,7 +13,13 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     encoded_span = Transformer.to_zipkin_span(create_span_data(attributes: { 'bar' => 'baz' }), resource)
     _(encoded_span[:name]).must_equal('')
     _(encoded_span['localEndpoint']['serviceName']).must_equal('foo')
-    _(encoded_span['tags']).must_equal('bar' => 'baz', 'otel.library.version' => '0.0.0', 'otel.library.name' => 'vendorlib')
+    _(encoded_span['tags']).must_equal(
+      'bar' => 'baz',
+      'otel.library.version' => '0.0.0',
+      'otel.scope.version' => '0.0.0',
+      'otel.library.name' => 'vendorlib',
+      'otel.scope.name' => 'vendorlib'
+    )
   end
 
   it 'encodes span.status and span.kind' do
@@ -22,7 +28,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
 
     encoded_span = Transformer.to_zipkin_span(span_data, resource)
 
-    _(encoded_span['tags'].size).must_equal(5)
+    _(encoded_span['tags'].size).must_equal(7)
 
     kind_tag = encoded_span['kind']
     error_tag = encoded_span['tags']['error']
@@ -56,7 +62,14 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     _(annotation_two[:value]).must_equal('event_no_attrib')
 
     tags = encoded_span['tags']
-    _(tags).must_equal('akey' => 'avalue', 'bar' => 'baz', 'otel.library.version' => '0.0.0', 'otel.library.name' => 'vendorlib')
+    _(tags).must_equal(
+      'akey' => 'avalue',
+      'bar' => 'baz',
+      'otel.library.version' => '0.0.0',
+      'otel.scope.version' => '0.0.0',
+      'otel.library.name' => 'vendorlib',
+      'otel.scope.name' => 'vendorlib'
+    )
   end
 
   it 'records dropped attribute, event, and links counts when things were dropped' do
@@ -66,7 +79,9 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     tags = encoded_span['tags']
     _(tags).must_equal(
       'otel.library.version' => '0.0.0',
+      'otel.scope.version' => '0.0.0',
       'otel.library.name' => 'vendorlib',
+      'otel.scope.name' => 'vendorlib',
       'otel.dropped_attributes_count' => '1',
       'otel.dropped_events_count' => '1',
       'otel.dropped_links_count' => '1'
@@ -78,7 +93,12 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     span_data = create_span_data
     encoded_span = Transformer.to_zipkin_span(span_data, resource)
     tags = encoded_span['tags']
-    _(tags).must_equal('otel.library.version' => '0.0.0', 'otel.library.name' => 'vendorlib')
+    _(tags).must_equal(
+      'otel.library.version' => '0.0.0',
+      'otel.scope.version' => '0.0.0',
+      'otel.library.name' => 'vendorlib',
+      'otel.scope.name' => 'vendorlib'
+    )
   end
 
   it 'encodes array attribute values in events and the span as JSON strings' do
@@ -99,7 +119,14 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     _(annotation_one[:value]).must_equal({ 'event_with_attribs' => { 'ekey' => '["evalue"]' } }.to_json)
 
     tags = encoded_span['tags']
-    _(tags).must_equal('akey' => ['avalue'].to_s, 'bar' => 'baz', 'otel.library.version' => '0.0.0', 'otel.library.name' => 'vendorlib')
+    _(tags).must_equal(
+      'akey' => ['avalue'].to_s,
+      'bar' => 'baz',
+      'otel.library.version' => '0.0.0',
+      'otel.scope.version' => '0.0.0',
+      'otel.library.name' => 'vendorlib',
+      'otel.scope.name' => 'vendorlib'
+    )
   end
 
   describe 'status' do
@@ -111,7 +138,14 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
       encoded_span = Transformer.to_zipkin_span(span_data, resource)
 
       tags = encoded_span['tags']
-      _(tags).must_equal('otel.status_code' => 'OK', 'bar' => 'baz', 'otel.library.version' => '0.0.0', 'otel.library.name' => 'vendorlib')
+      _(tags).must_equal(
+        'otel.status_code' => 'OK',
+        'bar' => 'baz',
+        'otel.library.version' => '0.0.0',
+        'otel.scope.version' => '0.0.0',
+        'otel.library.name' => 'vendorlib',
+        'otel.scope.name' => 'vendorlib'
+      )
     end
 
     it 'encodes error status code as strings on error tag and status description field' do
@@ -122,29 +156,40 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
       encoded_span = Transformer.to_zipkin_span(span_data, resource)
 
       tags = encoded_span['tags']
-      _(tags).must_equal('error' => error_description, 'otel.status_code' => 'ERROR', 'bar' => 'baz', 'otel.library.version' => '0.0.0', 'otel.library.name' => 'vendorlib')
+      _(tags).must_equal(
+        'error' => error_description,
+        'otel.status_code' => 'ERROR',
+        'bar' => 'baz',
+        'otel.library.version' => '0.0.0',
+        'otel.scope.version' => '0.0.0',
+        'otel.library.name' => 'vendorlib',
+        'otel.scope.name' => 'vendorlib'
+      )
     end
   end
 
-  describe 'instrumentation library' do
+  describe 'instrumentation scope' do
     it 'encodes library and version when set' do
-      lib = OpenTelemetry::SDK::InstrumentationLibrary.new('mylib', '0.1.0')
+      lib = OpenTelemetry::SDK::InstrumentationScope.new('mylib', '0.1.0')
       resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo')
-      span_data = create_span_data(attributes: { 'bar' => 'baz' }, instrumentation_library: lib)
+      span_data = create_span_data(attributes: { 'bar' => 'baz' }, instrumentation_scope: lib)
       encoded_span = Transformer.to_zipkin_span(span_data, resource)
 
-      _(encoded_span['tags'].size).must_equal(3)
+      _(encoded_span['tags'].size).must_equal(5)
+      _(encoded_span['tags']['otel.scope.name']).must_equal('mylib')
       _(encoded_span['tags']['otel.library.name']).must_equal('mylib')
+      _(encoded_span['tags']['otel.scope.version']).must_equal('0.1.0')
       _(encoded_span['tags']['otel.library.version']).must_equal('0.1.0')
     end
 
     it 'skips nil values' do
-      lib = OpenTelemetry::SDK::InstrumentationLibrary.new('mylib')
+      lib = OpenTelemetry::SDK::InstrumentationScope.new('mylib')
       resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'foo')
-      span_data = create_span_data(attributes: { 'bar' => 'baz' }, instrumentation_library: lib)
+      span_data = create_span_data(attributes: { 'bar' => 'baz' }, instrumentation_scope: lib)
       encoded_span = Transformer.to_zipkin_span(span_data, resource)
 
-      _(encoded_span['tags'].size).must_equal(3)
+      _(encoded_span['tags'].size).must_equal(5)
+      _(encoded_span['tags']['otel.scope.name']).must_equal('mylib')
       _(encoded_span['tags']['otel.library.name']).must_equal('mylib')
     end
   end

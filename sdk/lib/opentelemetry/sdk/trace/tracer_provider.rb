@@ -126,7 +126,7 @@ module OpenTelemetry
         end
 
         # @api private
-        def internal_create_span(name, kind, attributes, links, start_timestamp, parent_context, instrumentation_library) # rubocop:disable Metrics/MethodLength
+        def internal_create_span(name, kind, attributes, links, start_timestamp, parent_context, instrumentation_scope) # rubocop:disable Metrics/MethodLength
           parent_span = OpenTelemetry::Trace.current_span(parent_context)
           parent_span_context = parent_span.context
 
@@ -155,7 +155,7 @@ module OpenTelemetry
               links,
               start_timestamp,
               @resource,
-              instrumentation_library
+              instrumentation_scope
             )
           else
             OpenTelemetry::Trace.non_recording_span(OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: span_id, tracestate: result.tracestate))

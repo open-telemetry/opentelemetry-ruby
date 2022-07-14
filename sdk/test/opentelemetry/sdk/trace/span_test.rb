@@ -463,6 +463,33 @@ describe OpenTelemetry::SDK::Trace::Span do
     end
   end
 
+  describe '#instrumentation_library' do
+    it 'is identical to the instrumentation_scope' do
+      mock_span_processor.expect(:on_start, nil) { |s| yielded_span = s } # rubocop:disable Lint/UselessAssignment
+      span = Span.new(
+        context,
+        Context.empty,
+        OpenTelemetry::Trace::Span::INVALID,
+        'name',
+        SpanKind::INTERNAL,
+        nil,
+        span_limits,
+        [mock_span_processor],
+        nil,
+        nil,
+        Time.now,
+        nil,
+        OpenTelemetry::SDK::InstrumentationScope.new('foo', '1.0')
+      )
+
+      _(span.instrumentation_scope).must_be_instance_of(OpenTelemetry::SDK::InstrumentationScope)
+      _(span.instrumentation_library).must_be_instance_of(OpenTelemetry::SDK::InstrumentationLibrary)
+
+      _(span.instrumentation_library.name).must_equal(span.instrumentation_scope.name)
+      _(span.instrumentation_library.version).must_equal(span.instrumentation_scope.version)
+    end
+  end
+
   describe '#initialize' do
     it 'calls the span processor #on_start callback' do
       yielded_span = nil

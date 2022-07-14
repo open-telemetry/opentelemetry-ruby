@@ -514,9 +514,9 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
                   Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'telemetry.sdk.version', value: Opentelemetry::Proto::Common::V1::AnyValue.new(string_value: OpenTelemetry::SDK::VERSION))
                 ]
               ),
-              instrumentation_library_spans: [
-                Opentelemetry::Proto::Trace::V1::InstrumentationLibrarySpans.new(
-                  instrumentation_library: Opentelemetry::Proto::Common::V1::InstrumentationLibrary.new(
+              scope_spans: [
+                Opentelemetry::Proto::Trace::V1::ScopeSpans.new(
+                  scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
                     name: 'tracer',
                     version: 'v0.0.1'
                   ),
@@ -606,8 +606,8 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
                     )
                   ]
                 ),
-                Opentelemetry::Proto::Trace::V1::InstrumentationLibrarySpans.new(
-                  instrumentation_library: Opentelemetry::Proto::Common::V1::InstrumentationLibrary.new(
+                Opentelemetry::Proto::Trace::V1::ScopeSpans.new(
+                  scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
                     name: 'other_tracer'
                   ),
                   spans: [
