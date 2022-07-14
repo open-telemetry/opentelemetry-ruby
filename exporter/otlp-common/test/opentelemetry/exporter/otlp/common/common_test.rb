@@ -26,10 +26,10 @@ describe OpenTelemetry::Exporter::OTLP::Common do
 
   describe '#as_etsr' do
     it 'batches per resource' do
-      resource_one = OpenTelemetry::SDK::Resources::Resource.create({ 'k1' => 'v1' })
+      resource_one = OpenTelemetry::SDK::Resources::Resource.create({ 'k1' => 'v1' }) # rubocop:disable Style/BracesAroundHashParameters
       span_data1 = OpenTelemetry::TestHelpers.create_span_data(resource: resource_one)
 
-      resource_two = OpenTelemetry::SDK::Resources::Resource.create({ 'k2' => 'v2' })
+      resource_two = OpenTelemetry::SDK::Resources::Resource.create({ 'k2' => 'v2' }) # rubocop:disable Style/BracesAroundHashParameters
       span_data2 = OpenTelemetry::TestHelpers.create_span_data(resource: resource_two)
       span_data3 = OpenTelemetry::TestHelpers.create_span_data(resource: resource_two)
 

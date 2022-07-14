@@ -457,8 +457,10 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
         { status: 200 }
       end
 
+      # rubocop:disable Style/BracesAroundHashParameters
       span_data1 = OpenTelemetry::TestHelpers.create_span_data(resource: OpenTelemetry::SDK::Resources::Resource.create({ 'k1' => 'v1' }))
       span_data2 = OpenTelemetry::TestHelpers.create_span_data(resource: OpenTelemetry::SDK::Resources::Resource.create({ 'k2' => 'v2' }))
+      # rubocop:enable Style/BracesAroundHashParameters
 
       result = exporter.export([span_data1, span_data2])
 

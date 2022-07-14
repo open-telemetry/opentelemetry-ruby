@@ -106,7 +106,7 @@ module OpenTelemetry
         # @param [Resource] other The other resource to merge
         # @return [Resource] A new resource formed by merging the current resource
         #   with other
-        def merge(other) # rubocop:disable Metrics/AbcSize
+        def merge(other)
           return self unless other.is_a?(Resource)
 
           # This is slightly verbose, but tries to follow the definition in the spec closely.
