@@ -53,7 +53,7 @@ module OpenTelemetry
                               # @deprecated Please use instrumentation_scope instead.
                               #
                               # @return InstrumentationLibrary
-                              alias instrumentation_library instrumentation_scope
+                              alias_method :instrumentation_library, :instrumentation_scope
                             end
     end
   end
