@@ -46,11 +46,11 @@ module OpenTelemetry
               tracestate = parent_span_context.tracestate
               parse_ot_vendor_tag(tracestate) do |_, in_r, rest|
                 r = if in_r.nil? || in_r > 62
-                  # TODO: warn the user that a potentially inconsistent trace is being produced
-                  generate_r(trace_id)
-                else
-                  in_r
-                end
+                      # TODO: warn the user that a potentially inconsistent trace is being produced
+                      generate_r(trace_id)
+                    else
+                      in_r
+                    end
                 if p <= r
                   Result.new(decision: Decision::RECORD_AND_SAMPLE, tracestate: update_tracestate(tracestate, p, r, rest))
                 else

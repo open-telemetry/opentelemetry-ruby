@@ -19,7 +19,7 @@ module OpenTelemetry
           # parse_ot_vendor_tag parses the 'ot' vendor tag of the tracestate.
           # It yields the parsed probability fields and the remaining tracestate.
           # It returns the result of the block.
-          def parse_ot_vendor_tag(tracestate)
+          def parse_ot_vendor_tag(tracestate) # rubocop:disable Metrics/CyclomaticComplexity
             return yield(nil, nil, nil) if tracestate.empty?
 
             ot = tracestate.value('ot')
@@ -34,24 +34,24 @@ module OpenTelemetry
               when 'p' then p = decimal(v)
               when 'r' then r = decimal(v)
               else
-                rest << ';' if rest.length > 0
+                rest << ';' unless rest.empty?
                 rest << field
               end
             end
             yield(p, r, rest)
           end
 
-          def update_tracestate(tracestate, p, r, rest)
+          def update_tracestate(tracestate, p, r, rest) # rubocop:disable Naming/UncommunicativeMethodParamName, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
             s = +''
-            s << "p:#{p}" if !p.nil?
-            s << ';' if !p.nil? && !r.nil?
-            s << "r:#{r}" if !r.nil?
-            s << ';' if (!p.nil? || !r.nil?) && !rest.nil?
-            s << rest if !rest.nil?
+            s << "p:#{p}" unless p.nil?
+            s << ';' unless s.empty? || r.nil?
+            s << "r:#{r}" unless r.nil?
+            s << ';' unless s.empty? || rest.nil?
+            s << rest unless rest.nil?
             tracestate.set_value('ot', to_s)
           end
 
-          def new_tracestate(p: nil, r: nil)
+          def new_tracestate(p: nil, r: nil) # rubocop:disable Naming/UncommunicativeMethodParamName
             if p.nil? && r.nil?
               Tracestate.DEFAULT
             elsif p.nil?
