@@ -482,9 +482,6 @@ describe OpenTelemetry::SDK::Trace::Span do
         OpenTelemetry::SDK::InstrumentationScope.new('foo', '1.0')
       )
 
-      _(span.instrumentation_scope).must_be_instance_of(OpenTelemetry::SDK::InstrumentationScope)
-      _(span.instrumentation_library).must_be_instance_of(OpenTelemetry::SDK::InstrumentationLibrary)
-
       _(span.instrumentation_library.name).must_equal(span.instrumentation_scope.name)
       _(span.instrumentation_library.version).must_equal(span.instrumentation_scope.version)
     end
