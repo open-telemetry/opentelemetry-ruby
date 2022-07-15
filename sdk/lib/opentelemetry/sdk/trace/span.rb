@@ -29,9 +29,7 @@ module OpenTelemetry
         # @deprecated Please use instrumentation_scope instead.
         #
         # @return InstrumentationLibrary
-        def instrumentation_library
-          @instrumentation_library ||= InstrumentationLibrary.new(@instrumentation_scope.name, @instrumentation_scope.version)
-        end
+        alias instrumentation_library instrumentation_scope
 
         # Return a frozen copy of the current attributes. This is intended for
         # use of SpanProcessors and should not be considered part of the public
