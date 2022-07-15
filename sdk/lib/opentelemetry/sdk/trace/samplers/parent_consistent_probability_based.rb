@@ -43,7 +43,7 @@ module OpenTelemetry
             if !parent_span_context.valid?
               @root.should_sample?(trace_id: trace_id, parent_context: parent_context, links: links, name: name, kind: kind, attributes: attributes)
             else
-              tracestate = validate_tracestate(parent_span_context)
+              tracestate = sanitized_tracestate(parent_span_context)
               if parent_span_context.trace_flags.sampled?
                 Result.new(decision: Decision::RECORD_AND_SAMPLE, tracestate: tracestate)
               else
@@ -55,6 +55,31 @@ module OpenTelemetry
           protected
 
           attr_reader :root
+
+          private
+
+          # sanitized_tracestate returns an OpenTelemetry Tracestate object with the
+          # tracestate sanitized according to the Context invariants defined in the
+          # tracestate probability sampling spec.
+          #
+          # @param span_context [OpenTelemetry::Trace::SpanContext] the parent span context
+          # @return [OpenTelemetry::Trace::Tracestate] the sanitized tracestate
+          def sanitized_tracestate(span_context) # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+            sampled = span_context.trace_flags.sampled?
+            tracestate = span_context.tracestate
+            parse_ot_vendor_tag(tracestate) do |p, r, rest|
+              if !r.nil? && r > 62
+                p = r = nil
+              elsif !p.nil? && p > 63
+                p = nil
+              elsif !p.nil? && !r.nil? && !invariant(p, r, sampled)
+                p = nil
+              else
+                return tracestate
+              end
+              update_tracestate(tracestate, p, r, rest)
+            end
+          end
         end
       end
     end

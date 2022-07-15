@@ -18,12 +18,12 @@ module OpenTelemetry
 
           def initialize(probability)
             if probability < 2e-62
-              @probability = @p_floor = @p_ceil = @p_ceil_probability = 0
+              @p_floor = 63
+              @p_ceil = @p_ceil_probability = 0
               @description = 'ConsistentProbabilityBased{0}'
               return
             end
 
-            @probability = probability
             @p_floor = (Math.frexp(probability)[1] - 1).abs
             @p_ceil = @p_floor + 1
             floor = Math.ldexp(1.0, -@p_floor)
@@ -41,34 +41,29 @@ module OpenTelemetry
           # See {Samplers}.
           def should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:) # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
             parent_span_context = OpenTelemetry::Trace.current_span(parent_context).context
-            if !parent_span_context.valid?
-              r = generate_r(trace_id)
-              p = probabilistic_p
-              if p <= r
-                tracestate = TraceState.from_hash({ 'p' => p.to_s, 'r' => r.to_s })
-                Result.new(decision: Decision::RECORD_AND_SAMPLE, tracestate: tracestate)
-              else
-                tracestate = TraceState.from_hash({ 'r' => r.to_s })
-                Result.new(decision: Decision::DROP, tracestate: tracestate)
+            p = probabilistic_p
+            if parent_span_context.valid?
+              tracestate = parent_span_context.tracestate
+              parse_ot_vendor_tag(tracestate) do |_, in_r, rest|
+                r = if in_r.nil? || in_r > 62
+                  # TODO: warn the user that a potentially inconsistent trace is being produced
+                  generate_r(trace_id)
+                else
+                  in_r
+                end
+                if p <= r
+                  Result.new(decision: Decision::RECORD_AND_SAMPLE, tracestate: update_tracestate(tracestate, p, r, rest))
+                else
+                  Result.new(decision: Decision::DROP, tracestate: update_tracestate(tracestate, nil, r, rest))
+                end
               end
             else
-              decision = nil
-              tracestate = validate_tracestate(parent_span_context) do |ot, parent_r|
-                if parent_r.nil?
-                  # TODO: warn the user that a potentially inconsistent trace is being produced
-                  r = generate_r(trace_id)
-                  ot.set_value('r', r.to_s)
-                end
-                p = probabilistic_p
-                if p <= r
-                  ot.set_value('p', p.to_s)
-                  decision = Decision::RECORD_AND_SAMPLE
-                else
-                  decision = Decision::DROP
-                end
-                ot
+              r = generate_r(trace_id)
+              if p <= r
+                Result.new(decision: Decision::RECORD_AND_SAMPLE, tracestate: new_tracestate(p: p, r: r))
+              else
+                Result.new(decision: Decision::DROP, tracestate: new_tracestate(r: r))
               end
-              Result.new(decision: decision, tracestate: tracestate)
             end
           end
 
