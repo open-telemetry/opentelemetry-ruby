@@ -29,7 +29,7 @@ module OpenTelemetry
         # @deprecated Please use instrumentation_scope instead.
         #
         # @return InstrumentationLibrary
-        alias_method :instrumentation_library, :instrumentation_scope
+        alias instrumentation_library instrumentation_scope
 
         # Return a frozen copy of the current attributes. This is intended for
         # use of SpanProcessors and should not be considered part of the public
