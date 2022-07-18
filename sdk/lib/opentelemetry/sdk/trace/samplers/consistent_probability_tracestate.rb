@@ -23,7 +23,7 @@ module OpenTelemetry
             return yield(nil, nil, nil) if tracestate.empty?
 
             ot = tracestate.value('ot')
-            return yield(nil, nil, nil) if ot.nil? || ot.length > MAX_LIST_LENGTH
+            return yield(nil, nil, nil) if ot.nil? || ot.length > MAX_LIST_LENGTH # TODO: warn that we're rejecting the tracestate
 
             p = r = nil
             rest = +''
@@ -38,17 +38,17 @@ module OpenTelemetry
                 rest << field
               end
             end
+            rest = nil if rest.empty?
             yield(p, r, rest)
           end
 
           def update_tracestate(tracestate, p, r, rest) # rubocop:disable Naming/UncommunicativeMethodParamName, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
-            s = +''
-            s << "p:#{p}" unless p.nil?
-            s << ';' unless s.empty? || r.nil?
-            s << "r:#{r}" unless r.nil?
-            s << ';' unless s.empty? || rest.nil?
-            s << rest unless rest.nil?
-            tracestate.set_value('ot', to_s)
+            # This could be more efficient and allocate less, however it *should* only be used for root spans and sanitizing invalid tracestate
+            # in the most common configuration of parent_consistent_probability_based(root: consistent_probability_based(p)).
+            ps = "p:#{p}" unless p.nil?
+            rs = "r:#{r}" unless r.nil?
+            ot = [ps, rs, rest].compact.join(';')
+            tracestate.set_value('ot', ot)
           end
 
           def new_tracestate(p: nil, r: nil) # rubocop:disable Naming/UncommunicativeMethodParamName
