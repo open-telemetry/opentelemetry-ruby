@@ -64,7 +64,7 @@ module OpenTelemetry
           #
           # @param span_context [OpenTelemetry::Trace::SpanContext] the parent span context
           # @return [OpenTelemetry::Trace::Tracestate] the sanitized tracestate
-          def sanitized_tracestate(span_context) # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+          def sanitized_tracestate(span_context)
             sampled = span_context.trace_flags.sampled?
             tracestate = span_context.tracestate
             parse_ot_vendor_tag(tracestate) do |p, r, rest|

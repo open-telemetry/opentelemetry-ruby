@@ -39,7 +39,7 @@ module OpenTelemetry
           # @api private
           #
           # See {Samplers}.
-          def should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:) # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
+          def should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:)
             parent_span_context = OpenTelemetry::Trace.current_span(parent_context).context
             p = probabilistic_p
             if parent_span_context.valid?

@@ -7,10 +7,7 @@
 require 'opentelemetry/sdk/trace/samplers/decision'
 require 'opentelemetry/sdk/trace/samplers/result'
 require 'opentelemetry/sdk/trace/samplers/constant_sampler'
-require 'opentelemetry/sdk/trace/samplers/consistent_probability_tracestate'
-require 'opentelemetry/sdk/trace/samplers/consistent_probability_based'
 require 'opentelemetry/sdk/trace/samplers/parent_based'
-require 'opentelemetry/sdk/trace/samplers/parent_consistent_probability_based'
 require 'opentelemetry/sdk/trace/samplers/trace_id_ratio_based'
 
 module OpenTelemetry
@@ -87,25 +84,6 @@ module OpenTelemetry
           raise ArgumentError, 'ratio must be in range [0.0, 1.0]' unless (0.0..1.0).include?(ratio)
 
           TraceIdRatioBased.new(ratio)
-        end
-
-        # Returns a new sampler.
-        #
-        # @param [Numeric] ratio The desired sampling ratio.
-        #   Must be within [0.0, 1.0].
-        # @raise [ArgumentError] if ratio is out of range
-        def self.consistent_probability_based(ratio)
-          raise ArgumentError, 'ratio must be in range [0.0, 1.0]' unless (0.0..1.0).include?(ratio)
-
-          ConsistentProbabilityBased.new(ratio)
-        end
-
-        # Returns a new sampler.
-        #
-        # @param [Sampler] root The sampler to which the sampling
-        #   decision is delegated for spans with no parent (root spans).
-        def self.parent_consistent_probability_based(root:)
-          ParentConsistentProbabilityBased.new(root)
         end
       end
     end

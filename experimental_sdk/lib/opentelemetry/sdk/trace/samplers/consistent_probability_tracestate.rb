@@ -19,7 +19,7 @@ module OpenTelemetry
           # parse_ot_vendor_tag parses the 'ot' vendor tag of the tracestate.
           # It yields the parsed probability fields and the remaining tracestate.
           # It returns the result of the block.
-          def parse_ot_vendor_tag(tracestate) # rubocop:disable Metrics/CyclomaticComplexity
+          def parse_ot_vendor_tag(tracestate)
             return yield(nil, nil, nil) if tracestate.empty?
 
             ot = tracestate.value('ot')
@@ -42,7 +42,7 @@ module OpenTelemetry
             yield(p, r, rest)
           end
 
-          def update_tracestate(tracestate, p, r, rest) # rubocop:disable Naming/UncommunicativeMethodParamName, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+          def update_tracestate(tracestate, p, r, rest) # rubocop:disable Naming/UncommunicativeMethodParamName
             # This could be more efficient and allocate less, however it *should* only be used for root spans and sanitizing invalid tracestate
             # in the most common configuration of parent_consistent_probability_based(root: consistent_probability_based(p)).
             ps = "p:#{p}" unless p.nil?
