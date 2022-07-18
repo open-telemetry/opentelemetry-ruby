@@ -4,8 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-if OpenTelemetry::SDK::Trace::Samplers.singleton_method(:consistent_probability_based).nil? &&
-   OpenTelemetry::SDK::Trace::Samplers.singleton_method(:parent_consistent_probability_based).nil? &&
+if !(%i[consistent_probability_based parent_consistent_probability_based] - OpenTelemetry::SDK::Trace::Samplers.singleton_methods).empty? &&
    !OpenTelemetry::SDK::Trace::Samplers.const_defined?(:ConsistentProbabilityTraceState) &&
    !OpenTelemetry::SDK::Trace::Samplers.const_defined?(:ParentConsistentProbabilityBased) &&
    !OpenTelemetry::SDK::Trace::Samplers.const_defined?(:ConsistentProbabilityBased)
@@ -23,7 +22,7 @@ if OpenTelemetry::SDK::Trace::Samplers.singleton_method(:consistent_probability_
           # @param [Numeric] ratio The desired sampling ratio.
           #   Must be within [0.0, 1.0].
           # @raise [ArgumentError] if ratio is out of range
-          def self.consistent_probability_based(ratio)
+          def consistent_probability_based(ratio)
             raise ArgumentError, 'ratio must be in range [0.0, 1.0]' unless (0.0..1.0).include?(ratio)
 
             ConsistentProbabilityBased.new(ratio)
@@ -33,7 +32,7 @@ if OpenTelemetry::SDK::Trace::Samplers.singleton_method(:consistent_probability_
           #
           # @param [Sampler] root The sampler to which the sampling
           #   decision is delegated for spans with no parent (root spans).
-          def self.parent_consistent_probability_based(root:)
+          def parent_consistent_probability_based(root:)
             ParentConsistentProbabilityBased.new(root)
           end
         end
@@ -41,5 +40,5 @@ if OpenTelemetry::SDK::Trace::Samplers.singleton_method(:consistent_probability_
     end
   end
 
-  OpenTelemetry::SDK::Trace::Samplers.prepend(OpenTelemetry::SDK::Experimental::SamplersPatch)
+  OpenTelemetry::SDK::Trace::Samplers.extend(OpenTelemetry::SDK::Experimental::SamplersPatch)
 end
