@@ -14,7 +14,8 @@ module OpenTelemetry
         # validation and manipulation for the consistent probability-based samplers.
         module ConsistentProbabilityTraceState
           DECIMAL = /\A\d+\z/.freeze
-          private_constant(:DECIMAL)
+          MAX_LIST_LENGTH = 256 # Defined by https://www.w3.org/TR/trace-context/
+          private_constant(:DECIMAL, :MAX_LIST_LENGTH)
 
           # parse_ot_vendor_tag parses the 'ot' vendor tag of the tracestate.
           # It yields the parsed probability fields and the remaining tracestate.
@@ -53,13 +54,13 @@ module OpenTelemetry
 
           def new_tracestate(p: nil, r: nil) # rubocop:disable Naming/UncommunicativeMethodParamName
             if p.nil? && r.nil?
-              Tracestate.DEFAULT
+              OpenTelemetry::Trace::Tracestate.DEFAULT
             elsif p.nil?
-              Tracestate.from_hash('ot' => "r:#{r}")
+              OpenTelemetry::Trace::Tracestate.from_hash('ot' => "r:#{r}")
             elsif r.nil?
-              Tracestate.from_hash('ot' => "p:#{p}")
+              OpenTelemetry::Trace::Tracestate.from_hash('ot' => "p:#{p}")
             else
-              Tracestate.from_hash('ot' => "p:#{p};r:#{r}")
+              OpenTelemetry::Trace::Tracestate.from_hash('ot' => "p:#{p};r:#{r}")
             end
           end
 
