@@ -30,11 +30,11 @@ def trace_id(id)
   [first, second].pack('Q>Q>')
 end
 
-def parent_context(trace_id: nil, sampled: false, ot: nil)
+def parent_context(trace_id: nil, sampled: false, ot: nil) # rubocop:disable Naming/UncommunicativeMethodParamName
   span_context = OpenTelemetry::Trace::SpanContext.new(
     trace_id: trace_id || OpenTelemetry::Trace.generate_trace_id,
     trace_flags: sampled ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT,
-    tracestate: ot.nil? ? OpenTelemetry::Trace::Tracestate::DEFAULT : OpenTelemetry::Trace::Tracestate::from_hash('ot' => ot)
+    tracestate: ot.nil? ? OpenTelemetry::Trace::Tracestate::DEFAULT : OpenTelemetry::Trace::Tracestate.from_hash('ot' => ot)
   )
   span = OpenTelemetry::Trace.non_recording_span(span_context)
   OpenTelemetry::Trace.context_with_span(span, parent_context: OpenTelemetry::Context::ROOT)
