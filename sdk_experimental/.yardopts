@@ -1,5 +1,5 @@
 --no-private
---title=OpenTelemetry Experimental SDK
+--title=OpenTelemetry SDK (experimental extensions)
 --markup=markdown
 --main=README.md
 ./lib/opentelemetry/**/*.rb

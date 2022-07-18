@@ -17,6 +17,6 @@ Metrics/ParameterLists:
   Enabled: false
 Naming/FileName:
   Exclude:
-    - "lib/opentelemetry-experimental-sdk.rb"
+    - "lib/opentelemetry-sdk-experimental.rb"
 Style/ModuleFunction:
   Enabled: false
