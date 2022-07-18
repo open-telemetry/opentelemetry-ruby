@@ -25,7 +25,7 @@ if !(%i[consistent_probability_based parent_consistent_probability_based] - Open
           def consistent_probability_based(ratio)
             raise ArgumentError, 'ratio must be in range [0.0, 1.0]' unless (0.0..1.0).include?(ratio)
 
-            ConsistentProbabilityBased.new(ratio)
+            OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased.new(ratio)
           end
 
           # Returns a new sampler.
@@ -33,7 +33,7 @@ if !(%i[consistent_probability_based parent_consistent_probability_based] - Open
           # @param [Sampler] root The sampler to which the sampling
           #   decision is delegated for spans with no parent (root spans).
           def parent_consistent_probability_based(root:)
-            ParentConsistentProbabilityBased.new(root)
+            OpenTelemetry::SDK::Trace::Samplers::ParentConsistentProbabilityBased.new(root)
           end
         end
       end
