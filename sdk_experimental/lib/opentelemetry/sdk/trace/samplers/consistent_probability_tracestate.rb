@@ -49,7 +49,11 @@ module OpenTelemetry
             ps = "p:#{p}" unless p.nil?
             rs = "r:#{r}" unless r.nil?
             ot = [ps, rs, rest].compact.join(';')
-            tracestate.set_value('ot', ot)
+            if ot.empty?
+              tracestate.delete('ot')
+            else
+              tracestate.set_value('ot', ot)
+            end
           end
 
           def new_tracestate(p: nil, r: nil) # rubocop:disable Naming/UncommunicativeMethodParamName

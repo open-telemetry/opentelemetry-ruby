@@ -31,8 +31,8 @@ describe OpenTelemetry::SDK::Trace::Samplers::ParentConsistentProbabilityBased d
       _(call_sampler(subject, parent_context: parent_context(sampled: false, ot: 'p:2;r:1')).tracestate['ot']).must_equal('p:2;r:1')
       _(call_sampler(subject, parent_context: parent_context(sampled: true, ot: 'p:2;r:1')).tracestate['ot']).must_equal('r:1')
       _(call_sampler(subject, parent_context: parent_context(sampled: true, ot: 'p:63;r:1')).tracestate['ot']).must_equal('p:63;r:1')
-      # TODO: figure out why this fails
-      # _(call_sampler(subject, parent_context: parent_context(ot: 'p:1;r:63')).tracestate['ot']).must_be_nil
+      _(call_sampler(subject, parent_context: parent_context(ot: 'p:1;r:63')).tracestate['ot']).must_be_nil
+      _(call_sampler(subject, parent_context: parent_context(ot: 'p:1;r:63;junk')).tracestate['ot']).must_equal('junk')
     end
 
     it 'respects parent sampling decision' do
