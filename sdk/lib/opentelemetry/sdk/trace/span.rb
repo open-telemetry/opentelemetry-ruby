@@ -28,7 +28,7 @@ module OpenTelemetry
         # Returns an InstrumentationScope struct, which is backwards compatible with InstrumentationLibrary.
         # @deprecated Please use instrumentation_scope instead.
         #
-        # @return InstrumentationLibrary
+        # @return InstrumentationScope
         alias instrumentation_library instrumentation_scope
 
         # Return a frozen copy of the current attributes. This is intended for
