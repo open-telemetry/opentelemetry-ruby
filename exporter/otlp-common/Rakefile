@@ -29,15 +29,21 @@ else
   task default: %i[test rubocop yard]
 end
 
+PROTO_VERSION = 'v0.18.0'
 PROTOBUF_FILES = [
+  'collector/logs/v1/logs_service.proto',
+  'collector/metrics/v1/metrics_service.proto',
+  'collector/trace/v1/trace_service.proto',
   'common/v1/common.proto',
+  'logs/v1/logs.proto',
+  'metrics/v1/metrics.proto',
   'resource/v1/resource.proto',
   'trace/v1/trace.proto',
-  'collector/trace/v1/trace_service.proto'
+  'trace/v1/trace_config.proto'
 ].freeze
 
 task :update_protobuf do
-  system('git clone https://github.com/open-telemetry/opentelemetry-proto')
+  system("git clone -b #{PROTO_VERSION} https://github.com/open-telemetry/opentelemetry-proto")
   PROTOBUF_FILES.each do |file|
     system("protoc --ruby_out=lib/ --proto_path=opentelemetry-proto opentelemetry/proto/#{file}")
   end
