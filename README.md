@@ -32,6 +32,7 @@ Approvers ([@open-telemetry/ruby-approvers](https://github.com/orgs/open-telemet
 - [Ariel Valentin](https://github.com/arielvalentin), GitHub
 - [Andrew Hayworth](https://github.com/ahayworth), Shopify
 - [Sam Handler](https://github.com/plantfansam), Shopify
+- [Robb Kidd](https://github.com/robbkidd), Honeycomb
 
 *Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#approver).*
 
