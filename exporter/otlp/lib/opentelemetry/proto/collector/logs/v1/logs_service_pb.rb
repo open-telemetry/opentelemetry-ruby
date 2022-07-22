@@ -4,6 +4,7 @@
 require 'google/protobuf'
 
 require 'opentelemetry/proto/logs/v1/logs_pb'
+
 Google::Protobuf::DescriptorPool.generated_pool.build do
   add_file("opentelemetry/proto/collector/logs/v1/logs_service.proto", :syntax => :proto3) do
     add_message "opentelemetry.proto.collector.logs.v1.ExportLogsServiceRequest" do
