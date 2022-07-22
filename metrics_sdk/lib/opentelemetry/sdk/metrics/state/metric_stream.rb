@@ -21,7 +21,8 @@ module OpenTelemetry
             unit,
             instrument_kind,
             meter_provider,
-            instrumentation_scope
+            instrumentation_scope,
+            aggregation
           )
             @name = name
             @description = description
@@ -29,8 +30,8 @@ module OpenTelemetry
             @instrument_kind = instrument_kind
             @meter_provider = meter_provider
             @instrumentation_scope = instrumentation_scope
+            @aggregation = aggregation
 
-            @data_points = {}
             @mutex = Mutex.new
           end
 
@@ -43,21 +44,15 @@ module OpenTelemetry
                 @instrument_kind,
                 @meter_provider.resource,
                 @instrumentation_scope,
-                @data_points.dup,
+                @aggregation.collect,
                 start_time,
                 end_time
               )
             end
           end
 
-          def update(measurement, aggregation)
-            @mutex.synchronize do
-              @data_points[measurement.attributes] = if @data_points[measurement.attributes]
-                                                       aggregation.call(@data_points[measurement.attributes], measurement.value)
-                                                     else
-                                                       measurement.value
-                                                     end
-            end
+          def update(value, attributes)
+            @mutex.synchronize { @aggregation.update(value, attributes) }
           end
 
           def to_s

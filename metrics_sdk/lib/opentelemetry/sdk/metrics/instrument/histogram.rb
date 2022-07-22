@@ -10,8 +10,6 @@ module OpenTelemetry
       module Instrument
         # {Histogram} is the SDK implementation of {OpenTelemetry::Metrics::Histogram}.
         class Histogram < OpenTelemetry::SDK::Metrics::Instrument::SynchronousInstrument
-          DEFAULT_AGGREGATION = OpenTelemetry::SDK::Metrics::Aggregation::EXPLICIT_BUCKET_HISTOGRAM
-
           # Returns the instrument kind as a Symbol
           #
           # @return [Symbol]
@@ -32,6 +30,12 @@ module OpenTelemetry
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
             nil
+          end
+
+          private
+
+          def default_aggregation
+            OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new
           end
         end
       end

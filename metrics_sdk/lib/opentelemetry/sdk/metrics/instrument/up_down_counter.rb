@@ -10,15 +10,12 @@ module OpenTelemetry
       module Instrument
         # {UpDownCounter} is the SDK implementation of {OpenTelemetry::Metrics::UpDownCounter}.
         class UpDownCounter < OpenTelemetry::SDK::Metrics::Instrument::SynchronousInstrument
-          DEFAULT_AGGREGATION = OpenTelemetry::SDK::Metrics::Aggregation::SUM
-
           # Returns the instrument kind as a Symbol
           #
           # @return [Symbol]
           def instrument_kind
             :up_down_counter
           end
-
           # Increment or decrement the UpDownCounter by a fixed amount.
           #
           # @param [Numeric] amount The amount to be added, can be positive, negative or zero.
@@ -35,6 +32,12 @@ module OpenTelemetry
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
             nil
+          end
+
+          private
+
+          def default_aggregation
+            OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
           end
         end
       end
