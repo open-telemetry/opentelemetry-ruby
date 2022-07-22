@@ -49,10 +49,10 @@ module OpenTelemetry
                                 parent_span_id.unpack1('H*')
                               end
 
-                              # Returns an InstrumentationLibrary struct for backwards compatibility.
+                              # Returns an InstrumentationScope struct, which is backwards compatible with InstrumentationLibrary.
                               # @deprecated Please use instrumentation_scope instead.
                               #
-                              # @return InstrumentationLibrary
+                              # @return InstrumentationScope
                               alias_method :instrumentation_library, :instrumentation_scope
                             end
     end
