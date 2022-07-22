@@ -25,7 +25,7 @@ module OpenTelemetry
         # should not be considered part of the public interface for instrumentation.
         attr_reader :name, :status, :kind, :parent_span_id, :start_timestamp, :end_timestamp, :links, :resource, :instrumentation_scope
 
-        # Returns an InstrumentationLibrary struct for backwards compatibility.
+        # Returns an InstrumentationScope struct, which is backwards compatible with InstrumentationLibrary.
         # @deprecated Please use instrumentation_scope instead.
         #
         # @return InstrumentationLibrary
