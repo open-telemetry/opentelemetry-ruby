@@ -400,7 +400,7 @@ module OpenTelemetry
           result
         end
 
-        def parse_headers(raw) # rubocop:disable Metrics/CyclomaticComplexity
+        def parse_headers(raw)
           return raw if raw.is_a?(Hash)
 
           entries = raw.split(',')
