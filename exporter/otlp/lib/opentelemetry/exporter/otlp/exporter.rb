@@ -36,43 +36,42 @@ module OpenTelemetry
         private_constant(:ERROR_MESSAGE_INVALID_HEADERS)
 
         def self.ssl_verify_mode
-          if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
-            OpenSSL::SSL::VERIFY_PEER
-          elsif ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE')
-            OpenSSL::SSL::VERIFY_NONE
-          else
-            OpenSSL::SSL::VERIFY_PEER
-          end
+          return OpenSSL::SSL::VERIFY_PEER if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
+          return OpenSSL::SSL::VERIFY_NONE if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE')
+
+          OpenSSL::SSL::VERIFY_PEER
         end
 
-        def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4318/v1/traces'), # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-                       certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
-                       ssl_verify_mode: Exporter.ssl_verify_mode,
-                       headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
-                       compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
-                       timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
-                       metrics_reporter: nil)
-          raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
-          raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
+        DEFAULT_ENDPOINT = 'http://localhost:4318/v1/traces'
+        DEFAULT_COMPRESSION = 'gzip'
+        DEFAULT_HEADERS = {}.freeze
+        DEFAULT_TIMEOUT = 10
 
-          @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
-                   URI.join(endpoint, 'v1/traces')
-                 else
-                   URI(endpoint)
-                 end
+        def self.env_opts
+          {
+            endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: DEFAULT_ENDPOINT),
+            certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
+            compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: DEFAULT_COMPRESSION),
+            headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: DEFAULT_HEADERS),
+            timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: DEFAULT_TIMEOUT),
+            ssl_verify_mode: ssl_verify_mode,
+            metrics_reporter: nil
+          }
+        end
 
-          @http = http_connection(@uri, ssl_verify_mode, certificate_file)
+        def initialize(opts = {})
+          opts = self.class.env_opts.merge(opts)
+          validate!(opts)
 
-          @path = @uri.path
-          @headers = case headers
-                     when String then parse_headers(headers)
-                     when Hash then headers
-                     else
-                       raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS
-                     end
-          @timeout = timeout.to_f
-          @compression = compression
-          @metrics_reporter = metrics_reporter || OpenTelemetry::SDK::Trace::Export::MetricsReporter
+          @endpoint = opts[:endpoint]
+          @compression = opts[:compression]
+          @certificate_file = opts[:certificate_file]
+          @ssl_verify_mode = opts[:ssl_verify_mode]
+          @http = http_connection(@ssl_verify_mode, @certificate_file)
+          @headers = parse_headers(opts[:headers])
+          @path = uri.path
+          @timeout = opts[:timeout].to_f
+          @metrics_reporter = opts[:metrics_reporter] || OpenTelemetry::SDK::Trace::Export::MetricsReporter
           @shutdown = false
         end
 
@@ -111,7 +110,19 @@ module OpenTelemetry
 
         private
 
-        def http_connection(uri, ssl_verify_mode, certificate_file)
+        def validate!(args)
+          raise ArgumentError, "invalid url for OTLP::Exporter #{args[:endpoint]}" unless OpenTelemetry::Common::Utilities.valid_url?(args[:endpoint])
+          raise ArgumentError, "unsupported compression key #{args[:compression]}" unless args[:compression].nil? || %w[gzip none].include?(args[:compression])
+          raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS unless [String, Hash].include?(args[:headers].class)
+        end
+
+        def uri
+          @uri ||= URI.join(@endpoint, 'v1/traces') if @endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
+
+          @uri ||= URI(@endpoint)
+        end
+
+        def http_connection(ssl_verify_mode, certificate_file)
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = uri.scheme == 'https'
           http.verify_mode = ssl_verify_mode
@@ -389,7 +400,9 @@ module OpenTelemetry
           result
         end
 
-        def parse_headers(raw)
+        def parse_headers(raw) # rubocop:disable Metrics/CyclomaticComplexity
+          return raw if raw.is_a?(Hash)
+
           entries = raw.split(',')
           raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if entries.empty?
 
