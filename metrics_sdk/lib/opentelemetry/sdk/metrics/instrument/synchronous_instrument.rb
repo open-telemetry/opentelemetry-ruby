@@ -40,9 +40,7 @@ module OpenTelemetry
           private
 
           def update(value, attributes)
-            @metric_streams.each do |ms|
-              ms.update(value, attributes)
-            end
+            @metric_streams.each { |ms| ms.update(value, attributes) }
           end
         end
       end

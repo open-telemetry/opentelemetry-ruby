@@ -16,6 +16,7 @@ module OpenTelemetry
           def instrument_kind
             :up_down_counter
           end
+
           # Increment or decrement the UpDownCounter by a fixed amount.
           #
           # @param [Numeric] amount The amount to be added, can be positive, negative or zero.

@@ -7,7 +7,12 @@
 require 'test_helper'
 
 describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
-  let(:ebh) { OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(boundaries: boundaries, record_min_max: record_min_max) }
+  let(:ebh) do
+    OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(
+      boundaries: boundaries,
+      record_min_max: record_min_max
+    )
+  end
   let(:boundaries) { [0, 5, 10, 25, 50, 75, 100, 250, 500, 1000] }
   let(:record_min_max) { true }
   let(:now_in_nano) { (Time.now.to_r * 1_000_000_000).to_i }
@@ -20,14 +25,29 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
       ebh.update(6, {})
       ebh.update(10, {})
 
-      ebh.update(0, { 'foo' => 'bar' })
-      ebh.update(1, { 'foo' => 'bar' })
-      ebh.update(5, { 'foo' => 'bar' })
-      ebh.update(6, { 'foo' => 'bar' })
-      ebh.update(10, { 'foo' => 'bar' })
+      ebh.update(-10, 'foo' => 'bar')
+      ebh.update(1, 'foo' => 'bar')
+      ebh.update(22, 'foo' => 'bar')
+      ebh.update(55, 'foo' => 'bar')
+      ebh.update(80, 'foo' => 'bar')
 
       hdps = ebh.collect(now_in_nano, now_in_nano)
       _(hdps.size).must_equal(2)
+      _(hdps[0].attributes).must_equal({})
+      _(hdps[0].count).must_equal(5)
+      _(hdps[0].sum).must_equal(22)
+      _(hdps[0].min).must_equal(0)
+      _(hdps[0].max).must_equal(10)
+      _(hdps[0].bucket_counts).must_equal([1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0])
+      _(hdps[0].explicit_bounds).must_equal([0, 5, 10, 25, 50, 75, 100, 250, 500, 1000])
+
+      _(hdps[1].attributes).must_equal('foo' => 'bar')
+      _(hdps[1].count).must_equal(5)
+      _(hdps[1].sum).must_equal(148)
+      _(hdps[1].min).must_equal(-10)
+      _(hdps[1].max).must_equal(80)
+      _(hdps[1].bucket_counts).must_equal([1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0])
+      _(hdps[1].explicit_bounds).must_equal([0, 5, 10, 25, 50, 75, 100, 250, 500, 1000])
     end
 
     it 'sets the timestamps' do
@@ -98,6 +118,9 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
         ebh.update(3, {})
         ebh.update(4, {})
         ebh.update(5, {})
+        hdp = ebh.collect(now_in_nano, now_in_nano)[0]
+
+        _(hdp.bucket_counts).must_equal([2, 2, 2, 1])
       end
     end
 
