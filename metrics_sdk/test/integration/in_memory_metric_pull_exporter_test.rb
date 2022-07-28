@@ -17,28 +17,35 @@ describe OpenTelemetry::SDK do
       OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
 
       meter = OpenTelemetry.meter_provider.meter('test')
-      instrument = meter.create_counter('b_counter', unit: 'smidgen', description: 'a small amount of something')
+      counter = meter.create_counter('counter', unit: 'smidgen', description: 'a small amount of something')
 
-      instrument.add(1)
-      instrument.add(2, attributes: { 'a' => 'b' })
-      instrument.add(2, attributes: { 'a' => 'b' })
-      instrument.add(3, attributes: { 'b' => 'c' })
-      instrument.add(4, attributes: { 'd' => 'e' })
+      counter.add(1)
+      counter.add(2, attributes: { 'a' => 'b' })
+      counter.add(2, attributes: { 'a' => 'b' })
+      counter.add(3, attributes: { 'b' => 'c' })
+      counter.add(4, attributes: { 'd' => 'e' })
 
       metric_exporter.pull
       last_snapshot = metric_exporter.metric_snapshots.last
 
       _(last_snapshot).wont_be_empty
-      _(last_snapshot[0].name).must_equal('b_counter')
+      _(last_snapshot[0].name).must_equal('counter')
       _(last_snapshot[0].unit).must_equal('smidgen')
       _(last_snapshot[0].description).must_equal('a small amount of something')
+
       _(last_snapshot[0].instrumentation_scope.name).must_equal('test')
-      _(last_snapshot[0].data_points).must_equal(
-        {} => 1,
-        { 'a' => 'b' } => 4,
-        { 'b' => 'c' } => 3,
-        { 'd' => 'e' } => 4
-      )
+
+      _(last_snapshot[0].data_points[0].value).must_equal(1)
+      _(last_snapshot[0].data_points[0].attributes).must_equal({})
+
+      _(last_snapshot[0].data_points[1].value).must_equal(4)
+      _(last_snapshot[0].data_points[1].attributes).must_equal('a' => 'b')
+
+      _(last_snapshot[0].data_points[2].value).must_equal(3)
+      _(last_snapshot[0].data_points[2].attributes).must_equal('b' => 'c')
+
+      _(last_snapshot[0].data_points[3].value).must_equal(4)
+      _(last_snapshot[0].data_points[3].attributes).must_equal('d' => 'e')
     end
   end
 end

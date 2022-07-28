@@ -18,18 +18,28 @@ module OpenTelemetry
             @mutex = Mutex.new
           end
 
-          def collect
-            dp = @data_points.dup
+          def collect(start_time, end_time)
+            ndps = @data_points.map do |_key, ndp|
+              ndp.start_time_unix_nano = start_time
+              ndp.time_unix_nano = end_time
+              ndp
+            end
             @data_points.clear if @aggregation_temporality == :delta
-            dp
+            ndps
           end
 
           def update(increment, attributes)
-            @data_points[attributes] = if @data_points[attributes]
-                                         @data_points[attributes] + increment
-                                       else
-                                         increment
-                                       end
+            ndp = @data_points[attributes] || @data_points[attributes] = NumberDataPoint.new(
+              attributes,
+              nil,
+              nil,
+              0,
+              nil,
+              nil
+            )
+
+            ndp.value += increment
+            nil
           end
         end
       end

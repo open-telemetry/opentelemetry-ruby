@@ -8,7 +8,7 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Aggregation
-        NumberDataPoint = Struct.new(:attributes, # Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}
+        NumberDataPoint = Struct.new(:attributes,            # Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}
                                      :start_time_unix_nano,  # optional Integer nanoseconds since Epoch
                                      :time_unix_nano,        # Integer nanoseconds since Epoch
                                      :value,                 # Integer

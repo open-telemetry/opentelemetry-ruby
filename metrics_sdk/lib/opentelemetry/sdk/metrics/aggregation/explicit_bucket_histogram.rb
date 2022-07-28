@@ -41,16 +41,16 @@ module OpenTelemetry
           def update(amount, attributes)
             hdp = @data_points[attributes] || @data_points[attributes] = HistogramDataPoint.new(
               attributes,
-              nil, # :start_time_unix_nano
-              nil, # :time_unix_nano
-              0, # :count
-              0, # :sum
+              nil,                 # :start_time_unix_nano
+              nil,                 # :time_unix_nano
+              0,                   # :count
+              0,                   # :sum
               empty_bucket_counts, # :bucket_counts
-              @boundaries, # :explicit_bounds
-              nil, # :exemplars
-              nil, # flags
-              Float::INFINITY, # :min
-              -Float::INFINITY # :max
+              @boundaries,         # :explicit_bounds
+              nil,                 # :exemplars
+              nil,                 # flags
+              Float::INFINITY,     # :min
+              -Float::INFINITY     # :max
             )
 
             if @record_min_max
@@ -60,6 +60,7 @@ module OpenTelemetry
 
             hdp.sum += amount
             hdp.bucket_counts[bisect_left(@boundaries, amount)] += 1
+            nil
           end
 
           private
