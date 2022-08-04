@@ -110,6 +110,24 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(http.port).must_equal 4321
     end
 
+    it 'appends the correct path if OTEL_EXPORTER_OTLP_ENDPOINT has a trailing slash' do
+      exp = OpenTelemetry::TestHelpers.with_env(
+        'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234/'
+      ) do
+        OpenTelemetry::Exporter::OTLP::Exporter.new()
+      end
+      _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
+    end
+
+    it 'appends the correct path if OTEL_EXPORTER_OTLP_ENDPOINT does not have a trailing slash' do
+      exp = OpenTelemetry::TestHelpers.with_env(
+        'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234'
+      ) do
+        OpenTelemetry::Exporter::OTLP::Exporter.new()
+      end
+      _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
+    end
+
     it 'restricts explicit headers to a String or Hash' do
       exp = OpenTelemetry::Exporter::OTLP::Exporter.new(headers: { 'token' => 'über' })
       _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über')
@@ -404,13 +422,32 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
 
       details = [::Google::Protobuf::Any.pack(::Google::Protobuf::StringValue.new(value: 'you are a bad request'))]
       status = ::Google::Rpc::Status.encode(::Google::Rpc::Status.new(code: 1, message: 'bad request', details: details))
-      stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 400, body: status)
+      stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 400, body: status, headers: { 'Content-Type' => 'application/x-protobuf' })
       span_data = OpenTelemetry::TestHelpers.create_span_data
 
       result = exporter.export([span_data])
 
       _(log_stream.string).must_match(
         /ERROR -- : OpenTelemetry error: OTLP exporter received rpc.Status{message=bad request, details=\[.*you are a bad request.*\]}/
+      )
+
+      _(result).must_equal(FAILURE)
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
+    it 'logs a specific message when there is a 404' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 404, body: "Not Found\n")
+      span_data = OpenTelemetry::TestHelpers.create_span_data
+
+      result = exporter.export([span_data])
+
+      _(log_stream.string).must_match(
+        %r{ERROR -- : OpenTelemetry error: OTLP exporter received http\.code=404 for uri: '/v1/traces'}
       )
 
       _(result).must_equal(FAILURE)

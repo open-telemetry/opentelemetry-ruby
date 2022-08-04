@@ -7,7 +7,7 @@ AllCops:
 Lint/UnusedMethodArgument:
   Enabled: false
 Metrics/AbcSize:
-  Max: 29
+  Enabled: false
 Metrics/LineLength:
   Enabled: false
 Metrics/ModuleLength:

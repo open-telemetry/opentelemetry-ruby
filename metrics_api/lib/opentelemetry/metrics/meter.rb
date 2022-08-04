@@ -26,27 +26,27 @@ module OpenTelemetry
 
       def initialize
         @mutex = Mutex.new
-        @registry = {}
+        @instrument_registry = {}
       end
 
       def create_counter(name, unit: nil, description: nil)
         create_instrument(:counter, name, unit, description, nil) { COUNTER }
       end
 
-      def create_observable_counter(name, unit: nil, description: nil, callback:)
-        create_instrument(:observable_counter, name, unit, description, callback) { OBSERVABLE_COUNTER }
-      end
-
       def create_histogram(name, unit: nil, description: nil)
         create_instrument(:histogram, name, unit, description, nil) { HISTOGRAM }
       end
 
-      def create_observable_gauge(name, unit: nil, description: nil, callback:)
-        create_instrument(:observable_gauge, name, unit, description, callback) { OBSERVABLE_GAUGE }
-      end
-
       def create_up_down_counter(name, unit: nil, description: nil)
         create_instrument(:up_down_counter, name, unit, description, nil) { UP_DOWN_COUNTER }
+      end
+
+      def create_observable_counter(name, unit: nil, description: nil, callback:)
+        create_instrument(:observable_counter, name, unit, description, callback) { OBSERVABLE_COUNTER }
+      end
+
+      def create_observable_gauge(name, unit: nil, description: nil, callback:)
+        create_instrument(:observable_gauge, name, unit, description, callback) { OBSERVABLE_GAUGE }
       end
 
       def create_observable_up_down_counter(name, unit: nil, description: nil, callback:)
@@ -60,12 +60,12 @@ module OpenTelemetry
         raise InstrumentNameError if name.empty?
         raise InstrumentNameError unless NAME_REGEX.match?(name)
         raise InstrumentUnitError if unit && (!unit.ascii_only? || unit.size > 63)
-        raise InstrumentDescriptionError if description && (description.size > 1023 || !utf8mb3_encoding?(description))
+        raise InstrumentDescriptionError if description && (description.size > 1023 || !utf8mb3_encoding?(description.dup))
 
         @mutex.synchronize do
-          raise DuplicateInstrumentError if @registry.include? name
+          OpenTelemetry.logger.warn("duplicate instrument registration occurred for instrument #{name}") if @instrument_registry.include? name
 
-          @registry[name] = yield
+          @instrument_registry[name] = yield
         end
       end
 
