@@ -71,21 +71,6 @@ module OpenTelemetry
           def empty_bucket_counts
             Array.new(@boundaries.size + 1, 0)
           end
-
-          def bisect_left(boundaries, amount)
-            low = 0
-            high = boundaries.size
-            while low < high
-              mid = (low + high) / 2
-              if boundaries[mid] < amount
-                low = mid + 1
-              else
-                high = mid
-              end
-            end
-
-            low
-          end
         end
       end
     end
