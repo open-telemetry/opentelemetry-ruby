@@ -28,18 +28,18 @@ module OpenTelemetry
           end
 
           def collect(start_time, end_time)
-            hdps = @data_points.map do |_key, hdp|
+            @data_points.each_value do |hdp|
               hdp.count = hdp.bucket_counts.sum
               hdp.start_time_unix_nano = start_time
               hdp.time_unix_nano = end_time
-              hdp
             end
+            hdps = @data_points.values
             @data_points.clear if @aggregation_temporality == :delta
             hdps
           end
 
           def update(amount, attributes)
-            hdp = @data_points[attributes] || @data_points[attributes] = HistogramDataPoint.new(
+            hdp = @data_points.fetch(attributes) { @data_points[attributes] = HistogramDataPoint.new(
               attributes,
               nil,                 # :start_time_unix_nano
               nil,                 # :time_unix_nano
@@ -59,7 +59,8 @@ module OpenTelemetry
             end
 
             hdp.sum += amount
-            hdp.bucket_counts[bisect_left(@boundaries, amount)] += 1
+            bucket_index = @boundaries.bsearch_index { _1 >= amount } || @boundaries.size
+            hdp.bucket_counts[bucket_index] += 1
             nil
           end
 
