@@ -39,19 +39,21 @@ module OpenTelemetry
           end
 
           def update(amount, attributes)
-            hdp = @data_points.fetch(attributes) { @data_points[attributes] = HistogramDataPoint.new(
-              attributes,
-              nil,                 # :start_time_unix_nano
-              nil,                 # :time_unix_nano
-              0,                   # :count
-              0,                   # :sum
-              empty_bucket_counts, # :bucket_counts
-              @boundaries,         # :explicit_bounds
-              nil,                 # :exemplars
-              nil,                 # flags
-              Float::INFINITY,     # :min
-              -Float::INFINITY     # :max
-            )
+            hdp = @data_points.fetch(attributes) do
+              @data_points[attributes] = HistogramDataPoint.new(
+                attributes,
+                nil,                 # :start_time_unix_nano
+                nil,                 # :time_unix_nano
+                0,                   # :count
+                0,                   # :sum
+                empty_bucket_counts, # :bucket_counts
+                @boundaries,         # :explicit_bounds
+                nil,                 # :exemplars
+                nil,                 # flags
+                Float::INFINITY,     # :min
+                -Float::INFINITY     # :max
+              )
+            end
 
             if @record_min_max
               hdp.max = amount if amount > hdp.max
