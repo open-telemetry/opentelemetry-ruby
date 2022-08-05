@@ -23,7 +23,7 @@ module OpenTelemetry
           )
             @data_points = {}
             @aggregation_temporality = :delta
-            @boundaries = boundaries
+            @boundaries = boundaries.sort
             @record_min_max = record_min_max
           end
 

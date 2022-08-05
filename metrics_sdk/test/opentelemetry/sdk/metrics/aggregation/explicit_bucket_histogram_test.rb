@@ -107,6 +107,15 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
       _(hdp.max).must_equal(1001)
     end
 
+    describe 'with an unsorted boundary set' do
+      let(:boundaries) { [4, 2, 1] }
+
+      it 'sorts it' do
+        ebh.update(0, {})
+        _(ebh.collect(now_in_nano, now_in_nano)[0].explicit_bounds).must_equal([1, 2, 4])
+      end
+    end
+
     describe 'with custom boundaries' do
       let(:boundaries) { [0, 2, 4] }
 
