@@ -25,7 +25,7 @@ module OpenTelemetry
           #   Array values must not contain nil elements and all elements must be of
           #   the same basic type (string, numeric, boolean).
           def record(amount, attributes: nil)
-            update(OpenTelemetry::Metrics::Measurement.new(amount, attributes))
+            update(amount, attributes)
             nil
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
