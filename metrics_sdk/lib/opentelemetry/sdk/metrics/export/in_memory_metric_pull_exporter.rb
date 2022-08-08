@@ -25,8 +25,6 @@ module OpenTelemetry
 
           def export(metrics)
             @mutex.synchronize do
-              return FAILURE if @stopped
-
               @metric_snapshots << metrics
             end
             SUCCESS
