@@ -12,8 +12,7 @@ module OpenTelemetry
                                      :start_time_unix_nano,  # optional Integer nanoseconds since Epoch
                                      :time_unix_nano,        # Integer nanoseconds since Epoch
                                      :value,                 # Integer
-                                     :exemplars,             # optional List of exemplars collected from measurements that were used to form the data point
-                                     :flags)                 # Integer Flags that apply to this specific data point.
+                                     :exemplars)             # optional List of exemplars collected from measurements that were used to form the data point
       end
     end
   end

@@ -16,7 +16,6 @@ module OpenTelemetry
                                         :bucket_counts,         # optional Array[Integer] field contains the count values of histogram for each bucket.
                                         :explicit_bounds,       # Array[Float] specifies buckets with explicitly defined bounds for values.
                                         :exemplars,             # optional List of exemplars collected from measurements that were used to form the data point
-                                        :flags,                 # Integer Flags that apply to this specific data point.
                                         :min,                   # optional Float min is the minimum value over (start_time, end_time].
                                         :max)                   # optional Float max is the maximum value over (start_time, end_time].
       end

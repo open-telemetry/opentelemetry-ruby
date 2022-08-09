@@ -50,7 +50,6 @@ module OpenTelemetry
                 empty_bucket_counts, # :bucket_counts
                 @boundaries,         # :explicit_bounds
                 nil,                 # :exemplars
-                nil,                 # flags
                 nil,                 # :min
                 nil                  # :max
               ).tap do |data_point|
