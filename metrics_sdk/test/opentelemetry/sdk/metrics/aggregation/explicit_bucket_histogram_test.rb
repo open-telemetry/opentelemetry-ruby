@@ -122,8 +122,8 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
       it 'does not record min max values' do
         ebh.update(-1, {})
         hdp = ebh.collect(now_in_nano, now_in_nano)[0]
-        _(hdp.min).must_equal(nil)
-        _(hdp.max).must_equal(nil)
+        _(hdp.min).must_be_nil
+        _(hdp.min).must_be_nil
       end
     end
 
