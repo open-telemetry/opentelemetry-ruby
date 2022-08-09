@@ -116,6 +116,17 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
       end
     end
 
+    describe 'with recording min max disabled' do
+      let(:record_min_max) { false }
+
+      it 'does not record min max values' do
+        ebh.update(-1, {})
+        hdp = ebh.collect(now_in_nano, now_in_nano)[0]
+        _(hdp.min).must_equal(nil)
+        _(hdp.max).must_equal(nil)
+      end
+    end
+
     describe 'with custom boundaries' do
       let(:boundaries) { [0, 2, 4] }
 

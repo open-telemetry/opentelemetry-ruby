@@ -51,9 +51,14 @@ module OpenTelemetry
                 @boundaries,         # :explicit_bounds
                 nil,                 # :exemplars
                 nil,                 # flags
-                Float::INFINITY,     # :min
-                -Float::INFINITY     # :max
-              )
+                nil,                 # :min
+                nil                  # :max
+              ).tap do |data_point|
+                if @record_min_max
+                  data_point.max = -Float::INFINITY
+                  data_point.min = Float::INFINITY
+                end
+              end
             end
 
             if @record_min_max
