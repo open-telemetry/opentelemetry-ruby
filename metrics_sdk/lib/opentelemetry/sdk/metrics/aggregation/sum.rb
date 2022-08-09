@@ -15,7 +15,6 @@ module OpenTelemetry
             @aggregation_temporality = :delta
 
             @data_points = {}
-            @mutex = Mutex.new
           end
 
           def collect(start_time, end_time)
