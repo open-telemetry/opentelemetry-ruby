@@ -18,11 +18,11 @@ module OpenTelemetry
           end
 
           def collect(start_time, end_time)
-            ndps = @data_points.map do |_key, ndp|
+            @data_points.each_value do |ndp|
               ndp.start_time_unix_nano = start_time
               ndp.time_unix_nano = end_time
-              ndp
             end
+            ndps = @data_points.values
             @data_points.clear if @aggregation_temporality == :delta
             ndps
           end

@@ -40,6 +40,7 @@ module OpenTelemetry
           end
 
           def update(amount, attributes)
+            min, max = Float::INFINITY, -Float::INFINITY if @record_min_max
             hdp = @data_points.fetch(attributes) do
               @data_points[attributes] = HistogramDataPoint.new(
                 attributes,
@@ -50,14 +51,9 @@ module OpenTelemetry
                 empty_bucket_counts, # :bucket_counts
                 @boundaries,         # :explicit_bounds
                 nil,                 # :exemplars
-                nil,                 # :min
-                nil                  # :max
-              ).tap do |data_point|
-                if @record_min_max
-                  data_point.max = -Float::INFINITY
-                  data_point.min = Float::INFINITY
-                end
-              end
+                min,                 # :min
+                max                  # :max
+              )
             end
 
             if @record_min_max
