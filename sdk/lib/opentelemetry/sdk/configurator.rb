@@ -141,10 +141,13 @@ module OpenTelemetry
         configure_span_processors
         tracer_provider.id_generator = @id_generator
         OpenTelemetry.tracer_provider = tracer_provider
+        metrics_configuration_hook
         install_instrumentation
       end
 
       private
+
+      def metrics_configuration_hook; end
 
       def tracer_provider
         @tracer_provider ||= Trace::TracerProvider.new(resource: @resource)
