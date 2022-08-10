@@ -44,6 +44,8 @@ runs:
         echo "::set-output name=cache_key::mri"
         if [[ "${{ inputs.ruby }}" == "jruby" ]]; then
           echo "::set-output name=cache_key::jruby"
+        elif [[ "${{ inputs.ruby }}" == "truffleruby" ]]; then
+          echo "::set-output name=cache_key::truffleruby"
         fi
 
         echo "::set-output name=appraisals::false"
