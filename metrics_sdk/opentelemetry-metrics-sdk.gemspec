@@ -6,11 +6,11 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'opentelemetry/metrics/version'
+require 'opentelemetry/sdk/metrics/version'
 
 Gem::Specification.new do |spec|
-  spec.name        = 'opentelemetry-metrics-api'
-  spec.version     = OpenTelemetry::Metrics::VERSION
+  spec.name        = 'opentelemetry-metrics-sdk'
+  spec.version     = OpenTelemetry::SDK::Metrics::VERSION
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
@@ -26,6 +26,8 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 2.6.0'
 
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
+  spec.add_dependency 'opentelemetry-metrics-api'
+  spec.add_dependency 'opentelemetry-sdk', '~> 1.0'
 
   spec.add_development_dependency 'benchmark-ipsa', '~> 0.2.0'
   spec.add_development_dependency 'bundler', '>= 1.17'
@@ -39,9 +41,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
 
   if spec.respond_to?(:metadata)
-    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-metrics-api/v#{OpenTelemetry::Metrics::VERSION}/file.CHANGELOG.html"
+    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-metrics-sdk/v#{OpenTelemetry::SDK::Metrics::VERSION}/file.CHANGELOG.html"
     spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/api'
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/issues'
-    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-metrics-api/v#{OpenTelemetry::Metrics::VERSION}"
+    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-metrics-sdk/v#{OpenTelemetry::SDK::Metrics::VERSION}"
   end
 end
