@@ -46,7 +46,7 @@ module OpenTelemetry
               tracestate = parent_span_context.tracestate
               parse_ot_vendor_tag(tracestate) do |_, in_r, rest|
                 r = if in_r.nil? || in_r > 62
-                      # TODO: warn the user that a potentially inconsistent trace is being produced
+                      OpenTelemetry.logger.debug("ConsistentProbabilitySampler: potentially inconsistent trace detected - r: #{in_r.inspect}")
                       generate_r(trace_id)
                     else
                       in_r
