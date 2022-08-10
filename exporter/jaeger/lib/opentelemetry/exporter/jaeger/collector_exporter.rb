@@ -29,7 +29,8 @@ module OpenTelemetry
                        username: ENV['OTEL_EXPORTER_JAEGER_USER'],
                        password: ENV['OTEL_EXPORTER_JAEGER_PASSWORD'],
                        timeout: ENV.fetch('OTEL_EXPORTER_JAEGER_TIMEOUT', 10),
-                       ssl_verify_mode: CollectorExporter.ssl_verify_mode)
+                       ssl_verify_mode: CollectorExporter.ssl_verify_mode,
+                       metrics_reporter: nil)
           raise ArgumentError, "invalid url for Jaeger::CollectorExporter #{endpoint}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
           raise ArgumentError, 'username and password should either both be nil or both be set' if username.nil? != password.nil?
 
@@ -41,6 +42,7 @@ module OpenTelemetry
             @transport.add_headers(auth_header)
           end
           @serializer = ::Thrift::Serializer.new
+          @metrics_reporter = metrics_reporter || OpenTelemetry::SDK::Trace::Export::MetricsReporter
           @shutdown = false
         end
 
@@ -59,10 +61,13 @@ module OpenTelemetry
           end
 
           OpenTelemetry::Common::Utilities.untraced do
-            @transport.flush
+            measure_request_duration do
+              @transport.flush
+            end
           end
           SUCCESS
         rescue StandardError => e
+          @metrics_reporter.add_to_counter('otel.jaeger_exporter.failure', labels: { 'reason' => e.class.to_s })
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error in Jaeger::CollectorExporter#export')
           FAILURE
         end
@@ -94,6 +99,15 @@ module OpenTelemetry
             spans.map! { |span| Encoder.encoded_span(span) }
             Thrift::Batch.new('process' => process, 'spans' => spans)
           end
+        end
+
+        def measure_request_duration
+          start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+          yield
+        ensure
+          stop = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+          duration_ms = 1000.0 * (stop - start)
+          @metrics_reporter.record_value('otel.jaeger_exporter.request_duration', value: duration_ms)
         end
       end
     end
