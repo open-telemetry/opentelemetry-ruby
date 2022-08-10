@@ -13,10 +13,12 @@ Manual instrumentation can be added using the [OpenTelemetry API][manual].
 These instructions will explain how to set up automatic and manual instrumentation for a Ruby service.
 In order to follow along, you will need:
 
-- MRI Ruby >= `2.7`, or jruby >= `9.3.2.0`
+- MRI Ruby >= `2.7`, jruby >= `9.3.2.0`, or truffleruby >= 22.1
 - Docker Compose
 
 > jruby only targets compatibility with MRI Ruby 2.6.8; which is EOL. This project does not officially support MRI Ruby 2.6.8, and provides jruby support on a best-effort basis until the jruby project supports compatibility with more modern Ruby runtimes.
+
+> truffleruby is tested, but support is best-effort at this time.
 
 ### Installation
 
