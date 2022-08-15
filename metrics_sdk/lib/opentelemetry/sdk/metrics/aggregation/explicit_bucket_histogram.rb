@@ -40,11 +40,12 @@ module OpenTelemetry
           end
 
           def update(amount, attributes)
-            if @record_min_max
-              min = Float::INFINITY
-              max = -Float::INFINITY
-            end
             hdp = @data_points.fetch(attributes) do
+              if @record_min_max
+                min = Float::INFINITY
+                max = -Float::INFINITY
+              end
+
               @data_points[attributes] = HistogramDataPoint.new(
                 attributes,
                 nil,                 # :start_time_unix_nano
