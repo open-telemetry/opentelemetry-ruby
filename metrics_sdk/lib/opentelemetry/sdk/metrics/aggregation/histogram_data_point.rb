@@ -9,7 +9,7 @@ module OpenTelemetry
     module Metrics
       module Aggregation
         HistogramDataPoint = Struct.new(:attributes,            # optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}
-                                        :start_time_unix_nano,  # optional Integer nanoseconds since Epoch
+                                        :start_time_unix_nano,  # Integer nanoseconds since Epoch
                                         :time_unix_nano,        # Integer nanoseconds since Epoch
                                         :count,                 # Integer count is the number of values in the population. Must be non-negative.
                                         :sum,                   # Integer sum of the values in the population. If count is zero then this field then this field must be zero

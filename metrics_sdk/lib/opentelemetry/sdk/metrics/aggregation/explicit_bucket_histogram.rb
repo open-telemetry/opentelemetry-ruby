@@ -34,8 +34,16 @@ module OpenTelemetry
               hdp.start_time_unix_nano = start_time
               hdp.time_unix_nano = end_time
             end
-            hdps = @data_points.values(&:dup)
-            @data_points.clear if @aggregation_temporality == :delta
+            hdps = @data_points.values
+            if @aggregation_temporality == :delta
+              @data_points.clear
+            else
+              hdps = hdps.map do |hdp|
+                hdp = hdp.dup
+                hdp.bucket_counts = hdp.bucket_counts.dup
+                hdp
+              end
+            end
             hdps
           end
 

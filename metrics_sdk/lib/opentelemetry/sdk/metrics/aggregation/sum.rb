@@ -22,8 +22,12 @@ module OpenTelemetry
               ndp.start_time_unix_nano = start_time
               ndp.time_unix_nano = end_time
             end
-            ndps = @data_points.values(&:dup)
-            @data_points.clear if @aggregation_temporality == :delta
+            ndps = @data_points.values
+            if @aggregation_temporality == :delta
+              @data_points.clear
+            else
+              ndps = ndps.map(&:dup)
+            end
             ndps
           end
 
