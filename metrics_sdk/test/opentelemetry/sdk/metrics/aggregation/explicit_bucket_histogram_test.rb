@@ -167,5 +167,22 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
         _(hdp.bucket_counts).must_equal([2])
       end
     end
+
+    describe 'with a nil boundary value' do
+      let(:boundaries) { nil }
+
+      it 'aggregates' do
+        ebh.update(-1, {})
+        ebh.update(1, {})
+        hdp = ebh.collect(now_in_nano, now_in_nano)[0]
+
+        _(hdp.bucket_counts).must_be_nil
+        _(hdp.explicit_bounds).must_be_nil
+        _(hdp.sum).must_equal(0)
+        _(hdp.count).must_equal(0)
+        _(hdp.min).must_equal(-1)
+        _(hdp.max).must_equal(1)
+      end
+    end
   end
 end

@@ -24,13 +24,13 @@ module OpenTelemetry
           )
             @data_points = {}
             @aggregation_temporality = :delta
-            @boundaries = boundaries.sort
+            @boundaries = boundaries ? boundaries.sort : nil
             @record_min_max = record_min_max
           end
 
           def collect(start_time, end_time)
             @data_points.each_value do |hdp|
-              hdp.count = hdp.bucket_counts.sum
+              hdp.count = hdp.bucket_counts.sum if @boundaries
               hdp.start_time_unix_nano = start_time
               hdp.time_unix_nano = end_time
             end
@@ -74,15 +74,17 @@ module OpenTelemetry
             end
 
             hdp.sum += amount
-            bucket_index = @boundaries.bsearch_index { _1 >= amount } || @boundaries.size
-            hdp.bucket_counts[bucket_index] += 1
+            if @boundaries
+              bucket_index = @boundaries.bsearch_index { _1 >= amount } || @boundaries.size
+              hdp.bucket_counts[bucket_index] += 1
+            end
             nil
           end
 
           private
 
           def empty_bucket_counts
-            Array.new(@boundaries.size + 1, 0)
+            @boundaries ? Array.new(@boundaries.size + 1, 0) : nil
           end
         end
       end
