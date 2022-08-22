@@ -71,7 +71,7 @@ module OpenTelemetry
           tags = encoded_tags(span_data.attributes) +
                  encoded_status(span_data.status) +
                  encoded_kind(span_data.kind) +
-                 encoded_instrumentation_library(span_data.instrumentation_library)
+                 encoded_instrumentation_scope(span_data.instrumentation_scope)
 
           dropped_attributes_count = span_data.total_recorded_attributes - span_data.attributes&.size.to_i
           dropped_events_count = span_data.total_recorded_events - span_data.events&.size.to_i
@@ -141,12 +141,20 @@ module OpenTelemetry
           )
         end
 
-        def encoded_instrumentation_library(instrumentation_library)
-          return EMPTY_ARRAY unless instrumentation_library
+        def encoded_instrumentation_scope(instrumentation_scope)
+          return EMPTY_ARRAY unless instrumentation_scope
 
           tags = []
-          tags << encoded_tag('otel.library.name', instrumentation_library.name) if instrumentation_library.name
-          tags << encoded_tag('otel.library.version', instrumentation_library.version) if instrumentation_library.version
+          if instrumentation_scope.name
+            tags << encoded_tag('otel.scope.name', instrumentation_scope.name)
+            tags << encoded_tag('otel.library.name', instrumentation_scope.name)
+          end
+
+          if instrumentation_scope.version
+            tags << encoded_tag('otel.scope.version', instrumentation_scope.version)
+            tags << encoded_tag('otel.library.version', instrumentation_scope.version)
+          end
+
           tags
         end
 

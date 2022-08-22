@@ -119,38 +119,47 @@ describe OpenTelemetry::Exporter::Jaeger::Encoder do
     )
   end
 
-  describe 'instrumentation library' do
-    it 'encodes library and version when set' do
-      lib = OpenTelemetry::SDK::InstrumentationLibrary.new('mylib', '0.1.0')
-      span_data = create_span_data(instrumentation_library: lib)
+  describe 'instrumentation scope' do
+    it 'encodes name and version when set, with backwards-compat tags' do
+      lib = OpenTelemetry::SDK::InstrumentationScope.new('mylib', '0.1.0')
+      span_data = create_span_data(instrumentation_scope: lib)
+      encoded_span = Encoder.encoded_span(span_data)
+
+      _(encoded_span.tags.size).must_equal(4)
+
+      name_tag, old_name_tag, version_tag, old_version_tag = encoded_span.tags
+
+      _(name_tag.key).must_equal('otel.scope.name')
+      _(name_tag.vStr).must_equal('mylib')
+
+      _(old_name_tag.key).must_equal('otel.library.name')
+      _(old_name_tag.vStr).must_equal('mylib')
+
+      _(version_tag.key).must_equal('otel.scope.version')
+      _(version_tag.vStr).must_equal('0.1.0')
+
+      _(old_version_tag.key).must_equal('otel.library.version')
+      _(old_version_tag.vStr).must_equal('0.1.0')
+    end
+
+    it 'skips nil values' do
+      lib = OpenTelemetry::SDK::InstrumentationScope.new('mylib')
+      span_data = create_span_data(instrumentation_scope: lib)
       encoded_span = Encoder.encoded_span(span_data)
 
       _(encoded_span.tags.size).must_equal(2)
 
-      name_tag, version_tag = encoded_span.tags
+      name_tag, old_name_tag = encoded_span.tags
 
-      _(name_tag.key).must_equal('otel.library.name')
+      _(name_tag.key).must_equal('otel.scope.name')
       _(name_tag.vStr).must_equal('mylib')
 
-      _(version_tag.key).must_equal('otel.library.version')
-      _(version_tag.vStr).must_equal('0.1.0')
-    end
-
-    it 'skips nil values' do
-      lib = OpenTelemetry::SDK::InstrumentationLibrary.new('mylib')
-      span_data = create_span_data(instrumentation_library: lib)
-      encoded_span = Encoder.encoded_span(span_data)
-
-      _(encoded_span.tags.size).must_equal(1)
-
-      name_tag, = encoded_span.tags
-
-      _(name_tag.key).must_equal('otel.library.name')
-      _(name_tag.vStr).must_equal('mylib')
+      _(old_name_tag.key).must_equal('otel.library.name')
+      _(old_name_tag.vStr).must_equal('mylib')
     end
   end
 
-  def create_span_data(status: nil, kind: nil, attributes: nil, total_recorded_attributes: 0, events: nil, total_recorded_events: 0, links: nil, total_recorded_links: 0, instrumentation_library: nil, trace_id: OpenTelemetry::Trace.generate_trace_id, trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, tracestate: nil)
+  def create_span_data(status: nil, kind: nil, attributes: nil, total_recorded_attributes: 0, events: nil, total_recorded_events: 0, links: nil, total_recorded_links: 0, instrumentation_scope: nil, trace_id: OpenTelemetry::Trace.generate_trace_id, trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT, tracestate: nil)
     OpenTelemetry::SDK::Trace::SpanData.new(
       '',
       kind,
@@ -165,7 +174,7 @@ describe OpenTelemetry::Exporter::Jaeger::Encoder do
       links,
       events,
       nil,
-      instrumentation_library,
+      instrumentation_scope,
       OpenTelemetry::Trace.generate_span_id,
       trace_id,
       trace_flags,

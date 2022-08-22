@@ -23,7 +23,7 @@ module OpenTelemetry
                             :links,                     # optional Array[OpenTelemetry::Trace::Link]
                             :events,                    # optional Array[Event]
                             :resource,                  # OpenTelemetry::SDK::Resources::Resource
-                            :instrumentation_library,   # OpenTelemetry::SDK::InstrumentationLibrary
+                            :instrumentation_scope,     # OpenTelemetry::SDK::InstrumentationScope
                             :span_id,                   # String (8 byte binary)
                             :trace_id,                  # String (16-byte binary)
                             :trace_flags,               # Integer (8-bit byte of bit flags)
@@ -48,6 +48,12 @@ module OpenTelemetry
                               def hex_parent_span_id
                                 parent_span_id.unpack1('H*')
                               end
+
+                              # Returns an InstrumentationScope struct, which is backwards compatible with InstrumentationLibrary.
+                              # @deprecated Please use instrumentation_scope instead.
+                              #
+                              # @return InstrumentationScope
+                              alias_method :instrumentation_library, :instrumentation_scope
                             end
     end
   end

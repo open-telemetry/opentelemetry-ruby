@@ -32,7 +32,7 @@ describe OpenTelemetry::SDK do
       _(last_snapshot[0].name).must_equal('b_counter')
       _(last_snapshot[0].unit).must_equal('smidgen')
       _(last_snapshot[0].description).must_equal('a small amount of something')
-      _(last_snapshot[0].instrumentation_library.name).must_equal('test')
+      _(last_snapshot[0].instrumentation_scope.name).must_equal('test')
       _(last_snapshot[0].data_points).must_equal(
         {} => 1,
         { 'a' => 'b' } => 4,

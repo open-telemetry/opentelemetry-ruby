@@ -4,6 +4,7 @@
 require 'google/protobuf'
 
 require 'opentelemetry/proto/trace/v1/trace_pb'
+
 Google::Protobuf::DescriptorPool.generated_pool.build do
   add_file("opentelemetry/proto/collector/trace/v1/trace_service.proto", :syntax => :proto3) do
     add_message "opentelemetry.proto.collector.trace.v1.ExportTraceServiceRequest" do

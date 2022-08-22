@@ -5,6 +5,7 @@ require 'google/protobuf'
 
 require 'opentelemetry/proto/common/v1/common_pb'
 require 'opentelemetry/proto/resource/v1/resource_pb'
+
 Google::Protobuf::DescriptorPool.generated_pool.build do
   add_file("opentelemetry/proto/logs/v1/logs.proto", :syntax => :proto3) do
     add_message "opentelemetry.proto.logs.v1.LogsData" do
@@ -12,19 +13,25 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
     end
     add_message "opentelemetry.proto.logs.v1.ResourceLogs" do
       optional :resource, :message, 1, "opentelemetry.proto.resource.v1.Resource"
-      repeated :instrumentation_library_logs, :message, 2, "opentelemetry.proto.logs.v1.InstrumentationLibraryLogs"
+      repeated :scope_logs, :message, 2, "opentelemetry.proto.logs.v1.ScopeLogs"
+      repeated :instrumentation_library_logs, :message, 1000, "opentelemetry.proto.logs.v1.InstrumentationLibraryLogs"
+      optional :schema_url, :string, 3
+    end
+    add_message "opentelemetry.proto.logs.v1.ScopeLogs" do
+      optional :scope, :message, 1, "opentelemetry.proto.common.v1.InstrumentationScope"
+      repeated :log_records, :message, 2, "opentelemetry.proto.logs.v1.LogRecord"
       optional :schema_url, :string, 3
     end
     add_message "opentelemetry.proto.logs.v1.InstrumentationLibraryLogs" do
       optional :instrumentation_library, :message, 1, "opentelemetry.proto.common.v1.InstrumentationLibrary"
-      repeated :logs, :message, 2, "opentelemetry.proto.logs.v1.LogRecord"
+      repeated :log_records, :message, 2, "opentelemetry.proto.logs.v1.LogRecord"
       optional :schema_url, :string, 3
     end
     add_message "opentelemetry.proto.logs.v1.LogRecord" do
       optional :time_unix_nano, :fixed64, 1
+      optional :observed_time_unix_nano, :fixed64, 11
       optional :severity_number, :enum, 2, "opentelemetry.proto.logs.v1.SeverityNumber"
       optional :severity_text, :string, 3
-      optional :name, :string, 4
       optional :body, :message, 5, "opentelemetry.proto.common.v1.AnyValue"
       repeated :attributes, :message, 6, "opentelemetry.proto.common.v1.KeyValue"
       optional :dropped_attributes_count, :uint32, 7
@@ -72,6 +79,7 @@ module Opentelemetry
       module V1
         LogsData = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.logs.v1.LogsData").msgclass
         ResourceLogs = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.logs.v1.ResourceLogs").msgclass
+        ScopeLogs = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.logs.v1.ScopeLogs").msgclass
         InstrumentationLibraryLogs = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.logs.v1.InstrumentationLibraryLogs").msgclass
         LogRecord = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.logs.v1.LogRecord").msgclass
         SeverityNumber = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.logs.v1.SeverityNumber").enummodule

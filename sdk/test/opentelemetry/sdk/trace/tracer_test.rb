@@ -237,10 +237,10 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       _(span.context.span_id).must_equal span_id
     end
 
-    it 'creates a span with the provided instrumentation library' do
+    it 'creates a span with the provided instrumentation scope' do
       span = tracer.start_span('span', with_parent: context)
-      _(span.instrumentation_library.name).must_equal('component-tracer')
-      _(span.instrumentation_library.version).must_equal('1.0.0')
+      _(span.instrumentation_scope.name).must_equal('component-tracer')
+      _(span.instrumentation_scope.version).must_equal('1.0.0')
     end
 
     it 'creates a span with all supplied parameters' do

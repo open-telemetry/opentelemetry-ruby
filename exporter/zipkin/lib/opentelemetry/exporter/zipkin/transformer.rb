@@ -46,7 +46,7 @@ module OpenTelemetry
             service_name = value if key == SERVICE_NAME_ATTRIBUTE_KEY
           end
 
-          add_il_tags(span_d, tags)
+          add_scope_tags(span_d, tags)
           add_status_tags(span_d, tags)
           tags = aggregate_span_tags(span_d, tags)
 
@@ -70,9 +70,12 @@ module OpenTelemetry
           zipkin_span
         end
 
-        def add_il_tags(span_data, tags)
-          tags['otel.library.name'] = span_data.instrumentation_library.name
-          tags['otel.library.version'] = span_data.instrumentation_library.version
+        def add_scope_tags(span_data, tags)
+          tags['otel.scope.name'] = span_data.instrumentation_scope.name
+          tags['otel.library.name'] = span_data.instrumentation_scope.name
+
+          tags['otel.scope.version'] = span_data.instrumentation_scope.version
+          tags['otel.library.version'] = span_data.instrumentation_scope.version
         end
 
         def add_status_tags(span_data, tags)

@@ -4,6 +4,7 @@
 require 'google/protobuf'
 
 require 'opentelemetry/proto/common/v1/common_pb'
+
 Google::Protobuf::DescriptorPool.generated_pool.build do
   add_file("opentelemetry/proto/resource/v1/resource.proto", :syntax => :proto3) do
     add_message "opentelemetry.proto.resource.v1.Resource" do

@@ -30,7 +30,7 @@ module Opentelemetry
             # case spans are sent/received to/from multiple Applications).
             class Service
 
-              include GRPC::GenericService
+              include ::GRPC::GenericService
 
               self.marshal_class_method = :encode
               self.unmarshal_class_method = :decode

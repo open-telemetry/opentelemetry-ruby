@@ -19,7 +19,7 @@ module OpenTelemetry
         #
         # @return [Tracer]
         def initialize(name, version, tracer_provider)
-          @instrumentation_library = InstrumentationLibrary.new(name, version)
+          @instrumentation_scope = InstrumentationScope.new(name, version)
           @tracer_provider = tracer_provider
         end
 
@@ -32,7 +32,7 @@ module OpenTelemetry
           kind ||= :internal
           with_parent ||= Context.current
 
-          @tracer_provider.internal_create_span(name, kind, attributes, links, start_timestamp, with_parent, @instrumentation_library)
+          @tracer_provider.internal_create_span(name, kind, attributes, links, start_timestamp, with_parent, @instrumentation_scope)
         end
       end
     end
