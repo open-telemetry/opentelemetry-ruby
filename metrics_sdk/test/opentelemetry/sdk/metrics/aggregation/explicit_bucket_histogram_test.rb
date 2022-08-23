@@ -9,6 +9,7 @@ require 'test_helper'
 describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
   let(:ebh) do
     OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(
+      aggregation_temporality: aggregation_temporality,
       boundaries: boundaries,
       record_min_max: record_min_max
     )
@@ -16,6 +17,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
   let(:boundaries) { [0, 5, 10, 25, 50, 75, 100, 250, 500, 1000] }
   let(:record_min_max) { true }
   let(:now_in_nano) { (Time.now.to_r * 1_000_000_000).to_i }
+  let(:aggregation_temporality) { :delta }
 
   describe '#collect' do
     it 'returns all the data points' do
@@ -64,6 +66,73 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
       ebh.update(0, {})
       hdp = ebh.collect(now_in_nano, now_in_nano)[0]
       _(hdp.count).must_equal(4)
+    end
+
+    it 'does not aggregate between collects' do
+      ebh.update(0, {})
+      ebh.update(1, {})
+      ebh.update(5, {})
+      ebh.update(6, {})
+      ebh.update(10, {})
+      hdps = ebh.collect(now_in_nano, now_in_nano)
+
+      ebh.update(0, {})
+      ebh.update(1, {})
+      ebh.update(5, {})
+      ebh.update(6, {})
+      ebh.update(10, {})
+      # Assert that the recent update does not
+      # impact the already collected metrics
+      _(hdps[0].count).must_equal(5)
+      _(hdps[0].sum).must_equal(22)
+      _(hdps[0].min).must_equal(0)
+      _(hdps[0].max).must_equal(10)
+      _(hdps[0].bucket_counts).must_equal([1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0])
+
+      hdps = ebh.collect(now_in_nano, now_in_nano)
+      # Assert that we are not accumulating values
+      # between calls to collect
+      _(hdps[0].count).must_equal(5)
+      _(hdps[0].sum).must_equal(22)
+      _(hdps[0].min).must_equal(0)
+      _(hdps[0].max).must_equal(10)
+      _(hdps[0].bucket_counts).must_equal([1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0])
+    end
+
+    describe 'when aggregation_temporality is not delta' do
+      let(:aggregation_temporality) { :not_delta }
+
+      it 'allows metrics to accumulate' do
+        ebh.update(0, {})
+        ebh.update(1, {})
+        ebh.update(5, {})
+        ebh.update(6, {})
+        ebh.update(10, {})
+        hdps = ebh.collect(now_in_nano, now_in_nano)
+
+        ebh.update(0, {})
+        ebh.update(1, {})
+        ebh.update(5, {})
+        ebh.update(6, {})
+        ebh.update(10, {})
+        # Assert that the recent update does not
+        # impact the already collected metrics
+        _(hdps[0].count).must_equal(5)
+        _(hdps[0].sum).must_equal(22)
+        _(hdps[0].min).must_equal(0)
+        _(hdps[0].max).must_equal(10)
+        _(hdps[0].bucket_counts).must_equal([1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0])
+
+        hdps = ebh.collect(now_in_nano, now_in_nano)
+        # Assert that we are accumulating values
+        # and not just capturing the delta since
+        # the previous collect call
+        _(hdps[0].count).must_equal(10)
+        _(hdps[0].sum).must_equal(44)
+        _(hdps[0].min).must_equal(0)
+        _(hdps[0].max).must_equal(10)
+        _(hdps[0].bucket_counts).must_equal([2, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0])
+      end
     end
   end
 
@@ -161,15 +230,15 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
 
       it 'aggregates but does not record bucket counts' do
         ebh.update(-1, {})
-        ebh.update(1, {})
+        ebh.update(3, {})
         hdp = ebh.collect(now_in_nano, now_in_nano)[0]
 
         _(hdp.bucket_counts).must_be_nil
         _(hdp.explicit_bounds).must_be_nil
-        _(hdp.sum).must_equal(0)
-        _(hdp.count).must_equal(0)
+        _(hdp.sum).must_equal(2)
+        _(hdp.count).must_equal(2)
         _(hdp.min).must_equal(-1)
-        _(hdp.max).must_equal(1)
+        _(hdp.max).must_equal(3)
       end
     end
 
@@ -178,15 +247,15 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
 
       it 'aggregates but does not record bucket counts' do
         ebh.update(-1, {})
-        ebh.update(1, {})
+        ebh.update(3, {})
         hdp = ebh.collect(now_in_nano, now_in_nano)[0]
 
         _(hdp.bucket_counts).must_be_nil
         _(hdp.explicit_bounds).must_be_nil
-        _(hdp.sum).must_equal(0)
-        _(hdp.count).must_equal(0)
+        _(hdp.sum).must_equal(2)
+        _(hdp.count).must_equal(2)
         _(hdp.min).must_equal(-1)
-        _(hdp.max).must_equal(1)
+        _(hdp.max).must_equal(3)
       end
     end
   end

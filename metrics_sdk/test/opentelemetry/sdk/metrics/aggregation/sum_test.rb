@@ -27,19 +27,19 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
   end
 
   it 'does not aggregate between collects' do
-      sum_aggregation.update(1, {})
-      sum_aggregation.update(2, {})
-      ndps = sum_aggregation.collect(now_in_nano, now_in_nano)
+    sum_aggregation.update(1, {})
+    sum_aggregation.update(2, {})
+    ndps = sum_aggregation.collect(now_in_nano, now_in_nano)
 
-      sum_aggregation.update(1, {})
-      # Assert that the recent update does not
-      # impact the already collected metrics
-      _(ndps[0].value).must_equal(3)
+    sum_aggregation.update(1, {})
+    # Assert that the recent update does not
+    # impact the already collected metrics
+    _(ndps[0].value).must_equal(3)
 
-      ndps = sum_aggregation.collect(now_in_nano, now_in_nano)
-      # Assert that we are not accumulating values
-      # between calls to collect
-      _(ndps[0].value).must_equal(1)
+    ndps = sum_aggregation.collect(now_in_nano, now_in_nano)
+    # Assert that we are not accumulating values
+    # between calls to collect
+    _(ndps[0].value).must_equal(1)
   end
 
   describe 'when aggregation_temporality is not delta' do
