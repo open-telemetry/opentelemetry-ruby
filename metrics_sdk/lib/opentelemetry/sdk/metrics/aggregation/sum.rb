@@ -11,9 +11,8 @@ module OpenTelemetry
         # Contains the implementation of the Sum aggregation
         # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#sum-aggregation
         class Sum
-          def initialize
-            @aggregation_temporality = :delta
-
+          def initialize(aggregation_temporality: :delta)
+            @aggregation_temporality = aggregation_temporality
             @data_points = {}
           end
 
