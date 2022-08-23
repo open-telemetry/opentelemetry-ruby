@@ -29,22 +29,24 @@ module OpenTelemetry
           end
 
           def collect(start_time, end_time)
-            @data_points.each_value do |hdp|
-              hdp.count = hdp.bucket_counts.sum if @boundaries
-              hdp.start_time_unix_nano = start_time
-              hdp.time_unix_nano = end_time
-            end
-            hdps = @data_points.values
             if @aggregation_temporality == :delta
+              # Set timestamps and 'move' data point values to result.
+              hdps = @data_points.values.each do |hdp|
+                hdp.start_time_unix_nano = start_time
+                hdp.time_unix_nano = end_time
+              end
               @data_points.clear
+              hdps
             else
-              hdps = hdps.map do |hdp|
+              # Update timestamps and take a snapshot.
+              @data_points.values.map! do |hdp|
+                hdp.start_time_unix_nano ||= start_time # Start time of a data point is from the first observation.
+                hdp.time_unix_nano = end_time
                 hdp = hdp.dup
                 hdp.bucket_counts = hdp.bucket_counts.dup
                 hdp
               end
             end
-            hdps
           end
 
           def update(amount, attributes)
@@ -74,6 +76,7 @@ module OpenTelemetry
             end
 
             hdp.sum += amount
+            hdp.count += 1
             if @boundaries
               bucket_index = @boundaries.bsearch_index { _1 >= amount } || @boundaries.size
               hdp.bucket_counts[bucket_index] += 1

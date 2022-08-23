@@ -18,17 +18,22 @@ module OpenTelemetry
           end
 
           def collect(start_time, end_time)
-            @data_points.each_value do |ndp|
-              ndp.start_time_unix_nano = start_time
-              ndp.time_unix_nano = end_time
-            end
-            ndps = @data_points.values
             if @aggregation_temporality == :delta
+              # Set timestamps and 'move' data point values to result.
+              ndps = @data_points.values.each do |ndp|
+                ndp.start_time_unix_nano = start_time
+                ndp.time_unix_nano = end_time
+              end
               @data_points.clear
+              ndps
             else
-              ndps = ndps.map(&:dup)
+              # Update timestamps and take a snapshot.
+              @data_points.values.map! do |ndp|
+                ndp.start_time_unix_nano ||= start_time # Start time of a data point is from the first observation.
+                ndp.time_unix_nano = end_time
+                ndp.dup
+              end
             end
-            ndps
           end
 
           def update(increment, attributes)
