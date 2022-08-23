@@ -26,7 +26,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::Histogram do
     _(last_snapshot[0].name).must_equal('histogram')
     _(last_snapshot[0].unit).must_equal('smidgen')
     _(last_snapshot[0].description).must_equal('a small amount of something')
-    _(last_snapshot[0].instrumentation_library.name).must_equal('test')
+    _(last_snapshot[0].instrumentation_scope.name).must_equal('test')
     _(last_snapshot[0].data_points[0].count).must_equal(2)
     _(last_snapshot[0].data_points[0].sum).must_equal(11)
     _(last_snapshot[0].data_points[0].min).must_equal(5)
