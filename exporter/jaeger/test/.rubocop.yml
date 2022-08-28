@@ -4,5 +4,5 @@ Metrics/AbcSize:
   Max: 18
 Metrics/BlockLength:
   Enabled: false
-Metrics/LineLength:
+Layout/LineLength:
   Enabled: false
