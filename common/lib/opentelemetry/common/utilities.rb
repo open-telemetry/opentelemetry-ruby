@@ -83,8 +83,8 @@ module OpenTelemetry
         end
       end
 
-      def untraced
-        OpenTelemetry::Trace.with_span(OpenTelemetry::Trace.non_recording_span(OpenTelemetry::Trace::SpanContext.new)) { yield }
+      def untraced(&block)
+        OpenTelemetry::Trace.with_span(OpenTelemetry::Trace.non_recording_span(OpenTelemetry::Trace::SpanContext.new), &block)
       end
 
       # Returns a URL string with userinfo removed.
