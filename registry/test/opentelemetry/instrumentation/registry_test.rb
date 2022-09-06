@@ -44,23 +44,23 @@ describe OpenTelemetry::Instrumentation::Registry do
     OpenTelemetry::Instrumentation::Registry.new
   end
 
-  let(:instrumentation_1) do
+  let(:instrumentation1) do
     FakeInstrumentation.new('TestInstrumentation1', '0.1.1')
   end
 
-  let(:instrumentation_2) do
+  let(:instrumentation2) do
     FakeInstrumentation.new('TestInstrumentation2', '0.3.2')
   end
 
   let(:instrumentations) do
-    [instrumentation_1, instrumentation_2]
+    [instrumentation1, instrumentation2]
   end
 
   describe '#register, #lookup' do
     it 'registers and looks up instrumentations' do
       instrumentations.each { |i| registry.register(i) }
 
-      instrumentations.each do |i|
+      instrumentations.each do |i| # rubocop:disable Style/CombinableLoops
         _(registry.lookup(i.name)).must_equal(i)
       end
     end
@@ -89,11 +89,11 @@ describe OpenTelemetry::Instrumentation::Registry do
           'TestInstrumentation2' => { b: 'b' }
         )
 
-        _(instrumentation_1).must_be :installed?
-        _(instrumentation_1.config).must_equal(a: 'a')
+        _(instrumentation1).must_be :installed?
+        _(instrumentation1.config).must_equal(a: 'a')
 
-        _(instrumentation_2).must_be :installed?
-        _(instrumentation_2.config).must_equal(b: 'b')
+        _(instrumentation2).must_be :installed?
+        _(instrumentation2.config).must_equal(b: 'b')
       end
     end
   end
@@ -107,11 +107,11 @@ describe OpenTelemetry::Instrumentation::Registry do
       it 'installs a specific instrumentation' do
         registry.install(%w[TestInstrumentation1])
 
-        _(instrumentation_1).must_be :installed?
-        _(instrumentation_1.config).must_be_nil
+        _(instrumentation1).must_be :installed?
+        _(instrumentation1.config).must_be_nil
 
-        _(instrumentation_2).wont_be :installed?
-        _(instrumentation_2.config).must_be_nil
+        _(instrumentation2).wont_be :installed?
+        _(instrumentation2.config).must_be_nil
       end
     end
 
@@ -123,11 +123,11 @@ describe OpenTelemetry::Instrumentation::Registry do
           'TestInstrumentation2' => { b: 'b' }
         )
 
-        _(instrumentation_1).must_be :installed?
-        _(instrumentation_1.config).must_equal(a: 'a')
+        _(instrumentation1).must_be :installed?
+        _(instrumentation1.config).must_equal(a: 'a')
 
-        _(instrumentation_2).must_be :installed?
-        _(instrumentation_2.config).must_equal(b: 'b')
+        _(instrumentation2).must_be :installed?
+        _(instrumentation2.config).must_equal(b: 'b')
       end
     end
 
@@ -144,8 +144,8 @@ describe OpenTelemetry::Instrumentation::Registry do
 
         _(@log_stream.string).must_match(/Could not install NotInstalled because it was not found/)
 
-        _(instrumentation_2).must_be :installed?
-        _(instrumentation_2.config).must_equal(b: 'b')
+        _(instrumentation2).must_be :installed?
+        _(instrumentation2.config).must_equal(b: 'b')
       end
     end
   end
@@ -157,21 +157,21 @@ describe OpenTelemetry::Instrumentation::Registry do
 
     describe 'install' do
       it 'handles exceptions during installation' do
-        expect(instrumentation_1).to receive(:install).and_raise('oops')
+        expect(instrumentation1).to receive(:install).and_raise('oops')
 
         registry.install(%w[TestInstrumentation1 TestInstrumentation2])
 
-        _(instrumentation_2).must_be :installed?
+        _(instrumentation2).must_be :installed?
       end
     end
 
     describe 'install_all' do
       it 'handles exceptions during installation' do
-        expect(instrumentation_1).to receive(:install).and_raise('oops')
+        expect(instrumentation1).to receive(:install).and_raise('oops')
 
         registry.install_all
 
-        _(instrumentation_2).must_be :installed?
+        _(instrumentation2).must_be :installed?
       end
     end
   end

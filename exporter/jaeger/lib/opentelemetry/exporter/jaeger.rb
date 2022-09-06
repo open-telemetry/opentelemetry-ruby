@@ -18,7 +18,7 @@ module OpenTelemetry
   end
 end
 
-$LOAD_PATH.push(File.dirname(__FILE__) + '/../../../thrift/gen-rb')
+$LOAD_PATH.push("#{File.dirname(__FILE__)}/../../../thrift/gen-rb")
 
 require 'agent'
 require 'collector'

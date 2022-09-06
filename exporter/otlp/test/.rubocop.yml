@@ -1,11 +1,5 @@
 inherit_from: ../.rubocop.yml
 
-Metrics/AbcSize:
-  Enabled: false
-Metrics/BlockLength:
-  Enabled: false
-Metrics/LineLength:
-  Enabled: false
 Style/MethodCallWithoutArgsParentheses:
   Exclude:
     - 'opentelemetry/exporter/otlp/exporter_test.rb'

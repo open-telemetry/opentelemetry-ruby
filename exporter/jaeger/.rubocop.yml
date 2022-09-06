@@ -1,21 +1,42 @@
 AllCops:
   TargetRubyVersion: "2.6.0"
+  NewCops: disable
+  SuggestExtensions: false
   Exclude:
     - "thrift/**/*"
     - "vendor/**/*"
 
+Bundler/OrderedGems:
+  Exclude:
+    - gemfiles/**/*
 Lint/UnusedMethodArgument:
   Enabled: false
+Lint/MissingSuper:
+  Enabled: false
+Lint/ConstantDefinitionInBlock:
+  Exclude:
+    - "test/**/*"
+Style/StringConcatenation:
+  Exclude:
+    - "test/**/*"
 Metrics/AbcSize:
   Enabled: false
-Metrics/LineLength:
+Layout/LineLength:
   Enabled: false
 Metrics/MethodLength:
-  Max: 21
+  Max: 20
 Metrics/ParameterLists:
+  Enabled: false
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - gemfiles/**/*
+Style/ModuleFunction:
+  Enabled: false
+Style/StringLiterals:
+  Exclude:
+    - gemfiles/**/*
+Metrics/BlockLength:
   Enabled: false
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-exporter-jaeger.rb"
-Style/ModuleFunction:
-  Enabled: false
