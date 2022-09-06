@@ -45,7 +45,7 @@ module OpenTelemetry
           end
         end
 
-        def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4318/v1/traces'), # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4318/v1/traces'), # rubocop:disable Metrics/CyclomaticComplexity
                        certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
                        ssl_verify_mode: Exporter.ssl_verify_mode,
                        headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
@@ -128,7 +128,7 @@ module OpenTelemetry
         # and override this method's behaviour to explicitly trace the HTTP request.
         # This would allow you to trace your export pipeline.
         def around_request
-          OpenTelemetry::Common::Utilities.untraced { yield }
+          OpenTelemetry::Common::Utilities.untraced { yield } # rubocop:disable Style/ExplicitBlockArgument
         end
 
         def send_bytes(bytes, timeout:) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
@@ -152,7 +152,7 @@ module OpenTelemetry
           timeout ||= @timeout
           start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
 
-          around_request do # rubocop:disable Metrics/BlockLength
+          around_request do
             remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
             return FAILURE if remaining_timeout.zero?
 
@@ -248,7 +248,7 @@ module OpenTelemetry
           end
         end
 
-        def backoff?(retry_after: nil, retry_count:, reason:)
+        def backoff?(retry_count:, reason:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
           @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => reason })
           return false if retry_count > RETRY_COUNT
 
@@ -274,7 +274,7 @@ module OpenTelemetry
           true
         end
 
-        def encode(span_data) # rubocop:disable Metrics/MethodLength
+        def encode(span_data) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(
             Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
               resource_spans: span_data
@@ -304,7 +304,7 @@ module OpenTelemetry
           nil
         end
 
-        def as_otlp_span(span_data) # rubocop:disable Metrics/MethodLength
+        def as_otlp_span(span_data) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           Opentelemetry::Proto::Trace::V1::Span.new(
             trace_id: span_data.trace_id,
             span_id: span_data.span_id,
