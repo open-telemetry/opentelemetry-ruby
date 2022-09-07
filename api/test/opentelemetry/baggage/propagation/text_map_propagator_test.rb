@@ -128,7 +128,7 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
 
     it 'enforces max of 180 name-value pairs' do
       context = OpenTelemetry::Baggage.build(context: OpenTelemetry::Context.empty) do |b|
-        (0..180).each do |i|
+        181.times do |i|
           b.set_value("k#{i}", "v#{i}")
         end
       end
@@ -139,7 +139,7 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
 
       # expect keys indexed from 0 to 180 to be in baggage, but only 0 to 179 in the result
       _(OpenTelemetry::Baggage.value('k180', context: context)).wont_be_nil
-      (0...180).each do |i|
+      180.times do |i|
         _(result).must_include("k#{i}")
       end
       _(result).wont_include('k180')
