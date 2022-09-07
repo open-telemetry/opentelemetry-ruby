@@ -59,7 +59,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
       _(hdp.time_unix_nano).must_equal(now_in_nano)
     end
 
-    it 'calculates the bucket count' do
+    it 'calculates the count' do
       ebh.update(0, {})
       ebh.update(0, {})
       ebh.update(0, {})
@@ -68,7 +68,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
       _(hdp.count).must_equal(4)
     end
 
-    it 'does not aggregate between collects' do
+    it 'does not aggregate between collects with default delta aggregation' do
       ebh.update(0, {})
       ebh.update(1, {})
       ebh.update(5, {})
@@ -123,15 +123,23 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
         _(hdps[0].max).must_equal(10)
         _(hdps[0].bucket_counts).must_equal([1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0])
 
-        hdps = ebh.collect(now_in_nano, now_in_nano)
+        hdps1 = ebh.collect(now_in_nano, now_in_nano)
         # Assert that we are accumulating values
         # and not just capturing the delta since
         # the previous collect call
-        _(hdps[0].count).must_equal(10)
-        _(hdps[0].sum).must_equal(44)
+        _(hdps1[0].count).must_equal(10)
+        _(hdps1[0].sum).must_equal(44)
+        _(hdps1[0].min).must_equal(0)
+        _(hdps1[0].max).must_equal(10)
+        _(hdps1[0].bucket_counts).must_equal([2, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0])
+
+        # Assert that the recent collect does not
+        # impact the already collected metrics
+        _(hdps[0].count).must_equal(5)
+        _(hdps[0].sum).must_equal(22)
         _(hdps[0].min).must_equal(0)
         _(hdps[0].max).must_equal(10)
-        _(hdps[0].bucket_counts).must_equal([2, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0])
+        _(hdps[0].bucket_counts).must_equal([1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0])
       end
     end
   end
