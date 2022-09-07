@@ -25,8 +25,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.6.0'
 
-  spec.add_dependency 'google-protobuf', '~> 3.19'
   spec.add_dependency 'googleapis-common-protos-types', '~> 1.3'
+  spec.add_dependency 'google-protobuf', '~> 3.19'
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
   spec.add_dependency 'opentelemetry-common', '~> 0.19.6'
   spec.add_dependency 'opentelemetry-sdk', '~> 1.0'
@@ -38,7 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'opentelemetry-test-helpers'
   spec.add_development_dependency 'pry-byebug' unless RUBY_ENGINE == 'jruby'
   spec.add_development_dependency 'rake', '~> 12.0'
-  spec.add_development_dependency 'rubocop', '~> 0.73.0'
+  spec.add_development_dependency 'rubocop', '~> 1.3'
   spec.add_development_dependency 'simplecov', '~> 0.17'
   spec.add_development_dependency 'webmock', '~> 3.7.6'
   spec.add_development_dependency 'yard', '~> 0.9'

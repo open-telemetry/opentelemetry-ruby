@@ -84,7 +84,7 @@ module OpenTelemetry
       end
 
       def untraced
-        OpenTelemetry::Trace.with_span(OpenTelemetry::Trace.non_recording_span(OpenTelemetry::Trace::SpanContext.new)) { yield }
+        OpenTelemetry::Trace.with_span(OpenTelemetry::Trace.non_recording_span(OpenTelemetry::Trace::SpanContext.new)) { yield } # rubocop:disable Style/ExplicitBlockArgument
       end
 
       # Returns a URL string with userinfo removed.
