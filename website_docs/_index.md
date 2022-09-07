@@ -20,7 +20,7 @@ This documentation is designed to help you understand how to get started using O
 The current status of the major functional components for OpenTelemetry Ruby is
 as follows:
 
-| Tracing | Metrics | Logging |
+| Traces  | Metrics | Logs    |
 | ------- | ------- | ------- |
 | Stable | Not Yet Implemented | Not Yet Implemented |
 
