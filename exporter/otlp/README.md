@@ -62,12 +62,7 @@ tracer.in_span('foo') do |span|
   end
 end
 
-# Immediately export all spans that have not yet been exported.
-# This method should only be called in cases where it is absolutely
-# necessary, such as when using some FaaS providers that may suspend
-# the process after an invocation, but before the `Processor` exports
-# the completed spans.
-tracer_provider.force_flush
+tracer_provider.shutdown
 ```
 
 For additional examples, see the [examples on github][examples-github].
