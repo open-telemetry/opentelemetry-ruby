@@ -46,7 +46,8 @@ require 'opentelemetry/exporter/otlp'
 OpenTelemetry::SDK.configure
 
 # To start a trace you need to get a Tracer from the TracerProvider
-tracer = OpenTelemetry.tracer_provider.tracer('my_app_or_gem', '0.1.0')
+tracer_provider = OpenTelemetry.tracer_provider
+tracer = tracer_provider.tracer('my_app_or_gem', '0.1.0')
 
 # create a span
 tracer.in_span('foo') do |span|
@@ -60,6 +61,8 @@ tracer.in_span('foo') do |span|
     pp child_span
   end
 end
+
+tracer_provider.shutdown
 ```
 
 For additional examples, see the [examples on github][examples-github].
