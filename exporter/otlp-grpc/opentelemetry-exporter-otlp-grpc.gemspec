@@ -26,10 +26,10 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 2.5.0'
 
   spec.add_dependency 'grpc'
-  spec.add_dependency 'opentelemetry-api', '~> 1.0'
+  spec.add_dependency 'opentelemetry-api', '~> 1.1'
   spec.add_dependency 'opentelemetry-common', '~> 0.19.6'
   spec.add_dependency 'opentelemetry-exporter-otlp-common'
-  spec.add_dependency 'opentelemetry-sdk', '~> 1.0'
+  spec.add_dependency 'opentelemetry-sdk', '~> 1.2'
 
   spec.add_development_dependency 'bundler', '>= 1.17'
   spec.add_development_dependency 'faraday', '~> 0.13'

@@ -10,6 +10,7 @@ gemspec
 
 gem 'opentelemetry-api', path: '../api'
 gem 'opentelemetry-metrics-api', path: '../metrics_api'
+gem 'opentelemetry-registry', path: '../registry'
 gem 'opentelemetry-sdk', path: '../sdk'
 gem 'opentelemetry-test-helpers', path: '../test_helpers'
 
