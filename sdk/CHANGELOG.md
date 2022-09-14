@@ -1,5 +1,12 @@
 # Release History: opentelemetry-sdk
 
+### v1.2.0 / 2022-09-14
+
+* ADDED: Support OTEL_PROPAGATORS=none 
+* ADDED: Support OTEL_ATTRIBUTE_{COUNT,VALUE_LENGTH}_LIMIT env vars 
+* ADDED: Support InstrumentationScope, and update OTLP proto to 0.18.0 
+* FIXED: SpanLimits setting event attributes length limit 
+
 ### v1.1.0 / 2022-05-26
 
 * BREAKING CHANGE: This requires upgrading both the SDK and Instrumentation gem in tandem

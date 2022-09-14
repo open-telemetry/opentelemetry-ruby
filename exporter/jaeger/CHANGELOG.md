@@ -1,5 +1,11 @@
 # Release History: opentelemetry-exporter-jaeger
 
+### v0.22.0 / 2022-09-14
+
+* ADDED: Add dropped events/attributes/links counts to zipkin + jaeger exporters 
+* ADDED: Metrics reporter for Jaeger collector exporter 
+* ADDED: Support InstrumentationScope, and update OTLP proto to 0.18.0 
+
 ### v0.21.0 / 2022-06-09
 
 * (No significant changes)
