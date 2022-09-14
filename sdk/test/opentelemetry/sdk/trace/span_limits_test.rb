@@ -12,9 +12,11 @@ describe OpenTelemetry::SDK::Trace::SpanLimits do
   describe '#initialize' do
     it 'provides defaults' do
       _(span_limits.attribute_count_limit).must_equal 128
+      _(span_limits.attribute_length_limit).must_be_nil
       _(span_limits.event_count_limit).must_equal 128
       _(span_limits.link_count_limit).must_equal 128
       _(span_limits.event_attribute_count_limit).must_equal 128
+      _(span_limits.event_attribute_length_limit).must_be_nil
       _(span_limits.link_attribute_count_limit).must_equal 128
     end
 
