@@ -58,9 +58,9 @@
       </div>
 
       <div id="content"><div id='filecontents'>
-<h1 id="label-opentelemetry-propagator-jaeger">opentelemetry-propagator-jaeger</h1>
+<h1 id="label-opentelemetry-test-helpers">opentelemetry-test-helpers</h1>
 
-<p>The <code>opentelemetry-propagator-jaeger</code> gem contains a propagator for the <a href="https://www.jaegertracing.io/docs/1.20/client-libraries/#propagation-format">Jaeger native propagation format</a> This can be used on its own as well as with propagators for other formats to support a variety of context propagation scenarios.</p>
+<p>The <code>opentelemetry-test-helpers</code> gem contains a collection of test helpers for the various OpenTelemetry Ruby gems.</p>
 
 <h2 id="label-What+is+OpenTelemetry-3F">What is OpenTelemetry?</h2>
 
@@ -70,30 +70,30 @@
 
 <h2 id="label-How+does+this+gem+fit+in-3F">How does this gem fit in?</h2>
 
-<p>This gem can be used with any OpenTelemetry SDK implementation. This can be the official <code>opentelemetry-sdk</code> gem or any other concrete implementation.</p>
+<p>The <code>opentelemetry-test-helpers</code> gem is home to commonly used snippets of test code in the OpenTelemetry Ruby gems. The intended use of this gem is to test the implementation of OpenTelemetry Ruby itself, but may be used by consumers of OpenTelemetry Ruby gems.</p>
 
 <h2 id="label-How+do+I+get+started-3F">How do I get started?</h2>
 
 <p>Install the gem using:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_gem'>gem</span> <span class='id identifier rubyid_install'>install</span> <span class='id identifier rubyid_opentelemetry'>opentelemetry</span><span class='op'>-</span><span class='id identifier rubyid_propagator'>propagator</span><span class='op'>-</span><span class='id identifier rubyid_jaeger'>jaeger</span>
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_gem'>gem</span> <span class='id identifier rubyid_install'>install</span> <span class='id identifier rubyid_opentelemetry'>opentelemetry</span><span class='op'>-</span><span class='id identifier rubyid_test'>test</span><span class='op'>-</span><span class='id identifier rubyid_helpers'>helpers</span>
 </code></pre>
 
-<p>Or, if you use <a href="https://bundler.io">bundler</a>, include <code>opentelemetry-propagator-jaeger</code> in your <code>Gemfile</code>.</p>
+<p>Or, if you use <a href="https://bundler.io">bundler</a>, include <code>opentelemetry-test-helpers</code> in your <code>Gemfile</code>.</p>
 
 <h2 id="label-How+can+I+get+involved-3F">How can I get involved?</h2>
 
-<p>The <code>opentelemetry-propagator-jaeger</code> gem source is <a href="https://github.com/open-telemetry/opentelemetry-ruby">on github</a>, along with related gems including <code>opentelemetry-api</code> and <code>opentelemetry-sdk</code>.</p>
+<p>The <code>opentelemetry-test-helpers</code> gem source is <a href="https://github.com/open-telemetry/opentelemetry-ruby">on github</a>, along with related gems including <code>opentelemetry-api</code>.</p>
 
-<p>The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us on our <a href="https://gitter.im/open-telemetry/opentelemetry-ruby">gitter channel</a> or attending our weekly meeting. See the <a href="https://github.com/open-telemetry/community#community-meetings">meeting calendar</a> for dates and times. For more information on this and other language SIGs, see the OpenTelemetry <a href="https://github.com/open-telemetry/community#ruby-sig">community page</a>.</p>
+<p>The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us in <a href="https://github.com/open-telemetry/opentelemetry-ruby/discussions">GitHub Discussions</a> or attending our weekly meeting. See the <a href="https://github.com/open-telemetry/community#community-meetings">meeting calendar</a> for dates and times. For more information on this and other language SIGs, see the OpenTelemetry <a href="https://github.com/open-telemetry/community#ruby-sig">community page</a>.</p>
 
 <h2 id="label-License">License</h2>
 
-<p>The <code>opentelemetry-propagator-jaeger</code> gem is distributed under the Apache 2.0 license. See <a href="https://github.com/open-telemetry/opentelemetry-ruby/blob/master/LICENSE">LICENSE</a> for more information.</p>
+<p>The <code>opentelemetry-test-helpers</code> gem is distributed under the Apache 2.0 license. See <a href="https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE">LICENSE</a> for more information.</p>
 </div></div>
 
       <div id="footer">
-  Generated on Wed Sep 14 22:18:49 2022 by
+  Generated on Wed Sep 14 22:18:55 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-2.7.6).
 </div>
