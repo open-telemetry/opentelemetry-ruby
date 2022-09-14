@@ -111,7 +111,6 @@ describe OpenTelemetry::SDK::Trace::SpanLimits do
                                           'OTEL_ATTRIBUTE_COUNT_LIMIT' => '2',
                                           'OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '32',
                                           'OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '33') do
-
         _(span_limits.attribute_count_limit).must_equal 1
         _(span_limits.attribute_length_limit).must_equal 32
       end
