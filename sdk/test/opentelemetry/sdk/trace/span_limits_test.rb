@@ -101,9 +101,8 @@ describe OpenTelemetry::SDK::Trace::SpanLimits do
     it 'reflects generic attribute env vars' do
       OpenTelemetry::TestHelpers.with_env('OTEL_ATTRIBUTE_COUNT_LIMIT' => '1',
                                           'OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '32') do
-        config = subject.new
-        _(config.attribute_count_limit).must_equal 1
-        _(config.attribute_length_limit).must_equal 32
+        _(span_limits.attribute_count_limit).must_equal 1
+        _(span_limits.attribute_length_limit).must_equal 32
       end
     end
 
@@ -112,9 +111,9 @@ describe OpenTelemetry::SDK::Trace::SpanLimits do
                                           'OTEL_ATTRIBUTE_COUNT_LIMIT' => '2',
                                           'OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '32',
                                           'OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '33') do
-        config = subject.new
-        _(config.attribute_count_limit).must_equal 1
-        _(config.attribute_length_limit).must_equal 32
+
+        _(span_limits.attribute_count_limit).must_equal 1
+        _(span_limits.attribute_length_limit).must_equal 32
       end
     end
   end
