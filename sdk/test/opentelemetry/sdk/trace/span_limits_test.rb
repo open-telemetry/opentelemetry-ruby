@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'test_helper'
-require 'pry'
+
 describe OpenTelemetry::SDK::Trace::SpanLimits do
   let(:span_limits) { OpenTelemetry::SDK::Trace::SpanLimits.new }
 
