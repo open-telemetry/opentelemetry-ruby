@@ -1,5 +1,10 @@
 # Release History: opentelemetry-api
 
+### v1.1.0 / 2022-09-14
+
+* ADDED: Consistent probability sampler 
+* FIXED: Get API onto rubocop 1.3 
+
 ### v1.0.2 / 2022-05-02
 
 * FIXED: Text map propagator extraction should use argument context 
