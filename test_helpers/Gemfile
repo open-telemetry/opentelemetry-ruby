@@ -10,5 +10,6 @@ gemspec
 
 group :test, :development do
   gem 'opentelemetry-api', path: '../api'
+  gem 'opentelemetry-registry', path: '../registry'
   gem 'opentelemetry-sdk', path: '../sdk'
 end

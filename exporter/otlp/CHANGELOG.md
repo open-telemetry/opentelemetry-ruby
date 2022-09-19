@@ -1,5 +1,13 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.24.0 / 2022-09-14
+
+* ADDED: Support InstrumentationScope, and update OTLP proto to 0.18.0 
+* FIXED: Handle OTLP exporter 404s discretely 
+* FIXED: `OTEL_EXPORTER_OTLP_ENDPOINT` appends the correct path with a trailing slash 
+* FIXED: OTLP exporter demo code 
+* DOCS: Update exporter default compression setting 
+
 ### v0.23.0 / 2022-06-23
 
 * ADDED: Report bundle size stats in exporter; also don't re-gzip unnecessarily 

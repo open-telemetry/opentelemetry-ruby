@@ -22,7 +22,8 @@ describe OpenTelemetry::SDK::Trace::Span do
       link_count_limit: 1,
       event_attribute_count_limit: 1,
       link_attribute_count_limit: 1,
-      attribute_length_limit: 32
+      attribute_length_limit: 32,
+      event_attribute_length_limit: 32
     )
   end
   let(:span) do

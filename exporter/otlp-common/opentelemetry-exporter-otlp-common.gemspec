@@ -27,12 +27,12 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'google-protobuf', '~> 3.19'
   spec.add_dependency 'googleapis-common-protos-types', '~> 1.3'
-  spec.add_dependency 'opentelemetry-api', '~> 1.0'
+  spec.add_dependency 'opentelemetry-api', '~> 1.1'
 
   spec.add_development_dependency 'bundler', '>= 1.17'
   spec.add_development_dependency 'faraday', '~> 0.13'
   spec.add_development_dependency 'minitest', '~> 5.0'
-  spec.add_development_dependency 'opentelemetry-sdk', '~> 1.0'
+  spec.add_development_dependency 'opentelemetry-sdk', '~> 1.2'
   spec.add_development_dependency 'opentelemetry-test-helpers'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'pry-byebug' unless RUBY_ENGINE == 'jruby'
