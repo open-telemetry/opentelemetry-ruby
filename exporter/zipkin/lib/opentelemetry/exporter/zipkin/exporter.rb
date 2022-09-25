@@ -29,7 +29,8 @@ module OpenTelemetry
 
         def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_ZIPKIN_ENDPOINT', default: 'http://localhost:9411/api/v2/spans'),
                        headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_ZIPKIN_TRACES_HEADERS', 'OTEL_EXPORTER_ZIPKIN_HEADERS'),
-                       timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_ZIPKIN_TRACES_TIMEOUT', 'OTEL_EXPORTER_ZIPKIN_TIMEOUT', default: 10))
+                       timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_ZIPKIN_TRACES_TIMEOUT', 'OTEL_EXPORTER_ZIPKIN_TIMEOUT', default: 10),
+                       metrics_reporter: nil)
           raise ArgumentError, "invalid url for Zipkin::Exporter #{endpoint}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
           raise ArgumentError, 'headers must be comma-separated k=v pairs or a Hash' unless valid_headers?(headers)
 
@@ -50,6 +51,7 @@ module OpenTelemetry
                      when Hash then headers
                      end
 
+          @metrics_reporter = metrics_reporter || OpenTelemetry::SDK::Trace::Export::MetricsReporter
           @shutdown = false
         end
 
@@ -66,6 +68,7 @@ module OpenTelemetry
           zipkin_spans = encode_spans(span_data)
           send_spans(zipkin_spans, timeout: timeout)
         rescue StandardError => e
+          @metrics_reporter.add_to_counter('otel.zipkin_exporter.failure', labels: { 'reason' => e.class.to_s })
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error in Zipkin::Exporter#export')
           FAILURE
         end
@@ -130,7 +133,7 @@ module OpenTelemetry
             @http.write_timeout = remaining_timeout if WRITE_TIMEOUT_SUPPORTED
             @http.start unless @http.started?
 
-            response = @http.request(request)
+            response = measure_request_duration { @http.request(request) }
             response.body # Read and discard body
             # in opentelemetry-js 200-399 is succcess, in opentelemetry-collector zipkin exporter,200-299 is a success
             # zipkin api docs list 202 as default success code
@@ -196,6 +199,19 @@ module OpenTelemetry
 
           sleep(sleep_interval)
           true
+        end
+
+        def measure_request_duration
+          start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+          begin
+            response = yield
+          ensure
+            stop = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+            duration_ms = 1000.0 * (stop - start)
+            @metrics_reporter.record_value('otel.zipkin_exporter.request_duration',
+                                           value: duration_ms,
+                                           labels: { 'status' => response&.code || 'unknown' })
+          end
         end
       end
     end
