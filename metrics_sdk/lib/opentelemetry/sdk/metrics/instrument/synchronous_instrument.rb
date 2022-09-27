@@ -19,20 +19,19 @@ module OpenTelemetry
             @meter_provider = meter_provider
             @metric_streams = []
 
-            meter_provider.metric_readers.each do |metric_reader|
-              register_with_new_metric_store(metric_reader.metric_store)
-            end
+            meter_provider.register_synchronous_instrument(self)
           end
 
           # @api private
-          def register_with_new_metric_store(metric_store)
+          def register_with_new_metric_store(metric_store, aggregation: default_aggregation)
             ms = OpenTelemetry::SDK::Metrics::State::MetricStream.new(
               @name,
               @description,
               @unit,
               instrument_kind,
               @meter_provider,
-              @instrumentation_scope
+              @instrumentation_scope,
+              aggregation
             )
             @metric_streams << ms
             metric_store.add_metric_stream(ms)
@@ -40,10 +39,8 @@ module OpenTelemetry
 
           private
 
-          def update(measurement, aggregation)
-            @metric_streams.each do |ms|
-              ms.update(measurement, aggregation)
-            end
+          def update(value, attributes)
+            @metric_streams.each { |ms| ms.update(value, attributes) }
           end
         end
       end

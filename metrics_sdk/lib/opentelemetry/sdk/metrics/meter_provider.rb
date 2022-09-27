@@ -116,6 +116,15 @@ module OpenTelemetry
           end
         end
 
+        # @api private
+        def register_synchronous_instrument(instrument)
+          @mutex.synchronize do
+            @metric_readers.each do |mr|
+              instrument.register_with_new_metric_store(mr.metric_store)
+            end
+          end
+        end
+
         # The type of the Instrument(s) (optional).
         # The name of the Instrument(s). OpenTelemetry SDK authors MAY choose to support wildcard characters, with the question mark (?) matching exactly one character and the asterisk character (*) matching zero or more characters.
         # The name of the Meter (optional).

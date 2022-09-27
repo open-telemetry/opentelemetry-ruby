@@ -10,8 +10,6 @@ module OpenTelemetry
       module Instrument
         # {UpDownCounter} is the SDK implementation of {OpenTelemetry::Metrics::UpDownCounter}.
         class UpDownCounter < OpenTelemetry::SDK::Metrics::Instrument::SynchronousInstrument
-          DEFAULT_AGGREGATION = OpenTelemetry::SDK::Metrics::Aggregation::SUM
-
           # Returns the instrument kind as a Symbol
           #
           # @return [Symbol]
@@ -27,14 +25,17 @@ module OpenTelemetry
           #   Array values must not contain nil elements and all elements must be of
           #   the same basic type (string, numeric, boolean).
           def add(amount, attributes: nil)
-            update(
-              OpenTelemetry::Metrics::Measurement.new(amount, attributes),
-              DEFAULT_AGGREGATION
-            )
+            update(amount, attributes)
             nil
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
             nil
+          end
+
+          private
+
+          def default_aggregation
+            OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
           end
         end
       end
