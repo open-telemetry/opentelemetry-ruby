@@ -66,10 +66,18 @@ describe OpenTelemetry::Exporter::Zipkin::Exporter do
       _(http.address).must_equal 'localhost'
       _(http.port).must_equal 4321
     end
+
+    it 'accepts a custom metrics reporter' do
+      custom_metrics_reporter = Object.new
+      exp = OpenTelemetry::Exporter::Zipkin::Exporter.new(metrics_reporter: custom_metrics_reporter)
+      _(exp.instance_variable_get(:@metrics_reporter)).must_equal(custom_metrics_reporter)
+    end
   end
 
   describe '#export' do
-    let(:exporter) { OpenTelemetry::Exporter::Zipkin::Exporter.new }
+    let(:metrics_reporter) { nil }
+
+    let(:exporter) { OpenTelemetry::Exporter::Zipkin::Exporter.new(metrics_reporter: metrics_reporter) }
 
     before do
       OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new
@@ -141,6 +149,45 @@ describe OpenTelemetry::Exporter::Zipkin::Exporter do
       OpenTelemetry.tracer_provider.tracer.start_root_span('foo').finish
       OpenTelemetry.tracer_provider.shutdown
       assert_requested(stub_post)
+    end
+
+    describe 'given a custom metrics reporter' do
+      let(:metrics_reporter) { InMemoryMetricsReporter.new }
+
+      describe 'on successful exports' do
+        it 'provides the metric reporter with the HTTP request duration for an export' do
+          stub_request(:post, DEFAULT_ZIPKIN_COLLECTOR_ENDPOINT).to_return(status: 202)
+          span_data = create_resource_span_data
+          result = exporter.export([span_data], timeout: nil)
+          _(result).must_equal(OpenTelemetry::SDK::Trace::Export::SUCCESS)
+
+          request_duration = metrics_reporter.records.first
+          _(request_duration.fetch(:metric)).must_equal('otel.zipkin_exporter.request_duration')
+          _(request_duration.fetch(:value)).must_be :>, 0
+          _(request_duration.fetch(:labels)).must_equal('status' => '202')
+        end
+      end
+
+      describe 'when an error occurs' do
+        it 'notifies the metric reporter when an export fails' do
+          stub_request(:post, DEFAULT_ZIPKIN_COLLECTOR_ENDPOINT).to_raise(StandardError)
+          span_data = create_resource_span_data
+          result = exporter.export([span_data], timeout: nil)
+          _(result).must_equal(OpenTelemetry::SDK::Trace::Export::FAILURE)
+
+          expect(metrics_reporter).wont_be :empty?
+
+          failed_count = metrics_reporter.counters.first
+          _(failed_count.fetch(:metric)).must_equal('otel.zipkin_exporter.failure')
+          _(failed_count.fetch(:value)).must_equal(1)
+          _(failed_count.fetch(:labels)).must_equal('reason' => 'StandardError')
+
+          request_duration = metrics_reporter.records.first
+          _(request_duration.fetch(:metric)).must_equal('otel.zipkin_exporter.request_duration')
+          _(request_duration.fetch(:value)).must_be :>, 0
+          _(request_duration.fetch(:labels)).must_equal('status' => 'unknown')
+        end
+      end
     end
   end
 end
