@@ -15,6 +15,7 @@ module OpenTelemetry
         # the unstable OpenTelemetry Metrics API. An example implementation in
         # terms of StatsD is:
         #
+        # @example
         #   module MetricsReporter
         #     def add_to_counter(metric, increment: 1, labels: {})
         #       StatsD.increment(metric, increment, labels, no_prefix: true)
