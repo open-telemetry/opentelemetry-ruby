@@ -10,26 +10,26 @@ module OpenTelemetry
       module Export
         # A SpanExporter implementation that can be used to test OpenTelemetry integration.
         #
-        # Example usage in a test suite:
+        # @example Usage in a test suite:
+        #   class MyClassTest
+        #     def setup
+        #       @tracer_provider = TracerProvider.new
+        #       # The default is `recording: true`, which is appropriate in non-test environments.
+        #       @exporter = InMemorySpanExporter.new(recording: false)
+        #       @tracer_provider.add_span_processor(SimpleSampledSpansProcessor.new(@exporter))
+        #     end
         #
-        # class MyClassTest
-        #   def setup
-        #     @tracer_provider = TracerProvider.new
-        #     # The default is `recording: true`, which is appropriate in non-test environments.
-        #     @exporter = InMemorySpanExporter.new(recording: false)
-        #     @tracer_provider.add_span_processor(SimpleSampledSpansProcessor.new(@exporter))
-        #   end
+        #     def test_finished_spans
+        #       @exporter.recording = true
+        #       @tracer_provider.tracer.in_span("span") {}
         #
-        #   def test_finished_spans
-        #     @exporter.recording = true
-        #     @tracer_provider.tracer.in_span("span") {}
+        #       spans = @exporter.finished_spans
+        #       spans.wont_be_nil
+        #       spans.size.must_equal(1)
+        #       spans[0].name.must_equal("span")
         #
-        #     spans = @exporter.finished_spans
-        #     spans.wont_be_nil
-        #     spans.size.must_equal(1)
-        #     spans[0].name.must_equal("span")
-        #
-        #     @exporter.recording = false
+        #       @exporter.recording = false
+        #     end
         #   end
         class InMemorySpanExporter
           # Controls whether or not the exporter will record spans, or discard them.
