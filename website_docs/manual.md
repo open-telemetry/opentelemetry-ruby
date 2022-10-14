@@ -1,7 +1,10 @@
 ---
 title: Manual Instrumentation
 linkTitle: Manual
-aliases: [/docs/instrumentation/ruby/manual_instrumentation, /docs/instrumentation/ruby/events, /docs/instrumentation/ruby/context-propagation]
+aliases:
+  - /docs/instrumentation/ruby/manual_instrumentation
+  - /docs/instrumentation/ruby/events
+  - /docs/instrumentation/ruby/context-propagation
 weight: 4
 ---
 
