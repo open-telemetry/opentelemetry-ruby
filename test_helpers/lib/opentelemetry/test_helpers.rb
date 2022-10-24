@@ -55,11 +55,9 @@ module OpenTelemetry
       keys_to_delete.each { |k| ENV.delete(k) }
     end
 
-    def with_ids(trace_id, span_id)
+    def with_ids(trace_id, span_id, &block)
       OpenTelemetry::Trace.stub(:generate_trace_id, trace_id) do
-        OpenTelemetry::Trace.stub(:generate_span_id, span_id) do
-          yield
-        end
+        OpenTelemetry::Trace.stub(:generate_span_id, span_id, &block)
       end
     end
 
