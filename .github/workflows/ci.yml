@@ -112,11 +112,11 @@ jobs:
         id: jruby_skip
         shell: bash
         run: |
-          echo "::set-output name=skip::false"
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp"        ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-common" ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-http"   ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-grpc"   ]] && echo "::set-output name=skip::true"
+          echo "skip=false" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp"        ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-common" ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-http"   ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-grpc"   ]] && echo "skip=true" >> $GITHUB_OUTPUT
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
           true
       - name: "Test JRuby"
@@ -129,11 +129,11 @@ jobs:
         id: truffleruby_skip
         shell: bash
         run: |
-          echo "::set-output name=skip::false"
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp"        ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-common" ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-http"   ]] && echo "::set-output name=skip::true"
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-grpc"   ]] && echo "::set-output name=skip::true"
+          echo "skip=false" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp"        ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-common" ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-http"   ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-grpc"   ]] && echo "skip=true" >> $GITHUB_OUTPUT
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
           true
       - name: "Test truffleruby"
