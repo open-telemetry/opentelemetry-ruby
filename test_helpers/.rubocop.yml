@@ -1,11 +1,12 @@
 AllCops:
   TargetRubyVersion: "2.6.0"
+  NewCops: enable
 
 Lint/UnusedMethodArgument:
   Enabled: false
-Metrics/AbcSize:
+Layout/LineLength:
   Enabled: false
-Metrics/LineLength:
+Metrics/AbcSize:
   Enabled: false
 Metrics/MethodLength:
   Max: 21
@@ -16,5 +17,5 @@ Naming/FileName:
     - "lib/opentelemetry-test-helpers.rb"
 Style/ModuleFunction:
   Enabled: false
-Style/BracesAroundHashParameters:
+Gemspec/RequireMFA:
   Enabled: false
