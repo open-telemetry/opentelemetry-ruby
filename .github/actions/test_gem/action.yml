@@ -33,7 +33,7 @@ runs:
       shell: bash
       run: |
         dir=$(find . -iname '${{ inputs.gem }}.gemspec' -exec dirname {} \;)
-        echo "::set-output name=dir::${dir}"
+        echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
 
         # We install multiple ruby versions here, and that makes for some
         # annoying bundler conflicts when we get to the JRuby step. Removing
@@ -41,16 +41,16 @@ runs:
         # of the benefits of bundler caching.
         rm -f "${dir}/Gemfile.lock"
 
-        echo "::set-output name=cache_key::mri"
+        echo "cache_key=mri" >> $GITHUB_OUTPUT
         if [[ "${{ inputs.ruby }}" == "jruby" ]]; then
-          echo "::set-output name=cache_key::jruby"
+          echo "cache_key=jruby" >> $GITHUB_OUTPUT
         elif [[ "${{ inputs.ruby }}" == "truffleruby" ]]; then
-          echo "::set-output name=cache_key::truffleruby"
+          echo "cache_key=truffleruby" >> $GITHUB_OUTPUT
         fi
 
-        echo "::set-output name=appraisals::false"
+        echo "appraisals=false" >> $GITHUB_OUTPUT
         if [[ -f "${dir}/Appraisals" ]]; then
-          echo "::set-output name=appraisals::true"
+          echo "appraisals=true" >> $GITHUB_OUTPUT
         fi
 
     # Install ruby and bundle dependencies and cache!
@@ -60,7 +60,7 @@ runs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: "${{ inputs.ruby }}"
-        working-directory: "${{ steps.setup.outputs.dir }}"
+        working-directory: "${{ steps.setup.outputs.gem_dir }}"
         bundler-cache: true
         cache-version: "v1-${{ steps.setup.outputs.cache_key }}"
 
@@ -74,14 +74,14 @@ runs:
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
       shell: bash
       run: |
-        cd "${{ steps.setup.outputs.dir }}"
+        cd "${{ steps.setup.outputs.gem_dir }}"
         bundle install
         bundle exec appraisal install
 
     - name: Test Gem
       shell: bash
       run: |
-        cd "${{ steps.setup.outputs.dir }}"
+        cd "${{ steps.setup.outputs.gem_dir }}"
 
         if [[ -f "Appraisals" ]]; then
           bundle exec appraisal rake test
@@ -114,19 +114,19 @@ runs:
       shell: bash
       if: "${{ inputs.yard == 'true' }}"
       run: |
-        cd "${{ steps.setup.outputs.dir }}"
+        cd "${{ steps.setup.outputs.gem_dir }}"
         bundle exec rake yard
 
     - name: Rubocop
       shell: bash
       if: "${{ inputs.rubocop == 'true' }}"
       run: |
-        cd "${{ steps.setup.outputs.dir }}"
+        cd "${{ steps.setup.outputs.gem_dir }}"
         bundle exec rake rubocop
 
     - name: Build Gem
       shell: bash
       if: "${{ inputs.build == 'true' }}"
       run: |
-        cd "${{ steps.setup.outputs.dir }}"
+        cd "${{ steps.setup.outputs.gem_dir }}"
         gem build ${{ inputs.gem }}.gemspec
