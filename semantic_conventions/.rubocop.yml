@@ -1,5 +1,6 @@
 AllCops:
   TargetRubyVersion: '2.6.0'
+  NewCops: enable
 
 Bundler/OrderedGems:
   Exclude:
@@ -8,7 +9,7 @@ Lint/UnusedMethodArgument:
   Enabled: false
 Metrics/AbcSize:
   Enabled: false
-Metrics/LineLength:
+Layout/LineLength:
   Enabled: false
 Metrics/MethodLength:
   Max: 20
@@ -33,5 +34,7 @@ Layout/EmptyLinesAroundModuleBody:
   Enabled: false
 Layout/TrailingWhitespace:
   Enabled: false
-Layout/TrailingBlankLines:
-  Enabled: False
+Layout/TrailingEmptyLines:
+  Enabled: false
+Gemspec/RequireMFA:
+  Enabled: false
