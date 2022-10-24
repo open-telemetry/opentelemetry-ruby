@@ -51,7 +51,7 @@ task :generate do
         -f /source code
         --template /templates/semantic_conventions.j2
         --output /output/opentelemetry/semantic_conventions/#{kind}.rb
-        -Dmodule=#{kind[0].upcase}#{kind[1..-1]}
+        -Dmodule=#{kind[0].upcase}#{kind[1..]}
       ]
 
       puts "Running: #{cmd.join(' ')}"
