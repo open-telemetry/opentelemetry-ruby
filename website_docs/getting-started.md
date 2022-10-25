@@ -97,8 +97,8 @@ provides a few more features that will allow you gain even deeper insights!
 
 [auto]: https://github.com/open-telemetry/opentelemetry-ruby#instrumentation-libraries
 [config]: {{< relref "automatic#configuring-specific-instrumentation-libraries" >}}
-[Context propagation]: ../context-propagation
+[Context propagation]: ../manual#context-propagation
 [manual]: ../manual
 [repository]: https://github.com/open-telemetry/opentelemetry-ruby
 [sdk-env]: {{< relref "/docs/reference/specification/protocol/exporter#configuration-options" >}}
-[Span events]: ../events
+[Span events]: ../manual#span-events
