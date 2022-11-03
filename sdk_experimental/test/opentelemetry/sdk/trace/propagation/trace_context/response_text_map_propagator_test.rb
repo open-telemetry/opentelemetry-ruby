@@ -11,12 +11,7 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::ResponseTextMapPropaga
   let(:propagator) do
     OpenTelemetry::Trace::Propagation::TraceContext::ResponseTextMapPropagator.new
   end
-  let(:valid_traceresponse_header) do
-    '00-000000000000000000000000000000AA-00000000000000ea-01'
-  end
-  let(:invalid_traceresponse_header) do
-    'FF-000000000000000000000000000000AA-00000000000000ea-01'
-  end
+
   let(:carrier) do
     {
       traceresponse_key => valid_traceresponse_header

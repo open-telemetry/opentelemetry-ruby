@@ -31,8 +31,8 @@ module OpenTelemetry
             nil
           end
 
-          # Extract trace context from the supplied carrier.
-          # If extraction fails, the original context will be returned
+          # Extract trace context from the supplied carrier. This is a no-op for
+          # this propagator, and will return the provided context.
           #
           # @param [Carrier] carrier The carrier to get the header from
           # @param [optional Context] context Context to be updated with the trace context
