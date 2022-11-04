@@ -41,8 +41,7 @@ module OpenTelemetry
           #   will be used to read the header from the carrier, otherwise the default
           #   text map getter will be used.
           #
-          # @return [Context] context updated with extracted baggage, or the original context
-          #   if extraction fails
+          # @return [Context] the original context.
           def extract(carrier, context: Context.current, getter: Context::Propagation.text_map_getter)
             context
           end
