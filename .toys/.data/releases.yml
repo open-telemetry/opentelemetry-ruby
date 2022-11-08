@@ -45,6 +45,10 @@ gems:
     directory: sdk
     version_constant: [OpenTelemetry, SDK, VERSION]
 
+  - name: opentelemetry-sdk-experimental
+    directory: sdk_experimental
+    version_constant: [OpenTelemetry, SDK, Experimental, VERSION]
+
   - name: opentelemetry-common
     directory: common
     version_rb_path: lib/opentelemetry/common/version.rb
