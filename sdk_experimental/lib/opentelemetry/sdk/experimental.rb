@@ -14,3 +14,4 @@ module OpenTelemetry
 end
 
 require 'opentelemetry/sdk/experimental/samplers_patch'
+require 'opentelemetry/sdk/trace/propagation/trace_context/response_text_map_propagator'
