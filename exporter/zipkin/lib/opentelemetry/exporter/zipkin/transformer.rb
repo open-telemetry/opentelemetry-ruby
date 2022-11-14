@@ -25,7 +25,7 @@ module OpenTelemetry
 
         SERVICE_NAME_ATTRIBUTE_KEY = 'service.name'
         ERROR_TAG_KEY = 'error'
-        STATUS_CODE_NAME = 'otel.status_code'
+        STATUS_CODE_NAME = SemanticConventions::Common::OTEL_STATUS_CODE
         STATUS_ERROR = 'ERROR'
         STATUS_OK = 'OK'
         ATTRIBUTE_PEER_SERVICE = 'peer.service'
@@ -71,11 +71,11 @@ module OpenTelemetry
         end
 
         def add_scope_tags(span_data, tags)
-          tags['otel.scope.name'] = span_data.instrumentation_scope.name
-          tags['otel.library.name'] = span_data.instrumentation_scope.name
+          tags[SemanticConventions::Common::OTEL_SCOPE_NAME] = span_data.instrumentation_scope.name
+          tags[SemanticConventions::Common::OTEL_LIBRARY_NAME] = span_data.instrumentation_scope.name
 
-          tags['otel.scope.version'] = span_data.instrumentation_scope.version
-          tags['otel.library.version'] = span_data.instrumentation_scope.version
+          tags[SemanticConventions::Common::OTEL_SCOPE_VERSION] = span_data.instrumentation_scope.version
+          tags[SemanticConventions::Common::OTEL_LIBRARY_VERSION] = span_data.instrumentation_scope.version
         end
 
         def add_status_tags(span_data, tags)
@@ -95,9 +95,9 @@ module OpenTelemetry
           dropped_attributes_count = span_data.total_recorded_attributes - span_data.attributes&.size.to_i
           dropped_events_count = span_data.total_recorded_events - span_data.events&.size.to_i
           dropped_links_count = span_data.total_recorded_links - span_data.links&.size.to_i
-          tags['otel.dropped_attributes_count'] = dropped_attributes_count.to_s if dropped_attributes_count.positive?
-          tags['otel.dropped_events_count'] = dropped_events_count.to_s if dropped_events_count.positive?
-          tags['otel.dropped_links_count'] = dropped_links_count.to_s if dropped_links_count.positive?
+          tags[SemanticConventions::Common::OTEL_DROPPED_ATTRIBUTES_COUNT] = dropped_attributes_count.to_s if dropped_attributes_count.positive?
+          tags[SemanticConventions::Common::OTEL_DROPPED_EVENTS_COUNT] = dropped_events_count.to_s if dropped_events_count.positive?
+          tags[SemanticConventions::Common::OTEL_DROPPED_LINKS_COUNT] = dropped_links_count.to_s if dropped_links_count.positive?
 
           zipkin_span['tags'] = tags unless tags.empty?
           zipkin_span['kind'] = KIND_MAP[span_data.kind] unless span_data.kind.nil?

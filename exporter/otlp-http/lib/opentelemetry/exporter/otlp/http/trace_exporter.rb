@@ -168,7 +168,7 @@ module OpenTelemetry
                 FAILURE
               when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
                 log_status(response.body)
-                @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response.code })
+                @metrics_reporter.add_to_counter(SemanticConventions::Common::OTEL_OTLP_EXPORTER_FAILURE, labels: { 'reason' => response.code })
                 FAILURE
               when Net::HTTPRedirection
                 @http.finish
@@ -198,7 +198,7 @@ module OpenTelemetry
               return FAILURE
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#send_bytes')
-              @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => e.class.to_s })
+              @metrics_reporter.add_to_counter(SemanticConventions::Common::OTEL_OTLP_EXPORTER_FAILURE, labels: { 'reason' => e.class.to_s })
               return FAILURE
             end
           ensure
@@ -230,14 +230,14 @@ module OpenTelemetry
             ensure
               stop = Process.clock_gettime(Process::CLOCK_MONOTONIC)
               duration_ms = 1000.0 * (stop - start)
-              @metrics_reporter.record_value('otel.otlp_exporter.request_duration',
+              @metrics_reporter.record_value(SemanticConventions::Common::OTEL_OTLP_EXPORTER_REQUEST_DURATION,
                                              value: duration_ms,
                                              labels: { 'status' => response&.code || 'unknown' })
             end
           end
 
           def backoff?(retry_after: nil, retry_count:, reason:)
-            @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => reason })
+            @metrics_reporter.add_to_counter(SemanticConventions::Common::OTEL_OTLP_EXPORTER_FAILURE, labels: { 'reason' => reason })
             return false if retry_count > RETRY_COUNT
 
             sleep_interval = nil

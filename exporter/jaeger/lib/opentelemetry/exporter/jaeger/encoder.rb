@@ -77,9 +77,9 @@ module OpenTelemetry
           dropped_events_count = span_data.total_recorded_events - span_data.events&.size.to_i
           dropped_links_count = span_data.total_recorded_links - span_data.links&.size.to_i
 
-          tags << encoded_tag('otel.dropped_attributes_count', dropped_attributes_count) if dropped_attributes_count.positive?
-          tags << encoded_tag('otel.dropped_events_count', dropped_events_count) if dropped_events_count.positive?
-          tags << encoded_tag('otel.dropped_links_count', dropped_links_count) if dropped_links_count.positive?
+          tags << encoded_tag(SemanticConventions::Common::OTEL_DROPPED_ATTRIBUTES_COUNT, dropped_attributes_count) if dropped_attributes_count.positive?
+          tags << encoded_tag(SemanticConventions::Common::OTEL_DROPPED_EVENTS_COUNT, dropped_events_count) if dropped_events_count.positive?
+          tags << encoded_tag(SemanticConventions::Common::OTEL_DROPPED_LINKS_COUNT, dropped_links_count) if dropped_links_count.positive?
 
           Thrift::Span.new(
             'traceIdLow' => int64(span_data.trace_id[8, 8]),
@@ -146,13 +146,13 @@ module OpenTelemetry
 
           tags = []
           if instrumentation_scope.name
-            tags << encoded_tag('otel.scope.name', instrumentation_scope.name)
-            tags << encoded_tag('otel.library.name', instrumentation_scope.name)
+            tags << encoded_tag(SemanticConventions::Common::OTEL_SCOPE_NAME, instrumentation_scope.name)
+            tags << encoded_tag(SemanticConventions::Common::OTEL_LIBRARY_NAME, instrumentation_scope.name)
           end
 
           if instrumentation_scope.version
-            tags << encoded_tag('otel.scope.version', instrumentation_scope.version)
-            tags << encoded_tag('otel.library.version', instrumentation_scope.version)
+            tags << encoded_tag(SemanticConventions::Common::OTEL_SCOPE_VERSION, instrumentation_scope.version)
+            tags << encoded_tag(SemanticConventions::Common::OTEL_LIBRARY_VERSION, instrumentation_scope.version)
           end
 
           tags

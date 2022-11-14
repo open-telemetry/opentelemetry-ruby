@@ -20,6 +20,7 @@ end
 
 $LOAD_PATH.push(File.dirname(__FILE__) + '/../../../thrift/gen-rb')
 
+require 'opentelemetry-semantic_conventions'
 require 'opentelemetry/sdk'
 require 'opentelemetry/common'
 require 'opentelemetry/exporter/zipkin/transformer'
