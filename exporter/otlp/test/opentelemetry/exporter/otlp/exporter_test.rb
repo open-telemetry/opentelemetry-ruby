@@ -10,12 +10,13 @@ require 'google/protobuf/well_known_types'
 describe OpenTelemetry::Exporter::OTLP::Exporter do
   SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
   FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
+  VERSION = OpenTelemetry::Exporter::OTLP::VERSION
 
   describe '#initialize' do
     it 'initializes with defaults' do
       exp = OpenTelemetry::Exporter::OTLP::Exporter.new
       _(exp).wont_be_nil
-      _(exp.instance_variable_get(:@headers)).must_be_empty
+      _(exp.instance_variable_get(:@headers)).must_equal('User-Agent' => "OTel OTLP Exporter Ruby/#{VERSION}")
       _(exp.instance_variable_get(:@timeout)).must_equal 10.0
       _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
       _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
@@ -72,7 +73,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                                                 'OTEL_EXPORTER_OTLP_TIMEOUT' => '11') do
         OpenTelemetry::Exporter::OTLP::Exporter.new
       end
-      _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd')
+      _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd', 'User-Agent' => "OTel OTLP Exporter Ruby/#{VERSION}")
       _(exp.instance_variable_get(:@timeout)).must_equal 11.0
       _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
       _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
@@ -98,7 +99,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                                                     ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE,
                                                     timeout: 12)
       end
-      _(exp.instance_variable_get(:@headers)).must_equal('x' => 'y')
+      _(exp.instance_variable_get(:@headers)).must_equal('x' => 'y', 'User-Agent' => "OTel OTLP Exporter Ruby/#{VERSION}")
       _(exp.instance_variable_get(:@timeout)).must_equal 12.0
       _(exp.instance_variable_get(:@path)).must_equal ''
       _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
@@ -130,10 +131,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
 
     it 'restricts explicit headers to a String or Hash' do
       exp = OpenTelemetry::Exporter::OTLP::Exporter.new(headers: { 'token' => 'über' })
-      _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über')
+      _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über', 'User-Agent' => "OTel OTLP Exporter Ruby/#{VERSION}")
 
       exp = OpenTelemetry::Exporter::OTLP::Exporter.new(headers: 'token=%C3%BCber')
-      _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über')
+      _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über', 'User-Agent' => "OTel OTLP Exporter Ruby/#{VERSION}")
 
       error = _() {
         exp = OpenTelemetry::Exporter::OTLP::Exporter.new(headers: Object.new)
@@ -147,53 +148,53 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'a=b,c=d==,e=f') do
           OpenTelemetry::Exporter::OTLP::Exporter.new
         end
-        _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd==', 'e' => 'f')
+        _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd==', 'e' => 'f', 'User-Agent' => "OTel OTLP Exporter Ruby/#{VERSION}")
 
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'a=b,c=d==,e=f') do
           OpenTelemetry::Exporter::OTLP::Exporter.new
         end
-        _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd==', 'e' => 'f')
+        _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd==', 'e' => 'f', 'User-Agent' => "OTel OTLP Exporter Ruby/#{VERSION}")
       end
 
       it 'trims any leading or trailing whitespaces in keys and values' do
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'a =  b  ,c=d , e=f') do
           OpenTelemetry::Exporter::OTLP::Exporter.new
         end
-        _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd', 'e' => 'f')
+        _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd', 'e' => 'f', 'User-Agent' => "OTel OTLP Exporter Ruby/#{VERSION}")
 
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'a =  b  ,c=d , e=f') do
           OpenTelemetry::Exporter::OTLP::Exporter.new
         end
-        _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd', 'e' => 'f')
+        _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd', 'e' => 'f', 'User-Agent' => "OTel OTLP Exporter Ruby/#{VERSION}")
       end
 
       it 'decodes values as URL encoded UTF-8 strings' do
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'token=%C3%BCber') do
           OpenTelemetry::Exporter::OTLP::Exporter.new
         end
-        _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über')
+        _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über', 'User-Agent' => "OTel OTLP Exporter Ruby/#{VERSION}")
 
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => '%C3%BCber=token') do
           OpenTelemetry::Exporter::OTLP::Exporter.new
         end
-        _(exp.instance_variable_get(:@headers)).must_equal('über' => 'token')
+        _(exp.instance_variable_get(:@headers)).must_equal('über' => 'token', 'User-Agent' => "OTel OTLP Exporter Ruby/#{VERSION}")
 
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'token=%C3%BCber') do
           OpenTelemetry::Exporter::OTLP::Exporter.new
         end
-        _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über')
+        _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über', 'User-Agent' => "OTel OTLP Exporter Ruby/#{VERSION}")
 
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => '%C3%BCber=token') do
           OpenTelemetry::Exporter::OTLP::Exporter.new
         end
-        _(exp.instance_variable_get(:@headers)).must_equal('über' => 'token')
+        _(exp.instance_variable_get(:@headers)).must_equal('über' => 'token', 'User-Agent' => "OTel OTLP Exporter Ruby/#{VERSION}")
       end
 
       it 'prefers TRACES specific variable' do
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'a=b,c=d==,e=f', 'OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'token=%C3%BCber') do
           OpenTelemetry::Exporter::OTLP::Exporter.new
         end
-        _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über')
+        _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über', 'User-Agent' => "OTel OTLP Exporter Ruby/#{VERSION}")
       end
 
       it 'fails fast when header values are missing' do

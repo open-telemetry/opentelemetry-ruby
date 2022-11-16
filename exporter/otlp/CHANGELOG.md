@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.24.1 / 2022-11-16
+
+* FIXED: Emit User-Agent header in OTLP exporter (#1385)
+
 ### v0.24.0 / 2022-09-14
 
 * ADDED: Support InstrumentationScope, and update OTLP proto to 0.18.0 

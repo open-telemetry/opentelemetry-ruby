@@ -70,6 +70,7 @@ module OpenTelemetry
                      else
                        raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS
                      end
+          @headers['User-Agent'] = "OTel OTLP Exporter Ruby/#{OpenTelemetry::Exporter::OTLP::VERSION}"
           @timeout = timeout.to_f
           @compression = compression
           @metrics_reporter = metrics_reporter || OpenTelemetry::SDK::Trace::Export::MetricsReporter
