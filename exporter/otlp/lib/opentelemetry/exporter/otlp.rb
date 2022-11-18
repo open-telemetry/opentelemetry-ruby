@@ -6,6 +6,7 @@
 
 require 'opentelemetry/exporter/otlp/exporter'
 require 'opentelemetry/exporter/otlp/version'
+require 'opentelemetry/exporter/otlp/attributes'
 
 # OpenTelemetry is an open source observability framework, providing a
 # general-purpose API, SDK, and related tools required for the instrumentation

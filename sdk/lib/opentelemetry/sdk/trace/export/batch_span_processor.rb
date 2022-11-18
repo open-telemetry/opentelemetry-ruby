@@ -26,6 +26,24 @@ module OpenTelemetry
         # worker thread that exports the spans to wake up and start a new
         # export cycle.
         class BatchSpanProcessor # rubocop:disable Metrics/ClassLength
+          # A comparison between the actual size of the Span and the BatchSpanProcessor @max_queue_size
+          OTEL_BSP_BUFFER_UTILIZATION = 'otel.bsp.buffer_utilization'
+
+          # A count of spans that were permanently dropped
+          OTEL_BSP_DROPPED_SPANS = 'otel.bsp.dropped_spans'
+
+          # A count of errors in the BatchSpanProcessor
+          OTEL_BSP_ERROR = 'otel.bsp.error'
+
+          # A count of failed Span exports in the BatchSpanProcessor
+          OTEL_BSP_EXPORT_FAILURE = 'otel.bsp.export.failure'
+
+          # A count of sucessful Span exports in the BatchSpanProcessor
+          OTEL_BSP_EXPORT_SUCCESS = 'otel.bsp.export.success'
+
+          # A count of the total number of exported Spans in the BatchSpanProcessor
+          OTEL_BSP_EXPORTED_SPANS = 'otel.bsp.exported_spans'
+
           # Returns a new instance of the {BatchSpanProcessor}.
           #
           # @param [SpanExporter] exporter the (duck type) SpanExporter to where the
@@ -165,7 +183,7 @@ module OpenTelemetry
                 fetch_batch
               end
 
-              @metrics_reporter.observe_value(SemanticConventions::Common::OTEL_BSP_BUFFER_UTILIZATION, value: spans.size / max_queue_size.to_f)
+              @metrics_reporter.observe_value(OTEL_BSP_BUFFER_UTILIZATION, value: spans.size / max_queue_size.to_f)
 
               export_batch(batch)
             end
@@ -179,7 +197,7 @@ module OpenTelemetry
             spans.clear
             @thread = restart_thread ? Thread.new { work } : nil
           rescue ThreadError => e
-            @metrics_reporter.add_to_counter(SemanticConventions::Common::OTEL_BSP_ERROR, labels: { 'reason' => 'ThreadError' })
+            @metrics_reporter.add_to_counter(OTEL_BSP_ERROR, labels: { 'reason' => 'ThreadError' })
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error in BatchSpanProcessor#reset_on_fork')
           end
 
@@ -189,23 +207,23 @@ module OpenTelemetry
             result_code
           rescue StandardError => e
             report_result(FAILURE, batch)
-            @metrics_reporter.add_to_counter(SemanticConventions::Common::OTEL_BSP_ERROR, labels: { 'reason' => e.class.to_s })
+            @metrics_reporter.add_to_counter(OTEL_BSP_ERROR, labels: { 'reason' => e.class.to_s })
             FAILURE
           end
 
           def report_result(result_code, batch)
             if result_code == SUCCESS
-              @metrics_reporter.add_to_counter(SemanticConventions::Common::OTEL_BSP_EXPORT_SUCCESS)
-              @metrics_reporter.add_to_counter(SemanticConventions::Common::OTEL_BSP_EXPORTED_SPANS, increment: batch.size)
+              @metrics_reporter.add_to_counter(OTEL_BSP_EXPORT_SUCCESS)
+              @metrics_reporter.add_to_counter(OTEL_BSP_EXPORTED_SPANS, increment: batch.size)
             else
               OpenTelemetry.handle_error(exception: ExportError.new("Unable to export #{batch.size} spans"))
-              @metrics_reporter.add_to_counter(SemanticConventions::Common::OTEL_BSP_EXPORT_FAILURE)
+              @metrics_reporter.add_to_counter(OTEL_BSP_EXPORT_FAILURE)
               report_dropped_spans(batch.size, reason: 'export-failure')
             end
           end
 
           def report_dropped_spans(count, reason:)
-            @metrics_reporter.add_to_counter(SemanticConventions::Common::OTEL_BSP_DROPPED_SPANS, increment: count, labels: { 'reason' => reason })
+            @metrics_reporter.add_to_counter(OTEL_BSP_DROPPED_SPANS, increment: count, labels: { 'reason' => reason })
           end
 
           def fetch_batch
