@@ -1,0 +1,12 @@
+[package]
+name = "opentelemetry_sdk_rust"
+version = "0.0.1"
+authors = ["OpenTelemetry Authors <cncf-opentelemetry-contributors@lists.cncf.io>"]
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+magnus = "0.3"
+opentelemetry = "0.18.0"
