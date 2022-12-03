@@ -1,4 +1,4 @@
-use magnus::{define_class, function, method, prelude::*, scan_args::scan_args, Error, Value};
+use magnus::{define_module, function, method, prelude::*, scan_args::scan_args, Error, Value};
 use opentelemetry::trace::TracerProvider;
 
 #[magnus::wrap(class = "OpenTelemetry::SDK::Trace::TracerProvider")]
@@ -41,12 +41,15 @@ struct Tracer(opentelemetry::global::BoxedTracer);
 
 #[magnus::init]
 fn init() -> Result<(), Error> {
-    let tracer_provider_class = define_class(
-        "OpenTelemetry::SDK::Trace::TracerProvider",
-        Default::default(),
-    )?;
+    let module = define_module("OpenTelemetry")?
+        .define_module("SDK")?
+        .define_module("Trace")?;
+
+    let tracer_provider_class = module.define_class("TracerProvider", Default::default())?;
     tracer_provider_class
         .define_singleton_method("new", function!(WrappedTracerProvider::new, 0))?;
     tracer_provider_class.define_method("tracer", method!(WrappedTracerProvider::tracer, -1))?;
+
+    let _tracer_class = module.define_class("Tracer", Default::default())?;
     Ok(())
 }
