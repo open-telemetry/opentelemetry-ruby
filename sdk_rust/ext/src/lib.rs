@@ -12,27 +12,15 @@ impl WrappedTracerProvider {
     fn tracer(&self, args: &[Value]) -> Result<Tracer, Error> {
         let args = scan_args::<(), (Option<String>, Option<String>), (), (), (), ()>(args)?;
         let (name, version) = args.optional;
-        match (name, version) {
-            (Some(n), Some(v)) => {
-                let version = Box::leak(v.into_boxed_str());
-                let tracer = self.0.versioned_tracer(n, Some(version), Option::None);
-                Ok(Tracer(tracer))
-            }
-            (Some(n), None) => {
-                let tracer = self.0.versioned_tracer(n, Option::None, Option::None);
-                Ok(Tracer(tracer))
-            }
-            (None, None) => {
-                let tracer = self.0.versioned_tracer("", Option::None, Option::None);
-                Ok(Tracer(tracer))
-            }
-            _ => Err(Error::runtime_error("version supplied without name")),
-        }
-        // Box::leak(s.into_boxed_str())
-        // let tracer = self
-        //     .0
-        //     .versioned_tracer(name.unwrap(), version.as_deref(), Option::None);
-        // Ok(Tracer(tracer))
+        let tracer = if let Some(v) = version {
+            let version = Box::leak(v.into_boxed_str());
+            self.0
+                .versioned_tracer(name.unwrap(), Some(version), Option::None)
+        } else {
+            self.0
+                .versioned_tracer(name.unwrap(), Option::None, Option::None)
+        };
+        Ok(Tracer(tracer))
     }
 }
 
