@@ -19,12 +19,10 @@ Gem::Specification.new do |spec|
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby'
   spec.license     = 'Apache-2.0'
 
-  spec.files = ::Dir.glob('lib/**/*.rb') +
-               ::Dir.glob('*.md') +
-               ['LICENSE']
+  spec.files = ::Dir['{lib,ext}/**/*', '*.md', 'LICENSE', 'Cargo.*']
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.6.0'
-  spec.extensions = ['ext/opentelemetry_sdk_rust/extconf.rb']
+  spec.extensions = ['ext/extconf.rb']
 
   spec.add_dependency 'opentelemetry-api', '~> 1.1'
   spec.add_dependency 'opentelemetry-common', '~> 0.19.3'
@@ -33,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rb_sys', '~> 0.9.44'
 
   # actually a build time dependency, but that's not an option.
-  spec.add_runtime_dependency 'rake', '~> 12.0'
+  spec.add_runtime_dependency 'rake', '~> 13.0'
 
   # only needed when developing or packaging your gem
   spec.add_development_dependency 'rake-compiler', '~> 1.2.0'

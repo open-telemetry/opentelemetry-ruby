@@ -5,8 +5,9 @@ require "rake/extensiontask"
 
 task default: :test
 
-Rake::ExtensionTask.new("opentelemetry_sdk_rust") do |c|
+Rake::ExtensionTask.new("ext") do |c|
   c.lib_dir = "lib/opentelemetry_sdk_rust"
+  c.ext_dir = "ext"
 end
 
 task :dev do

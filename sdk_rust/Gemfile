@@ -6,12 +6,12 @@
 
 source 'https://rubygems.org'
 
-# gem "rb_sys", "~> 0.9.44"
-# gem "rake"
-# gem "rake-compiler", "1.2.0"
-# gem "test-unit"
-
 gemspec
+
+gem "rake", "~> 13.0"
+gem "rake-compiler", "~> 1.2"
+gem "rb_sys", "~> 0.9"
+gem "test-unit"
 
 group :test, :development do
   gem 'opentelemetry-api', path: '../api'

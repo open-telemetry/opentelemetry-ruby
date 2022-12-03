@@ -8,6 +8,9 @@
 **/.bundle
 **/.DS_Store
 **/.byebug_history
+**/tmp/**/*
+**/target/**/*
+**/*.bundle
 
 
 # Appraisals

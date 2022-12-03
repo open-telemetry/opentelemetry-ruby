@@ -6,4 +6,4 @@
 
 require 'opentelemetry/sdk'
 
-require_relative "opentelemetry_sdk_rust/opentelemetry_sdk_rust"
+require_relative "opentelemetry_sdk_rust/ext"
