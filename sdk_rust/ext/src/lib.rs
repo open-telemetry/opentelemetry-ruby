@@ -1,5 +1,6 @@
 use magnus::{define_module, Error, Module};
 
+mod span;
 mod tracer;
 mod tracer_provider;
 
@@ -11,6 +12,7 @@ fn init() -> Result<(), Error> {
 
     tracer_provider::init(module)?;
     tracer::init(module)?;
+    span::init(module)?;
 
     Ok(())
 }
