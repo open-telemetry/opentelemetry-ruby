@@ -1,16 +1,16 @@
 use crate::tracer::Tracer;
 use magnus::{function, method, prelude::*, scan_args::scan_args, Error, Module, RModule, Value};
-use opentelemetry::trace::TracerProvider;
 
 #[magnus::wrap(class = "OpenTelemetry::SDK::Trace::TracerProvider")]
-struct WrappedTracerProvider(opentelemetry::global::GlobalTracerProvider);
+struct TracerProvider(opentelemetry::global::GlobalTracerProvider);
 
-impl WrappedTracerProvider {
+impl TracerProvider {
     fn new() -> Self {
         Self(opentelemetry::global::tracer_provider())
     }
 
     fn tracer(&self, args: &[Value]) -> Result<Tracer, Error> {
+        use opentelemetry::trace::TracerProvider;
         let args = scan_args::<(), (Option<String>, Option<String>), (), (), (), ()>(args)?;
         let (name, version) = args.optional;
         let tracer = if let Some(v) = version {
@@ -27,7 +27,7 @@ impl WrappedTracerProvider {
 
 pub(crate) fn init(module: RModule) -> Result<(), Error> {
     let class = module.define_class("TracerProvider", Default::default())?;
-    class.define_singleton_method("new", function!(WrappedTracerProvider::new, 0))?;
-    class.define_method("tracer", method!(WrappedTracerProvider::tracer, -1))?;
+    class.define_singleton_method("new", function!(TracerProvider::new, 0))?;
+    class.define_method("tracer", method!(TracerProvider::tracer, -1))?;
     Ok(())
 }
