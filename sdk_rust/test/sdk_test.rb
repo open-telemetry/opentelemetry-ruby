@@ -8,5 +8,6 @@ class SDKTest < Test::Unit::TestCase
     assert { !OpenTelemetry::SDK::Trace::TracerProvider.new.nil? }
     assert { !OpenTelemetry::SDK::Trace::TracerProvider.new.tracer("foo").nil? }
     assert { !OpenTelemetry::SDK::Trace::TracerProvider.new.tracer("foo", "1.2.3").nil? }
+    assert_nothing_raised { OpenTelemetry::SDK::Trace::TracerProvider.new.tracer("foo", "1.2.3").start_span("bar").finish }
   end
 end

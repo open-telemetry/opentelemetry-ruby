@@ -13,7 +13,7 @@ impl Tracer {
         Self(tracer)
     }
 
-    pub(crate) fn start_span(&self, args: &[Value]) -> Result<Span, Error> {
+    fn start_span(&self, args: &[Value]) -> Result<Span, Error> {
         use opentelemetry::trace::Tracer;
         let args = scan_args::<(String,), (), (), (), _, ()>(args)?;
         let (name,) = args.required;
