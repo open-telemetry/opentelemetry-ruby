@@ -1,5 +1,10 @@
 use crate::tracer::Tracer;
-use magnus::{function, method, prelude::*, scan_args::scan_args, Error, Module, RModule, Value};
+use magnus::{
+    function, method,
+    prelude::*,
+    scan_args::{get_kwargs, scan_args},
+    Error, Module, RModule, Value,
+};
 
 #[magnus::wrap(class = "OpenTelemetry::SDK::Trace::TracerProvider")]
 struct TracerProvider(opentelemetry::global::GlobalTracerProvider);
@@ -23,11 +28,22 @@ impl TracerProvider {
         };
         Ok(Tracer::new(tracer))
     }
+
+    fn shutdown(&self, args: &[Value]) -> Result<(), Error> {
+        let args = scan_args::<(), (), (), (), _, ()>(args)?;
+        let args = get_kwargs(args.keywords, &[], &["timeout"])?;
+        let _: () = args.required;
+        let (_timeout,): (Option<Value>,) = args.optional;
+        let _: () = args.splat;
+        opentelemetry::global::shutdown_tracer_provider();
+        Ok(())
+    }
 }
 
 pub(crate) fn init(module: RModule) -> Result<(), Error> {
     let class = module.define_class("TracerProvider", Default::default())?;
     class.define_singleton_method("new", function!(TracerProvider::new, 0))?;
     class.define_method("tracer", method!(TracerProvider::tracer, -1))?;
+    class.define_method("shutdown", method!(TracerProvider::shutdown, -1))?;
     Ok(())
 }
