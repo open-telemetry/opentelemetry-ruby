@@ -19,4 +19,16 @@ class SDKTest < Test::Unit::TestCase
       tp.shutdown
     end
   end
+
+  def test_sdk_configure_with_env
+    assert_nothing_raised do
+      ENV['OTEL_EXPORTER_OTLP_ENDPOINT'] = 'http://localhost:4317'
+      ENV['OTEL_TRACES_EXPORTER'] = 'console,otlp'
+
+      OpenTelemetry::SDK.configure
+
+      ENV.delete('OTEL_EXPORTER_OTLP_ENDPOINT')
+      ENV.delete('OTEL_TRACES_EXPORTER')
+    end
+  end
 end

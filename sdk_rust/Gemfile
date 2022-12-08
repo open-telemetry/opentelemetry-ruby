@@ -14,6 +14,7 @@ gem "rb_sys", "~> 0.9"
 gem "test-unit"
 
 group :test, :development do
+  gem 'pry'
   gem 'opentelemetry-api', path: '../api'
   gem 'opentelemetry-common', path: '../common'
   gem 'opentelemetry-registry', path: '../registry'

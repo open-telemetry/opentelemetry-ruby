@@ -8,6 +8,9 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-opentelemetry = "0.18.0"
-magnus = { git = "https://github.com/matsadler/magnus", features = ["rb-sys-interop"] }
-rb-sys = "~0.9.44"
+opentelemetry = { version = "0.18.0", features = ["rt-tokio"] }
+magnus = { version = "0.4.3", features = ["rb-sys-interop"] }
+rb-sys = "~0.9.46"
+opentelemetry-otlp = "0.11.0"
+tokio = { version = "1.23.0", features = [ "full" ] }
+lazy_static = "1.4.0"
