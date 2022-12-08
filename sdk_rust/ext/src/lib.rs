@@ -26,7 +26,7 @@ fn configure() -> Result<(), Error> {
     let mut tracer_provider_builder =
         sdk::trace::Builder::default().with_config(opentelemetry::sdk::trace::config());
 
-    let env_exporters = env!("OTEL_TRACES_EXPORTER");
+    let env_exporters = std::env::var("OTEL_TRACES_EXPORTER").unwrap_or("".to_owned());
     for exp in env_exporters.split(",") {
         match exp {
             "otlp" => {
