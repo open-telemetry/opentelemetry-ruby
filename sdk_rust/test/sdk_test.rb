@@ -15,7 +15,7 @@ class SDKTest < Test::Unit::TestCase
     assert_nothing_raised do
       OpenTelemetry::SDK.configure
       tp = OpenTelemetry::SDK::Trace::TracerProvider.new
-      tp.tracer("foo", "1.2.3").start_span("bar").finish
+      tp.tracer("foo", "1.2.3").start_span("bar", attributes: {"answer" => 42, "true" => true, "false" => false, "float" => 1.0, "stringy" => "mcstringface"}).finish
       tp.shutdown
     end
   end
