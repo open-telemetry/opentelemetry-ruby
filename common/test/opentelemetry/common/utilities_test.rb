@@ -23,7 +23,7 @@ describe OpenTelemetry::Common::Utilities do
     end
 
     it 'returns false outside an untraced block' do
-      common_utils.untraced { }
+      common_utils.untraced {}
       assert_equal(false, common_utils.untraced?)
     end
   end
