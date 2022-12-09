@@ -17,6 +17,17 @@ describe OpenTelemetry::Common::Utilities do
 
   let(:common_utils) { OpenTelemetry::Common::Utilities }
 
+  describe '#untraced?' do
+    it 'returns true within an untraced block' do
+      assert_equal(true, common_utils.untraced { common_utils.untraced? })
+    end
+
+    it 'returns false outside an untraced block' do
+      common_utils.untraced { }
+      assert_equal(false, common_utils.untraced?)
+    end
+  end
+
   describe '#utf8_encode' do
     it 'happy path' do
       str = 'pristine ￢'.encode(Encoding::UTF_8)

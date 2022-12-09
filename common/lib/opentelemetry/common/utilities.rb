@@ -10,6 +10,9 @@ module OpenTelemetry
     module Utilities
       extend self
 
+      UNTRACED_KEY = Context.create_key('untraced')
+      private_constant :UNTRACED_KEY
+
       STRING_PLACEHOLDER = ''.encode(::Encoding::UTF_8).freeze
 
       # Returns nil if timeout is nil, 0 if timeout has expired,
@@ -83,8 +86,17 @@ module OpenTelemetry
         end
       end
 
+      # Disables tracing within the provided block.
       def untraced
-        OpenTelemetry::Trace.with_span(OpenTelemetry::Trace.non_recording_span(OpenTelemetry::Trace::SpanContext.new)) { yield } # rubocop:disable Style/ExplicitBlockArgument
+        Context.with_value(UNTRACED_KEY, true) do |ctx, _|
+          yield ctx
+        end
+      end
+
+      # Detects whether the current context has been set to disable tracing.
+      def untraced?(context = nil)
+        context ||= Context.current
+        !!context.value(UNTRACED_KEY)
       end
 
       # Returns a URL string with userinfo removed.
