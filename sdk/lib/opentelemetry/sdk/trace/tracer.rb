@@ -29,9 +29,7 @@ module OpenTelemetry
 
         def start_span(name, with_parent: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
           with_parent ||= Context.current
-          if Common::Utilities.untraced?(with_parent)
-            return super(name, with_parent: with_parent, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind)
-          end
+          return super(name, with_parent: with_parent, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind) if Common::Utilities.untraced?(with_parent)
 
           name ||= 'empty'
           kind ||= :internal
