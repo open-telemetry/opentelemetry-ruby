@@ -1,6 +1,6 @@
-use crate::span::Span;
+use crate::span::{magnus_value_to_otel, Span};
 use magnus::{
-    class, method,
+    method,
     r_hash::ForEach,
     scan_args::{get_kwargs, scan_args},
     Error, Module, RArray, RHash, RModule, Symbol, Value,
@@ -43,21 +43,7 @@ impl Tracer {
         if let Some(attrs) = attributes {
             let mut map = OrderMap::with_capacity(attrs.len());
             attrs.foreach(|key: String, value: Value| {
-                let cls = value.class();
-                let val = if cls.equal(class::true_class())? {
-                    opentelemetry::Value::Bool(true)
-                } else if cls.equal(class::false_class())? {
-                    opentelemetry::Value::Bool(false)
-                } else if cls.equal(class::integer())? {
-                    opentelemetry::Value::I64(value.try_convert().unwrap())
-                } else if cls.equal(class::float())? {
-                    opentelemetry::Value::F64(value.try_convert().unwrap())
-                } else if cls.equal(class::string())? {
-                    opentelemetry::Value::String(value.try_convert::<String>().unwrap().into())
-                } else {
-                    todo!() // Array
-                };
-                map.insert(key.into(), val);
+                map.insert(key.into(), magnus_value_to_otel(value)?);
                 Ok(ForEach::Continue)
             })?;
             builder = builder.with_attributes_map(map);
