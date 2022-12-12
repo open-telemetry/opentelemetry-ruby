@@ -1,35 +1,64 @@
 require "benchmark"
-require_relative "../lib/opentelemetry_sdk_rust"
+require "benchmark/memory"
+
+ENV['OTEL_TRACES_EXPORTER'] = ''
 
 n = 1_000_000
 Benchmark.bmbm do |x|
-  # x.report("empty") do
-  #   n.times {"".blank?}
-  # end
+  x.report("rust-cpu") do
+    require_relative "../lib/opentelemetry_sdk_rust"
+    OpenTelemetry::SDK.configure
+    tp = OpenTelemetry::SDK::Trace::TracerProvider.new
+    tracer = tp.tracer("benchmark", "0.1.0")
 
-  # x.report("blank") do
-  #   n.times {" ".blank?}
-  # end
+    n.times {
+      span = tracer.start_span("foo", attributes: {"answer" => 42, "true" => true, "false" => false, "float" => 1.0, "stringy" => "mcstringface"})
+      span.finish
+    }
+    GC.start
+  end
 
-  # x.report("present") do
-  #   n.times {"x".blank?}
-  # end
+  x.report("ruby-cpu") do
+    require "opentelemetry/sdk"
+    OpenTelemetry::SDK.configure
+    tp = OpenTelemetry::SDK::Trace::TracerProvider.new
+    tracer = tp.tracer("benchmark", "0.1.0")
 
-  # x.report("lots of spaces blank") do
-  #   n.times {"                                          ".blank?}
-  # end
+    n.times {
+      span = tracer.start_span("foo", attributes: {"answer" => 42, "true" => true, "false" => false, "float" => 1.0, "stringy" => "mcstringface"})
+      span.finish
+    }
+    GC.start
+  end
+end
 
-  # x.report("lots of spaces present") do
-  #   n.times {"                                          x".blank?}
-  # end
+n = 1_000
+Benchmark.memory do |x|
+  x.report("rust-memory") do
+    require_relative "../lib/opentelemetry_sdk_rust"
+    OpenTelemetry::SDK.configure
+    tp = OpenTelemetry::SDK::Trace::TracerProvider.new
+    tracer = tp.tracer("benchmark", "0.1.0")
 
-  # x.report("blank US-ASCII") do
-  #   s = " ".encode("US-ASCII")
-  #   n.times {s.blank?}
-  # end
+    n.times {
+      span = tracer.start_span("foo", attributes: {"answer" => 42, "true" => true, "false" => false, "float" => 1.0, "stringy" => "mcstringface"})
+      span.finish
+    }
+    GC.start
+  end
 
-  # x.report("blank non-utf-8") do
-  #   s = " ".encode("UTF-16LE")
-  #   n.times {s.blank?}
-  # end
+  x.report("ruby-memory") do
+    require "opentelemetry/sdk"
+    OpenTelemetry::SDK.configure
+    tp = OpenTelemetry::SDK::Trace::TracerProvider.new
+    tracer = tp.tracer("benchmark", "0.1.0")
+
+    n.times {
+      span = tracer.start_span("foo", attributes: {"answer" => 42, "true" => true, "false" => false, "float" => 1.0, "stringy" => "mcstringface"})
+      span.finish
+    }
+    GC.start
+  end
+
+  x.compare!
 end
