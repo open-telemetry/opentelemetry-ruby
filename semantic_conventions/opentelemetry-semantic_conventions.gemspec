@@ -19,8 +19,8 @@ Gem::Specification.new do |spec|
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby'
   spec.license     = 'Apache-2.0'
 
-  spec.files = ::Dir.glob('lib/**/*.rb') +
-               ::Dir.glob('*.md') +
+  spec.files = Dir.glob('lib/**/*.rb') +
+               Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.6.0'
