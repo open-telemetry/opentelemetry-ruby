@@ -10,11 +10,16 @@ Rake::ExtensionTask.new("ext") do |c|
   c.ext_dir = "ext"
 end
 
+task "compile:debug" do
+  ENV["RB_SYS_CARGO_PROFILE"] = "dev"
+  Rake::Task["compile"].invoke
+end
+
 task :dev do
   ENV['RB_SYS_CARGO_PROFILE'] = 'dev'
 end
 
 Rake::TestTask.new do |t|
   t.deps << :dev << :compile
-  t.test_files = FileList[File.expand_path("test/*_test.rb", __dir__), "test/bench.rb"]
+  t.test_files = FileList[File.expand_path("test/*_test.rb", __dir__)]
 end
