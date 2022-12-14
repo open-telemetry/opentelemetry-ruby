@@ -7,11 +7,11 @@ use magnus::{
 };
 
 #[magnus::wrap(class = "OpenTelemetry::SDK::Trace::TracerProvider")]
-struct TracerProvider(opentelemetry::global::GlobalTracerProvider);
+struct TracerProvider;
 
 impl TracerProvider {
     fn new() -> Self {
-        Self(opentelemetry::global::tracer_provider())
+        Self
     }
 
     fn tracer(&self, args: &[Value]) -> Result<Tracer, Error> {
@@ -20,11 +20,17 @@ impl TracerProvider {
         let (name, version) = args.optional;
         let tracer = if let Some(v) = version {
             let version = Box::leak(v.into_boxed_str());
-            self.0
-                .versioned_tracer(name.unwrap(), Some(version), Option::None)
+            opentelemetry::global::tracer_provider().versioned_tracer(
+                name.unwrap(),
+                Some(version),
+                Option::None,
+            )
         } else {
-            self.0
-                .versioned_tracer(name.unwrap(), Option::None, Option::None)
+            opentelemetry::global::tracer_provider().versioned_tracer(
+                name.unwrap(),
+                Option::None,
+                Option::None,
+            )
         };
         Ok(Tracer::new(tracer))
     }
