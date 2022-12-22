@@ -44,15 +44,22 @@ module OpenTelemetry
           end
 
           def update_tracestate(tracestate, p, r, rest) # rubocop:disable Naming/UncommunicativeMethodParamName
-            # This could be more efficient and allocate less, however it *should* only be used for root spans and sanitizing invalid tracestate
-            # in the most common configuration of parent_consistent_probability_based(root: consistent_probability_based(p)).
-            ps = "p:#{p}" unless p.nil?
-            rs = "r:#{r}" unless r.nil?
-            ot = [ps, rs, rest].compact.join(';')
-            if ot.empty?
+            if p.nil? && r.nil? && rest.nil?
               tracestate.delete('ot')
+            elsif p.nil? && r.nil?
+              tracestate.set_value('ot', rest)
+            elsif p.nil? && rest.nil?
+              tracestate.set_value('ot', "r:#{r}")
+            elsif r.nil? && rest.nil?
+              tracestate.set_value('ot', "p:#{p}")
+            elsif p.nil?
+              tracestate.set_value('ot', "r:#{r};#{rest}")
+            elsif r.nil?
+              tracestate.set_value('ot', "p:#{p};#{rest}")
+            elsif rest.nil?
+              tracestate.set_value('ot', "p:#{p};r:#{r}")
             else
-              tracestate.set_value('ot', ot)
+              tracestate.set_value('ot', "p:#{p};r:#{r};#{rest}")
             end
           end
 
