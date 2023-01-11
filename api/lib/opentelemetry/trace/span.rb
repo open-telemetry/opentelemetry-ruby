@@ -115,7 +115,7 @@ module OpenTelemetry
 
       # Sets the Status to the Span
       #
-      # If used, this will override the default Span status. Default is OK.
+      # If used, this will override the default Span status. Default status is unset.
       #
       # Only the value of the last call will be recorded, and implementations
       # are free to ignore previous calls.
