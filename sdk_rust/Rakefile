@@ -21,5 +21,9 @@ end
 
 Rake::TestTask.new do |t|
   t.deps << :dev << :compile
-  t.test_files = FileList[File.expand_path("test/*_test.rb", __dir__), "test/*bench.rb"]
+  t.test_files = FileList[File.expand_path("test/*_test.rb", __dir__)]
 end
+
+# task "benchmark" do
+#   ENV["RB_SYS_CARGO_PROFILE"] = "dev"
+

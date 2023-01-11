@@ -26,7 +26,6 @@ end
 n = 1_000
 Benchmark.memory do |x|
   x.report("ruby-memory") do
-    before = GC.stat[:total_allocated_objects]
     OpenTelemetry::SDK.configure
     tp = OpenTelemetry::SDK::Trace::TracerProvider.new
     tracer = tp.tracer("benchmark", "0.1.0")
@@ -35,9 +34,5 @@ Benchmark.memory do |x|
       span = tracer.start_span("foo", attributes: {"answer" => 42, "true" => true, "false" => false, "float" => 1.0, "stringy" => "mcstringface"})
       span.finish
     }
-    GC.start
-    puts GC.stat[:total_allocated_objects] - before
   end
-
-  x.compare!
 end
