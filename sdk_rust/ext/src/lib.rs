@@ -14,8 +14,6 @@ mod tracer;
 mod tracer_provider;
 
 fn configure() -> Result<(), Error> {
-    println!("[RUST] configure");
-
     let mut tracer_provider_builder =
         sdk::trace::Builder::default().with_config(opentelemetry::sdk::trace::config());
 

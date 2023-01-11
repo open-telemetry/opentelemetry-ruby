@@ -4,7 +4,7 @@
 
 require "benchmark"
 require "benchmark/memory"
-require "opentelemetry/sdk"
+require_relative "../../sdk/lib/opentelemetry-sdk"
 
 ENV['OTEL_TRACES_EXPORTER'] = ''
 

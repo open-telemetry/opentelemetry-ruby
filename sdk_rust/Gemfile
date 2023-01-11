@@ -18,7 +18,6 @@ group :test, :development do
   gem 'benchmark'
   gem 'benchmark-memory'
   gem 'opentelemetry-api', path: '../api'
-  gem 'opentelemetry-sdk', path: '../sdk'
   gem 'opentelemetry-common', path: '../common'
   gem 'opentelemetry-registry', path: '../registry'
   gem 'opentelemetry-semantic_conventions', path: '../semantic_conventions'
