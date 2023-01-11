@@ -4,8 +4,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'simplecov'
-SimpleCov.start
+if RUBY_ENGINE == 'ruby'
+  require 'simplecov'
+  SimpleCov.start
+end
 
 require 'pry'
 
