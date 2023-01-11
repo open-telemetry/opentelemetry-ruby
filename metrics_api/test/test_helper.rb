@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# require 'simplecov'
+# require 'simplecov' if RUBY_ENGINE == "ruby"
 # # SimpleCov.start
 # # SimpleCov.minimum_coverage 85
 
