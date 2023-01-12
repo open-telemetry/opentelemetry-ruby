@@ -9,6 +9,8 @@ require 'opentelemetry-test-helpers'
 require 'minitest/autorun'
 require 'pry'
 
-require 'simplecov'
-SimpleCov.start
-SimpleCov.minimum_coverage 85
+if RUBY_ENGINE == 'ruby'
+  require 'simplecov'
+  SimpleCov.start
+  SimpleCov.minimum_coverage 85
+end
