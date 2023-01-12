@@ -192,6 +192,13 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       _(span).wont_be :recording?
     end
 
+    it 'returns a no-op span within an untraced block' do
+      tracer_provider.sampler = Samplers::ALWAYS_ON
+      span = OpenTelemetry::Common::Utilities.untraced { tracer.start_span('op') }
+      _(span.context.trace_flags).wont_be :sampled?
+      _(span).wont_be :recording?
+    end
+
     it 'returns an unsampled span if sampler says record, but do not sample' do
       tracer_provider.sampler = record_sampler
       span = tracer.start_span('op', with_parent: context)
