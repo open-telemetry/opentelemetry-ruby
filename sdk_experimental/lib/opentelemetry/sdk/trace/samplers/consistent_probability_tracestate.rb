@@ -17,6 +17,31 @@ module OpenTelemetry
           MAX_LIST_LENGTH = 256 # Defined by https://www.w3.org/TR/trace-context/
           private_constant(:DECIMAL, :MAX_LIST_LENGTH)
 
+          private
+
+          # sanitized_tracestate returns an OpenTelemetry Tracestate object with the
+          # tracestate sanitized according to the Context invariants defined in the
+          # tracestate probability sampling spec.
+          #
+          # @param span_context [OpenTelemetry::Trace::SpanContext] the parent span context
+          # @return [OpenTelemetry::Trace::Tracestate] the sanitized tracestate
+          def sanitized_tracestate(span_context)
+            sampled = span_context.trace_flags.sampled?
+            tracestate = span_context.tracestate
+            parse_ot_vendor_tag(tracestate) do |p, r, rest|
+              if !r.nil? && r > 62
+                p = r = nil
+              elsif !p.nil? && p > 63
+                p = nil
+              elsif !p.nil? && !r.nil? && !invariant(p, r, sampled)
+                p = nil
+              else
+                return tracestate
+              end
+              update_tracestate(tracestate, p, r, rest)
+            end
+          end
+
           # parse_ot_vendor_tag parses the 'ot' vendor tag of the tracestate.
           # It yields the parsed probability fields and the remaining tracestate.
           # It returns the result of the block.
@@ -81,6 +106,12 @@ module OpenTelemetry
 
           def decimal(str)
             str.to_i if !str.nil? && DECIMAL.match?(str)
+          end
+
+          def generate_r(trace_id)
+            x = trace_id[8, 8].unpack1('Q>') | 0x3
+            clz = 64 - x.bit_length
+            clz
           end
         end
       end
