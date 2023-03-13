@@ -215,14 +215,14 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
           OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'c=hi%F3') do
             OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
           end
-        end.must_raise(Encoding::CompatibilityError)
+        end.must_raise(ArgumentError)
         _(error.message).must_match(/headers/i)
 
         error = _ do
           OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'c=hi%F3') do
             OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
           end
-        end.must_raise(Encoding::CompatibilityError)
+        end.must_raise(ArgumentError)
         _(error.message).must_match(/headers/i)
       end
 
