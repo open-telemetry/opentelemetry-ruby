@@ -233,14 +233,14 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
           OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'c=hi%F3') do
             OpenTelemetry::Exporter::OTLP::Exporter.new
           end
-        }.must_raise(ArgumentError)
+        }.must_raise(Encoding::CompatibilityError)
         _(error.message).must_match(/headers/i)
 
         error = _() {
           OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'c=hi%F3') do
             OpenTelemetry::Exporter::OTLP::Exporter.new
           end
-        }.must_raise(ArgumentError)
+        }.must_raise(Encoding::CompatibilityError)
         _(error.message).must_match(/headers/i)
       end
 
