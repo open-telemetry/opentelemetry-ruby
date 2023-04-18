@@ -22,6 +22,9 @@ instrumentation/active_record/db
 # IDE Settings
 /.idea/
 
+# asdf configuration
+.tool-versions
+
 # rbenv configuration
 .ruby-version
 
