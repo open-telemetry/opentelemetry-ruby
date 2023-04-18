@@ -56,17 +56,33 @@ module OpenTelemetry
       private
 
       def create_instrument(kind, name, unit, description, callback)
-        raise InstrumentNameError if name.nil?
-        raise InstrumentNameError if name.empty?
-        raise InstrumentNameError unless NAME_REGEX.match?(name)
-        raise InstrumentUnitError if unit && (!unit.ascii_only? || unit.size > 63)
-        raise InstrumentDescriptionError if description && (description.size > 1023 || !utf8mb3_encoding?(description.dup))
+        raise InstrumentNameError if invalid_name?(name)
+        raise InstrumentUnitError if invalid_unit?(unit)
+        raise InstrumentDescriptionError if invalid_description?(description)
+
+        name = normalize_name(name)
 
         @mutex.synchronize do
           OpenTelemetry.logger.warn("duplicate instrument registration occurred for instrument #{name}") if @instrument_registry.include? name
 
           @instrument_registry[name] = yield
         end
+      end
+
+      def invalid_name?(name)
+        !NAME_REGEX.match?(name)
+      end
+
+      def normalize_name(name)
+        name.downcase
+      end
+
+      def invalid_unit?(unit)
+        unit && (!unit.ascii_only? || unit.size > 63)
+      end
+
+      def invalid_description?(description)
+        description && (description.size > 1023 || !utf8mb3_encoding?(description.dup))
       end
 
       def utf8mb3_encoding?(string)
