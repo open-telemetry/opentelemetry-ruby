@@ -8,7 +8,7 @@ module OpenTelemetry
   module Metrics
     module Instrument
       # No-op implementation of UpDownCounter.
-      class UpDownCounter
+      class UpDownCounter < SynchronousInstrument
         # Increment or decrement the UpDownCounter by a fixed amount.
         #
         # @param [Numeric] amount The amount to be added, can be positive, negative or zero.

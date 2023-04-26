@@ -3,6 +3,7 @@ AllCops:
 
 Lint/UnusedMethodArgument:
   Enabled: false
+
 Metrics/AbcSize:
   Enabled: false
 Metrics/LineLength:
@@ -15,8 +16,14 @@ Metrics/CyclomaticComplexity:
   Max: 20
 Metrics/ParameterLists:
   Enabled: false
+
+Naming/VariableNumber:
+  Enabled: false
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-metrics-api.rb"
+
+Style/IfUnlessModifier:
+  Enabled: false
 Style/ModuleFunction:
   Enabled: false

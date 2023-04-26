@@ -8,70 +8,155 @@ module OpenTelemetry
   module Metrics
     # No-op implementation of Meter.
     class Meter
-      COUNTER = Instrument::Counter.new
-      OBSERVABLE_COUNTER = Instrument::ObservableCounter.new
-      HISTOGRAM = Instrument::Histogram.new
-      OBSERVABLE_GAUGE = Instrument::ObservableGauge.new
-      UP_DOWN_COUNTER = Instrument::UpDownCounter.new
-      OBSERVABLE_UP_DOWN_COUNTER = Instrument::ObservableUpDownCounter.new
+      NOOP_COUNTER                    = Instrument::Counter.new('np-op')
+      NOOP_HISTOGRAM                  = Instrument::Histogram.new('np-op')
+      NOOP_UP_DOWN_COUNTER            = Instrument::UpDownCounter.new('np-op')
+      NOOP_OBSERVABLE_COUNTER         = Instrument::ObservableCounter.new('np-op')
+      NOOP_OBSERVABLE_GAUGE           = Instrument::ObservableGauge.new('np-op')
+      NOOP_OBSERVABLE_UP_DOWN_COUNTER = Instrument::ObservableUpDownCounter.new('np-op')
 
-      NAME_REGEX = /^[a-zA-Z][-.\w]{0,62}$/.freeze
+      private_constant(
+        :NOOP_COUNTER,
+        :NOOP_HISTOGRAM,
+        :NOOP_UP_DOWN_COUNTER,
+        :NOOP_OBSERVABLE_COUNTER,
+        :NOOP_OBSERVABLE_GAUGE,
+        :NOOP_OBSERVABLE_UP_DOWN_COUNTER
+      )
 
-      private_constant(:COUNTER, :OBSERVABLE_COUNTER, :HISTOGRAM, :OBSERVABLE_GAUGE, :UP_DOWN_COUNTER, :OBSERVABLE_UP_DOWN_COUNTER)
+      attr_reader :name, :version, :schema_url, :attributes
 
-      DuplicateInstrumentError = Class.new(OpenTelemetry::Error)
-      InstrumentNameError = Class.new(OpenTelemetry::Error)
-      InstrumentUnitError = Class.new(OpenTelemetry::Error)
-      InstrumentDescriptionError = Class.new(OpenTelemetry::Error)
+      # @api private
+      def initialize(name, version: nil, schema_url: nil, attributes: nil)
+        @name = name
+        @version = version || ''
+        @schema_url = schema_url || ''
+        @attributes = attributes || {}
 
-      def initialize
         @mutex = Mutex.new
         @instrument_registry = {}
       end
 
+      # @param name [String]
+      #   Must conform to the instrument name syntax:
+      #   not nil or empty, case-insensitive ASCII string that matches `/\A[a-z][a-z0-9_.-]{0,62}\z/i`
+      # @param unit [optional String]
+      #   Must conform to the instrument unit rule:
+      #   case-sensitive ASCII string with maximum length of 63 characters
+      # @param description [optional String]
+      #   Must conform to the instrument description rule:
+      #   UTF-8 string but up to 3 bytes per charater with maximum length of 1023 characters
+      #
+      # @return [Instrument::Counter]
       def create_counter(name, unit: nil, description: nil)
-        create_instrument(:counter, name, unit, description, nil) { COUNTER }
+        create_instrument(:counter, name, unit, description, nil) { NOOP_COUNTER }
       end
 
+      # @param name [String]
+      #   Must conform to the instrument name syntax:
+      #   not nil or empty, case-insensitive ASCII string that matches `/\A[a-z][a-z0-9_.-]{0,62}\z/i`
+      # @param unit [optional String]
+      #   Must conform to the instrument unit rule:
+      #   case-sensitive ASCII string with maximum length of 63 characters
+      # @param description [optional String]
+      #   Must conform to the instrument description rule:
+      #   UTF-8 string but up to 3 bytes per charater with maximum length of 1023 characters
+      #
+      # @return [Instrument::Histogram]
       def create_histogram(name, unit: nil, description: nil)
-        create_instrument(:histogram, name, unit, description, nil) { HISTOGRAM }
+        create_instrument(:histogram, name, unit, description, nil) { NOOP_HISTOGRAM }
       end
 
+      # @param name [String]
+      #   Must conform to the instrument name syntax:
+      #   not nil or empty, case-insensitive ASCII string that matches `/\A[a-z][a-z0-9_.-]{0,62}\z/i`
+      # @param unit [optional String]
+      #   Must conform to the instrument unit rule:
+      #   case-sensitive ASCII string with maximum length of 63 characters
+      # @param description [optional String]
+      #   Must conform to the instrument description rule:
+      #   UTF-8 string but up to 3 bytes per charater with maximum length of 1023 characters
+      #
+      # @return [Instrument::UpDownCounter]
       def create_up_down_counter(name, unit: nil, description: nil)
-        create_instrument(:up_down_counter, name, unit, description, nil) { UP_DOWN_COUNTER }
+        create_instrument(:up_down_counter, name, unit, description, nil) { NOOP_UP_DOWN_COUNTER }
       end
 
-      def create_observable_counter(name, unit: nil, description: nil, callback:)
-        create_instrument(:observable_counter, name, unit, description, callback) { OBSERVABLE_COUNTER }
+      # @param name [String]
+      #   Must conform to the instrument name syntax:
+      #   not nil or empty, case-insensitive ASCII string that matches `/\A[a-z][a-z0-9_.-]{0,62}\z/i`
+      # @param unit [optional String]
+      #   Must conform to the instrument unit rule:
+      #   case-sensitive ASCII string with maximum length of 63 characters
+      # @param description [optional String]
+      #   Must conform to the instrument description rule:
+      #   UTF-8 string but up to 3 bytes per charater with maximum length of 1023 characters
+      # @param callback [optional Proc, Array<Proc>]
+      #   Callback functions should:
+      #   - be reentrant safe;
+      #   - not take an indefinite amount of time;
+      #   - not make duplicate observations (more than one Measurement with the same attributes)
+      #     across all registered callbacks;
+      #
+      # @return [Instrument::ObservableCounter]
+      def create_observable_counter(name, unit: nil, description: nil, callback: nil)
+        create_instrument(:observable_counter, name, unit, description, callback) { NOOP_OBSERVABLE_COUNTER }
       end
 
-      def create_observable_gauge(name, unit: nil, description: nil, callback:)
-        create_instrument(:observable_gauge, name, unit, description, callback) { OBSERVABLE_GAUGE }
+      # @param name [String]
+      #   Must conform to the instrument name syntax:
+      #   not nil or empty, case-insensitive ASCII string that matches `/\A[a-z][a-z0-9_.-]{0,62}\z/i`
+      # @param unit [optional String]
+      #   Must conform to the instrument unit rule:
+      #   case-sensitive ASCII string with maximum length of 63 characters
+      # @param description [optional String]
+      #   Must conform to the instrument description rule:
+      #   UTF-8 string but up to 3 bytes per charater with maximum length of 1023 characters
+      # @param callback [optional Proc, Array<Proc>]
+      #   Callback functions should:
+      #   - be reentrant safe;
+      #   - not take an indefinite amount of time;
+      #   - not make duplicate observations (more than one Measurement with the same attributes)
+      #     across all registered callbacks;
+      #
+      # @return [Instrument::ObservableGauge]
+      def create_observable_gauge(name, unit: nil, description: nil, callback: nil)
+        create_instrument(:observable_gauge, name, unit, description, callback) { NOOP_OBSERVABLE_GAUGE }
       end
 
-      def create_observable_up_down_counter(name, unit: nil, description: nil, callback:)
-        create_instrument(:observable_up_down_counter, name, unit, description, callback) { OBSERVABLE_UP_DOWN_COUNTER }
+      # @param name [String]
+      #   Must conform to the instrument name syntax:
+      #   not nil or empty, case-insensitive ASCII string that matches `/\A[a-z][a-z0-9_.-]{0,62}\z/i`
+      # @param unit [optional String]
+      #   Must conform to the instrument unit rule:
+      #   case-sensitive ASCII string with maximum length of 63 characters
+      # @param description [optional String]
+      #   Must conform to the instrument description rule:
+      #   UTF-8 string but up to 3 bytes per charater with maximum length of 1023 characters
+      # @param callback [optional Proc, Array<Proc>]
+      #   Callback functions should:
+      #   - be reentrant safe;
+      #   - not take an indefinite amount of time;
+      #   - not make duplicate observations (more than one Measurement with the same attributes)
+      #     across all registered callbacks;
+      #
+      # @return [Instrument::ObservableUpDownCounter]
+      def create_observable_up_down_counter(name, unit: nil, description: nil, callback: nil)
+        create_instrument(:observable_up_down_counter, name, unit, description, callback) { NOOP_OBSERVABLE_UP_DOWN_COUNTER }
       end
 
       private
 
       def create_instrument(kind, name, unit, description, callback)
-        raise InstrumentNameError if name.nil?
-        raise InstrumentNameError if name.empty?
-        raise InstrumentNameError unless NAME_REGEX.match?(name)
-        raise InstrumentUnitError if unit && (!unit.ascii_only? || unit.size > 63)
-        raise InstrumentDescriptionError if description && (description.size > 1023 || !utf8mb3_encoding?(description.dup))
+        name = name.downcase
 
         @mutex.synchronize do
-          OpenTelemetry.logger.warn("duplicate instrument registration occurred for instrument #{name}") if @instrument_registry.include? name
+          if @instrument_registry.include?(name)
+            OpenTelemetry.logger.warn("duplicate instrument registration occurred for #{name}")
+          end
 
           @instrument_registry[name] = yield
         end
-      end
-
-      def utf8mb3_encoding?(string)
-        string.force_encoding('UTF-8').valid_encoding? &&
-          string.each_char { |c| return false if c.bytesize >= 4 }
       end
     end
   end

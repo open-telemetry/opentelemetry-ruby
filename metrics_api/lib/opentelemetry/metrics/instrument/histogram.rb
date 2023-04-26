@@ -8,10 +8,10 @@ module OpenTelemetry
   module Metrics
     module Instrument
       # No-op implementation of Histogram.
-      class Histogram
+      class Histogram < SynchronousInstrument
         # Updates the statistics with the specified amount.
         #
-        # @param [numeric] amount The amount of the Measurement, which MUST be a non-negative numeric value.
+        # @param [Numeric] amount The amount of the Measurement, which MUST be a non-negative numeric value.
         # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
         #   Values must be non-nil and (array of) string, boolean or numeric type.
         #   Array values must not contain nil elements and all elements must be of

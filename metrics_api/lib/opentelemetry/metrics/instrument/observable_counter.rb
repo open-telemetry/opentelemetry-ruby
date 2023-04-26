@@ -8,8 +8,7 @@ module OpenTelemetry
   module Metrics
     module Instrument
       # No-op implementation of ObservableCounter.
-      class ObservableCounter
-        # TODO
+      class ObservableCounter < AsynchronousInstrument
       end
     end
   end

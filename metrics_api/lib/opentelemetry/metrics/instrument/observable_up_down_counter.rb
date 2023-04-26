@@ -8,8 +8,7 @@ module OpenTelemetry
   module Metrics
     module Instrument
       # No-op implementation of ObservableUpDownCounter.
-      class ObservableUpDownCounter
-        # TODO
+      class ObservableUpDownCounter < AsynchronousInstrument
       end
     end
   end
