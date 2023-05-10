@@ -69,12 +69,6 @@ module OpenTelemetry
 
           private
 
-          def generate_r(trace_id)
-            x = trace_id[8, 8].unpack1('Q>') | 0x3
-            clz = 64 - x.bit_length
-            clz
-          end
-
           def probabilistic_p
             if Random.rand < @p_ceil_probability
               @p_ceil

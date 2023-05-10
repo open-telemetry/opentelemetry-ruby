@@ -398,6 +398,8 @@ module OpenTelemetry
             begin
               k = k.to_s.strip
               v = v.to_s.strip
+            rescue Encoding::CompatibilityError
+              raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS
             rescue ArgumentError => e
               raise e, ERROR_MESSAGE_INVALID_HEADERS
             end

@@ -30,7 +30,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
+      - name: "Test Ruby 3.2"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "3.2"
       - name: "Test Ruby 3.1"
+        if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
@@ -88,7 +94,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
+      - name: "Test Ruby 3.2"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "3.2"
       - name: "Test Ruby 3.1"
+        if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
@@ -155,7 +167,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
+      - name: "Test Ruby 3.2"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "3.2"
       - name: "Test Ruby 3.1"
+        if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
