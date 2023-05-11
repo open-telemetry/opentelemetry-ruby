@@ -14,15 +14,18 @@ describe OpenTelemetry::Metrics::MeterProvider do
       _(-> { meter_provider.meter }).must_raise(ArgumentError)
     end
 
-    it 'returns an instance of Meter' do
+    it 'returns an instance of Meter without errors' do
       meter_provider = build_meter_provider
+
+      meter = meter_provider.meter('test-meter')
+      assert(meter.is_a?(OpenTelemetry::Metrics::Meter))
+
       meter = meter_provider.meter(
-        'test',
+        'test-meter',
         version: '1.0.0',
         schema_url: 'https://example.com/schema/1.0.0',
         attributes: { 'key' => 'value' }
       )
-
       assert(meter.is_a?(OpenTelemetry::Metrics::Meter))
     end
   end
