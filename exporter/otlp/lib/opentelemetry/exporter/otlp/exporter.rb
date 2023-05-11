@@ -35,6 +35,8 @@ module OpenTelemetry
         ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
         private_constant(:ERROR_MESSAGE_INVALID_HEADERS)
 
+        DEFAULT_USER_AGENT = "OTel-OTLP-Exporter-Ruby/#{OpenTelemetry::Exporter::OTLP::VERSION} Ruby/#{RUBY_VERSION} (#{RUBY_PLATFORM}; #{RUBY_ENGINE}/#{RUBY_ENGINE_VERSION})"
+
         def self.ssl_verify_mode
           if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
             OpenSSL::SSL::VERIFY_PEER
@@ -64,13 +66,7 @@ module OpenTelemetry
           @http = http_connection(@uri, ssl_verify_mode, certificate_file)
 
           @path = @uri.path
-          @headers = case headers
-                     when String then parse_headers(headers)
-                     when Hash then headers
-                     else
-                       raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS
-                     end
-          @headers['User-Agent'] = "OTel OTLP Exporter Ruby/#{OpenTelemetry::Exporter::OTLP::VERSION}"
+          @headers = prepare_headers(headers)
           @timeout = timeout.to_f
           @compression = compression
           @metrics_reporter = metrics_reporter || OpenTelemetry::SDK::Trace::Export::MetricsReporter
@@ -388,6 +384,19 @@ module OpenTelemetry
             result.array_value = Opentelemetry::Proto::Common::V1::ArrayValue.new(values: values)
           end
           result
+        end
+
+        def prepare_headers(config_headers)
+          headers = case config_headers
+                    when String then parse_headers(config_headers)
+                    when Hash then config_headers.dup
+                    else
+                      raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS
+                    end
+
+          headers['User-Agent'] = (headers.fetch('User-Agent','') + ' ' + DEFAULT_USER_AGENT).strip
+
+          headers
         end
 
         def parse_headers(raw)
