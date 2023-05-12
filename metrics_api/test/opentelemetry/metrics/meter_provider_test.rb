@@ -17,7 +17,7 @@ describe OpenTelemetry::Metrics::MeterProvider do
     it 'returns an instance of Meter' do
       meter_provider = build_meter_provider
 
-      assert(meter_provider.meter('test', '1.0.0').is_a?(OpenTelemetry::Metrics::Meter))
+      assert(meter_provider.meter('test', version: '1.0.0').is_a?(OpenTelemetry::Metrics::Meter))
     end
   end
 

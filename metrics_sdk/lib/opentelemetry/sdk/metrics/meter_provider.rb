@@ -30,7 +30,7 @@ module OpenTelemetry
         # @param [optional String] version Instrumentation package version
         #
         # @return [Meter]
-        def meter(name, version = nil)
+        def meter(name, version: nil)
           version ||= ''
           if @stopped
             OpenTelemetry.logger.warn 'calling MeterProvider#meter after shutdown, a noop meter will be returned.'
