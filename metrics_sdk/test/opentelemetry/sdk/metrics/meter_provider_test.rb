@@ -60,8 +60,8 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
     it 'invokes shutdown on all registered Metric Readers' do
       mock_metric_reader1 = new_mock_reader
       mock_metric_reader2 = new_mock_reader
-      mock_metric_reader1.expect(:shutdown, nil, [{ timeout: nil }])
-      mock_metric_reader2.expect(:shutdown, nil, [{ timeout: nil }])
+      mock_metric_reader1.expect(:shutdown, nil, [], { timeout: nil })
+      mock_metric_reader2.expect(:shutdown, nil, [], { timeout: nil })
 
       OpenTelemetry.meter_provider.add_metric_reader(mock_metric_reader1)
       OpenTelemetry.meter_provider.add_metric_reader(mock_metric_reader2)
@@ -84,8 +84,8 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
     it 'invokes force_flush on all registered Metric Readers' do
       mock_metric_reader1 = new_mock_reader
       mock_metric_reader2 = new_mock_reader
-      mock_metric_reader1.expect(:force_flush, nil, [{ timeout: nil }])
-      mock_metric_reader2.expect(:force_flush, nil, [{ timeout: nil }])
+      mock_metric_reader1.expect(:force_flush, nil, [], { timeout: nil })
+      mock_metric_reader2.expect(:force_flush, nil, [], { timeout: nil })
       OpenTelemetry.meter_provider.add_metric_reader(mock_metric_reader1)
       OpenTelemetry.meter_provider.add_metric_reader(mock_metric_reader2)
 
