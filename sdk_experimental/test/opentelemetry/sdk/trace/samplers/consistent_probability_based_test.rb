@@ -92,7 +92,7 @@ describe OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased do
       floor_prob = 1 - ceil_prob
       p_floor = sampler.instance_variable_get(:@p_floor)
       p_ceil = sampler.instance_variable_get(:@p_ceil)
-      _((p_ceil * ceil_prob) + (p_floor * floor_prob)).must_be_within_epsilon(0.1)
+      _((2**-p_ceil * ceil_prob) + (2**-p_floor * floor_prob)).must_be_within_epsilon(0.1)
     end
   end
 end
