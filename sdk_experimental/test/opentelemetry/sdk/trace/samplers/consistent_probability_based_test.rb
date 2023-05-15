@@ -62,4 +62,37 @@ describe OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased do
 
     # TODO: statistical tests
   end
+
+  describe '#initialize' do
+    # Check that the internal state is initialized correctly. We cache the
+    # floor and ceil of the negative power-of-two of the provided probability,
+    # and the probability of the ceil. It should be possible to calculate the
+    # original probability from these.
+    #
+    # Note that these are negative power-of-two exponent values, so the ceiling
+    # is the smaller value.
+
+    it 'initializes correctly for power-of-two probabilities' do
+      p_values = 62.downto(0)
+      probabilities = p_values.map { |i| 2**-i }
+      p_values.zip(probabilities).each do |p, probability|
+        sampler = OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased.new(probability)
+        _(sampler.instance_variable_get(:@p_floor)).must_equal(p)
+        _(sampler.instance_variable_get(:@p_ceil)).must_equal(p-1)
+        _(sampler.instance_variable_get(:@p_ceil_probability)).must_equal(0)
+      end
+    end
+
+    it 'initializes correctly for 0.1' do
+      sampler = OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased.new(0.1)
+      _(sampler.instance_variable_get(:@p_floor)).must_equal(4) # 2**-4 = 0.0625
+      _(sampler.instance_variable_get(:@p_ceil)).must_equal(3) # 2**-3 = 0.125
+      _(sampler.instance_variable_get(:@p_ceil_probability)).must_be_within_epsilon(0.6) # 0.0375 / 0.0625
+      ceil_prob = sampler.instance_variable_get(:@p_ceil_probability)
+      floor_prob = 1 - ceil_prob
+      p_floor = sampler.instance_variable_get(:@p_floor)
+      p_ceil = sampler.instance_variable_get(:@p_ceil)
+      _((p_ceil * ceil_prob) + (p_floor * floor_prob)).must_be_within_epsilon(0.1)
+    end
+  end
 end
