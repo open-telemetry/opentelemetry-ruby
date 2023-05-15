@@ -83,6 +83,21 @@ describe OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased do
       end
     end
 
+    it 'initializes correctly for 0' do
+      sampler = OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased.new(0)
+      _(sampler.instance_variable_get(:@p_floor)).must_equal(63)
+      _(sampler.instance_variable_get(:@p_ceil)).must_equal(0)
+      _(sampler.instance_variable_get(:@p_ceil_probability)).must_equal(0)
+    end
+
+    it 'initializes correctly when the probability is close to a negative power-of-two' do
+      sampler = OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased.new(0.12)
+      _(sampler.instance_variable_get(:@p_floor)).must_equal(4) # 2**-4 = 0.0625
+      _(sampler.instance_variable_get(:@p_ceil)).must_equal(3) # 2**-3 = 0.125
+      # Note obvious skew here: 0.12 is closer to 0.125 than 0.0625, so the probability of choosing the ceil is higher.
+      _(sampler.instance_variable_get(:@p_ceil_probability)).must_be_within_epsilon(0.92) # 0.0575 / 0.0625
+    end
+
     it 'initializes correctly for 0.1' do
       sampler = OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased.new(0.1)
       _(sampler.instance_variable_get(:@p_floor)).must_equal(4) # 2**-4 = 0.0625
@@ -93,7 +108,7 @@ describe OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased do
       p_floor = sampler.instance_variable_get(:@p_floor)
       p_ceil = sampler.instance_variable_get(:@p_ceil)
       # Verify that the sampling probability encoded in each `p` adds up to the probability
-      # in the the initializer argument  
+      # in the the initializer argument
       _((2**-p_ceil * ceil_prob) + (2**-p_floor * floor_prob)).must_be_within_epsilon(0.1)
     end
   end
