@@ -37,7 +37,7 @@ module OpenTelemetry
 
         @mutex.synchronize do
           @delegate = provider
-          @registry.each { |key, meter| meter.delegate = provider.meter(key.name, key.version) }
+          @registry.each { |key, meter| meter.delegate = provider.meter(key.name, version: key.version) }
         end
       end
 
@@ -47,9 +47,9 @@ module OpenTelemetry
       # @param [optional String] version Instrumentation package version
       #
       # @return [Meter]
-      def meter(name = nil, version = nil)
+      def meter(name = nil, version: nil)
         @mutex.synchronize do
-          return @delegate.meter(name, version) unless @delegate.nil?
+          return @delegate.meter(name, version: version) unless @delegate.nil?
 
           @registry[Key.new(name, version)] ||= ProxyMeter.new
         end
