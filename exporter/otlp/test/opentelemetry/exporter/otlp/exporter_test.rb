@@ -161,7 +161,6 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       a_hash_to_mutate_later['token'] = 'unter'
       a_hash_to_mutate_later['oops'] = 'i forgot to add this, too'
       _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über', 'User-Agent' => DEFAULT_USER_AGENT)
-
     end
 
     describe 'Headers Environment Variable' do
