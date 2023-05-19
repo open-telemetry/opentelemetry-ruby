@@ -25,7 +25,7 @@ module OpenTelemetry
             end
 
             @p_floor = (Math.frexp(probability)[1] - 1).abs
-            @p_ceil = @p_floor + 1
+            @p_ceil = @p_floor - 1
             floor = Math.ldexp(1.0, -@p_floor)
             ceil = Math.ldexp(1.0, -@p_ceil)
             @p_ceil_probability = (probability - floor) / (ceil - floor)
