@@ -62,6 +62,7 @@ jobs:
         with:
           gem: "${{ matrix.gem }}"
           ruby: "jruby"
+          rubocop: false
       - name: "Test truffleruby"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
@@ -137,6 +138,7 @@ jobs:
         with:
           gem: "${{ matrix.gem }}"
           ruby: "jruby"
+          rubocop: false
       - name: "Truffleruby Filter"
         id: truffleruby_skip
         shell: bash
@@ -202,6 +204,7 @@ jobs:
         with:
           gem: "${{ matrix.gem }}"
           ruby: "jruby"
+          rubocop: false
       - name: "Test truffleruby"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
