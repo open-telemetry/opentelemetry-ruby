@@ -164,7 +164,7 @@ module OpenTelemetry
 
         private
 
-        def sampler_from_environment(default_sampler) # rubocop:disable Metrics/CyclomaticComplexity
+        def sampler_from_environment(default_sampler)
           case ENV['OTEL_TRACES_SAMPLER']
           when 'always_on' then Samplers::ALWAYS_ON
           when 'always_off' then Samplers::ALWAYS_OFF
