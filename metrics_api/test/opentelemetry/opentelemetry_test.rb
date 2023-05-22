@@ -26,7 +26,7 @@ describe OpenTelemetry do
 
       OpenTelemetry.meter_provider = new_meter_provider
 
-      assert(OpenTelemetry.meter_provider.object_id == new_meter_provider.object_id)
+      assert(OpenTelemetry.meter_provider.equal?(new_meter_provider))
     end
 
     describe 'when global MeterProvider is an instance of Internal::ProxyMeterProvider' do
@@ -37,8 +37,8 @@ describe OpenTelemetry do
         OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
           OpenTelemetry.meter_provider = new_meter_provider
 
-          assert(proxy_meter_provider.instance_variable_get(:@delegate).object_id == new_meter_provider.object_id)
-          assert(OpenTelemetry.meter_provider.object_id == new_meter_provider.object_id)
+          assert(proxy_meter_provider.instance_variable_get(:@delegate).equal?(new_meter_provider))
+          assert(OpenTelemetry.meter_provider.equal?(new_meter_provider))
           assert(log_stream.string.match?(/Upgrading default proxy meter provider to #{new_meter_provider.class}/i))
         end
       end
