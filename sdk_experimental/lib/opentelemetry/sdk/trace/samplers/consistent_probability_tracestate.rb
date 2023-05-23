@@ -90,7 +90,7 @@ module OpenTelemetry
 
           def new_tracestate(p: nil, r: nil) # rubocop:disable Naming/UncommunicativeMethodParamName
             if p.nil? && r.nil?
-              OpenTelemetry::Trace::Tracestate.DEFAULT
+              OpenTelemetry::Trace::Tracestate::DEFAULT
             elsif p.nil?
               OpenTelemetry::Trace::Tracestate.from_hash('ot' => "r:#{r}")
             elsif r.nil?
