@@ -590,6 +590,6 @@ describe OpenTelemetry::SDK::Trace::Span do
       timestamps[clock_id]
     end
 
-    Process.stub(:clock_gettime, clock_gettime_mock), { yield }
+    Process.stub(:clock_gettime, clock_gettime_mock) { yield }
   end
 end
