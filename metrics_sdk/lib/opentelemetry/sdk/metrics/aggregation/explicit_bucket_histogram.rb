@@ -79,7 +79,7 @@ module OpenTelemetry
             hdp.sum += amount
             hdp.count += 1
             if @boundaries
-              bucket_index = @boundaries.bsearch_index { _1 >= amount } || @boundaries.size
+              bucket_index = @boundaries.bsearch_index { |i| i >= amount } || @boundaries.size
               hdp.bucket_counts[bucket_index] += 1
             end
             nil
