@@ -25,5 +25,7 @@ Metrics/ParameterLists:
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-exporter-zipkin.rb"
+Style/ExplicitBlockArgument:
+  Enabled: false
 Style/ModuleFunction:
   Enabled: false

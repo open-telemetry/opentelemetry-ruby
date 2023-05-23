@@ -578,7 +578,7 @@ describe OpenTelemetry::SDK::Trace::Span do
     end
   end
 
-  def mock_gettime(monotonic:, realtime:, &block)
+  def mock_gettime(monotonic:, realtime:)
     timestamps = {
       Process::CLOCK_MONOTONIC => monotonic,
       Process::CLOCK_REALTIME => realtime
@@ -590,6 +590,6 @@ describe OpenTelemetry::SDK::Trace::Span do
       timestamps[clock_id]
     end
 
-    Process.stub(:clock_gettime, clock_gettime_mock, &block)
+    Process.stub(:clock_gettime, clock_gettime_mock), { yield }
   end
 end

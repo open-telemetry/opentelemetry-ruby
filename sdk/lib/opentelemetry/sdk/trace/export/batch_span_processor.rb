@@ -212,8 +212,10 @@ module OpenTelemetry
             spans.shift(@batch_size).map!(&:to_span_data)
           end
 
-          def lock(&block)
-            @mutex.synchronize(&block)
+          def lock
+            @mutex.synchronize do
+              yield
+            end
           end
         end
       end
