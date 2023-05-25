@@ -28,6 +28,14 @@ describe OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased do
       _(result).wont_be :sampled?
     end
 
+    it 'passes through tracestate even if the parent span is invalid' do
+      tracestate = OpenTelemetry::Trace::Tracestate.from_hash({ 'foo' => 'bar' })
+      parent_span_context = OpenTelemetry::Trace::SpanContext.new(tracestate: tracestate)
+      parent_context = OpenTelemetry::Trace.context_with_span(OpenTelemetry::Trace::Span.new(span_context: parent_span_context))
+      result = call_sampler(subject, trace_id: trace_id(1), parent_context: parent_context)
+      _(result.tracestate['foo']).must_equal('bar')
+    end
+
     it 'populates tracestate with the parent r for a sampled child span' do
       tid = trace_id(1)
       ctx = parent_context(trace_id: tid, ot: 'p:1;r:1')

@@ -42,27 +42,16 @@ module OpenTelemetry
           def should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:)
             parent_span_context = OpenTelemetry::Trace.current_span(parent_context).context
             p = probabilistic_p
-            if parent_span_context.valid?
-              tracestate = parent_span_context.tracestate
-              parse_ot_vendor_tag(tracestate) do |_, in_r, rest|
-                r = if in_r.nil? || in_r > 62
-                      OpenTelemetry.logger.debug("ConsistentProbabilitySampler: potentially inconsistent trace detected - r: #{in_r.inspect}")
-                      generate_r(trace_id)
-                    else
-                      in_r
-                    end
-                if p <= r
-                  Result.new(decision: Decision::RECORD_AND_SAMPLE, tracestate: update_tracestate(tracestate, p, r, rest))
-                else
-                  Result.new(decision: Decision::DROP, tracestate: update_tracestate(tracestate, nil, r, rest))
-                end
+            tracestate = parent_span_context.tracestate
+            parse_ot_vendor_tag(tracestate) do |_, r, rest|
+              if r.nil? || r > 62
+                OpenTelemetry.logger.debug("ConsistentProbabilitySampler: potentially inconsistent trace detected - r: #{r.inspect}") if parent_span_context.valid?
+                r = generate_r(trace_id)
               end
-            else
-              r = generate_r(trace_id)
               if p <= r
-                Result.new(decision: Decision::RECORD_AND_SAMPLE, tracestate: new_tracestate(p: p, r: r))
+                Result.new(decision: Decision::RECORD_AND_SAMPLE, tracestate: update_tracestate(tracestate, p, r, rest))
               else
-                Result.new(decision: Decision::DROP, tracestate: new_tracestate(r: r))
+                Result.new(decision: Decision::DROP, tracestate: update_tracestate(tracestate, nil, r, rest))
               end
             end
           end

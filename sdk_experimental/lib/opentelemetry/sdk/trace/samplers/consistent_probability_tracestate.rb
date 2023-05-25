@@ -88,18 +88,6 @@ module OpenTelemetry
             end
           end
 
-          def new_tracestate(p: nil, r: nil) # rubocop:disable Naming/UncommunicativeMethodParamName
-            if p.nil? && r.nil?
-              OpenTelemetry::Trace::Tracestate::DEFAULT
-            elsif p.nil?
-              OpenTelemetry::Trace::Tracestate.from_hash('ot' => "r:#{r}")
-            elsif r.nil?
-              OpenTelemetry::Trace::Tracestate.from_hash('ot' => "p:#{p}")
-            else
-              OpenTelemetry::Trace::Tracestate.from_hash('ot' => "p:#{p};r:#{r}")
-            end
-          end
-
           def invariant(p, r, sampled) # rubocop:disable Naming/UncommunicativeMethodParamName
             ((p <= r) == sampled) || (sampled && (p == 63))
           end
