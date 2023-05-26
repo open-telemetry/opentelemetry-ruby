@@ -8,12 +8,12 @@ module OpenTelemetry
   module Metrics
     # No-op implementation of Meter.
     class Meter
-      NOOP_COUNTER                    = Instrument::Counter.new('np-op')
-      NOOP_HISTOGRAM                  = Instrument::Histogram.new('np-op')
-      NOOP_UP_DOWN_COUNTER            = Instrument::UpDownCounter.new('np-op')
-      NOOP_OBSERVABLE_COUNTER         = Instrument::ObservableCounter.new('np-op')
-      NOOP_OBSERVABLE_GAUGE           = Instrument::ObservableGauge.new('np-op')
-      NOOP_OBSERVABLE_UP_DOWN_COUNTER = Instrument::ObservableUpDownCounter.new('np-op')
+      NOOP_COUNTER                    = Instrument::Counter.new('no-op')
+      NOOP_HISTOGRAM                  = Instrument::Histogram.new('no-op')
+      NOOP_UP_DOWN_COUNTER            = Instrument::UpDownCounter.new('no-op')
+      NOOP_OBSERVABLE_COUNTER         = Instrument::ObservableCounter.new('no-op')
+      NOOP_OBSERVABLE_GAUGE           = Instrument::ObservableGauge.new('no-op')
+      NOOP_OBSERVABLE_UP_DOWN_COUNTER = Instrument::ObservableUpDownCounter.new('no-op')
 
       private_constant(
         :NOOP_COUNTER,
