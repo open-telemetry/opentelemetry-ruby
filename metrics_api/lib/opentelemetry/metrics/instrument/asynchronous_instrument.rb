@@ -25,9 +25,7 @@ module OpenTelemetry
         #   - not take an indefinite amount of time;
         #   - not make duplicate observations (more than one Measurement with the same attributes)
         #     across all registered callbacks;
-        def register_callback(callback)
-          @callback.concat(Array(callback))
-        end
+        def register_callback(callback); end
 
         # @param callback [Proc, Array<Proc>]
         #   Callback functions should:
@@ -35,9 +33,7 @@ module OpenTelemetry
         #   - not take an indefinite amount of time;
         #   - not make duplicate observations (more than one Measurement with the same attributes)
         #     across all registered callbacks;
-        def unregister_callback(callback)
-          @callback -= Array(callback)
-        end
+        def unregister_callback(callback); end
       end
     end
   end
