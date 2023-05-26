@@ -29,6 +29,7 @@ module OpenTelemetry
         logger.debug("Upgrading default proxy meter provider to #{provider.class}")
         @meter_provider.delegate = provider
       end
+
       @meter_provider = provider
     end
   end
