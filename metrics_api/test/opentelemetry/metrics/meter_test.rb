@@ -52,7 +52,8 @@ describe OpenTelemetry::Metrics::Meter do
       instrument = meter.create_counter(
         'test-instrument',
         unit: 'b',
-        description: 'number of bytes received'
+        description: 'number of bytes received',
+        advice: {}
       )
 
       assert(instrument.is_a?(OpenTelemetry::Metrics::Instrument::Counter))
@@ -77,7 +78,8 @@ describe OpenTelemetry::Metrics::Meter do
       instrument = meter.create_histogram(
         'test-instrument',
         unit: 'ms',
-        description: 'request duration'
+        description: 'request duration',
+        advice: {}
       )
 
       assert(instrument.is_a?(OpenTelemetry::Metrics::Instrument::Histogram))
@@ -102,7 +104,8 @@ describe OpenTelemetry::Metrics::Meter do
       instrument = meter.create_up_down_counter(
         'test-instrument',
         unit: 'items',
-        description: 'number of items in a queue'
+        description: 'number of items in a queue',
+        advice: {}
       )
 
       assert(instrument.is_a?(OpenTelemetry::Metrics::Instrument::UpDownCounter))

@@ -35,6 +35,27 @@ describe OpenTelemetry::Metrics::Instrument::SynchronousInstrument do
     end
   end
 
+  describe '#advice' do
+    it 'returns advice' do
+      instrument = build_synchronous_instrument('test-instrument')
+      assert(instrument.advice == {})
+
+      instrument = build_synchronous_instrument(
+        'test-instrument',
+        advice: {
+          histogram: {
+            explicit_bucket_boundaries: [0.1, 0.5, 1.0, 5.0, 10.0, 25.0, Float::INFINITY]
+          }
+        }
+      )
+      assert(instrument.advice == {
+        histogram: {
+          explicit_bucket_boundaries: [0.1, 0.5, 1.0, 5.0, 10.0, 25.0, Float::INFINITY]
+        }
+      })
+    end
+  end
+
   def build_synchronous_instrument(*args, **kwargs)
     OpenTelemetry::Metrics::Instrument::SynchronousInstrument.new(*args, **kwargs)
   end

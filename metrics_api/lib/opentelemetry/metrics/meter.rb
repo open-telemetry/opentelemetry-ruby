@@ -46,10 +46,12 @@ module OpenTelemetry
       # @param description [optional String]
       #   Must conform to the instrument description rule:
       #   UTF-8 string but up to 3 bytes per charater with maximum length of 1023 characters
+      # @param advice [optional Hash] Set of recommendations aimed at assisting
+      #   implementations in providing useful output with minimal configuration
       #
       # @return [Instrument::Counter]
-      def create_counter(name, unit: nil, description: nil)
-        create_instrument(:counter, name, unit, description, nil) { NOOP_COUNTER }
+      def create_counter(name, unit: nil, description: nil, advice: nil)
+        create_instrument(:counter, name, unit, description, advice, nil) { NOOP_COUNTER }
       end
 
       # @param name [String]
@@ -61,10 +63,12 @@ module OpenTelemetry
       # @param description [optional String]
       #   Must conform to the instrument description rule:
       #   UTF-8 string but up to 3 bytes per charater with maximum length of 1023 characters
+      # @param advice [optional Hash] Set of recommendations aimed at assisting
+      #   implementations in providing useful output with minimal configuration
       #
       # @return [Instrument::Histogram]
-      def create_histogram(name, unit: nil, description: nil)
-        create_instrument(:histogram, name, unit, description, nil) { NOOP_HISTOGRAM }
+      def create_histogram(name, unit: nil, description: nil, advice: nil)
+        create_instrument(:histogram, name, unit, description, advice, nil) { NOOP_HISTOGRAM }
       end
 
       # @param name [String]
@@ -76,10 +80,12 @@ module OpenTelemetry
       # @param description [optional String]
       #   Must conform to the instrument description rule:
       #   UTF-8 string but up to 3 bytes per charater with maximum length of 1023 characters
+      # @param advice [optional Hash] Set of recommendations aimed at assisting
+      #   implementations in providing useful output with minimal configuration
       #
       # @return [Instrument::UpDownCounter]
-      def create_up_down_counter(name, unit: nil, description: nil)
-        create_instrument(:up_down_counter, name, unit, description, nil) { NOOP_UP_DOWN_COUNTER }
+      def create_up_down_counter(name, unit: nil, description: nil, advice: nil)
+        create_instrument(:up_down_counter, name, unit, description, advice, nil) { NOOP_UP_DOWN_COUNTER }
       end
 
       # @param name [String]
@@ -100,7 +106,7 @@ module OpenTelemetry
       #
       # @return [Instrument::ObservableCounter]
       def create_observable_counter(name, unit: nil, description: nil, callback: nil)
-        create_instrument(:observable_counter, name, unit, description, callback) { NOOP_OBSERVABLE_COUNTER }
+        create_instrument(:observable_counter, name, unit, description, nil, callback) { NOOP_OBSERVABLE_COUNTER }
       end
 
       # @param name [String]
@@ -121,7 +127,7 @@ module OpenTelemetry
       #
       # @return [Instrument::ObservableGauge]
       def create_observable_gauge(name, unit: nil, description: nil, callback: nil)
-        create_instrument(:observable_gauge, name, unit, description, callback) { NOOP_OBSERVABLE_GAUGE }
+        create_instrument(:observable_gauge, name, unit, description, nil, callback) { NOOP_OBSERVABLE_GAUGE }
       end
 
       # @param name [String]
@@ -142,12 +148,12 @@ module OpenTelemetry
       #
       # @return [Instrument::ObservableUpDownCounter]
       def create_observable_up_down_counter(name, unit: nil, description: nil, callback: nil)
-        create_instrument(:observable_up_down_counter, name, unit, description, callback) { NOOP_OBSERVABLE_UP_DOWN_COUNTER }
+        create_instrument(:observable_up_down_counter, name, unit, description, nil, callback) { NOOP_OBSERVABLE_UP_DOWN_COUNTER }
       end
 
       private
 
-      def create_instrument(kind, name, unit, description, callback)
+      def create_instrument(kind, name, unit, description, advice, callback)
         name = name.downcase
 
         @mutex.synchronize do
