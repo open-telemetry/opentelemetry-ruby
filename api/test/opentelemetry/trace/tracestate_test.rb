@@ -156,4 +156,10 @@ describe OpenTelemetry::Trace::Tracestate do
       _(OpenTelemetry::Trace::Tracestate.from_hash('a' => 'b')).wont_be :empty?
     end
   end
+
+  describe '::DEFAULT' do
+    it 'returns empty tracestate' do
+      _(OpenTelemetry::Trace::Tracestate::DEFAULT.to_h).must_be :empty?
+    end
+  end
 end

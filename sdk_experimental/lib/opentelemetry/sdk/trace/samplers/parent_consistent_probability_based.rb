@@ -43,7 +43,7 @@ module OpenTelemetry
             if !parent_span_context.valid?
               @root.should_sample?(trace_id: trace_id, parent_context: parent_context, links: links, name: name, kind: kind, attributes: attributes)
             else
-              tracestate = sanitized_tracestate(parent_span_context)
+              tracestate = sanitized_tracestate(trace_id, parent_span_context)
               if parent_span_context.trace_flags.sampled?
                 Result.new(decision: Decision::RECORD_AND_SAMPLE, tracestate: tracestate)
               else

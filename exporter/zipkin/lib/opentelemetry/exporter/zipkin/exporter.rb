@@ -115,7 +115,7 @@ module OpenTelemetry
           false
         end
 
-        def send_spans(zipkin_spans, timeout: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
+        def send_spans(zipkin_spans, timeout: nil) # rubocop:disable Metrics/MethodLength
           retry_count = 0
           timeout ||= @timeout
           start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
@@ -174,7 +174,7 @@ module OpenTelemetry
           # TODO: figure out destination and reinitialize @http and @path
         end
 
-        def backoff?(retry_after: nil, retry_count:, reason:)
+        def backoff?(retry_count:, reason:, retry_after: nil)
           return false if retry_count > RETRY_COUNT
 
           # TODO: metric exporter

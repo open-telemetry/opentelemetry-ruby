@@ -41,15 +41,15 @@ module OpenTelemetry
         create_instrument(:up_down_counter, name, unit, description, nil) { UP_DOWN_COUNTER }
       end
 
-      def create_observable_counter(name, unit: nil, description: nil, callback:)
+      def create_observable_counter(name, callback:, unit: nil, description: nil)
         create_instrument(:observable_counter, name, unit, description, callback) { OBSERVABLE_COUNTER }
       end
 
-      def create_observable_gauge(name, unit: nil, description: nil, callback:)
+      def create_observable_gauge(name, callback:, unit: nil, description: nil)
         create_instrument(:observable_gauge, name, unit, description, callback) { OBSERVABLE_GAUGE }
       end
 
-      def create_observable_up_down_counter(name, unit: nil, description: nil, callback:)
+      def create_observable_up_down_counter(name, callback:, unit: nil, description: nil)
         create_instrument(:observable_up_down_counter, name, unit, description, callback) { OBSERVABLE_UP_DOWN_COUNTER }
       end
 

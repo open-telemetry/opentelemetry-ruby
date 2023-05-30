@@ -5,11 +5,27 @@ AllCops:
 Bundler/OrderedGems:
   Exclude:
     - gemfiles/**/*
-Lint/UnusedMethodArgument:
+
+Gemspec/DevelopmentDependencies:
   Enabled: false
-Metrics/AbcSize:
+Gemspec/RequireMFA:
+  Enabled: false
+
+Layout/EmptyLinesAroundModuleBody:
   Enabled: false
 Layout/LineLength:
+  Enabled: false
+Layout/TrailingEmptyLines:
+  Enabled: false
+Layout/TrailingWhitespace:
+  Enabled: false
+
+Lint/UnusedMethodArgument:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+Metrics/BlockLength:
   Enabled: false
 Metrics/MethodLength:
   Max: 20
@@ -17,6 +33,11 @@ Metrics/ModuleLength:
   Enabled: false
 Metrics/ParameterLists:
   Enabled: false
+
+Naming/FileName:
+  Exclude:
+    - lib/opentelemetry-semantic_conventions.rb
+
 Style/FrozenStringLiteralComment:
   Exclude:
     - gemfiles/**/*
@@ -25,16 +46,3 @@ Style/ModuleFunction:
 Style/StringLiterals:
   Exclude:
     - gemfiles/**/*
-Metrics/BlockLength:
-  Enabled: false
-Naming/FileName:
-  Exclude:
-    - "lib/opentelemetry-semantic_conventions.rb"
-Layout/EmptyLinesAroundModuleBody:
-  Enabled: false
-Layout/TrailingWhitespace:
-  Enabled: false
-Layout/TrailingEmptyLines:
-  Enabled: false
-Gemspec/RequireMFA:
-  Enabled: false

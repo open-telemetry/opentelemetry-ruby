@@ -15,7 +15,6 @@ Gem::Specification.new do |spec|
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
   spec.summary     = 'A stats collection and distributed tracing framework'
-  spec.description = 'A stats collection and distributed tracing framework'
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby'
   spec.license     = 'Apache-2.0'
 
@@ -31,16 +30,16 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '>= 1.17'
   spec.add_development_dependency 'faraday', '~> 0.13'
   spec.add_development_dependency 'minitest', '~> 5.0'
-  spec.add_development_dependency 'opentelemetry-test-helpers'
+  spec.add_development_dependency 'opentelemetry-test-helpers', '~> 0.3.0'
   spec.add_development_dependency 'rake', '~> 12.0'
-  spec.add_development_dependency 'rubocop', '~> 0.73.0'
+  spec.add_development_dependency 'rubocop', '~> 1.51.0'
   spec.add_development_dependency 'simplecov', '~> 0.17'
   spec.add_development_dependency 'yard', '~> 0.9'
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-metrics-api/v#{OpenTelemetry::Metrics::VERSION}/file.CHANGELOG.html"
-    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/api'
+    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/metrics_api'
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/issues'
     spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-metrics-api/v#{OpenTelemetry::Metrics::VERSION}"
   end
