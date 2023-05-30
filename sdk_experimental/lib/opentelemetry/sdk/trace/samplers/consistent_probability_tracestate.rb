@@ -23,9 +23,14 @@ module OpenTelemetry
           # tracestate sanitized according to the Context invariants defined in the
           # tracestate probability sampling spec.
           #
+          # If r is nil after the sanitization, it is generated from the trace_id.
+          #
+          # This method assumes the parent span context is valid.
+          #
+          # @param trace_id [OpenTelemetry::Trace::TraceId] the trace id
           # @param span_context [OpenTelemetry::Trace::SpanContext] the parent span context
           # @return [OpenTelemetry::Trace::Tracestate] the sanitized tracestate
-          def sanitized_tracestate(span_context)
+          def sanitized_tracestate(trace_id, span_context)
             sampled = span_context.trace_flags.sampled?
             tracestate = span_context.tracestate
             parse_ot_vendor_tag(tracestate) do |p, r, rest|
@@ -35,8 +40,12 @@ module OpenTelemetry
                 p = nil
               elsif !p.nil? && !r.nil? && !invariant(p, r, sampled)
                 p = nil
-              else
+              elsif !r.nil?
                 return tracestate
+              end
+              if r.nil?
+                OpenTelemetry.logger.debug("ConsistentProbabilitySampler: potentially inconsistent trace detected - r: #{r.inspect}")
+                r = generate_r(trace_id)
               end
               update_tracestate(tracestate, p, r, rest)
             end
@@ -85,18 +94,6 @@ module OpenTelemetry
               tracestate.set_value('ot', "p:#{p};r:#{r}")
             else
               tracestate.set_value('ot', "p:#{p};r:#{r};#{rest}")
-            end
-          end
-
-          def new_tracestate(p: nil, r: nil) # rubocop:disable Naming/UncommunicativeMethodParamName
-            if p.nil? && r.nil?
-              OpenTelemetry::Trace::Tracestate::DEFAULT
-            elsif p.nil?
-              OpenTelemetry::Trace::Tracestate.from_hash('ot' => "r:#{r}")
-            elsif r.nil?
-              OpenTelemetry::Trace::Tracestate.from_hash('ot' => "p:#{p}")
-            else
-              OpenTelemetry::Trace::Tracestate.from_hash('ot' => "p:#{p};r:#{r}")
             end
           end
 

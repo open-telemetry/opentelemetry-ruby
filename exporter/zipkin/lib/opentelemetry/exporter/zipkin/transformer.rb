@@ -91,7 +91,7 @@ module OpenTelemetry
           end
         end
 
-        def add_conditional_tags(zipkin_span, span_data, tags, service_name) # rubocop:disable Metrics/CyclomaticComplexity
+        def add_conditional_tags(zipkin_span, span_data, tags, service_name)
           dropped_attributes_count = span_data.total_recorded_attributes - span_data.attributes&.size.to_i
           dropped_events_count = span_data.total_recorded_events - span_data.events&.size.to_i
           dropped_links_count = span_data.total_recorded_links - span_data.links&.size.to_i

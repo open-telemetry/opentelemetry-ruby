@@ -19,8 +19,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       @failed_batches = []
     end
 
-    attr_reader :batches
-    attr_reader :failed_batches
+    attr_reader :batches, :failed_batches
 
     def export(batch, timeout: nil)
       # If status codes is empty, its a success for less verbose testing

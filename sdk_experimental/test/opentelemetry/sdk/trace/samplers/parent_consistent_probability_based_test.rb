@@ -31,8 +31,15 @@ describe OpenTelemetry::SDK::Trace::Samplers::ParentConsistentProbabilityBased d
       _(call_sampler(subject, parent_context: parent_context(sampled: false, ot: 'p:2;r:1')).tracestate['ot']).must_equal('p:2;r:1')
       _(call_sampler(subject, parent_context: parent_context(sampled: true, ot: 'p:2;r:1')).tracestate['ot']).must_equal('r:1')
       _(call_sampler(subject, parent_context: parent_context(sampled: true, ot: 'p:63;r:1')).tracestate['ot']).must_equal('p:63;r:1')
-      _(call_sampler(subject, parent_context: parent_context(ot: 'p:1;r:63')).tracestate['ot']).must_be_nil
-      _(call_sampler(subject, parent_context: parent_context(ot: 'p:1;r:63;junk')).tracestate['ot']).must_equal('junk')
+      _(call_sampler(subject, trace_id: trace_id(-1), parent_context: parent_context(ot: 'p:1;r:63')).tracestate['ot']).must_equal('r:0')
+      _(call_sampler(subject, trace_id: trace_id(-1), parent_context: parent_context(ot: 'p:1;r:63;junk')).tracestate['ot']).must_equal('r:0;junk')
+    end
+
+    it 'sets r based on the trace_id if missing or invalid' do
+      _(call_sampler(subject, trace_id: trace_id(-1), parent_context: parent_context(sampled: true)).tracestate['ot']).must_equal('r:0')
+      _(call_sampler(subject, trace_id: trace_id(-1), parent_context: parent_context(sampled: false)).tracestate['ot']).must_equal('r:0')
+      _(call_sampler(subject, trace_id: trace_id(-1), parent_context: parent_context(ot: 'r:63', sampled: true)).tracestate['ot']).must_equal('r:0')
+      _(call_sampler(subject, trace_id: trace_id(-1), parent_context: parent_context(ot: 'r:63', sampled: false)).tracestate['ot']).must_equal('r:0')
     end
 
     it 'respects parent sampling decision' do
