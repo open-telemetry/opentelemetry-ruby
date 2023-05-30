@@ -1,5 +1,9 @@
 # Release History: opentelemetry-semantic_conventions
 
+### v1.8.1 / 2023-05-30
+
+* FIXED: Warning messages from gem build 
+
 ### v1.8.0 / 2022-01-06
 
 * (No significant changes)

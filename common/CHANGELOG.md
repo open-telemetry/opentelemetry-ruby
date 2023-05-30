@@ -1,5 +1,9 @@
 # Release History: opentelemetry-common
 
+### v0.19.7 / 2023-05-30
+
+* FIXED: Untraced only works with parent-based sampler 
+
 ### v0.19.6 / 2022-05-18
 
 * (No significant changes)

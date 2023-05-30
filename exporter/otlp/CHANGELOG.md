@@ -1,5 +1,10 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.24.1 / 2023-05-30
+
+* FIXED: Add Ruby 3.2 to CI and do small fix 
+* FIXED: Adds User-Agent header in OTLP exporter 
+
 ### v0.24.0 / 2022-09-14
 
 * ADDED: Support InstrumentationScope, and update OTLP proto to 0.18.0 
