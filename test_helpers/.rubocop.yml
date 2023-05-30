@@ -16,5 +16,7 @@ Naming/FileName:
     - "lib/opentelemetry-test-helpers.rb"
 Style/ModuleFunction:
   Enabled: false
+Gemspec/DevelopmentDependencies:
+  Enabled: false
 Gemspec/RequireMFA:
   Enabled: false
