@@ -35,7 +35,7 @@ Then, configure the SDK to use the OTLP GRPC exporter as a span processor, and u
 require 'opentelemetry/sdk'
 require 'opentelemetry/exporter/otlp/grpc'
 
-exporter = OpenTelemetry::Exporter::OTLP::GRPC::Exporter.new
+exporter = OpenTelemetry::Exporter::OTLP::GRPC::TraceExporter.new
 span_processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter)
 
 OpenTelemetry::SDK.configure do |c|
