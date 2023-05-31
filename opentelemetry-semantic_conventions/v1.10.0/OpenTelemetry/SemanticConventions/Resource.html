@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: OpenTelemetry::SemanticConventions::Resource
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::SemanticConventions::Resource";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (R)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../SemanticConventions.html" title="OpenTelemetry::SemanticConventions (module)">SemanticConventions</a></span></span>
+     &raquo; 
+    <span class="title">Resource</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: OpenTelemetry::SemanticConventions::Resource
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/semantic_conventions/resource.rb</dd>
+  </dl>
+  
+</div>
+
+
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="CLOUD_PROVIDER-constant" class="">CLOUD_PROVIDER =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Name of the cloud provider</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cloud.provider</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="CLOUD_ACCOUNT_ID-constant" class="">CLOUD_ACCOUNT_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The cloud account ID the resource is assigned to</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cloud.account.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="CLOUD_REGION-constant" class="">CLOUD_REGION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'>
+<p>Refer to your provider&#39;s docs to see the available regions, for example <a href="https://www.alibabacloud.com/help/doc-detail/40654.htm">Alibaba Cloud regions</a>, <a href="https://aws.amazon.com/about-aws/global-infrastructure/regions_az/">AWS regions</a>, <a href="https://azure.microsoft.com/en-us/global-infrastructure/geographies/">Azure regions</a>, <a href="https://cloud.google.com/about/locations">Google Cloud regions</a>, or <a href="https://intl.cloud.tencent.com/document/product/213/6091">Tencent Cloud regions</a></p>
+</div>
+  </div>
+
+
+<p>The geographical region the resource is running</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cloud.region</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="CLOUD_AVAILABILITY_ZONE-constant" class="">CLOUD_AVAILABILITY_ZONE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'>
+<p>Availability zones are called “zones” on Alibaba Cloud and Google Cloud</p>
+</div>
+  </div>
+
+
+<p>Cloud regions often have multiple, isolated locations known as zones to increase availability. Availability zone represents the zone where the resource is running</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cloud.availability_zone</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="CLOUD_PLATFORM-constant" class="">CLOUD_PLATFORM =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'>
+<p>The prefix of the service SHOULD match the one specified in <code>cloud.provider</code></p>
+</div>
+  </div>
+
+
+<p>The cloud platform in use</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cloud.platform</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_ECS_CONTAINER_ARN-constant" class="">AWS_ECS_CONTAINER_ARN =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The Amazon Resource Name (ARN) of an <a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_instances.html">ECS container instance</a></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.ecs.container.arn</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_ECS_CLUSTER_ARN-constant" class="">AWS_ECS_CLUSTER_ARN =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The ARN of an <a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/clusters.html">ECS cluster</a></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.ecs.cluster.arn</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_ECS_LAUNCHTYPE-constant" class="">AWS_ECS_LAUNCHTYPE =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The <a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/launch_types.html">launch type</a> for an ECS task</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.ecs.launchtype</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_ECS_TASK_ARN-constant" class="">AWS_ECS_TASK_ARN =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The ARN of an <a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definitions.html">ECS task definition</a></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.ecs.task.arn</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_ECS_TASK_FAMILY-constant" class="">AWS_ECS_TASK_FAMILY =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The task definition family this task definition is a member of</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.ecs.task.family</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_ECS_TASK_REVISION-constant" class="">AWS_ECS_TASK_REVISION =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The revision for this task definition</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.ecs.task.revision</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_EKS_CLUSTER_ARN-constant" class="">AWS_EKS_CLUSTER_ARN =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The ARN of an EKS cluster</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.eks.cluster.arn</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_LOG_GROUP_NAMES-constant" class="">AWS_LOG_GROUP_NAMES =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'>
+<p>Multiple log groups must be supported for cases like multi-container applications, where a single application has sidecar containers, and each write to their own log group</p>
+</div>
+  </div>
+
+
+<p>The name(s) of the AWS log group(s) an application is writing to</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.log.group.names</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_LOG_GROUP_ARNS-constant" class="">AWS_LOG_GROUP_ARNS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'>
+<p>See the <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/iam-access-control-overview-cwl.html#CWL_ARN_Format">log group ARN format documentation</a></p>
+</div>
+  </div>
+
+
+<p>The Amazon Resource Name(s) (ARN) of the AWS log group(s)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.log.group.arns</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_LOG_STREAM_NAMES-constant" class="">AWS_LOG_STREAM_NAMES =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The name(s) of the AWS log stream(s) an application is writing to</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.log.stream.names</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_LOG_STREAM_ARNS-constant" class="">AWS_LOG_STREAM_ARNS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'>
+<p>See the <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/iam-access-control-overview-cwl.html#CWL_ARN_Format">log stream ARN format documentation</a>. One log group can contain several log streams, so these ARNs necessarily identify both a log group and a log stream</p>
+</div>
+  </div>
+
+
+<p>The ARN(s) of the AWS log stream(s)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.log.stream.arns</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="CONTAINER_NAME-constant" class="">CONTAINER_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Container name used by container runtime</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>container.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="CONTAINER_ID-constant" class="">CONTAINER_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Container ID. Usually a UUID, as for example used to <a href="https://docs.docker.com/engine/reference/run/#container-identification">identify Docker containers</a>. The UUID might be abbreviated</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>container.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="CONTAINER_RUNTIME-constant" class="">CONTAINER_RUNTIME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The container runtime managing this container</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>container.runtime</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="CONTAINER_IMAGE_NAME-constant" class="">CONTAINER_IMAGE_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Name of the image the container was built on</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>container.image.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="CONTAINER_IMAGE_TAG-constant" class="">CONTAINER_IMAGE_TAG =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Container image tag</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>container.image.tag</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DEPLOYMENT_ENVIRONMENT-constant" class="">DEPLOYMENT_ENVIRONMENT =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Name of the <a href="https://en.wikipedia.org/wiki/Deployment_environment">deployment environment</a> (aka deployment tier)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>deployment.environment</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DEVICE_ID-constant" class="">DEVICE_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'>
+<p>The device identifier MUST only be defined using the values outlined below. This value is not an advertising identifier and MUST NOT be used as such. On iOS (Swift or Objective-C), this value MUST be equal to the <a href="https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor">vendor identifier</a>. On Android (Java or Kotlin), this value MUST be equal to the Firebase Installation ID or a globally unique UUID which is persisted across sessions in your application. More information can be found <a href="https://developer.android.com/training/articles/user-data-ids">here</a> on best practices and exact implementation details. Caution should be taken when storing personal data or anything which can identify a user. GDPR and data protection laws may apply, ensure you do your own due diligence</p>
+</div>
+  </div>
+
+
+<p>A unique identifier representing the device</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>device.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DEVICE_MODEL_IDENTIFIER-constant" class="">DEVICE_MODEL_IDENTIFIER =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'>
+<p>It&#39;s recommended this value represents a machine readable version of the model identifier rather than the market or consumer-friendly name of the device</p>
+</div>
+  </div>
+
+
+<p>The model identifier for the device</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>device.model.identifier</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DEVICE_MODEL_NAME-constant" class="">DEVICE_MODEL_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'>
+<p>It&#39;s recommended this value represents a human readable version of the device model rather than a machine readable alternative</p>
+</div>
+  </div>
+
+
+<p>The marketing name for the device model</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>device.model.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DEVICE_MANUFACTURER-constant" class="">DEVICE_MANUFACTURER =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'>
+<p>The Android OS provides this field via <a href="https://developer.android.com/reference/android/os/Build#MANUFACTURER">Build</a>. iOS apps SHOULD hardcode the value <code>Apple</code></p>
+</div>
+  </div>
+
+
+<p>The name of the device manufacturer</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>device.manufacturer</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_NAME-constant" class="">FAAS_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'>
+<p>This is the name of the function as configured/deployed on the FaaS platform and is usually different from the name of the callback function (which may be stored in the <a href="../../trace/semantic_conventions/span-general.md#source-code-attributes">code.namespace/code.function</a> span attributes)</p>
+</div>
+  </div>
+
+
+<p>The name of the single function that this runtime instance executes</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_ID-constant" class="">FAAS_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'>
+<p>Depending on the cloud provider, use:</p>
+<ul><li>
+<p><strong>AWS Lambda:</strong> The function <a href="https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html">ARN</a>. Take care not to use the “invoked ARN” directly but replace any <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-aliases.html">alias suffix</a> with the resolved function version, as the same runtime instance may be invokable with multiple different aliases.</p>
+</li><li>
+<p><strong>GCP:</strong> The <a href="https://cloud.google.com/iam/docs/full-resource-names">URI of the resource</a></p>
+</li><li>
+<p><strong>Azure:</strong> The <a href="https://docs.microsoft.com/en-us/rest/api/resources/resources/get-by-id">Fully Qualified Resource ID</a>.</p>
+</li></ul>
+
+<p>On some providers, it may not be possible to determine the full ID at startup, which is why this field cannot be made required. For example, on AWS the account ID part of the ARN is not available without calling another AWS API which may be deemed too slow for a short-running lambda function. As an alternative, consider setting <code>faas.id</code> as a span attribute instead</p>
+</div>
+  </div>
+
+
+<p>The unique ID of the single function that this runtime instance executes</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_VERSION-constant" class="">FAAS_VERSION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'>
+<p>Depending on the cloud provider and platform, use:</p>
+<ul><li>
+<p><strong>AWS Lambda:</strong> The <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-versions.html">function version</a>  (an integer represented as a decimal string).</p>
+</li><li>
+<p><strong>Google Cloud Run:</strong> The <a href="https://cloud.google.com/run/docs/managing/revisions">revision</a>  (i.e., the function name plus the revision suffix).</p>
+</li><li>
+<p><strong>Google Cloud Functions:</strong> The value of the  <a href="https://cloud.google.com/functions/docs/env-var#runtime_environment_variables_set_automatically">K_REVISION environment variable</a>.</p>
+</li><li>
+<p><strong>Azure Functions:</strong> Not applicable. Do not set this attribute</p>
+</li></ul>
+</div>
+  </div>
+
+
+<p>The immutable version of the function being executed</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.version</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_INSTANCE-constant" class="">FAAS_INSTANCE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><ul><li>
+<p><strong>AWS Lambda:</strong> Use the (full) log stream name</p>
+</li></ul>
+</div>
+  </div>
+
+
+<p>The execution environment ID as a string, that will be potentially reused for other invocations to the same function/function version</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.instance</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_MAX_MEMORY-constant" class="">FAAS_MAX_MEMORY =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'>
+<p>It&#39;s recommended to set this attribute since e.g. too little memory can easily stop a Java AWS Lambda function from working correctly. On AWS Lambda, the environment variable <code>AWS_LAMBDA_FUNCTION_MEMORY_SIZE</code> provides this information</p>
+</div>
+  </div>
+
+
+<p>The amount of memory available to the serverless function in MiB</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.max_memory</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HOST_ID-constant" class="">HOST_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Unique host ID. For Cloud, this must be the instance_id assigned by the cloud provider</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>host.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HOST_NAME-constant" class="">HOST_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Name of the host. On Unix systems, it may contain what the hostname command returns, or the fully qualified hostname, or another name specified by the user</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>host.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HOST_TYPE-constant" class="">HOST_TYPE =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Type of host. For Cloud, this must be the machine type</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>host.type</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HOST_ARCH-constant" class="">HOST_ARCH =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The CPU architecture the host system is running on</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>host.arch</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HOST_IMAGE_NAME-constant" class="">HOST_IMAGE_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Name of the VM image or OS install the host was instantiated from</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>host.image.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HOST_IMAGE_ID-constant" class="">HOST_IMAGE_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>VM image ID. For Cloud, this value is from the provider</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>host.image.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HOST_IMAGE_VERSION-constant" class="">HOST_IMAGE_VERSION =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The version string of the VM image as defined in <a href="README.md#version-attributes">Version Attributes</a></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>host.image.version</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="K8S_CLUSTER_NAME-constant" class="">K8S_CLUSTER_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The name of the cluster</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.cluster.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="K8S_NODE_NAME-constant" class="">K8S_NODE_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The name of the Node</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.node.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="K8S_NODE_UID-constant" class="">K8S_NODE_UID =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The UID of the Node</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.node.uid</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="K8S_NAMESPACE_NAME-constant" class="">K8S_NAMESPACE_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The name of the namespace that the pod is running in</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.namespace.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="K8S_POD_UID-constant" class="">K8S_POD_UID =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The UID of the Pod</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.pod.uid</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="K8S_POD_NAME-constant" class="">K8S_POD_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The name of the Pod</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.pod.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="K8S_CONTAINER_NAME-constant" class="">K8S_CONTAINER_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The name of the Container from Pod specification, must be unique within a Pod. Container runtime usually uses different globally unique name (<code>container.name</code>)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.container.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="K8S_CONTAINER_RESTART_COUNT-constant" class="">K8S_CONTAINER_RESTART_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Number of times the container was restarted. This attribute can be used to identify a particular container (running or stopped) within a container spec</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.container.restart_count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="K8S_REPLICASET_UID-constant" class="">K8S_REPLICASET_UID =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The UID of the ReplicaSet</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.replicaset.uid</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="K8S_REPLICASET_NAME-constant" class="">K8S_REPLICASET_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The name of the ReplicaSet</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.replicaset.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="K8S_DEPLOYMENT_UID-constant" class="">K8S_DEPLOYMENT_UID =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The UID of the Deployment</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.deployment.uid</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="K8S_DEPLOYMENT_NAME-constant" class="">K8S_DEPLOYMENT_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The name of the Deployment</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.deployment.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="K8S_STATEFULSET_UID-constant" class="">K8S_STATEFULSET_UID =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The UID of the StatefulSet</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.statefulset.uid</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="K8S_STATEFULSET_NAME-constant" class="">K8S_STATEFULSET_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The name of the StatefulSet</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.statefulset.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="K8S_DAEMONSET_UID-constant" class="">K8S_DAEMONSET_UID =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The UID of the DaemonSet</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.daemonset.uid</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="K8S_DAEMONSET_NAME-constant" class="">K8S_DAEMONSET_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The name of the DaemonSet</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.daemonset.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="K8S_JOB_UID-constant" class="">K8S_JOB_UID =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The UID of the Job</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.job.uid</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="K8S_JOB_NAME-constant" class="">K8S_JOB_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The name of the Job</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.job.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="K8S_CRONJOB_UID-constant" class="">K8S_CRONJOB_UID =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The UID of the CronJob</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.cronjob.uid</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="K8S_CRONJOB_NAME-constant" class="">K8S_CRONJOB_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The name of the CronJob</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>k8s.cronjob.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OS_TYPE-constant" class="">OS_TYPE =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The operating system type</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>os.type</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OS_DESCRIPTION-constant" class="">OS_DESCRIPTION =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Human readable (not intended to be parsed) OS version information, like e.g. reported by <code>ver</code> or <code>lsb_release -a</code> commands</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>os.description</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OS_NAME-constant" class="">OS_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Human readable operating system name</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>os.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OS_VERSION-constant" class="">OS_VERSION =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The version string of the operating system as defined in <a href="../../resource/semantic_conventions/README.md#version-attributes">Version Attributes</a></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>os.version</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_PID-constant" class="">PROCESS_PID =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Process identifier (PID)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.pid</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_EXECUTABLE_NAME-constant" class="">PROCESS_EXECUTABLE_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The name of the process executable. On Linux based systems, can be set to the <code>Name</code> in <code>proc/[pid]/status</code>. On Windows, can be set to the base name of <code>GetProcessImageFileNameW</code></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.executable.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_EXECUTABLE_PATH-constant" class="">PROCESS_EXECUTABLE_PATH =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The full path to the process executable. On Linux based systems, can be set to the target of <code>proc/[pid]/exe</code>. On Windows, can be set to the result of <code>GetProcessImageFileNameW</code></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.executable.path</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_COMMAND-constant" class="">PROCESS_COMMAND =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The command used to launch the process (i.e. the command name). On Linux based systems, can be set to the zeroth string in <code>proc/[pid]/cmdline</code>. On Windows, can be set to the first parameter extracted from <code>GetCommandLineW</code></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.command</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_COMMAND_LINE-constant" class="">PROCESS_COMMAND_LINE =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The full command used to launch the process as a single string representing the full command. On Windows, can be set to the result of <code>GetCommandLineW</code>. Do not set this if you have to assemble it just for monitoring; use <code>process.command_args</code> instead</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.command_line</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_COMMAND_ARGS-constant" class="">PROCESS_COMMAND_ARGS =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>All the command arguments (including the command/executable itself) as received by the process. On Linux-based systems (and some other Unixoid systems supporting procfs), can be set according to the list of null-delimited strings extracted from <code>proc/[pid]/cmdline</code>. For libc-based executables, this would be the full argv vector passed to <code>main</code></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.command_args</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_OWNER-constant" class="">PROCESS_OWNER =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The username of the user that owns the process</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.owner</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_RUNTIME_NAME-constant" class="">PROCESS_RUNTIME_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The name of the runtime of this process. For compiled native binaries, this SHOULD be the name of the compiler</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.runtime.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_RUNTIME_VERSION-constant" class="">PROCESS_RUNTIME_VERSION =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The version of the runtime of this process, as returned by the runtime without modification</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.runtime.version</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_RUNTIME_DESCRIPTION-constant" class="">PROCESS_RUNTIME_DESCRIPTION =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>An additional description about the runtime of the process, for example a specific vendor customization of the runtime environment</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.runtime.description</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="SERVICE_NAME-constant" class="">SERVICE_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'>
+<p>MUST be the same for all instances of horizontally scaled services. If the value was not specified, SDKs MUST fallback to <code>unknown_service:</code> concatenated with <a href="process.md#process">process.executable.name</a>, e.g. <code>unknown_service:bash</code>. If <code>process.executable.name</code> is not available, the value MUST be set to <code>unknown_service</code></p>
+</div>
+  </div>
+
+
+<p>Logical name of the service</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>service.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="SERVICE_NAMESPACE-constant" class="">SERVICE_NAMESPACE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'>
+<p>A string value having a meaning that helps to distinguish a group of services, for example the team name that owns a group of services. <code>service.name</code> is expected to be unique within the same namespace. If <code>service.namespace</code> is not specified in the Resource then <code>service.name</code> is expected to be unique for all services that have no explicit namespace defined (so the empty/unspecified namespace is simply one more valid namespace). Zero-length namespace string is assumed equal to unspecified namespace</p>
+</div>
+  </div>
+
+
+<p>A namespace for <code>service.name</code></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>service.namespace</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="SERVICE_INSTANCE_ID-constant" class="">SERVICE_INSTANCE_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'>
+<p>MUST be unique for each instance of the same <code>service.namespace,service.name</code> pair (in other words <code>service.namespace,service.name,service.instance.id</code> triplet MUST be globally unique). The ID helps to distinguish instances of the same service that exist at the same time (e.g. instances of a horizontally scaled service). It is preferable for the ID to be persistent and stay the same for the lifetime of the service instance, however it is acceptable that the ID is ephemeral and changes during important lifetime events for the service (e.g. service restarts). If the service has no inherent unique ID that can be used as the value of this attribute it is recommended to generate a random Version 1 or Version 4 RFC 4122 UUID (services aiming for reproducible UUIDs may also use Version 5, see RFC 4122 for more recommendations)</p>
+</div>
+  </div>
+
+
+<p>The string ID of the service instance</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>service.instance.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="SERVICE_VERSION-constant" class="">SERVICE_VERSION =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The version string of the service API or implementation</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>service.version</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="TELEMETRY_SDK_NAME-constant" class="">TELEMETRY_SDK_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The name of the telemetry SDK as defined above</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>telemetry.sdk.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="TELEMETRY_SDK_LANGUAGE-constant" class="">TELEMETRY_SDK_LANGUAGE =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The language of the telemetry SDK</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>telemetry.sdk.language</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="TELEMETRY_SDK_VERSION-constant" class="">TELEMETRY_SDK_VERSION =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The version string of the telemetry SDK</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>telemetry.sdk.version</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="TELEMETRY_AUTO_VERSION-constant" class="">TELEMETRY_AUTO_VERSION =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The version string of the auto instrumentation agent, if used</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>telemetry.auto.version</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="WEBENGINE_NAME-constant" class="">WEBENGINE_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The name of the web engine</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>webengine.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="WEBENGINE_VERSION-constant" class="">WEBENGINE_VERSION =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The version of the web engine</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>webengine.version</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="WEBENGINE_DESCRIPTION-constant" class="">WEBENGINE_DESCRIPTION =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Additional description of the web engine (e.g. detailed version and edition information)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>webengine.description</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+
+
+</div>
+
+      <div id="footer">
+  Generated on Wed May 31 17:45:47 2023 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.34 (ruby-2.7.8).
+</div>
+
+    </div>
+  </body>
+</html>
