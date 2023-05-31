@@ -4,7 +4,7 @@
 
 * FIXED: Warning messages from gem build 
 
-### v1.10.0 / 2022-01-06
+### v1.8.0 / 2022-01-06
 
 * (No significant changes)
 
