@@ -1,5 +1,10 @@
 # Release History: opentelemetry-sdk
 
+### v1.2.1 / 2023-05-30
+
+* FIXED: Untraced only works with parent-based sampler 
+* DOCS: Improve formatting of usage examples in OpenTelemetry SDK rubydocs 
+
 ### v1.2.0 / 2022-09-14
 
 * ADDED: Support OTEL_PROPAGATORS=none 
