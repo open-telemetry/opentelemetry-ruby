@@ -5,6 +5,7 @@
 * BREAKING CHANGE: Remove support for EoL Ruby 2.7 
 
 * ADDED: Remove support for EoL Ruby 2.7 
+* FIXED: Make version available to user agent header #1458
 
 ### v0.24.1 / 2023-05-30
 
