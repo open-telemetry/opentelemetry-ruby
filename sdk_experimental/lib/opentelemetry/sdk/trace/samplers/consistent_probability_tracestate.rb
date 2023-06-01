@@ -13,7 +13,7 @@ module OpenTelemetry
         # The ConsistentProbabilityTraceState module implements Tracestate parsing,
         # validation and manipulation for the consistent probability-based samplers.
         module ConsistentProbabilityTraceState
-          DECIMAL = /\A\d+\z/.freeze
+          DECIMAL = /\A\d+\z/
           MAX_LIST_LENGTH = 256 # Defined by https://www.w3.org/TR/trace-context/
           private_constant(:DECIMAL, :MAX_LIST_LENGTH)
 
@@ -77,7 +77,7 @@ module OpenTelemetry
             yield(p, r, rest)
           end
 
-          def update_tracestate(tracestate, p, r, rest) # rubocop:disable Naming/UncommunicativeMethodParamName
+          def update_tracestate(tracestate, p, r, rest)
             if p.nil? && r.nil? && rest.nil?
               tracestate.delete('ot')
             elsif p.nil? && r.nil?
@@ -97,7 +97,7 @@ module OpenTelemetry
             end
           end
 
-          def invariant(p, r, sampled) # rubocop:disable Naming/UncommunicativeMethodParamName
+          def invariant(p, r, sampled)
             ((p <= r) == sampled) || (sampled && (p == 63))
           end
 
@@ -107,8 +107,7 @@ module OpenTelemetry
 
           def generate_r(trace_id)
             x = trace_id[8, 8].unpack1('Q>') | 0x3
-            clz = 64 - x.bit_length
-            clz
+            64 - x.bit_length
           end
         end
       end

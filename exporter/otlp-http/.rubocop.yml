@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: "2.6.0"
+  TargetRubyVersion: "3.0"
   Exclude:
     - "lib/opentelemetry/proto/**/*"
     - "vendor/**/*"
@@ -7,6 +7,10 @@ AllCops:
 Lint/UnusedMethodArgument:
   Enabled: false
 Metrics/AbcSize:
+  Enabled: false
+Metrics/CyclomaticComplexity:
+  Enabled: false
+Metrics/PerceivedComplexity:
   Enabled: false
 Metrics/LineLength:
   Enabled: false
