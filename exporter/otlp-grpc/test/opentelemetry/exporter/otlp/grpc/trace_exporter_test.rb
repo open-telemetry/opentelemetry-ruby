@@ -7,7 +7,6 @@ require 'test_helper'
 
 describe OpenTelemetry::Exporter::OTLP::GRPC::TraceExporter do
   let(:success) { OpenTelemetry::SDK::Trace::Export::SUCCESS }
-  let(:failure) { OpenTelemetry::SDK::Trace::Export::FAILURE }
 
   describe '#exporter' do
     it 'integrates with collector' do
