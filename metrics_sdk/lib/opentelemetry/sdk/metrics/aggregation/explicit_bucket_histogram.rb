@@ -32,7 +32,7 @@ module OpenTelemetry
           def collect(start_time, end_time)
             if @aggregation_temporality == :delta
               # Set timestamps and 'move' data point values to result.
-              hdps = @data_points.values.each do |hdp|
+              hdps = @data_points.each_value do |hdp|
                 hdp.start_time_unix_nano = start_time
                 hdp.time_unix_nano = end_time
               end

@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: "2.6.0"
+  TargetRubyVersion: "3.0"
 
 Lint/UnusedMethodArgument:
   Enabled: false
@@ -15,8 +15,6 @@ Naming/FileName:
   Exclude:
     - "lib/opentelemetry-test-helpers.rb"
 Style/ModuleFunction:
-  Enabled: false
-Gemspec/DevelopmentDependencies:
   Enabled: false
 Gemspec/RequireMFA:
   Enabled: false

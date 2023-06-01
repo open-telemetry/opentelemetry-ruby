@@ -63,7 +63,7 @@ module OpenTelemetry
 
       MAX_MEMBER_COUNT = 32 # Defined by https://www.w3.org/TR/trace-context/
       VALID_KEY = Regexp.union(%r(^[a-z][a-z0-9_\-*/]{,255}$), %r(^[a-z0-9][a-z0-9_\-*/]{,240}@[a-z][a-z0-9_\-*/]{,13}$)).freeze
-      VALID_VALUE = /^[ -~&&[^,=]]{,255}[!-~&&[^,=]]$/.freeze
+      VALID_VALUE = /^[ -~&&[^,=]]{,255}[!-~&&[^,=]]$/
       private_constant(:MAX_MEMBER_COUNT, :VALID_KEY, :VALID_VALUE)
 
       # @api private

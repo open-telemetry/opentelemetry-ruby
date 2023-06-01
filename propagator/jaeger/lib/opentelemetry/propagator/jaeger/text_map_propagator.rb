@@ -24,8 +24,8 @@ module OpenTelemetry
         SAMPLED_FLAG_BIT = 0x01
         DEBUG_FLAG_BIT   = 0x02
         FIELDS = [IDENTITY_KEY].freeze
-        TRACE_SPAN_IDENTITY_REGEX = /\A(?<trace_id>(?:[0-9a-f]){1,32}):(?<span_id>([0-9a-f]){1,16}):[0-9a-f]{1,16}:(?<sampling_flags>[0-9a-f]{1,2})\z/.freeze
-        ZERO_ID_REGEX = /^0+$/.freeze
+        TRACE_SPAN_IDENTITY_REGEX = /\A(?<trace_id>(?:[0-9a-f]){1,32}):(?<span_id>([0-9a-f]){1,16}):[0-9a-f]{1,16}:(?<sampling_flags>[0-9a-f]{1,2})\z/
+        ZERO_ID_REGEX = /^0+$/
 
         private_constant \
           :IDENTITY_KEY, :DEFAULT_FLAG_BIT, :SAMPLED_FLAG_BIT, :DEBUG_FLAG_BIT,

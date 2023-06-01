@@ -17,9 +17,9 @@ module OpenTelemetry
     module B3
       # Extracts trace context using the b3 single or multi header formats, favouring b3 single header.
       module TextMapExtractor
-        B3_CONTEXT_REGEX = /\A(?<trace_id>(?:[0-9a-f]{16}){1,2})-(?<span_id>[0-9a-f]{16})(?:-(?<sampling_state>[01d](?![0-9a-f])))?(?:-(?<parent_span_id>[0-9a-f]{16}))?\z/.freeze
-        B3_TRACE_ID_REGEX = /\A(?:[0-9a-f]{16}){1,2}\z/.freeze
-        B3_SPAN_ID_REGEX = /\A[0-9a-f]{16}\z/.freeze
+        B3_CONTEXT_REGEX = /\A(?<trace_id>(?:[0-9a-f]{16}){1,2})-(?<span_id>[0-9a-f]{16})(?:-(?<sampling_state>[01d](?![0-9a-f])))?(?:-(?<parent_span_id>[0-9a-f]{16}))?\z/
+        B3_TRACE_ID_REGEX = /\A(?:[0-9a-f]{16}){1,2}\z/
+        B3_SPAN_ID_REGEX = /\A[0-9a-f]{16}\z/
         SAMPLED_VALUES = %w[1 true].freeze
 
         B3_CONTEXT_KEY = 'b3'

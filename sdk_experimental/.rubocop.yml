@@ -1,7 +1,9 @@
 AllCops:
-  TargetRubyVersion: "2.6.0"
+  TargetRubyVersion: "3.0"
 
 Lint/UnusedMethodArgument:
+  Enabled: false
+Naming/MethodParameterName:
   Enabled: false
 Metrics/AbcSize:
   Max: 30
