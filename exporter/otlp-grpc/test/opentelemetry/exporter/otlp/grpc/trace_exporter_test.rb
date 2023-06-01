@@ -6,8 +6,8 @@
 require 'test_helper'
 
 describe OpenTelemetry::Exporter::OTLP::GRPC::TraceExporter do
-  SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
-  FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
+  let(:success) { OpenTelemetry::SDK::Trace::Export::SUCCESS }
+  let(:failure) { OpenTelemetry::SDK::Trace::Export::FAILURE }
 
   describe '#exporter' do
     it 'integrates with collector' do
@@ -15,7 +15,7 @@ describe OpenTelemetry::Exporter::OTLP::GRPC::TraceExporter do
       span_data = OpenTelemetry::TestHelpers.create_span_data
       exporter = OpenTelemetry::Exporter::OTLP::GRPC::TraceExporter.new(endpoint: 'http://localhost:4317')
       result = exporter.export([span_data])
-      _(result).must_equal(SUCCESS)
+      _(result).must_equal(success)
     end
   end
 end

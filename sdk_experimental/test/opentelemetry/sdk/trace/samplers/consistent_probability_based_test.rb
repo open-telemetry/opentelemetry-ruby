@@ -86,7 +86,7 @@ describe OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased do
       p_values.zip(probabilities).each do |p, probability|
         sampler = OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased.new(probability)
         _(sampler.instance_variable_get(:@p_floor)).must_equal(p)
-        _(sampler.instance_variable_get(:@p_ceil)).must_equal(p-1)
+        _(sampler.instance_variable_get(:@p_ceil)).must_equal(p - 1)
         _(sampler.instance_variable_get(:@p_ceil_probability)).must_equal(0)
       end
     end

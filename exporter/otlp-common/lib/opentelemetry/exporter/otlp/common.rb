@@ -43,7 +43,7 @@ module OpenTelemetry
         #
         # @return [Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest]
         #   returns an ETSR of the provided span data
-        def as_etsr(span_data) # rubocop:disable Metrics/MethodLength
+        def as_etsr(span_data)
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
             resource_spans: span_data
               .group_by(&:resource)
@@ -70,7 +70,7 @@ module OpenTelemetry
 
         private
 
-        def as_otlp_span(span_data) # rubocop:disable Metrics/MethodLength
+        def as_otlp_span(span_data)
           Opentelemetry::Proto::Trace::V1::Span.new(
             trace_id: span_data.trace_id,
             span_id: span_data.span_id,

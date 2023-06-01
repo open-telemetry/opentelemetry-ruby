@@ -8,6 +8,8 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Aggregation
+        # TODO: Deal with this later
+        # rubocop:disable Lint/StructNewOverride
         HistogramDataPoint = Struct.new(:attributes,            # optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}
                                         :start_time_unix_nano,  # Integer nanoseconds since Epoch
                                         :time_unix_nano,        # Integer nanoseconds since Epoch
@@ -18,6 +20,7 @@ module OpenTelemetry
                                         :exemplars,             # optional List of exemplars collected from measurements that were used to form the data point
                                         :min,                   # optional Float min is the minimum value over (start_time, end_time].
                                         :max)                   # optional Float max is the maximum value over (start_time, end_time].
+        # rubocop:enable Lint/StructNewOverride
       end
     end
   end

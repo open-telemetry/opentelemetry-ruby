@@ -32,7 +32,7 @@ module OpenTelemetry
           ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
           private_constant(:ERROR_MESSAGE_INVALID_HEADERS)
 
-          def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4318/v1/traces'), # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+          def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4318/v1/traces'),
                          certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
                          ssl_verify_mode: fetch_ssl_verify_mode,
                          headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
@@ -125,10 +125,10 @@ module OpenTelemetry
           # and override this method's behaviour to explicitly trace the HTTP request.
           # This would allow you to trace your export pipeline.
           def around_request
-            OpenTelemetry::Common::Utilities.untraced { yield }
+            OpenTelemetry::Common::Utilities.untraced { yield } # rubocop:disable Style/ExplicitBlockArgument
           end
 
-          def send_bytes(bytes, timeout:) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+          def send_bytes(bytes, timeout:) # rubocop:disable Metrics/MethodLength
             return FAILURE if bytes.nil?
 
             retry_count = 0
@@ -236,7 +236,7 @@ module OpenTelemetry
             end
           end
 
-          def backoff?(retry_after: nil, retry_count:, reason:)
+          def backoff?(retry_count:, reason:, retry_after: nil)
             @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => reason })
             return false if retry_count > RETRY_COUNT
 
