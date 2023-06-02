@@ -97,7 +97,7 @@ module OpenTelemetry
       # @param description [optional String]
       #   Must conform to the instrument description rule:
       #   UTF-8 string but up to 3 bytes per charater with maximum length of 1023 characters
-      # @param callbacks [optional Array<Proc>]
+      # @param callbacks [optional Proc, Array<Proc>]
       #   Callback functions should:
       #   - be reentrant safe;
       #   - not take an indefinite amount of time;
@@ -118,7 +118,7 @@ module OpenTelemetry
       # @param description [optional String]
       #   Must conform to the instrument description rule:
       #   UTF-8 string but up to 3 bytes per charater with maximum length of 1023 characters
-      # @param callbacks [optional Array<Proc>]
+      # @param callbacks [optional Proc, Array<Proc>]
       #   Callback functions should:
       #   - be reentrant safe;
       #   - not take an indefinite amount of time;
@@ -139,7 +139,7 @@ module OpenTelemetry
       # @param description [optional String]
       #   Must conform to the instrument description rule:
       #   UTF-8 string but up to 3 bytes per charater with maximum length of 1023 characters
-      # @param callbacks [optional Array<Proc>]
+      # @param callbacks [optional Proc, Array<Proc>]
       #   Callback functions should:
       #   - be reentrant safe;
       #   - not take an indefinite amount of time;
