@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Metrics
     module Instrument
-      # https://opentelemetry.io/docs/reference/specification/metrics/api/#asynchronous-instrument-api
+      # https://opentelemetry.io/docs/specs/otel/metrics/api/#asynchronous-instrument-api
       class AsynchronousInstrument
         attr_reader :name, :unit, :description, :callback
 

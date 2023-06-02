@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Metrics
     module Instrument
-      # https://opentelemetry.io/docs/reference/specification/metrics/api/#synchronous-instrument-api
+      # https://opentelemetry.io/docs/specs/otel/metrics/api/#synchronous-instrument-api
       class SynchronousInstrument
         attr_reader :name, :unit, :description, :advice
 
