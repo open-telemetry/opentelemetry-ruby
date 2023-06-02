@@ -13,7 +13,7 @@ module OpenTelemetry
         # The ConsistentProbabilityTraceState module implements Tracestate parsing,
         # validation and manipulation for the consistent probability-based samplers.
         module ConsistentProbabilityTraceState
-          DECIMAL = /\A\d+\z/.freeze
+          DECIMAL = /\A\d+\z/
           MAX_LIST_LENGTH = 256 # Defined by https://www.w3.org/TR/trace-context/
           private_constant(:DECIMAL, :MAX_LIST_LENGTH)
 
@@ -23,9 +23,14 @@ module OpenTelemetry
           # tracestate sanitized according to the Context invariants defined in the
           # tracestate probability sampling spec.
           #
+          # If r is nil after the sanitization, it is generated from the trace_id.
+          #
+          # This method assumes the parent span context is valid.
+          #
+          # @param trace_id [OpenTelemetry::Trace::TraceId] the trace id
           # @param span_context [OpenTelemetry::Trace::SpanContext] the parent span context
           # @return [OpenTelemetry::Trace::Tracestate] the sanitized tracestate
-          def sanitized_tracestate(span_context)
+          def sanitized_tracestate(trace_id, span_context)
             sampled = span_context.trace_flags.sampled?
             tracestate = span_context.tracestate
             parse_ot_vendor_tag(tracestate) do |p, r, rest|
@@ -35,8 +40,12 @@ module OpenTelemetry
                 p = nil
               elsif !p.nil? && !r.nil? && !invariant(p, r, sampled)
                 p = nil
-              else
+              elsif !r.nil?
                 return tracestate
+              end
+              if r.nil?
+                OpenTelemetry.logger.debug("ConsistentProbabilitySampler: potentially inconsistent trace detected - r: #{r.inspect}")
+                r = generate_r(trace_id)
               end
               update_tracestate(tracestate, p, r, rest)
             end
@@ -68,7 +77,7 @@ module OpenTelemetry
             yield(p, r, rest)
           end
 
-          def update_tracestate(tracestate, p, r, rest) # rubocop:disable Naming/UncommunicativeMethodParamName
+          def update_tracestate(tracestate, p, r, rest)
             if p.nil? && r.nil? && rest.nil?
               tracestate.delete('ot')
             elsif p.nil? && r.nil?
@@ -88,7 +97,7 @@ module OpenTelemetry
             end
           end
 
-          def invariant(p, r, sampled) # rubocop:disable Naming/UncommunicativeMethodParamName
+          def invariant(p, r, sampled)
             ((p <= r) == sampled) || (sampled && (p == 63))
           end
 
@@ -98,8 +107,7 @@ module OpenTelemetry
 
           def generate_r(trace_id)
             x = trace_id[8, 8].unpack1('Q>') | 0x3
-            clz = 64 - x.bit_length
-            clz
+            64 - x.bit_length
           end
         end
       end

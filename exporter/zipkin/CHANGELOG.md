@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-zipkin
 
+### v0.22.0 / 2023-05-30
+
+* ADDED: Custom  Metrics Reporter Support for Zipkin 
+
 ### v0.21.0 / 2022-09-14
 
 * ADDED: Add dropped events/attributes/links counts to zipkin + jaeger exporters 

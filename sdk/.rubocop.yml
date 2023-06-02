@@ -1,5 +1,7 @@
+inherit_from: .rubocop_todo.yml
+
 AllCops:
-  TargetRubyVersion: "2.6.0"
+  TargetRubyVersion: "3.0"
 
 Lint/UnusedMethodArgument:
   Enabled: false
@@ -14,7 +16,7 @@ Metrics/ParameterLists:
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-sdk.rb"
-Style/ModuleFunction:
+Style/ExplicitBlockArgument:
   Enabled: false
-Style/BracesAroundHashParameters:
+Style/ModuleFunction:
   Enabled: false

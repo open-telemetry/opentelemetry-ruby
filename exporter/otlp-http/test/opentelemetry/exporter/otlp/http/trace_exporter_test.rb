@@ -8,8 +8,8 @@ require 'google/protobuf/wrappers_pb'
 require 'google/protobuf/well_known_types'
 
 describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
-  SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
-  FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
+  let(:success) { OpenTelemetry::SDK::Trace::Export::SUCCESS }
+  let(:export_failure) { OpenTelemetry::SDK::Trace::Export::FAILURE }
 
   describe '#initialize' do
     it 'initializes with defaults' do
@@ -284,21 +284,21 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
       span_data = OpenTelemetry::TestHelpers.create_span_data
       exporter = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(endpoint: 'http://localhost:4318/v1/traces', compression: 'gzip')
       result = exporter.export([span_data])
-      _(result).must_equal(SUCCESS)
+      _(result).must_equal(success)
     end
 
     it 'retries on timeout' do
       stub_request(:post, 'http://localhost:4318/v1/traces').to_timeout.then.to_return(status: 200)
       span_data = OpenTelemetry::TestHelpers.create_span_data
       result = exporter.export([span_data])
-      _(result).must_equal(SUCCESS)
+      _(result).must_equal(success)
     end
 
     it 'returns TIMEOUT on timeout' do
       stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 200)
       span_data = OpenTelemetry::TestHelpers.create_span_data
       result = exporter.export([span_data], timeout: 0)
-      _(result).must_equal(FAILURE)
+      _(result).must_equal(export_failure)
     end
 
     it 'returns FAILURE on unexpected exceptions' do
@@ -314,7 +314,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
         /ERROR -- : OpenTelemetry error: unexpected error in OTLP::Exporter#send_bytes - something unexpected/
       )
 
-      _(result).must_equal(FAILURE)
+      _(result).must_equal(export_failure)
     ensure
       OpenTelemetry.logger = logger
     end
@@ -328,7 +328,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
       span_data = OpenTelemetry::TestHelpers.create_span_data
 
       Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.stub(:encode, ->(_) { raise 'a little hell' }) do
-        _(exporter.export([span_data], timeout: 1)).must_equal(FAILURE)
+        _(exporter.export([span_data], timeout: 1)).must_equal(export_failure)
       end
 
       _(log_stream.string).must_match(
@@ -350,7 +350,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
       end
 
       exporter.stub(:backoff?, backoff_stubbed_call) do
-        _(exporter.export([span_data], timeout: 0.1)).must_equal(FAILURE)
+        _(exporter.export([span_data], timeout: 0.1)).must_equal(export_failure)
       end
     ensure
       @retry_count = 0
@@ -359,7 +359,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
     it 'returns FAILURE when shutdown' do
       exporter.shutdown
       result = exporter.export(nil)
-      _(result).must_equal(FAILURE)
+      _(result).must_equal(export_failure)
     end
 
     it 'returns FAILURE when encryption to receiver endpoint fails' do
@@ -367,7 +367,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
       stub_request(:post, 'https://localhost:4318/v1/traces').to_raise(OpenSSL::SSL::SSLError.new('enigma wedged'))
       span_data = OpenTelemetry::TestHelpers.create_span_data
       exporter.stub(:backoff?, ->(**_) { false }) do
-        _(exporter.export([span_data])).must_equal(FAILURE)
+        _(exporter.export([span_data])).must_equal(export_failure)
       end
     end
 
@@ -375,7 +375,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
       stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 200)
       span_data = OpenTelemetry::TestHelpers.create_span_data
       result = exporter.export([span_data])
-      _(result).must_equal(SUCCESS)
+      _(result).must_equal(success)
     end
 
     it 'handles encoding errors with poise and grace' do
@@ -392,7 +392,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
         /ERROR -- : OpenTelemetry error: encoding error for key a and value �/
       )
 
-      _(result).must_equal(SUCCESS)
+      _(result).must_equal(success)
     ensure
       OpenTelemetry.logger = logger
     end
@@ -413,7 +413,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
         /ERROR -- : OpenTelemetry error: OTLP exporter received rpc.Status{message=bad request, details=\[.*you are a bad request.*\]}/
       )
 
-      _(result).must_equal(FAILURE)
+      _(result).must_equal(export_failure)
     ensure
       OpenTelemetry.logger = logger
     end
@@ -422,7 +422,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
       stub_request(:post, 'http://localhost:4318/v1/traces').to_raise(Zlib::DataError.new('data error'))
       span_data = OpenTelemetry::TestHelpers.create_span_data
       exporter.stub(:backoff?, ->(**_) { false }) do
-        _(exporter.export([span_data])).must_equal(FAILURE)
+        _(exporter.export([span_data])).must_equal(export_failure)
       end
     end
 
@@ -445,7 +445,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
       span_data = OpenTelemetry::TestHelpers.create_span_data
       result = exporter.export([span_data])
 
-      _(result).must_equal(SUCCESS)
+      _(result).must_equal(success)
       assert_requested(stub_post)
     end
 
@@ -462,7 +462,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
 
       result = exporter.export([span_data1, span_data2])
 
-      _(result).must_equal(SUCCESS)
+      _(result).must_equal(success)
       assert_requested(stub_post)
       _(etsr.resource_spans.length).must_equal(2)
     end

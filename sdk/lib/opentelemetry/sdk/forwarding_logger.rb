@@ -10,7 +10,7 @@ module OpenTelemetry
     # with an ERROR log level, only OpenTelemetry logs at the ERROR level or higher
     # will be emitted.
     class ForwardingLogger
-      def initialize(logger, level:) # rubocop:disable Metrics/CyclomaticComplexity
+      def initialize(logger, level:)
         @logger = logger
 
         if level.is_a?(Integer)

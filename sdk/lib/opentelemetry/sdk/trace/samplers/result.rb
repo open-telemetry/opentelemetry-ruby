@@ -40,7 +40,7 @@ module OpenTelemetry
           #   an empty Tracestate here, the Tracestate will be cleared, so
           #   samplers SHOULD normally return the passed-in Tracestate if they
           #   do not intend to change it.
-          def initialize(decision:, attributes: nil, tracestate:)
+          def initialize(decision:, tracestate:, attributes: nil)
             @decision = decision
             @attributes = attributes.freeze || EMPTY_HASH
             @tracestate = tracestate

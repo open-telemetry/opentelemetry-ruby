@@ -1,5 +1,11 @@
 # Release History: opentelemetry-sdk-experimental
 
+### v0.2.0 / 2023-05-30
+
+* FIXED: Consistent probability sampler init 
+* BREAKING CHANGE: Consistently pass tracestate 
+* BREAKING CHANGE: Set r in Parent CPS 
+
 ### v0.1.1 / 2023-03-06
 
 * FIXED: Reduce allocations in update_tracestate 

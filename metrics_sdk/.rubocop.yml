@@ -1,11 +1,14 @@
 AllCops:
-  TargetRubyVersion: "2.6.0"
-
+  TargetRubyVersion: "3.0"
+  NewCops: disable
+  SuggestExtensions: false
+Lint/MissingSuper:
+  Enabled: false
 Lint/UnusedMethodArgument:
   Enabled: false
 Metrics/AbcSize:
   Max: 30
-Metrics/LineLength:
+Layout/LineLength:
   Enabled: false
 Metrics/MethodLength:
   Max: 50

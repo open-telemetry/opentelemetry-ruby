@@ -1,5 +1,7 @@
+inherit_from: .rubocop_todo.yml
+
 AllCops:
-  TargetRubyVersion: "2.6.0"
+  TargetRubyVersion: "3.0"
   Exclude:
     - "thrift/**/*"
     - "vendor/**/*"
@@ -15,13 +17,15 @@ Metrics/ModuleLength:
 Metrics/MethodLength:
   Max: 25
 Metrics/PerceivedComplexity:
-  Max: 11
+  Enabled: false
 Metrics/CyclomaticComplexity:
-  Max: 8
+  Enabled: false
 Metrics/ParameterLists:
   Enabled: false
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-exporter-zipkin.rb"
+Style/ExplicitBlockArgument:
+  Enabled: false
 Style/ModuleFunction:
   Enabled: false

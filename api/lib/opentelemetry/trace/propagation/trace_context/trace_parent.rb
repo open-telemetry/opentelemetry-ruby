@@ -22,7 +22,7 @@ module OpenTelemetry
           MAX_VERSION = 254
           private_constant :MAX_VERSION
 
-          REGEXP = /^(?<version>[A-Fa-f0-9]{2})-(?<trace_id>[A-Fa-f0-9]{32})-(?<span_id>[A-Fa-f0-9]{16})-(?<flags>[A-Fa-f0-9]{2})(?<ignored>-.*)?$/.freeze
+          REGEXP = /^(?<version>[A-Fa-f0-9]{2})-(?<trace_id>[A-Fa-f0-9]{32})-(?<span_id>[A-Fa-f0-9]{16})-(?<flags>[A-Fa-f0-9]{2})(?<ignored>-.*)?$/
           private_constant :REGEXP
 
           INVALID_TRACE_ID = OpenTelemetry::Trace::SpanContext::INVALID.hex_trace_id
