@@ -131,7 +131,7 @@ describe OpenTelemetry::Metrics::Meter do
         'test-instrument',
         unit: 'fault',
         description: 'number of page faults',
-        callback: -> {}
+        callbacks: -> {}
       )
 
       assert(instrument.is_a?(OpenTelemetry::Metrics::Instrument::ObservableCounter))
@@ -157,7 +157,7 @@ describe OpenTelemetry::Metrics::Meter do
         'test-instrument',
         unit: 'celsius',
         description: 'room temperature',
-        callback: -> {}
+        callbacks: -> {}
       )
 
       assert(instrument.is_a?(OpenTelemetry::Metrics::Instrument::ObservableGauge))
@@ -183,7 +183,7 @@ describe OpenTelemetry::Metrics::Meter do
         'test-instrument',
         unit: 'b',
         description: 'process heap size',
-        callback: -> {}
+        callbacks: -> {}
       )
 
       assert(instrument.is_a?(OpenTelemetry::Metrics::Instrument::ObservableUpDownCounter))

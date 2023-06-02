@@ -97,7 +97,7 @@ module OpenTelemetry
       # @param description [optional String]
       #   Must conform to the instrument description rule:
       #   UTF-8 string but up to 3 bytes per charater with maximum length of 1023 characters
-      # @param callback [optional Proc, Array<Proc>]
+      # @param callbacks [optional Array<Proc>]
       #   Callback functions should:
       #   - be reentrant safe;
       #   - not take an indefinite amount of time;
@@ -105,8 +105,8 @@ module OpenTelemetry
       #     across all registered callbacks;
       #
       # @return [Instrument::ObservableCounter]
-      def create_observable_counter(name, unit: nil, description: nil, callback: nil)
-        create_instrument(:observable_counter, name, unit, description, nil, callback) { NOOP_OBSERVABLE_COUNTER }
+      def create_observable_counter(name, unit: nil, description: nil, callbacks: nil)
+        create_instrument(:observable_counter, name, unit, description, nil, callbacks) { NOOP_OBSERVABLE_COUNTER }
       end
 
       # @param name [String]
@@ -118,7 +118,7 @@ module OpenTelemetry
       # @param description [optional String]
       #   Must conform to the instrument description rule:
       #   UTF-8 string but up to 3 bytes per charater with maximum length of 1023 characters
-      # @param callback [optional Proc, Array<Proc>]
+      # @param callbacks [optional Array<Proc>]
       #   Callback functions should:
       #   - be reentrant safe;
       #   - not take an indefinite amount of time;
@@ -126,8 +126,8 @@ module OpenTelemetry
       #     across all registered callbacks;
       #
       # @return [Instrument::ObservableGauge]
-      def create_observable_gauge(name, unit: nil, description: nil, callback: nil)
-        create_instrument(:observable_gauge, name, unit, description, nil, callback) { NOOP_OBSERVABLE_GAUGE }
+      def create_observable_gauge(name, unit: nil, description: nil, callbacks: nil)
+        create_instrument(:observable_gauge, name, unit, description, nil, callbacks) { NOOP_OBSERVABLE_GAUGE }
       end
 
       # @param name [String]
@@ -139,7 +139,7 @@ module OpenTelemetry
       # @param description [optional String]
       #   Must conform to the instrument description rule:
       #   UTF-8 string but up to 3 bytes per charater with maximum length of 1023 characters
-      # @param callback [optional Proc, Array<Proc>]
+      # @param callbacks [optional Array<Proc>]
       #   Callback functions should:
       #   - be reentrant safe;
       #   - not take an indefinite amount of time;
@@ -147,13 +147,13 @@ module OpenTelemetry
       #     across all registered callbacks;
       #
       # @return [Instrument::ObservableUpDownCounter]
-      def create_observable_up_down_counter(name, unit: nil, description: nil, callback: nil)
-        create_instrument(:observable_up_down_counter, name, unit, description, nil, callback) { NOOP_OBSERVABLE_UP_DOWN_COUNTER }
+      def create_observable_up_down_counter(name, unit: nil, description: nil, callbacks: nil)
+        create_instrument(:observable_up_down_counter, name, unit, description, nil, callbacks) { NOOP_OBSERVABLE_UP_DOWN_COUNTER }
       end
 
       private
 
-      def create_instrument(kind, name, unit, description, advice, callback)
+      def create_instrument(kind, name, unit, description, advice, callbacks)
         name = name.downcase
 
         @mutex.synchronize do

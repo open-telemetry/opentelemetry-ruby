@@ -35,37 +35,37 @@ describe OpenTelemetry::Metrics::Instrument::AsynchronousInstrument do
     end
   end
 
-  describe '#callback' do
-    it 'returns callback list' do
+  describe '#callbacks' do
+    it 'returns callbacks list' do
       instrument = build_asynchronous_instrument('test-instrument')
-      assert(instrument.callback == [])
+      assert(instrument.callbacks == [])
 
       callback_1 = -> {}
       callback_2 = -> {}
 
-      instrument = build_asynchronous_instrument('test-instrument', callback: callback_1)
-      assert(instrument.callback == [callback_1])
+      instrument = build_asynchronous_instrument('test-instrument', callbacks: callback_1)
+      assert(instrument.callbacks == [callback_1])
 
-      instrument = build_asynchronous_instrument('test-instrument', callback: [callback_1, callback_2])
-      assert(instrument.callback == [callback_1, callback_2])
+      instrument = build_asynchronous_instrument('test-instrument', callbacks: [callback_1, callback_2])
+      assert(instrument.callbacks == [callback_1, callback_2])
     end
   end
 
-  describe '#register_callback' do
+  describe '#register_callbacks' do
     it 'responds without errors and returns nil' do
       instrument = build_asynchronous_instrument('test-instrument')
 
-      assert(instrument.register_callback(-> {}).nil?)
-      assert(instrument.register_callback([-> {}, -> {}]).nil?)
+      assert(instrument.register_callbacks(-> {}).nil?)
+      assert(instrument.register_callbacks([-> {}, -> {}]).nil?)
     end
   end
 
-  describe '#unregister_callback' do
+  describe '#unregister_callbacks' do
     it 'responds without errors and returns nil' do
       instrument = build_asynchronous_instrument('test-instrument')
 
-      assert(instrument.unregister_callback(-> {}).nil?)
-      assert(instrument.unregister_callback([-> {}, -> {}]).nil?)
+      assert(instrument.unregister_callbacks(-> {}).nil?)
+      assert(instrument.unregister_callbacks([-> {}, -> {}]).nil?)
     end
   end
 
