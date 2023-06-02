@@ -56,6 +56,7 @@ describe OpenTelemetry::Metrics::Instrument::AsynchronousInstrument do
       instrument = build_asynchronous_instrument('test-instrument')
 
       assert(instrument.register_callbacks(-> {}).nil?)
+      assert(instrument.register_callbacks(-> {}, -> {}).nil?)
       assert(instrument.register_callbacks([-> {}, -> {}]).nil?)
     end
   end
@@ -65,6 +66,7 @@ describe OpenTelemetry::Metrics::Instrument::AsynchronousInstrument do
       instrument = build_asynchronous_instrument('test-instrument')
 
       assert(instrument.unregister_callbacks(-> {}).nil?)
+      assert(instrument.unregister_callbacks(-> {}, -> {}).nil?)
       assert(instrument.unregister_callbacks([-> {}, -> {}]).nil?)
     end
   end
