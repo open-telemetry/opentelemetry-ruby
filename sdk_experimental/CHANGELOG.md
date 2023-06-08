@@ -1,5 +1,11 @@
 # Release History: opentelemetry-sdk-experimental
 
+### v0.3.0 / 2023-06-08
+
+* BREAKING CHANGE: Remove support for EoL Ruby 2.7 
+
+* ADDED: Remove support for EoL Ruby 2.7 
+
 ### v0.2.0 / 2023-05-30
 
 * FIXED: Consistent probability sampler init 
