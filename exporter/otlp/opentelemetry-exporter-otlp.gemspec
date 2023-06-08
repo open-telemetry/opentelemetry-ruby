@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'googleapis-common-protos-types', '~> 1.3'
   spec.add_dependency 'google-protobuf', '~> 3.19'
   spec.add_dependency 'opentelemetry-api', '~> 1.1'
-  spec.add_dependency 'opentelemetry-common', '~> 0.19.6'
+  spec.add_dependency 'opentelemetry-common', '~> 0.20'
   spec.add_dependency 'opentelemetry-sdk', '~> 1.2'
   spec.add_dependency 'opentelemetry-semantic_conventions'
 
