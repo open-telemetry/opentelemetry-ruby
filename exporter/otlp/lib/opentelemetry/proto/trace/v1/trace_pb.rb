@@ -14,16 +14,10 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
     add_message "opentelemetry.proto.trace.v1.ResourceSpans" do
       optional :resource, :message, 1, "opentelemetry.proto.resource.v1.Resource"
       repeated :scope_spans, :message, 2, "opentelemetry.proto.trace.v1.ScopeSpans"
-      repeated :instrumentation_library_spans, :message, 1000, "opentelemetry.proto.trace.v1.InstrumentationLibrarySpans"
       optional :schema_url, :string, 3
     end
     add_message "opentelemetry.proto.trace.v1.ScopeSpans" do
       optional :scope, :message, 1, "opentelemetry.proto.common.v1.InstrumentationScope"
-      repeated :spans, :message, 2, "opentelemetry.proto.trace.v1.Span"
-      optional :schema_url, :string, 3
-    end
-    add_message "opentelemetry.proto.trace.v1.InstrumentationLibrarySpans" do
-      optional :instrumentation_library, :message, 1, "opentelemetry.proto.common.v1.InstrumentationLibrary"
       repeated :spans, :message, 2, "opentelemetry.proto.trace.v1.Span"
       optional :schema_url, :string, 3
     end
@@ -84,7 +78,6 @@ module Opentelemetry
         TracesData = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.TracesData").msgclass
         ResourceSpans = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.ResourceSpans").msgclass
         ScopeSpans = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.ScopeSpans").msgclass
-        InstrumentationLibrarySpans = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.InstrumentationLibrarySpans").msgclass
         Span = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.Span").msgclass
         Span::Event = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.Span.Event").msgclass
         Span::Link = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.trace.v1.Span.Link").msgclass
