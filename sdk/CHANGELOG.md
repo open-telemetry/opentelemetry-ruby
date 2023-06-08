@@ -1,5 +1,12 @@
 # Release History: opentelemetry-sdk
 
+### v1.3.0 / 2023-06-08
+
+* BREAKING CHANGE: Remove support for EoL Ruby 2.7 
+
+* ADDED: Remove support for EoL Ruby 2.7 
+* FIXED: SDK requires opentelemetry-common 0.19.7 
+
 ### v1.2.1 / 2023-05-30
 
 * FIXED: Untraced only works with parent-based sampler 

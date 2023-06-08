@@ -1,5 +1,11 @@
 # Release History: opentelemetry-exporter-jaeger
 
+### v0.23.0 / 2023-06-08
+
+* BREAKING CHANGE: Remove support for EoL Ruby 2.7 
+
+* ADDED: Remove support for EoL Ruby 2.7 
+
 ### v0.22.0 / 2022-09-14
 
 * ADDED: Add dropped events/attributes/links counts to zipkin + jaeger exporters 

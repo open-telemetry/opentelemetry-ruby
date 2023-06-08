@@ -1,5 +1,11 @@
 # Release History: opentelemetry-common
 
+### v0.20.0 / 2023-06-08
+
+* BREAKING CHANGE: Remove support for EoL Ruby 2.7 
+
+* ADDED: Remove support for EoL Ruby 2.7 
+
 ### v0.19.7 / 2023-05-30
 
 * FIXED: Untraced only works with parent-based sampler 

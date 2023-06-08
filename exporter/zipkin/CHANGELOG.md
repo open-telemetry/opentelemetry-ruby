@@ -1,5 +1,11 @@
 # Release History: opentelemetry-exporter-zipkin
 
+### v0.23.0 / 2023-06-08
+
+* BREAKING CHANGE: Remove support for EoL Ruby 2.7 
+
+* ADDED: Remove support for EoL Ruby 2.7 
+
 ### v0.22.0 / 2023-05-30
 
 * ADDED: Custom  Metrics Reporter Support for Zipkin 
