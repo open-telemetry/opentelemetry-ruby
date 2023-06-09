@@ -1,11 +1,5 @@
 # Release History: opentelemetry-semantic_conventions
 
-### v2.0.0 / 2023-06-08
-
-* BREAKING CHANGE: Remove support for EoL Ruby 2.7 
-
-* ADDED: Remove support for EoL Ruby 2.7 
-
 ### v1.10.0 / 2023-05-30
 
 * FIXED: Warning messages from gem build 
