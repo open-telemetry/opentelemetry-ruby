@@ -14,16 +14,10 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
     add_message "opentelemetry.proto.logs.v1.ResourceLogs" do
       optional :resource, :message, 1, "opentelemetry.proto.resource.v1.Resource"
       repeated :scope_logs, :message, 2, "opentelemetry.proto.logs.v1.ScopeLogs"
-      repeated :instrumentation_library_logs, :message, 1000, "opentelemetry.proto.logs.v1.InstrumentationLibraryLogs"
       optional :schema_url, :string, 3
     end
     add_message "opentelemetry.proto.logs.v1.ScopeLogs" do
       optional :scope, :message, 1, "opentelemetry.proto.common.v1.InstrumentationScope"
-      repeated :log_records, :message, 2, "opentelemetry.proto.logs.v1.LogRecord"
-      optional :schema_url, :string, 3
-    end
-    add_message "opentelemetry.proto.logs.v1.InstrumentationLibraryLogs" do
-      optional :instrumentation_library, :message, 1, "opentelemetry.proto.common.v1.InstrumentationLibrary"
       repeated :log_records, :message, 2, "opentelemetry.proto.logs.v1.LogRecord"
       optional :schema_url, :string, 3
     end
@@ -67,8 +61,8 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
       value :SEVERITY_NUMBER_FATAL4, 24
     end
     add_enum "opentelemetry.proto.logs.v1.LogRecordFlags" do
-      value :LOG_RECORD_FLAG_UNSPECIFIED, 0
-      value :LOG_RECORD_FLAG_TRACE_FLAGS_MASK, 255
+      value :LOG_RECORD_FLAGS_DO_NOT_USE, 0
+      value :LOG_RECORD_FLAGS_TRACE_FLAGS_MASK, 255
     end
   end
 end
@@ -80,7 +74,6 @@ module Opentelemetry
         LogsData = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.logs.v1.LogsData").msgclass
         ResourceLogs = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.logs.v1.ResourceLogs").msgclass
         ScopeLogs = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.logs.v1.ScopeLogs").msgclass
-        InstrumentationLibraryLogs = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.logs.v1.InstrumentationLibraryLogs").msgclass
         LogRecord = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.logs.v1.LogRecord").msgclass
         SeverityNumber = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.logs.v1.SeverityNumber").enummodule
         LogRecordFlags = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.logs.v1.LogRecordFlags").enummodule

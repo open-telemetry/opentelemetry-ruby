@@ -14,16 +14,10 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
     add_message "opentelemetry.proto.metrics.v1.ResourceMetrics" do
       optional :resource, :message, 1, "opentelemetry.proto.resource.v1.Resource"
       repeated :scope_metrics, :message, 2, "opentelemetry.proto.metrics.v1.ScopeMetrics"
-      repeated :instrumentation_library_metrics, :message, 1000, "opentelemetry.proto.metrics.v1.InstrumentationLibraryMetrics"
       optional :schema_url, :string, 3
     end
     add_message "opentelemetry.proto.metrics.v1.ScopeMetrics" do
       optional :scope, :message, 1, "opentelemetry.proto.common.v1.InstrumentationScope"
-      repeated :metrics, :message, 2, "opentelemetry.proto.metrics.v1.Metric"
-      optional :schema_url, :string, 3
-    end
-    add_message "opentelemetry.proto.metrics.v1.InstrumentationLibraryMetrics" do
-      optional :instrumentation_library, :message, 1, "opentelemetry.proto.common.v1.InstrumentationLibrary"
       repeated :metrics, :message, 2, "opentelemetry.proto.metrics.v1.Metric"
       optional :schema_url, :string, 3
     end
@@ -96,6 +90,7 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
       repeated :exemplars, :message, 11, "opentelemetry.proto.metrics.v1.Exemplar"
       proto3_optional :min, :double, 12
       proto3_optional :max, :double, 13
+      optional :zero_threshold, :double, 14
     end
     add_message "opentelemetry.proto.metrics.v1.ExponentialHistogramDataPoint.Buckets" do
       optional :offset, :sint32, 1
@@ -130,8 +125,8 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
       value :AGGREGATION_TEMPORALITY_CUMULATIVE, 2
     end
     add_enum "opentelemetry.proto.metrics.v1.DataPointFlags" do
-      value :FLAG_NONE, 0
-      value :FLAG_NO_RECORDED_VALUE, 1
+      value :DATA_POINT_FLAGS_DO_NOT_USE, 0
+      value :DATA_POINT_FLAGS_NO_RECORDED_VALUE_MASK, 1
     end
   end
 end
@@ -143,7 +138,6 @@ module Opentelemetry
         MetricsData = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.MetricsData").msgclass
         ResourceMetrics = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.ResourceMetrics").msgclass
         ScopeMetrics = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.ScopeMetrics").msgclass
-        InstrumentationLibraryMetrics = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.InstrumentationLibraryMetrics").msgclass
         Metric = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.Metric").msgclass
         Gauge = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.Gauge").msgclass
         Sum = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.metrics.v1.Sum").msgclass

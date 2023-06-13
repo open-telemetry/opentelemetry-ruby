@@ -29,7 +29,7 @@ else
   task default: %i[test rubocop yard]
 end
 
-PROTO_VERSION = 'v0.18.0'
+PROTO_VERSION = 'v0.20.0'
 PROTOBUF_FILES = [
   'collector/logs/v1/logs_service.proto',
   'collector/metrics/v1/metrics_service.proto',
