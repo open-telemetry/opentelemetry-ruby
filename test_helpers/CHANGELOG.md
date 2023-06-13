@@ -1,5 +1,11 @@
 # Release History: opentelemetry-test-helpers
 
+### v0.4.0 / 2023-06-08
+
+* BREAKING CHANGE: Remove support for EoL Ruby 2.7 
+
+* ADDED: Remove support for EoL Ruby 2.7 
+
 ### v0.3.0 / 2022-09-14
 
 * ADDED: Support InstrumentationScope, and update OTLP proto to 0.18.0 

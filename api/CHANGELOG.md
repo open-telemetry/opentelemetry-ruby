@@ -1,5 +1,11 @@
 # Release History: opentelemetry-api
 
+### v1.2.0 / 2023-06-08
+
+* BREAKING CHANGE: Remove support for EoL Ruby 2.7 
+
+* ADDED: Remove support for EoL Ruby 2.7 
+
 ### v1.1.0 / 2022-09-14
 
 * ADDED: Consistent probability sampler 
