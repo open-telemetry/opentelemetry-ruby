@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  File: CHANGELOG
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "CHANGELOG";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="file_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: CHANGELOG</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><div id='filecontents'>
+<h1 id="label-Release+History-3A+opentelemetry-api">Release History: opentelemetry-api</h1>
+
+<h3 id="label-v1.2.0+-2F+2023-06-08">v1.2.0 / 2023-06-08</h3>
+<ul><li>
+<p>BREAKING CHANGE: Remove support for EoL Ruby 2.7</p>
+</li><li>
+<p>ADDED: Remove support for EoL Ruby 2.7</p>
+</li></ul>
+
+<h3 id="label-v1.1.0+-2F+2022-09-14">v1.1.0 / 2022-09-14</h3>
+<ul><li>
+<p>ADDED: Consistent probability sampler</p>
+</li><li>
+<p>FIXED: Get API onto rubocop 1.3</p>
+</li></ul>
+
+<h3 id="label-v1.0.2+-2F+2022-05-02">v1.0.2 / 2022-05-02</h3>
+<ul><li>
+<p>FIXED: Text map propagator extraction should use argument context</p>
+</li></ul>
+
+<h3 id="label-v1.0.1+-2F+2021-12-01">v1.0.1 / 2021-12-01</h3>
+<ul><li>
+<p>FIXED: Deprecate api rack env getter</p>
+</li></ul>
+
+<h3 id="label-v1.0.0+-2F+2021-09-29">v1.0.0 / 2021-09-29</h3>
+<ul><li>
+<p>(No significant changes)</p>
+</li></ul>
+
+<h3 id="label-v1.0.0.rc3+-2F+2021-08-12">v1.0.0.rc3 / 2021-08-12</h3>
+<ul><li>
+<p>BREAKING CHANGE: Remove optional parent_context from in_span</p>
+</li><li>
+<p>BREAKING CHANGE: Refactor Baggage to remove Noop*</p>
+</li><li>
+<p>BREAKING CHANGE: Total order constraint on span.status=</p>
+</li><li>
+<p>ADDED: Add Tracer.non_recording_span to API</p>
+</li><li>
+<p>ADDED: Make API&#39;s NoopTextMapPropagator private</p>
+</li><li>
+<p>FIXED: Remove optional parent_context from in_span</p>
+</li><li>
+<p>FIXED: Reduce span allocation in API</p>
+</li><li>
+<p>FIXED: Refactor Baggage to remove Noop*</p>
+</li><li>
+<p>FIXED: Total order constraint on span.status=</p>
+</li><li>
+<p>FIXED: Return early if carrier is nil</p>
+</li><li>
+<p>FIXED: Update context to match spec</p>
+</li><li>
+<p>FIXED: Return the original context if the baggage header value is empty</p>
+</li><li>
+<p>DOCS: Update docs to rely more on environment variable configuration</p>
+</li></ul>
+
+<h3 id="label-v1.0.0.rc2+-2F+2021-06-23">v1.0.0.rc2 / 2021-06-23</h3>
+<ul><li>
+<p>BREAKING CHANGE: Remove optional parent_context from in_span <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/729">729</a></p>
+</li><li>
+<p>BREAKING CHANGE: Refactor Baggage to remove Noop* <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/800">800</a></p>
+</li><li>
+<p>The noop baggage manger has been removed.</p>
+</li><li>
+<p>The baggage management methods are now available through OpenTelemetry::Baggage#method, previously OpenTelemetry.baggage#method</p>
+</li><li>
+<p>BREAKING CHANGE: Total order constraint on span.status= <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/805">805</a></p>
+</li><li>
+<p>The OpenTelemetry::Trace::Util::HttpToStatus module has been removed as it was incorrectly setting the span status to OK for codes codes in the range 100..399</p>
+</li><li>
+<p>The HttpToStatus module can be replaced inline as follows <code>span.status = OpenTelemetry::Trace::Status.error unless (100..399).include?(response_code.to_i)</code></p>
+</li><li>
+<p>The <code>Status.new(code, description:)</code> initializer has been hidden in favour of simpler constructors for each status code: <code>Status.ok</code>, <code>Status.error</code> and <code>Status.unset</code>. Each constructor takes an optional description.</p>
+</li><li>
+<p>ADDED: Add Tracer.non_recording_span to API <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/799">799</a></p>
+</li><li>
+<p>FIXED: Reduce span allocation in API <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/795">795</a></p>
+</li><li>
+<p>FIXED: Return early if carrier is nil <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/835">835</a></p>
+</li><li>
+<p>FIXED: Update context to match spec <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/807">807</a></p>
+</li><li>
+<p>The <code>Context.current</code> setter has been removed and the previously private attach/detach methods are now available as class methods on the context module.</p>
+</li></ul>
+
+<h3 id="label-v1.0.0.rc1+-2F+2021-05-21">v1.0.0.rc1 / 2021-05-21</h3>
+<ul><li>
+<p>BREAKING CHANGE: Remove optional parent_context from in_span</p>
+</li><li>
+<p>FIXED: Remove optional parent_context from in_span</p>
+</li></ul>
+
+<h3 id="label-v0.17.0+-2F+2021-04-22">v0.17.0 / 2021-04-22</h3>
+<ul><li>
+<p>BREAKING CHANGE: Replace TextMapInjector/TextMapExtractor pairs with a TextMapPropagator.</p>
+</li></ul>
+
+<p><a href="https://open-telemetry.github.io/opentelemetry-ruby/">Check the propagator documentation</a> for the new usage. * BREAKING CHANGE: Remove metrics API.</p>
+
+<p><code>OpenTelemetry::Metrics</code> and all of its behavior removed until spec stabilizes. * BREAKING CHANGE: Extract instrumentation base from api (#698).</p>
+
+<p>To take advantage of a base instrumentation class to create your own auto-instrumentation, require and use the <code>opentelemetry-instrumentation-base</code> gem.</p>
+<ul><li>
+<p>ADDED: Default noop tracer for instrumentation</p>
+</li><li>
+<p>FIXED: Refactor propagators to add #fields</p>
+</li><li>
+<p>FIXED: Remove metrics API</p>
+</li><li>
+<p>FIXED: Dynamically upgrade global tracer provider</p>
+</li></ul>
+
+<h3 id="label-v0.16.0+-2F+2021-03-17">v0.16.0 / 2021-03-17</h3>
+<ul><li>
+<p>ADDED: Span#add_attributes</p>
+</li><li>
+<p>FIXED: Handle rack env getter edge cases</p>
+</li><li>
+<p>DOCS: Replace Gitter with GitHub Discussions</p>
+</li></ul>
+
+<h3 id="label-v0.15.0+-2F+2021-02-18">v0.15.0 / 2021-02-18</h3>
+<ul><li>
+<p>ADDED: Add instrumentation config validation</p>
+</li><li>
+<p>DOCS: Clarify nil attribute values not allowed</p>
+</li></ul>
+
+<h3 id="label-v0.14.0+-2F+2021-02-03">v0.14.0 / 2021-02-03</h3>
+<ul><li>
+<p>BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators</p>
+</li><li>
+<p>ADDED: Replace getter and setter callables and remove rack specific propagators</p>
+</li></ul>
+
+<h3 id="label-v0.13.0+-2F+2021-01-29">v0.13.0 / 2021-01-29</h3>
+<ul><li>
+<p>ADDED: Add optional attributes to record_exception</p>
+</li><li>
+<p>FIXED: Small test fixes.</p>
+</li></ul>
+
+<h3 id="label-v0.12.1+-2F+2021-01-13">v0.12.1 / 2021-01-13</h3>
+<ul><li>
+<p>FIXED: Eliminate warning about Random::DEFAULT on Ruby 3.0</p>
+</li></ul>
+
+<h3 id="label-v0.12.0+-2F+2020-12-24">v0.12.0 / 2020-12-24</h3>
+<ul><li>
+<p>ADDED: Structured error handling</p>
+</li></ul>
+
+<h3 id="label-v0.11.0+-2F+2020-12-11">v0.11.0 / 2020-12-11</h3>
+<ul><li>
+<p>BREAKING CHANGE: Implement tracestate</p>
+</li><li>
+<p>ADDED: Implement tracestate</p>
+</li><li>
+<p>FIXED: Missing white space from install messages</p>
+</li><li>
+<p>FIXED: Copyright comments to not reference year</p>
+</li></ul>
+
+<h3 id="label-v0.10.0+-2F+2020-12-03">v0.10.0 / 2020-12-03</h3>
+<ul><li>
+<p>(No significant changes)</p>
+</li></ul>
+
+<h3 id="label-v0.9.0+-2F+2020-11-27">v0.9.0 / 2020-11-27</h3>
+<ul><li>
+<p>(No significant changes)</p>
+</li></ul>
+
+<h3 id="label-v0.8.0+-2F+2020-10-27">v0.8.0 / 2020-10-27</h3>
+<ul><li>
+<p>BREAKING CHANGE: Move context/span methods to Trace module</p>
+</li><li>
+<p>BREAKING CHANGE: Remove &#39;canonical&#39; from status codes</p>
+</li><li>
+<p>BREAKING CHANGE: Assorted SpanContext fixes</p>
+</li><li>
+<p>ADDED: B3 support</p>
+</li><li>
+<p>FIXED: Move context/span methods to Trace module</p>
+</li><li>
+<p>FIXED: Remove &#39;canonical&#39; from status codes</p>
+</li><li>
+<p>FIXED: Assorted SpanContext fixes</p>
+</li></ul>
+
+<h3 id="label-v0.7.0+-2F+2020-10-07">v0.7.0 / 2020-10-07</h3>
+<ul><li>
+<p>FIXED: Safely navigate span variable during error cases</p>
+</li><li>
+<p>DOCS: Standardize toplevel docs structure and readme</p>
+</li><li>
+<p>DOCS: Fix param description in TextMapInjector for Baggage</p>
+</li></ul>
+
+<h3 id="label-v0.6.0+-2F+2020-09-10">v0.6.0 / 2020-09-10</h3>
+<ul><li>
+<p>ADDED: Add support for OTEL_LOG_LEVEL env var</p>
+</li><li>
+<p>Documented array valued attributes <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/343">#343</a></p>
+</li><li>
+<p>Renamed CorrelationContext to Baggage <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/338">#338</a></p>
+</li><li>
+<p>Renamed Text* to TextMap* (propagators) <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/335">#335</a></p>
+</li><li>
+<p>Fixed exception semantic conventions (<code>span.record_error</code> -&gt; <code>span.record_exception</code>) <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/333">#333</a></p>
+</li><li>
+<p>Removed support for lazy event creation <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/329">#329</a></p>
+</li><li>
+<p><code>name:</code> named parameter to <code>span.add_event</code> becomes first positional argument</p>
+</li><li>
+<p><code>Event</code> class removed from API</p>
+</li><li>
+<p>Added <code>hex_trace_id</code> and <code>hex_span_id</code> helpers to <code>SpanContext</code> <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/332">#332</a></p>
+</li><li>
+<p>Added <code>CorrelationContext::Manager.values</code> method to return correlations as a <code>Hash</code> <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/323">#323</a></p>
+</li></ul>
+</div></div>
+
+      <div id="footer">
+  Generated on Tue Jun 13 14:46:20 2023 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.34 (ruby-3.0.6).
+</div>
+
+    </div>
+  </body>
+</html>
