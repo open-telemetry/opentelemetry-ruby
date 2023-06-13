@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'grpc'
   spec.add_dependency 'opentelemetry-api', '~> 1.1'
-  spec.add_dependency 'opentelemetry-common', '~> 0.19.6'
+  spec.add_dependency 'opentelemetry-common', '~> 0.20'
   spec.add_dependency 'opentelemetry-exporter-otlp-common'
   spec.add_dependency 'opentelemetry-sdk', '~> 1.2'
 
