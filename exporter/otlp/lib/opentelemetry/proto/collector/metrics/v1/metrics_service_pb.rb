@@ -11,6 +11,11 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
       repeated :resource_metrics, :message, 1, "opentelemetry.proto.metrics.v1.ResourceMetrics"
     end
     add_message "opentelemetry.proto.collector.metrics.v1.ExportMetricsServiceResponse" do
+      optional :partial_success, :message, 1, "opentelemetry.proto.collector.metrics.v1.ExportMetricsPartialSuccess"
+    end
+    add_message "opentelemetry.proto.collector.metrics.v1.ExportMetricsPartialSuccess" do
+      optional :rejected_data_points, :int64, 1
+      optional :error_message, :string, 2
     end
   end
 end
@@ -22,6 +27,7 @@ module Opentelemetry
         module V1
           ExportMetricsServiceRequest = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.collector.metrics.v1.ExportMetricsServiceRequest").msgclass
           ExportMetricsServiceResponse = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.collector.metrics.v1.ExportMetricsServiceResponse").msgclass
+          ExportMetricsPartialSuccess = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.collector.metrics.v1.ExportMetricsPartialSuccess").msgclass
         end
       end
     end

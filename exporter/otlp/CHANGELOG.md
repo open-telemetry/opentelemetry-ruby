@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.26.0 / 2023-06-13
+
+* ADDED: Use OTLP 0.20.0 protos 
+
 ### v0.25.0 / 2023-06-01
 
 * BREAKING CHANGE: Remove support for EoL Ruby 2.7 
