@@ -21,6 +21,14 @@ module OpenTelemetry
       # On exit, the Span that was active before calling this method will be reactivated. If an
       # exception occurs during the execution of the provided block, it will be recorded on the
       # span and reraised.
+      #
+      # @param name [String] the name of the span
+      # @param attributes [optional Hash] attributes to attach to the span {String => String,
+      # Numeric, Boolean, Array<String, Numeric, Boolean>}
+      # @param links [optional Array] an array of OpenTelemetry::Trace::Link instances
+      # @param start_timestamp [optional Integer] nanoseconds since Epoch
+      # @param kind [optional Symbol] One of :internal, :server, :client, :producer, :consumer
+      #
       # @yield [span, context] yields the newly created span and a context containing the
       #   span to the block.
       def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, &block)
