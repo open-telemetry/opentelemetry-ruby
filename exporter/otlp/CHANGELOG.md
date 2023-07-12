@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.24.2 / 2023-07-12
+
+* FIXED: Otlp exporter version require order
+
 ### v0.24.1 / 2023-05-30
 
 * FIXED: Add Ruby 3.2 to CI and do small fix 
