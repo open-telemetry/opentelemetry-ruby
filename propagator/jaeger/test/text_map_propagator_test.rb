@@ -265,7 +265,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
     it 'injects to rack keys' do
       rack_env_setter = Object.new
       def rack_env_setter.set(carrier, key, value)
-        rack_key = 'HTTP_' + key
+        rack_key = RUBY_VERSION < '3.0.0'? 'HTTP_' + key : "HTTP_#{key}"
         rack_key.tr!('-', '_')
         rack_key.upcase!
         carrier[rack_key] = value
