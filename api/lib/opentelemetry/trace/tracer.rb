@@ -34,7 +34,7 @@ module OpenTelemetry
       def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, &block)
         span = nil
         span = start_span(name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind)
-        Trace.with_span(span, &block)
+        Trace.with_span(span) { |s, c| yield s, c }
       rescue Exception => e # rubocop:disable Lint/RescueException
         span&.record_exception(e)
         span&.status = Status.error("Unhandled exception of type: #{e.class}")
