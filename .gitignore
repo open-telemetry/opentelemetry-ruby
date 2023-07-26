@@ -11,10 +11,7 @@
 
 
 # Appraisals
-instrumentation/**/gemfiles
-
-# Sqlite file for tests
-instrumentation/active_record/db
+**/*/gemfiles
 
 # Vendored gems
 **/vendor/**/*
