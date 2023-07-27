@@ -42,7 +42,7 @@ namespace :protobuf do
   task generate: [:clean] do
     system("git clone -b #{PROTO_VERSION} https://github.com/open-telemetry/opentelemetry-proto", exception: true)
     Dir['opentelemetry-proto/opentelemetry/proto/**/*.proto'].each do |file|
-      system("protoc --ruby_out=lib/ --proto_path=opentelemetry-proto #{file.gsub("opentelemetry-proto/","")}", exception: true)
+      system("protoc --ruby_out=lib/ --proto_path=opentelemetry-proto #{file.gsub('opentelemetry-proto/','')}", exception: true)
     end
     FileUtils.rm_rf('opentelemetry-proto')
   end
