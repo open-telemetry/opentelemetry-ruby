@@ -16,15 +16,17 @@ Generally, *libraries* that produce telemetry data should avoid depending direct
 
 ### Supported protocol version
 
-This gem supports the [v0.4.0 release](https://github.com/open-telemetry/opentelemetry-proto/releases/tag/v0.4.0) of OTLP.
+This gem supports the [v0.20.0 release][otel-proto-release] of OTLP.
 
 ## How do I get started?
 
 Install the gem using:
 
-```
+```console
+
 gem install opentelemetry-sdk
 gem install opentelemetry-exporter-otlp
+
 ```
 
 Or, if you use [bundler][bundler-home], include `opentelemetry-sdk` in your `Gemfile`.
@@ -93,6 +95,48 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 
 The `opentelemetry-exporter-otlp` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
 
+## Working with Proto Definitions
+
+The OTel community maintains a [repository with protobuf definitions][otel-proto-github] that language and collector implementors use to generate code.
+
+Maintainers are expected to keep up to date with the latest version of protos. This guide will provide you with step-by-step instructions on updating the OTLP Exporter gem with the latest definitions.
+
+### System Requirements
+
+- [`git` 2.41+][git-install]
+- [`protoc` 22.5][protoc-install]
+- [Ruby 3+][ruby-downloads]
+
+> :warning: `protoc 23.x` *changes the Ruby code generator to emit a serialized proto instead of a DSL.* <https://protobuf.dev/news/2023-04-20/>. Please ensure you use `protoc` version `22.x` in order to ensure we remain compatible with versions of protobuf prior to `google-protobuf` gem `3.18`.
+
+### Upgrade Proto Definitions
+
+**Update the target otel-proto version in the `Rakefile` that matches a release `tag` in the proto repo, e.g.**
+
+```ruby
+  # Rakefile
+
+  # https://github.com/open-telemetry/opentelemetry-proto/tree/v0.20.0
+  PROTO_VERSION = `v0.20.0`
+```
+
+**Generate the Ruby source files using `rake`:**
+
+```console
+
+$> bundle exec rake protobuf:generate
+
+```
+
+**Run tests and fix any errors:**
+
+```console
+
+$> bundle exec rake test
+
+```
+
+**Commit the chnages and open a PR!**
 
 [opentelemetry-collector-home]: https://opentelemetry.io/docs/collector/about/
 [opentelemetry-home]: https://opentelemetry.io
@@ -103,3 +147,8 @@ The `opentelemetry-exporter-otlp` gem is distributed under the Apache 2.0 licens
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
+[git-install]: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
+[protoc-install]: https://github.com/protocolbuffers/protobuf/releases/tag/v22.5
+[ruby-downloads]: https://www.ruby-lang.org/en/downloads/
+[otel-proto-github]: https://github.com/open-telemetry/opentelemetry-proto
+[otel-proto-release]: https://github.com/open-telemetry/opentelemetry-proto/releases/tag/v0.20.0
