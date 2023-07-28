@@ -6,6 +6,6 @@
 
 module OpenTelemetry
   module SemanticConventions
-    VERSION = '1.10.0'
+    VERSION = '2.0.0'
   end
 end
