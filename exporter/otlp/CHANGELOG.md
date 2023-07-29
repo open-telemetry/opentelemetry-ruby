@@ -3,6 +3,7 @@
 ### v0.26.1 / 2023-07-29
 
 * FIXED: Regenerate v0.20.0 protos
+* ADDED: Allow google-protobuf ~> 3.14
 
 ### v0.26.0 / 2023-06-13
 
