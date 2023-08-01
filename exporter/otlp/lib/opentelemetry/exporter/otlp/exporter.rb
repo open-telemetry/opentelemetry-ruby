@@ -395,6 +395,8 @@ module OpenTelemetry
           elsif !ENV['OTEL_EXPORTER_OTLP_ENDPOINT'].nil?
             # Append v1/traces only if the non-signal specific env var is set.
             non_signal_specific_endpoint = ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
+            # append '/' if not present
+            non_signal_specific_endpoint += '/' unless non_signal_specific_endpoint.end_with?('/')
             begin
               URI.join(non_signal_specific_endpoint, 'v1/traces')
             rescue URI::InvalidURIError

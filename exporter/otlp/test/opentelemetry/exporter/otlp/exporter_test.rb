@@ -125,7 +125,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       exp = OpenTelemetry::TestHelpers.with_env(
         'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234/'
       ) do
-        OpenTelemetry::Exporter::OTLP::Exporter.new()
+        OpenTelemetry::Exporter::OTLP::Exporter.new
       end
       _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
     end
@@ -134,12 +134,22 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       exp = OpenTelemetry::TestHelpers.with_env(
         'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234'
       ) do
-        OpenTelemetry::Exporter::OTLP::Exporter.new()
+        OpenTelemetry::Exporter::OTLP::Exporter.new
       end
       _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
     end
 
-    it 'does not join endpoint with v1/traces if endpoint and OTEL_EXPORTER_OTLP_ENDPOINT are equal' do
+    it 'appends the correct path if OTEL_EXPORTER_OTLP_ENDPOINT does have a path without a trailing slash' do
+      exp = OpenTelemetry::TestHelpers.with_env(
+        # simulate OTLP endpoints built on top of an exiting API
+        'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234/api/v2/otlp'
+      ) do
+        OpenTelemetry::Exporter::OTLP::Exporter.new
+      end
+      _(exp.instance_variable_get(:@path)).must_equal '/api/v2/otlp/v1/traces'
+    end
+
+    it 'does not join endpoint with v1/traces if endpoint is set and is equal to OTEL_EXPORTER_OTLP_ENDPOINT' do
       exp = OpenTelemetry::TestHelpers.with_env(
         'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234/custom/path'
       ) do
@@ -153,7 +163,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
         'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234/custom/path',
         'OTEL_EXPORTER_OTLP_TRACES_ENDPOINT' => 'https://localhost:1234/custom/path'
       ) do
-        OpenTelemetry::Exporter::OTLP::Exporter.new()
+        OpenTelemetry::Exporter::OTLP::Exporter.new
       end
       _(exp.instance_variable_get(:@path)).must_equal '/custom/path'
     end
@@ -163,9 +173,19 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
         'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234/non/specific/custom/path',
         'OTEL_EXPORTER_OTLP_TRACES_ENDPOINT' => 'https://localhost:1234/specific/custom/path'
       ) do
-        OpenTelemetry::Exporter::OTLP::Exporter.new()
+        OpenTelemetry::Exporter::OTLP::Exporter.new
       end
       _(exp.instance_variable_get(:@path)).must_equal '/specific/custom/path'
+    end
+
+    it 'uses endpoint over OTEL_EXPORTER_OTLP_TRACES_ENDPOINT and OTEL_EXPORTER_OTLP_ENDPOINT' do
+      exp = OpenTelemetry::TestHelpers.with_env(
+        'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234/non/specific/custom/path',
+        'OTEL_EXPORTER_OTLP_TRACES_ENDPOINT' => 'https://localhost:1234/specific/custom/path'
+      ) do
+        OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'https://localhost:1234/endpoint/custom/path')
+      end
+      _(exp.instance_variable_get(:@path)).must_equal '/endpoint/custom/path'
     end
 
     it 'restricts explicit headers to a String or Hash' do
