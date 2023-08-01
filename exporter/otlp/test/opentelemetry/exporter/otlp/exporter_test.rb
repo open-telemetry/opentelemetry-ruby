@@ -139,6 +139,35 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
     end
 
+    it 'does not join endpoint with v1/traces if endpoint and OTEL_EXPORTER_OTLP_ENDPOINT are equal' do
+      exp = OpenTelemetry::TestHelpers.with_env(
+        'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234/custom/path'
+      ) do
+        OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'https://localhost:1234/custom/path')
+      end
+      _(exp.instance_variable_get(:@path)).must_equal '/custom/path'
+    end
+
+    it 'does not append v1/traces if OTEL_EXPORTER_OTLP_ENDPOINT and OTEL_EXPORTER_OTLP_TRACES_ENDPOINT both equal' do
+      exp = OpenTelemetry::TestHelpers.with_env(
+        'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234/custom/path',
+        'OTEL_EXPORTER_OTLP_TRACES_ENDPOINT' => 'https://localhost:1234/custom/path'
+      ) do
+        OpenTelemetry::Exporter::OTLP::Exporter.new()
+      end
+      _(exp.instance_variable_get(:@path)).must_equal '/custom/path'
+    end
+
+    it 'uses OTEL_EXPORTER_OTLP_TRACES_ENDPOINT over OTEL_EXPORTER_OTLP_ENDPOINT' do
+      exp = OpenTelemetry::TestHelpers.with_env(
+        'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234/non/specific/custom/path',
+        'OTEL_EXPORTER_OTLP_TRACES_ENDPOINT' => 'https://localhost:1234/specific/custom/path'
+      ) do
+        OpenTelemetry::Exporter::OTLP::Exporter.new()
+      end
+      _(exp.instance_variable_get(:@path)).must_equal '/specific/custom/path'
+    end
+
     it 'restricts explicit headers to a String or Hash' do
       exp = OpenTelemetry::Exporter::OTLP::Exporter.new(headers: { 'token' => 'über' })
       _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über', 'User-Agent' => DEFAULT_USER_AGENT)
