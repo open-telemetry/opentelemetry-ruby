@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  File: CHANGELOG
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "CHANGELOG";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="file_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: CHANGELOG</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><div id='filecontents'>
+<h1 id="label-Release+History-3A+opentelemetry-exporter-otlp">Release History: opentelemetry-exporter-otlp</h1>
+
+<h3 id="label-v0.26.1+-2F+2023-07-29">v0.26.1 / 2023-07-29</h3>
+<ul><li>
+<p>FIXED: Regenerate v0.20.0 protos</p>
+</li><li>
+<p>ADDED: Allow google-protobuf ~&gt; 3.14</p>
+</li></ul>
+
+<h3 id="label-v0.26.0+-2F+2023-06-13">v0.26.0 / 2023-06-13</h3>
+<ul><li>
+<p>ADDED: Use OTLP 0.20.0 protos</p>
+</li></ul>
+
+<h3 id="label-v0.25.0+-2F+2023-06-01">v0.25.0 / 2023-06-01</h3>
+<ul><li>
+<p>BREAKING CHANGE: Remove support for EoL Ruby 2.7</p>
+</li><li>
+<p>ADDED: Remove support for EoL Ruby 2.7</p>
+</li><li>
+<p>FIXED: Make version available to user agent header #1458</p>
+</li></ul>
+
+<h3 id="label-v0.24.1+-2F+2023-05-30">v0.24.1 / 2023-05-30</h3>
+<ul><li>
+<p>FIXED: Add Ruby 3.2 to CI and do small fix</p>
+</li><li>
+<p>FIXED: Adds User-Agent header in OTLP exporter</p>
+</li></ul>
+
+<h3 id="label-v0.24.0+-2F+2022-09-14">v0.24.0 / 2022-09-14</h3>
+<ul><li>
+<p>ADDED: Support InstrumentationScope, and update OTLP proto to 0.18.0</p>
+</li><li>
+<p>FIXED: Handle OTLP exporter 404s discretely</p>
+</li><li>
+<p>FIXED: <code>OTEL_EXPORTER_OTLP_ENDPOINT</code> appends the correct path with a trailing slash</p>
+</li><li>
+<p>FIXED: OTLP exporter demo code</p>
+</li><li>
+<p>DOCS: Update exporter default compression setting</p>
+</li></ul>
+
+<h3 id="label-v0.23.0+-2F+2022-06-23">v0.23.0 / 2022-06-23</h3>
+<ul><li>
+<p>ADDED: Report bundle size stats in exporter; also don&#39;t re-gzip unnecessarily</p>
+</li></ul>
+
+<h3 id="label-v0.22.0+-2F+2022-06-09">v0.22.0 / 2022-06-09</h3>
+<ul><li>
+<p>ADDED: Otlp grpc</p>
+</li></ul>
+
+<h3 id="label-v0.21.3+-2F+2022-05-12">v0.21.3 / 2022-05-12</h3>
+<ul><li>
+<p>(No significant changes)</p>
+</li></ul>
+
+<h3 id="label-v0.21.2+-2F+2022-01-19">v0.21.2 / 2022-01-19</h3>
+<ul><li>
+<p>FIXED: Default scheme for OTLP endpoint</p>
+</li><li>
+<p>FIXED: Remove TIMEOUT status from OTLP exporter (#1087)</p>
+</li></ul>
+
+<h3 id="label-v0.21.1+-2F+2021-12-31">v0.21.1 / 2021-12-31</h3>
+<ul><li>
+<p>FIXED: Allow OTLP Exporter compression value of <code>none</code></p>
+</li></ul>
+
+<h3 id="label-v0.21.0+-2F+2021-12-01">v0.21.0 / 2021-12-01</h3>
+<ul><li>
+<p>ADDED: Exporter should use gzip compression by default</p>
+</li></ul>
+
+<h3 id="label-v0.20.6+-2F+2021-10-29">v0.20.6 / 2021-10-29</h3>
+<ul><li>
+<p>FIXED: Add unexpected error handlign in BSP and OTLP exporter (#995)</p>
+</li><li>
+<p>FIXED: Handle otlp exporter race condition gzip errors with retry</p>
+</li></ul>
+
+<h3 id="label-v0.20.5+-2F+2021-09-29">v0.20.5 / 2021-09-29</h3>
+<ul><li>
+<p>(No significant changes)</p>
+</li></ul>
+
+<h3 id="label-v0.20.4+-2F+2021-09-29">v0.20.4 / 2021-09-29</h3>
+<ul><li>
+<p>FIXED: OTLP Export Header Format</p>
+</li></ul>
+
+<h3 id="label-v0.20.3+-2F+2021-08-19">v0.20.3 / 2021-08-19</h3>
+<ul><li>
+<p>FIXED: OTLP exporter missing failure metrics</p>
+</li></ul>
+
+<h3 id="label-v0.20.2+-2F+2021-08-12">v0.20.2 / 2021-08-12</h3>
+<ul><li>
+<p>FIXED: Add rescue for OpenSSL errors during export</p>
+</li><li>
+<p>DOCS: Update docs to rely more on environment variable configuration</p>
+</li></ul>
+
+<h3 id="label-v0.20.1+-2F+2021-06-29">v0.20.1 / 2021-06-29</h3>
+<ul><li>
+<p>FIXED: Otlp encoding exceptions again</p>
+</li></ul>
+
+<h3 id="label-v0.20.0+-2F+2021-06-23">v0.20.0 / 2021-06-23</h3>
+<ul><li>
+<p>BREAKING CHANGE: Total order constraint on span.status=</p>
+</li><li>
+<p>FIXED: Total order constraint on span.status=</p>
+</li></ul>
+
+<h3 id="label-v0.19.0+-2F+2021-06-03">v0.19.0 / 2021-06-03</h3>
+<ul><li>
+<p>ADDED: Add a SSL verify mode option for the OTLP exporter</p>
+</li><li>
+<p>FIXED: Handle OTLP exporter encoding exceptions</p>
+</li><li>
+<p>DOCS: Remove the OTLP receiver legacy gRPC port(55680) references</p>
+</li></ul>
+
+<h3 id="label-v0.18.0+-2F+2021-05-21">v0.18.0 / 2021-05-21</h3>
+<ul><li>
+<p>BREAKING CHANGE: Replace Time.now with Process.clock_gettime</p>
+</li><li>
+<p>FIXED: Replace Time.now with Process.clock_gettime</p>
+</li><li>
+<p>FIXED: Rescue missed otlp exporter network errors</p>
+</li></ul>
+
+<h3 id="label-v0.17.0+-2F+2021-04-22">v0.17.0 / 2021-04-22</h3>
+<ul><li>
+<p>ADDED: Add zipkin exporter</p>
+</li></ul>
+
+<h3 id="label-v0.16.0+-2F+2021-03-17">v0.16.0 / 2021-03-17</h3>
+<ul><li>
+<p>BREAKING CHANGE: Implement Exporter#force_flush</p>
+</li><li>
+<p>ADDED: Implement Exporter#force_flush</p>
+</li><li>
+<p>FIXED: Rescue socket err in otlp exporter to prevent failures unable to connect</p>
+</li><li>
+<p>DOCS: Replace Gitter with GitHub Discussions</p>
+</li></ul>
+
+<h3 id="label-v0.15.0+-2F+2021-02-18">v0.15.0 / 2021-02-18</h3>
+<ul><li>
+<p>BREAKING CHANGE: Streamline processor pipeline</p>
+</li><li>
+<p>ADDED: Add otlp exporter hooks</p>
+</li><li>
+<p>FIXED: Streamline processor pipeline</p>
+</li></ul>
+
+<h3 id="label-v0.14.0+-2F+2021-02-03">v0.14.0 / 2021-02-03</h3>
+<ul><li>
+<p>(No significant changes)</p>
+</li></ul>
+
+<h3 id="label-v0.13.0+-2F+2021-01-29">v0.13.0 / 2021-01-29</h3>
+<ul><li>
+<p>BREAKING CHANGE: Spec compliance for OTLP exporter</p>
+</li><li>
+<p>ADDED: Add untraced wrapper to common utils</p>
+</li><li>
+<p>FIXED: Spec compliance for OTLP exporter</p>
+</li><li>
+<p>FIXED: Conditionally append path to collector endpoint</p>
+</li><li>
+<p>FIXED: OTLP path should be /v1/traces</p>
+</li><li>
+<p>FIXED: Rename OTLP env vars SPAN -&gt; TRACES</p>
+</li></ul>
+
+<h3 id="label-v0.12.1+-2F+2021-01-13">v0.12.1 / 2021-01-13</h3>
+<ul><li>
+<p>FIXED: Updated protobuf version dependency</p>
+</li></ul>
+
+<h3 id="label-v0.12.0+-2F+2020-12-24">v0.12.0 / 2020-12-24</h3>
+<ul><li>
+<p>(No significant changes)</p>
+</li></ul>
+
+<h3 id="label-v0.11.0+-2F+2020-12-11">v0.11.0 / 2020-12-11</h3>
+<ul><li>
+<p>BREAKING CHANGE: Implement tracestate</p>
+</li><li>
+<p>ADDED: Implement tracestate</p>
+</li><li>
+<p>ADDED: Metrics reporting from trace export</p>
+</li><li>
+<p>FIXED: Copyright comments to not reference year</p>
+</li></ul>
+
+<h3 id="label-v0.10.0+-2F+2020-12-03">v0.10.0 / 2020-12-03</h3>
+<ul><li>
+<p>(No significant changes)</p>
+</li></ul>
+
+<h3 id="label-v0.9.0+-2F+2020-11-27">v0.9.0 / 2020-11-27</h3>
+<ul><li>
+<p>BREAKING CHANGE: Add timeout for force_flush and shutdown</p>
+</li><li>
+<p>ADDED: Add timeout for force_flush and shutdown</p>
+</li><li>
+<p>FIXED: Remove unused kwarg from otlp exporter retry</p>
+</li></ul>
+
+<h3 id="label-v0.8.0+-2F+2020-10-27">v0.8.0 / 2020-10-27</h3>
+<ul><li>
+<p>BREAKING CHANGE: Move context/span methods to Trace module</p>
+</li><li>
+<p>BREAKING CHANGE: Remove &#39;canonical&#39; from status codes</p>
+</li><li>
+<p>BREAKING CHANGE: Assorted SpanContext fixes</p>
+</li><li>
+<p>FIXED: Move context/span methods to Trace module</p>
+</li><li>
+<p>FIXED: Remove &#39;canonical&#39; from status codes</p>
+</li><li>
+<p>FIXED: Add gzip support to OTLP exporter</p>
+</li><li>
+<p>FIXED: Assorted SpanContext fixes</p>
+</li></ul>
+
+<h3 id="label-v0.7.0+-2F+2020-10-07">v0.7.0 / 2020-10-07</h3>
+<ul><li>
+<p>FIXED: OTLP parent_span_id should be nil for root</p>
+</li><li>
+<p>DOCS: Fix use of add_event in OTLP doc</p>
+</li><li>
+<p>DOCS: Standardize toplevel docs structure and readme</p>
+</li><li>
+<p>DOCS: Use BatchSpanProcessor in examples</p>
+</li></ul>
+
+<h3 id="label-v0.6.0+-2F+2020-09-10">v0.6.0 / 2020-09-10</h3>
+<ul><li>
+<p>Initial release.</p>
+</li></ul>
+</div></div>
+
+      <div id="footer">
+  Generated on Tue Aug  1 15:01:03 2023 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.34 (ruby-3.0.6).
+</div>
+
+    </div>
+  </body>
+</html>
