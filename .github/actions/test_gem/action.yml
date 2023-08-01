@@ -32,6 +32,7 @@ runs:
       id: setup
       shell: bash
       run: |
+        # 🛠️ Setup 🛠️
         dir=$(find . -iname '${{ inputs.gem }}.gemspec' -exec dirname {} \;)
         echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
 
@@ -57,76 +58,68 @@ runs:
     # ...but not for appraisals, sadly.
     - name: Install Ruby ${{ inputs.ruby }} with dependencies
       if: "${{ steps.setup.outputs.appraisals == 'false' }}"
-      uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@v1.144.1
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
+        bundler:  "latest"
         bundler-cache: true
         cache-version: "v1-${{ steps.setup.outputs.cache_key }}"
 
     # If we're using appraisals, do it all manually.
     - name: Install Ruby ${{ inputs.ruby }} without dependencies
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
-      uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@v1.144.1
       with:
         ruby-version: "${{ inputs.ruby }}"
-    - name: Install dependencies and appraisals
+        bundler:  "latest"
+        working-directory: "${{ steps.setup.outputs.gem_dir }}"
+    - name: Install dependencies and generate appraisals
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
       shell: bash
       run: |
-        cd "${{ steps.setup.outputs.gem_dir }}"
-        bundle install
-        bundle exec appraisal install
+        # 💎 Install dependencies and generate appraisals 💎
+        bundle install --quiet --jobs=3 --retry=4
+        bundle exec appraisal generate
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Test Gem
       shell: bash
       run: |
-        cd "${{ steps.setup.outputs.gem_dir }}"
-
+        # 🍿 Test Gem 🍿
         if [[ -f "Appraisals" ]]; then
-          bundle exec appraisal rake test
+          for i in `bundle exec appraisal list | sed 's/-/_/g' `; do
+            echo "::group::🔎 Appraising ${i}"
+            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle install --quiet --jobs=3 --retry=4 && \
+            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle show && \
+            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle exec rake test
+            echo "::endgroup::"
+          done
         else
           bundle exec rake test
         fi
-      env:
-        TEST_KAFKA_HOST: "127.0.0.1"
-        TEST_KAFKA_PORT: 29092
-        TEST_MYSQL_HOST: "127.0.0.1"
-        TEST_MYSQL_PORT: 3306
-        TEST_MYSQL_USER: mysql
-        TEST_MYSQL_PASSWORD: mysql
-        TEST_POSTGRES_PASSWORD: postgres
-        TEST_POSTGRES_USER: postgres
-        TEST_POSTGRES_HOST: localhost
-        TEST_POSTGRES_PORT: 5432
-        TEST_POSTGRES_DB: postgres
-        TEST_MEMCACHED_HOST: localhost
-        TEST_MEMCACHED_PORT: 11211
-        TEST_MONGODB_HOST: localhost
-        TEST_MONGODB_PORT: 27017
-        TEST_RABBITMQ_HOST: localhost
-        TEST_RABBITMQ_PORT: 5672
-        TEST_RABBITMQ_URL: amqp://guest:guest@localhost:5672
-        TEST_REDIS_HOST: localhost
-        TEST_REDIS_PORT: 6379
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: YARD
       shell: bash
       if: "${{ inputs.yard == 'true' }}"
       run: |
-        cd "${{ steps.setup.outputs.gem_dir }}"
+        # 📄 Yard Docs 📄
         bundle exec rake yard
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Rubocop
       shell: bash
       if: "${{ inputs.rubocop == 'true' }}"
       run: |
-        cd "${{ steps.setup.outputs.gem_dir }}"
+        # 🤖 Rubocop 🤖
         bundle exec rake rubocop
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Build Gem
       shell: bash
       if: "${{ inputs.build == 'true' }}"
       run: |
-        cd "${{ steps.setup.outputs.gem_dir }}"
+        # 📦 Build Gem 📦
         gem build ${{ inputs.gem }}.gemspec
+      working-directory: "${{ steps.setup.outputs.gem_dir }}"
