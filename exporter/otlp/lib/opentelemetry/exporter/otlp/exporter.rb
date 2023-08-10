@@ -54,7 +54,20 @@ module OpenTelemetry
                        compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                        timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
                        metrics_reporter: nil)
-          @uri = determine_url(endpoint)
+          endpoint ||= ENV['OTEL_EXPORTER_OTLP_TRACES_ENDPOINT']
+          @uri = begin
+                   if endpoint.nil?
+                     endpoint = ENV['OTEL_EXPORTER_OTLP_ENDPOINT'] || 'http://localhost:4318'
+                     endpoint += '/' unless endpoint.end_with?('/')
+                     URI.join(endpoint, 'v1/traces')
+                   elsif endpoint.strip.empty?
+                     raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}"
+                   else
+                     URI(endpoint)
+                   end
+                 rescue URI::Error
+                   raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}"
+                 end
           raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
           @http = http_connection(@uri, ssl_verify_mode, certificate_file)
@@ -378,42 +391,6 @@ module OpenTelemetry
             result.array_value = Opentelemetry::Proto::Common::V1::ArrayValue.new(values: values)
           end
           result
-        end
-
-        # Returns the url used by the exporter based on the precedence defined in the specification:
-        # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/protocol/exporter.md#endpoint-urls-for-otlphttp
-        #
-        # @param [String, nil] endpoint
-        # @return [URI::Generic]
-        def determine_url(endpoint)
-          if !endpoint.nil?
-            # Use endpoint provided via argument as-is
-            parse_url_or_raise(endpoint)
-          elsif !ENV['OTEL_EXPORTER_OTLP_TRACES_ENDPOINT'].nil?
-            # Use signal-specific endpoint as-is
-            parse_url_or_raise(ENV['OTEL_EXPORTER_OTLP_TRACES_ENDPOINT'])
-          elsif !ENV['OTEL_EXPORTER_OTLP_ENDPOINT'].nil?
-            # Append v1/traces only if the non-signal specific env var is set.
-            non_signal_specific_endpoint = ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
-            # append '/' if not present
-            non_signal_specific_endpoint += '/' unless non_signal_specific_endpoint.end_with?('/')
-            begin
-              URI.join(non_signal_specific_endpoint, 'v1/traces')
-            rescue URI::InvalidURIError
-              raise ArgumentError, "invalid url for OTLP::Exporter #{non_signal_specific_endpoint}"
-            end
-          else
-            # use default in all other cases
-            parse_url_or_raise('http://localhost:4318/v1/traces')
-          end
-        end
-
-        def parse_url_or_raise(endpoint)
-          raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}" if endpoint.nil? || endpoint.strip.empty?
-
-          URI(endpoint)
-        rescue URI::InvalidURIError
-          raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}"
         end
 
         def prepare_headers(config_headers)
