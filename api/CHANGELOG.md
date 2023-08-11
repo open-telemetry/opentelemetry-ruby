@@ -1,5 +1,9 @@
 # Release History: opentelemetry-api
 
+### v1.2.1 / 2023-07-29
+
+* DOCS: Describe Tracer#in_span arguments
+
 ### v1.2.0 / 2023-06-08
 
 * BREAKING CHANGE: Remove support for EoL Ruby 2.7 

@@ -4,7 +4,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry'
+
 module OpenTelemetry
-  ## Current OpenTelemetry version
-  VERSION = '1.2.1'
+  # OpenTelemetry Logs API
+  module Logs
+  end
 end
