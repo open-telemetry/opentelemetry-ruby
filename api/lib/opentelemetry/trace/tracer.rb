@@ -31,7 +31,7 @@ module OpenTelemetry
       #
       # @yield [span, context] yields the newly created span and a context containing the
       #   span to the block.
-      def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, &block)
+      def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
         span = nil
         span = start_span(name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind)
         Trace.with_span(span) { |s, c| yield s, c }
