@@ -24,3 +24,5 @@ Style/StringConcatenation:
     - "test/**/*"
 Style/ModuleFunction:
   Enabled: false
+Style/ExplicitBlockArgument:
+  Enabled: false
