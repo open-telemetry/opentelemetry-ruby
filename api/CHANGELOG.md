@@ -1,5 +1,10 @@
 # Release History: opentelemetry-api
 
+### v1.2.2 / 2023-08-15
+
+* FIXED: Patch the issue for frozen string on ruby < 3.0 with string interpolation
+* FIXED: Performance regression in_span
+
 ### v1.2.1 / 2023-07-29
 
 * DOCS: Describe Tracer#in_span arguments
