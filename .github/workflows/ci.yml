@@ -17,6 +17,7 @@ jobs:
         gem:
           - opentelemetry-api
           - opentelemetry-common
+          - opentelemetry-logs-api
           - opentelemetry-metrics-api
           - opentelemetry-registry
           - opentelemetry-sdk
