@@ -5,6 +5,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  ## Current OpenTelemetry version
-  VERSION = '1.2.2'
+  module Logs
+    # No-op implementation of an emitted log and its associated attributes.
+    class LogRecord; end
+  end
 end

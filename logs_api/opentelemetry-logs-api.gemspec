@@ -27,12 +27,12 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
 
   spec.add_development_dependency 'bundler', '>= 1.17'
-  spec.add_development_dependency 'minitest', '~> 5.0'
+  spec.add_development_dependency 'minitest', '~> 5.19'
   spec.add_development_dependency 'rake', '~> 12.0'
-  spec.add_development_dependency 'rubocop', '~> 1.3'
-  spec.add_development_dependency 'simplecov', '~> 0.17'
+  spec.add_development_dependency 'rubocop', '~> 1.55'
+  spec.add_development_dependency 'simplecov', '~> 0.22'
   spec.add_development_dependency 'yard', '~> 0.9'
-  spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
+  spec.add_development_dependency 'yard-doctest', '~> 0.1'
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-logs-api/v#{OpenTelemetry::Logs::VERSION}/file.CHANGELOG.html"

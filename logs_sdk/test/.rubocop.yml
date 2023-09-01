@@ -1,5 +1,7 @@
+# inherit_from: .rubocop_todo.yml
+
 AllCops:
-  TargetRubyVersion: "3.0"
+  TargetRubyVersion: '3.0'
 
 Lint/UnusedMethodArgument:
   Enabled: false
@@ -8,21 +10,15 @@ Metrics/AbcSize:
 Metrics/LineLength:
   Enabled: false
 Metrics/MethodLength:
+  Max: 50
+Metrics/PerceivedComplexity:
+  Max: 30
+Metrics/CyclomaticComplexity:
   Max: 20
 Metrics/ParameterLists:
   Enabled: false
 Naming/FileName:
   Exclude:
-    - "lib/opentelemetry-api.rb"
-Lint/MissingSuper:
-  Enabled: false
-Lint/ConstantDefinitionInBlock:
-  Exclude:
-    - "test/**/*"
-Style/StringConcatenation:
-  Exclude:
-    - "test/**/*"
+    - 'lib/opentelemetry-logs-sdk.rb'
 Style/ModuleFunction:
-  Enabled: false
-Style/ExplicitBlockArgument:
   Enabled: false
