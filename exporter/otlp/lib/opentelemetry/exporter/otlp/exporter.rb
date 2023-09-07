@@ -54,20 +54,12 @@ module OpenTelemetry
                        compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                        timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
                        metrics_reporter: nil)
-          endpoint ||= ENV['OTEL_EXPORTER_OTLP_TRACES_ENDPOINT']
           @uri = begin
-                   if endpoint.nil?
-                     endpoint = ENV['OTEL_EXPORTER_OTLP_ENDPOINT'] || 'http://localhost:4318'
-                     endpoint += '/' unless endpoint.end_with?('/')
-                     URI.join(endpoint, 'v1/traces')
-                   elsif endpoint.strip.empty?
-                     raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}"
-                   else
-                     URI(endpoint)
-                   end
-                 rescue URI::Error
-                   raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}"
-                 end
+            prepare_endpoint(endpoint)
+          rescue ArgumentError => e
+            raise ArgumentError, e.message
+          end
+
           raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
           @http = http_connection(@uri, ssl_verify_mode, certificate_file)
@@ -391,6 +383,21 @@ module OpenTelemetry
             result.array_value = Opentelemetry::Proto::Common::V1::ArrayValue.new(values: values)
           end
           result
+        end
+
+        def prepare_endpoint(endpoint)
+          endpoint ||= ENV['OTEL_EXPORTER_OTLP_TRACES_ENDPOINT']
+          if endpoint.nil?
+            endpoint = ENV['OTEL_EXPORTER_OTLP_ENDPOINT'] || 'http://localhost:4318'
+            endpoint += '/' unless endpoint.end_with?('/')
+            URI.join(endpoint, 'v1/traces')
+          elsif endpoint.strip.empty?
+            raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}"
+          else
+            URI(endpoint)
+          end
+        rescue URI::InvalidURIError
+          raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}"
         end
 
         def prepare_headers(config_headers)
