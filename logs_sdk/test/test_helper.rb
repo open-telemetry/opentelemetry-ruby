@@ -10,3 +10,5 @@ SimpleCov.minimum_coverage 85
 
 require 'opentelemetry-logs-api'
 require 'minitest/autorun'
+
+OpenTelemetry.logger = Logger.new(File::NULL)
