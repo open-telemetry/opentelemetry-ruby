@@ -1,5 +1,10 @@
 # Release History: opentelemetry-api
 
+### v1.2.3 / 2023-09-18
+
+* FIXED: Optimize span and trace ID generation
+* FIXED: Small perf improvement to generate_r
+
 ### v1.2.2 / 2023-08-15
 
 * FIXED: Patch the issue for frozen string on ruby < 3.0 with string interpolation
