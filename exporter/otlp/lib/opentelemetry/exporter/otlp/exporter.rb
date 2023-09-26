@@ -54,11 +54,7 @@ module OpenTelemetry
                        compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                        timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
                        metrics_reporter: nil)
-          @uri = begin
-            prepare_endpoint(endpoint)
-          rescue ArgumentError => e
-            raise ArgumentError, e.message
-          end
+          @uri = prepare_endpoint(endpoint)
 
           raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
