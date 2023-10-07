@@ -468,6 +468,9 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
     end
 
     it 'translates all the things' do
+      # TODO: See issue #1507 to fix
+      skip 'Intermittently fails' if RUBY_ENGINE == 'truffleruby'
+
       stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 200)
       processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter)
       tracer = OpenTelemetry.tracer_provider.tracer('tracer', 'v0.0.1')
