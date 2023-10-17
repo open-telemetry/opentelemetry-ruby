@@ -7,8 +7,7 @@
 module OpenTelemetry
   module SDK
     module Logs
-      # The export module contains result codes for LoggerProvider#force_flush
-      # and LoggerProvider#shutdown
+      # The Export module contains result codes for exporters
       module Export
         # The operation finished successfully.
         SUCCESS = 0
