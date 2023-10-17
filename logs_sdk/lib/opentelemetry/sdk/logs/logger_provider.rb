@@ -28,15 +28,17 @@ module OpenTelemetry
 
         # Creates an {OpenTelemetry::SDK::Logs::Logger} instance.
         #
-        # @param [optional String] name Instrumentation package name
+        # @param [String] name Instrumentation package name
         # @param [optional String] version Instrumentation package version
         #
         # @return [OpenTelemetry::SDK::Logs::Logger]
-        def logger(name = nil, version = nil)
-          name ||= ''
+        def logger(name:, version: nil)
           version ||= ''
 
-          OpenTelemetry.logger.warn('LoggerProvider#logger called without providing a logger name.') if name.empty?
+          if !name.is_a?(String) || name.empty?
+            OpenTelemetry.logger.warn('LoggerProvider#logger called with an ' \
+              "invalid name. Name provided: #{name.inspect}")
+          end
 
           OpenTelemetry::SDK::Logs::Logger.new(name, version, self)
         end
