@@ -9,7 +9,7 @@ module OpenTelemetry
     module Logs
       # The SDK implementation of OpenTelemetry::Logs::LoggerProvider.
       class LoggerProvider < OpenTelemetry::Logs::LoggerProvider
-        attr_reader :resource, :log_record_processors
+        attr_reader :resource
 
         UNEXPECTED_ERROR_MESSAGE = 'unexpected error in ' \
           'OpenTelemetry::SDK::Logs::LoggerProvider#%s'
@@ -17,15 +17,10 @@ module OpenTelemetry
         #
         # @param [optional Resource] resource The resource to associate with
         #   new LogRecords created by {Logger}s created by this LoggerProvider.
-        # @param [optional Array] log_record_processors The
-        #   {LogRecordProcessor}s to associate with this LoggerProvider.
         #
         # @return [OpenTelemetry::SDK::Logs::LoggerProvider]
-        def initialize(
-          resource: OpenTelemetry::SDK::Resources::Resource.create,
-          log_record_processors: []
-        )
-          @log_record_processors = log_record_processors
+        def initialize(resource: OpenTelemetry::SDK::Resources::Resource.create)
+          @log_record_processors = []
           @mutex = Mutex.new
           @resource = resource
           @stopped = false
@@ -53,7 +48,7 @@ module OpenTelemetry
         #   {LogRecordProcessor} to add to this LoggerProvider.
         def add_log_record_processor(log_record_processor)
           @mutex.synchronize do
-            @log_record_processors = log_record_processors.dup.push(log_record_processor)
+            @log_record_processors = @log_record_processors.dup.push(log_record_processor)
           end
         end
 
@@ -77,7 +72,7 @@ module OpenTelemetry
             end
 
             start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
-            results = log_record_processors.map do |processor|
+            results = @log_record_processors.map do |processor|
               remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
               break [OpenTelemetry::SDK::Logs::Export::TIMEOUT] if remaining_timeout&.zero?
 
@@ -108,7 +103,7 @@ module OpenTelemetry
             return Export::SUCCESS if @stopped
 
             start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
-            results = log_record_processors.map do |processor|
+            results = @log_record_processors.map do |processor|
               remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
               return Export::TIMEOUT if remaining_timeout&.zero?
 
