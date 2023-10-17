@@ -15,7 +15,7 @@ module OpenTelemetry
         # Called when a {LogRecord} is emitted. Subsequent calls are not
         # permitted after shutdown is called.
         # @param [LogRecord] log_record The emitted {LogRecord}
-        # @param [Context] context The resolved Context
+        # @param [Context] context The resolved Context (the explicitly passed Context or the current Context)
         def on_emit(log_record, context); end
 
         # Export all log records to the configured `Exporter` that have not yet
