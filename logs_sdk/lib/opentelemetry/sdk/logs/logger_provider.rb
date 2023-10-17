@@ -13,6 +13,9 @@ module OpenTelemetry
 
         UNEXPECTED_ERROR_MESSAGE = 'unexpected error in ' \
           'OpenTelemetry::SDK::Logs::LoggerProvider#%s'
+
+        private_constant :UNEXPECTED_ERROR_MESSAGE
+
         # Returns a new LoggerProvider instance.
         #
         # @param [optional Resource] resource The resource to associate with
