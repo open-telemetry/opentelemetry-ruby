@@ -9,8 +9,6 @@ module OpenTelemetry
     module Logs
       # The SDK implementation of OpenTelemetry::Logs::Logger
       class Logger < OpenTelemetry::Logs::Logger
-        attr_reader :instrumentation_scope, :logger_provider
-
         # @api private
         #
         # Returns a new {OpenTelemetry::SDK::Logs::Logger} instance. This should
