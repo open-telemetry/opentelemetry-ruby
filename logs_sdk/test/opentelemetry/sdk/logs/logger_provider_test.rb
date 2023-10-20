@@ -31,6 +31,25 @@ describe OpenTelemetry::SDK::Logs::LoggerProvider do
       logger_provider.add_log_record_processor(mock_log_record_processor)
       assert_equal(1, logger_provider.instance_variable_get(:@log_record_processors).length)
     end
+
+    describe 'when stopped' do
+      before { logger_provider.instance_variable_set(:@stopped, true) }
+
+      it 'does not add the processor' do
+        assert_equal(0, logger_provider.instance_variable_get(:@log_record_processors).length)
+
+        logger_provider.add_log_record_processor(mock_log_record_processor)
+        assert_equal(0, logger_provider.instance_variable_get(:@log_record_processors).length)
+      end
+
+      it 'logs a warning' do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          logger_provider.add_log_record_processor(mock_log_record_processor)
+          assert_match(/calling LoggerProvider#add_log_record_processor after shutdown/,
+            log_stream.string)
+        end
+      end
+    end
   end
 
   describe '#logger' do

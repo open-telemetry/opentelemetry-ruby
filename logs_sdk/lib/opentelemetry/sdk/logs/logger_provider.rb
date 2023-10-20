@@ -53,6 +53,11 @@ module OpenTelemetry
         #   {LogRecordProcessor} to add to this LoggerProvider.
         def add_log_record_processor(log_record_processor)
           @mutex.synchronize do
+            if @stopped
+              OpenTelemetry.logger.warn('calling LoggerProvider#' \
+                'add_log_record_processor after shutdown.')
+              return
+            end
             @log_record_processors = @log_record_processors.dup.push(log_record_processor)
           end
         end
