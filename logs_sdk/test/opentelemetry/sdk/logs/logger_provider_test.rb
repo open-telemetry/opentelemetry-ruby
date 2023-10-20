@@ -65,7 +65,6 @@ describe OpenTelemetry::SDK::Logs::LoggerProvider do
       assert_equal(logger.instance_variable_get(:@instrumentation_scope).version, version)
     end
   end
-  end
 
   describe '#shutdown' do
     it 'logs a warning if called twice' do
@@ -115,21 +114,6 @@ describe OpenTelemetry::SDK::Logs::LoggerProvider do
         assert_equal(OpenTelemetry::SDK::Logs::Export::TIMEOUT, logger_provider.shutdown)
       end
     end
-
-    it 'logs an error when error is raised' do
-      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
-        OpenTelemetry::Common::Utilities.stub :timeout_timestamp, -> { raise StandardError.new, 'fail' } do
-          logger_provider.shutdown
-          assert_match(/LoggerProvider#shutdown/, log_stream.string)
-        end
-      end
-    end
-
-    it 'returns a failure code when an error is raised' do
-      OpenTelemetry::Common::Utilities.stub :timeout_timestamp, -> { raise StandardError.new, 'fail' } do
-        assert_equal(OpenTelemetry::SDK::Logs::Export::FAILURE, logger_provider.shutdown)
-      end
-    end
   end
 
   describe '#force_flush' do
@@ -164,21 +148,6 @@ describe OpenTelemetry::SDK::Logs::LoggerProvider do
       OpenTelemetry::Common::Utilities.stub :maybe_timeout, 0 do
         logger_provider.add_log_record_processor(mock_log_record_processor)
         assert_equal(OpenTelemetry::SDK::Logs::Export::TIMEOUT, logger_provider.force_flush)
-      end
-    end
-
-    it 'returns a failure code when an error is raised' do
-      OpenTelemetry::Common::Utilities.stub :timeout_timestamp, -> { raise StandardError.new, 'fail' } do
-        assert_equal(OpenTelemetry::SDK::Logs::Export::FAILURE, logger_provider.force_flush)
-      end
-    end
-
-    it 'logs an error when error is raised' do
-      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
-        OpenTelemetry::Common::Utilities.stub :timeout_timestamp, -> { raise StandardError.new, 'fail' } do
-          logger_provider.shutdown
-          assert_match(/LoggerProvider#shutdown/, log_stream.string)
-        end
       end
     end
   end

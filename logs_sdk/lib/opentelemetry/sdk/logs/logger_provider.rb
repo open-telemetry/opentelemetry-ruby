@@ -87,9 +87,6 @@ module OpenTelemetry
             @stopped = true
             results.max || OpenTelemetry::SDK::Logs::Export::SUCCESS
           end
-        rescue StandardError => e
-          OpenTelemetry.handle_error(exception: e, message: UNEXPECTED_ERROR_MESSAGE % __method__)
-          Export::FAILURE
         end
 
         # Immediately export all {LogRecord}s that have not yet been exported
@@ -117,9 +114,6 @@ module OpenTelemetry
 
             results.max || Export::SUCCESS
           end
-        rescue StandardError => e
-          OpenTelemetry.handle_error(exception: e, message: UNEXPECTED_ERROR_MESSAGE % __method__)
-          Export::FAILURE
         end
       end
     end
