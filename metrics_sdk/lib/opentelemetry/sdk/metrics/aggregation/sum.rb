@@ -19,7 +19,7 @@ module OpenTelemetry
           def collect(start_time, end_time)
             if @aggregation_temporality == :delta
               # Set timestamps and 'move' data point values to result.
-              ndps = @data_points.values.map do |ndp|
+              ndps = @data_points.values.map! do |ndp|
                 ndp.start_time_unix_nano = start_time
                 ndp.time_unix_nano = end_time
                 ndp
