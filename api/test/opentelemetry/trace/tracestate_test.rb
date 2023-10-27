@@ -74,9 +74,12 @@ describe OpenTelemetry::Trace::Tracestate do
       tracestate = OpenTelemetry::Trace::Tracestate.from_hash(h)
       _(tracestate.to_h).must_equal('the-good-key' => '  the-good-value', '0x_the-vendor/key@my*v3nd0r' => 'another-great-value')
     end
-    it 'will not exceed 32 members' do
-      tracestate = OpenTelemetry::Trace::Tracestate.from_hash(33.times.collect { |n| [n.to_s, n.to_s] }.to_h)
-      _(tracestate.to_h.size).must_be :<=, 32
+    it 'will not exceed 32 members and drops excess from the beginning' do
+      input_hash = 33.times.collect { [('a'..'z').to_a.sample(5).join, ('a'..'z').to_a.sample(5).join] }.to_h
+      tracestate = OpenTelemetry::Trace::Tracestate.from_hash(input_hash)
+      output_hash = tracestate.to_h
+      _(output_hash.size).must_be :<=, 32
+      _(output_hash).must_equal(input_hash.drop(1).to_h)
     end
   end
 
