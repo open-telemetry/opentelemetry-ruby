@@ -75,8 +75,8 @@ module OpenTelemetry
       # @return [Tracestate]
       def initialize(hash)
         excess = hash.size - MAX_MEMBER_COUNT
-        hash = Hash[hash.drop(excess)] if excess.positive?
-        @hash = hash.freeze
+        @hash = excess.positive? ? Hash[hash.first(MAX_MEMBER_COUNT)] : hash
+        @hash.freeze
       end
 
       # Returns the value associated with the given key, or nil if the key
