@@ -103,7 +103,7 @@ module OpenTelemetry
           def force_flush(timeout: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
             start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
             snapshot = lock do
-              reset_on_fork if @keep_running
+              reset_on_fork(restart_thread: @keep_running)
               spans.shift(spans.size)
             end
             until snapshot.empty?
