@@ -511,7 +511,7 @@ describe OpenTelemetry::SDK::Trace::Span do
       attributes = { 'foo' => 'oldbaroldbaroldbaroldbaroldbaroldbar' }
       span = Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'name', SpanKind::INTERNAL, nil, span_limits,
                       [], attributes, nil, Time.now, nil, nil)
-      _(span.attributes["foo"]).must_equal('oldbaroldbaroldbaroldbaroldba...')
+      _(span.attributes['foo']).must_equal('oldbaroldbaroldbaroldbaroldba...')
     end
 
     it 'counts attributes' do
