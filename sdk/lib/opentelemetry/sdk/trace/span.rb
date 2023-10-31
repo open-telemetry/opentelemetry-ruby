@@ -347,8 +347,14 @@ module OpenTelemetry
         def trim_span_attributes(attrs)
           return if attrs.nil?
 
-          excess = attrs.size - @span_limits.attribute_count_limit
-          excess.times { attrs.shift } if excess.positive?
+          if attrs.size > @span_limits.attribute_count_limit
+            n = @span_limits.attribute_count_limit
+            attrs.delete_if do |_key, _value|
+              n -= 1
+              n < 0
+            end
+          end
+
           truncate_attribute_values(attrs, @span_limits.attribute_length_limit)
           nil
         end
