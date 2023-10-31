@@ -351,7 +351,7 @@ module OpenTelemetry
             n = @span_limits.attribute_count_limit
             attrs.delete_if do |_key, _value|
               n -= 1
-              n < 0
+              n.negative?
             end
           end
 
