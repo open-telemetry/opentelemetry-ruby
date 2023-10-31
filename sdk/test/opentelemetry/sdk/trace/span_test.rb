@@ -499,22 +499,23 @@ describe OpenTelemetry::SDK::Trace::Span do
     end
 
     it 'trims excess attributes' do
-      attributes = { 'foo': 'bar', 'other': 'attr' }
+      attributes = { 'foo' => 'bar', 'other' => 'attr' }
       span = Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'name', SpanKind::INTERNAL, nil, span_limits,
                       [], attributes, nil, Time.now, nil, nil)
       _(span.to_span_data.total_recorded_attributes).must_equal(2)
       _(span.attributes.length).must_equal(1)
+      _(span.attributes).must_equal('foo' => 'bar')
     end
 
     it 'truncates attributes if configured' do
-      attributes = { 'foo': 'oldbaroldbaroldbaroldbaroldbaroldbar' }
+      attributes = { 'foo' => 'oldbaroldbaroldbaroldbaroldbaroldbar' }
       span = Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'name', SpanKind::INTERNAL, nil, span_limits,
                       [], attributes, nil, Time.now, nil, nil)
-      _(span.attributes[:foo]).must_equal('oldbaroldbaroldbaroldbaroldba...')
+      _(span.attributes["foo"]).must_equal('oldbaroldbaroldbaroldbaroldba...')
     end
 
     it 'counts attributes' do
-      attributes = { 'foo': 'bar', 'other': 'attr' }
+      attributes = { 'foo' => 'bar', 'other' => 'attr' }
       span = Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'name', SpanKind::INTERNAL, nil, span_limits,
                       [], attributes, nil, Time.now, nil, nil)
       _(span.to_span_data.total_recorded_attributes).must_equal(2)
