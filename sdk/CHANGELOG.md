@@ -1,5 +1,9 @@
 # Release History: opentelemetry-sdk
 
+### v1.3.1 / 2023-11-02
+
+* FIXED: Spec compliance for span attribute limit
+
 ### v1.3.0 / 2023-06-08
 
 * BREAKING CHANGE: Remove support for EoL Ruby 2.7 
