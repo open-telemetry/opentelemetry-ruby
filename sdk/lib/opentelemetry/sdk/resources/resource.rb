@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'uri'
+
 module OpenTelemetry
   module SDK
     module Resources
@@ -46,7 +48,7 @@ module OpenTelemetry
 
             resource_pairs.split(',').each do |pair|
               key, value = pair.split('=')
-              resource_attributes[key.strip] = value
+              resource_attributes[key.strip] = URI.decode_www_form_component(value).strip
             end
 
             resource_attributes.delete_if { |_key, value| value.nil? || value.empty? }

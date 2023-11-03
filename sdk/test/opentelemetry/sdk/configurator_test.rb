@@ -89,7 +89,7 @@ describe OpenTelemetry::SDK::Configurator do
       end
 
       it 'cleans up whitespace in user provided resources' do
-        OpenTelemetry::TestHelpers.with_env('OTEL_RESOURCE_ATTRIBUTES' => 'important_foo=x, important_bar=y') do
+        OpenTelemetry::TestHelpers.with_env('OTEL_RESOURCE_ATTRIBUTES' => ' important_foo=x, important_bar=y ') do
           configurator.resource = OpenTelemetry::SDK::Resources::Resource.create()
           _(configurator_resource_attributes).must_equal(default_resource_attributes.merge('important_foo' => 'x', 'important_bar' => 'y'))
         end
