@@ -46,7 +46,7 @@ module OpenTelemetry
 
             resource_pairs.split(',').each do |pair|
               key, value = pair.split('=')
-              resource_attributes[key] = value
+              resource_attributes[key.strip] = value
             end
 
             resource_attributes.delete_if { |_key, value| value.nil? || value.empty? }
