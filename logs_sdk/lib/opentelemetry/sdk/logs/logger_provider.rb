@@ -18,7 +18,7 @@ module OpenTelemetry
 
         # Returns a new LoggerProvider instance.
         #
-        # @param [optional Resource] resource The resource to associate with
+        # @param [Resource] resource An optional resource to associate with
         #   new LogRecords created by {Logger}s created by this LoggerProvider.
         #
         # @return [OpenTelemetry::SDK::Logs::LoggerProvider]
