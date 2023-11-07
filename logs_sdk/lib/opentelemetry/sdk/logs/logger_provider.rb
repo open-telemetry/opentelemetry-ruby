@@ -32,7 +32,7 @@ module OpenTelemetry
         # Creates an {OpenTelemetry::SDK::Logs::Logger} instance.
         #
         # @param [String] name Instrumentation package name
-        # @param [optional String] version Instrumentation package version
+        # @param [String] version Optional instrumentation package version
         #
         # @return [OpenTelemetry::SDK::Logs::Logger]
         def logger(name:, version: nil)
@@ -71,7 +71,7 @@ module OpenTelemetry
         #
         # After this is called all newly created {LogRecord}s will be no-op.
         #
-        # @param [optional Numeric] timeout An optional timeout in seconds.
+        # @param [Numeric] timeout An optional timeout in seconds.
         # @return [Integer] Export::SUCCESS if no error occurred, Export::FAILURE if
         #   a non-specific failure occurred, Export::TIMEOUT if a timeout occurred.
         def shutdown(timeout: nil)
@@ -102,7 +102,7 @@ module OpenTelemetry
         # the process after an invocation, but before the {LogRecordProcessor}
         # exports the completed {LogRecord}s.
         #
-        # @param [optional Numeric] timeout An optional timeout in seconds.
+        # @param [Numeric] timeout An optional timeout in seconds.
         # @return [Integer] Export::SUCCESS if no error occurred, Export::FAILURE if
         #   a non-specific failure occurred, Export::TIMEOUT if a timeout occurred.
         def force_flush(timeout: nil)
