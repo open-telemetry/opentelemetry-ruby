@@ -21,6 +21,7 @@ jobs:
           - opentelemetry-metrics-api
           - opentelemetry-registry
           - opentelemetry-sdk
+          - opentelemetry-sdk-experimental
           - opentelemetry-semantic_conventions
           - opentelemetry-test-helpers
         os:

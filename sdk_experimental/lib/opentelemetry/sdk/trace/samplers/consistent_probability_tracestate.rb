@@ -106,7 +106,7 @@ module OpenTelemetry
           end
 
           def generate_r(trace_id)
-            x = trace_id.unpack1('Q>', offset: 8) | 0x3
+            x = trace_id.unpack1('@8Q>') | 0x3
             64 - x.bit_length
           end
         end
