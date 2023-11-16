@@ -67,6 +67,31 @@ end
 tracer_provider.shutdown
 ```
 
+For otlp metrics exporter
+
+```ruby
+require 'opentelemetry/sdk'
+require 'opentelemetry-metrics-sdk'
+require 'opentelemetry/exporter/otlp'
+
+OpenTelemetry::SDK.configure
+
+# To start a trace you need to get a Tracer from the TracerProvider
+
+otlp_metric_exporter = OpenTelemetry::Exporter::OTLP::MetricsExporter.new
+
+OpenTelemetry.meter_provider.add_metric_reader(otlp_metric_exporter)
+
+meter = OpenTelemetry.meter_provider.meter("SAMPLE_METER_NAME")
+
+histogram = meter.create_histogram('histogram', unit: 'smidgen', description: 'desscription')
+
+histogram.record(123, attributes: {'foo' => 'bar'})
+
+OpenTelemetry.meter_provider.metric_readers.each(&:pull)
+OpenTelemetry.meter_provider.shutdown
+```
+
 For additional examples, see the [examples on github][examples-github].
 
 ## How can I configure the OTLP exporter?
@@ -84,6 +109,20 @@ The collector exporter can be configured explicitly in code, or via environment 
 |                     | `OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE`    |                                     |
 
 `ssl_verify_mode:` parameter values should be flags for server certificate verification: `OpenSSL::SSL:VERIFY_PEER` and `OpenSSL::SSL:VERIFY_NONE` are acceptable. These values can also be set using the appropriately named environment variables as shown where `VERIFY_PEER` will take precedence over `VERIFY_NONE`.  Please see [the Net::HTTP docs](https://ruby-doc.org/stdlib-2.7.6/libdoc/net/http/rdoc/Net/HTTP.html#verify_mode) for more information about these flags.
+
+## How can I configure the OTLP Metrics exporter?
+
+The collector exporter can be configured explicitly in code, or via environment variables as shown above. The configuration parameters, environment variables, and defaults are shown below.
+
+| Parameter           | Environment variable                         | Default                             |
+| ------------------- | -------------------------------------------- | ----------------------------------- |
+| `endpoint:`         | `OTEL_EXPORTER_OTLP_ENDPOINT`                | `"http://localhost:4318/v1/metrics"` |
+| `certificate_file: `| `OTEL_EXPORTER_OTLP_CERTIFICATE`             |                                     |
+| `headers:`          | `OTEL_EXPORTER_OTLP_HEADERS`                 |                                     |
+| `compression:`      | `OTEL_EXPORTER_OTLP_COMPRESSION`             | `"gzip"`                            |
+| `timeout:`          | `OTEL_EXPORTER_OTLP_TIMEOUT`                 | `10`                                |
+| `ssl_verify_mode:`  | `OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER` or | `OpenSSL::SSL:VERIFY_PEER`          |
+|                     | `OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE`    |                                     |
 
 ## How can I get involved?
 
