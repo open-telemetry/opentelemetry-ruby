@@ -3,6 +3,7 @@
 # Copyright The OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
+
 require 'test_helper'
 require 'google/protobuf/wrappers_pb'
 require 'google/protobuf/well_known_types'
@@ -543,8 +544,10 @@ describe OpenTelemetry::Exporter::OTLP::MetricsExporter do
       meter_provider.add_metric_reader(exporter)
       meter   = meter_provider.meter('test')
       counter = meter.create_counter('test_counter', unit: 'smidgen', description: 'a small amount of something')
-
       counter.add(5, attributes: { 'foo' => 'bar' })
+
+      histogram = meter.create_histogram('test_histogram', unit: 'smidgen', description: 'a small amount of something')
+      histogram.record(10, attributes: {'oof' => 'rab'})
       exporter.pull
       meter_provider.shutdown
 
@@ -580,6 +583,29 @@ describe OpenTelemetry::Exporter::OTLP::MetricsExporter do
                             start_time_unix_nano: 1_699_593_427_329_946_585,
                             time_unix_nano: 1_699_593_427_329_946_586,
                             exemplars: nil
+                          )
+                        ]
+                      )
+                    ),
+                    Opentelemetry::Proto::Metrics::V1::Metric.new(
+                      name: 'test_histogram',
+                      description: 'a small amount of something',
+                      unit: 'smidgen',
+                      histogram: Opentelemetry::Proto::Metrics::V1::Histogram.new(
+                        data_points: [
+                          Opentelemetry::Proto::Metrics::V1::HistogramDataPoint.new(
+                            attributes: [
+                              Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'oof', value: Opentelemetry::Proto::Common::V1::AnyValue.new(string_value: 'rab'))
+                            ],
+                            start_time_unix_nano: 1_699_593_427_329_946_585,
+                            time_unix_nano: 1_699_593_427_329_946_586,
+                            count: 1,
+                            sum: 10,
+                            bucket_counts: [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+                            explicit_bounds: [0, 5, 10, 25, 50, 75, 100, 250, 500, 1000],
+                            exemplars: nil,
+                            min: 10,
+                            max: 10
                           )
                         ]
                       )
