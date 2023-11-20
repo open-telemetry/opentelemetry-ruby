@@ -100,10 +100,10 @@ module OpenTelemetry
           # @param [optional Numeric] timeout An optional timeout in seconds.
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
-          def force_flush(timeout: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
+          def force_flush(timeout: nil) # rubocop:disable Metrics/MethodLength
             start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
             snapshot = lock do
-              reset_on_fork if @keep_running
+              reset_on_fork(restart_thread: @keep_running)
               spans.shift(spans.size)
             end
             until snapshot.empty?
