@@ -547,7 +547,7 @@ describe OpenTelemetry::Exporter::OTLP::MetricsExporter do
       counter.add(5, attributes: { 'foo' => 'bar' })
 
       histogram = meter.create_histogram('test_histogram', unit: 'smidgen', description: 'a small amount of something')
-      histogram.record(10, attributes: {'oof' => 'rab'})
+      histogram.record(10, attributes: { 'oof' => 'rab' })
       exporter.pull
       meter_provider.shutdown
 

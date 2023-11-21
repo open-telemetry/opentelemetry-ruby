@@ -206,7 +206,7 @@ module OpenTelemetry
         # current metric sdk only implements instrument: :counter -> :sum, :histogram -> :histogram
         #
         # metrics [MetricData]
-        def as_otlp_metrics(metrics) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
+        def as_otlp_metrics(metrics) # rubocop:disable Metrics/MethodLength
           case metrics.instrument_kind
           when :observable_gauge
             Opentelemetry::Proto::Metrics::V1::Metric.new(
