@@ -55,8 +55,7 @@ module OpenTelemetry
             return false
           elsif !valid_value?(v)
             OpenTelemetry.handle_error(message: "invalid #{kind} attribute value type #{v.class} for key '#{k}' on span '#{owner}'")
-            break false
-          else
+            return false
           end
         end
 
