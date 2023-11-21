@@ -52,7 +52,7 @@ module OpenTelemetry
         attrs.nil? || attrs.each do |k, v|
           if !valid_key?(k)
             OpenTelemetry.handle_error(message: "invalid #{kind} attribute key type #{k.class} on span '#{owner}'")
-            break false
+            return false
           elsif !valid_value?(v)
             OpenTelemetry.handle_error(message: "invalid #{kind} attribute value type #{v.class} for key '#{k}' on span '#{owner}'")
             break false
