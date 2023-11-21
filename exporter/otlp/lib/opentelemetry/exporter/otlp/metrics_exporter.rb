@@ -215,13 +215,7 @@ module OpenTelemetry
               unit: metrics.unit,
               gauge: Opentelemetry::Proto::Metrics::V1::Gauage.new(
                 data_points: metrics.data_points.map do |ndp|
-                  Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(
-                    attributes: ndp.attributes.map { |k, v| Util.as_otlp_key_value(k, v) },
-                    as_int: ndp.value,
-                    start_time_unix_nano: ndp.start_time_unix_nano,
-                    time_unix_nano: ndp.time_unix_nano,
-                    exemplars: ndp.exemplars # exemplars not implemented yet from metrics sdk
-                  )
+                  number_data_point(ndp)
                 end
               )
             )
@@ -233,13 +227,7 @@ module OpenTelemetry
               unit: metrics.unit,
               sum: Opentelemetry::Proto::Metrics::V1::Sum.new(
                 data_points: metrics.data_points.map do |ndp|
-                  Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(
-                    attributes: ndp.attributes.map { |k, v| Util.as_otlp_key_value(k, v) },
-                    as_int: ndp.value,
-                    start_time_unix_nano: ndp.start_time_unix_nano,
-                    time_unix_nano: ndp.time_unix_nano,
-                    exemplars: ndp.exemplars # exemplars not implemented yet from metrics sdk
-                  )
+                  number_data_point(ndp)
                 end
               )
             )
@@ -251,22 +239,36 @@ module OpenTelemetry
               unit: metrics.unit,
               histogram: Opentelemetry::Proto::Metrics::V1::Histogram.new(
                 data_points: metrics.data_points.map do |hdp|
-                  Opentelemetry::Proto::Metrics::V1::HistogramDataPoint.new(
-                    attributes: hdp.attributes.map { |k, v| Util.as_otlp_key_value(k, v) },
-                    start_time_unix_nano: hdp.start_time_unix_nano,
-                    time_unix_nano: hdp.time_unix_nano,
-                    count: hdp.count,
-                    sum: hdp.sum,
-                    bucket_counts: hdp.bucket_counts,
-                    explicit_bounds: hdp.explicit_bounds,
-                    exemplars: hdp.exemplars,
-                    min: hdp.min,
-                    max: hdp.max
-                  )
+                  histogram_data_point(hdp)
                 end
               )
             )
           end
+        end
+
+        def histogram_data_point(hdp)
+          Opentelemetry::Proto::Metrics::V1::HistogramDataPoint.new(
+            attributes: hdp.attributes.map { |k, v| Util.as_otlp_key_value(k, v) },
+            start_time_unix_nano: hdp.start_time_unix_nano,
+            time_unix_nano: hdp.time_unix_nano,
+            count: hdp.count,
+            sum: hdp.sum,
+            bucket_counts: hdp.bucket_counts,
+            explicit_bounds: hdp.explicit_bounds,
+            exemplars: hdp.exemplars,
+            min: hdp.min,
+            max: hdp.max
+          )
+        end
+
+        def number_data_point(ndp)
+          Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(
+            attributes: ndp.attributes.map { |k, v| Util.as_otlp_key_value(k, v) },
+            as_int: ndp.value,
+            start_time_unix_nano: ndp.start_time_unix_nano,
+            time_unix_nano: ndp.time_unix_nano,
+            exemplars: ndp.exemplars # exemplars not implemented yet from metrics sdk
+          )
         end
 
         def backoff?(retry_count:, reason:, retry_after: nil)
