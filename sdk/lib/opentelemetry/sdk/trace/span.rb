@@ -282,7 +282,7 @@ module OpenTelemetry
         end
 
         # @api private
-        def initialize(context, parent_context, parent_span, name, kind, parent_span_id, span_limits, span_processors, attributes, links, start_timestamp, resource, instrumentation_scope) # rubocop:disable  Metrics/CyclomaticComplexity, Metrics/MethodLength,  Metrics/PerceivedComplexity
+        def initialize(context, parent_context, parent_span, name, kind, parent_span_id, span_limits, span_processors, attributes, links, start_timestamp, resource, instrumentation_scope) # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
           super(span_context: context)
           @mutex = Mutex.new
           @name = name
