@@ -71,7 +71,7 @@ module OpenTelemetry
           export(collect)
         end
 
-        # metrics [Metric Object]
+        # metrics Array[MetricData]
         def export(metrics, timeout: nil)
           @mutex.synchronize do
             send_bytes(encode(metrics), timeout: timeout)
