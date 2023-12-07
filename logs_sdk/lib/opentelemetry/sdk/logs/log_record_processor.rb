@@ -7,15 +7,15 @@
 module OpenTelemetry
   module SDK
     module Logs
-      # LogRecordProcessor describes a duck type and provides synchronous no-op hooks for when a
-      # {LogRecord} is started or when a {LogRecord} is ended. It is not required to subclass this
+      # LogRecordProcessor describes a duck type and provides a synchronous no-op hook for when a
+      # {LogRecord} is emitted. It is not required to subclass this
       # class to provide an implementation of LogRecordProcessor, provided the interface is
       # satisfied.
       class LogRecordProcessor
         # Called when a {LogRecord} is emitted. Subsequent calls are not
         # permitted after shutdown is called.
         # @param [LogRecord] log_record The emitted {LogRecord}
-        # @param [Context] context The resolved Context (the explicitly passed Context or the current Context)
+        # @param [Context] context The {Context}
         def on_emit(log_record, context); end
 
         # Export all log records to the configured `Exporter` that have not yet

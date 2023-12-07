@@ -29,7 +29,7 @@ module OpenTelemetry
           @stopped = false
         end
 
-        # Creates an {OpenTelemetry::SDK::Logs::Logger} instance.
+        # Returns an {OpenTelemetry::SDK::Logs::Logger} instance.
         #
         # @param [String] name Instrumentation package name
         # @param [String] version Optional instrumentation package version
@@ -43,7 +43,7 @@ module OpenTelemetry
               "invalid name. Name provided: #{name.inspect}")
           end
 
-          OpenTelemetry::SDK::Logs::Logger.new(name, version, self)
+         Logger.new(name, version, self)
         end
 
         # Adds a new log record processor to this LoggerProvider's
@@ -78,19 +78,19 @@ module OpenTelemetry
           @mutex.synchronize do
             if @stopped
               OpenTelemetry.logger.warn('LoggerProvider#shutdown called multiple times.')
-              return OpenTelemetry::SDK::Logs::Export::FAILURE
+              return Export::FAILURE
             end
 
             start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
             results = @log_record_processors.map do |processor|
               remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
-              break [OpenTelemetry::SDK::Logs::Export::TIMEOUT] if remaining_timeout&.zero?
+              break [Export::TIMEOUT] if remaining_timeout&.zero?
 
               processor.shutdown(timeout: remaining_timeout)
             end
 
             @stopped = true
-            results.max || OpenTelemetry::SDK::Logs::Export::SUCCESS
+            results.max || Export::SUCCESS
           end
         end
 
