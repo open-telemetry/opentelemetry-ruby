@@ -26,10 +26,9 @@ module OpenTelemetry
     #
     # @return [String] a valid trace ID.
     def generate_trace_id
-      loop do
-        id = Random.bytes(16)
-        return id unless id == INVALID_TRACE_ID
-      end
+      id = Random.bytes(16)
+      id = Random.bytes(16) while id == INVALID_TRACE_ID
+      id
     end
 
     # Generates a valid span identifier, an 8-byte string with at least one
@@ -37,10 +36,9 @@ module OpenTelemetry
     #
     # @return [String] a valid span ID.
     def generate_span_id
-      loop do
-        id = Random.bytes(8)
-        return id unless id == INVALID_SPAN_ID
-      end
+      id = Random.bytes(8)
+      id = Random.bytes(8) while id == INVALID_SPAN_ID
+      id
     end
 
     # Returns the current span from the current or provided context

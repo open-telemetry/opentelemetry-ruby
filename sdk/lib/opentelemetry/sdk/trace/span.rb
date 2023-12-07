@@ -282,7 +282,7 @@ module OpenTelemetry
         end
 
         # @api private
-        def initialize(context, parent_context, parent_span, name, kind, parent_span_id, span_limits, span_processors, attributes, links, start_timestamp, resource, instrumentation_scope) # rubocop:disable  Metrics/CyclomaticComplexity, Metrics/MethodLength,  Metrics/PerceivedComplexity
+        def initialize(context, parent_context, parent_span, name, kind, parent_span_id, span_limits, span_processors, attributes, links, start_timestamp, resource, instrumentation_scope) # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
           super(span_context: context)
           @mutex = Mutex.new
           @name = name
@@ -297,7 +297,7 @@ module OpenTelemetry
           @total_recorded_events = 0
           @total_recorded_links = links&.size || 0
           @total_recorded_attributes = attributes&.size || 0
-          @attributes = attributes.nil? ? nil : Hash[attributes] # We need a mutable copy of attributes.
+          @attributes = attributes
           trim_span_attributes(@attributes)
           @events = nil
           @links = trim_links(links, span_limits.link_count_limit, span_limits.link_attribute_count_limit)
@@ -317,7 +317,7 @@ module OpenTelemetry
           # SpanData.
           @monotonic_start_timestamp = monotonic_now
           @realtime_start_timestamp = if parent_span.recording?
-                                        relative_realtime(parent_span.realtime_start_timestamp, parent_span.monotonic_start_timestamp)
+                                        relative_realtime(parent_span.realtime_start_timestamp, parent_span.monotonic_start_timestamp, @monotonic_start_timestamp)
                                       else
                                         realtime_now
                                       end
@@ -347,8 +347,14 @@ module OpenTelemetry
         def trim_span_attributes(attrs)
           return if attrs.nil?
 
-          excess = attrs.size - @span_limits.attribute_count_limit
-          excess.times { attrs.shift } if excess.positive?
+          if attrs.size > @span_limits.attribute_count_limit
+            n = @span_limits.attribute_count_limit
+            attrs.delete_if do |_key, _value|
+              n -= 1
+              n.negative?
+            end
+          end
+
           truncate_attribute_values(attrs, @span_limits.attribute_length_limit)
           nil
         end
@@ -413,15 +419,15 @@ module OpenTelemetry
         def relative_timestamp(timestamp)
           return time_in_nanoseconds(timestamp) unless timestamp.nil?
 
-          relative_realtime(realtime_start_timestamp, monotonic_start_timestamp)
+          relative_realtime(realtime_start_timestamp, monotonic_start_timestamp, monotonic_now)
         end
 
         def time_in_nanoseconds(timestamp)
           (timestamp.to_r * 1_000_000_000).to_i
         end
 
-        def relative_realtime(realtime_base, monotonic_base)
-          realtime_base + (monotonic_now - monotonic_base)
+        def relative_realtime(realtime_base, monotonic_base, now)
+          realtime_base + (now - monotonic_base)
         end
 
         def realtime_now

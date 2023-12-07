@@ -1,5 +1,13 @@
 # Release History: opentelemetry-sdk-experimental
 
+### v0.3.2 / 2023-11-02
+
+* FIXED: Ruby 3.0 compatibility for generate_r
+
+### v0.3.1 / 2023-09-18
+
+* FIXED: Small perf improvement to generate_r
+
 ### v0.3.0 / 2023-06-08
 
 * BREAKING CHANGE: Remove support for EoL Ruby 2.7 

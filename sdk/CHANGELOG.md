@@ -1,23 +1,28 @@
 # Release History: opentelemetry-sdk
 
+### v1.3.1 / 2023-11-02
+
+* FIXED: Spec compliance for span attribute limit
+* FIXED: BatchSpanProcessor#force_flush: purge inherited spans even on shutdown
+
 ### v1.3.0 / 2023-06-08
 
-* BREAKING CHANGE: Remove support for EoL Ruby 2.7 
+* BREAKING CHANGE: Remove support for EoL Ruby 2.7
 
-* ADDED: Remove support for EoL Ruby 2.7 
-* FIXED: SDK requires opentelemetry-common 0.19.7 
+* ADDED: Remove support for EoL Ruby 2.7
+* FIXED: SDK requires opentelemetry-common 0.19.7
 
 ### v1.2.1 / 2023-05-30
 
-* FIXED: Untraced only works with parent-based sampler 
-* DOCS: Improve formatting of usage examples in OpenTelemetry SDK rubydocs 
+* FIXED: Untraced only works with parent-based sampler
+* DOCS: Improve formatting of usage examples in OpenTelemetry SDK rubydocs
 
 ### v1.2.0 / 2022-09-14
 
-* ADDED: Support OTEL_PROPAGATORS=none 
-* ADDED: Support OTEL_ATTRIBUTE_{COUNT,VALUE_LENGTH}_LIMIT env vars 
-* ADDED: Support InstrumentationScope, and update OTLP proto to 0.18.0 
-* FIXED: SpanLimits setting event attributes length limit 
+* ADDED: Support OTEL_PROPAGATORS=none
+* ADDED: Support OTEL_ATTRIBUTE_{COUNT,VALUE_LENGTH}_LIMIT env vars
+* ADDED: Support InstrumentationScope, and update OTLP proto to 0.18.0
+* FIXED: SpanLimits setting event attributes length limit
 
 ### v1.1.0 / 2022-05-26
 
@@ -27,15 +32,15 @@
 ### v1.0.3 / 2022-05-02
 
 * ADDED: Truncate the strings in an array attribute value if length_limit is configured
-* FIXED: Update attribute length limit env var name to match spec 
-* FIXED: Warning about Struct initialization in Ruby 3.2+ 
-* FIXED: Warn on unsupported otlp transport protocols 
-* FIXED: Only allow certain types of Numeric values as attribute values. 
+* FIXED: Update attribute length limit env var name to match spec
+* FIXED: Warning about Struct initialization in Ruby 3.2+
+* FIXED: Warn on unsupported otlp transport protocols
+* FIXED: Only allow certain types of Numeric values as attribute values.
 
 ### v1.0.2 / 2021-12-01
 
-* FIXED: Default span kind 
-* FIXED: Use monotonic clock where possible 
+* FIXED: Default span kind
+* FIXED: Use monotonic clock where possible
 
 ### v1.0.1 / 2021-10-29
 
