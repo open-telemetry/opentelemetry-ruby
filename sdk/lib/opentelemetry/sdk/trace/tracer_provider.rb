@@ -141,7 +141,7 @@ module OpenTelemetry
           if result.recording? && !@stopped
             trace_flags = result.sampled? ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
             context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: span_id, trace_flags: trace_flags, tracestate: result.tracestate)
-            attributes = attributes&.merge(result.attributes) || result.attributes
+            attributes = attributes&.merge(result.attributes) || result.attributes.dup
             Span.new(
               context,
               parent_context,
