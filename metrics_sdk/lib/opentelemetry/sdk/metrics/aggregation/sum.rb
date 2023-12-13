@@ -11,7 +11,8 @@ module OpenTelemetry
         # Contains the implementation of the Sum aggregation
         # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#sum-aggregation
         class Sum
-          def initialize(aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta)) # the default should be :cumulative, but we haven't implemented it yet
+          def initialize(aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta))
+            # ^-- the default should be :cumulative, but we haven't implemented it yet
             @aggregation_temporality = aggregation_temporality
             @data_points = {}
           end
