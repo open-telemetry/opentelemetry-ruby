@@ -19,7 +19,7 @@ module OpenTelemetry
           # (50.0, 75.0], (75.0, 100.0], (100.0, 250.0], (250.0, 500.0],
           # (500.0, 1000.0], (1000.0, +inf)
           def initialize(
-            aggregation_temporality: :delta,
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta), # the default should be :cumulative, but we haven't implemented it yet
             boundaries: DEFAULT_BOUNDARIES,
             record_min_max: true
           )
