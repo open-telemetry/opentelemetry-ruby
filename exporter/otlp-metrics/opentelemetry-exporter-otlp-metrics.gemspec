@@ -14,8 +14,8 @@ Gem::Specification.new do |spec|
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
-  spec.summary     = 'OTLP exporter for the OpenTelemetry framework'
-  spec.description = 'OTLP exporter for the OpenTelemetry framework'
+  spec.summary     = 'OTLP metrics exporter for the OpenTelemetry framework'
+  spec.description = 'OTLP metrics exporter for the OpenTelemetry framework'
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby'
   spec.license     = 'Apache-2.0'
 

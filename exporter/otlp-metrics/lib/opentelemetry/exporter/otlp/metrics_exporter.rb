@@ -25,7 +25,7 @@ require_relative './util'
 module OpenTelemetry
   module Exporter
     module OTLP
-      # An OpenTelemetry metrics exporter that sends spans over HTTP as Protobuf encoded OTLP ExportMetricsServiceRequest.
+      # An OpenTelemetry metrics exporter that sends metrics over HTTP as Protobuf encoded OTLP ExportMetricsServiceRequest.
       class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricReader # rubocop:disable Metrics/ClassLength
         include Util
 
@@ -259,6 +259,14 @@ module OpenTelemetry
 
               )
             )
+          end
+        end
+
+        def as_otlp_aggregation_temporality(type)
+          case type
+          when :delta then Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
+          when :cumulative then Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_CUMULATIVE
+          else Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_UNSPECIFIED
           end
         end
 

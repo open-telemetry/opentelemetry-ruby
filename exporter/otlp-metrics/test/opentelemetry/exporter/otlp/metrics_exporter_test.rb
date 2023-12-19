@@ -493,7 +493,7 @@ describe OpenTelemetry::Exporter::OTLP::MetricsExporter do
       end
     end
 
-    it 'exports a metrics' do
+    it 'exports a metric' do
       stub_post = stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 200)
       meter_provider.add_metric_reader(exporter)
       meter     = meter_provider.meter('test')
@@ -584,7 +584,8 @@ describe OpenTelemetry::Exporter::OTLP::MetricsExporter do
                             time_unix_nano: 1_699_593_427_329_946_586,
                             exemplars: nil
                           )
-                        ]
+                        ],
+                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
                       )
                     ),
                     Opentelemetry::Proto::Metrics::V1::Metric.new(
