@@ -29,11 +29,11 @@ OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.prepend(MockSu
 
 def create_metrics_data(name: '', description: '', unit: '', instrument_kind: :counter, resource: nil,
                         instrumentation_scope: OpenTelemetry::SDK::InstrumentationScope.new('', 'v0.0.1'),
-                        data_points: nil, start_time_unix_nano: 0, time_unix_nano: 0)
+                        data_points: nil, aggregation_temporality: :delta, start_time_unix_nano: 0, time_unix_nano: 0)
   data_points ||= [OpenTelemetry::SDK::Metrics::Aggregation::NumberDataPoint.new(attributes: {}, start_time_unix_nano: 0, time_unix_nano: 0, value: 1, exemplars: nil)]
   resource    ||= OpenTelemetry::SDK::Resources::Resource.telemetry_sdk
 
   OpenTelemetry::SDK::Metrics::State::MetricData.new(name, description, unit, instrument_kind,
                                                      resource, instrumentation_scope, data_points,
-                                                     start_time_unix_nano, time_unix_nano)
+                                                     start_time_unix_nano, time_unix_nano, aggregation_temporality)
 end
