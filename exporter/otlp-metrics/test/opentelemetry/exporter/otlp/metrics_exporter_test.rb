@@ -493,7 +493,7 @@ describe OpenTelemetry::Exporter::OTLP::MetricsExporter do
       end
     end
 
-    it 'exports a metrics' do
+    it 'exports a metric' do
       stub_post = stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 200)
       meter_provider.add_metric_reader(exporter)
       meter     = meter_provider.meter('test')
