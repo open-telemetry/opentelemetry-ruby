@@ -258,6 +258,14 @@ module OpenTelemetry
           end
         end
 
+        def as_otlp_aggregation_temporality(type)
+          case type
+          when :delta then Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
+          when :cumulative then Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_CUMULATIVE
+          else Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_UNSPECIFIED
+          end
+        end
+
         def histogram_data_point(hdp)
           Opentelemetry::Proto::Metrics::V1::HistogramDataPoint.new(
             attributes: hdp.attributes.map { |k, v| as_otlp_key_value(k, v) },
