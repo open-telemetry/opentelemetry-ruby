@@ -608,7 +608,8 @@ describe OpenTelemetry::Exporter::OTLP::MetricsExporter do
                             min: 10,
                             max: 10
                           )
-                        ]
+                        ],
+                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
                       )
                     )
                   ]

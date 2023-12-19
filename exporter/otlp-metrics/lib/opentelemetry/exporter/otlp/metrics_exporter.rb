@@ -226,7 +226,7 @@ module OpenTelemetry
               description: metrics.description,
               unit: metrics.unit,
               gauge: Opentelemetry::Proto::Metrics::V1::Gauge.new(
-                aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality)
+                aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
                 data_points: metrics.data_points.map do |ndp|
                   number_data_point(ndp)
                 end
@@ -239,7 +239,7 @@ module OpenTelemetry
               description: metrics.description,
               unit: metrics.unit,
               sum: Opentelemetry::Proto::Metrics::V1::Sum.new(
-                aggregation_temporality: metrics.aggregation_temporality,
+                aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
                 data_points: metrics.data_points.map do |ndp|
                   number_data_point(ndp)
                 end
@@ -252,11 +252,10 @@ module OpenTelemetry
               description: metrics.description,
               unit: metrics.unit,
               histogram: Opentelemetry::Proto::Metrics::V1::Histogram.new(
-                aggregation_temporality: metrics.aggregation_temporality,
+                aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
                 data_points: metrics.data_points.map do |hdp|
                   histogram_data_point(hdp)
                 end
-
               )
             )
           end

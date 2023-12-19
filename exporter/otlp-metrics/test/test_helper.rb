@@ -35,5 +35,5 @@ def create_metrics_data(name: '', description: '', unit: '', instrument_kind: :c
 
   OpenTelemetry::SDK::Metrics::State::MetricData.new(name, description, unit, instrument_kind,
                                                      resource, instrumentation_scope, data_points,
-                                                     start_time_unix_nano, time_unix_nano, aggregation_temporality)
+                                                     aggregation_temporality, start_time_unix_nano, time_unix_nano)
 end
