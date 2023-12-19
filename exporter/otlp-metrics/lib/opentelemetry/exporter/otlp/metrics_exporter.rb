@@ -25,7 +25,7 @@ require_relative './util'
 module OpenTelemetry
   module Exporter
     module OTLP
-      # An OpenTelemetry metrics exporter that sends spans over HTTP as Protobuf encoded OTLP ExportMetricsServiceRequest.
+      # An OpenTelemetry metrics exporter that sends metrics over HTTP as Protobuf encoded OTLP ExportMetricsServiceRequest.
       class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricReader # rubocop:disable Metrics/ClassLength
         include Util
 
