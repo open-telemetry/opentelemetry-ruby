@@ -584,7 +584,8 @@ describe OpenTelemetry::Exporter::OTLP::MetricsExporter do
                             time_unix_nano: 1_699_593_427_329_946_586,
                             exemplars: nil
                           )
-                        ]
+                        ],
+                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
                       )
                     ),
                     Opentelemetry::Proto::Metrics::V1::Metric.new(
