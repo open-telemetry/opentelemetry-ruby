@@ -22,6 +22,7 @@ module OpenTelemetry
           @stopped = false
           @metric_readers = []
           @resource = resource
+          @exempler_filter = DEFAULT_EXEMPLAR_FITLER
         end
 
         # Returns a {Meter} instance.
@@ -123,6 +124,10 @@ module OpenTelemetry
               instrument.register_with_new_metric_store(mr.metric_store)
             end
           end
+        end
+
+        def set_exemplar_filter(exempler_filter)
+          @exempler_filter = exempler_filter
         end
 
         # The type of the Instrument(s) (optional).
