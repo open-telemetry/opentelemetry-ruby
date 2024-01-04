@@ -9,12 +9,14 @@ module OpenTelemetry
     module Metrics
       module Exemplar
         class Exemplar
-          def initialize(value, time_unix_nano, attributes)
+          attr_reader :value, :time_unix_nano, :attributes, :span_id, :trace_id
+
+          def initialize(value, time_unix_nano, attributes, span_id, trace_id)
             @value = value
             @time_unix_nano = time_unix_nano
             @attributes = attributes
-            @span_id  = nil
-            @trace_id = nil
+            @span_id  = span_id
+            @trace_id = trace_id
           end
         end
       end

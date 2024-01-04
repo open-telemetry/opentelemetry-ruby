@@ -14,7 +14,7 @@ module OpenTelemetry
         Key = Struct.new(:name, :version)
         private_constant(:Key)
 
-        attr_reader :resource, :metric_readers
+        attr_reader :resource, :metric_readers, :exemplar_filter
 
         def initialize(resource: OpenTelemetry::SDK::Resources::Resource.create)
           @mutex = Mutex.new
@@ -22,7 +22,8 @@ module OpenTelemetry
           @stopped = false
           @metric_readers = []
           @resource = resource
-          @exempler_filter = DEFAULT_EXEMPLAR_FITLER
+
+          resolve_exemplar_filter
         end
 
         # Returns a {Meter} instance.
@@ -126,8 +127,36 @@ module OpenTelemetry
           end
         end
 
-        def set_exemplar_filter(exempler_filter)
-          @exempler_filter = exempler_filter
+        # Adds a new ExemplarFilter to this {MeterProvider}. Existing exemplar_filter will be replaced
+        # This is one way to turn on the exemplar
+        #
+        # @param exemplar_filter the new ExemplarFilter to be added.
+        def exemplar_filter_on(exemplar_filter: Exemplar::TraceBasedExemplarFilter)
+          @exemplar_filter = exemplar_filter
+        end
+
+        def exemplar_filter_off
+          @exemplar_filter = nil
+        end
+
+        # This method is for the spec: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/configuration/sdk-environment-variables.md#exemplar
+        # and this is one way to turn on the exemplar (exemplar should be turned off by default)
+        # 
+        def resolve_exemplar_filter
+          if ENV.has_key?('OTEL_METRICS_EXEMPLAR_FILTER')
+            case ENV['OTEL_METRICS_EXEMPLAR_FILTER']
+            when 'always_on'
+              @exemplar_filter = Exemplar::AlwaysOnExemplarFilter
+            when 'trace_based'
+              @exemplar_filter = Exemplar::TraceBasedExemplarFilter
+            when 'always_off'
+              @exemplar_filter = Exemplar::AlwaysOffExemplarFilter
+            else
+              @exemplar_filter = nil
+            end
+            # @exemplar_on = true if @exemplar_filter
+
+          end
         end
 
         # The type of the Instrument(s) (optional).

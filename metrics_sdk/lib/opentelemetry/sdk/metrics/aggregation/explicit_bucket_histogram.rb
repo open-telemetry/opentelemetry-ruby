@@ -14,6 +14,10 @@ module OpenTelemetry
           DEFAULT_BOUNDARIES = [0, 5, 10, 25, 50, 75, 100, 250, 500, 1000].freeze
           private_constant :DEFAULT_BOUNDARIES
 
+          # if no reservior pass from instrument, then use this empty reservior to avoid no method found error
+          DEFAULT_RESERVOIR = Metrics::Exemplar::FixedSizeExemplarReservoir.new
+          private_constant :DEFAULT_RESERVOIR
+
           # The default value for boundaries represents the following buckets:
           # (-inf, 0], (0, 5.0], (5.0, 10.0], (10.0, 25.0], (25.0, 50.0],
           # (50.0, 75.0], (75.0, 100.0], (100.0, 250.0], (250.0, 500.0],
@@ -21,9 +25,11 @@ module OpenTelemetry
           def initialize(
             aggregation_temporality: :delta,
             boundaries: DEFAULT_BOUNDARIES,
-            record_min_max: true
+            record_min_max: true,
+            exemplar_reservoir: DEFAULT_RESERVOIR
           )
             @data_points = {}
+            @exemplar_reservoir = exemplar_reservoir
             @aggregation_temporality = aggregation_temporality
             @boundaries = boundaries && !boundaries.empty? ? boundaries.sort : nil
             @record_min_max = record_min_max
@@ -66,7 +72,7 @@ module OpenTelemetry
                 0,                   # :sum
                 empty_bucket_counts, # :bucket_counts
                 @boundaries,         # :explicit_bounds
-                nil,                 # :exemplars
+                @exemplar_reservoir.collect(attributes: attributes, aggregation_temporality: @aggregation_temporality), # :exemplars
                 min,                 # :min
                 max                  # :max
               )

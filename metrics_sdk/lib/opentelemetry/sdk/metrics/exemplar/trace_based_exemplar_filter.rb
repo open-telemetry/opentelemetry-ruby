@@ -8,9 +8,9 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Exemplar
-        class AlwaysOffExemplarFilter < ExemplarFilter
-          def should_sample?(value, timestamp, attributes, context)
-            OpenTelemetry.current_span(context).context.trace_flags.sampled?
+        class TraceBasedExemplarFilter < ExemplarFilter
+          def self.should_sample?(value, timestamp, attributes, context)
+            ::OpenTelemetry::Trace.current_span(context).context.trace_flags.sampled?
           end
         end
       end

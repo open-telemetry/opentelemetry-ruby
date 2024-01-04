@@ -25,6 +25,7 @@ module OpenTelemetry
           #   Array values must not contain nil elements and all elements must be of
           #   the same basic type (string, numeric, boolean).
           def add(amount, attributes: nil)
+            exemplar_offer(increment, attributes) if @meter_provider.exemplar_filter
             update(amount, attributes)
             nil
           rescue StandardError => e
@@ -35,7 +36,7 @@ module OpenTelemetry
           private
 
           def default_aggregation
-            OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
+            OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(exemplar_reservoir: @exemplar_reservoir)
           end
         end
       end

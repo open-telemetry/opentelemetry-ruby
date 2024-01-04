@@ -31,6 +31,7 @@ module OpenTelemetry
             if increment.negative?
               OpenTelemetry.logger.warn("#{@name} received a negative value")
             else
+              exemplar_offer(increment, attributes) if @meter_provider.exemplar_filter
               update(increment, attributes)
             end
             nil
@@ -42,7 +43,7 @@ module OpenTelemetry
           private
 
           def default_aggregation
-            OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
+            OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(exemplar_reservoir: @exemplar_reservoir)
           end
         end
       end

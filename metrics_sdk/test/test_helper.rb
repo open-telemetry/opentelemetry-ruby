@@ -33,3 +33,12 @@ def with_test_logger
 ensure
   OpenTelemetry.logger = original_logger
 end
+
+def create_meter
+  ENV['OTEL_TRACES_EXPORTER'] = 'console'
+  OpenTelemetry::SDK.configure
+  OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+  OpenTelemetry.meter_provider.exemplar_filter_on(exemplar_filter: exemplar_filter)
+  meter = OpenTelemetry.meter_provider.meter("SAMPLE_METER_NAME")
+  meter
+end

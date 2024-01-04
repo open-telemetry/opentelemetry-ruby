@@ -16,7 +16,7 @@ module OpenTelemetry
           # @param [Context] context Context of the measurement, which covers the Baggage and the current active Span.
           #
           # @return [Boolean]
-          def should_sample?(value, attributes, context); end
+          def self.should_sample?(value, attributes, context); end
         end
       end
     end

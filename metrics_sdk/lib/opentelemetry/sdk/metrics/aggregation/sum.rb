@@ -8,12 +8,19 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Aggregation
+
+        # if no reservior pass from instrument, then use this empty reservior to avoid no method found error
+        DEFAULT_RESERVOIR = Metrics::Exemplar::FixedSizeExemplarReservoir.new
+        private_constant :DEFAULT_RESERVOIR
+
         # Contains the implementation of the Sum aggregation
         # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#sum-aggregation
         class Sum
-          def initialize(aggregation_temporality: :delta)
+
+          def initialize(aggregation_temporality: :delta, exemplar_reservoir: DEFAULT_RESERVOIR)
             @aggregation_temporality = aggregation_temporality
             @data_points = {}
+            @exemplar_reservoir = exemplar_reservoir
           end
 
           def collect(start_time, end_time)
@@ -37,12 +44,14 @@ module OpenTelemetry
           end
 
           def update(increment, attributes)
+            # NumberDataPoint should include exemplars
             ndp = @data_points[attributes] || @data_points[attributes] = NumberDataPoint.new(
               attributes,
               nil,
               nil,
               0,
-              nil
+              # will this cause the reservoir overloaded with old exemplars? 
+              @exemplar_reservoir.collect(attributes: attributes, aggregation_temporality: @aggregation_temporality) # exemplar
             )
 
             ndp.value += increment
