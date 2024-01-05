@@ -129,9 +129,15 @@ module OpenTelemetry
 
         # Adds a new ExemplarFilter to this {MeterProvider}. Existing exemplar_filter will be replaced
         # This is one way to turn on the exemplar
+        # Environment variable has higher precedence; if wants to use custom exemplar_filter, should unset OTEL_METRICS_EXEMPLAR_FILTER
+        # and then use meter_provider.exemplar_filter_on(exemplar_filter: custom_exemplar_filter)
         #
         # @param exemplar_filter the new ExemplarFilter to be added.
         def exemplar_filter_on(exemplar_filter: Exemplar::TraceBasedExemplarFilter)
+          if ENV.has_key?('OTEL_METRICS_EXEMPLAR_FILTER')
+            OpenTelemetry.logger.warn("Exemplar is on based on OTEL_METRICS_EXEMPLAR_FILTER #{ENV['OTEL_METRICS_EXEMPLAR_FILTER']}")
+            return
+          end
           @exemplar_filter = exemplar_filter
         end
 
@@ -152,10 +158,9 @@ module OpenTelemetry
             when 'always_off'
               @exemplar_filter = Exemplar::AlwaysOffExemplarFilter
             else
+              OpenTelemetry.logger.warn("OTEL_METRICS_EXEMPLAR_FILTER #{ENV['OTEL_METRICS_EXEMPLAR_FILTER']} is not part of provided exemplar filter; Exemplar is off.")
               @exemplar_filter = nil
             end
-            # @exemplar_on = true if @exemplar_filter
-
           end
         end
 
