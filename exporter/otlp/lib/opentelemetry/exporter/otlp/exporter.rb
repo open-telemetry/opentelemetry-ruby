@@ -7,7 +7,6 @@
 require 'opentelemetry/common'
 require 'opentelemetry/sdk'
 require 'net/http'
-require 'csv'
 require 'zlib'
 
 require 'google/rpc/status_pb'
