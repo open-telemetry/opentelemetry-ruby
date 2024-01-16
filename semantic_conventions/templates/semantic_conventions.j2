@@ -4,15 +4,31 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require_relative '../{{prev_spec_version}}/{{kind}}'
+
 module OpenTelemetry
-  module SemanticConventions
+  module SemanticConventions_{{spec_version | replace(".", "_")}} # rubocop:disable Naming/ClassAndModuleCamelCase
+    # https://github.com/open-telemetry/opentelemetry-specification/blob/v{{spec_version}}/specification/
     module {{module}}
-      {%- for attribute in attributes | unique(attribute="fqn") %}
+    {%- if (prev_spec_version | string()) != "" %}
+      def self.const_missing(const_name)
+        attribute_name = OpenTelemetry::SemanticConventions_{{prev_spec_version | replace(".", "_")}}::Trace.const_get(const_name)
+        super(const_name) unless attribute_name
+
+        warn "#{const_name} is deprecated."
+        const_set(const_name, attribute_name)
+        attribute_name
+      end
+{# blank line #}
+    {%- endif %}
+      {%- for attribute in attributes | unique(attribute="fqn") | sort(attribute="fqn") %}
       # {{ attribute.brief | to_doc_brief | regex_replace(pattern="\n", replace="\n      #  ") }}
       {%- if attribute.note %}
+      #
       # @note {{ attribute.note | to_doc_brief | regex_replace(pattern="\n", replace="\n      #  ") }}
       {%- endif %}
-      {%- if attribute.deprecated %}
+      {%- if (attribute.stability | string())  == "StabilityLevel.DEPRECATED" %}
+      #
       # @deprecated {{ attribute.deprecated | to_doc_brief | regex_replace(pattern="\n", replace="\n      #  ") }}
       {%- endif %}
       {{ attribute.fqn | to_const_name }} = '{{ attribute.fqn }}'

@@ -10,8 +10,6 @@ require 'yard'
 require 'rubocop/rake_task'
 require 'tmpdir'
 
-SPEC_VERSION = '1.10.0'
-
 RuboCop::RakeTask.new
 
 Rake::TestTask.new :test do |t|
@@ -31,34 +29,71 @@ else
   task default: %i[generate test rubocop yard]
 end
 
-task :generate do
-  cwd = Dir.pwd
+SPEC_VERSION = '1.20.0'
+PREV_SPEC_VERSION = Dir.children('./lib/opentelemetry/semantic_conventions/')
+                       .select { |dir| dir != SPEC_VERSION && File.directory?("./lib/opentelemetry/semantic_conventions/#{dir}") }
+                       .map { |dir| Gem::Version.new(dir) }
+                       .max
 
-  Dir.mktmpdir('opentelemetry-specification', Dir.pwd) do |tmpdir|
-    `git clone https://github.com/open-telemetry/opentelemetry-specification.git #{tmpdir}`
-    Dir.chdir(tmpdir) do
-      `git fetch`
-      `git checkout "v#{SPEC_VERSION}"`
-    end
+GENERATOR_VERSION = '0.22.0'
+semconvrepodir = './tmpsemconvrepo'
+gen_output_dir = "./lib/opentelemetry/semantic_conventions/#{SPEC_VERSION}"
 
-    %w[trace resource].each do |kind|
-      cmd = %W[
-        docker run --rm
-        -v "#{tmpdir}/semantic_conventions/#{kind}":/source
-        -v "#{cwd}/templates":/templates
-        -v "#{cwd}/lib":/output
-        otel/semconvgen:0.11.1
-        -f /source code
-        --template /templates/semantic_conventions.j2
-        --output /output/opentelemetry/semantic_conventions/#{kind}.rb
-        -Dmodule=#{kind[0].upcase}#{kind[1..]}
-      ]
+task generate: [:update_gem_version, :update_includes, "#{gen_output_dir}/trace.rb", "#{gen_output_dir}/resource.rb"]
 
-      puts "Running: #{cmd.join(' ')}"
-      `#{cmd.join(' ')}`
-    end
+directory semconvrepodir do
+  `git clone --depth=1 --branch v#{SPEC_VERSION} https://github.com/open-telemetry/opentelemetry-specification.git #{semconvrepodir}`
+end
+
+task check_out_semconv_version: [semconvrepodir] do
+  Dir.chdir(semconvrepodir) do
+    `git fetch`
+    `git checkout "v#{SPEC_VERSION}"`
   end
+end
 
+directory gen_output_dir
+
+file "#{gen_output_dir}/trace.rb" => [:check_out_semconv_version, gen_output_dir] do
+  semconvgen(semconvrepodir, kind: 'trace', only: 'span,event,attribute_group,scope')
+end
+
+file "#{gen_output_dir}/resource.rb" => [:check_out_semconv_version, gen_output_dir] do
+  semconvgen(semconvrepodir, kind: 'resource', only: 'resource')
+end
+
+def semconvgen(semconvrepo, kind:, only:)
+  cwd = Dir.pwd
+  cmd = %W[
+    docker run --rm
+    -v "#{semconvrepo}/semantic_conventions/":/source
+    -v "#{cwd}/templates":/templates
+    -v "#{cwd}/lib":/output
+    otel/semconvgen:#{GENERATOR_VERSION}
+    --only #{only}
+    --yaml-root /source code
+    --template /templates/semantic_conventions.j2
+    --output /output/opentelemetry/semantic_conventions/#{SPEC_VERSION}/#{kind}.rb
+    -Dkind=#{kind}
+    -Dmodule=#{kind[0].upcase}#{kind[1..]}
+    -Dspec_version=#{SPEC_VERSION}
+    -Dprev_spec_version=#{PREV_SPEC_VERSION}
+  ]
+
+  puts "Running: #{cmd.join(' ')}"
+  `#{cmd.join(' ')}`
+end
+
+task :update_includes do
+  `sed -i.bak "s/::SemanticConventions_.*::/::SemanticConventions_#{SPEC_VERSION.tr(".", "_")}::/g" lib/opentelemetry/semantic_conventions/trace.rb`
+  `sed -i.bak "s/::SemanticConventions_.*::/::SemanticConventions_#{SPEC_VERSION.tr(".", "_")}::/g" lib/opentelemetry/semantic_conventions/resource.rb`
+  `sed -i.bak "s/#{PREV_SPEC_VERSION.to_s.gsub(/\./, "\\.")}/#{SPEC_VERSION}/" lib/opentelemetry/semantic_conventions.rb`
+  `rm lib/opentelemetry/semantic_conventions/trace.rb.bak`
+  `rm lib/opentelemetry/semantic_conventions/resource.rb.bak`
+  `rm lib/opentelemetry/semantic_conventions.rb.bak`
+end
+
+task :update_gem_version do
   `sed -i.bak "s/VERSION = '.*'/VERSION = '#{SPEC_VERSION}'/g" lib/opentelemetry/semantic_conventions/version.rb`
   `rm lib/opentelemetry/semantic_conventions/version.rb.bak`
 end

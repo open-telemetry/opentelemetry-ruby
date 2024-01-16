@@ -10,7 +10,7 @@ module OpenTelemetry
   end
 end
 
-require_relative 'semantic_conventions/1.10.0/trace'
+require_relative 'semantic_conventions/1.20.0/trace'
 require_relative 'semantic_conventions/trace'
-require_relative 'semantic_conventions/1.10.0/resource'
+require_relative 'semantic_conventions/1.20.0/resource'
 require_relative 'semantic_conventions/resource'

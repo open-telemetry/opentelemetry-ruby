@@ -7,7 +7,13 @@
 module OpenTelemetry
   module SemanticConventions
     module Trace
-      include OpenTelemetry::SemanticConventions_1_10_0::Trace
+      def self.const_missing(const_name)
+        attribute_name = OpenTelemetry::SemanticConventions_1_20_0::Trace.const_get(const_name)
+        super(const_name) unless attribute_name
+
+        const_set(const_name, attribute_name)
+        attribute_name
+      end
     end
   end
 end
