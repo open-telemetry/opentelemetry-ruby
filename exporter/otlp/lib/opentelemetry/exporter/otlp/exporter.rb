@@ -61,6 +61,7 @@ module OpenTelemetry
           @http = http_connection(@uri, ssl_verify_mode, certificate_file)
 
           @path = @uri.path
+          @uri_string = @uri.to_s
           @headers = prepare_headers(headers)
           @timeout = timeout.to_f
           @compression = compression
@@ -161,14 +162,15 @@ module OpenTelemetry
             when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
               response.body # Read and discard body
               redo if backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1, reason: response.code)
+              log_request_failure(response.code)
               FAILURE
             when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
               response.body # Read and discard body
               redo if backoff?(retry_count: retry_count += 1, reason: response.code)
+              log_request_failure(response.code)
               FAILURE
             when Net::HTTPNotFound
-              OpenTelemetry.handle_error(message: "OTLP exporter received http.code=404 for uri: '#{@path}'")
-              @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response.code })
+              log_request_failure(response.code)
               FAILURE
             when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
               log_status(response.body)
@@ -180,6 +182,7 @@ module OpenTelemetry
               redo if backoff?(retry_after: 0, retry_count: retry_count += 1, reason: response.code)
             else
               @http.finish
+              log_request_failure(response.code, 'reason': 'unexpected_response')
               FAILURE
             end
           rescue Net::OpenTimeout, Net::ReadTimeout
@@ -222,9 +225,14 @@ module OpenTelemetry
             klass_or_nil = ::Google::Protobuf::DescriptorPool.generated_pool.lookup(detail.type_name).msgclass
             detail.unpack(klass_or_nil) if klass_or_nil
           end.compact
-          OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}}")
+          OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}}, uri #{@uri_string}")
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
+        end
+
+        def log_request_failure(response_code, labels = {})
+          OpenTelemetry.handle_error(message: "OTLP exporter received http.code=#{response_code} for uri: '#{@uri_string}' in OTLP::Exporter#send_bytes")
+          @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response_code }.merge(labels))
         end
 
         def measure_request_duration
