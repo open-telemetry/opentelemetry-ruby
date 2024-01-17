@@ -179,7 +179,8 @@ module OpenTelemetry
               redo if backoff?(retry_after: 0, retry_count: retry_count += 1, reason: response.code)
             else
               @http.finish
-              log_request_failure(response.code, 'reason': 'unexpected_response')
+              OpenTelemetry.handle_error(message: "OTLP exporter received http.code=#{response_code} for uri='#{@uri}' in OTLP::Exporter#send_bytes")
+              @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => 'unexpected_response', 'response_code' => response.code })
               FAILURE
             end
           rescue Net::OpenTimeout, Net::ReadTimeout
