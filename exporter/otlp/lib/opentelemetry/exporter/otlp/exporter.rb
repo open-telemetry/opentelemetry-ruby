@@ -225,7 +225,7 @@ module OpenTelemetry
             klass_or_nil = ::Google::Protobuf::DescriptorPool.generated_pool.lookup(detail.type_name).msgclass
             detail.unpack(klass_or_nil) if klass_or_nil
           end.compact
-          OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}}, uri #{@uri_string}")
+          OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}} from #{@uri}")
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
         end
