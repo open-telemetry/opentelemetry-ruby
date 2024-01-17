@@ -231,7 +231,7 @@ module OpenTelemetry
         end
 
         def log_request_failure(response_code, labels = {})
-          OpenTelemetry.handle_error(message: "OTLP exporter received http.code=#{response_code} for uri: '#{@uri_string}' in OTLP::Exporter#send_bytes")
+          OpenTelemetry.handle_error(message: "OTLP exporter received http.code=#{response_code} for uri='#{@uri}' in OTLP::Exporter#send_bytes")
           @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response_code }.merge(labels))
         end
 
