@@ -61,7 +61,6 @@ module OpenTelemetry
           @http = http_connection(@uri, ssl_verify_mode, certificate_file)
 
           @path = @uri.path
-          @uri_string = @uri.to_s
           @headers = prepare_headers(headers)
           @timeout = timeout.to_f
           @compression = compression
