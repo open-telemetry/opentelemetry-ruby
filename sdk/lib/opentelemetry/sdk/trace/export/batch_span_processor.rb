@@ -123,7 +123,7 @@ module OpenTelemetry
               n = spans.size + snapshot.size - max_queue_size
               if n.positive?
                 snapshot.shift(n)
-                report_dropped_spans(n, reason: 'buffer-full', context: "force_flush")
+                report_dropped_spans(n, reason: 'buffer-full', context: 'force_flush')
               end
               spans.unshift(snapshot) unless snapshot.empty?
               @condition.signal if spans.size > max_queue_size / 2
