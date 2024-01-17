@@ -161,12 +161,10 @@ module OpenTelemetry
             when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
               response.body # Read and discard body
               redo if backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1, reason: response.code)
-              log_request_failure(response.code)
               FAILURE
             when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
               response.body # Read and discard body
               redo if backoff?(retry_count: retry_count += 1, reason: response.code)
-              log_request_failure(response.code)
               FAILURE
             when Net::HTTPNotFound
               log_request_failure(response.code)
@@ -248,7 +246,7 @@ module OpenTelemetry
         end
 
         def backoff?(retry_count:, reason:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-          @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => reason })
+          log_request_failure(response_code)
           return false if retry_count > RETRY_COUNT
 
           sleep_interval = nil
