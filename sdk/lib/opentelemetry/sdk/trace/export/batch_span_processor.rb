@@ -205,7 +205,7 @@ module OpenTelemetry
           end
 
           def report_dropped_spans(count, reason:, function: nil)
-            @metrics_reporter.add_to_counter('otel.bsp.dropped_spans', increment: count, labels: { 'reason' => reason, OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => function }.compact )
+            @metrics_reporter.add_to_counter('otel.bsp.dropped_spans', increment: count, labels: { 'reason' => reason, OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => function }.compact)
           end
 
           def fetch_batch
