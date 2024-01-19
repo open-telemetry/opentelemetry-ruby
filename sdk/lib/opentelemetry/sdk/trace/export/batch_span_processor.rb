@@ -82,7 +82,7 @@ module OpenTelemetry
               n = spans.size + 1 - max_queue_size
               if n.positive?
                 spans.shift(n)
-                report_dropped_spans(n, reason: 'buffer-full', function: __method__)
+                report_dropped_spans(n, reason: 'buffer-full', function: __method__.to_s)
               end
               spans << span
               @condition.signal if spans.size > batch_size
@@ -123,7 +123,7 @@ module OpenTelemetry
               n = spans.size + snapshot.size - max_queue_size
               if n.positive?
                 snapshot.shift(n)
-                report_dropped_spans(n, reason: 'buffer-full', function: __method__)
+                report_dropped_spans(n, reason: 'buffer-full', function: __method__.to_s)
               end
               spans.unshift(snapshot) unless snapshot.empty?
               @condition.signal if spans.size > max_queue_size / 2
