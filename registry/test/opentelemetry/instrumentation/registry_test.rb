@@ -9,15 +9,20 @@ require 'test_helper'
 class FakeInstrumentation
   attr_reader :name, :version, :config
 
-  def initialize(name, version)
+  def initialize(name, version, present: true)
     @name = name
     @version = version
     @install = false
     @config = nil
+    @present = present
   end
 
   def instance
     self
+  end
+
+  def present?
+    @present
   end
 
   def installed?
@@ -67,33 +72,52 @@ describe OpenTelemetry::Instrumentation::Registry do
   end
 
   describe '#install_all' do
-    before do
-      instrumentations.each { |i| registry.register(i) }
-    end
+    describe 'with existing instrumentation' do
+      before do
+        instrumentations.each { |i| registry.register(i) }
+      end
 
-    describe 'when using defaults arguments' do
-      it 'installs all registered instrumentations' do
-        registry.install_all
+      describe 'when using defaults arguments' do
+        it 'installs all registered instrumentations' do
+          registry.install_all
 
-        instrumentations.each do |i|
-          _(i).must_be :installed?
-          _(i.config).must_be_nil
+          instrumentations.each do |i|
+            _(i).must_be :installed?
+            _(i.config).must_be_nil
+          end
+        end
+      end
+
+      describe 'when using instrumentation specific configs' do
+        it 'installs all registered instrumentations' do
+          registry.install_all(
+            'TestInstrumentation1' => { a: 'a' },
+            'TestInstrumentation2' => { b: 'b' }
+          )
+
+          _(instrumentation1).must_be :installed?
+          _(instrumentation1.config).must_equal(a: 'a')
+
+          _(instrumentation2).must_be :installed?
+          _(instrumentation2.config).must_equal(b: 'b')
         end
       end
     end
 
-    describe 'when using instrumentation specific configs' do
-      it 'installs all registered instrumentations' do
-        registry.install_all(
-          'TestInstrumentation1' => { a: 'a' },
-          'TestInstrumentation2' => { b: 'b' }
-        )
+    describe 'with non existent instrumentation' do
+      describe 'suppress not found' do
+        before do
+          @log_stream = StringIO.new
+          OpenTelemetry.logger = ::Logger.new(@log_stream)
+          OpenTelemetry.logger.level = ::Logger::WARN
+        end
 
-        _(instrumentation1).must_be :installed?
-        _(instrumentation1.config).must_equal(a: 'a')
+        it 'suppresses not found in logs' do
+          registry.register(FakeInstrumentation.new('Not installed', '1.0.0', present: false))
+          registry.install_all({})
 
-        _(instrumentation2).must_be :installed?
-        _(instrumentation2.config).must_equal(b: 'b')
+          _(@log_stream.string).must_be_empty
+        end
       end
     end
   end
