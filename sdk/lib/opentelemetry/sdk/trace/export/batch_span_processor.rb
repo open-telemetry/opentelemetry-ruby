@@ -147,7 +147,7 @@ module OpenTelemetry
             thread&.join(timeout)
             force_flush(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
             dropped_spans = lock { spans.shift(spans.length) }
-            report_dropped_spans(dropped_spans, reason: 'terminating') if dropped_spans.positive?
+            report_dropped_spans(dropped_spans, reason: 'terminating') if dropped_spans.any?
             @exporter.shutdown(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
           end
 
