@@ -81,8 +81,8 @@ module OpenTelemetry
               reset_on_fork
               n = spans.size + 1 - max_queue_size
               if n.positive?
-                spans.shift(n)
-                report_dropped_spans(n, reason: 'buffer-full', function: 'on_finish')
+                dropped_spans = spans.shift(n)
+                report_dropped_spans(dropped_spans, reason: 'buffer-full', function: 'on_finish')
               end
               spans << span
               @condition.signal if spans.size > batch_size
@@ -122,8 +122,8 @@ module OpenTelemetry
             lock do
               n = spans.size + snapshot.size - max_queue_size
               if n.positive?
-                snapshot.shift(n)
-                report_dropped_spans(n, reason: 'buffer-full', function: 'force_flush')
+                dropped_spans = snapshot.shift(n)
+                report_dropped_spans(dropped_spans, reason: 'buffer-full', function: 'force_flush')
               end
               spans.unshift(snapshot) unless snapshot.empty?
               @condition.signal if spans.size > max_queue_size / 2
@@ -146,7 +146,7 @@ module OpenTelemetry
 
             thread&.join(timeout)
             force_flush(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
-            dropped_spans = lock { spans.size }
+            dropped_spans = lock { spans}
             report_dropped_spans(dropped_spans, reason: 'terminating') if dropped_spans.positive?
             @exporter.shutdown(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
           end
@@ -200,12 +200,13 @@ module OpenTelemetry
             else
               OpenTelemetry.handle_error(exception: ExportError.new("Unable to export #{batch.size} spans"))
               @metrics_reporter.add_to_counter('otel.bsp.export.failure')
-              report_dropped_spans(batch.size, reason: 'export-failure')
+              report_dropped_spans(batch, reason: 'export-failure')
             end
           end
 
-          def report_dropped_spans(count, reason:, function: nil)
-            @metrics_reporter.add_to_counter('otel.bsp.dropped_spans', increment: count, labels: { 'reason' => reason, OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => function }.compact)
+          def report_dropped_spans(dropped_spans, reason:, function: nil)
+            OpenTelemetry.logger.debug("Dropped #{dropped_spans.size} spans with reason=#{reason} and traceids=#{ dropped_spans.map{|s| s.context.hex_trace_id}.uniq }")
+            @metrics_reporter.add_to_counter('otel.bsp.dropped_spans', increment: dropped_spans.size, labels: { 'reason' => reason, OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => function }.compact)
           end
 
           def fetch_batch
