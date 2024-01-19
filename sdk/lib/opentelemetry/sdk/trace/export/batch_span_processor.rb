@@ -123,7 +123,7 @@ module OpenTelemetry
               n = spans.size + snapshot.size - max_queue_size
               if n.positive?
                 snapshot.shift(n)
-                report_dropped_spans(n, reason: 'buffer-full', function: 'force_flush')
+                report_dropped_spans(n, reason: 'buffer-full', function: __method__)
               end
               spans.unshift(snapshot) unless snapshot.empty?
               @condition.signal if spans.size > max_queue_size / 2
@@ -205,7 +205,7 @@ module OpenTelemetry
           end
 
           def report_dropped_spans(count, reason:, function: nil)
-            @metrics_reporter.add_to_counter('otel.bsp.dropped_spans', increment: count, labels: { 'reason' => reason, OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => __method__ }.compact)
+            @metrics_reporter.add_to_counter('otel.bsp.dropped_spans', increment: count, labels: { 'reason' => reason, OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => function }.compact)
           end
 
           def fetch_batch
