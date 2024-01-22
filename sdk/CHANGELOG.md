@@ -3,6 +3,7 @@
 ### v1.3.2 / 2024-01-22
 
 * FIXED: Reduce allocations on GraphQL hot paths
+* FIXED: Add context to metrics reporting of buffer-full events
 
 ### v1.3.1 / 2023-11-02
 
