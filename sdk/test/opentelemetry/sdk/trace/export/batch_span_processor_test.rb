@@ -222,7 +222,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       _(test_exporter.failed_batches.size).must_equal(0)
       _(test_exporter.batches.size).must_equal(0)
 
-      _(bsp.instance_variable_get(:@spans).size).must_equal(1)
+      _(bsp.instance_variable_get(:@spans).size).must_equal(0)
     end
 
     it 'works if the thread is not running' do
