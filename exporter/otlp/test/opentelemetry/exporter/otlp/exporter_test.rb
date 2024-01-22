@@ -524,7 +524,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       result = exporter.export([span_data])
 
       _(log_stream.string).must_match(
-        %r{ERROR -- : OpenTelemetry error: OTLP exporter received http\.code=404 for uri: '/v1/traces'}
+        %r{ERROR -- : OpenTelemetry error: OTLP exporter received http\.code=404 for uri='http://localhost:4318/v1/traces'}
       )
 
       _(result).must_equal(FAILURE)
