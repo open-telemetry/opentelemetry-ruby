@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.26.2 / 2024-01-22
+
+* FIXED: Align endpoint environment varaible handling with spec
+
 ### v0.26.1 / 2023-07-29
 
 * FIXED: Regenerate v0.20.0 protos

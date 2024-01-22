@@ -1,5 +1,9 @@
 # Release History: opentelemetry-sdk
 
+### v1.3.2 / 2024-01-22
+
+* FIXED: Reduce allocations on GraphQL hot paths
+
 ### v1.3.1 / 2023-11-02
 
 * FIXED: Spec compliance for span attribute limit
