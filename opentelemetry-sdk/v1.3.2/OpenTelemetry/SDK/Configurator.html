@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: OpenTelemetry::SDK::Configurator
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::SDK::Configurator";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (C)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../SDK.html" title="OpenTelemetry::SDK (module)">SDK</a></span></span>
+     &raquo; 
+    <span class="title">Configurator</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: OpenTelemetry::SDK::Configurator
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">OpenTelemetry::SDK::Configurator</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/sdk/configurator.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>The configurator provides defaults and facilitates configuring the SDK for use.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Configurator/NoopTextMapPropagator.html" title="OpenTelemetry::SDK::Configurator::NoopTextMapPropagator (class)">NoopTextMapPropagator</a></span>
+    
+  
+</p>
+
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#error_handler-instance_method" title="#error_handler (instance method)">#<strong>error_handler</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#id_generator=-instance_method" title="#id_generator= (instance method)">#<strong>id_generator</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+      <span class="note title writeonly">writeonly</span>
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Sets the attribute id_generator.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#propagators=-instance_method" title="#propagators= (instance method)">#<strong>propagators</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+      <span class="note title writeonly">writeonly</span>
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Sets the attribute propagators.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#add_span_processor-instance_method" title="#add_span_processor (instance method)">#<strong>add_span_processor</strong>(span_processor)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Add a span processor to the export pipeline.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#configure-instance_method" title="#configure (instance method)">#<strong>configure</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  <span class="private note title">private</span>
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The configure method is where we define the setup process.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>  &#x21d2; Configurator </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>A new instance of Configurator.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#logger-instance_method" title="#logger (instance method)">#<strong>logger</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#logger=-instance_method" title="#logger= (instance method)">#<strong>logger=</strong>(new_logger)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Accepts a logger and wraps it in the <span class='object_link'><a href="ForwardingLogger.html" title="OpenTelemetry::SDK::ForwardingLogger (class)">ForwardingLogger</a></span> which allows for controlling the severity level emitted by the OpenTelemetry.logger independently of the supplied logger.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#resource=-instance_method" title="#resource= (instance method)">#<strong>resource=</strong>(new_resource)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Accepts a resource object that is merged with the default telemetry sdk resource.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#service_name=-instance_method" title="#service_name= (instance method)">#<strong>service_name=</strong>(service_name)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Accepts a string that is merged in as the service.name resource attribute.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#service_version=-instance_method" title="#service_version= (instance method)">#<strong>service_version=</strong>(service_version)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Accepts a string that is merged in as the service.version resource attribute.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#use-instance_method" title="#use (instance method)">#<strong>use</strong>(instrumentation_name, config = nil)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Install an instrumentation with specificied optional <code>config</code>.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#use_all-instance_method" title="#use_all (instance method)">#<strong>use_all</strong>(instrumentation_config_map = {})  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Install all registered instrumentation.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>  &#x21d2; <tt><span class='object_link'><a href="" title="OpenTelemetry::SDK::Configurator (class)">Configurator</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns a new instance of Configurator.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+36
+37
+38
+39
+40
+41
+42
+43
+44</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/configurator.rb', line 36</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span>
+  <span class='ivar'>@instrumentation_names</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='ivar'>@instrumentation_config_map</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='ivar'>@propagators</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='ivar'>@span_processors</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='ivar'>@use_mode</span> <span class='op'>=</span> <span class='const'>USE_MODE_UNSPECIFIED</span>
+  <span class='ivar'>@resource</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Resources.html" title="OpenTelemetry::SDK::Resources (module)">Resources</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Resources/Resource.html" title="OpenTelemetry::SDK::Resources::Resource (class)">Resource</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default'><span class='object_link'><a href="Resources/Resource.html#default-class_method" title="OpenTelemetry::SDK::Resources::Resource.default (method)">default</a></span></span>
+  <span class='ivar'>@id_generator</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'>Trace</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id="error_handler=-instance_method"></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="error_handler-instance_method">
+  
+    #<strong>error_handler</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+59
+60
+61</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/configurator.rb', line 59</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_error_handler'>error_handler</span>
+  <span class='ivar'>@error_handler</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='period'>.</span><span class='id identifier rubyid_error_handler'>error_handler</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="id_generator=-instance_method">
+  
+    #<strong>id_generator=</strong>(value)  &#x21d2; <tt>Object</tt>  <span class="extras">(writeonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Sets the attribute id_generator</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>value</span>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>the value to set the attribute id_generator to.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+34
+35
+36</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/configurator.rb', line 34</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_id_generator='>id_generator=</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+  <span class='ivar'>@id_generator</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="propagators=-instance_method">
+  
+    #<strong>propagators=</strong>(value)  &#x21d2; <tt>Object</tt>  <span class="extras">(writeonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Sets the attribute propagators</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>value</span>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>the value to set the attribute propagators to.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+34
+35
+36</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/configurator.rb', line 34</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_propagators='>propagators=</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+  <span class='ivar'>@propagators</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="add_span_processor-instance_method">
+  
+    #<strong>add_span_processor</strong>(span_processor)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Add a span processor to the export pipeline</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>span_processor</span>
+      
+      
+        <span class='type'>(<tt>#on_start</tt>, <tt>#on_finish</tt>, <tt>#shutdown</tt>, <tt>#force_flush</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>A span_processor that satisfies the duck type #on_start, #on_finish, #shutdown, #force_flush. See SimpleSpanProcessor for an example.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+125
+126
+127</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/configurator.rb', line 125</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_add_span_processor'>add_span_processor</span><span class='lparen'>(</span><span class='id identifier rubyid_span_processor'>span_processor</span><span class='rparen'>)</span>
+  <span class='ivar'>@span_processors</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_span_processor'>span_processor</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="configure-instance_method">
+  
+    #<strong>configure</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note private">
+  <strong>This method is part of a private API.</strong>
+  You should avoid using this method if possible, as it may be removed or be changed in the future.
+</p>
+
+<p>The configure method is where we define the setup process. This allows us to make certain guarantees about which systems and globals are setup at each stage. The setup process is:  - setup logging  - setup propagation  - setup tracer_provider and meter_provider  - install instrumentation</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/configurator.rb', line 137</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_configure'>configure</span>
+  <span class='const'><span class='object_link'><a href="../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span> <span class='op'>=</span> <span class='id identifier rubyid_logger'>logger</span>
+  <span class='const'><span class='object_link'><a href="../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='period'>.</span><span class='id identifier rubyid_error_handler'>error_handler</span> <span class='op'>=</span> <span class='id identifier rubyid_error_handler'>error_handler</span>
+  <span class='id identifier rubyid_configure_propagation'>configure_propagation</span>
+  <span class='id identifier rubyid_configure_span_processors'>configure_span_processors</span>
+  <span class='id identifier rubyid_tracer_provider'>tracer_provider</span><span class='period'>.</span><span class='id identifier rubyid_id_generator'>id_generator</span> <span class='op'>=</span> <span class='ivar'>@id_generator</span>
+  <span class='const'><span class='object_link'><a href="../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='period'>.</span><span class='id identifier rubyid_tracer_provider'>tracer_provider</span> <span class='op'>=</span> <span class='id identifier rubyid_tracer_provider'>tracer_provider</span>
+  <span class='id identifier rubyid_metrics_configuration_hook'>metrics_configuration_hook</span>
+  <span class='id identifier rubyid_install_instrumentation'>install_instrumentation</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="logger-instance_method">
+  
+    #<strong>logger</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+46
+47
+48</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/configurator.rb', line 46</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_logger'>logger</span>
+  <span class='ivar'>@logger</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="logger=-instance_method">
+  
+    #<strong>logger=</strong>(new_logger)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Accepts a logger and wraps it in the <span class='object_link'><a href="ForwardingLogger.html" title="OpenTelemetry::SDK::ForwardingLogger (class)">ForwardingLogger</a></span> which allows for controlling the severity level emitted by the OpenTelemetry.logger independently of the supplied logger.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>new_logger</span>
+      
+      
+        <span class='type'>(<tt>Logger</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The logger for OpenTelemetry to use</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+55
+56
+57</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/configurator.rb', line 55</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_logger='>logger=</span><span class='lparen'>(</span><span class='id identifier rubyid_new_logger'>new_logger</span><span class='rparen'>)</span>
+  <span class='ivar'>@logger</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="ForwardingLogger.html" title="OpenTelemetry::SDK::ForwardingLogger (class)">ForwardingLogger</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="ForwardingLogger.html#initialize-instance_method" title="OpenTelemetry::SDK::ForwardingLogger#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_new_logger'>new_logger</span><span class='comma'>,</span> <span class='label'>level:</span> <span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>OTEL_LOG_LEVEL</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='const'>Logger</span><span class='op'>::</span><span class='const'>INFO</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="resource=-instance_method">
+  
+    #<strong>resource=</strong>(new_resource)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Accepts a resource object that is merged with the default telemetry sdk resource. The use of this method is optional, and is provided as means to include additional resource information. If a resource key collision occurs the passed in resource takes priority.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>new_resource</span>
+      
+      
+        <span class='type'>(<tt>Resource</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The resource to be merged</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+69
+70
+71</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/configurator.rb', line 69</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_resource='>resource=</span><span class='lparen'>(</span><span class='id identifier rubyid_new_resource'>new_resource</span><span class='rparen'>)</span>
+  <span class='ivar'>@resource</span> <span class='op'>=</span> <span class='ivar'>@resource</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_new_resource'>new_resource</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="service_name=-instance_method">
+  
+    #<strong>service_name=</strong>(service_name)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Accepts a string that is merged in as the service.name resource attribute. The most recent assigned value will be used in the event of repeated calls to this setter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>service_name</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The value to be used as the service name</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+77
+78
+79
+80
+81</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/configurator.rb', line 77</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_service_name='>service_name=</span><span class='lparen'>(</span><span class='id identifier rubyid_service_name'>service_name</span><span class='rparen'>)</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_resource'>resource</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../SDK.html" title="OpenTelemetry::SDK (module)">SDK</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Resources.html" title="OpenTelemetry::SDK::Resources (module)">Resources</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Resources/Resource.html" title="OpenTelemetry::SDK::Resources::Resource (class)">Resource</a></span></span><span class='period'>.</span><span class='id identifier rubyid_create'><span class='object_link'><a href="Resources/Resource.html#create-class_method" title="OpenTelemetry::SDK::Resources::Resource.create (method)">create</a></span></span><span class='lparen'>(</span>
+    <span class='const'><span class='object_link'><a href="../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'>SemanticConventions</span><span class='op'>::</span><span class='const'>Resource</span><span class='op'>::</span><span class='const'>SERVICE_NAME</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_service_name'>service_name</span>
+  <span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="service_version=-instance_method">
+  
+    #<strong>service_version=</strong>(service_version)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Accepts a string that is merged in as the service.version resource attribute. The most recent assigned value will be used in the event of repeated calls to this setter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>service_version</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The value to be used as the service version</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+87
+88
+89
+90
+91</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/configurator.rb', line 87</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_service_version='>service_version=</span><span class='lparen'>(</span><span class='id identifier rubyid_service_version'>service_version</span><span class='rparen'>)</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_resource'>resource</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../SDK.html" title="OpenTelemetry::SDK (module)">SDK</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Resources.html" title="OpenTelemetry::SDK::Resources (module)">Resources</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Resources/Resource.html" title="OpenTelemetry::SDK::Resources::Resource (class)">Resource</a></span></span><span class='period'>.</span><span class='id identifier rubyid_create'><span class='object_link'><a href="Resources/Resource.html#create-class_method" title="OpenTelemetry::SDK::Resources::Resource.create (method)">create</a></span></span><span class='lparen'>(</span>
+    <span class='const'><span class='object_link'><a href="../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'>SemanticConventions</span><span class='op'>::</span><span class='const'>Resource</span><span class='op'>::</span><span class='const'>SERVICE_VERSION</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_service_version'>service_version</span>
+  <span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="use-instance_method">
+  
+    #<strong>use</strong>(instrumentation_name, config = nil)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Install an instrumentation with specificied optional <code>config</code>. Use can be called multiple times to install multiple instrumentation. Only <code>use</code> or <code>use_all</code>, but not both when installing instrumentation. A call to <code>use_all</code> after <code>use</code> will result in an exception.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>instrumentation_name</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The name of the instrumentation</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>config</span>
+      
+      
+        <span class='type'>(<tt>optional Hash</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The config for this instrumentation</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+101
+102
+103
+104
+105</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/configurator.rb', line 101</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_use'>use</span><span class='lparen'>(</span><span class='id identifier rubyid_instrumentation_name'>instrumentation_name</span><span class='comma'>,</span> <span class='id identifier rubyid_config'>config</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_check_use_mode!'>check_use_mode!</span><span class='lparen'>(</span><span class='const'>USE_MODE_ONE</span><span class='rparen'>)</span>
+  <span class='ivar'>@instrumentation_names</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_instrumentation_name'>instrumentation_name</span>
+  <span class='ivar'>@instrumentation_config_map</span><span class='lbracket'>[</span><span class='id identifier rubyid_instrumentation_name'>instrumentation_name</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_config'>config</span> <span class='kw'>if</span> <span class='id identifier rubyid_config'>config</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="use_all-instance_method">
+  
+    #<strong>use_all</strong>(instrumentation_config_map = {})  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Install all registered instrumentation. Configuration for specific instrumentation can be provided with the optional <code>instrumentation_config_map</code> parameter. Only <code>use</code> or <code>use_all</code>, but not both when installing instrumentation. A call to <code>use</code> after <code>use_all</code> will result in an exception.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>instrumentation_config_map</span>
+      
+      
+        <span class='type'>(<tt>optional Hash&lt;String,Hash&gt;</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>{}</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>A map with string keys representing the instrumentation name and values specifying the instrumentation config</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+115
+116
+117
+118</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/configurator.rb', line 115</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_use_all'>use_all</span><span class='lparen'>(</span><span class='id identifier rubyid_instrumentation_config_map'>instrumentation_config_map</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_check_use_mode!'>check_use_mode!</span><span class='lparen'>(</span><span class='const'>USE_MODE_ALL</span><span class='rparen'>)</span>
+  <span class='ivar'>@instrumentation_config_map</span> <span class='op'>=</span> <span class='id identifier rubyid_instrumentation_config_map'>instrumentation_config_map</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Jan 23 22:32:30 2024 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.34 (ruby-3.0.6).
+</div>
+
+    </div>
+  </body>
+</html>
