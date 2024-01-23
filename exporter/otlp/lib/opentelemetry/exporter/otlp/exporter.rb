@@ -7,7 +7,6 @@
 require 'opentelemetry/common'
 require 'opentelemetry/sdk'
 require 'net/http'
-require 'csv'
 require 'zlib'
 
 require 'google/rpc/status_pb'
@@ -167,8 +166,7 @@ module OpenTelemetry
               redo if backoff?(retry_count: retry_count += 1, reason: response.code)
               FAILURE
             when Net::HTTPNotFound
-              OpenTelemetry.handle_error(message: "OTLP exporter received http.code=404 for uri: '#{@path}'")
-              @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response.code })
+              log_request_failure(response.code)
               FAILURE
             when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
               log_status(response.body)
@@ -180,6 +178,7 @@ module OpenTelemetry
               redo if backoff?(retry_after: 0, retry_count: retry_count += 1, reason: response.code)
             else
               @http.finish
+              log_request_failure(response.code)
               FAILURE
             end
           rescue Net::OpenTimeout, Net::ReadTimeout
@@ -222,9 +221,14 @@ module OpenTelemetry
             klass_or_nil = ::Google::Protobuf::DescriptorPool.generated_pool.lookup(detail.type_name).msgclass
             detail.unpack(klass_or_nil) if klass_or_nil
           end.compact
-          OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}}")
+          OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}} for uri=#{@uri}")
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
+        end
+
+        def log_request_failure(response_code)
+          OpenTelemetry.handle_error(message: "OTLP exporter received http.code=#{response_code} for uri='#{@uri}' in OTLP::Exporter#send_bytes")
+          @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response_code })
         end
 
         def measure_request_duration
@@ -241,7 +245,7 @@ module OpenTelemetry
         end
 
         def backoff?(retry_count:, reason:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-          @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => reason })
+          log_request_failure(reason)
           return false if retry_count > RETRY_COUNT
 
           sleep_interval = nil
