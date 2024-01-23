@@ -1,5 +1,11 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.26.2 / 2024-01-23
+
+* FIXED: Align endpoint environment variable handling with spec
+* FIXED: Require csv for ruby-3.4 compatibility
+* FIXED: Add context to metrics reporting of buffer-full events
+
 ### v0.26.1 / 2023-07-29
 
 * FIXED: Regenerate v0.20.0 protos
