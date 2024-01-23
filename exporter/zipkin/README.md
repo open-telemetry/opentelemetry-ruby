@@ -1,6 +1,6 @@
 # opentelemetry-exporter-zipkin
 
-The `opentelemetry-exporter-zipkin` gem provides Zipkin exporters for OpenTelemetry for Ruby. Using `opentelemetry-exporter-zipkin`, an application can configure OpenTelemetry to export collected tracing data to [Zipkin][zipkin-home]. One exporter is included: the `Exporter` exports in HTTP JSON format over TCP to a Zipkin backend
+The `opentelemetry-exporter-zipkin` gem provides Zipkin exporters for OpenTelemetry for Ruby. Using `opentelemetry-exporter-zipkin`, an application can configure OpenTelemetry to export collected tracing data to [Zipkin][zipkin-home]. One exporter is included: the `Exporter` exports in HTTP JSON format over TCP to a Zipkin backend.
 
 ## What is OpenTelemetry?
 

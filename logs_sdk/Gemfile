@@ -7,3 +7,8 @@
 source 'https://rubygems.org'
 
 gemspec
+
+gem 'opentelemetry-api', path: '../api'
+gem 'opentelemetry-logs-api', path: '../logs_api'
+gem 'opentelemetry-sdk', path: '../sdk'
+gem 'opentelemetry-test-helpers', path: '../test_helpers'
