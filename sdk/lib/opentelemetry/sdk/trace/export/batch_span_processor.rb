@@ -125,7 +125,7 @@ module OpenTelemetry
                 dropped_spans = snapshot.shift(n)
                 report_dropped_spans(dropped_spans, reason: 'buffer-full', function: __method__.to_s)
               end
-              spans.unshift(snapshot) unless snapshot.empty?
+              spans.unshift(*snapshot) unless snapshot.empty?
               @condition.signal if spans.size > max_queue_size / 2
             end
           end
