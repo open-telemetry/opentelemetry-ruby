@@ -198,7 +198,7 @@ module OpenTelemetry
               @metrics_reporter.add_to_counter('otel.bsp.export.success')
               @metrics_reporter.add_to_counter('otel.bsp.exported_spans', increment: batch.size)
             else
-              OpenTelemetry.handle_error(exception: ExportError.new("Unable to export #{batch.size} spans"))
+              OpenTelemetry.handle_error(exception: ExportError.new(batch))
               @metrics_reporter.add_to_counter('otel.bsp.export.failure')
               report_dropped_spans(batch, reason: 'export-failure')
             end
@@ -206,6 +206,7 @@ module OpenTelemetry
 
           def report_dropped_spans(dropped_spans, reason:, function: nil)
             @metrics_reporter.add_to_counter('otel.bsp.dropped_spans', increment: dropped_spans.size, labels: { 'reason' => reason, OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => function }.compact)
+            OpenTelemetry.handle_error(exception: ExportError.new(dropped_spans))
           end
 
           def fetch_batch
