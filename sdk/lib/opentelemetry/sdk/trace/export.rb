@@ -10,7 +10,14 @@ module OpenTelemetry
       # The Export module contains the built-in exporters and span processors for the OpenTelemetry
       # reference implementation.
       module Export
-        ExportError = Class.new(OpenTelemetry::Error)
+        class ExportError < OpenTelemetry::Error
+          attr_reader :spans
+
+          def initialize(spans)
+            super("Unable to export #{spans.size} spans")
+            @spans = spans
+          end
+        end
 
         # Result codes for the SpanExporter#export method and the SpanProcessor#force_flush and SpanProcessor#shutdown methods.
 
