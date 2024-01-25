@@ -10,6 +10,7 @@ module OpenTelemetry
       # The Export module contains the built-in exporters and span processors for the OpenTelemetry
       # reference implementation.
       module Export
+        # Raised when an export fails; spans are available via :spans accessor
         class ExportError < OpenTelemetry::Error
           attr_reader :spans
 
