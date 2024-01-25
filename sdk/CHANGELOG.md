@@ -1,5 +1,9 @@
 # Release History: opentelemetry-sdk
 
+### v1.4.0 / 2024-01-25
+
+* ADDED: Add spans to Trace::ExportError
+
 ### v1.3.2 / 2024-01-23
 
 * FIXED: Reduce allocations on GraphQL hot paths
