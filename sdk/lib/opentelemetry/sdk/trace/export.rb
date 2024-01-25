@@ -12,9 +12,12 @@ module OpenTelemetry
       module Export
         # Raised when an export fails; spans are available via :spans accessor
         class ExportError < OpenTelemetry::Error
+          # Returns the {Span} array for this exception
+          #
+          # @return [Array<OpenTelemetry::SDK::Trace::Span>]
           attr_reader :spans
 
-          # @param [Array<OpenTelemetry::Trace::Span>] spans the array of spans that failed to export
+          # @param [Array<OpenTelemetry::SDK::Trace::Span>] spans the array of spans that failed to export
           def initialize(spans)
             super("Unable to export #{spans.size} spans")
             @spans = spans
