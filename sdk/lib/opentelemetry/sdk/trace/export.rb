@@ -14,6 +14,7 @@ module OpenTelemetry
         class ExportError < OpenTelemetry::Error
           attr_reader :spans
 
+          # @param [Array<OpenTelemetry::Trace::Span>] spans the array of spans that failed to export
           def initialize(spans)
             super("Unable to export #{spans.size} spans")
             @spans = spans
