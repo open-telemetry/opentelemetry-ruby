@@ -46,7 +46,7 @@ describe OpenTelemetry::SDK::Logs::LoggerProvider do
         OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
           logger_provider.add_log_record_processor(mock_log_record_processor)
           assert_match(/calling LoggerProvider#add_log_record_processor after shutdown/,
-            log_stream.string)
+                       log_stream.string)
         end
       end
     end

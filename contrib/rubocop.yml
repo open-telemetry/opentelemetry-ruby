@@ -1,0 +1,32 @@
+AllCops:
+  NewCops: disable
+  SuggestExtensions: false
+  TargetRubyVersion: "3.0"
+  Exclude:
+    - "vendor/**/*"
+
+Layout/LineLength:
+  Enabled: false
+
+Lint/ConstantDefinitionInBlock:
+  Exclude:
+    - "test/**/*"
+Lint/MissingSuper:
+  Enabled: false
+Lint/UnusedMethodArgument:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+Metrics/MethodLength:
+  Max: 21
+Metrics/ParameterLists:
+  Enabled: false
+
+Style/ModuleFunction:
+  Enabled: false
+Style/NumericPredicate:
+  Enabled: false
+Style/StringConcatenation:
+  Exclude:
+    - "test/**/*"
