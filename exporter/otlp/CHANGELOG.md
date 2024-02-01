@@ -2,7 +2,7 @@
 
 ### v0.26.3 / 2024-02-01
 
-* (No significant changes)
+* FIXED: do not log request failure in backoff?
 
 ### v0.26.2 / 2024-01-23
 
