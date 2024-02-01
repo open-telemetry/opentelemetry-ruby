@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.26.3 / 2024-02-01
+
+* FIXED: do not log request failure in backoff?
+
 ### v0.26.2 / 2024-01-23
 
 * FIXED: Align endpoint environment variable handling with spec
