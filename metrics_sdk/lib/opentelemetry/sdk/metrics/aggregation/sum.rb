@@ -14,7 +14,7 @@ module OpenTelemetry
           attr_reader :aggregation_temporality
 
           def initialize(aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta))
-            # ^-- the default should be :cumulative, but we haven't implemented it yet
+            # TODO: the default should be :cumulative, see issue #1555
             @aggregation_temporality = aggregation_temporality
             @data_points = {}
           end
