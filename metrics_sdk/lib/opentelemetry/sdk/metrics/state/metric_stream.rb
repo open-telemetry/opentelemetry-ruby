@@ -45,7 +45,7 @@ module OpenTelemetry
                 @meter_provider.resource,
                 @instrumentation_scope,
                 @aggregation.collect(start_time, end_time),
-                @aggregation.instance_variable_get(:@aggregation_temporality),
+                @aggregation.aggregation_temporality,
                 start_time,
                 end_time
               )
