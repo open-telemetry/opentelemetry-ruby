@@ -75,7 +75,9 @@ module OpenTelemetry
       end
 
       def install_instrumentation(instrumentation, config)
-        if instrumentation.install(config)
+        if !instrumentation.present?
+          OpenTelemetry.logger.debug "Instrumentation: #{instrumentation.name} skipping install given corresponding dependency not found"
+        elsif instrumentation.install(config)
           OpenTelemetry.logger.info "Instrumentation: #{instrumentation.name} was successfully installed with the following options #{instrumentation.config}"
         else
           OpenTelemetry.logger.warn "Instrumentation: #{instrumentation.name} failed to install"

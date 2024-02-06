@@ -33,6 +33,7 @@ Approvers ([@open-telemetry/ruby-approvers](https://github.com/orgs/open-telemet
 - [Andrew Hayworth](https://github.com/ahayworth), Shopify
 - [Sam Handler](https://github.com/plantfansam), Shopify
 - [Robb Kidd](https://github.com/robbkidd), Honeycomb
+- [Kayla Reopelle](https://github.com/kaylareopelle), New Relic
 
 *Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#approver).*
 
@@ -66,7 +67,7 @@ Apache 2.0 - See [LICENSE][license-url] for more information.
 [contrib-repo]: https://github.com/open-telemetry/opentelemetry-ruby-contrib
 [contrib-instrumentations]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation
 [examples-github]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/examples
-[getting-started]: https://opentelemetry.io/docs/ruby/
+[getting-started]: https://opentelemetry.io/docs/languages/ruby/
 [issues-good-first-issue]: https://github.com/open-telemetry/opentelemetry-ruby/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22
 [issues-help-wanted]: https://github.com/open-telemetry/opentelemetry-ruby/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22
 [license-image]: https://img.shields.io/badge/license-Apache_2.0-green.svg?style=flat
