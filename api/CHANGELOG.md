@@ -1,5 +1,9 @@
 # Release History: opentelemetry-api
 
+### v1.2.4 / 2024-02-06
+
+* FIXED: SystemStackError in Composite Text Map Propagator (#1590)
+
 ### v1.2.3 / 2023-09-18
 
 * FIXED: Optimize span and trace ID generation
