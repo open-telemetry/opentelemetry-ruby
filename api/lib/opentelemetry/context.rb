@@ -12,7 +12,16 @@ module OpenTelemetry
   class Context
     EMPTY_ENTRIES = {}.freeze
     STACK_KEY = :__opentelemetry_context_storage__
-    private_constant :EMPTY_ENTRIES, :STACK_KEY
+
+    class Token
+      attr_reader :context, :next_token
+      def initialize(context, next_token)
+        @context = context
+        @next_token = next_token
+      end
+    end
+
+    private_constant :EMPTY_ENTRIES, :STACK_KEY, :Token
 
     DetachError = Class.new(OpenTelemetry::Error)
 
@@ -29,7 +38,7 @@ module OpenTelemetry
       #
       # @return [Context]
       def current
-        stack.last || ROOT
+        Thread.current[STACK_KEY]&.context || ROOT
       end
 
       # Associates a Context with the caller's current Fiber. Every call to
@@ -40,9 +49,10 @@ module OpenTelemetry
       # @param [Context] context The new context
       # @return [Object] A token to be used when detaching
       def attach(context)
-        s = stack
-        s.push(context)
-        s.size
+        next_token = Thread.current[STACK_KEY]
+        token = Token.new(context, next_token)
+        Thread.current[STACK_KEY] = token
+        token
       end
 
       # Restores the previous Context associated with the current Fiber.
@@ -53,11 +63,11 @@ module OpenTelemetry
       # @param [Object] token The token provided by the matching call to attach
       # @return [Boolean] True if the calls matched, false otherwise
       def detach(token)
-        s = stack
-        calls_matched = (token == s.size)
+        current = Thread.current[STACK_KEY]
+        calls_matched = (token == current)
         OpenTelemetry.handle_error(exception: DetachError.new('calls to detach should match corresponding calls to attach.')) unless calls_matched
 
-        s.pop
+        Thread.current[STACK_KEY] = current&.next_token
         calls_matched
       end
 
@@ -114,17 +124,11 @@ module OpenTelemetry
       end
 
       def clear
-        stack.clear
+        Thread.current[STACK_KEY] = nil
       end
 
       def empty
         new(EMPTY_ENTRIES)
-      end
-
-      private
-
-      def stack
-        Thread.current[STACK_KEY] ||= []
       end
     end
 
