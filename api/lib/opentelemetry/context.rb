@@ -113,6 +113,9 @@ module OpenTelemetry
         current.value(key)
       end
 
+      # Clears the fiber-local Context stack. This allocates a new array for the
+      # stack, which is important in some use-cases to avoid sharing the backing
+      # array between fibers.
       def clear
         Thread.current[STACK_KEY] = []
       end
