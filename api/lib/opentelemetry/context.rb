@@ -114,7 +114,7 @@ module OpenTelemetry
       end
 
       def clear
-        stack.clear
+        Thread.current[STACK_KEY] = []
       end
 
       def empty
