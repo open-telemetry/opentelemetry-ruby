@@ -1,5 +1,9 @@
 # Release History: opentelemetry-api
 
+### v1.2.5 / 2024-02-20
+
+* FIXED: Replace Context stack on clear
+
 ### v1.2.4 / 2024-02-06
 
 * FIXED: SystemStackError in Composite Text Map Propagator (#1590)
