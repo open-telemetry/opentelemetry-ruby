@@ -97,7 +97,7 @@ module OpenTelemetry
         # @return [Array<String>] a list of fields that will be used by this propagator.
         def fields
           injectors = @injectors || @propagators
-          injectors.flat_map(&fields).uniq
+          injectors.flat_map(&:fields).uniq
         end
       end
     end

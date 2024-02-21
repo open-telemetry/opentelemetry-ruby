@@ -74,6 +74,7 @@ module OpenTelemetry
               @meter_provider.resource,
               @instrumentation_scope,
               aggregator.collect(start_time, end_time, @data_points),
+              aggregator.aggregation_temporality,
               start_time,
               end_time
             )

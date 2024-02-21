@@ -10,6 +10,8 @@ module OpenTelemetry
       module Aggregation
         # Contains the implementation of the Drop aggregation
         class Drop
+          attr_reader :aggregation_temporality
+
           def initialize(aggregation_temporality: :delta)
             @aggregation_temporality = aggregation_temporality
           end

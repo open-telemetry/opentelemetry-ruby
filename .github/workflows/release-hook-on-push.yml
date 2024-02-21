@@ -19,7 +19,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Install Toys
-        run: "gem install --no-document toys"
+        run: "gem install --no-document toys -v 0.15.5"
       - name: Update open releases
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

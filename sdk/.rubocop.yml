@@ -20,3 +20,5 @@ Style/ExplicitBlockArgument:
   Enabled: false
 Style/ModuleFunction:
   Enabled: false
+Style/NumericPredicate:
+  Enabled: false
