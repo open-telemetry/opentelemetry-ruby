@@ -10,7 +10,6 @@ module OpenTelemetry
       module Export
         # PeriodicMetricReader provides a minimal example implementation.
         class PeriodicMetricReader < MetricReader
-          
           def initialize(interval_millis: 60, timout_millis: 30, exporter: nil)
             super()
 
@@ -24,16 +23,16 @@ module OpenTelemetry
 
           def start_reader
             if @exporter.nil?
-              OpenTelemetry.logger.warn "Missing exporter in PeriodicMetricReader."
+              OpenTelemetry.logger.warn 'Missing exporter in PeriodicMetricReader.'
             elsif !@thread.nil?
-              OpenTelemetry.logger.warn "PeriodicMetricReader is running. Please close it if need to restart."
+              OpenTelemetry.logger.warn 'PeriodicMetricReader is running. Please close it if need to restart.'
             else
               @thread = Thread.new { perodic_collect }
             end
           end
 
           def perodic_collect
-            while true
+            loop do
               sleep(@interval_millis)
               Timeout.timeout(@timout_millis) { @exporter.export(collect) }
             end
@@ -53,14 +52,14 @@ module OpenTelemetry
             close_reader
             @exporter.shutdown
             Export::SUCCESS
-          rescue
+          rescue StandardError
             Export::FAILURE
           end
 
           def force_flush(timeout: nil)
             @exporter.export(collect)
             Export::SUCCESS
-          rescue
+          rescue StandardError
             Export::FAILURE
           end
         end
