@@ -8,6 +8,7 @@ module OpenTelemetry
   module SDK
     module Metrics
       module View
+        # RegisteredView
         class RegisteredView
           attr_reader :name, :aggregation, :attribute_keys
 

@@ -17,9 +17,7 @@ module OpenTelemetry
           end
 
           def collect(start_time, end_time, data_points)
-            data_points.values.map! do |ndp|
-              ndp.dup
-            end
+            data_points.values.map!(&:dup)
           end
 
           def update(increment, attributes, data_points)

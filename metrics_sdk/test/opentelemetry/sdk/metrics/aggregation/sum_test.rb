@@ -7,7 +7,6 @@
 require 'test_helper'
 
 describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
-  
   let(:data_points) { {} }
   let(:sum_aggregation) { OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: aggregation_temporality) }
   let(:aggregation_temporality) { :delta }
@@ -27,8 +26,8 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
     sum_aggregation.update(1, {}, data_points)
     sum_aggregation.update(2, {}, data_points)
 
-    sum_aggregation.update(2, {'foo' => 'bar'}, data_points)
-    sum_aggregation.update(2, {'foo' => 'bar'}, data_points)
+    sum_aggregation.update(2, { 'foo' => 'bar' }, data_points)
+    sum_aggregation.update(2, { 'foo' => 'bar' }, data_points)
 
     ndps = sum_aggregation.collect(start_time, end_time, data_points)
     _(ndps[0].value).must_equal(3)

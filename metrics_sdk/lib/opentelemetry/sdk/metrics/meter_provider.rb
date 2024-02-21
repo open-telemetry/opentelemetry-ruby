@@ -128,7 +128,7 @@ module OpenTelemetry
 
         # The name of the Instrument(s). OpenTelemetry SDK authors MAY choose to support wildcard characters, with the question mark (?) matching exactly one character and the asterisk character (*) matching zero or more characters.
         # The options of the Instrument(s). Useful key include: aggregation, type, unit, meter_name, meter_version, attribute_keys
-        # 
+        #
         # TODO: add schema_url as part of options
         def add_view(name, **options)
           @registered_views << View::RegisteredView.new(name, **options)

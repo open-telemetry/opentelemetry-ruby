@@ -37,7 +37,7 @@ module OpenTelemetry
           end
 
           def collect(start_time, end_time)
-            metric_data      = Array.new
+            metric_data      = []
             registred_views  = find_registered_view
 
             if registred_views.empty?
@@ -55,11 +55,11 @@ module OpenTelemetry
               @mutex.synchronize { @default_aggregation.update(value, attributes, @data_points) }
             else
               registred_views.each do |view|
-                @mutex.synchronize {
-                  attributes = attributes || {}
+                @mutex.synchronize do
+                  attributes ||= {}
                   attributes.merge!(view.attribute_keys)
-                  view.aggregation.update(value, attributes, @data_points) 
-                }
+                  view.aggregation.update(value, attributes, @data_points)
+                end
               end
             end
           end
@@ -81,11 +81,11 @@ module OpenTelemetry
           end
 
           def find_registered_view
-            registred_views = Array.new
+            registred_views = []
             @meter_provider.registered_views.each { |view| registred_views << view if view.match_instrument(self) }
             registred_views
           end
-          
+
           def to_s
             instrument_info = String.new
             instrument_info << "name=#{@name}"

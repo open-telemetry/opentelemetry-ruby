@@ -7,7 +7,6 @@
 require 'test_helper'
 
 describe OpenTelemetry::SDK::Metrics::Aggregation::LastValue do
-  
   let(:data_points) { {} }
   let(:drop_aggregation) { OpenTelemetry::SDK::Metrics::Aggregation::Drop.new(aggregation_temporality: aggregation_temporality) }
   let(:aggregation_temporality) { :delta }
@@ -27,8 +26,8 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::LastValue do
     drop_aggregation.update(1, {}, data_points)
     drop_aggregation.update(2, {}, data_points)
 
-    drop_aggregation.update(2, {'foo' => 'bar'}, data_points)
-    drop_aggregation.update(2, {'foo' => 'bar'}, data_points)
+    drop_aggregation.update(2, { 'foo' => 'bar' }, data_points)
+    drop_aggregation.update(2, { 'foo' => 'bar' }, data_points)
 
     ndps = drop_aggregation.collect(start_time, end_time, data_points)
 

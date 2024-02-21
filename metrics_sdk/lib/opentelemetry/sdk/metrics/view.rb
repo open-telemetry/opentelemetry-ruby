@@ -7,6 +7,7 @@
 module OpenTelemetry
   module SDK
     module Metrics
+      # View
       module View
       end
     end

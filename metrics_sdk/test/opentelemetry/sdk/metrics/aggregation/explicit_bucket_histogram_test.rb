@@ -30,11 +30,11 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
       ebh.update(6, {}, data_points)
       ebh.update(10, {}, data_points)
 
-      ebh.update(-10, {'foo' => 'bar'}, data_points)
-      ebh.update(1, {'foo' => 'bar'}, data_points)
-      ebh.update(22, {'foo' => 'bar'}, data_points)
-      ebh.update(55, {'foo' => 'bar'}, data_points)
-      ebh.update(80, {'foo' => 'bar'}, data_points)
+      ebh.update(-10, { 'foo' => 'bar' }, data_points)
+      ebh.update(1, { 'foo' => 'bar' }, data_points)
+      ebh.update(22, { 'foo' => 'bar' }, data_points)
+      ebh.update(55, { 'foo' => 'bar' }, data_points)
+      ebh.update(80, { 'foo' => 'bar' }, data_points)
 
       hdps = ebh.collect(start_time, end_time, data_points)
       _(hdps.size).must_equal(2)

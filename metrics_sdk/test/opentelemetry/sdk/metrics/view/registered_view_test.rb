@@ -19,7 +19,7 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
       meter = OpenTelemetry.meter_provider.meter('test')
       counter = meter.create_counter('counter', unit: 'smidgen', description: 'a small amount of something')
 
-      OpenTelemetry.meter_provider.add_view("counter", aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::Drop.new())
+      OpenTelemetry.meter_provider.add_view('counter', aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::Drop.new)
 
       counter.add(1)
       counter.add(2, attributes: { 'a' => 'b' })
@@ -52,7 +52,7 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
       meter = OpenTelemetry.meter_provider.meter('test')
       counter = meter.create_counter('counter', unit: 'smidgen', description: 'a small amount of something')
 
-      OpenTelemetry.meter_provider.add_view("counter", aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new())
+      OpenTelemetry.meter_provider.add_view('counter', aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new)
 
       counter.add(1)
       counter.add(2)
@@ -75,7 +75,7 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
       meter = OpenTelemetry.meter_provider.meter('test')
       counter = meter.create_counter('counter', unit: 'smidgen', description: 'a small amount of something')
 
-      OpenTelemetry.meter_provider.add_view("retnuoc", aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new())
+      OpenTelemetry.meter_provider.add_view('retnuoc', aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new)
 
       counter.add(1)
       counter.add(2)
@@ -91,37 +91,37 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
   end
 
   describe '#registered_view select instrument' do
-    let(:registered_view) { OpenTelemetry::SDK::Metrics::View::RegisteredView.new(nil, aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new()) }
-    let(:instrumentation_scope) {
+    let(:registered_view) { OpenTelemetry::SDK::Metrics::View::RegisteredView.new(nil, aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new) }
+    let(:instrumentation_scope) do
       OpenTelemetry::SDK::InstrumentationScope.new('test_scope', '1.0.1')
-    }
+    end
 
-    let(:metric_stream) {
-      OpenTelemetry::SDK::Metrics::State::MetricStream.new('test', 'description', 'smidgen', :counter, nil, instrumentation_scope ,nil)
-    }
+    let(:metric_stream) do
+      OpenTelemetry::SDK::Metrics::State::MetricStream.new('test', 'description', 'smidgen', :counter, nil, instrumentation_scope, nil)
+    end
 
     it 'registered view with matching name' do
-      registered_view.instance_variable_set(:@name,'test')
+      registered_view.instance_variable_set(:@name, 'test')
       _(registered_view.match_instrument(metric_stream)).must_equal true
     end
 
     it 'registered view with matching type' do
-      registered_view.instance_variable_set(:@options, {:type => :counter})
+      registered_view.instance_variable_set(:@options, { type: :counter })
       _(registered_view.match_instrument(metric_stream)).must_equal true
     end
 
     it 'registered view with matching version' do
-      registered_view.instance_variable_set(:@options, {:meter_version => '1.0.1'})
+      registered_view.instance_variable_set(:@options, { meter_version: '1.0.1' })
       _(registered_view.match_instrument(metric_stream)).must_equal true
     end
 
     it 'registered view with matching meter_name' do
-      registered_view.instance_variable_set(:@options, {:meter_name => 'test_scope'})
+      registered_view.instance_variable_set(:@options, { meter_name: 'test_scope' })
       _(registered_view.match_instrument(metric_stream)).must_equal true
     end
 
     it 'do not registered view with unmatching name and matching type' do
-      registered_view.instance_variable_set(:@options, {:type => :counter})
+      registered_view.instance_variable_set(:@options, { type: :counter })
       registered_view.instance_variable_set(:@name, 'tset')
       _(registered_view.match_instrument(metric_stream)).must_equal false
     end
