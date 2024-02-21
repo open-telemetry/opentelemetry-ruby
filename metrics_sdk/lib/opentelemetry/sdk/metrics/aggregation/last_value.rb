@@ -8,9 +8,8 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Aggregation
-        # Contains the implementation of the Sum aggregation
-        # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#sum-aggregation
-        class Sum
+        # Contains the implementation of the LastValue aggregation
+        class LastValue
           def initialize(aggregation_temporality: :delta)
             @aggregation_temporality = aggregation_temporality
           end
@@ -36,15 +35,13 @@ module OpenTelemetry
           end
 
           def update(increment, attributes, data_points)
-            ndp = data_points[attributes] || data_points[attributes] = NumberDataPoint.new(
+            data_points[attributes] = NumberDataPoint.new(
               attributes,
               nil,
               nil,
-              0,
+              increment,
               nil
             )
-
-            ndp.value += increment
             nil
           end
         end

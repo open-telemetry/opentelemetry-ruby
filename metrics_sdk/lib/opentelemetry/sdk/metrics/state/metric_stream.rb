@@ -28,33 +28,63 @@ module OpenTelemetry
             @description = description
             @unit = unit
             @instrument_kind = instrument_kind
-            @meter_provider = meter_provider
+            @meter_provider  = meter_provider
             @instrumentation_scope = instrumentation_scope
-            @aggregation = aggregation
+            @default_aggregation = aggregation
+            @data_points = {}
 
             @mutex = Mutex.new
           end
 
           def collect(start_time, end_time)
-            @mutex.synchronize do
-              MetricData.new(
-                @name,
-                @description,
-                @unit,
-                @instrument_kind,
-                @meter_provider.resource,
-                @instrumentation_scope,
-                @aggregation.collect(start_time, end_time),
-                start_time,
-                end_time
-              )
+            metric_data      = Array.new
+            registred_views  = find_registered_view
+
+            if registred_views.empty?
+              metric_data << aggregate_metric_data(start_time, end_time)
+            else
+              registred_views.each { |view| metric_data << aggregate_metric_data(start_time, end_time, aggregation: view.aggregation) }
             end
+
+            metric_data
           end
 
           def update(value, attributes)
-            @mutex.synchronize { @aggregation.update(value, attributes) }
+            registred_views = find_registered_view
+            if registred_views.empty?
+              @mutex.synchronize { @default_aggregation.update(value, attributes, @data_points) }
+            else
+              registred_views.each do |view|
+                @mutex.synchronize {
+                  attributes = attributes || {}
+                  attributes.merge!(view.attribute_keys)
+                  view.aggregation.update(value, attributes, @data_points) 
+                }
+              end
+            end
           end
 
+          def aggregate_metric_data(start_time, end_time, aggregation: nil)
+            aggregator = aggregation || @default_aggregation
+            MetricData.new(
+              @name,
+              @description,
+              @unit,
+              @instrument_kind,
+              @meter_provider.resource,
+              @instrumentation_scope,
+              aggregator.collect(start_time, end_time, @data_points),
+              start_time,
+              end_time
+            )
+          end
+
+          def find_registered_view
+            registred_views = Array.new
+            @meter_provider.registered_views.each { |view| registred_views << view if view.match_instrument(self) }
+            registred_views
+          end
+          
           def to_s
             instrument_info = String.new
             instrument_info << "name=#{@name}"

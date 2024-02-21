@@ -14,7 +14,7 @@ module OpenTelemetry
         Key = Struct.new(:name, :version)
         private_constant(:Key)
 
-        attr_reader :resource, :metric_readers
+        attr_reader :resource, :metric_readers, :registered_views
 
         def initialize(resource: OpenTelemetry::SDK::Resources::Resource.create)
           @mutex = Mutex.new
@@ -22,6 +22,7 @@ module OpenTelemetry
           @stopped = false
           @metric_readers = []
           @resource = resource
+          @registered_views = []
         end
 
         # Returns a {Meter} instance.
@@ -125,13 +126,12 @@ module OpenTelemetry
           end
         end
 
-        # The type of the Instrument(s) (optional).
         # The name of the Instrument(s). OpenTelemetry SDK authors MAY choose to support wildcard characters, with the question mark (?) matching exactly one character and the asterisk character (*) matching zero or more characters.
-        # The name of the Meter (optional).
-        # The version of the Meter (optional).
-        # The schema_url of the Meter (optional).
-        def add_view
-          # TODO: For each meter add this view to all applicable instruments
+        # The options of the Instrument(s). Useful key include: aggregation, type, unit, meter_name, meter_version, attribute_keys
+        # 
+        # TODO: add schema_url as part of options
+        def add_view(name, **options)
+          @registered_views << View::RegisteredView.new(name, **options)
         end
       end
     end
