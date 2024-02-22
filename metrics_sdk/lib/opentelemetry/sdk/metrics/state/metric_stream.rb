@@ -37,24 +37,24 @@ module OpenTelemetry
           end
 
           def collect(start_time, end_time)
-            metric_data      = []
-            registred_views  = find_registered_view
+            metric_data = []
+            registered_views = find_registered_view
 
-            if registred_views.empty?
+            if registered_views.empty?
               metric_data << aggregate_metric_data(start_time, end_time)
             else
-              registred_views.each { |view| metric_data << aggregate_metric_data(start_time, end_time, aggregation: view.aggregation) }
+              registered_views.each { |view| metric_data << aggregate_metric_data(start_time, end_time, aggregation: view.aggregation) }
             end
 
             metric_data
           end
 
           def update(value, attributes)
-            registred_views = find_registered_view
-            if registred_views.empty?
+            registered_views = find_registered_view
+            if registered_views.empty?
               @mutex.synchronize { @default_aggregation.update(value, attributes, @data_points) }
             else
-              registred_views.each do |view|
+              registered_views.each do |view|
                 @mutex.synchronize do
                   attributes ||= {}
                   attributes.merge!(view.attribute_keys)
@@ -81,9 +81,9 @@ module OpenTelemetry
           end
 
           def find_registered_view
-            registred_views = []
-            @meter_provider.registered_views.each { |view| registred_views << view if view.match_instrument(self) }
-            registred_views
+            registered_views = []
+            @meter_provider.registered_views.each { |view| registered_views << view if view.match_instrument(self) }
+            registered_views
           end
 
           def to_s
