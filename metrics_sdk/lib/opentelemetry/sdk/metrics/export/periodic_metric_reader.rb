@@ -16,40 +16,42 @@ module OpenTelemetry
             @interval_millis = interval_millis
             @timout_millis = timout_millis
             @exporter = exporter
-            @thread = nil
+            @thread   = nil
+            @continue = false
 
-            start_reader
+            start
           end
 
-          def start_reader
+          def start
+            @continue = true
             if @exporter.nil?
               OpenTelemetry.logger.warn 'Missing exporter in PeriodicMetricReader.'
-            elsif !@thread.nil?
-              OpenTelemetry.logger.warn 'PeriodicMetricReader is running. Please close it if need to restart.'
+            elsif @thread&.alive?
+              OpenTelemetry.logger.warn 'PeriodicMetricReader is still running. Please close it if it needs to restart.'
             else
-              @thread = Thread.new { perodic_collect }
+              @thread = Thread.new do
+                while @continue
+                  sleep(@interval_millis)
+                  begin
+                    Timeout.timeout(@timout_millis) { @exporter.export(collect) }
+                  rescue Timeout::Error => e
+                    OpenTelemetry.handle_error(exception: e, message: 'PeriodicMetricReader timeout.')
+                  end
+                end
+              end
             end
           end
 
-          def perodic_collect
-            loop do
-              sleep(@interval_millis)
-              Timeout.timeout(@timout_millis) { @exporter.export(collect) }
-            end
-          end
-
-          def close_reader
-            @thread.kill
-            @thread.join
+          def close
+            @continue = false   # force termination in next iteration
+            @thread.join(5)     # wait 5 seconds for collecting and exporting
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'Fail to close PeriodicMetricReader.')
-          ensure
-            @thread = nil
           end
 
           # TODO: determine correctness: directly kill the reader without waiting for next metrics collection
           def shutdown(timeout: nil)
-            close_reader
+            close
             @exporter.shutdown
             Export::SUCCESS
           rescue StandardError
