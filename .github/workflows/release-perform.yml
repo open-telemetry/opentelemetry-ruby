@@ -22,13 +22,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Ruby ${{ env.ruby_version }}
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@v1.165.1
         with:
           ruby-version: ${{ env.ruby_version }}
       - name: Checkout repo
         uses: actions/checkout@v2
       - name: Install Toys
-        run: "gem install --no-document toys"
+        run: "gem install --no-document toys -v 0.15.5"
       - name: Perform release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

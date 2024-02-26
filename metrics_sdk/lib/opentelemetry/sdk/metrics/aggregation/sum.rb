@@ -3,21 +3,22 @@
 # Copyright The OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
-
 module OpenTelemetry
   module SDK
     module Metrics
       module Aggregation
-
-        # if no reservior pass from instrument, then use this empty reservior to avoid no method found error
-        DEFAULT_RESERVOIR = Metrics::Exemplar::FixedSizeExemplarReservoir.new
-        private_constant :DEFAULT_RESERVOIR
-
         # Contains the implementation of the Sum aggregation
         # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#sum-aggregation
         class Sum
+          # if no reservior pass from instrument, then use this empty reservior to avoid no method found error
+          DEFAULT_RESERVOIR = Metrics::Exemplar::FixedSizeExemplarReservoir.new
+          private_constant :DEFAULT_RESERVOIR
 
-          def initialize(aggregation_temporality: :delta, exemplar_reservoir: DEFAULT_RESERVOIR)
+          attr_reader :aggregation_temporality
+
+          def initialize(aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta),
+                          exemplar_reservoir: DEFAULT_RESERVOIR)
+            # TODO: the default should be :cumulative, see issue #1555
             @aggregation_temporality = aggregation_temporality
             @data_points = {}
             @exemplar_reservoir = exemplar_reservoir
