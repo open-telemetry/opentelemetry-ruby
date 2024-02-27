@@ -8,6 +8,7 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Exemplar
+        # AlwaysOnExemplarFilter
         class AlwaysOnExemplarFilter < ExemplarFilter
           def self.should_sample?(value, timestamp, attributes, context)
             true

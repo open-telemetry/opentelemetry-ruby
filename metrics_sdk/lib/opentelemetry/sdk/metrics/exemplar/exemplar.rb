@@ -8,6 +8,7 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Exemplar
+        # Exemplar
         class Exemplar
           attr_reader :value, :time_unix_nano, :attributes, :span_id, :trace_id
 

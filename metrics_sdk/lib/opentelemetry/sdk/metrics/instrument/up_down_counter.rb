@@ -25,7 +25,7 @@ module OpenTelemetry
           #   Array values must not contain nil elements and all elements must be of
           #   the same basic type (string, numeric, boolean).
           def add(amount, attributes: nil)
-            exemplar_offer(increment, attributes) if @meter_provider.exemplar_filter
+            exemplar_offer(amount, attributes)
             update(amount, attributes)
             nil
           rescue StandardError => e

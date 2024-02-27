@@ -8,6 +8,7 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Exemplar
+        # ExemplarReservoir
         class ExemplarReservoir
           def initialize
             @exemplars = []
@@ -31,13 +32,11 @@ module OpenTelemetry
           #
           # @param [Hash] attributes Value of the measurement
           # @param [Boolean] aggregation_temporality Should remove the original exemplars or not, default delta
-          # 
+          #
           # @return [Array] exemplars Array of exemplars
           def collect(attributes: nil, aggregation_temporality: :delta)
             exemplars = []
-            @exemplars.each do |exemplar|
-              exemplars << exemplar if exemplar # TODO Addition operation on selecting exemplar
-            end
+            @exemplars.each { |exemplar| exemplars << exemplar if exemplar } # TODO: Addition operation on selecting exemplar
             @exemplars.clear if aggregation_temporality == :delta
             exemplars
           end

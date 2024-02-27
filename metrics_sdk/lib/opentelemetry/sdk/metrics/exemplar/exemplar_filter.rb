@@ -8,6 +8,7 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Exemplar
+        # ExemplarFilter
         class ExemplarFilter
           # Returns a {Boolean} value.
           #

@@ -20,7 +20,7 @@ module OpenTelemetry
             @instrumentation_scope = instrumentation_scope
             @meter_provider = meter_provider
             @metric_streams = []
-            @exemplar_filter    = exemplar_filter || meter_provider.exemplar_filter
+            @exemplar_filter = exemplar_filter || meter_provider.exemplar_filter
             @exemplar_reservoir = exemplar_reservoir || NOOP_EXEMPLAR_RESERVOIR
 
             meter_provider.register_synchronous_instrument(self)
@@ -47,12 +47,14 @@ module OpenTelemetry
             @metric_streams.each { |ms| ms.update(value, attributes) }
           end
 
+          # Adding the exemplar to reservoir
+          #
           def exemplar_offer(value, attributes)
             context = OpenTelemetry::Context.current
             time = (Time.now.to_r * 1_000_000).to_i
-            if @exemplar_filter.should_sample?(value, time, attributes, context)
-              @exemplar_reservoir.offer(value: value, timestamp: time, attributes: attributes, context: context) # this create an exemplar object in reservoir
-            end
+            return unless @exemplar_filter.should_sample?(value, time, attributes, context)
+
+            @exemplar_reservoir.offer(value: value, timestamp: time, attributes: attributes, context: context)
           end
         end
       end

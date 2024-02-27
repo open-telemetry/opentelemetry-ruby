@@ -7,17 +7,20 @@
 require 'test_helper'
 
 describe OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir do
-
   describe 'basic exemplar reservoir operation test' do
-    let(:context) { ::OpenTelemetry::Trace.context_with_span(
-                    ::OpenTelemetry::Trace.non_recording_span(
-                      ::OpenTelemetry::Trace::SpanContext.new(
-                        trace_id: Array("w\xCBl\xCCR-1\x06\x11M\xD6\xEC\xBBp\x03j").pack('H*'),
-                        span_id: Array("1\xE1u\x12\x8E\xFC@\x18").pack('H*'),
-                        trace_flags: ::OpenTelemetry::Trace::TraceFlags::DEFAULT)))
-                  }
+    let(:context) do
+      ::OpenTelemetry::Trace.context_with_span(
+        ::OpenTelemetry::Trace.non_recording_span(
+          ::OpenTelemetry::Trace::SpanContext.new(
+            trace_id: Array("w\xCBl\xCCR-1\x06\x11M\xD6\xEC\xBBp\x03j").pack('H*'),
+            span_id: Array("1\xE1u\x12\x8E\xFC@\x18").pack('H*'),
+            trace_flags: ::OpenTelemetry::Trace::TraceFlags::DEFAULT
+          )
+        )
+      )
+    end
     let(:timestamp) { 123_456_789 }
-    let(:attributes) { {'test': 'test'} }
+    let(:attributes) { { 'test': 'test' } }
 
     it 'basic test for exemplar reservoir' do
       exemplar = OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir.new
@@ -75,16 +78,15 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir do
   end
 
   describe 'complex exemplar reservoir integration test always on filter' do
-
     let(:metric_exporter) { OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new }
     let(:exemplar_filter) { OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter }
     let(:exemplar_reservoir) { OpenTelemetry::SDK::Metrics::Exemplar::FixedSizeExemplarReservoir.new(max_size: 2) }
 
     it 'integrate fixed size exemplar reservior with simple counter' do
       meter = create_meter
-      histogram = meter.create_histogram('histogram', unit: 'smidgen', description: 'description', 
-                                              exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir)
-      histogram.record(1, attributes: {'foo' => 'bar'})
+      histogram = meter.create_histogram('histogram', unit: 'smidgen', description: 'description',
+                                                      exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir)
+      histogram.record(1, attributes: { 'foo' => 'bar' })
 
       metric_exporter.pull
       last_snapshot = metric_exporter.metric_snapshots.last
@@ -97,21 +99,15 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir do
   end
 
   describe 'complex exemplar reservoir integration test always off filter' do
-
     let(:metric_exporter) { OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new }
     let(:exemplar_filter) { OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOffExemplarFilter }
     let(:exemplar_reservoir) { OpenTelemetry::SDK::Metrics::Exemplar::FixedSizeExemplarReservoir.new(max_size: 2) }
 
-    # def create_histogram(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
-    #   create_instrument(:histogram, name, unit, description, nil, exemplar_filter, exemplar_reservoir) { HISTOGRAM }
-    # end
-    # create_histogram -> create_instrument so if no exemplar_filter and exemplar_reservoir provided, these two will be nil
-    # create_instrument -> OpenTelemetry::SDK::Metrics::Instrument::Histogram.new(name, unit, description, @instrumentation_scope, @meter_provider, exemplar_filter, exemplar_reservoir)
     it 'integrate fixed size exemplar reservior with simple counter' do
       meter = create_meter
-      histogram = meter.create_histogram('histogram', unit: 'smidgen', description: 'description', 
-                                              exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir)
-      histogram.record(1, attributes: {'foo' => 'bar'})
+      histogram = meter.create_histogram('histogram', unit: 'smidgen', description: 'description',
+                                                      exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir)
+      histogram.record(1, attributes: { 'foo' => 'bar' })
 
       metric_exporter.pull
       last_snapshot = metric_exporter.metric_snapshots.last

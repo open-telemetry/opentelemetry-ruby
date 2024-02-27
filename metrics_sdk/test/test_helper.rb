@@ -39,6 +39,5 @@ def create_meter
   OpenTelemetry::SDK.configure
   OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
   OpenTelemetry.meter_provider.exemplar_filter_on(exemplar_filter: exemplar_filter)
-  meter = OpenTelemetry.meter_provider.meter("SAMPLE_METER_NAME")
-  meter
+  OpenTelemetry.meter_provider.meter('SAMPLE_METER_NAME')
 end

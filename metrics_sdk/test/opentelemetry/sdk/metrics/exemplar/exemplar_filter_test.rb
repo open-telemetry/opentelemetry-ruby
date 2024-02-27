@@ -7,16 +7,19 @@
 require 'test_helper'
 
 describe OpenTelemetry::SDK::Metrics::Exemplar::ExemplarFilter do
-
-  let(:context) { ::OpenTelemetry::Trace.context_with_span(
-                    ::OpenTelemetry::Trace.non_recording_span(
-                      ::OpenTelemetry::Trace::SpanContext.new(
-                        trace_id: Array("w\xCBl\xCCR-1\x06\x11M\xD6\xEC\xBBp\x03j").pack('H*'),
-                        span_id: Array("1\xE1u\x12\x8E\xFC@\x18").pack('H*'),
-                        trace_flags: ::OpenTelemetry::Trace::TraceFlags::DEFAULT)))
-                }
+  let(:context) do
+    ::OpenTelemetry::Trace.context_with_span(
+      ::OpenTelemetry::Trace.non_recording_span(
+        ::OpenTelemetry::Trace::SpanContext.new(
+          trace_id: Array("w\xCBl\xCCR-1\x06\x11M\xD6\xEC\xBBp\x03j").pack('H*'),
+          span_id: Array("1\xE1u\x12\x8E\xFC@\x18").pack('H*'),
+          trace_flags: ::OpenTelemetry::Trace::TraceFlags::DEFAULT
+        )
+      )
+    )
+  end
   let(:timestamp) { 123_456_789 }
-  let(:attributes) { {'test': 'test'} }
+  let(:attributes) { { 'test': 'test' } }
 
   it 'always true for always on exemplar filter' do
     result = OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter.should_sample?(1, timestamp, attributes, context)

@@ -10,7 +10,6 @@ module OpenTelemetry
       module Exemplar
         # same as AlignedHistogramBucketExemplarReservoir
         class HistogramExemplarReservoir < ExemplarReservoir
-
           DEFAULT_BOUNDARIES = [0, 5, 10, 25, 50, 75, 100, 250, 500, 1000].freeze
           private_constant :DEFAULT_BOUNDARIES
 
@@ -24,10 +23,10 @@ module OpenTelemetry
           # Assumption: each boundary should have one exemplar measurement
           def offer(value: nil, timestamp: nil, attributes: nil, context: nil)
             bucket = find_histogram_bucket(value)
-            if bucket < @boundaries.size
-              span_context = current_span_context(context)
-              @exemplars[bucket] = Exemplar.new(value, timestamp, attributes, span_context.hex_span_id, span_context.hex_trace_id)
-            end
+            return unless bucket < @boundaries.size
+
+            span_context = current_span_context(context)
+            @exemplars[bucket] = Exemplar.new(value, timestamp, attributes, span_context.hex_span_id, span_context.hex_trace_id)
           end
 
           # return Exemplar

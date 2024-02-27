@@ -17,7 +17,7 @@ module OpenTelemetry
           attr_reader :aggregation_temporality
 
           def initialize(aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta),
-                          exemplar_reservoir: DEFAULT_RESERVOIR)
+                         exemplar_reservoir: DEFAULT_RESERVOIR)
             # TODO: the default should be :cumulative, see issue #1555
             @aggregation_temporality = aggregation_temporality
             @data_points = {}
@@ -51,7 +51,7 @@ module OpenTelemetry
               nil,
               nil,
               0,
-              # will this cause the reservoir overloaded with old exemplars? 
+              # will this cause the reservoir overloaded with old exemplars?
               @exemplar_reservoir.collect(attributes: attributes, aggregation_temporality: @aggregation_temporality) # exemplar
             )
 

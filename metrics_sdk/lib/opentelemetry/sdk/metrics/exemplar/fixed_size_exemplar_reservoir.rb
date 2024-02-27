@@ -8,9 +8,10 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Exemplar
+        # FixedSizeExemplarReservoir
         class FixedSizeExemplarReservoir < ExemplarReservoir
           MAX_BUCKET_SIZE = 1
-          
+
           def initialize(max_size: nil)
             super()
             @max_size = max_size || MAX_BUCKET_SIZE
@@ -20,7 +21,7 @@ module OpenTelemetry
           def offer(value: nil, timestamp: nil, attributes: nil, context: nil)
             span_context = current_span_context(context)
             if @exemplars.size >= @max_size
-              rand_index = rand(0..@max_size-1)
+              rand_index = rand(0..@max_size - 1)
               @exemplars[rand_index] = Exemplar.new(value, timestamp, attributes, span_context.hex_span_id, span_context.hex_trace_id)
               nil
             else
