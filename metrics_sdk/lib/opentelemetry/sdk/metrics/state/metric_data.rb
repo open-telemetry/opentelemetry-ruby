@@ -16,6 +16,7 @@ module OpenTelemetry
                                 :resource,                  # OpenTelemetry::SDK::Resources::Resource
                                 :instrumentation_scope,     # OpenTelemetry::SDK::InstrumentationScope
                                 :data_points,               # Hash{Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>} => Numeric}
+                                :aggregation_temporality,   # Symbol
                                 :start_time_unix_nano,      # Integer nanoseconds since Epoch
                                 :time_unix_nano)            # Integer nanoseconds since Epoch
       end

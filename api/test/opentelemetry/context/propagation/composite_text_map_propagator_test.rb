@@ -22,6 +22,10 @@ describe OpenTelemetry::Context::Propagation::CompositeTextMapPropagator do
       end
       carrier
     end
+
+    def fields
+      [@key]
+    end
   end
 
   class TestExtractor
@@ -122,6 +126,12 @@ describe OpenTelemetry::Context::Propagation::CompositeTextMapPropagator do
         _(context['k1']).must_equal('V1')
         _(context['k2']).must_equal('V2')
         _(context['k3']).must_equal('V3')
+      end
+    end
+
+    describe '#fields' do
+      it 'returns all fields from injectors' do
+        _(propagator.fields).must_equal(%w[k1 k2 k3])
       end
     end
   end

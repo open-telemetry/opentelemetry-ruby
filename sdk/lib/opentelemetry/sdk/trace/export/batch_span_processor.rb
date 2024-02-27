@@ -80,9 +80,9 @@ module OpenTelemetry
             lock do
               reset_on_fork
               n = spans.size + 1 - max_queue_size
-              if n.positive?
-                spans.shift(n)
-                report_dropped_spans(n, reason: 'buffer-full')
+              if n > 0
+                dropped_spans = spans.shift(n)
+                report_dropped_spans(dropped_spans, reason: 'buffer-full', function: __method__.to_s)
               end
               spans << span
               @condition.signal if spans.size > batch_size
@@ -110,7 +110,7 @@ module OpenTelemetry
               remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
               return TIMEOUT if remaining_timeout&.zero?
 
-              batch = snapshot.shift(@batch_size).map!(&:to_span_data)
+              batch = snapshot.shift(@batch_size)
               result_code = export_batch(batch, timeout: remaining_timeout)
               return result_code unless result_code == SUCCESS
             end
@@ -122,10 +122,10 @@ module OpenTelemetry
             lock do
               n = spans.size + snapshot.size - max_queue_size
               if n.positive?
-                snapshot.shift(n)
-                report_dropped_spans(n, reason: 'buffer-full')
+                dropped_spans = snapshot.shift(n)
+                report_dropped_spans(dropped_spans, reason: 'buffer-full', function: __method__.to_s)
               end
-              spans.unshift(snapshot) unless snapshot.empty?
+              spans.unshift(*snapshot) unless snapshot.empty?
               @condition.signal if spans.size > max_queue_size / 2
             end
           end
@@ -146,8 +146,8 @@ module OpenTelemetry
 
             thread&.join(timeout)
             force_flush(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
-            dropped_spans = lock { spans.size }
-            report_dropped_spans(dropped_spans, reason: 'terminating') if dropped_spans.positive?
+            dropped_spans = lock { spans.shift(spans.length) }
+            report_dropped_spans(dropped_spans, reason: 'terminating') if dropped_spans.any?
             @exporter.shutdown(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
           end
 
@@ -162,7 +162,7 @@ module OpenTelemetry
                 @condition.wait(@mutex, @delay_seconds) while spans.empty? && @keep_running
                 return unless @keep_running
 
-                fetch_batch
+                spans.shift(@batch_size)
               end
 
               @metrics_reporter.observe_value('otel.bsp.buffer_utilization', value: spans.size / max_queue_size.to_f)
@@ -183,33 +183,30 @@ module OpenTelemetry
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error in BatchSpanProcessor#reset_on_fork')
           end
 
-          def export_batch(batch, timeout: @exporter_timeout_seconds)
+          def export_batch(span_array, timeout: @exporter_timeout_seconds)
+            batch = span_array.map(&:to_span_data)
             result_code = @export_mutex.synchronize { @exporter.export(batch, timeout: timeout) }
-            report_result(result_code, batch)
+            report_result(result_code, span_array)
             result_code
           rescue StandardError => e
-            report_result(FAILURE, batch)
+            report_result(FAILURE, span_array)
             @metrics_reporter.add_to_counter('otel.bsp.error', labels: { 'reason' => e.class.to_s })
             FAILURE
           end
 
-          def report_result(result_code, batch)
+          def report_result(result_code, span_array)
             if result_code == SUCCESS
               @metrics_reporter.add_to_counter('otel.bsp.export.success')
-              @metrics_reporter.add_to_counter('otel.bsp.exported_spans', increment: batch.size)
+              @metrics_reporter.add_to_counter('otel.bsp.exported_spans', increment: span_array.size)
             else
-              OpenTelemetry.handle_error(exception: ExportError.new("Unable to export #{batch.size} spans"))
+              OpenTelemetry.handle_error(exception: ExportError.new(span_array))
               @metrics_reporter.add_to_counter('otel.bsp.export.failure')
-              report_dropped_spans(batch.size, reason: 'export-failure')
+              report_dropped_spans(span_array, reason: 'export-failure')
             end
           end
 
-          def report_dropped_spans(count, reason:)
-            @metrics_reporter.add_to_counter('otel.bsp.dropped_spans', increment: count, labels: { 'reason' => reason })
-          end
-
-          def fetch_batch
-            spans.shift(@batch_size).map!(&:to_span_data)
+          def report_dropped_spans(dropped_spans, reason:, function: nil)
+            @metrics_reporter.add_to_counter('otel.bsp.dropped_spans', increment: dropped_spans.size, labels: { 'reason' => reason, OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => function }.compact)
           end
 
           def lock

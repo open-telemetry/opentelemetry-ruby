@@ -1,5 +1,9 @@
 # Release History: opentelemetry-common
 
+### v0.20.1 / 2024-02-06
+
+* FIXED: Patch the issue for frozen string on ruby < 3.0 with string interpolation
+
 ### v0.20.0 / 2023-06-08
 
 * BREAKING CHANGE: Remove support for EoL Ruby 2.7 
