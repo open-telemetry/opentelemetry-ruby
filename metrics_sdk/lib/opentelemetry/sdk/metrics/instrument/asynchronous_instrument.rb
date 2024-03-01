@@ -40,29 +40,24 @@ module OpenTelemetry
             metric_store.add_metric_stream(ms)
           end
 
+          # For multiple callbacks in single instrument
           def register_callback(callback)
-            callbacks = [callback] unless callback.instance_of? Array
-
-            callbacks.each do |cb|
-              if cb.instance_of? Proc
-                @callbacks << cb
-              else
-                OpenTelemetry.logger.warn "The callback registeration failed for instrument #{@name}"
-              end
+            if callback.instance_of?(Proc)
+              @callbacks << callback  # since @callbacks pass to ms, so no need to add it again
+            else
+              OpenTelemetry.logger.warn "Only accept single Proc for registering callback (given callback #{callback.class}"
             end
-            @meter_provider.register_callback(self, @callbacks) # meter_provider should register list of callback
           end
 
-          def remove_callback(callback)
-            orig_callback_size = @callbacks.size
-            callbacks = [callback] unless callback.instance_of? Array
-
-            callbacks.each { |cb| @callback.delete(cb) }
-            @meter_provider.register_callback(self, @callbacks) if @callback.size != orig_callback_size
+          # For callback functions registered after an asynchronous instrument is created,
+          def unregister(callback)
+            @callbacks.delete(callback)
           end
 
           private
 
+          # update the observed value (after calling observe)
+          # invoke callback will execute callback and export metric_data that is observed
           def update(timeout, attributes)
             @metric_streams.each { |ms| ms.invoke_callback(timeout, attributes) }
           end

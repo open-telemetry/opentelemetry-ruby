@@ -9,6 +9,7 @@ module OpenTelemetry
     module Metrics
       module Instrument
         # {ObservableUpDownCounter} is the SDK implementation of {OpenTelemetry::SDK::Metrics::Instrument::AsynchronousInstrument}.
+        # Asynchronous UpDownCounter is an asynchronous Instrument which reports additive value(s) (e.g. the process heap size)
         class ObservableUpDownCounter < OpenTelemetry::SDK::Metrics::Instrument::AsynchronousInstrument
           # Returns the instrument kind as a Symbol
           #
@@ -18,6 +19,7 @@ module OpenTelemetry
           end
 
           # Observe the ObservableCounter with fixed timeout duartion.
+          # Everytime observe, the value should be sent to backend through exporter
           #
           # @param [int] timeout The timeout duration for callback to run, which MUST be a non-negative numeric value.
           # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
@@ -31,7 +33,7 @@ module OpenTelemetry
           private
 
           def default_aggregation
-            OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
+            OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: :cumulative)
           end
         end
       end

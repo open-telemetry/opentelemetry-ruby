@@ -9,6 +9,7 @@ module OpenTelemetry
     module Metrics
       module Instrument
         # {ObservableGauge} is the SDK implementation of {OpenTelemetry::SDK::Metrics::Instrument::AsynchronousInstrument}.
+        # Asynchronous Gauge is an asynchronous Instrument which reports non-additive value(s) (e.g. the room temperature)
         class ObservableGauge < OpenTelemetry::SDK::Metrics::Instrument::AsynchronousInstrument
           # Returns the instrument kind as a Symbol
           #

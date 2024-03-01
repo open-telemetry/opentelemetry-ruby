@@ -22,7 +22,6 @@ module OpenTelemetry
           @stopped = false
           @metric_readers = []
           @resource = resource
-          @registered_callback = {}
         end
 
         # Returns a {Meter} instance.
@@ -128,16 +127,6 @@ module OpenTelemetry
 
         def register_asynchronous_instrument(instrument)
           register_synchronous_instrument(instrument)
-        end
-
-        def register_callback(instrument, callback)
-          instruments = [instrument] unless instrument.instance_of? Array
-          instruments.each { |inst| inst.register_callback(callback) }
-        end
-
-        def remove_callback(instrument, callback)
-          instruments = [instrument] unless instrument.instance_of? Array
-          instruments.each { |inst| inst.remove_callback(callback) }
         end
 
         # The type of the Instrument(s) (optional).

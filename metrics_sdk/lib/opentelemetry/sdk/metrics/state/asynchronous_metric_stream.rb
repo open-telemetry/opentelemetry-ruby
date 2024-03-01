@@ -33,12 +33,16 @@ module OpenTelemetry
             @instrumentation_scope = instrumentation_scope
             @aggregation = aggregation
             @callback = callback
+            @start_time = now_in_nano
 
             @mutex = Mutex.new
           end
 
+          # When collect, if there are asynchronous SDK Instruments involved, their callback functions will be triggered.
+          # Related spec: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#collect
+          # invoke_callback will update the data_points in aggregation
           def collect(start_time, end_time)
-            invoke_callback(nil, {})  # number of callbacks are finalized, collect the metric data in aggregation
+            invoke_callback(nil, {})
 
             @mutex.synchronize do
               MetricData.new(
@@ -49,6 +53,7 @@ module OpenTelemetry
                 @meter_provider.resource,
                 @instrumentation_scope,
                 @aggregation.collect(start_time, end_time),
+                @aggregation.aggregation_temporality,
                 start_time,
                 end_time
               )
@@ -56,15 +61,13 @@ module OpenTelemetry
           end
 
           def invoke_callback(timeout, attributes)
-            timeout_ = timeout || 30
-            Timeout.timeout(timeout) do
-              @callback.each do |cb|
-                value = cb.call
-                @mutex.synchronize { 
-                  @aggregation.update(value, attributes) 
-                }
+            @mutex.synchronize do
+              Timeout.timeout(timeout || 30) do
+                @callback.each do |cb|
+                  value = cb.call
+                  @aggregation.update(value, attributes)
+                end
               end
-              
             end
           end
 
@@ -80,6 +83,10 @@ module OpenTelemetry
               metric_stream_string << " #{value}"
               metric_stream_string
             end.join("\n")
+          end
+
+          def now_in_nano
+            (Time.now.to_r * 1_000_000_000).to_i
           end
         end
       end

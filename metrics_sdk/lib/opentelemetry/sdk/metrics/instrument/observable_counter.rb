@@ -9,6 +9,7 @@ module OpenTelemetry
     module Metrics
       module Instrument
         # {ObservableCounter} is the SDK implementation of {OpenTelemetry::SDK::Metrics::Instrument::AsynchronousInstrument}.
+        # Asynchronous Counter is an asynchronous Instrument which reports non-additive, monotonically increasing value(s) when the instrument is being observed.
         class ObservableCounter < OpenTelemetry::SDK::Metrics::Instrument::AsynchronousInstrument
           # Returns the instrument kind as a Symbol
           #
