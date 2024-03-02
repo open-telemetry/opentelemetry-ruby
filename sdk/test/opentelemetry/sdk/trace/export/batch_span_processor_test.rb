@@ -201,6 +201,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       test_exporter = TestExporter.new
       bsp = BatchSpanProcessor.new(test_exporter)
       bsp.on_finish(TestSpan.new)
+      bsp.on_finish(TestSpan.new)
       result = bsp.force_flush(timeout: 0)
 
       _(result).must_equal(TIMEOUT)
@@ -208,7 +209,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       _(test_exporter.failed_batches.size).must_equal(0)
       _(test_exporter.batches.size).must_equal(0)
 
-      _(bsp.instance_variable_get(:@spans).size).must_equal(1)
+      _(bsp.instance_variable_get(:@spans).size).must_equal(2)
     end
   end
 
@@ -222,7 +223,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       _(test_exporter.failed_batches.size).must_equal(0)
       _(test_exporter.batches.size).must_equal(0)
 
-      _(bsp.instance_variable_get(:@spans).size).must_equal(1)
+      _(bsp.instance_variable_get(:@spans).size).must_equal(0)
     end
 
     it 'works if the thread is not running' do

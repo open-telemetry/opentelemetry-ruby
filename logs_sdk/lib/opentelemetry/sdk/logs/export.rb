@@ -6,10 +6,9 @@
 
 module OpenTelemetry
   module SDK
-    module Metrics
+    module Logs
+      # The Export module contains result codes for exporters
       module Export
-        ExportError = Class.new(OpenTelemetry::Error)
-
         # The operation finished successfully.
         SUCCESS = 0
 
@@ -22,7 +21,3 @@ module OpenTelemetry
     end
   end
 end
-
-require 'opentelemetry/sdk/metrics/export/metric_reader'
-require 'opentelemetry/sdk/metrics/export/in_memory_metric_pull_exporter'
-require 'opentelemetry/sdk/metrics/export/console_metric_pull_exporter'

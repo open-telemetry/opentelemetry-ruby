@@ -14,12 +14,14 @@ module OpenTelemetry
           DEFAULT_BOUNDARIES = [0, 5, 10, 25, 50, 75, 100, 250, 500, 1000].freeze
           private_constant :DEFAULT_BOUNDARIES
 
+          attr_reader :aggregation_temporality
+
           # The default value for boundaries represents the following buckets:
           # (-inf, 0], (0, 5.0], (5.0, 10.0], (10.0, 25.0], (25.0, 50.0],
           # (50.0, 75.0], (75.0, 100.0], (100.0, 250.0], (250.0, 500.0],
           # (500.0, 1000.0], (1000.0, +inf)
           def initialize(
-            aggregation_temporality: :delta,
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta), # TODO: the default should be :cumulative, see issue #1555
             boundaries: DEFAULT_BOUNDARIES,
             record_min_max: true
           )
@@ -32,9 +34,10 @@ module OpenTelemetry
           def collect(start_time, end_time)
             if @aggregation_temporality == :delta
               # Set timestamps and 'move' data point values to result.
-              hdps = @data_points.each_value do |hdp|
+              hdps = @data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano = start_time
                 hdp.time_unix_nano = end_time
+                hdp
               end
               @data_points.clear
               hdps
