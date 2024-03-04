@@ -17,7 +17,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableGauge do
   end
 
   it 'counts without observe' do
-    callback = Proc.new { 10 }
+    callback = proc { 10 }
     meter.create_observable_gauge('gauge', unit: 'smidgen', description: 'a small amount of something', callback: callback)
 
     metric_exporter.pull
@@ -33,9 +33,9 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableGauge do
   end
 
   it 'counts with observe' do
-    callback = Proc.new { 10 }
+    callback = proc { 10 }
     observable_gauge = meter.create_observable_gauge('gauge', unit: 'smidgen', description: 'a small amount of something', callback: callback)
-    observable_gauge.observe(timeout: 10, attributes: {'foo' => 'bar'})
+    observable_gauge.observe(timeout: 10, attributes: { 'foo' => 'bar' })
 
     metric_exporter.pull
     last_snapshot = metric_exporter.metric_snapshots.last

@@ -23,7 +23,9 @@ module OpenTelemetry
             meter_provider,
             instrumentation_scope,
             aggregation,
-            callback
+            callback,
+            timeout,
+            attributes
           )
             @name = name
             @description = description
@@ -34,6 +36,8 @@ module OpenTelemetry
             @aggregation = aggregation
             @callback = callback
             @start_time = now_in_nano
+            @timeout = timeout
+            @attributes = attributes
 
             @mutex = Mutex.new
           end
@@ -42,7 +46,7 @@ module OpenTelemetry
           # Related spec: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#collect
           # invoke_callback will update the data_points in aggregation
           def collect(start_time, end_time)
-            invoke_callback(nil, {})
+            invoke_callback(@timeout, @attributes)
 
             @mutex.synchronize do
               MetricData.new(

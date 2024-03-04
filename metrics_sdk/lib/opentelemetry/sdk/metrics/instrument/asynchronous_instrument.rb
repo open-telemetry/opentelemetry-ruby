@@ -19,6 +19,8 @@ module OpenTelemetry
             @meter_provider = meter_provider
             @metric_streams = []
             @callbacks = []
+            @timeout   = nil
+            @attributes = {}
 
             register_callback(callback)
             meter_provider.register_asynchronous_instrument(self)
@@ -34,7 +36,9 @@ module OpenTelemetry
               @meter_provider,
               @instrumentation_scope,
               aggregation,
-              @callbacks
+              @callbacks,
+              @timeout,
+              @attributes
             )
             @metric_streams << ms
             metric_store.add_metric_stream(ms)
@@ -43,7 +47,7 @@ module OpenTelemetry
           # For multiple callbacks in single instrument
           def register_callback(callback)
             if callback.instance_of?(Proc)
-              @callbacks << callback  # since @callbacks pass to ms, so no need to add it again
+              @callbacks << callback
             else
               OpenTelemetry.logger.warn "Only accept single Proc for registering callback (given callback #{callback.class}"
             end
@@ -52,6 +56,14 @@ module OpenTelemetry
           # For callback functions registered after an asynchronous instrument is created,
           def unregister(callback)
             @callbacks.delete(callback)
+          end
+
+          def timeout(timeout)
+            @timeout = timeout
+          end
+
+          def add_attributes(attributes)
+            @attributes.merge!(attributes) if attributes.instance_of?(Hash)
           end
 
           private

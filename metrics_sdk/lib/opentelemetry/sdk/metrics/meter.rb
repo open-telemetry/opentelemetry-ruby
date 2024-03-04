@@ -26,7 +26,6 @@ module OpenTelemetry
           @meter_provider = meter_provider
         end
 
-
         # Multiple-instrument callbacks
         # Callbacks registered after the time of instrument creation MAY be associated with multiple instruments.
         # Related spec: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/api.md#multiple-instrument-callbacks

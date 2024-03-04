@@ -34,21 +34,21 @@ describe OpenTelemetry::SDK::Metrics::Meter do
 
   describe '#create_observable_counter' do
     it 'creates a observable_counter instrument' do
-      instrument = meter.create_observable_counter('a_observable_counter', unit: 'minutes', description: 'useful description', callback: proc {10})
+      instrument = meter.create_observable_counter('a_observable_counter', unit: 'minutes', description: 'useful description', callback: proc { 10 })
       _(instrument).must_be_instance_of OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter
     end
   end
 
   describe '#create_observable_gauge' do
     it 'creates a observable_gauge instrument' do
-      instrument = meter.create_observable_gauge('a_observable_gauge', unit: 'minutes', description: 'useful description', callback: proc {10})
+      instrument = meter.create_observable_gauge('a_observable_gauge', unit: 'minutes', description: 'useful description', callback: proc { 10 })
       _(instrument).must_be_instance_of OpenTelemetry::SDK::Metrics::Instrument::ObservableGauge
     end
   end
 
   describe '#create_observable_up_down_counter' do
     it 'creates a observable_up_down_counter instrument' do
-      instrument = meter.create_observable_up_down_counter('a_observable_up_down_counter', unit: 'minutes', description: 'useful description', callback: proc {10})
+      instrument = meter.create_observable_up_down_counter('a_observable_up_down_counter', unit: 'minutes', description: 'useful description', callback: proc { 10 })
       _(instrument).must_be_instance_of OpenTelemetry::SDK::Metrics::Instrument::ObservableUpDownCounter
     end
   end
@@ -65,20 +65,20 @@ describe OpenTelemetry::SDK::Metrics::Meter do
       end
 
       it 'create callback with multi asychronous instrument' do
-        callback_1 = Proc.new { 10 }
-        counter_1 = meter.create_observable_counter('counter_1', unit: 'smidgen', description: '', callback: callback_1)
-        counter_2 = meter.create_observable_counter('counter_2', unit: 'smidgen', description: '', callback: callback_1)
+        callback_first = proc { 10 }
+        counter_first  = meter.create_observable_counter('counter_first', unit: 'smidgen', description: '', callback: callback_first)
+        counter_second = meter.create_observable_counter('counter_second', unit: 'smidgen', description: '', callback: callback_first)
 
-        callback_2 = Proc.new { 20 }
-        meter.register_callback([counter_1, counter_2], callback_2)
+        callback_second = proc { 20 }
+        meter.register_callback([counter_first, counter_second], callback_second)
 
-        _(counter_1.instance_variable_get(:@callbacks).size).must_equal 2
-        _(counter_2.instance_variable_get(:@callbacks).size).must_equal 2
+        _(counter_first.instance_variable_get(:@callbacks).size).must_equal 2
+        _(counter_second.instance_variable_get(:@callbacks).size).must_equal 2
 
         metric_exporter.pull
         last_snapshot = metric_exporter.metric_snapshots.last
 
-        _(last_snapshot[0].name).must_equal('counter_1')
+        _(last_snapshot[0].name).must_equal('counter_first')
         _(last_snapshot[0].unit).must_equal('smidgen')
         _(last_snapshot[0].description).must_equal('')
         _(last_snapshot[0].instrumentation_scope.name).must_equal('test')
@@ -86,7 +86,7 @@ describe OpenTelemetry::SDK::Metrics::Meter do
         _(last_snapshot[0].data_points[0].attributes).must_equal({})
         _(last_snapshot[0].aggregation_temporality).must_equal(:delta)
 
-        _(last_snapshot[1].name).must_equal('counter_2')
+        _(last_snapshot[1].name).must_equal('counter_second')
         _(last_snapshot[1].unit).must_equal('smidgen')
         _(last_snapshot[1].description).must_equal('')
         _(last_snapshot[1].instrumentation_scope.name).must_equal('test')
@@ -96,20 +96,20 @@ describe OpenTelemetry::SDK::Metrics::Meter do
       end
 
       it 'remove callback with multi asychronous instrument' do
-        callback_1 = Proc.new { 10 }
-        counter_1 = meter.create_observable_counter('counter_1', unit: 'smidgen', description: '', callback: callback_1)
-        counter_2 = meter.create_observable_counter('counter_2', unit: 'smidgen', description: '', callback: callback_1)
+        callback_first = proc { 10 }
+        counter_first  = meter.create_observable_counter('counter_first', unit: 'smidgen', description: '', callback: callback_first)
+        counter_second = meter.create_observable_counter('counter_second', unit: 'smidgen', description: '', callback: callback_first)
 
-        callback_2 = Proc.new { 20 }
-        meter.register_callback([counter_1, counter_2], callback_2)
+        callback_second = proc { 20 }
+        meter.register_callback([counter_first, counter_second], callback_second)
 
-        _(counter_1.instance_variable_get(:@callbacks).size).must_equal 2
-        _(counter_2.instance_variable_get(:@callbacks).size).must_equal 2
+        _(counter_first.instance_variable_get(:@callbacks).size).must_equal 2
+        _(counter_second.instance_variable_get(:@callbacks).size).must_equal 2
 
         metric_exporter.pull
         last_snapshot = metric_exporter.metric_snapshots.last
 
-        _(last_snapshot[0].name).must_equal('counter_1')
+        _(last_snapshot[0].name).must_equal('counter_first')
         _(last_snapshot[0].unit).must_equal('smidgen')
         _(last_snapshot[0].description).must_equal('')
         _(last_snapshot[0].instrumentation_scope.name).must_equal('test')
@@ -117,7 +117,7 @@ describe OpenTelemetry::SDK::Metrics::Meter do
         _(last_snapshot[0].data_points[0].attributes).must_equal({})
         _(last_snapshot[0].aggregation_temporality).must_equal(:delta)
 
-        _(last_snapshot[1].name).must_equal('counter_2')
+        _(last_snapshot[1].name).must_equal('counter_second')
         _(last_snapshot[1].unit).must_equal('smidgen')
         _(last_snapshot[1].description).must_equal('')
         _(last_snapshot[1].instrumentation_scope.name).must_equal('test')
@@ -125,13 +125,13 @@ describe OpenTelemetry::SDK::Metrics::Meter do
         _(last_snapshot[1].data_points[0].attributes).must_equal({})
         _(last_snapshot[1].aggregation_temporality).must_equal(:delta)
 
-        # unregister the callback_2 from instruments counter_1 and counter_2
-        meter.unregister([counter_1, counter_2], callback_2)
+        # unregister the callback_second from instruments counter_first and counter_second
+        meter.unregister([counter_first, counter_second], callback_second)
 
         metric_exporter.pull
         last_snapshot = metric_exporter.metric_snapshots.last
 
-        _(last_snapshot[0].name).must_equal('counter_1')
+        _(last_snapshot[0].name).must_equal('counter_first')
         _(last_snapshot[0].unit).must_equal('smidgen')
         _(last_snapshot[0].description).must_equal('')
         _(last_snapshot[0].instrumentation_scope.name).must_equal('test')
@@ -139,7 +139,7 @@ describe OpenTelemetry::SDK::Metrics::Meter do
         _(last_snapshot[0].data_points[0].attributes).must_equal({})
         _(last_snapshot[0].aggregation_temporality).must_equal(:delta)
 
-        _(last_snapshot[1].name).must_equal('counter_2')
+        _(last_snapshot[1].name).must_equal('counter_second')
         _(last_snapshot[1].unit).must_equal('smidgen')
         _(last_snapshot[1].description).must_equal('')
         _(last_snapshot[1].instrumentation_scope.name).must_equal('test')
