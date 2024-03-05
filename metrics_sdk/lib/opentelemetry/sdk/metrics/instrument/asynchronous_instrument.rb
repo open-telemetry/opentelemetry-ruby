@@ -22,7 +22,7 @@ module OpenTelemetry
             @timeout   = nil
             @attributes = {}
 
-            register_callback(callback)
+            init_callback(callback)
             meter_provider.register_asynchronous_instrument(self)
           end
 
@@ -44,16 +44,29 @@ module OpenTelemetry
             metric_store.add_metric_stream(ms)
           end
 
-          # For multiple callbacks in single instrument
+          # The API MUST support creation of asynchronous instruments by passing zero or more callback functions
+          # to be permanently registered to the newly created instrument.
+          def init_callback(callback)
+            if callback.instance_of?(Proc)
+              @callbacks << callback
+            elsif callback.instance_of?(Array)
+              callback.each { |cb| @callbacks << cb if cb.instance_of?(Proc) }
+            else
+              OpenTelemetry.logger.warn "Only accept single Proc or Array of Proc for initialization with callback (given callback #{callback.class}"
+            end
+          end
+
+          # Where the API supports registration of callback functions after asynchronous instrumentation creation,
+          # the user MUST be able to undo registration of the specific callback after its registration by some means.
           def register_callback(callback)
             if callback.instance_of?(Proc)
               @callbacks << callback
+              callback
             else
               OpenTelemetry.logger.warn "Only accept single Proc for registering callback (given callback #{callback.class}"
             end
           end
 
-          # For callback functions registered after an asynchronous instrument is created,
           def unregister(callback)
             @callbacks.delete(callback)
           end
@@ -77,4 +90,10 @@ module OpenTelemetry
       end
     end
   end
+end
+
+def create_callback(callbacks)
+  return callbacks if callbacks.instance_of?(Proc)
+
+  puts 'a'
 end

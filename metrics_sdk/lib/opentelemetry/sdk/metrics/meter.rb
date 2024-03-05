@@ -37,6 +37,7 @@ module OpenTelemetry
         # It is RECOMMENDED that the API authors use one of the following forms for the callback function:
         # The list (or tuple, etc.) returned by the callback function contains (Instrument, Measurement) pairs.
         # the Observable Result parameter receives an additional (Instrument, Measurement) pairs
+        # Here it chose the second form
         def register_callback(instruments, callback)
           instruments.each do |instrument|
             instrument.register_callback(callback)
