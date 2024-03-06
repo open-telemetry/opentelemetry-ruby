@@ -549,8 +549,6 @@ describe OpenTelemetry::Exporter::OTLP::MetricsExporter do
       histogram = meter.create_histogram('test_histogram', unit: 'smidgen', description: 'a small amount of something')
       histogram.record(10, attributes: { 'oof' => 'rab' })
       exporter.pull
-
-      sleep 2
       meter_provider.shutdown
 
       encoded_etsr = Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.encode(
