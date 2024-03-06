@@ -80,7 +80,7 @@ module OpenTelemetry
             lock do
               reset_on_fork
               n = spans.size + 1 - max_queue_size
-              if n.positive?
+              if n > 0
                 dropped_spans = spans.shift(n)
                 report_dropped_spans(dropped_spans, reason: 'buffer-full', function: __method__.to_s)
               end
