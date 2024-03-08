@@ -1,20 +1,8 @@
-AllCops:
-  TargetRubyVersion: "3.0"
+inherit_from: ../contrib/rubocop.yml
 
-Lint/UnusedMethodArgument:
+Gemspec/RequireMFA:
   Enabled: false
-Layout/LineLength:
-  Enabled: false
-Metrics/AbcSize:
-  Enabled: false
-Metrics/MethodLength:
-  Max: 21
-Metrics/ParameterLists:
-  Enabled: false
+
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-test-helpers.rb"
-Style/ModuleFunction:
-  Enabled: false
-Gemspec/RequireMFA:
-  Enabled: false
