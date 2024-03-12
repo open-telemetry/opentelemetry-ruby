@@ -1,24 +1,16 @@
-AllCops:
-  TargetRubyVersion: "3.0"
+inherit_from: ../contrib/rubocop.yml
 
-Lint/UnusedMethodArgument:
-  Enabled: false
-Naming/MethodParameterName:
-  Enabled: false
 Metrics/AbcSize:
   Max: 30
-Metrics/LineLength:
-  Enabled: false
 Metrics/MethodLength:
   Max: 50
 Metrics/PerceivedComplexity:
   Max: 30
 Metrics/CyclomaticComplexity:
   Max: 20
-Metrics/ParameterLists:
-  Enabled: false
+
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-sdk-experimental.rb"
-Style/ModuleFunction:
+Naming/MethodParameterName:
   Enabled: false

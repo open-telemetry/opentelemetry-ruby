@@ -1,25 +1,16 @@
+inherit_from: ../contrib/rubocop.yml
+
 AllCops:
-  TargetRubyVersion: '3.0'
   NewCops: disable
-  SuggestExtensions: false
-Lint/MissingSuper:
-  Enabled: false
-Lint/UnusedMethodArgument:
-  Enabled: false
+
 Metrics/AbcSize:
   Max: 30
-Layout/LineLength:
-  Enabled: false
 Metrics/MethodLength:
   Max: 50
 Metrics/PerceivedComplexity:
   Max: 30
 Metrics/CyclomaticComplexity:
   Max: 20
-Metrics/ParameterLists:
-  Enabled: false
 Naming/FileName:
   Exclude:
     - 'lib/opentelemetry-logs-sdk.rb'
-Style/ModuleFunction:
-  Enabled: false
