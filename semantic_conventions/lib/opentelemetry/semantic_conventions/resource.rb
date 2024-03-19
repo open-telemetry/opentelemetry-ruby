@@ -6,6 +6,7 @@
 
 module OpenTelemetry
   module SemanticConventions
+    # Semantic conventions for resource attributes
     module Resource
       def self.const_missing(const_name)
         attribute_name = OpenTelemetry::SemanticConventions_1_20_0::Resource.const_get(const_name)

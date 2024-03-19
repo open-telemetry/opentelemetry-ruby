@@ -6,6 +6,7 @@
 
 module OpenTelemetry
   module SemanticConventions
+    # Semantic conventions for trace attributes
     module Trace
       def self.const_missing(const_name)
         attribute_name = OpenTelemetry::SemanticConventions_1_20_0::Trace.const_get(const_name)

@@ -85,9 +85,9 @@ def semconvgen(semconvrepo, kind:, only:)
 end
 
 task :update_includes do
-  `sed -i.bak "s/::SemanticConventions_.*::/::SemanticConventions_#{SPEC_VERSION.tr(".", "_")}::/g" lib/opentelemetry/semantic_conventions/trace.rb`
-  `sed -i.bak "s/::SemanticConventions_.*::/::SemanticConventions_#{SPEC_VERSION.tr(".", "_")}::/g" lib/opentelemetry/semantic_conventions/resource.rb`
-  `sed -i.bak "s/#{PREV_SPEC_VERSION.to_s.gsub(/\./, "\\.")}/#{SPEC_VERSION}/" lib/opentelemetry/semantic_conventions.rb`
+  `sed -i.bak "s/::SemanticConventions_.*::/::SemanticConventions_#{SPEC_VERSION.tr('.', '_')}::/g" lib/opentelemetry/semantic_conventions/trace.rb`
+  `sed -i.bak "s/::SemanticConventions_.*::/::SemanticConventions_#{SPEC_VERSION.tr('.', '_')}::/g" lib/opentelemetry/semantic_conventions/resource.rb`
+  `sed -i.bak "s/#{PREV_SPEC_VERSION.to_s.gsub('.', '\\.')}/#{SPEC_VERSION}/" lib/opentelemetry/semantic_conventions.rb`
   `rm lib/opentelemetry/semantic_conventions/trace.rb.bak`
   `rm lib/opentelemetry/semantic_conventions/resource.rb.bak`
   `rm lib/opentelemetry/semantic_conventions.rb.bak`
