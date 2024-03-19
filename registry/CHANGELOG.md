@@ -2,7 +2,7 @@
 
 ### v0.3.1 / 2024-03-19
 
-* (No significant changes)
+* fix: Make use_all config friendlier https://github.com/open-telemetry/opentelemetry-ruby/pull/1406
 
 ### v0.3.0 / 2023-06-08
 
