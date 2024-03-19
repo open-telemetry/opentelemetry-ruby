@@ -26,6 +26,9 @@ Metrics/MethodLength:
 Metrics/ModuleLength:
   Enabled: false
 
+Naming/ClassAndModuleCamelCase:
+  Exclude:
+    - lib/opentelemetry/semantic_conventions/**/*.rb
 Naming/FileName:
   Exclude:
     - lib/opentelemetry-semantic_conventions.rb

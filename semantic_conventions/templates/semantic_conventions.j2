@@ -7,7 +7,7 @@
 require_relative '../{{prev_spec_version}}/{{kind}}'
 
 module OpenTelemetry
-  module SemanticConventions_{{spec_version | replace(".", "_")}} # rubocop:disable Naming/ClassAndModuleCamelCase
+  module SemanticConventions_{{spec_version | replace(".", "_")}}
     # https://github.com/open-telemetry/opentelemetry-specification/blob/v{{spec_version}}/specification/
     module {{module}}
     {%- if (prev_spec_version | string()) != "" %}

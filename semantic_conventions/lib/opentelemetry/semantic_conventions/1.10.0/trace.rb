@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 module OpenTelemetry
-  module SemanticConventions_1_10_0 # rubocop:disable Naming/ClassAndModuleCamelCase
+  module SemanticConventions_1_10_0
     # https://github.com/open-telemetry/opentelemetry-specification/tree/v1.10.0/specification
     module Trace
       # The full invoked ARN as provided on the `Context` passed to the function (`Lambda-Runtime-Invoked-Function-Arn` header on the `/runtime/invocation/next` applicable)

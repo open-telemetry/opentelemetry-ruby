@@ -7,7 +7,7 @@
 require_relative '../1.10.0/resource'
 
 module OpenTelemetry
-  module SemanticConventions_1_20_0 # rubocop:disable Naming/ClassAndModuleCamelCase
+  module SemanticConventions_1_20_0
     # https://github.com/open-telemetry/opentelemetry-specification/blob/v1.20.0/specification/
     module Resource
       def self.const_missing(const_name)
