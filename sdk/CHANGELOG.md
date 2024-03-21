@@ -2,7 +2,7 @@
 
 ### v1.4.1 / 2024-03-21
 
-* FIXED: ForwardingLogger should foward block param
+* FIXED: ForwardingLogger should foward block param.
 
 ### v1.4.0 / 2024-01-25
 
