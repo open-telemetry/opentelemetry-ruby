@@ -138,7 +138,7 @@ module OpenTelemetry
           trace_id ||= @id_generator.generate_trace_id
           result = @sampler.should_sample?(trace_id: trace_id, parent_context: parent_context, links: links, name: name, kind: kind, attributes: attributes)
           span_id = @id_generator.generate_span_id
-          if result.recording? && !@stopped
+          if !OpenTelemetry::Common::Utilities.untraced?(parent_context) && result.recording? && !@stopped
             trace_flags = result.sampled? ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
             context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: span_id, trace_flags: trace_flags, tracestate: result.tracestate)
             attributes = attributes&.merge(result.attributes) || result.attributes.dup
