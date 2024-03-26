@@ -1,5 +1,6 @@
+inherit_from: ../contrib/rubocop.yml
+
 AllCops:
-  TargetRubyVersion: '3.0'
   NewCops: enable
 
 Bundler/OrderedGems:
@@ -13,25 +14,16 @@ Gemspec/RequireMFA:
 
 Layout/EmptyLinesAroundModuleBody:
   Enabled: false
-Layout/LineLength:
-  Enabled: false
 Layout/TrailingEmptyLines:
   Enabled: false
 Layout/TrailingWhitespace:
   Enabled: false
 
-Lint/UnusedMethodArgument:
-  Enabled: false
-
-Metrics/AbcSize:
-  Enabled: false
 Metrics/BlockLength:
   Enabled: false
 Metrics/MethodLength:
   Max: 20
 Metrics/ModuleLength:
-  Enabled: false
-Metrics/ParameterLists:
   Enabled: false
 
 Naming/FileName:
@@ -41,8 +33,6 @@ Naming/FileName:
 Style/FrozenStringLiteralComment:
   Exclude:
     - gemfiles/**/*
-Style/ModuleFunction:
-  Enabled: false
 Style/StringLiterals:
   Exclude:
     - gemfiles/**/*

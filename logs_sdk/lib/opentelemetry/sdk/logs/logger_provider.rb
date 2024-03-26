@@ -43,7 +43,7 @@ module OpenTelemetry
               "invalid name. Name provided: #{name.inspect}")
           end
 
-         Logger.new(name, version, self)
+          Logger.new(name, version, self)
         end
 
         # Adds a new log record processor to this LoggerProvider's

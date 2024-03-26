@@ -35,10 +35,10 @@ module OpenTelemetry
         end
       end
 
-      def add(severity, message = nil, progname = nil)
+      def add(severity, message = nil, progname = nil, &block)
         return true if severity < @level
 
-        @logger.add(severity, message, progname)
+        @logger.add(severity, message, progname, &block)
       end
 
       def debug(progname = nil, &block)
