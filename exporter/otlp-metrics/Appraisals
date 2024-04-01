@@ -1,0 +1,12 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+(14..25).each do |i|
+  version = "3.#{i}"
+  appraise "google-protobuf-#{version}" do
+    gem 'google-protobuf', "~> #{version}"
+  end
+end

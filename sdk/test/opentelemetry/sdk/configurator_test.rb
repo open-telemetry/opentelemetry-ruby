@@ -31,12 +31,13 @@ describe OpenTelemetry::SDK::Configurator do
       _(configurator.logger).must_be_instance_of(Logger)
     end
 
-    it 'assigns the logger to OpenTelemetry.logger' do
+    it 'assigns the logger to OpenTelemetry.logger, with a default level of info' do
       custom_logger = Logger.new(File::NULL, level: 'INFO')
       _(OpenTelemetry.logger).wont_equal custom_logger
 
       OpenTelemetry::SDK.configure { |c| c.logger = custom_logger }
       _(OpenTelemetry.logger.instance_variable_get(:@logger)).must_equal custom_logger
+      _(OpenTelemetry.logger.instance_variable_get(:@level)).must_equal Logger::INFO
       _(OpenTelemetry.logger).must_be_instance_of(OpenTelemetry::SDK::ForwardingLogger)
     end
 
@@ -60,6 +61,26 @@ describe OpenTelemetry::SDK::Configurator do
 
         OpenTelemetry.logger.warn('The forwarding logger should not forward this message')
         _(log_stream.string).must_be_empty
+      end
+    end
+
+    it 'forwards log messages supplied as parameters' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        custom_logger = Logger.new(log_stream)
+        OpenTelemetry::SDK.configure { |c| c.logger = custom_logger }
+        message = 'The forwarding logger should forward this message'
+        OpenTelemetry.logger.info(message)
+        _(log_stream.string).must_include message
+      end
+    end
+
+    it 'forwards log messages supplied in blocks' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        custom_logger = Logger.new(log_stream)
+        OpenTelemetry::SDK.configure { |c| c.logger = custom_logger }
+        message = 'The forwarding logger should forward this message'
+        OpenTelemetry.logger.info { message }
+        _(log_stream.string).must_include message
       end
     end
   end

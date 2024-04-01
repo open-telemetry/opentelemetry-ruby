@@ -1,0 +1,8 @@
+inherit_from: ../.rubocop.yml
+
+Style/MethodCallWithoutArgsParentheses:
+  Exclude:
+    - 'opentelemetry/exporter/otlp/exporter_test.rb'
+Style/BlockDelimiters:
+  Exclude:
+   - 'opentelemetry/exporter/otlp/exporter_test.rb'
