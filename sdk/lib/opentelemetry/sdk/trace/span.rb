@@ -118,6 +118,37 @@ module OpenTelemetry
           self
         end
 
+        # Add a link to a {Span}.
+        #
+        # Adding links at span creation using the `links` option is preferred
+        # to calling add_link later, because head sampling decisions can only
+        # consider information present during span creation.
+        #
+        # Example>
+        #
+        #   span.add_link(OpenTelemetry::Trace::Link.new(span_to_link_from.context))
+        #
+        # Note that the OpenTelemetry project
+        # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-semantic-conventions.md
+        # documents} certain "standard attributes" that have prescribed semantic
+        # meanings.
+        #
+        # @param [OpenTelemetry::Trace::Link] the link object to add on the {Span}.
+        #
+        # @return [self] returns itself
+        def add_link(link)
+          @mutex.synchronize do
+            if @ended
+              OpenTelemetry.logger.warn('Calling add_link on an ended Span.')
+            else
+              @links ||= []
+              @links = trim_links(@links + [link], @span_limits.link_count_limit, @span_limits.link_attribute_count_limit)
+              @total_recorded_links += 1
+            end
+          end
+          self
+        end
+
         # Add an Event to a {Span}.
         #
         # Example:
