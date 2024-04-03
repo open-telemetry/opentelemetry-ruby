@@ -427,8 +427,11 @@ module OpenTelemetry
       # Client Id for the Consumer or Producer that is handling the message
       MESSAGING_KAFKA_CLIENT_ID = 'messaging.kafka.client_id'
 
-      # Partition the message is sent to
+      # Deprecated, use `MESSAGING_KAFKA_DESTINATION_PARTITION` instead
       MESSAGING_KAFKA_PARTITION = 'messaging.kafka.partition'
+
+      # Partition the message is sent to
+      MESSAGING_KAFKA_DESTINATION_PARTITION = 'messaging.kafka.destination.partition'
 
       # A boolean that is true if the message is a tombstone
       MESSAGING_KAFKA_TOMBSTONE = 'messaging.kafka.tombstone'
