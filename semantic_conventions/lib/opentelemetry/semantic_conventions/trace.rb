@@ -422,7 +422,7 @@ module OpenTelemetry
       MESSAGING_KAFKA_MESSAGE_KEY = 'messaging.kafka.message_key'
 
       # Name of the Kafka Consumer Group that is handling the message. Only applies to consumers, not producers
-      MESSAGING_KAFKA_CONSUMER_GROUP = 'messaging.kafka.consumer_group'
+      MESSAGING_KAFKA_CONSUMER_GROUP = 'messaging.kafka.consumer.group'
 
       # Client Id for the Consumer or Producer that is handling the message
       MESSAGING_KAFKA_CLIENT_ID = 'messaging.kafka.client_id'
