@@ -1,7 +1,6 @@
+inherit_from: ../../contrib/rubocop.yml
+
 AllCops:
-  TargetRubyVersion: "3.0"
-  NewCops: disable
-  SuggestExtensions: false
   Exclude:
     - "thrift/**/*"
     - "vendor/**/*"
@@ -9,29 +8,9 @@ AllCops:
 Bundler/OrderedGems:
   Exclude:
     - gemfiles/**/*
-Lint/UnusedMethodArgument:
-  Enabled: false
-Lint/MissingSuper:
-  Enabled: false
-Lint/ConstantDefinitionInBlock:
-  Exclude:
-    - "test/**/*"
-Style/StringConcatenation:
-  Exclude:
-    - "test/**/*"
-Metrics/AbcSize:
-  Enabled: false
-Layout/LineLength:
-  Enabled: false
-Metrics/MethodLength:
-  Max: 20
-Metrics/ParameterLists:
-  Enabled: false
 Style/FrozenStringLiteralComment:
   Exclude:
     - gemfiles/**/*
-Style/ModuleFunction:
-  Enabled: false
 Style/StringLiterals:
   Exclude:
     - gemfiles/**/*

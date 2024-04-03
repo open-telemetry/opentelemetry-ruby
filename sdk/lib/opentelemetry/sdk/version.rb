@@ -7,6 +7,6 @@
 module OpenTelemetry
   module SDK
     ## Current OpenTelemetry version
-    VERSION = '1.4.0'
+    VERSION = '1.4.1'
   end
 end
