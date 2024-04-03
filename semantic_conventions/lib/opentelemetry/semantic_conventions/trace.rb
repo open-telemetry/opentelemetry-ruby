@@ -411,6 +411,9 @@ module OpenTelemetry
       # A string identifying the kind of message consumption as defined in the [Operation names](#operation-names) section above. If the operation is "send", this attribute MUST NOT be set, since the operation can be inferred from the span kind in that case
       MESSAGING_OPERATION = 'messaging.operation'
 
+      # The number of messages sent, received, or processed in the scope of the batching operation
+      MESSAGING_BATCH_MESSAGE_COUNT = 'messaging.batch.message_count'
+
       # The identifier for the consumer receiving a message. For Kafka, set it to `{messaging.kafka.consumer_group} - {messaging.kafka.client_id}`, if both are present, or only `messaging.kafka.consumer_group`. For brokers, such as RabbitMQ and Artemis, set it to the `client_id` of the client consuming the message
       MESSAGING_CONSUMER_ID = 'messaging.consumer_id'
 
