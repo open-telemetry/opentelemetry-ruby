@@ -419,7 +419,7 @@ module OpenTelemetry
 
       # Message keys in Kafka are used for grouping alike messages to ensure they're processed on the same partition. They differ from `messaging.message_id` in that they're not unique. If the key is `null`, the attribute MUST NOT be set
       # @note If the key type is not string, it's string representation has to be supplied for the attribute. If the key has no unambiguous, canonical string form, don't include its value
-      MESSAGING_KAFKA_MESSAGE_KEY = 'messaging.kafka.message_key'
+      MESSAGING_KAFKA_MESSAGE_KEY = 'messaging.kafka.message.key'
 
       # Name of the Kafka Consumer Group that is handling the message. Only applies to consumers, not producers
       MESSAGING_KAFKA_CONSUMER_GROUP = 'messaging.kafka.consumer.group'
