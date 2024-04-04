@@ -84,7 +84,7 @@ module OpenTelemetry
       # to calling add_link later, because head sampling decisions can only
       # consider information present during span creation.
       #
-      # Example>
+      # Example:
       #
       #   span.add_link(OpenTelemetry::Trace::Link.new(span_to_link_from.context))
       #
