@@ -1,25 +1,17 @@
+inherit_from: ../../contrib/rubocop.yml
+
 AllCops:
-  TargetRubyVersion: "3.0"
   Exclude:
     - "lib/opentelemetry/proto/**/*"
     - "vendor/**/*"
 
-Lint/UnusedMethodArgument:
-  Enabled: false
-Metrics/AbcSize:
-  Enabled: false
-Metrics/LineLength:
+Metrics/CyclomaticComplexity:
   Enabled: false
 Metrics/MethodLength:
   Enabled: false
 Metrics/PerceivedComplexity:
   Enabled: false
-Metrics/CyclomaticComplexity:
-  Enabled: false
-Metrics/ParameterLists:
-  Enabled: false
+
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-exporter-otlp-common.rb"
-Style/ModuleFunction:
-  Enabled: false

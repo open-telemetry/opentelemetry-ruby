@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-registry
 
+### v0.3.1 / 2024-03-19
+
+* fix: Make use_all config friendlier [#1406](https://github.com/open-telemetry/opentelemetry-ruby/pull/1406)
+
 ### v0.3.0 / 2023-06-08
 
 * BREAKING CHANGE: Remove support for EoL Ruby 2.7 
