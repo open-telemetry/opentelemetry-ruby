@@ -57,7 +57,7 @@ describe OpenTelemetry::SDK do
       _(periodic_metric_reader.instance_variable_get(:@thread).alive?).must_equal false
     end
 
-    it 'emits 1 metrics after 1 seconds when interval is > 1 seconds' do
+    it 'emits 1 metric after 1 second when interval is > 1 second' do
       OpenTelemetry::SDK.configure
 
       metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
