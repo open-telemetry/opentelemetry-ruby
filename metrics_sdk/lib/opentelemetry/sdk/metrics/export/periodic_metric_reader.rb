@@ -10,7 +10,7 @@ module OpenTelemetry
       module Export
         # PeriodicMetricReader provides a minimal example implementation.
         class PeriodicMetricReader < MetricReader
-          def initialize(interval_millis: 60, timout_millis: 30, exporter: nil)
+          def initialize(interval_millis: 60, timeout_millis: 30, exporter: nil)
             super()
 
             @interval_millis = interval_millis
