@@ -33,7 +33,7 @@ module OpenTelemetry
                 while @continue
                   sleep(@interval_millis)
                   begin
-                    Timeout.timeout(@timout_millis) { @exporter.export(collect) }
+                    Timeout.timeout(@timeout_millis) { @exporter.export(collect) }
                   rescue Timeout::Error => e
                     OpenTelemetry.handle_error(exception: e, message: 'PeriodicMetricReader timeout.')
                   end
