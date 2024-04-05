@@ -14,7 +14,7 @@ module OpenTelemetry
             super()
 
             @interval_millis = interval_millis
-            @timout_millis = timout_millis
+            @timeout_millis = timeout_millis
             @exporter = exporter
             @thread   = nil
             @continue = false
