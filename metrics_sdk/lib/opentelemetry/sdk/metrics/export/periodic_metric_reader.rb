@@ -10,11 +10,11 @@ module OpenTelemetry
       module Export
         # PeriodicMetricReader provides a minimal example implementation.
         class PeriodicMetricReader < MetricReader
-          def initialize(interval_millis: 60, timout_millis: 30, exporter: nil)
+          def initialize(interval_millis: 60, timeout_millis: 30, exporter: nil)
             super()
 
             @interval_millis = interval_millis
-            @timout_millis = timout_millis
+            @timeout_millis = timeout_millis
             @exporter = exporter
             @thread   = nil
             @continue = false
@@ -33,7 +33,7 @@ module OpenTelemetry
                 while @continue
                   sleep(@interval_millis)
                   begin
-                    Timeout.timeout(@timout_millis) { @exporter.export(collect) }
+                    Timeout.timeout(@timeout_millis) { @exporter.export(collect) }
                   rescue Timeout::Error => e
                     OpenTelemetry.handle_error(exception: e, message: 'PeriodicMetricReader timeout.')
                   end
