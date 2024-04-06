@@ -10,7 +10,9 @@ module OpenTelemetry
       module Export
         # PeriodicMetricReader provides a minimal example implementation.
         class PeriodicMetricReader < MetricReader
-          def initialize(interval_millis: 60, timeout_millis: 30, exporter: nil)
+          def initialize(interval_millis: ENV.fetch('OTEL_METRIC_EXPORT_INTERVAL', 60),
+                         timeout_millis: ENV.fetch('OTEL_METRIC_EXPORT_TIMEOUT', 30),
+                         exporter: nil)
             super()
 
             @interval_millis = interval_millis
@@ -43,15 +45,15 @@ module OpenTelemetry
           end
 
           def close
-            @continue = false   # force termination in next iteration
-            @thread.join(5)     # wait 5 seconds for collecting and exporting
+            @continue = false # force termination in next iteration
+            @thread.join(@interval_millis) # wait 5 seconds for collecting and exporting
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'Fail to close PeriodicMetricReader.')
           end
 
-          # TODO: determine correctness: directly kill the reader without waiting for next metrics collection
           def shutdown(timeout: nil)
             close
+            @exporter.force_flush if @exporter.respond_to?(:force_flush)
             @exporter.shutdown
             Export::SUCCESS
           rescue StandardError

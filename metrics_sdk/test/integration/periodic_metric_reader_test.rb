@@ -14,7 +14,7 @@ describe OpenTelemetry::SDK do
       OpenTelemetry::SDK.configure
 
       metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(interval_millis: 5, timout_millis: 5, exporter: metric_exporter)
+      periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(interval_millis: 5, timeout_millis: 5, exporter: metric_exporter)
 
       OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
 
@@ -53,7 +53,6 @@ describe OpenTelemetry::SDK do
       _(first_snapshot[0].data_points[3].value).must_equal(4)
       _(first_snapshot[0].data_points[3].attributes).must_equal('d' => 'e')
 
-      puts periodic_metric_reader.instance_variable_get(:@thread)
       _(periodic_metric_reader.instance_variable_get(:@thread).alive?).must_equal false
     end
 
@@ -61,7 +60,7 @@ describe OpenTelemetry::SDK do
       OpenTelemetry::SDK.configure
 
       metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(interval_millis: 5, timout_millis: 5, exporter: metric_exporter)
+      periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(interval_millis: 5, timeout_millis: 5, exporter: metric_exporter)
 
       OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
 
