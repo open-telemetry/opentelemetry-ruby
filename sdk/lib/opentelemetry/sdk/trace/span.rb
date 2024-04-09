@@ -142,7 +142,7 @@ module OpenTelemetry
               OpenTelemetry.logger.warn('Calling add_link on an ended Span.')
             else
               @links ||= []
-              @links = trim_links(@links + [link], @span_limits.link_count_limit, @span_limits.link_attribute_count_limit)
+              @links = trim_links(@links << link, @span_limits.link_count_limit, @span_limits.link_attribute_count_limit)
               @total_recorded_links += 1
             end
           end
@@ -273,6 +273,7 @@ module OpenTelemetry
             @end_timestamp = relative_timestamp(end_timestamp)
             @attributes = validated_attributes(@attributes).freeze
             @events.freeze
+            @links.freeze
             @ended = true
           end
           @span_processors.each { |processor| processor.on_finish(self) }
@@ -404,7 +405,7 @@ module OpenTelemetry
 
           if links.size <= link_count_limit &&
              links.all? { |link| link.span_context.valid? && link.attributes.size <= link_attribute_count_limit && Internal.valid_attributes?(name, 'link', link.attributes) }
-            return links.frozen? ? links : links.clone.freeze
+            return links
           end
 
           # Slow path: trim attributes for each Link.
@@ -417,7 +418,7 @@ module OpenTelemetry
             excess = attrs.size - link_attribute_count_limit
             excess.times { attrs.shift } if excess.positive?
             OpenTelemetry::Trace::Link.new(link.span_context, attrs)
-          end.freeze
+          end
         end
 
         def append_event(events, event) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
