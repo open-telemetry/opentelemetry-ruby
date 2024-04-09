@@ -126,7 +126,7 @@ module OpenTelemetry
         end
 
         # @api private
-        def internal_start_span(name, kind, attributes, links, start_timestamp, parent_context, instrumentation_scope) # rubocop:disable Metrics/MethodLength
+        def internal_start_span(name, kind, attributes, links, start_timestamp, parent_context, instrumentation_scope) # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
           parent_span = OpenTelemetry::Trace.current_span(parent_context)
           parent_span_context = parent_span.context
 
