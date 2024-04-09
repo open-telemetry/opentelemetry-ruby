@@ -329,5 +329,28 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       _(span.status.code).must_equal(OpenTelemetry::Trace::Status::ERROR)
       _(span.status.description).must_equal('Unhandled exception of type: RuntimeError')
     end
+
+    it 'yields a no-op span within an untraced block' do
+      tracer_provider.sampler = Samplers::ALWAYS_ON
+      tracer.in_span('root') do
+        OpenTelemetry::Common::Utilities.untraced do
+          tracer.in_span('op') do |span|
+            _(span).must_be_instance_of(OpenTelemetry::Trace::Span)
+            _(span.context.trace_flags).wont_be :sampled?
+            _(span).wont_be :recording?
+          end
+        end
+      end
+    end
+
+    it 'does not log "Calling finish on an ended Span" warnings' do
+      tracer_provider.sampler = Samplers::ALWAYS_ON
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        tracer.in_span('root') do
+          OpenTelemetry::Common::Utilities.untraced { tracer.in_span('op') {} }
+        end
+        _(log_stream.string).wont_include 'Calling finish on an ended Span'
+      end
+    end
   end
 end
