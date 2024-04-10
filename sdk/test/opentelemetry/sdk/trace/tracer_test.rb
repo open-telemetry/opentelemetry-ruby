@@ -331,7 +331,6 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     end
 
     it 'yields a no-op span within an untraced block' do
-      tracer_provider.sampler = Samplers::ALWAYS_ON
       tracer.in_span('root') do
         OpenTelemetry::Common::Utilities.untraced do
           tracer.in_span('op') do |span|
@@ -344,7 +343,6 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     end
 
     it 'does not log "Calling finish on an ended Span" warnings' do
-      tracer_provider.sampler = Samplers::ALWAYS_ON
       OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
         tracer.in_span('root') do
           OpenTelemetry::Common::Utilities.untraced { tracer.in_span('op') {} }
