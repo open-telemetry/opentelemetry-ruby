@@ -382,6 +382,17 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(result).must_equal(SUCCESS)
     end
 
+    it 'records metrics' do
+      metrics_reporter = Minitest::Mock.new
+      exporter = OpenTelemetry::Exporter::OTLP::Exporter.new(metrics_reporter: metrics_reporter)
+      stub_request(:post, 'http://localhost:4318/v1/traces').to_timeout.then.to_return(status: 200)
+      metrics_reporter.expect(:record_value, nil) { |m, _, _| m == 'otel.otlp_exporter.encode_duration' }
+      metrics_reporter.expect(:record_value, nil) { |m, _, _| m == 'otel.otlp_exporter.message.uncompressed_size' }
+      metrics_reporter.expect(:record_value, nil) { |m, _, _| m == 'otel.otlp_exporter.message.compressed_size' }
+      metrics_reporter.expect(:add_to_counter, nil) { |m, _, _| m == 'otel.otlp_exporter.failure' }
+      exporter.export([OpenTelemetry::TestHelpers.create_span_data])
+    end
+
     it 'retries on timeout' do
       stub_request(:post, 'http://localhost:4318/v1/traces').to_timeout.then.to_return(status: 200)
       span_data = OpenTelemetry::TestHelpers.create_span_data
