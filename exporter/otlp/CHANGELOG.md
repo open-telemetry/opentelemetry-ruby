@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.27.0 / 2024-04-19
+
+* ADDED: Add stats for serialization time in otlp exporter
+
 ### v0.26.3 / 2024-02-01
 
 * FIXED: do not log request failure in backoff?
