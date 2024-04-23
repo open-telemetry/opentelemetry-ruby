@@ -126,7 +126,7 @@ module OpenTelemetry
         end
 
         # @api private
-        def internal_start_span(name, kind, attributes, links, start_timestamp, parent_context, instrumentation_scope) # rubocop:disable Metrics/MethodLength
+        def internal_start_span(name, kind, attributes, links, start_timestamp, parent_context, instrumentation_scope) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
           parent_span = OpenTelemetry::Trace.current_span(parent_context)
           parent_span_context = parent_span.context
 
@@ -134,8 +134,13 @@ module OpenTelemetry
             parent_span_id = parent_span_context.span_id
             trace_id = parent_span_context.trace_id
           end
-
           trace_id ||= @id_generator.generate_trace_id
+
+          if OpenTelemetry::Common::Utilities.untraced?(parent_context)
+            span_id = parent_span_id || @id_generator.generate_span_id
+            return OpenTelemetry::Trace.non_recording_span(OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: span_id))
+          end
+
           result = @sampler.should_sample?(trace_id: trace_id, parent_context: parent_context, links: links, name: name, kind: kind, attributes: attributes)
           span_id = @id_generator.generate_span_id
           if result.recording? && !@stopped
