@@ -2,7 +2,7 @@
 
 ### v0.21.0 / 2024-05-08
 
-* ADDED: Add untraced ctx method
+* ADDED: Untraced method updated to support both block and non block structured calls
 
 ### v0.20.1 / 2024-02-06
 
