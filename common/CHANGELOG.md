@@ -1,5 +1,9 @@
 # Release History: opentelemetry-common
 
+### v0.21.0 / 2024-05-08
+
+* ADDED: Add untraced ctx method
+
 ### v0.20.1 / 2024-02-06
 
 * FIXED: Patch the issue for frozen string on ruby < 3.0 with string interpolation
