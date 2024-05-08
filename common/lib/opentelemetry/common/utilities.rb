@@ -89,9 +89,12 @@ module OpenTelemetry
       end
 
       # Disables tracing within the provided block.
-      def untraced
-        Context.with_value(UNTRACED_KEY, true) do |ctx, _|
-          yield ctx
+      def untraced(context = Context.current)
+        context = context.set_value(UNTRACED_KEY, true)
+        if block_given?
+          Context.with_current(context) { |ctx| yield ctx }
+        else
+          context
         end
       end
 
