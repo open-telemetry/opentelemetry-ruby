@@ -6,6 +6,8 @@ Bundler/OrderedGems:
 Style/FrozenStringLiteralComment:
   Exclude:
     - gemfiles/**/*
+Style/ExplicitBlockArgument:
+  Enabled: false
 Style/StringLiterals:
   Exclude:
     - gemfiles/**/*
