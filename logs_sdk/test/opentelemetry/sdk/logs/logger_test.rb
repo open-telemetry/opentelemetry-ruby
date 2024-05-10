@@ -27,12 +27,13 @@ describe OpenTelemetry::SDK::Logs::Logger do
     it 'sends the newly-created log record to the processors' do
       mock_log_record = Minitest::Mock.new
       mock_context = Minitest::Mock.new
+      def mock_context.value(key); OpenTelemetry::Trace::Span::INVALID; end
 
       OpenTelemetry::SDK::Logs::LogRecord.stub(:new, ->(_) { mock_log_record }) do
         mock_log_record_processor = Minitest::Mock.new
         logger_provider.add_log_record_processor(mock_log_record_processor)
         mock_log_record_processor.expect(:on_emit, nil, [mock_log_record, mock_context])
-        logger.on_emit(span_context: mock_context)
+        logger.on_emit(context: mock_context)
         mock_log_record_processor.verify
       end
     end

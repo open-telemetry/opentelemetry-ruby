@@ -34,48 +34,64 @@ module OpenTelemetry
 
         # Emit a {LogRecord} to the processing pipeline.
         #
-        # @param timestamp [optional Float, Time] Time in nanoseconds since Unix
+        # @param [optional Float, Time] timestamp Time in nanoseconds since Unix
         #   epoch when the event occurred measured by the origin clock, i.e. the
         #   time at the source.
-        # @param observed_timestamp [optional Float, Time] Time in nanoseconds
+        # @param [optional Float, Time] observed_timestamp Time in nanoseconds
         #   since Unix epoch when the event was observed by the collection system.
         #   Intended default: Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond)
-        # @param [optional OpenTelemetry::Trace::SpanContext] span_context The
-        #   OpenTelemetry::Trace::SpanContext to associate with the
-        #   {LogRecord}.
-        # @param severity_number [optional Integer] Numerical value of the
+        # @param [optional String] severity_text Original string representation of
+        #   the severity as it is known at the source. Also known as log level.
+        # @param [optional Integer] severity_number Numerical value of the
         #   severity. Smaller numerical values correspond to less severe events
         #   (such as debug events), larger numerical values correspond to more
         #   severe events (such as errors and critical events).
-        # @param severity_text [optional String] Original string representation of
-        #   the severity as it is known at the source. Also known as log level.
-        # @param body [optional String, Numeric, Boolean, Array<String, Numeric,
+        # @param [optional String, Numeric, Boolean, Array<String, Numeric,
         #   Boolean>, Hash{String => String, Numeric, Boolean, Array<String,
-        #   Numeric, Boolean>}] A value containing the body of the log record.
-        # @param attributes [optional Hash{String => String, Numeric, Boolean,
-        #   Array<String, Numeric, Boolean>}] Additional information about the
-        #   event.
+        #   Numeric, Boolean>}] body A value containing the body of the log record.
+        # @param [optional Hash{String => String, Numeric, Boolean,
+        #   Array<String, Numeric, Boolean>}] attributes Additional information
+        #   about the event.
+        # @param [optional String (16-byte binary)] trace_id Request trace id as
+        #   defined in {https://www.w3.org/TR/trace-context/#trace-id W3C Trace Context}.
+        #   Can be set for logs that are part of request processing and have an
+        #   assigned trace id.
+        # @param [optional String (8-byte binary)] span_id Span id. Can be set
+        #   for logs that are part of a particular processing span. If span_id
+        #   is present trace_id should also be present.
+        # @param [optional Integer (8-bit byte of bit flags)] trace_flags Trace
+        #   flag as defined in {https://www.w3.org/TR/trace-context/#trace-flags W3C Trace Context}
+        #   specification. At the time of writing the specification defines one
+        #   flag - the SAMPLED flag.
+        # @param [optional OpenTelemetry::Context] context The OpenTelemetry::Context
+        #   to associate with the {LogRecord}.
         #
         # @api public
         def on_emit(timestamp: nil,
-                 observed_timestamp: nil,
-                 span_context: nil, # or should this just be context? like in the API?
-                 severity_number: nil,
-                 severity_text: nil,
-                 body: nil,
-                 attributes: nil)
+                     observed_timestamp: Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond),
+                     severity_text: nil,
+                     severity_number: nil,
+                     body: nil,
+                     attributes: nil,
+                     trace_id: nil,
+                     span_id: nil,
+                     trace_flags: nil,
+                     context: OpenTelemetry::Context.current)
+
+          current_span = OpenTelemetry::Trace.current_span(context)
+          span_context = current_span.context unless OpenTelemetry::Trace::Span::INVALID == current_span
           log_record = LogRecord.new(timestamp: timestamp,
                                      observed_timestamp: observed_timestamp,
-                                     span_context: span_context ||= OpenTelemetry::Trace.current_span.context,
                                      severity_text: severity_text,
                                      severity_number: severity_number,
                                      body: body,
                                      attributes: attributes,
+                                     trace_id: trace_id || span_context&.trace_id,
+                                     span_id: span_id || span_context&.span_id,
+                                     trace_flags: trace_flags || span_context&.trace_flags,
                                      logger: self)
 
-          logger_provider.instance_variable_get(:@log_record_processors).each do |processor|
-            processor.on_emit(log_record, span_context)
-          end
+          logger_provider.on_emit(log_record, context)
         end
       end
     end
