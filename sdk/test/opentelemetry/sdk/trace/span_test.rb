@@ -167,6 +167,47 @@ describe OpenTelemetry::SDK::Trace::Span do
     end
   end
 
+  describe '#add_link' do
+    it 'does not add a link if span is ended' do
+      span.finish
+      span.add_link(OpenTelemetry::Trace::Link.new(context))
+      _(span.links).must_be_nil
+    end
+
+    it 'adds a link' do
+      span.add_link(OpenTelemetry::Trace::Link.new(context))
+      links = span.links
+      _(links.size).must_equal(1)
+      _(links.first.span_context).must_equal(context)
+    end
+
+    it 'adds a link with attributes' do
+      attrs = { 'foo' => 'bar' }
+      span.add_link(OpenTelemetry::Trace::Link.new(context, attrs))
+      links = span.links
+      _(links.size).must_equal(1)
+      _(links.first.attributes).must_equal(attrs)
+    end
+
+    it 'updates the links count' do
+      span.add_link(OpenTelemetry::Trace::Link.new(context))
+      span.add_link(OpenTelemetry::Trace::Link.new(context))
+      _(span.to_span_data.total_recorded_links).must_equal(2)
+    end
+
+    it 'trims excess links' do
+      span.add_link(OpenTelemetry::Trace::Link.new(context))
+      span.add_link(OpenTelemetry::Trace::Link.new(context))
+      _(span.links.size).must_equal(1)
+    end
+
+    it 'prunes invalid links' do
+      invalid_context = OpenTelemetry::Trace::SpanContext.new(trace_id: OpenTelemetry::Trace::INVALID_TRACE_ID)
+      span.add_link(OpenTelemetry::Trace::Link.new(invalid_context))
+      _(span.links.size).must_equal(0)
+    end
+  end
+
   describe '#add_event' do
     it 'add a named event' do
       span.add_event('added')
