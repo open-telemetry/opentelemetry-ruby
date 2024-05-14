@@ -11,7 +11,6 @@ module OpenTelemetry
       class LogRecord < OpenTelemetry::Logs::LogRecord
         attr_accessor :timestamp,
                       :observed_timestamp,
-                      :span_context,
                       :severity_text,
                       :severity_number,
                       :body,
@@ -64,7 +63,6 @@ module OpenTelemetry
         )
           @timestamp = timestamp
           @observed_timestamp = observed_timestamp || timestamp || Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond)
-          @span_context = span_context
           @severity_text = severity_text
           @severity_number = severity_number
           @body = body
