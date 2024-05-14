@@ -271,6 +271,7 @@ module OpenTelemetry
         end
 
         def encode(span_data) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
+          start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(
             Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
               resource_spans: span_data
@@ -298,6 +299,11 @@ module OpenTelemetry
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#encode')
           nil
+        ensure
+          stop = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+          duration_ms = 1000.0 * (stop - start)
+          @metrics_reporter.record_value('otel.otlp_exporter.encode_duration',
+                                         value: duration_ms)
         end
 
         def as_otlp_span(span_data) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
