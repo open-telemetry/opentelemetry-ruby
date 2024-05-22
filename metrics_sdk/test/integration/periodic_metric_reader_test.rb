@@ -14,7 +14,7 @@ describe OpenTelemetry::SDK do
       OpenTelemetry::SDK.configure
 
       metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval: 5, export_timeout: 5, exporter: metric_exporter)
+      periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval_millis: 5000, export_timeout_millis: 5000, exporter: metric_exporter)
 
       OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
 
@@ -60,7 +60,7 @@ describe OpenTelemetry::SDK do
       OpenTelemetry::SDK.configure
 
       metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval: 5, export_timeout: 5, exporter: metric_exporter)
+      periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval_millis: 5000, export_timeout_millis: 5000, exporter: metric_exporter)
 
       OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
 

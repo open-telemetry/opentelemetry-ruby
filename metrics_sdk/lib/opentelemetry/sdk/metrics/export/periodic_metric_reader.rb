@@ -10,13 +10,13 @@ module OpenTelemetry
       module Export
         # PeriodicMetricReader provides a minimal example implementation.
         class PeriodicMetricReader < MetricReader
-          def initialize(export_interval: ENV.fetch('OTEL_METRIC_EXPORT_INTERVAL', 60),
-                         export_timeout: ENV.fetch('OTEL_METRIC_EXPORT_TIMEOUT', 30),
+          def initialize(export_interval_millis: Float(ENV.fetch('OTEL_METRIC_EXPORT_INTERVAL', 60_000)),
+                         export_timeout_millis: Float(ENV.fetch('OTEL_METRIC_EXPORT_TIMEOUT', 30_000)),
                          exporter: nil)
             super()
 
-            @export_interval = export_interval
-            @export_timeout = export_timeout
+            @export_interval = export_interval_millis / 1000.0
+            @export_timeout = export_timeout_millis / 1000.0
             @exporter = exporter
             @thread   = nil
             @continue = false
