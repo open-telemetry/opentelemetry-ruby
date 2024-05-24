@@ -1,5 +1,9 @@
 # Release History: opentelemetry-common
 
+### v0.21.0 / 2024-05-08
+
+* ADDED: Untraced method updated to support both block and non block structured calls
+
 ### v0.20.1 / 2024-02-06
 
 * FIXED: Patch the issue for frozen string on ruby < 3.0 with string interpolation
