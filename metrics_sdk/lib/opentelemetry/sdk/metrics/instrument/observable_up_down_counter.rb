@@ -33,7 +33,7 @@ module OpenTelemetry
           private
 
           def default_aggregation
-            OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: :cumulative)
+            OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: :delta)
           end
         end
       end

@@ -91,9 +91,3 @@ module OpenTelemetry
     end
   end
 end
-
-def create_callback(callbacks)
-  return callbacks if callbacks.instance_of?(Proc)
-
-  puts 'a'
-end
