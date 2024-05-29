@@ -21,6 +21,7 @@ namespace :each do
     foreach_gem('bundle exec rake yard')
   end
 
+  desc "Run rubocop in each gem"
   task :rubocop do
     foreach_gem('bundle exec rake rubocop')
   end
