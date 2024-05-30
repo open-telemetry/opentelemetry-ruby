@@ -67,10 +67,6 @@ gems:
     directory: exporter/zipkin
     version_constant: [OpenTelemetry, Exporter, Zipkin, VERSION]
 
-  - name: opentelemetry-exporter-otlp-metrics
-    directory: exporter/otlp-metrics
-    version_constant: [OpenTelemetry, Exporter, OTLP, VERSION]
-
   - name: opentelemetry-propagator-b3
     directory: propagator/b3
     version_constant: [OpenTelemetry, Propagator, B3, VERSION]
