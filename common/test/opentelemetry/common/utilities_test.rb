@@ -26,6 +26,13 @@ describe OpenTelemetry::Common::Utilities do
       common_utils.untraced {}
       assert_equal(false, common_utils.untraced?)
     end
+
+    it 'supports non block format' do
+      token = OpenTelemetry::Context.attach(common_utils.untraced)
+      assert_equal(true, common_utils.untraced?)
+      OpenTelemetry::Context.detach(token)
+      assert_equal(false, common_utils.untraced?)
+    end
   end
 
   describe '#utf8_encode' do
