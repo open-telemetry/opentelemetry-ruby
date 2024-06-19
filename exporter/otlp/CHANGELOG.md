@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.28.0 / 2024-06-19
+
+* ADDED: Bump google_protobuf >=3.18, < 5.a
+
 ### v0.27.0 / 2024-04-19
 
 * ADDED: Add stats for serialization time in otlp exporter
