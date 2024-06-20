@@ -29,16 +29,16 @@ module OpenTelemetry
         @instrument_registry = {}
       end
 
-      def create_counter(name, unit: nil, description: nil)
-        create_instrument(:counter, name, unit, description, nil) { COUNTER }
+      def create_counter(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
+        create_instrument(:counter, name, unit, description, nil, exemplar_filter, exemplar_reservoir) { COUNTER }
       end
 
-      def create_histogram(name, unit: nil, description: nil)
-        create_instrument(:histogram, name, unit, description, nil) { HISTOGRAM }
+      def create_histogram(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
+        create_instrument(:histogram, name, unit, description, nil, exemplar_filter, exemplar_reservoir) { HISTOGRAM }
       end
 
-      def create_up_down_counter(name, unit: nil, description: nil)
-        create_instrument(:up_down_counter, name, unit, description, nil) { UP_DOWN_COUNTER }
+      def create_up_down_counter(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
+        create_instrument(:up_down_counter, name, unit, description, nil, exemplar_filter, exemplar_reservoir) { UP_DOWN_COUNTER }
       end
 
       def create_observable_counter(name, callback:, unit: nil, description: nil)
@@ -55,7 +55,7 @@ module OpenTelemetry
 
       private
 
-      def create_instrument(kind, name, unit, description, callback)
+      def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
         raise InstrumentNameError if name.nil?
         raise InstrumentNameError if name.empty?
         raise InstrumentNameError unless NAME_REGEX.match?(name)
