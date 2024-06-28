@@ -24,14 +24,26 @@ module OpenTelemetry
 
           def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4317/v1/traces'),
                          timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
+                         certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
+                         client_certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_CLIENT_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE'),
+                         client_key_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_CLIENT_KEY', 'OTEL_EXPORTER_OTLP_CLIENT_KEY'),
                          metrics_reporter: nil)
             raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
 
             uri = URI(endpoint)
 
+            creds = if !client_key_file.nil? && !client_certificate_file.nil?
+                      # Permits constructing with nil root cert.
+                      ::GRPC::Core::ChannelCredentials.new(certificate_file, client_key_file, client_certificate_file)
+                    elsif !certificate_file.nil?
+                      ::GRPC::Core::ChannelCredentials.new(certificate_file)
+                    else
+                      :this_channel_is_insecure
+                    end
+
             @client = Opentelemetry::Proto::Collector::Trace::V1::TraceService::Stub.new(
               "#{uri.host}:#{uri.port}",
-              :this_channel_is_insecure
+              creds
             )
 
             @timeout = timeout.to_f

@@ -12,6 +12,12 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
   FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
   VERSION = OpenTelemetry::Exporter::OTLP::VERSION
   DEFAULT_USER_AGENT = OpenTelemetry::Exporter::OTLP::Exporter::DEFAULT_USER_AGENT
+  CLIENT_CERT_A_PATH = File.dirname(__FILE__) + '/mtls-client-a.pem'
+  CLIENT_CERT_A = OpenSSL::X509::Certificate.new(File.read(CLIENT_CERT_A_PATH))
+  CLIENT_KEY_A = OpenSSL::PKey::RSA.new(File.read(CLIENT_CERT_A_PATH))
+  CLIENT_CERT_B_PATH = File.dirname(__FILE__) + '/mtls-client-b.pem'
+  CLIENT_CERT_B = OpenSSL::X509::Certificate.new(File.read(CLIENT_CERT_B_PATH))
+  CLIENT_KEY_B = OpenSSL::PKey::RSA.new(File.read(CLIENT_CERT_B_PATH))
 
   describe '#initialize' do
     it 'initializes with defaults' do
@@ -23,6 +29,8 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
       http = exp.instance_variable_get(:@http)
       _(http.ca_file).must_be_nil
+      _(http.cert).must_be_nil
+      _(http.key).must_be_nil
       _(http.use_ssl?).must_equal false
       _(http.address).must_equal 'localhost'
       _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_PEER
@@ -76,7 +84,9 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
 
     it 'sets parameters from the environment' do
       exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234',
-                                                'OTEL_EXPORTER_OTLP_CERTIFICATE' => '/foo/bar',
+                                                'OTEL_EXPORTER_OTLP_CERTIFICATE' => '/foo/bar/cacert',
+                                                'OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE' => CLIENT_CERT_A_PATH,
+                                                'OTEL_EXPORTER_OTLP_CLIENT_KEY' => CLIENT_CERT_A_PATH,
                                                 'OTEL_EXPORTER_OTLP_HEADERS' => 'a=b,c=d',
                                                 'OTEL_EXPORTER_OTLP_COMPRESSION' => 'gzip',
                                                 'OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE' => 'true',
@@ -88,7 +98,9 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
       _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
       http = exp.instance_variable_get(:@http)
-      _(http.ca_file).must_equal '/foo/bar'
+      _(http.ca_file).must_equal '/foo/bar/cacert'
+      _(http.cert).must_equal CLIENT_CERT_A
+      _(http.key.params).must_equal CLIENT_KEY_A.params
       _(http.use_ssl?).must_equal true
       _(http.address).must_equal 'localhost'
       _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_NONE
@@ -98,12 +110,16 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     it 'prefers explicit parameters rather than the environment' do
       exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234',
                                                 'OTEL_EXPORTER_OTLP_CERTIFICATE' => '/foo/bar',
+                                                'OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE' => CLIENT_CERT_A_PATH,
+                                                'OTEL_EXPORTER_OTLP_CLIENT_KEY' => CLIENT_CERT_A_PATH,
                                                 'OTEL_EXPORTER_OTLP_HEADERS' => 'a:b,c:d',
                                                 'OTEL_EXPORTER_OTLP_COMPRESSION' => 'flate',
                                                 'OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER' => 'true',
                                                 'OTEL_EXPORTER_OTLP_TIMEOUT' => '11') do
         OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'http://localhost:4321',
                                                     certificate_file: '/baz',
+                                                    client_certificate_file: CLIENT_CERT_B_PATH,
+                                                    client_key_file: CLIENT_CERT_B_PATH,
                                                     headers: { 'x' => 'y' },
                                                     compression: 'gzip',
                                                     ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE,
@@ -115,6 +131,8 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
       http = exp.instance_variable_get(:@http)
       _(http.ca_file).must_equal '/baz'
+      _(http.cert).must_equal CLIENT_CERT_B
+      _(http.key.params).must_equal CLIENT_KEY_B.params
       _(http.use_ssl?).must_equal false
       _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_NONE
       _(http.address).must_equal 'localhost'

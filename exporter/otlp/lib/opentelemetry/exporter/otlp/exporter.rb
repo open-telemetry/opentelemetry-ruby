@@ -48,6 +48,8 @@ module OpenTelemetry
 
         def initialize(endpoint: nil,
                        certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
+                       client_certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_CLIENT_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE'),
+                       client_key_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_CLIENT_KEY', 'OTEL_EXPORTER_OTLP_CLIENT_KEY'),
                        ssl_verify_mode: Exporter.ssl_verify_mode,
                        headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                        compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
@@ -57,7 +59,7 @@ module OpenTelemetry
 
           raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
-          @http = http_connection(@uri, ssl_verify_mode, certificate_file)
+          @http = http_connection(@uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
 
           @path = @uri.path
           @headers = prepare_headers(headers)
@@ -102,11 +104,13 @@ module OpenTelemetry
 
         private
 
-        def http_connection(uri, ssl_verify_mode, certificate_file)
+        def http_connection(uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = uri.scheme == 'https'
           http.verify_mode = ssl_verify_mode
           http.ca_file = certificate_file unless certificate_file.nil?
+          http.cert = OpenSSL::X509::Certificate.new(File.read(client_certificate_file)) unless client_certificate_file.nil?
+          http.key = OpenSSL::PKey::RSA.new(File.read(client_key_file)) unless client_key_file.nil?
           http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
           http
         end
