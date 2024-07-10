@@ -9,8 +9,7 @@ require 'rake/testtask'
 require 'yard'
 require 'rubocop/rake_task'
 require 'tmpdir'
-
-SPEC_VERSION = '1.10.0'
+require 'pathname'
 
 RuboCop::RakeTask.new
 
@@ -31,34 +30,65 @@ else
   task default: %i[generate test rubocop yard]
 end
 
-task :generate do
-  cwd = Dir.pwd
+SPEC_VERSION = '1.26.0'
+GENERATOR_VERSION = '0.24.0'
+semconv_source_dir = Pathname.new("./tmpsemconvrepo_v#{SPEC_VERSION}")
+conventions_output_dir = Pathname.new('./lib/opentelemetry/semantic_conventions')
+candidates_output_dir = Pathname.new('./lib/opentelemetry/semantic_candidates')
 
-  Dir.mktmpdir('opentelemetry-specification', Dir.pwd) do |tmpdir|
-    `git clone https://github.com/open-telemetry/opentelemetry-specification.git #{tmpdir}`
-    Dir.chdir(tmpdir) do
-      `git fetch`
-      `git checkout "v#{SPEC_VERSION}"`
-    end
+task generate: %i[update_gem_version generate_stable_attributes generate_candidate_attributes]
 
-    %w[trace resource].each do |kind|
-      cmd = %W[
-        docker run --rm
-        -v "#{tmpdir}/semantic_conventions/#{kind}":/source
-        -v "#{cwd}/templates":/templates
-        -v "#{cwd}/lib":/output
-        otel/semconvgen:0.11.1
-        -f /source code
-        --template /templates/semantic_conventions.j2
-        --output /output/opentelemetry/semantic_conventions/#{kind}.rb
-        -Dmodule=#{kind[0].upcase}#{kind[1..]}
-      ]
+directory semconv_source_dir do
+  `git clone --depth=1 --branch v#{SPEC_VERSION} https://github.com/open-telemetry/semantic-conventions.git #{semconv_source_dir}`
+end
 
-      puts "Running: #{cmd.join(' ')}"
-      `#{cmd.join(' ')}`
-    end
+task check_out_semconv_version: [semconv_source_dir] do
+  Dir.chdir(semconv_source_dir) do
+    `git fetch`
+    `git checkout "v#{SPEC_VERSION}"`
   end
+end
 
+task generate_stable_attributes: [:check_out_semconv_version] do
+  conventions_output_dir
+    .join('attributes')
+    .glob('*.rb')
+    .then { |files| FileUtils.rm(files) }
+  semconvgen(semconv_source_dir, output_root: conventions_output_dir, kind: 'attributes', selector: 'is_stable')
+end
+
+task generate_candidate_attributes: [:check_out_semconv_version] do
+  candidates_output_dir
+    .join('attributes')
+    .glob('*.rb')
+    .then { |files| FileUtils.rm(files) }
+  semconvgen(semconv_source_dir, output_root: candidates_output_dir, kind: 'attributes', selector: 'any')
+end
+
+def semconvgen(semconv_source, output_root:, kind:, selector:)
+  mkdir_p output_root + kind
+  cwd = Dir.pwd
+  output_filenames_template = Pathname.new('/output').join(output_root, kind, '{{snake_prefix}}.rb')
+  cmd = %W[
+    docker run --rm
+    -v "#{semconv_source}/model":/source
+    -v "#{cwd}/templates":/templates
+    -v "#{cwd}":/output
+    otel/semconvgen:#{GENERATOR_VERSION}
+    --yaml-root /source
+    --continue-on-validation-errors
+    code
+    --file-per-group root_namespace
+    --template /templates/#{kind}.j2
+    --output "#{output_filenames_template}"
+    -Dselector=#{selector}
+  ]
+
+  puts "Running: #{cmd.join(' ')}"
+  `#{cmd.join(' ')}`
+end
+
+task :update_gem_version do
   `sed -i.bak "s/VERSION = '.*'/VERSION = '#{SPEC_VERSION}'/g" lib/opentelemetry/semantic_conventions/version.rb`
   `rm lib/opentelemetry/semantic_conventions/version.rb.bak`
 end

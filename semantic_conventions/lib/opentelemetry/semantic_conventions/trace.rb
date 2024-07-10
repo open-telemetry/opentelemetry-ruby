@@ -216,13 +216,13 @@ module OpenTelemetry
       #  This may be actually "in flight" in some languages (e.g. if the exception
       #  is passed to a Context manager's `__exit__` method in Python) but will
       #  usually be caught at the point of recording the exception in most languages.
-      #  
+      #
       #  It is usually not possible to determine at the point where an exception is thrown
       #  whether it will escape the scope of a span.
       #  However, it is trivial to know that an exception
       #  will escape, if one checks for an active exception just before ending the span,
       #  as done in the [example above](#recording-an-exception).
-      #  
+      #
       #  It follows that an exception may still escape the scope of the span
       #  even if the `exception.escaped` attribute was not set or set to false,
       #  since the event might have been recorded at a time where it was not
@@ -235,7 +235,7 @@ module OpenTelemetry
       # Type of the trigger which caused this function execution
       # @note For the server/consumer span on the incoming side,
       #  `faas.trigger` MUST be set.
-      #  
+      #
       #  Clients invoking FaaS instances usually cannot set `faas.trigger`,
       #  since they would typically need to look in the payload to determine
       #  the event type. If clients set it, it should be the same as the
@@ -374,7 +374,7 @@ module OpenTelemetry
       # The IP address of the original client behind all proxies, if known (e.g. from [X-Forwarded-For](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-For))
       # @note This is not necessarily the same as `net.peer.ip`, which would
       #  identify the network-level peer, which may be a proxy.
-      #  
+      #
       #  This attribute should be set when a source of information different
       #  from the one used for `net.peer.ip`, is available even if that other
       #  source just confirms the same value as `net.peer.ip`.

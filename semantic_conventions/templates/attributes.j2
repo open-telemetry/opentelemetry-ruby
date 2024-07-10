@@ -1,0 +1,52 @@
+{#-
+# Copyright The OpenTelemetry Authors
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#}
+{%- import 'common.j2' as common -%}
+{%- if selector == 'any' -%}
+{%- set filtered_attributes = attributes_and_templates | list -%}
+{%- set module_name = 'SemanticCandidates' -%}
+{%- elif selector == 'is_stable' -%}
+{%- set filtered_attributes = attributes_and_templates | select(selector) | list -%}
+{%- set module_name = 'SemanticConventions' -%}
+{%- endif -%}
+{%- if filtered_attributes | count > 0 -%} {# only produce code if there are attributes #}
+{{- common.file_header() }}
+
+module OpenTelemetry
+  module {{ module_name }}
+    module {{ root_namespace | to_const_name }} {# TODO: macro to PascalCase with exceptions for AspNetCore, HTTP, etc? #}
+      # @!group Attribute Names
+    {% for attribute in filtered_attributes %}
+      # {{ common.to_docstring(attribute.brief) }}
+          {%- if attribute.note %}
+      #
+      # {{ common.to_docstring(attribute.note) }}
+          {%- endif %}
+      #
+      # @note {{ attribute.stability }}
+          {%- if attribute | is_deprecated %}
+      #
+      # @deprecated {{ common.to_docstring(attribute.deprecated) }}
+          {%- elif attribute | is_stable and selector == 'any' %}
+      #
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::{{ root_namespace | to_const_name }}::{{ attribute.attr_id | to_const_name }}}.
+          {%- endif %}
+      {{ attribute.fqn | to_const_name }} = '{{ attribute.fqn }}'
+    {% endfor %}
+      # @!endgroup
+    end
+  end
+end
+
+{%- endif -%} {# only produce code if there are attributes #}
