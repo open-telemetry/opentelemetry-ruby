@@ -42,7 +42,13 @@ module OpenTelemetry
       #
       # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::{{ root_namespace | to_const_name }}::{{ attribute.attr_id | to_const_name }}}.
           {%- endif %}
+          {%- if attribute.fqn in excluded_attributes %}
+      #
+      # @note This attribute has been excluded from code generation.
+      # {{ attribute.fqn | to_const_name }} = '{{ attribute.fqn }}'
+          {%- else %}
       {{ attribute.fqn | to_const_name }} = '{{ attribute.fqn }}'
+          {%- endif %}
     {% endfor %}
       # @!endgroup
     end

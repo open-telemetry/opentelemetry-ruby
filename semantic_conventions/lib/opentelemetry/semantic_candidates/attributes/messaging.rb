@@ -40,7 +40,9 @@ module OpenTelemetry
       # @note StabilityLevel.EXPERIMENTAL
       #
       # @deprecated Replaced by `messaging.client.id`
-      MESSAGING_CLIENT_ID = 'messaging.client_id'
+      #
+      # @note This attribute has been excluded from code generation.
+      # MESSAGING_CLIENT_ID = 'messaging.client_id'
     
       # A boolean that is true if the message destination is anonymous (could be unnamed or have auto-generated name)
       #

@@ -36,6 +36,8 @@ semconv_source_dir = Pathname.new("./tmpsemconvrepo_v#{SPEC_VERSION}")
 conventions_output_dir = Pathname.new('./lib/opentelemetry/semantic_conventions')
 candidates_output_dir = Pathname.new('./lib/opentelemetry/semantic_candidates')
 
+EXCLUDED_ATTRIBUTES = %w[messaging.client_id]
+
 task generate: %i[update_gem_version generate_stable_attributes generate_candidate_attributes]
 
 directory semconv_source_dir do
@@ -82,6 +84,7 @@ def semconvgen(semconv_source, output_root:, kind:, selector:)
     --template /templates/#{kind}.j2
     --output "#{output_filenames_template}"
     -Dselector=#{selector}
+    -Dexcluded_attributes="#{EXCLUDED_ATTRIBUTES.join(' ')}"
   ]
 
   puts "Running: #{cmd.join(' ')}"
