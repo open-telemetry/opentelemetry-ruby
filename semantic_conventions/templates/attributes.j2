@@ -40,7 +40,7 @@ module OpenTelemetry
       # @deprecated {{ common.to_docstring(attribute.deprecated) }}
           {%- elif attribute | is_stable and selector == 'any' %}
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::{{ root_namespace | to_const_name }}::{{ attribute.attr_id | to_const_name }}}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::{{ root_namespace | to_const_name }}::{{ attribute.fqn | to_const_name }}}.
           {%- endif %}
           {%- if attribute.fqn in excluded_attributes %}
       #

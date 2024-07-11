@@ -44,28 +44,28 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::EXCEPTION::ESCAPED}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::EXCEPTION::EXCEPTION_ESCAPED}.
       EXCEPTION_ESCAPED = 'exception.escaped'
     
       # The exception message
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::EXCEPTION::MESSAGE}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::EXCEPTION::EXCEPTION_MESSAGE}.
       EXCEPTION_MESSAGE = 'exception.message'
     
       # A stacktrace as a string in the natural representation for the language runtime. The representation is to be determined and documented by each language SIG
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::EXCEPTION::STACKTRACE}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::EXCEPTION::EXCEPTION_STACKTRACE}.
       EXCEPTION_STACKTRACE = 'exception.stacktrace'
     
       # The type of the exception (its fully-qualified class name, if applicable). The dynamic type of the exception should be preferred over the static type in languages that support it
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::EXCEPTION::TYPE}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::EXCEPTION::EXCEPTION_TYPE}.
       EXCEPTION_TYPE = 'exception.type'
     
       # @!endgroup

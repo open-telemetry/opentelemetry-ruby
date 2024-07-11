@@ -41,28 +41,28 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::OTEL::NAME}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::OTEL::OTEL_SCOPE_NAME}.
       OTEL_SCOPE_NAME = 'otel.scope.name'
     
       # The version of the instrumentation scope - (`InstrumentationScope.Version` in OTLP)
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::OTEL::VERSION}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::OTEL::OTEL_SCOPE_VERSION}.
       OTEL_SCOPE_VERSION = 'otel.scope.version'
     
       # Name of the code, either "OK" or "ERROR". MUST NOT be set if the status code is UNSET
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::OTEL::STATUS_CODE}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::OTEL::OTEL_STATUS_CODE}.
       OTEL_STATUS_CODE = 'otel.status_code'
     
       # Description of the Status if it has a value, otherwise not set
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::OTEL::STATUS_DESCRIPTION}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::OTEL::OTEL_STATUS_DESCRIPTION}.
       OTEL_STATUS_DESCRIPTION = 'otel.status_description'
     
       # @!endgroup

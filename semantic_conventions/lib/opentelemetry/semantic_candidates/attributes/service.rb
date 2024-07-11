@@ -61,7 +61,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::SERVICE::NAME}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::SERVICE::SERVICE_NAME}.
       SERVICE_NAME = 'service.name'
     
       # A namespace for `service.name`
@@ -75,7 +75,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::SERVICE::VERSION}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::SERVICE::SERVICE_VERSION}.
       SERVICE_VERSION = 'service.version'
     
       # @!endgroup

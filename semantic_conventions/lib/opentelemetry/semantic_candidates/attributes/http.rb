@@ -69,7 +69,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::HTTP::REQUEST_HEADER}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::HTTP::HTTP_REQUEST_HEADER}.
       HTTP_REQUEST_HEADER = 'http.request.header'
     
       # HTTP request method
@@ -91,14 +91,14 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::HTTP::REQUEST_METHOD}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::HTTP::HTTP_REQUEST_METHOD}.
       HTTP_REQUEST_METHOD = 'http.request.method'
     
       # Original HTTP method sent by the client in the request line
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::HTTP::REQUEST_METHOD_ORIGINAL}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::HTTP::HTTP_REQUEST_METHOD_ORIGINAL}.
       HTTP_REQUEST_METHOD_ORIGINAL = 'http.request.method_original'
     
       # The ordinal number of request resending attempt (for any reason, including redirects)
@@ -107,7 +107,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::HTTP::REQUEST_RESEND_COUNT}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::HTTP::HTTP_REQUEST_RESEND_COUNT}.
       HTTP_REQUEST_RESEND_COUNT = 'http.request.resend_count'
     
       # The total size of the request in bytes. This should be the total number of bytes sent over the wire, including the request line (HTTP/1.1), framing (HTTP/2 and HTTP/3), headers, and request body if any
@@ -142,7 +142,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::HTTP::RESPONSE_HEADER}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::HTTP::HTTP_RESPONSE_HEADER}.
       HTTP_RESPONSE_HEADER = 'http.response.header'
     
       # The total size of the response in bytes. This should be the total number of bytes sent over the wire, including the status line (HTTP/1.1), framing (HTTP/2 and HTTP/3), headers, and response body and trailers if any
@@ -154,7 +154,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::HTTP::RESPONSE_STATUS_CODE}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::HTTP::HTTP_RESPONSE_STATUS_CODE}.
       HTTP_RESPONSE_STATUS_CODE = 'http.response.status_code'
     
       # Deprecated, use `http.response.header.content-length` instead
@@ -178,7 +178,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::HTTP::ROUTE}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::HTTP::HTTP_ROUTE}.
       HTTP_ROUTE = 'http.route'
     
       # Deprecated, use `url.scheme` instead

@@ -27,14 +27,14 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::SIGNALR::CONNECTION_STATUS}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::SIGNALR::SIGNALR_CONNECTION_STATUS}.
       SIGNALR_CONNECTION_STATUS = 'signalr.connection.status'
     
       # [SignalR transport type](https://github.com/dotnet/aspnetcore/blob/main/src/SignalR/docs/specs/TransportProtocols.md)
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::SIGNALR::TRANSPORT}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::SIGNALR::SIGNALR_TRANSPORT}.
       SIGNALR_TRANSPORT = 'signalr.transport'
     
       # @!endgroup

@@ -41,7 +41,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::URL::FRAGMENT}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::URL::URL_FRAGMENT}.
       URL_FRAGMENT = 'url.fragment'
     
       # Absolute URL describing a network resource according to [RFC3986](https://www.rfc-editor.org/rfc/rfc3986)
@@ -52,7 +52,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::URL::FULL}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::URL::URL_FULL}.
       URL_FULL = 'url.full'
     
       # Unmodified original URL as seen in the event source
@@ -69,7 +69,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::URL::PATH}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::URL::URL_PATH}.
       URL_PATH = 'url.path'
     
       # Port extracted from the `url.full`
@@ -83,7 +83,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::URL::QUERY}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::URL::URL_QUERY}.
       URL_QUERY = 'url.query'
     
       # The highest registered url domain, stripped of the subdomain
@@ -97,7 +97,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::URL::SCHEME}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::URL::URL_SCHEME}.
       URL_SCHEME = 'url.scheme'
     
       # The subdomain portion of a fully qualified domain name includes all of the names except the host name under the registered_domain. In a partially qualified domain, or if the qualification level of the full name cannot be determined, subdomain contains all of the names below the registered domain

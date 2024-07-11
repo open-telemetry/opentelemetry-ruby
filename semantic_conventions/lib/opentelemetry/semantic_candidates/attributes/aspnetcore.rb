@@ -27,49 +27,49 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::ASPNETCORE::DIAGNOSTICS_EXCEPTION_RESULT}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::ASPNETCORE::ASPNETCORE_DIAGNOSTICS_EXCEPTION_RESULT}.
       ASPNETCORE_DIAGNOSTICS_EXCEPTION_RESULT = 'aspnetcore.diagnostics.exception.result'
     
       # Full type name of the [`IExceptionHandler`](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.diagnostics.iexceptionhandler) implementation that handled the exception
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::ASPNETCORE::DIAGNOSTICS_HANDLER_TYPE}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::ASPNETCORE::ASPNETCORE_DIAGNOSTICS_HANDLER_TYPE}.
       ASPNETCORE_DIAGNOSTICS_HANDLER_TYPE = 'aspnetcore.diagnostics.handler.type'
     
       # Rate limiting policy name
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::ASPNETCORE::RATE_LIMITING_POLICY}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::ASPNETCORE::ASPNETCORE_RATE_LIMITING_POLICY}.
       ASPNETCORE_RATE_LIMITING_POLICY = 'aspnetcore.rate_limiting.policy'
     
       # Rate-limiting result, shows whether the lease was acquired or contains a rejection reason
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::ASPNETCORE::RATE_LIMITING_RESULT}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::ASPNETCORE::ASPNETCORE_RATE_LIMITING_RESULT}.
       ASPNETCORE_RATE_LIMITING_RESULT = 'aspnetcore.rate_limiting.result'
     
       # Flag indicating if request was handled by the application pipeline
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::ASPNETCORE::REQUEST_IS_UNHANDLED}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::ASPNETCORE::ASPNETCORE_REQUEST_IS_UNHANDLED}.
       ASPNETCORE_REQUEST_IS_UNHANDLED = 'aspnetcore.request.is_unhandled'
     
       # A value that indicates whether the matched route is a fallback route
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::ASPNETCORE::ROUTING_IS_FALLBACK}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::ASPNETCORE::ASPNETCORE_ROUTING_IS_FALLBACK}.
       ASPNETCORE_ROUTING_IS_FALLBACK = 'aspnetcore.routing.is_fallback'
     
       # Match result - success or failure
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::ASPNETCORE::ROUTING_MATCH_STATUS}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::ASPNETCORE::ASPNETCORE_ROUTING_MATCH_STATUS}.
       ASPNETCORE_ROUTING_MATCH_STATUS = 'aspnetcore.routing.match_status'
     
       # @!endgroup

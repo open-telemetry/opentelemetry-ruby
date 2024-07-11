@@ -62,28 +62,28 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::NETWORK::LOCAL_ADDRESS}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::NETWORK::NETWORK_LOCAL_ADDRESS}.
       NETWORK_LOCAL_ADDRESS = 'network.local.address'
     
       # Local port number of the network connection
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::NETWORK::LOCAL_PORT}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::NETWORK::NETWORK_LOCAL_PORT}.
       NETWORK_LOCAL_PORT = 'network.local.port'
     
       # Peer address of the network connection - IP address or Unix domain socket name
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::NETWORK::PEER_ADDRESS}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::NETWORK::NETWORK_PEER_ADDRESS}.
       NETWORK_PEER_ADDRESS = 'network.peer.address'
     
       # Peer port number of the network connection
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::NETWORK::PEER_PORT}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::NETWORK::NETWORK_PEER_PORT}.
       NETWORK_PEER_PORT = 'network.peer.port'
     
       # [OSI application layer](https://osi-model.com/application-layer/) or non-OSI equivalent
@@ -92,7 +92,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::NETWORK::PROTOCOL_NAME}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::NETWORK::NETWORK_PROTOCOL_NAME}.
       NETWORK_PROTOCOL_NAME = 'network.protocol.name'
     
       # The actual version of the protocol used for network communication
@@ -101,7 +101,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::NETWORK::PROTOCOL_VERSION}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::NETWORK::NETWORK_PROTOCOL_VERSION}.
       NETWORK_PROTOCOL_VERSION = 'network.protocol.version'
     
       # [OSI transport layer](https://osi-model.com/transport-layer/) or [inter-process communication method](https://wikipedia.org/wiki/Inter-process_communication)
@@ -114,7 +114,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::NETWORK::TRANSPORT}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::NETWORK::NETWORK_TRANSPORT}.
       NETWORK_TRANSPORT = 'network.transport'
     
       # [OSI network layer](https://osi-model.com/network-layer/) or non-OSI equivalent
@@ -123,7 +123,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::NETWORK::TYPE}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::NETWORK::NETWORK_TYPE}.
       NETWORK_TYPE = 'network.type'
     
       # @!endgroup

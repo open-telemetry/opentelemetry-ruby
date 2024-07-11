@@ -47,7 +47,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::ERROR::TYPE}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::ERROR::ERROR_TYPE}.
       ERROR_TYPE = 'error.type'
     
       # @!endgroup

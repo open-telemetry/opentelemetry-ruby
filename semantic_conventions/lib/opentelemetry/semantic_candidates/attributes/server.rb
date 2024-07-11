@@ -29,7 +29,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::SERVER::ADDRESS}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::SERVER::SERVER_ADDRESS}.
       SERVER_ADDRESS = 'server.address'
     
       # Server port number
@@ -38,7 +38,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::SERVER::PORT}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::SERVER::SERVER_PORT}.
       SERVER_PORT = 'server.port'
     
       # @!endgroup

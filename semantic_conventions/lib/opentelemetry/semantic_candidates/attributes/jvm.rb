@@ -36,7 +36,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::JVM::GC_ACTION}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::JVM::JVM_GC_ACTION}.
       JVM_GC_ACTION = 'jvm.gc.action'
     
       # Name of the garbage collector
@@ -45,7 +45,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::JVM::GC_NAME}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::JVM::JVM_GC_NAME}.
       JVM_GC_NAME = 'jvm.gc.name'
     
       # Name of the memory pool
@@ -54,28 +54,28 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::JVM::MEMORY_POOL_NAME}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::JVM::JVM_MEMORY_POOL_NAME}.
       JVM_MEMORY_POOL_NAME = 'jvm.memory.pool.name'
     
       # The type of memory
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::JVM::MEMORY_TYPE}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::JVM::JVM_MEMORY_TYPE}.
       JVM_MEMORY_TYPE = 'jvm.memory.type'
     
       # Whether the thread is daemon or not
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::JVM::THREAD_DAEMON}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::JVM::JVM_THREAD_DAEMON}.
       JVM_THREAD_DAEMON = 'jvm.thread.daemon'
     
       # State of the thread
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::JVM::THREAD_STATE}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::JVM::JVM_THREAD_STATE}.
       JVM_THREAD_STATE = 'jvm.thread.state'
     
       # @!endgroup

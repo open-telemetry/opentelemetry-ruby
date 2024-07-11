@@ -29,7 +29,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::CLIENT::ADDRESS}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::CLIENT::CLIENT_ADDRESS}.
       CLIENT_ADDRESS = 'client.address'
     
       # Client port number
@@ -38,7 +38,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::CLIENT::PORT}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::CLIENT::CLIENT_PORT}.
       CLIENT_PORT = 'client.port'
     
       # @!endgroup

@@ -40,7 +40,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::TELEMETRY::SDK_LANGUAGE}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::TELEMETRY::TELEMETRY_SDK_LANGUAGE}.
       TELEMETRY_SDK_LANGUAGE = 'telemetry.sdk.language'
     
       # The name of the telemetry SDK as defined above
@@ -54,14 +54,14 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::TELEMETRY::SDK_NAME}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::TELEMETRY::TELEMETRY_SDK_NAME}.
       TELEMETRY_SDK_NAME = 'telemetry.sdk.name'
     
       # The version string of the telemetry SDK
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::TELEMETRY::SDK_VERSION}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::TELEMETRY::TELEMETRY_SDK_VERSION}.
       TELEMETRY_SDK_VERSION = 'telemetry.sdk.version'
     
       # @!endgroup

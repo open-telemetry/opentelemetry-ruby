@@ -34,7 +34,7 @@ module OpenTelemetry
       #
       # @note StabilityLevel.STABLE
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::USER_AGENT::ORIGINAL}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::USER_AGENT::USER_AGENT_ORIGINAL}.
       USER_AGENT_ORIGINAL = 'user_agent.original'
     
       # Version of the user-agent extracted from original. Usually refers to the browser's version
