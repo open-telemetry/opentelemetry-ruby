@@ -25,7 +25,7 @@ module OpenTelemetry
               @epoch_end_time = now_in_nano
               snapshot = @metric_streams.map { |ms| ms.collect(@epoch_start_time, @epoch_end_time) }
               @epoch_start_time = @epoch_end_time
-              snapshot
+              snapshot.flatten!
             end
           end
 
