@@ -184,8 +184,9 @@ module OpenTelemetry
           rescue Net::OpenTimeout, Net::ReadTimeout
             retry if backoff?(retry_count: retry_count += 1, reason: 'timeout')
             return FAILURE
-          rescue OpenSSL::SSL::SSLError
+          rescue OpenSSL::SSL::SSLError => e
             retry if backoff?(retry_count: retry_count += 1, reason: 'openssl_error')
+            OpenTelemetry.handle_error(exception: e, message: 'SSL error in OTLP::Exporter#send_bytes')
             return FAILURE
           rescue SocketError
             retry if backoff?(retry_count: retry_count += 1, reason: 'socket_error')
@@ -244,7 +245,7 @@ module OpenTelemetry
           end
         end
 
-        def backoff?(retry_count:, reason:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+        def backoff?(retry_count:, reason:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => reason })
           return false if retry_count > RETRY_COUNT
 
@@ -271,6 +272,7 @@ module OpenTelemetry
         end
 
         def encode(span_data) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
+          start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(
             Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
               resource_spans: span_data
@@ -298,6 +300,11 @@ module OpenTelemetry
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#encode')
           nil
+        ensure
+          stop = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+          duration_ms = 1000.0 * (stop - start)
+          @metrics_reporter.record_value('otel.otlp_exporter.encode_duration',
+                                         value: duration_ms)
         end
 
         def as_otlp_span(span_data) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity

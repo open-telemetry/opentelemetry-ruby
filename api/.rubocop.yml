@@ -1,28 +1,7 @@
-AllCops:
-  TargetRubyVersion: "3.0"
+inherit_from: ../contrib/rubocop.yml
 
-Lint/UnusedMethodArgument:
-  Enabled: false
-Metrics/AbcSize:
-  Enabled: false
-Metrics/LineLength:
-  Enabled: false
-Metrics/MethodLength:
-  Max: 20
-Metrics/ParameterLists:
-  Enabled: false
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-api.rb"
-Lint/MissingSuper:
-  Enabled: false
-Lint/ConstantDefinitionInBlock:
-  Exclude:
-    - "test/**/*"
-Style/StringConcatenation:
-  Exclude:
-    - "test/**/*"
-Style/ModuleFunction:
-  Enabled: false
 Style/ExplicitBlockArgument:
   Enabled: false
