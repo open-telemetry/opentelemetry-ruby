@@ -81,28 +81,6 @@ module OpenTelemetry
       # @note StabilityLevel.EXPERIMENTAL
       RPC_JSONRPC_VERSION = 'rpc.jsonrpc.version'
     
-      # Compressed size of the message in bytes
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      RPC_MESSAGE_COMPRESSED_SIZE = 'rpc.message.compressed_size'
-    
-      # MUST be calculated as two different counters starting from `1` one for sent messages and one for received message
-      #
-      # This way we guarantee that the values will be consistent between different implementations
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      RPC_MESSAGE_ID = 'rpc.message.id'
-    
-      # Whether this is a received or sent message
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      RPC_MESSAGE_TYPE = 'rpc.message.type'
-    
-      # Uncompressed size of the message in bytes
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      RPC_MESSAGE_UNCOMPRESSED_SIZE = 'rpc.message.uncompressed_size'
-    
       # The name of the (logical) method being called, must be equal to the $method part in the span name
       #
       # This is the logical name of the method from the RPC interface perspective, which can be different from the name of any implementing method/function. The `code.function` attribute may be used to store the latter (e.g., method actually executing the call on the server side, RPC client stub method on the client side)

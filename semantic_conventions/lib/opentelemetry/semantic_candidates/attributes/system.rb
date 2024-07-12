@@ -28,7 +28,7 @@ module OpenTelemetry
       # @note StabilityLevel.EXPERIMENTAL
       SYSTEM_CPU_LOGICAL_NUMBER = 'system.cpu.logical_number'
     
-      # The state of the CPU
+      # The CPU state for this data point. A system's CPU SHOULD be characterized *either* by data points with no `state` labels, *or only* data points with `state` labels
       #
       # @note StabilityLevel.EXPERIMENTAL
       SYSTEM_CPU_STATE = 'system.cpu.state'

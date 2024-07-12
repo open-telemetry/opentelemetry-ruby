@@ -53,30 +53,12 @@ module OpenTelemetry
       # @note StabilityLevel.EXPERIMENTAL
       DB_CASSANDRA_SPECULATIVE_EXECUTION_COUNT = 'db.cassandra.speculative_execution_count'
     
-      # Deprecated, use `db.collection.name` instead
+      # The name of the primary Cassandra table that the operation is acting upon, including the keyspace name (if applicable)
+      #
+      # This mirrors the db.sql.table attribute but references cassandra rather than sql. It is not recommended to attempt any client-side parsing of `db.statement` just to get this property, but it should be set if it is provided by the library being instrumented. If the operation is acting upon an anonymous table, or more than one table, this value MUST NOT be set
       #
       # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replaced by `db.collection.name`
       DB_CASSANDRA_TABLE = 'db.cassandra.table'
-    
-      # The name of the connection pool; unique within the instrumented application. In case the connection pool implementation doesn't provide a name, instrumentation should use a combination of `server.address` and `server.port` attributes formatted as `server.address:server.port`
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      DB_CLIENT_CONNECTIONS_POOL_NAME = 'db.client.connections.pool.name'
-    
-      # The state of a connection in the pool
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      DB_CLIENT_CONNECTIONS_STATE = 'db.client.connections.state'
-    
-      # The name of a collection (table, container) within the database
-      #
-      # If the collection name is parsed from the query, it SHOULD match the value provided in the query and may be qualified with the schema and database name.
-      #   It is RECOMMENDED to capture the value as provided by the application without attempting to do any case normalization
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      DB_COLLECTION_NAME = 'db.collection.name'
     
       # Deprecated, use `server.address`, `server.port` attributes instead
       #
@@ -95,11 +77,9 @@ module OpenTelemetry
       # @note StabilityLevel.EXPERIMENTAL
       DB_COSMOSDB_CONNECTION_MODE = 'db.cosmosdb.connection_mode'
     
-      # Deprecated, use `db.collection.name` instead
+      # Cosmos DB container name
       #
       # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replaced by `db.collection.name`
       DB_COSMOSDB_CONTAINER = 'db.cosmosdb.container'
     
       # CosmosDB Operation Type
@@ -132,9 +112,11 @@ module OpenTelemetry
       # @note StabilityLevel.EXPERIMENTAL
       DB_ELASTICSEARCH_CLUSTER_NAME = 'db.elasticsearch.cluster.name'
     
-      # Represents the human-readable identifier of the node/instance to which a request was routed
+      # Deprecated, use `db.instance.id` instead
       #
       # @note StabilityLevel.EXPERIMENTAL
+      #
+      # @deprecated Replaced by `db.instance.id`
       DB_ELASTICSEARCH_NODE_NAME = 'db.elasticsearch.node.name'
     
       # A dynamic value in the url path
@@ -144,11 +126,9 @@ module OpenTelemetry
       # @note StabilityLevel.EXPERIMENTAL
       DB_ELASTICSEARCH_PATH_PARTS = 'db.elasticsearch.path_parts'
     
-      # Deprecated, no general replacement at this time. For Elasticsearch, use `db.elasticsearch.node.name` instead
+      # An identifier (address, unique name, or any other identifier) of the database instance that is executing queries or mutations on the current connection. This is useful in cases where the database is running in a clustered environment and the instrumentation is able to record the node executing the query. The client may obtain this value in databases like MySQL using queries like `select @@hostname`
       #
       # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Deprecated, no general replacement at this time. For Elasticsearch, use `db.elasticsearch.node.name` instead
       DB_INSTANCE_ID = 'db.instance.id'
     
       # Removed, no replacement at this time
@@ -158,96 +138,57 @@ module OpenTelemetry
       # @deprecated Removed as not used
       DB_JDBC_DRIVER_CLASSNAME = 'db.jdbc.driver_classname'
     
-      # Deprecated, use `db.collection.name` instead
+      # The MongoDB collection being accessed within the database stated in `db.name`
       #
       # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replaced by `db.collection.name`
       DB_MONGODB_COLLECTION = 'db.mongodb.collection'
     
-      # Deprecated, SQL Server instance is now populated as a part of `db.namespace` attribute
+      # The Microsoft SQL Server [instance name](https://docs.microsoft.com/sql/connect/jdbc/building-the-connection-url?view=sql-server-ver15) connecting to. This name is used to determine the port of a named instance
+      #
+      # If setting a `db.mssql.instance_name`, `server.port` is no longer required (but still recommended if non-standard)
       #
       # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Deprecated, no replacement at this time
       DB_MSSQL_INSTANCE_NAME = 'db.mssql.instance_name'
     
-      # Deprecated, use `db.namespace` instead
+      # This attribute is used to report the name of the database being accessed. For commands that switch the database, this should be set to the target database (even if the command fails)
+      #
+      # In some SQL databases, the database name to be used is called "schema name". In case there are multiple layers that could be considered for database name (e.g. Oracle instance name and schema name), the database name to be used is the more specific layer (e.g. Oracle schema name)
       #
       # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replaced by `db.namespace`
       DB_NAME = 'db.name'
     
-      # The name of the database, fully qualified within the server address and port
+      # The name of the operation being executed, e.g. the [MongoDB command name](https://docs.mongodb.com/manual/reference/command/#database-operations) such as `findAndModify`, or the SQL keyword
       #
-      # If a database system has multiple namespace components, they SHOULD be concatenated (potentially using database system specific conventions) from most general to most specific namespace component, and more specific namespaces SHOULD NOT be captured without the more general namespaces, to ensure that "startswith" queries for the more general namespaces will be valid.
-      #   Semantic conventions for individual database systems SHOULD document what `db.namespace` means in the context of that system.
-      #   It is RECOMMENDED to capture the value as provided by the application without attempting to do any case normalization
+      # When setting this to an SQL keyword, it is not recommended to attempt any client-side parsing of `db.statement` just to get this property, but it should be set if the operation name is provided by the library being instrumented. If the SQL statement has an ambiguous operation, or performs more than one operation, this value may be omitted
       #
       # @note StabilityLevel.EXPERIMENTAL
-      DB_NAMESPACE = 'db.namespace'
-    
-      # Deprecated, use `db.operation.name` instead
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replaced by `db.operation.name`
       DB_OPERATION = 'db.operation'
     
-      # The name of the operation or command being executed
-      #
-      # It is RECOMMENDED to capture the value as provided by the application without attempting to do any case normalization
+      # The index of the database being accessed as used in the [`SELECT` command](https://redis.io/commands/select), provided as an integer. To be used instead of the generic `db.name` attribute
       #
       # @note StabilityLevel.EXPERIMENTAL
-      DB_OPERATION_NAME = 'db.operation.name'
-    
-      # The query parameters used in `db.query.text`, with `<key>` being the parameter name, and the attribute value being the parameter value
-      #
-      # Query parameters should only be captured when `db.query.text` is parameterized with placeholders.
-      #   If a parameter has no name and instead is referenced only by index, then `<key>` SHOULD be the 0-based index
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      DB_QUERY_PARAMETER = 'db.query.parameter'
-    
-      # The database query being executed
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      DB_QUERY_TEXT = 'db.query.text'
-    
-      # Deprecated, use `db.namespace` instead
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replaced by `db.namespace`
       DB_REDIS_DATABASE_INDEX = 'db.redis.database_index'
     
-      # Deprecated, use `db.collection.name` instead
+      # The name of the primary table that the operation is acting upon, including the database name (if applicable)
+      #
+      # It is not recommended to attempt any client-side parsing of `db.statement` just to get this property, but it should be set if it is provided by the library being instrumented. If the operation is acting upon an anonymous table, or more than one table, this value MUST NOT be set
       #
       # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replaced by `db.collection.name`
       DB_SQL_TABLE = 'db.sql.table'
     
       # The database statement being executed
       #
       # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replaced by `db.query.text`
       DB_STATEMENT = 'db.statement'
     
-      # The database management system (DBMS) product as identified by the client instrumentation
-      #
-      # The actual DBMS may differ from the one identified by the client. For example, when using PostgreSQL client libraries to connect to a CockroachDB, the `db.system` is set to `postgresql` based on the instrumentation's best knowledge
+      # An identifier for the database management system (DBMS) product being used. See below for a list of well-known identifiers
       #
       # @note StabilityLevel.EXPERIMENTAL
       DB_SYSTEM = 'db.system'
     
-      # Deprecated, no replacement at this time
+      # Username for accessing the database
       #
       # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated No replacement at this time
       DB_USER = 'db.user'
     
       # @!endgroup

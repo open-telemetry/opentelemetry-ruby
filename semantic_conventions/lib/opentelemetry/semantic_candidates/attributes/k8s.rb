@@ -66,11 +66,6 @@ module OpenTelemetry
       # @note StabilityLevel.EXPERIMENTAL
       K8S_CONTAINER_RESTART_COUNT = 'k8s.container.restart_count'
     
-      # Last terminated reason of the Container
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      K8S_CONTAINER_STATUS_LAST_TERMINATED_REASON = 'k8s.container.status.last_terminated_reason'
-    
       # The name of the CronJob
       #
       # @note StabilityLevel.EXPERIMENTAL

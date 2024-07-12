@@ -23,11 +23,9 @@ module OpenTelemetry
     module POOL 
       # @!group Attribute Names
     
-      # Deprecated, use `db.client.connections.pool.name` instead
+      # The name of the connection pool; unique within the instrumented application. In case the connection pool implementation doesn't provide a name, instrumentation should use a combination of `server.address` and `server.port` attributes formatted as `server.address:server.port`
       #
       # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replaced by `db.client.connections.pool.name`
       POOL_NAME = 'pool.name'
     
       # @!endgroup

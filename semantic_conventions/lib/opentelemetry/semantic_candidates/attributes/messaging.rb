@@ -33,16 +33,7 @@ module OpenTelemetry
       # A unique identifier for the client that consumes or produces a message
       #
       # @note StabilityLevel.EXPERIMENTAL
-      MESSAGING_CLIENT_ID = 'messaging.client.id'
-    
-      # Deprecated, use `messaging.client.id` instead
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replaced by `messaging.client.id`
-      #
-      # @note This attribute has been excluded from code generation.
-      # MESSAGING_CLIENT_ID = 'messaging.client_id'
+      MESSAGING_CLIENT_ID = 'messaging.client_id'
     
       # A boolean that is true if the message destination is anonymous (could be unnamed or have auto-generated name)
       #
@@ -97,21 +88,6 @@ module OpenTelemetry
       # @note StabilityLevel.EXPERIMENTAL
       MESSAGING_EVENTHUBS_MESSAGE_ENQUEUED_TIME = 'messaging.eventhubs.message.enqueued_time'
     
-      # The ack deadline in seconds set for the modify ack deadline request
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      MESSAGING_GCP_PUBSUB_MESSAGE_ACK_DEADLINE = 'messaging.gcp_pubsub.message.ack_deadline'
-    
-      # The ack id for a given message
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      MESSAGING_GCP_PUBSUB_MESSAGE_ACK_ID = 'messaging.gcp_pubsub.message.ack_id'
-    
-      # The delivery attempt for a given message
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      MESSAGING_GCP_PUBSUB_MESSAGE_DELIVERY_ATTEMPT = 'messaging.gcp_pubsub.message.delivery_attempt'
-    
       # The ordering key for a given message. If the attribute is not present, the message does not have an ordering key
       #
       # @note StabilityLevel.EXPERIMENTAL
@@ -122,7 +98,7 @@ module OpenTelemetry
       # @note StabilityLevel.EXPERIMENTAL
       MESSAGING_KAFKA_CONSUMER_GROUP = 'messaging.kafka.consumer.group'
     
-      # Deprecated, use `messaging.destination.partition.id` instead
+      # "Deprecated, use `messaging.destination.partition.id` instead."
       #
       # @note StabilityLevel.EXPERIMENTAL
       #
@@ -172,24 +148,12 @@ module OpenTelemetry
       # @note StabilityLevel.EXPERIMENTAL
       MESSAGING_MESSAGE_ID = 'messaging.message.id'
     
-      # Deprecated, use `messaging.operation.type` instead
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replaced by `messaging.operation.type`
-      MESSAGING_OPERATION = 'messaging.operation'
-    
-      # The system-specific name of the messaging operation
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      MESSAGING_OPERATION_NAME = 'messaging.operation.name'
-    
-      # A string identifying the type of the messaging operation
+      # A string identifying the kind of messaging operation
       #
       # If a custom value is used, it MUST be of low cardinality
       #
       # @note StabilityLevel.EXPERIMENTAL
-      MESSAGING_OPERATION_TYPE = 'messaging.operation.type'
+      MESSAGING_OPERATION = 'messaging.operation'
     
       # RabbitMQ message routing key
       #
@@ -266,9 +230,7 @@ module OpenTelemetry
       # @note StabilityLevel.EXPERIMENTAL
       MESSAGING_SERVICEBUS_MESSAGE_ENQUEUED_TIME = 'messaging.servicebus.message.enqueued_time'
     
-      # The messaging system as identified by the client instrumentation
-      #
-      # The actual messaging system may differ from the one known by the client. For example, when using Kafka client libraries to communicate with Azure Event Hubs, the `messaging.system` is set to `kafka` based on the instrumentation's best knowledge
+      # An identifier for the messaging system being used. See below for a list of well-known identifiers
       #
       # @note StabilityLevel.EXPERIMENTAL
       MESSAGING_SYSTEM = 'messaging.system'

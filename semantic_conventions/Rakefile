@@ -30,13 +30,13 @@ else
   task default: %i[generate test rubocop yard]
 end
 
-SPEC_VERSION = '1.26.0'
+SPEC_VERSION = '1.25.0'
 GENERATOR_VERSION = '0.24.0'
 semconv_source_dir = Pathname.new("./tmpsemconvrepo_v#{SPEC_VERSION}")
 conventions_output_dir = Pathname.new('./lib/opentelemetry/semantic_conventions')
 candidates_output_dir = Pathname.new('./lib/opentelemetry/semantic_candidates')
 
-EXCLUDED_ATTRIBUTES = %w[messaging.client_id]
+EXCLUDED_ATTRIBUTES = %w[]
 
 task generate: %i[update_gem_version generate_stable_attributes generate_candidate_attributes]
 

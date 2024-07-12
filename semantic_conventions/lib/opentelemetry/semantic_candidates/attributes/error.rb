@@ -25,11 +25,7 @@ module OpenTelemetry
     
       # Describes a class of error the operation ended with
       #
-      # The `error.type` SHOULD be predictable, and SHOULD have low cardinality.
-      #   
-      #   When `error.type` is set to a type (e.g., an exception type), its
-      #   canonical class name identifying the type within the artifact SHOULD be used.
-      #   
+      # The `error.type` SHOULD be predictable and SHOULD have low cardinality.
       #   Instrumentations SHOULD document the list of errors they report.
       #   
       #   The cardinality of `error.type` within one instrumentation library SHOULD be low.

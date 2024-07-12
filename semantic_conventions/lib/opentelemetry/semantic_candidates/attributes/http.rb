@@ -23,13 +23,6 @@ module OpenTelemetry
     module HTTP 
       # @!group Attribute Names
     
-      # Deprecated, use `client.address` instead
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replaced by `client.address`
-      HTTP_CLIENT_IP = 'http.client_ip'
-    
       # State of the HTTP connection in the HTTP connection pool
       #
       # @note StabilityLevel.EXPERIMENTAL
@@ -41,13 +34,6 @@ module OpenTelemetry
       #
       # @deprecated Replaced by `network.protocol.name`
       HTTP_FLAVOR = 'http.flavor'
-    
-      # Deprecated, use one of `server.address`, `client.address` or `http.request.header.host` instead, depending on the usage
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replaced by one of `server.address`, `client.address` or `http.request.header.host`, depending on the usage
-      HTTP_HOST = 'http.host'
     
       # Deprecated, use `http.request.method` instead
       #
@@ -122,13 +108,6 @@ module OpenTelemetry
       # @deprecated Replaced by `http.request.header.content-length`
       HTTP_REQUEST_CONTENT_LENGTH = 'http.request_content_length'
     
-      # Deprecated, use `http.request.body.size` instead
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replaced by `http.request.body.size`
-      HTTP_REQUEST_CONTENT_LENGTH_UNCOMPRESSED = 'http.request_content_length_uncompressed'
-    
       # The size of the response payload body in bytes. This is the number of bytes transferred excluding headers and is often, but not always, present as the [Content-Length](https://www.rfc-editor.org/rfc/rfc9110.html#field.content-length) header. For requests using transport encoding, this should be the compressed size
       #
       # @note StabilityLevel.EXPERIMENTAL
@@ -164,13 +143,6 @@ module OpenTelemetry
       # @deprecated Replaced by `http.response.header.content-length`
       HTTP_RESPONSE_CONTENT_LENGTH = 'http.response_content_length'
     
-      # Deprecated, use `http.response.body.size` instead
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replace by `http.response.body.size`
-      HTTP_RESPONSE_CONTENT_LENGTH_UNCOMPRESSED = 'http.response_content_length_uncompressed'
-    
       # The matched route, that is, the path template in the format used by the respective server framework
       #
       # MUST NOT be populated when this is not supported by the HTTP server framework as the route attribute should have low-cardinality and the URI path can NOT substitute it.
@@ -187,13 +159,6 @@ module OpenTelemetry
       #
       # @deprecated Replaced by `url.scheme` instead
       HTTP_SCHEME = 'http.scheme'
-    
-      # Deprecated, use `server.address` instead
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replaced by `server.address`
-      HTTP_SERVER_NAME = 'http.server_name'
     
       # Deprecated, use `http.response.status_code` instead
       #

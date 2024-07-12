@@ -23,13 +23,6 @@ module OpenTelemetry
     module NET 
       # @!group Attribute Names
     
-      # Deprecated, use `network.local.address`
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replaced by `network.local.address`
-      NET_HOST_IP = 'net.host.ip'
-    
       # Deprecated, use `server.address`
       #
       # @note StabilityLevel.EXPERIMENTAL
@@ -43,13 +36,6 @@ module OpenTelemetry
       #
       # @deprecated Replaced by `server.port`
       NET_HOST_PORT = 'net.host.port'
-    
-      # Deprecated, use `network.peer.address`
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replaced by `network.peer.address`
-      NET_PEER_IP = 'net.peer.ip'
     
       # Deprecated, use `server.address` on client spans and `client.address` on server spans
       #

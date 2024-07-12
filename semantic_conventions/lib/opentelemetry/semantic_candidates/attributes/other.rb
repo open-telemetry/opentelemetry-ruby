@@ -23,11 +23,9 @@ module OpenTelemetry
     module OTHER 
       # @!group Attribute Names
     
-      # Deprecated, use `db.client.connections.state` instead
+      # The state of a connection in the pool
       #
       # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replaced by `db.client.connections.state`
       STATE = 'state'
     
       # @!endgroup

@@ -23,13 +23,11 @@ module OpenTelemetry
     module IOS 
       # @!group Attribute Names
     
-      # Deprecated use the `device.app.lifecycle` event definition including `ios.state` as a payload field instead
+      # This attribute represents the state the application has transitioned into at the occurrence of the event
       #
       # The iOS lifecycle states are defined in the [UIApplicationDelegate documentation](https://developer.apple.com/documentation/uikit/uiapplicationdelegate#1656902), and from which the `OS terminology` column values are derived
       #
       # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Moved to a payload field of `device.app.lifecycle`
       IOS_STATE = 'ios.state'
     
       # @!endgroup

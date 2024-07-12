@@ -43,15 +43,10 @@ module OpenTelemetry
       # @note StabilityLevel.EXPERIMENTAL
       PROCESS_CONTEXT_SWITCH_TYPE = 'process.context_switch_type'
     
-      # The CPU state of the process
+      # The CPU state for this data point. A process SHOULD be characterized _either_ by data points with no `state` labels, _or only_ data points with `state` labels
       #
       # @note StabilityLevel.EXPERIMENTAL
       PROCESS_CPU_STATE = 'process.cpu.state'
-    
-      # The date and time the process was created, in ISO 8601 format
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      PROCESS_CREATION_TIME = 'process.creation.time'
     
       # The name of the process executable. On Linux based systems, can be set to the `Name` in `proc/[pid]/status`. On Windows, can be set to the base name of `GetProcessImageFileNameW`
       #
@@ -62,26 +57,6 @@ module OpenTelemetry
       #
       # @note StabilityLevel.EXPERIMENTAL
       PROCESS_EXECUTABLE_PATH = 'process.executable.path'
-    
-      # The exit code of the process
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      PROCESS_EXIT_CODE = 'process.exit.code'
-    
-      # The date and time the process exited, in ISO 8601 format
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      PROCESS_EXIT_TIME = 'process.exit.time'
-    
-      # The PID of the process's group leader. This is also the process group ID (PGID) of the process
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      PROCESS_GROUP_LEADER_PID = 'process.group_leader.pid'
-    
-      # Whether the process is connected to an interactive shell
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      PROCESS_INTERACTIVE = 'process.interactive'
     
       # The username of the user that owns the process
       #
@@ -103,16 +78,6 @@ module OpenTelemetry
       # @note StabilityLevel.EXPERIMENTAL
       PROCESS_PID = 'process.pid'
     
-      # The real user ID (RUID) of the process
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      PROCESS_REAL_USER_ID = 'process.real_user.id'
-    
-      # The username of the real user of the process
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      PROCESS_REAL_USER_NAME = 'process.real_user.name'
-    
       # An additional description about the runtime of the process, for example a specific vendor customization of the runtime environment
       #
       # @note StabilityLevel.EXPERIMENTAL
@@ -127,38 +92,6 @@ module OpenTelemetry
       #
       # @note StabilityLevel.EXPERIMENTAL
       PROCESS_RUNTIME_VERSION = 'process.runtime.version'
-    
-      # The saved user ID (SUID) of the process
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      PROCESS_SAVED_USER_ID = 'process.saved_user.id'
-    
-      # The username of the saved user
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      PROCESS_SAVED_USER_NAME = 'process.saved_user.name'
-    
-      # The PID of the process's session leader. This is also the session ID (SID) of the process
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      PROCESS_SESSION_LEADER_PID = 'process.session_leader.pid'
-    
-      # The effective user ID (EUID) of the process
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      PROCESS_USER_ID = 'process.user.id'
-    
-      # The username of the effective user of the process
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      PROCESS_USER_NAME = 'process.user.name'
-    
-      # Virtual process identifier
-      #
-      # The process ID within a PID namespace. This is not necessarily unique across all processes on the host but it is unique within the process namespace that the process exists within
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      PROCESS_VPID = 'process.vpid'
     
       # @!endgroup
     end

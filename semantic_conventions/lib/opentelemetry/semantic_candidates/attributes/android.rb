@@ -28,7 +28,7 @@ module OpenTelemetry
       # @note StabilityLevel.EXPERIMENTAL
       ANDROID_OS_API_LEVEL = 'android.os.api_level'
     
-      # Deprecated use the `device.app.lifecycle` event definition including `android.state` as a payload field instead
+      # This attribute represents the state the application has transitioned into at the occurrence of the event
       #
       # The Android lifecycle states are defined in [Activity lifecycle callbacks](https://developer.android.com/guide/components/activities/activity-lifecycle#lc), and from which the `OS identifiers` are derived
       #

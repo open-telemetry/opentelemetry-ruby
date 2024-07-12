@@ -107,11 +107,6 @@ module OpenTelemetry
       # @note StabilityLevel.EXPERIMENTAL
       URL_SUBDOMAIN = 'url.subdomain'
     
-      # The low-cardinality template of an [absolute path reference](https://www.rfc-editor.org/rfc/rfc3986#section-4.2)
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      URL_TEMPLATE = 'url.template'
-    
       # The effective top level domain (eTLD), also known as the domain suffix, is the last part of the domain name. For example, the top level domain for example.com is `com`
       #
       # This value can be determined precisely with the [public suffix list](http://publicsuffix.org)
