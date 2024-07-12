@@ -32,22 +32,22 @@ end
 
 SPEC_VERSION = '1.25.0'
 GENERATOR_VERSION = '0.24.0'
-semconv_source_dir = Pathname.new("./tmpsemconvrepo_v#{SPEC_VERSION}")
+semconv_source_dir = Pathname.new('./tmp/semconvrepo')
 conventions_output_dir = Pathname.new('./lib/opentelemetry/semantic_conventions')
 candidates_output_dir = Pathname.new('./lib/opentelemetry/semantic_candidates')
 
-EXCLUDED_ATTRIBUTES = %w[]
+EXCLUDED_ATTRIBUTES = %w[].freeze
 
 task generate: %i[update_gem_version generate_stable_attributes generate_candidate_attributes]
 
 directory semconv_source_dir do
-  `git clone --depth=1 --branch v#{SPEC_VERSION} https://github.com/open-telemetry/semantic-conventions.git #{semconv_source_dir}`
+  sh "git clone --tags --depth=1 --branch v#{SPEC_VERSION} https://github.com/open-telemetry/semantic-conventions.git #{semconv_source_dir}"
 end
 
 task check_out_semconv_version: [semconv_source_dir] do
   Dir.chdir(semconv_source_dir) do
-    `git fetch`
-    `git checkout "v#{SPEC_VERSION}"`
+    sh "git fetch --depth 1 origin tag v#{SPEC_VERSION}"
+    sh "git checkout 'v#{SPEC_VERSION}'"
   end
 end
 
@@ -88,10 +88,10 @@ def semconvgen(semconv_source, output_root:, kind:, selector:)
   ]
 
   puts "Running: #{cmd.join(' ')}"
-  `#{cmd.join(' ')}`
+  sh cmd.join(' ')
 end
 
 task :update_gem_version do
-  `sed -i.bak "s/VERSION = '.*'/VERSION = '#{SPEC_VERSION}'/g" lib/opentelemetry/semantic_conventions/version.rb`
-  `rm lib/opentelemetry/semantic_conventions/version.rb.bak`
+  sh %(sed -i.bak "s/VERSION = '.*'/VERSION = '#{SPEC_VERSION}'/g" lib/opentelemetry/semantic_conventions/version.rb)
+  sh 'rm lib/opentelemetry/semantic_conventions/version.rb.bak'
 end

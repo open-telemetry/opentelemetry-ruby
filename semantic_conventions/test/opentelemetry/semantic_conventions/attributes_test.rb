@@ -19,7 +19,7 @@ describe OpenTelemetry::SemanticConventions do
           .const_get(root_namespace)
           .constants
           .each do |stable_const|
-            it "#{stable_const}" do
+            it stable_const.to_s do
               candidate_namespace = OpenTelemetry::SemanticCandidates.const_get(root_namespace)
               assert candidate_namespace.constants.include?(stable_const), "Missing stable constant in candidates: #{stable_const}"
             end

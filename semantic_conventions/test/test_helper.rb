@@ -13,4 +13,4 @@ end
 require 'minitest/autorun'
 require 'pry'
 
-Dir[File.join(File.dirname(__FILE__), '..', 'lib', 'opentelemetry', '**', '*.rb')].sort.each { |file| require file }
+Dir[File.join(File.dirname(__FILE__), '..', 'lib', 'opentelemetry', '**', '*.rb')].each { |file| require file }
