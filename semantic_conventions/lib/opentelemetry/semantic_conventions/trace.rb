@@ -6,6 +6,8 @@
 
 module OpenTelemetry
   module SemanticConventions
+    # OpenTelemetry semantic conventions from v1.10.
+    #
     # @deprecated This module is deprecated in favor of the namespaced modules under
     #   {OpenTelemetry::SemanticCandidates} (all experimental and stable) and
     #   {OpenTelemetry::SemanticConventions} (stable)
@@ -108,7 +110,7 @@ module OpenTelemetry
       # Remote address of the peer (dotted decimal for IPv4 or [RFC5952](https://tools.ietf.org/html/rfc5952) for IPv6)
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::NET::NET_PEER_IP} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::NET::NET_SOCK_PEER_ADDR} for its replacement.
       NET_PEER_IP = 'net.peer.ip'
 
       # Remote port number
@@ -250,7 +252,7 @@ module OpenTelemetry
       # The execution ID of the current function execution
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::FAAS::FAAS_EXECUTION} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::FAAS::FAAS_INVOCATION_ID} for its replacement.
       FAAS_EXECUTION = 'faas.execution'
 
       # The name of the source on which the triggering operation was performed. For example, in Cloud Storage or S3 corresponds to the bucket name, and in Cosmos DB to the database name
@@ -300,7 +302,7 @@ module OpenTelemetry
       # @note When the header is present but empty the attribute SHOULD be set to the empty string. Note that this is a valid situation that is expected in certain cases, according the aforementioned [section of RFC 7230](https://tools.ietf.org/html/rfc7230#section-5.4). When the header is not set the attribute MUST NOT be set
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::HTTP::HTTP_HOST} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::HTTP::HTTP_REQUEST_HEADER} for its replacement.
       HTTP_HOST = 'http.host'
 
       # The URI scheme identifying the used protocol
@@ -337,7 +339,8 @@ module OpenTelemetry
       # The size of the uncompressed request payload body after transport decoding. Not set if transport encoding not used
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::HTTP::HTTP_REQUEST_CONTENT_LENGTH_UNCOMPRESSED} for its replacement.
+      #   There is no replacement.
+      #   Consider using the bare content length with {OpenTelemetry::SemanticCandidates::HTTP::HTTP_REQUEST_CONTENT_LENGTH} instead.
       HTTP_REQUEST_CONTENT_LENGTH_UNCOMPRESSED = 'http.request_content_length_uncompressed'
 
       # The size of the response payload body in bytes. This is the number of bytes transferred excluding headers and is often, but not always, present as the [Content-Length](https://tools.ietf.org/html/rfc7230#section-3.3.2) header. For requests using transport encoding, this should be the compressed size
@@ -349,20 +352,21 @@ module OpenTelemetry
       # The size of the uncompressed response payload body after transport decoding. Not set if transport encoding not used
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::HTTP::HTTP_RESPONSE_CONTENT_LENGTH_UNCOMPRESSED} for its replacement.
+      #   There is no replacement.
+      #   Consider using the bare content length with {OpenTelemetry::SemanticCandidates::HTTP::HTTP_RESPONSE_CONTENT_LENGTH} instead.
       HTTP_RESPONSE_CONTENT_LENGTH_UNCOMPRESSED = 'http.response_content_length_uncompressed'
 
       # The ordinal number of request re-sending attempt
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::HTTP::HTTP_RETRY_COUNT} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::HTTP::HTTP_REQUEST_RESEND_COUNT} for its replacement.
       HTTP_RETRY_COUNT = 'http.retry_count'
 
       # The primary server name of the matched virtual host. This should be obtained via configuration. If no such configuration can be obtained, this attribute MUST NOT be set ( `net.host.name` should be used instead)
       # @note `http.url` is usually not readily available on the server side but would have to be assembled in a cumbersome and sometimes lossy process from other information (see e.g. open-telemetry/opentelemetry-python/pull/148). It is thus preferred to supply the raw data that is available
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::HTTP::HTTP_SERVER_NAME} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::NET::NET_HOST_NAME} for its replacement.
       HTTP_SERVER_NAME = 'http.server_name'
 
       # The matched route (path template)
@@ -385,13 +389,13 @@ module OpenTelemetry
       #  the closest proxy
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::HTTP::HTTP_CLIENT_IP} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::CLIENT::CLIENT_ADDRESS} for its replacement.
       HTTP_CLIENT_IP = 'http.client_ip'
 
       # Like `net.peer.ip` but for the host IP. Useful in case of a multi-IP host
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::NET::NET_HOST_IP} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::NET::NET_SOCK_HOST_ADDR} for its replacement.
       NET_HOST_IP = 'net.host.ip'
 
       # Like `net.peer.port` but for the host port
@@ -409,37 +413,37 @@ module OpenTelemetry
       # The internet connection type currently being used by the host
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::NET::NET_HOST_CONNECTION_TYPE} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::NETWORK::NETWORK_CONNECTION_TYPE} for its replacement.
       NET_HOST_CONNECTION_TYPE = 'net.host.connection.type'
 
       # This describes more details regarding the connection.type. It may be the type of cell technology connection, but it could be used for describing details about a wifi connection
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::NET::NET_HOST_CONNECTION_SUBTYPE} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::NETWORK::NETWORK_CONNECTION_SUBTYPE} for its replacement.
       NET_HOST_CONNECTION_SUBTYPE = 'net.host.connection.subtype'
 
       # The name of the mobile carrier
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::NET::NET_HOST_CARRIER_NAME} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::NETWORK::NETWORK_CARRIER_NAME} for its replacement.
       NET_HOST_CARRIER_NAME = 'net.host.carrier.name'
 
       # The mobile carrier country code
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::NET::NET_HOST_CARRIER_MCC} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::NETWORK::NETWORK_CARRIER_MCC} for its replacement.
       NET_HOST_CARRIER_MCC = 'net.host.carrier.mcc'
 
       # The mobile carrier network code
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::NET::NET_HOST_CARRIER_MNC} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::NETWORK::NETWORK_CARRIER_MNC} for its replacement.
       NET_HOST_CARRIER_MNC = 'net.host.carrier.mnc'
 
       # The ISO 3166-1 alpha-2 2-character country code associated with the mobile carrier network
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::NET::NET_HOST_CARRIER_ICC} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::NETWORK::NETWORK_CARRIER_ICC} for its replacement.
       NET_HOST_CARRIER_ICC = 'net.host.carrier.icc'
 
       # A string identifying the messaging system
@@ -451,37 +455,37 @@ module OpenTelemetry
       # The message destination name. This might be equal to the span name but is required nevertheless
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_DESTINATION} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_DESTINATION_NAME} for its replacement.
       MESSAGING_DESTINATION = 'messaging.destination'
 
       # The kind of message destination
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_DESTINATION_KIND} for its replacement.
+      #   This attribute was renamed in v1.17.0 and its replacement was removed in v1.20.0.
       MESSAGING_DESTINATION_KIND = 'messaging.destination_kind'
 
       # A boolean that is true if the message destination is temporary
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_TEMP_DESTINATION} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_DESTINATION_TEMPORARY} for its replacement.
       MESSAGING_TEMP_DESTINATION = 'messaging.temp_destination'
 
       # The name of the transport protocol
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_PROTOCOL} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::NET::NET_PROTOCOL_NAME} for its replacement.
       MESSAGING_PROTOCOL = 'messaging.protocol'
 
       # The version of the transport protocol
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_PROTOCOL_VERSION} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::NET::NET_PROTOCOL_VERSION} for its replacement.
       MESSAGING_PROTOCOL_VERSION = 'messaging.protocol_version'
 
       # Connection string
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_URL} for its replacement.
+      #   This attribute was removed in v1.17.0.
       MESSAGING_URL = 'messaging.url'
 
       # A value used by the messaging system as an identifier for the message, represented as a string
@@ -493,19 +497,19 @@ module OpenTelemetry
       # The [conversation ID](#conversations) identifying the conversation to which the message belongs, represented as a string. Sometimes called "Correlation ID"
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_CONVERSATION_ID} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_MESSAGE_CONVERSATION_ID} for its replacement.
       MESSAGING_CONVERSATION_ID = 'messaging.conversation_id'
 
       # The (uncompressed) size of the message payload in bytes. Also use this attribute if it is unknown whether the compressed or uncompressed payload size is reported
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_MESSAGE_BODY_SIZE} for its replacement.
       MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES = 'messaging.message_payload_size_bytes'
 
       # The compressed size of the message payload in bytes
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_MESSAGE_PAYLOAD_COMPRESSED_SIZE_BYTES} for its replacement.
+      #   This attribute was removed in v1.22.0.
       MESSAGING_MESSAGE_PAYLOAD_COMPRESSED_SIZE_BYTES = 'messaging.message_payload_compressed_size_bytes'
 
       # A string containing the function invocation time in the [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format expressed in [UTC](https://www.w3.org/TR/NOTE-datetime)
@@ -768,13 +772,13 @@ module OpenTelemetry
       # The identifier for the consumer receiving a message. For Kafka, set it to `{messaging.kafka.consumer_group} - {messaging.kafka.client_id}`, if both are present, or only `messaging.kafka.consumer_group`. For brokers, such as RabbitMQ and Artemis, set it to the `client_id` of the client consuming the message
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_CONSUMER_ID} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_CLIENT_ID} for its replacement.
       MESSAGING_CONSUMER_ID = 'messaging.consumer_id'
 
       # RabbitMQ message routing key
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_RABBITMQ_ROUTING_KEY} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_RABBITMQ_DESTINATION_ROUTING_KEY} for its replacement.
       MESSAGING_RABBITMQ_ROUTING_KEY = 'messaging.rabbitmq.routing_key'
 
       # Message keys in Kafka are used for grouping alike messages to ensure they're processed on the same partition. They differ from `messaging.message_id` in that they're not unique. If the key is `null`, the attribute MUST NOT be set
@@ -793,19 +797,19 @@ module OpenTelemetry
       # Client Id for the Consumer or Producer that is handling the message
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_KAFKA_CLIENT_ID} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_CLIENT_ID} for its replacement.
       MESSAGING_KAFKA_CLIENT_ID = 'messaging.kafka.client_id'
 
       # Partition the message is sent to
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_KAFKA_PARTITION} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_KAFKA_DESTINATION_PARTITION} for its replacement.
       MESSAGING_KAFKA_PARTITION = 'messaging.kafka.partition'
 
       # A boolean that is true if the message is a tombstone
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_KAFKA_TOMBSTONE} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_KAFKA_MESSAGE_TOMBSTONE} for its replacement.
       MESSAGING_KAFKA_TOMBSTONE = 'messaging.kafka.tombstone'
 
       # Namespace of RocketMQ resources, resources in different namespaces are individual
@@ -823,7 +827,7 @@ module OpenTelemetry
       # The unique identifier for each client
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_ROCKETMQ_CLIENT_ID} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::MESSAGING::MESSAGING_CLIENT_ID} for its replacement.
       MESSAGING_ROCKETMQ_CLIENT_ID = 'messaging.rocketmq.client_id'
 
       # Type of message

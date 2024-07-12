@@ -6,6 +6,8 @@
 
 module OpenTelemetry
   module SemanticConventions
+    # OpenTelemetry semantic conventions from v1.10.
+    #
     # @deprecated This module is deprecated in favor of the namespaced modules under
     #   {OpenTelemetry::SemanticCandidates} (all experimental and stable) and
     #   {OpenTelemetry::SemanticConventions} (stable)
@@ -139,7 +141,7 @@ module OpenTelemetry
       # Container image tag
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Resource\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::CONTAINER::CONTAINER_IMAGE_TAG} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::CONTAINER::CONTAINER_IMAGE_TAGS} for its replacement.
       CONTAINER_IMAGE_TAG = 'container.image.tag'
 
       # Name of the [deployment environment](https://en.wikipedia.org/wiki/Deployment_environment) (aka deployment tier)
@@ -200,7 +202,7 @@ module OpenTelemetry
       #  As an alternative, consider setting `faas.id` as a span attribute instead
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Resource\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::FAAS::FAAS_ID} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::CLOUD::CLOUD_RESOURCE_ID} for its replacement.
       FAAS_ID = 'faas.id'
 
       # The immutable version of the function being executed
@@ -526,7 +528,7 @@ module OpenTelemetry
       # The version string of the auto instrumentation agent, if used
       #
       # @deprecated The \{OpenTelemetry::SemanticConventions::Resource\} module is deprecated.
-      #   See {OpenTelemetry::SemanticCandidates::TELEMETRY::TELEMETRY_AUTO_VERSION} for its replacement.
+      #   See {OpenTelemetry::SemanticCandidates::TELEMETRY::TELEMETRY_DISTRO_VERSION} for its replacement.
       TELEMETRY_AUTO_VERSION = 'telemetry.auto.version'
 
       # The name of the web engine
