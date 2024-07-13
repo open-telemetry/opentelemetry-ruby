@@ -7,7 +7,7 @@
 require 'test_helper'
 
 describe OpenTelemetry::SDK::Logs::LogRecord do
-  Logs = OpenTelemetry::SDK::Logs # rubocop:disable Lint/ConstantDefinitionInBlock
+  Logs = OpenTelemetry::SDK::Logs
   let(:log_record) { Logs::LogRecord.new(**args) }
   let(:args) { {} }
   let(:logger) { Logs::Logger.new('', '', Logs::LoggerProvider.new) }
@@ -57,7 +57,7 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
           # I'm going to assert it's an Integer, which is the
           # Process.clock_gettime return value class when passed the
           # :nanosecond option
-          assert_instance_of(Integer, log_record.observed_timestamp)
+          assert_instance_of(Time, log_record.observed_timestamp)
         end
       end
     end

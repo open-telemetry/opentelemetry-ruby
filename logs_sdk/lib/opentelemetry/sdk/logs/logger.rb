@@ -34,15 +34,13 @@ module OpenTelemetry
 
         # Emit a {LogRecord} to the processing pipeline.
         #
-        # @param [optional Float, Time] timestamp Time in nanoseconds since Unix
-        #   epoch when the event occurred measured by the origin clock, i.e. the
-        #   time at the source.
-        # @param [optional Float, Time] observed_timestamp Time in nanoseconds
-        #   since Unix epoch when the event was observed by the collection system.
-        #   Intended default: Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond)
-        # @param [optional String] severity_text Original string representation of
-        #   the severity as it is known at the source. Also known as log level.
-        # @param [optional Integer] severity_number Numerical value of the
+        # @param [optional Time] timestamp Time when the event occurred.
+        # @param [optional Time] observed_timestamp Time when the event was
+        #   observed by the collection system.
+        # @param [optional OpenTelemetry::Trace::SpanContext] span_context The
+        #   OpenTelemetry::Trace::SpanContext to associate with the
+        #   {LogRecord}.
+        # @param severity_number [optional Integer] Numerical value of the
         #   severity. Smaller numerical values correspond to less severe events
         #   (such as debug events), larger numerical values correspond to more
         #   severe events (such as errors and critical events).
@@ -68,18 +66,18 @@ module OpenTelemetry
         #
         # @api public
         def on_emit(timestamp: nil,
-                     observed_timestamp: Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond),
-                     severity_text: nil,
-                     severity_number: nil,
-                     body: nil,
-                     attributes: nil,
-                     trace_id: nil,
-                     span_id: nil,
-                     trace_flags: nil,
-                     context: OpenTelemetry::Context.current)
+                    observed_timestamp: Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond),
+                    severity_text: nil,
+                    severity_number: nil,
+                    body: nil,
+                    attributes: nil,
+                    trace_id: nil,
+                    span_id: nil,
+                    trace_flags: nil,
+                    context: OpenTelemetry::Context.current)
 
           current_span = OpenTelemetry::Trace.current_span(context)
-          span_context = current_span.context unless OpenTelemetry::Trace::Span::INVALID == current_span
+          span_context = current_span.context unless current_span == OpenTelemetry::Trace::Span::INVALID
           log_record = LogRecord.new(timestamp: timestamp,
                                      observed_timestamp: observed_timestamp,
                                      severity_text: severity_text,

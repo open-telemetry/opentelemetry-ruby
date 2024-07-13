@@ -175,7 +175,7 @@ describe OpenTelemetry::SDK::Logs::LoggerProvider do
     it 'sends the log record to the processors' do
       mock_log_record = Minitest::Mock.new
       mock_context = Minitest::Mock.new
-      def mock_context.value(key); OpenTelemetry::Trace::Span::INVALID; end
+      def mock_context.value(key); OpenTelemetry::Trace::Span::INVALID; end # rubocop:disable Style/SingleLineMethods
 
       logger_provider.add_log_record_processor(mock_log_record_processor)
       mock_log_record_processor.expect(:on_emit, nil, [mock_log_record, mock_context])

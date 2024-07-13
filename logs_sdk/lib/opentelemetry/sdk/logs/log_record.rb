@@ -23,11 +23,12 @@ module OpenTelemetry
 
         # Creates a new {LogRecord}.
         #
-        # @param [optional Float, Time] timestamp Time when the event occurred.
-        # @param [optional Float, Time] observed_timestamp Time when the event
+        # @param [optional Time] timestamp Time when the event occurred.
+        # @param [optional Time] observed_timestamp Time when the event
         #   was observed by the collection system. If nil, will first attempt
-        #   to set to `timestamp`. If `timestamp` is nil, will set to
-        #   `Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond)`.
+        #   to set to `timestamp`. If `timestamp` is nil, will set to Time.now.
+        # @param [optional OpenTelemetry::Trace::SpanContext] span_context The
+        #   OpenTelemetry::Trace::SpanContext to associate with the LogRecord.
         # @param [optional String] severity_text The log severity, also known as
         #   log level.
         # @param [optional Integer] severity_number The numerical value of the
@@ -62,7 +63,7 @@ module OpenTelemetry
           logger: nil
         )
           @timestamp = timestamp
-          @observed_timestamp = observed_timestamp || timestamp || Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond)
+          @observed_timestamp = observed_timestamp || timestamp || Time.now
           @severity_text = severity_text
           @severity_number = severity_number
           @body = body

@@ -12,13 +12,12 @@ module OpenTelemetry
 
       # Emit a {LogRecord} to the processing pipeline.
       #
-      # @param [optional Float, Time] timestamp Time in nanoseconds since Unix
-      #   epoch when the event occurred measured by the origin clock, i.e. the
-      #   time at the source.
-      # @param [optional Float, Time] observed_timestamp Time in nanoseconds
-      #   since Unix epoch when the event was observed by the collection system.
-      #   Intended default: Process.clock_gettime(Process::CLOCK_REALTIME)
-      # @param [optional Integer] severity_number Numerical value of the
+      # @param timestamp [optional Time] Time when the event occurred.
+      # @param observed_timestamp [optional Time] Time when the event was
+      #   observed by the collection system.
+      # @param context [optional Context] The Context to associate with the
+      #   LogRecord. Intended default: OpenTelemetry::Context.current
+      # @param severity_number [optional Integer] Numerical value of the
       #   severity. Smaller numerical values correspond to less severe events
       #   (such as debug events), larger numerical values correspond to more
       #   severe events (such as errors and critical events).

@@ -23,19 +23,15 @@ module OpenTelemetry
                                  :instrumentation_scope, # OpenTelemetry::SDK::InstrumentationScope
                                  :total_recorded_attributes) do # Integer
         def unix_nano_timestamp
-          if timestamp.is_a?(Time)
-            (timestamp.to_r * 1_000_000_000).to_i
-          else
-            timestamp
-          end
+          return unless timestamp.is_a?(Time)
+
+          (timestamp.to_r * 10**9).to_i
         end
 
         def unix_nano_observed_timestamp
-          if timestamp.is_a?(Time)
-            (timestamp.to_r * 1_000_000_000).to_i
-          else
-            timestamp
-          end
+          return unless observed_timestamp.is_a?(Time)
+
+          (observed_timestamp.to_r * 10**9).to_i
         end
       end
     end
