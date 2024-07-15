@@ -66,7 +66,7 @@ module OpenTelemetry
         #
         # @api public
         def on_emit(timestamp: nil,
-                    observed_timestamp: Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond),
+                    observed_timestamp: Time.now,
                     severity_text: nil,
                     severity_number: nil,
                     body: nil,

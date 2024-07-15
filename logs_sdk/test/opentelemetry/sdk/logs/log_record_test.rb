@@ -37,7 +37,7 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
       end
 
       describe 'when timestamp is present' do
-        let(:timestamp) { Process.clock_gettime(Process::CLOCK_REALTIME) }
+        let(:timestamp) { Time.now }
         let(:args) { { timestamp: timestamp } }
 
         it 'is equal to timestamp' do
@@ -66,8 +66,8 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
       let(:args) do
         span_context = OpenTelemetry::Trace::SpanContext.new
         {
-          timestamp: Process.clock_gettime(Process::CLOCK_REALTIME),
-          observed_timestamp: Process.clock_gettime(Process::CLOCK_REALTIME),
+          timestamp: Time.now,
+          observed_timestamp: Time.now + 1,
           severity_text: 'DEBUG',
           severity_number: 0,
           body: 'body',
@@ -82,8 +82,8 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
       it 'transforms the LogRecord into a LogRecordData' do
         log_record_data = log_record.to_log_record_data
 
-        assert_equal(args[:timestamp], log_record_data.timestamp)
-        assert_equal(args[:observed_timestamp], log_record_data.observed_timestamp)
+        assert_equal(args[:timestamp].strftime("%s%N").to_i, log_record_data.timestamp)
+        assert_equal(args[:observed_timestamp].strftime("%s%N").to_i, log_record_data.observed_timestamp)
         assert_equal(args[:severity_text], log_record_data.severity_text)
         assert_equal(args[:severity_number], log_record_data.severity_number)
         assert_equal(args[:body], log_record_data.body)

@@ -78,8 +78,8 @@ module OpenTelemetry
 
         def to_log_record_data
           LogRecordData.new(
-            @timestamp,
-            @observed_timestamp,
+            to_integer_nanoseconds(@timestamp),
+            to_integer_nanoseconds(@observed_timestamp),
             @severity_text,
             @severity_number,
             @body,
@@ -91,6 +91,14 @@ module OpenTelemetry
             @instrumentation_scope,
             @total_recorded_attributes
           )
+        end
+
+        private
+
+        def to_integer_nanoseconds(timestamp)
+          return unless timestamp.is_a?(Time)
+
+          t = (timestamp.to_r * 10**9).to_i
         end
       end
     end
