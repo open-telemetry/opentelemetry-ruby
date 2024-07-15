@@ -43,11 +43,13 @@ module OpenTelemetry
         #   current context.
         # @param [optional String] span_id The span ID associated with the
         #   current context.
-        # @param [optional TraceFlags] trace_flags The trace flags associated
-        #   with the current context.
-        # @param [optional OpenTelemetry::SDK::Logs::Logger] logger The logger that
-        #   created the {LogRecord}. Used to set `resource` and
-        #   `instrumentation_scope`.
+        # @param [optional OpenTelemetry::Trace::TraceFlags] trace_flags The
+        #   trace flags associated with the current context.
+        # @param [optional OpenTelemetry::SDK::Resources::Resource] recource The
+        #   source of the log, desrived from the LoggerProvider.
+        # @param [optional OpenTelemetry::SDK::InstrumentationScope] instrumentation_scope
+        #   The instrumentation scope, derived from the emitting Logger
+        #
         #
         # @return [LogRecord]
         def initialize(
@@ -60,7 +62,8 @@ module OpenTelemetry
           trace_id: nil,
           span_id: nil,
           trace_flags: nil,
-          logger: nil
+          resource: nil,
+          instrumentation_scope: nil
         )
           @timestamp = timestamp
           @observed_timestamp = observed_timestamp || timestamp || Time.now
@@ -71,8 +74,8 @@ module OpenTelemetry
           @trace_id = trace_id
           @span_id = span_id
           @trace_flags = trace_flags
-          @resource = logger&.resource
-          @instrumentation_scope = logger&.instrumentation_scope
+          @resource = resource
+          @instrumentation_scope = instrumentation_scope
           @total_recorded_attributes = @attributes&.size || 0
         end
 

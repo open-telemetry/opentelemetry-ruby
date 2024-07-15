@@ -19,7 +19,7 @@ describe OpenTelemetry::SDK::Logs::LoggerProvider do
 
     it 'allows a resource to be associated with the logger provider' do
       assert_instance_of(
-        OpenTelemetry::SDK::Resources::Resource, logger_provider.resource
+        OpenTelemetry::SDK::Resources::Resource, logger_provider.instance_variable_get(:@resource)
       )
     end
   end
@@ -172,16 +172,47 @@ describe OpenTelemetry::SDK::Logs::LoggerProvider do
   end
 
   describe '#on_emit' do
-    it 'sends the log record to the processors' do
-      mock_log_record = Minitest::Mock.new
+    let(:mock_context) do
       mock_context = Minitest::Mock.new
       def mock_context.value(key); OpenTelemetry::Trace::Span::INVALID; end # rubocop:disable Style/SingleLineMethods
 
-      logger_provider.add_log_record_processor(mock_log_record_processor)
-      mock_log_record_processor.expect(:on_emit, nil, [mock_log_record, mock_context])
+      mock_context
+    end
 
-      logger_provider.on_emit(mock_log_record, mock_context)
-      mock_log_record_processor.verify
+    let(:args) do
+      span_context = OpenTelemetry::Trace::SpanContext.new
+      {
+        timestamp: Time.now,
+        observed_timestamp: Time.now + 1,
+        severity_text: 'DEBUG',
+        severity_number: 0,
+        body: 'body',
+        attributes: { 'a' => 'b' },
+        trace_id: span_context.trace_id,
+        span_id: span_context.span_id,
+        trace_flags: span_context.trace_flags,
+        instrumentation_scope: OpenTelemetry::SDK::InstrumentationScope,
+        context: mock_context,
+      }
+    end
+
+    it 'creates a new log record' do
+      output = 'union station'
+      OpenTelemetry::SDK::Logs::LogRecord.stub(:new, ->(_) { puts output }) do
+        assert_output(/#{output}/) { logger_provider.on_emit(**args) }
+      end
+    end
+
+    it 'sends the log record to the processors' do
+      mock_log_record = Minitest::Mock.new
+
+      OpenTelemetry::SDK::Logs::LogRecord.stub :new, mock_log_record do
+        logger_provider.add_log_record_processor(mock_log_record_processor)
+        mock_log_record_processor.expect(:on_emit, nil, [mock_log_record, mock_context])
+
+        logger_provider.on_emit(**args)
+        mock_log_record_processor.verify
+      end
     end
   end
 end

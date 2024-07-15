@@ -10,12 +10,6 @@ describe OpenTelemetry::SDK::Logs::Logger do
   let(:logger_provider) { OpenTelemetry::SDK::Logs::LoggerProvider.new }
   let(:logger) { logger_provider.logger(name: 'default_logger') }
 
-  describe '#resource' do
-    it 'returns the resource associated with the logger_provider' do
-      assert_equal(logger.resource, logger_provider.resource)
-    end
-  end
-
   describe '#on_emit' do
     it 'creates a new LogRecord' do
       output = 'chocolate cherry'

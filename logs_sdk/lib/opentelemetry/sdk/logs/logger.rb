@@ -9,8 +9,6 @@ module OpenTelemetry
     module Logs
       # The SDK implementation of OpenTelemetry::Logs::Logger
       class Logger < OpenTelemetry::Logs::Logger
-        attr_reader :instrumentation_scope, :logger_provider
-
         # @api private
         #
         # Returns a new {OpenTelemetry::SDK::Logs::Logger} instance. This should
@@ -26,10 +24,6 @@ module OpenTelemetry
         def initialize(name, version, logger_provider)
           @instrumentation_scope = InstrumentationScope.new(name, version)
           @logger_provider = logger_provider
-        end
-
-        def resource
-          logger_provider.resource
         end
 
         # Emit a {LogRecord} to the processing pipeline.
@@ -78,18 +72,18 @@ module OpenTelemetry
 
           current_span = OpenTelemetry::Trace.current_span(context)
           span_context = current_span.context unless current_span == OpenTelemetry::Trace::Span::INVALID
-          log_record = LogRecord.new(timestamp: timestamp,
-                                     observed_timestamp: observed_timestamp,
-                                     severity_text: severity_text,
-                                     severity_number: severity_number,
-                                     body: body,
-                                     attributes: attributes,
-                                     trace_id: trace_id || span_context&.trace_id,
-                                     span_id: span_id || span_context&.span_id,
-                                     trace_flags: trace_flags || span_context&.trace_flags,
-                                     logger: self)
 
-          logger_provider.on_emit(log_record, context)
+          @logger_provider.on_emit(timestamp: timestamp,
+                                  observed_timestamp: observed_timestamp,
+                                  severity_text: severity_text,
+                                  severity_number: severity_number,
+                                  body: body,
+                                  attributes: attributes,
+                                  trace_id: trace_id || span_context&.trace_id,
+                                  span_id: span_id || span_context&.span_id,
+                                  trace_flags: trace_flags || span_context&.trace_flags,
+                                  instrumentation_scope: @instrumentation_scope,
+                                  context: context)
         end
       end
     end

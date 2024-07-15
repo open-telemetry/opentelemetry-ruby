@@ -9,8 +9,6 @@ module OpenTelemetry
     module Logs
       # The SDK implementation of OpenTelemetry::Logs::LoggerProvider.
       class LoggerProvider < OpenTelemetry::Logs::LoggerProvider
-        attr_reader :resource
-
         UNEXPECTED_ERROR_MESSAGE = 'unexpected error in ' \
           'OpenTelemetry::SDK::Logs::LoggerProvider#%s'
 
@@ -121,8 +119,31 @@ module OpenTelemetry
           end
         end
 
-        # Call the on_emit methods for each log_record_processor
-        def on_emit(log_record, context)
+        # @api private
+        def on_emit(timestamp: nil,
+                    observed_timestamp: nil,
+                    severity_text: nil,
+                    severity_number: nil,
+                    body: nil,
+                    attributes: nil,
+                    trace_id: nil,
+                    span_id: nil,
+                    trace_flags: nil,
+                    instrumentation_scope: nil,
+                    context: nil)
+
+          log_record = LogRecord.new(timestamp: timestamp,
+                                     observed_timestamp: observed_timestamp,
+                                     severity_text: severity_text,
+                                     severity_number: severity_number,
+                                     body: body,
+                                     attributes: attributes,
+                                     trace_id: trace_id,
+                                     span_id: span_id,
+                                     trace_flags: trace_flags,
+                                     resource: @resource,
+                                     instrumentation_scope: instrumentation_scope)
+
           @log_record_processors.each { |processor| processor.on_emit(log_record, context) }
         end
       end

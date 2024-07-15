@@ -75,7 +75,8 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
           trace_id: span_context.trace_id,
           span_id: span_context.span_id,
           trace_flags: span_context.trace_flags,
-          logger: logger
+          resource: logger.instance_variable_get(:@logger_provider).instance_variable_get(:@resource),
+          instrumentation_scope: logger.instance_variable_get(:@instrumentation_scope)
         }
       end
 
@@ -91,40 +92,8 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
         assert_equal(args[:trace_id], log_record_data.trace_id)
         assert_equal(args[:span_id], log_record_data.span_id)
         assert_equal(args[:trace_flags], log_record_data.trace_flags)
-        assert_equal(args[:logger].resource, log_record_data.resource)
-        assert_equal(args[:logger].instrumentation_scope, log_record_data.instrumentation_scope)
-      end
-    end
-
-    describe 'attributes set through logger' do
-      let(:logger_provider) { Logs::LoggerProvider.new }
-      let(:resource) { OpenTelemetry::SDK::Resources::Resource.create }
-      let(:instrumentation_scope) { OpenTelemetry::SDK::InstrumentationScope.new('name', 'version') }
-      let(:logger) { Logs::Logger.new(resource, instrumentation_scope, logger_provider) }
-      let(:args) { { logger: logger } }
-
-      describe 'resource' do
-        it 'is set to the resource of the logger given on initialization' do
-          assert_equal(logger.resource, log_record.resource)
-        end
-      end
-
-      describe 'instrumentation_scope' do
-        it 'is set to the instrumentation_scope of the logger given on initialization' do
-          assert_equal(logger.instrumentation_scope, log_record.instrumentation_scope)
-        end
-      end
-
-      describe 'when logger is nil' do
-        let(:logger) { nil }
-
-        it 'sets the resource to nil' do
-          assert_nil(log_record.resource)
-        end
-
-        it 'sets the instrumentation_scope to nil' do
-          assert_nil(log_record.instrumentation_scope)
-        end
+        assert_equal(args[:resource], log_record_data.resource)
+        assert_equal(args[:instrumentation_scope], log_record_data.instrumentation_scope)
       end
     end
   end
