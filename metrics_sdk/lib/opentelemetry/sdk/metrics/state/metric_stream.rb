@@ -82,7 +82,7 @@ module OpenTelemetry
 
           def find_registered_view
             registered_views = []
-            @meter_provider.registered_views.each { |view| registered_views << view if view.match_instrument(self) }
+            @meter_provider.registered_views.each { |view| registered_views << view if view.match_instrument?(self) }
             registered_views
           end
 

@@ -102,28 +102,28 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
 
     it 'registered view with matching name' do
       registered_view.instance_variable_set(:@name, 'test')
-      _(registered_view.match_instrument(metric_stream)).must_equal true
+      _(registered_view.match_instrument?(metric_stream)).must_equal true
     end
 
     it 'registered view with matching type' do
       registered_view.instance_variable_set(:@options, { type: :counter })
-      _(registered_view.match_instrument(metric_stream)).must_equal true
+      _(registered_view.match_instrument?(metric_stream)).must_equal true
     end
 
     it 'registered view with matching version' do
       registered_view.instance_variable_set(:@options, { meter_version: '1.0.1' })
-      _(registered_view.match_instrument(metric_stream)).must_equal true
+      _(registered_view.match_instrument?(metric_stream)).must_equal true
     end
 
     it 'registered view with matching meter_name' do
       registered_view.instance_variable_set(:@options, { meter_name: 'test_scope' })
-      _(registered_view.match_instrument(metric_stream)).must_equal true
+      _(registered_view.match_instrument?(metric_stream)).must_equal true
     end
 
     it 'do not registered view with unmatching name and matching type' do
       registered_view.instance_variable_set(:@options, { type: :counter })
       registered_view.instance_variable_set(:@name, 'tset')
-      _(registered_view.match_instrument(metric_stream)).must_equal false
+      _(registered_view.match_instrument?(metric_stream)).must_equal false
     end
   end
 end

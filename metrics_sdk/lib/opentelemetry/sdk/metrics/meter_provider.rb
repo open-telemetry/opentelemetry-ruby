@@ -126,12 +126,33 @@ module OpenTelemetry
           end
         end
 
-        # The name of the Instrument(s). OpenTelemetry SDK authors MAY choose to support wildcard characters, with the question mark (?) matching exactly one character and the asterisk character (*) matching zero or more characters.
-        # The options of the Instrument(s). Useful keys include: aggregation, type, unit, meter_name, meter_version, attribute_keys
+        # Register a view.
+        #
+        # Example:
+        #
+        #   OpenTelemetry.meter_provider.add_view('test', :aggregation => Aggregation::Drop.new,
+        #                                         :type => :counter, :unit => 'smidgen',
+        #                                         :meter_name => 'test', :meter_version => '1.0')
+        #
+        # Note that OpenTelemetry SDK authors MAY choose to support wildcard characters,
+        # with the question mark (?) matching exactly one character and the asterisk
+        # character (*) matching zero or more characters.
+        #
+        # @param [String] name Name of the view.
+        # @param [optional Hash] options For more precise matching view and metrics stream
+        #   options may include:
+        #     aggregation: aggregation type e.g. ExplicitBucketHistogram, Sum, LastValue
+        #     type: instrumentation kind (instrument_kind) e.g. observable_gauge, counter, etc.
+        #     unit: instrumentation unit e.g. smidgen
+        #     meter_name: meter name e.g. meter_provider.meter("sample_meter_name", version: '1.2.0')
+        #     meter_version: meter version e.g. meter_provider.meter("sample_meter_name", version: '1.2.0')
+        #
+        # @return [nil] returns nil
         #
         # TODO: add schema_url as part of options
         def add_view(name, **options)
           @registered_views << View::RegisteredView.new(name, **options)
+          nil
         end
       end
     end

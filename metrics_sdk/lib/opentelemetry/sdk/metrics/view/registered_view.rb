@@ -19,7 +19,7 @@ module OpenTelemetry
             @attribute_keys = options[:attribute_keys] || {}
           end
 
-          def match_instrument(metric_stream)
+          def match_instrument?(metric_stream)
             return false if @aggregation.nil?
             return false if @name && @name != metric_stream.name
             return false if @options[:type] && @options[:type] != metric_stream.instrument_kind
