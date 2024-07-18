@@ -28,7 +28,7 @@ module OpenTelemetry
             @description = description
             @unit = unit
             @instrument_kind = instrument_kind
-            @meter_provider  = meter_provider
+            @meter_provider = meter_provider
             @instrumentation_scope = instrumentation_scope
             @default_aggregation = aggregation
             @data_points = {}
