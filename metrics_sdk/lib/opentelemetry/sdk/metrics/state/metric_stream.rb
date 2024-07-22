@@ -32,33 +32,32 @@ module OpenTelemetry
             @instrumentation_scope = instrumentation_scope
             @default_aggregation = aggregation
             @data_points = {}
+            @registered_views = []
 
+            find_registered_view
             @mutex = Mutex.new
           end
 
           def collect(start_time, end_time)
             metric_data = []
-            registered_views = find_registered_view
-
-            if registered_views.empty?
+            if @registered_views.empty?
               metric_data << aggregate_metric_data(start_time, end_time)
             else
-              registered_views.each { |view| metric_data << aggregate_metric_data(start_time, end_time, aggregation: view.aggregation) }
+              @registered_views.each { |view| metric_data << aggregate_metric_data(start_time, end_time, aggregation: view.aggregation) }
             end
 
             metric_data
           end
 
           def update(value, attributes)
-            registered_views = find_registered_view
-            if registered_views.empty?
+            if @registered_views.empty?
               @mutex.synchronize { @default_aggregation.update(value, attributes, @data_points) }
             else
-              registered_views.each do |view|
+              @registered_views.each do |view|
                 @mutex.synchronize do
                   attributes ||= {}
                   attributes.merge!(view.attribute_keys)
-                  view.aggregation.update(value, attributes, @data_points)
+                  view.aggregation.update(value, attributes, @data_points) if view.valid_aggregation?
                 end
               end
             end
@@ -81,9 +80,9 @@ module OpenTelemetry
           end
 
           def find_registered_view
-            registered_views = []
-            @meter_provider.registered_views.each { |view| registered_views << view if view.match_instrument?(self) }
-            registered_views
+            return if @meter_provider.nil?
+
+            @meter_provider.registered_views.each { |view| @registered_views << view if view.match_instrument?(self) }
           end
 
           def to_s
