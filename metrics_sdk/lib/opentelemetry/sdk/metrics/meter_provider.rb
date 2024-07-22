@@ -136,9 +136,6 @@ module OpenTelemetry
         #                                         :type => :counter, :unit => 'smidgen',
         #                                         :meter_name => 'test', :meter_version => '1.0')
         #
-        # Note that OpenTelemetry SDK authors MAY choose to support wildcard characters,
-        # with the question mark (?) matching exactly one character and the asterisk
-        # character (*) matching zero or more characters.
         #
         # @param [String] name Name of the view.
         # @param [optional Hash] options For more precise matching, {View} and {MetricsStream}
