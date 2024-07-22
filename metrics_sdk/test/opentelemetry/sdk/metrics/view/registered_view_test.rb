@@ -73,9 +73,9 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
       OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
 
       meter = OpenTelemetry.meter_provider.meter('test')
-      counter = meter.create_counter('counter', unit: 'smidgen', description: 'a small amount of something')
-
       OpenTelemetry.meter_provider.add_view('retnuoc', aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new)
+
+      counter = meter.create_counter('counter', unit: 'smidgen', description: 'a small amount of something')
 
       counter.add(1)
       counter.add(2)
