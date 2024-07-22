@@ -128,6 +128,8 @@ module OpenTelemetry
 
         # A View provides SDK users with the flexibility to customize the metrics that are output by the SDK.
         #
+        # A View provides SDK users with the flexibility to customize the metrics that are output by the SDK.
+        #
         # Example:
         #
         #   OpenTelemetry.meter_provider.add_view('test', :aggregation => Aggregation::Drop.new,
