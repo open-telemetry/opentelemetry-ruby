@@ -6,5 +6,5 @@
 
 module OpenTelemetry
   ## Current OpenTelemetry version
-  VERSION = '1.2.5'
+  VERSION = '1.3.0'
 end
