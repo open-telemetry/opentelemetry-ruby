@@ -1,5 +1,9 @@
 # Release History: opentelemetry-api
 
+### v1.3.0 / 2024-07-24
+
+* ADDED: Add add_link to span api/sdk
+
 ### v1.2.5 / 2024-02-20
 
 * FIXED: Replace Context stack on clear
