@@ -20,9 +20,9 @@ require 'opentelemetry-exporter-otlp-metrics'
 
 OpenTelemetry::SDK.configure
 
-console_metric_exporter = OpenTelemetry::Exporter::OTLP::MetricsExporter.new
+otlp_metric_exporter = OpenTelemetry::Exporter::OTLP::MetricsExporter.new
 
-OpenTelemetry.meter_provider.add_metric_reader(console_metric_exporter)
+OpenTelemetry.meter_provider.add_metric_reader(otlp_metric_exporter)
 
 meter = OpenTelemetry.meter_provider.meter("SAMPLE_METER_NAME")
 
