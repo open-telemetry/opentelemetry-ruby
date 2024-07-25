@@ -1,5 +1,10 @@
 # Release History: opentelemetry-sdk
 
+### v1.5.0 / 2024-07-24
+
+* ADDED: Add add_link to span api/sdk
+* FIXED: Update `untraced` to suppress logging "Calling finish on an ended Span" warnings
+
 ### v1.4.1 / 2024-03-21
 
 * FIXED: ForwardingLogger should forward block param.
