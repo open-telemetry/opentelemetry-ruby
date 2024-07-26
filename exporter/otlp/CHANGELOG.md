@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.28.1 / 2024-07-24
+
+* ADDED: Improve SSL error logging.
+
 ### v0.28.0 / 2024-06-19
 
 * ADDED: Bump google_protobuf >=3.18, < 5.a
