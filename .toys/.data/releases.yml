@@ -84,3 +84,11 @@ gems:
     directory: test_helpers
     version_rb_path: lib/opentelemetry/test_helpers/version.rb
     version_constant: [OpenTelemetry, TestHelpers, VERSION]
+
+  - name: opentelemetry-metrics-api
+    directory: metrics_api
+    version_constant: [OpenTelemetry, Metrics, VERSION]
+
+  - name: opentelemetry-metrics-sdk
+    directory: metrics_sdk
+    version_constant: [OpenTelemetry, SDK, Metrics, VERSION]
