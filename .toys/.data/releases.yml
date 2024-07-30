@@ -87,8 +87,10 @@ gems:
 
   - name: opentelemetry-metrics-api
     directory: metrics_api
+    version_rb_path: lib/opentelemetry/metrics/version.rb
     version_constant: [OpenTelemetry, Metrics, VERSION]
 
   - name: opentelemetry-metrics-sdk
     directory: metrics_sdk
+    version_rb_path: lib/opentelemetry/sdk/metrics/version.rb
     version_constant: [OpenTelemetry, SDK, Metrics, VERSION]
