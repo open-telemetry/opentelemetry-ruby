@@ -26,6 +26,11 @@ describe OpenTelemetry::Trace::Status do
       status = OpenTelemetry::Trace::Status.ok('ok')
       _(status.description).must_equal('ok')
     end
+
+    it 'coerces the value passed in' do
+      status = OpenTelemetry::Trace::Status.ok(true)
+      _(status.description).must_equal('true')
+    end
   end
 
   describe '.ok?' do

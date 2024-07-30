@@ -59,7 +59,7 @@ module OpenTelemetry
       # @param [String] description
       def initialize(code, description: '')
         @code = code
-        @description = description
+        @description = description.to_s
       end
 
       # Returns false if this {Status} represents an error, else returns true.
