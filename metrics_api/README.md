@@ -54,6 +54,10 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 
 There's still work to be done, to get to a spec-compliant metrics implementation and we'd love to have more folks contributing to the project. Check the [repo][repo-github] for issues and PRs labeled with `metrics` to see what's available.
 
+## Feedback
+
+During this experimental stage, we're looking for lots of community feedback about this gem. Please add your comments to Issue [#1662][1662].
+
 ## License
 
 The `opentelemetry-api` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
@@ -67,3 +71,4 @@ The `opentelemetry-api` gem is distributed under the Apache 2.0 license. See [LI
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
+[1662]: https://github.com/open-telemetry/opentelemetry-ruby/issues/1662
