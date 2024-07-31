@@ -45,7 +45,7 @@ module OpenTelemetry
         #   current context.
         # @param [optional OpenTelemetry::Trace::TraceFlags] trace_flags The
         #   trace flags associated with the current context.
-        # @param [optional OpenTelemetry::SDK::Resources::Resource] recource The
+        # @param [optional OpenTelemetry::SDK::Resources::Resource] resource The
         #   source of the log, desrived from the LoggerProvider.
         # @param [optional OpenTelemetry::SDK::InstrumentationScope] instrumentation_scope
         #   The instrumentation scope, derived from the emitting Logger
