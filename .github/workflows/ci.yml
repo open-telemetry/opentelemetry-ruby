@@ -207,3 +207,9 @@ jobs:
         with:
           gem: "${{ matrix.gem }}"
           ruby: "truffleruby"
+
+  codespell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: make codespell
