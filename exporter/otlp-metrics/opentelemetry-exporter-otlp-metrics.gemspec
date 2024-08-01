@@ -6,11 +6,11 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'opentelemetry/exporter/otlp/version'
+require 'opentelemetry/exporter/otlp/metrics/version'
 
 Gem::Specification.new do |spec|
   spec.name        = 'opentelemetry-exporter-otlp-metrics'
-  spec.version     = OpenTelemetry::Exporter::OTLP::VERSION
+  spec.version     = OpenTelemetry::Exporter::OTLP::Metrics::VERSION
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
@@ -30,6 +30,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-api', '~> 1.1'
   spec.add_dependency 'opentelemetry-common', '~> 0.20'
   spec.add_dependency 'opentelemetry-sdk', '~> 1.2'
+  spec.add_dependency 'opentelemetry-metrics-api', '~> 0.1.0'
+  spec.add_dependency 'opentelemetry-metrics-sdk', '~> 0.1.0'
   spec.add_dependency 'opentelemetry-semantic_conventions'
 
   spec.add_development_dependency 'appraisal', '~> 2.2.0'
@@ -46,9 +48,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
 
   if spec.respond_to?(:metadata)
-    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-exporter-otlp-metrics/v#{OpenTelemetry::Exporter::OTLP::VERSION}/file.CHANGELOG.html"
+    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-exporter-otlp-metrics/v#{OpenTelemetry::Exporter::OTLP::Metrics::VERSION}/file.CHANGELOG.html"
     spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/exporter/otlp-metrics'
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/issues'
-    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-exporter-otlp-metrics/v#{OpenTelemetry::Exporter::OTLP::VERSION}"
+    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-exporter-otlp-metrics/v#{OpenTelemetry::Exporter::OTLP::Metrics::VERSION}"
   end
 end
