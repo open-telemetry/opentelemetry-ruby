@@ -7,8 +7,8 @@
 module OpenTelemetry
   module Exporter
     module OTLP
-      # Util module provide essential functionality for exporter
       module Metrics
+        # Util module provide essential functionality for exporter
         module Util # rubocop:disable Metrics/ModuleLength
           KEEP_ALIVE_TIMEOUT = 30
           RETRY_COUNT = 5
