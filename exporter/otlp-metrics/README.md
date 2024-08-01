@@ -43,7 +43,7 @@ OpenTelemetry::SDK.configure
 
 # To start a trace you need to get a Tracer from the TracerProvider
 
-otlp_metric_exporter = OpenTelemetry::Exporter::OTLP::MetricsExporter.new
+otlp_metric_exporter = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new
 
 OpenTelemetry.meter_provider.add_metric_reader(otlp_metric_exporter)
 
