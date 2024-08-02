@@ -7,7 +7,6 @@
 require 'opentelemetry/common'
 require 'opentelemetry/sdk'
 require 'net/http'
-require 'csv'
 require 'zlib'
 
 require 'google/rpc/status_pb'
@@ -35,9 +34,6 @@ module OpenTelemetry
           SUCCESS = OpenTelemetry::SDK::Metrics::Export::SUCCESS
           FAILURE = OpenTelemetry::SDK::Metrics::Export::FAILURE
           private_constant(:SUCCESS, :FAILURE)
-
-          WRITE_TIMEOUT_SUPPORTED = Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.6')
-          private_constant(:WRITE_TIMEOUT_SUPPORTED)
 
           def self.ssl_verify_mode
             if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
@@ -117,7 +113,7 @@ module OpenTelemetry
 
               @http.open_timeout = remaining_timeout
               @http.read_timeout = remaining_timeout
-              @http.write_timeout = remaining_timeout if WRITE_TIMEOUT_SUPPORTED
+              @http.write_timeout = remaining_timeout
               @http.start unless @http.started?
               response = measure_request_duration { @http.request(request) }
               case response
@@ -182,7 +178,7 @@ module OpenTelemetry
             # Reset timeouts to defaults for the next call.
             @http.open_timeout = @timeout
             @http.read_timeout = @timeout
-            @http.write_timeout = @timeout if WRITE_TIMEOUT_SUPPORTED
+            @http.write_timeout = @timeout
           end
 
           def encode(metrics_data) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
