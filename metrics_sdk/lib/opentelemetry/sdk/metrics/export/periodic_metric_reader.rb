@@ -72,9 +72,9 @@ module OpenTelemetry
                 while @continue
                   sleep(@export_interval)
                   begin
-                    Timeout.timeout(@export_timeout) {
+                    Timeout.timeout(@export_timeout) do
                       export(timeout: @export_timeout)
-                    }
+                    end
                   rescue Timeout::Error => e
                     OpenTelemetry.handle_error(exception: e, message: 'PeriodicMetricReader timeout.')
                   end
@@ -84,16 +84,14 @@ module OpenTelemetry
           end
 
           def export(timeout: nil)
-            @export_mutex.synchronize {
+            @export_mutex.synchronize do
               collected_metrics = collect
-              @exporter.export(collected_metrics, timeout: timeout || @export_timeout) if collected_metrics.size > 0
-            }
+              @exporter.export(collected_metrics, timeout: timeout || @export_timeout) unless collected_metrics.empty?
+            end
           end
 
-          def lock
-            @mutex.synchronize do
-              yield
-            end
+          def lock(&block)
+            @mutex.synchronize(&block)
           end
         end
       end
