@@ -180,8 +180,9 @@ module OpenTelemetry
             rescue Net::OpenTimeout, Net::ReadTimeout
               retry if backoff?(retry_count: retry_count += 1, reason: 'timeout')
               return FAILURE
-            rescue OpenSSL::SSL::SSLError
+            rescue OpenSSL::SSL::SSLError => e
               retry if backoff?(retry_count: retry_count += 1, reason: 'openssl_error')
+              OpenTelemetry.handle_error(exception: e, message: 'SSL error in OTLP::Exporter#send_bytes')
               return FAILURE
             rescue SocketError
               retry if backoff?(retry_count: retry_count += 1, reason: 'socket_error')
