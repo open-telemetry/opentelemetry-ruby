@@ -83,8 +83,8 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
       it 'transforms the LogRecord into a LogRecordData' do
         log_record_data = log_record.to_log_record_data
 
-        assert_equal(args[:timestamp].strftime("%s%N").to_i, log_record_data.timestamp)
-        assert_equal(args[:observed_timestamp].strftime("%s%N").to_i, log_record_data.observed_timestamp)
+        assert_equal(args[:timestamp].strftime('%s%N').to_i, log_record_data.timestamp)
+        assert_equal(args[:observed_timestamp].strftime('%s%N').to_i, log_record_data.observed_timestamp)
         assert_equal(args[:severity_text], log_record_data.severity_text)
         assert_equal(args[:severity_number], log_record_data.severity_number)
         assert_equal(args[:body], log_record_data.body)
