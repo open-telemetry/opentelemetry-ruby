@@ -39,7 +39,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'opentelemetry-test-helpers'
   spec.add_development_dependency 'pry-byebug' unless RUBY_ENGINE == 'jruby'
   spec.add_development_dependency 'rake', '~> 12.0'
-  spec.add_development_dependency 'rubocop', '~> 1.3'
+  spec.add_development_dependency 'rubocop', '~> 1.65'
   spec.add_development_dependency 'simplecov', '~> 0.17'
   spec.add_development_dependency 'webmock', '~> 3.7.6'
   spec.add_development_dependency 'yard', '~> 0.9'
