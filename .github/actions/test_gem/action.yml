@@ -62,7 +62,7 @@ runs:
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
-        bundler:  "2.5.10"
+        bundler:  "2.5.17"
         bundler-cache: true
         cache-version: "v1-${{ steps.setup.outputs.cache_key }}"
 
@@ -72,7 +72,7 @@ runs:
       uses: ruby/setup-ruby@v1.190.0
       with:
         ruby-version: "${{ inputs.ruby }}"
-        bundler:  "2.5.10"
+        bundler:  "2.5.17"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
     - name: Install dependencies and generate appraisals
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
