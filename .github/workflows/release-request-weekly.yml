@@ -1,0 +1,28 @@
+name: Open release request - Weekly
+
+on:
+  schedule:
+    - cron: "0 15 * * 2"
+
+jobs:
+  release-request:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
+    env:
+      ruby_version: "3.0"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Ruby ${{ env.ruby_version }}
+        uses: ruby/setup-ruby@v1.190.0
+        with:
+          ruby-version: ${{ env.ruby_version }}
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Install Toys
+        run: "gem install --no-document toys -v 0.15.5"
+      - name: Open release pull request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          toys release request --yes --verbose \
+            "--release-ref=${{ github.ref }}" \
+            < /dev/null
