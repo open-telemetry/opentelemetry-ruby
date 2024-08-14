@@ -23,7 +23,7 @@ describe OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter do
   end
 
   it 'accepts an Enumerable of SpanDatas as argument to #export' do
-    # An anonymous Struct serves as a handy implementor of Enumerable
+    # An anonymous Struct serves as a handy implementer of Enumerable
     enumerable = Struct.new(:span_data1, :span_data2).new
     enumerable.span_data1 = span_data1
     enumerable.span_data2 = span_data2
