@@ -296,6 +296,10 @@ module OpenTelemetry
             SUCCESS
           end
 
+          def force_flush(timeout: nil)
+            SUCCESS
+          end
+
           def shutdown(timeout: nil)
             @shutdown = true
             SUCCESS
