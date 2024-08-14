@@ -18,6 +18,7 @@ jobs:
           - opentelemetry-api
           - opentelemetry-common
           - opentelemetry-logs-api
+          - opentelemetry-logs-sdk
           - opentelemetry-metrics-api
           - opentelemetry-metrics-sdk
           - opentelemetry-registry

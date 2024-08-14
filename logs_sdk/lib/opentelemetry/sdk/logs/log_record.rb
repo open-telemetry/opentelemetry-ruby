@@ -101,7 +101,7 @@ module OpenTelemetry
         def to_integer_nanoseconds(timestamp)
           return unless timestamp.is_a?(Time)
 
-          t = (timestamp.to_r * 10**9).to_i
+          (timestamp.to_r * 10**9).to_i
         end
       end
     end

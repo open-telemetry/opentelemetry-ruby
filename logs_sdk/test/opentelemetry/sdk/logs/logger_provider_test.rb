@@ -192,7 +192,7 @@ describe OpenTelemetry::SDK::Logs::LoggerProvider do
         span_id: span_context.span_id,
         trace_flags: span_context.trace_flags,
         instrumentation_scope: OpenTelemetry::SDK::InstrumentationScope,
-        context: mock_context,
+        context: mock_context
       }
     end
 
