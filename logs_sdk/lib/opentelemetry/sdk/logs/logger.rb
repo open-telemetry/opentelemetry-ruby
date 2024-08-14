@@ -74,16 +74,16 @@ module OpenTelemetry
           span_context = current_span.context unless current_span == OpenTelemetry::Trace::Span::INVALID
 
           @logger_provider.on_emit(timestamp: timestamp,
-                                  observed_timestamp: observed_timestamp,
-                                  severity_text: severity_text,
-                                  severity_number: severity_number,
-                                  body: body,
-                                  attributes: attributes,
-                                  trace_id: trace_id || span_context&.trace_id,
-                                  span_id: span_id || span_context&.span_id,
-                                  trace_flags: trace_flags || span_context&.trace_flags,
-                                  instrumentation_scope: @instrumentation_scope,
-                                  context: context)
+                                   observed_timestamp: observed_timestamp,
+                                   severity_text: severity_text,
+                                   severity_number: severity_number,
+                                   body: body,
+                                   attributes: attributes,
+                                   trace_id: trace_id || span_context&.trace_id,
+                                   span_id: span_id || span_context&.span_id,
+                                   trace_flags: trace_flags || span_context&.trace_flags,
+                                   instrumentation_scope: @instrumentation_scope,
+                                   context: context)
         end
       end
     end
