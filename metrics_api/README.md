@@ -12,7 +12,11 @@ OpenTelemetry provides a single set of APIs, libraries, agents, and collector se
 
 The `opentelemetry-metrics-api` gem defines the core OpenTelemetry interfaces in the form of abstract classes and no-op implementations. That is, it defines interfaces and data types sufficient for a library or application to code against to produce telemetry data, but does not actually collect, analyze, or export the data.
 
-To collect and analyze telemetry data, _applications_ should also install a concrete implementation of the API, such as the `opentelemetry-metrics-sdk` gem. However, _libraries_ that produce telemetry data should depend only on `opentelemetry-metrics-api`, deferring the choise of concrete implementation to the application developer.
+To collect and analyze telemetry data, _applications_ should also
+install a concrete implementation of the API, such as the
+`opentelemetry-metrics-sdk` gem. However, _libraries_ that produce
+telemetry data should depend only on `opentelemetry-metrics-api`,
+deferring the choice of concrete implementation to the application developer.
 
 This code is still under development and is not a complete implementation of the Metrics API. Until the code becomes stable, Metrics API functionality will live outside the `opentelemetry-api` library.
 
@@ -54,6 +58,10 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 
 There's still work to be done, to get to a spec-compliant metrics implementation and we'd love to have more folks contributing to the project. Check the [repo][repo-github] for issues and PRs labeled with `metrics` to see what's available.
 
+## Feedback
+
+During this experimental stage, we're looking for lots of community feedback about this gem. Please add your comments to Issue [#1662][1662].
+
 ## License
 
 The `opentelemetry-api` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
@@ -67,3 +75,4 @@ The `opentelemetry-api` gem is distributed under the Apache 2.0 license. See [LI
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
+[1662]: https://github.com/open-telemetry/opentelemetry-ruby/issues/1662
