@@ -50,7 +50,7 @@ module OpenTelemetry
           add_status_tags(span_d, tags)
           tags = aggregate_span_tags(span_d, tags)
 
-          # TOOO: set debug flag? (is that represented in tracestate?)
+          # TODO: set debug flag? (is that represented in tracestate?)
           # https://github.com/openzipkin/b3-propagation#why-is-debug-encoded-as-x-b3-flags-1
           # https://github.com/openzipkin/zipkin-api/blob/7692ca7be4dc3be9225db550d60c4d30e6e9ec59/zipkin2-api.yaml#L475
           # TODO: shared key mapping
