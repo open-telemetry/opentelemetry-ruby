@@ -26,14 +26,14 @@ Within the .gemspec file, these gems are not listed as dependencies. However, fo
 
 To facilitate this, there are couple recommended approaches:
 
-#### 1. Download the source code
+### 1. Download the source code
 
 1. Download the [opentelemetry-ruby](https://github.com/open-telemetry/opentelemetry-ruby).
 2. Navigate to subfolder, then build the [metrics_sdk](https://github.com/open-telemetry/opentelemetry-ruby/tree/main/metrics_sdk) and [metrics_api](https://github.com/open-telemetry/opentelemetry-ruby/tree/main/metrics_api).
 3. Execute `gem build *.gemspec`.
 4. Lastly, install the built gem into the system.
 
-#### 2. Using `path:` option in Gemfile with downloaded source code
+### 2. Using `path:` option in Gemfile with downloaded source code
 
 git clone [opentelemetry-ruby](https://github.com/open-telemetry/opentelemetry-ruby) first, then use Gemfile
 
@@ -44,7 +44,7 @@ gem 'opentelemetry-metrics-api', path: "opentelemetry-ruby/metrics_api"
 gem 'opentelemetry-metrics-sdk', path: "opentelemetry-ruby/metrics_sdk"
 ```
 
-#### 3. Using `git:` option in Gemfile
+### 3. Using `git:` option in Gemfile
 
 ```ruby
 # Gemfile
@@ -66,7 +66,7 @@ gem install opentelemetry-exporter-otlp-metrics
 
 Or, if you use [bundler][bundler-home], include `opentelemetry-sdk` in your `Gemfile`.
 
-Then, configure the SDK to use the OTLP metrics exporter 
+Then, configure the SDK to use the OTLP metrics exporter
 
 ```ruby
 require 'opentelemetry/sdk'
@@ -100,7 +100,7 @@ The collector exporter can be configured explicitly in code, or via environment 
 | Parameter           | Environment variable                         | Default                             |
 | ------------------- | -------------------------------------------- | ----------------------------------- |
 | `endpoint:`         | `OTEL_EXPORTER_OTLP_ENDPOINT`                | `"http://localhost:4318/v1/metrics"` |
-| `certificate_file: `| `OTEL_EXPORTER_OTLP_CERTIFICATE`             |                                     |
+| `certificate_file:`| `OTEL_EXPORTER_OTLP_CERTIFICATE`             |                                     |
 | `headers:`          | `OTEL_EXPORTER_OTLP_HEADERS`                 |                                     |
 | `compression:`      | `OTEL_EXPORTER_OTLP_COMPRESSION`             | `"gzip"`                            |
 | `timeout:`          | `OTEL_EXPORTER_OTLP_TIMEOUT`                 | `10`                                |
@@ -108,7 +108,6 @@ The collector exporter can be configured explicitly in code, or via environment 
 |                     | `OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE`    |                                     |
 
 `ssl_verify_mode:` parameter values should be flags for server certificate verification: `OpenSSL::SSL:VERIFY_PEER` and `OpenSSL::SSL:VERIFY_NONE` are acceptable. These values can also be set using the appropriately named environment variables as shown where `VERIFY_PEER` will take precedence over `VERIFY_NONE`.  Please see [the Net::HTTP docs](https://ruby-doc.org/stdlib-2.7.6/libdoc/net/http/rdoc/Net/HTTP.html#verify_mode) for more information about these flags.
-
 
 ## How can I get involved?
 
