@@ -292,7 +292,7 @@ describe OpenTelemetry::SDK::Configurator do
         )
       end
 
-      it 'accepts comma separated list with preceeding or trailing spaces as an environment variable' do
+      it 'accepts comma separated list with preceding or trailing spaces as an environment variable' do
         OpenTelemetry::TestHelpers.with_env('OTEL_TRACES_EXPORTER' => 'zipkin , console') do
           configurator.configure
         end

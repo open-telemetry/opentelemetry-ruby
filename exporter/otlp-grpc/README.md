@@ -65,9 +65,12 @@ For additional examples, see the [examples on github][examples-github].
 
 The collector exporter can be configured explicitly in code, or via environment variables as shown above. The configuration parameters, environment variables, and defaults are shown below.
 
-| Parameter           | Environment variable                         | Default                             |
-| ------------------- | -------------------------------------------- | ----------------------------------- |
-| `endpoint:`         | `OTEL_EXPORTER_OTLP_ENDPOINT`                | `"http://localhost:4318/v1/traces"` |
+| Parameter                 | Environment variable                         | Default                             |
+| ------------------------- | -------------------------------------------- | ----------------------------------- |
+| `endpoint:`               | `OTEL_EXPORTER_OTLP_ENDPOINT`                | `"http://localhost:4318/v1/traces"` |
+| `certificate_file:`       | `OTEL_EXPORTER_OTLP_CERTIFICATE`             |                                     |
+| `client_certificate_file` | `OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE`      |                                     |
+| `client_key_file`         | `OTEL_EXPORTER_OTLP_CLIENT_KEY`              |                                     |
 
 ## How can I get involved?
 
