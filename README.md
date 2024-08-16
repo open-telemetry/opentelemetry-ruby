@@ -63,6 +63,7 @@ the [Ruby language](https://www.ruby-lang.org/en/downloads/branches/).
 
 - For more information on OpenTelemetry, visit: <https://opentelemetry.io/>
 - For help or feedback on this project, join us in [GitHub Discussions][discussions-url].
+- For more examples, check [SDK example][examples-github].
 
 ## License
 
@@ -71,6 +72,7 @@ Apache 2.0 - See [LICENSE][license-url] for more information.
 [ci-image]: https://github.com/open-telemetry/opentelemetry-ruby/workflows/CI/badge.svg?event=push
 [contrib-repo]: https://github.com/open-telemetry/opentelemetry-ruby-contrib
 [contrib-instrumentations]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation
+[examples-github]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/examples
 [getting-started]: https://opentelemetry.io/docs/languages/ruby/
 [issues-good-first-issue]: https://github.com/open-telemetry/opentelemetry-ruby/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22
 [issues-help-wanted]: https://github.com/open-telemetry/opentelemetry-ruby/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22

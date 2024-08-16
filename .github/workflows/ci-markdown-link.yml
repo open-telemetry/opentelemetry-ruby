@@ -9,7 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # act -j markdown-link-check --container-architecture linux/arm64
       - name: "Markdown Link Check"
         uses: gaurav-nelson/github-action-markdown-link-check@v1
         with:
