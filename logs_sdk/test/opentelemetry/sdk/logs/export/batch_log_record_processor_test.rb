@@ -65,14 +65,11 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
   end
 
   let(:mock_context) { Minitest::Mock.new }
-  let(:exporter) { TestExporter.new }
-  let(:processor) { BatchLogRecordProcessor.new(exporter) }
-  let(:log_record) { TestLogRecord.new }
 
   describe 'initialization' do
     it 'raises if max batch size is greater than max queue size' do
       assert_raises ArgumentError do
-        BatchLogRecordProcessor.new(exporter, max_queue_size: 6, max_export_batch_size: 999)
+        BatchLogRecordProcessor.new(TestExporter.new, max_queue_size: 6, max_export_batch_size: 999)
       end
     end
 
@@ -180,32 +177,40 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
 
   describe '#on_emit' do
     it 'adds the log record to the batch' do
+      processor = BatchLogRecordProcessor.new(TestExporter.new)
+      log_record = TestLogRecord.new
+
       processor.on_emit(log_record, mock_context)
 
       assert_includes(processor.instance_variable_get(:@log_records), log_record)
     end
 
     it 'removes the older log records from the batch if full' do
-      processor = BatchLogRecordProcessor.new(exporter, max_queue_size: 1, max_export_batch_size: 1)
+      processor = BatchLogRecordProcessor.new(TestExporter.new, max_queue_size: 1, max_export_batch_size: 1)
 
       older_log_record = TestLogRecord.new
       newer_log_record = TestLogRecord.new
+      newest_log_record = TestLogRecord.new
 
       processor.on_emit(older_log_record, mock_context)
       processor.on_emit(newer_log_record, mock_context)
+      processor.on_emit(newest_log_record, mock_context)
 
       records = processor.instance_variable_get(:@log_records)
-      assert_includes(records, newer_log_record)
+
+      assert_includes(records, newest_log_record)
+      refute_includes(records, newer_log_record)
       refute_includes(records, older_log_record)
     end
 
     it 'logs a warning if a log record was emitted after the buffer is full' do
       mock_otel_logger = Minitest::Mock.new
-      mock_otel_logger.expect(:warn, nil, [/buffer-full/])
+      mock_otel_logger.expect(:warn, nil, ['1 log record(s) dropped. Reason: buffer-full'])
 
       OpenTelemetry.stub(:logger, mock_otel_logger) do
-        processor = BatchLogRecordProcessor.new(exporter, max_queue_size: 1, max_export_batch_size: 1)
+        processor = BatchLogRecordProcessor.new(TestExporter.new, max_queue_size: 1, max_export_batch_size: 1)
 
+        log_record = TestLogRecord.new
         log_record2 = TestLogRecord.new
 
         processor.on_emit(log_record, mock_context)
@@ -216,15 +221,21 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
     end
 
     it 'does not emit a log record if stopped' do
+      processor = BatchLogRecordProcessor.new(TestExporter.new)
+
       processor.instance_variable_set(:@stopped, true)
-      processor.on_emit(log_record, mock_context)
+      processor.on_emit(TestLogRecord.new, mock_context)
+
       assert_empty(processor.instance_variable_get(:@log_records))
     end
   end
 
   describe '#force_flush' do
     it 'reenqueues excess log_records on timeout' do
-      processor.on_emit(log_record, mock_context)
+      exporter = TestExporter.new
+      processor = BatchLogRecordProcessor.new(exporter)
+
+      processor.on_emit(TestLogRecord.new, mock_context)
       result = processor.force_flush(timeout: 0)
 
       _(result).must_equal(TIMEOUT)
@@ -237,8 +248,11 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
 
     it 'exports the log record data and calls #force_flush on the exporter' do
       mock_exporter = Minitest::Mock.new
+      processor = BatchLogRecordProcessor.new(TestExporter.new)
       processor.instance_variable_set(:@exporter, mock_exporter)
+      log_record = TestLogRecord.new
       log_record_data_mock = Minitest::Mock.new
+
       log_record.stub(:to_log_record_data, log_record_data_mock) do
         processor.on_emit(log_record, mock_context)
         mock_exporter.expect(:export, 0, [[log_record_data_mock]], timeout: nil)
@@ -249,8 +263,10 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
     end
 
     it 'returns failure code if export_batch fails' do
+      processor = BatchLogRecordProcessor.new(TestExporter.new)
+
       processor.stub(:export_batch, OpenTelemetry::SDK::Logs::Export::FAILURE) do
-        processor.on_emit(log_record, mock_context)
+        processor.on_emit(TestLogRecord.new, mock_context)
         assert_equal(OpenTelemetry::SDK::Logs::Export::FAILURE, processor.force_flush)
       end
     end
@@ -258,10 +274,11 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
     it 'reports dropped logs if timeout occurs with full buffer' do
       mock_otel_logger = Minitest::Mock.new
       mock_otel_logger.expect(:warn, nil, [/buffer-full/])
+
       OpenTelemetry.stub(:logger, mock_otel_logger) do
         OpenTelemetry::Common::Utilities.stub(:maybe_timeout, 0) do
-          processor = BatchLogRecordProcessor.new(exporter, max_queue_size: 1, max_export_batch_size: 1)
-          processor.instance_variable_set(:@log_records, [TestLogRecord.new, TestLogRecord.new])
+          processor = BatchLogRecordProcessor.new(TestExporter.new, max_queue_size: 1, max_export_batch_size: 1)
+          processor.instance_variable_set(:@log_records, [TestLogRecord.new, TestLogRecord.new, TestLogRecord.new])
           processor.force_flush
         end
       end
@@ -272,12 +289,18 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
 
   describe '#shutdown' do
     it 'does not allow subsequent calls to emit after shutdown' do
+      processor = BatchLogRecordProcessor.new(TestExporter.new)
+
       processor.shutdown
-      processor.on_emit(log_record, mock_context)
+      processor.on_emit(TestLogRecord.new, mock_context)
+
       assert_empty(processor.instance_variable_get(:@log_records))
     end
 
     it 'does not send shutdown to exporter if already shutdown' do
+      exporter = TestExporter.new
+      processor = BatchLogRecordProcessor.new(exporter)
+
       processor.instance_variable_set(:@stopped, true)
 
       exporter.stub(:shutdown, ->(_) { raise 'whoops!' }) do
@@ -286,12 +309,19 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
     end
 
     it 'sets @stopped to true' do
+      processor = BatchLogRecordProcessor.new(TestExporter.new)
+
       refute(processor.instance_variable_get(:@stopped))
+
       processor.shutdown
+
       assert(processor.instance_variable_get(:@stopped))
     end
 
     it 'respects the timeout' do
+      exporter = TestExporter.new
+      processor = BatchLogRecordProcessor.new(exporter)
+
       processor.on_emit(TestLogRecord.new, mock_context)
       processor.shutdown(timeout: 0)
 
@@ -315,13 +345,13 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
       end
 
       processor = BatchLogRecordProcessor.new(test_exporter)
-      processor.on_emit(log_record, mock_context)
+      processor.on_emit(TestLogRecord.new, mock_context)
       result = processor.shutdown(timeout: 0)
 
       _(result).must_equal(SUCCESS)
     end
 
-    it 'returns a FAILURE status if a non specific export error occurs' do
+    it 'returns a FAILURE status if a non-specific export error occurs' do
       test_exporter = TestExporter.new
       test_exporter.instance_eval do
         def shutdown(timeout: nil)
@@ -354,10 +384,15 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
 
   describe 'lifecycle' do
     it 'should stop and start correctly' do
+      processor = BatchLogRecordProcessor.new(TestExporter.new)
       processor.shutdown
     end
 
     it 'should flush everything on shutdown' do
+      exporter = TestExporter.new
+      processor = BatchLogRecordProcessor.new(exporter)
+      log_record = TestLogRecord.new
+
       processor.on_emit(log_record, mock_context)
       processor.shutdown
 
@@ -367,6 +402,7 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
 
   describe 'batching' do
     it 'should batch up to but not over the max_batch' do
+      exporter = TestExporter.new
       processor = BatchLogRecordProcessor.new(exporter, max_queue_size: 6, max_export_batch_size: 3)
 
       log_records = [TestLogRecord.new, TestLogRecord.new, TestLogRecord.new, TestLogRecord.new]
@@ -401,6 +437,9 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
 
   describe 'stress test' do
     it 'does not blow up with a lot of things' do
+      exporter = TestExporter.new
+      processor = BatchLogRecordProcessor.new(exporter)
+
       producers = 10.times.map do |i|
         Thread.new do
           x = i * 10
@@ -442,6 +481,7 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
   end
 
   describe 'fork safety test' do
+    let(:exporter) { TestExporter.new }
     let(:processor) do
       BatchLogRecordProcessor.new(exporter,
                                   max_queue_size: 10,
