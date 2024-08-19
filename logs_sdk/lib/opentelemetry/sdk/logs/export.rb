@@ -24,4 +24,6 @@ module OpenTelemetry
   end
 end
 
+require_relative 'export/console_log_record_exporter'
+require_relative 'export/in_memory_log_record_exporter'
 require_relative 'export/log_record_exporter'
