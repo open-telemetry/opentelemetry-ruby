@@ -154,7 +154,7 @@ to ensure that your code complies before opening a pull request.
 We also use Yard to generate class documentation automatically. Among other
 things, this means:
 
- *  Methods and arguments should include the appropraite type annotations
+ *  Methods and arguments should include the appropriate type annotations
  *  You can use markdown formatting in your documentation comments
 
 You can generate the docs locally to see the results, by running:

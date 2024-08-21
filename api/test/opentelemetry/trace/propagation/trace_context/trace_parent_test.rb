@@ -76,7 +76,7 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TraceParent do
       _(tp.to_s).must_equal(expected)
     end
 
-    it 'must ignore flags it doesnt know (use the mask)' do
+    it 'must ignore flags it doesn\'t know (use the mask)' do
       value = '00-0000000000000000000000000000000a-000000000000000a-ff'
       assert TraceParent.from_string(value).sampled?
       value = '00-0000000000000000000000000000000a-000000000000000a-04'

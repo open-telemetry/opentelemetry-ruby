@@ -122,7 +122,7 @@ The `opentelemetry-exporter-otlp-metrics` gem is distributed under the Apache 2.
 
 ## Working with Proto Definitions
 
-The OTel community maintains a [repository with protobuf definitions][otel-proto-github] that language and collector implementors use to generate code.
+The OTel community maintains a [repository with protobuf definitions][otel-proto-github] that language and collector implementers use to generate code.
 
 Maintainers are expected to keep up to date with the latest version of protos. This guide will provide you with step-by-step instructions on updating the OTLP Exporter gem with the latest definitions.
 
