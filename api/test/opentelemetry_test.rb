@@ -96,7 +96,9 @@ describe OpenTelemetry do
       rescue StandardError => e
         OpenTelemetry.handle_error(exception: e, message: 'hi')
       end
-      _(OpenTelemetry.logger.messages).must_equal ['OpenTelemetry error: foo', 'OpenTelemetry error: hell', 'OpenTelemetry error: hi - bar']
+      _(OpenTelemetry.logger.messages[0]).must_equal('OpenTelemetry error: foo')
+      _(OpenTelemetry.logger.messages[1]).must_match(%r{OpenTelemetry error: hell - .+/opentelemetry_test\.rb:\d+:in .+'})
+      _(OpenTelemetry.logger.messages[2]).must_match(%r{OpenTelemetry error: hi - bar - .+/opentelemetry_test\.rb:\d+:in .+'})
     end
 
     it 'calls user specified error handler' do
