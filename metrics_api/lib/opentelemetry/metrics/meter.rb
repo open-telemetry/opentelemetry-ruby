@@ -33,8 +33,8 @@ module OpenTelemetry
         create_instrument(:counter, name, unit, description, nil) { COUNTER }
       end
 
-      def create_histogram(name, unit: nil, description: nil)
-        create_instrument(:histogram, name, unit, description, nil) { HISTOGRAM }
+      def create_histogram(name, unit: nil, description: nil, advice: {})
+        create_instrument(:histogram, name, unit, description, nil, advice) { HISTOGRAM }
       end
 
       def create_up_down_counter(name, unit: nil, description: nil)
@@ -55,7 +55,7 @@ module OpenTelemetry
 
       private
 
-      def create_instrument(kind, name, unit, description, callback)
+      def create_instrument(kind, name, unit, description, callback, advice = nil)
         raise InstrumentNameError if name.nil?
         raise InstrumentNameError if name.empty?
         raise InstrumentNameError unless NAME_REGEX.match?(name)

@@ -13,6 +13,10 @@ require 'opentelemetry-test-helpers'
 require 'minitest/autorun'
 require 'pry'
 
+# The metrics test output will include an error about a missing OTLP exporter
+# unless we set the traces exporter to 'none'
+ENV['OTEL_TRACES_EXPORTER'] = 'none'
+
 # reset_metrics_sdk is a test helper used to clear
 # SDK configuration state between calls
 def reset_metrics_sdk

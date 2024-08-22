@@ -32,6 +32,14 @@ module OpenTelemetry
             nil
           end
 
+          def register_with_new_metric_store(metric_store, aggregation: default_aggregation)
+            if @advice&.key?(:explicit_bucket_boundaries)
+              aggregation = OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(boundaries: @advice[:explicit_bucket_boundaries])
+            end
+
+            super
+          end
+
           private
 
           def default_aggregation

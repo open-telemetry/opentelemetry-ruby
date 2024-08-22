@@ -69,5 +69,20 @@ describe OpenTelemetry::Metrics::Meter do
       meter.create_counter('a_counter', description: long_description)
       _(-> { meter.create_counter('b_counter', description: long_description + 'a') }).must_raise(INSTRUMENT_DESCRIPTION_ERROR)
     end
+
+    describe 'histogram' do
+      it 'accepts advice' do
+        advice = {wisdom: 'this too shall pass'}
+        histogram = meter.create_histogram('histogram', description: 'stuff', unit: 'things', advice: advice)
+
+        assert_equal histogram.instance_variable_get(:@advice)
+      end
+
+      it 'does not require advice' do
+        histogram = meter.create_histogram('histogram', description: 'stuff', unit: 'things')
+
+        assert_equal {}, histogram.advice
+      end
+    end
   end
 end
