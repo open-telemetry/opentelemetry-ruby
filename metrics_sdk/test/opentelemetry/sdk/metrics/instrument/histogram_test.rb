@@ -37,7 +37,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::Histogram do
   end
 
   it 'can apply advice to change the explicit bucket boundaries' do
-    histogram = meter.create_histogram('histogram', unit: 's', description: 'test', advice: { explicit_bucket_boundaries: [5, 10, 15]})
+    histogram = meter.create_histogram('histogram', unit: 's', description: 'test', advice: { explicit_bucket_boundaries: [5, 10, 15] })
 
     histogram.record(0)
     histogram.record(5)
