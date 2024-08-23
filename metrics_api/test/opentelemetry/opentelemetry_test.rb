@@ -8,7 +8,7 @@ require 'test_helper'
 
 describe OpenTelemetry do
   after do
-    # TODO: After Metrics SDK is incoporated into OpenTelemetry SDK, move this
+    # TODO: After Metrics SDK is incorporated into OpenTelemetry SDK, move this
     # to OpenTelemetry::TestHelpers.reset_opentelemetry
     OpenTelemetry.instance_variable_set(
       :@meter_provider,

@@ -135,7 +135,7 @@ module OpenTelemetry
 
             response = measure_request_duration { @http.request(request) }
             response.body # Read and discard body
-            # in opentelemetry-js 200-399 is succcess, in opentelemetry-collector zipkin exporter,200-299 is a success
+            # in opentelemetry-js 200-399 is success, in opentelemetry-collector zipkin exporter,200-299 is a success
             # zipkin api docs list 202 as default success code
             # https://zipkin.io/zipkin-api/#/default/post_spans
             # TODO: redirect
