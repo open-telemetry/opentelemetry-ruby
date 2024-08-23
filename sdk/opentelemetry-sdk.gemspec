@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
 
   # This is an intentionally loose dependency, since we want to be able to
   # release new versions of opentelemetry-semantic_conventions without requiring
-  # a new SDK release. The requirements of the SDK have been satisifed since the
+  # a new SDK release. The requirements of the SDK have been satisfied since the
   # initial release of opentelemetry-semantic_conventions, so we feel it is safe.
   spec.add_dependency 'opentelemetry-semantic_conventions'
 
