@@ -23,6 +23,19 @@ describe OpenTelemetry::SDK::Metrics::Meter do
       instrument = meter.create_histogram('a_histogram', unit: 'minutes', description: 'useful description')
       _(instrument).must_be_instance_of OpenTelemetry::SDK::Metrics::Instrument::Histogram
     end
+
+    it 'accepts advice' do
+      advice = {wisdom: 'this too shall pass'}
+      instrument = meter.create_histogram('histogram', description: 'stuff', unit: 'things', advice: advice)
+
+      _(instrument.instance_variable_get(:@advice)).must_equal(advice)
+    end
+
+    it 'does not require advice' do
+      instrument = meter.create_histogram('histogram', description: 'stuff', unit: 'things')
+
+      _(instrument.instance_variable_get(:@advice)).must_equal({})
+    end
   end
 
   describe '#create_up_down_counter' do
