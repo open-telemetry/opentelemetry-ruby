@@ -38,7 +38,7 @@ module OpenTelemetry
 
       private
 
-      def create_instrument(kind, name, unit, description, callback, advice = {})
+      def create_instrument(kind, name, unit, description, callback, advice = nil)
         super do
           next ProxyInstrument.new(kind, name, unit, description, callback, advice) if @delegate.nil?
 
