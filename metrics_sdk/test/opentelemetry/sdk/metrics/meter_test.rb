@@ -25,7 +25,7 @@ describe OpenTelemetry::SDK::Metrics::Meter do
     end
 
     it 'accepts advice' do
-      advice = {wisdom: 'this too shall pass'}
+      advice = { wisdom: 'this too shall pass' }
       instrument = meter.create_histogram('histogram', description: 'stuff', unit: 'things', advice: advice)
 
       _(instrument.instance_variable_get(:@advice)).must_equal(advice)
