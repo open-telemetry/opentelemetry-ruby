@@ -265,6 +265,7 @@ module OpenTelemetry
         #
         # @return [self] returns itself
         def finish(end_timestamp: nil)
+          @span_processors.each { |processor| processor.on_finish(self) }
           @mutex.synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling finish on an ended Span.')
@@ -276,7 +277,6 @@ module OpenTelemetry
             @links.freeze
             @ended = true
           end
-          @span_processors.each { |processor| processor.on_finish(self) }
           self
         end
 
