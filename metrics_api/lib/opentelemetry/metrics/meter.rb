@@ -33,7 +33,7 @@ module OpenTelemetry
         create_instrument(:counter, name, unit, description, nil) { COUNTER }
       end
 
-      def create_histogram(name, unit: nil, description: nil, advice: {})
+      def create_histogram(name, unit: nil, description: nil, advice: nil)
         create_instrument(:histogram, name, unit, description, nil, advice) { HISTOGRAM }
       end
 
