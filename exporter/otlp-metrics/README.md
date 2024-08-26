@@ -60,11 +60,12 @@ Install the gem using:
 ```console
 
 gem install opentelemetry-sdk
+gem install opentelemetry-metrics-sdk
 gem install opentelemetry-exporter-otlp-metrics
 
 ```
 
-Or, if you use [bundler][bundler-home], include `opentelemetry-sdk` in your `Gemfile`.
+Or, if you use [bundler][bundler-home], include `opentelemetry-sdk`, `opentelemetry-metrics-sdk`, and `opentelemetry-exporter-otlp-metrics` in your `Gemfile`.
 
 Then, configure the SDK to use the OTLP metrics exporter
 
@@ -77,7 +78,7 @@ OpenTelemetry::SDK.configure
 
 # To start a trace you need to get a Tracer from the TracerProvider
 
-otlp_metric_exporter = OpenTelemetry::Exporter::OTLP::MetricsExporter.new
+otlp_metric_exporter = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new
 
 OpenTelemetry.meter_provider.add_metric_reader(otlp_metric_exporter)
 
@@ -111,7 +112,7 @@ The collector exporter can be configured explicitly in code, or via environment 
 
 ## How can I get involved?
 
-The `opentelemetry-exporter-otlp-metrics` gem source is [on github][repo-github], along with related gems including `opentelemetry-sdk`.
+The `opentelemetry-exporter-otlp-metrics` gem source is [on github][repo-github], along with related gems including `opentelemetry-metrics-sdk`.
 
 The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us in [GitHub Discussions][discussions-url] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
