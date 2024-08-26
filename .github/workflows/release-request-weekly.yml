@@ -1,12 +1,8 @@
-name: Open release request
+name: Open release request - Weekly
 
 on:
-  workflow_dispatch:
-    inputs:
-      gems:
-        description: Gems to release (leave blank to release all gems)
-        required: false
-        default: ""
+  schedule:
+    - cron: "0 15 * * 2"
 
 jobs:
   release-request:
@@ -20,7 +16,7 @@ jobs:
         with:
           ruby-version: ${{ env.ruby_version }}
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Install Toys
         run: "gem install --no-document toys -v 0.15.5"
       - name: Open release pull request
@@ -28,6 +24,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           toys release request --yes --verbose \
-            "--gems=${{ github.event.inputs.gems }}" \
             "--release-ref=${{ github.ref }}" \
             < /dev/null
