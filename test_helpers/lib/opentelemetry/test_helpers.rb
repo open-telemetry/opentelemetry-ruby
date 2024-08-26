@@ -72,5 +72,34 @@ module OpenTelemetry
                                               total_recorded_events, total_recorded_links, start_timestamp, end_timestamp,
                                               attributes, links, events, resource, instrumentation_scope, span_id, trace_id, trace_flags, tracestate)
     end
+
+    def create_log_record_data(timestamp: OpenTelemetry::TestHelpers.exportable_timestamp,
+                               observed_timestamp: OpenTelemetry::TestHelpers.exportable_timestamp,
+                               severity_text: nil,
+                               severity_number: nil,
+                               body: nil,
+                               attributes: nil,
+                               trace_id: OpenTelemetry::Trace.generate_trace_id,
+                               span_id: OpenTelemetry::Trace.generate_span_id,
+                               trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT,
+                               resource: nil,
+                               instrumentation_scope: OpenTelemetry::SDK::InstrumentationScope.new('', 'v0.0.1'),
+                               total_recorded_attributes: 0)
+      resource ||= OpenTelemetry::SDK::Resources::Resource.telemetry_sdk
+      OpenTelemetry::SDK::Logs::LogRecordData.new(
+        timestamp,
+        observed_timestamp,
+        severity_text,
+        severity_number,
+        body,
+        attributes,
+        trace_id,
+        span_id,
+        trace_flags,
+        resource,
+        instrumentation_scope,
+        total_recorded_attributes
+      )
+    end
   end
 end
