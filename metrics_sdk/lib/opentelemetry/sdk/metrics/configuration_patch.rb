@@ -45,7 +45,7 @@ module OpenTelemetry
               OpenTelemetry.meter_provider.add_metric_reader(Metrics::Export::InMemoryMetricPullExporter.new)
             when 'otlp'
               begin
-                OpenTelemetry.meter_provider.add_metric_reader(OpenTelemetry::Exporter::OTLP::MetricsExporter.new)
+                OpenTelemetry.meter_provider.add_metric_reader(OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new)
               rescue NameError
                 OpenTelemetry.logger.warn 'The otlp metrics exporter cannot be configured - please add ' \
                   'opentelemetry-exporter-otlp-metrics to your Gemfile, metrics will not be exported'
