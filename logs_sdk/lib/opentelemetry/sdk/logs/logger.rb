@@ -34,6 +34,8 @@ module OpenTelemetry
         # @param [optional OpenTelemetry::Trace::SpanContext] span_context The
         #   OpenTelemetry::Trace::SpanContext to associate with the
         #   {LogRecord}.
+        # @param [optional String] severity_text Original string representation of
+        #   the severity as it is known at the source. Also known as log level.
         # @param severity_number [optional Integer] Numerical value of the
         #   severity. Smaller numerical values correspond to less severe events
         #   (such as debug events), larger numerical values correspond to more
