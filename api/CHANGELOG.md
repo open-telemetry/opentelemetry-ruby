@@ -1,5 +1,9 @@
 # Release History: opentelemetry-api
 
+### v1.4.0 / 2024-08-27
+
+* ADDED: Include backtrace first line for better debug info
+
 ### v1.3.0 / 2024-07-24
 
 * ADDED: Add add_link to span api/sdk
@@ -71,7 +75,7 @@
 
 * BREAKING CHANGE: Remove optional parent_context from in_span [729](https://github.com/open-telemetry/opentelemetry-ruby/pull/729)
 * BREAKING CHANGE: Refactor Baggage to remove Noop* [800](https://github.com/open-telemetry/opentelemetry-ruby/pull/800)
-  - The noop baggage manger has been removed.
+  - The noop baggage manager has been removed.
   - The baggage management methods are now available through OpenTelemetry::Baggage#method, previously OpenTelemetry.baggage#method
 * BREAKING CHANGE: Total order constraint on span.status= [805](https://github.com/open-telemetry/opentelemetry-ruby/pull/805)
   - The OpenTelemetry::Trace::Util::HttpToStatus module has been removed as it was incorrectly setting the span status to OK for codes codes in the range 100..399

@@ -34,7 +34,7 @@ module OpenTelemetry
   # @return [Callable] configured error handler or a default that logs the
   #   exception and message at ERROR level.
   def error_handler
-    @error_handler ||= ->(exception: nil, message: nil) { logger.error("OpenTelemetry error: #{[message, exception&.message].compact.join(' - ')}") }
+    @error_handler ||= ->(exception: nil, message: nil) { logger.error("OpenTelemetry error: #{[message, exception&.message, exception&.backtrace&.first].compact.join(' - ')}") }
   end
 
   # Handles an error by calling the configured error_handler.
