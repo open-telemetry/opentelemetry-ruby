@@ -6,7 +6,7 @@ on:
 
 jobs:
   stale:
-
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     runs-on: ubuntu-latest
 
     steps:
