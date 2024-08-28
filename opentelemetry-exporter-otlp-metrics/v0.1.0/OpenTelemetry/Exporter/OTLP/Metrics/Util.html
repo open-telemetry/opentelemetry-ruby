@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: OpenTelemetry::Exporter::OTLP::Metrics::Util
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::Exporter::OTLP::Metrics::Util";
+  relpath = '../../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../../_index.html">Index (U)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../../Exporter.html" title="OpenTelemetry::Exporter (module)">Exporter</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../OTLP.html" title="OpenTelemetry::Exporter::OTLP (module)">OTLP</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Metrics.html" title="OpenTelemetry::Exporter::OTLP::Metrics (module)">Metrics</a></span></span>
+     &raquo; 
+    <span class="title">Util</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: OpenTelemetry::Exporter::OTLP::Metrics::Util
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+  <dl>
+    <dt>Included in:</dt>
+    <dd><span class='object_link'><a href="MetricsExporter.html" title="OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter (class)">MetricsExporter</a></span></dd>
+  </dl>
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/exporter/otlp/metrics/util.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Util module provide essential functionality for exporter</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="KEEP_ALIVE_TIMEOUT-constant" class="">KEEP_ALIVE_TIMEOUT =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>rubocop:disable Metrics/ModuleLength</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>30</span></pre></dd>
+      
+        <dt id="RETRY_COUNT-constant" class="">RETRY_COUNT =
+          
+        </dt>
+        <dd><pre class="code"><span class='int'>5</span></pre></dd>
+      
+        <dt id="ERROR_MESSAGE_INVALID_HEADERS-constant" class="">ERROR_MESSAGE_INVALID_HEADERS =
+          
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DEFAULT_USER_AGENT-constant" class="">DEFAULT_USER_AGENT =
+          
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>OTel-OTLP-MetricsExporter-Ruby/</span><span class='embexpr_beg'>#{</span><span class='const'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../../Exporter.html" title="OpenTelemetry::Exporter (module)">Exporter</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../OTLP.html" title="OpenTelemetry::Exporter::OTLP (module)">OTLP</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Metrics.html" title="OpenTelemetry::Exporter::OTLP::Metrics (module)">Metrics</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Metrics.html#VERSION-constant" title="OpenTelemetry::Exporter::OTLP::Metrics::VERSION (constant)">VERSION</a></span></span><span class='embexpr_end'>}</span><span class='tstring_content'> Ruby/</span><span class='embexpr_beg'>#{</span><span class='const'>RUBY_VERSION</span><span class='embexpr_end'>}</span><span class='tstring_content'> (</span><span class='embexpr_beg'>#{</span><span class='const'>RUBY_PLATFORM</span><span class='embexpr_end'>}</span><span class='tstring_content'>; </span><span class='embexpr_beg'>#{</span><span class='const'>RUBY_ENGINE</span><span class='embexpr_end'>}</span><span class='tstring_content'>/</span><span class='embexpr_beg'>#{</span><span class='const'>RUBY_ENGINE_VERSION</span><span class='embexpr_end'>}</span><span class='tstring_content'>)</span><span class='tstring_end'>&quot;</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#around_request-instance_method" title="#around_request (instance method)">#<strong>around_request</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#as_otlp_any_value-instance_method" title="#as_otlp_any_value (instance method)">#<strong>as_otlp_any_value</strong>(value)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#as_otlp_key_value-instance_method" title="#as_otlp_key_value (instance method)">#<strong>as_otlp_key_value</strong>(key, value)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#backoff%3F-instance_method" title="#backoff? (instance method)">#<strong>backoff?</strong>(retry_count:, reason:, retry_after: nil)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#handle_redirect-instance_method" title="#handle_redirect (instance method)">#<strong>handle_redirect</strong>(location)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#http_connection-instance_method" title="#http_connection (instance method)">#<strong>http_connection</strong>(uri, ssl_verify_mode, certificate_file)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#log_status-instance_method" title="#log_status (instance method)">#<strong>log_status</strong>(body)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#measure_request_duration-instance_method" title="#measure_request_duration (instance method)">#<strong>measure_request_duration</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#parse_headers-instance_method" title="#parse_headers (instance method)">#<strong>parse_headers</strong>(raw)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#prepare_headers-instance_method" title="#prepare_headers (instance method)">#<strong>prepare_headers</strong>(config_headers)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="around_request-instance_method">
+  
+    #<strong>around_request</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+27
+28
+29</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/exporter/otlp/metrics/util.rb', line 27</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_around_request'>around_request</span>
+  <span class='const'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'>Common</span><span class='op'>::</span><span class='const'>Utilities</span><span class='period'>.</span><span class='id identifier rubyid_untraced'>untraced</span> <span class='lbrace'>{</span> <span class='kw'>yield</span> <span class='rbrace'>}</span> <span class='comment'># rubocop:disable Style/ExplicitBlockArgument
+</span><span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="as_otlp_any_value-instance_method">
+  
+    #<strong>as_otlp_any_value</strong>(value)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/exporter/otlp/metrics/util.rb', line 39</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_as_otlp_any_value'>as_otlp_any_value</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_result'>result</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../../../Opentelemetry_.html" title="Opentelemetry (module)">Opentelemetry</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../../../Opentelemetry/Proto.html" title="Opentelemetry::Proto (module)">Proto</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../../../Opentelemetry/Proto/Common.html" title="Opentelemetry::Proto::Common (module)">Common</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../../../Opentelemetry/Proto/Common/V1.html" title="Opentelemetry::Proto::Common::V1 (module)">V1</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../../../Opentelemetry/Proto/Common/V1.html#AnyValue-constant" title="Opentelemetry::Proto::Common::V1::AnyValue (constant)">AnyValue</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+  <span class='kw'>case</span> <span class='id identifier rubyid_value'>value</span>
+  <span class='kw'>when</span> <span class='const'>String</span>
+    <span class='id identifier rubyid_result'>result</span><span class='period'>.</span><span class='id identifier rubyid_string_value'>string_value</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span>
+  <span class='kw'>when</span> <span class='const'>Integer</span>
+    <span class='id identifier rubyid_result'>result</span><span class='period'>.</span><span class='id identifier rubyid_int_value'>int_value</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span>
+  <span class='kw'>when</span> <span class='const'>Float</span>
+    <span class='id identifier rubyid_result'>result</span><span class='period'>.</span><span class='id identifier rubyid_double_value'>double_value</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span>
+  <span class='kw'>when</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='kw'>false</span>
+    <span class='id identifier rubyid_result'>result</span><span class='period'>.</span><span class='id identifier rubyid_bool_value'>bool_value</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span>
+  <span class='kw'>when</span> <span class='const'>Array</span>
+    <span class='id identifier rubyid_values'>values</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_element'>element</span><span class='op'>|</span> <span class='id identifier rubyid_as_otlp_any_value'>as_otlp_any_value</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+    <span class='id identifier rubyid_result'>result</span><span class='period'>.</span><span class='id identifier rubyid_array_value'>array_value</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../../../Opentelemetry_.html" title="Opentelemetry (module)">Opentelemetry</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../../../Opentelemetry/Proto.html" title="Opentelemetry::Proto (module)">Proto</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../../../Opentelemetry/Proto/Common.html" title="Opentelemetry::Proto::Common (module)">Common</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../../../Opentelemetry/Proto/Common/V1.html" title="Opentelemetry::Proto::Common::V1 (module)">V1</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../../../Opentelemetry/Proto/Common/V1.html#ArrayValue-constant" title="Opentelemetry::Proto::Common::V1::ArrayValue (constant)">ArrayValue</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>values:</span> <span class='id identifier rubyid_values'>values</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_result'>result</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="as_otlp_key_value-instance_method">
+  
+    #<strong>as_otlp_key_value</strong>(key, value)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+31
+32
+33
+34
+35
+36
+37</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/exporter/otlp/metrics/util.rb', line 31</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_as_otlp_key_value'>as_otlp_key_value</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="../../../../Opentelemetry_.html" title="Opentelemetry (module)">Opentelemetry</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../../../Opentelemetry/Proto.html" title="Opentelemetry::Proto (module)">Proto</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../../../Opentelemetry/Proto/Common.html" title="Opentelemetry::Proto::Common (module)">Common</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../../../Opentelemetry/Proto/Common/V1.html" title="Opentelemetry::Proto::Common::V1 (module)">V1</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../../../Opentelemetry/Proto/Common/V1.html#KeyValue-constant" title="Opentelemetry::Proto::Common::V1::KeyValue (constant)">KeyValue</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>key:</span> <span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='label'>value:</span> <span class='id identifier rubyid_as_otlp_any_value'>as_otlp_any_value</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span><span class='rparen'>)</span>
+<span class='kw'>rescue</span> <span class='const'>Encoding</span><span class='op'>::</span><span class='const'>UndefinedConversionError</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
+  <span class='id identifier rubyid_encoded_value'>encoded_value</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_encode'>encode</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>UTF-8</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>invalid:</span> <span class='symbol'>:replace</span><span class='comma'>,</span> <span class='label'>undef:</span> <span class='symbol'>:replace</span><span class='comma'>,</span> <span class='label'>replace:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>�</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='period'>.</span><span class='id identifier rubyid_handle_error'>handle_error</span><span class='lparen'>(</span><span class='label'>exception:</span> <span class='id identifier rubyid_e'>e</span><span class='comma'>,</span> <span class='label'>message:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>encoding error for key </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_key'>key</span><span class='embexpr_end'>}</span><span class='tstring_content'> and value </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_encoded_value'>encoded_value</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="../../../../Opentelemetry_.html" title="Opentelemetry (module)">Opentelemetry</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../../../Opentelemetry/Proto.html" title="Opentelemetry::Proto (module)">Proto</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../../../Opentelemetry/Proto/Common.html" title="Opentelemetry::Proto::Common (module)">Common</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../../../Opentelemetry/Proto/Common/V1.html" title="Opentelemetry::Proto::Common::V1 (module)">V1</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../../../Opentelemetry/Proto/Common/V1.html#KeyValue-constant" title="Opentelemetry::Proto::Common::V1::KeyValue (constant)">KeyValue</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>key:</span> <span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='label'>value:</span> <span class='id identifier rubyid_as_otlp_any_value'>as_otlp_any_value</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Encoding Error</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="backoff?-instance_method">
+  
+    #<strong>backoff?</strong>(retry_count:, reason:, retry_after: nil)  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/exporter/otlp/metrics/util.rb', line 100</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_backoff?'>backoff?</span><span class='lparen'>(</span><span class='label'>retry_count:</span><span class='comma'>,</span> <span class='label'>reason:</span><span class='comma'>,</span> <span class='label'>retry_after:</span> <span class='kw'>nil</span><span class='rparen'>)</span> <span class='comment'># rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+</span>  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='id identifier rubyid_retry_count'>retry_count</span> <span class='op'>&gt;</span> <span class='const'><span class='object_link'><a href="#RETRY_COUNT-constant" title="OpenTelemetry::Exporter::OTLP::Metrics::Util::RETRY_COUNT (constant)">RETRY_COUNT</a></span></span>
+
+  <span class='id identifier rubyid_sleep_interval'>sleep_interval</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='kw'>unless</span> <span class='id identifier rubyid_retry_after'>retry_after</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_sleep_interval'>sleep_interval</span> <span class='op'>=</span>
+      <span class='kw'>begin</span>
+        <span class='const'>Integer</span><span class='lparen'>(</span><span class='id identifier rubyid_retry_after'>retry_after</span><span class='rparen'>)</span>
+      <span class='kw'>rescue</span> <span class='const'>ArgumentError</span>
+        <span class='kw'>nil</span>
+      <span class='kw'>end</span>
+    <span class='id identifier rubyid_sleep_interval'>sleep_interval</span> <span class='op'>||=</span>
+      <span class='kw'>begin</span>
+        <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_httpdate'>httpdate</span><span class='lparen'>(</span><span class='id identifier rubyid_retry_after'>retry_after</span><span class='rparen'>)</span> <span class='op'>-</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span>
+      <span class='kw'>rescue</span> <span class='comment'># rubocop:disable Style/RescueStandardError
+</span>        <span class='kw'>nil</span>
+      <span class='kw'>end</span>
+    <span class='id identifier rubyid_sleep_interval'>sleep_interval</span> <span class='op'>=</span> <span class='kw'>nil</span> <span class='kw'>unless</span> <span class='id identifier rubyid_sleep_interval'>sleep_interval</span><span class='op'>&amp;.</span><span class='id identifier rubyid_positive?'>positive?</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_sleep_interval'>sleep_interval</span> <span class='op'>||=</span> <span class='id identifier rubyid_rand'>rand</span><span class='lparen'>(</span><span class='int'>2</span><span class='op'>**</span><span class='id identifier rubyid_retry_count'>retry_count</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_sleep'>sleep</span><span class='lparen'>(</span><span class='id identifier rubyid_sleep_interval'>sleep_interval</span><span class='rparen'>)</span>
+  <span class='kw'>true</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="handle_redirect-instance_method">
+  
+    #<strong>handle_redirect</strong>(location)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+136</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/exporter/otlp/metrics/util.rb', line 136</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_handle_redirect'>handle_redirect</span><span class='lparen'>(</span><span class='id identifier rubyid_location'>location</span><span class='rparen'>)</span><span class='semicolon'>;</span> <span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="http_connection-instance_method">
+  
+    #<strong>http_connection</strong>(uri, ssl_verify_mode, certificate_file)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+18
+19
+20
+21
+22
+23
+24
+25</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/exporter/otlp/metrics/util.rb', line 18</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_http_connection'>http_connection</span><span class='lparen'>(</span><span class='id identifier rubyid_uri'>uri</span><span class='comma'>,</span> <span class='id identifier rubyid_ssl_verify_mode'>ssl_verify_mode</span><span class='comma'>,</span> <span class='id identifier rubyid_certificate_file'>certificate_file</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_http'>http</span> <span class='op'>=</span> <span class='const'>Net</span><span class='op'>::</span><span class='const'>HTTP</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_uri'>uri</span><span class='period'>.</span><span class='id identifier rubyid_host'>host</span><span class='comma'>,</span> <span class='id identifier rubyid_uri'>uri</span><span class='period'>.</span><span class='id identifier rubyid_port'>port</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_http'>http</span><span class='period'>.</span><span class='id identifier rubyid_use_ssl'>use_ssl</span> <span class='op'>=</span> <span class='id identifier rubyid_uri'>uri</span><span class='period'>.</span><span class='id identifier rubyid_scheme'>scheme</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>https</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_http'>http</span><span class='period'>.</span><span class='id identifier rubyid_verify_mode'>verify_mode</span> <span class='op'>=</span> <span class='id identifier rubyid_ssl_verify_mode'>ssl_verify_mode</span>
+  <span class='id identifier rubyid_http'>http</span><span class='period'>.</span><span class='id identifier rubyid_ca_file'>ca_file</span> <span class='op'>=</span> <span class='id identifier rubyid_certificate_file'>certificate_file</span> <span class='kw'>unless</span> <span class='id identifier rubyid_certificate_file'>certificate_file</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='id identifier rubyid_http'>http</span><span class='period'>.</span><span class='id identifier rubyid_keep_alive_timeout'>keep_alive_timeout</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="#KEEP_ALIVE_TIMEOUT-constant" title="OpenTelemetry::Exporter::OTLP::Metrics::Util::KEEP_ALIVE_TIMEOUT (constant)">KEEP_ALIVE_TIMEOUT</a></span></span>
+  <span class='id identifier rubyid_http'>http</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="log_status-instance_method">
+  
+    #<strong>log_status</strong>(body)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/exporter/otlp/metrics/util.rb', line 125</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_log_status'>log_status</span><span class='lparen'>(</span><span class='id identifier rubyid_body'>body</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_status'>status</span> <span class='op'>=</span> <span class='const'>Google</span><span class='op'>::</span><span class='const'>Rpc</span><span class='op'>::</span><span class='const'>Status</span><span class='period'>.</span><span class='id identifier rubyid_decode'>decode</span><span class='lparen'>(</span><span class='id identifier rubyid_body'>body</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_details'>details</span> <span class='op'>=</span> <span class='id identifier rubyid_status'>status</span><span class='period'>.</span><span class='id identifier rubyid_details'>details</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_detail'>detail</span><span class='op'>|</span>
+    <span class='id identifier rubyid_klass_or_nil'>klass_or_nil</span> <span class='op'>=</span> <span class='op'>::</span><span class='const'>Google</span><span class='op'>::</span><span class='const'>Protobuf</span><span class='op'>::</span><span class='const'>DescriptorPool</span><span class='period'>.</span><span class='id identifier rubyid_generated_pool'>generated_pool</span><span class='period'>.</span><span class='id identifier rubyid_lookup'>lookup</span><span class='lparen'>(</span><span class='id identifier rubyid_detail'>detail</span><span class='period'>.</span><span class='id identifier rubyid_type_name'>type_name</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_msgclass'>msgclass</span>
+    <span class='id identifier rubyid_detail'>detail</span><span class='period'>.</span><span class='id identifier rubyid_unpack'>unpack</span><span class='lparen'>(</span><span class='id identifier rubyid_klass_or_nil'>klass_or_nil</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_klass_or_nil'>klass_or_nil</span>
+  <span class='kw'>end</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
+  <span class='const'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='period'>.</span><span class='id identifier rubyid_handle_error'>handle_error</span><span class='lparen'>(</span><span class='label'>message:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>OTLP metrics_exporter received rpc.Status{message=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_status'>status</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span><span class='embexpr_end'>}</span><span class='tstring_content'>, details=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_details'>details</span><span class='embexpr_end'>}</span><span class='tstring_content'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='kw'>rescue</span> <span class='const'>StandardError</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
+  <span class='const'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='period'>.</span><span class='id identifier rubyid_handle_error'>handle_error</span><span class='lparen'>(</span><span class='label'>exception:</span> <span class='id identifier rubyid_e'>e</span><span class='comma'>,</span> <span class='label'>message:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>unexpected error decoding rpc.Status in OTLP::MetricsExporter#log_status</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="measure_request_duration-instance_method">
+  
+    #<strong>measure_request_duration</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+70
+71
+72
+73
+74
+75
+76
+77
+78</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/exporter/otlp/metrics/util.rb', line 70</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_measure_request_duration'>measure_request_duration</span>
+  <span class='id identifier rubyid_start'>start</span> <span class='op'>=</span> <span class='const'>Process</span><span class='period'>.</span><span class='id identifier rubyid_clock_gettime'>clock_gettime</span><span class='lparen'>(</span><span class='const'>Process</span><span class='op'>::</span><span class='const'>CLOCK_MONOTONIC</span><span class='rparen'>)</span>
+  <span class='kw'>begin</span>
+    <span class='kw'>yield</span>
+  <span class='kw'>ensure</span>
+    <span class='id identifier rubyid_stop'>stop</span> <span class='op'>=</span> <span class='const'>Process</span><span class='period'>.</span><span class='id identifier rubyid_clock_gettime'>clock_gettime</span><span class='lparen'>(</span><span class='const'>Process</span><span class='op'>::</span><span class='const'>CLOCK_MONOTONIC</span><span class='rparen'>)</span>
+    <span class='float'>1000.0</span> <span class='op'>*</span> <span class='lparen'>(</span><span class='id identifier rubyid_stop'>stop</span> <span class='op'>-</span> <span class='id identifier rubyid_start'>start</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="parse_headers-instance_method">
+  
+    #<strong>parse_headers</strong>(raw)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/exporter/otlp/metrics/util.rb', line 80</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_parse_headers'>parse_headers</span><span class='lparen'>(</span><span class='id identifier rubyid_raw'>raw</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_entries'>entries</span> <span class='op'>=</span> <span class='id identifier rubyid_raw'>raw</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>,</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#ERROR_MESSAGE_INVALID_HEADERS-constant" title="OpenTelemetry::Exporter::OTLP::Metrics::Util::ERROR_MESSAGE_INVALID_HEADERS (constant)">ERROR_MESSAGE_INVALID_HEADERS</a></span></span> <span class='kw'>if</span> <span class='id identifier rubyid_entries'>entries</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+
+  <span class='id identifier rubyid_entries'>entries</span><span class='period'>.</span><span class='id identifier rubyid_each_with_object'>each_with_object</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_entry'>entry</span><span class='comma'>,</span> <span class='id identifier rubyid_headers'>headers</span><span class='op'>|</span>
+    <span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span> <span class='op'>=</span> <span class='id identifier rubyid_entry'>entry</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>=</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='int'>2</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='const'>CGI</span><span class='period'>.</span><span class='id identifier rubyid_method'>method</span><span class='lparen'>(</span><span class='symbol'>:unescape</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='kw'>begin</span>
+      <span class='id identifier rubyid_k'>k</span> <span class='op'>=</span> <span class='id identifier rubyid_k'>k</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span>
+      <span class='id identifier rubyid_v'>v</span> <span class='op'>=</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span>
+    <span class='kw'>rescue</span> <span class='const'>Encoding</span><span class='op'>::</span><span class='const'>CompatibilityError</span>
+      <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#ERROR_MESSAGE_INVALID_HEADERS-constant" title="OpenTelemetry::Exporter::OTLP::Metrics::Util::ERROR_MESSAGE_INVALID_HEADERS (constant)">ERROR_MESSAGE_INVALID_HEADERS</a></span></span>
+    <span class='kw'>rescue</span> <span class='const'>ArgumentError</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
+      <span class='id identifier rubyid_raise'>raise</span> <span class='id identifier rubyid_e'>e</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#ERROR_MESSAGE_INVALID_HEADERS-constant" title="OpenTelemetry::Exporter::OTLP::Metrics::Util::ERROR_MESSAGE_INVALID_HEADERS (constant)">ERROR_MESSAGE_INVALID_HEADERS</a></span></span>
+    <span class='kw'>end</span>
+    <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#ERROR_MESSAGE_INVALID_HEADERS-constant" title="OpenTelemetry::Exporter::OTLP::Metrics::Util::ERROR_MESSAGE_INVALID_HEADERS (constant)">ERROR_MESSAGE_INVALID_HEADERS</a></span></span> <span class='kw'>if</span> <span class='id identifier rubyid_k'>k</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span> <span class='op'>||</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+
+    <span class='id identifier rubyid_headers'>headers</span><span class='lbracket'>[</span><span class='id identifier rubyid_k'>k</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_v'>v</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="prepare_headers-instance_method">
+  
+    #<strong>prepare_headers</strong>(config_headers)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/exporter/otlp/metrics/util.rb', line 57</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_prepare_headers'>prepare_headers</span><span class='lparen'>(</span><span class='id identifier rubyid_config_headers'>config_headers</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_headers'>headers</span> <span class='op'>=</span> <span class='kw'>case</span> <span class='id identifier rubyid_config_headers'>config_headers</span>
+            <span class='kw'>when</span> <span class='const'>String</span> <span class='kw'>then</span> <span class='id identifier rubyid_parse_headers'>parse_headers</span><span class='lparen'>(</span><span class='id identifier rubyid_config_headers'>config_headers</span><span class='rparen'>)</span>
+            <span class='kw'>when</span> <span class='const'>Hash</span> <span class='kw'>then</span> <span class='id identifier rubyid_config_headers'>config_headers</span><span class='period'>.</span><span class='id identifier rubyid_dup'>dup</span>
+            <span class='kw'>else</span>
+              <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#ERROR_MESSAGE_INVALID_HEADERS-constant" title="OpenTelemetry::Exporter::OTLP::Metrics::Util::ERROR_MESSAGE_INVALID_HEADERS (constant)">ERROR_MESSAGE_INVALID_HEADERS</a></span></span>
+            <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_headers'>headers</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>User-Agent</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_headers'>headers</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>User-Agent</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_content'> </span><span class='embexpr_beg'>#{</span><span class='const'><span class='object_link'><a href="#DEFAULT_USER_AGENT-constant" title="OpenTelemetry::Exporter::OTLP::Metrics::Util::DEFAULT_USER_AGENT (constant)">DEFAULT_USER_AGENT</a></span></span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span>
+
+  <span class='id identifier rubyid_headers'>headers</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Wed Aug 28 21:54:21 2024 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.36 (ruby-3.0.7).
+</div>
+
+    </div>
+  </body>
+</html>
