@@ -189,6 +189,7 @@ module OpenTelemetry
           when 'none' then nil
           when 'otlp'
             otlp_protocol = ENV['OTEL_EXPORTER_OTLP_TRACES_PROTOCOL'] || ENV['OTEL_EXPORTER_OTLP_PROTOCOL'] || 'http/protobuf'
+
             if otlp_protocol != 'http/protobuf'
               OpenTelemetry.logger.warn "The #{otlp_protocol} transport protocol is not supported by the OTLP exporter, spans will not be exported."
               nil
