@@ -18,41 +18,6 @@ Generally, *libraries* that produce telemetry data should avoid depending direct
 
 This gem supports the [v0.20.0 release][otel-proto-release] of OTLP.
 
-## Prerequisite
-
-The exporter-oltp-metrics depends on two gems that have not been officially released: opentelemetry-metrics-sdk and opentelemetry-metrics-api.
-
-Within the .gemspec file, these gems are not listed as dependencies. However, for users who need utilize this metrics exporter, they must first install and load these two gems before they can use the exporter.
-
-To facilitate this, there are couple recommended approaches:
-
-#### 1. Download the source code
-
-1. Download the [opentelemetry-ruby](https://github.com/open-telemetry/opentelemetry-ruby).
-2. Navigate to subfolder, then build the [metrics_sdk](https://github.com/open-telemetry/opentelemetry-ruby/tree/main/metrics_sdk) and [metrics_api](https://github.com/open-telemetry/opentelemetry-ruby/tree/main/metrics_api).
-3. Execute `gem build *.gemspec`.
-4. Lastly, install the built gem into the system.
-
-#### 2. Using `path:` option in Gemfile with downloaded source code
-
-git clone [opentelemetry-ruby](https://github.com/open-telemetry/opentelemetry-ruby) first, then use Gemfile
-
-```ruby
-# Gemfile
-source 'https://rubygems.org'
-gem 'opentelemetry-metrics-api', path: "opentelemetry-ruby/metrics_api"
-gem 'opentelemetry-metrics-sdk', path: "opentelemetry-ruby/metrics_sdk"
-```
-
-#### 3. Using `git:` option in Gemfile
-
-```ruby
-# Gemfile
-source 'https://rubygems.org'
-gem 'opentelemetry-metrics-api', git: "https://github.com/open-telemetry/opentelemetry-ruby", glob: 'metrics_api/*.gemspec'
-gem 'opentelemetry-metrics-sdk', git: "https://github.com/open-telemetry/opentelemetry-ruby", glob: 'metrics_sdk/*.gemspec'
-```
-
 ## How do I get started?
 
 Install the gem using:
@@ -60,13 +25,14 @@ Install the gem using:
 ```console
 
 gem install opentelemetry-sdk
+gem install opentelemetry-metrics-sdk
 gem install opentelemetry-exporter-otlp-metrics
 
 ```
 
-Or, if you use [bundler][bundler-home], include `opentelemetry-sdk` in your `Gemfile`.
+Or, if you use [bundler][bundler-home], include `opentelemetry-sdk`, `opentelemetry-metrics-sdk`, and `opentelemetry-exporter-otlp-metrics` in your `Gemfile`.
 
-Then, configure the SDK to use the OTLP metrics exporter 
+Then, configure the SDK to use the OTLP metrics exporter
 
 ```ruby
 require 'opentelemetry/sdk'
@@ -77,7 +43,7 @@ OpenTelemetry::SDK.configure
 
 # To start a trace you need to get a Tracer from the TracerProvider
 
-otlp_metric_exporter = OpenTelemetry::Exporter::OTLP::MetricsExporter.new
+otlp_metric_exporter = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new
 
 OpenTelemetry.meter_provider.add_metric_reader(otlp_metric_exporter)
 
@@ -112,7 +78,7 @@ The collector exporter can be configured explicitly in code, or via environment 
 
 ## How can I get involved?
 
-The `opentelemetry-exporter-otlp-metrics` gem source is [on github][repo-github], along with related gems including `opentelemetry-sdk`.
+The `opentelemetry-exporter-otlp-metrics` gem source is [on github][repo-github], along with related gems including `opentelemetry-metrics-sdk`.
 
 The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us in [GitHub Discussions][discussions-url] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
