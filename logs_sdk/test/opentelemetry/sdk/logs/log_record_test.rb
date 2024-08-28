@@ -99,7 +99,6 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
 
     describe 'attribute limits' do
       it 'uses the limits set by the logger provider via the logger' do
-        skip 'need console log record exporter to be merged first'
         # Spy on the console output
         captured_stdout = StringIO.new
         original_stdout = $stdout
