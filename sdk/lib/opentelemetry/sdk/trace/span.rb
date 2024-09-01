@@ -271,6 +271,9 @@ module OpenTelemetry
               return self
             end
             @end_timestamp = relative_timestamp(end_timestamp)
+            @span_processors.each do |processor|
+              processor.on_ending(self) if processor.respond_to?(:on_ending)
+            end
             @attributes = validated_attributes(@attributes).freeze
             @events.freeze
             @links.freeze
