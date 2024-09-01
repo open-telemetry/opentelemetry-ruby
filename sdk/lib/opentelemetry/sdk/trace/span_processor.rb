@@ -23,6 +23,20 @@ module OpenTelemetry
         #  started span.
         def on_start(span, parent_context); end
 
+        # Called when a {Span} is ending, after the end timestamp has been set
+        # but before span becomes immutable. This allows for updating the span
+        # by setting attributes or adding links and events.
+        #
+        # This method is called synchronously and should not blocks the current
+        # thread nor throw exceptions.
+        #
+        # This method is optional on the Span Processor interface. It will only
+        # get called if it exists within the processor.
+        #
+        # @param [Span] span the {Span} that just is ending (still mutable).
+        # @return [void]
+        def on_ending(span); end
+
         # Called when a {Span} is ended, if the {Span#recording?}
         # returns true.
         #
