@@ -15,6 +15,10 @@ describe OpenTelemetry::SDK::Trace::SpanProcessor do
     processor.on_start(span, context)
   end
 
+  it 'implements #on_ending' do
+    processor.on_ending(span)
+  end
+
   it 'implements #on_finish' do
     processor.on_finish(span)
   end
