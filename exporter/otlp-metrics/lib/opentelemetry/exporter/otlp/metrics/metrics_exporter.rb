@@ -26,7 +26,7 @@ module OpenTelemetry
     module OTLP
       module Metrics
         # An OpenTelemetry metrics exporter that sends metrics over HTTP as Protobuf encoded OTLP ExportMetricsServiceRequest.
-        class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricReader # rubocop:disable Metrics/ClassLength
+        class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricReader
           include Util
 
           attr_reader :metric_snapshots
@@ -89,7 +89,7 @@ module OpenTelemetry
             end
           end
 
-          def send_bytes(bytes, timeout:) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+          def send_bytes(bytes, timeout:)
             return FAILURE if bytes.nil?
 
             request = Net::HTTP::Post.new(@path)
@@ -183,7 +183,7 @@ module OpenTelemetry
             @http.write_timeout = @timeout
           end
 
-          def encode(metrics_data) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
+          def encode(metrics_data)
             Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.encode(
               Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.new(
                 resource_metrics: metrics_data
@@ -217,7 +217,7 @@ module OpenTelemetry
           # current metric sdk only implements instrument: :counter -> :sum, :histogram -> :histogram
           #
           # metrics [MetricData]
-          def as_otlp_metrics(metrics) # rubocop:disable Metrics/MethodLength
+          def as_otlp_metrics(metrics)
             case metrics.instrument_kind
             when :observable_gauge
               Opentelemetry::Proto::Metrics::V1::Metric.new(
