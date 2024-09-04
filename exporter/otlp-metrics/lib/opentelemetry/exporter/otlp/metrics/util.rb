@@ -67,16 +67,6 @@ module OpenTelemetry
             headers
           end
 
-          def measure_request_duration
-            start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-            begin
-              yield
-            ensure
-              stop = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-              1000.0 * (stop - start)
-            end
-          end
-
           def parse_headers(raw)
             entries = raw.split(',')
             raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if entries.empty?
