@@ -11,7 +11,7 @@ module OpenTelemetry
     module Metrics
       # {MeterProvider} is the SDK implementation of {OpenTelemetry::Metrics::MeterProvider}.
       class MeterProvider < OpenTelemetry::Metrics::MeterProvider
-        Key = Struct.new(:name, :version)
+        Key = Struct.new(:name, :version, :schema_url, :attributes)
         private_constant(:Key)
 
         attr_reader :resource, :metric_readers
@@ -28,15 +28,17 @@ module OpenTelemetry
         #
         # @param [String] name Instrumentation package name
         # @param [optional String] version Instrumentation package version
+        # @param [optional String] schema_url Schema URL that should be recorded in the emitted telemetry
+        # @param [optional Hash] attributes Instrumentation scope attributes to associate with emitted telemetry
         #
         # @return [Meter]
-        def meter(name, version: nil)
+        def meter(name, version: nil, schema_url: nil, attributes: {})
           version ||= ''
           if @stopped
             OpenTelemetry.logger.warn 'calling MeterProvider#meter after shutdown, a noop meter will be returned.'
             OpenTelemetry::Metrics::Meter.new
           else
-            @mutex.synchronize { @meter_registry[Key.new(name, version)] ||= Meter.new(name, version, self) }
+            @mutex.synchronize { @meter_registry[Key.new(name, version, schema_url, attributes)] ||= Meter.new(name, version, schema_url, attributes, self) }
           end
         end
 
