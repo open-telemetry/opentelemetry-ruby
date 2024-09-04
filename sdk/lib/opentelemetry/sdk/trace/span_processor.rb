@@ -29,7 +29,7 @@ module OpenTelemetry
         # but before span becomes immutable. This allows for updating the span
         # by setting attributes or adding links and events.
         #
-        # This method is called synchronously and should not blocks the current
+        # This method is called synchronously and should not block the current
         # thread nor throw exceptions.
         #
         # This method is optional on the Span Processor interface. It will only
