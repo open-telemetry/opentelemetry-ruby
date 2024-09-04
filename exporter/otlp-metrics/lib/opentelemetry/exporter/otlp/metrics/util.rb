@@ -9,7 +9,7 @@ module OpenTelemetry
     module OTLP
       module Metrics
         # Util module provide essential functionality for exporter
-        module Util 
+        module Util
           KEEP_ALIVE_TIMEOUT = 30
           RETRY_COUNT = 5
           ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
