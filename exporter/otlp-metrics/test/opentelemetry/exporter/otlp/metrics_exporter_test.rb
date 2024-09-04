@@ -16,6 +16,9 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
   METRICS_CLIENT_CERT_A_PATH = File.dirname(__FILE__) + '/mtls-client-a.pem'
   METRICS_CLIENT_CERT_A = OpenSSL::X509::Certificate.new(File.read(METRICS_CLIENT_CERT_A_PATH))
   METRICS_CLIENT_KEY_A = OpenSSL::PKey::RSA.new(File.read(METRICS_CLIENT_CERT_A_PATH))
+  METRICS_CLIENT_CERT_B_PATH = File.dirname(__FILE__) + '/mtls-client-b.pem'
+  METRICS_CLIENT_CERT_B = OpenSSL::X509::Certificate.new(File.read(METRICS_CLIENT_CERT_B_PATH))
+  METRICS_CLIENT_KEY_B = OpenSSL::PKey::RSA.new(File.read(METRICS_CLIENT_CERT_B_PATH))
 
   describe '#initialize' do
     it 'initializes with defaults' do
@@ -114,6 +117,8 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
                                                 'OTEL_EXPORTER_OTLP_TIMEOUT' => '11') do
         OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://localhost:4321',
                                                                     certificate_file: '/baz',
+                                                                    client_certificate_file: METRICS_CLIENT_CERT_B_PATH,
+                                                                    client_key_file: METRICS_CLIENT_CERT_B_PATH,
                                                                     headers: { 'x' => 'y' },
                                                                     compression: 'gzip',
                                                                     ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE,
@@ -125,8 +130,8 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
       http = exp.instance_variable_get(:@http)
       _(http.ca_file).must_equal '/baz'
-      _(http.cert).must_equal METRICS_CLIENT_CERT_A
-      _(http.key.params).must_equal METRICS_CLIENT_KEY_A.params
+      _(http.cert).must_equal METRICS_CLIENT_CERT_B
+      _(http.key.params).must_equal METRICS_CLIENT_KEY_B.params
       _(http.use_ssl?).must_equal false
       _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_NONE
       _(http.address).must_equal 'localhost'
