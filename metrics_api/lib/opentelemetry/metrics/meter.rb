@@ -11,13 +11,14 @@ module OpenTelemetry
       COUNTER = Instrument::Counter.new
       OBSERVABLE_COUNTER = Instrument::ObservableCounter.new
       HISTOGRAM = Instrument::Histogram.new
+      GAUGE = Instrument::Gauge.new
       OBSERVABLE_GAUGE = Instrument::ObservableGauge.new
       UP_DOWN_COUNTER = Instrument::UpDownCounter.new
       OBSERVABLE_UP_DOWN_COUNTER = Instrument::ObservableUpDownCounter.new
 
       NAME_REGEX = /\A[a-zA-Z][-.\w]{0,62}\z/
 
-      private_constant(:COUNTER, :OBSERVABLE_COUNTER, :HISTOGRAM, :OBSERVABLE_GAUGE, :UP_DOWN_COUNTER, :OBSERVABLE_UP_DOWN_COUNTER)
+      private_constant(:COUNTER, :OBSERVABLE_COUNTER, :HISTOGRAM, :GAUGE, :OBSERVABLE_GAUGE, :UP_DOWN_COUNTER, :OBSERVABLE_UP_DOWN_COUNTER)
 
       DuplicateInstrumentError = Class.new(OpenTelemetry::Error)
       InstrumentNameError = Class.new(OpenTelemetry::Error)
@@ -35,6 +36,10 @@ module OpenTelemetry
 
       def create_histogram(name, unit: nil, description: nil)
         create_instrument(:histogram, name, unit, description, nil) { HISTOGRAM }
+      end
+
+      def create_gauge(name, unit: nil, description: nil)
+        create_instrument(:gauge, name, unit, description, nil) { GAUGE }
       end
 
       def create_up_down_counter(name, unit: nil, description: nil)
