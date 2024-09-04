@@ -28,8 +28,7 @@ module OpenTelemetry
         # Default timeouts in seconds.
         KEEP_ALIVE_TIMEOUT = 30
         RETRY_COUNT = 5
-        WRITE_TIMEOUT_SUPPORTED = Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.6')
-        private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT, :WRITE_TIMEOUT_SUPPORTED)
+        private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT)
 
         ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
         private_constant(:ERROR_MESSAGE_INVALID_HEADERS)
@@ -153,7 +152,7 @@ module OpenTelemetry
 
             @http.open_timeout = remaining_timeout
             @http.read_timeout = remaining_timeout
-            @http.write_timeout = remaining_timeout if WRITE_TIMEOUT_SUPPORTED
+            @http.write_timeout = remaining_timeout
             @http.start unless @http.started?
             response = measure_request_duration { @http.request(request) }
 
@@ -213,7 +212,7 @@ module OpenTelemetry
           # Reset timeouts to defaults for the next call.
           @http.open_timeout = @timeout
           @http.read_timeout = @timeout
-          @http.write_timeout = @timeout if WRITE_TIMEOUT_SUPPORTED
+          @http.write_timeout = @timeout
         end
 
         def handle_redirect(location)
