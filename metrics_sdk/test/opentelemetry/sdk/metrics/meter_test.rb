@@ -34,7 +34,7 @@ describe OpenTelemetry::SDK::Metrics::Meter do
     it 'does not require advice' do
       instrument = meter.create_histogram('histogram', description: 'stuff', unit: 'things')
 
-      _(instrument.instance_variable_get(:@advice)).must_equal(nil)
+      assert_nil instrument.instance_variable_get(:@advice)
     end
   end
 
