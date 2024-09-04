@@ -9,7 +9,7 @@ module OpenTelemetry
     module OTLP
       module Metrics
         # Util module provide essential functionality for exporter
-        module Util # rubocop:disable Metrics/ModuleLength
+        module Util
           KEEP_ALIVE_TIMEOUT = 30
           RETRY_COUNT = 5
           ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
@@ -67,16 +67,6 @@ module OpenTelemetry
             headers['User-Agent'] = "#{headers.fetch('User-Agent', '')} #{DEFAULT_USER_AGENT}".strip
 
             headers
-          end
-
-          def measure_request_duration
-            start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-            begin
-              yield
-            ensure
-              stop = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-              1000.0 * (stop - start)
-            end
           end
 
           def parse_headers(raw)
