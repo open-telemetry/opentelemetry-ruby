@@ -23,7 +23,7 @@ module OpenTelemetry
         #  started span.
         def on_start(span, parent_context); end
 
-        # The on_ending is an experimental feature and may have breaking changes.
+        # The on_ending method is an experimental feature and may have breaking changes.
         #
         # Called when a {Span} is ending, after the end timestamp has been set
         # but before span becomes immutable. This allows for updating the span
