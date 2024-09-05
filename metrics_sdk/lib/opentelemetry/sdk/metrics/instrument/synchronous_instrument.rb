@@ -11,13 +11,12 @@ module OpenTelemetry
         # {SynchronousInstrument} contains the common functionality shared across
         # the synchronous instruments SDK instruments.
         class SynchronousInstrument
-          def initialize(name, unit, description, instrumentation_scope, meter_provider, advice = {})
+          def initialize(name, unit, description, instrumentation_scope, meter_provider, advice = nil)
             @name = name
             @unit = unit
             @description = description
             @instrumentation_scope = instrumentation_scope
             @meter_provider = meter_provider
-            @advice = advice
             @metric_streams = []
 
             meter_provider.register_synchronous_instrument(self)
