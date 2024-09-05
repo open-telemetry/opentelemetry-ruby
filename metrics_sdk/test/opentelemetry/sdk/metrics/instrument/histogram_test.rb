@@ -57,7 +57,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::Histogram do
     _(last_snapshot[0].data_points[0].sum).must_equal(40)
     _(last_snapshot[0].data_points[0].min).must_equal(0)
     _(last_snapshot[0].data_points[0].max).must_equal(20)
-    _(last_snapshot[0].data_points[0].attributes).must_be_nil
+    _(last_snapshot[0].data_points[0].attributes).must_equal({})
     _(last_snapshot[0].aggregation_temporality).must_equal(:delta)
   end
 end
