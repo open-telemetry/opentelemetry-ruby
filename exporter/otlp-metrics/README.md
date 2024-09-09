@@ -68,7 +68,7 @@ The collector exporter can be configured explicitly in code, or via environment 
 | `endpoint:`         | `OTEL_EXPORTER_OTLP_ENDPOINT`                | `"http://localhost:4318/v1/metrics"` |
 | `certificate_file: `| `OTEL_EXPORTER_OTLP_CERTIFICATE`             |                                     |
 | `client_certificate_file: `| `OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE` |                                   |
-| `certificate_file: `| `OTEL_EXPORTER_OTLP_CLIENT_KEY`              |                                     |
+| `client_key:`       | `OTEL_EXPORTER_OTLP_CLIENT_KEY`              |                                     |
 | `headers:`          | `OTEL_EXPORTER_OTLP_HEADERS`                 |                                     |
 | `compression:`      | `OTEL_EXPORTER_OTLP_COMPRESSION`             | `"gzip"`                            |
 | `timeout:`          | `OTEL_EXPORTER_OTLP_TIMEOUT`                 | `10`                                |
