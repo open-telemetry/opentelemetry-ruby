@@ -50,7 +50,12 @@ module OpenTelemetry
                 OpenTelemetry.logger.warn "The #{otlp_protocol} transport protocol is not supported by the OTLP exporter, log_records will not be exported."
                 nil
               else
-                Logs::Export::BatchLogRecordProcessor.new(OpenTelemetry::Exporter::OTLP::LogsExporter.new)
+                begin
+                  Logs::Export::BatchLogRecordProcessor.new(OpenTelemetry::Exporter::OTLP::LogsExporter.new)
+                rescue NameError
+                  OpenTelemetry.logger.warn "The otlp logs exporter cannot be configured - please add opentelemetry-exporter-otlp-logs to your Gemfile. Logs will not be exported"
+                  nil
+                end
               end
             else
               OpenTelemetry.logger.warn "The #{exporter} exporter is unknown and cannot be configured, log records will not be exported"
