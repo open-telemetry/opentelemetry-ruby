@@ -102,6 +102,7 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
 
     it 'registered view with matching name' do
       registered_view.instance_variable_set(:@name, 'test')
+      registered_view.send(:generate_regex_pattern, 'test')
       _(registered_view.match_instrument?(metric_stream)).must_equal true
     end
 
@@ -124,6 +125,24 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
       registered_view.instance_variable_set(:@options, { type: :counter })
       registered_view.instance_variable_set(:@name, 'tset')
       _(registered_view.match_instrument?(metric_stream)).must_equal false
+    end
+
+    describe '#name_match' do
+      it 'name_match_for_wild_card' do
+        registered_view.instance_variable_set(:@name, 'log*2024?.txt')
+        registered_view.send(:generate_regex_pattern, 'log*2024?.txt')
+        _(registered_view.name_match('logfile20242.txt')).must_equal true
+        _(registered_view.name_match('log2024a.txt')).must_equal true
+        _(registered_view.name_match('log_test_2024.txt')).must_equal false
+      end
+
+      it 'name_match_for_*' do
+        registered_view.instance_variable_set(:@name, '*')
+        registered_view.send(:generate_regex_pattern, '*')
+        _(registered_view.name_match('*')).must_equal true
+        _(registered_view.name_match('aaaaaaaaa')).must_equal true
+        _(registered_view.name_match('!@#$%^&')).must_equal true
+      end
     end
   end
 end

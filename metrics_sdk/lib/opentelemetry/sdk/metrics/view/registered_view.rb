@@ -10,13 +10,15 @@ module OpenTelemetry
       module View
         # RegisteredView is an internal class used to match Views with a given {MetricStream}
         class RegisteredView
-          attr_reader :name, :aggregation, :attribute_keys
+          attr_reader :name, :aggregation, :attribute_keys, :regex
 
           def initialize(name, **options)
             @name = name
             @options = options
             @aggregation = options[:aggregation]
             @attribute_keys = options[:attribute_keys] || {}
+
+            generate_regex_pattern(name)
           end
 
           def match_instrument?(metric_stream)
@@ -30,17 +32,24 @@ module OpenTelemetry
           end
 
           def name_match(stream_name)
-            regex_pattern = Regexp.escape(@name)
-
-            regex_pattern.gsub!('\*', '.*')
-            regex_pattern.gsub!('\?', '.')
-
-            regex = Regexp.new("^#{regex_pattern}$")
-            !!regex.match(stream_name)
+            !!@regex&.match(stream_name)
           end
 
           def valid_aggregation?
             @aggregation.class.name.rpartition('::')[0] == 'OpenTelemetry::SDK::Metrics::Aggregation'
+          end
+
+          private
+
+          def generate_regex_pattern(view_name)
+            regex_pattern = Regexp.escape(view_name)
+
+            regex_pattern.gsub!('\*', '.*')
+            regex_pattern.gsub!('\?', '.')
+
+            @regex = Regexp.new("^#{regex_pattern}$")
+          rescue StandardError
+            @regex = nil
           end
         end
       end
