@@ -50,15 +50,20 @@ describe OpenTelemetry do
       OpenTelemetry.logger_provider = OpenTelemetry::Internal::ProxyLoggerProvider.new
     end
 
-    it 'upgrades default loggers to "real" loggers' do
-      skip 'copy from tracer, not sure if this is how it should work'
+    it 'has a default proxy logger' do
+      refute_nil OpenTelemetry.logger_provider.logger
+    end
+
+    it 'upgrades default loggers to *real* loggers' do
+      # proxy loggers do not emit any log records, nor does the API logger
+      # the on_emit method is empty
       default_logger = OpenTelemetry.logger_provider.logger
-      _(default_logger.on_emit(body: 'test')).must_be_instance_of(OpenTelemetry::Logs::LogRecord)
+      _(default_logger.on_emit(body: 'test')).must_be_instance_of(NilClass)
       OpenTelemetry.logger_provider = CustomLoggerProvider.new
       _(default_logger.on_emit(body: 'test')).must_be_instance_of(CustomLogRecord)
     end
 
-    it 'upgrades the default logger provider to a "real" logger provider' do
+    it 'upgrades the default logger provider to a *real* logger provider' do
       default_logger_provider = OpenTelemetry.logger_provider
       OpenTelemetry.logger_provider = CustomLoggerProvider.new
       _(default_logger_provider.logger).must_be_instance_of(CustomLogger)

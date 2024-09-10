@@ -18,6 +18,7 @@ module OpenTelemetry
       # @return [ProxyLogger]
       def initialize
         super
+        @mutex = Mutex.new
         @delegate = nil
       end
 
@@ -29,7 +30,6 @@ module OpenTelemetry
         @mutex.synchronize do
           if @delegate.nil?
             @delegate = logger
-            @instrument_registry.each_value { |instrument| instrument.upgrade_with(logger) }
           else
             OpenTelemetry.logger.warn 'Attempt to reset delegate in ProxyLogger ignored.'
           end
@@ -48,7 +48,7 @@ module OpenTelemetry
         attributes: nil,
         context: nil
       )
-        @delegate.on_emit(
+        return @delegate.on_emit(
           timestamp: nil,
           observed_timestamp: nil,
           severity_number: nil,
@@ -59,7 +59,7 @@ module OpenTelemetry
           trace_flags: nil,
           attributes: nil,
           context: nil
-        )
+        ) unless @delegate.nil?
 
         super
       end
