@@ -59,7 +59,7 @@ OpenTelemetry::SDK.configure
 #   c.use 'OpenTelemetry::Instrumentation::Net::HTTP'
 # end
 #
-# Note that the SimpleSpanExporter is not recommended for use in production.
+# Note that the SimpleSpanProcessor is not recommended for use in production.
 
 
 # To start a trace you need to get a Tracer from the TracerProvider
