@@ -14,18 +14,21 @@
 #}
 {%- import 'common.j2' as common -%}
 {%- if selector == 'any' -%}
-{%- set filtered_attributes = attributes_and_templates | list -%}
-{%- set module_name = 'SemanticCandidates' -%}
+{%-   set filtered_attributes = attributes_and_templates | list -%}
+{%-   set gen_incubating = true -%}
 {%- elif selector == 'is_stable' -%}
-{%- set filtered_attributes = attributes_and_templates | select(selector) | list -%}
-{%- set module_name = 'SemanticConventions' -%}
+{%-   set filtered_attributes = attributes_and_templates | select(selector) | list -%}
+{%-   set gen_incubating = false -%}
 {%- endif -%}
 {%- if filtered_attributes | count > 0 -%} {# only produce code if there are attributes #}
 {{- common.file_header() }}
 
 module OpenTelemetry
-  module {{ module_name }}
-    module {{ root_namespace | to_const_name }} {# TODO: macro to PascalCase with exceptions for AspNetCore, HTTP, etc? #}
+  module SemConv
+  {%- if gen_incubating %}
+  module Incubating
+  {%- endif %}
+    module {{ root_namespace | to_const_name }}
       # @!group Attribute Names
     {% for attribute in filtered_attributes %}
       # {{ common.to_docstring(attribute.brief) }}
@@ -38,21 +41,26 @@ module OpenTelemetry
           {%- if attribute | is_deprecated %}
       #
       # @deprecated {{ common.to_docstring(attribute.deprecated) }}
-          {%- elif attribute | is_stable and selector == 'any' %}
+          {%- elif attribute | is_stable and gen_incubating %}
       #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemanticConventions::{{ root_namespace | to_const_name }}::{{ attribute.fqn | to_const_name }}}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::{{ root_namespace | to_const_name }}::{{ attribute.fqn | to_const_name }}}.
           {%- endif %}
-          {%- if attribute.fqn in excluded_attributes %}
-      #
-      # @note This attribute has been excluded from code generation.
-      # {{ attribute.fqn | to_const_name }} = '{{ attribute.fqn }}'
-          {%- else %}
+          {%- if attribute.fqn not in excluded_attributes %}
+            {%- if attribute | is_template %}
+      {{ attribute.fqn | to_const_name }}_LAMBDA = -> (key) { "{{ attribute.fqn }}.#{key}" }
+            {%- else %}
       {{ attribute.fqn | to_const_name }} = '{{ attribute.fqn }}'
+            {%- endif %}
           {%- endif %}
-    {% endfor %}
+  {% endfor %}
+      # @!endgroup
+
+      # @!group Metric Names
       # @!endgroup
     end
+  {%- if gen_incubating %}
+  end # module Incubating
+  {%- endif %}
   end
 end
-
 {%- endif -%} {# only produce code if there are attributes #}

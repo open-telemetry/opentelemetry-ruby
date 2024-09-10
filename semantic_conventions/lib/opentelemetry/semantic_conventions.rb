@@ -18,8 +18,8 @@ module OpenTelemetry
   end
 end
 
-# TODO: test to make sure the trace and resource constants are present in SemanticCandidates
-# TODO: test to make sure the SemanticConventions (stable) constants are all still present in the SemanticCandidates constants
+# TODO: test to make sure the trace and resource constants are present in SemConv::Incubating
+# TODO: test to make sure the SemConv (stable) constants are all still present in the SemConv::Incubating constants
 # TODO: remove these convenience requires in the next major version
 require_relative 'semantic_conventions/trace'
 require_relative 'semantic_conventions/resource'
