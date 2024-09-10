@@ -8,7 +8,7 @@ module OpenTelemetry
   module SDK
     module Metrics
       module View
-        # RegisteredView
+        # RegisteredView is an internal class used to match Views with a given {MetricStream}
         class RegisteredView
           attr_reader :name, :aggregation, :attribute_keys
 
