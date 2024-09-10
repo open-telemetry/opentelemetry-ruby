@@ -7,7 +7,7 @@
 module OpenTelemetry
   module SDK
     module Metrics
-      # View
+      # A View provides SDK users with the flexibility to customize the metrics that are output by the SDK. 
       module View
       end
     end
