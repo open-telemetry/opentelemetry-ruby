@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Ruby ${{ env.ruby_version }}
-        uses: ruby/setup-ruby@v1.179.0
+        uses: ruby/setup-ruby@v1.190.0
         with:
           ruby-version: ${{ env.ruby_version }}
       - name: Checkout repo
