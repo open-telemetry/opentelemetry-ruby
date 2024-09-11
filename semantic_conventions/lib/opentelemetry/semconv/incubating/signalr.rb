@@ -24,18 +24,18 @@ module OpenTelemetry
     module SIGNALR
       # @!group Attribute Names
     
-      # SignalR HTTP connection closure status
+      # SignalR HTTP connection closure status.
+      # 
+      # @note Stability Level: stable
       #
-      # @note StabilityLevel.STABLE
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::SIGNALR::SIGNALR_CONNECTION_STATUS}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::Signalr::SIGNALR_CONNECTION_STATUS}.
       SIGNALR_CONNECTION_STATUS = 'signalr.connection.status'
   
       # [SignalR transport type](https://github.com/dotnet/aspnetcore/blob/main/src/SignalR/docs/specs/TransportProtocols.md)
+      # 
+      # @note Stability Level: stable
       #
-      # @note StabilityLevel.STABLE
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::SIGNALR::SIGNALR_TRANSPORT}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::Signalr::SIGNALR_TRANSPORT}.
       SIGNALR_TRANSPORT = 'signalr.transport'
   
       # @!endgroup
@@ -43,6 +43,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

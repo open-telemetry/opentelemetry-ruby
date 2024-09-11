@@ -24,22 +24,22 @@ module OpenTelemetry
     module CLIENT
       # @!group Attribute Names
     
-      # Client address - domain name if available without reverse DNS lookup; otherwise, IP address or Unix domain socket name
+      # Client address - domain name if available without reverse DNS lookup; otherwise, IP address or Unix domain socket name.
+      # 
+      # When observed from the server side, and when communicating through an intermediary, `client.address` SHOULD represent the client address behind any intermediaries,  for example proxies, if it's available.
+      # 
+      # @note Stability Level: stable
       #
-      # When observed from the server side, and when communicating through an intermediary, `client.address` SHOULD represent the client address behind any intermediaries,  for example proxies, if it's available
-      #
-      # @note StabilityLevel.STABLE
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::CLIENT::CLIENT_ADDRESS}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::Client::CLIENT_ADDRESS}.
       CLIENT_ADDRESS = 'client.address'
   
-      # Client port number
+      # Client port number.
+      # 
+      # When observed from the server side, and when communicating through an intermediary, `client.port` SHOULD represent the client port behind any intermediaries,  for example proxies, if it's available.
+      # 
+      # @note Stability Level: stable
       #
-      # When observed from the server side, and when communicating through an intermediary, `client.port` SHOULD represent the client port behind any intermediaries,  for example proxies, if it's available
-      #
-      # @note StabilityLevel.STABLE
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::CLIENT::CLIENT_PORT}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::Client::CLIENT_PORT}.
       CLIENT_PORT = 'client.port'
   
       # @!endgroup
@@ -47,6 +47,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

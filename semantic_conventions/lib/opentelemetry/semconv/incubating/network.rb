@@ -24,107 +24,107 @@ module OpenTelemetry
     module NETWORK
       # @!group Attribute Names
     
-      # The ISO 3166-1 alpha-2 2-character country code associated with the mobile carrier network
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The ISO 3166-1 alpha-2 2-character country code associated with the mobile carrier network.
+      # 
+      # @note Stability Level: experimental
       NETWORK_CARRIER_ICC = 'network.carrier.icc'
   
-      # The mobile carrier country code
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The mobile carrier country code.
+      # 
+      # @note Stability Level: experimental
       NETWORK_CARRIER_MCC = 'network.carrier.mcc'
   
-      # The mobile carrier network code
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The mobile carrier network code.
+      # 
+      # @note Stability Level: experimental
       NETWORK_CARRIER_MNC = 'network.carrier.mnc'
   
-      # The name of the mobile carrier
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The name of the mobile carrier.
+      # 
+      # @note Stability Level: experimental
       NETWORK_CARRIER_NAME = 'network.carrier.name'
   
-      # This describes more details regarding the connection.type. It may be the type of cell technology connection, but it could be used for describing details about a wifi connection
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # This describes more details regarding the connection.type. It may be the type of cell technology connection, but it could be used for describing details about a wifi connection.
+      # 
+      # @note Stability Level: experimental
       NETWORK_CONNECTION_SUBTYPE = 'network.connection.subtype'
   
-      # The internet connection type
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The internet connection type.
+      # 
+      # @note Stability Level: experimental
       NETWORK_CONNECTION_TYPE = 'network.connection.type'
   
-      # The network IO operation direction
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The network IO operation direction.
+      # 
+      # @note Stability Level: experimental
       NETWORK_IO_DIRECTION = 'network.io.direction'
   
-      # Local address of the network connection - IP address or Unix domain socket name
+      # Local address of the network connection - IP address or Unix domain socket name.
+      # 
+      # @note Stability Level: stable
       #
-      # @note StabilityLevel.STABLE
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_LOCAL_ADDRESS}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::Network::NETWORK_LOCAL_ADDRESS}.
       NETWORK_LOCAL_ADDRESS = 'network.local.address'
   
-      # Local port number of the network connection
+      # Local port number of the network connection.
+      # 
+      # @note Stability Level: stable
       #
-      # @note StabilityLevel.STABLE
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_LOCAL_PORT}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::Network::NETWORK_LOCAL_PORT}.
       NETWORK_LOCAL_PORT = 'network.local.port'
   
-      # Peer address of the network connection - IP address or Unix domain socket name
+      # Peer address of the network connection - IP address or Unix domain socket name.
+      # 
+      # @note Stability Level: stable
       #
-      # @note StabilityLevel.STABLE
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_PEER_ADDRESS}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::Network::NETWORK_PEER_ADDRESS}.
       NETWORK_PEER_ADDRESS = 'network.peer.address'
   
-      # Peer port number of the network connection
+      # Peer port number of the network connection.
+      # 
+      # @note Stability Level: stable
       #
-      # @note StabilityLevel.STABLE
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_PEER_PORT}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::Network::NETWORK_PEER_PORT}.
       NETWORK_PEER_PORT = 'network.peer.port'
   
-      # [OSI application layer](https://osi-model.com/application-layer/) or non-OSI equivalent
+      # [OSI application layer](https://osi-model.com/application-layer/) or non-OSI equivalent.
+      # 
+      # The value SHOULD be normalized to lowercase.
+      # 
+      # @note Stability Level: stable
       #
-      # The value SHOULD be normalized to lowercase
-      #
-      # @note StabilityLevel.STABLE
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_PROTOCOL_NAME}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::Network::NETWORK_PROTOCOL_NAME}.
       NETWORK_PROTOCOL_NAME = 'network.protocol.name'
   
-      # The actual version of the protocol used for network communication
+      # The actual version of the protocol used for network communication.
+      # 
+      # If protocol version is subject to negotiation (for example using [ALPN](https://www.rfc-editor.org/rfc/rfc7301.html)), this attribute SHOULD be set to the negotiated version. If the actual protocol version is not known, this attribute SHOULD NOT be set.
+      # 
+      # @note Stability Level: stable
       #
-      # If protocol version is subject to negotiation (for example using [ALPN](https://www.rfc-editor.org/rfc/rfc7301.html)), this attribute SHOULD be set to the negotiated version. If the actual protocol version is not known, this attribute SHOULD NOT be set
-      #
-      # @note StabilityLevel.STABLE
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_PROTOCOL_VERSION}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::Network::NETWORK_PROTOCOL_VERSION}.
       NETWORK_PROTOCOL_VERSION = 'network.protocol.version'
   
-      # [OSI transport layer](https://osi-model.com/transport-layer/) or [inter-process communication method](https://wikipedia.org/wiki/Inter-process_communication)
-      #
+      # [OSI transport layer](https://osi-model.com/transport-layer/) or [inter-process communication method](https://wikipedia.org/wiki/Inter-process_communication).
+      # 
       # The value SHOULD be normalized to lowercase.
-      #   
-      #   Consider always setting the transport when setting a port number, since
-      #   a port number is ambiguous without knowing the transport. For example
-      #   different processes could be listening on TCP port 12345 and UDP port 12345
+      # 
+      # Consider always setting the transport when setting a port number, since
+      # a port number is ambiguous without knowing the transport. For example
+      # different processes could be listening on TCP port 12345 and UDP port 12345.
+      # 
+      # @note Stability Level: stable
       #
-      # @note StabilityLevel.STABLE
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_TRANSPORT}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::Network::NETWORK_TRANSPORT}.
       NETWORK_TRANSPORT = 'network.transport'
   
-      # [OSI network layer](https://osi-model.com/network-layer/) or non-OSI equivalent
+      # [OSI network layer](https://osi-model.com/network-layer/) or non-OSI equivalent.
+      # 
+      # The value SHOULD be normalized to lowercase.
+      # 
+      # @note Stability Level: stable
       #
-      # The value SHOULD be normalized to lowercase
-      #
-      # @note StabilityLevel.STABLE
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_TYPE}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::Network::NETWORK_TYPE}.
       NETWORK_TYPE = 'network.type'
   
       # @!endgroup
@@ -132,6 +132,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

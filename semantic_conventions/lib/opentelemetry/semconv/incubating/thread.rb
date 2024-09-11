@@ -24,14 +24,14 @@ module OpenTelemetry
     module THREAD
       # @!group Attribute Names
     
-      # Current "managed" thread ID (as opposed to OS thread ID)
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Current "managed" thread ID (as opposed to OS thread ID).
+      # 
+      # @note Stability Level: experimental
       THREAD_ID = 'thread.id'
   
-      # Current thread name
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Current thread name.
+      # 
+      # @note Stability Level: experimental
       THREAD_NAME = 'thread.name'
   
       # @!endgroup
@@ -39,6 +39,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

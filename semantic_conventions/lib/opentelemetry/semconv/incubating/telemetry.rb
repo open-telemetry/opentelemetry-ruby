@@ -24,45 +24,45 @@ module OpenTelemetry
     module TELEMETRY
       # @!group Attribute Names
     
-      # The name of the auto instrumentation agent or distribution, if used
-      #
+      # The name of the auto instrumentation agent or distribution, if used.
+      # 
       # Official auto instrumentation agents and distributions SHOULD set the `telemetry.distro.name` attribute to
-      #   a string starting with `opentelemetry-`, e.g. `opentelemetry-java-instrumentation`
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # a string starting with `opentelemetry-`, e.g. `opentelemetry-java-instrumentation`.
+      # 
+      # @note Stability Level: experimental
       TELEMETRY_DISTRO_NAME = 'telemetry.distro.name'
   
-      # The version string of the auto instrumentation agent or distribution, if used
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The version string of the auto instrumentation agent or distribution, if used.
+      # 
+      # @note Stability Level: experimental
       TELEMETRY_DISTRO_VERSION = 'telemetry.distro.version'
   
-      # The language of the telemetry SDK
+      # The language of the telemetry SDK.
+      # 
+      # @note Stability Level: stable
       #
-      # @note StabilityLevel.STABLE
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::TELEMETRY::TELEMETRY_SDK_LANGUAGE}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::Telemetry::TELEMETRY_SDK_LANGUAGE}.
       TELEMETRY_SDK_LANGUAGE = 'telemetry.sdk.language'
   
-      # The name of the telemetry SDK as defined above
-      #
+      # The name of the telemetry SDK as defined above.
+      # 
       # The OpenTelemetry SDK MUST set the `telemetry.sdk.name` attribute to `opentelemetry`.
-      #   If another SDK, like a fork or a vendor-provided implementation, is used, this SDK MUST set the
-      #   `telemetry.sdk.name` attribute to the fully-qualified class or module name of this SDK's main entry point
-      #   or another suitable identifier depending on the language.
-      #   The identifier `opentelemetry` is reserved and MUST NOT be used in this case.
-      #   All custom identifiers SHOULD be stable across different versions of an implementation
+      # If another SDK, like a fork or a vendor-provided implementation, is used, this SDK MUST set the
+      # `telemetry.sdk.name` attribute to the fully-qualified class or module name of this SDK's main entry point
+      # or another suitable identifier depending on the language.
+      # The identifier `opentelemetry` is reserved and MUST NOT be used in this case.
+      # All custom identifiers SHOULD be stable across different versions of an implementation.
+      # 
+      # @note Stability Level: stable
       #
-      # @note StabilityLevel.STABLE
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::TELEMETRY::TELEMETRY_SDK_NAME}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::Telemetry::TELEMETRY_SDK_NAME}.
       TELEMETRY_SDK_NAME = 'telemetry.sdk.name'
   
-      # The version string of the telemetry SDK
+      # The version string of the telemetry SDK.
+      # 
+      # @note Stability Level: stable
       #
-      # @note StabilityLevel.STABLE
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::TELEMETRY::TELEMETRY_SDK_VERSION}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::Telemetry::TELEMETRY_SDK_VERSION}.
       TELEMETRY_SDK_VERSION = 'telemetry.sdk.version'
   
       # @!endgroup
@@ -70,6 +70,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

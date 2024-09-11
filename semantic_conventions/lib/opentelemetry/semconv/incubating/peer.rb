@@ -24,9 +24,9 @@ module OpenTelemetry
     module PEER
       # @!group Attribute Names
     
-      # The [`service.name`](/docs/resource/README.md#service) of the remote service. SHOULD be equal to the actual `service.name` resource attribute of the remote service if any
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The [`service.name`](/docs/resource/README.md#service) of the remote service. SHOULD be equal to the actual `service.name` resource attribute of the remote service if any.
+      # 
+      # @note Stability Level: experimental
       PEER_SERVICE = 'peer.service'
   
       # @!endgroup
@@ -34,6 +34,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

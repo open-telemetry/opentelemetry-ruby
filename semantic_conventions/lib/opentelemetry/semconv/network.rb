@@ -23,56 +23,56 @@ module OpenTelemetry
     module NETWORK
       # @!group Attribute Names
     
-      # Local address of the network connection - IP address or Unix domain socket name
-      #
-      # @note StabilityLevel.STABLE
+      # Local address of the network connection - IP address or Unix domain socket name.
+      # 
+      # @note Stability Level: stable
       NETWORK_LOCAL_ADDRESS = 'network.local.address'
   
-      # Local port number of the network connection
-      #
-      # @note StabilityLevel.STABLE
+      # Local port number of the network connection.
+      # 
+      # @note Stability Level: stable
       NETWORK_LOCAL_PORT = 'network.local.port'
   
-      # Peer address of the network connection - IP address or Unix domain socket name
-      #
-      # @note StabilityLevel.STABLE
+      # Peer address of the network connection - IP address or Unix domain socket name.
+      # 
+      # @note Stability Level: stable
       NETWORK_PEER_ADDRESS = 'network.peer.address'
   
-      # Peer port number of the network connection
-      #
-      # @note StabilityLevel.STABLE
+      # Peer port number of the network connection.
+      # 
+      # @note Stability Level: stable
       NETWORK_PEER_PORT = 'network.peer.port'
   
-      # [OSI application layer](https://osi-model.com/application-layer/) or non-OSI equivalent
-      #
-      # The value SHOULD be normalized to lowercase
-      #
-      # @note StabilityLevel.STABLE
+      # [OSI application layer](https://osi-model.com/application-layer/) or non-OSI equivalent.
+      # 
+      # The value SHOULD be normalized to lowercase.
+      # 
+      # @note Stability Level: stable
       NETWORK_PROTOCOL_NAME = 'network.protocol.name'
   
-      # The actual version of the protocol used for network communication
-      #
-      # If protocol version is subject to negotiation (for example using [ALPN](https://www.rfc-editor.org/rfc/rfc7301.html)), this attribute SHOULD be set to the negotiated version. If the actual protocol version is not known, this attribute SHOULD NOT be set
-      #
-      # @note StabilityLevel.STABLE
+      # The actual version of the protocol used for network communication.
+      # 
+      # If protocol version is subject to negotiation (for example using [ALPN](https://www.rfc-editor.org/rfc/rfc7301.html)), this attribute SHOULD be set to the negotiated version. If the actual protocol version is not known, this attribute SHOULD NOT be set.
+      # 
+      # @note Stability Level: stable
       NETWORK_PROTOCOL_VERSION = 'network.protocol.version'
   
-      # [OSI transport layer](https://osi-model.com/transport-layer/) or [inter-process communication method](https://wikipedia.org/wiki/Inter-process_communication)
-      #
+      # [OSI transport layer](https://osi-model.com/transport-layer/) or [inter-process communication method](https://wikipedia.org/wiki/Inter-process_communication).
+      # 
       # The value SHOULD be normalized to lowercase.
-      #   
-      #   Consider always setting the transport when setting a port number, since
-      #   a port number is ambiguous without knowing the transport. For example
-      #   different processes could be listening on TCP port 12345 and UDP port 12345
-      #
-      # @note StabilityLevel.STABLE
+      # 
+      # Consider always setting the transport when setting a port number, since
+      # a port number is ambiguous without knowing the transport. For example
+      # different processes could be listening on TCP port 12345 and UDP port 12345.
+      # 
+      # @note Stability Level: stable
       NETWORK_TRANSPORT = 'network.transport'
   
-      # [OSI network layer](https://osi-model.com/network-layer/) or non-OSI equivalent
-      #
-      # The value SHOULD be normalized to lowercase
-      #
-      # @note StabilityLevel.STABLE
+      # [OSI network layer](https://osi-model.com/network-layer/) or non-OSI equivalent.
+      # 
+      # The value SHOULD be normalized to lowercase.
+      # 
+      # @note Stability Level: stable
       NETWORK_TYPE = 'network.type'
   
       # @!endgroup

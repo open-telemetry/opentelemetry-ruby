@@ -24,11 +24,11 @@ module OpenTelemetry
     module EVENT
       # @!group Attribute Names
     
-      # Identifies the class / type of event
-      #
-      # Event names are subject to the same rules as [attribute names](https://github.com/open-telemetry/opentelemetry-specification/tree/v1.31.0/specification/common/attribute-naming.md). Notably, event names are namespaced to avoid collisions and provide a clean separation of semantics for events in separate domains like browser, mobile, and kubernetes
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Identifies the class / type of event.
+      # 
+      # Event names are subject to the same rules as [attribute names](https://github.com/open-telemetry/opentelemetry-specification/tree/v1.33.0/specification/common/attribute-naming.md). Notably, event names are namespaced to avoid collisions and provide a clean separation of semantics for events in separate domains like browser, mobile, and kubernetes.
+      # 
+      # @note Stability Level: experimental
       EVENT_NAME = 'event.name'
   
       # @!endgroup
@@ -36,6 +36,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

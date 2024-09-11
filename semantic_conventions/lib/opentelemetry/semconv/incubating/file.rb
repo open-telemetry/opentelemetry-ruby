@@ -24,31 +24,31 @@ module OpenTelemetry
     module FILE
       # @!group Attribute Names
     
-      # Directory where the file is located. It should include the drive letter, when appropriate
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Directory where the file is located. It should include the drive letter, when appropriate.
+      # 
+      # @note Stability Level: experimental
       FILE_DIRECTORY = 'file.directory'
   
-      # File extension, excluding the leading dot
-      #
-      # When the file name has multiple extensions (example.tar.gz), only the last one should be captured ("gz", not "tar.gz")
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # File extension, excluding the leading dot.
+      # 
+      # When the file name has multiple extensions (example.tar.gz), only the last one should be captured ("gz", not "tar.gz").
+      # 
+      # @note Stability Level: experimental
       FILE_EXTENSION = 'file.extension'
   
-      # Name of the file including the extension, without the directory
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Name of the file including the extension, without the directory.
+      # 
+      # @note Stability Level: experimental
       FILE_NAME = 'file.name'
   
-      # Full path to the file, including the file name. It should include the drive letter, when appropriate
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Full path to the file, including the file name. It should include the drive letter, when appropriate.
+      # 
+      # @note Stability Level: experimental
       FILE_PATH = 'file.path'
   
-      # File size in bytes
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # File size in bytes.
+      # 
+      # @note Stability Level: experimental
       FILE_SIZE = 'file.size'
   
       # @!endgroup
@@ -56,6 +56,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

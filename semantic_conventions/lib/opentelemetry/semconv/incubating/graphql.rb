@@ -24,21 +24,21 @@ module OpenTelemetry
     module GRAPHQL
       # @!group Attribute Names
     
-      # The GraphQL document being executed
-      #
-      # The value may be sanitized to exclude sensitive information
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The GraphQL document being executed.
+      # 
+      # The value may be sanitized to exclude sensitive information.
+      # 
+      # @note Stability Level: experimental
       GRAPHQL_DOCUMENT = 'graphql.document'
   
-      # The name of the operation being executed
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The name of the operation being executed.
+      # 
+      # @note Stability Level: experimental
       GRAPHQL_OPERATION_NAME = 'graphql.operation.name'
   
-      # The type of the operation being executed
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The type of the operation being executed.
+      # 
+      # @note Stability Level: experimental
       GRAPHQL_OPERATION_TYPE = 'graphql.operation.type'
   
       # @!endgroup
@@ -46,6 +46,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

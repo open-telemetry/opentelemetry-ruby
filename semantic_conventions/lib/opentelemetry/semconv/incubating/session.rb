@@ -24,14 +24,14 @@ module OpenTelemetry
     module SESSION
       # @!group Attribute Names
     
-      # A unique id to identify a session
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # A unique id to identify a session.
+      # 
+      # @note Stability Level: experimental
       SESSION_ID = 'session.id'
   
-      # The previous `session.id` for this user, when known
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The previous `session.id` for this user, when known.
+      # 
+      # @note Stability Level: experimental
       SESSION_PREVIOUS_ID = 'session.previous_id'
   
       # @!endgroup
@@ -39,6 +39,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

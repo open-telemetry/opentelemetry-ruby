@@ -23,40 +23,40 @@ module OpenTelemetry
     module JVM
       # @!group Attribute Names
     
-      # Name of the garbage collector action
-      #
-      # Garbage collector action is generally obtained via [GarbageCollectionNotificationInfo#getGcAction()](https://docs.oracle.com/en/java/javase/11/docs/api/jdk.management/com/sun/management/GarbageCollectionNotificationInfo.html#getGcAction())
-      #
-      # @note StabilityLevel.STABLE
+      # Name of the garbage collector action.
+      # 
+      # Garbage collector action is generally obtained via [GarbageCollectionNotificationInfo#getGcAction()](https://docs.oracle.com/en/java/javase/11/docs/api/jdk.management/com/sun/management/GarbageCollectionNotificationInfo.html#getGcAction()).
+      # 
+      # @note Stability Level: stable
       JVM_GC_ACTION = 'jvm.gc.action'
   
-      # Name of the garbage collector
-      #
-      # Garbage collector name is generally obtained via [GarbageCollectionNotificationInfo#getGcName()](https://docs.oracle.com/en/java/javase/11/docs/api/jdk.management/com/sun/management/GarbageCollectionNotificationInfo.html#getGcName())
-      #
-      # @note StabilityLevel.STABLE
+      # Name of the garbage collector.
+      # 
+      # Garbage collector name is generally obtained via [GarbageCollectionNotificationInfo#getGcName()](https://docs.oracle.com/en/java/javase/11/docs/api/jdk.management/com/sun/management/GarbageCollectionNotificationInfo.html#getGcName()).
+      # 
+      # @note Stability Level: stable
       JVM_GC_NAME = 'jvm.gc.name'
   
-      # Name of the memory pool
-      #
-      # Pool names are generally obtained via [MemoryPoolMXBean#getName()](https://docs.oracle.com/en/java/javase/11/docs/api/java.management/java/lang/management/MemoryPoolMXBean.html#getName())
-      #
-      # @note StabilityLevel.STABLE
+      # Name of the memory pool.
+      # 
+      # Pool names are generally obtained via [MemoryPoolMXBean#getName()](https://docs.oracle.com/en/java/javase/11/docs/api/java.management/java/lang/management/MemoryPoolMXBean.html#getName()).
+      # 
+      # @note Stability Level: stable
       JVM_MEMORY_POOL_NAME = 'jvm.memory.pool.name'
   
-      # The type of memory
-      #
-      # @note StabilityLevel.STABLE
+      # The type of memory.
+      # 
+      # @note Stability Level: stable
       JVM_MEMORY_TYPE = 'jvm.memory.type'
   
-      # Whether the thread is daemon or not
-      #
-      # @note StabilityLevel.STABLE
+      # Whether the thread is daemon or not.
+      # 
+      # @note Stability Level: stable
       JVM_THREAD_DAEMON = 'jvm.thread.daemon'
   
-      # State of the thread
-      #
-      # @note StabilityLevel.STABLE
+      # State of the thread.
+      # 
+      # @note Stability Level: stable
       JVM_THREAD_STATE = 'jvm.thread.state'
   
       # @!endgroup

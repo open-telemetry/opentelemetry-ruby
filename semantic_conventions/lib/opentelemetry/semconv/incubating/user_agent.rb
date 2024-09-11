@@ -24,25 +24,25 @@ module OpenTelemetry
     module USER_AGENT
       # @!group Attribute Names
     
-      # Name of the user-agent extracted from original. Usually refers to the browser's name
-      #
+      # Name of the user-agent extracted from original. Usually refers to the browser's name.
+      # 
       # [Example](https://www.whatsmyua.info) of extracting browser's name from original string. In the case of using a user-agent for non-browser products, such as microservices with multiple names/versions inside the `user_agent.original`, the most significant name SHOULD be selected. In such a scenario it should align with `user_agent.version`
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # 
+      # @note Stability Level: experimental
       USER_AGENT_NAME = 'user_agent.name'
   
-      # Value of the [HTTP User-Agent](https://www.rfc-editor.org/rfc/rfc9110.html#field.user-agent) header sent by the client
+      # Value of the [HTTP User-Agent](https://www.rfc-editor.org/rfc/rfc9110.html#field.user-agent) header sent by the client.
+      # 
+      # @note Stability Level: stable
       #
-      # @note StabilityLevel.STABLE
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::USER_AGENT::USER_AGENT_ORIGINAL}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::UserAgent::USER_AGENT_ORIGINAL}.
       USER_AGENT_ORIGINAL = 'user_agent.original'
   
       # Version of the user-agent extracted from original. Usually refers to the browser's version
-      #
+      # 
       # [Example](https://www.whatsmyua.info) of extracting browser's version from original string. In the case of using a user-agent for non-browser products, such as microservices with multiple names/versions inside the `user_agent.original`, the most significant version SHOULD be selected. In such a scenario it should align with `user_agent.name`
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # 
+      # @note Stability Level: experimental
       USER_AGENT_VERSION = 'user_agent.version'
   
       # @!endgroup
@@ -50,6 +50,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

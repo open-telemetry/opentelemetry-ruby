@@ -24,79 +24,78 @@ module OpenTelemetry
     module CONTAINER
       # @!group Attribute Names
     
-      # The command used to run the container (i.e. the command name)
-      #
-      # If using embedded credentials or sensitive data, it is recommended to remove them to prevent potential leakage
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The command used to run the container (i.e. the command name).
+      # 
+      # If using embedded credentials or sensitive data, it is recommended to remove them to prevent potential leakage.
+      # 
+      # @note Stability Level: experimental
       CONTAINER_COMMAND = 'container.command'
   
       # All the command arguments (including the command/executable itself) run by the container. [2]
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # 
+      # @note Stability Level: experimental
       CONTAINER_COMMAND_ARGS = 'container.command_args'
   
       # The full command run by the container as a single string representing the full command. [2]
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # 
+      # @note Stability Level: experimental
       CONTAINER_COMMAND_LINE = 'container.command_line'
   
-      # The CPU state for this data point
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The CPU state for this data point.
+      # 
+      # @note Stability Level: experimental
       CONTAINER_CPU_STATE = 'container.cpu.state'
   
-      # Container ID. Usually a UUID, as for example used to [identify Docker containers](https://docs.docker.com/engine/reference/run/#container-identification). The UUID might be abbreviated
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Container ID. Usually a UUID, as for example used to [identify Docker containers](https://docs.docker.com/engine/reference/run/#container-identification). The UUID might be abbreviated.
+      # 
+      # @note Stability Level: experimental
       CONTAINER_ID = 'container.id'
   
-      # Runtime specific image identifier. Usually a hash algorithm followed by a UUID
-      #
+      # Runtime specific image identifier. Usually a hash algorithm followed by a UUID.
+      # 
       # Docker defines a sha256 of the image id; `container.image.id` corresponds to the `Image` field from the Docker container inspect [API](https://docs.docker.com/engine/api/v1.43/#tag/Container/operation/ContainerInspect) endpoint.
-      #   K8s defines a link to the container registry repository with digest `"imageID": "registry.azurecr.io /namespace/service/dockerfile@sha256:bdeabd40c3a8a492eaf9e8e44d0ebbb84bac7ee25ac0cf8a7159d25f62555625"`.
-      #   The ID is assinged by the container runtime and can vary in different environments. Consider using `oci.manifest.digest` if it is important to identify the same image in different environments/runtimes
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # K8s defines a link to the container registry repository with digest `"imageID": "registry.azurecr.io /namespace/service/dockerfile@sha256:bdeabd40c3a8a492eaf9e8e44d0ebbb84bac7ee25ac0cf8a7159d25f62555625"`.
+      # The ID is assigned by the container runtime and can vary in different environments. Consider using `oci.manifest.digest` if it is important to identify the same image in different environments/runtimes.
+      # 
+      # @note Stability Level: experimental
       CONTAINER_IMAGE_ID = 'container.image.id'
   
-      # Name of the image the container was built on
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Name of the image the container was built on.
+      # 
+      # @note Stability Level: experimental
       CONTAINER_IMAGE_NAME = 'container.image.name'
   
-      # Repo digests of the container image as provided by the container runtime
-      #
-      # [Docker](https://docs.docker.com/engine/api/v1.43/#tag/Image/operation/ImageInspect) and [CRI](https://github.com/kubernetes/cri-api/blob/c75ef5b473bbe2d0a4fc92f82235efd665ea8e9f/pkg/apis/runtime/v1/api.proto#L1237-L1238) report those under the `RepoDigests` field
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Repo digests of the container image as provided by the container runtime.
+      # 
+      # [Docker](https://docs.docker.com/engine/api/v1.43/#tag/Image/operation/ImageInspect) and [CRI](https://github.com/kubernetes/cri-api/blob/c75ef5b473bbe2d0a4fc92f82235efd665ea8e9f/pkg/apis/runtime/v1/api.proto#L1237-L1238) report those under the `RepoDigests` field.
+      # 
+      # @note Stability Level: experimental
       CONTAINER_IMAGE_REPO_DIGESTS = 'container.image.repo_digests'
   
-      # Container image tags. An example can be found in [Docker Image Inspect](https://docs.docker.com/engine/api/v1.43/#tag/Image/operation/ImageInspect). Should be only the `<tag>` section of the full name for example from `registry.example.com/my-org/my-image:<tag>`
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Container image tags. An example can be found in [Docker Image Inspect](https://docs.docker.com/engine/api/v1.43/#tag/Image/operation/ImageInspect). Should be only the `<tag>` section of the full name for example from `registry.example.com/my-org/my-image:<tag>`.
+      # 
+      # @note Stability Level: experimental
       CONTAINER_IMAGE_TAGS = 'container.image.tags'
   
-      # Container labels, `<key>` being the label name, the value being the label value
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      CONTAINER_LABEL_LAMBDA = -> (key) { "container.label.#{key}" }
+      # Container labels, `<key>` being the label name, the value being the label value.
+      # 
+      # @note Stability Level: experimental
+      CONTAINER_LABEL_LAMBDA = ->(key) { "container.label.#{key}" }
   
-      # Deprecated, use `container.label` instead
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replaced by `container.label`
-      CONTAINER_LABELS_LAMBDA = -> (key) { "container.labels.#{key}" }
+      # Deprecated, use `container.label` instead.
+      # 
+      # @note Stability Level: experimental
+      # @deprecated Replaced by `container.label`.
+      CONTAINER_LABELS_LAMBDA = ->(key) { "container.labels.#{key}" }
   
-      # Container name used by container runtime
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Container name used by container runtime.
+      # 
+      # @note Stability Level: experimental
       CONTAINER_NAME = 'container.name'
   
-      # The container runtime managing this container
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The container runtime managing this container.
+      # 
+      # @note Stability Level: experimental
       CONTAINER_RUNTIME = 'container.runtime'
   
       # @!endgroup
@@ -104,6 +103,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

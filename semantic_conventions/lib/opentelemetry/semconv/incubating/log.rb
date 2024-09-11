@@ -24,37 +24,37 @@ module OpenTelemetry
     module LOG
       # @!group Attribute Names
     
-      # The basename of the file
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The basename of the file.
+      # 
+      # @note Stability Level: experimental
       LOG_FILE_NAME = 'log.file.name'
   
-      # The basename of the file, with symlinks resolved
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The basename of the file, with symlinks resolved.
+      # 
+      # @note Stability Level: experimental
       LOG_FILE_NAME_RESOLVED = 'log.file.name_resolved'
   
-      # The full path to the file
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The full path to the file.
+      # 
+      # @note Stability Level: experimental
       LOG_FILE_PATH = 'log.file.path'
   
-      # The full path to the file, with symlinks resolved
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The full path to the file, with symlinks resolved.
+      # 
+      # @note Stability Level: experimental
       LOG_FILE_PATH_RESOLVED = 'log.file.path_resolved'
   
-      # The stream associated with the log. See below for a list of well-known values
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The stream associated with the log. See below for a list of well-known values.
+      # 
+      # @note Stability Level: experimental
       LOG_IOSTREAM = 'log.iostream'
   
-      # A unique identifier for the Log Record
-      #
+      # A unique identifier for the Log Record.
+      # 
       # If an id is provided, other log records with the same id will be considered duplicates and can be removed safely. This means, that two distinguishable log records MUST have different values.
-      #   The id MAY be an [Universally Unique Lexicographically Sortable Identifier (ULID)](https://github.com/ulid/spec), but other identifiers (e.g. UUID) may be used as needed
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The id MAY be an [Universally Unique Lexicographically Sortable Identifier (ULID)](https://github.com/ulid/spec), but other identifiers (e.g. UUID) may be used as needed.
+      # 
+      # @note Stability Level: experimental
       LOG_RECORD_UID = 'log.record.uid'
   
       # @!endgroup
@@ -62,6 +62,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

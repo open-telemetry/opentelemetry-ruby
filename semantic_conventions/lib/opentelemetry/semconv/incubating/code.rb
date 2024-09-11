@@ -24,34 +24,34 @@ module OpenTelemetry
     module CODE
       # @!group Attribute Names
     
-      # The column number in `code.filepath` best representing the operation. It SHOULD point within the code unit named in `code.function`
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The column number in `code.filepath` best representing the operation. It SHOULD point within the code unit named in `code.function`.
+      # 
+      # @note Stability Level: experimental
       CODE_COLUMN = 'code.column'
   
-      # The source code file name that identifies the code unit as uniquely as possible (preferably an absolute file path)
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The source code file name that identifies the code unit as uniquely as possible (preferably an absolute file path).
+      # 
+      # @note Stability Level: experimental
       CODE_FILEPATH = 'code.filepath'
   
-      # The method or function name, or equivalent (usually rightmost part of the code unit's name)
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The method or function name, or equivalent (usually rightmost part of the code unit's name).
+      # 
+      # @note Stability Level: experimental
       CODE_FUNCTION = 'code.function'
   
-      # The line number in `code.filepath` best representing the operation. It SHOULD point within the code unit named in `code.function`
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The line number in `code.filepath` best representing the operation. It SHOULD point within the code unit named in `code.function`.
+      # 
+      # @note Stability Level: experimental
       CODE_LINENO = 'code.lineno'
   
-      # The "namespace" within which `code.function` is defined. Usually the qualified class or module name, such that `code.namespace` + some separator + `code.function` form a unique identifier for the code unit
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The "namespace" within which `code.function` is defined. Usually the qualified class or module name, such that `code.namespace` + some separator + `code.function` form a unique identifier for the code unit.
+      # 
+      # @note Stability Level: experimental
       CODE_NAMESPACE = 'code.namespace'
   
-      # A stacktrace as a string in the natural representation for the language runtime. The representation is to be determined and documented by each language SIG
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # A stacktrace as a string in the natural representation for the language runtime. The representation is to be determined and documented by each language SIG.
+      # 
+      # @note Stability Level: experimental
       CODE_STACKTRACE = 'code.stacktrace'
   
       # @!endgroup
@@ -59,6 +59,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

@@ -24,29 +24,29 @@ module OpenTelemetry
     module OS
       # @!group Attribute Names
     
-      # Unique identifier for a particular build or compilation of the operating system
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Unique identifier for a particular build or compilation of the operating system.
+      # 
+      # @note Stability Level: experimental
       OS_BUILD_ID = 'os.build_id'
   
-      # Human readable (not intended to be parsed) OS version information, like e.g. reported by `ver` or `lsb_release -a` commands
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Human readable (not intended to be parsed) OS version information, like e.g. reported by `ver` or `lsb_release -a` commands.
+      # 
+      # @note Stability Level: experimental
       OS_DESCRIPTION = 'os.description'
   
-      # Human readable operating system name
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Human readable operating system name.
+      # 
+      # @note Stability Level: experimental
       OS_NAME = 'os.name'
   
-      # The operating system type
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The operating system type.
+      # 
+      # @note Stability Level: experimental
       OS_TYPE = 'os.type'
   
-      # The version string of the operating system as defined in [Version Attributes](/docs/resource/README.md#version-attributes)
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The version string of the operating system as defined in [Version Attributes](/docs/resource/README.md#version-attributes).
+      # 
+      # @note Stability Level: experimental
       OS_VERSION = 'os.version'
   
       # @!endgroup
@@ -54,6 +54,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

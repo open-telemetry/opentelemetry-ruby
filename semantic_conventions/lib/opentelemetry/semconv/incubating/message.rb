@@ -24,26 +24,28 @@ module OpenTelemetry
     module MESSAGE
       # @!group Attribute Names
     
-      # Compressed size of the message in bytes
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Deprecated, use `rpc.message.compressed_size` instead.
+      # 
+      # @note Stability Level: experimental
+      # @deprecated Replaced by `rpc.message.compressed_size`.
       MESSAGE_COMPRESSED_SIZE = 'message.compressed_size'
   
-      # MUST be calculated as two different counters starting from `1` one for sent messages and one for received message
-      #
-      # This way we guarantee that the values will be consistent between different implementations
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Deprecated, use `rpc.message.id` instead.
+      # 
+      # @note Stability Level: experimental
+      # @deprecated Replaced by `rpc.message.id`.
       MESSAGE_ID = 'message.id'
   
-      # Whether this is a received or sent message
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Deprecated, use `rpc.message.type` instead.
+      # 
+      # @note Stability Level: experimental
+      # @deprecated Replaced by `rpc.message.type`.
       MESSAGE_TYPE = 'message.type'
   
-      # Uncompressed size of the message in bytes
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Deprecated, use `rpc.message.uncompressed_size` instead.
+      # 
+      # @note Stability Level: experimental
+      # @deprecated Replaced by `rpc.message.uncompressed_size`.
       MESSAGE_UNCOMPRESSED_SIZE = 'message.uncompressed_size'
   
       # @!endgroup
@@ -51,6 +53,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

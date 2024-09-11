@@ -30,66 +30,47 @@ else
   task default: %i[generate test rubocop yard]
 end
 
-SPEC_VERSION = '1.25.0'
-GENERATOR_VERSION = '0.24.0'
+SPEC_VERSION = '1.26.0'
+OTEL_WEAVER_VERSION = 'v0.9.2'
 semconv_source_dir = Pathname.new('./tmp/semconvrepo')
-conventions_output_dir = Pathname.new('./lib/opentelemetry/semconv')
-incubating_output_dir = Pathname.new('./lib/opentelemetry/semconv/incubating')
-
-EXCLUDED_ATTRIBUTES = %w[].freeze
-
-task generate: %i[update_gem_version generate_stable generate_incubating]
+semconv_output_dir = Pathname.new('./lib/opentelemetry/semconv')
 
 directory semconv_source_dir do
+  puts "\n+++ Cloning semantic conventions repository\n"
   sh "git clone --tags --depth=1 --branch v#{SPEC_VERSION} https://github.com/open-telemetry/semantic-conventions.git #{semconv_source_dir}"
 end
 
 task check_out_semconv_version: [semconv_source_dir] do
+  puts "\n+++ Checking out semantic conventions version #{SPEC_VERSION}\n"
   Dir.chdir(semconv_source_dir) do
     sh "git fetch --depth 1 origin tag v#{SPEC_VERSION}"
     sh "git checkout 'v#{SPEC_VERSION}'"
   end
 end
 
-task generate_stable: [:check_out_semconv_version] do
-  conventions_output_dir
+task generate: %i[update_gem_version check_out_semconv_version] do
+  puts "\n+++ Removing previously generated semantic conventions code.\n"
+  semconv_output_dir
     .glob('*.rb')
     .then { |files| FileUtils.rm(files) }
-  semconvgen(semconv_source_dir, output_root: conventions_output_dir, selector: 'is_stable')
-end
 
-task generate_incubating: [:check_out_semconv_version] do
-  incubating_output_dir
-    .glob('*.rb')
-    .then { |files| FileUtils.rm(files) }
-  semconvgen(semconv_source_dir, output_root: incubating_output_dir, selector: 'any')
-end
-
-def semconvgen(semconv_source, output_root:, selector:)
-  FileUtils.mkdir_p(output_root)
-  cwd = Dir.pwd
-  output_filenames_template = Pathname.new('/output').join(output_root, '{{snake_prefix}}.rb')
-  cmd = %W[
-    docker run --rm
-    -v "#{semconv_source}/model":/source
-    -v "#{cwd}/templates":/templates
-    -v "#{cwd}":/output
-    otel/semconvgen:#{GENERATOR_VERSION}
-    --yaml-root /source
-    --continue-on-validation-errors
-    code
-    --file-per-group root_namespace
-    --template /templates/attributes.j2
-    --output "#{output_filenames_template}"
-    -Dselector=#{selector}
-    -Dexcluded_attributes="#{EXCLUDED_ATTRIBUTES.join(' ')}"
-  ]
-
-  puts "Running: #{cmd.join(' ')}"
-  sh cmd.join(' ')
+  puts "\n+++ Generating semantic conventions code.\n"
+  sh <<~DOCKER_COMMAND
+    docker run --rm \
+      -v "#{semconv_source_dir}/model":/source \
+      -v ./templates:/templates \
+      -v ./:/output \
+      otel/weaver:#{OTEL_WEAVER_VERSION} \
+      registry generate \
+      --registry=/source \
+      --templates=/templates \
+      ruby \
+      /output/#{semconv_output_dir}
+  DOCKER_COMMAND
 end
 
 task :update_gem_version do
+  puts "\n+++ Updating gem version to #{SPEC_VERSION}\n"
   sh %(sed -i.bak "s/VERSION = '.*'/VERSION = '#{SPEC_VERSION}'/g" lib/opentelemetry/semantic_conventions/version.rb)
   sh 'rm lib/opentelemetry/semantic_conventions/version.rb.bak'
 end

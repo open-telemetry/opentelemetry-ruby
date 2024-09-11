@@ -24,17 +24,17 @@ module OpenTelemetry
     module DEPLOYMENT
       # @!group Attribute Names
     
-      # Name of the [deployment environment](https://wikipedia.org/wiki/Deployment_environment) (aka deployment tier)
-      #
+      # Name of the [deployment environment](https://wikipedia.org/wiki/Deployment_environment) (aka deployment tier).
+      # 
       # `deployment.environment` does not affect the uniqueness constraints defined through
-      #   the `service.namespace`, `service.name` and `service.instance.id` resource attributes.
-      #   This implies that resources carrying the following attribute combinations MUST be
-      #   considered to be identifying the same service:
-      #   
-      #   * `service.name=frontend`, `deployment.environment=production`
-      #   * `service.name=frontend`, `deployment.environment=staging`
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # the `service.namespace`, `service.name` and `service.instance.id` resource attributes.
+      # This implies that resources carrying the following attribute combinations MUST be
+      # considered to be identifying the same service:
+      # 
+      # - `service.name=frontend`, `deployment.environment=production`
+      # - `service.name=frontend`, `deployment.environment=staging`.
+      # 
+      # @note Stability Level: experimental
       DEPLOYMENT_ENVIRONMENT = 'deployment.environment'
   
       # @!endgroup
@@ -42,6 +42,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

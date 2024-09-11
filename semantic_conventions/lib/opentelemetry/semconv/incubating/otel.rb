@@ -24,46 +24,40 @@ module OpenTelemetry
     module OTEL
       # @!group Attribute Names
     
-      # None
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated use the `otel.scope.name` attribute
+      # @note Stability Level: experimental
+      # @deprecated use the `otel.scope.name` attribute.
       OTEL_LIBRARY_NAME = 'otel.library.name'
   
-      # None
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated use the `otel.scope.version` attribute
+      # @note Stability Level: experimental
+      # @deprecated use the `otel.scope.version` attribute.
       OTEL_LIBRARY_VERSION = 'otel.library.version'
   
-      # The name of the instrumentation scope - (`InstrumentationScope.Name` in OTLP)
+      # The name of the instrumentation scope - (`InstrumentationScope.Name` in OTLP).
+      # 
+      # @note Stability Level: stable
       #
-      # @note StabilityLevel.STABLE
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::OTEL::OTEL_SCOPE_NAME}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::Otel::OTEL_SCOPE_NAME}.
       OTEL_SCOPE_NAME = 'otel.scope.name'
   
-      # The version of the instrumentation scope - (`InstrumentationScope.Version` in OTLP)
+      # The version of the instrumentation scope - (`InstrumentationScope.Version` in OTLP).
+      # 
+      # @note Stability Level: stable
       #
-      # @note StabilityLevel.STABLE
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::OTEL::OTEL_SCOPE_VERSION}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::Otel::OTEL_SCOPE_VERSION}.
       OTEL_SCOPE_VERSION = 'otel.scope.version'
   
-      # Name of the code, either "OK" or "ERROR". MUST NOT be set if the status code is UNSET
+      # Name of the code, either "OK" or "ERROR". MUST NOT be set if the status code is UNSET.
+      # 
+      # @note Stability Level: stable
       #
-      # @note StabilityLevel.STABLE
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::OTEL::OTEL_STATUS_CODE}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::Otel::OTEL_STATUS_CODE}.
       OTEL_STATUS_CODE = 'otel.status_code'
   
-      # Description of the Status if it has a value, otherwise not set
+      # Description of the Status if it has a value, otherwise not set.
+      # 
+      # @note Stability Level: stable
       #
-      # @note StabilityLevel.STABLE
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::OTEL::OTEL_STATUS_DESCRIPTION}.
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::Otel::OTEL_STATUS_DESCRIPTION}.
       OTEL_STATUS_DESCRIPTION = 'otel.status_description'
   
       # @!endgroup
@@ -71,6 +65,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

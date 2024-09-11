@@ -25,10 +25,10 @@ module OpenTelemetry
       # @!group Attribute Names
     
       # Parent-child Reference type
-      #
-      # The causal relationship between a child Span and a parent Span
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # 
+      # The causal relationship between a child Span and a parent Span.
+      # 
+      # @note Stability Level: experimental
       OPENTRACING_REF_TYPE = 'opentracing.ref_type'
   
       # @!endgroup
@@ -36,6 +36,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

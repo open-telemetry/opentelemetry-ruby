@@ -24,16 +24,16 @@ module OpenTelemetry
     module ANDROID
       # @!group Attribute Names
     
-      # Uniquely identifies the framework API revision offered by a version (`os.version`) of the android operating system. More information can be found [here](https://developer.android.com/guide/topics/manifest/uses-sdk-element#ApiLevels)
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Uniquely identifies the framework API revision offered by a version (`os.version`) of the android operating system. More information can be found [here](https://developer.android.com/guide/topics/manifest/uses-sdk-element#ApiLevels).
+      # 
+      # @note Stability Level: experimental
       ANDROID_OS_API_LEVEL = 'android.os.api_level'
   
-      # This attribute represents the state the application has transitioned into at the occurrence of the event
-      #
-      # The Android lifecycle states are defined in [Activity lifecycle callbacks](https://developer.android.com/guide/components/activities/activity-lifecycle#lc), and from which the `OS identifiers` are derived
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Deprecated use the `device.app.lifecycle` event definition including `android.state` as a payload field instead.
+      # 
+      # The Android lifecycle states are defined in [Activity lifecycle callbacks](https://developer.android.com/guide/components/activities/activity-lifecycle#lc), and from which the `OS identifiers` are derived.
+      # 
+      # @note Stability Level: experimental
       ANDROID_STATE = 'android.state'
   
       # @!endgroup
@@ -41,6 +41,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

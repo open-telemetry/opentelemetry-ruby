@@ -25,18 +25,18 @@ module OpenTelemetry
       # @!group Attribute Names
     
       # Unique identifier for the application
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # 
+      # @note Stability Level: experimental
       HEROKU_APP_ID = 'heroku.app.id'
   
       # Commit hash for the current release
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # 
+      # @note Stability Level: experimental
       HEROKU_RELEASE_COMMIT = 'heroku.release.commit'
   
       # Time and date the release was created
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # 
+      # @note Stability Level: experimental
       HEROKU_RELEASE_CREATION_TIMESTAMP = 'heroku.release.creation_timestamp'
   
       # @!endgroup
@@ -44,6 +44,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

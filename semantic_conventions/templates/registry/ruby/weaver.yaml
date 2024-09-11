@@ -1,0 +1,34 @@
+params:
+  excluded_namespaces: []
+  excluded_attributes: ["messaging.client_id"]
+
+templates:
+  # stable
+  - template: attributes.j2
+    application_mode: each
+    filter:  >
+      semconv_grouped_attributes({
+        "exclude_root_namespace": $excluded_namespaces,
+        "exclude_stability": ["experimental", "deprecated"],
+        "exclude_deprecated": false
+      })
+    file_name: "{{ctx.root_namespace | snake_case}}.rb"
+  # incubating
+  - pattern: attributes.j2
+    application_mode: each
+    filter: >
+      semconv_grouped_attributes({
+        "exclude_root_namespace": $excluded_namespaces,
+        "exclude_stability": [],
+        "exclude_deprecated": false
+      })
+    file_name: "incubating/{{ctx.root_namespace | snake_case}}.rb"
+    params:
+      incubating: true
+
+default_comment_format: yard_doc
+comment_formats:
+  yard_doc:
+    format: markdown
+    prefix: "# "
+

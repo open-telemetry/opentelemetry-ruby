@@ -25,31 +25,31 @@ module OpenTelemetry
       # @!group Attribute Names
     
       # A unique identifier representing the device
-      #
-      # The device identifier MUST only be defined using the values outlined below. This value is not an advertising identifier and MUST NOT be used as such. On iOS (Swift or Objective-C), this value MUST be equal to the [vendor identifier](https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor). On Android (Java or Kotlin), this value MUST be equal to the Firebase Installation ID or a globally unique UUID which is persisted across sessions in your application. More information can be found [here](https://developer.android.com/training/articles/user-data-ids) on best practices and exact implementation details. Caution should be taken when storing personal data or anything which can identify a user. GDPR and data protection laws may apply, ensure you do your own due diligence
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # 
+      # The device identifier MUST only be defined using the values outlined below. This value is not an advertising identifier and MUST NOT be used as such. On iOS (Swift or Objective-C), this value MUST be equal to the [vendor identifier](https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor). On Android (Java or Kotlin), this value MUST be equal to the Firebase Installation ID or a globally unique UUID which is persisted across sessions in your application. More information can be found [here](https://developer.android.com/training/articles/user-data-ids) on best practices and exact implementation details. Caution should be taken when storing personal data or anything which can identify a user. GDPR and data protection laws may apply, ensure you do your own due diligence.
+      # 
+      # @note Stability Level: experimental
       DEVICE_ID = 'device.id'
   
       # The name of the device manufacturer
-      #
-      # The Android OS provides this field via [Build](https://developer.android.com/reference/android/os/Build#MANUFACTURER). iOS apps SHOULD hardcode the value `Apple`
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # 
+      # The Android OS provides this field via [Build](https://developer.android.com/reference/android/os/Build#MANUFACTURER). iOS apps SHOULD hardcode the value `Apple`.
+      # 
+      # @note Stability Level: experimental
       DEVICE_MANUFACTURER = 'device.manufacturer'
   
       # The model identifier for the device
-      #
-      # It's recommended this value represents a machine-readable version of the model identifier rather than the market or consumer-friendly name of the device
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # 
+      # It's recommended this value represents a machine-readable version of the model identifier rather than the market or consumer-friendly name of the device.
+      # 
+      # @note Stability Level: experimental
       DEVICE_MODEL_IDENTIFIER = 'device.model.identifier'
   
       # The marketing name for the device model
-      #
-      # It's recommended this value represents a human-readable version of the device model rather than a machine-readable alternative
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # 
+      # It's recommended this value represents a human-readable version of the device model rather than a machine-readable alternative.
+      # 
+      # @note Stability Level: experimental
       DEVICE_MODEL_NAME = 'device.model.name'
   
       # @!endgroup
@@ -57,6 +57,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

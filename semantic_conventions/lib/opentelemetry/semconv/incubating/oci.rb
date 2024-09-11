@@ -24,12 +24,12 @@ module OpenTelemetry
     module OCI
       # @!group Attribute Names
     
-      # The digest of the OCI image manifest. For container images specifically is the digest by which the container image is known
-      #
+      # The digest of the OCI image manifest. For container images specifically is the digest by which the container image is known.
+      # 
       # Follows [OCI Image Manifest Specification](https://github.com/opencontainers/image-spec/blob/main/manifest.md), and specifically the [Digest property](https://github.com/opencontainers/image-spec/blob/main/descriptor.md#digests).
-      #   An example can be found in [Example Image Manifest](https://docs.docker.com/registry/spec/manifest-v2-2/#example-image-manifest)
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # An example can be found in [Example Image Manifest](https://docs.docker.com/registry/spec/manifest-v2-2/#example-image-manifest).
+      # 
+      # @note Stability Level: experimental
       OCI_MANIFEST_DIGEST = 'oci.manifest.digest'
   
       # @!endgroup
@@ -37,6 +37,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

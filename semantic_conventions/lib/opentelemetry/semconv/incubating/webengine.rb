@@ -24,19 +24,19 @@ module OpenTelemetry
     module WEBENGINE
       # @!group Attribute Names
     
-      # Additional description of the web engine (e.g. detailed version and edition information)
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Additional description of the web engine (e.g. detailed version and edition information).
+      # 
+      # @note Stability Level: experimental
       WEBENGINE_DESCRIPTION = 'webengine.description'
   
-      # The name of the web engine
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The name of the web engine.
+      # 
+      # @note Stability Level: experimental
       WEBENGINE_NAME = 'webengine.name'
   
-      # The version of the web engine
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The version of the web engine.
+      # 
+      # @note Stability Level: experimental
       WEBENGINE_VERSION = 'webengine.version'
   
       # @!endgroup
@@ -44,6 +44,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

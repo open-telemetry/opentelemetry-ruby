@@ -24,9 +24,9 @@ module OpenTelemetry
     module DISK
       # @!group Attribute Names
     
-      # The disk IO operation direction
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The disk IO operation direction.
+      # 
+      # @note Stability Level: experimental
       DISK_IO_DIRECTION = 'disk.io.direction'
   
       # @!endgroup
@@ -34,6 +34,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

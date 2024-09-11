@@ -24,16 +24,16 @@ module OpenTelemetry
     module SOURCE
       # @!group Attribute Names
     
-      # Source address - domain name if available without reverse DNS lookup; otherwise, IP address or Unix domain socket name
-      #
-      # When observed from the destination side, and when communicating through an intermediary, `source.address` SHOULD represent the source address behind any intermediaries, for example proxies, if it's available
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Source address - domain name if available without reverse DNS lookup; otherwise, IP address or Unix domain socket name.
+      # 
+      # When observed from the destination side, and when communicating through an intermediary, `source.address` SHOULD represent the source address behind any intermediaries, for example proxies, if it's available.
+      # 
+      # @note Stability Level: experimental
       SOURCE_ADDRESS = 'source.address'
   
       # Source port number
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # 
+      # @note Stability Level: experimental
       SOURCE_PORT = 'source.port'
   
       # @!endgroup
@@ -41,6 +41,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

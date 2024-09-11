@@ -1,0 +1,57 @@
+{#-
+# Copyright The OpenTelemetry Authors
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#}
+{%- import 'common.j2' as common -%}
+{{- common.file_header() }}
+
+module OpenTelemetry
+  module SemConv
+  {%- if params.incubating %}
+  module Incubating
+  {%- endif %}
+    module {{ ctx.root_namespace | screaming_snake_case }}
+      # @!group Attribute Names
+    {% for attribute in ctx.attributes | rejectattr("name", "in", params.excluded_attributes) %}
+      {%- set attr_const_name = attribute.name | screaming_snake_case %}
+      {%- if attribute.type is template_type %}
+        {%- set attr_const_name = attr_const_name ~ "_LAMBDA"  %}
+      {%- endif %}
+      {{ [attribute.brief,
+          concat_if("\n", attribute.note),
+          concat_if("\n@note Stability Level: ", attribute.stability),
+          ] | comment(indent=6) }}
+          {%- if attribute is deprecated %}
+      {{ concat_if("\n@deprecated ", attribute.deprecated) | comment(indent=6)}}
+          {%- elif attribute is stable and params.incubating %}
+      #
+      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::{{ ctx.root_namespace | pascal_case }}::{{ attr_const_name }}}.
+          {%- endif %}
+          {%- if attribute.fqn not in excluded_attributes %}
+            {%- if attribute.type is template_type %}
+      {{ attr_const_name }} = ->(key) { "{{ attribute.name }}.#{key}" }
+            {%- else %}
+      {{ attr_const_name }} = '{{ attribute.name }}'
+            {%- endif %}
+          {%- endif %}
+  {% endfor %}
+      # @!endgroup
+
+      # @!group Metric Names
+      # @!endgroup
+    end
+  {%- if params.incubating %}
+  end
+  {%- endif %}
+  end
+end

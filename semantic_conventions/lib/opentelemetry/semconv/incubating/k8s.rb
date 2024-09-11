@@ -24,149 +24,153 @@ module OpenTelemetry
     module K8S
       # @!group Attribute Names
     
-      # The name of the cluster
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The name of the cluster.
+      # 
+      # @note Stability Level: experimental
       K8S_CLUSTER_NAME = 'k8s.cluster.name'
   
-      # A pseudo-ID for the cluster, set to the UID of the `kube-system` namespace
-      #
+      # A pseudo-ID for the cluster, set to the UID of the `kube-system` namespace.
+      # 
       # K8s doesn't have support for obtaining a cluster ID. If this is ever
-      #   added, we will recommend collecting the `k8s.cluster.uid` through the
-      #   official APIs. In the meantime, we are able to use the `uid` of the
-      #   `kube-system` namespace as a proxy for cluster ID. Read on for the
-      #   rationale.
-      #   
-      #   Every object created in a K8s cluster is assigned a distinct UID. The
-      #   `kube-system` namespace is used by Kubernetes itself and will exist
-      #   for the lifetime of the cluster. Using the `uid` of the `kube-system`
-      #   namespace is a reasonable proxy for the K8s ClusterID as it will only
-      #   change if the cluster is rebuilt. Furthermore, Kubernetes UIDs are
-      #   UUIDs as standardized by
-      #   [ISO/IEC 9834-8 and ITU-T X.667](https://www.itu.int/ITU-T/studygroups/com17/oid.html).
-      #   Which states:
-      #   
-      #   > If generated according to one of the mechanisms defined in Rec.
-      #     ITU-T X.667 | ISO/IEC 9834-8, a UUID is either guaranteed to be
-      #     different from all other UUIDs generated before 3603 A.D., or is
-      #     extremely likely to be different (depending on the mechanism chosen).
-      #   
-      #   Therefore, UIDs between clusters should be extremely unlikely to
-      #   conflict
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # added, we will recommend collecting the `k8s.cluster.uid` through the
+      # official APIs. In the meantime, we are able to use the `uid` of the
+      # `kube-system` namespace as a proxy for cluster ID. Read on for the
+      # rationale.
+      # 
+      # Every object created in a K8s cluster is assigned a distinct UID. The
+      # `kube-system` namespace is used by Kubernetes itself and will exist
+      # for the lifetime of the cluster. Using the `uid` of the `kube-system`
+      # namespace is a reasonable proxy for the K8s ClusterID as it will only
+      # change if the cluster is rebuilt. Furthermore, Kubernetes UIDs are
+      # UUIDs as standardized by
+      # [ISO/IEC 9834-8 and ITU-T X.667](https://www.itu.int/ITU-T/studygroups/com17/oid.html).
+      # Which states:
+      # 
+      # > If generated according to one of the mechanisms defined in Rec.
+      # > ITU-T X.667 | ISO/IEC 9834-8, a UUID is either guaranteed to be
+      # > different from all other UUIDs generated before 3603 A.D., or is
+      # > extremely likely to be different (depending on the mechanism chosen).
+      # 
+      # Therefore, UIDs between clusters should be extremely unlikely to
+      # conflict.
+      # 
+      # @note Stability Level: experimental
       K8S_CLUSTER_UID = 'k8s.cluster.uid'
   
-      # The name of the Container from Pod specification, must be unique within a Pod. Container runtime usually uses different globally unique name (`container.name`)
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The name of the Container from Pod specification, must be unique within a Pod. Container runtime usually uses different globally unique name (`container.name`).
+      # 
+      # @note Stability Level: experimental
       K8S_CONTAINER_NAME = 'k8s.container.name'
   
-      # Number of times the container was restarted. This attribute can be used to identify a particular container (running or stopped) within a container spec
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Number of times the container was restarted. This attribute can be used to identify a particular container (running or stopped) within a container spec.
+      # 
+      # @note Stability Level: experimental
       K8S_CONTAINER_RESTART_COUNT = 'k8s.container.restart_count'
   
-      # The name of the CronJob
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Last terminated reason of the Container.
+      # 
+      # @note Stability Level: experimental
+      K8S_CONTAINER_STATUS_LAST_TERMINATED_REASON = 'k8s.container.status.last_terminated_reason'
+  
+      # The name of the CronJob.
+      # 
+      # @note Stability Level: experimental
       K8S_CRONJOB_NAME = 'k8s.cronjob.name'
   
-      # The UID of the CronJob
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The UID of the CronJob.
+      # 
+      # @note Stability Level: experimental
       K8S_CRONJOB_UID = 'k8s.cronjob.uid'
   
-      # The name of the DaemonSet
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The name of the DaemonSet.
+      # 
+      # @note Stability Level: experimental
       K8S_DAEMONSET_NAME = 'k8s.daemonset.name'
   
-      # The UID of the DaemonSet
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The UID of the DaemonSet.
+      # 
+      # @note Stability Level: experimental
       K8S_DAEMONSET_UID = 'k8s.daemonset.uid'
   
-      # The name of the Deployment
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The name of the Deployment.
+      # 
+      # @note Stability Level: experimental
       K8S_DEPLOYMENT_NAME = 'k8s.deployment.name'
   
-      # The UID of the Deployment
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The UID of the Deployment.
+      # 
+      # @note Stability Level: experimental
       K8S_DEPLOYMENT_UID = 'k8s.deployment.uid'
   
-      # The name of the Job
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The name of the Job.
+      # 
+      # @note Stability Level: experimental
       K8S_JOB_NAME = 'k8s.job.name'
   
-      # The UID of the Job
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The UID of the Job.
+      # 
+      # @note Stability Level: experimental
       K8S_JOB_UID = 'k8s.job.uid'
   
-      # The name of the namespace that the pod is running in
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The name of the namespace that the pod is running in.
+      # 
+      # @note Stability Level: experimental
       K8S_NAMESPACE_NAME = 'k8s.namespace.name'
   
-      # The name of the Node
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The name of the Node.
+      # 
+      # @note Stability Level: experimental
       K8S_NODE_NAME = 'k8s.node.name'
   
-      # The UID of the Node
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The UID of the Node.
+      # 
+      # @note Stability Level: experimental
       K8S_NODE_UID = 'k8s.node.uid'
   
-      # The annotation key-value pairs placed on the Pod, the `<key>` being the annotation name, the value being the annotation value
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      K8S_POD_ANNOTATION_LAMBDA = -> (key) { "k8s.pod.annotation.#{key}" }
+      # The annotation key-value pairs placed on the Pod, the `<key>` being the annotation name, the value being the annotation value.
+      # 
+      # @note Stability Level: experimental
+      K8S_POD_ANNOTATION_LAMBDA = ->(key) { "k8s.pod.annotation.#{key}" }
   
-      # The label key-value pairs placed on the Pod, the `<key>` being the label name, the value being the label value
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      K8S_POD_LABEL_LAMBDA = -> (key) { "k8s.pod.label.#{key}" }
+      # The label key-value pairs placed on the Pod, the `<key>` being the label name, the value being the label value.
+      # 
+      # @note Stability Level: experimental
+      K8S_POD_LABEL_LAMBDA = ->(key) { "k8s.pod.label.#{key}" }
   
-      # Deprecated, use `k8s.pod.label` instead
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      #
-      # @deprecated Replaced by `k8s.pod.label`
-      K8S_POD_LABELS_LAMBDA = -> (key) { "k8s.pod.labels.#{key}" }
+      # Deprecated, use `k8s.pod.label` instead.
+      # 
+      # @note Stability Level: experimental
+      # @deprecated Replaced by `k8s.pod.label`.
+      K8S_POD_LABELS_LAMBDA = ->(key) { "k8s.pod.labels.#{key}" }
   
-      # The name of the Pod
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The name of the Pod.
+      # 
+      # @note Stability Level: experimental
       K8S_POD_NAME = 'k8s.pod.name'
   
-      # The UID of the Pod
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The UID of the Pod.
+      # 
+      # @note Stability Level: experimental
       K8S_POD_UID = 'k8s.pod.uid'
   
-      # The name of the ReplicaSet
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The name of the ReplicaSet.
+      # 
+      # @note Stability Level: experimental
       K8S_REPLICASET_NAME = 'k8s.replicaset.name'
   
-      # The UID of the ReplicaSet
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The UID of the ReplicaSet.
+      # 
+      # @note Stability Level: experimental
       K8S_REPLICASET_UID = 'k8s.replicaset.uid'
   
-      # The name of the StatefulSet
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The name of the StatefulSet.
+      # 
+      # @note Stability Level: experimental
       K8S_STATEFULSET_NAME = 'k8s.statefulset.name'
   
-      # The UID of the StatefulSet
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The UID of the StatefulSet.
+      # 
+      # @note Stability Level: experimental
       K8S_STATEFULSET_UID = 'k8s.statefulset.uid'
   
       # @!endgroup
@@ -174,6 +178,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

@@ -24,81 +24,103 @@ module OpenTelemetry
     module RPC
       # @!group Attribute Names
     
-      # The [error codes](https://connect.build/docs/protocol/#error-codes) of the Connect request. Error codes are always string values
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The [error codes](https://connect.build/docs/protocol/#error-codes) of the Connect request. Error codes are always string values.
+      # 
+      # @note Stability Level: experimental
       RPC_CONNECT_RPC_ERROR_CODE = 'rpc.connect_rpc.error_code'
   
-      # Connect request metadata, `<key>` being the normalized Connect Metadata key (lowercase), the value being the metadata values
-      #
-      # Instrumentations SHOULD require an explicit configuration of which metadata values are to be captured. Including all request metadata values can be a security risk - explicit configuration helps avoid leaking sensitive information
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      RPC_CONNECT_RPC_REQUEST_METADATA_LAMBDA = -> (key) { "rpc.connect_rpc.request.metadata.#{key}" }
+      # Connect request metadata, `<key>` being the normalized Connect Metadata key (lowercase), the value being the metadata values.
+      # 
+      # Instrumentations SHOULD require an explicit configuration of which metadata values are to be captured. Including all request metadata values can be a security risk - explicit configuration helps avoid leaking sensitive information.
+      # 
+      # @note Stability Level: experimental
+      RPC_CONNECT_RPC_REQUEST_METADATA_LAMBDA = ->(key) { "rpc.connect_rpc.request.metadata.#{key}" }
   
-      # Connect response metadata, `<key>` being the normalized Connect Metadata key (lowercase), the value being the metadata values
-      #
-      # Instrumentations SHOULD require an explicit configuration of which metadata values are to be captured. Including all response metadata values can be a security risk - explicit configuration helps avoid leaking sensitive information
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      RPC_CONNECT_RPC_RESPONSE_METADATA_LAMBDA = -> (key) { "rpc.connect_rpc.response.metadata.#{key}" }
+      # Connect response metadata, `<key>` being the normalized Connect Metadata key (lowercase), the value being the metadata values.
+      # 
+      # Instrumentations SHOULD require an explicit configuration of which metadata values are to be captured. Including all response metadata values can be a security risk - explicit configuration helps avoid leaking sensitive information.
+      # 
+      # @note Stability Level: experimental
+      RPC_CONNECT_RPC_RESPONSE_METADATA_LAMBDA = ->(key) { "rpc.connect_rpc.response.metadata.#{key}" }
   
-      # gRPC request metadata, `<key>` being the normalized gRPC Metadata key (lowercase), the value being the metadata values
-      #
-      # Instrumentations SHOULD require an explicit configuration of which metadata values are to be captured. Including all request metadata values can be a security risk - explicit configuration helps avoid leaking sensitive information
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      RPC_GRPC_REQUEST_METADATA_LAMBDA = -> (key) { "rpc.grpc.request.metadata.#{key}" }
+      # gRPC request metadata, `<key>` being the normalized gRPC Metadata key (lowercase), the value being the metadata values.
+      # 
+      # Instrumentations SHOULD require an explicit configuration of which metadata values are to be captured. Including all request metadata values can be a security risk - explicit configuration helps avoid leaking sensitive information.
+      # 
+      # @note Stability Level: experimental
+      RPC_GRPC_REQUEST_METADATA_LAMBDA = ->(key) { "rpc.grpc.request.metadata.#{key}" }
   
-      # gRPC response metadata, `<key>` being the normalized gRPC Metadata key (lowercase), the value being the metadata values
-      #
-      # Instrumentations SHOULD require an explicit configuration of which metadata values are to be captured. Including all response metadata values can be a security risk - explicit configuration helps avoid leaking sensitive information
-      #
-      # @note StabilityLevel.EXPERIMENTAL
-      RPC_GRPC_RESPONSE_METADATA_LAMBDA = -> (key) { "rpc.grpc.response.metadata.#{key}" }
+      # gRPC response metadata, `<key>` being the normalized gRPC Metadata key (lowercase), the value being the metadata values.
+      # 
+      # Instrumentations SHOULD require an explicit configuration of which metadata values are to be captured. Including all response metadata values can be a security risk - explicit configuration helps avoid leaking sensitive information.
+      # 
+      # @note Stability Level: experimental
+      RPC_GRPC_RESPONSE_METADATA_LAMBDA = ->(key) { "rpc.grpc.response.metadata.#{key}" }
   
-      # The [numeric status code](https://github.com/grpc/grpc/blob/v1.33.2/doc/statuscodes.md) of the gRPC request
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The [numeric status code](https://github.com/grpc/grpc/blob/v1.33.2/doc/statuscodes.md) of the gRPC request.
+      # 
+      # @note Stability Level: experimental
       RPC_GRPC_STATUS_CODE = 'rpc.grpc.status_code'
   
-      # `error.code` property of response if it is an error response
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # `error.code` property of response if it is an error response.
+      # 
+      # @note Stability Level: experimental
       RPC_JSONRPC_ERROR_CODE = 'rpc.jsonrpc.error_code'
   
-      # `error.message` property of response if it is an error response
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # `error.message` property of response if it is an error response.
+      # 
+      # @note Stability Level: experimental
       RPC_JSONRPC_ERROR_MESSAGE = 'rpc.jsonrpc.error_message'
   
-      # `id` property of request or response. Since protocol allows id to be int, string, `null` or missing (for notifications), value is expected to be cast to string for simplicity. Use empty string in case of `null` value. Omit entirely if this is a notification
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # `id` property of request or response. Since protocol allows id to be int, string, `null` or missing (for notifications), value is expected to be cast to string for simplicity. Use empty string in case of `null` value. Omit entirely if this is a notification.
+      # 
+      # @note Stability Level: experimental
       RPC_JSONRPC_REQUEST_ID = 'rpc.jsonrpc.request_id'
   
-      # Protocol version as in `jsonrpc` property of request/response. Since JSON-RPC 1.0 doesn't specify this, the value can be omitted
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Protocol version as in `jsonrpc` property of request/response. Since JSON-RPC 1.0 doesn't specify this, the value can be omitted.
+      # 
+      # @note Stability Level: experimental
       RPC_JSONRPC_VERSION = 'rpc.jsonrpc.version'
   
-      # The name of the (logical) method being called, must be equal to the $method part in the span name
-      #
-      # This is the logical name of the method from the RPC interface perspective, which can be different from the name of any implementing method/function. The `code.function` attribute may be used to store the latter (e.g., method actually executing the call on the server side, RPC client stub method on the client side)
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Compressed size of the message in bytes.
+      # 
+      # @note Stability Level: experimental
+      RPC_MESSAGE_COMPRESSED_SIZE = 'rpc.message.compressed_size'
+  
+      # MUST be calculated as two different counters starting from `1` one for sent messages and one for received message.
+      # 
+      # This way we guarantee that the values will be consistent between different implementations.
+      # 
+      # @note Stability Level: experimental
+      RPC_MESSAGE_ID = 'rpc.message.id'
+  
+      # Whether this is a received or sent message.
+      # 
+      # @note Stability Level: experimental
+      RPC_MESSAGE_TYPE = 'rpc.message.type'
+  
+      # Uncompressed size of the message in bytes.
+      # 
+      # @note Stability Level: experimental
+      RPC_MESSAGE_UNCOMPRESSED_SIZE = 'rpc.message.uncompressed_size'
+  
+      # The name of the (logical) method being called, must be equal to the $method part in the span name.
+      # 
+      # This is the logical name of the method from the RPC interface perspective, which can be different from the name of any implementing method/function. The `code.function` attribute may be used to store the latter (e.g., method actually executing the call on the server side, RPC client stub method on the client side).
+      # 
+      # @note Stability Level: experimental
       RPC_METHOD = 'rpc.method'
   
-      # The full (logical) name of the service being called, including its package name, if applicable
-      #
-      # This is the logical name of the service from the RPC interface perspective, which can be different from the name of any implementing class. The `code.namespace` attribute may be used to store the latter (despite the attribute name, it may include a class name; e.g., class with method actually executing the call on the server side, RPC client stub class on the client side)
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The full (logical) name of the service being called, including its package name, if applicable.
+      # 
+      # This is the logical name of the service from the RPC interface perspective, which can be different from the name of any implementing class. The `code.namespace` attribute may be used to store the latter (despite the attribute name, it may include a class name; e.g., class with method actually executing the call on the server side, RPC client stub class on the client side).
+      # 
+      # @note Stability Level: experimental
       RPC_SERVICE = 'rpc.service'
   
-      # A string identifying the remoting system. See below for a list of well-known identifiers
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # A string identifying the remoting system. See below for a list of well-known identifiers.
+      # 
+      # @note Stability Level: experimental
       RPC_SYSTEM = 'rpc.system'
   
       # @!endgroup
@@ -106,6 +128,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

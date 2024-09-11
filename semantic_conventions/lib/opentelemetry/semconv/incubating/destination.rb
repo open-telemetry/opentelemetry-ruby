@@ -24,16 +24,16 @@ module OpenTelemetry
     module DESTINATION
       # @!group Attribute Names
     
-      # Destination address - domain name if available without reverse DNS lookup; otherwise, IP address or Unix domain socket name
-      #
-      # When observed from the source side, and when communicating through an intermediary, `destination.address` SHOULD represent the destination address behind any intermediaries, for example proxies, if it's available
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Destination address - domain name if available without reverse DNS lookup; otherwise, IP address or Unix domain socket name.
+      # 
+      # When observed from the source side, and when communicating through an intermediary, `destination.address` SHOULD represent the destination address behind any intermediaries, for example proxies, if it's available.
+      # 
+      # @note Stability Level: experimental
       DESTINATION_ADDRESS = 'destination.address'
   
       # Destination port number
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # 
+      # @note Stability Level: experimental
       DESTINATION_PORT = 'destination.port'
   
       # @!endgroup
@@ -41,6 +41,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end

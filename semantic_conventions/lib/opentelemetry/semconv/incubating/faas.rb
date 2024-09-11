@@ -24,121 +24,121 @@ module OpenTelemetry
     module FAAS
       # @!group Attribute Names
     
-      # A boolean that is true if the serverless function is executed for the first time (aka cold-start)
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # A boolean that is true if the serverless function is executed for the first time (aka cold-start).
+      # 
+      # @note Stability Level: experimental
       FAAS_COLDSTART = 'faas.coldstart'
   
-      # A string containing the schedule period as [Cron Expression](https://docs.oracle.com/cd/E12058_01/doc/doc.1014/e12030/cron_expressions.htm)
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # A string containing the schedule period as [Cron Expression](https://docs.oracle.com/cd/E12058_01/doc/doc.1014/e12030/cron_expressions.htm).
+      # 
+      # @note Stability Level: experimental
       FAAS_CRON = 'faas.cron'
   
-      # The name of the source on which the triggering operation was performed. For example, in Cloud Storage or S3 corresponds to the bucket name, and in Cosmos DB to the database name
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The name of the source on which the triggering operation was performed. For example, in Cloud Storage or S3 corresponds to the bucket name, and in Cosmos DB to the database name.
+      # 
+      # @note Stability Level: experimental
       FAAS_DOCUMENT_COLLECTION = 'faas.document.collection'
   
-      # The document name/table subjected to the operation. For example, in Cloud Storage or S3 is the name of the file, and in Cosmos DB the table name
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The document name/table subjected to the operation. For example, in Cloud Storage or S3 is the name of the file, and in Cosmos DB the table name.
+      # 
+      # @note Stability Level: experimental
       FAAS_DOCUMENT_NAME = 'faas.document.name'
   
-      # Describes the type of the operation that was performed on the data
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Describes the type of the operation that was performed on the data.
+      # 
+      # @note Stability Level: experimental
       FAAS_DOCUMENT_OPERATION = 'faas.document.operation'
   
-      # A string containing the time when the data was accessed in the [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format expressed in [UTC](https://www.w3.org/TR/NOTE-datetime)
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # A string containing the time when the data was accessed in the [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format expressed in [UTC](https://www.w3.org/TR/NOTE-datetime).
+      # 
+      # @note Stability Level: experimental
       FAAS_DOCUMENT_TIME = 'faas.document.time'
   
-      # The execution environment ID as a string, that will be potentially reused for other invocations to the same function/function version
-      #
-      # * **AWS Lambda:** Use the (full) log stream name
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The execution environment ID as a string, that will be potentially reused for other invocations to the same function/function version.
+      # 
+      # - **AWS Lambda:** Use the (full) log stream name.
+      # 
+      # @note Stability Level: experimental
       FAAS_INSTANCE = 'faas.instance'
   
-      # The invocation ID of the current function invocation
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The invocation ID of the current function invocation.
+      # 
+      # @note Stability Level: experimental
       FAAS_INVOCATION_ID = 'faas.invocation_id'
   
-      # The name of the invoked function
-      #
-      # SHOULD be equal to the `faas.name` resource attribute of the invoked function
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The name of the invoked function.
+      # 
+      # SHOULD be equal to the `faas.name` resource attribute of the invoked function.
+      # 
+      # @note Stability Level: experimental
       FAAS_INVOKED_NAME = 'faas.invoked_name'
   
-      # The cloud provider of the invoked function
-      #
-      # SHOULD be equal to the `cloud.provider` resource attribute of the invoked function
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The cloud provider of the invoked function.
+      # 
+      # SHOULD be equal to the `cloud.provider` resource attribute of the invoked function.
+      # 
+      # @note Stability Level: experimental
       FAAS_INVOKED_PROVIDER = 'faas.invoked_provider'
   
-      # The cloud region of the invoked function
-      #
-      # SHOULD be equal to the `cloud.region` resource attribute of the invoked function
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The cloud region of the invoked function.
+      # 
+      # SHOULD be equal to the `cloud.region` resource attribute of the invoked function.
+      # 
+      # @note Stability Level: experimental
       FAAS_INVOKED_REGION = 'faas.invoked_region'
   
-      # The amount of memory available to the serverless function converted to Bytes
-      #
-      # It's recommended to set this attribute since e.g. too little memory can easily stop a Java AWS Lambda function from working correctly. On AWS Lambda, the environment variable `AWS_LAMBDA_FUNCTION_MEMORY_SIZE` provides this information (which must be multiplied by 1,048,576)
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # The amount of memory available to the serverless function converted to Bytes.
+      # 
+      # It's recommended to set this attribute since e.g. too little memory can easily stop a Java AWS Lambda function from working correctly. On AWS Lambda, the environment variable `AWS_LAMBDA_FUNCTION_MEMORY_SIZE` provides this information (which must be multiplied by 1,048,576).
+      # 
+      # @note Stability Level: experimental
       FAAS_MAX_MEMORY = 'faas.max_memory'
   
-      # The name of the single function that this runtime instance executes
-      #
+      # The name of the single function that this runtime instance executes.
+      # 
       # This is the name of the function as configured/deployed on the FaaS
-      #   platform and is usually different from the name of the callback
-      #   function (which may be stored in the
-      #   [`code.namespace`/`code.function`](/docs/general/attributes.md#source-code-attributes)
-      #   span attributes).
-      #   
-      #   For some cloud providers, the above definition is ambiguous. The following
-      #   definition of function name MUST be used for this attribute
-      #   (and consequently the span name) for the listed cloud providers/products:
-      #   
-      #   * **Azure:**  The full name `<FUNCAPP>/<FUNC>`, i.e., function app name
-      #     followed by a forward slash followed by the function name (this form
-      #     can also be seen in the resource JSON for the function).
-      #     This means that a span attribute MUST be used, as an Azure function
-      #     app can host multiple functions that would usually share
-      #     a TracerProvider (see also the `cloud.resource_id` attribute)
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # platform and is usually different from the name of the callback
+      # function (which may be stored in the
+      # [`code.namespace`/`code.function`](/docs/general/attributes.md#source-code-attributes)
+      # span attributes).
+      # 
+      # For some cloud providers, the above definition is ambiguous. The following
+      # definition of function name MUST be used for this attribute
+      # (and consequently the span name) for the listed cloud providers/products:
+      # 
+      # - **Azure:**  The full name `<FUNCAPP>/<FUNC>`, i.e., function app name
+      #   followed by a forward slash followed by the function name (this form
+      #   can also be seen in the resource JSON for the function).
+      #   This means that a span attribute MUST be used, as an Azure function
+      #   app can host multiple functions that would usually share
+      #   a TracerProvider (see also the `cloud.resource_id` attribute).
+      # 
+      # @note Stability Level: experimental
       FAAS_NAME = 'faas.name'
   
-      # A string containing the function invocation time in the [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format expressed in [UTC](https://www.w3.org/TR/NOTE-datetime)
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # A string containing the function invocation time in the [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format expressed in [UTC](https://www.w3.org/TR/NOTE-datetime).
+      # 
+      # @note Stability Level: experimental
       FAAS_TIME = 'faas.time'
   
-      # Type of the trigger which caused this function invocation
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # Type of the trigger which caused this function invocation.
+      # 
+      # @note Stability Level: experimental
       FAAS_TRIGGER = 'faas.trigger'
   
-      # The immutable version of the function being executed
-      #
+      # The immutable version of the function being executed.
+      # 
       # Depending on the cloud provider and platform, use:
-      #   
-      #   * **AWS Lambda:** The [function version](https://docs.aws.amazon.com/lambda/latest/dg/configuration-versions.html)
-      #     (an integer represented as a decimal string).
-      #   * **Google Cloud Run (Services):** The [revision](https://cloud.google.com/run/docs/managing/revisions)
-      #     (i.e., the function name plus the revision suffix).
-      #   * **Google Cloud Functions:** The value of the
-      #     [`K_REVISION` environment variable](https://cloud.google.com/functions/docs/env-var#runtime_environment_variables_set_automatically).
-      #   * **Azure Functions:** Not applicable. Do not set this attribute
-      #
-      # @note StabilityLevel.EXPERIMENTAL
+      # 
+      # - **AWS Lambda:** The [function version](https://docs.aws.amazon.com/lambda/latest/dg/configuration-versions.html)
+      #   (an integer represented as a decimal string).
+      # - **Google Cloud Run (Services):** The [revision](https://cloud.google.com/run/docs/managing/revisions)
+      #   (i.e., the function name plus the revision suffix).
+      # - **Google Cloud Functions:** The value of the
+      #   [`K_REVISION` environment variable](https://cloud.google.com/functions/docs/env-var#runtime_environment_variables_set_automatically).
+      # - **Azure Functions:** Not applicable. Do not set this attribute.
+      # 
+      # @note Stability Level: experimental
       FAAS_VERSION = 'faas.version'
   
       # @!endgroup
@@ -146,6 +146,6 @@ module OpenTelemetry
       # @!group Metric Names
       # @!endgroup
     end
-  end # module Incubating
+  end
   end
 end
