@@ -53,7 +53,7 @@ module OpenTelemetry
                 begin
                   Logs::Export::BatchLogRecordProcessor.new(OpenTelemetry::Exporter::OTLP::LogsExporter.new)
                 rescue NameError
-                  OpenTelemetry.logger.warn "The otlp logs exporter cannot be configured - please add opentelemetry-exporter-otlp-logs to your Gemfile. Logs will not be exported"
+                  OpenTelemetry.logger.warn 'The otlp logs exporter cannot be configured - please add opentelemetry-exporter-otlp-logs to your Gemfile. Logs will not be exported'
                   nil
                 end
               end

@@ -216,7 +216,6 @@ describe OpenTelemetry::SDK::Logs::LoggerProvider do
     end
   end
 
-
   describe 'instrument registry' do
     # On the first call, create a logger with an empty string for name and
     # version and add to the registry. The second call returns that logger

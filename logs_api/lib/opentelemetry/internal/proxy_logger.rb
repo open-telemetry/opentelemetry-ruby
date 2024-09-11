@@ -48,18 +48,20 @@ module OpenTelemetry
         attributes: nil,
         context: nil
       )
-        return @delegate.on_emit(
-          timestamp: nil,
-          observed_timestamp: nil,
-          severity_number: nil,
-          severity_text: nil,
-          body: nil,
-          trace_id: nil,
-          span_id: nil,
-          trace_flags: nil,
-          attributes: nil,
-          context: nil
-        ) unless @delegate.nil?
+        unless @delegate.nil?
+          return @delegate.on_emit(
+            timestamp: nil,
+            observed_timestamp: nil,
+            severity_number: nil,
+            severity_text: nil,
+            body: nil,
+            trace_id: nil,
+            span_id: nil,
+            trace_flags: nil,
+            attributes: nil,
+            context: nil
+          )
+        end
 
         super
       end
