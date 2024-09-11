@@ -16,7 +16,7 @@ module OpenTelemetry
         #   Values must be non-nil and (array of) string, boolean or numeric type.
         #   Array values must not contain nil elements and all elements must be of
         #   the same basic type (string, numeric, boolean).
-        def add(increment, attributes: nil); end
+        def add(increment, attributes: {}); end
       end
     end
   end

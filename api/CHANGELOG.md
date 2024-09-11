@@ -1,5 +1,9 @@
 # Release History: opentelemetry-api
 
+### v1.4.0 / 2024-08-27
+
+* ADDED: Include backtrace first line for better debug info
+
 ### v1.3.0 / 2024-07-24
 
 * ADDED: Add add_link to span api/sdk
