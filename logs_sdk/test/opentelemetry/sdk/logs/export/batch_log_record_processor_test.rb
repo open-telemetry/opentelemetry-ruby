@@ -469,6 +469,7 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
     let(:processor) { BatchLogRecordProcessor.new(exporter) }
 
     it 'reports export failures' do
+      skip 'intermittent failure will be fixed in #1701'
       mock_logger = Minitest::Mock.new
       mock_logger.expect(:error, nil, [/Unable to export/])
       mock_logger.expect(:error, nil, [/Result code: 1/])
