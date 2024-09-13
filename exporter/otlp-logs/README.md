@@ -10,7 +10,7 @@ OpenTelemetry provides a single set of APIs, libraries, agents, and collector se
 
 ## How does this gem fit in?
 
-The `opentelemetry-exporter-otlp-logs` gem is a plugin that provides OTLP export. To export to the OpenTelemetry Collector, an application can include this gem along with `opentelemetry-sdk` and the `opentelemetry-logs-sdk` and configure the `SDK` to use the provided OTLP exporter as a log record processor.
+The `opentelemetry-exporter-otlp-logs` gem is a plugin that provides OTLP export. To export to the OpenTelemetry Collector, an application can include this gem along with `opentelemetry-logs-sdk` and configure the SDK to use the provided OTLP exporter with a log record processor.
 
 Generally, *libraries* that produce telemetry data should avoid depending directly on specific exporter, deferring that choice to the application developer.
 
@@ -24,21 +24,18 @@ Install the gem using:
 
 ```console
 
-gem install opentelemetry-sdk
+gem install opentelemetry-logs-sdk
 gem install opentelemetry-exporter-otlp
 
 ```
 
 Or, if you use [bundler][bundler-home], include `opentelemetry-sdk` in your `Gemfile`.
 
-Then, configure the SDK to use the OTLP exporter as a span processor, and use the OpenTelemetry interfaces to produces traces and other information. Following is a basic example.
+Then, configure the SDK to use the OTLP exporter as a log record processor, and use the OpenTelemetry interfaces to produce log records. The following is a basic example.
 
 ```ruby
-require 'opentelemetry/sdk'
 require 'opentelemetry-logs-sdk'
 require 'opentelemetry/exporter/otlp_logs'
-
-OpenTelemetry::SDK.configure
 
 # Create a LoggerProvider
 logger_provider = OpenTelemetry::SDK::Logs::LoggerProvider.new
@@ -47,7 +44,7 @@ processor = OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor.new(OpenTe
 # Add the processor to the LoggerProvider
 logger_provider.add_log_record_processor(processor)
 # Access a Logger for your library from your LoggerProvider
-logger = logger_provider.logger('my_app_or_gem', '0.1.0')
+logger = logger_provider.logger(name: 'my_app_or_gem', version: '0.1.0')
 
 # Use your Logger to  emit a log record
 logger.on_emit(
