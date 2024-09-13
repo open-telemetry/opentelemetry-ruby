@@ -18,7 +18,7 @@ Generally, *libraries* that produce telemetry data should avoid depending direct
 
 Install the gem using:
 
-```
+```sh
 gem install opentelemetry-sdk
 gem install opentelemetry-exporter-jaeger
 ```
@@ -103,7 +103,6 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 ## License
 
 The `opentelemetry-exporter-jaeger` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
-
 
 [jaeger-home]: https://www.jaegertracing.io
 [opentelemetry-home]: https://opentelemetry.io

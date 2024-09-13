@@ -204,6 +204,10 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
     end
 
     it 'logs a warning if a log record was emitted after the buffer is full' do
+      # This will be fixed as part of Issue #1701
+      # https://github.com/open-telemetry/opentelemetry-ruby/issues/1701
+      skip if RUBY_ENGINE == 'jruby'
+
       mock_otel_logger = Minitest::Mock.new
       mock_otel_logger.expect(:warn, nil, ['1 log record(s) dropped. Reason: buffer-full'])
 

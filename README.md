@@ -63,6 +63,7 @@ the [Ruby language](https://www.ruby-lang.org/en/downloads/branches/).
 
 - For more information on OpenTelemetry, visit: <https://opentelemetry.io/>
 - For help or feedback on this project, join us in [GitHub Discussions][discussions-url].
+- For more examples, check [SDK example][examples-github].
 
 ## License
 
