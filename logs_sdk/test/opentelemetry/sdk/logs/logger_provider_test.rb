@@ -215,4 +215,40 @@ describe OpenTelemetry::SDK::Logs::LoggerProvider do
       end
     end
   end
+
+  describe 'instrument registry' do
+    # On the first call, create a logger with an empty string for name and
+    # version and add to the registry. The second call returns that logger
+    # from the registry instead of creating a new instance.
+    it 'reuses the same logger if called twice when name and version are nil' do
+      logger = logger_provider.logger(name: nil, version: nil)
+      logger2 = logger_provider.logger(name: nil, version: nil)
+
+      assert_instance_of(Logs::Logger, logger)
+      assert_same(logger, logger2)
+    end
+
+    describe 'when stopped' do
+      it 'logs a warning' do
+        logger_provider.instance_variable_set(:@stopped, true)
+
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          logger_provider.logger(name: '')
+          assert_match(
+            /calling LoggerProvider#logger after shutdown/,
+            log_stream.string
+          )
+        end
+      end
+
+      it 'does not add a new logger to the registry' do
+        before_stopped_size = logger_provider.instance_variable_get(:@registry).keys.size
+        logger_provider.instance_variable_set(:@stopped, true)
+        logger_provider.logger(name: 'new_logger')
+        after_stopped_size = logger_provider.instance_variable_get(:@registry).keys.size
+
+        assert_equal(before_stopped_size, after_stopped_size)
+      end
+    end
+  end
 end

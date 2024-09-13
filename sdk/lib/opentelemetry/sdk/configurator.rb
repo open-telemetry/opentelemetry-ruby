@@ -126,13 +126,20 @@ module OpenTelemetry
         @span_processors << span_processor
       end
 
+      # Add a log record processor to the export pipeline
+      #
+      # @param [#emit, #shutdown, #force_flush] log_record_processor A log_record_processor
+      #   that satisfies the duck type #emit, #shutdown, #force_flush. See
+      #   {SimpleLogRecordProcessor} for an example.
+      def add_log_record_processor(log_record_processor); end
+
       # @api private
       # The configure method is where we define the setup process. This allows
       # us to make certain guarantees about which systems and globals are setup
       # at each stage. The setup process is:
       #   - setup logging
       #   - setup propagation
-      #   - setup tracer_provider and meter_provider
+      #   - setup tracer_provider, meter_provider, and logger_provider
       #   - install instrumentation
       def configure
         OpenTelemetry.logger = logger
@@ -142,12 +149,15 @@ module OpenTelemetry
         tracer_provider.id_generator = @id_generator
         OpenTelemetry.tracer_provider = tracer_provider
         metrics_configuration_hook
+        logs_configuration_hook
         install_instrumentation
       end
 
       private
 
       def metrics_configuration_hook; end
+
+      def logs_configuration_hook; end
 
       def tracer_provider
         @tracer_provider ||= Trace::TracerProvider.new(resource: @resource)
