@@ -24,7 +24,7 @@ produce telemetry data should generally depend only on
 
 Install the gem using:
 
-```
+```sh
 gem install opentelemetry-sdk
 ```
 
@@ -90,7 +90,6 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 ## License
 
 The `opentelemetry-sdk` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
-
 
 [opentelemetry-home]: https://opentelemetry.io
 [bundler-home]: https://bundler.io
