@@ -21,7 +21,7 @@ data should depend only on `opentelemetry-api`, deferring the choice of concrete
 
 Install the gem using:
 
-```
+```sh
 gem install opentelemetry-api
 ```
 
@@ -57,7 +57,6 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 ## License
 
 The `opentelemetry-api` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
-
 
 [opentelemetry-home]: https://opentelemetry.io
 [bundler-home]: https://bundler.io
