@@ -21,13 +21,18 @@ module OpenTelemetry
     #   - `default`: Emit old conventions ONLY
     #
     # If no `OTEL_SEMCONV_STABILITY_OPT_IN` is set, the `default` behavior is used. `http/dup` has higher precedence than `http` in case both values are present.
+    #
+    # For instrumentation authors of libraries that emit HTTP semantic conventions, it is recommended to use the helper methods provided by this class to assign 
+    # attributes on span to support the opt-in preference of users. This class provides one method per convention and each method accepts at least two arguments. The 
+    # first is a hash to add the attribute(s) to. Additional arguments make up the value. The return value is nil, but the hash that was passed in will be updated.
     # 
     # Example usage:
     # ```ruby
+    # result = {} # Hash to add attributes to
     # stability_mode = OpenTelemetry::SemanticConventions::StabilityMode.new
-    # stability_mode.set_http_method(result, 'GET')
     # stability_mode.set_http_status_code(result, 200)
-    # stability_mode.set_http_url(result, 'https://example.com')
+    # 
+    # span.add_attributes(result) # Add the attributes to the span
     # ```
     class StabilityMode
       OTEL_SEMCONV_STABILITY_OPT_IN = 'OTEL_SEMCONV_STABILITY_OPT_IN'
@@ -99,8 +104,8 @@ module OpenTelemetry
 
       # Sets the HTTP status code attribute in the result hash.
       #
-      # @param result [Hash] The result hash.
-      # @param code [Integer] The HTTP status code.
+      # @param [Hash] result The result hash.
+      # @param [Integer] code The HTTP status code.
       def set_http_status_code(result, code)
         set_int_attribute(result, OpenTelemetry::SemanticConventions::Trace::HTTP_STATUS_CODE, code) if report_old?(HTTP)
         set_int_attribute(result, HTTP_RESPONSE_STATUS_CODE, code) if report_new?(HTTP)
@@ -108,8 +113,8 @@ module OpenTelemetry
 
       # Sets the HTTP URL attribute in the result hash.
       #
-      # @param result [Hash] The result hash.
-      # @param url [String] The HTTP URL.
+      # @param [Hash] result The result hash.
+      # @param [String] url The HTTP URL.
       def set_http_url(result, url)
         set_string_attribute(result, OpenTelemetry::SemanticConventions::Trace::HTTP_URL, url) if report_old?(HTTP)
         set_string_attribute(result, URL_FULL, url) if report_new?(HTTP)
@@ -117,8 +122,8 @@ module OpenTelemetry
 
       # Sets the HTTP scheme attribute in the result hash.
       #
-      # @param result [Hash] The result hash.
-      # @param scheme [String] The HTTP scheme.
+      # @param [Hash] result The result hash.
+      # @param [String] scheme The HTTP scheme.
       def set_http_scheme(result, scheme)
         set_string_attribute(result, OpenTelemetry::SemanticConventions::Trace::HTTP_SCHEME, scheme) if report_old?(HTTP)
         set_string_attribute(result, URL_SCHEME, scheme) if report_new?(HTTP)
@@ -126,8 +131,8 @@ module OpenTelemetry
 
       # Sets the server address attribute in the result hash for client requests.
       #
-      # @param result [Hash] The result hash.
-      # @param peer_name [String] The server address.
+      # @param [Hash] result The result hash.
+      # @param [String] peer_name The server address.
       def set_http_net_peer_name_client(result, peer_name)
         set_string_attribute(result, OpenTelemetry::SemanticConventions::Trace::NET_PEER_NAME, peer_name) if report_old?(HTTP)
         set_string_attribute(result, SERVER_ADDRESS, peer_name) if report_new?(HTTP)
@@ -135,8 +140,8 @@ module OpenTelemetry
 
       # Sets the server port attribute in the result hash for client requests.
       #
-      # @param result [Hash] The result hash.
-      # @param port [Integer] The server port.
+      # @param [Hash] result The result hash.
+      # @param [Integer] port The server port.
       def set_http_peer_port_client(result, port)
         set_int_attribute(result, OpenTelemetry::SemanticConventions::Trace::NET_PEER_PORT, port) if report_old?(HTTP)
         set_int_attribute(result, SERVER_PORT, port) if report_new?(HTTP)
@@ -144,9 +149,9 @@ module OpenTelemetry
 
       # Sets the HTTP target attribute in the result hash.
       #
-      # @param result [Hash] The result hash.
-      # @param path [String] The URL path.
-      # @param query [String] The URL query.
+      # @param [Hash] result The result hash.
+      # @param [String] path The URL path.
+      # @param [String] query The URL query.
       def set_http_target(result, path, query)
         set_string_attribute(result, OpenTelemetry::SemanticConventions::Trace::HTTP_TARGET, path) if report_old?(HTTP)
         return unless report_new?(HTTP)
