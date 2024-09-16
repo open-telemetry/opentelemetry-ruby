@@ -6,7 +6,7 @@
 
 module OpenTelemetry
   module SemanticConventions
-    # The StabilityMode module provides constants and methods for semantic conventions stability
+    # The StabilityMode class provides constants and methods for semantic conventions stability
     class StabilityMode
       OTEL_SEMCONV_STABILITY_OPT_IN = 'OTEL_SEMCONV_STABILITY_OPT_IN'
 
@@ -14,7 +14,7 @@ module OpenTelemetry
       HTTP = 'http' # emit stable HTTP and networking conventions ONLY
       HTTP_DUP = 'http/dup' # emit both old and stable HTTP and networking conventions      
 
-      # Will go away once semvconv stability PR merged
+      # These constants will be pulled in from elsehwere once semvconv stability PR merged
       # https://github.com/open-telemetry/opentelemetry-ruby/pull/1651
       HTTP_REQUEST_METHOD = 'http.request.method'
       HTTP_RESPONSE_STATUS_CODE = 'http.response.status_code'
@@ -28,30 +28,27 @@ module OpenTelemetry
       attr_accessor :initialized, :lock, :otel_semconv_stability_signal_mapping
       
       def initialize
-        @initialized = false
         @lock = Mutex.new
         @otel_semconv_stability_signal_mapping = {}
         
         @lock.synchronize do
-          unless initialized
-            # Users can pass in comma delimited string for opt-in options
-            # Only values for http stability are supported for now
-            opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', nil)
-            opt_in_list = opt_in.split(',').map(&:strip) if opt_in
-            http_opt_in = DEFAULT
-            # Process http opt-in
-            if opt_in_list
-              # http/dup takes priority over http
-              if opt_in_list.include?(HTTP_DUP)
-                http_opt_in = HTTP_DUP
-              elsif opt_in_list.include?(HTTP)
-                http_opt_in = HTTP
-              end
-            end
-            otel_semconv_stability_signal_mapping['http'] = http_opt_in
-            @initialized = true
-          end
+          # Users can pass in comma delimited string for opt-in options
+          opt_in = ENV.fetch('OTEL_SEMCONV_STABILITY_OPT_IN', nil)
+          opt_in_list = opt_in.split(',').map(&:strip) if opt_in
+          http_set_sability_mode(opt_in_list) if opt_in_list
         end
+      end
+      
+      def http_set_sability_mode(opt_in_list)
+        return unless opt_in_list.include?(HTTP) || opt_in_list.include?(HTTP_DUP)
+
+        http_opt_in = DEFAULT
+        if opt_in_list.include?(HTTP_DUP) # http/dup takes priority over http
+          http_opt_in = HTTP_DUP
+        elsif opt_in_list.include?(HTTP)
+          http_opt_in = HTTP
+        end
+        otel_semconv_stability_signal_mapping['http'] = http_opt_in
       end
 
       def report_new?(opt_in_mode)
@@ -63,13 +60,13 @@ module OpenTelemetry
       end
 
       def set_string_attribute(result, key, value)
-        result[key] = value if value
+        result[key] = String(value) if value
       end
       
       def set_int_attribute(result, key, value)
         result[key] = Integer(value) if value
       end
-      
+
       def set_http_method(result, request_method)
         set_string_attribute(result, OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD, request_method) if report_old?(HTTP)
         set_string_attribute(result, HTTP_REQUEST_METHOD, request_method) if report_new?(HTTP)
