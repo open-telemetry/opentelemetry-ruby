@@ -6,13 +6,13 @@
 
 module OpenTelemetry
   module SemanticConventions
-    # The `StabilityMode` class allows controls which semantic conventions are emitted.
+    # The `StabilityMode` class controls which semantic conventions are emitted.
     #
     # For more information on semantic conventions stability, refer to 
     # {https://opentelemetry.io/docs/specs/otel/versioning-and-stability/#semantic-conventions-stability OpenTelemetry documentation}. 
     #
     # ## Configuration
-    # The `StabilityMode` class is relies on the `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable, a comma-delimited string of stability modes to opt into. 
+    # The `StabilityMode` class relies on the `OTEL_SEMCONV_STABILITY_OPT_IN` environment variable, a comma-delimited string of stability modes to opt into. 
     # 
     # Currently, `OTEL_SEMCONV_STABILITY_OPT_IN` only supports {https://opentelemetry.io/docs/specs/semconv/http/ semantic conventions for HTTP}. 
     # The values defined for `OTEL_SEMCONV_STABILITY_OPT_IN` are:
@@ -20,7 +20,7 @@ module OpenTelemetry
     #   - `http/dup`: Emit both old and stable HTTP and networking conventions
     #   - `default`: Emit old conventions ONLY
     #
-    # If no `OTEL_SEMCONV_STABILITY_OPT_IN` is set, the `default` behavior is used. `http/dup` has higher precedence than `http`` in case both values are present.
+    # If no `OTEL_SEMCONV_STABILITY_OPT_IN` is set, the `default` behavior is used. `http/dup` has higher precedence than `http` in case both values are present.
     # 
     # Example usage:
     # ```ruby
@@ -88,10 +88,10 @@ module OpenTelemetry
         result[key] = Integer(value) if value
       end
 
-      # Sets the HTTP method attribute in the result hash.
+      # Sets the HTTP method attribute in the `result` hash.
       #
-      # @param result [Hash] The result hash.
-      # @param request_method [String] The HTTP request method.
+      # @param [Hash] result The result hash.
+      # @param [String] request_method The HTTP request method.
       def set_http_method(result, request_method)
         set_string_attribute(result, OpenTelemetry::SemanticConventions::Trace::HTTP_METHOD, request_method) if report_old?(HTTP)
         set_string_attribute(result, HTTP_REQUEST_METHOD, request_method) if report_new?(HTTP)
