@@ -51,7 +51,7 @@ end
 task generate: %i[update_gem_version check_out_semconv_version] do
   puts "\n+++ Removing previously generated semantic conventions code.\n"
   semconv_output_dir
-    .glob('*.rb')
+    .glob('**/*.rb')
     .then { |files| FileUtils.rm(files) }
 
   puts "\n+++ Generating semantic conventions code.\n"

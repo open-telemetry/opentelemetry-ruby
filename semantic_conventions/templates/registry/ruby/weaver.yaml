@@ -12,7 +12,16 @@ templates:
         "exclude_stability": ["experimental", "deprecated"],
         "exclude_deprecated": false
       })
-    file_name: "{{ctx.root_namespace | snake_case}}.rb"
+    file_name: "{{ctx.root_namespace | snake_case}}/attributes.rb"
+  - template: metrics.j2
+    application_mode: each
+    filter:  >
+      semconv_grouped_metrics({
+        "exclude_root_namespace": $excluded_namespaces,
+        "exclude_stability": ["experimental", "deprecated"],
+        "exclude_deprecated": false
+      })
+    file_name: "{{ctx.root_namespace | snake_case}}/metrics.rb"
   # incubating
   - pattern: attributes.j2
     application_mode: each
@@ -22,7 +31,18 @@ templates:
         "exclude_stability": [],
         "exclude_deprecated": false
       })
-    file_name: "incubating/{{ctx.root_namespace | snake_case}}.rb"
+    file_name: "incubating/{{ctx.root_namespace | snake_case}}/attributes.rb"
+    params:
+      incubating: true
+  - pattern: metrics.j2
+    application_mode: each
+    filter: >
+      semconv_grouped_metrics({
+        "exclude_root_namespace": $excluded_namespaces,
+        "exclude_stability": [],
+        "exclude_deprecated": false
+      })
+    file_name: "incubating/{{ctx.root_namespace | snake_case}}/metrics.rb"
     params:
       incubating: true
 
