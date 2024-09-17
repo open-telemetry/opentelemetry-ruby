@@ -64,12 +64,14 @@ task check_out_semconv_version: [semconv_source_dir] do
   end
 end
 
-task generate_semconv: %i[check_out_semconv_version] do
+task :clean_generated_code do
   puts "\n+++ Removing previously generated semantic conventions code.\n"
   semconv_output_dir
     .glob('**/*.rb')
     .then { |files| FileUtils.rm(files) }
+end
 
+task generate_semconv: %i[check_out_semconv_version clean_generated_code] do
   puts "\n+++ Generating semantic conventions code.\n"
   sh <<~DOCKER_COMMAND
     docker run --rm \
@@ -85,7 +87,7 @@ task generate_semconv: %i[check_out_semconv_version] do
   DOCKER_COMMAND
 end
 
-task :generate_require_rollups do
+task generate_require_rollups: %i[generate_semconv] do
   puts "\n+++ Generating rollup/barrel files for semconv namespaces.\n"
 
   Rake::FileList[  # find all the generated semconv files
