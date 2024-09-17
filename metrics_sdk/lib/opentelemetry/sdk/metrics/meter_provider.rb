@@ -124,6 +124,7 @@ module OpenTelemetry
             end
           end
         end
+        alias_method :register_asynchronous_instrument, :register_synchronous_instrument
 
         # The type of the Instrument(s) (optional).
         # The name of the Instrument(s). OpenTelemetry SDK authors MAY choose to support wildcard characters, with the question mark (?) matching exactly one character and the asterisk character (*) matching zero or more characters.
