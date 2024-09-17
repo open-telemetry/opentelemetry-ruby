@@ -16,7 +16,7 @@ The `opentelemetry-common` gem provides common helpers for semantic conventions,
 
 Install the gem using:
 
-```
+```sh
 gem install opentelemetry-common
 ```
 
