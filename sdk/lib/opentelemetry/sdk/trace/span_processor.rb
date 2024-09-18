@@ -23,7 +23,9 @@ module OpenTelemetry
         #  started span.
         def on_start(span, parent_context); end
 
-        # The on_ending method is an experimental feature and may have breaking changes.
+        # The on_finishing method is an experimental feature and may have breaking changes.
+        # The OpenTelemetry specification defines it as "On Ending". As `end` is a reserved
+        # keyword in Ruby, we are using `on_finishing` instead.
         #
         # Called when a {Span} is ending, after the end timestamp has been set
         # but before span becomes immutable. This allows for updating the span
@@ -37,7 +39,7 @@ module OpenTelemetry
         #
         # @param [Span] span the {Span} that just is ending (still mutable).
         # @return [void]
-        def on_ending(span); end
+        def on_finishing(span); end
 
         # Called when a {Span} is ended, if the {Span#recording?}
         # returns true.
