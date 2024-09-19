@@ -19,7 +19,7 @@ module OpenTelemetry
 
           # Increment or decremt the Gauge by a fixed amount.
           #
-          # @param [numeric] increment The increment amount, which MUST be a non-negative numeric value.
+          # @param [numeric] value The current absolute value.
           # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
           #   Values must be non-nil and (array of) string, boolean or numeric type.
           #   Array values must not contain nil elements and all elements must be of
