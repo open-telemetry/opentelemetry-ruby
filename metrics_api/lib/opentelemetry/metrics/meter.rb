@@ -15,6 +15,8 @@ module OpenTelemetry
       UP_DOWN_COUNTER = Instrument::UpDownCounter.new
       OBSERVABLE_UP_DOWN_COUNTER = Instrument::ObservableUpDownCounter.new
 
+      EMPTY_ADVICE = {}.freeze
+
       NAME_REGEX = /\A[a-zA-Z][-.\w]{0,62}\z/
 
       private_constant(:COUNTER, :OBSERVABLE_COUNTER, :HISTOGRAM, :OBSERVABLE_GAUGE, :UP_DOWN_COUNTER, :OBSERVABLE_UP_DOWN_COUNTER)
@@ -33,7 +35,7 @@ module OpenTelemetry
         create_instrument(:counter, name, unit, description, nil) { COUNTER }
       end
 
-      def create_histogram(name, unit: nil, description: nil, advice: nil)
+      def create_histogram(name, unit: nil, description: nil, advice: EMPTY_ADVICE)
         create_instrument(:histogram, name, unit, description, nil, advice) { HISTOGRAM }
       end
 
@@ -55,7 +57,7 @@ module OpenTelemetry
 
       private
 
-      def create_instrument(kind, name, unit, description, callback, advice = nil)
+      def create_instrument(kind, name, unit, description, callback, advice = EMPTY_ADVICE)
         raise InstrumentNameError if name.nil?
         raise InstrumentNameError if name.empty?
         raise InstrumentNameError unless NAME_REGEX.match?(name)

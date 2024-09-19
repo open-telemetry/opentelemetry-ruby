@@ -33,7 +33,7 @@ module OpenTelemetry
           end
         end
 
-        def create_instrument(kind, name, unit, description, callback, advice = nil)
+        def create_instrument(kind, name, unit, description, callback, advice = OpenTelemetry::Metrics::Meter::EMPTY_ADVICE)
           super do
             case kind
             when :counter then OpenTelemetry::SDK::Metrics::Instrument::Counter.new(name, unit, description, @instrumentation_scope, @meter_provider)
