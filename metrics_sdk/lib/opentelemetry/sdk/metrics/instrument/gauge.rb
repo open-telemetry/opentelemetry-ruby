@@ -17,7 +17,7 @@ module OpenTelemetry
             :gauge
           end
 
-          # Increment or decremt the Gauge by a fixed amount.
+          # Record the absolute value of the Gauge.
           #
           # @param [numeric] value The current absolute value.
           # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
