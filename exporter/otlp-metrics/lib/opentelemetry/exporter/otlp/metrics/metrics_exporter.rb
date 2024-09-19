@@ -115,7 +115,7 @@ module OpenTelemetry
               @http.read_timeout = remaining_timeout
               @http.write_timeout = remaining_timeout
               @http.start unless @http.started?
-              response = measure_request_duration { @http.request(request) }
+              response = @http.request(request)
               case response
               when Net::HTTPOK
                 response.body # Read and discard body
