@@ -11,7 +11,7 @@ module OpenTelemetry
       class Gauge
         # Record the current value for the Gauge
         #
-        # @param [Numeric] amount The amount to be added, can be positive, negative or zero.
+        # @param [Numeric] amount The current absolute value.
         # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
         #   Values must be non-nil and (array of) string, boolean or numeric type.
         #   Array values must not contain nil elements and all elements must be of
