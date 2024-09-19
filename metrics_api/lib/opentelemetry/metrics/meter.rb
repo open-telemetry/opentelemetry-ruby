@@ -48,7 +48,7 @@ module OpenTelemetry
 
       # Histogram is a synchronous Instrument which can be used to report arbitrary values that are likely
       # to be statistically meaningful. It is intended for statistics such as histograms,
-      # summaries, and percentile.
+      # summaries, and percentiles.
       #
       # With this api call:
       #
