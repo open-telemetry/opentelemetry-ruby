@@ -8,7 +8,7 @@ module OpenTelemetry
   module Internal
     # @api private
     class ProxyInstrument
-      def initialize(kind, name, unit, desc, callable, advice = Metrics::Meter::EMPTY_ADVICE)
+      def initialize(kind, name, unit, desc, callable, advice = nil)
         @kind = kind
         @name = name
         @unit = unit
