@@ -9,7 +9,7 @@ module OpenTelemetry
     module Instrument
       # No-op implementation of Gauge.
       class Gauge
-        # Increment or decrement the UpDownCounter by a fixed amount.
+        # Record the current value for the Gauge
         #
         # @param [Numeric] amount The amount to be added, can be positive, negative or zero.
         # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
