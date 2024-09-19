@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Metrics
     module Instrument
-      # No-op implementation of UpDownCounter.
+      # No-op implementation of Gauge.
       class Gauge
         # Increment or decrement the UpDownCounter by a fixed amount.
         #
