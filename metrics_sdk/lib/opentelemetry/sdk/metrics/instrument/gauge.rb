@@ -24,7 +24,7 @@ module OpenTelemetry
           #   Values must be non-nil and (array of) string, boolean or numeric type.
           #   Array values must not contain nil elements and all elements must be of
           #   the same basic type (string, numeric, boolean).
-          def record(amount, attributes: {})
+          def record(value, attributes: {})
             # TODO: When the metrics SDK stabilizes and is merged into the main SDK,
             # we can leverage the SDK Internal validation classes to enforce this:
             # https://github.com/open-telemetry/opentelemetry-ruby/blob/6bec625ef49004f364457c26263df421526b60d6/sdk/lib/opentelemetry/sdk/internal.rb#L47
