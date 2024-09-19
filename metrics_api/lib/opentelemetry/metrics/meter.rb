@@ -38,6 +38,20 @@ module OpenTelemetry
         create_instrument(:histogram, name, unit, description, nil) { HISTOGRAM }
       end
 
+      # Gauge is an synchronous Instrument which reports non-additive value(s)
+      #
+      # With this api call:
+      #
+      #   meter.create_gauge("cpu.frequency",
+      #                       description: "the real-time CPU clock speed",
+      #                       unit: "ms")
+      #
+      #
+      # @param name [String] the name of the gauge.
+      # @param unit [optional String] an optional string provided by user.
+      # @param description [optional String] an optional free-form text provided by user.
+      #
+      # @return [nil] after creation of gauge, it will be stored in instrument_registry
       def create_gauge(name, unit: nil, description: nil)
         create_instrument(:gauge, name, unit, description, nil) { GAUGE }
       end
