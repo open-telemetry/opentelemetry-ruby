@@ -3,6 +3,7 @@ receivers:
   otlp:
     protocols:
       http:
+        endpoint: 0.0.0.0:4318
 
 exporters:
   debug:
@@ -11,9 +12,10 @@ exporters:
     endpoint: "http://zipkin-all-in-one:9411/api/v2/spans"
     format: proto
 
-  jaeger:
-    endpoint: jaeger-all-in-one:14250
-    insecure: true
+  otlp:
+    endpoint: jaeger-all-in-one:4317
+    tls:
+      insecure: true
 
 processors:
   batch:
@@ -23,7 +25,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug, zipkin, jaeger]
+      exporters: [debug, zipkin, otlp]
     metrics:
       receivers: [otlp]
       processors: [batch]
