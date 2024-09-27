@@ -9,6 +9,7 @@ module OpenTelemetry
     module Metrics
       module Aggregation
         module ExponentialHistogram
+          # LogarithmMapping for mapping when scale < 0
           class ExponentMapping
             attr_reader :scale
 
@@ -19,7 +20,6 @@ module OpenTelemetry
             end
 
             def map_to_index(value)
-
               return @min_normal_lower_boundary_index if value < IEEE754::MIN_NORMAL_VALUE
 
               exponent = IEEE754.get_ieee_754_exponent(value)

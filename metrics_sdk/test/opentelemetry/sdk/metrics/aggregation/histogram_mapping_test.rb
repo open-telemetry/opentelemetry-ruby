@@ -29,7 +29,6 @@ def right_boundary(scale, index)
 end
 
 describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
-
   MAX_NORMAL_EXPONENT = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MAX_NORMAL_EXPONENT
   MIN_NORMAL_EXPONENT = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MIN_NORMAL_EXPONENT
   MAX_NORMAL_VALUE = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MAX_NORMAL_VALUE
@@ -55,7 +54,6 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
     end
 
     it 'test_logarithm_boundary' do
-
       [1, 2, 3, 4, 10, 15].each do |scale|
         logarithm_mapping = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::LogarithmMapping.new(scale)
 
@@ -86,17 +84,17 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
 
         _(boundary).must_be :<, OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MAX_NORMAL_VALUE
 
-        _((OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MAX_NORMAL_VALUE - boundary) / boundary ).must_be_within_epsilon base - 1, 1e-6
+        _((OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MAX_NORMAL_VALUE - boundary) / boundary).must_be_within_epsilon base - 1, 1e-6
 
         error = assert_raises(StandardError) do
           logarithm_mapping.get_lower_boundary(inds + 1)
         end
-        assert_equal("mapping overflow", error.message)
+        assert_equal('mapping overflow', error.message)
 
         error = assert_raises(StandardError) do
           logarithm_mapping.get_lower_boundary(inds + 2)
         end
-        assert_equal("mapping overflow", error.message)
+        assert_equal('mapping overflow', error.message)
       end
     end
 
@@ -135,26 +133,24 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         assert_equal('mapping underflow', error.message)
       end
     end
-
   end
 
   describe 'exponent_mapping' do
     let(:exponent_mapping_min_scale) { -10 }
-    
-    it 'test_exponent_mapping_zero' do
 
+    it 'test_exponent_mapping_zero' do
       exponent_mapping = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::ExponentMapping.new(0)
 
       # This is the equivalent to 1.1 in hexadecimal
-      hex_1_1 = 1 + (1.0 / 16)
+      hex_one_one = 1 + (1.0 / 16)
 
       # Testing with values near +inf
       _(exponent_mapping.map_to_index(MAX_NORMAL_VALUE)).must_equal(MAX_NORMAL_EXPONENT)
       _(exponent_mapping.map_to_index(MAX_NORMAL_VALUE)).must_equal(1023)
       _(exponent_mapping.map_to_index(2**1023)).must_equal(1022)
       _(exponent_mapping.map_to_index(2**1022)).must_equal(1021)
-      _(exponent_mapping.map_to_index(hex_1_1 * (2**1023))).must_equal(1023)
-      _(exponent_mapping.map_to_index(hex_1_1 * (2**1022))).must_equal(1022)
+      _(exponent_mapping.map_to_index(hex_one_one * (2**1023))).must_equal(1023)
+      _(exponent_mapping.map_to_index(hex_one_one * (2**1022))).must_equal(1022)
 
       # Testing with values near 1
       _(exponent_mapping.map_to_index(4)).must_equal(1)
@@ -171,9 +167,9 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
 
       # Testing with values near 0
       _(exponent_mapping.map_to_index(2**-1022)).must_equal(-1023)
-      _(exponent_mapping.map_to_index(hex_1_1 * (2**-1022))).must_equal(-1022)
+      _(exponent_mapping.map_to_index(hex_one_one * (2**-1022))).must_equal(-1022)
       _(exponent_mapping.map_to_index(2**-1021)).must_equal(-1022)
-      _(exponent_mapping.map_to_index(hex_1_1 * (2**-1021))).must_equal(-1021)
+      _(exponent_mapping.map_to_index(hex_one_one * (2**-1021))).must_equal(-1021)
       _(exponent_mapping.map_to_index(2**-1022)).must_equal(MIN_NORMAL_EXPONENT - 1)
       _(exponent_mapping.map_to_index(2**-1021)).must_equal(MIN_NORMAL_EXPONENT)
 
@@ -211,7 +207,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
     end
 
     it 'test_exponent_mapping_negative_four' do
-      exponent_mapping =  OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::ExponentMapping.new(-4)
+      exponent_mapping = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::ExponentMapping.new(-4)
 
       _(exponent_mapping.map_to_index(0x1.to_f)).must_equal(-1)
       _(exponent_mapping.map_to_index(0x10.to_f)).must_equal(0)
@@ -316,7 +312,6 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         end
         assert_equal('mapping underflow', error.message)
       end
-      
     end
 
     it 'test_exponent_index_min' do
@@ -356,7 +351,5 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         _(exponent_mapping.map_to_index(Float::MIN.next_float)).must_equal(MIN_NORMAL_EXPONENT >> -scale)
       end
     end
-
   end
-
 end

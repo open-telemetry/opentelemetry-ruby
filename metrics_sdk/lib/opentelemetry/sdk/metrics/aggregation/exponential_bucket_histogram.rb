@@ -10,14 +10,13 @@ require_relative 'exponential_histogram/ieee_754'
 require_relative 'exponential_histogram/logarithm_mapping'
 require_relative 'exponential_histogram/exponent_mapping'
 
-
 module OpenTelemetry
   module SDK
     module Metrics
       module Aggregation
         # Contains the implementation of the ExponentialBucketHistogram aggregation
         # https://opentelemetry.io/docs/specs/otel/metrics/data-model/#exponentialhistogram
-        class ExponentialBucketHistogram
+        class ExponentialBucketHistogram # rubocop:disable Metrics/ClassLength
           attr_reader :aggregation_temporality
 
           # relate to min max scale: https://opentelemetry.io/docs/specs/otel/metrics/sdk/#support-a-minimum-and-maximum-scale
@@ -71,11 +70,10 @@ module OpenTelemetry
             end
           end
 
-          # ruby seems only record local min and max
+          # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
           def update(amount, attributes)
             # fetch or initialize the ExponentialHistogramDataPoint
             hdp = @data_points.fetch(attributes) do
-
               if @record_min_max
                 min = Float::INFINITY
                 max = -Float::INFINITY
@@ -95,7 +93,7 @@ module OpenTelemetry
                 nil,                                                               # :exemplars
                 min,                                                               # :min
                 max,                                                               # :max
-                @zero_threshold,                                                   # :zero_threshold)
+                @zero_threshold # :zero_threshold)
               )
             end
 
@@ -123,7 +121,7 @@ module OpenTelemetry
             is_rescaling_needed = false
             low = high = 0
 
-            if buckets.counts.empty?
+            if buckets.counts == [0] # special case of empty
               buckets.index_start = bucket_index
               buckets.index_end   = bucket_index
               buckets.index_base  = bucket_index
@@ -171,12 +169,13 @@ module OpenTelemetry
               buckets.index_end = bucket_index
             end
 
-            bucket_index = bucket_index - buckets.index_base
+            bucket_index -= buckets.index_base
             bucket_index += buckets.counts.size if bucket_index.negative?
 
             buckets.increment_bucket(bucket_index)
             nil
           end
+          # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity
 
           private
 
@@ -203,7 +202,7 @@ module OpenTelemetry
 
           def downscale(change, positive, negative)
             return if change == 0
-            raise "Invalid change of scale" if change.negative?
+            raise 'Invalid change of scale' if change.negative?
 
             positive.downscale(change)
             negative.downscale(change)

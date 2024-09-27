@@ -9,6 +9,7 @@ module OpenTelemetry
     module Metrics
       module Aggregation
         module ExponentialHistogram
+          # Log2eScaleFactor is precomputed scale factor value
           class Log2eScaleFactor
             MAX_SCALE = 20
 

@@ -9,9 +9,9 @@ module OpenTelemetry
     module Metrics
       module Aggregation
         module ExponentialHistogram
+          # Buckets is the fundamental building block of exponential histogram that store bucket/boundary value
           class Buckets
             attr_accessor :index_start, :index_end, :index_base
-            attr_reader :counts
 
             def initialize
               @counts = [0]
@@ -30,7 +30,7 @@ module OpenTelemetry
               new_positive_limit = new_size - bias
 
               tmp = Array.new(new_size, 0)
-              tmp[new_positive_limit..-1] = @counts[old_positive_limit..-1]
+              tmp[new_positive_limit..-1] = @counts[old_positive_limit..]
               tmp[0...old_positive_limit] = @counts[0...old_positive_limit]
               @counts = tmp
             end
@@ -39,11 +39,11 @@ module OpenTelemetry
               @index_start
             end
 
-            def get_offset_counts
+            def offset_counts
               bias = @index_base - @index_start
-              @counts[-bias..-1] + @counts[0...-bias]
+              @counts[-bias..] + @counts[0...-bias]
             end
-            alias_method :counts, :get_offset_counts
+            alias counts offset_counts
 
             def length
               return 0 if @counts.empty?
@@ -67,7 +67,7 @@ module OpenTelemetry
               if bias != 0
                 @index_base = @index_start
                 @counts.reverse!
-                @counts = @counts[0...bias].reverse + @counts[bias..-1].reverse
+                @counts = @counts[0...bias].reverse + @counts[bias..].reverse
               end
 
               size = 1 + @index_end - @index_start
@@ -110,4 +110,3 @@ module OpenTelemetry
     end
   end
 end
-

@@ -11,6 +11,7 @@ module OpenTelemetry
     module Metrics
       module Aggregation
         module ExponentialHistogram
+          # IEEE754 standard for floating-point calculation
           module IEEE754
             extend Fiddle::Importer
             dlload Fiddle::Handle::DEFAULT
@@ -19,7 +20,7 @@ module OpenTelemetry
             EXPONENT_WIDTH = 11
 
             MANTISSA_MASK = (1 << MANTISSA_WIDTH) - 1
-            EXPONENT_BIAS = (2 ** (EXPONENT_WIDTH - 1)) - 1
+            EXPONENT_BIAS = (2**(EXPONENT_WIDTH - 1)) - 1
             EXPONENT_MASK = ((1 << EXPONENT_WIDTH) - 1) << MANTISSA_WIDTH
             SIGN_MASK = 1 << (EXPONENT_WIDTH + MANTISSA_WIDTH)
 
