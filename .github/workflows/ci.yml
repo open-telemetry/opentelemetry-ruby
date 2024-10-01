@@ -9,6 +9,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}  # Ensure that only one instance of this workflow is running per Pull Request
+  cancel-in-progress: true  # Cancel any previous runs of this workflow
+
 jobs:
   base:
     strategy:
@@ -18,6 +22,7 @@ jobs:
           - opentelemetry-api
           - opentelemetry-common
           - opentelemetry-logs-api
+          - opentelemetry-logs-sdk
           - opentelemetry-metrics-api
           - opentelemetry-metrics-sdk
           - opentelemetry-registry
@@ -82,6 +87,7 @@ jobs:
           - opentelemetry-exporter-otlp-grpc
           - opentelemetry-exporter-otlp-http
           - opentelemetry-exporter-zipkin
+          - opentelemetry-exporter-otlp-metrics
         os:
           - ubuntu-latest
           - macos-latest
@@ -130,6 +136,7 @@ jobs:
           [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-common" ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-http"   ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-grpc"   ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-metrics" ]] && echo "skip=true" >> $GITHUB_OUTPUT
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
           true
       - name: "Test JRuby"
@@ -205,3 +212,9 @@ jobs:
         with:
           gem: "${{ matrix.gem }}"
           ruby: "truffleruby"
+
+  codespell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: make codespell

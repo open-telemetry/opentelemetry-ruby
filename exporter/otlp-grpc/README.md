@@ -22,7 +22,7 @@ This gem supports the [v0.11.0 release](https://github.com/open-telemetry/opente
 
 Install the gem using:
 
-```
+```sh
 gem install opentelemetry-sdk
 gem install opentelemetry-exporter-otlp-grpc
 ```
@@ -65,9 +65,12 @@ For additional examples, see the [examples on github][examples-github].
 
 The collector exporter can be configured explicitly in code, or via environment variables as shown above. The configuration parameters, environment variables, and defaults are shown below.
 
-| Parameter           | Environment variable                         | Default                             |
-| ------------------- | -------------------------------------------- | ----------------------------------- |
-| `endpoint:`         | `OTEL_EXPORTER_OTLP_ENDPOINT`                | `"http://localhost:4318/v1/traces"` |
+| Parameter                 | Environment variable                         | Default                             |
+| ------------------------- | -------------------------------------------- | ----------------------------------- |
+| `endpoint:`               | `OTEL_EXPORTER_OTLP_ENDPOINT`                | `"http://localhost:4318/v1/traces"` |
+| `certificate_file:`       | `OTEL_EXPORTER_OTLP_CERTIFICATE`             |                                     |
+| `client_certificate_file` | `OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE`      |                                     |
+| `client_key_file`         | `OTEL_EXPORTER_OTLP_CLIENT_KEY`              |                                     |
 
 ## How can I get involved?
 
@@ -78,7 +81,6 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 ## License
 
 The `opentelemetry-exporter-otlp-grpc` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
-
 
 [opentelemetry-collector-home]: https://opentelemetry.io/docs/collector/about/
 [opentelemetry-home]: https://opentelemetry.io

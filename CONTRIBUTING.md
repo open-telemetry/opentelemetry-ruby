@@ -24,7 +24,7 @@ conforms to the specification, but the interface and structure are flexible.
 It is preferable to have contributions follow the idioms of the language
 rather than conform to specific API names or argument patterns in the spec.
 
-For a deeper discussion, see: https://github.com/open-telemetry/opentelemetry-specification/issues/165
+For a deeper discussion, see: <https://github.com/open-telemetry/opentelemetry-specification/issues/165>
 
 ## Getting started
 
@@ -40,6 +40,7 @@ git clone git@github.com:YOUR_GITHUB_NAME/opentelemetry-ruby.git
 ```
 
 or
+
 ```sh
 git clone https://github.com/YOUR_GITHUB_NAME/opentelemetry-ruby.git
 ```
@@ -66,11 +67,11 @@ _Setting up a running Ruby environment is outside the scope of this document._
 
 This repository contains multiple Ruby gems:
 
- *  `opentelemetry-api` located in the `api` directory
- *  `opentelemetry-sdk` located in the `sdk` directory
- *  Various instrumentation gems located in subdirectories of `instrumentation`
- *  Various exporter gems located in subdirectories of `exporter`
- *  `opentelemetry-resource_detectors` located in the `resource_detectors` directory
+*  `opentelemetry-api` located in the `api` directory
+*  `opentelemetry-sdk` located in the `sdk` directory
+*  Various instrumentation gems located in subdirectories of `instrumentation`
+*  Various exporter gems located in subdirectories of `exporter`
+*  `opentelemetry-resource_detectors` located in the `resource_detectors` directory
 
 Each of these gems has its configuration and tests.
 
@@ -89,10 +90,10 @@ configuration details.
 
 The services provided include:
 
- *  `app` - main container environment scoped to the `/app` directory. Used
+*  `app` - main container environment scoped to the `/app` directory. Used
     primarily to build and tag the `opentelemetry/opentelemetry-ruby:latest` image.
- *  `api` - convenience environment scoped to the `api` gem in the `/app/api` directory.
- *  `sdk` - convenience environment scoped to the `sdk` gem in the `/app/sdk` directory.
+*  `api` - convenience environment scoped to the `api` gem in the `/app/api` directory.
+*  `sdk` - convenience environment scoped to the `sdk` gem in the `/app/sdk` directory.
 
 To test using Docker:
 
@@ -154,8 +155,8 @@ to ensure that your code complies before opening a pull request.
 We also use Yard to generate class documentation automatically. Among other
 things, this means:
 
- *  Methods and arguments should include the appropraite type annotations
- *  You can use markdown formatting in your documentation comments
+*  Methods and arguments should include the appropriate type annotations
+*  You can use markdown formatting in your documentation comments
 
 You can generate the docs locally to see the results, by running:
 
@@ -249,7 +250,7 @@ Releases are normally performed using GitHub Actions.
      *  For each gem, it will create a release tag and a GitHub release.
      *  It will build and push the gems to rubygems.
      *  It will build the docs and push them to
-        https://open-telemetry.github.io/opentelemetry-ruby
+        <https://open-telemetry.github.io/opentelemetry-ruby>
      *  If the releases succeed, the script will update the release pull
         request with the results and change its label to `release: complete`.
         If something went wrong, the script will, if possible, report the error
@@ -269,15 +270,15 @@ review the release logs for the GitHub Actions workflows.
 
 There are four GitHub actions workflows related to releases.
 
- *  `Open release request` is the main release entrypoint, and is used to open
+*  `Open release request` is the main release entrypoint, and is used to open
     a release pull request. If something goes wrong with this process, the logs
     will appear in the workflow run.
- *  `Force release` is generally used only to restart a failed release.
- *  `[release hook] Update open releases` is run on pushes to the main branch,
+*  `Force release` is generally used only to restart a failed release.
+*  `[release hook] Update open releases` is run on pushes to the main branch,
     and pushes warnings to open release pull requests if you make modifications
     before triggering the release (i.e. because you might need to update the
     changelogs.)
- *  `[release hook] Process release` is the main release automation script and
+*  `[release hook] Process release` is the main release automation script and
     is run when a pull request is closed. If it determines that a release pull
     request was merged, it kicks off the release process for the affected gems.
     It also updates the label on a closed release pull request. Finally, it
@@ -320,7 +321,7 @@ changed gems.
 
 To force-release, assuming the version and changelog are already modified:
 
-```
+```sh
 toys release perform --rubygems-api-key=$API_KEY $GEM_NAME $GEM_VERSION
 ```
 
@@ -338,17 +339,17 @@ not correspond exactly to the gem name.
 
 For releases to succeed, new gems MUST include the following:
 
- *  The above configuration entry.
- *  The `*.gemspec` file, with the name matching the gem name.
- *  A `version.rb` file in the standard location, or in a location listed in
+*  The above configuration entry.
+*  The `*.gemspec` file, with the name matching the gem name.
+*  A `version.rb` file in the standard location, or in a location listed in
     the configuration.
- *  A `CHANGELOG.md` file.
- *  A `yard` rake task.
+*  A `CHANGELOG.md` file.
+*  A `yard` rake task.
 
 [cncf-cla]: https://identity.linuxfoundation.org/projects/cncf
 [github-draft]: https://github.blog/2019-02-14-introducing-draft-pull-requests/
 [kube-github-workflow-pr]: https://github.com/kubernetes/community/blob/master/contributors/guide/github-workflow.md#7-create-a-pull-request
-[otel-contributor-guide]: https://github.com/open-telemetry/community/blob/master/CONTRIBUTING.md
-[otel-github-workflow]: https://github.com/open-telemetry/community/blob/master/CONTRIBUTING.md#github-workflow
+[otel-contributor-guide]: https://github.com/open-telemetry/community/blob/main/guides/contributor/README.md
+[otel-github-workflow]: https://github.com/open-telemetry/community/blob/main/guides/contributor/processes.md#workflows
 [otel-lib-guidelines]: https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/library-guidelines.md
 [otel-specification]: https://github.com/open-telemetry/opentelemetry-specification

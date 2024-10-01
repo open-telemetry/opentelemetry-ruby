@@ -54,10 +54,16 @@ The [opentelemetry-ruby-contrib repository][contrib-repo] contains instrumentati
 
 OpenTelemetry Ruby follows the [versioning and stability document][otel-versioning] in the OpenTelemetry specification. Notably, we adhere to the outlined version numbering exception, which states that experimental signals may have a `0.x` version number.
 
+## Compatibility
+
+OpenTelemetry Ruby ensures compatibility with the current supported versions of
+the [Ruby language](https://www.ruby-lang.org/en/downloads/branches/).
+
 ## Useful links
 
 - For more information on OpenTelemetry, visit: <https://opentelemetry.io/>
 - For help or feedback on this project, join us in [GitHub Discussions][discussions-url].
+- For more examples, check [SDK example][examples-github].
 
 ## License
 

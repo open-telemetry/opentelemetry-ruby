@@ -12,13 +12,19 @@ OpenTelemetry provides a single set of APIs, libraries, agents, and collector se
 
 The `opentelemetry-sdk` gem provides the reference implementation of the OpenTelemetry Ruby interfaces defined in the `opentelemetry-api` gem. That is, it includes the *functionality* needed to collect, analyze, and export telemetry data produced using the API.
 
-Generally, Ruby *applications* should install `opentelemetry-sdk` (or other concrete implementation of the OpenTelemetry API). Using the SDK, an application can configure how it wants telemetry data to be handled, including which data should be persisted, how it should be formatted, and where it should be recorded or exported. However, *libraries* that produce telemetry data should generally depend only on `opentelemetry-api`, deferring the choise of concrete implementation to the application developer.
+Generally, Ruby *applications* should install `opentelemetry-sdk` (or
+other concrete implementation of the OpenTelemetry API). Using the SDK,
+an application can configure how it wants telemetry data to be handled,
+including which data should be persisted, how it should be formatted,
+and where it should be recorded or exported. However, *libraries* that
+produce telemetry data should generally depend only on
+`opentelemetry-api`, deferring the choice of concrete implementation to the application developer.
 
 ## How do I get started?
 
 Install the gem using:
 
-```
+```sh
 gem install opentelemetry-sdk
 ```
 
@@ -53,7 +59,7 @@ OpenTelemetry::SDK.configure
 #   c.use 'OpenTelemetry::Instrumentation::Net::HTTP'
 # end
 #
-# Note that the SimpleSpanExporter is not recommended for use in production.
+# Note that the SimpleSpanProcessor is not recommended for use in production.
 
 
 # To start a trace you need to get a Tracer from the TracerProvider
@@ -84,7 +90,6 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 ## License
 
 The `opentelemetry-sdk` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
-
 
 [opentelemetry-home]: https://opentelemetry.io
 [bundler-home]: https://bundler.io
