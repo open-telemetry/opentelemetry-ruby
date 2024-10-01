@@ -87,6 +87,7 @@ jobs:
           - opentelemetry-exporter-otlp-grpc
           - opentelemetry-exporter-otlp-http
           - opentelemetry-exporter-zipkin
+          - opentelemetry-exporter-otlp-logs
           - opentelemetry-exporter-otlp-metrics
         os:
           - ubuntu-latest
