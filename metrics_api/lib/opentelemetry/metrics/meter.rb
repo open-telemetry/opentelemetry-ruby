@@ -15,8 +15,6 @@ module OpenTelemetry
       UP_DOWN_COUNTER = Instrument::UpDownCounter.new
       OBSERVABLE_UP_DOWN_COUNTER = Instrument::ObservableUpDownCounter.new
 
-      NAME_REGEX = /\A[a-zA-Z][-.\w]{0,62}\z/
-
       private_constant(:COUNTER, :OBSERVABLE_COUNTER, :HISTOGRAM, :OBSERVABLE_GAUGE, :UP_DOWN_COUNTER, :OBSERVABLE_UP_DOWN_COUNTER)
 
       DuplicateInstrumentError = Class.new(OpenTelemetry::Error)
@@ -56,22 +54,11 @@ module OpenTelemetry
       private
 
       def create_instrument(kind, name, unit, description, callback)
-        raise InstrumentNameError if name.nil?
-        raise InstrumentNameError if name.empty?
-        raise InstrumentNameError unless NAME_REGEX.match?(name)
-        raise InstrumentUnitError if unit && (!unit.ascii_only? || unit.size > 63)
-        raise InstrumentDescriptionError if description && (description.size > 1023 || !utf8mb3_encoding?(description.dup))
-
         @mutex.synchronize do
           OpenTelemetry.logger.warn("duplicate instrument registration occurred for instrument #{name}") if @instrument_registry.include? name
 
           @instrument_registry[name] = yield
         end
-      end
-
-      def utf8mb3_encoding?(string)
-        string.force_encoding('UTF-8').valid_encoding? &&
-          string.each_char { |c| return false if c.bytesize >= 4 }
       end
     end
   end
