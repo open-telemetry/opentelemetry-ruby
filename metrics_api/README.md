@@ -24,7 +24,7 @@ This code is still under development and is not a complete implementation of the
 
 Install the gem using:
 
-```
+```sh
 gem install opentelemetry-metrics-api
 ```
 

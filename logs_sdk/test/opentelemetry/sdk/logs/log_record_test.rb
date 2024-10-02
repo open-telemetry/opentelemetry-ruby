@@ -15,7 +15,8 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
   describe '#initialize' do
     describe 'observed_timestamp' do
       describe 'when observed_timestamp is present' do
-        let(:observed_timestamp) { '1692661486.2841358' }
+        let(:current_time) { Time.now }
+        let(:observed_timestamp) { current_time + 1 }
         let(:args) { { observed_timestamp: observed_timestamp } }
 
         it 'is equal to observed_timestamp' do
@@ -26,13 +27,8 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
           refute_equal(log_record.timestamp, log_record.observed_timestamp)
         end
 
-        # Process.clock_gettime is used to set the current time
-        # That method returns a Float. Since the stubbed value of
-        # observed_timestamp is a String, we can know the the
-        # observed_timestamp was not set to the value of Process.clock_gettime
-        # by making sure its value is not a Float.
         it 'is not equal to the current time' do
-          refute_instance_of(Float, log_record.observed_timestamp)
+          refute_equal(current_time, log_record.observed_timestamp)
         end
       end
 
