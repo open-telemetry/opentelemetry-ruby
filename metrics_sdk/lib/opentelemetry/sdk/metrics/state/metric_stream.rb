@@ -39,14 +39,16 @@ module OpenTelemetry
           end
 
           def collect(start_time, end_time)
-            metric_data = []
-            if @registered_views.empty?
-              metric_data << aggregate_metric_data(start_time, end_time)
-            else
-              @registered_views.each { |view| metric_data << aggregate_metric_data(start_time, end_time, aggregation: view.aggregation) }
-            end
+            @mutex.synchronize do
+              metric_data = []
+              if @registered_views.empty?
+                metric_data << aggregate_metric_data(start_time, end_time)
+              else
+                @registered_views.each { |view| metric_data << aggregate_metric_data(start_time, end_time, aggregation: view.aggregation) }
+              end
 
-            metric_data
+              metric_data
+            end
           end
 
           def update(value, attributes)
