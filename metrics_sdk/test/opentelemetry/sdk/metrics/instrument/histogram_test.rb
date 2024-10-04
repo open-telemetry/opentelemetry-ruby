@@ -21,7 +21,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::Histogram do
     histogram.record(5, attributes: { 'foo' => 'bar' })
     histogram.record(6, attributes: { 'foo' => 'bar' })
     metric_exporter.pull
-    last_snapshot = metric_exporter.metric_snapshots.last
+    last_snapshot = metric_exporter.metric_snapshots
 
     _(last_snapshot[0].name).must_equal('histogram')
     _(last_snapshot[0].unit).must_equal('smidgen')

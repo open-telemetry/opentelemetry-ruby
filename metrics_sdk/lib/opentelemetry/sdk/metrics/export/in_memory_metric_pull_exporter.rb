@@ -25,7 +25,7 @@ module OpenTelemetry
 
           def export(metrics, timeout: nil)
             @mutex.synchronize do
-              @metric_snapshots << metrics
+              @metric_snapshots.concat(Array(metrics))
             end
             SUCCESS
           end

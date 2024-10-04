@@ -20,7 +20,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::Counter do
   it 'counts' do
     counter.add(1, attributes: { 'foo' => 'bar' })
     metric_exporter.pull
-    last_snapshot = metric_exporter.metric_snapshots.last
+    last_snapshot = metric_exporter.metric_snapshots
 
     _(last_snapshot[0].name).must_equal('counter')
     _(last_snapshot[0].unit).must_equal('smidgen')

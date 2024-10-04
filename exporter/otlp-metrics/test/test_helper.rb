@@ -17,7 +17,7 @@ require 'webmock/minitest'
 OpenTelemetry.logger = Logger.new(File::NULL)
 
 module MockSum
-  def collect(start_time, end_time)
+  def collect(start_time, end_time, data_points)
     start_time = 1_699_593_427_329_946_585 # rubocop:disable Lint/ShadowedArgument
     end_time   = 1_699_593_427_329_946_586 # rubocop:disable Lint/ShadowedArgument
     super

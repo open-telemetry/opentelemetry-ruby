@@ -34,7 +34,7 @@ describe OpenTelemetry::SDK do
 
       _(snapshot.size).must_equal(2)
 
-      first_snapshot = snapshot[0]
+      first_snapshot = snapshot
       _(first_snapshot[0].name).must_equal('counter')
       _(first_snapshot[0].unit).must_equal('smidgen')
       _(first_snapshot[0].description).must_equal('a small amount of something')

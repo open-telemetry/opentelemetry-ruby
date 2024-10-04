@@ -21,7 +21,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::UpDownCounter do
     up_down_counter.add(1, attributes: { 'foo' => 'bar' })
     up_down_counter.add(-2, attributes: { 'foo' => 'bar' })
     metric_exporter.pull
-    last_snapshot = metric_exporter.metric_snapshots.last
+    last_snapshot = metric_exporter.metric_snapshots
 
     _(last_snapshot[0].name).must_equal('up_down_counter')
     _(last_snapshot[0].unit).must_equal('smidgen')

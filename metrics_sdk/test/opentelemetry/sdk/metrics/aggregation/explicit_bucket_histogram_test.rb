@@ -7,6 +7,7 @@
 require 'test_helper'
 
 describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
+  let(:data_points) { {} }
   let(:ebh) do
     OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(
       aggregation_temporality: aggregation_temporality,
@@ -23,19 +24,19 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
 
   describe '#collect' do
     it 'returns all the data points' do
-      ebh.update(0, {})
-      ebh.update(1, {})
-      ebh.update(5, {})
-      ebh.update(6, {})
-      ebh.update(10, {})
+      ebh.update(0, {}, data_points)
+      ebh.update(1, {}, data_points)
+      ebh.update(5, {}, data_points)
+      ebh.update(6, {}, data_points)
+      ebh.update(10, {}, data_points)
 
-      ebh.update(-10, 'foo' => 'bar')
-      ebh.update(1, 'foo' => 'bar')
-      ebh.update(22, 'foo' => 'bar')
-      ebh.update(55, 'foo' => 'bar')
-      ebh.update(80, 'foo' => 'bar')
+      ebh.update(-10, { 'foo' => 'bar' }, data_points)
+      ebh.update(1, { 'foo' => 'bar' }, data_points)
+      ebh.update(22, { 'foo' => 'bar' }, data_points)
+      ebh.update(55, { 'foo' => 'bar' }, data_points)
+      ebh.update(80, { 'foo' => 'bar' }, data_points)
 
-      hdps = ebh.collect(start_time, end_time)
+      hdps = ebh.collect(start_time, end_time, data_points)
       _(hdps.size).must_equal(2)
       _(hdps[0].attributes).must_equal({})
       _(hdps[0].count).must_equal(5)
@@ -55,34 +56,34 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
     end
 
     it 'sets the timestamps' do
-      ebh.update(0, {})
-      hdp = ebh.collect(start_time, end_time)[0]
+      ebh.update(0, {}, data_points)
+      hdp = ebh.collect(start_time, end_time, data_points)[0]
       _(hdp.start_time_unix_nano).must_equal(start_time)
       _(hdp.time_unix_nano).must_equal(end_time)
     end
 
     it 'calculates the count' do
-      ebh.update(0, {})
-      ebh.update(0, {})
-      ebh.update(0, {})
-      ebh.update(0, {})
-      hdp = ebh.collect(start_time, end_time)[0]
+      ebh.update(0, {}, data_points)
+      ebh.update(0, {}, data_points)
+      ebh.update(0, {}, data_points)
+      ebh.update(0, {}, data_points)
+      hdp = ebh.collect(start_time, end_time, data_points)[0]
       _(hdp.count).must_equal(4)
     end
 
     it 'does not aggregate between collects with default delta aggregation' do
-      ebh.update(0, {})
-      ebh.update(1, {})
-      ebh.update(5, {})
-      ebh.update(6, {})
-      ebh.update(10, {})
-      hdps = ebh.collect(start_time, end_time)
+      ebh.update(0, {}, data_points)
+      ebh.update(1, {}, data_points)
+      ebh.update(5, {}, data_points)
+      ebh.update(6, {}, data_points)
+      ebh.update(10, {}, data_points)
+      hdps = ebh.collect(start_time, end_time, data_points)
 
-      ebh.update(0, {})
-      ebh.update(1, {})
-      ebh.update(5, {})
-      ebh.update(6, {})
-      ebh.update(10, {})
+      ebh.update(0, {}, data_points)
+      ebh.update(1, {}, data_points)
+      ebh.update(5, {}, data_points)
+      ebh.update(6, {}, data_points)
+      ebh.update(10, {}, data_points)
       # Assert that the recent update does not
       # impact the already collected metrics
       _(hdps[0].count).must_equal(5)
@@ -91,7 +92,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
       _(hdps[0].max).must_equal(10)
       _(hdps[0].bucket_counts).must_equal([1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0])
 
-      hdps = ebh.collect(start_time, end_time)
+      hdps = ebh.collect(start_time, end_time, data_points)
       # Assert that we are not accumulating values
       # between calls to collect
       _(hdps[0].count).must_equal(5)
@@ -105,18 +106,18 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
       let(:aggregation_temporality) { :not_delta }
 
       it 'allows metrics to accumulate' do
-        ebh.update(0, {})
-        ebh.update(1, {})
-        ebh.update(5, {})
-        ebh.update(6, {})
-        ebh.update(10, {})
-        hdps = ebh.collect(start_time, end_time)
+        ebh.update(0, {}, data_points)
+        ebh.update(1, {}, data_points)
+        ebh.update(5, {}, data_points)
+        ebh.update(6, {}, data_points)
+        ebh.update(10, {}, data_points)
+        hdps = ebh.collect(start_time, end_time, data_points)
 
-        ebh.update(0, {})
-        ebh.update(1, {})
-        ebh.update(5, {})
-        ebh.update(6, {})
-        ebh.update(10, {})
+        ebh.update(0, {}, data_points)
+        ebh.update(1, {}, data_points)
+        ebh.update(5, {}, data_points)
+        ebh.update(6, {}, data_points)
+        ebh.update(10, {}, data_points)
         # Assert that the recent update does not
         # impact the already collected metrics
         _(hdps[0].count).must_equal(5)
@@ -125,7 +126,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
         _(hdps[0].max).must_equal(10)
         _(hdps[0].bucket_counts).must_equal([1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0])
 
-        hdps1 = ebh.collect(start_time, end_time)
+        hdps1 = ebh.collect(start_time, end_time, data_points)
         # Assert that we are accumulating values
         # and not just capturing the delta since
         # the previous collect call
@@ -148,38 +149,38 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
 
   describe '#update' do
     it 'accumulates across the default boundaries' do
-      ebh.update(0, {})
+      ebh.update(0, {}, data_points)
 
-      ebh.update(1, {})
-      ebh.update(5, {})
+      ebh.update(1, {}, data_points)
+      ebh.update(5, {}, data_points)
 
-      ebh.update(6, {})
-      ebh.update(10, {})
+      ebh.update(6, {}, data_points)
+      ebh.update(10, {}, data_points)
 
-      ebh.update(11, {})
-      ebh.update(25, {})
+      ebh.update(11, {}, data_points)
+      ebh.update(25, {}, data_points)
 
-      ebh.update(26, {})
-      ebh.update(50, {})
+      ebh.update(26, {}, data_points)
+      ebh.update(50, {}, data_points)
 
-      ebh.update(51, {})
-      ebh.update(75, {})
+      ebh.update(51, {}, data_points)
+      ebh.update(75, {}, data_points)
 
-      ebh.update(76, {})
-      ebh.update(100, {})
+      ebh.update(76, {}, data_points)
+      ebh.update(100, {}, data_points)
 
-      ebh.update(101, {})
-      ebh.update(250, {})
+      ebh.update(101, {}, data_points)
+      ebh.update(250, {}, data_points)
 
-      ebh.update(251, {})
-      ebh.update(500, {})
+      ebh.update(251, {}, data_points)
+      ebh.update(500, {}, data_points)
 
-      ebh.update(501, {})
-      ebh.update(1000, {})
+      ebh.update(501, {}, data_points)
+      ebh.update(1000, {}, data_points)
 
-      ebh.update(1001, {})
+      ebh.update(1001, {}, data_points)
 
-      hdp = ebh.collect(start_time, end_time)[0]
+      hdp = ebh.collect(start_time, end_time, data_points)[0]
       _(hdp.bucket_counts).must_equal([1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1])
       _(hdp.sum).must_equal(4040)
       _(hdp.min).must_equal(0)
@@ -190,8 +191,8 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
       let(:boundaries) { [4, 2, 1] }
 
       it 'sorts it' do
-        ebh.update(0, {})
-        _(ebh.collect(start_time, end_time)[0].explicit_bounds).must_equal([1, 2, 4])
+        ebh.update(0, {}, data_points)
+        _(ebh.collect(start_time, end_time, data_points)[0].explicit_bounds).must_equal([1, 2, 4])
       end
     end
 
@@ -199,8 +200,8 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
       let(:record_min_max) { false }
 
       it 'does not record min max values' do
-        ebh.update(-1, {})
-        hdp = ebh.collect(start_time, end_time)[0]
+        ebh.update(-1, {}, data_points)
+        hdp = ebh.collect(start_time, end_time, data_points)[0]
         _(hdp.min).must_be_nil
         _(hdp.min).must_be_nil
       end
@@ -210,14 +211,14 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
       let(:boundaries) { [0, 2, 4] }
 
       it 'aggregates' do
-        ebh.update(-1, {})
-        ebh.update(0, {})
-        ebh.update(1, {})
-        ebh.update(2, {})
-        ebh.update(3, {})
-        ebh.update(4, {})
-        ebh.update(5, {})
-        hdp = ebh.collect(start_time, end_time)[0]
+        ebh.update(-1, {}, data_points)
+        ebh.update(0, {}, data_points)
+        ebh.update(1, {}, data_points)
+        ebh.update(2, {}, data_points)
+        ebh.update(3, {}, data_points)
+        ebh.update(4, {}, data_points)
+        ebh.update(5, {}, data_points)
+        hdp = ebh.collect(start_time, end_time, data_points)[0]
 
         _(hdp.bucket_counts).must_equal([2, 2, 2, 1])
       end
@@ -227,9 +228,9 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
       let(:boundaries) { [0] }
 
       it 'aggregates' do
-        ebh.update(-1, {})
-        ebh.update(1, {})
-        hdp = ebh.collect(start_time, end_time)[0]
+        ebh.update(-1, {}, data_points)
+        ebh.update(1, {}, data_points)
+        hdp = ebh.collect(start_time, end_time, data_points)[0]
 
         _(hdp.bucket_counts).must_equal([1, 1])
       end
@@ -239,9 +240,9 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
       let(:boundaries) { [] }
 
       it 'aggregates but does not record bucket counts' do
-        ebh.update(-1, {})
-        ebh.update(3, {})
-        hdp = ebh.collect(start_time, end_time)[0]
+        ebh.update(-1, {}, data_points)
+        ebh.update(3, {}, data_points)
+        hdp = ebh.collect(start_time, end_time, data_points)[0]
 
         _(hdp.bucket_counts).must_be_nil
         _(hdp.explicit_bounds).must_be_nil
@@ -256,9 +257,9 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
       let(:boundaries) { nil }
 
       it 'aggregates but does not record bucket counts' do
-        ebh.update(-1, {})
-        ebh.update(3, {})
-        hdp = ebh.collect(start_time, end_time)[0]
+        ebh.update(-1, {}, data_points)
+        ebh.update(3, {}, data_points)
+        hdp = ebh.collect(start_time, end_time, data_points)[0]
 
         _(hdp.bucket_counts).must_be_nil
         _(hdp.explicit_bounds).must_be_nil
