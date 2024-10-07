@@ -26,7 +26,7 @@ module OpenTelemetry
             record_min_max: true
           )
             @data_points = {}
-            @aggregation_temporality = aggregation_temporality
+            @aggregation_temporality = aggregation_temporality.to_sym
             @boundaries = boundaries && !boundaries.empty? ? boundaries.sort : nil
             @record_min_max = record_min_max
           end
