@@ -33,7 +33,6 @@ Approvers ([@open-telemetry/ruby-approvers](https://github.com/orgs/open-telemet
 - [Andrew Hayworth](https://github.com/ahayworth), Shopify
 - [Sam Handler](https://github.com/plantfansam), Shopify
 - [Robb Kidd](https://github.com/robbkidd), Honeycomb
-- [Kayla Reopelle](https://github.com/kaylareopelle), New Relic
 
 *Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#approver).*
 
@@ -43,6 +42,7 @@ Maintainers ([@open-telemetry/ruby-maintainers](https://github.com/orgs/open-tel
 - [Francis Bogsanyi](https://github.com/fbogsany), Shopify
 - [Matthew Wear](https://github.com/mwear), Lightstep
 - [Daniel Azuma](https://github.com/dazuma), Google
+- [Kayla Reopelle](https://github.com/kaylareopelle), New Relic
 
 *Find more about the maintainer role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#maintainer).*
 
