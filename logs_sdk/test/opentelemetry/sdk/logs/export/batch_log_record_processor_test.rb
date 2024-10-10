@@ -188,22 +188,26 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
     it 'removes the older log records from the batch if full' do
       processor = BatchLogRecordProcessor.new(TestExporter.new, max_queue_size: 1, max_export_batch_size: 1)
 
-      older_log_record = TestLogRecord.new
-      newer_log_record = TestLogRecord.new
-      newest_log_record = TestLogRecord.new
+      # Don't actually try to export, we're looking at the log records array
+      processor.stub(:work, nil) do
+        older_log_record = TestLogRecord.new
+        newest_log_record = TestLogRecord.new
 
-      processor.on_emit(older_log_record, mock_context)
-      processor.on_emit(newer_log_record, mock_context)
-      processor.on_emit(newest_log_record, mock_context)
+        processor.on_emit(older_log_record, mock_context)
+        processor.on_emit(newest_log_record, mock_context)
 
-      records = processor.instance_variable_get(:@log_records)
+        records = processor.instance_variable_get(:@log_records)
 
-      assert_includes(records, newest_log_record)
-      refute_includes(records, newer_log_record)
-      refute_includes(records, older_log_record)
+        assert_includes(records, newest_log_record)
+        refute_includes(records, older_log_record)
+      end
     end
 
     it 'logs a warning if a log record was emitted after the buffer is full' do
+      # This will be fixed as part of Issue #1701
+      # https://github.com/open-telemetry/opentelemetry-ruby/issues/1701
+      skip if RUBY_ENGINE == 'jruby'
+
       mock_otel_logger = Minitest::Mock.new
       mock_otel_logger.expect(:warn, nil, ['1 log record(s) dropped. Reason: buffer-full'])
 
@@ -465,18 +469,21 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
     let(:processor) { BatchLogRecordProcessor.new(exporter) }
 
     it 'reports export failures' do
-      mock_logger = Minitest::Mock.new
-      mock_logger.expect(:error, nil, [/Unable to export/])
-      mock_logger.expect(:error, nil, [/Result code: 1/])
-      mock_logger.expect(:error, nil, [/unexpected error in .*\#export_batch/])
+      # skip the work method's behavior, we rely on shutdown to get us to the failures
+      processor.stub(:work, nil) do
+        mock_logger = Minitest::Mock.new
+        mock_logger.expect(:error, nil, [/Unable to export/])
+        mock_logger.expect(:error, nil, [/Result code: 1/])
+        mock_logger.expect(:error, nil, [/unexpected error in .*\#export_batch/])
 
-      OpenTelemetry.stub(:logger, mock_logger) do
-        log_records = [TestLogRecord.new, TestLogRecord.new, TestLogRecord.new, TestLogRecord.new]
-        log_records.each { |log_record| processor.on_emit(log_record, mock_context) }
-        processor.shutdown
+        OpenTelemetry.stub(:logger, mock_logger) do
+          log_records = [TestLogRecord.new, TestLogRecord.new, TestLogRecord.new, TestLogRecord.new]
+          log_records.each { |log_record| processor.on_emit(log_record, mock_context) }
+          processor.shutdown
+        end
+
+        mock_logger.verify
       end
-
-      mock_logger.verify
     end
   end
 

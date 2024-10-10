@@ -16,7 +16,7 @@ The `opentelemetry-semantic_conventions` gem provides auto-generated constants t
 
 Install the gem using:
 
-```
+```sh
 gem install opentelemetry-semantic_conventions
 ```
 
@@ -45,4 +45,4 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 The `opentelemetry-semantic_conventions` gem is distributed under the Apache 2.0 license. See LICENSE for more information.
 
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
-[semantic-conventions]: https://github.com/open-telemetry/opentelemetry-specification/tree/main/semantic_conventions
+[semantic-conventions]: https://github.com/open-telemetry/opentelemetry-specification/tree/v1.20.0/semantic_conventions
