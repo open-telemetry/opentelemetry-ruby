@@ -1,0 +1,32 @@
+name: Conventional Commits Validation
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}  # Ensure that only one instance of this workflow is running per Pull Request
+  cancel-in-progress: true  # Cancel any previous runs of this workflow
+
+jobs:
+  validate-commits:
+    name: Conventional Commits Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: dev-build-deploy/commit-me@v1.5.0
+        env:
+          FORCE_COLOR: 3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          include-commits: false
+          update-labels: false
+          config: ".commit-me.json"
