@@ -26,7 +26,7 @@ describe OpenTelemetry::SDK do
       counter.add(4, attributes: { 'd' => 'e' })
 
       metric_exporter.pull
-      last_snapshot = metric_exporter.metric_snapshots.last
+      last_snapshot = metric_exporter.metric_snapshots
 
       _(last_snapshot).wont_be_empty
       _(last_snapshot[0].name).must_equal('counter')
