@@ -15,6 +15,7 @@ Metrics is one of the core signals in OpenTelemetry. This package allows you to 
 This gem does not have a full implementation of the Metrics SDK specification. The work is in progress.
 
 At this time, you should be able to:
+
 * Create synchronous:
   * counters
   * up down counters
@@ -26,6 +27,7 @@ At this time, you should be able to:
 * Use delta aggregation temporality
 
 We do not yet have support for:
+
 * Asynchronous instruments
 * Cumulative aggregation temporality
 * Metrics Views
@@ -41,7 +43,7 @@ Until the Ruby implementation of OpenTelemetry Metrics becomes stable, the funct
 
 Install the gems using:
 
-```
+```sh
 gem install opentelemetry-metrics-sdk
 gem install opentelemetry-sdk
 ```
@@ -96,7 +98,6 @@ During this experimental stage, we're looking for lots of community feedback abo
 ## License
 
 The `opentelemetry-metrics-sdk` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
-
 
 [metrics-sdk]: https://opentelemetry.io/docs/specs/otel/metrics/sdk/
 [opentelemetry-home]: https://opentelemetry.io
