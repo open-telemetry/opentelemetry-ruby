@@ -26,7 +26,7 @@ module OpenTelemetry
     module OTLP
       module Metrics
         # An OpenTelemetry metrics exporter that sends metrics over HTTP as Protobuf encoded OTLP ExportMetricsServiceRequest.
-        class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricReader # rubocop:disable Metrics/ClassLength
+        class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricReader
           include Util
 
           attr_reader :metric_snapshots
@@ -47,6 +47,8 @@ module OpenTelemetry
 
           def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4318/v1/metrics'),
                          certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
+                         client_certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE'),
+                         client_key_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY', 'OTEL_EXPORTER_OTLP_CLIENT_KEY'),
                          ssl_verify_mode: MetricsExporter.ssl_verify_mode,
                          headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
@@ -63,7 +65,7 @@ module OpenTelemetry
                      URI(endpoint)
                    end
 
-            @http = http_connection(@uri, ssl_verify_mode, certificate_file)
+            @http = http_connection(@uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
 
             @path = @uri.path
             @headers = prepare_headers(headers)
@@ -87,7 +89,7 @@ module OpenTelemetry
             end
           end
 
-          def send_bytes(bytes, timeout:) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+          def send_bytes(bytes, timeout:)
             return FAILURE if bytes.nil?
 
             request = Net::HTTP::Post.new(@path)
@@ -115,7 +117,7 @@ module OpenTelemetry
               @http.read_timeout = remaining_timeout
               @http.write_timeout = remaining_timeout
               @http.start unless @http.started?
-              response = measure_request_duration { @http.request(request) }
+              response = @http.request(request)
               case response
               when Net::HTTPOK
                 response.body # Read and discard body
@@ -181,7 +183,7 @@ module OpenTelemetry
             @http.write_timeout = @timeout
           end
 
-          def encode(metrics_data) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
+          def encode(metrics_data)
             Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.encode(
               Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.new(
                 resource_metrics: metrics_data
@@ -215,7 +217,7 @@ module OpenTelemetry
           # current metric sdk only implements instrument: :counter -> :sum, :histogram -> :histogram
           #
           # metrics [MetricData]
-          def as_otlp_metrics(metrics) # rubocop:disable Metrics/MethodLength
+          def as_otlp_metrics(metrics)
             case metrics.instrument_kind
             when :observable_gauge
               Opentelemetry::Proto::Metrics::V1::Metric.new(

@@ -15,11 +15,13 @@ module OpenTelemetry
           ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
           DEFAULT_USER_AGENT = "OTel-OTLP-MetricsExporter-Ruby/#{OpenTelemetry::Exporter::OTLP::Metrics::VERSION} Ruby/#{RUBY_VERSION} (#{RUBY_PLATFORM}; #{RUBY_ENGINE}/#{RUBY_ENGINE_VERSION})".freeze
 
-          def http_connection(uri, ssl_verify_mode, certificate_file)
+          def http_connection(uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
             http = Net::HTTP.new(uri.host, uri.port)
             http.use_ssl = uri.scheme == 'https'
             http.verify_mode = ssl_verify_mode
             http.ca_file = certificate_file unless certificate_file.nil?
+            http.cert = OpenSSL::X509::Certificate.new(File.read(client_certificate_file)) unless client_certificate_file.nil?
+            http.key = OpenSSL::PKey::RSA.new(File.read(client_key_file)) unless client_key_file.nil?
             http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
             http
           end
@@ -67,16 +69,6 @@ module OpenTelemetry
             headers
           end
 
-          def measure_request_duration
-            start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-            begin
-              yield
-            ensure
-              stop = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-              1000.0 * (stop - start)
-            end
-          end
-
           def parse_headers(raw)
             entries = raw.split(',')
             raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if entries.empty?
@@ -97,7 +89,7 @@ module OpenTelemetry
             end
           end
 
-          def backoff?(retry_count:, reason:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+          def backoff?(retry_count:, reason:, retry_after: nil)
             return false if retry_count > RETRY_COUNT
 
             sleep_interval = nil
