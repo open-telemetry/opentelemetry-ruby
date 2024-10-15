@@ -1,0 +1,4 @@
+{
+  "include-pull-requests": true,
+    "types": [ "chore", "ci", "docs", "feat", "fix", "perf", "refactor", "release", "revert", "squash", "style", "test" ]
+}
