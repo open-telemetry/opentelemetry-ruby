@@ -134,8 +134,26 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
     end
   end
 
-  # TODO: OpenTelemetry.meter_provider.add_view
   describe '#add_view' do
+    it 'adds a view with aggregation' do
+      OpenTelemetry.meter_provider.add_view('test', aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::Drop.new)
+
+      registered_views = OpenTelemetry.meter_provider.instance_variable_get(:@registered_views)
+
+      _(registered_views.size).must_equal 1
+      _(registered_views[0].class).must_equal ::OpenTelemetry::SDK::Metrics::View::RegisteredView
+      _(registered_views[0].name).must_equal 'test'
+      _(registered_views[0].aggregation.class).must_equal ::OpenTelemetry::SDK::Metrics::Aggregation::Drop
+    end
+
+    it 'add a view without aggregation but aggregation as nil' do
+      OpenTelemetry.meter_provider.add_view('test')
+
+      registered_views = OpenTelemetry.meter_provider.instance_variable_get(:@registered_views)
+
+      _(registered_views.size).must_equal 1
+      _(registered_views[0].aggregation).must_be_nil
+    end
   end
 
   private

@@ -24,6 +24,15 @@ describe OpenTelemetry::SDK::Logs::LoggerProvider do
     end
   end
 
+  describe '#initialize' do
+    it 'activates a default LogRecordLimits' do
+      assert_equal(
+        OpenTelemetry::SDK::Logs::LogRecordLimits::DEFAULT,
+        logger_provider.instance_variable_get(:@log_record_limits)
+      )
+    end
+  end
+
   describe '#add_log_record_processor' do
     it "adds the processor to the logger provider's processors" do
       assert_equal(0, logger_provider.instance_variable_get(:@log_record_processors).length)
@@ -73,15 +82,15 @@ describe OpenTelemetry::SDK::Logs::LoggerProvider do
       # :version is nil by default, but explicitly setting it here
       # to make the test easier to read
       logger = logger_provider.logger(name: 'name', version: nil)
-      assert_equal(logger.instance_variable_get(:@instrumentation_scope).version, '')
+      assert_equal('', logger.instance_variable_get(:@instrumentation_scope).version)
     end
 
     it 'creates a new logger with the passed-in name and version' do
       name = 'name'
       version = 'version'
       logger = logger_provider.logger(name: name, version: version)
-      assert_equal(logger.instance_variable_get(:@instrumentation_scope).name, name)
-      assert_equal(logger.instance_variable_get(:@instrumentation_scope).version, version)
+      assert_equal(name, logger.instance_variable_get(:@instrumentation_scope).name)
+      assert_equal(version, logger.instance_variable_get(:@instrumentation_scope).version)
     end
   end
 
