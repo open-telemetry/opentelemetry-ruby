@@ -23,16 +23,6 @@ describe OpenTelemetry::SDK::Metrics::ConfiguratorPatch do
     }
   end
 
-  def setup
-    # Suppress log warnings about trace exporter absence
-    ENV['OTEL_TRACES_EXPORTER'] = 'none'
-  end
-
-  def teardown
-    # Let the settings go back to their default
-    ENV['OTEL_TRACES_EXPORTER'] = nil
-  end
-
   describe '#configure' do
     describe 'meter_provider' do
       it 'is an instance of SDK::Metrics::MeterProvider' do
