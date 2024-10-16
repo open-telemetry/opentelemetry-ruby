@@ -186,20 +186,23 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
     end
 
     it 'removes the older log records from the batch if full' do
-      processor = BatchLogRecordProcessor.new(TestExporter.new, max_queue_size: 1, max_export_batch_size: 1)
+      OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_BLRP_START_THREAD_ON_BOOT' => 'false') do
+        processor = BatchLogRecordProcessor.new(TestExporter.new, max_queue_size: 1, max_export_batch_size: 1)
 
-      # Don't actually try to export, we're looking at the log records array
-      processor.stub(:work, nil) do
-        older_log_record = TestLogRecord.new
-        newest_log_record = TestLogRecord.new
+        # Don't actually try to export, we're looking at the log records array
+        processor.stub(:work, nil) do
 
-        processor.on_emit(older_log_record, mock_context)
-        processor.on_emit(newest_log_record, mock_context)
+          older_log_record = TestLogRecord.new
+          newest_log_record = TestLogRecord.new
 
-        records = processor.instance_variable_get(:@log_records)
+          processor.on_emit(older_log_record, mock_context)
+          processor.on_emit(newest_log_record, mock_context)
 
-        assert_includes(records, newest_log_record)
-        refute_includes(records, older_log_record)
+          records = processor.instance_variable_get(:@log_records)
+
+          assert_includes(records, newest_log_record)
+          refute_includes(records, older_log_record)
+        end
       end
     end
 
