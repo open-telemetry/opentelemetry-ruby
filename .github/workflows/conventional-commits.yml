@@ -2,12 +2,12 @@ name: Conventional Commits Validation
 
 on:
   workflow_dispatch:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
-      - edited
+  # pull_request:
+  #   types:
+  #     - opened
+  #     - synchronize
+  #     - reopened
+  #     - edited
 
 permissions:
   contents: read
