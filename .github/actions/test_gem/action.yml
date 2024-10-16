@@ -96,7 +96,12 @@ runs:
             echo "::endgroup::"
           done
         else
-          bundle exec rake test
+          i=0; while bundle exec rake test
+          do
+            echo i: $i
+            ((i=i+1))
+          done
+          echo i: $i
         fi
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
