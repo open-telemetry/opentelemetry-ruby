@@ -84,6 +84,8 @@ module OpenTelemetry
 
           # metrics Array[MetricData]
           def export(metrics, timeout: nil)
+            puts 'MetricsExporter#export'
+            puts metrics
             @mutex.synchronize do
               send_bytes(encode(metrics), timeout: timeout)
             end
@@ -184,6 +186,8 @@ module OpenTelemetry
           end
 
           def encode(metrics_data)
+            puts 'def encode'
+            puts metrics_data
             Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.encode(
               Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.new(
                 resource_metrics: metrics_data

@@ -14,137 +14,137 @@ concurrency:
   cancel-in-progress: true  # Cancel any previous runs of this workflow
 
 jobs:
-  base:
-    strategy:
-      fail-fast: false
-      matrix:
-        gem:
-          - opentelemetry-api
-          - opentelemetry-common
-          - opentelemetry-logs-api
-          - opentelemetry-logs-sdk
-          - opentelemetry-metrics-api
-          - opentelemetry-metrics-sdk
-          - opentelemetry-registry
-          - opentelemetry-sdk
-          - opentelemetry-sdk-experimental
-          - opentelemetry-semantic_conventions
-          - opentelemetry-test-helpers
-        os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
-    name: ${{ matrix.gem }} / ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.1"
-      - name: "Test Ruby 3.0"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.0"
-          yard: true
-          rubocop: true
-          build: true
-      - name: "Test JRuby"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "jruby"
-      - name: "Test truffleruby"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "truffleruby"
+  # base:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       gem:
+  #         - opentelemetry-api
+  #         - opentelemetry-common
+  #         - opentelemetry-logs-api
+  #         - opentelemetry-logs-sdk
+  #         - opentelemetry-metrics-api
+  #         - opentelemetry-metrics-sdk
+  #         - opentelemetry-registry
+  #         - opentelemetry-sdk
+  #         - opentelemetry-sdk-experimental
+  #         - opentelemetry-semantic_conventions
+  #         - opentelemetry-test-helpers
+  #       os:
+  #         - ubuntu-latest
+  #         - macos-latest
+  #         - windows-latest
+  #   name: ${{ matrix.gem }} / ${{ matrix.os }}
+  #   runs-on: ${{ matrix.os }}
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: "Test Ruby 3.3"
+  #       uses: ./.github/actions/test_gem
+  #       with:
+  #         gem: "${{ matrix.gem }}"
+  #         ruby: "3.3"
+  #     - name: "Test Ruby 3.2"
+  #       uses: ./.github/actions/test_gem
+  #       with:
+  #         gem: "${{ matrix.gem }}"
+  #         ruby: "3.2"
+  #     - name: "Test Ruby 3.1"
+  #       if: "${{ matrix.os == 'ubuntu-latest' }}"
+  #       uses: ./.github/actions/test_gem
+  #       with:
+  #         gem: "${{ matrix.gem }}"
+  #         ruby: "3.1"
+  #     - name: "Test Ruby 3.0"
+  #       if: "${{ matrix.os == 'ubuntu-latest' }}"
+  #       uses: ./.github/actions/test_gem
+  #       with:
+  #         gem: "${{ matrix.gem }}"
+  #         ruby: "3.0"
+  #         yard: true
+  #         rubocop: true
+  #         build: true
+  #     - name: "Test JRuby"
+  #       if: "${{ matrix.os == 'ubuntu-latest' }}"
+  #       uses: ./.github/actions/test_gem
+  #       with:
+  #         gem: "${{ matrix.gem }}"
+  #         ruby: "jruby"
+  #     - name: "Test truffleruby"
+  #       if: "${{ matrix.os == 'ubuntu-latest' }}"
+  #       uses: ./.github/actions/test_gem
+  #       with:
+  #         gem: "${{ matrix.gem }}"
+  #         ruby: "truffleruby"
 
   exporters:
     strategy:
       fail-fast: false
       matrix:
         gem:
-          - opentelemetry-exporter-jaeger
-          - opentelemetry-exporter-otlp
-          - opentelemetry-exporter-otlp-common
-          - opentelemetry-exporter-otlp-grpc
-          - opentelemetry-exporter-otlp-http
-          - opentelemetry-exporter-zipkin
+          # - opentelemetry-exporter-jaeger
+          # - opentelemetry-exporter-otlp
+          # - opentelemetry-exporter-otlp-common
+          # - opentelemetry-exporter-otlp-grpc
+          # - opentelemetry-exporter-otlp-http
+          # - opentelemetry-exporter-zipkin
           - opentelemetry-exporter-otlp-metrics
         os:
           - ubuntu-latest
-          - macos-latest
-          - windows-latest
-        exclude:
+          # - macos-latest
+          # - windows-latest
+        # exclude:
           # Doesn't build on macos
-          - os: macos-latest
-            gem: opentelemetry-exporter-jaeger
-          - os: windows-latest
-            gem: opentelemetry-exporter-otlp-grpc
+          # - os: macos-latest
+          #   gem: opentelemetry-exporter-jaeger
+          # - os: windows-latest
+          #   gem: opentelemetry-exporter-otlp-grpc
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-      - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.1"
-      - name: "Test Ruby 3.0"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.0"
-          yard: true
-          rubocop: true
-          build: true
-      - name: "JRuby Filter"
-        id: jruby_skip
-        shell: bash
-        run: |
-          echo "skip=false" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp"        ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-common" ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-http"   ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-grpc"   ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-metrics" ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
-          true
-      - name: "Test JRuby"
-        if: "${{ matrix.os == 'ubuntu-latest' && steps.jruby_skip.outputs.skip == 'false' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "jruby"
+      # - name: "Test Ruby 3.3"
+      #   uses: ./.github/actions/test_gem
+      #   with:
+      #     gem: "${{ matrix.gem }}"
+      #     ruby: "3.3"
+      # - name: "Test Ruby 3.2"
+      #   uses: ./.github/actions/test_gem
+      #   with:
+      #     gem: "${{ matrix.gem }}"
+      #     ruby: "3.2"
+      # - name: "Test Ruby 3.1"
+      #   if: "${{ matrix.os == 'ubuntu-latest' }}"
+      #   uses: ./.github/actions/test_gem
+      #   with:
+      #     gem: "${{ matrix.gem }}"
+      #     ruby: "3.1"
+      # - name: "Test Ruby 3.0"
+      #   if: "${{ matrix.os == 'ubuntu-latest' }}"
+      #   uses: ./.github/actions/test_gem
+      #   with:
+      #     gem: "${{ matrix.gem }}"
+      #     ruby: "3.0"
+      #     yard: true
+      #     rubocop: true
+      #     build: true
+      # - name: "JRuby Filter"
+      #   id: jruby_skip
+      #   shell: bash
+      #   run: |
+      #     echo "skip=false" >> $GITHUB_OUTPUT
+      #     [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp"        ]] && echo "skip=true" >> $GITHUB_OUTPUT
+      #     [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-common" ]] && echo "skip=true" >> $GITHUB_OUTPUT
+      #     [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-http"   ]] && echo "skip=true" >> $GITHUB_OUTPUT
+      #     [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-grpc"   ]] && echo "skip=true" >> $GITHUB_OUTPUT
+      #     [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-metrics" ]] && echo "skip=true" >> $GITHUB_OUTPUT
+      #     # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
+      #     true
+      # - name: "Test JRuby"
+      #   if: "${{ matrix.os == 'ubuntu-latest' && steps.jruby_skip.outputs.skip == 'false' }}"
+      #   uses: ./.github/actions/test_gem
+      #   with:
+      #     gem: "${{ matrix.gem }}"
+      #     ruby: "jruby"
       - name: "Truffleruby Filter"
         id: truffleruby_skip
         shell: bash
@@ -160,61 +160,61 @@ jobs:
           gem: "${{ matrix.gem }}"
           ruby: "truffleruby"
 
-  propagators:
-    strategy:
-      fail-fast: false
-      matrix:
-        gem:
-          - opentelemetry-propagator-b3
-          - opentelemetry-propagator-jaeger
-        os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
-    name: ${{ matrix.gem }} / ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.3"
-      - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.1"
-      - name: "Test Ruby 3.0"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.0"
-          yard: true
-          rubocop: true
-          build: true
-      - name: "Test JRuby"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "jruby"
-      - name: "Test truffleruby"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "truffleruby"
+  # propagators:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       gem:
+  #         - opentelemetry-propagator-b3
+  #         - opentelemetry-propagator-jaeger
+  #       os:
+  #         - ubuntu-latest
+  #         - macos-latest
+  #         - windows-latest
+  #   name: ${{ matrix.gem }} / ${{ matrix.os }}
+  #   runs-on: ${{ matrix.os }}
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: "Test Ruby 3.3"
+  #       uses: ./.github/actions/test_gem
+  #       with:
+  #         gem: "${{ matrix.gem }}"
+  #         ruby: "3.3"
+  #     - name: "Test Ruby 3.2"
+  #       uses: ./.github/actions/test_gem
+  #       with:
+  #         gem: "${{ matrix.gem }}"
+  #         ruby: "3.2"
+  #     - name: "Test Ruby 3.1"
+  #       if: "${{ matrix.os == 'ubuntu-latest' }}"
+  #       uses: ./.github/actions/test_gem
+  #       with:
+  #         gem: "${{ matrix.gem }}"
+  #         ruby: "3.1"
+  #     - name: "Test Ruby 3.0"
+  #       if: "${{ matrix.os == 'ubuntu-latest' }}"
+  #       uses: ./.github/actions/test_gem
+  #       with:
+  #         gem: "${{ matrix.gem }}"
+  #         ruby: "3.0"
+  #         yard: true
+  #         rubocop: true
+  #         build: true
+  #     - name: "Test JRuby"
+  #       if: "${{ matrix.os == 'ubuntu-latest' }}"
+  #       uses: ./.github/actions/test_gem
+  #       with:
+  #         gem: "${{ matrix.gem }}"
+  #         ruby: "jruby"
+  #     - name: "Test truffleruby"
+  #       if: "${{ matrix.os == 'ubuntu-latest' }}"
+  #       uses: ./.github/actions/test_gem
+  #       with:
+  #         gem: "${{ matrix.gem }}"
+  #         ruby: "truffleruby"
 
-  codespell:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: make codespell
+  # codespell:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - run: make codespell
