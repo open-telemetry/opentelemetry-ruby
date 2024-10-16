@@ -470,6 +470,7 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
 
     it 'reports export failures' do
       # skip the work method's behavior, we rely on shutdown to get us to the failures
+      puts '**************************************'
       processor.stub(:work, nil) do
         mock_logger = Minitest::Mock.new
         mock_logger.expect(:error, nil, [/Unable to export/])
@@ -483,6 +484,7 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
         end
 
         mock_logger.verify
+        puts '**************************************'
       end
     end
   end
