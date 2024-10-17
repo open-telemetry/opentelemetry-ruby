@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 (14..23).each do |i|
-  version = "3.#{i}"
+  version = "3.#{i}.0"
   appraise "google-protobuf-#{version}" do
     gem 'google-protobuf', "~> #{version}"
   end
