@@ -87,6 +87,7 @@ jobs:
           - opentelemetry-exporter-otlp-grpc
           - opentelemetry-exporter-otlp-http
           - opentelemetry-exporter-zipkin
+          - opentelemetry-exporter-otlp-logs
           - opentelemetry-exporter-otlp-metrics
         os:
           - ubuntu-latest
@@ -134,8 +135,9 @@ jobs:
           echo "skip=false" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp"        ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-common" ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-http"   ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-grpc"   ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-http"   ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-logs" ]] && echo "skip=true" >> $GITHUB_OUTPUT
           [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-metrics" ]] && echo "skip=true" >> $GITHUB_OUTPUT
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
           true
