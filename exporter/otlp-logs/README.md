@@ -6,7 +6,7 @@ The `opentelemetry-exporter-otlp-logs` gem provides an [OTLP](https://github.com
 
 [OpenTelemetry][opentelemetry-home] is an open source observability framework, providing a general-purpose API, SDK, and related tools required for the instrumentation of cloud-native software, frameworks, and libraries.
 
-OpenTelemetry provides a single set of APIs, libraries, agents, and collector services to capture distributed traces and metrics from your application. You can analyze them using Prometheus, Jaeger, and other observability tools.
+OpenTelemetry provides a single set of APIs, libraries, agents, and collector services to capture distributed traces, metrics and logs from your application. You can analyze them using Prometheus, Jaeger, and other observability tools.
 
 ## How does this gem fit in?
 
@@ -63,9 +63,9 @@ For additional examples, see the [examples on github][examples-github].
 
 The collector exporter can be configured explicitly in code, or via environment variables. The configuration parameters, environment variables, and defaults are shown below.
 
-| Parameter           | Environment variable                         | Default                             |
-| ------------------- | -------------------------------------------- | ----------------------------------- |
-| `endpoint:`               | `OTEL_EXPORTER_OTLP_ENDPOINT`                | `"http://localhost:4318/v1/traces"` |
+| Parameter                 | Environment variable                         | Default                             |
+| ------------------------- | -------------------------------------------- | ----------------------------------- |
+| `endpoint:`               | `OTEL_EXPORTER_OTLP_ENDPOINT`                | `"http://localhost:4318/v1/logs"`   |
 | `certificate_file:`       | `OTEL_EXPORTER_OTLP_CERTIFICATE`             |                                     |
 | `client_certificate_file` | `OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE`      |                                     |
 | `client_key_file`         | `OTEL_EXPORTER_OTLP_CLIENT_KEY`              |                                     |
