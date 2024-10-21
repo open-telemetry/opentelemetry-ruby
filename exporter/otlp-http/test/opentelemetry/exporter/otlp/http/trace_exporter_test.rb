@@ -632,10 +632,6 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
       )
 
       assert_requested(:post, 'http://localhost:4318/v1/traces') do |req|
-        # Zlib.gzip adds a timestamp, which may be different than the one in the
-        # encoded req.body due to the test timing, and may cause an intermittent
-        # failure. Compare the unzipped request with the encoded_estr to avoid
-        # the timestamp interfering with the equality check.
         Zlib.gunzip(req.body) == encoded_etsr
       end
     end
