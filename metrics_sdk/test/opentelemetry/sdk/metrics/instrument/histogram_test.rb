@@ -46,9 +46,9 @@ describe OpenTelemetry::SDK::Metrics::Instrument::Histogram do
     histogram.record(20)
 
     metric_exporter.pull
-    last_snapshot = metric_exporter.metric_snapshots.last
-    _(last_snapshot[0].data_points[0].bucket_counts).must_equal([3, 1, 0, 1])
+    last_snapshot = metric_exporter.metric_snapshots
 
+    _(last_snapshot[0].data_points[0].bucket_counts).must_equal([3, 1, 0, 1])
     _(last_snapshot[0].name).must_equal('histogram')
     _(last_snapshot[0].unit).must_equal('s')
     _(last_snapshot[0].description).must_equal('test')
