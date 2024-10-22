@@ -13,8 +13,8 @@ module OpenTelemetry
       HISTOGRAM = Instrument::Histogram.new
       OBSERVABLE_GAUGE = Instrument::ObservableGauge.new
       UP_DOWN_COUNTER = Instrument::UpDownCounter.new
-      OBSERVABLE_UP_DOWN_COUNTER = Instrument::ObservableUpDownCounter.new      
-      
+      OBSERVABLE_UP_DOWN_COUNTER = Instrument::ObservableUpDownCounter.new
+
       private_constant(:COUNTER, :OBSERVABLE_COUNTER, :HISTOGRAM, :OBSERVABLE_GAUGE, :UP_DOWN_COUNTER, :OBSERVABLE_UP_DOWN_COUNTER)
 
       EMPTY_ADVICE = {}.freeze
