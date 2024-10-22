@@ -41,9 +41,6 @@ describe OpenTelemetry::Exporter::OTLP::Common do
     end
 
     it 'translates all the things' do
-      # TODO: See issue #1507 to fix
-      skip 'Intermittently fails' if RUBY_ENGINE == 'truffleruby'
-
       OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new(resource: OpenTelemetry::SDK::Resources::Resource.telemetry_sdk)
       tracer = OpenTelemetry.tracer_provider.tracer('tracer', 'v0.0.1')
       other_tracer = OpenTelemetry.tracer_provider.tracer('other_tracer')
