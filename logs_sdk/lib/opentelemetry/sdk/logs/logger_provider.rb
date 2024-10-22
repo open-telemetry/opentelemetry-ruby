@@ -9,6 +9,9 @@ module OpenTelemetry
     module Logs
       # The SDK implementation of OpenTelemetry::Logs::LoggerProvider.
       class LoggerProvider < OpenTelemetry::Logs::LoggerProvider
+        Key = Struct.new(:name, :version)
+        private_constant(:Key)
+
         UNEXPECTED_ERROR_MESSAGE = 'unexpected error in ' \
           'OpenTelemetry::SDK::Logs::LoggerProvider#%s'
 
@@ -28,6 +31,8 @@ module OpenTelemetry
           @mutex = Mutex.new
           @resource = resource
           @stopped = false
+          @registry = {}
+          @registry_mutex = Mutex.new
         end
 
         # Returns an {OpenTelemetry::SDK::Logs::Logger} instance.
@@ -37,14 +42,21 @@ module OpenTelemetry
         #
         # @return [OpenTelemetry::SDK::Logs::Logger]
         def logger(name:, version: nil)
-          version ||= ''
+          if @stopped
+            OpenTelemetry.logger.warn('calling LoggerProvider#logger after shutdown, a noop logger will be returned')
+            OpenTelemetry::Logs::Logger.new
+          else
+            version ||= ''
 
-          if !name.is_a?(String) || name.empty?
-            OpenTelemetry.logger.warn('LoggerProvider#logger called with an ' \
-              "invalid name. Name provided: #{name.inspect}")
+            if !name.is_a?(String) || name.empty?
+              OpenTelemetry.logger.warn('LoggerProvider#logger called with an ' \
+                "invalid name. Name provided: #{name.inspect}")
+            end
+
+            @registry_mutex.synchronize do
+              @registry[Key.new(name, version)] ||= Logger.new(name, version, self)
+            end
           end
-
-          Logger.new(name, version, self)
         end
 
         # Adds a new log record processor to this LoggerProvider's
