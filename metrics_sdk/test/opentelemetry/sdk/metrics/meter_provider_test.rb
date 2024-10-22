@@ -9,7 +9,11 @@ require 'test_helper'
 describe OpenTelemetry::SDK::Metrics::MeterProvider do
   before do
     reset_metrics_sdk
-    OpenTelemetry::SDK.configure
+    # The MeterProvider tests deal with mock MetricReaders that are manually added
+    # Run the tests without the configuration patch interfering with the setup
+    OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXPORTER' => 'none') do
+      OpenTelemetry::SDK.configure
+    end
   end
 
   describe '#meter' do

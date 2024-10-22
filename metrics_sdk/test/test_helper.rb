@@ -33,3 +33,6 @@ def with_test_logger
 ensure
   OpenTelemetry.logger = original_logger
 end
+
+# Suppress warn-level logs about a missing OTLP exporter for traces
+ENV['OTEL_TRACES_EXPORTER'] = 'none'
