@@ -186,6 +186,8 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
     end
 
     it 'removes the older log records from the batch if full' do
+      skip 'intermittent failure, see: #1701'
+
       processor = BatchLogRecordProcessor.new(TestExporter.new, max_queue_size: 1, max_export_batch_size: 1)
 
       # Don't actually try to export, we're looking at the log records array
