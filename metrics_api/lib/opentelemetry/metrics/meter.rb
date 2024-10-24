@@ -17,6 +17,8 @@ module OpenTelemetry
 
       private_constant(:COUNTER, :OBSERVABLE_COUNTER, :HISTOGRAM, :OBSERVABLE_GAUGE, :UP_DOWN_COUNTER, :OBSERVABLE_UP_DOWN_COUNTER)
 
+      EMPTY_ADVICE = {}.freeze
+
       DuplicateInstrumentError = Class.new(OpenTelemetry::Error)
       InstrumentNameError = Class.new(OpenTelemetry::Error)
       InstrumentUnitError = Class.new(OpenTelemetry::Error)
@@ -31,8 +33,8 @@ module OpenTelemetry
         create_instrument(:counter, name, unit, description, nil) { COUNTER }
       end
 
-      def create_histogram(name, unit: nil, description: nil)
-        create_instrument(:histogram, name, unit, description, nil) { HISTOGRAM }
+      def create_histogram(name, unit: nil, description: nil, advice: EMPTY_ADVICE)
+        create_instrument(:histogram, name, unit, description, nil, advice) { HISTOGRAM }
       end
 
       def create_up_down_counter(name, unit: nil, description: nil)
@@ -53,7 +55,7 @@ module OpenTelemetry
 
       private
 
-      def create_instrument(kind, name, unit, description, callback)
+      def create_instrument(kind, name, unit, description, callback, advice = EMPTY_ADVICE)
         @mutex.synchronize do
           OpenTelemetry.logger.warn("duplicate instrument registration occurred for instrument #{name}") if @instrument_registry.include? name
 
