@@ -36,8 +36,8 @@ receivers:
       # Default endpoints: 0.0.0.0:4317 for gRPC and 0.0.0.0:4318 for HTTP
 
 exporters:
-  logging:
-    loglevel: debug
+  debug:
+    verbosity: detailed
 
 processors:
   batch:
@@ -47,11 +47,11 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging]
+      exporters: [debug]
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging]
+      exporters: [debug]
 ```
 
 More information on how to setup the OTel collector can be found in the in [quick start docs](https://opentelemetry.io/docs/collector/quick-start/).
