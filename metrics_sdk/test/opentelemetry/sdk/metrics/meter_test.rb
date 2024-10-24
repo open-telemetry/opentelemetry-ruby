@@ -128,7 +128,6 @@ describe OpenTelemetry::SDK::Metrics::Meter do
         # unregister the callback_second from instruments counter_first and counter_second
         meter.unregister([counter_first, counter_second], callback_second)
 
-
         metric_exporter.reset
         metric_exporter.pull
         last_snapshot = metric_exporter.metric_snapshots
