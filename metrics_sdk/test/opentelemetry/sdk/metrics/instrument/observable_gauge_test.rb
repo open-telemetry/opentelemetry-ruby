@@ -21,7 +21,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableGauge do
     meter.create_observable_gauge('gauge', unit: 'smidgen', description: 'a small amount of something', callback: callback)
 
     metric_exporter.pull
-    last_snapshot = metric_exporter.metric_snapshots.last
+    last_snapshot = metric_exporter.metric_snapshots
 
     _(last_snapshot[0].name).must_equal('gauge')
     _(last_snapshot[0].unit).must_equal('smidgen')
@@ -38,7 +38,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableGauge do
     observable_gauge.observe(timeout: 10, attributes: { 'foo' => 'bar' })
 
     metric_exporter.pull
-    last_snapshot = metric_exporter.metric_snapshots.last
+    last_snapshot = metric_exporter.metric_snapshots
 
     _(last_snapshot[0].name).must_equal('gauge')
     _(last_snapshot[0].unit).must_equal('smidgen')

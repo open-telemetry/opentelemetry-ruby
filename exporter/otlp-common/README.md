@@ -26,12 +26,9 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 
 The `opentelemetry-exporter-otlp-common` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
 
-[opentelemetry-collector-home]: https://opentelemetry.io/docs/collector/about/
 [opentelemetry-home]: https://opentelemetry.io
-[bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
-[examples-github]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/examples
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions

@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
 
   # This is an intentionally loose dependency, since we want to be able to
   # release new versions of opentelemetry-semantic_conventions without requiring
-  # a new SDK release. The requirements of the SDK have been satisifed since the
+  # a new SDK release. The requirements of the SDK have been satisfied since the
   # initial release of opentelemetry-semantic_conventions, so we feel it is safe.
   spec.add_dependency 'opentelemetry-semantic_conventions'
 
@@ -43,7 +43,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'opentelemetry-test-helpers'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake', '~> 12.0'
-  spec.add_development_dependency 'rubocop', '~> 1.51.0'
+  spec.add_development_dependency 'rubocop', '~> 1.65'
   spec.add_development_dependency 'simplecov', '~> 0.17'
   spec.add_development_dependency 'yard', '~> 0.9'
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'

@@ -21,7 +21,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter do
     meter.create_observable_counter('counter', unit: 'smidgen', description: 'a small amount of something', callback: callback)
 
     metric_exporter.pull
-    last_snapshot = metric_exporter.metric_snapshots.last
+    last_snapshot = metric_exporter.metric_snapshots
 
     # puts "last_snapshot.inspect: #{last_snapshot.inspect}"
     _(last_snapshot[0].name).must_equal('counter')
@@ -40,7 +40,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter do
     observable_counter.timeout(10)
 
     metric_exporter.pull
-    last_snapshot = metric_exporter.metric_snapshots.last
+    last_snapshot = metric_exporter.metric_snapshots
 
     # puts "last_snapshot.inspect: #{last_snapshot.inspect}"
     _(last_snapshot[0].name).must_equal('counter')
@@ -58,7 +58,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter do
     observable_counter.observe(timeout: 10, attributes: { 'foo' => 'bar' }) # observe will make another data points modification
 
     metric_exporter.pull
-    last_snapshot = metric_exporter.metric_snapshots.last
+    last_snapshot = metric_exporter.metric_snapshots
 
     _(last_snapshot[0].name).must_equal('counter')
     _(last_snapshot[0].unit).must_equal('smidgen')
@@ -82,7 +82,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter do
     _(observable_counter.instance_variable_get(:@callbacks).size).must_equal 2
 
     metric_exporter.pull
-    last_snapshot = metric_exporter.metric_snapshots.last
+    last_snapshot = metric_exporter.metric_snapshots
 
     _(last_snapshot[0].name).must_equal('counter')
     _(last_snapshot[0].unit).must_equal('smidgen')
@@ -101,7 +101,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter do
     _(observable_counter.instance_variable_get(:@callbacks).size).must_equal 0
 
     metric_exporter.pull
-    last_snapshot = metric_exporter.metric_snapshots.last
+    last_snapshot = metric_exporter.metric_snapshots
 
     _(last_snapshot[0].name).must_equal('counter')
     _(last_snapshot[0].unit).must_equal('smidgen')
@@ -117,7 +117,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter do
     _(observable_counter.instance_variable_get(:@callbacks).size).must_equal 2
 
     metric_exporter.pull
-    last_snapshot = metric_exporter.metric_snapshots.last
+    last_snapshot = metric_exporter.metric_snapshots
 
     _(last_snapshot[0].name).must_equal('counter')
     _(last_snapshot[0].unit).must_equal('smidgen')
@@ -133,7 +133,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter do
     _(observable_counter.instance_variable_get(:@callbacks).size).must_equal 0
 
     metric_exporter.pull
-    last_snapshot = metric_exporter.metric_snapshots.last
+    last_snapshot = metric_exporter.metric_snapshots
     _(last_snapshot[0].data_points.size).must_equal 0
   end
 
@@ -143,7 +143,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter do
     _(observable_counter.instance_variable_get(:@callbacks).size).must_equal 0
 
     metric_exporter.pull
-    last_snapshot = metric_exporter.metric_snapshots.last
+    last_snapshot = metric_exporter.metric_snapshots
     _(last_snapshot[0].data_points.size).must_equal 0
   end
 end

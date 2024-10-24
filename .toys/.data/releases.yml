@@ -63,6 +63,10 @@ gems:
     directory: exporter/otlp
     version_constant: [OpenTelemetry, Exporter, OTLP, VERSION]
 
+  - name: opentelemetry-exporter-otlp-metrics
+    directory: exporter/otlp-metrics
+    version_constant: [OpenTelemetry, Exporter, OTLP, Metrics, VERSION]
+
   - name: opentelemetry-exporter-zipkin
     directory: exporter/zipkin
     version_constant: [OpenTelemetry, Exporter, Zipkin, VERSION]
@@ -84,3 +88,13 @@ gems:
     directory: test_helpers
     version_rb_path: lib/opentelemetry/test_helpers/version.rb
     version_constant: [OpenTelemetry, TestHelpers, VERSION]
+
+  - name: opentelemetry-metrics-api
+    directory: metrics_api
+    version_rb_path: lib/opentelemetry/metrics/version.rb
+    version_constant: [OpenTelemetry, Metrics, VERSION]
+
+  - name: opentelemetry-metrics-sdk
+    directory: metrics_sdk
+    version_rb_path: lib/opentelemetry/sdk/metrics/version.rb
+    version_constant: [OpenTelemetry, SDK, Metrics, VERSION]

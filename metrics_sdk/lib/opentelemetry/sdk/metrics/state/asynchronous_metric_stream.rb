@@ -38,6 +38,7 @@ module OpenTelemetry
             @start_time = now_in_nano
             @timeout = timeout
             @attributes = attributes
+            @data_points = {}
 
             @mutex = Mutex.new
           end
@@ -56,7 +57,7 @@ module OpenTelemetry
                 @instrument_kind,
                 @meter_provider.resource,
                 @instrumentation_scope,
-                @aggregation.collect(start_time, end_time),
+                @aggregation.collect(start_time, end_time, @data_points),
                 @aggregation.aggregation_temporality,
                 start_time,
                 end_time
@@ -69,7 +70,7 @@ module OpenTelemetry
               Timeout.timeout(timeout || 30) do
                 @callback.each do |cb|
                   value = cb.call
-                  @aggregation.update(value, attributes)
+                  @aggregation.update(value, attributes, @data_points)
                 end
               end
             end
