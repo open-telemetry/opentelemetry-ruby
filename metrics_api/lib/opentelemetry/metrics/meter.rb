@@ -29,7 +29,7 @@ module OpenTelemetry
         @instrument_registry = {}
       end
 
-      # Counter is a synchronous Instrument which supports non-negative increments.
+      # {https://opentelemetry.io/docs/specs/otel/metrics/api/#counter Counter} is a synchronous Instrument which supports non-negative increments.
       #
       # With this api call:
       #
