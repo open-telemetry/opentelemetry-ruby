@@ -24,7 +24,7 @@ produce telemetry data should generally depend only on
 
 Install the gem using:
 
-```
+```sh
 gem install opentelemetry-sdk
 ```
 
@@ -59,7 +59,7 @@ OpenTelemetry::SDK.configure
 #   c.use 'OpenTelemetry::Instrumentation::Net::HTTP'
 # end
 #
-# Note that the SimpleSpanExporter is not recommended for use in production.
+# Note that the SimpleSpanProcessor is not recommended for use in production.
 
 
 # To start a trace you need to get a Tracer from the TracerProvider
@@ -90,7 +90,6 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 ## License
 
 The `opentelemetry-sdk` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
-
 
 [opentelemetry-home]: https://opentelemetry.io
 [bundler-home]: https://bundler.io
