@@ -14,7 +14,7 @@ module OpenTelemetry
         Key = Struct.new(:name, :version)
         private_constant(:Key)
 
-        attr_reader :resource, :metric_readers, :exemplar_filter
+        attr_reader :resource, :metric_readers, :registered_views, :exemplar_filter
 
         def initialize(resource: OpenTelemetry::SDK::Resources::Resource.create)
           @mutex = Mutex.new
@@ -23,7 +23,7 @@ module OpenTelemetry
           @metric_readers = []
           @resource = resource
           @exemplar_filter = Exemplar::AlwaysOffExemplarFilter
-
+          @registered_views = []
           exemplar_filter_setup
         end
 
@@ -39,6 +39,7 @@ module OpenTelemetry
             OpenTelemetry.logger.warn 'calling MeterProvider#meter after shutdown, a noop meter will be returned.'
             OpenTelemetry::Metrics::Meter.new
           else
+            OpenTelemetry.logger.warn "Invalid meter name provided: #{name.nil? ? 'nil' : 'empty'} value" if name.to_s.empty?
             @mutex.synchronize { @meter_registry[Key.new(name, version)] ||= Meter.new(name, version, self) }
           end
         end
@@ -159,13 +160,30 @@ module OpenTelemetry
           @exemplar_filter = Exemplar::AlwaysOffExemplarFilter
         end
 
-        # The type of the Instrument(s) (optional).
-        # The name of the Instrument(s). OpenTelemetry SDK authors MAY choose to support wildcard characters, with the question mark (?) matching exactly one character and the asterisk character (*) matching zero or more characters.
-        # The name of the Meter (optional).
-        # The version of the Meter (optional).
-        # The schema_url of the Meter (optional).
-        def add_view
-          # TODO: For each meter add this view to all applicable instruments
+        # A View provides SDK users with the flexibility to customize the metrics that are output by the SDK.
+        #
+        # Example:
+        #
+        #   OpenTelemetry.meter_provider.add_view('test', :aggregation => Aggregation::Drop.new,
+        #                                         :type => :counter, :unit => 'smidgen',
+        #                                         :meter_name => 'test', :meter_version => '1.0')
+        #
+        #
+        # @param [String] name Name of the view.
+        # @param [optional Hash] options For more precise matching, {View} and {MetricsStream}
+        #   options may include:
+        #     aggregation: An instance of an aggregation class, e.g. {ExplicitBucketHistogram}, {Sum}, {LastValue}
+        #     type: A Symbol representing the instrument kind, e.g. :observable_gauge, :counter
+        #     unit: A String matching an instrumentation unit, e.g. 'smidgen'
+        #     meter_name: A String matching a meter name, e.g. meter_provider.meter('sample_meter_name', version: '1.2.0'), would be 'sample_meter_name'
+        #     meter_version: A String matching a meter version, e.g. meter_provider.meter('sample_meter_name', version: '1.2.0'), would be '1.2.0'
+        #
+        # @return [nil] returns nil
+        #
+        def add_view(name, **options)
+          # TODO: add schema_url as part of options
+          @registered_views << View::RegisteredView.new(name, **options)
+          nil
         end
       end
     end

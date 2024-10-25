@@ -89,7 +89,7 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir do
       histogram.record(1, attributes: { 'foo' => 'bar' })
 
       metric_exporter.pull
-      last_snapshot = metric_exporter.metric_snapshots.last
+      last_snapshot = metric_exporter.metric_snapshots
       _(last_snapshot[0].description).must_equal 'description'
       _(last_snapshot[0].data_points[0].exemplars[0].value).must_equal 1
       _(last_snapshot[0].data_points[0].exemplars[0].attributes['foo']).must_equal 'bar'
@@ -110,7 +110,7 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir do
       histogram.record(1, attributes: { 'foo' => 'bar' })
 
       metric_exporter.pull
-      last_snapshot = metric_exporter.metric_snapshots.last
+      last_snapshot = metric_exporter.metric_snapshots
       _(last_snapshot[0].description).must_equal 'description'
       _(last_snapshot[0].data_points[0].exemplars.size).must_equal 0
     end

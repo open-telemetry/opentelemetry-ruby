@@ -30,26 +30,25 @@ module OpenTelemetry
             record_min_max: true,
             exemplar_reservoir: DEFAULT_RESERVOIR
           )
-            @data_points = {}
             @exemplar_reservoir = exemplar_reservoir
-            @aggregation_temporality = aggregation_temporality
+            @aggregation_temporality = aggregation_temporality.to_sym
             @boundaries = boundaries && !boundaries.empty? ? boundaries.sort : nil
             @record_min_max = record_min_max
           end
 
-          def collect(start_time, end_time)
+          def collect(start_time, end_time, data_points)
             if @aggregation_temporality == :delta
               # Set timestamps and 'move' data point values to result.
-              hdps = @data_points.values.map! do |hdp|
+              hdps = data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano = start_time
                 hdp.time_unix_nano = end_time
                 hdp
               end
-              @data_points.clear
+              data_points.clear
               hdps
             else
               # Update timestamps and take a snapshot.
-              @data_points.values.map! do |hdp|
+              data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano ||= start_time # Start time of a data point is from the first observation.
                 hdp.time_unix_nano = end_time
                 hdp = hdp.dup
@@ -59,14 +58,14 @@ module OpenTelemetry
             end
           end
 
-          def update(amount, attributes)
-            hdp = @data_points.fetch(attributes) do
+          def update(amount, attributes, data_points)
+            hdp = data_points.fetch(attributes) do
               if @record_min_max
                 min = Float::INFINITY
                 max = -Float::INFINITY
               end
 
-              @data_points[attributes] = HistogramDataPoint.new(
+              data_points[attributes] = HistogramDataPoint.new(
                 attributes,
                 nil,                 # :start_time_unix_nano
                 nil,                 # :time_unix_nano

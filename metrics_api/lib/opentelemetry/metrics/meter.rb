@@ -15,8 +15,6 @@ module OpenTelemetry
       UP_DOWN_COUNTER = Instrument::UpDownCounter.new
       OBSERVABLE_UP_DOWN_COUNTER = Instrument::ObservableUpDownCounter.new
 
-      NAME_REGEX = /\A[a-zA-Z][-.\w]{0,62}\z/
-
       private_constant(:COUNTER, :OBSERVABLE_COUNTER, :HISTOGRAM, :OBSERVABLE_GAUGE, :UP_DOWN_COUNTER, :OBSERVABLE_UP_DOWN_COUNTER)
 
       DuplicateInstrumentError = Class.new(OpenTelemetry::Error)
@@ -41,37 +39,26 @@ module OpenTelemetry
         create_instrument(:up_down_counter, name, unit, description, nil, exemplar_filter, exemplar_reservoir) { UP_DOWN_COUNTER }
       end
 
-      def create_observable_counter(name, callback:, unit: nil, description: nil)
-        create_instrument(:observable_counter, name, unit, description, callback) { OBSERVABLE_COUNTER }
+      def create_observable_counter(name, callback:, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
+        create_instrument(:observable_counter, name, unit, description, callback, exemplar_filter, exemplar_reservoir) { OBSERVABLE_COUNTER }
       end
 
-      def create_observable_gauge(name, callback:, unit: nil, description: nil)
-        create_instrument(:observable_gauge, name, unit, description, callback) { OBSERVABLE_GAUGE }
+      def create_observable_gauge(name, callback:, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
+        create_instrument(:observable_gauge, name, unit, description, callback, exemplar_filter, exemplar_reservoir) { OBSERVABLE_GAUGE }
       end
 
-      def create_observable_up_down_counter(name, callback:, unit: nil, description: nil)
-        create_instrument(:observable_up_down_counter, name, unit, description, callback) { OBSERVABLE_UP_DOWN_COUNTER }
+      def create_observable_up_down_counter(name, callback:, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
+        create_instrument(:observable_up_down_counter, name, unit, description, callback, exemplar_filter, exemplar_reservoir) { OBSERVABLE_UP_DOWN_COUNTER }
       end
 
       private
 
       def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
-        raise InstrumentNameError if name.nil?
-        raise InstrumentNameError if name.empty?
-        raise InstrumentNameError unless NAME_REGEX.match?(name)
-        raise InstrumentUnitError if unit && (!unit.ascii_only? || unit.size > 63)
-        raise InstrumentDescriptionError if description && (description.size > 1023 || !utf8mb3_encoding?(description.dup))
-
         @mutex.synchronize do
           OpenTelemetry.logger.warn("duplicate instrument registration occurred for instrument #{name}") if @instrument_registry.include? name
 
           @instrument_registry[name] = yield
         end
-      end
-
-      def utf8mb3_encoding?(string)
-        string.force_encoding('UTF-8').valid_encoding? &&
-          string.each_char { |c| return false if c.bytesize >= 4 }
       end
     end
   end
