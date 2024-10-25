@@ -611,9 +611,6 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     end
 
     it 'translates all the things' do
-      # TODO: See issue #1507 to fix
-      skip 'Intermittently fails' if RUBY_ENGINE == 'truffleruby'
-
       stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 200)
       processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter)
       tracer = OpenTelemetry.tracer_provider.tracer('tracer', 'v0.0.1')
@@ -778,7 +775,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       )
 
       assert_requested(:post, 'http://localhost:4318/v1/traces') do |req|
-        req.body == Zlib.gzip(encoded_etsr)
+        Zlib.gunzip(req.body) == encoded_etsr
       end
     end
   end
