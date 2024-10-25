@@ -27,33 +27,33 @@ module OpenTelemetry
         @instrument_registry = {}
       end
 
-      def create_counter(name, unit: nil, description: nil)
-        create_instrument(:counter, name, unit, description, nil) { COUNTER }
+      def create_counter(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
+        create_instrument(:counter, name, unit, description, nil, exemplar_filter, exemplar_reservoir) { COUNTER }
       end
 
-      def create_histogram(name, unit: nil, description: nil)
-        create_instrument(:histogram, name, unit, description, nil) { HISTOGRAM }
+      def create_histogram(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
+        create_instrument(:histogram, name, unit, description, nil, exemplar_filter, exemplar_reservoir) { HISTOGRAM }
       end
 
-      def create_up_down_counter(name, unit: nil, description: nil)
-        create_instrument(:up_down_counter, name, unit, description, nil) { UP_DOWN_COUNTER }
+      def create_up_down_counter(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
+        create_instrument(:up_down_counter, name, unit, description, nil, exemplar_filter, exemplar_reservoir) { UP_DOWN_COUNTER }
       end
 
-      def create_observable_counter(name, callback:, unit: nil, description: nil)
-        create_instrument(:observable_counter, name, unit, description, callback) { OBSERVABLE_COUNTER }
+      def create_observable_counter(name, callback:, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
+        create_instrument(:observable_counter, name, unit, description, callback, exemplar_filter, exemplar_reservoir) { OBSERVABLE_COUNTER }
       end
 
-      def create_observable_gauge(name, callback:, unit: nil, description: nil)
-        create_instrument(:observable_gauge, name, unit, description, callback) { OBSERVABLE_GAUGE }
+      def create_observable_gauge(name, callback:, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
+        create_instrument(:observable_gauge, name, unit, description, callback, exemplar_filter, exemplar_reservoir) { OBSERVABLE_GAUGE }
       end
 
-      def create_observable_up_down_counter(name, callback:, unit: nil, description: nil)
-        create_instrument(:observable_up_down_counter, name, unit, description, callback) { OBSERVABLE_UP_DOWN_COUNTER }
+      def create_observable_up_down_counter(name, callback:, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
+        create_instrument(:observable_up_down_counter, name, unit, description, callback, exemplar_filter, exemplar_reservoir) { OBSERVABLE_UP_DOWN_COUNTER }
       end
 
       private
 
-      def create_instrument(kind, name, unit, description, callback)
+      def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
         @mutex.synchronize do
           OpenTelemetry.logger.warn("duplicate instrument registration occurred for instrument #{name}") if @instrument_registry.include? name
 
