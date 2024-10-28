@@ -223,6 +223,20 @@ describe OpenTelemetry::SDK::Logs::LoggerProvider do
         mock_log_record_processor.verify
       end
     end
+
+    it 'does not emit if the provider is stopped' do
+      logger_provider.instance_variable_set(:@stopped, true)
+      mock_log_record = Minitest::Mock.new
+
+      OpenTelemetry::SDK::Logs::LogRecord.stub :new, mock_log_record do
+        logger_provider.add_log_record_processor(mock_log_record_processor)
+        mock_log_record_processor.expect(:on_emit, nil, [mock_log_record, mock_context])
+
+        logger_provider.on_emit(**args)
+        # The verify should fail because on_emit should never call new on LogRecord
+        assert_raises(MockExpectationError) { mock_log_record_processor.verify }
+      end
+    end
   end
 
   describe 'instrument registry' do
@@ -235,29 +249,6 @@ describe OpenTelemetry::SDK::Logs::LoggerProvider do
 
       assert_instance_of(Logs::Logger, logger)
       assert_same(logger, logger2)
-    end
-
-    describe 'when stopped' do
-      it 'logs a warning' do
-        logger_provider.instance_variable_set(:@stopped, true)
-
-        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
-          logger_provider.logger(name: '')
-          assert_match(
-            /calling LoggerProvider#logger after shutdown/,
-            log_stream.string
-          )
-        end
-      end
-
-      it 'does not add a new logger to the registry' do
-        before_stopped_size = logger_provider.instance_variable_get(:@registry).keys.size
-        logger_provider.instance_variable_set(:@stopped, true)
-        logger_provider.logger(name: 'new_logger')
-        after_stopped_size = logger_provider.instance_variable_get(:@registry).keys.size
-
-        assert_equal(before_stopped_size, after_stopped_size)
-      end
     end
   end
 end
