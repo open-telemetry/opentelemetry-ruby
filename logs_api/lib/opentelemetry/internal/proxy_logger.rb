@@ -13,27 +13,13 @@ module OpenTelemetry
     # logger provider is installed, the ProxyLogger will delegate to the corresponding "real"
     # logger.
     class ProxyLogger < Logs::Logger
+      attr_writer :delegate
+
       # Returns a new {ProxyLogger} instance.
       #
       # @return [ProxyLogger]
       def initialize
-        super
-        @mutex = Mutex.new
         @delegate = nil
-      end
-
-      # Set the delegate Logger. If this is called more than once, a warning will
-      # be logged and superfluous calls will be ignored.
-      #
-      # @param [Logger] logger The Logger to delegate to
-      def delegate=(logger)
-        @mutex.synchronize do
-          if @delegate.nil?
-            @delegate = logger
-          else
-            OpenTelemetry.logger.warn 'Attempt to reset delegate in ProxyLogger ignored.'
-          end
-        end
       end
 
       def on_emit(
