@@ -15,6 +15,27 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
   let(:start_time) { (Time.now.to_r * 1_000_000_000).to_i }
   let(:end_time) { ((Time.now + 60).to_r * 1_000_000_000).to_i }
 
+  describe '#initialize' do
+    it 'defaults to the delta aggregation temporality' do
+      exp = OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new
+      _(exp.instance_variable_get(:@aggregation_temporality)).must_equal :delta
+    end
+
+    it 'sets parameters from the environment and converts them to symbols' do
+      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'potato') do
+        OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new
+      end
+      _(exp.instance_variable_get(:@aggregation_temporality)).must_equal :potato
+    end
+
+    it 'prefers explicit parameters rather than the environment and converts them to symbols' do
+      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'potato') do
+        OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(aggregation_temporality: 'pickles')
+      end
+      _(exp.instance_variable_get(:@aggregation_temporality)).must_equal :pickles
+    end
+  end
+
   it 'sets the timestamps' do
     sum_aggregation.update(0, {}, data_points)
     ndp = sum_aggregation.collect(start_time, end_time, data_points)[0]

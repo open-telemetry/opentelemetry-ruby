@@ -37,6 +37,7 @@ module OpenTelemetry
             OpenTelemetry.logger.warn 'calling MeterProvider#meter after shutdown, a noop meter will be returned.'
             OpenTelemetry::Metrics::Meter.new
           else
+            OpenTelemetry.logger.warn "Invalid meter name provided: #{name.nil? ? 'nil' : 'empty'} value" if name.to_s.empty?
             @mutex.synchronize { @meter_registry[Key.new(name, version)] ||= Meter.new(name, version, self) }
           end
         end
