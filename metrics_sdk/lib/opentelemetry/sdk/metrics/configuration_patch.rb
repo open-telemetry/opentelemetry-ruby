@@ -37,29 +37,17 @@ module OpenTelemetry
           exporters.split(',').map do |exporter|
             case exporter.strip
             when 'none' then nil
-            when 'console'
-              OpenTelemetry.meter_provider.add_metric_reader(
-                Metrics::Export::PeriodicMetricReader.new(
-                  exporter: Metrics::Export::ConsoleMetricPullExporter.new
-                )
-              )
-            when 'in-memory'
-              OpenTelemetry.meter_provider.add_metric_reader(Metrics::Export::InMemoryMetricPullExporter.new)
+            when 'console' then OpenTelemetry.meter_provider.add_metric_reader(Metrics::Export::PeriodicMetricReader.new(exporter: Metrics::Export::ConsoleMetricPullExporter.new))
+            when 'in-memory' then OpenTelemetry.meter_provider.add_metric_reader(Metrics::Export::InMemoryMetricPullExporter.new)
             when 'otlp'
               begin
-                OpenTelemetry.meter_provider.add_metric_reader(
-                  Metrics::Export::PeriodicMetricReader.new(
-                    exporter: OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new
-                  )
-                )
+                OpenTelemetry.meter_provider.add_metric_reader(Metrics::Export::PeriodicMetricReader.new(exporter: OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new))
               rescue NameError
-                OpenTelemetry.logger.warn 'The otlp metrics exporter cannot be configured - please add ' \
-                  'opentelemetry-exporter-otlp-metrics to your Gemfile, metrics will not be exported'
+                OpenTelemetry.logger.warn 'The otlp metrics exporter cannot be configured - please add opentelemetry-exporter-otlp-metrics to your Gemfile, metrics will not be exported'
                 nil
               end
             else
-              OpenTelemetry.logger.warn "The #{exporter} exporter is unknown and cannot be configured, " \
-                'metrics will not be exported'
+              OpenTelemetry.logger.warn "The #{exporter} exporter is unknown and cannot be configured, metrics will not be exported"
               nil
             end
           end
