@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'test_helper'
-require 'opentelemetry-exporter-otlp-metrics'
+require 'opentelemetry-exporter-otlp-metrics' unless RUBY_ENGINE == 'jruby'
 
 describe OpenTelemetry::SDK::Metrics::ConfiguratorPatch do
   let(:configurator) { OpenTelemetry::SDK::Configurator.new }
@@ -36,6 +36,8 @@ describe OpenTelemetry::SDK::Metrics::ConfiguratorPatch do
 
     describe 'metric readers' do
       it 'defaults to a periodic reader with an otlp exporter' do
+        skip 'OTLP exporter not compatible with JRuby' if RUBY_ENGINE == 'jruby'
+
         configurator.configure
 
         assert_equal 1, OpenTelemetry.meter_provider.metric_readers.size
@@ -71,7 +73,7 @@ describe OpenTelemetry::SDK::Metrics::ConfiguratorPatch do
       end
 
       it 'supports multiple exporters passed by environment variable' do
-        OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXPORTER' => 'otlp,console') do
+        OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXPORTER' => 'console,in-memory') do
           configurator.configure
         end
 
@@ -81,10 +83,9 @@ describe OpenTelemetry::SDK::Metrics::ConfiguratorPatch do
         reader2 = OpenTelemetry.meter_provider.metric_readers[1]
 
         assert_instance_of OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader, reader1
-        assert_instance_of OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter, reader1.instance_variable_get(:@exporter)
+        assert_instance_of OpenTelemetry::SDK::Metrics::Export::ConsoleMetricPullExporter, reader1.instance_variable_get(:@exporter)
 
-        assert_instance_of OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader, reader2
-        assert_instance_of OpenTelemetry::SDK::Metrics::Export::ConsoleMetricPullExporter, reader2.instance_variable_get(:@exporter)
+        assert_instance_of OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter, reader2
       end
 
       it 'defaults to noop with invalid env var' do
@@ -99,14 +100,25 @@ describe OpenTelemetry::SDK::Metrics::ConfiguratorPatch do
       end
 
       it 'rescues NameErrors when otlp set to env var and the library is not installed' do
-        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
-          OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.stub(:new, -> { raise NameError }) do
+        if RUBY_ENGINE == 'jruby'
+          OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
             OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXPORTER' => 'otlp') do
               configurator.configure
             end
 
             assert_empty OpenTelemetry.meter_provider.metric_readers
             assert_match(/The otlp metrics exporter cannot be configured - please add opentelemetry-exporter-otlp-metrics to your Gemfile, metrics will not be exported/, log_stream.string)
+          end
+        else
+          OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+            OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.stub(:new, -> { raise NameError }) do
+              OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXPORTER' => 'otlp') do
+                configurator.configure
+              end
+
+              assert_empty OpenTelemetry.meter_provider.metric_readers
+              assert_match(/The otlp metrics exporter cannot be configured - please add opentelemetry-exporter-otlp-metrics to your Gemfile, metrics will not be exported/, log_stream.string)
+            end
           end
         end
       end

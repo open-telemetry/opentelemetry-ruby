@@ -43,6 +43,8 @@ module OpenTelemetry
                   exporter: Metrics::Export::ConsoleMetricPullExporter.new
                 )
               )
+            when 'in-memory'
+              OpenTelemetry.meter_provider.add_metric_reader(Metrics::Export::InMemoryMetricPullExporter.new)
             when 'otlp'
               begin
                 OpenTelemetry.meter_provider.add_metric_reader(
