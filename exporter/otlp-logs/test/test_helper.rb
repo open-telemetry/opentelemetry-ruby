@@ -18,5 +18,6 @@ require 'opentelemetry-test-helpers'
 require 'opentelemetry/exporter/otlp_logs'
 require 'minitest/autorun'
 require 'webmock/minitest'
+require 'minitest/stub_const'
 
 OpenTelemetry.logger = Logger.new(File::NULL)

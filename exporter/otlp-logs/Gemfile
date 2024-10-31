@@ -18,3 +18,7 @@ group :test, :development do
   gem 'opentelemetry-semantic_conventions', path: '../../semantic_conventions'
   gem 'opentelemetry-test-helpers', path: '../../test_helpers'
 end
+
+group :test do
+  gem 'minitest-stub-const'
+end
