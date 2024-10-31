@@ -358,7 +358,7 @@ describe OpenTelemetry::Exporter::OTLP::LogsExporter do
       _(result).must_equal(SUCCESS)
     end
 
-    it 'returns TIMEOUT on timeout' do
+    it 'returns FAILURE on timeout' do
       stub_request(:post, 'http://localhost:4318/v1/logs').to_return(status: 200)
       log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
       result = exporter.export([log_record_data], timeout: 0)
@@ -402,7 +402,64 @@ describe OpenTelemetry::Exporter::OTLP::LogsExporter do
       OpenTelemetry.logger = logger
     end
 
-    it 'returns TIMEOUT on timeout after retrying' do
+    { 'Net::HTTPServiceUnavailable' => 503,
+      'Net::HTTPTooManyRequests' => 429,
+      'Net::HTTPRequestTimeout' => 408,
+      'Net::HTTPGatewayTimeout' => 504,
+      'Net::HTTPBadGateway' => 502,
+      'Net::HTTPNotFound' => 404 }.each do |klass, code|
+      it "logs an error and returns FAILURE with #{code}s" do
+        OpenTelemetry::Exporter::OTLP::LogsExporter.stub_const(:RETRY_COUNT, 0) do
+          log_stream = StringIO.new
+          OpenTelemetry.logger = ::Logger.new(log_stream)
+
+          stub_request(:post, 'http://localhost:4318/v1/logs').to_return(status: code)
+          log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
+          _(exporter.export([log_record_data])).must_equal(FAILURE)
+          _(log_stream.string).must_match(
+            %r{ERROR -- : OpenTelemetry error: OTLP logs exporter received #{klass}, http.code=#{code}, for uri: '/v1/logs'}
+          )
+        end
+      end
+    end
+
+    [
+      Net::OpenTimeout,
+      Net::ReadTimeout,
+      OpenSSL::SSL::SSLError,
+      SocketError,
+      EOFError,
+      Zlib::DataError
+    ].each do |error|
+      it "logs error and returns FAILURE when #{error} is raised" do
+        OpenTelemetry::Exporter::OTLP::LogsExporter.stub_const(:RETRY_COUNT, 0) do
+          log_stream = StringIO.new
+          OpenTelemetry.logger = ::Logger.new(log_stream)
+
+          stub_request(:post, 'http://localhost:4318/v1/logs').to_raise(error.send(:new))
+          log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
+          _(exporter.export([log_record_data])).must_equal(FAILURE)
+          _(log_stream.string).must_match(
+            /ERROR -- : OpenTelemetry error: #{error}/
+          )
+        end
+      end
+    end
+
+    it 'works with a SystemCallError' do
+      OpenTelemetry::Exporter::OTLP::LogsExporter.stub_const(:RETRY_COUNT, 0) do
+        log_stream = StringIO.new
+        OpenTelemetry.logger = ::Logger.new(log_stream)
+        stub_request(:post, 'http://localhost:4318/v1/logs').to_raise(SystemCallError.new('Failed to open TCP connection', 61))
+        log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
+        _(exporter.export([log_record_data])).must_equal(FAILURE)
+        _(log_stream.string).must_match(
+          /ERROR -- : OpenTelemetry error: Connection refused - Failed to open TCP connection/
+        )
+      end
+    end
+
+    it 'returns FAILURE on timeout after retrying' do
       stub_request(:post, 'http://localhost:4318/v1/logs').to_timeout.then.to_raise('this should not be reached')
       log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
 
@@ -427,11 +484,18 @@ describe OpenTelemetry::Exporter::OTLP::LogsExporter do
     end
 
     it 'returns FAILURE when encryption to receiver endpoint fails' do
+      log_stream = StringIO.new
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
       exporter = OpenTelemetry::Exporter::OTLP::LogsExporter.new(endpoint: 'https://localhost:4318/v1/logs')
       stub_request(:post, 'https://localhost:4318/v1/logs').to_raise(OpenSSL::SSL::SSLError.new('enigma wedged'))
       log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
       exporter.stub(:backoff?, ->(**_) { false }) do
         _(exporter.export([log_record_data])).must_equal(FAILURE)
+
+        _(log_stream.string).must_match(
+          /ERROR -- : OpenTelemetry error: enigma wedged/
+        )
       end
     end
 
@@ -474,7 +538,7 @@ describe OpenTelemetry::Exporter::OTLP::LogsExporter do
       result = exporter.export([log_record_data])
 
       _(log_stream.string).must_match(
-        /ERROR -- : OpenTelemetry error: OTLP exporter received rpc.Status{message=bad request, details=\[.*you are a bad request.*\]}/
+        /ERROR -- : OpenTelemetry error: OTLP logs exporter received rpc.Status{message=bad request, details=\[.*you are a bad request.*\]}/
       )
 
       _(result).must_equal(FAILURE)
@@ -493,7 +557,7 @@ describe OpenTelemetry::Exporter::OTLP::LogsExporter do
       result = exporter.export([log_record_data])
 
       _(log_stream.string).must_match(
-        %r{ERROR -- : OpenTelemetry error: OTLP exporter received http\.code=404 for uri: '/v1/logs'}
+        %r{ERROR -- : OpenTelemetry error: OTLP logs exporter received Net::HTTPNotFound, http.code=404, for uri: '/v1/logs'\n}
       )
 
       _(result).must_equal(FAILURE)

@@ -109,6 +109,10 @@ module OpenTelemetry
 
         private
 
+        def handle_http_error(response)
+          OpenTelemetry.handle_error(message: "OTLP logs exporter received #{response.class.name}, http.code=#{response.code}, for uri: '#{@path}'")
+        end
+
         def http_connection(uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = uri.scheme == 'https'
@@ -166,14 +170,16 @@ module OpenTelemetry
               SUCCESS
             when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
               response.body # Read and discard body
-              redo if backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1, reason: response.code)
+              handle_http_error(response)
+              redo if backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1)
               FAILURE
             when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
               response.body # Read and discard body
-              redo if backoff?(retry_count: retry_count += 1, reason: response.code)
+              handle_http_error(response)
+              redo if backoff?(retry_count: retry_count += 1)
               FAILURE
             when Net::HTTPNotFound
-              OpenTelemetry.handle_error(message: "OTLP exporter received http.code=404 for uri: '#{@path}'")
+              handle_http_error(response)
               FAILURE
             when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
               log_status(response.body)
@@ -181,28 +187,35 @@ module OpenTelemetry
             when Net::HTTPRedirection
               @http.finish
               handle_redirect(response['location'])
-              redo if backoff?(retry_after: 0, retry_count: retry_count += 1, reason: response.code)
+              redo if backoff?(retry_after: 0, retry_count: retry_count += 1)
             else
               @http.finish
+              handle_http_error(response)
               FAILURE
             end
-          rescue Net::OpenTimeout, Net::ReadTimeout
-            retry if backoff?(retry_count: retry_count += 1, reason: 'timeout')
+          rescue Net::OpenTimeout, Net::ReadTimeout => e
+            OpenTelemetry.handle_error(exception: e)
+            retry if backoff?(retry_count: retry_count += 1, exception: e)
             return FAILURE
-          rescue OpenSSL::SSL::SSLError
-            retry if backoff?(retry_count: retry_count += 1, reason: 'openssl_error')
+          rescue OpenSSL::SSL::SSLError => e
+            OpenTelemetry.handle_error(exception: e)
+            retry if backoff?(retry_count: retry_count += 1)
             return FAILURE
-          rescue SocketError
-            retry if backoff?(retry_count: retry_count += 1, reason: 'socket_error')
+          rescue SocketError => e
+            OpenTelemetry.handle_error(exception: e)
+            retry if backoff?(retry_count: retry_count += 1)
             return FAILURE
           rescue SystemCallError => e
-            retry if backoff?(retry_count: retry_count += 1, reason: e.class.name)
+            retry if backoff?(retry_count: retry_count += 1)
+            OpenTelemetry.handle_error(exception: e)
             return FAILURE
-          rescue EOFError
-            retry if backoff?(retry_count: retry_count += 1, reason: 'eof_error')
+          rescue EOFError => e
+            OpenTelemetry.handle_error(exception: e)
+            retry if backoff?(retry_count: retry_count += 1)
             return FAILURE
-          rescue Zlib::DataError
-            retry if backoff?(retry_count: retry_count += 1, reason: 'zlib_error')
+          rescue Zlib::DataError => e
+            OpenTelemetry.handle_error(exception: e)
+            retry if backoff?(retry_count: retry_count += 1)
             return FAILURE
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#send_bytes')
@@ -225,12 +238,12 @@ module OpenTelemetry
             klass_or_nil = ::Google::Protobuf::DescriptorPool.generated_pool.lookup(detail.type_name).msgclass
             detail.unpack(klass_or_nil) if klass_or_nil
           end.compact
-          OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}}")
+          OpenTelemetry.handle_error(message: "OTLP logs exporter received rpc.Status{message=#{status.message}, details=#{details}}")
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
         end
 
-        def backoff?(retry_count:, reason:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def backoff?(retry_count:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           return false if retry_count > RETRY_COUNT
 
           sleep_interval = nil
