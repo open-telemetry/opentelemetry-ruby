@@ -20,7 +20,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::Gauge do
   it 'gauge should count -2' do
     gauge.record(-2, attributes: { 'foo' => 'bar' })
     metric_exporter.pull
-    last_snapshot = metric_exporter.metric_snapshots.last
+    last_snapshot = metric_exporter.metric_snapshots
 
     _(last_snapshot[0].name).must_equal('gauge')
     _(last_snapshot[0].unit).must_equal('smidgen')
@@ -29,5 +29,30 @@ describe OpenTelemetry::SDK::Metrics::Instrument::Gauge do
     _(last_snapshot[0].data_points[0].attributes).must_equal('foo' => 'bar')
     _(last_snapshot[0].data_points[0].value).must_equal(-2)
     _(last_snapshot[0].aggregation_temporality).must_equal(:delta)
+  end
+
+  it 'gauge should count 1 for last recording' do
+    gauge.record(-2, attributes: { 'foo' => 'bar' })
+    gauge.record(1, attributes: { 'foo' => 'bar' })
+    metric_exporter.pull
+    last_snapshot = metric_exporter.metric_snapshots
+
+    _(last_snapshot.size).must_equal(1)
+    _(last_snapshot[0].data_points.size).must_equal(1)
+    _(last_snapshot[0].data_points[0].value).must_equal(1)
+  end
+
+  it 'gauge should count 1 for last recording' do
+    gauge.record(-2, attributes: { 'foo' => 'bar' })
+    gauge.record(1, attributes: { 'foo' => 'bar' })
+    gauge2 = meter.create_gauge('gauge2', unit: 'smidgen', description: 'a small amount of something')
+    gauge2.record(10, attributes: {})
+
+    metric_exporter.pull
+    last_snapshot = metric_exporter.metric_snapshots
+
+    _(last_snapshot.size).must_equal(2)
+    _(last_snapshot[0].data_points[0].value).must_equal(1)
+    _(last_snapshot[1].data_points[0].value).must_equal(10)
   end
 end
