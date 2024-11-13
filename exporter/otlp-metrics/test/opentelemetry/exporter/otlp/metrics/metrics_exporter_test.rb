@@ -556,8 +556,6 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
     end
 
     it 'translates all the things' do
-      skip 'Intermittently fails' if RUBY_ENGINE == 'truffleruby'
-
       stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 200)
       meter_provider.add_metric_reader(exporter)
       meter   = meter_provider.meter('test')
@@ -639,7 +637,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       )
 
       assert_requested(:post, 'http://localhost:4318/v1/metrics') do |req|
-        req.body == Zlib.gzip(encoded_etsr) # is asserting that the body of the HTTP request is equal to the result of gzipping the encoded_etsr.
+        Zlib.gunzip(req.body) == encoded_etsr
       end
     end
   end
