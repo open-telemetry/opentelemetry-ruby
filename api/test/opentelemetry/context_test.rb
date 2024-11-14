@@ -331,5 +331,60 @@ describe OpenTelemetry::Context do
         _(Context.current[bar_key]).must_be_nil
       end
     end
+
+    describe 'when current thread local variable get copied to new thread' do
+      # NOTE: this is the similar behavior of ActionController::Live as identified in open-telemetry/opentelemetry-ruby-contrib#772
+      it 'attach and detach in child thread will not affect parent thread' do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          ctx = new_context
+
+          t1 = Thread.current
+          locals = t1.keys.map { |key| [key, t1[key]] }
+
+          done_attach_new_context = false
+
+          token1 = Context.attach(ctx)
+          Thread.new do
+            t2 = Thread.current
+            locals.each { |k, v| t2[k] = v }
+
+            Context.attach(ctx)
+            done_attach_new_context = true
+          end
+
+          until done_attach_new_context; end
+
+          Context.detach(token1)
+
+          _(log_stream.string).wont_match(/OpenTelemetry error: calls to detach should match corresponding calls to attach/)
+        end
+      end
+
+      it 'clear in child thread will not affect parent thread' do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          ctx = new_context
+
+          t1 = Thread.current
+          locals = t1.keys.map { |key| [key, t1[key]] }
+
+          done_clear_context = false
+
+          token1 = Context.attach(ctx)
+          Thread.new do
+            t2 = Thread.current
+            locals.each { |k, v| t2[k] = v }
+
+            Context.clear
+            done_clear_context = true
+          end
+
+          until done_clear_context; end
+
+          Context.detach(token1)
+
+          _(log_stream.string).wont_match(/OpenTelemetry error: calls to detach should match corresponding calls to attach/)
+        end
+      end
+    end
   end
 end

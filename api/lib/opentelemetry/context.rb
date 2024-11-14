@@ -41,8 +41,9 @@ module OpenTelemetry
       # @return [Object] A token to be used when detaching
       def attach(context)
         s = stack
-        s.push(context)
-        s.size
+        new_stack = s + [context]
+        Thread.current[STACK_KEY] = new_stack
+        new_stack.size
       end
 
       # Restores the previous Context associated with the current Fiber.
@@ -57,7 +58,7 @@ module OpenTelemetry
         calls_matched = (token == s.size)
         OpenTelemetry.handle_error(exception: DetachError.new('calls to detach should match corresponding calls to attach.')) unless calls_matched
 
-        s.pop
+        Thread.current[STACK_KEY] = s[...-1] || []
         calls_matched
       end
 
