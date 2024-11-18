@@ -195,7 +195,7 @@ module OpenTelemetry
             end
           rescue Net::OpenTimeout, Net::ReadTimeout => e
             OpenTelemetry.handle_error(exception: e)
-            retry if backoff?(retry_count: retry_count += 1, exception: e)
+            retry if backoff?(retry_count: retry_count += 1)
             return FAILURE
           rescue OpenSSL::SSL::SSLError => e
             OpenTelemetry.handle_error(exception: e)
