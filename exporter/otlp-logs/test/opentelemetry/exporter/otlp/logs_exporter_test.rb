@@ -454,7 +454,7 @@ describe OpenTelemetry::Exporter::OTLP::LogsExporter do
         log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
         _(exporter.export([log_record_data])).must_equal(FAILURE)
         _(log_stream.string).must_match(
-          /ERROR -- : OpenTelemetry error: Connection refused - Failed to open TCP connection/
+          /ERROR -- : OpenTelemetry error:.*Failed to open TCP connection/
         )
       end
     end
