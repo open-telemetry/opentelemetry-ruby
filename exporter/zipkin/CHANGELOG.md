@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-zipkin
 
+### v0.23.2 / 2024-11-19
+
+* FIXED: Remove WRITE_TIMEOUT_SUPPORTED
+
 ### v0.23.1 / 2024-02-06
 
 * FIXED: Require csv for ruby-3.4 compatibility
