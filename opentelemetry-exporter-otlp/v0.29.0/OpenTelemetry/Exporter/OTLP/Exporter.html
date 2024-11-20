@@ -315,6 +315,7 @@
       <pre class="lines">
 
 
+48
 49
 50
 51
@@ -335,11 +336,10 @@
 66
 67
 68
-69
-70</pre>
+69</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/opentelemetry/exporter/otlp/exporter.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/exporter/otlp/exporter.rb', line 48</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='label'>endpoint:</span> <span class='kw'>nil</span><span class='comma'>,</span>
                <span class='label'>certificate_file:</span> <span class='const'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'>Common</span><span class='op'>::</span><span class='const'>Utilities</span><span class='period'>.</span><span class='id identifier rubyid_config_opt'>config_opt</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>OTEL_EXPORTER_OTLP_CERTIFICATE</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='comma'>,</span>
@@ -390,6 +390,7 @@
       <pre class="lines">
 
 
+38
 39
 40
 41
@@ -397,11 +398,10 @@
 43
 44
 45
-46
-47</pre>
+46</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/opentelemetry/exporter/otlp/exporter.rb', line 39</span>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/exporter/otlp/exporter.rb', line 38</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_ssl_verify_mode'>ssl_verify_mode</span>
   <span class='kw'>if</span> <span class='const'>ENV</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -505,14 +505,14 @@
       <pre class="lines">
 
 
+78
 79
 80
 81
-82
-83</pre>
+82</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/opentelemetry/exporter/otlp/exporter.rb', line 79</span>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/exporter/otlp/exporter.rb', line 78</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_export'>export</span><span class='lparen'>(</span><span class='id identifier rubyid_span_data'>span_data</span><span class='comma'>,</span> <span class='label'>timeout:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='const'>FAILURE</span> <span class='kw'>if</span> <span class='ivar'>@shutdown</span>
@@ -572,12 +572,12 @@
       <pre class="lines">
 
 
+89
 90
-91
-92</pre>
+91</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/opentelemetry/exporter/otlp/exporter.rb', line 90</span>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/exporter/otlp/exporter.rb', line 89</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_force_flush'>force_flush</span><span class='lparen'>(</span><span class='label'>timeout:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'>SUCCESS</span>
@@ -635,14 +635,14 @@
       <pre class="lines">
 
 
+98
 99
 100
 101
-102
-103</pre>
+102</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/opentelemetry/exporter/otlp/exporter.rb', line 99</span>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/exporter/otlp/exporter.rb', line 98</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_shutdown'>shutdown</span><span class='lparen'>(</span><span class='label'>timeout:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='ivar'>@shutdown</span> <span class='op'>=</span> <span class='kw'>true</span>
@@ -659,9 +659,9 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Aug 28 19:01:44 2024 by
+  Generated on Wed Nov 20 00:59:00 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.36 (ruby-3.0.7).
+  0.9.37 (ruby-3.0.7).
 </div>
 
     </div>
