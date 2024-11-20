@@ -1,6 +1,6 @@
 # Release History: opentelemetry-metrics-sdk
 
-### v0.4.0 / 2024-11-20
+### v0.4.0 / 2024-11-19
 
 * ADDED: Update metrics configuration patch
 
