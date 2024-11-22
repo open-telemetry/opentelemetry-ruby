@@ -40,7 +40,7 @@ require 'opentelemetry/exporter/otlp_logs'
 # Create a LoggerProvider
 logger_provider = OpenTelemetry::SDK::Logs::LoggerProvider.new
 # Create a batching processor configured to export to the OTLP exporter
-processor = OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor.new(OpenTelemetry::Exporter::OTLP::LogsExporter.new)
+processor = OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor.new(OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new)
 # Add the processor to the LoggerProvider
 logger_provider.add_log_record_processor(processor)
 # Access a Logger for your library from your LoggerProvider
