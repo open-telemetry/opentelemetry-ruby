@@ -118,13 +118,13 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
                                                 'OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER' => 'true',
                                                 'OTEL_EXPORTER_OTLP_TIMEOUT' => '11') do
         OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(endpoint: 'http://localhost:4321',
-                                                        certificate_file: '/baz',
-                                                        client_certificate_file: CLIENT_CERT_B_PATH,
-                                                        client_key_file: CLIENT_CERT_B_PATH,
-                                                        headers: { 'x' => 'y' },
-                                                        compression: 'gzip',
-                                                        ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE,
-                                                        timeout: 12)
+                                                              certificate_file: '/baz',
+                                                              client_certificate_file: CLIENT_CERT_B_PATH,
+                                                              client_key_file: CLIENT_CERT_B_PATH,
+                                                              headers: { 'x' => 'y' },
+                                                              compression: 'gzip',
+                                                              ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE,
+                                                              timeout: 12)
       end
       _(exp.instance_variable_get(:@headers)).must_equal('x' => 'y', 'User-Agent' => DEFAULT_USER_AGENT)
       _(exp.instance_variable_get(:@timeout)).must_equal 12.0
