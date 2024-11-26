@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.29.1 / 2024-11-26
+
+* FIXED: Remove WRITE_TIMEOUT_SUPPORTED
+
 ### v0.29.0 / 2024-08-27
 
 * ADDED: Add support for mutual TLS.
