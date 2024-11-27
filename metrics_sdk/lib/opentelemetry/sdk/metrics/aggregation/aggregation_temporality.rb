@@ -8,26 +8,23 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Aggregation
-        # Status represents the status of a finished {Span}. It is composed of a
-        # status code in conjunction with an optional descriptive message.
+        # AggregationTemporality represents the temporality of
+        # data point ({NumberDataPoint} and {HistogramDataPoint}) in {Metrics}.
+        # It determine whether the data point will be cleared for each metrics pull/export.
         class AggregationTemporality
           class << self
             private :new
 
-            # Returns a newly created {Status} with code == UNSET and an optional
-            # description.
+            # Returns a newly created {AggregationTemporality} with temporality == DELTA
             #
-            # @param [String] description
-            # @return [Status]
+            # @return [AggregationTemporality]
             def delta
               new(DELTA)
             end
 
-            # Returns a newly created {Status} with code == OK and an optional
-            # description.
+            # Returns a newly created {AggregationTemporality} with temporality == CUMULATIVE
             #
-            # @param [String] description
-            # @return [Status]
+            # @return [AggregationTemporality]
             def cumulative
               new(CUMULATIVE)
             end
@@ -37,11 +34,10 @@ module OpenTelemetry
 
           # @api private
           # The constructor is private and only for use internally by the class.
-          # Users should use the {unset}, {error}, or {ok} factory methods to
-          # obtain a {Status} instance.
+          # Users should use the {delta} and {cumulative} factory methods to obtain
+          # a {AggregationTemporality} instance.
           #
-          # @param [Integer] code One of the status codes below
-          # @param [String] description
+          # @param [Integer] temporality One of the status codes below
           def initialize(temporality)
             @temporality = temporality
           end
@@ -54,13 +50,10 @@ module OpenTelemetry
             @temporality == :cumulative
           end
 
-          # The following represents the set of status codes of a
-          # finished {Span}
-
-          # The operation completed successfully.
+          # delta: data point will be cleared after each metrics pull/export.
           DELTA = :delta
 
-          # The default status.
+          # cumulative: data point will NOT be cleared after metrics pull/export.
           CUMULATIVE = :cumulative
         end
       end
