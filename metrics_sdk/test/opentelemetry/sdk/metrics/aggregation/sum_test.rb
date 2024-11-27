@@ -16,23 +16,69 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
   let(:end_time) { ((Time.now + 60).to_r * 1_000_000_000).to_i }
 
   describe '#initialize' do
-    it 'defaults to the delta aggregation temporality' do
-      exp = OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new
-      _(exp.instance_variable_get(:@aggregation_temporality)).must_equal :delta
+    it 'defaults to the cumulative aggregation temporality' do
+      exp = OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
+      _(exp.aggregation_temporality).must_equal :cumulative
+    end
+
+    it 'sets parameters from the environment to cumulative' do
+      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'cumulative') do
+        OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
+      end
+      _(exp.aggregation_temporality).must_equal :cumulative
+    end
+
+    it 'sets parameters from the environment to delta' do
+      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'delta') do
+        OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
+      end
+      _(exp.aggregation_temporality).must_equal :delta
     end
 
     it 'sets parameters from the environment and converts them to symbols' do
       exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'potato') do
-        OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new
+        OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
       end
-      _(exp.instance_variable_get(:@aggregation_temporality)).must_equal :potato
+      _(exp.aggregation_temporality).must_equal :cumulative
+    end
+
+    it 'invalid aggregation_temporality from parameters return default to cumulative' do
+      exp = OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: 'pickles')
+      _(exp.aggregation_temporality).must_equal :cumulative
+    end
+
+    it 'valid aggregation_temporality delta from parameters' do
+      exp = OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: 'delta')
+      _(exp.aggregation_temporality).must_equal :delta
+    end
+
+    it 'valid aggregation_temporality cumulative from parameters' do
+      exp = OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: 'cumulative')
+      _(exp.aggregation_temporality).must_equal :cumulative
+    end
+
+    it 'valid aggregation_temporality delta as symbol from parameters' do
+      exp = OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: :delta)
+      _(exp.aggregation_temporality).must_equal :delta
+    end
+
+    it 'valid aggregation_temporality cumulative as symbol from parameters' do
+      exp = OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: :cumulative)
+      _(exp.aggregation_temporality).must_equal :cumulative
     end
 
     it 'prefers explicit parameters rather than the environment and converts them to symbols' do
       exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'potato') do
-        OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(aggregation_temporality: 'pickles')
+        OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: 'pickles')
       end
-      _(exp.instance_variable_get(:@aggregation_temporality)).must_equal :pickles
+      _(exp.aggregation_temporality).must_equal :cumulative
+    end
+
+    it 'function arguments have higher priority than environment' do
+      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'cumulative') do
+        OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: :delta)
+      end
+      _(exp.aggregation_temporality).must_equal :delta
     end
   end
 
