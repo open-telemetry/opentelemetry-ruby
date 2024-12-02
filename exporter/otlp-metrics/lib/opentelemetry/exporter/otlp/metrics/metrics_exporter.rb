@@ -284,13 +284,20 @@ module OpenTelemetry
           end
 
           def number_data_point(ndp)
-            Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(
+            args = {
               attributes: ndp.attributes.map { |k, v| as_otlp_key_value(k, v) },
-              as_int: ndp.value,
               start_time_unix_nano: ndp.start_time_unix_nano,
               time_unix_nano: ndp.time_unix_nano,
               exemplars: ndp.exemplars # exemplars not implemented yet from metrics sdk
-            )
+            }
+
+            if ndp.value.is_a?(Float)
+              args[:as_double] = ndp.value
+            else
+              args[:as_int] = ndp.value
+            end
+
+            Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(**args)
           end
 
           # may not need this
