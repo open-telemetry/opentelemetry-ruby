@@ -1,0 +1,49 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+require 'bundler/gem_tasks'
+require 'rake/testtask'
+require 'yard'
+
+require 'rubocop/rake_task'
+RuboCop::RakeTask.new
+
+Rake::TestTask.new :test do |t|
+  t.libs << 'test'
+  t.libs << 'lib'
+  t.libs << '../../api/lib'
+  t.libs << '../../sdk/lib'
+  t.test_files = FileList['test/**/*_test.rb']
+end
+
+YARD::Rake::YardocTask.new do |t|
+  t.stats_options = ['--list-undoc']
+end
+
+if RUBY_ENGINE == 'truffleruby'
+  task default: %i[test]
+else
+  task default: %i[test rubocop yard]
+end
+
+# https://github.com/open-telemetry/opentelemetry-proto/tree/v0.20.0
+PROTO_VERSION = 'v0.20.0'
+
+namespace :protobuf do
+  task :clean do
+    FileUtils.rm_rf('lib/opentelemetry/proto')
+    FileUtils.rm_rf('opentelemetry-proto')
+  end
+
+  desc "Generate Ruby Source files from OTel Proto Version #{PROTO_VERSION}"
+  task generate: [:clean] do
+    system("git clone -b #{PROTO_VERSION} https://github.com/open-telemetry/opentelemetry-proto", exception: true)
+    Dir['opentelemetry-proto/opentelemetry/proto/**/*.proto'].each do |file|
+      system("protoc --ruby_out=lib/ --proto_path=opentelemetry-proto #{file.gsub('opentelemetry-proto/', '')}", exception: true)
+    end
+    FileUtils.rm_rf('opentelemetry-proto')
+  end
+end

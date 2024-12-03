@@ -71,7 +71,6 @@ module OpenTelemetry
                     span_id: nil,
                     trace_flags: nil,
                     context: OpenTelemetry::Context.current)
-
           current_span = OpenTelemetry::Trace.current_span(context)
           span_context = current_span.context unless current_span == OpenTelemetry::Trace::Span::INVALID
 

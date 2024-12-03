@@ -1,0 +1,21 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+appraise 'google-protobuf-3.18.0' do
+  gem 'google-protobuf', '~> 3.18.0'
+end
+
+appraise 'google-protobuf-3.25.0' do
+  gem 'google-protobuf', '~> 3.25.0'
+end
+
+appraise 'google-protobuf-4.29.0' do
+  gem 'google-protobuf', '~> 4.29.0'
+end
+
+appraise 'google-protobuf-latest' do
+  gem 'google-protobuf'
+end

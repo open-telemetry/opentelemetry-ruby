@@ -1,0 +1,19 @@
+inherit_from:
+  - ../../contrib/rubocop.yml
+
+AllCops:
+  Exclude:
+    - "lib/opentelemetry/proto/**/*"
+    - "vendor/**/*"
+
+Naming/FileName:
+  Exclude:
+    - lib/opentelemetry-exporter-otlp-logs.rb
+Style/StringLiterals:
+  Exclude:
+    - gemfiles/**/*
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - gemfiles/**/*
+Metrics/BlockLength:
+  Enabled: false

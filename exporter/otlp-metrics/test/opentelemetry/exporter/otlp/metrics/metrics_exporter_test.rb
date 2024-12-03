@@ -463,6 +463,23 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       OpenTelemetry.logger = logger
     end
 
+    it 'is able to encode NumberDataPoint with Integer or Float value' do
+      stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 200)
+
+      [1, 0.1234].each do |value|
+        ndp = OpenTelemetry::SDK::Metrics::Aggregation::NumberDataPoint.new
+        ndp.attributes = { 'a' => 'b' }
+        ndp.start_time_unix_nano = 0
+        ndp.time_unix_nano = 0
+        ndp.value = value
+
+        metrics_data = create_metrics_data(data_points: [ndp])
+
+        result = exporter.export([metrics_data])
+        _(result).must_equal(METRICS_SUCCESS)
+      end
+    end
+
     it 'logs rpc.Status on bad request' do
       log_stream = StringIO.new
       logger = OpenTelemetry.logger
@@ -601,7 +618,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
                             exemplars: nil
                           )
                         ],
-                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
+                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_CUMULATIVE
                       )
                     ),
                     Opentelemetry::Proto::Metrics::V1::Metric.new(
@@ -625,7 +642,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
                             max: 10
                           )
                         ],
-                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
+                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_CUMULATIVE
                       )
                     )
                   ]
