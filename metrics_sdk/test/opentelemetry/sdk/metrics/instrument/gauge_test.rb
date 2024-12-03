@@ -42,7 +42,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::Gauge do
     _(last_snapshot[0].data_points[0].value).must_equal(1)
   end
 
-  it 'gauge should count 1 for last recording' do
+  it 'separate gauge should record their own last value' do
     gauge.record(-2, attributes: { 'foo' => 'bar' })
     gauge.record(1, attributes: { 'foo' => 'bar' })
     gauge2 = meter.create_gauge('gauge2', unit: 'smidgen', description: 'a small amount of something')
