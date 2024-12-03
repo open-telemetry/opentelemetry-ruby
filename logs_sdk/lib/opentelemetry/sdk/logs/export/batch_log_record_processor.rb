@@ -40,7 +40,6 @@ module OpenTelemetry
                          max_queue_size: Integer(ENV.fetch('OTEL_BLRP_MAX_QUEUE_SIZE', 2048)),
                          max_export_batch_size: Integer(ENV.fetch('OTEL_BLRP_MAX_EXPORT_BATCH_SIZE', 512)),
                          start_thread_on_boot: String(ENV['OTEL_RUBY_BLRP_START_THREAD_ON_BOOT']) !~ /false/i)
-
             unless max_export_batch_size <= max_queue_size
               raise ArgumentError,
                     'max_export_batch_size much be less than or equal to max_queue_size'
