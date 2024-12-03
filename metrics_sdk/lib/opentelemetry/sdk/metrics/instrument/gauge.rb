@@ -37,7 +37,6 @@ module OpenTelemetry
 
           private
 
-          # TODO: replace the default aggregation to LastValue
           def default_aggregation
             OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new
           end
