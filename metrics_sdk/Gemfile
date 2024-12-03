@@ -16,6 +16,7 @@ gem 'opentelemetry-sdk', path: '../sdk'
 gem 'opentelemetry-test-helpers', path: '../test_helpers'
 
 group :test, :development do
+  gem 'opentelemetry-exporter-otlp-metrics', path: '../exporter/otlp-metrics' unless RUBY_ENGINE == 'jruby'
   gem 'pry'
   gem 'pry-byebug' unless RUBY_ENGINE == 'jruby'
 end
