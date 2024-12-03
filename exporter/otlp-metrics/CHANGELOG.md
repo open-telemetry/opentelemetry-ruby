@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp-metrics
 
+### v0.2.1 / 2024-12-03
+
+* FIXED: Handle float value in NumberDataPoint
+
 ### v0.2.0 / 2024-11-19
 
 * ADDED: Add basic metrics view

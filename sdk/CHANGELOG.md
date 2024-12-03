@@ -1,5 +1,10 @@
 # Release History: opentelemetry-sdk
 
+### v1.6.0 / 2024-12-03
+
+* ADDED: OpenTelemetry.logger_provider API, ProxyLoggers, Configuration, and Instrument Registry
+* ADDED: Add OTLP Log Record Exporter
+
 ### v1.5.0 / 2024-07-24
 
 * ADDED: Add add_link to span api/sdk
