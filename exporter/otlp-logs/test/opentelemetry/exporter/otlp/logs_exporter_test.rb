@@ -740,8 +740,8 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
         )
       )
 
-      assert_requested(:post, 'http://localhost:4318/v1/logs') do |req|
-        req.body == Zlib.gzip(encoded_etsr)
+      assert_requested(:post, 'http://localhost:4318/v1/traces') do |req|
+        Zlib.gunzip(req.body) == encoded_etsr
       end
     end
   end
