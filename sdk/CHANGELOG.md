@@ -2,8 +2,7 @@
 
 ### v1.6.0 / 2024-12-04
 
-* ADDED: OpenTelemetry.logger_provider API, ProxyLoggers, Configuration, and Instrument Registry
-* ADDED: Add OTLP Log Record Exporter
+* ADDED: Add hooks to configure logs
 
 ### v1.5.0 / 2024-07-24
 
