@@ -1,5 +1,9 @@
 # Release History: opentelemetry-test-helpers
 
+### v0.5.0 / 2024-12-04
+
+* ADDED: Add OTLP Log Record Exporter
+
 ### v0.4.0 / 2023-06-08
 
 * BREAKING CHANGE: Remove support for EoL Ruby 2.7 

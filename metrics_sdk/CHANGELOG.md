@@ -1,5 +1,10 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.5.0 / 2024-12-04
+
+* ADDED: Add OTLP Log Record Exporter
+* FIXED: Handle float value in NumberDataPoint
+
 ### v0.4.0 / 2024-11-19
 
 * ADDED: Update metrics configuration patch
