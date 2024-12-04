@@ -27,4 +27,19 @@ describe OpenTelemetry::SDK do
       _(received_message).must_match(/unexpected configuration error due to unknown keyword: .*invalid_option/)
     end
   end
+
+  describe '#configure (no-op)' do
+    before do
+      ENV['OTEL_SDK_DISABLED'] = 'true'
+    end
+
+    after do
+      ENV.delete('OTEL_SDK_DISABLED')
+    end
+
+    it 'logs a warning and generate a no-op tracer if env OTEL_SDK_DISABLED is defined' do
+      tracer = OpenTelemetry::SDK.configure
+      _(tracer).must_be_instance_of OpenTelemetry::Internal::ProxyTracer
+    end
+  end
 end
