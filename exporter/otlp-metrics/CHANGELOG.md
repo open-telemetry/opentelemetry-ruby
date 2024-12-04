@@ -4,7 +4,7 @@
 
 * FIXED: Handle float value in NumberDataPoint
 
-### v0.2.0 / 2024-11-19
+### v0.2.0 / 2024-11-20
 
 * ADDED: Add basic metrics view
 * FIXED: Remove Metrics OTLP exporter `Util#measure_request_duration` and duplicate files

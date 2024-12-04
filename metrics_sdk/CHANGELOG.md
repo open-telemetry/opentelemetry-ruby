@@ -5,7 +5,7 @@
 * ADDED: Add OTLP Log Record Exporter
 * FIXED: Handle float value in NumberDataPoint
 
-### v0.4.0 / 2024-11-19
+### v0.4.0 / 2024-11-20
 
 * ADDED: Update metrics configuration patch
 
