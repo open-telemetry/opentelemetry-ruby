@@ -10,6 +10,12 @@ module OpenTelemetry
       module Instrument
         # {Histogram} is the SDK implementation of {OpenTelemetry::Metrics::Histogram}.
         class Histogram < OpenTelemetry::SDK::Metrics::Instrument::SynchronousInstrument
+          def initialize(name, unit, description, instrumentation_scope, meter_provider, advice = OpenTelemetry::Metrics::Meter::EMPTY_ADVICE)
+            @advice = advice
+
+            super
+          end
+
           # Returns the instrument kind as a Symbol
           #
           # @return [Symbol]
@@ -30,6 +36,12 @@ module OpenTelemetry
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e)
             nil
+          end
+
+          def register_with_new_metric_store(metric_store, aggregation: default_aggregation)
+            aggregation = OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(boundaries: @advice[:explicit_bucket_boundaries]) if @advice&.key?(:explicit_bucket_boundaries)
+
+            super
           end
 
           private

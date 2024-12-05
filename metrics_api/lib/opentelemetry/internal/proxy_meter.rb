@@ -38,13 +38,13 @@ module OpenTelemetry
 
       private
 
-      def create_instrument(kind, name, unit, description, callback)
+      def create_instrument(kind, name, unit, description, callback, advice = nil)
         super do
-          next ProxyInstrument.new(kind, name, unit, description, callback) if @delegate.nil?
+          next ProxyInstrument.new(kind, name, unit, description, callback, advice) if @delegate.nil?
 
           case kind
           when :counter then @delegate.create_counter(name, unit: unit, description: description)
-          when :histogram then @delegate.create_histogram(name, unit: unit, description: description)
+          when :histogram then @delegate.create_histogram(name, unit: unit, description: description, advice: advice)
           when :up_down_counter then @delegate.create_up_down_counter(name, unit: unit, description: description)
           when :observable_counter then @delegate.create_observable_counter(name, unit: unit, description: description, callback: callback)
           when :observable_gauge then @delegate.create_observable_gauge(name, unit: unit, description: description, callback: callback)
