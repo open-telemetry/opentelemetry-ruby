@@ -25,7 +25,7 @@ Install the gem using:
 ```console
 
 gem install opentelemetry-logs-sdk
-gem install opentelemetry-exporter-otlp
+gem install opentelemetry-exporter-otlp-logs
 
 ```
 
