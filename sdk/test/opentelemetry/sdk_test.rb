@@ -31,7 +31,7 @@ describe OpenTelemetry::SDK do
   describe '#configure (sdk disabled)' do
     it 'ignore configuration when sdk is disabled by env' do
       config = OpenTelemetry::TestHelpers.with_env('OTEL_SDK_DISABLED' => 'true') do
-        OpenTelemetry::SDK.configure        
+        OpenTelemetry::SDK.configure
       end
       _(config).must_equal nil
     end
