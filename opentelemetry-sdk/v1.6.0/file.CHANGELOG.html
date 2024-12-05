@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  File: CHANGELOG
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "CHANGELOG";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="file_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: CHANGELOG</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><div id='filecontents'>
+<h1 id="label-Release+History-3A+opentelemetry-sdk">Release History: opentelemetry-sdk</h1>
+
+<h3 id="label-v1.6.0+-2F+2024-12-04">v1.6.0 / 2024-12-04</h3>
+<ul><li>
+<p>ADDED: Add hooks to configure logs</p>
+</li></ul>
+
+<h3 id="label-v1.5.0+-2F+2024-07-24">v1.5.0 / 2024-07-24</h3>
+<ul><li>
+<p>ADDED: Add add_link to span api/sdk</p>
+</li><li>
+<p>FIXED: Update <code>untraced</code> to suppress logging “Calling finish on an ended Span” warnings</p>
+</li></ul>
+
+<h3 id="label-v1.4.1+-2F+2024-03-21">v1.4.1 / 2024-03-21</h3>
+<ul><li>
+<p>FIXED: ForwardingLogger should forward block param.</p>
+</li></ul>
+
+<h3 id="label-v1.4.0+-2F+2024-01-25">v1.4.0 / 2024-01-25</h3>
+<ul><li>
+<p>ADDED: Add spans to Trace::ExportError</p>
+</li></ul>
+
+<h3 id="label-v1.3.2+-2F+2024-01-23">v1.3.2 / 2024-01-23</h3>
+<ul><li>
+<p>FIXED: Reduce allocations on GraphQL hot paths</p>
+</li><li>
+<p>FIXED: Add context to metrics reporting of buffer-full events</p>
+</li></ul>
+
+<h3 id="label-v1.3.1+-2F+2023-11-02">v1.3.1 / 2023-11-02</h3>
+<ul><li>
+<p>FIXED: Spec compliance for span attribute limit</p>
+</li><li>
+<p>FIXED: BatchSpanProcessor#force_flush: purge inherited spans even on shutdown</p>
+</li></ul>
+
+<h3 id="label-v1.3.0+-2F+2023-06-08">v1.3.0 / 2023-06-08</h3>
+<ul><li>
+<p>BREAKING CHANGE: Remove support for EoL Ruby 2.7</p>
+</li><li>
+<p>ADDED: Remove support for EoL Ruby 2.7</p>
+</li><li>
+<p>FIXED: SDK requires opentelemetry-common 0.19.7</p>
+</li></ul>
+
+<h3 id="label-v1.2.1+-2F+2023-05-30">v1.2.1 / 2023-05-30</h3>
+<ul><li>
+<p>FIXED: Untraced only works with parent-based sampler</p>
+</li><li>
+<p>DOCS: Improve formatting of usage examples in OpenTelemetry SDK rubydocs</p>
+</li></ul>
+
+<h3 id="label-v1.2.0+-2F+2022-09-14">v1.2.0 / 2022-09-14</h3>
+<ul><li>
+<p>ADDED: Support OTEL_PROPAGATORS=none</p>
+</li><li>
+<p>ADDED: Support OTEL_ATTRIBUTE_COUNT,VALUE_LENGTH_LIMIT env vars</p>
+</li><li>
+<p>ADDED: Support InstrumentationScope, and update OTLP proto to 0.18.0</p>
+</li><li>
+<p>FIXED: SpanLimits setting event attributes length limit</p>
+</li></ul>
+
+<h3 id="label-v1.1.0+-2F+2022-05-26">v1.1.0 / 2022-05-26</h3>
+<ul><li>
+<p>BREAKING CHANGE: This requires upgrading both the SDK and Instrumentation gem in tandem</p>
+</li></ul>
+
+<h3 id="label-v1.0.3+-2F+2022-05-02">v1.0.3 / 2022-05-02</h3>
+<ul><li>
+<p>ADDED: Truncate the strings in an array attribute value if length_limit is configured</p>
+</li><li>
+<p>FIXED: Update attribute length limit env var name to match spec</p>
+</li><li>
+<p>FIXED: Warning about Struct initialization in Ruby 3.2+</p>
+</li><li>
+<p>FIXED: Warn on unsupported otlp transport protocols</p>
+</li><li>
+<p>FIXED: Only allow certain types of Numeric values as attribute values.</p>
+</li></ul>
+
+<h3 id="label-v1.0.2+-2F+2021-12-01">v1.0.2 / 2021-12-01</h3>
+<ul><li>
+<p>FIXED: Default span kind</p>
+</li><li>
+<p>FIXED: Use monotonic clock where possible</p>
+</li></ul>
+
+<h3 id="label-v1.0.1+-2F+2021-10-29">v1.0.1 / 2021-10-29</h3>
+<ul><li>
+<p>FIXED: Add unexpected error handlign in BSP and OTLP exporter (#995)</p>
+</li></ul>
+
+<h3 id="label-v1.0.0+-2F+2021-09-29">v1.0.0 / 2021-09-29</h3>
+<ul><li>
+<p>(No significant changes)</p>
+</li></ul>
+
+<h3 id="label-v1.0.0.rc3+-2F+2021-08-12">v1.0.0.rc3 / 2021-08-12</h3>
+<ul><li>
+<p>BREAKING CHANGE: Remove optional parent_context from in_span</p>
+</li><li>
+<p>BREAKING CHANGE: Replace Time.now with Process.clock_gettime</p>
+</li><li>
+<p>BREAKING CHANGE: Refactor Baggage to remove Noop*</p>
+</li><li>
+<p>BREAKING CHANGE: Remove unnecessary readers from SDK Tracer</p>
+</li><li>
+<p>BREAKING CHANGE: Total order constraint on span.status=</p>
+</li><li>
+<p>BREAKING CHANGE: Use auto-generated resource constants in sdk and resource_detectors</p>
+</li><li>
+<p>BREAKING CHANGE: Span limits env vars</p>
+</li><li>
+<p>ADDED: Add Tracer.non_recording_span to API</p>
+</li><li>
+<p>ADDED: Add unnamed tracer warning message</p>
+</li><li>
+<p>ADDED: Allow disabling of install messages</p>
+</li><li>
+<p>ADDED: Make API&#39;s NoopTextMapPropagator private</p>
+</li><li>
+<p>ADDED: Use auto-generated resource constants in sdk and resource_detectors</p>
+</li><li>
+<p>ADDED: Allow selecting multiple exporter</p>
+</li><li>
+<p>ADDED: Add explicit BSP export error</p>
+</li><li>
+<p>FIXED: Remove optional parent_context from in_span</p>
+</li><li>
+<p>FIXED: Replace Time.now with Process.clock_gettime</p>
+</li><li>
+<p>FIXED: Rename cloud.zone to cloud.availability_zone</p>
+</li><li>
+<p>FIXED: Improve attribute error messages</p>
+</li><li>
+<p>FIXED: Refactor Baggage to remove Noop*</p>
+</li><li>
+<p>FIXED: Support OTEL_SERVICE_NAME env var</p>
+</li><li>
+<p>FIXED: Remove unnecessary readers from SDK Tracer</p>
+</li><li>
+<p>FIXED: Total order constraint on span.status=</p>
+</li><li>
+<p>FIXED: Flakey tracer provider test</p>
+</li><li>
+<p>FIXED: Split lock in TracerProvider</p>
+</li><li>
+<p>FIXED: Span limits env vars</p>
+</li><li>
+<p>FIXED: Prune invalid links</p>
+</li><li>
+<p>DOCS: Update docs to rely more on environment variable configuration</p>
+</li></ul>
+
+<h3 id="label-v1.0.0.rc2+-2F+2021-06-23">v1.0.0.rc2 / 2021-06-23</h3>
+<ul><li>
+<p>BREAKING CHANGE: Remove optional parent_context from in_span <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/729">729</a></p>
+</li><li>
+<p>BREAKING CHANGE: Replace Time.now with Process.clock_gettime <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/717">717</a></p>
+</li><li>
+<p>BREAKING CHANGE: Refactor Baggage to remove Noop* <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/800">800</a></p>
+</li><li>
+<p>BREAKING CHANGE: Remove unnecessary readers from SDK Tracer <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/820">820</a></p>
+</li><li>
+<p>Tracer no longer surfaces attribute readers for the name, version, or tracer_provider</p>
+</li><li>
+<p>BREAKING CHANGE: Total order constraint on span.status= <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/805">805</a></p>
+</li><li>
+<p>ADDED: Add Tracer.non_recording_span to API <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/799">799</a></p>
+</li><li>
+<p>ADDED: Add unnamed tracer warning message <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/830">830</a></p>
+</li><li>
+<p>ADDED: Allow disabling of install messages <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/831">831</a></p>
+</li><li>
+<p>FIXED: Rename cloud.zone to cloud.availability_zone <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/734">734</a></p>
+</li><li>
+<p>FIXED: Improve attribute error messages <a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/742">742</a></p>
+</li><li>
+<p>FIXED: Support OTEL_SERVICE_NAME env var [806]<a href="https://github.com/open-telemetry/opentelemetry-ruby/pull/806">github.com/open-telemetry/opentelemetry-ruby/pull/806</a></p>
+</li><li>
+<p>FIXED: Flakey tracer provider test</p>
+</li></ul>
+
+<h3 id="label-v1.0.0.rc1+-2F+2021-05-21">v1.0.0.rc1 / 2021-05-21</h3>
+<ul><li>
+<p>BREAKING CHANGE: Remove optional parent_context from in_span</p>
+</li><li>
+<p>BREAKING CHANGE: Replace Time.now with Process.clock_gettime</p>
+</li><li>
+<p>FIXED: Remove optional parent_context from in_span</p>
+</li><li>
+<p>FIXED: Replace Time.now with Process.clock_gettime</p>
+</li><li>
+<p>FIXED: Rename cloud.zone to cloud.availability_zone</p>
+</li><li>
+<p>FIXED: Improve attribute error messages</p>
+</li></ul>
+
+<h3 id="label-v0.17.0+-2F+2021-04-22">v0.17.0 / 2021-04-22</h3>
+<ul><li>
+<p>BREAKING CHANGE: Replace TextMapInjector/TextMapExtractor pairs with a TextMapPropagator.</p>
+</li></ul>
+
+<p><a href="https://open-telemetry.github.io/opentelemetry-ruby/">Check the propagator documentation</a> for the new usage.</p>
+<ul><li>
+<p>ADDED: Add zipkin exporter</p>
+</li><li>
+<p>ADDED: Processors validate exporters on init.</p>
+</li><li>
+<p>ADDED: Add configurable truncation of span and event attribute values</p>
+</li><li>
+<p>ADDED: Add simple &#39;recording&#39; attr_accessor to InMemorySpanExporter</p>
+</li><li>
+<p>FIXED: Typo in error message</p>
+</li><li>
+<p>FIXED: Improve configuration error reporting</p>
+</li><li>
+<p>FIXED: Refactor propagators to add #fields</p>
+</li></ul>
+
+<h3 id="label-v0.16.0+-2F+2021-03-17">v0.16.0 / 2021-03-17</h3>
+<ul><li>
+<p>BREAKING CHANGE: Update SDK BaggageManager to match API</p>
+</li><li>
+<p>BREAKING CHANGE: Implement Exporter#force_flush</p>
+</li><li>
+<p>ADDED: Add force_flush to SDK&#39;s TracerProvider</p>
+</li><li>
+<p>ADDED: Add k8s node to gcp resource detector</p>
+</li><li>
+<p>ADDED: Add console option for OTEL_TRACES_EXPORTER</p>
+</li><li>
+<p>ADDED: Span#add_attributes</p>
+</li><li>
+<p>ADDED: Implement Exporter#force_flush</p>
+</li><li>
+<p>FIXED: Update SDK BaggageManager to match API</p>
+</li><li>
+<p>DOCS: Replace Gitter with GitHub Discussions</p>
+</li></ul>
+
+<h3 id="label-v0.15.0+-2F+2021-02-18">v0.15.0 / 2021-02-18</h3>
+<ul><li>
+<p>BREAKING CHANGE: Streamline processor pipeline</p>
+</li><li>
+<p>ADDED: Add instrumentation config validation</p>
+</li><li>
+<p>FIXED: Streamline processor pipeline</p>
+</li><li>
+<p>FIXED: OTEL_TRACE -&gt; OTEL_TRACES env vars</p>
+</li><li>
+<p>FIXED: Change limits from 1000 to 128</p>
+</li><li>
+<p>FIXED: OTEL_TRACES_EXPORTER and OTEL_PROPAGATORS</p>
+</li><li>
+<p>FIXED: Add thread error handling to the BSP</p>
+</li><li>
+<p>DOCS: Clarify nil attribute values not allowed</p>
+</li></ul>
+
+<h3 id="label-v0.14.0+-2F+2021-02-03">v0.14.0 / 2021-02-03</h3>
+<ul><li>
+<p>BREAKING CHANGE: Replace getter and setter callables and remove rack specific propagators</p>
+</li><li>
+<p>ADDED: Replace getter and setter callables and remove rack specific propagators</p>
+</li></ul>
+
+<h3 id="label-v0.13.1+-2F+2021-02-01">v0.13.1 / 2021-02-01</h3>
+<ul><li>
+<p>FIXED: Leaky test</p>
+</li><li>
+<p>FIXED: Allow env var override of service.name</p>
+</li></ul>
+
+<h3 id="label-v0.13.0+-2F+2021-01-29">v0.13.0 / 2021-01-29</h3>
+<ul><li>
+<p>BREAKING CHANGE: Remove MILLIS from BatchSpanProcessor vars</p>
+</li><li>
+<p>ADDED: Process.runtime resource</p>
+</li><li>
+<p>ADDED: Provide default resource in SDK</p>
+</li><li>
+<p>ADDED: Add optional attributes to record_exception</p>
+</li><li>
+<p>FIXED: Resource.merge consistency</p>
+</li><li>
+<p>FIXED: Remove MILLIS from BatchSpanProcessor vars</p>
+</li></ul>
+
+<h3 id="label-v0.12.1+-2F+2021-01-13">v0.12.1 / 2021-01-13</h3>
+<ul><li>
+<p>FIXED: Fix several BatchSpanProcessor errors related to fork safety</p>
+</li><li>
+<p>FIXED: Define default value for traceid ratio</p>
+</li></ul>
+
+<h3 id="label-v0.12.0+-2F+2020-12-24">v0.12.0 / 2020-12-24</h3>
+<ul><li>
+<p>ADDED: Structured error handling</p>
+</li><li>
+<p>ADDED: Pluggable ID generation</p>
+</li><li>
+<p>FIXED: BSP dropped span buffer full reporting</p>
+</li><li>
+<p>FIXED: Implement SDK environment variables</p>
+</li><li>
+<p>FIXED: Remove incorrect TODO</p>
+</li></ul>
+
+<h3 id="label-v0.11.1+-2F+2020-12-16">v0.11.1 / 2020-12-16</h3>
+<ul><li>
+<p>FIXED: BSP dropped span buffer full reporting</p>
+</li></ul>
+
+<h3 id="label-v0.11.0+-2F+2020-12-11">v0.11.0 / 2020-12-11</h3>
+<ul><li>
+<p>ADDED: Metrics reporting from trace export</p>
+</li><li>
+<p>FIXED: Copyright comments to not reference year</p>
+</li></ul>
+
+<h3 id="label-v0.10.0+-2F+2020-12-03">v0.10.0 / 2020-12-03</h3>
+<ul><li>
+<p>BREAKING CHANGE: Allow samplers to modify tracestate</p>
+</li><li>
+<p>FIXED: Allow samplers to modify tracestate</p>
+</li></ul>
+
+<h3 id="label-v0.9.0+-2F+2020-11-27">v0.9.0 / 2020-11-27</h3>
+<ul><li>
+<p>BREAKING CHANGE: Pass full Context to samplers</p>
+</li><li>
+<p>BREAKING CHANGE: Add timeout for force_flush and shutdown</p>
+</li><li>
+<p>ADDED: Add OTEL_RUBY_BSP_START_THREAD_ON_BOOT env var</p>
+</li><li>
+<p>ADDED: Add timeout for force_flush and shutdown</p>
+</li><li>
+<p>FIXED: Signal at batch_size</p>
+</li><li>
+<p>FIXED: SDK Span.recording? after finish</p>
+</li><li>
+<p>FIXED: Pass full Context to samplers</p>
+</li><li>
+<p>DOCS: Add documentation on usage scenarios for span processors</p>
+</li></ul>
+
+<h3 id="label-v0.8.0+-2F+2020-10-27">v0.8.0 / 2020-10-27</h3>
+<ul><li>
+<p>BREAKING CHANGE: Move context/span methods to Trace module</p>
+</li><li>
+<p>BREAKING CHANGE: Remove &#39;canonical&#39; from status codes</p>
+</li><li>
+<p>BREAKING CHANGE: Assorted SpanContext fixes</p>
+</li><li>
+<p>FIXED: Move context/span methods to Trace module</p>
+</li><li>
+<p>FIXED: Remove &#39;canonical&#39; from status codes</p>
+</li><li>
+<p>FIXED: Assorted SpanContext fixes</p>
+</li></ul>
+
+<h3 id="label-v0.7.0+-2F+2020-10-07">v0.7.0 / 2020-10-07</h3>
+<ul><li>
+<p>ADDED: Add service_name setter to configurator</p>
+</li><li>
+<p>ADDED: Add service_version setter to configurator</p>
+</li><li>
+<p>FIXED: Fork safety for batch processor</p>
+</li><li>
+<p>FIXED: Don&#39;t generate a span ID unnecessarily</p>
+</li><li>
+<p>DOCS: Fix Configurator#add_span_processor</p>
+</li><li>
+<p>DOCS: Standardize toplevel docs structure and readme</p>
+</li></ul>
+
+<h3 id="label-v0.6.0+-2F+2020-09-10">v0.6.0 / 2020-09-10</h3>
+<ul><li>
+<p>BREAKING CHANGE: Rename Resource labels to attributes</p>
+</li><li>
+<p>BREAKING CHANGE: Export resource from Span/SpanData instead of library_resource</p>
+</li><li>
+<p>BREAKING CHANGE: Rename CorrelationContext to Baggage</p>
+</li><li>
+<p>BREAKING CHANGE: Rename Text* to TextMap* (propagators, injectors, extractors)</p>
+</li><li>
+<p>BREAKING CHANGE: Rename span.record_error to span.record_exception</p>
+</li><li>
+<p>BREAKING CHANGE: Update samplers to match spec</p>
+</li><li>
+<p>BREAKING CHANGE: Remove support for lazy event creation</p>
+</li><li>
+<p>ADDED: Add OTLP exporter</p>
+</li><li>
+<p>ADDED: Add support for OTEL_LOG_LEVEL env var</p>
+</li><li>
+<p>FIXED: Rename Resource labels to attributes</p>
+</li><li>
+<p>ADDED: Environment variable resource detection</p>
+</li><li>
+<p>ADDED: BatchSpanProcessor environment variable support</p>
+</li><li>
+<p>FIXED: Remove semver prefix</p>
+</li><li>
+<p>FIXED: Docs for array valued attributes</p>
+</li><li>
+<p>ADDED: Add hex_trace_id and hex_span_id helpers to SpanData</p>
+</li><li>
+<p>FIXED: Fix ProbabilitySampler</p>
+</li><li>
+<p>ADDED: Implement GetCorrelations</p>
+</li><li>
+<p>FIXED: Change default Sampler to ParentOrElse(AlwaysOn)</p>
+</li><li>
+<p>FIXED: Fix probability sampler</p>
+</li></ul>
+</div></div>
+
+      <div id="footer">
+  Generated on Thu Dec  5 00:08:18 2024 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.0.7).
+</div>
+
+    </div>
+  </body>
+</html>

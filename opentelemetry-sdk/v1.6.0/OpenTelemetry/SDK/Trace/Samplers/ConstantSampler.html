@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: OpenTelemetry::SDK::Trace::Samplers::ConstantSampler
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::SDK::Trace::Samplers::ConstantSampler";
+  relpath = '../../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../../_index.html">Index (C)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../../SDK.html" title="OpenTelemetry::SDK (module)">SDK</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Trace.html" title="OpenTelemetry::SDK::Trace (module)">Trace</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Samplers.html" title="OpenTelemetry::SDK::Trace::Samplers (module)">Samplers</a></span></span>
+     &raquo; 
+    <span class="title">ConstantSampler</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: OpenTelemetry::SDK::Trace::Samplers::ConstantSampler
+  
+  
+  <span class="private note title">Private</span>
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">OpenTelemetry::SDK::Trace::Samplers::ConstantSampler</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/sdk/trace/samplers/constant_sampler.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p class="note private">
+  <strong>This class is part of a private API.</strong>
+  You should avoid using this class if possible, as it may be removed or be changed in the future.
+</p>
+
+<p>Implements a sampler returning a result with a constant decision.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#description-instance_method" title="#description (instance method)">#<strong>description</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  <span class="private note title">private</span>
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#==-instance_method" title="#== (instance method)">#<strong>==</strong>(other)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  <span class="private note title">private</span>
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(decision:, description:)  &#x21d2; ConstantSampler </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  <span class="private note title">private</span>
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>A new instance of ConstantSampler.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#should_sample%3F-instance_method" title="#should_sample? (instance method)">#<strong>should_sample?</strong>(trace_id:, parent_context:, links:, name:, kind:, attributes:)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  <span class="private note title">private</span>
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>See <span class='object_link'><a href="../Samplers.html" title="OpenTelemetry::SDK::Trace::Samplers (module)">OpenTelemetry::SDK::Trace::Samplers</a></span>.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(decision:, description:)  &#x21d2; <tt><span class='object_link'><a href="" title="OpenTelemetry::SDK::Trace::Samplers::ConstantSampler (class)">ConstantSampler</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note private">
+  <strong>This method is part of a private API.</strong>
+  You should avoid using this method if possible, as it may be removed or be changed in the future.
+</p>
+
+<p>Returns a new instance of ConstantSampler.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+17
+18
+19
+20</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/trace/samplers/constant_sampler.rb', line 17</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='label'>decision:</span><span class='comma'>,</span> <span class='label'>description:</span><span class='rparen'>)</span>
+  <span class='ivar'>@decision</span> <span class='op'>=</span> <span class='id identifier rubyid_decision'>decision</span>
+  <span class='ivar'>@description</span> <span class='op'>=</span> <span class='id identifier rubyid_description'>description</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id=""></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="description-instance_method">
+  
+    #<strong>description</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note private">
+  <strong>This method is part of a private API.</strong>
+  You should avoid using this method if possible, as it may be removed or be changed in the future.
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+15
+16
+17</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/trace/samplers/constant_sampler.rb', line 15</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_description'>description</span>
+  <span class='ivar'>@description</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="==-instance_method">
+  
+    #<strong>==</strong>(other)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note private">
+  <strong>This method is part of a private API.</strong>
+  You should avoid using this method if possible, as it may be removed or be changed in the future.
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+22
+23
+24</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/trace/samplers/constant_sampler.rb', line 22</span>
+
+<span class='kw'>def</span> <span class='op'>==</span><span class='lparen'>(</span><span class='id identifier rubyid_other'>other</span><span class='rparen'>)</span>
+  <span class='ivar'>@decision</span> <span class='op'>==</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_decision'>decision</span> <span class='op'>&amp;&amp;</span> <span class='ivar'>@description</span> <span class='op'>==</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_description'>description</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="should_sample?-instance_method">
+  
+    #<strong>should_sample?</strong>(trace_id:, parent_context:, links:, name:, kind:, attributes:)  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note private">
+  <strong>This method is part of a private API.</strong>
+  You should avoid using this method if possible, as it may be removed or be changed in the future.
+</p>
+
+<p>See <span class='object_link'><a href="../Samplers.html" title="OpenTelemetry::SDK::Trace::Samplers (module)">OpenTelemetry::SDK::Trace::Samplers</a></span>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+29
+30
+31</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/trace/samplers/constant_sampler.rb', line 29</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_should_sample?'>should_sample?</span><span class='lparen'>(</span><span class='label'>trace_id:</span><span class='comma'>,</span> <span class='label'>parent_context:</span><span class='comma'>,</span> <span class='label'>links:</span><span class='comma'>,</span> <span class='label'>name:</span><span class='comma'>,</span> <span class='label'>kind:</span><span class='comma'>,</span> <span class='label'>attributes:</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="Result.html" title="OpenTelemetry::SDK::Trace::Samplers::Result (class)">Result</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Result.html#initialize-instance_method" title="OpenTelemetry::SDK::Trace::Samplers::Result#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='label'>decision:</span> <span class='ivar'>@decision</span><span class='comma'>,</span> <span class='label'>tracestate:</span> <span class='const'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'>Trace</span><span class='period'>.</span><span class='id identifier rubyid_current_span'>current_span</span><span class='lparen'>(</span><span class='id identifier rubyid_parent_context'>parent_context</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_tracestate'>tracestate</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Thu Dec  5 00:08:19 2024 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.0.7).
+</div>
+
+    </div>
+  </body>
+</html>
