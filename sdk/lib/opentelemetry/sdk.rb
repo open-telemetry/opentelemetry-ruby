@@ -62,7 +62,7 @@ module OpenTelemetry
     #     end
     def configure
       if ENV['OTEL_SDK_DISABLED'] == 'true'
-        OpenTelemetry.logger.warn 'Environment variable OTEL_SDK_DISABLED is defined as true. SDK is disabled'
+        OpenTelemetry.logger.warn 'Environment variable OTEL_SDK_DISABLED is defined as true. SDK is disabled.'
         return
       end
 
