@@ -6,7 +6,7 @@
 
 require 'test_helper'
 
-describe OpenTelemetry::SDK::Metrics::Aggregation::LastValue do
+describe OpenTelemetry::SDK::Metrics::Aggregation::Drop do
   let(:data_points) { {} }
   let(:drop_aggregation) { OpenTelemetry::SDK::Metrics::Aggregation::Drop.new(aggregation_temporality: aggregation_temporality) }
   let(:aggregation_temporality) { :delta }
@@ -14,6 +14,10 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::LastValue do
   # Time in nano
   let(:start_time) { (Time.now.to_r * 1_000_000_000).to_i }
   let(:end_time) { ((Time.now + 60).to_r * 1_000_000_000).to_i }
+
+  describe '#initialize' do
+    # drop aggregation doesn't care about aggregation_temporality since all data will be dropped
+  end
 
   it 'sets the timestamps' do
     drop_aggregation.update(0, {}, data_points)
