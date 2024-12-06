@@ -16,6 +16,8 @@ module OpenTelemetry
 
           attr_reader :aggregation_temporality
 
+          # attr_accessor :aggregation_temporality # approach 2
+
           # The default value for boundaries represents the following buckets:
           # (-inf, 0], (0, 5.0], (5.0, 10.0], (10.0, 25.0], (25.0, 50.0],
           # (50.0, 75.0], (75.0, 100.0], (100.0, 250.0], (250.0, 500.0],
