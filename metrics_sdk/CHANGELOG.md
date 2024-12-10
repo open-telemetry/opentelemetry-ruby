@@ -1,6 +1,10 @@
 # Release History: opentelemetry-metrics-sdk
 
-### v0.4.0 / 2024-11-19
+### v0.4.1 / 2024-12-04
+
+* FIXED: Handle float value in NumberDataPoint
+
+### v0.4.0 / 2024-11-20
 
 * ADDED: Update metrics configuration patch
 
