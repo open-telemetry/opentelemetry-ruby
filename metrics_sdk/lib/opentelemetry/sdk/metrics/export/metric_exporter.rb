@@ -22,6 +22,10 @@ module OpenTelemetry
             @metric_store.collect
           end
 
+          def pull(timeout: nil)
+            export(collect, timeout: timeout)
+          end
+
           def shutdown(timeout: nil)
             Export::SUCCESS
           end

@@ -17,10 +17,6 @@ module OpenTelemetry
             @stopped = false
           end
 
-          def pull
-            export(collect)
-          end
-
           def export(metrics, timeout: nil)
             return FAILURE if @stopped
 

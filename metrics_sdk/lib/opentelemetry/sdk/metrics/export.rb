@@ -23,6 +23,7 @@ module OpenTelemetry
   end
 end
 
+require 'opentelemetry/sdk/metrics/export/metric_exporter'
 require 'opentelemetry/sdk/metrics/export/metric_reader'
 require 'opentelemetry/sdk/metrics/export/in_memory_metric_pull_exporter'
 require 'opentelemetry/sdk/metrics/export/console_metric_pull_exporter'

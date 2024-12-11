@@ -14,7 +14,8 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
       OpenTelemetry::SDK.configure
 
       metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+      metric_reader = OpenTelemetry::SDK::Metrics::Export::MetricReader.new(exporter: metric_exporter)
+      OpenTelemetry.meter_provider.add_metric_reader(metric_reader)
 
       meter = OpenTelemetry.meter_provider.meter('test')
       OpenTelemetry.meter_provider.add_view('counter', aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::Drop.new)
@@ -24,7 +25,7 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
       counter.add(1)
       counter.add(2, attributes: { 'a' => 'b' })
 
-      metric_exporter.pull
+      metric_reader.pull
       last_snapshot = metric_exporter.metric_snapshots
 
       _(last_snapshot).wont_be_empty
@@ -47,7 +48,8 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
       OpenTelemetry::SDK.configure
 
       metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+      metric_reader = OpenTelemetry::SDK::Metrics::Export::MetricReader.new(exporter: metric_exporter)
+      OpenTelemetry.meter_provider.add_metric_reader(metric_reader)
 
       meter = OpenTelemetry.meter_provider.meter('test')
       OpenTelemetry.meter_provider.add_view('counter', aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new)
@@ -59,7 +61,7 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
       counter.add(3)
       counter.add(4)
 
-      metric_exporter.pull
+      metric_reader.pull
       last_snapshot = metric_exporter.metric_snapshots
 
       _(last_snapshot[0].data_points).wont_be_empty
@@ -70,7 +72,8 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
       OpenTelemetry::SDK.configure
 
       metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+      metric_reader = OpenTelemetry::SDK::Metrics::Export::MetricReader.new(exporter: metric_exporter)
+      OpenTelemetry.meter_provider.add_metric_reader(metric_reader)
 
       meter = OpenTelemetry.meter_provider.meter('test')
       OpenTelemetry.meter_provider.add_view('retnuoc', aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new)
@@ -82,7 +85,7 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
       counter.add(3)
       counter.add(4)
 
-      metric_exporter.pull
+      metric_reader.pull
       last_snapshot = metric_exporter.metric_snapshots
 
       _(last_snapshot[0].data_points).wont_be_empty

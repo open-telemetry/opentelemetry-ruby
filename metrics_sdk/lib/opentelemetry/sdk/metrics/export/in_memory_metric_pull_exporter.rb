@@ -19,10 +19,6 @@ module OpenTelemetry
             @mutex = Mutex.new
           end
 
-          def pull
-            export(collect)
-          end
-
           def export(metrics, timeout: nil)
             @mutex.synchronize do
               @metric_snapshots.concat(Array(metrics))

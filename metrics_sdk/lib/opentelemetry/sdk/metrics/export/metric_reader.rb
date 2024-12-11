@@ -13,9 +13,9 @@ module OpenTelemetry
           attr_reader :exporters
 
           def initialize(exporter: nil)
-            register_exporter(exporter)
             @mutex = Mutex.new
             @exporters = []
+            register_exporter(exporter: exporter)
           end
 
           # The metrics Reader implementation supports registering metric Exporters
@@ -27,10 +27,9 @@ module OpenTelemetry
             end
           end
 
-          # Each exporter pull will trigger its metric_store call collect;
-          # and metric_store will collect all metrics data and send for export.
-          def collect
-            @exporters.each { |exporter| exporter.pull if exporter.respond_to?(:pull) }
+          # exporter pull should trigger exporter to send out the metrics
+          def collect(timeout: nil)
+            @exporters.each { |exporter| exporter.pull(timeout: timeout) if exporter.respond_to?(:pull) }
           end
           alias pull collect
 
