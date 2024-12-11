@@ -119,7 +119,7 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
       metric_exporter_b = OpenTelemetry::SDK::Metrics::Export::MetricExporter.new
       metric_reader_b = OpenTelemetry::SDK::Metrics::Export::MetricReader.new(exporter: metric_exporter_b)
       OpenTelemetry.meter_provider.add_metric_reader(metric_reader_b)
-      
+
       _(meter_a.instance_variable_get(:@metric_streams).size).must_equal(2)
       _(metric_reader_a.exporters.first.metric_store.instance_variable_get(:@metric_streams).size).must_equal(1)
       _(metric_reader_b.exporters.first.metric_store.instance_variable_get(:@metric_streams).size).must_equal(1)

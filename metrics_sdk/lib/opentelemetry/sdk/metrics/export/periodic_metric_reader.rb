@@ -29,7 +29,6 @@ module OpenTelemetry
 
             @export_interval = export_interval_millis / 1000.0
             @export_timeout = export_timeout_millis / 1000.0
-            # @exporter = exporter
             @thread   = nil
             @continue = false
             @export_mutex = Mutex.new
@@ -43,21 +42,14 @@ module OpenTelemetry
               @thread
             end
             thread&.join(@export_interval)
-            # @exporter.force_flush if @exporter.respond_to?(:force_flush)
-            # @exporter.shutdown
             super(timeout: timeout)
-            # Export::SUCCESS
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'Fail to shutdown PeriodicMetricReader.')
             Export::FAILURE
           end
 
           def force_flush(timeout: nil)
-            # export(timeout: timeout)
             super(timeout: timeout)
-            # Export::SUCCESS
-          # rescue StandardError
-          #   Export::FAILURE
           end
 
           private
@@ -86,9 +78,6 @@ module OpenTelemetry
 
           def export(timeout: nil)
             @export_mutex.synchronize do
-              # collected_metrics = collect
-              # collected_metrics = @exporters.each { |exporter| exporter.pull if exporter.respond_to?(:pull) }
-              # @exporter.export(collected_metrics, timeout: timeout || @export_timeout) unless collected_metrics.empty?
               @exporters.each { |exporter| exporter.pull(timeout: timeout || @export_timeout) if exporter.respond_to?(:pull) }
             end
           end

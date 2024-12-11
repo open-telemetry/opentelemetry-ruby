@@ -14,7 +14,7 @@ module OpenTelemetry
           DEFAULT_BOUNDARIES = [0, 5, 10, 25, 50, 75, 100, 250, 500, 1000].freeze
           private_constant :DEFAULT_BOUNDARIES
 
-          attr_reader :aggregation_temporality
+          attr_accessor :aggregation_temporality
 
           # attr_accessor :aggregation_temporality # approach 2
 

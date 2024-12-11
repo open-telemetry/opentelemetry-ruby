@@ -26,6 +26,10 @@ module OpenTelemetry
             export(collect, timeout: timeout)
           end
 
+          def export(metrics, timeout: nil)
+            Export::SUCCESS
+          end
+
           def shutdown(timeout: nil)
             Export::SUCCESS
           end
