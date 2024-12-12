@@ -141,7 +141,6 @@ module OpenTelemetry
                     trace_flags: nil,
                     instrumentation_scope: nil,
                     context: nil)
-
           return if @stopped
 
           log_record = LogRecord.new(timestamp: timestamp,
