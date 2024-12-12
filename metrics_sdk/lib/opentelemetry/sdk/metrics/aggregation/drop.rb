@@ -10,8 +10,8 @@ module OpenTelemetry
       module Aggregation
         # Contains the implementation of the Drop aggregation
         class Drop
-          def initialize(aggregation_temporality: :delta)
-            @aggregation_temporality = aggregation_temporality == :delta ? AggregationTemporality.delta : AggregationTemporality.cumulative
+          def initialize
+            @aggregation_temporality = nil
           end
 
           def collect(start_time, end_time, data_points)
@@ -30,7 +30,7 @@ module OpenTelemetry
           end
 
           def aggregation_temporality
-            @aggregation_temporality.temporality
+            nil
           end
         end
       end
