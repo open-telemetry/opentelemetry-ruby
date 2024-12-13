@@ -39,7 +39,7 @@ module OpenTelemetry
                    URI(endpoint)
                  end
 
-          @http = Net::HTTP.new(@uri.host, @uri.port)
+          @http = Net::HTTP.new(@uri.hostname, @uri.port)
           @http.use_ssl = @uri.scheme == 'https'
           @http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
 
