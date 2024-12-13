@@ -78,8 +78,8 @@ module OpenTelemetry
           # consolidate the metrics data into the form of MetricData
           #
           # return MetricData
-          def pull
-            export(collect)
+          def pull(timeout: nil)
+            export(collect, timeout: timeout)
           end
 
           # metrics Array[MetricData]
