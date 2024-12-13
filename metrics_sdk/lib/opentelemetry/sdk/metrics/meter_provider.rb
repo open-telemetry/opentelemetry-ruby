@@ -126,6 +126,7 @@ module OpenTelemetry
             end
           end
         end
+        alias register_asynchronous_instrument register_synchronous_instrument
 
         # A View provides SDK users with the flexibility to customize the metrics that are output by the SDK.
         #
