@@ -219,25 +219,12 @@ module OpenTelemetry
           # metrics [MetricData]
           def as_otlp_metrics(metrics)
             case metrics.instrument_kind
-            when :gauge
+            when :observable_gauge, :gauge
               Opentelemetry::Proto::Metrics::V1::Metric.new(
                 name: metrics.name,
                 description: metrics.description,
                 unit: metrics.unit,
                 gauge: Opentelemetry::Proto::Metrics::V1::Gauge.new(
-                  data_points: metrics.data_points.map do |ndp|
-                    number_data_point(ndp)
-                  end
-                )
-              )
-
-            when :observable_gauge
-              Opentelemetry::Proto::Metrics::V1::Metric.new(
-                name: metrics.name,
-                description: metrics.description,
-                unit: metrics.unit,
-                gauge: Opentelemetry::Proto::Metrics::V1::Gauge.new(
-                  aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
                   data_points: metrics.data_points.map do |ndp|
                     number_data_point(ndp)
                   end
