@@ -665,9 +665,9 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
                             time_unix_nano: 1_699_593_427_329_946_586,
                             exemplars: nil
                           )
-                        ],
+                        ]
                       )
-                    ),
+                    )
                   ]
                 )
               ]
