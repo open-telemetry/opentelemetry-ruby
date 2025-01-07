@@ -1,5 +1,9 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.5.0 / 2025-01-07
+
+* ADDED: Add synchronous  gauge
+
 ### v0.4.1 / 2024-12-04
 
 * FIXED: Handle float value in NumberDataPoint
