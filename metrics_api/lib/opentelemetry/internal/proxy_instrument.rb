@@ -19,7 +19,7 @@ module OpenTelemetry
 
       def upgrade_with(meter)
         @delegate = case @kind
-                    when :counter, :histogram, :up_down_counter
+                    when :counter, :histogram, :up_down_counter, :gauge
                       meter.send("create_#{@kind}", @name, unit: @unit, description: @desc)
                     when :observable_counter, :observable_gauge, :observable_up_down_counter
                       meter.send("create_#{@kind}", @name, unit: @unit, description: @desc, callback: @callback)

@@ -41,7 +41,6 @@ module OpenTelemetry
                        event_attribute_count_limit: Integer(OpenTelemetry::Common::Utilities.config_opt('OTEL_EVENT_ATTRIBUTE_COUNT_LIMIT', default: 128)),
                        event_attribute_length_limit: OpenTelemetry::Common::Utilities.config_opt('OTEL_EVENT_ATTRIBUTE_VALUE_LENGTH_LIMIT', 'OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT'),
                        link_attribute_count_limit: Integer(OpenTelemetry::Common::Utilities.config_opt('OTEL_LINK_ATTRIBUTE_COUNT_LIMIT', default: 128)))
-
           raise ArgumentError, 'attribute_count_limit must be positive' unless attribute_count_limit.positive?
           raise ArgumentError, 'attribute_length_limit must not be less than 32' unless attribute_length_limit.nil? || Integer(attribute_length_limit) >= 32
           raise ArgumentError, 'event_count_limit must be positive' unless event_count_limit.positive?
