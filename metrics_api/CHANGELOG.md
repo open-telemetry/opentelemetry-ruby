@@ -2,7 +2,7 @@
 
 ### v0.2.0 / 2025-01-08
 
-* ADDED: Add synchronous  gauge
+* ADDED: Add synchronous gauge
 * DOCS: Add documentation for Metrics API instruments
 
 ### v0.1.1 / 2024-10-22

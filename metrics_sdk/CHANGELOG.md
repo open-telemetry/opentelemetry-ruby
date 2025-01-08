@@ -2,7 +2,7 @@
 
 ### v0.5.0 / 2025-01-08
 
-* ADDED: Add synchronous  gauge
+* ADDED: Add synchronous gauge
 
 ### v0.4.1 / 2024-12-04
 
