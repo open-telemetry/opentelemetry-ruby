@@ -63,6 +63,10 @@ gems:
     directory: exporter/otlp
     version_constant: [OpenTelemetry, Exporter, OTLP, VERSION]
 
+  - name: opentelemetry-exporter-otlp-logs
+    directory: exporter/otlp-logs
+    version_constant: [OpenTelemetry, Exporter, OTLP, Logs, VERSION]
+
   - name: opentelemetry-exporter-otlp-metrics
     directory: exporter/otlp-metrics
     version_constant: [OpenTelemetry, Exporter, OTLP, Metrics, VERSION]
@@ -98,3 +102,13 @@ gems:
     directory: metrics_sdk
     version_rb_path: lib/opentelemetry/sdk/metrics/version.rb
     version_constant: [OpenTelemetry, SDK, Metrics, VERSION]
+
+  - name: opentelemetry-logs-api
+    directory: logs_api
+    version_rb_path: lib/opentelemetry/logs/version.rb
+    version_constant: [OpenTelemetry, Logs, VERSION]
+
+  - name: opentelemetry-logs-sdk
+    directory: logs_sdk
+    version_rb_path: lib/opentelemetry/sdk/logs/version.rb
+    version_constant: [OpenTelemetry, SDK, Logs, VERSION]

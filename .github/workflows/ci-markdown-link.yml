@@ -2,6 +2,8 @@ name: Markdown Link Check
 
 on:
   pull_request:
+    paths:
+      - '**/*.md'
 
 jobs:
   markdown-link-check:
@@ -9,9 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: "Markdown Link Check"
-        uses: gaurav-nelson/github-action-markdown-link-check@v1
+      # equivalent cli: linkspector check
+      - name: Run linkspector
+        uses: umbrelladocs/action-linkspector@v1
         with:
-          config-file: '.markdown-link-check.json'
-          use-quiet-mode: 'yes'
-          use-verbose-mode: 'yes'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          fail_on_error: true
