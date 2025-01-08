@@ -83,7 +83,6 @@ module OpenTelemetry
       def create_gauge(name, unit: nil, description: nil)
         create_instrument(:gauge, name, unit, description, nil) { GAUGE }
       end
-      
       # UpDownCounter is a synchronous Instrument which supports increments and decrements.
       #
       # With this api call:
