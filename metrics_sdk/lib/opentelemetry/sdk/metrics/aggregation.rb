@@ -15,6 +15,7 @@ module OpenTelemetry
   end
 end
 
+require 'opentelemetry/sdk/metrics/aggregation/aggregation_temporality'
 require 'opentelemetry/sdk/metrics/aggregation/number_data_point'
 require 'opentelemetry/sdk/metrics/aggregation/histogram_data_point'
 require 'opentelemetry/sdk/metrics/aggregation/explicit_bucket_histogram'
