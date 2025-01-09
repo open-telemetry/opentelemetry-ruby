@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'fiddle/import'
-
 module OpenTelemetry
   module SDK
     module Metrics
@@ -13,9 +11,6 @@ module OpenTelemetry
         module ExponentialHistogram
           # IEEE754 standard for floating-point calculation
           module IEEE754
-            extend Fiddle::Importer
-            dlload Fiddle::Handle::DEFAULT
-
             MANTISSA_WIDTH = 52
             EXPONENT_WIDTH = 11
 
