@@ -11,7 +11,7 @@ module OpenTelemetry
         NumberDataPoint = Struct.new(:attributes,            # Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}
                                      :start_time_unix_nano,  # Integer nanoseconds since Epoch
                                      :time_unix_nano,        # Integer nanoseconds since Epoch
-                                     :value,                 # Integer
+                                     :value,                 # Numeric
                                      :exemplars)             # optional List of exemplars collected from measurements that were used to form the data point
       end
     end

@@ -214,18 +214,17 @@ module OpenTelemetry
           end
 
           # metrics_pb has following type of data: :gauge, :sum, :histogram, :exponential_histogram, :summary
-          # current metric sdk only implements instrument: :counter -> :sum, :histogram -> :histogram
+          # current metric sdk only implements instrument: :counter -> :sum, :histogram -> :histogram, :gauge -> :gauge
           #
           # metrics [MetricData]
           def as_otlp_metrics(metrics)
             case metrics.instrument_kind
-            when :observable_gauge
+            when :observable_gauge, :gauge
               Opentelemetry::Proto::Metrics::V1::Metric.new(
                 name: metrics.name,
                 description: metrics.description,
                 unit: metrics.unit,
                 gauge: Opentelemetry::Proto::Metrics::V1::Gauge.new(
-                  aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
                   data_points: metrics.data_points.map do |ndp|
                     number_data_point(ndp)
                   end
@@ -284,13 +283,20 @@ module OpenTelemetry
           end
 
           def number_data_point(ndp)
-            Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(
+            args = {
               attributes: ndp.attributes.map { |k, v| as_otlp_key_value(k, v) },
-              as_int: ndp.value,
               start_time_unix_nano: ndp.start_time_unix_nano,
               time_unix_nano: ndp.time_unix_nano,
               exemplars: ndp.exemplars # exemplars not implemented yet from metrics sdk
-            )
+            }
+
+            if ndp.value.is_a?(Float)
+              args[:as_double] = ndp.value
+            else
+              args[:as_int] = ndp.value
+            end
+
+            Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(**args)
           end
 
           # may not need this
