@@ -14,8 +14,7 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Aggregation
-        # Contains the implementation of the ExponentialBucketHistogram aggregation
-        # https://opentelemetry.io/docs/specs/otel/metrics/data-model/#exponentialhistogram
+        # Contains the implementation of the {https://opentelemetry.io/docs/specs/otel/metrics/data-model/#exponentialhistogram ExponentialBucketHistogram} aggregation
         class ExponentialBucketHistogram # rubocop:disable Metrics/ClassLength
           attr_reader :aggregation_temporality
 
@@ -24,7 +23,7 @@ module OpenTelemetry
           MIN_SCALE = -10
           MAX_SIZE  = 160
 
-          # The default boundaries is calculated based on default max_size and max_scale value
+          # The default boundaries are calculated based on default max_size and max_scale values
           def initialize(
             aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta),
             max_size: MAX_SIZE,
