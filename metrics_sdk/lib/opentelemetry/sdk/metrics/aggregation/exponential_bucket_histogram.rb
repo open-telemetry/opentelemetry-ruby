@@ -14,8 +14,7 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Aggregation
-        # Contains the implementation of the ExponentialBucketHistogram aggregation
-        # https://opentelemetry.io/docs/specs/otel/metrics/data-model/#exponentialhistogram
+        # Contains the implementation of the {https://opentelemetry.io/docs/specs/otel/metrics/data-model/#exponentialhistogram ExponentialBucketHistogram} aggregation
         class ExponentialBucketHistogram # rubocop:disable Metrics/ClassLength
           attr_reader :aggregation_temporality
 
