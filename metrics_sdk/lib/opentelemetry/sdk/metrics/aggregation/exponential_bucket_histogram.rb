@@ -23,7 +23,7 @@ module OpenTelemetry
           MIN_SCALE = -10
           MAX_SIZE  = 160
 
-          # The default boundaries is calculated based on default max_size and max_scale value
+          # The default boundaries are calculated based on default max_size and max_scale values
           def initialize(
             aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta), # TODO: aggregation_temporality should be renamed to collect_aggregation_temporality for clear definition
             max_size: MAX_SIZE,
