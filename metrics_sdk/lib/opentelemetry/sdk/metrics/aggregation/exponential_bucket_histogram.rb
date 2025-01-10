@@ -26,13 +26,12 @@ module OpenTelemetry
 
           # The default boundaries is calculated based on default max_size and max_scale value
           def initialize(
-            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta), # TODO: aggregation_temporality should be renamed to collect_aggregation_temporality for clear definition
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta),
             max_size: MAX_SIZE,
             max_scale: MAX_SCALE,
             record_min_max: true,
             zero_threshold: 0
           )
-            @data_points = {}
             @aggregation_temporality = aggregation_temporality
             @record_min_max = record_min_max
             @min            = Float::INFINITY
@@ -47,19 +46,19 @@ module OpenTelemetry
             @mapping = new_mapping(@scale)
           end
 
-          def collect(start_time, end_time)
+          def collect(start_time, end_time, data_points)
             if @aggregation_temporality == :delta
               # Set timestamps and 'move' data point values to result.
-              hdps = @data_points.values.map! do |hdp|
+              hdps = data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano = start_time
                 hdp.time_unix_nano = end_time
                 hdp
               end
-              @data_points.clear
+              data_points.clear
               hdps
             else
-              # Assume merge is done in collector side at this point
-              @data_points.values.map! do |hdp|
+              # Update timestamps and take a snapshot.
+              data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano ||= start_time # Start time of a data point is from the first observation.
                 hdp.time_unix_nano = end_time
                 hdp = hdp.dup
@@ -70,16 +69,16 @@ module OpenTelemetry
             end
           end
 
-          # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
-          def update(amount, attributes)
+          # rubocop:disable Metrics/MethodLength
+          def update(amount, attributes, data_points)
             # fetch or initialize the ExponentialHistogramDataPoint
-            hdp = @data_points.fetch(attributes) do
+            hdp = data_points.fetch(attributes) do
               if @record_min_max
                 min = Float::INFINITY
                 max = -Float::INFINITY
               end
 
-              @data_points[attributes] = ExponentialHistogramDataPoint.new(
+              data_points[attributes] = ExponentialHistogramDataPoint.new(
                 attributes,
                 nil,                                                               # :start_time_unix_nano
                 0,                                                                 # :time_unix_nano
@@ -118,7 +117,7 @@ module OpenTelemetry
 
             bucket_index = @mapping.map_to_index(amount)
 
-            is_rescaling_needed = false
+            rescaling_needed = false
             low = high = 0
 
             if buckets.counts == [0] # special case of empty
@@ -127,17 +126,17 @@ module OpenTelemetry
               buckets.index_base  = bucket_index
 
             elsif bucket_index < buckets.index_start && (buckets.index_end - bucket_index) >= @size
-              is_rescaling_needed = true
+              rescaling_needed = true
               low = bucket_index
               high = buckets.index_end
 
             elsif bucket_index > buckets.index_end && (bucket_index - buckets.index_start) >= @size
-              is_rescaling_needed = true
+              rescaling_needed = true
               low = buckets.index_start
               high = bucket_index
             end
 
-            if is_rescaling_needed
+            if rescaling_needed
               scale_change = get_scale_change(low, high)
               downscale(scale_change, hdp.positive, hdp.negative)
               new_scale = @mapping.scale - scale_change
@@ -151,21 +150,11 @@ module OpenTelemetry
             # adjust buckets based on the bucket_index
             if bucket_index < buckets.index_start
               span = buckets.index_end - bucket_index
-
-              if span >= buckets.counts.size
-                OpenTelemetry.logger.debug "buckets need to grow to #{span + 1} from #{buckets.counts.size} (max bucket size #{@size})"
-                buckets.grow(span + 1, @size)
-              end
-
+              grow_buckets(span, buckets)
               buckets.index_start = bucket_index
             elsif bucket_index > buckets.index_end
               span = bucket_index - buckets.index_start
-
-              if span >= buckets.counts.size
-                OpenTelemetry.logger.debug "buckets need to grow to #{span + 1} from #{buckets.counts.size} (max bucket size #{@size})"
-                buckets.grow(span + 1, @size)
-              end
-
+              grow_buckets(span, buckets)
               buckets.index_end = bucket_index
             end
 
@@ -175,9 +164,16 @@ module OpenTelemetry
             buckets.increment_bucket(bucket_index)
             nil
           end
-          # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity
+          # rubocop:enable Metrics/MethodLength
 
           private
+
+          def grow_buckets(span, buckets)
+            return if span < buckets.counts.size
+
+            OpenTelemetry.logger.debug "buckets need to grow to #{span + 1} from #{buckets.counts.size} (max bucket size #{@size})"
+            buckets.grow(span + 1, @size)
+          end
 
           def new_mapping(scale)
             scale <= 0 ? ExponentialHistogram::ExponentMapping.new(scale) : ExponentialHistogram::LogarithmMapping.new(scale)
@@ -201,8 +197,7 @@ module OpenTelemetry
           end
 
           def downscale(change, positive, negative)
-            return if change == 0
-            raise 'Invalid change of scale' if change.negative?
+            return if change <= 0
 
             positive.downscale(change)
             negative.downscale(change)
