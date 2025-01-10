@@ -59,7 +59,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       _(exphdps[1].zero_threshold).must_equal(0)
     end
 
-    it 'rescale_with_alternating_growth_0' do
+    it 'rescales with alternating growth 0' do
       # Tests insertion of [2, 4, 1]. The index of 2 (i.e., 0) becomes
       # `indexBase`, the 4 goes to its right and the 1 goes in the last
       # position of the backing array. With 3 binary orders of magnitude
