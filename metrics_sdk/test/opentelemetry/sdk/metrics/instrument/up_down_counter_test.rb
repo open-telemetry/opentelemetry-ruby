@@ -8,19 +8,20 @@ require 'test_helper'
 
 describe OpenTelemetry::SDK::Metrics::Instrument::UpDownCounter do
   let(:metric_exporter) { OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new }
+  let(:metric_reader) { OpenTelemetry::SDK::Metrics::Export::MetricReader.new(exporter: metric_exporter) }
   let(:meter) { OpenTelemetry.meter_provider.meter('test') }
   let(:up_down_counter) { meter.create_up_down_counter('up_down_counter', unit: 'smidgen', description: 'a small amount of something') }
 
   before do
     reset_metrics_sdk
     OpenTelemetry::SDK.configure
-    OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+    OpenTelemetry.meter_provider.add_metric_reader(metric_reader)
   end
 
   it 'counts up and down' do
     up_down_counter.add(1, attributes: { 'foo' => 'bar' })
     up_down_counter.add(-2, attributes: { 'foo' => 'bar' })
-    metric_exporter.pull
+    metric_reader.pull
     last_snapshot = metric_exporter.metric_snapshots
 
     _(last_snapshot[0].name).must_equal('up_down_counter')

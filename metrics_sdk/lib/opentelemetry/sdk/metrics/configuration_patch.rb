@@ -38,7 +38,7 @@ module OpenTelemetry
             case exporter.strip
             when 'none' then nil
             when 'console' then OpenTelemetry.meter_provider.add_metric_reader(Metrics::Export::PeriodicMetricReader.new(exporter: Metrics::Export::ConsoleMetricPullExporter.new))
-            when 'in-memory' then OpenTelemetry.meter_provider.add_metric_reader(Metrics::Export::InMemoryMetricPullExporter.new)
+            when 'in-memory' then OpenTelemetry.meter_provider.add_metric_reader(Metrics::Export::MetricReader.new(exporter: Metrics::Export::InMemoryMetricPullExporter.new))
             when 'otlp'
               begin
                 OpenTelemetry.meter_provider.add_metric_reader(Metrics::Export::PeriodicMetricReader.new(exporter: OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new))
