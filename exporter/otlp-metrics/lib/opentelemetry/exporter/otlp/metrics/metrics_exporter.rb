@@ -214,18 +214,17 @@ module OpenTelemetry
           end
 
           # metrics_pb has following type of data: :gauge, :sum, :histogram, :exponential_histogram, :summary
-          # current metric sdk only implements instrument: :counter -> :sum, :histogram -> :histogram
+          # current metric sdk only implements instrument: :counter -> :sum, :histogram -> :histogram, :gauge -> :gauge
           #
           # metrics [MetricData]
           def as_otlp_metrics(metrics)
             case metrics.instrument_kind
-            when :observable_gauge
+            when :observable_gauge, :gauge
               Opentelemetry::Proto::Metrics::V1::Metric.new(
                 name: metrics.name,
                 description: metrics.description,
                 unit: metrics.unit,
                 gauge: Opentelemetry::Proto::Metrics::V1::Gauge.new(
-                  aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
                   data_points: metrics.data_points.map do |ndp|
                     number_data_point(ndp)
                   end
