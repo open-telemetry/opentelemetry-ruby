@@ -18,6 +18,7 @@ module OpenTelemetry
               Math.ldexp(log2e, scale)
             end
 
+            # for testing
             def self.log2e_scale_buckets
               LOG2E_SCALE_BUCKETS
             end

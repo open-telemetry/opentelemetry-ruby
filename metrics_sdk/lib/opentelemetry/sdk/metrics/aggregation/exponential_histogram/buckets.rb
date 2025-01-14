@@ -20,6 +20,7 @@ module OpenTelemetry
               @index_end = 0
             end
 
+            # grow simply expand the @counts size
             def grow(needed, max_size)
               size = @counts.size
               bias = @index_base - @index_start
@@ -47,7 +48,7 @@ module OpenTelemetry
 
             def length
               return 0 if @counts.empty?
-              return 0 if @index_end == @index_start && self[0] == 0
+              return 0 if @index_end == @index_start && counts[0] == 0
 
               @index_end - @index_start + 1
             end

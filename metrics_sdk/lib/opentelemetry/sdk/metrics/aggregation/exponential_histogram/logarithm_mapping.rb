@@ -31,6 +31,7 @@ module OpenTelemetry
               [(Math.log(value) * @scale_factor).floor, @max_normal_lower_boundary_index].min
             end
 
+            # for testing
             def get_lower_boundary(inds)
               if inds >= @max_normal_lower_boundary_index
                 return 2 * Math.exp((inds - (1 << @scale)) / @scale_factor) if inds == @max_normal_lower_boundary_index

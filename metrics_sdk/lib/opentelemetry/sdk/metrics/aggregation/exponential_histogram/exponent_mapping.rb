@@ -27,16 +27,17 @@ module OpenTelemetry
               (exponent + correction) >> -@scale
             end
 
-            def get_lower_boundary(inds)
-              raise StandardError, 'mapping underflow' if inds < @min_normal_lower_boundary_index || inds > @max_normal_lower_boundary_index
-
-              Math.ldexp(1, inds << -@scale)
-            end
-
             def calculate_min_normal_lower_boundary_index(scale)
               inds = IEEE754::MIN_NORMAL_EXPONENT >> -scale
               inds -= 1 if -scale < 2
               inds
+            end
+
+            # for testing
+            def get_lower_boundary(inds)
+              raise StandardError, 'mapping underflow' if inds < @min_normal_lower_boundary_index || inds > @max_normal_lower_boundary_index
+
+              Math.ldexp(1, inds << -@scale)
             end
           end
         end
