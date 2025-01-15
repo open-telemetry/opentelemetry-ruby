@@ -241,7 +241,7 @@ module OpenTelemetry
                   data_points: metrics.data_points.map do |ndp|
                     number_data_point(ndp)
                   end,
-                  is_monotonic: false
+                  is_monotonic: metrics.is_monotonic
                 )
               )
 
@@ -255,7 +255,7 @@ module OpenTelemetry
                   data_points: metrics.data_points.map do |ndp|
                     number_data_point(ndp)
                   end,
-                  is_monotonic: true
+                  is_monotonic: metrics.is_monotonic
                 )
               )
 
