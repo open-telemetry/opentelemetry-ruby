@@ -11,11 +11,12 @@ module OpenTelemetry
         # Contains the implementation of the Sum aggregation
         # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#sum-aggregation
         class Sum
-          attr_reader :aggregation_temporality
+          attr_reader :aggregation_temporality, :is_monotonic
 
-          def initialize(aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta))
+          def initialize(aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta), is_monotonic: false)
             # TODO: the default should be :cumulative, see issue #1555
             @aggregation_temporality = aggregation_temporality.to_sym
+            @is_monotonic = is_monotonic
           end
 
           def collect(start_time, end_time, data_points)
@@ -46,6 +47,8 @@ module OpenTelemetry
               0,
               nil
             )
+
+            return if is_monotonic && increment < 0
 
             ndp.value += increment
             nil

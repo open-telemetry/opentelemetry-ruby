@@ -8,8 +8,9 @@ require 'test_helper'
 
 describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
   let(:data_points) { {} }
-  let(:sum_aggregation) { OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: aggregation_temporality) }
+  let(:sum_aggregation) { OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: aggregation_temporality, is_monotonic: is_monotonic) }
   let(:aggregation_temporality) { :delta }
+  let(:is_monotonic) { false }
 
   # Time in nano
   let(:start_time) { (Time.now.to_r * 1_000_000_000).to_i }
@@ -58,6 +59,14 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
     _(ndps[1].attributes).must_equal('foo' => 'bar')
   end
 
+  it 'aggregates and collects negative values' do
+    sum_aggregation.update(1, {}, data_points)
+    sum_aggregation.update(-2, {}, data_points)
+
+    ndps = sum_aggregation.collect(start_time, end_time, data_points)
+    _(ndps[0].value).must_equal(-1)
+  end
+
   it 'does not aggregate between collects' do
     sum_aggregation.update(1, {}, data_points)
     sum_aggregation.update(2, {}, data_points)
@@ -92,6 +101,19 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
       # and not just capturing the delta since
       # the previous collect call
       _(ndps[0].value).must_equal(4)
+    end
+  end
+
+  describe 'when sum type is monotonic' do
+    let(:aggregation_temporality) { :not_delta }
+    let(:is_monotonic) { true }
+
+    it 'does not allow negative values to accumulate' do
+      sum_aggregation.update(1, {}, data_points)
+      sum_aggregation.update(-2, {}, data_points)
+      ndps = sum_aggregation.collect(start_time, end_time, data_points)
+
+      _(ndps[0].value).must_equal(1)
     end
   end
 end
