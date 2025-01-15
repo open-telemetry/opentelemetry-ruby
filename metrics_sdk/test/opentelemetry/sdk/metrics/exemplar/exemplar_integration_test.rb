@@ -11,6 +11,8 @@ describe OpenTelemetry::SDK do
     before { reset_metrics_sdk }
 
     it 'emits metrics with list of exempler' do
+      ENV['OTEL_METRICS_EXPORTER'] = 'none'
+
       OpenTelemetry::SDK.configure
 
       metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new

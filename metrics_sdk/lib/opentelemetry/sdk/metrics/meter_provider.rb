@@ -10,6 +10,7 @@ module OpenTelemetry
     # implementation.
     module Metrics
       # {MeterProvider} is the SDK implementation of {OpenTelemetry::Metrics::MeterProvider}.
+      # rubocop:disable Metrics/ClassLength
       class MeterProvider < OpenTelemetry::Metrics::MeterProvider
         Key = Struct.new(:name, :version)
         private_constant(:Key)
@@ -186,6 +187,7 @@ module OpenTelemetry
           nil
         end
       end
+      # rubocop:enable Metrics/ClassLength
     end
   end
 end

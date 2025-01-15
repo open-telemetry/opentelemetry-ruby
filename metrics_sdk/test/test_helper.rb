@@ -36,6 +36,7 @@ end
 
 def create_meter
   ENV['OTEL_TRACES_EXPORTER'] = 'console'
+  ENV['OTEL_METRICS_EXPORTER'] = 'none'
   OpenTelemetry::SDK.configure
   OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
   OpenTelemetry.meter_provider.exemplar_filter_on(exemplar_filter: exemplar_filter)

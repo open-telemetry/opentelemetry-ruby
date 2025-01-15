@@ -83,6 +83,7 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir do
     let(:exemplar_reservoir) { OpenTelemetry::SDK::Metrics::Exemplar::FixedSizeExemplarReservoir.new(max_size: 2) }
 
     it 'integrate fixed size exemplar reservior with simple counter' do
+      reset_metrics_sdk
       meter = create_meter
       histogram = meter.create_histogram('histogram_always_on_exemplar', unit: 'smidgen', description: 'description',
                                                                          exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir)
@@ -104,6 +105,7 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir do
     let(:exemplar_reservoir) { OpenTelemetry::SDK::Metrics::Exemplar::FixedSizeExemplarReservoir.new(max_size: 2) }
 
     it 'integrate fixed size exemplar reservior with simple counter' do
+      reset_metrics_sdk
       meter = create_meter
       histogram = meter.create_histogram('histogram_always_off_exemplar', unit: 'smidgen', description: 'description',
                                                                           exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir)
