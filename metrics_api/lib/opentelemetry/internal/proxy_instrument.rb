@@ -21,11 +21,11 @@ module OpenTelemetry
 
       def upgrade_with(meter)
         @delegate = case @kind
-          when :counter, :histogram, :up_down_counter
-            meter.send("create_#{@kind}", @name, unit: @unit, description: @desc, exemplar_filter: @exemplar_filter, exemplar_reservoir: @exemplar_reservoir)
-          when :observable_counter, :observable_gauge, :observable_up_down_counter
-            meter.send("create_#{@kind}", @name, unit: @unit, description: @desc, exemplar_filter: @exemplar_filter, exemplar_reservoir: @exemplar_reservoir, callback: @callback)
-          end
+                    when :counter, :histogram, :up_down_counter
+                      meter.send("create_#{@kind}", @name, unit: @unit, description: @desc, exemplar_filter: @exemplar_filter, exemplar_reservoir: @exemplar_reservoir)
+                    when :observable_counter, :observable_gauge, :observable_up_down_counter
+                      meter.send("create_#{@kind}", @name, unit: @unit, description: @desc, exemplar_filter: @exemplar_filter, exemplar_reservoir: @exemplar_reservoir, callback: @callback)
+                    end
       end
 
       def add(amount, attributes: nil)
