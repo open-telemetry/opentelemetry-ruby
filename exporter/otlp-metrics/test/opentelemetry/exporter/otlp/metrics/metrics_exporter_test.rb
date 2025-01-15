@@ -623,6 +623,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
                             exemplars: nil
                           )
                         ],
+                        is_monotonic: true,
                         aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
                       )
                     ),
