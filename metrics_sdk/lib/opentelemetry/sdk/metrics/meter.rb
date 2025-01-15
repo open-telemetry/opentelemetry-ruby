@@ -46,6 +46,7 @@ module OpenTelemetry
             case kind
             when :counter then OpenTelemetry::SDK::Metrics::Instrument::Counter.new(name, unit, description, @instrumentation_scope, @meter_provider, exemplar_filter, exemplar_reservoir)
             when :observable_counter then OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter.new(name, unit, description, callback, @instrumentation_scope, @meter_provider)
+            when :gauge then OpenTelemetry::SDK::Metrics::Instrument::Gauge.new(name, unit, description, @instrumentation_scope, @meter_provider, exemplar_filter, exemplar_reservoir)
             when :histogram then OpenTelemetry::SDK::Metrics::Instrument::Histogram.new(name, unit, description, @instrumentation_scope, @meter_provider, exemplar_filter, exemplar_reservoir)
             when :observable_gauge then OpenTelemetry::SDK::Metrics::Instrument::ObservableGauge.new(name, unit, description, callback, @instrumentation_scope, @meter_provider)
             when :up_down_counter then OpenTelemetry::SDK::Metrics::Instrument::UpDownCounter.new(name, unit, description, @instrumentation_scope, @meter_provider, exemplar_filter, exemplar_reservoir)

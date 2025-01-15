@@ -1,5 +1,9 @@
 # Release History: opentelemetry-sdk
 
+### v1.6.0 / 2024-12-04
+
+* ADDED: Add hooks to configure logs
+
 ### v1.5.0 / 2024-07-24
 
 * ADDED: Add add_link to span api/sdk

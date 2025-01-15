@@ -41,3 +41,6 @@ def create_meter
   OpenTelemetry.meter_provider.exemplar_filter_on(exemplar_filter: exemplar_filter)
   OpenTelemetry.meter_provider.meter('SAMPLE_METER_NAME')
 end
+
+# Suppress warn-level logs about a missing OTLP exporter for traces
+ENV['OTEL_TRACES_EXPORTER'] = 'none'

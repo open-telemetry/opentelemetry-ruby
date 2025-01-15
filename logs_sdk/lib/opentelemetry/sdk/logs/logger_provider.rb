@@ -9,6 +9,9 @@ module OpenTelemetry
     module Logs
       # The SDK implementation of OpenTelemetry::Logs::LoggerProvider.
       class LoggerProvider < OpenTelemetry::Logs::LoggerProvider
+        Key = Struct.new(:name, :version)
+        private_constant(:Key)
+
         UNEXPECTED_ERROR_MESSAGE = 'unexpected error in ' \
           'OpenTelemetry::SDK::Logs::LoggerProvider#%s'
 
@@ -28,6 +31,8 @@ module OpenTelemetry
           @mutex = Mutex.new
           @resource = resource
           @stopped = false
+          @registry = {}
+          @registry_mutex = Mutex.new
         end
 
         # Returns an {OpenTelemetry::SDK::Logs::Logger} instance.
@@ -44,7 +49,9 @@ module OpenTelemetry
               "invalid name. Name provided: #{name.inspect}")
           end
 
-          Logger.new(name, version, self)
+          @registry_mutex.synchronize do
+            @registry[Key.new(name, version)] ||= Logger.new(name, version, self)
+          end
         end
 
         # Adds a new log record processor to this LoggerProvider's
@@ -134,6 +141,7 @@ module OpenTelemetry
                     trace_flags: nil,
                     instrumentation_scope: nil,
                     context: nil)
+          return if @stopped
 
           log_record = LogRecord.new(timestamp: timestamp,
                                      observed_timestamp: observed_timestamp,
