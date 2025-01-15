@@ -231,21 +231,7 @@ module OpenTelemetry
                 )
               )
 
-            when :up_down_counter
-              Opentelemetry::Proto::Metrics::V1::Metric.new(
-                name: metrics.name,
-                description: metrics.description,
-                unit: metrics.unit,
-                sum: Opentelemetry::Proto::Metrics::V1::Sum.new(
-                  aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
-                  data_points: metrics.data_points.map do |ndp|
-                    number_data_point(ndp)
-                  end,
-                  is_monotonic: metrics.is_monotonic
-                )
-              )
-
-            when :counter
+            when :counter, :up_down_counter
               Opentelemetry::Proto::Metrics::V1::Metric.new(
                 name: metrics.name,
                 description: metrics.description,

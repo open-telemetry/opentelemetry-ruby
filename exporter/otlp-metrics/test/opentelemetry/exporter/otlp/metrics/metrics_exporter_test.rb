@@ -580,6 +580,9 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       counter = meter.create_counter('test_counter', unit: 'smidgen', description: 'a small amount of something')
       counter.add(5, attributes: { 'foo' => 'bar' })
 
+      up_down_counter = meter.create_up_down_counter('test_up_down_counter', unit: 'smidgen', description: 'a small amount of something')
+      up_down_counter.add(5, attributes: { 'foo' => 'bar' })
+
       histogram = meter.create_histogram('test_histogram', unit: 'smidgen', description: 'a small amount of something')
       histogram.record(10, attributes: { 'oof' => 'rab' })
 
@@ -624,6 +627,26 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
                           )
                         ],
                         is_monotonic: true,
+                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
+                      )
+                    ),
+                    Opentelemetry::Proto::Metrics::V1::Metric.new(
+                      name: 'test_up_down_counter',
+                      description: 'a small amount of something',
+                      unit: 'smidgen',
+                      sum: Opentelemetry::Proto::Metrics::V1::Sum.new(
+                        data_points: [
+                          Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(
+                            attributes: [
+                              Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'foo', value: Opentelemetry::Proto::Common::V1::AnyValue.new(string_value: 'bar'))
+                            ],
+                            as_int: 5,
+                            start_time_unix_nano: 1_699_593_427_329_946_585,
+                            time_unix_nano: 1_699_593_427_329_946_586,
+                            exemplars: nil
+                          )
+                        ],
+                        is_monotonic: false,
                         aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
                       )
                     ),
