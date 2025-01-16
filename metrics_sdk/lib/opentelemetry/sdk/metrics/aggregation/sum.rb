@@ -40,6 +40,8 @@ module OpenTelemetry
           end
 
           def update(increment, attributes, data_points)
+            return if @is_monotonic && increment < 0
+
             ndp = data_points[attributes] || data_points[attributes] = NumberDataPoint.new(
               attributes,
               nil,
@@ -47,8 +49,6 @@ module OpenTelemetry
               0,
               nil
             )
-
-            return if is_monotonic && increment < 0
 
             ndp.value += increment
             nil

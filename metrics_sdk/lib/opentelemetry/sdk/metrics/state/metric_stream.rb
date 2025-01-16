@@ -67,7 +67,7 @@ module OpenTelemetry
 
           def aggregate_metric_data(start_time, end_time, aggregation: nil)
             aggregator = aggregation || @default_aggregation
-            is_monotonic = aggregator.respond_to?(:is_monotonic) && aggregator.is_monotonic
+            is_monotonic = aggregator.respond_to?(:is_monotonic) ? aggregator.is_monotonic : nil
 
             MetricData.new(
               @name,
