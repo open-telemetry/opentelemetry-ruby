@@ -8,9 +8,9 @@ require 'test_helper'
 
 describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
   let(:data_points) { {} }
-  let(:sum_aggregation) { OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: aggregation_temporality, is_monotonic: is_monotonic) }
+  let(:sum_aggregation) { OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: aggregation_temporality, monotonic: monotonic) }
   let(:aggregation_temporality) { :delta }
-  let(:is_monotonic) { false }
+  let(:monotonic) { false }
 
   # Time in nano
   let(:start_time) { (Time.now.to_r * 1_000_000_000).to_i }
@@ -106,7 +106,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
 
   describe 'when sum type is monotonic' do
     let(:aggregation_temporality) { :not_delta }
-    let(:is_monotonic) { true }
+    let(:monotonic) { true }
 
     it 'does not allow negative values to accumulate' do
       sum_aggregation.update(1, {}, data_points)
