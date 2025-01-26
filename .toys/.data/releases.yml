@@ -60,7 +60,11 @@ gems:
     version_constant: [OpenTelemetry, Exporter, Jaeger, VERSION]
 
   - name: opentelemetry-exporter-otlp
-    directory: exporter/otlp
+    # we append a slash here to avoid the naive substring start_with? directory-matching condition in underlying toys gem
+    # which casues exporter/otlp to incorrectly match when changes occur in exporter/otlp-logs or exporter/otlp-metrics
+    # https://github.com/dazuma/toys/blob/17ed449da8299f272b834470ff6b279a59e8070b/.toys/release/.lib/release_utils.rb#L436
+    # https://github.com/open-telemetry/opentelemetry-ruby/issues/1792
+    directory: exporter/otlp/
     version_constant: [OpenTelemetry, Exporter, OTLP, VERSION]
 
   - name: opentelemetry-exporter-otlp-logs
