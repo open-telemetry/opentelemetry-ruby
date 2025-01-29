@@ -43,8 +43,8 @@ module OpenTelemetry
       # @param description [optional String] an optional free-form text provided by user.
       #
       # @return [nil] after creation of counter, it will be stored in instrument_registry
-      def create_counter(name, unit: nil, description: nil)
-        create_instrument(:counter, name, unit, description, nil) { COUNTER }
+      def create_counter(name, unit: nil, description: nil, **advisory_parameters)
+        create_instrument(:counter, name, unit, description, nil, **advisory_parameters) { COUNTER }
       end
 
       # Histogram is a synchronous Instrument which can be used to report arbitrary values that are likely
@@ -62,8 +62,8 @@ module OpenTelemetry
       # @param description [optional String] an optional free-form text provided by user.
       #
       # @return [nil] after creation of histogram, it will be stored in instrument_registry
-      def create_histogram(name, unit: nil, description: nil)
-        create_instrument(:histogram, name, unit, description, nil) { HISTOGRAM }
+      def create_histogram(name, unit: nil, description: nil, **advisory_parameters)
+        create_instrument(:histogram, name, unit, description, nil, **advisory_parameters) { HISTOGRAM }
       end
 
       # Gauge is an synchronous Instrument which reports non-additive value(s)
@@ -80,8 +80,8 @@ module OpenTelemetry
       # @param description [optional String] an optional free-form text provided by user.
       #
       # @return [nil] after creation of gauge, it will be stored in instrument_registry
-      def create_gauge(name, unit: nil, description: nil)
-        create_instrument(:gauge, name, unit, description, nil) { GAUGE }
+      def create_gauge(name, unit: nil, description: nil, **advisory_parameters)
+        create_instrument(:gauge, name, unit, description, nil, **advisory_parameters) { GAUGE }
       end
 
       # UpDownCounter is a synchronous Instrument which supports increments and decrements.
@@ -97,8 +97,8 @@ module OpenTelemetry
       # @param description [optional String] an optional free-form text provided by user.
       #
       # @return [nil] after creation of up_down_counter, it will be stored in instrument_registry
-      def create_up_down_counter(name, unit: nil, description: nil)
-        create_instrument(:up_down_counter, name, unit, description, nil) { UP_DOWN_COUNTER }
+      def create_up_down_counter(name, unit: nil, description: nil, **advisory_parameters)
+        create_instrument(:up_down_counter, name, unit, description, nil, **advisory_parameters) { UP_DOWN_COUNTER }
       end
 
       # ObservableCounter is an asynchronous Instrument which reports monotonically
@@ -119,8 +119,8 @@ module OpenTelemetry
       # @param description [optional String] an optional free-form text provided by user.
       #
       # @return [nil] after creation of observable_counter, it will be stored in instrument_registry
-      def create_observable_counter(name, callback:, unit: nil, description: nil)
-        create_instrument(:observable_counter, name, unit, description, callback) { OBSERVABLE_COUNTER }
+      def create_observable_counter(name, callback:, unit: nil, description: nil, **advisory_parameters)
+        create_instrument(:observable_counter, name, unit, description, callback, **advisory_parameters) { OBSERVABLE_COUNTER }
       end
 
       # ObservableGauge is an asynchronous Instrument which reports non-additive value(s)
@@ -142,8 +142,8 @@ module OpenTelemetry
       # @param description [optional String] an optional free-form text provided by user.
       #
       # @return [nil] after creation of observable_gauge, it will be stored in instrument_registry
-      def create_observable_gauge(name, callback:, unit: nil, description: nil)
-        create_instrument(:observable_gauge, name, unit, description, callback) { OBSERVABLE_GAUGE }
+      def create_observable_gauge(name, callback:, unit: nil, description: nil, **advisory_parameters)
+        create_instrument(:observable_gauge, name, unit, description, callback, **advisory_parameters) { OBSERVABLE_GAUGE }
       end
 
       # ObservableUpDownCounter is an asynchronous Instrument which reports additive value(s)
@@ -165,13 +165,13 @@ module OpenTelemetry
       # @param description [optional String] an optional free-form text provided by user.
       #
       # @return [nil] after creation of observable_up_down_counter, it will be stored in instrument_registry
-      def create_observable_up_down_counter(name, callback:, unit: nil, description: nil)
-        create_instrument(:observable_up_down_counter, name, unit, description, callback) { OBSERVABLE_UP_DOWN_COUNTER }
+      def create_observable_up_down_counter(name, callback:, unit: nil, description: nil, **advisory_parameters)
+        create_instrument(:observable_up_down_counter, name, unit, description, callback, **advisory_parameters) { OBSERVABLE_UP_DOWN_COUNTER }
       end
 
       private
 
-      def create_instrument(kind, name, unit, description, callback)
+      def create_instrument(kind, name, unit, description, callback, **)
         @mutex.synchronize do
           OpenTelemetry.logger.warn("duplicate instrument registration occurred for instrument #{name}") if @instrument_registry.include? name
 

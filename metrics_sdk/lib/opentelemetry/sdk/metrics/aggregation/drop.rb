@@ -12,8 +12,9 @@ module OpenTelemetry
         class Drop
           attr_reader :aggregation_temporality
 
-          def initialize(aggregation_temporality: :delta)
+          def initialize(aggregation_temporality: :delta, attributes: nil)
             @aggregation_temporality = aggregation_temporality
+            @attributes = attributes if attributes
           end
 
           def collect(start_time, end_time, data_points)
@@ -21,6 +22,8 @@ module OpenTelemetry
           end
 
           def update(increment, attributes, data_points)
+            attributes = @attributes.merge(attributes) if @attributes
+
             data_points[attributes] = NumberDataPoint.new(
               {},
               0,

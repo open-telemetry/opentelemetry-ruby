@@ -35,4 +35,43 @@ describe OpenTelemetry::SDK::Metrics::Instrument::Histogram do
     _(last_snapshot[0].data_points[0].attributes).must_equal('foo' => 'bar')
     _(last_snapshot[0].aggregation_temporality).must_equal(:delta)
   end
+
+  describe 'with advisory parameters' do
+    let(:explicit_bucket_boundaries) { [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5, 10] }
+    let(:histogram) do
+      meter.create_histogram(
+        'histogram',
+        unit: 'smidgen',
+        description: 'a small amount of something',
+        explicit_bucket_boundaries: explicit_bucket_boundaries,
+        attributes: { random_attribute => true }
+      )
+    end
+
+    let(:random_attribute) { "a#{SecureRandom.hex}" }
+
+    it 'histograms' do
+      histogram.record(0.01)
+      histogram.record(0.1, attributes: { 'foo' => 'bar' })
+      histogram.record(1)
+      histogram.record(10)
+
+      metric_exporter.pull
+      last_snapshot = metric_exporter.metric_snapshots.last
+
+      _(last_snapshot.data_points.count).must_equal(2)
+
+      last_snapshot.data_points.each do |data_point|
+        _(data_point.attributes[random_attribute]).must_equal(true)
+      end
+
+      _(last_snapshot.data_points.first.bucket_counts).must_equal(
+        [0, 0, 1, 0, 0, 0, 1, 0, 1, 0]
+      )
+
+      _(last_snapshot.data_points.last.bucket_counts).must_equal(
+        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
+      )
+    end
+  end
 end
