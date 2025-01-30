@@ -22,6 +22,46 @@ gem install opentelemetry-test-helpers
 
 Or, if you use [bundler][bundler-home], include `opentelemetry-test-helpers` in your `Gemfile`.
 
+## Testing with metrics
+
+The `metrics` module facilitates testing instrumentation libraries with respect to the OpenTelemetry Metrics API and SDK. It is not required by default. It is designed to work with or without the metrics API and SDK defined, but you may experience issues if the API or SDK gem is in your Gemfile but not yet loaded when the test helpers are initialized.
+
+### Usage
+
+In a test_helper.rb, after the `configure` block,
+require this library:
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.error_handler = ->(exception:, message:) { raise(exception || message) }
+  c.add_span_processor span_processor
+end
+require 'opentelemetry/test_helpers/metrics'
+```
+
+If the library uses Appraisals, it is recommended to appraise with and without the metrics api and sdk gems. Note that any metrics implementation in instrumentation libraries should be written against the API only, but for testing the SDK is required to collect metrics data - testing under all three scenarios (no metrics at all, api only, and with the sdk) helps ensure compliance with this requirement.
+
+In a test:
+
+```ruby
+with_metrics_sdk do
+  let(:metric_snapshots) do
+    metrics_exporter.tap(&:pull)
+      .metric_snapshots.select { |snapshot| snapshot.data_points.any? }
+      .group_by(&:name)
+  end
+
+  it "uses metrics", with_metrics_sdk: true do
+    # do something here ...
+    _(metric_snapshots).count.must_equal(4)
+  end
+end
+```
+
+- `metrics_exporter` is automatically reset before each test.
+- `#with_metrics_sdk` will only yield if the SDK is present.
+- `#with_metrics_api` will only yield if the API is present
+
 ## How can I get involved?
 
 The `opentelemetry-test-helpers` gem source is [on github][repo-github], along with related gems including `opentelemetry-api`.
