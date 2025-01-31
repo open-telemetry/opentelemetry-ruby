@@ -220,7 +220,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       attributes = Minitest::Mock.new
       result = Result.new(decision: Decision::DROP, tracestate: nil)
       mock_sampler = Minitest::Mock.new
-      mock_sampler.expect(:should_sample?, result, [{ trace_id: span_context.trace_id, parent_context: context, links: links, name: name, kind: kind, attributes: attributes }])
+      mock_sampler.expect(:should_sample?, result, [], trace_id: span_context.trace_id, parent_context: context, links: links, name: name, kind: kind, attributes: attributes )
       tracer_provider.sampler = mock_sampler
       tracer.start_span(name, with_parent: context, attributes: attributes, links: links, kind: kind)
       mock_sampler.verify
