@@ -116,7 +116,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       sampler_attributes = { '1' => 1 }
       mock_sampler = Minitest::Mock.new
       result = Result.new(decision: Decision::RECORD_ONLY, attributes: sampler_attributes, tracestate: nil)
-      mock_sampler.expect(:should_sample?, result, [Hash])
+      mock_sampler.expect(:should_sample?, result, [], trace_id: String, parent_context: OpenTelemetry::Context, links: nil, name: String, kind: Symbol, attributes: Hash)
       tracer_provider.sampler = mock_sampler
       span = tracer.start_root_span('op', attributes: { '1' => 0, '2' => 2 })
       _(span.attributes).must_equal('1' => 1, '2' => 2)
@@ -270,7 +270,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       sampler_attributes = { '1' => 1 }
       mock_sampler = Minitest::Mock.new
       result = Result.new(decision: Decision::RECORD_ONLY, attributes: sampler_attributes, tracestate: nil)
-      mock_sampler.expect(:should_sample?, result, [Hash])
+      mock_sampler.expect(:should_sample?, result, [], trace_id: String, parent_context: OpenTelemetry::Context, links: nil, name: String, kind: Symbol, attributes: Hash)
       tracer_provider.sampler = mock_sampler
       span = tracer.start_span('op', with_parent: context, attributes: { '1' => 0, '2' => 2 })
       _(span.attributes).must_equal('1' => 1, '2' => 2)
