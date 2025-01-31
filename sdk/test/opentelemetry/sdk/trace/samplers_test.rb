@@ -60,7 +60,7 @@ describe OpenTelemetry::SDK::Trace::Samplers do
 
     it 'delegates sampling of remote sampled spans' do
       mock_sampler = Minitest::Mock.new
-      mock_sampler.expect(:should_sample?, result, [], trace_id: trace_id, parent_context: remote_sampled_parent_context, links: nil, name: nil, kind: nil, attributes: nil )
+      mock_sampler.expect(:should_sample?, result, [], trace_id: trace_id, parent_context: remote_sampled_parent_context, links: nil, name: nil, kind: nil, attributes: nil)
       sampler = Samplers.parent_based(
         root: not_a_sampler,
         remote_parent_sampled: mock_sampler,
@@ -76,7 +76,7 @@ describe OpenTelemetry::SDK::Trace::Samplers do
 
     it 'delegates sampling of remote not sampled spans' do
       mock_sampler = Minitest::Mock.new
-      mock_sampler.expect(:should_sample?, result, [], trace_id: trace_id, parent_context: remote_not_sampled_parent_context, links: nil, name: nil, kind: nil, attributes: nil )
+      mock_sampler.expect(:should_sample?, result, [], trace_id: trace_id, parent_context: remote_not_sampled_parent_context, links: nil, name: nil, kind: nil, attributes: nil)
       sampler = Samplers.parent_based(
         root: not_a_sampler,
         remote_parent_sampled: not_a_sampler,
@@ -92,7 +92,7 @@ describe OpenTelemetry::SDK::Trace::Samplers do
 
     it 'delegates sampling of local sampled spans' do
       mock_sampler = Minitest::Mock.new
-      mock_sampler.expect(:should_sample?, result, [], trace_id: trace_id, parent_context: local_sampled_parent_context, links: nil, name: nil, kind: nil, attributes: nil )
+      mock_sampler.expect(:should_sample?, result, [], trace_id: trace_id, parent_context: local_sampled_parent_context, links: nil, name: nil, kind: nil, attributes: nil)
       sampler = Samplers.parent_based(
         root: not_a_sampler,
         remote_parent_sampled: not_a_sampler,
@@ -108,7 +108,7 @@ describe OpenTelemetry::SDK::Trace::Samplers do
 
     it 'delegates sampling of local not sampled spans' do
       mock_sampler = Minitest::Mock.new
-      mock_sampler.expect(:should_sample?, result, [], trace_id: trace_id, parent_context: local_not_sampled_parent_context, links: nil, name: nil, kind: nil, attributes: nil )
+      mock_sampler.expect(:should_sample?, result, [], trace_id: trace_id, parent_context: local_not_sampled_parent_context, links: nil, name: nil, kind: nil, attributes: nil)
       sampler = Samplers.parent_based(
         root: not_a_sampler,
         remote_parent_sampled: not_a_sampler,
@@ -124,7 +124,7 @@ describe OpenTelemetry::SDK::Trace::Samplers do
 
     it 'delegates sampling of root spans' do
       mock_sampler = Minitest::Mock.new
-      mock_sampler.expect(:should_sample?, result, [], trace_id: trace_id, parent_context: nil, links: nil, name: nil, kind: nil, attributes: nil )
+      mock_sampler.expect(:should_sample?, result, [], trace_id: trace_id, parent_context: nil, links: nil, name: nil, kind: nil, attributes: nil)
       sampler = Samplers.parent_based(
         root: mock_sampler,
         remote_parent_sampled: not_a_sampler,
