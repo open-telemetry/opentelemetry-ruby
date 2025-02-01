@@ -113,7 +113,7 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
         logger.on_emit(attributes: { 'a' => 'a', 'b' => 'b' })
 
         # Look at the captured output to see if the attributes have been truncated
-        assert_match(/attributes={"b".=>."b"}/, captured_stdout.string)
+        assert_match(/attributes={"b".?=>.?"b"}/, captured_stdout.string)
         refute_match(/"a"=>"a"/, captured_stdout.string)
 
         # Return STDOUT to its normal output
