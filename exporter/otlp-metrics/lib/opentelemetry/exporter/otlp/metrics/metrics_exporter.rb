@@ -240,7 +240,8 @@ module OpenTelemetry
                   aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
                   data_points: metrics.data_points.map do |ndp|
                     number_data_point(ndp)
-                  end
+                  end,
+                  is_monotonic: metrics.is_monotonic
                 )
               )
 
