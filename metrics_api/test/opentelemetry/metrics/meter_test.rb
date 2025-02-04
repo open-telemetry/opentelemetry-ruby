@@ -24,9 +24,19 @@ describe OpenTelemetry::Metrics::Meter do
       _(counter.class).must_equal(OpenTelemetry::Metrics::Instrument::Counter)
     end
 
+    it 'test create_counter with advisory parameters' do
+      counter = meter.create_counter('test', attributes: { 'test' => true })
+      _(counter.class).must_equal(OpenTelemetry::Metrics::Instrument::Counter)
+    end
+
     it 'test create_histogram' do
       counter = meter.create_histogram('test')
       _(counter.class).must_equal(OpenTelemetry::Metrics::Instrument::Histogram)
+    end
+
+    it 'test create_histogram with advisory parameters' do
+      histogram = meter.create_histogram('test', explicit_bucket_boundaries: [1, 2, 3])
+      _(histogram.class).must_equal(OpenTelemetry::Metrics::Instrument::Histogram)
     end
 
     it 'test create_up_down_counter' do

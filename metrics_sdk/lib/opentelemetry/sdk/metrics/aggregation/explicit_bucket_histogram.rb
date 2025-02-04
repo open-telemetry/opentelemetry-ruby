@@ -23,11 +23,13 @@ module OpenTelemetry
           def initialize(
             aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta), # TODO: the default should be :cumulative, see issue #1555
             boundaries: DEFAULT_BOUNDARIES,
+            attributes: nil,
             record_min_max: true
           )
             @aggregation_temporality = aggregation_temporality.to_sym
             @boundaries = boundaries && !boundaries.empty? ? boundaries.sort : nil
             @record_min_max = record_min_max
+            @attributes = attributes if attributes
           end
 
           def collect(start_time, end_time, data_points)
@@ -53,6 +55,8 @@ module OpenTelemetry
           end
 
           def update(amount, attributes, data_points)
+            attributes = @attributes.merge(attributes) if @attributes
+
             hdp = data_points.fetch(attributes) do
               if @record_min_max
                 min = Float::INFINITY

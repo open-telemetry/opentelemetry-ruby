@@ -38,18 +38,18 @@ module OpenTelemetry
 
       private
 
-      def create_instrument(kind, name, unit, description, callback)
+      def create_instrument(kind, name, unit, description, callback, **advisory_parameters)
         super do
           next ProxyInstrument.new(kind, name, unit, description, callback) if @delegate.nil?
 
           case kind
-          when :counter then @delegate.create_counter(name, unit: unit, description: description)
-          when :histogram then @delegate.create_histogram(name, unit: unit, description: description)
-          when :gauge then @delegate.create_gauge(name, unit: unit, description: description)
-          when :up_down_counter then @delegate.create_up_down_counter(name, unit: unit, description: description)
-          when :observable_counter then @delegate.create_observable_counter(name, unit: unit, description: description, callback: callback)
-          when :observable_gauge then @delegate.create_observable_gauge(name, unit: unit, description: description, callback: callback)
-          when :observable_up_down_counter then @delegate.create_observable_up_down_counter(name, unit: unit, description: description, callback: callback)
+          when :counter then @delegate.create_counter(name, unit: unit, description: description, **advisory_parameters)
+          when :histogram then @delegate.create_histogram(name, unit: unit, description: description, **advisory_parameters)
+          when :gauge then @delegate.create_gauge(name, unit: unit, description: description, **advisory_parameters)
+          when :up_down_counter then @delegate.create_up_down_counter(name, unit: unit, description: description, **advisory_parameters)
+          when :observable_counter then @delegate.create_observable_counter(name, unit: unit, description: description, callback: callback, **advisory_parameters)
+          when :observable_gauge then @delegate.create_observable_gauge(name, unit: unit, description: description, callback: callback, **advisory_parameters)
+          when :observable_up_down_counter then @delegate.create_observable_up_down_counter(name, unit: unit, description: description, callback: callback, **advisory_parameters)
           end
         end
       end

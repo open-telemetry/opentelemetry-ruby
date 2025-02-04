@@ -38,7 +38,7 @@ module OpenTelemetry
           private
 
           def default_aggregation
-            OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new
+            OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new(attributes: @attributes)
           end
         end
       end

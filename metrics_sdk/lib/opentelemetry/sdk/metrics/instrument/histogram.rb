@@ -35,7 +35,21 @@ module OpenTelemetry
           private
 
           def default_aggregation
-            OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new
+            # This hash is assembled to avoid implicitly passing `boundaries: nil`,
+            # which should be valid explicit call according to ExplicitBucketHistogram#initialize
+            kwargs = {}
+            kwargs[:attributes] = @attributes if @attributes
+            kwargs[:boundaries] = @boundaries if @boundaries
+
+            OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(**kwargs)
+          end
+
+          def validate_advisory_parameters(parameters)
+            if (boundaries = parameters.delete(:explicit_bucket_boundaries))
+              @boundaries = boundaries
+            end
+
+            super
           end
         end
       end
