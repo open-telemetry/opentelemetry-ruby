@@ -1,5 +1,9 @@
 # Release History: opentelemetry-sdk
 
+### v1.7.0 / 2025-02-04
+
+* ADDED: Add compatibility with env OTEL_SDK_DISABLED
+
 ### v1.6.0 / 2024-12-04
 
 * ADDED: Add hooks to configure logs
