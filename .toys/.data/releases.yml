@@ -7,8 +7,8 @@ main_branch: main
 # Time in seconds for release scripts to wait for CI to complete.
 required_checks_timeout: 1200
 # Git user attached to commits for release pull requests.
-git_user_name: Daniel Azuma
-git_user_email: dazuma@gmail.com
+git_user_name: OpenTelemetry Bot
+git_user_email: 107717825+opentelemetrybot@users.noreply.github.com
 # Toys tool that builds YARD reference docs
 docs_builder_tool: [yardoc]
 
