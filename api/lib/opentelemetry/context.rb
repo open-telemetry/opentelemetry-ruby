@@ -8,11 +8,12 @@ require 'opentelemetry/context/key'
 require 'opentelemetry/context/propagation'
 
 module OpenTelemetry
+  Fiber.attr_accessor :opentelemetry_context
+
   # Manages context on a per-fiber basis
   class Context
     EMPTY_ENTRIES = {}.freeze
-    STACK_KEY = :__opentelemetry_context_storage__
-    private_constant :EMPTY_ENTRIES, :STACK_KEY
+    private_constant :EMPTY_ENTRIES
 
     DetachError = Class.new(OpenTelemetry::Error)
 
@@ -113,11 +114,9 @@ module OpenTelemetry
         current.value(key)
       end
 
-      # Clears the fiber-local Context stack. This allocates a new array for the
-      # stack, which is important in some use-cases to avoid sharing the backing
-      # array between fibers.
+      # Clears the fiber-local Context stack.
       def clear
-        Thread.current[STACK_KEY] = []
+        Fiber.current.opentelemetry_context = []
       end
 
       def empty
@@ -127,7 +126,7 @@ module OpenTelemetry
       private
 
       def stack
-        Thread.current[STACK_KEY] ||= []
+        Fiber.current.opentelemetry_context ||= []
       end
     end
 
