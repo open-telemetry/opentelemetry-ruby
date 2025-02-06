@@ -312,6 +312,7 @@ describe OpenTelemetry::Context do
     end
 
     it 'is isolated with respect to Fiber-local storage manipulation' do
+      skip unless Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.2.0')
       OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
         ctx = new_context
         Context.with_current(ctx) do
