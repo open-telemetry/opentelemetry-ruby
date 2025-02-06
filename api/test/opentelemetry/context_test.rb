@@ -304,7 +304,7 @@ describe OpenTelemetry::Context do
             # Manipulate _this fiber's_ context stack.
             Context.attach(new_context)
           ensure
-            locals.each { |k, _| t2[k] = nil }
+            locals.each_key { |k| t2.delete(k) }
           end.resume
         end
         _(log_stream.string).must_be_empty
@@ -327,7 +327,7 @@ describe OpenTelemetry::Context do
             # Manipulate _this fiber's_ context stack.
             Context.attach(new_context)
           ensure
-            locals.each { |k, _| f2.storage[k] = nil }
+            locals.each_key { |k| f2.storage.delete(k) }
           end.resume
         end
         _(log_stream.string).must_be_empty
@@ -350,7 +350,7 @@ describe OpenTelemetry::Context do
             # Manipulate _this thread's_ context stack.
             Context.attach(new_context)
           ensure
-            locals.each { |k, _| t2[k] = nil }
+            locals.each_key { |k| t2.delete(k) }
           end.join
         end
         _(log_stream.string).must_be_empty
