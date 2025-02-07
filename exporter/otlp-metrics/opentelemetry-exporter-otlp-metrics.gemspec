@@ -43,7 +43,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 12.0'
   spec.add_development_dependency 'rubocop', '~> 1.65'
   spec.add_development_dependency 'simplecov', '~> 0.17'
-  spec.add_development_dependency 'webmock', '~> 3.7.6'
+  spec.add_development_dependency 'webmock', '~> 3.24'
   spec.add_development_dependency 'yard', '~> 0.9'
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
 
