@@ -8,6 +8,7 @@ require 'benchmark/ipsa'
 require 'concurrent-ruby'
 require 'opentelemetry'
 
+# Manages context on a per-fiber basis
 class FiberLocalVarContext
   EMPTY_ENTRIES = {}.freeze
   VAR = Concurrent::FiberLocalVar.new { [] }
@@ -102,6 +103,7 @@ end
 
 Fiber.attr_accessor :opentelemetry_context
 
+# Manages context on a per-fiber basis
 class FiberAttributeContext
   EMPTY_ENTRIES = {}.freeze
   private_constant :EMPTY_ENTRIES
@@ -193,18 +195,19 @@ class FiberAttributeContext
   ROOT = empty.freeze
 end
 
+# Manages context on a per-fiber basis
 class LinkedListContext
   EMPTY_ENTRIES = {}.freeze
   STACK_KEY = :__linked_list_context_storage__
 
+  # @api private
   class Token
+    attr_reader :context, :next_token
+
     def initialize(context, next_token)
       @context = context
       @next_token = next_token
     end
-
-    def context = @context
-    def next_token = @next_token
   end
 
   private_constant :EMPTY_ENTRIES, :STACK_KEY, :Token
@@ -254,6 +257,7 @@ class LinkedListContext
     ensure
       detach(token)
     end
+
     def value(key)
       current.value(key)
     end
@@ -290,18 +294,19 @@ class LinkedListContext
   ROOT = empty.freeze
 end
 
+# Manages context on a per-fiber basis
 class FiberLocalLinkedListContext < Hash
   EMPTY_ENTRIES = {}.freeze
   STACK_KEY = :__fiber_local_linked_list_context_storage__
 
+  # @api private
   class Token
+    attr_reader :context, :next_token
+
     def initialize(context, next_token)
       @context = context
       @next_token = next_token
     end
-
-    def context = @context
-    def next_token = @next_token
   end
 
   private_constant :EMPTY_ENTRIES, :STACK_KEY, :Token
@@ -348,6 +353,7 @@ class FiberLocalLinkedListContext < Hash
     ensure
       detach(token)
     end
+
     def value(key)
       current.value(key)
     end
@@ -380,6 +386,7 @@ class FiberLocalLinkedListContext < Hash
   ROOT = empty.freeze
 end
 
+# Manages context on a per-fiber basis
 class ArrayContext
   EMPTY_ENTRIES = {}.freeze
   STACK_KEY = :__array_context_storage__
@@ -472,6 +479,7 @@ class ArrayContext
   ROOT = empty.freeze
 end
 
+# Manages context on a per-fiber basis
 class FiberLocalArrayContext
   EMPTY_ENTRIES = {}.freeze
   STACK_KEY = :__fiber_local_array_context_storage__
@@ -590,6 +598,7 @@ class FiberLocalArrayContext
   ROOT = empty.freeze
 end
 
+# Manages context on a per-fiber basis
 class ImmutableArrayContext
   EMPTY_ENTRIES = {}.freeze
   STACK_KEY = :__immutable_array_context_storage__
@@ -682,6 +691,7 @@ class ImmutableArrayContext
   ROOT = empty.freeze
 end
 
+# Manages context on a per-fiber basis
 class FiberLocalImmutableArrayContext
   EMPTY_ENTRIES = {}.freeze
   STACK_KEY = :__fiber_local_immutable_array_context_storage__
@@ -774,46 +784,43 @@ class FiberLocalImmutableArrayContext
   ROOT = empty.freeze
 end
 
-values = { 'key' => 'value' }
-context = LinkedListContext.empty.set_values(values)
-
 Benchmark.ipsa do |x|
   x.report 'FiberAttributeContext.with_value' do
-    FiberAttributeContext.with_value('key', 'value') { |ctx, value| ctx }
+    FiberAttributeContext.with_value('key', 'value') { |ctx, _| ctx }
   end
 
   x.report 'LinkedListContext.with_value' do
-    LinkedListContext.with_value('key', 'value') { |ctx, value| ctx }
+    LinkedListContext.with_value('key', 'value') { |ctx, _| ctx }
   end
 
   x.report 'ArrayContext.with_value' do
-    ArrayContext.with_value('key', 'value') { |ctx, value| ctx }
+    ArrayContext.with_value('key', 'value') { |ctx, _| ctx }
   end
 
   x.report 'ImmutableArrayContext.with_value' do
-    ImmutableArrayContext.with_value('key', 'value') { |ctx, value| ctx }
+    ImmutableArrayContext.with_value('key', 'value') { |ctx, _| ctx }
   end
 
   x.report 'FiberLocalVarContext.with_value' do
-    FiberLocalVarContext.with_value('key', 'value') { |ctx, value| ctx }
+    FiberLocalVarContext.with_value('key', 'value') { |ctx, _| ctx }
   end
 
   x.report 'FiberLocalLinkedListContext.with_value' do
-    FiberLocalLinkedListContext.with_value('key', 'value') { |ctx, value| ctx }
+    FiberLocalLinkedListContext.with_value('key', 'value') { |ctx, _| ctx }
   end
 
   x.report 'FiberLocalImmutableArrayContext.with_value' do
-    FiberLocalImmutableArrayContext.with_value('key', 'value') { |ctx, value| ctx }
+    FiberLocalImmutableArrayContext.with_value('key', 'value') { |ctx, _| ctx }
   end
 
   x.report 'FiberLocalArrayContext.with_value' do
-    FiberLocalArrayContext.with_value('key', 'value') { |ctx, value| ctx }
+    FiberLocalArrayContext.with_value('key', 'value') { |ctx, _| ctx }
   end
 
   x.compare!
 end
 
-Benchmark.ipsa do |x|
+Benchmark.ipsa do |x| # rubocop:disable Metrics/BlockLength
   x.report 'LinkedListContext.with_value recursive' do
     LinkedListContext.with_value('key', 'value') do
       LinkedListContext.with_value('key', 'value') do
@@ -824,7 +831,7 @@ Benchmark.ipsa do |x|
                 LinkedListContext.with_value('key', 'value') do
                   LinkedListContext.with_value('key', 'value') do
                     LinkedListContext.with_value('key', 'value') do
-                      LinkedListContext.with_value('key', 'value') do |ctx, value| ctx end
+                      LinkedListContext.with_value('key', 'value') { |ctx, _| ctx }
                     end
                   end
                 end
@@ -846,7 +853,7 @@ Benchmark.ipsa do |x|
                 ArrayContext.with_value('key', 'value') do
                   ArrayContext.with_value('key', 'value') do
                     ArrayContext.with_value('key', 'value') do
-                      ArrayContext.with_value('key', 'value') do |ctx, value| ctx end
+                      ArrayContext.with_value('key', 'value') { |ctx, _| ctx }
                     end
                   end
                 end
@@ -868,7 +875,7 @@ Benchmark.ipsa do |x|
                 ImmutableArrayContext.with_value('key', 'value') do
                   ImmutableArrayContext.with_value('key', 'value') do
                     ImmutableArrayContext.with_value('key', 'value') do
-                      ImmutableArrayContext.with_value('key', 'value') do |ctx, value| ctx end
+                      ImmutableArrayContext.with_value('key', 'value') { |ctx, _| ctx }
                     end
                   end
                 end
@@ -890,7 +897,7 @@ Benchmark.ipsa do |x|
                 FiberAttributeContext.with_value('key', 'value') do
                   FiberAttributeContext.with_value('key', 'value') do
                     FiberAttributeContext.with_value('key', 'value') do
-                      FiberAttributeContext.with_value('key', 'value') do |ctx, value| ctx end
+                      FiberAttributeContext.with_value('key', 'value') { |ctx, _| ctx }
                     end
                   end
                 end
@@ -912,7 +919,7 @@ Benchmark.ipsa do |x|
                 FiberLocalVarContext.with_value('key', 'value') do
                   FiberLocalVarContext.with_value('key', 'value') do
                     FiberLocalVarContext.with_value('key', 'value') do
-                      FiberLocalVarContext.with_value('key', 'value') do |ctx, value| ctx end
+                      FiberLocalVarContext.with_value('key', 'value') { |ctx, _| ctx }
                     end
                   end
                 end
@@ -934,7 +941,7 @@ Benchmark.ipsa do |x|
                 FiberLocalLinkedListContext.with_value('key', 'value') do
                   FiberLocalLinkedListContext.with_value('key', 'value') do
                     FiberLocalLinkedListContext.with_value('key', 'value') do
-                      FiberLocalLinkedListContext.with_value('key', 'value') do |ctx, value| ctx end
+                      FiberLocalLinkedListContext.with_value('key', 'value') { |ctx, _| ctx }
                     end
                   end
                 end
@@ -956,7 +963,7 @@ Benchmark.ipsa do |x|
                 FiberLocalImmutableArrayContext.with_value('key', 'value') do
                   FiberLocalImmutableArrayContext.with_value('key', 'value') do
                     FiberLocalImmutableArrayContext.with_value('key', 'value') do
-                      FiberLocalImmutableArrayContext.with_value('key', 'value') do |ctx, value| ctx end
+                      FiberLocalImmutableArrayContext.with_value('key', 'value') { |ctx, _| ctx }
                     end
                   end
                 end
@@ -978,7 +985,7 @@ Benchmark.ipsa do |x|
                 FiberLocalArrayContext.with_value('key', 'value') do
                   FiberLocalArrayContext.with_value('key', 'value') do
                     FiberLocalArrayContext.with_value('key', 'value') do
-                      FiberLocalArrayContext.with_value('key', 'value') do |ctx, value| ctx end
+                      FiberLocalArrayContext.with_value('key', 'value') { |ctx, _| ctx }
                     end
                   end
                 end
