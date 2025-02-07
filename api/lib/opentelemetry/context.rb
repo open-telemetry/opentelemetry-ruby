@@ -7,7 +7,7 @@
 require 'opentelemetry/context/key'
 require 'opentelemetry/context/propagation'
 
-module OpenTelemetry
+module OpenTelemetry # rubocop:disable Style/Documentation
   Fiber.attr_accessor :opentelemetry_context
 
   # Manages context on a per-fiber basis
