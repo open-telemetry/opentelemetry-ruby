@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.30.0 / 2025-02-11
+
+* ADDED: Suppport 3.1 Min Version
+
 ### v0.29.1 / 2024-12-04
 
 * FIXED: Remove WRITE_TIMEOUT_SUPPORTED

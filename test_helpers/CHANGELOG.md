@@ -1,5 +1,9 @@
 # Release History: opentelemetry-test-helpers
 
+### v0.6.0 / 2025-02-11
+
+* ADDED: Suppport 3.1 Min Version
+
 ### v0.5.0 / 2024-12-04
 
 * ADDED: Add OTLP Log Record Exporter

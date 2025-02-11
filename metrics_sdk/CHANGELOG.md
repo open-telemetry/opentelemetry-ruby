@@ -1,5 +1,10 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.6.0 / 2025-02-11
+
+* ADDED: Suppport 3.1 Min Version
+* FIXED: Adding is_monotonic flag to sum
+
 ### v0.5.0 / 2025-01-08
 
 * ADDED: Add synchronous gauge
