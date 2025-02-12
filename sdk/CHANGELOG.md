@@ -50,7 +50,7 @@
 ### v1.2.0 / 2022-09-14
 
 - ADDED: Support OTEL_PROPAGATORS=none
-- ADDED: Support OTEL*ATTRIBUTE*{COUNT,VALUE_LENGTH}\_LIMIT env vars
+- ADDED: Support OTEL\_ATTRIBUTE\_{COUNT,VALUE_LENGTH}\_LIMIT env vars
 - ADDED: Support InstrumentationScope, and update OTLP proto to 0.18.0
 - FIXED: SpanLimits setting event attributes length limit
 
