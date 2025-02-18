@@ -1,5 +1,9 @@
 # Release History: opentelemetry-instrumentation-registry
 
+### v0.4.0 / 2025-02-18
+
+* ADDED: Suppport 3.1 Min Version
+
 ### v0.3.1 / 2024-03-19
 
 * fix: Make use_all config friendlier [#1406](https://github.com/open-telemetry/opentelemetry-ruby/pull/1406)
