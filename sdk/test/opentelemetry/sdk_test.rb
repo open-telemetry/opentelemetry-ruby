@@ -27,4 +27,13 @@ describe OpenTelemetry::SDK do
       _(received_message).must_match(/unexpected configuration error due to unknown keyword: .*invalid_option/)
     end
   end
+
+  describe '#configure (sdk disabled)' do
+    it 'ignore configuration when sdk is disabled by env' do
+      config = OpenTelemetry::TestHelpers.with_env('OTEL_SDK_DISABLED' => 'true') do
+        OpenTelemetry::SDK.configure
+      end
+      _(config).must_equal nil
+    end
+  end
 end
