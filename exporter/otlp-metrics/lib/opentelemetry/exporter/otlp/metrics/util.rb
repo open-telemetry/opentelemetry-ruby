@@ -118,7 +118,7 @@ module OpenTelemetry
             status = Google::Rpc::Status.decode(body)
             details = status.details.map do |detail|
               type_name = detail.type_url.to_s.split('/').last.to_s
-              klass_or_nil = ::Google::Protobuf::DescriptorPool.generated_pool.lookup(detail.type_name)&.msgclass
+              klass_or_nil = ::Google::Protobuf::DescriptorPool.generated_pool.lookup(type_name)&.msgclass
               detail.unpack(klass_or_nil) if klass_or_nil
             end.compact
             OpenTelemetry.handle_error(message: "OTLP metrics_exporter received rpc.Status{message=#{status.message}, details=#{details}}")
