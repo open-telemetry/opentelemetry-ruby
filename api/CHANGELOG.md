@@ -1,5 +1,10 @@
 # Release History: opentelemetry-api
 
+### v1.5.0 / 2025-02-20
+
+* ADDED: Suppport 3.1 Min Version
+* FIXED: Use a Fiber attribute for Context
+
 ### v1.4.0 / 2024-08-27
 
 * ADDED: Include backtrace first line for better debug info
