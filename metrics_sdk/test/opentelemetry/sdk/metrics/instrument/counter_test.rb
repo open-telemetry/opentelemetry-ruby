@@ -8,18 +8,19 @@ require 'test_helper'
 
 describe OpenTelemetry::SDK::Metrics::Instrument::Counter do
   let(:metric_exporter) { OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new }
+  let(:metric_reader) { OpenTelemetry::SDK::Metrics::Export::MetricReader.new(exporter: metric_exporter) }
   let(:meter) { OpenTelemetry.meter_provider.meter('test') }
   let(:counter) { meter.create_counter('counter', unit: 'smidgen', description: 'a small amount of something') }
 
   before do
     reset_metrics_sdk
     OpenTelemetry::SDK.configure
-    OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+    OpenTelemetry.meter_provider.add_metric_reader(metric_reader)
   end
 
   it 'counts' do
     counter.add(1, attributes: { 'foo' => 'bar' })
-    metric_exporter.pull
+    metric_reader.pull
     last_snapshot = metric_exporter.metric_snapshots
 
     _(last_snapshot[0].name).must_equal('counter')

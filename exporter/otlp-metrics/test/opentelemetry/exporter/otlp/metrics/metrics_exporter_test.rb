@@ -336,6 +336,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
 
   describe '#export' do
     let(:exporter) { OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new }
+    let(:metric_reader) { OpenTelemetry::SDK::Metrics::Export::MetricReader.new(exporter: exporter) }
     let(:meter_provider) { OpenTelemetry::SDK::Metrics::MeterProvider.new(resource: OpenTelemetry::SDK::Resources::Resource.telemetry_sdk) }
 
     it 'integrates with collector' do
@@ -530,11 +531,11 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
 
     it 'exports a metric' do
       stub_post = stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 200)
-      meter_provider.add_metric_reader(exporter)
+      meter_provider.add_metric_reader(metric_reader)
       meter     = meter_provider.meter('test')
       counter   = meter.create_counter('test_counter', unit: 'smidgen', description: 'a small amount of something')
       counter.add(5, attributes: { 'foo' => 'bar' })
-      exporter.pull
+      metric_reader.pull
       meter_provider.shutdown
 
       assert_requested(stub_post)
@@ -574,7 +575,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
 
     it 'translates all the things' do
       stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 200)
-      meter_provider.add_metric_reader(exporter)
+      meter_provider.add_metric_reader(metric_reader)
       meter   = meter_provider.meter('test')
 
       counter = meter.create_counter('test_counter', unit: 'smidgen', description: 'a small amount of something')
@@ -589,7 +590,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       gauge = meter.create_gauge('test_gauge', unit: 'smidgen', description: 'a small amount of something')
       gauge.record(15, attributes: { 'baz' => 'qux' })
 
-      exporter.pull
+      metric_reader.pull
       meter_provider.shutdown
 
       encoded_etsr = Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.encode(
