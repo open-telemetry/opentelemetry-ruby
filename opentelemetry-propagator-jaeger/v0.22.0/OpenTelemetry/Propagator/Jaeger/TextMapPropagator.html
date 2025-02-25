@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: OpenTelemetry::Propagator::Jaeger::TextMapPropagator
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::Propagator::Jaeger::TextMapPropagator";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (T)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Propagator.html" title="OpenTelemetry::Propagator (module)">Propagator</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Jaeger.html" title="OpenTelemetry::Propagator::Jaeger (module)">Jaeger</a></span></span>
+     &raquo; 
+    <span class="title">TextMapPropagator</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: OpenTelemetry::Propagator::Jaeger::TextMapPropagator
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">OpenTelemetry::Propagator::Jaeger::TextMapPropagator</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/propagator/jaeger/text_map_propagator.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Propagates trace context using the Jaeger format</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#extract-instance_method" title="#extract (instance method)">#<strong>extract</strong>(carrier, context: Context.current, getter: Context::Propagation.text_map_getter)  &#x21d2; Context </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Extract trace context from the supplied carrier.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#fields-instance_method" title="#fields (instance method)">#<strong>fields</strong>  &#x21d2; Array&lt;String&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the predefined propagation fields.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#inject-instance_method" title="#inject (instance method)">#<strong>inject</strong>(carrier, context: Context.current, setter: Context::Propagation.text_map_setter)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Inject trace context into the supplied carrier.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="extract-instance_method">
+  
+    #<strong>extract</strong>(carrier, context: Context.current, getter: Context::Propagation.text_map_getter)  &#x21d2; <tt>Context</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Extract trace context from the supplied carrier. If extraction fails, the original context will be returned</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>carrier</span>
+      
+      
+        <span class='type'>(<tt>Carrier</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The carrier to get the header from</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>context</span>
+      
+      
+        <span class='type'>(<tt>optional Context</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>Context.current</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Context to be updated with the trace context extracted from the carrier. Defaults to <code>Context.current</code>.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>getter</span>
+      
+      
+        <span class='type'>(<tt>optional Getter</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>Context::Propagation.text_map_getter</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If the optional getter is provided, it will be used to read the header from the carrier, otherwise the default text map getter will be used.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Context</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>context updated with extracted baggage, or the original context if extraction fails</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/propagator/jaeger/text_map_propagator.rb', line 46</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_extract'>extract</span><span class='lparen'>(</span><span class='id identifier rubyid_carrier'>carrier</span><span class='comma'>,</span> <span class='label'>context:</span> <span class='const'>Context</span><span class='period'>.</span><span class='id identifier rubyid_current'>current</span><span class='comma'>,</span> <span class='label'>getter:</span> <span class='const'>Context</span><span class='op'>::</span><span class='const'>Propagation</span><span class='period'>.</span><span class='id identifier rubyid_text_map_getter'>text_map_getter</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_header'>header</span> <span class='op'>=</span> <span class='id identifier rubyid_getter'>getter</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='id identifier rubyid_carrier'>carrier</span><span class='comma'>,</span> <span class='const'>IDENTITY_KEY</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='id identifier rubyid_context'>context</span> <span class='kw'>unless</span> <span class='id identifier rubyid_header'>header</span>
+  <span class='kw'>return</span> <span class='id identifier rubyid_context'>context</span> <span class='kw'>unless</span> <span class='lparen'>(</span><span class='id identifier rubyid_match'>match</span> <span class='op'>=</span> <span class='id identifier rubyid_header'>header</span><span class='period'>.</span><span class='id identifier rubyid_match'>match</span><span class='lparen'>(</span><span class='const'>TRACE_SPAN_IDENTITY_REGEX</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='id identifier rubyid_context'>context</span> <span class='kw'>if</span> <span class='id identifier rubyid_match'>match</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>trace_id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>=~</span> <span class='const'>ZERO_ID_REGEX</span>
+  <span class='kw'>return</span> <span class='id identifier rubyid_context'>context</span> <span class='kw'>if</span> <span class='id identifier rubyid_match'>match</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>span_id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>=~</span> <span class='const'>ZERO_ID_REGEX</span>
+
+  <span class='id identifier rubyid_sampling_flags'>sampling_flags</span> <span class='op'>=</span> <span class='id identifier rubyid_match'>match</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>sampling_flags</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
+  <span class='id identifier rubyid_span'>span</span> <span class='op'>=</span> <span class='id identifier rubyid_build_span'>build_span</span><span class='lparen'>(</span><span class='id identifier rubyid_match'>match</span><span class='comma'>,</span> <span class='id identifier rubyid_sampling_flags'>sampling_flags</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_context'>context</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Jaeger.html" title="OpenTelemetry::Propagator::Jaeger (module)">Jaeger</a></span></span><span class='period'>.</span><span class='id identifier rubyid_context_with_debug'><span class='object_link'><a href="../Jaeger.html#context_with_debug-instance_method" title="OpenTelemetry::Propagator::Jaeger#context_with_debug (method)">context_with_debug</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_sampling_flags'>sampling_flags</span> <span class='op'>&amp;</span> <span class='const'>DEBUG_FLAG_BIT</span> <span class='op'>!=</span> <span class='int'>0</span>
+  <span class='id identifier rubyid_context'>context</span> <span class='op'>=</span> <span class='id identifier rubyid_context_with_extracted_baggage'>context_with_extracted_baggage</span><span class='lparen'>(</span><span class='id identifier rubyid_carrier'>carrier</span><span class='comma'>,</span> <span class='id identifier rubyid_context'>context</span><span class='comma'>,</span> <span class='id identifier rubyid_getter'>getter</span><span class='rparen'>)</span>
+  <span class='const'>Trace</span><span class='period'>.</span><span class='id identifier rubyid_context_with_span'>context_with_span</span><span class='lparen'>(</span><span class='id identifier rubyid_span'>span</span><span class='comma'>,</span> <span class='label'>parent_context:</span> <span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="fields-instance_method">
+  
+    #<strong>fields</strong>  &#x21d2; <tt>Array&lt;String&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the predefined propagation fields. If your carrier is reused, you should delete the fields returned by this method before calling <code>inject</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>a list of fields that will be used by this propagator.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+88
+89
+90</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/propagator/jaeger/text_map_propagator.rb', line 88</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_fields'>fields</span>
+  <span class='const'>FIELDS</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="inject-instance_method">
+  
+    #<strong>inject</strong>(carrier, context: Context.current, setter: Context::Propagation.text_map_setter)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Inject trace context into the supplied carrier.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>carrier</span>
+      
+      
+        <span class='type'>(<tt>Carrier</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The mutable carrier to inject trace context into</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>context</span>
+      
+      
+        <span class='type'>(<tt>Context</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>Context.current</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The context to read trace context from</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>setter</span>
+      
+      
+        <span class='type'>(<tt>optional Setter</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>Context::Propagation.text_map_setter</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If the optional setter is provided, it will be used to write context into the carrier, otherwise the default text map setter will be used.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/propagator/jaeger/text_map_propagator.rb', line 67</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_inject'>inject</span><span class='lparen'>(</span><span class='id identifier rubyid_carrier'>carrier</span><span class='comma'>,</span> <span class='label'>context:</span> <span class='const'>Context</span><span class='period'>.</span><span class='id identifier rubyid_current'>current</span><span class='comma'>,</span> <span class='label'>setter:</span> <span class='const'>Context</span><span class='op'>::</span><span class='const'>Propagation</span><span class='period'>.</span><span class='id identifier rubyid_text_map_setter'>text_map_setter</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_span_context'>span_context</span> <span class='op'>=</span> <span class='const'>Trace</span><span class='period'>.</span><span class='id identifier rubyid_current_span'>current_span</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_context'>context</span>
+  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_span_context'>span_context</span><span class='period'>.</span><span class='id identifier rubyid_valid?'>valid?</span>
+
+  <span class='id identifier rubyid_flags'>flags</span> <span class='op'>=</span> <span class='id identifier rubyid_to_jaeger_flags'>to_jaeger_flags</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='comma'>,</span> <span class='id identifier rubyid_span_context'>span_context</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_trace_span_identity_value'>trace_span_identity_value</span> <span class='op'>=</span> <span class='lbracket'>[</span>
+    <span class='id identifier rubyid_span_context'>span_context</span><span class='period'>.</span><span class='id identifier rubyid_hex_trace_id'>hex_trace_id</span><span class='comma'>,</span> <span class='id identifier rubyid_span_context'>span_context</span><span class='period'>.</span><span class='id identifier rubyid_hex_span_id'>hex_span_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_flags'>flags</span>
+  <span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>:</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_setter'>setter</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='id identifier rubyid_carrier'>carrier</span><span class='comma'>,</span> <span class='const'>IDENTITY_KEY</span><span class='comma'>,</span> <span class='id identifier rubyid_trace_span_identity_value'>trace_span_identity_value</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'>Baggage</span><span class='period'>.</span><span class='id identifier rubyid_values'>values</span><span class='lparen'>(</span><span class='label'>context:</span> <span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
+    <span class='id identifier rubyid_baggage_key'>baggage_key</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>uberctx-</span><span class='tstring_end'>&#39;</span></span> <span class='op'>+</span> <span class='id identifier rubyid_key'>key</span>
+    <span class='id identifier rubyid_encoded_value'>encoded_value</span> <span class='op'>=</span> <span class='const'>CGI</span><span class='period'>.</span><span class='id identifier rubyid_escape'>escape</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_setter'>setter</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='id identifier rubyid_carrier'>carrier</span><span class='comma'>,</span> <span class='id identifier rubyid_baggage_key'>baggage_key</span><span class='comma'>,</span> <span class='id identifier rubyid_encoded_value'>encoded_value</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_carrier'>carrier</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Feb 25 21:55:35 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.1.6).
+</div>
+
+    </div>
+  </body>
+</html>
