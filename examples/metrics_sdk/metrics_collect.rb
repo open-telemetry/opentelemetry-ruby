@@ -15,6 +15,7 @@ end
 require 'opentelemetry/sdk'
 require 'opentelemetry-metrics-sdk'
 
+# this example manually configures the exporter, turn off automatic configuration
 ENV['OTEL_METRICS_EXPORTER'] = 'none'
 
 OpenTelemetry::SDK.configure
