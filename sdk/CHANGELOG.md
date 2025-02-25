@@ -1,5 +1,9 @@
 # Release History: opentelemetry-sdk
 
+### v1.8.0 / 2025-02-25
+
+* ADDED: Suppport 3.1 Min Version
+
 ### v1.7.0 / 2025-02-04
 
 * ADDED: Add compatibility with env OTEL_SDK_DISABLED

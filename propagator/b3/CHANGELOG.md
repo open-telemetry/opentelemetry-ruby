@@ -1,5 +1,9 @@
 # Release History: opentelemetry-propagator-b3
 
+### v0.22.0 / 2025-02-25
+
+* ADDED: Suppport 3.1 Min Version
+
 ### v0.21.0 / 2023-06-08
 
 * BREAKING CHANGE: Remove support for EoL Ruby 2.7 

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-common
 
+### v0.22.0 / 2025-02-25
+
+* ADDED: Suppport 3.1 Min Version
+
 ### v0.21.0 / 2024-05-08
 
 * ADDED: Untraced method updated to support both block and non block structured calls

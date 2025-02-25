@@ -1,5 +1,9 @@
 # Release History: opentelemetry-propagator-jaeger
 
+### v0.22.0 / 2025-02-25
+
+* ADDED: Suppport 3.1 Min Version
+
 ### v0.21.1 / 2024-02-06
 
 * FIXED: Patch the issue for frozen string on ruby < 3.0 with string interpolation

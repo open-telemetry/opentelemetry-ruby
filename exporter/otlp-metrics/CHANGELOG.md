@@ -1,5 +1,10 @@
 # Release History: opentelemetry-exporter-otlp-metrics
 
+### v0.4.0 / 2025-02-25
+
+* ADDED: Suppport 3.1 Min Version
+* FIXED: Adding is_monotonic flag to sum
+
 ### v0.3.0 / 2025-01-08
 
 * ADDED: Gauge metrics exporter encoding

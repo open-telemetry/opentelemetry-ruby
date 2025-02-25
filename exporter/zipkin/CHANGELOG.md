@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-zipkin
 
+### v0.24.0 / 2025-02-25
+
+* ADDED: Suppport 3.1 Min Version
+
 ### v0.23.2 / 2024-12-04
 
 * FIXED: Remove WRITE_TIMEOUT_SUPPORTED
