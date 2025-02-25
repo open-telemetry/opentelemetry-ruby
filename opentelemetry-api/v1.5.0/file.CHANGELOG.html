@@ -62,7 +62,7 @@
 
 <h3 id="label-v1.5.0+-2F+2025-02-20">v1.5.0 / 2025-02-20</h3>
 <ul><li>
-<p>ADDED: Suppport 3.1 Min Version</p>
+<p>ADDED: Support 3.1 Min Version</p>
 </li><li>
 <p>FIXED: Use a Fiber attribute for Context</p>
 </li></ul>
@@ -207,9 +207,15 @@
 <p>BREAKING CHANGE: Replace TextMapInjector/TextMapExtractor pairs with a TextMapPropagator.</p>
 </li></ul>
 
-<p><a href="https://open-telemetry.github.io/opentelemetry-ruby/">Check the propagator documentation</a> for the new usage. * BREAKING CHANGE: Remove metrics API.</p>
+<p><a href="https://open-telemetry.github.io/opentelemetry-ruby/">Check the propagator documentation</a> for the new usage.</p>
+<ul><li>
+<p>BREAKING CHANGE: Remove metrics API.</p>
+</li></ul>
 
-<p><code>OpenTelemetry::Metrics</code> and all of its behavior removed until spec stabilizes. * BREAKING CHANGE: Extract instrumentation base from api (#698).</p>
+<p><code>OpenTelemetry::Metrics</code> and all of its behavior removed until spec stabilizes.</p>
+<ul><li>
+<p>BREAKING CHANGE: Extract instrumentation base from api (#698).</p>
+</li></ul>
 
 <p>To take advantage of a base instrumentation class to create your own auto-instrumentation, require and use the <code>opentelemetry-instrumentation-base</code> gem.</p>
 <ul><li>
@@ -334,7 +340,7 @@
 </div></div>
 
       <div id="footer">
-  Generated on Thu Feb 20 22:47:16 2025 by
+  Generated on Tue Feb 25 21:54:24 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.1.6).
 </div>
