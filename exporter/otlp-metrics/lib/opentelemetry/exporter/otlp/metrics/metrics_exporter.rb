@@ -26,7 +26,7 @@ module OpenTelemetry
     module OTLP
       module Metrics
         # An OpenTelemetry metrics exporter that sends metrics over HTTP as Protobuf encoded OTLP ExportMetricsServiceRequest.
-        class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricReader
+        class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricExporter
           include Util
 
           attr_reader :metric_snapshots
@@ -78,8 +78,8 @@ module OpenTelemetry
           # consolidate the metrics data into the form of MetricData
           #
           # return MetricData
-          def pull
-            export(collect)
+          def pull(timeout: nil)
+            export(collect, timeout: timeout)
           end
 
           # metrics Array[MetricData]

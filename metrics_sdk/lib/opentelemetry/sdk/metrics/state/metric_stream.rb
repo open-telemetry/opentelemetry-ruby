@@ -14,6 +14,7 @@ module OpenTelemetry
         # public API.
         class MetricStream
           attr_reader :name, :description, :unit, :instrument_kind, :instrumentation_scope, :data_points
+          attr_accessor :default_aggregation
 
           def initialize(
             name,

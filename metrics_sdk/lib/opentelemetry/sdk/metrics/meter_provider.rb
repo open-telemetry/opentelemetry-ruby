@@ -122,7 +122,9 @@ module OpenTelemetry
         def register_synchronous_instrument(instrument)
           @mutex.synchronize do
             @metric_readers.each do |mr|
-              instrument.register_with_new_metric_store(mr.metric_store)
+              mr.exporters.each do |exporter|
+                instrument.register_with_new_metric_store(exporter.metric_store)
+              end
             end
           end
         end
