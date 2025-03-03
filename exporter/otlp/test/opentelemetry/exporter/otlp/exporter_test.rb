@@ -26,7 +26,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(exp.instance_variable_get(:@headers)).must_equal('User-Agent' => DEFAULT_USER_AGENT)
       _(exp.instance_variable_get(:@timeout)).must_equal 10.0
       _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
-      _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
+      _(exp.instance_variable_get(:@compression)).must_be_nil
       http = exp.instance_variable_get(:@http)
       _(http.ca_file).must_be_nil
       _(http.cert).must_be_nil
@@ -385,7 +385,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
   end
 
   describe '#export' do
-    let(:exporter) { OpenTelemetry::Exporter::OTLP::Exporter.new }
+    let(:exporter) { OpenTelemetry::Exporter::OTLP::Exporter.new compression: 'gzip' }
 
     before do
       OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new(resource: OpenTelemetry::SDK::Resources::Resource.telemetry_sdk)
