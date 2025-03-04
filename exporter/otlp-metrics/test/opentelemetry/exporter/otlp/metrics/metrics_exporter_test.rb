@@ -27,7 +27,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       _(exp.instance_variable_get(:@headers)).must_equal('User-Agent' => METRICS_DEFAULT_USER_AGENT)
       _(exp.instance_variable_get(:@timeout)).must_equal 10.0
       _(exp.instance_variable_get(:@path)).must_equal '/v1/metrics'
-      _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
+      _(exp.instance_variable_get(:@compression)).must_be_nil
       http = exp.instance_variable_get(:@http)
       _(http.ca_file).must_be_nil
       _(http.cert).must_be_nil
@@ -335,7 +335,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
   end
 
   describe '#export' do
-    let(:exporter) { OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new }
+    let(:exporter) { OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new compression: 'gzip' }
     let(:meter_provider) { OpenTelemetry::SDK::Metrics::MeterProvider.new(resource: OpenTelemetry::SDK::Resources::Resource.telemetry_sdk) }
 
     it 'integrates with collector' do
