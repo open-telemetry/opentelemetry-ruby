@@ -8,10 +8,10 @@ require 'test_helper'
 require 'json'
 
 describe OpenTelemetry::SDK::Metrics::ForkHooks do
-  def fork_with_fork_hooks(before_fork_lambda, after_fork_lambda)
+  def fork_with_fork_hooks(after_fork_lambda)
     with_pipe do |inner_read_io, inner_write_io|
       child_pid = fork do # fork twice to avoid prepending fork in the parent process
-        setup_fork_hooks(before_fork_lambda, after_fork_lambda) do
+        setup_fork_hooks(after_fork_lambda) do
           grandchild_pid = fork {}
           Timeout.timeout(5) { Process.waitpid(grandchild_pid) }
           message = { 'child_pid' => Process.pid, 'grandchild_pid' => grandchild_pid }.to_json
@@ -31,12 +31,10 @@ describe OpenTelemetry::SDK::Metrics::ForkHooks do
     end
   end
 
-  def setup_fork_hooks(before_hook, after_hook)
-    OpenTelemetry::SDK::Metrics::ForkHooks.stub(:before_fork, before_hook) do
-      OpenTelemetry::SDK::Metrics::ForkHooks.stub(:after_fork, after_hook) do
-        Process.singleton_class.prepend(OpenTelemetry::SDK::Metrics::ForkHooks)
-        yield if block_given?
-      end
+  def setup_fork_hooks(after_hook)
+    OpenTelemetry::SDK::Metrics::ForkHooks.stub(:after_fork, after_hook) do
+      Process.singleton_class.prepend(OpenTelemetry::SDK::Metrics::ForkHooks)
+      yield if block_given?
     end
   end
 
@@ -48,22 +46,8 @@ describe OpenTelemetry::SDK::Metrics::ForkHooks do
     write_io.close unless write_io.closed?
   end
 
-  it 'runs the before_hook before forking' do
-    with_pipe do |inner_read_io, inner_write_io|
-      before_fork_lambda = proc do
-        inner_write_io.puts "before_fork was called on #{Process.pid}"
-      end
-      after_fork_lambda = proc {}
-      forking_pid, _forked_pid = fork_with_fork_hooks(before_fork_lambda, after_fork_lambda)
-
-      before_fork_message = inner_read_io.gets.chomp
-      assert_equal(before_fork_message, "before_fork was called on #{forking_pid}")
-    end
-  end
-
   it 'runs the after_hook after forking' do
     with_pipe do |after_fork_read_io, after_fork_write_io|
-      before_fork_lambda = proc {}
       after_fork_lambda = proc do
         message = { 'after_fork_pid' => Process.pid }.to_json
         after_fork_write_io.puts message
@@ -76,26 +60,6 @@ describe OpenTelemetry::SDK::Metrics::ForkHooks do
       refute_equal(pid_from_after_fork, forking_pid)
       assert_equal(forked_pid, pid_from_after_fork)
     end
-  end
-
-  it 'calls before_fork on metric readers' do
-    reader1 = Class.new do
-      attr_reader :before_fork_called
-
-      def before_fork
-        @before_fork_called = true
-      end
-    end.new
-
-    reader2 = OpenStruct.new
-
-    meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
-    meter_provider.add_metric_reader(reader1)
-    meter_provider.add_metric_reader(reader2)
-    ::OpenTelemetry.stub(:meter_provider, meter_provider) do
-      OpenTelemetry::SDK::Metrics::ForkHooks.before_fork
-    end
-    assert(reader1.before_fork_called)
   end
 
   it 'calls after_fork on metric readers' do

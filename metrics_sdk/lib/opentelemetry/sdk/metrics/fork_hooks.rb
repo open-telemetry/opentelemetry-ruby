@@ -17,12 +17,6 @@ module OpenTelemetry
           @fork_hooks_attached = true
         end
 
-        def self.before_fork
-          ::OpenTelemetry.meter_provider.metric_readers.each do |reader|
-            reader.before_fork if reader.respond_to?(:before_fork)
-          end
-        end
-
         def self.after_fork
           ::OpenTelemetry.meter_provider.metric_readers.each do |reader|
             reader.after_fork if reader.respond_to?(:after_fork)
@@ -30,7 +24,6 @@ module OpenTelemetry
         end
 
         def _fork
-          ForkHooks.before_fork
           parent_pid = Process.pid
           super.tap do
             ForkHooks.after_fork unless Process.pid == parent_pid
