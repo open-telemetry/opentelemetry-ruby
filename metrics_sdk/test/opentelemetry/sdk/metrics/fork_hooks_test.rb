@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'test_helper'
-require 'opentelemetry-exporter-otlp-metrics' unless RUBY_ENGINE == 'jruby'
+require 'json'
 
 describe OpenTelemetry::SDK::Metrics::ForkHooks do
   def fork_with_fork_hooks(before_fork_lambda, after_fork_lambda)
@@ -13,12 +13,18 @@ describe OpenTelemetry::SDK::Metrics::ForkHooks do
       child_pid = fork do # fork twice to avoid prepending fork in the parent process
         setup_fork_hooks(before_fork_lambda, after_fork_lambda) do
           grandchild_pid = fork {}
-          Process.waitpid(grandchild_pid)
-          inner_write_io.puts grandchild_pid
+          Timeout.timeout(5) { Process.waitpid(grandchild_pid) }
+          message = { 'child_pid' => Process.pid, 'grandchild_pid' => grandchild_pid }.to_json
+          inner_write_io.puts message
+        rescue StandardError => e
+          message = { 'error' => e.message }.to_json
+          inner_write_io.puts message
         end
       end
-      Process.waitpid(child_pid)
-      grandchild_pid = inner_read_io.gets.chomp.to_i
+      Timeout.timeout(10) { Process.waitpid(child_pid) }
+      received_from_child = JSON.parse(inner_read_io.gets.chomp)
+      refute_includes(received_from_child, 'error')
+      grandchild_pid = received_from_child['grandchild_pid']
       refute_equal(child_pid, Process.pid)
       refute_equal(child_pid, grandchild_pid)
       [child_pid, grandchild_pid]
@@ -59,11 +65,12 @@ describe OpenTelemetry::SDK::Metrics::ForkHooks do
     with_pipe do |after_fork_read_io, after_fork_write_io|
       before_fork_lambda = proc {}
       after_fork_lambda = proc do
-        after_fork_write_io.puts Process.pid
+        message = { 'after_fork_pid' => Process.pid }.to_json
+        after_fork_write_io.puts message
       end
 
-      forking_pid, forked_pid = fork_with_fork_hooks(before_fork_lambda, after_fork_lambda)
-      pid_from_after_fork = after_fork_read_io.gets.chomp.to_i
+      forking_pid, forked_pid = fork_with_fork_hooks(after_fork_lambda)
+      pid_from_after_fork = JSON.parse(after_fork_read_io.gets.chomp)['after_fork_pid'].to_i
 
       refute_equal(pid_from_after_fork, Process.pid)
       refute_equal(pid_from_after_fork, forking_pid)
