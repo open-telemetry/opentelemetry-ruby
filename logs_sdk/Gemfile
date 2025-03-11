@@ -8,8 +8,8 @@ source 'https://rubygems.org'
 
 gemspec
 
+gem 'mutex_m' if RUBY_VERSION >= '3.4'
 gem 'opentelemetry-api', path: '../api'
 gem 'opentelemetry-logs-api', path: '../logs_api'
 gem 'opentelemetry-sdk', path: '../sdk'
 gem 'opentelemetry-test-helpers', path: '../test_helpers'
-gem 'mutex_m' if RUBY_VERSION >= '3.4'
