@@ -55,7 +55,7 @@ module OpenTelemetry
           end
 
           def force_flush(timeout: nil)
-            export(timeout: timeout)
+            export(timeout:)
             Export::SUCCESS
           rescue StandardError
             Export::FAILURE

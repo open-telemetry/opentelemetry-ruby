@@ -86,7 +86,7 @@ describe OpenTelemetry::SDK do
       OpenTelemetry::SDK.configure
 
       metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval_millis: 1000000, export_timeout_millis: 10000, exporter: metric_exporter)
+      periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval_millis: 1_000_000, export_timeout_millis: 10_000, exporter: metric_exporter)
 
       OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
 
@@ -94,7 +94,7 @@ describe OpenTelemetry::SDK do
 
       sleep 5 # make sure the work thread start
 
-      Timeout.timeout(2) do  # Fail if this block takes more than 2 seconds
+      Timeout.timeout(2) do # Fail if this block takes more than 2 seconds
         periodic_metric_reader.shutdown
       end
 
