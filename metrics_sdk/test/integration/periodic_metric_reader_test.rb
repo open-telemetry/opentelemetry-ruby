@@ -81,5 +81,24 @@ describe OpenTelemetry::SDK do
       _(snapshot.size).must_equal(1)
       _(periodic_metric_reader.instance_variable_get(:@thread).alive?).must_equal false
     end
+
+    it 'shutdown break the export interval cycle' do
+      OpenTelemetry::SDK.configure
+
+      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+      periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval_millis: 1000000, export_timeout_millis: 10000, exporter: metric_exporter)
+
+      OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
+
+      _(periodic_metric_reader.alive?).must_equal true
+
+      sleep 5 # make sure the work thread start
+
+      Timeout.timeout(2) do  # Fail if this block takes more than 2 seconds
+        periodic_metric_reader.shutdown
+      end
+
+      _(periodic_metric_reader.alive?).must_equal false
+    end
   end
 end

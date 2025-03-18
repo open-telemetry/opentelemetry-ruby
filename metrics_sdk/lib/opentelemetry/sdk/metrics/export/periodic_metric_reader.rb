@@ -33,6 +33,7 @@ module OpenTelemetry
             @thread   = nil
             @continue = false
             @mutex = Mutex.new
+            @condition = ConditionVariable.new
             @export_mutex = Mutex.new
 
             start
@@ -41,6 +42,7 @@ module OpenTelemetry
           def shutdown(timeout: nil)
             thread = lock do
               @continue = false # force termination in next iteration
+              @condition.signal
               @thread
             end
             thread&.join(@export_interval)
@@ -59,6 +61,10 @@ module OpenTelemetry
             Export::FAILURE
           end
 
+          def alive?
+            @continue || @thread.alive?
+          end
+
           private
 
           def start
@@ -70,13 +76,9 @@ module OpenTelemetry
             else
               @thread = Thread.new do
                 while @continue
-                  sleep(@export_interval)
-                  begin
-                    Timeout.timeout(@export_timeout) do
-                      export(timeout: @export_timeout)
-                    end
-                  rescue Timeout::Error => e
-                    OpenTelemetry.handle_error(exception: e, message: 'PeriodicMetricReader timeout.')
+                  lock do
+                    @condition.wait(@mutex, @export_interval)
+                    export(timeout: @export_timeout)
                   end
                 end
               end
