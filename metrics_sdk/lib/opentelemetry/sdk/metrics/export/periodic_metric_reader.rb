@@ -43,7 +43,11 @@ module OpenTelemetry
               @continue = false # force termination in next iteration
               @thread
             end
-            thread&.join(@export_interval)
+
+            # Trigger a final export before killing the writing thread
+            export(timeout: @export_timeout)
+            thread.kill
+
             @exporter.force_flush if @exporter.respond_to?(:force_flush)
             @exporter.shutdown
             Export::SUCCESS
