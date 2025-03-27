@@ -39,6 +39,12 @@ module OpenTelemetry
             start
           end
 
+          # Shuts the @thread down and set @continue to false; it will block
+          # until the shutdown thread is finished.
+          #
+          # @param [optional Numeric] timeout An optional timeout in seconds.
+          # @return [Integer] SUCCESS if no error occurred, FAILURE if a
+          #   non-specific failure occurred.
           def shutdown(timeout: nil)
             thread = lock do
               @continue = false # force termination in next iteration
@@ -54,6 +60,17 @@ module OpenTelemetry
             Export::FAILURE
           end
 
+          # Export all metrics to the configured `Exporter` that have not yet
+          # been exported.
+          #
+          # This method should only be called in cases where it is absolutely
+          # necessary, such as when using some FaaS providers that may suspend
+          # the process after an invocation, but before the `PeriodicMetricReader` exports
+          # the completed metrics.
+          #
+          # @param [optional Numeric] timeout An optional timeout in seconds.
+          # @return [Integer] SUCCESS if no error occurred, FAILURE if a
+          #   non-specific failure occurred.
           def force_flush(timeout: nil)
             export(timeout:)
             Export::SUCCESS
@@ -61,12 +78,17 @@ module OpenTelemetry
             Export::FAILURE
           end
 
+          # Check both @thread and @continue object to determine if current
+          # PeriodicMetricReader is still alive. If one of them is true/alive,
+          # then PeriodicMetricReader is determined as alive
           def alive?
             @continue || @thread.alive?
           end
 
           private
 
+          # Start a thread that continously export metrics within fixed duration.
+          # The wait mechanism is using to check @mutex lock with conditional variable
           def start
             @continue = true
             if @exporter.nil?
@@ -85,6 +107,12 @@ module OpenTelemetry
             end
           end
 
+          # Helper function for the defined exporter to export metrics.
+          # It only exports if the collected metrics are not an empty array (collect returns an Array).
+          #
+          # @param [optional Numeric] timeout An optional timeout in seconds.
+          # @return [Integer] SUCCESS if no error occurred, FAILURE if a
+          #   non-specific failure occurred
           def export(timeout: nil)
             @export_mutex.synchronize do
               collected_metrics = collect
