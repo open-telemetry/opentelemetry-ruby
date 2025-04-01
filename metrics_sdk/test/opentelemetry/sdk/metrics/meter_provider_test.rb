@@ -112,29 +112,33 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
     it 'associates the metric store with instruments created before the metric reader' do
       meter_a = OpenTelemetry.meter_provider.meter('a').create_counter('meter_a')
 
-      metric_reader_a = OpenTelemetry::SDK::Metrics::Export::MetricReader.new
+      metric_exporter_a = OpenTelemetry::SDK::Metrics::Export::MetricExporter.new
+      metric_reader_a = OpenTelemetry::SDK::Metrics::Export::MetricReader.new(exporter: metric_exporter_a)
       OpenTelemetry.meter_provider.add_metric_reader(metric_reader_a)
 
-      metric_reader_b = OpenTelemetry::SDK::Metrics::Export::MetricReader.new
+      metric_exporter_b = OpenTelemetry::SDK::Metrics::Export::MetricExporter.new
+      metric_reader_b = OpenTelemetry::SDK::Metrics::Export::MetricReader.new(exporter: metric_exporter_b)
       OpenTelemetry.meter_provider.add_metric_reader(metric_reader_b)
 
       _(meter_a.instance_variable_get(:@metric_streams).size).must_equal(2)
-      _(metric_reader_a.metric_store.instance_variable_get(:@metric_streams).size).must_equal(1)
-      _(metric_reader_b.metric_store.instance_variable_get(:@metric_streams).size).must_equal(1)
+      _(metric_reader_a.exporters.first.metric_store.instance_variable_get(:@metric_streams).size).must_equal(1)
+      _(metric_reader_b.exporters.first.metric_store.instance_variable_get(:@metric_streams).size).must_equal(1)
     end
 
     it 'associates the metric store with instruments created after the metric reader' do
-      metric_reader_a = OpenTelemetry::SDK::Metrics::Export::MetricReader.new
+      metric_exporter_a = OpenTelemetry::SDK::Metrics::Export::MetricExporter.new
+      metric_reader_a = OpenTelemetry::SDK::Metrics::Export::MetricReader.new(exporter: metric_exporter_a)
       OpenTelemetry.meter_provider.add_metric_reader(metric_reader_a)
 
-      metric_reader_b = OpenTelemetry::SDK::Metrics::Export::MetricReader.new
+      metric_exporter_b = OpenTelemetry::SDK::Metrics::Export::MetricExporter.new
+      metric_reader_b = OpenTelemetry::SDK::Metrics::Export::MetricReader.new(exporter: metric_exporter_b)
       OpenTelemetry.meter_provider.add_metric_reader(metric_reader_b)
 
       meter_a = OpenTelemetry.meter_provider.meter('a').create_counter('meter_a')
 
       _(meter_a.instance_variable_get(:@metric_streams).size).must_equal(2)
-      _(metric_reader_a.metric_store.instance_variable_get(:@metric_streams).size).must_equal(1)
-      _(metric_reader_b.metric_store.instance_variable_get(:@metric_streams).size).must_equal(1)
+      _(metric_reader_a.exporters.first.metric_store.instance_variable_get(:@metric_streams).size).must_equal(1)
+      _(metric_reader_b.exporters.first.metric_store.instance_variable_get(:@metric_streams).size).must_equal(1)
     end
   end
 

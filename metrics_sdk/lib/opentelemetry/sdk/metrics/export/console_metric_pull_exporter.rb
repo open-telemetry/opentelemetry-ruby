@@ -11,14 +11,10 @@ module OpenTelemetry
         # Outputs {MetricData} to the console
         #
         # Potentially useful for exploratory purposes.
-        class ConsoleMetricPullExporter < MetricReader
+        class ConsoleMetricPullExporter < MetricExporter
           def initialize
             super
             @stopped = false
-          end
-
-          def pull
-            export(collect)
           end
 
           def export(metrics, timeout: nil)

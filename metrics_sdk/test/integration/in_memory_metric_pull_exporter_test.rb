@@ -14,7 +14,8 @@ describe OpenTelemetry::SDK do
       OpenTelemetry::SDK.configure
 
       metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+      metric_reader = OpenTelemetry::SDK::Metrics::Export::MetricReader.new(exporter: metric_exporter)
+      OpenTelemetry.meter_provider.add_metric_reader(metric_reader)
 
       meter = OpenTelemetry.meter_provider.meter('test')
       counter = meter.create_counter('counter', unit: 'smidgen', description: 'a small amount of something')
@@ -25,7 +26,7 @@ describe OpenTelemetry::SDK do
       counter.add(3, attributes: { 'b' => 'c' })
       counter.add(4, attributes: { 'd' => 'e' })
 
-      metric_exporter.pull
+      metric_reader.pull
       last_snapshot = metric_exporter.metric_snapshots
 
       _(last_snapshot).wont_be_empty

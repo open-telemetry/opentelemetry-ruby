@@ -13,6 +13,8 @@ module OpenTelemetry
         # The MetricStore module provides SDK internal functionality that is not a part of the
         # public API.
         class MetricStore
+          attr_reader :metric_streams
+
           def initialize
             @mutex = Mutex.new
             @epoch_start_time = now_in_nano
@@ -23,7 +25,6 @@ module OpenTelemetry
           def collect
             @mutex.synchronize do
               @epoch_end_time = now_in_nano
-              # snapshot = @metric_streams.map { |ms| ms.collect(@epoch_start_time, @epoch_end_time) }
               snapshot = @metric_streams.flat_map { |ms| ms.collect(@epoch_start_time, @epoch_end_time) }
               @epoch_start_time = @epoch_end_time
               snapshot

@@ -44,7 +44,7 @@ describe OpenTelemetry::SDK::Metrics::ConfiguratorPatch do
         reader = OpenTelemetry.meter_provider.metric_readers[0]
 
         assert_instance_of OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader, reader
-        assert_instance_of OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter, reader.instance_variable_get(:@exporter)
+        assert_instance_of OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter, reader.exporters.first
       end
 
       it 'can be set by environment variable' do
@@ -57,7 +57,7 @@ describe OpenTelemetry::SDK::Metrics::ConfiguratorPatch do
         reader = OpenTelemetry.meter_provider.metric_readers[0]
 
         assert_instance_of OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader, reader
-        assert_instance_of OpenTelemetry::SDK::Metrics::Export::ConsoleMetricPullExporter, reader.instance_variable_get(:@exporter)
+        assert_instance_of OpenTelemetry::SDK::Metrics::Export::ConsoleMetricPullExporter, reader.exporters.first
       end
 
       it 'supports "none" as an environment variable' do
@@ -83,9 +83,9 @@ describe OpenTelemetry::SDK::Metrics::ConfiguratorPatch do
         reader2 = OpenTelemetry.meter_provider.metric_readers[1]
 
         assert_instance_of OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader, reader1
-        assert_instance_of OpenTelemetry::SDK::Metrics::Export::ConsoleMetricPullExporter, reader1.instance_variable_get(:@exporter)
+        assert_instance_of OpenTelemetry::SDK::Metrics::Export::ConsoleMetricPullExporter, reader1.exporters.first
 
-        assert_instance_of OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter, reader2
+        assert_instance_of OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter, reader2.exporters.first
       end
 
       it 'defaults to noop with invalid env var' do
