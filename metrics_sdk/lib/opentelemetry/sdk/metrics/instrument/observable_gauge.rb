@@ -8,16 +8,31 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Instrument
-        # {ObservableGauge} is the SDK implementation of {OpenTelemetry::Metrics::ObservableGauge}.
-        class ObservableGauge < OpenTelemetry::Metrics::Instrument::ObservableGauge
-          attr_reader :name, :unit, :description
+        # {ObservableGauge} is the SDK implementation of {OpenTelemetry::SDK::Metrics::Instrument::AsynchronousInstrument}.
+        # Asynchronous Gauge is an asynchronous Instrument which reports non-additive value(s) (e.g. the room temperature)
+        class ObservableGauge < OpenTelemetry::SDK::Metrics::Instrument::AsynchronousInstrument
+          # Returns the instrument kind as a Symbol
+          #
+          # @return [Symbol]
+          def instrument_kind
+            :observable_gauge
+          end
 
-          def initialize(name, unit, description, callback, meter)
-            @name = name
-            @unit = unit
-            @description = description
-            @callback = callback
-            @meter = meter
+          # Observe the ObservableCounter with fixed timeout duartion.
+          #
+          # @param [int] timeout The timeout duration for callback to run, which MUST be a non-negative numeric value.
+          # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
+          #   Values must be non-nil and (array of) string, boolean or numeric type.
+          #   Array values must not contain nil elements and all elements must be of
+          #   the same basic type (string, numeric, boolean).
+          def observe(timeout: nil, attributes: {})
+            update(timeout, attributes)
+          end
+
+          private
+
+          def default_aggregation
+            OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
           end
         end
       end
