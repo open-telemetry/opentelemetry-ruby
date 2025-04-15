@@ -2,6 +2,7 @@ plugins:
   - rubocop-minitest
   - rubocop-rspec
   - rubocop-rake
+  - rubocop-performance
 
 AllCops:
   NewCops: disable

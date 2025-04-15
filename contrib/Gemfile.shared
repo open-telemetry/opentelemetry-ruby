@@ -1,3 +1,4 @@
 gem 'rubocop-rspec', '~> 3.5', require: false
 gem 'rubocop-rake', '~> 0.7.1', require: false
 gem 'rubocop-minitest', '~> 0.38.0', require: false
+gem 'rubocop-performance', '~> 1.25', require: false
