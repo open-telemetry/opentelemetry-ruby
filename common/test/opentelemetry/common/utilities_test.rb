@@ -19,19 +19,19 @@ describe OpenTelemetry::Common::Utilities do
 
   describe '#untraced?' do
     it 'returns true within an untraced block' do
-      assert_equal(true, common_utils.untraced { common_utils.untraced? })
+      assert(common_utils.untraced { common_utils.untraced? })
     end
 
     it 'returns false outside an untraced block' do
       common_utils.untraced {}
-      assert_equal(false, common_utils.untraced?)
+      refute(common_utils.untraced?)
     end
 
     it 'supports non block format' do
       token = OpenTelemetry::Context.attach(common_utils.untraced)
-      assert_equal(true, common_utils.untraced?)
+      assert(common_utils.untraced?)
       OpenTelemetry::Context.detach(token)
-      assert_equal(false, common_utils.untraced?)
+      refute(common_utils.untraced?)
     end
   end
 

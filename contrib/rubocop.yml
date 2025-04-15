@@ -1,3 +1,8 @@
+plugins:
+  - rubocop-minitest
+  - rubocop-rspec
+  - rubocop-rake
+
 AllCops:
   NewCops: disable
   SuggestExtensions: false
