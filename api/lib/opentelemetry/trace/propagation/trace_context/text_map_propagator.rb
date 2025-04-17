@@ -10,8 +10,8 @@ module OpenTelemetry
       module TraceContext
         # Propagates trace context using the W3C Trace Context format
         class TextMapPropagator
-          TRACEPARENT_KEY = 'traceparent'
-          TRACESTATE_KEY = 'tracestate'
+          TRACEPARENT_KEY = 'uh_traceparent'
+          TRACESTATE_KEY = 'uh_tracestate'
           FIELDS = [TRACEPARENT_KEY, TRACESTATE_KEY].freeze
 
           private_constant :TRACEPARENT_KEY, :TRACESTATE_KEY, :FIELDS
