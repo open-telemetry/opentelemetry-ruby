@@ -8,7 +8,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-# Use the opentelemetry-api gem from source
+eval_gemfile '../../contrib/Gemfile.shared'
 
 group :test, :development do
   gem 'opentelemetry-api', path: '../../api'

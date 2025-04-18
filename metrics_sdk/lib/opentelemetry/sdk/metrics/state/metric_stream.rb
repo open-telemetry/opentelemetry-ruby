@@ -91,12 +91,12 @@ module OpenTelemetry
           end
 
           def to_s
-            instrument_info = String.new
+            instrument_info = +''
             instrument_info << "name=#{@name}"
             instrument_info << " description=#{@description}" if @description
             instrument_info << " unit=#{@unit}" if @unit
             @data_points.map do |attributes, value|
-              metric_stream_string = String.new
+              metric_stream_string = +''
               metric_stream_string << instrument_info
               metric_stream_string << " attributes=#{attributes}" if attributes
               metric_stream_string << " #{value}"

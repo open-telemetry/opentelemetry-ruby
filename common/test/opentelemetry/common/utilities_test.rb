@@ -19,19 +19,19 @@ describe OpenTelemetry::Common::Utilities do
 
   describe '#untraced?' do
     it 'returns true within an untraced block' do
-      assert_equal(true, common_utils.untraced { common_utils.untraced? })
+      assert(common_utils.untraced { common_utils.untraced? })
     end
 
     it 'returns false outside an untraced block' do
       common_utils.untraced {}
-      assert_equal(false, common_utils.untraced?)
+      refute(common_utils.untraced?)
     end
 
     it 'supports non block format' do
       token = OpenTelemetry::Context.attach(common_utils.untraced)
-      assert_equal(true, common_utils.untraced?)
+      assert(common_utils.untraced?)
       OpenTelemetry::Context.detach(token)
-      assert_equal(false, common_utils.untraced?)
+      refute(common_utils.untraced?)
     end
   end
 
@@ -48,7 +48,7 @@ describe OpenTelemetry::Common::Utilities do
     end
 
     it 'with invalid conversion' do
-      time_bomb = "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT)
+      time_bomb = (+"\xC2").force_encoding(::Encoding::ASCII_8BIT)
 
       # making sure this is indeed a problem
       assert_raises(Encoding::UndefinedConversionError) do
@@ -62,7 +62,7 @@ describe OpenTelemetry::Common::Utilities do
     end
 
     it 'with binary data' do
-      byte_array = "keep what\xC2 is valid".dup.force_encoding(::Encoding::ASCII_8BIT)
+      byte_array = (+"keep what\xC2 is valid").force_encoding(::Encoding::ASCII_8BIT)
 
       assert_equal('keep what is valid', common_utils.utf8_encode(byte_array, binary: true))
     end

@@ -445,7 +445,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 200)
 
       ndp = OpenTelemetry::SDK::Metrics::Aggregation::NumberDataPoint.new
-      ndp.attributes = { 'a' => "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT) }
+      ndp.attributes = { 'a' => (+"\xC2").force_encoding(::Encoding::ASCII_8BIT) }
       ndp.start_time_unix_nano = 0
       ndp.time_unix_nano = 0
       ndp.value = 1

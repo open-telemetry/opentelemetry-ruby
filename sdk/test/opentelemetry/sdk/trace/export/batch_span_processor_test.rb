@@ -351,7 +351,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       te = TestExporter.new
 
       bsp = BatchSpanProcessor.new(te)
-      producers = 10.times.map do |i|
+      producers = Array.new(10) do |i|
         Thread.new do
           x = i * 10
           10.times do |j|
@@ -365,7 +365,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
       out = te.batches.flatten.map(&:id).sort
 
-      expected = 100.times.map { |i| i }
+      expected = Array.new(100) { |i| i }
 
       _(out).must_equal(expected)
     end

@@ -39,7 +39,7 @@ describe OpenTelemetry do
 
           assert_same(proxy_meter_provider.instance_variable_get(:@delegate), new_meter_provider)
           assert_same(OpenTelemetry.meter_provider, new_meter_provider)
-          assert(log_stream.string.match?(/Upgrading default proxy meter provider to #{new_meter_provider.class}/i))
+          assert_match(/Upgrading default proxy meter provider to #{new_meter_provider.class}/i, log_stream.string)
         end
       end
     end

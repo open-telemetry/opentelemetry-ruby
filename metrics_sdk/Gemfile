@@ -8,15 +8,16 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'opentelemetry-api', path: '../api'
-gem 'opentelemetry-common', path: '../common'
-gem 'opentelemetry-metrics-api', path: '../metrics_api'
-gem 'opentelemetry-registry', path: '../registry'
-gem 'opentelemetry-sdk', path: '../sdk'
-gem 'opentelemetry-test-helpers', path: '../test_helpers'
+eval_gemfile '../contrib/Gemfile.shared'
 
 group :test, :development do
+  gem 'opentelemetry-api', path: '../api'
+  gem 'opentelemetry-common', path: '../common'
   gem 'opentelemetry-exporter-otlp-metrics', path: '../exporter/otlp-metrics' unless RUBY_ENGINE == 'jruby'
+  gem 'opentelemetry-metrics-api', path: '../metrics_api'
+  gem 'opentelemetry-registry', path: '../registry'
+  gem 'opentelemetry-sdk', path: '../sdk'
+  gem 'opentelemetry-test-helpers', path: '../test_helpers'
   gem 'pry'
   gem 'pry-byebug' unless RUBY_ENGINE == 'jruby'
 end

@@ -75,7 +75,7 @@ describe OpenTelemetry::Trace::Tracestate do
       _(tracestate.to_h).must_equal('the-good-key' => '  the-good-value', '0x_the-vendor/key@my*v3nd0r' => 'another-great-value')
     end
     it 'will not exceed 32 members' do
-      tracestate = OpenTelemetry::Trace::Tracestate.from_hash(33.times.collect { |n| [n.to_s, n.to_s] }.to_h)
+      tracestate = OpenTelemetry::Trace::Tracestate.from_hash(Array.new(33) { |n| [n.to_s, n.to_s] }.to_h)
       _(tracestate.to_h.size).must_be :<=, 32
     end
   end
@@ -92,7 +92,7 @@ describe OpenTelemetry::Trace::Tracestate do
 
   describe '#set_value' do
     it 'will not exceed 32 members' do
-      tracestate = OpenTelemetry::Trace::Tracestate.from_hash(31.times.collect { |n| [n.to_s, n.to_s] }.to_h)
+      tracestate = OpenTelemetry::Trace::Tracestate.from_hash(Array.new(31) { |n| [n.to_s, n.to_s] }.to_h)
       tracestate = tracestate.set_value('a', 'a').set_value('b', 'b')
       _(tracestate.to_h.size).must_be :<=, 32
     end

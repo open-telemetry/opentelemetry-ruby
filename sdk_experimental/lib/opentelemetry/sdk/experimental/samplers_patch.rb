@@ -23,7 +23,7 @@ if !(%i[consistent_probability_based parent_consistent_probability_based] - Open
           #   Must be within [0.0, 1.0].
           # @raise [ArgumentError] if ratio is out of range
           def consistent_probability_based(ratio)
-            raise ArgumentError, 'ratio must be in range [0.0, 1.0]' unless (0.0..1.0).include?(ratio)
+            raise ArgumentError, 'ratio must be in range [0.0, 1.0]' unless (0.0..1.0).cover?(ratio)
 
             OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased.new(ratio)
           end

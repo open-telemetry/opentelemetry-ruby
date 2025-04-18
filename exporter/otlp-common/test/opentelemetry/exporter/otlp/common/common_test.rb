@@ -12,7 +12,7 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
         span_data = OpenTelemetry::TestHelpers.create_span_data(
           total_recorded_attributes: 1,
-          attributes: { 'a' => "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT) }
+          attributes: { 'a' => (+"\xC2").force_encoding(::Encoding::ASCII_8BIT) }
         )
 
         OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr([span_data])

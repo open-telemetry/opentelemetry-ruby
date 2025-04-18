@@ -81,7 +81,7 @@ module OpenTelemetry
         #   Must be within [0.0, 1.0].
         # @raise [ArgumentError] if ratio is out of range
         def self.trace_id_ratio_based(ratio)
-          raise ArgumentError, 'ratio must be in range [0.0, 1.0]' unless (0.0..1.0).include?(ratio)
+          raise ArgumentError, 'ratio must be in range [0.0, 1.0]' unless (0.0..1.0).cover?(ratio)
 
           TraceIdRatioBased.new(ratio)
         end

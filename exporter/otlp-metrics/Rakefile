@@ -23,16 +23,20 @@ YARD::Rake::YardocTask.new do |t|
   t.stats_options = ['--list-undoc']
 end
 
-if RUBY_ENGINE == 'truffleruby'
-  task default: %i[test]
-else
-  task default: %i[test rubocop yard]
-end
+default_tasks =
+  if RUBY_ENGINE == 'truffleruby'
+    %i[test]
+  else
+    %i[test rubocop yard]
+  end
+
+task default: default_tasks
 
 # https://github.com/open-telemetry/opentelemetry-proto/tree/v0.20.0
 PROTO_VERSION = 'v0.20.0'
 
 namespace :protobuf do
+  desc 'Clean protobuf file'
   task :clean do
     FileUtils.rm_rf('lib/opentelemetry/proto')
     FileUtils.rm_rf('opentelemetry-proto')
