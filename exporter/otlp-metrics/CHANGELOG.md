@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp-metrics
 
+### v0.4.1 / 2025-04-17
+
+* FIXED: Update out-of-date google-protobuf-any
+
 ### v0.4.0 / 2025-02-25
 
 - ADDED: Support 3.1 Min Version
