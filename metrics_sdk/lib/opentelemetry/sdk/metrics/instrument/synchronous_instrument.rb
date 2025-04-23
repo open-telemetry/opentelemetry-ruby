@@ -24,7 +24,7 @@ module OpenTelemetry
           end
 
           # @api private
-          def register_with_new_metric_store(metric_store, aggregation: nil)
+          def register_with_new_metric_store(metric_store, aggregation: @aggregation)
             ms = OpenTelemetry::SDK::Metrics::State::MetricStream.new(
               @name,
               @description,
@@ -32,7 +32,7 @@ module OpenTelemetry
               instrument_kind,
               @meter_provider,
               @instrumentation_scope,
-              aggregation || @aggregation
+              aggregation
             )
             @metric_streams << ms
             metric_store.add_metric_stream(ms)
