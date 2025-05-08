@@ -8,6 +8,8 @@ source 'https://rubygems.org'
 
 gemspec
 
+eval_gemfile '../../contrib/Gemfile.shared'
+
 group :test, :development do
   gem 'opentelemetry-api', path: '../../api'
   gem 'opentelemetry-common', path: '../../common'

@@ -25,12 +25,16 @@ YARD::Rake::YardocTask.new do |t|
   t.stats_options = ['--list-undoc']
 end
 
-if RUBY_ENGINE == 'truffleruby'
-  task default: %i[generate test]
-else
-  task default: %i[generate test rubocop yard]
-end
+default_tasks =
+  if RUBY_ENGINE == 'truffleruby'
+    %i[test]
+  else
+    %i[test rubocop yard]
+  end
 
+task default: default_tasks
+
+desc 'update semantic conventions'
 task :generate do
   cwd = Dir.pwd
 

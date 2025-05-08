@@ -445,7 +445,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 200)
 
       ndp = OpenTelemetry::SDK::Metrics::Aggregation::NumberDataPoint.new
-      ndp.attributes = { 'a' => "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT) }
+      ndp.attributes = { 'a' => (+"\xC2").force_encoding(::Encoding::ASCII_8BIT) }
       ndp.start_time_unix_nano = 0
       ndp.time_unix_nano = 0
       ndp.value = 1
@@ -494,6 +494,26 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
 
       _(log_stream.string).must_match(
         /ERROR -- : OpenTelemetry error: OTLP metrics_exporter received rpc.Status{message=bad request, details=\[.*you are a bad request.*\]}/
+      )
+
+      _(result).must_equal(METRICS_FAILURE)
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
+    it 'logs rpc.Status on bad request from byte body' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      body = "\b\x03\x12VHTTP 400 (gRPC: INVALID_ARGUMENT): Metric validation removed all of the passed metrics\x1A\xA0\x01\n)type.googleapis.com/google.rpc.BadRequest\x12s\n>\n\x1D.resourceMetrics.scopeMetrics\x12\x1DPath contained no usable data\n1\n\x10.resourceMetrics\x12\x1DPath contained no usable data"
+      stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 400, body: body, headers: { 'Content-Type' => 'application/x-protobuf' })
+      metrics_data = create_metrics_data
+
+      result = exporter.export([metrics_data])
+
+      _(log_stream.string).must_match(
+        /ERROR -- : OpenTelemetry error: OTLP metrics_exporter received rpc\.Status{message=HTTP 400 \(gRPC: INVALID_ARGUMENT\): Metric validation removed all of the passed metrics, details=\[\]}/
       )
 
       _(result).must_equal(METRICS_FAILURE)
@@ -580,6 +600,9 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       counter = meter.create_counter('test_counter', unit: 'smidgen', description: 'a small amount of something')
       counter.add(5, attributes: { 'foo' => 'bar' })
 
+      up_down_counter = meter.create_up_down_counter('test_up_down_counter', unit: 'smidgen', description: 'a small amount of something')
+      up_down_counter.add(5, attributes: { 'foo' => 'bar' })
+
       histogram = meter.create_histogram('test_histogram', unit: 'smidgen', description: 'a small amount of something')
       histogram.record(10, attributes: { 'oof' => 'rab' })
 
@@ -623,6 +646,27 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
                             exemplars: nil
                           )
                         ],
+                        is_monotonic: true,
+                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
+                      )
+                    ),
+                    Opentelemetry::Proto::Metrics::V1::Metric.new(
+                      name: 'test_up_down_counter',
+                      description: 'a small amount of something',
+                      unit: 'smidgen',
+                      sum: Opentelemetry::Proto::Metrics::V1::Sum.new(
+                        data_points: [
+                          Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(
+                            attributes: [
+                              Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'foo', value: Opentelemetry::Proto::Common::V1::AnyValue.new(string_value: 'bar'))
+                            ],
+                            as_int: 5,
+                            start_time_unix_nano: 1_699_593_427_329_946_585,
+                            time_unix_nano: 1_699_593_427_329_946_586,
+                            exemplars: nil
+                          )
+                        ],
+                        is_monotonic: false,
                         aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
                       )
                     ),

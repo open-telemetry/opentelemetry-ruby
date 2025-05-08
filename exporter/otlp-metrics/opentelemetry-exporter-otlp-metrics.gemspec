@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
                ::Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 3.0'
+  spec.required_ruby_version = '>= 3.1'
 
   spec.add_dependency 'googleapis-common-protos-types', '~> 1.3'
   spec.add_dependency 'google-protobuf', '>= 3.18', '< 5.0'
@@ -42,8 +42,12 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'pry-byebug' unless RUBY_ENGINE == 'jruby'
   spec.add_development_dependency 'rake', '~> 12.0'
   spec.add_development_dependency 'rubocop', '~> 1.65'
+  spec.add_development_dependency 'rubocop-minitest', '~> 0.38.0'
+  spec.add_development_dependency 'rubocop-performance', '~> 1.25'
+  spec.add_development_dependency 'rubocop-rake', '~> 0.7.1'
+  spec.add_development_dependency 'rubocop-rspec', '~> 3.5'
   spec.add_development_dependency 'simplecov', '~> 0.17'
-  spec.add_development_dependency 'webmock', '~> 3.7.6'
+  spec.add_development_dependency 'webmock', '~> 3.24'
   spec.add_development_dependency 'yard', '~> 0.9'
   spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
 

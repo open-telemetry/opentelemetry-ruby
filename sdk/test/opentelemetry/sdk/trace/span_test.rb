@@ -378,7 +378,7 @@ describe OpenTelemetry::SDK::Trace::Span do
 
     it 'encodes the stacktrace' do
       begin
-        raise "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT)
+        raise (+"\xC2").force_encoding(::Encoding::ASCII_8BIT)
       rescue StandardError => e
         span.record_exception(e)
       end

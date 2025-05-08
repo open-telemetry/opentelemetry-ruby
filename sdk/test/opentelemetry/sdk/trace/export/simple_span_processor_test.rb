@@ -45,7 +45,7 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
 
   it 'forwards calls to #force_flush to the exporter' do
     mock_span_exporter.instance_eval { undef :force_flush }
-    mock_span_exporter.expect :force_flush, nil, [{ timeout: nil }]
+    mock_span_exporter.expect :force_flush, nil, [], timeout: nil
 
     processor.force_flush
     mock_span_exporter.verify
@@ -108,7 +108,7 @@ describe OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor do
 
   it 'forwards calls to #shutdown to the exporter' do
     mock_span_exporter.instance_eval { undef :shutdown }
-    mock_span_exporter.expect :shutdown, nil, [{ timeout: nil }]
+    mock_span_exporter.expect :shutdown, nil, [], timeout: nil
 
     processor.shutdown
     mock_span_exporter.verify

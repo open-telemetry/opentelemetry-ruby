@@ -18,11 +18,11 @@ jobs:
   release-perform:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     env:
-      ruby_version: "3.0"
+      ruby_version: "3.1"
     runs-on: ubuntu-latest
     steps:
       - name: Install Ruby ${{ env.ruby_version }}
-        uses: ruby/setup-ruby@v1.190.0
+        uses: ruby/setup-ruby@v1.215.0
         with:
           ruby-version: ${{ env.ruby_version }}
       - name: Checkout repo

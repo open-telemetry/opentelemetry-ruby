@@ -149,7 +149,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
 
     it 'spawns a thread on boot by default' do
-      mock = MiniTest::Mock.new
+      mock = Minitest::Mock.new
       mock.expect(:call, nil)
 
       Thread.stub(:new, mock) do
@@ -160,7 +160,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
 
     it 'spawns a thread on boot if OTEL_RUBY_BSP_START_THREAD_ON_BOOT is true' do
-      mock = MiniTest::Mock.new
+      mock = Minitest::Mock.new
       mock.expect(:call, nil)
 
       Thread.stub(:new, mock) do
@@ -173,7 +173,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
 
     it 'does not spawn a thread on boot if OTEL_RUBY_BSP_START_THREAD_ON_BOOT is false' do
-      mock = MiniTest::Mock.new
+      mock = Minitest::Mock.new
       mock.expect(:call, nil) { assert false }
 
       Thread.stub(:new, mock) do
@@ -184,7 +184,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
 
     it 'prefers explicit start_thread_on_boot parameter rather than the environment' do
-      mock = MiniTest::Mock.new
+      mock = Minitest::Mock.new
       mock.expect(:call, nil) { assert false }
 
       Thread.stub(:new, mock) do
@@ -351,7 +351,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       te = TestExporter.new
 
       bsp = BatchSpanProcessor.new(te)
-      producers = 10.times.map do |i|
+      producers = Array.new(10) do |i|
         Thread.new do
           x = i * 10
           10.times do |j|
@@ -365,7 +365,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
       out = te.batches.flatten.map(&:id).sort
 
-      expected = 100.times.map { |i| i }
+      expected = Array.new(100) { |i| i }
 
       _(out).must_equal(expected)
     end

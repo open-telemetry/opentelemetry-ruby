@@ -289,7 +289,74 @@ describe OpenTelemetry::Context do
     end
   end
 
+  describe 'fibers' do
+    it 'is isolated with respect to Fiber-local variable manipulation' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        ctx = new_context
+        Context.with_current(ctx) do
+          # This is based on code in ActionController::Live#process:
+          # https://github.com/rails/rails/blob/ad0105c13f61d145a659004efb928a643104e973/actionpack/lib/action_controller/metal/live.rb#L270
+          t1 = Thread.current
+          locals = t1.keys.map { |key| [key, t1[key]] }
+          Fiber.new do
+            t2 = Thread.current
+            locals.each { |k, v| t2[k] = v }
+            # Manipulate _this fiber's_ context stack.
+            Context.attach(new_context)
+          ensure
+            locals.each { |k, _| t2[k] = nil } # rubocop:disable Style/HashEachMethods (locals is not a Hash)
+          end.resume
+        end
+        _(log_stream.string).must_be_empty
+      end
+    end
+
+    it 'is isolated with respect to Fiber-local storage manipulation' do
+      skip unless Fiber.current.respond_to?(:storage)
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        ctx = new_context
+        Context.with_current(ctx) do
+          # This is based on code in ActionController::Live#process, modified to use Fiber-local storage:
+          # https://github.com/rails/rails/blob/ad0105c13f61d145a659004efb928a643104e973/actionpack/lib/action_controller/metal/live.rb#L270
+          f1 = Fiber.current
+          Fiber[:foo] = :bar
+          locals = f1.storage
+          Fiber.new do
+            f2 = Fiber.current
+            locals.each { |k, v| f2.storage[k] = v }
+            # Manipulate _this fiber's_ context stack.
+            Context.attach(new_context)
+          ensure
+            locals.each_key { |k| f2.storage.delete(k) }
+          end.resume
+        end
+        _(log_stream.string).must_be_empty
+      end
+    end
+  end
+
   describe 'threading' do
+    it 'is isolated with respect to Fiber-local variable manipulation' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        ctx = new_context
+        Context.with_current(ctx) do
+          # This is based on code in ActionController::Live#process:
+          # https://github.com/rails/rails/blob/ad0105c13f61d145a659004efb928a643104e973/actionpack/lib/action_controller/metal/live.rb#L270
+          t1 = Thread.current
+          locals = t1.keys.map { |key| [key, t1[key]] }
+          Thread.new do
+            t2 = Thread.current
+            locals.each { |k, v| t2[k] = v }
+            # Manipulate _this thread's_ context stack.
+            Context.attach(new_context)
+          ensure
+            locals.each { |k, _| t2[k] = nil } # rubocop:disable Style/HashEachMethods (locals is not a Hash)
+          end.join
+        end
+        _(log_stream.string).must_be_empty
+      end
+    end
+
     it 'unwinds the stack on each thread' do
       ctx = new_context
       t1_ctx_before = Context.current
