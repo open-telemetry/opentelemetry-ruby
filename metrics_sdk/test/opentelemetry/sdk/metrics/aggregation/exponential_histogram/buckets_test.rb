@@ -102,7 +102,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::Buckets
 
       buckets.downscale(2)
 
-      assert_equal [], buckets.counts
+      assert_empty buckets.counts
       assert_equal 0, buckets.index_start
       assert_equal 0, buckets.index_end
     end
