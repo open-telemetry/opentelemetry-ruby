@@ -80,7 +80,7 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TraceParent do
       value = '00-0000000000000000000000000000000a-000000000000000a-ff'
       assert TraceParent.from_string(value).sampled?
       value = '00-0000000000000000000000000000000a-000000000000000a-04'
-      assert !TraceParent.from_string(value).sampled?
+      refute TraceParent.from_string(value).sampled?
     end
 
     it 'must have a trace id of 16 hex bytes' do

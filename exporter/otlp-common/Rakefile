@@ -23,11 +23,14 @@ YARD::Rake::YardocTask.new do |t|
   t.stats_options = ['--list-undoc']
 end
 
-if RUBY_ENGINE == 'truffleruby'
-  task default: %i[test]
-else
-  task default: %i[test rubocop yard]
-end
+default_tasks =
+  if RUBY_ENGINE == 'truffleruby'
+    %i[test]
+  else
+    %i[test rubocop yard]
+  end
+
+task default: default_tasks
 
 PROTO_VERSION = 'v0.18.0'
 PROTOBUF_FILES = [
@@ -42,6 +45,7 @@ PROTOBUF_FILES = [
   'trace/v1/trace_config.proto'
 ].freeze
 
+desc 'Update probobuf'
 task :update_protobuf do
   system("git clone -b #{PROTO_VERSION} https://github.com/open-telemetry/opentelemetry-proto")
   PROTOBUF_FILES.each do |file|

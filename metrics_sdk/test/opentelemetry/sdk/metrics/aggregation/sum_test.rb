@@ -8,7 +8,7 @@ require 'test_helper'
 
 describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
   let(:data_points) { {} }
-  let(:sum_aggregation) { OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: aggregation_temporality, monotonic: monotonic) }
+  let(:sum_aggregation) { OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality:, monotonic:) }
   let(:aggregation_temporality) { :delta }
   let(:monotonic) { false }
 
