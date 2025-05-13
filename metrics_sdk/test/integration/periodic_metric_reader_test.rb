@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'test_helper'
+require 'json'
 
 describe OpenTelemetry::SDK do
   describe '#periodic_metric_reader' do
@@ -80,6 +81,46 @@ describe OpenTelemetry::SDK do
 
       _(snapshot.size).must_equal(1)
       _(periodic_metric_reader.instance_variable_get(:@thread).alive?).must_equal false
+    end
+
+    unless Gem.win_platform? || %w[jruby truffleruby].include?(RUBY_ENGINE) # forking is not available on these platforms or runtimes
+      it 'is restarted after forking' do
+        OpenTelemetry::SDK.configure
+
+        metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+        periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval_millis: 5000, export_timeout_millis: 5000, exporter: metric_exporter)
+
+        OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
+
+        read, write = IO.pipe
+
+        pid = fork do
+          meter = OpenTelemetry.meter_provider.meter('test')
+          counter = meter.create_counter('counter', unit: 'smidgen', description: 'a small amount of something')
+
+          counter.add(1)
+          counter.add(2, attributes: { 'a' => 'b' })
+          counter.add(2, attributes: { 'a' => 'b' })
+          counter.add(3, attributes: { 'b' => 'c' })
+          counter.add(4, attributes: { 'd' => 'e' })
+
+          sleep(8)
+          snapshot = metric_exporter.metric_snapshots
+
+          json = snapshot.map { |reading| { name: reading.name } }.to_json
+          write.puts json
+        end
+
+        Timeout.timeout(10) do
+          Process.waitpid(pid)
+        end
+
+        periodic_metric_reader.shutdown
+        snapshot = JSON.parse(read.gets.chomp)
+        _(snapshot.size).must_equal(1)
+        _(snapshot[0]).must_equal('name' => 'counter')
+        _(periodic_metric_reader.instance_variable_get(:@thread).alive?).must_equal false
+      end
     end
 
     it 'shutdown break the export interval cycle' do
