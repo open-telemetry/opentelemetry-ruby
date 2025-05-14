@@ -45,7 +45,7 @@ module OpenTelemetry
           exporters = ENV.fetch('OTEL_LOGS_EXPORTER', 'console')
           OpenTelemetry.logger.info("#wrapped_log_exporters_from_env, exporters = #{exporters}")
 
-          exporters.split(',').map do |exporter|
+          exporters.split(',').map do |exporter| # rubocop:disable Metrics/BlockLength
             case exporter.strip
             when 'none'
               OpenTelemetry.logger.info('none exporter reached')
