@@ -70,8 +70,8 @@ module OpenTelemetry
                 rescue NameError
                   OpenTelemetry.logger.warn 'The otlp logs exporter cannot be configured - please add opentelemetry-exporter-otlp-logs to your Gemfile. Logs will not be exported'
                   nil
-                rescue => e
-                  OpenTelemetry.handle_error(exception: e, message: "Error in Logs::ConfigurationPatch#wrapped_log_exporters_from_env")
+                rescue StandardError => e
+                  OpenTelemetry.handle_error(exception: e, message: 'Error in Logs::ConfigurationPatch#wrapped_log_exporters_from_env')
                 end
               end
             else
