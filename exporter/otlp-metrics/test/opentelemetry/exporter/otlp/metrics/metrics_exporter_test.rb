@@ -609,6 +609,9 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       gauge = meter.create_gauge('test_gauge', unit: 'smidgen', description: 'a small amount of something')
       gauge.record(15, attributes: { 'baz' => 'qux' })
 
+      exponential_histogram = meter.create_exponential_histogram('test_exponential_histogram', unit: 'smidgen', description: 'a small amount of something')
+      exponential_histogram.record(20, attributes: { 'lox' => 'xol' })
+
       exporter.pull
       meter_provider.shutdown
 
@@ -710,6 +713,40 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
                             exemplars: nil
                           )
                         ]
+                      )
+                    ),
+                    Opentelemetry::Proto::Metrics::V1::Metric.new(
+                      name: 'test_exponential_histogram',
+                      description: 'a small amount of something',
+                      unit: 'smidgen',
+                      exponential_histogram: Opentelemetry::Proto::Metrics::V1::ExponentialHistogram.new(
+                        data_points: [
+                          Opentelemetry::Proto::Metrics::V1::ExponentialHistogramDataPoint.new(
+                            attributes: [
+                              Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'lox', value: Opentelemetry::Proto::Common::V1::AnyValue.new(string_value: 'xol'))
+                            ],
+                            start_time_unix_nano: 1_699_593_427_329_946_585,
+                            time_unix_nano: 1_699_593_427_329_946_586,
+                            count: 1,
+                            sum: 20,
+                            scale: 20,
+                            zero_count: 0,
+                            positive: Opentelemetry::Proto::Metrics::V1::ExponentialHistogramDataPoint::Buckets.new(
+                              offset: 4_531_870,
+                              bucket_counts: [1]
+                            ),
+                            negative: Opentelemetry::Proto::Metrics::V1::ExponentialHistogramDataPoint::Buckets.new(
+                              offset: 0,
+                              bucket_counts: [0]
+                            ),
+                            flags: 0,
+                            exemplars: nil,
+                            min: 20,
+                            max: 20,
+                            zero_threshold: 0
+                          )
+                        ],
+                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
                       )
                     )
                   ]

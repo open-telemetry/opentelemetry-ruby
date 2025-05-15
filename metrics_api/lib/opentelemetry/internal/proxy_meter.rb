@@ -45,6 +45,7 @@ module OpenTelemetry
           case kind
           when :counter then @delegate.create_counter(name, unit: unit, description: description)
           when :histogram then @delegate.create_histogram(name, unit: unit, description: description)
+          when :exponential_histogram then @delegate.create_exponential_histogram(name, unit: unit, description: description)
           when :gauge then @delegate.create_gauge(name, unit: unit, description: description)
           when :up_down_counter then @delegate.create_up_down_counter(name, unit: unit, description: description)
           when :observable_counter then @delegate.create_observable_counter(name, unit: unit, description: description, callback: callback)

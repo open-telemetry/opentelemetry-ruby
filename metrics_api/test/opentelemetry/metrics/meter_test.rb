@@ -29,6 +29,11 @@ describe OpenTelemetry::Metrics::Meter do
       _(counter.class).must_equal(OpenTelemetry::Metrics::Instrument::Histogram)
     end
 
+    it 'test create_exponential_histogram' do
+      counter = meter.create_exponential_histogram('test')
+      _(counter.class).must_equal(OpenTelemetry::Metrics::Instrument::ExponentialHistogram)
+    end
+
     it 'test create_up_down_counter' do
       counter = meter.create_up_down_counter('test')
       _(counter.class).must_equal(OpenTelemetry::Metrics::Instrument::UpDownCounter)
