@@ -26,7 +26,7 @@ module OpenTelemetry
       # @param attributes [optional Hash] attributes to attach to the span {String => String,
       # Numeric, Boolean, Array<String, Numeric, Boolean>}
       # @param links [optional Array] an array of OpenTelemetry::Trace::Link instances
-      # @param start_timestamp [optional Integer] nanoseconds since Epoch
+      # @param start_timestamp [optional Time] timestamp to use as the start time of the span
       # @param kind [optional Symbol] One of :internal, :server, :client, :producer, :consumer
       #
       # @yield [span, context] yields the newly created span and a context containing the
