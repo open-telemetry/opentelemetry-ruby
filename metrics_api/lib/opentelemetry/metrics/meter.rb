@@ -11,6 +11,7 @@ module OpenTelemetry
       COUNTER = Instrument::Counter.new
       OBSERVABLE_COUNTER = Instrument::ObservableCounter.new
       HISTOGRAM = Instrument::Histogram.new
+      EXPONENTIAL_HISTOGRAM = Instrument::ExponentialHistogram.new
       GAUGE = Instrument::Gauge.new
       OBSERVABLE_GAUGE = Instrument::ObservableGauge.new
       UP_DOWN_COUNTER = Instrument::UpDownCounter.new
@@ -64,6 +65,25 @@ module OpenTelemetry
       # @return [nil] after creation of histogram, it will be stored in instrument_registry
       def create_histogram(name, unit: nil, description: nil)
         create_instrument(:histogram, name, unit, description, nil) { HISTOGRAM }
+      end
+
+      # Expotential Histogram is a synchronous Instrument which can be used to report arbitrary values that are likely
+      # to be statistically meaningful. It is intended for statistics such as histograms,
+      # summaries, and percentiles with defined scale.
+      #
+      # With this api call:
+      #
+      #   http_server_duration = meter.create_exponential_histogram("http.server.duration",
+      #                                                 description: "measures the duration of the inbound HTTP request",
+      #                                                 unit: "s")
+      #
+      # @param name [String] the name of the expotential histogram
+      # @param unit [optional String] an optional string provided by user.
+      # @param description [optional String] an optional free-form text provided by user.
+      #
+      # @return [nil] after creation of expotential histogram, it will be stored in instrument_registry
+      def create_exponential_histogram(name, unit: nil, description: nil)
+        create_instrument(:exponential_histogram, name, unit, description, nil) { EXPONENTIAL_HISTOGRAM }
       end
 
       # Gauge is an synchronous Instrument which reports non-additive value(s)
