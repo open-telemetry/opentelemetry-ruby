@@ -8,7 +8,7 @@ module OpenTelemetry
   module SDK
     module Metrics
       # Current OpenTelemetry metrics sdk version
-      VERSION = '0.6.0'
+      VERSION = '0.7.0'
     end
   end
 end

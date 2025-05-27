@@ -10,9 +10,9 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
   let(:data_points) { {} }
   let(:ebh) do
     OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(
-      aggregation_temporality: aggregation_temporality,
-      boundaries: boundaries,
-      record_min_max: record_min_max
+      aggregation_temporality:,
+      boundaries:,
+      record_min_max:
     )
   end
   let(:boundaries) { [0, 5, 10, 25, 50, 75, 100, 250, 500, 1000] }
