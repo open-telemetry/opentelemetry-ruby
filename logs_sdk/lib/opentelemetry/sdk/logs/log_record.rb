@@ -139,10 +139,10 @@ module OpenTelemetry
           # Future refactor opportunity: https://github.com/open-telemetry/opentelemetry-ruby/issues/1739
           attrs.keep_if do |k, v|
             if !Internal.valid_key?(k)
-              OpenTelemetry.logger.warn("Invalid log record attribute key type #{k.class} for key #{k.inspect} on record: '#{body}'. Attribute keys must be Strings. Dropping attribute.")
+              OpenTelemetry.handle_error("Invalid log record attribute key type #{k.class} for key #{k.inspect} on record: '#{body}'. Attribute keys must be Strings. Dropping attribute.")
               return false
             elsif !Internal.valid_value?(v)
-              OpenTelemetry.logger.warn("Invalid log record attribute value type #{v.class} for key '#{k}' on record: '#{body}'. Dropping attribute.")
+              OpenTelemetry.handle_error("Invalid log record attribute value type #{v.class} for key '#{k}' on record: '#{body}'. Dropping attribute.")
               return false
             end
 
