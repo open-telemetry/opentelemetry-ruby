@@ -11,6 +11,7 @@ require 'opentelemetry/metrics/instrument/observable_counter'
 require 'opentelemetry/metrics/instrument/observable_gauge'
 require 'opentelemetry/metrics/instrument/observable_up_down_counter'
 require 'opentelemetry/metrics/instrument/up_down_counter'
+require 'opentelemetry/metrics/instrument/exponential_histogram'
 
 module OpenTelemetry
   module Metrics
