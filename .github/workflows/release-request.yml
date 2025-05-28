@@ -25,7 +25,7 @@ jobs:
         run: "gem install --no-document toys -v 0.15.5"
       - name: Open release pull request
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.OPENTELEMETRYBOT_GITHUB_TOKEN }}
         run: |
           toys release request --yes --verbose \
             "--gems=${{ github.event.inputs.gems }}" \
