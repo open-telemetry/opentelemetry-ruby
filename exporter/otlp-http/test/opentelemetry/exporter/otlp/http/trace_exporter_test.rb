@@ -384,7 +384,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
       OpenTelemetry.logger = ::Logger.new(log_stream)
 
       stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 200)
-      span_data = OpenTelemetry::TestHelpers.create_span_data(total_recorded_attributes: 1, attributes: { 'a' => "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT) })
+      span_data = OpenTelemetry::TestHelpers.create_span_data(total_recorded_attributes: 1, attributes: { 'a' => (+"\xC2").force_encoding(::Encoding::ASCII_8BIT) })
 
       result = exporter.export([span_data])
 
