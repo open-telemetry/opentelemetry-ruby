@@ -1,5 +1,9 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.7.1 / 2025-05-28
+
+* FIXED: Recover periodic metric readers after forking
+
 ### v0.7.0 / 2025-05-13
 
 * ADDED: Add basic exponential histogram

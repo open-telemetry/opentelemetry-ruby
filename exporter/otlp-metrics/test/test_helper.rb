@@ -27,6 +27,7 @@ end
 OpenTelemetry::SDK::Metrics::Aggregation::Sum.prepend(MockSum)
 OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.prepend(MockSum)
 OpenTelemetry::SDK::Metrics::Aggregation::LastValue.prepend(MockSum)
+OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.prepend(MockSum)
 
 def create_metrics_data(name: '', description: '', unit: '', instrument_kind: :counter, resource: nil,
                         instrumentation_scope: OpenTelemetry::SDK::InstrumentationScope.new('', 'v0.0.1'),
