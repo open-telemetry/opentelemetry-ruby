@@ -3,6 +3,7 @@ name: Open release request - Weekly
 on:
   schedule:
     - cron: "0 15 * * 2"
+  workflow_dispatch:
 
 jobs:
   release-request:
