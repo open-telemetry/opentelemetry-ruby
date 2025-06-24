@@ -47,8 +47,8 @@ module OpenTelemetry
           header = getter.get(carrier, IDENTITY_KEY)
           return context unless header
           return context unless (match = header.match(TRACE_SPAN_IDENTITY_REGEX))
-          return context if match['trace_id'] =~ ZERO_ID_REGEX
-          return context if match['span_id'] =~ ZERO_ID_REGEX
+          return context if ZERO_ID_REGEX.match?(match['trace_id'])
+          return context if ZERO_ID_REGEX.match?(match['span_id'])
 
           sampling_flags = match['sampling_flags'].to_i
           span = build_span(match, sampling_flags)

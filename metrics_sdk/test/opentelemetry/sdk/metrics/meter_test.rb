@@ -201,8 +201,8 @@ describe OpenTelemetry::SDK::Metrics::Meter do
     end
 
     it 'instrument description must be utf8mb3' do
-      _(-> { meter.create_counter('a_counter', description: '💩'.dup) }).must_raise(INSTRUMENT_DESCRIPTION_ERROR)
-      _(-> { meter.create_counter('b_counter', description: "\xc2".dup) }).must_raise(INSTRUMENT_DESCRIPTION_ERROR)
+      _(-> { meter.create_counter('a_counter', description: +'💩') }).must_raise(INSTRUMENT_DESCRIPTION_ERROR)
+      _(-> { meter.create_counter('b_counter', description: +"\xc2") }).must_raise(INSTRUMENT_DESCRIPTION_ERROR)
     end
 
     it 'instrument description must not exceed 1023 characters' do
