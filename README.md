@@ -34,7 +34,7 @@ The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 - [Daniel Azuma](https://github.com/dazuma), Google
 - [Kayla Reopelle](https://github.com/kaylareopelle), New Relic
 
-For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/community-membership.md#maintainer).
+For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
 
 ### Approvers
 
@@ -44,7 +44,7 @@ For more information about the maintainer role, see the [community repository](h
 - [Sam Handler](https://github.com/plantfansam), Shopify
 - [Robb Kidd](https://github.com/robbkidd), Honeycomb
 
-For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/community-membership.md#approver).
+For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).
 
 ## Contrib Repository
 
