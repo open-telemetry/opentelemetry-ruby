@@ -35,24 +35,9 @@ describe OpenTelemetry::SDK::Logs::ConfiguratorPatch do
     end
 
     describe 'processors' do
-      it 'defaults to a simple processor with a console exporter' do
-        configurator.configure
-
-        processors = OpenTelemetry.logger_provider.instance_variable_get(:@log_record_processors)
-
-        assert_equal 1, processors.size
-        processor = processors[0]
-
-        assert_instance_of OpenTelemetry::SDK::Logs::Export::SimpleLogRecordProcessor, processor
-        assert_instance_of OpenTelemetry::SDK::Logs::Export::ConsoleLogRecordExporter, processor.instance_variable_get(:@log_record_exporter)
-      end
-
-      it 'can be set by environment variable' do
+      it 'defaults to a batch processor with an otlp exporter' do
         skip 'OTLP exporter not compatible with JRuby' if RUBY_ENGINE == 'jruby'
-
-        OpenTelemetry::TestHelpers.with_env('OTEL_LOGS_EXPORTER' => 'otlp') do
-          configurator.configure
-        end
+        configurator.configure
 
         processors = OpenTelemetry.logger_provider.instance_variable_get(:@log_record_processors)
 
@@ -61,6 +46,20 @@ describe OpenTelemetry::SDK::Logs::ConfiguratorPatch do
 
         assert_instance_of OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor, processor
         assert_instance_of OpenTelemetry::Exporter::OTLP::Logs::LogsExporter, processor.instance_variable_get(:@exporter)
+      end
+
+      it 'can be set by environment variable' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_LOGS_EXPORTER' => 'console') do
+          configurator.configure
+        end
+
+        processors = OpenTelemetry.logger_provider.instance_variable_get(:@log_record_processors)
+
+        assert_equal 1, processors.size
+        processor = processors[0]
+
+        assert_instance_of OpenTelemetry::SDK::Logs::Export::SimpleLogRecordProcessor, processor
+        assert_instance_of OpenTelemetry::SDK::Logs::Export::ConsoleLogRecordExporter, processor.instance_variable_get(:@log_record_exporter)
       end
 
       it 'supports "none" as an environment variable' do
