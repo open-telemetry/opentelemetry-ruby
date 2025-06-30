@@ -17,10 +17,13 @@ module OpenTelemetry
           attr_reader :aggregation_temporality
 
           def initialize(aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta),
+                         monotonic: false,
                          exemplar_reservoir: DEFAULT_RESERVOIR)
+
             # TODO: the default should be :cumulative, see issue #1555
             @exemplar_reservoir = exemplar_reservoir
             @aggregation_temporality = aggregation_temporality.to_sym
+            @monotonic = monotonic
           end
 
           def collect(start_time, end_time, data_points)
@@ -43,8 +46,13 @@ module OpenTelemetry
             end
           end
 
+          def monotonic?
+            @monotonic
+          end
+
           def update(increment, attributes, data_points)
-            # NumberDataPoint should include exemplars
+            return if @monotonic && increment < 0
+
             ndp = data_points[attributes] || data_points[attributes] = NumberDataPoint.new(
               attributes,
               nil,

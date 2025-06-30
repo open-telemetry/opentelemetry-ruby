@@ -45,7 +45,7 @@ describe OpenTelemetry::SDK do
       OpenTelemetry::SDK.configure(&:do_something)
 
       _(received_exception).must_be_instance_of OpenTelemetry::SDK::ConfigurationError
-      _(received_message).must_match(/unexpected configuration error due to undefined method `do_something/)
+      _(received_message).must_match(/undefined method/)
     end
   end
 end

@@ -20,7 +20,7 @@ def reset_metrics_sdk
     :@meter_provider,
     OpenTelemetry::Internal::ProxyMeterProvider.new
   )
-
+  OpenTelemetry::SDK::Metrics::ForkHooks.instance_variable_set(:@fork_hooks_attached, false)
   OpenTelemetry.logger = Logger.new(File::NULL)
   OpenTelemetry.error_handler = nil
 end

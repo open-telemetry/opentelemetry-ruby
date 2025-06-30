@@ -33,14 +33,22 @@ module OpenTelemetry
             @thread   = nil
             @continue = false
             @mutex = Mutex.new
+            @condition = ConditionVariable.new
             @export_mutex = Mutex.new
 
             start
           end
 
+          # Shuts the @thread down and set @continue to false; it will block
+          # until the shutdown thread is finished.
+          #
+          # @param [optional Numeric] timeout An optional timeout in seconds.
+          # @return [Integer] SUCCESS if no error occurred, FAILURE if a
+          #   non-specific failure occurred.
           def shutdown(timeout: nil)
             thread = lock do
               @continue = false # force termination in next iteration
+              @condition.signal
               @thread
             end
             thread&.join(@export_interval)
@@ -52,15 +60,42 @@ module OpenTelemetry
             Export::FAILURE
           end
 
+          # Export all metrics to the configured `Exporter` that have not yet
+          # been exported.
+          #
+          # This method should only be called in cases where it is absolutely
+          # necessary, such as when using some FaaS providers that may suspend
+          # the process after an invocation, but before the `PeriodicMetricReader` exports
+          # the completed metrics.
+          #
+          # @param [optional Numeric] timeout An optional timeout in seconds.
+          # @return [Integer] SUCCESS if no error occurred, FAILURE if a
+          #   non-specific failure occurred.
           def force_flush(timeout: nil)
-            export(timeout: timeout)
+            export(timeout:)
             Export::SUCCESS
           rescue StandardError
             Export::FAILURE
           end
 
+          def after_fork
+            @exporter.reset if @exporter.respond_to?(:reset)
+            collect # move past previously reported metrics from parent process
+            @thread = nil
+            start
+          end
+
+          # Check both @thread and @continue object to determine if current
+          # PeriodicMetricReader is still alive. If one of them is true/alive,
+          # then PeriodicMetricReader is determined as alive
+          def alive?
+            @continue || @thread.alive?
+          end
+
           private
 
+          # Start a thread that continously export metrics within fixed duration.
+          # The wait mechanism is using to check @mutex lock with conditional variable
           def start
             @continue = true
             if @exporter.nil?
@@ -70,19 +105,21 @@ module OpenTelemetry
             else
               @thread = Thread.new do
                 while @continue
-                  sleep(@export_interval)
-                  begin
-                    Timeout.timeout(@export_timeout) do
-                      export(timeout: @export_timeout)
-                    end
-                  rescue Timeout::Error => e
-                    OpenTelemetry.handle_error(exception: e, message: 'PeriodicMetricReader timeout.')
+                  lock do
+                    @condition.wait(@mutex, @export_interval)
+                    export(timeout: @export_timeout)
                   end
                 end
               end
             end
           end
 
+          # Helper function for the defined exporter to export metrics.
+          # It only exports if the collected metrics are not an empty array (collect returns an Array).
+          #
+          # @param [optional Numeric] timeout An optional timeout in seconds.
+          # @return [Integer] SUCCESS if no error occurred, FAILURE if a
+          #   non-specific failure occurred
           def export(timeout: nil)
             @export_mutex.synchronize do
               collected_metrics = collect

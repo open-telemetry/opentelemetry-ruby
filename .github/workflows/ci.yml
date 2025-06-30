@@ -38,6 +38,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
+      - name: "Test Ruby 3.4"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
@@ -54,12 +59,6 @@ jobs:
         with:
           gem: "${{ matrix.gem }}"
           ruby: "3.1"
-      - name: "Test Ruby 3.0"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.0"
           yard: true
           rubocop: true
           build: true
@@ -103,6 +102,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
+      - name: "Test Ruby 3.4"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
@@ -119,12 +123,6 @@ jobs:
         with:
           gem: "${{ matrix.gem }}"
           ruby: "3.1"
-      - name: "Test Ruby 3.0"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.0"
           yard: true
           rubocop: true
           build: true
@@ -177,6 +175,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
+      - name: "Test Ruby 3.4"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "3.4"
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
@@ -193,12 +196,6 @@ jobs:
         with:
           gem: "${{ matrix.gem }}"
           ruby: "3.1"
-      - name: "Test Ruby 3.0"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.0"
           yard: true
           rubocop: true
           build: true

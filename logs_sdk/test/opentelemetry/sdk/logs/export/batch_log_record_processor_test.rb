@@ -447,7 +447,7 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
       exporter = TestExporter.new
       processor = BatchLogRecordProcessor.new(exporter)
 
-      producers = 10.times.map do |i|
+      producers = Array.new(10) do |i|
         Thread.new do
           x = i * 10
           10.times do |j|
@@ -461,7 +461,7 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
 
       out = exporter.batches.flatten.map(&:body).sort
 
-      expected = 100.times.map { |i| i }
+      expected = Array.new(100) { |i| i }
 
       _(out).must_equal(expected)
     end

@@ -70,6 +70,8 @@ Or, if you use [bundler][bundler-home], include `opentelemetry-sdk`, `openteleme
 Then, configure the SDK to use the OTLP metrics exporter
 
 ```ruby
+ENV['OTEL_METRICS_EXPORTER'] = 'none'
+
 require 'opentelemetry/sdk'
 require 'opentelemetry-metrics-sdk'
 require 'opentelemetry/exporter/otlp_metrics'
