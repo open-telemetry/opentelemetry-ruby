@@ -2,7 +2,7 @@
 
 ### v0.7.2 / 2025-07-01
 
-* FIXED: Enfore the aggregation_temporality as sym for exponential_histogram
+* FIXED: Coerce aggregation temporality to be a symbol for exponential histograms
 
 ### v0.7.1 / 2025-05-28
 
