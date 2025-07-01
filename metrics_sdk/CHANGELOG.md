@@ -1,5 +1,9 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.7.2 / 2025-07-01
+
+* FIXED: Enfore the aggregation_temporality as sym for exponential_histogram
+
 ### v0.7.1 / 2025-05-28
 
 * FIXED: Recover periodic metric readers after forking
