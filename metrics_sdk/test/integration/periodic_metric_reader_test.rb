@@ -21,7 +21,7 @@ describe OpenTelemetry::SDK do
       OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
 
       meter = OpenTelemetry.meter_provider.meter('test')
-      histogram = meter.create_histogram('example', unit: 's', description: 'test')
+      meter.create_histogram('example', unit: 's', description: 'test')
 
       sleep(1)
 
@@ -42,12 +42,11 @@ describe OpenTelemetry::SDK do
       boundaries = [0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10]
 
       OpenTelemetry.meter_provider.add_view('http.server.request.duration',
-        type: :histogram,
-        aggregation: OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(boundaries: boundaries)
-      )
+                                            type: :histogram,
+                                            aggregation: OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(boundaries: boundaries))
 
       meter = OpenTelemetry.meter_provider.meter('test')
-      histogram = meter.create_histogram('http.server.request.duration', unit: 's', description: 'Duration of HTTP server requests.')
+      meter.create_histogram('http.server.request.duration', unit: 's', description: 'Duration of HTTP server requests.')
 
       sleep(8)
 
