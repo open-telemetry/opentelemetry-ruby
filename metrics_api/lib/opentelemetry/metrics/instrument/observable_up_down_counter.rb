@@ -10,7 +10,6 @@ module OpenTelemetry
       # No-op implementation of ObservableUpDownCounter.
       class ObservableUpDownCounter
         # Observe the ObservableUpDownCounter with fixed timeout duration.
-        # Everytime observe, the value should be sent to backend through exporter
         #
         # @param [int] timeout The timeout duration for callback to run, which MUST be a non-negative numeric value.
         # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
