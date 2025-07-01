@@ -31,7 +31,7 @@ module OpenTelemetry
             record_min_max: true,
             zero_threshold: 0
           )
-            @aggregation_temporality = aggregation_temporality
+            @aggregation_temporality = aggregation_temporality.to_sym
             @record_min_max = record_min_max
             @min            = Float::INFINITY
             @max            = -Float::INFINITY
