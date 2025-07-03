@@ -36,8 +36,7 @@ module OpenTelemetry
         end
 
         def wrapped_log_exporters_from_env
-          # TODO: set default to OTLP to match traces, default is console until other exporters merged
-          exporters = ENV.fetch('OTEL_LOGS_EXPORTER', 'console')
+          exporters = ENV.fetch('OTEL_LOGS_EXPORTER', 'otlp')
 
           exporters.split(',').map do |exporter|
             case exporter.strip
