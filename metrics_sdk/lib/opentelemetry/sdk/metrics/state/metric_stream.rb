@@ -41,6 +41,10 @@ module OpenTelemetry
           def collect(start_time, end_time)
             @mutex.synchronize do
               metric_data = []
+
+              # data points are required to export over OTLP
+              return metric_data if @data_points.empty?
+
               if @registered_views.empty?
                 metric_data << aggregate_metric_data(start_time, end_time)
               else
