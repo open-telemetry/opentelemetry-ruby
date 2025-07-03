@@ -1,6 +1,6 @@
 # Release History: opentelemetry-metrics-sdk
 
-### v0.7.2 / 2025-07-01
+### v0.7.2 / 2025-07-03
 
 * FIXED: Coerce aggregation temporality to be a symbol for exponential histograms
 
