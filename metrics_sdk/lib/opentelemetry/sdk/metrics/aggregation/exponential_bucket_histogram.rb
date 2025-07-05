@@ -45,6 +45,7 @@ module OpenTelemetry
             @mapping = new_mapping(@scale)
           end
 
+          # when aggregation temporality is cumulative, merge and downscale will happen.
           def collect(start_time, end_time, data_points)
             if @aggregation_temporality == :delta
               # Set timestamps and 'move' data point values to result.
@@ -57,6 +58,16 @@ module OpenTelemetry
               hdps
             else
               # Update timestamps and take a snapshot.
+              # Here we need to handle the case where:
+              # collect is called after at least one other call to collect
+              # (there is data in previous buckets, a call to merge is needed
+              # to handle possible differences in bucket sizes).
+              # collect is called without another call previous call to
+              # collect was made (there is no previous buckets, previous,
+              # empty buckets that are the same scale of the current buckets
+              # need to be made so that they can be cumulatively aggregated
+              # to the current buckets).
+
               data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano ||= start_time # Start time of a data point is from the first observation.
                 hdp.time_unix_nano = end_time
@@ -68,6 +79,7 @@ module OpenTelemetry
             end
           end
 
+          # this is aggregate in python; there is no merge in aggregate; but rescale happened
           # rubocop:disable Metrics/MethodLength
           def update(amount, attributes, data_points)
             # fetch or initialize the ExponentialHistogramDataPoint

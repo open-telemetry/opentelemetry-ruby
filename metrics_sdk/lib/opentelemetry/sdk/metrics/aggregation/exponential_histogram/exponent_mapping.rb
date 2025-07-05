@@ -13,8 +13,11 @@ module OpenTelemetry
           class ExponentMapping
             attr_reader :scale
 
+            MINIMAL_SCALE = -10
+            MAXIMAL_SCALE = 0
+
             def initialize(scale)
-              @scale = scale
+              @scale = validate_scale(scale)
               @min_normal_lower_boundary_index = calculate_min_normal_lower_boundary_index(scale)
               @max_normal_lower_boundary_index = IEEE754::MAX_NORMAL_EXPONENT >> -@scale
             end
@@ -31,6 +34,12 @@ module OpenTelemetry
               inds = IEEE754::MIN_NORMAL_EXPONENT >> -scale
               inds -= 1 if -scale < 2
               inds
+            end
+
+            def validate_scale(scale)
+              raise "scale is larger than #{MAXIMAL_SCALE}" if scale > MAXIMAL_SCALE
+              raise "scale is smaller than #{MINIMAL_SCALE}" if scale < MINIMAL_SCALE
+              scale
             end
 
             # for testing

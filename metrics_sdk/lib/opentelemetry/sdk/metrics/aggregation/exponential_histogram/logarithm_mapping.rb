@@ -13,8 +13,11 @@ module OpenTelemetry
           class LogarithmMapping
             attr_reader :scale
 
+            MINIMAL_SCALE = 1
+            MAXIMAL_SCALE = 20
+
             def initialize(scale)
-              @scale = scale
+              @scale = validate_scale(scale)
               @scale_factor = Log2eScaleFactor::LOG2E_SCALE_BUCKETS[scale] # scale_factor is used for mapping the index
               @min_normal_lower_boundary_index = IEEE754::MIN_NORMAL_EXPONENT << @scale
               @max_normal_lower_boundary_index = ((IEEE754::MAX_NORMAL_EXPONENT + 1) << @scale) - 1
@@ -29,6 +32,12 @@ module OpenTelemetry
               end
 
               [(Math.log(value) * @scale_factor).floor, @max_normal_lower_boundary_index].min
+            end
+
+            def validate_scale(scale)
+              raise "scale is larger than #{MAXIMAL_SCALE}" if scale > MAXIMAL_SCALE
+              raise "scale is smaller than #{MINIMAL_SCALE}" if scale < MINIMAL_SCALE
+              scale
             end
 
             # for testing
