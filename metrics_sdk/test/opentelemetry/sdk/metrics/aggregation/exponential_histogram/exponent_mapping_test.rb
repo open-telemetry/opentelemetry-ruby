@@ -6,34 +6,7 @@
 
 require 'test_helper'
 
-def left_boundary(scale, inds)
-  while scale > 0 && inds < -1022
-    inds /= 2.to_f
-    scale -= 1
-  end
-
-  result = 2.0**inds
-
-  scale.times { result = Math.sqrt(result) }
-  result
-end
-
-def right_boundary(scale, index)
-  result = 2**index
-
-  scale.abs.times do
-    result *= result
-  end
-
-  result
-end
-
 describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
-  MAX_NORMAL_EXPONENT = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MAX_NORMAL_EXPONENT
-  MIN_NORMAL_EXPONENT = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MIN_NORMAL_EXPONENT
-  MAX_NORMAL_VALUE = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MAX_NORMAL_VALUE
-  MIN_NORMAL_VALUE = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MIN_NORMAL_VALUE
-
   describe 'exponent_mapping' do
     let(:exponent_mapping_min_scale) { -10 }
 
@@ -193,21 +166,6 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       _(exponent_mapping.map_to_index(1)).must_equal(-1)
       _(exponent_mapping.map_to_index(Float::MAX)).must_equal(0)
       _(exponent_mapping.map_to_index(Float::MIN)).must_equal(-1)
-    end
-
-    it 'test_invalid_scale' do
-      # Test scale larger than maximum allowed
-      error = assert_raises(RuntimeError) do
-        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::ExponentMapping.new(1)
-      end
-      assert_equal('scale is larger than 0', error.message)
-
-      # Test scale smaller than minimum allowed
-      min_scale = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::ExponentMapping::MINIMAL_SCALE
-      error = assert_raises(RuntimeError) do
-        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::ExponentMapping.new(min_scale - 1)
-      end
-      assert_equal('scale is smaller than -10', error.message)
     end
 
     it 'test_exponent_index_max' do

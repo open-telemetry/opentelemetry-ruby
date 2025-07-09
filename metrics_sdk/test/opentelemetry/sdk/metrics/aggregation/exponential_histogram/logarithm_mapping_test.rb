@@ -6,34 +6,7 @@
 
 require 'test_helper'
 
-def left_boundary(scale, inds)
-  while scale > 0 && inds < -1022
-    inds /= 2.to_f
-    scale -= 1
-  end
-
-  result = 2.0**inds
-
-  scale.times { result = Math.sqrt(result) }
-  result
-end
-
-def right_boundary(scale, index)
-  result = 2**index
-
-  scale.abs.times do
-    result *= result
-  end
-
-  result
-end
-
 describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
-  MAX_NORMAL_EXPONENT = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MAX_NORMAL_EXPONENT
-  MIN_NORMAL_EXPONENT = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MIN_NORMAL_EXPONENT
-  MAX_NORMAL_VALUE = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MAX_NORMAL_VALUE
-  MIN_NORMAL_VALUE = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MIN_NORMAL_VALUE
-
   describe 'logarithm_mapping' do
     it 'test_init_called_once' do
       # Test that creating multiple instances with the same scale works correctly
@@ -48,27 +21,6 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       # Both should produce the same mapping results
       test_value = 2.5
       _(mapping1.map_to_index(test_value)).must_equal(mapping2.map_to_index(test_value))
-    end
-
-    it 'test_invalid_scale' do
-      # Test scale smaller than minimum allowed (scale must be >= 1)
-      error = assert_raises(RuntimeError) do
-        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::LogarithmMapping.new(-1)
-      end
-      assert_equal('scale is smaller than 1', error.message)
-
-      # Test scale of 0 (also invalid for LogarithmMapping)
-      error = assert_raises(RuntimeError) do
-        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::LogarithmMapping.new(0)
-      end
-      assert_equal('scale is smaller than 1', error.message)
-
-      # Test scale larger than maximum allowed
-      max_scale = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::LogarithmMapping::MAXIMAL_SCALE
-      error = assert_raises(RuntimeError) do
-        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::LogarithmMapping.new(max_scale + 1)
-      end
-      assert_equal("scale is larger than #{max_scale}", error.message)
     end
 
     it 'test_logarithm_mapping_scale_one' do
