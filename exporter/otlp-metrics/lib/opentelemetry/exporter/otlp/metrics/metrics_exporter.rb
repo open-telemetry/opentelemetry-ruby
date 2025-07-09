@@ -201,7 +201,7 @@ module OpenTelemetry
                               name: instrumentation_scope.name,
                               version: instrumentation_scope.version
                             ),
-                            metrics: metrics.map { |sd| as_otlp_metrics(sd) }
+                            metrics: metrics.filter_map { |sd| as_otlp_metrics(sd) }
                           )
                         end
                     )
