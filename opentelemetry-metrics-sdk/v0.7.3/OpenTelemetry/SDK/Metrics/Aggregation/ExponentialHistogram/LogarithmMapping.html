@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::LogarithmMapping
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::LogarithmMapping";
+  relpath = '../../../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../../../_index.html">Index (L)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../../../SDK.html" title="OpenTelemetry::SDK (module)">SDK</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../../Metrics.html" title="OpenTelemetry::SDK::Metrics (module)">Metrics</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Aggregation.html" title="OpenTelemetry::SDK::Metrics::Aggregation (module)">Aggregation</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../ExponentialHistogram.html" title="OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram (module)">ExponentialHistogram</a></span></span>
+     &raquo; 
+    <span class="title">LogarithmMapping</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::LogarithmMapping
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::LogarithmMapping</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/sdk/metrics/aggregation/exponential_histogram/logarithm_mapping.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>LogarithmMapping for mapping when scale &gt; 0</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#scale-instance_method" title="#scale (instance method)">#<strong>scale</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute scale.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#get_lower_boundary-instance_method" title="#get_lower_boundary (instance method)">#<strong>get_lower_boundary</strong>(inds)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>for testing.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(scale)  &#x21d2; LogarithmMapping </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>A new instance of LogarithmMapping.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#map_to_index-instance_method" title="#map_to_index (instance method)">#<strong>map_to_index</strong>(value)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(scale)  &#x21d2; <tt><span class='object_link'><a href="" title="OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::LogarithmMapping (class)">LogarithmMapping</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns a new instance of LogarithmMapping.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+16
+17
+18
+19
+20
+21</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/metrics/aggregation/exponential_histogram/logarithm_mapping.rb', line 16</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_scale'>scale</span><span class='rparen'>)</span>
+  <span class='ivar'>@scale</span> <span class='op'>=</span> <span class='id identifier rubyid_scale'>scale</span>
+  <span class='ivar'>@scale_factor</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Log2eScaleFactor.html" title="OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::Log2eScaleFactor (class)">Log2eScaleFactor</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Log2eScaleFactor.html#LOG2E_SCALE_BUCKETS-constant" title="OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::Log2eScaleFactor::LOG2E_SCALE_BUCKETS (constant)">LOG2E_SCALE_BUCKETS</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_scale'>scale</span><span class='rbracket'>]</span> <span class='comment'># scale_factor is used for mapping the index
+</span>  <span class='ivar'>@min_normal_lower_boundary_index</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="IEEE754.html" title="OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754 (module)">IEEE754</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="IEEE754.html#MIN_NORMAL_EXPONENT-constant" title="OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MIN_NORMAL_EXPONENT (constant)">MIN_NORMAL_EXPONENT</a></span></span> <span class='op'>&lt;&lt;</span> <span class='ivar'>@scale</span>
+  <span class='ivar'>@max_normal_lower_boundary_index</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="IEEE754.html" title="OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754 (module)">IEEE754</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="IEEE754.html#MAX_NORMAL_EXPONENT-constant" title="OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MAX_NORMAL_EXPONENT (constant)">MAX_NORMAL_EXPONENT</a></span></span> <span class='op'>+</span> <span class='int'>1</span><span class='rparen'>)</span> <span class='op'>&lt;&lt;</span> <span class='ivar'>@scale</span><span class='rparen'>)</span> <span class='op'>-</span> <span class='int'>1</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id=""></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="scale-instance_method">
+  
+    #<strong>scale</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute scale.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+14
+15
+16</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/metrics/aggregation/exponential_histogram/logarithm_mapping.rb', line 14</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_scale'>scale</span>
+  <span class='ivar'>@scale</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="get_lower_boundary-instance_method">
+  
+    #<strong>get_lower_boundary</strong>(inds)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>for testing</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/metrics/aggregation/exponential_histogram/logarithm_mapping.rb', line 35</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_get_lower_boundary'>get_lower_boundary</span><span class='lparen'>(</span><span class='id identifier rubyid_inds'>inds</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_inds'>inds</span> <span class='op'>&gt;=</span> <span class='ivar'>@max_normal_lower_boundary_index</span>
+    <span class='kw'>return</span> <span class='int'>2</span> <span class='op'>*</span> <span class='const'>Math</span><span class='period'>.</span><span class='id identifier rubyid_exp'>exp</span><span class='lparen'>(</span><span class='lparen'>(</span><span class='id identifier rubyid_inds'>inds</span> <span class='op'>-</span> <span class='lparen'>(</span><span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='ivar'>@scale</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='op'>/</span> <span class='ivar'>@scale_factor</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_inds'>inds</span> <span class='op'>==</span> <span class='ivar'>@max_normal_lower_boundary_index</span>
+
+    <span class='id identifier rubyid_raise'>raise</span> <span class='const'>StandardError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>mapping overflow</span><span class='tstring_end'>&#39;</span></span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_inds'>inds</span> <span class='op'>&lt;=</span> <span class='ivar'>@min_normal_lower_boundary_index</span>
+    <span class='kw'>return</span> <span class='const'><span class='object_link'><a href="IEEE754.html" title="OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754 (module)">IEEE754</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="IEEE754.html#MIN_NORMAL_VALUE-constant" title="OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MIN_NORMAL_VALUE (constant)">MIN_NORMAL_VALUE</a></span></span> <span class='kw'>if</span> <span class='id identifier rubyid_inds'>inds</span> <span class='op'>==</span> <span class='ivar'>@min_normal_lower_boundary_index</span>
+    <span class='kw'>return</span> <span class='const'>Math</span><span class='period'>.</span><span class='id identifier rubyid_exp'>exp</span><span class='lparen'>(</span><span class='lparen'>(</span><span class='id identifier rubyid_inds'>inds</span> <span class='op'>+</span> <span class='lparen'>(</span><span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='ivar'>@scale</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='op'>/</span> <span class='ivar'>@scale_factor</span><span class='rparen'>)</span> <span class='op'>/</span> <span class='int'>2</span> <span class='kw'>if</span> <span class='id identifier rubyid_inds'>inds</span> <span class='op'>==</span> <span class='ivar'>@min_normal_lower_boundary_index</span> <span class='op'>-</span> <span class='int'>1</span>
+
+    <span class='id identifier rubyid_raise'>raise</span> <span class='const'>StandardError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>mapping underflow</span><span class='tstring_end'>&#39;</span></span>
+  <span class='kw'>end</span>
+
+  <span class='const'>Math</span><span class='period'>.</span><span class='id identifier rubyid_exp'>exp</span><span class='lparen'>(</span><span class='id identifier rubyid_inds'>inds</span> <span class='op'>/</span> <span class='ivar'>@scale_factor</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="map_to_index-instance_method">
+  
+    #<strong>map_to_index</strong>(value)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/metrics/aggregation/exponential_histogram/logarithm_mapping.rb', line 23</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_map_to_index'>map_to_index</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='ivar'>@min_normal_lower_boundary_index</span> <span class='op'>-</span> <span class='int'>1</span> <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span> <span class='op'>&lt;=</span> <span class='const'><span class='object_link'><a href="IEEE754.html" title="OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754 (module)">IEEE754</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="IEEE754.html#MIN_NORMAL_VALUE-constant" title="OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MIN_NORMAL_VALUE (constant)">MIN_NORMAL_VALUE</a></span></span>
+
+  <span class='kw'>if</span> <span class='const'><span class='object_link'><a href="IEEE754.html" title="OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754 (module)">IEEE754</a></span></span><span class='period'>.</span><span class='id identifier rubyid_get_ieee_754_mantissa'><span class='object_link'><a href="IEEE754.html#get_ieee_754_mantissa-class_method" title="OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754.get_ieee_754_mantissa (method)">get_ieee_754_mantissa</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span> <span class='op'>==</span> <span class='int'>0</span>
+    <span class='id identifier rubyid_exponent'>exponent</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="IEEE754.html" title="OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754 (module)">IEEE754</a></span></span><span class='period'>.</span><span class='id identifier rubyid_get_ieee_754_exponent'><span class='object_link'><a href="IEEE754.html#get_ieee_754_exponent-class_method" title="OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754.get_ieee_754_exponent (method)">get_ieee_754_exponent</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+    <span class='kw'>return</span> <span class='lparen'>(</span><span class='id identifier rubyid_exponent'>exponent</span> <span class='op'>&lt;&lt;</span> <span class='ivar'>@scale</span><span class='rparen'>)</span> <span class='op'>-</span> <span class='int'>1</span>
+  <span class='kw'>end</span>
+
+  <span class='lbracket'>[</span><span class='lparen'>(</span><span class='const'>Math</span><span class='period'>.</span><span class='id identifier rubyid_log'>log</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span> <span class='op'>*</span> <span class='ivar'>@scale_factor</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_floor'>floor</span><span class='comma'>,</span> <span class='ivar'>@max_normal_lower_boundary_index</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_min'>min</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Wed Jul  9 15:33:26 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.1.6).
+</div>
+
+    </div>
+  </body>
+</html>
