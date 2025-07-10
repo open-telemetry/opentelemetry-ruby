@@ -207,10 +207,14 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       end
     end
 
+    def center_val(mapping, inds)
+      (mapping.get_lower_boundary(inds) + mapping.get_lower_boundary(inds + 1)) / 2.0
+    end
+
     def ascending_sequence_test(max_size, offset, init_scale)
       (max_size...(max_size * 4)).each do |step|
         expbh = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
-          aggregation_temporality: aggregation_temporality,
+          aggregation_temporality: :delta,
           record_min_max: record_min_max,
           max_size: max_size,
           max_scale: init_scale,
@@ -225,20 +229,22 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
           OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::LogarithmMapping.new(init_scale)
         end
 
+        min_val = center_val(mapping, offset)
+        max_val = center_val(mapping, offset + step)
+
         # Generate test values
         sum_value = 0.0
         max_size.times do |index|
-          value = 2**(offset + index) # Simple approximation for center_val
+          value = center_val(mapping, offset + index)
           expbh.update(value, {}, local_data_points)
           sum_value += value
         end
 
         hdp = local_data_points[{}]
         _(hdp.scale).must_equal(init_scale)
-        _(hdp.positive.index_start).must_equal(offset)
+        _(hdp.positive.offset).must_equal(offset)
 
         # Add one more value to trigger potential downscaling
-        max_val = 2**(offset + step)
         expbh.update(max_val, {}, local_data_points)
         sum_value += max_val
 
@@ -256,6 +262,17 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         _(total_count).must_be :<=, max_size + 1
         _(hdp.count).must_be :<=, max_size + 1
         _(hdp.sum).must_be :<=, sum_value
+
+        if init_scale <= 0
+          mapping = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::ExponentMapping.new(hdp.scale)
+        else
+          mapping = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::LogarithmMapping.new(hdp.scale)
+        end
+
+        inds = mapping.map_to_index(min_val)
+        _(inds).must_equal(hdp.positive.offset)
+        inds = mapping.map_to_index(max_val)
+        _(inds).must_equal(hdp.positive.offset + hdp.positive.length - 1)
       end
     end
 
@@ -546,7 +563,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
 
     it 'test_zero_count_by_increment' do
       expbh_0 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
-        aggregation_temporality: aggregation_temporality,
+        aggregation_temporality: :delta,
         record_min_max: record_min_max,
         zero_threshold: 0
       )
@@ -569,8 +586,8 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
 
       # Simulate increment behavior by manually adjusting counts
       hdp_1 = data_points_1[{}]
-      hdp_1.instance_variable_set(:@count, hdp_1.count * increment)
-      hdp_1.instance_variable_set(:@zero_count, hdp_1.zero_count * increment)
+      hdp_1.count *= increment
+      hdp_1.zero_count *= increment
 
       hdp_0 = data_points_0[{}]
       _(hdp_0.count).must_equal(hdp_1.count)
@@ -603,8 +620,8 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
 
       # Simulate increment behavior
       hdp_1 = data_points_1[{}]
-      hdp_1.instance_variable_set(:@count, hdp_1.count * increment)
-      hdp_1.instance_variable_set(:@sum, hdp_1.sum * increment)
+      hdp_1.count *= increment
+      hdp_1.sum *= increment
 
       hdp_0 = data_points_0[{}]
       _(hdp_0.count).must_equal(hdp_1.count)
@@ -787,42 +804,48 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
 
       result = expbh.collect(start_time, end_time, local_data_points)
 
+      # python exponential_histogram_aggregation._mapping.scale will inherit from last scale
+      # ruby will start from new scale (20) so it will be 20 after the data is cleared from delta temp operation
+      expbh.update(0, {}, local_data_points)
+      hdp = local_data_points[{}]
+      hdp.scale = 0
+
       [1, 2, 4, 8].each do |value|
         expbh.update(1.0 / value, {}, local_data_points)
       end
 
       hdp = local_data_points[{}]
-      _(hdp.scale).must_equal(0) # expect 20
+
+      _(hdp.scale).must_equal(0)
       _(hdp.positive.index_start).must_equal(-4)
       _(hdp.positive.counts).must_equal([1, 1, 1, 1])
 
       result_1 = expbh.collect(start_time, end_time, local_data_points)
-
-      # _(result.first.scale).must_equal(result_1.first.scale)
+      _(result.first.scale).must_equal(result_1.first.scale)
     end
 
     it 'test_invalid_scale_validation' do
       error = assert_raises(ArgumentError) do
         OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_scale: 100)
       end
-      assert_equal('Scale 100 is larger than maximal scale 20', error.message)
+      assert_equal('Scale 100 is larger than maximum scale 20', error.message)
 
       error = assert_raises(ArgumentError) do
         OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_scale: -20)
       end
-      assert_equal('Scale -20 is smaller than minimal scale -10', error.message)
+      assert_equal('Scale -20 is smaller than minimum scale -10', error.message)
     end
 
     it 'test_invalid_size_validation' do
       error = assert_raises(ArgumentError) do
         OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_size: 10000000)
       end
-      assert_equal('Max size 10000000 is larger than maximal size 16384', error.message)
+      assert_equal('Buckets max size 10000000 is larger than maximum max size 16384', error.message)
 
       error = assert_raises(ArgumentError) do
         OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_size: 0)
       end
-      assert_equal('Max size 0 is smaller than minimal size 2', error.message)
+      assert_equal('Buckets min size 0 is smaller than minimum min size 2', error.message)
     end
   end
 
