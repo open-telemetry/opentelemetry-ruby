@@ -25,11 +25,11 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
   let(:start_time) { Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond) }
   let(:end_time) { Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond) + (60 * 1_000_000_000) }
 
-  # Helper method to swap internal state between two exponential histogram aggregations
-  # This simulates the Python swap function that directly manipulates internal state
+  # Helper method to swap internal state between two exponential histogram data point containers
+  # This translates the Python swap function that directly manipulates internal aggregation state
   def swap(first_data_points, second_data_points)
-    # Since Ruby doesn't have direct access to internal aggregation state like Python,
-    # we swap the data points containers instead which contain the accumulated state
+    # In Ruby, we work with data point containers rather than direct aggregation state access
+    # This swaps the entire data point hashes, effectively achieving the same result as the Python version
     temp = first_data_points.dup
     first_data_points.clear
     first_data_points.merge!(second_data_points)
@@ -223,10 +223,10 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         local_data_points = {}
 
         mapping = if init_scale <= 0
-          OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::ExponentMapping.new(init_scale)
-        else
-          OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::LogarithmMapping.new(init_scale)
-        end
+                    OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::ExponentMapping.new(init_scale)
+                  else
+                    OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::LogarithmMapping.new(init_scale)
+                  end
 
         min_val = center_val(mapping, offset)
         max_val = center_val(mapping, offset + step)
@@ -262,11 +262,11 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         _(hdp.count).must_be :<=, max_size + 1
         _(hdp.sum).must_be :<=, sum_value
 
-        if init_scale <= 0
-          mapping = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::ExponentMapping.new(hdp.scale)
-        else
-          mapping = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::LogarithmMapping.new(hdp.scale)
-        end
+        mapping = if init_scale <= 0
+                    OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::ExponentMapping.new(hdp.scale)
+                  else
+                    OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::LogarithmMapping.new(hdp.scale)
+                  end
 
         inds = mapping.map_to_index(min_val)
         _(inds).must_equal(hdp.positive.offset)
@@ -288,7 +288,6 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
     it 'test_reset' do
       # Tests reset behavior with different increment values and bucket operations
       [0x1, 0x100, 0x10000, 0x100000000, 0x200000000].each do |increment|
-
         expbh = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
           aggregation_temporality: :delta,
           record_min_max: record_min_max,
@@ -310,80 +309,80 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
           expbh.update(value, {}, local_data_points)
 
           # Manually adjust the counts to simulate the mocked increment
-          if local_data_points[{}]
-            hdp = local_data_points[{}]
-            # Simulate the effect of the mocked increment
-            hdp.instance_variable_set(:@count, hdp.count + increment - 1) if hdp.count > 0
-            hdp.instance_variable_set(:@sum, hdp.sum + (value * increment) - value) if hdp.sum > 0
-          end
+          next unless local_data_points[{}]
+
+          hdp = local_data_points[{}]
+          # Simulate the effect of the mocked increment
+          hdp.instance_variable_set(:@count, hdp.count + increment - 1) if hdp.count > 0
+          hdp.instance_variable_set(:@sum, hdp.sum + (value * increment) - value) if hdp.sum > 0
         end
 
         # Final adjustments to simulate the Python test behavior
-        if local_data_points[{}]
-          hdp = local_data_points[{}]
-          hdp.count *= increment
-          hdp.sum *= increment
+        next unless local_data_points[{}]
 
-          _(hdp.sum).must_equal(expect)
-          _(hdp.count).must_equal(255 * increment)
+        hdp = local_data_points[{}]
+        hdp.count *= increment
+        hdp.sum *= increment
 
-          # Verify scale is 5 (as mentioned in Python comment)
-          # Note: Scale may vary based on the actual values, but we test the structure
-          scale = hdp.scale
-          _(scale).must_be :>=, 0  # Scale should be reasonable
+        _(hdp.sum).must_equal(expect)
+        _(hdp.count).must_equal(255 * increment)
 
-          # Verify bucket structure - positive buckets should have reasonable size
-          _(hdp.positive.counts.size).must_be :>, 0
-          _(hdp.positive.counts.size).must_be :<=, 256
+        # Verify scale is 5 (as mentioned in Python comment)
+        # Note: Scale may vary based on the actual values, but we test the structure
+        scale = hdp.scale
+        _(scale).must_be :>=, 0 # Scale should be reasonable
 
-          # Verify that bucket counts are reasonable (each bucket ≤ 6 * increment as in Python)
-          hdp.positive.counts.each do |bucket_count|
-            _(bucket_count).must_be :<=, 6 * increment
-          end
+        # Verify bucket structure - positive buckets should have reasonable size
+        _(hdp.positive.counts.size).must_be :>, 0
+        _(hdp.positive.counts.size).must_be :<=, 256
+
+        # Verify that bucket counts are reasonable (each bucket ≤ 6 * increment as in Python)
+        hdp.positive.counts.each do |bucket_count|
+          _(bucket_count).must_be :<=, 6 * increment
         end
       end
     end
 
     it 'test_move_into' do
-      expbh_0 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
+      expbh0 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
         aggregation_temporality: :delta,
         record_min_max: record_min_max,
         max_size: 256
       )
 
-      expbh_1 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
+      expbh1 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
         aggregation_temporality: :delta,
         record_min_max: record_min_max,
         max_size: 256
       )
 
-      data_points_0 = {}
-      data_points_1 = {}
+      data_points0 = {}
+      data_points1 = {}
 
       expect = 0
       (2..256).each do |inds|
         expect += inds
-        expbh_0.update(inds, {}, data_points_0)
-        expbh_0.update(0, {}, data_points_0)
+        expbh0.update(inds, {}, data_points0)
+        expbh0.update(0, {}, data_points0)
       end
 
-      swap(data_points_0, data_points_1)
+      swap(data_points0, data_points1)
 
-      expbh_0_dps = expbh_0.collect(start_time, end_time, data_points_0)
-      expbh_1_dps = expbh_1.collect(start_time, end_time, data_points_1)
+      expbh0_dps = expbh0.collect(start_time, end_time, data_points0)
+      expbh1_dps = expbh1.collect(start_time, end_time, data_points1)
 
-      _(expbh_0_dps).must_be_empty
-      _(expbh_1_dps[0].sum).must_equal expect
-      _(expbh_1_dps[0].count).must_equal 255 * 2
-      _(expbh_1_dps[0].zero_count).must_equal 255
+      _(expbh0_dps).must_be_empty
+      _(expbh1_dps[0].sum).must_equal expect
+      _(expbh1_dps[0].count).must_equal 255 * 2
+      _(expbh1_dps[0].zero_count).must_equal 255
 
-      scale = expbh_1_dps[0].scale
+      scale = expbh1_dps[0].scale
       _(scale).must_equal 5
-      _(expbh_1_dps[0].positive.length).must_equal 256 - ((1 << scale) - 1)
-      _(expbh_1_dps[0].positive.offset).must_equal (1 << scale) - 1
+      _(expbh1_dps[0].positive.length).must_equal 256 - ((1 << scale) - 1)
+      _(expbh1_dps[0].positive.offset).must_equal (1 << scale) - 1
 
       # Verify bucket counts are reasonable
-      expbh_1_dps[0].positive.counts.each do |bucket_count|
+      expbh1_dps[0].positive.counts.each do |bucket_count|
         _(bucket_count).must_be :<=, 6
       end
     end
@@ -488,136 +487,136 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
 
     it 'test_aggregator_copy_swap' do
       # Test copy and swap behavior similar to Python test
-      expbh_0 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
+      expbh0 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
         aggregation_temporality: :delta,
         record_min_max: record_min_max,
         zero_threshold: 0
       )
 
-      expbh_1 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
+      expbh1 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
         aggregation_temporality: :delta,
         record_min_max: record_min_max,
         zero_threshold: 0
       )
 
-      expbh_2 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
+      expbh2 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
         aggregation_temporality: :delta,
         record_min_max: record_min_max,
         zero_threshold: 0
       )
 
-      data_points_0 = {}
-      data_points_1 = {}
-      data_points_2 = {}
+      data_points0 = {}
+      data_points1 = {}
+      data_points2 = {}
 
       # Add data to first aggregator
       [1, 3, 5, 7, 9, -1, -3, -5].each do |value|
-        expbh_0.update(value, {}, data_points_0)
+        expbh0.update(value, {}, data_points0)
       end
 
       # Add data to second aggregator
       [5, 4, 3, 2].each do |value|
-        expbh_1.update(value, {}, data_points_1)
+        expbh1.update(value, {}, data_points1)
       end
 
       # Collect initial data to verify state
-      results_0_before = expbh_0.collect(start_time, end_time, data_points_0.dup)
-      results_1_before = expbh_1.collect(start_time, end_time, data_points_1.dup)
+      results0_before = expbh0.collect(start_time, end_time, data_points0.dup)
+      results1_before = expbh1.collect(start_time, end_time, data_points1.dup)
 
       # Perform swap
-      swap(data_points_0, data_points_1)
+      swap(data_points0, data_points1)
 
       # Collect after swap
-      results_0_after = expbh_0.collect(start_time, end_time, data_points_0)
-      results_1_after = expbh_1.collect(start_time, end_time, data_points_1)
+      results0_after = expbh0.collect(start_time, end_time, data_points0)
+      results1_after = expbh1.collect(start_time, end_time, data_points1)
 
       # Verify the swap worked - data should be exchanged
-      if results_0_after.any? && results_1_after.any?
-        # The data from original expbh_1 should now be in expbh_0's data_points
-        _(results_0_after[0].sum).must_equal(results_1_before[0].sum)
-        _(results_0_after[0].count).must_equal(results_1_before[0].count)
+      if results0_after.any? && results1_after.any?
+        # The data from original expbh1 should now be in expbh0's data_points
+        _(results0_after[0].sum).must_equal(results1_before[0].sum)
+        _(results0_after[0].count).must_equal(results1_before[0].count)
 
-        # The data from original expbh_0 should now be in expbh_1's data_points
-        _(results_1_after[0].sum).must_equal(results_0_before[0].sum)
-        _(results_1_after[0].count).must_equal(results_0_before[0].count)
+        # The data from original expbh0 should now be in expbh1's data_points
+        _(results1_after[0].sum).must_equal(results0_before[0].sum)
+        _(results1_after[0].count).must_equal(results0_before[0].count)
       end
 
       # Test copy behavior by copying data from one aggregator to another
-      data_points_2.merge!(data_points_1)
-      results_2 = expbh_2.collect(start_time, end_time, data_points_2)
+      data_points2.merge!(data_points1)
+      results2 = expbh2.collect(start_time, end_time, data_points2)
 
       # Verify the copy worked
-      if results_1_after.any? && results_2.any?
-        _(results_2[0].sum).must_equal(results_1_after[0].sum)
-        _(results_2[0].count).must_equal(results_1_after[0].count)
+      if results1_after.any? && results2.any?
+        _(results2[0].sum).must_equal(results1_after[0].sum)
+        _(results2[0].count).must_equal(results1_after[0].count)
       end
     end
 
     it 'test_zero_count_by_increment' do
-      expbh_0 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
+      expbh0 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
         aggregation_temporality: :delta,
         record_min_max: record_min_max,
         zero_threshold: 0
       )
 
       increment = 10
-      data_points_0 = {}
+      data_points0 = {}
 
       increment.times do
-        expbh_0.update(0, {}, data_points_0)
+        expbh0.update(0, {}, data_points0)
       end
 
-      expbh_1 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
+      expbh1 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
         aggregation_temporality: :delta,
         record_min_max: record_min_max,
         zero_threshold: 0
       )
 
-      data_points_1 = {}
-      expbh_1.update(0, {}, data_points_1)
+      data_points1 = {}
+      expbh1.update(0, {}, data_points1)
 
       # Simulate increment behavior by manually adjusting counts
-      hdp_1 = data_points_1[{}]
-      hdp_1.count *= increment
-      hdp_1.zero_count *= increment
+      hdp1 = data_points1[{}]
+      hdp1.count *= increment
+      hdp1.zero_count *= increment
 
-      hdp_0 = data_points_0[{}]
-      _(hdp_0.count).must_equal(hdp_1.count)
-      _(hdp_0.zero_count).must_equal(hdp_1.zero_count)
-      _(hdp_0.sum).must_equal(hdp_1.sum)
+      hdp0 = data_points0[{}]
+      _(hdp0.count).must_equal(hdp1.count)
+      _(hdp0.zero_count).must_equal(hdp1.zero_count)
+      _(hdp0.sum).must_equal(hdp1.sum)
     end
 
     it 'test_one_count_by_increment' do
-      expbh_0 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
+      expbh0 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
         aggregation_temporality: :delta,
         record_min_max: record_min_max,
         zero_threshold: 0
       )
 
       increment = 10
-      data_points_0 = {}
+      data_points0 = {}
 
       increment.times do
-        expbh_0.update(1, {}, data_points_0)
+        expbh0.update(1, {}, data_points0)
       end
 
-      expbh_1 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
+      expbh1 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
         aggregation_temporality: :delta,
         record_min_max: record_min_max,
         zero_threshold: 0
       )
 
-      data_points_1 = {}
-      expbh_1.update(1, {}, data_points_1)
+      data_points1 = {}
+      expbh1.update(1, {}, data_points1)
 
       # Simulate increment behavior
-      hdp_1 = data_points_1[{}]
-      hdp_1.count *= increment
-      hdp_1.sum *= increment
+      hdp1 = data_points1[{}]
+      hdp1.count *= increment
+      hdp1.sum *= increment
 
-      hdp_0 = data_points_0[{}]
-      _(hdp_0.count).must_equal(hdp_1.count)
-      _(hdp_0.sum).must_equal(hdp_1.sum)
+      hdp0 = data_points0[{}]
+      _(hdp0.count).must_equal(hdp1.count)
+      _(hdp0.sum).must_equal(hdp1.sum)
     end
 
     it 'test_boundary_statistics' do
@@ -628,10 +627,10 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         below = 0
 
         mapping = if scale <= 0
-          OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::ExponentMapping.new(scale)
-        else
-          OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::LogarithmMapping.new(scale)
-        end
+                    OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::ExponentMapping.new(scale)
+                  else
+                    OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::LogarithmMapping.new(scale)
+                  end
 
         (MIN_NORMAL_EXPONENT..MAX_NORMAL_EXPONENT).each do |exp|
           value = Math.ldexp(1, exp)
@@ -715,32 +714,32 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       expbh.update(1, {}, data_points)
       _(data_points[{}].scale).must_equal(6)
 
-      collection_0 = expbh.collect(start_time, end_time, data_points)
+      collection0 = expbh.collect(start_time, end_time, data_points)
 
-      _(collection_0.size).must_equal(1)
-      result_0 = collection_0.first
+      _(collection0.size).must_equal(1)
+      result0 = collection0.first
 
-      _(result_0.positive.counts.size).must_equal(160)
-      _(result_0.count).must_equal(3)
-      _(result_0.sum).must_equal(7)
-      _(result_0.scale).must_equal(6)
-      _(result_0.zero_count).must_equal(0)
-      _(result_0.min).must_equal(1)
-      _(result_0.max).must_equal(4)
+      _(result0.positive.counts.size).must_equal(160)
+      _(result0.count).must_equal(3)
+      _(result0.sum).must_equal(7)
+      _(result0.scale).must_equal(6)
+      _(result0.zero_count).must_equal(0)
+      _(result0.min).must_equal(1)
+      _(result0.max).must_equal(4)
 
       [1, 8, 0.5, 0.1, 0.045].each do |value|
         expbh.update(value, {}, data_points)
       end
 
-      collection_1 = expbh.collect(start_time, end_time, data_points)
-      result_1 = collection_1.first
+      collection1 = expbh.collect(start_time, end_time, data_points)
+      result1 = collection1.first
 
-      _(result_1.count).must_equal(8)
-      _(result_1.sum.round(3)).must_equal(16.645)
-      _(result_1.scale).must_equal(4)
-      _(result_1.zero_count).must_equal(0)
-      _(result_1.min).must_equal(0.045)
-      _(result_1.max).must_equal(8)
+      _(result1.count).must_equal(8)
+      _(result1.sum.round(3)).must_equal(16.645)
+      _(result1.scale).must_equal(4)
+      _(result1.zero_count).must_equal(0)
+      _(result1.min).must_equal(0.045)
+      _(result1.max).must_equal(8)
     end
 
     it 'test_merge_collect_cumulative' do
@@ -760,8 +759,8 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       _(hdp.positive.index_start).must_equal(0)
       _(hdp.positive.counts).must_equal([1, 1, 1, 1])
 
-      result_0 = expbh.collect(start_time, end_time, data_points)
-      _(result_0.first.scale).must_equal(0)
+      result0 = expbh.collect(start_time, end_time, data_points)
+      _(result0.first.scale).must_equal(0)
 
       [1, 2, 4, 8].each do |value|
         expbh.update(1.0 / value, {}, data_points)
@@ -771,8 +770,8 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       _(hdp.positive.index_start).must_equal(-4)
       _(hdp.positive.counts).must_equal([1, 1, 1, 1])
 
-      result_1 = expbh.collect(start_time, end_time, data_points)
-      _(result_1.first.scale).must_equal(-1)
+      result1 = expbh.collect(start_time, end_time, data_points)
+      _(result1.first.scale).must_equal(-1)
     end
 
     it 'test_merge_collect_delta' do
@@ -812,8 +811,8 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       _(hdp.positive.index_start).must_equal(-4)
       _(hdp.positive.counts).must_equal([1, 1, 1, 1])
 
-      result_1 = expbh.collect(start_time, end_time, local_data_points)
-      _(result.first.scale).must_equal(result_1.first.scale)
+      result1 = expbh.collect(start_time, end_time, local_data_points)
+      _(result.first.scale).must_equal(result1.first.scale)
     end
 
     it 'test_invalid_scale_validation' do
@@ -830,7 +829,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
 
     it 'test_invalid_size_validation' do
       error = assert_raises(ArgumentError) do
-        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_size: 10000000)
+        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_size: 10_000_000)
       end
       assert_equal('Buckets max size 10000000 is larger than maximum max size 16384', error.message)
 
@@ -846,7 +845,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
     TEST_VALUES = [2, 4, 1, 1, 8, 0.5, 0.1, 0.045].freeze
 
     def skip_on_windows
-      skip 'Tests fail because Windows time_ns resolution is too low' if RUBY_PLATFORM =~ /mswin|mingw|cygwin/
+      skip 'Tests fail because Windows time_ns resolution is too low' if RUBY_PLATFORM.match?(/mswin|mingw|cygwin/)
     end
 
     describe 'exponential_histogram_integration_test' do
@@ -880,7 +879,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         _(metric_data.max).must_equal(TEST_VALUES[0])
         _(metric_data.sum).must_equal(TEST_VALUES[0])
 
-        results[1..-1].each_with_index do |metrics_data, index|
+        results[1..].each_with_index do |metrics_data, index|
           metric_data = metrics_data[0]
 
           _(metric_data.time_unix_nano).must_equal(previous_time_unix_nano)
@@ -968,7 +967,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         _(metric_data.sum).must_equal(TEST_VALUES[0])
 
         # removed some of the time comparison because of the time record here are static for testing purpose
-        results[1..-1].each_with_index do |metrics_data, index|
+        results[1..].each_with_index do |metrics_data, index|
           metric_data = metrics_data[0]
 
           _(metric_data.start_time_unix_nano).must_equal(start_time_unix_nano)
@@ -1014,7 +1013,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
 
         previous_metric_data = metric_data
 
-        results[1..-1].each_with_index do |metrics_data, index|
+        results[1..].each_with_index do |metrics_data, _index|
           metric_data = metrics_data[0]
 
           _(metric_data.start_time_unix_nano).must_equal(previous_metric_data.start_time_unix_nano)

@@ -25,7 +25,7 @@ module OpenTelemetry
           MAX_SCALE = 20
           MIN_SCALE = -10
           MIN_MAX_SIZE = 2
-          MAX_MAX_SIZE = 16384
+          MAX_MAX_SIZE = 16_384
 
           # The default boundaries are calculated based on default max_size and max_scale values
           def initialize(
@@ -104,23 +104,13 @@ module OpenTelemetry
                 current_scale = hdp.scale
 
                 # Handle first collection or initialize previous state
-                if @previous_positive.nil? && !current_positive.counts.empty?
-                  @previous_positive = current_positive.copy_empty
-                end
-                if @previous_negative.nil? && !current_negative.counts.empty?
-                  @previous_negative = current_negative.copy_empty
-                end
-                if @previous_scale.nil?
-                  @previous_scale = current_scale || @scale
-                end
+                @previous_positive = current_positive.copy_empty if @previous_positive.nil? && !current_positive.counts.empty?
+                @previous_negative = current_negative.copy_empty if @previous_negative.nil? && !current_negative.counts.empty?
+                @previous_scale = current_scale || @scale if @previous_scale.nil?
 
                 # Initialize empty buckets if needed
-                if current_positive.nil? && @previous_positive
-                  current_positive = @previous_positive.copy_empty
-                end
-                if current_negative.nil? && @previous_negative
-                  current_negative = @previous_negative.copy_empty
-                end
+                current_positive = @previous_positive.copy_empty if current_positive.nil? && @previous_positive
+                current_negative = @previous_negative.copy_empty if current_negative.nil? && @previous_negative
                 current_scale ||= @previous_scale
 
                 # Determine minimum scale for merging
@@ -339,25 +329,17 @@ module OpenTelemetry
           end
 
           def validate_scale(scale)
-            if scale > MAX_SCALE
-              raise ArgumentError, "Scale #{scale} is larger than maximum scale #{MAX_SCALE}"
-            end
+            raise ArgumentError, "Scale #{scale} is larger than maximum scale #{MAX_SCALE}" if scale > MAX_SCALE
 
-            if scale < MIN_SCALE
-              raise ArgumentError, "Scale #{scale} is smaller than minimum scale #{MIN_SCALE}"
-            end
+            raise ArgumentError, "Scale #{scale} is smaller than minimum scale #{MIN_SCALE}" if scale < MIN_SCALE
 
             scale
           end
 
           def validate_size(size)
-            if size < MIN_MAX_SIZE
-              raise ArgumentError, "Buckets min size #{size} is smaller than minimum min size #{MIN_MAX_SIZE}"
-            end
+            raise ArgumentError, "Buckets min size #{size} is smaller than minimum min size #{MIN_MAX_SIZE}" if size < MIN_MAX_SIZE
 
-            if size > MAX_MAX_SIZE
-              raise ArgumentError, "Buckets max size #{size} is larger than maximum max size #{MAX_MAX_SIZE}"
-            end
+            raise ArgumentError, "Buckets max size #{size} is larger than maximum max size #{MAX_MAX_SIZE}" if size > MAX_MAX_SIZE
 
             size
           end
@@ -403,9 +385,7 @@ module OpenTelemetry
 
                 raise StandardError, 'Incorrect merge scale' if span >= @size
 
-                if span >= previous_buckets.counts.size
-                  previous_buckets.grow(span + 1, @size)
-                end
+                previous_buckets.grow(span + 1, @size) if span >= previous_buckets.counts.size
 
                 previous_buckets.index_start = index
               end
@@ -415,9 +395,7 @@ module OpenTelemetry
 
                 raise StandardError, 'Incorrect merge scale' if span >= @size
 
-                if span >= previous_buckets.counts.size
-                  previous_buckets.grow(span + 1, @size)
-                end
+                previous_buckets.grow(span + 1, @size) if span >= previous_buckets.counts.size
 
                 previous_buckets.index_end = index
               end
