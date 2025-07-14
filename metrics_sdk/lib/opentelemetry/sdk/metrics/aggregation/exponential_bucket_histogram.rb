@@ -46,24 +46,23 @@ module OpenTelemetry
             @size           = validate_size(max_size)
             @scale          = validate_scale(max_scale)
 
-            # Previous state for cumulative aggregation
-            @previous_positive = nil
-            @previous_negative = nil
-            @previous_min = Float::INFINITY
-            @previous_max = -Float::INFINITY
-            @previous_sum = 0
-            @previous_count = 0
-            @previous_zero_count = 0
-            @previous_scale = nil
-            @start_time_unix_nano = nil
-
             @mapping = new_mapping(@scale)
+
+            # Previous state for cumulative aggregation
+            @previous_positive = {} # nil
+            @previous_negative = {} # nil
+            @previous_min = {} # Float::INFINITY
+            @previous_max = {} # -Float::INFINITY
+            @previous_sum = {} # 0
+            @previous_count = {} # 0
+            @previous_zero_count = {} # 0
+            @previous_scale = {} # nil
+            # @start_time_unix_nano = {} #nil
           end
 
           # when aggregation temporality is cumulative, merge and downscale will happen.
+          # rubocop:disable Metrics/MethodLength
           def collect(start_time, end_time, data_points)
-            @start_time_unix_nano ||= start_time
-
             if @aggregation_temporality == :delta
               # Set timestamps and 'move' data point values to result.
               # puts "data_points.inspect: #{data_points.inspect}"
@@ -75,23 +74,14 @@ module OpenTelemetry
               data_points.clear
               hdps
             else
-              # CUMULATIVE temporality - merge current with previous data
-              # Update timestamps and take a snapshot.
-              # Here we need to handle the case where:
-              # collect is called after at least one other call to collect
-              # (there is data in previous buckets, a call to merge is needed
-              # to handle possible differences in bucket sizes).
-              # collect is called without another call previous call to
-              # collect was made (there is no previous buckets, previous,
-              # empty buckets that are the same scale of the current buckets
-              # need to be made so that they can be cumulatively aggregated
-              # to the current buckets).
+              # CUMULATIVE temporality - merge current data_points to previous data_points
+              # and only keep the merged data_points in @previous_*
 
               merged_data_points = {}
 
               # this will slow down the operation especially if large amount of data_points present
-              # but it should be fine since with cumulative, the data_points are clustered together
-              # but the @previous_positive are based on last examined value from data_points
+              # but it should be fine since with cumulative, the data_points are merged into previous_* and not kept in data_points
+              # rubocop:disable Metrics/BlockLength
               data_points.each do |attributes, hdp|
                 # Store current values
                 current_positive = hdp.positive
@@ -103,29 +93,26 @@ module OpenTelemetry
                 current_zero_count = hdp.zero_count
                 current_scale = hdp.scale
 
-                # Handle first collection or initialize previous state
-                @previous_positive = current_positive.copy_empty if @previous_positive.nil? && !current_positive.counts.empty?
-                @previous_negative = current_negative.copy_empty if @previous_negative.nil? && !current_negative.counts.empty?
-                @previous_scale = current_scale || @scale if @previous_scale.nil?
-
-                # Initialize empty buckets if needed
-                current_positive = @previous_positive.copy_empty if current_positive.nil? && @previous_positive
-                current_negative = @previous_negative.copy_empty if current_negative.nil? && @previous_negative
-                current_scale ||= @previous_scale
+                # Setup previous positive, negative bucket and scale based on three different cases
+                @previous_positive[attributes] = current_positive.copy_empty if @previous_positive[attributes].nil?
+                @previous_negative[attributes] = current_negative.copy_empty if @previous_negative[attributes].nil?
+                @previous_scale[attributes] = current_scale if @previous_scale[attributes].nil?
 
                 # Determine minimum scale for merging
-                min_scale = [@previous_scale || current_scale, current_scale].min
+                min_scale = [@previous_scale[attributes], current_scale].min
 
                 # Calculate ranges for positive and negative buckets
                 low_positive, high_positive = get_low_high_previous_current(
-                  @previous_positive || ExponentialHistogram::Buckets.new,
-                  current_positive || ExponentialHistogram::Buckets.new,
+                  @previous_positive[attributes],
+                  current_positive,
+                  @previous_scale[attributes],
                   current_scale,
                   min_scale
                 )
                 low_negative, high_negative = get_low_high_previous_current(
-                  @previous_negative || ExponentialHistogram::Buckets.new,
-                  current_negative || ExponentialHistogram::Buckets.new,
+                  @previous_negative[attributes],
+                  current_negative,
+                  @previous_scale[attributes],
                   current_scale,
                   min_scale
                 )
@@ -137,60 +124,81 @@ module OpenTelemetry
                 ].min
 
                 # Downscale previous buckets if necessary
-                if @previous_positive && @previous_negative
-                  downscale_change = (@previous_scale || 0) - min_scale
-                  downscale(downscale_change, @previous_positive, @previous_negative) if downscale_change > 0
-                end
+                downscale_change = @previous_scale[attributes] - min_scale
+                downscale(downscale_change, @previous_positive[attributes], @previous_negative[attributes])
 
-                # Initialize previous buckets if they don't exist
-                @previous_positive ||= ExponentialHistogram::Buckets.new
-                @previous_negative ||= ExponentialHistogram::Buckets.new
+                # Merge current buckets into previous buckets (kind like update); it's always :cumulative
+                merge_buckets(@previous_positive[attributes], current_positive, current_scale, min_scale, @aggregation_temporality)
+                merge_buckets(@previous_negative[attributes], current_negative, current_scale, min_scale, @aggregation_temporality)
 
-                # Merge current buckets into previous
-                merge_buckets(@previous_positive, current_positive, current_scale, min_scale, :cumulative) if current_positive
-                merge_buckets(@previous_negative, current_negative, current_scale, min_scale, :cumulative) if current_negative
+                # initialize min, max, sum, count, zero_count for first time
+                @previous_min[attributes] = Float::INFINITY if @previous_min[attributes].nil?
+                @previous_max[attributes] = -Float::INFINITY if @previous_max[attributes].nil?
+                @previous_sum[attributes] = 0 if @previous_sum[attributes].nil?
+                @previous_count[attributes] = 0 if @previous_count[attributes].nil?
+                @previous_zero_count[attributes] = 0 if @previous_zero_count[attributes].nil?
 
                 # Update aggregated values
-                @previous_min = [@previous_min, current_min].min
-                @previous_max = [@previous_max, current_max].max
-                @previous_sum += current_sum
-                @previous_count += current_count
-                @previous_zero_count += current_zero_count
-                @previous_scale = min_scale
+                @previous_min[attributes] = [@previous_min[attributes], current_min].min
+                @previous_max[attributes] = [@previous_max[attributes], current_max].max
+                @previous_sum[attributes] += current_sum
+                @previous_count[attributes] += current_count
+                @previous_zero_count[attributes] += current_zero_count
+                @previous_scale[attributes] = min_scale
 
                 # Create merged data point
                 merged_hdp = ExponentialHistogramDataPoint.new(
                   attributes,
-                  @start_time_unix_nano,
+                  start_time,
                   end_time,
-                  @previous_count,
-                  @previous_sum,
-                  @previous_scale,
-                  @previous_zero_count,
-                  @previous_positive.dup,
-                  @previous_negative.dup,
+                  @previous_count[attributes],
+                  @previous_sum[attributes],
+                  @previous_scale[attributes],
+                  @previous_zero_count[attributes],
+                  @previous_positive[attributes].dup,
+                  @previous_negative[attributes].dup,
                   0, # flags
                   nil, # exemplars
-                  @previous_min,
-                  @previous_max,
+                  @previous_min[attributes],
+                  @previous_max[attributes],
                   @zero_threshold
                 )
 
                 merged_data_points[attributes] = merged_hdp
+              end
+              # rubocop:enable Metrics/BlockLength
 
-                # Reset current state for next collection
-                hdp.positive = ExponentialHistogram::Buckets.new
-                hdp.negative = ExponentialHistogram::Buckets.new
-                hdp.sum = 0
-                hdp.min = Float::INFINITY
-                hdp.max = -Float::INFINITY
-                hdp.count = 0
-                hdp.zero_count = 0
+              # when you have no local_data_points, the loop from cumulative aggregation will not run
+              # so return last merged data points if exists
+              if data_points.empty? && !@previous_positive.empty?
+                @previous_positive.each_key do |attributes|
+                  merged_hdp = ExponentialHistogramDataPoint.new(
+                    attributes,
+                    start_time,
+                    end_time,
+                    @previous_count[attributes],
+                    @previous_sum[attributes],
+                    @previous_scale[attributes],
+                    @previous_zero_count[attributes],
+                    @previous_positive[attributes].dup,
+                    @previous_negative[attributes].dup,
+                    0, # flags
+                    nil, # exemplars
+                    @previous_min[attributes],
+                    @previous_max[attributes],
+                    @zero_threshold
+                  )
+                  merged_data_points[attributes] = merged_hdp
+                end
               end
 
-              merged_data_points.values # array is ok
+              # clear data_points since the data is merged into previous_* already;
+              # otherwise we will have duplicated data_points in the next collect
+              data_points.clear
+              merged_data_points.values # return array
             end
           end
+          # rubocop:enable Metrics/MethodLength
 
           # this is aggregate in python; there is no merge in aggregate; but rescale happened
           # rubocop:disable Metrics/MethodLength
@@ -322,7 +330,8 @@ module OpenTelemetry
           end
 
           def downscale(change, positive, negative)
-            return if change <= 0
+            return if change == 0
+            raise ArgumentError, 'Invalid change of scale' if change < 0
 
             positive.downscale(change)
             negative.downscale(change)
@@ -345,8 +354,8 @@ module OpenTelemetry
           end
 
           # checked, only issue is if @previous_scale is nil, then get_low_high may throw error
-          def get_low_high_previous_current(previous_buckets, current_buckets, current_scale, min_scale)
-            previous_low, previous_high = get_low_high(previous_buckets, @previous_scale, min_scale)
+          def get_low_high_previous_current(previous_buckets, current_buckets, previous_scale, current_scale, min_scale)
+            previous_low, previous_high = get_low_high(previous_buckets, previous_scale, min_scale)
             current_low, current_high = get_low_high(current_buckets, current_scale, min_scale)
 
             if current_low > current_high
@@ -377,30 +386,30 @@ module OpenTelemetry
               current_index = current_buckets.index_base + current_bucket_index
               current_index -= current_buckets.counts.size if current_index > current_buckets.index_end
 
-              index = current_index >> current_change
+              inds = current_index >> current_change
 
               # Grow previous buckets if needed to accommodate the new index
-              if index < previous_buckets.index_start
-                span = previous_buckets.index_end - index
+              if inds < previous_buckets.index_start
+                span = previous_buckets.index_end - inds
 
                 raise StandardError, 'Incorrect merge scale' if span >= @size
 
                 previous_buckets.grow(span + 1, @size) if span >= previous_buckets.counts.size
 
-                previous_buckets.index_start = index
+                previous_buckets.index_start = inds
               end
 
-              if index > previous_buckets.index_end
-                span = index - previous_buckets.index_start
+              if inds > previous_buckets.index_end
+                span = inds - previous_buckets.index_start
 
                 raise StandardError, 'Incorrect merge scale' if span >= @size
 
                 previous_buckets.grow(span + 1, @size) if span >= previous_buckets.counts.size
 
-                previous_buckets.index_end = index
+                previous_buckets.index_end = inds
               end
 
-              bucket_index = index - previous_buckets.index_base
+              bucket_index = inds - previous_buckets.index_base
               bucket_index += previous_buckets.counts.size if bucket_index < 0
 
               # For delta temporality in merge, we subtract (this shouldn't normally happen in our use case)
