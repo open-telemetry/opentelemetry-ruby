@@ -380,7 +380,8 @@ module OpenTelemetry
 
             current_change = current_scale - min_scale
 
-            current_buckets.counts.each_with_index do |current_bucket, current_bucket_index|
+            # when we iterate counts, we don't use offset counts
+            current_buckets.instance_variable_get(:@counts).each_with_index do |current_bucket, current_bucket_index|
               next if current_bucket == 0
 
               current_index = current_buckets.index_base + current_bucket_index

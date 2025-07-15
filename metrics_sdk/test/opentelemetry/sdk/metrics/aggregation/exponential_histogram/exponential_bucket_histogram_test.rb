@@ -724,6 +724,8 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       _(result0.sum).must_equal(7)
       _(result0.scale).must_equal(6)
       _(result0.zero_count).must_equal(0)
+      _(result0.positive.counts).must_equal([1, *[0] * 63, 1, *[0] * 63, 1, *[0] * 31])
+      _(result0.flags).must_equal(0)
       _(result0.min).must_equal(1)
       _(result0.max).must_equal(4)
 
@@ -738,30 +740,30 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       _(result1.sum.round(3)).must_equal(16.645)
       _(result1.scale).must_equal(4)
       _(result1.zero_count).must_equal(0)
-      # _(result1.positive.counts).must_equal(
-      #   [
-      #     1,
-      #     *[0] * 17,
-      #     1,
-      #     *[0] * 36,
-      #     1,
-      #     *[0] * 15,
-      #     2,
-      #     *[0] * 15,
-      #     1,
-      #     *[0] * 15,
-      #     1,
-      #     *[0] * 15,
-      #     1,
-      #     *[0] * 40,
-      #   ]
-      # )
+      _(result1.positive.counts).must_equal(
+        [
+          1,
+          *[0] * 17,
+          1,
+          *[0] * 36,
+          1,
+          *[0] * 15,
+          2,
+          *[0] * 15,
+          1,
+          *[0] * 15,
+          1,
+          *[0] * 15,
+          1,
+          *[0] * 40
+        ]
+      )
       _(result1.flags).must_equal(0)
       _(result1.min).must_equal(0.045)
       _(result1.max).must_equal(8)
     end
 
-    it 'test_merge_collect_cumulative focus' do
+    it 'test_merge_collect_cumulative' do
       expbh = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
         aggregation_temporality: :cumulative,
         record_min_max: record_min_max,
@@ -955,8 +957,8 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         expbh_cumulative = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
           aggregation_temporality: :cumulative,
           record_min_max: record_min_max,
-          max_size: max_size,
-          max_scale: max_scale,
+          max_size: 160,
+          max_scale: 20,
           zero_threshold: 0
         )
 
@@ -998,23 +1000,23 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
           _(metric_data.sum).must_be_within_epsilon(TEST_VALUES[0..index + 1].sum, 1e-10)
         end
 
-        # omit the test case for now before cumulative aggregation is tested
-        # _(metric_data.positive.counts).must_equal([
-        #   1,
-        #   *[0] * 17,
-        #   1,
-        #   *[0] * 36,
-        #   1,
-        #   *[0] * 15,
-        #   2,
-        #   *[0] * 15,
-        #   1,
-        #   *[0] * 15,
-        #   1,
-        #   *[0] * 15,
-        #   1,
-        #   *[0] * 40
-        # ])
+        expected_bucket_counts = [
+          1,
+          *[0] * 17,
+          1,
+          *[0] * 36,
+          1,
+          *[0] * 15,
+          2,
+          *[0] * 15,
+          1,
+          *[0] * 15,
+          1,
+          *[0] * 15,
+          1,
+          *[0] * 40
+        ]
+        _(metric_data.positive.counts).must_equal(expected_bucket_counts)
         _(metric_data.negative.counts).must_equal([0])
 
         results = []
@@ -1042,7 +1044,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
           # _(metric_data.sum).must_be_within_epsilon(previous_metric_data.sum, 1e-10)
 
           # omit the test case for now before cumulative aggregation is tested
-          # _(metric_data.positive.counts).must_equal(expected_bucket_counts)
+          _(metric_data.positive.counts).must_equal(expected_bucket_counts)
           _(metric_data.negative.counts).must_equal([0])
         end
       end
