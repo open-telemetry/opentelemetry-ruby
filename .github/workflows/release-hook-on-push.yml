@@ -5,9 +5,14 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   release-update-open-requests:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
+    permissions:
+      pull-requests: write # required for updating open release PRs
     env:
       ruby_version: "3.1"
     runs-on: ubuntu-latest
