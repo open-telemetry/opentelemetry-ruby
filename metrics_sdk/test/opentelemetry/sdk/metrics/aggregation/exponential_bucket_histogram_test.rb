@@ -255,5 +255,29 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
     it 'test_merge' do
       # TODO
     end
+
+    it 'test_invalid_scale_validation' do
+      error = assert_raises(ArgumentError) do
+        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_scale: 100)
+      end
+      assert_equal('Scale 100 is larger than maximal scale 20', error.message)
+
+      error = assert_raises(ArgumentError) do
+        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_scale: -20)
+      end
+      assert_equal('Scale -20 is smaller than minimal scale -10', error.message)
+    end
+
+    it 'test_invalid_size_validation' do
+      error = assert_raises(ArgumentError) do
+        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_size: 10_000_000)
+      end
+      assert_equal('Max size 10000000 is larger than maximal size 16384', error.message)
+
+      error = assert_raises(ArgumentError) do
+        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_size: 0)
+      end
+      assert_equal('Max size 0 is smaller than minimal size 2', error.message)
+    end
   end
 end
