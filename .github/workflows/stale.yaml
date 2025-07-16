@@ -4,9 +4,15 @@ on:
   schedule:
   - cron: "30 1 * * *"
 
+permissions:
+  contents: read
+
 jobs:
   stale:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
+    permissions:
+      issues: write # required for managing stale issues
+      pull-requests: write # required for managing stale PRs
     runs-on: ubuntu-latest
 
     steps:

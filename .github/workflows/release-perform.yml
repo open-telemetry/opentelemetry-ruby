@@ -14,9 +14,14 @@ on:
         required: false
         default: ""
 
+permissions:
+  contents: read
+
 jobs:
   release-perform:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
+    permissions:
+      contents: write # required for creating releases
     env:
       ruby_version: "3.1"
     runs-on: ubuntu-latest
