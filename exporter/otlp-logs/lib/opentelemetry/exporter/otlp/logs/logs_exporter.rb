@@ -322,7 +322,7 @@ module OpenTelemetry
             Opentelemetry::Proto::Common::V1::KeyValue.new(key: key, value: as_otlp_any_value('Encoding Error'))
           end
 
-          def as_otlp_any_value(value)
+          def as_otlp_any_value(value) # rubocop:disable Metrics/CyclomaticComplexity
             result = Opentelemetry::Proto::Common::V1::AnyValue.new
             case value
             when String
@@ -336,6 +336,9 @@ module OpenTelemetry
             when Array
               values = value.map { |element| as_otlp_any_value(element) }
               result.array_value = Opentelemetry::Proto::Common::V1::ArrayValue.new(values: values)
+            when Hash
+              values = value.map { |k, v| as_otlp_key_value(k, v) }
+              result.kvlist_value = Opentelemetry::Proto::Common::V1::KeyValueList.new(values: values)
             end
             result
           end
