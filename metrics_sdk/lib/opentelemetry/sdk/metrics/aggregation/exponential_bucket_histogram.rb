@@ -207,15 +207,15 @@ module OpenTelemetry
           end
 
           def validate_scale(scale)
-            raise ArgumentError, "Scale #{scale} is larger than maximal scale #{MAX_SCALE}" if scale > MAX_SCALE
-            raise ArgumentError, "Scale #{scale} is smaller than minimal scale #{MIN_SCALE}" if scale < MIN_SCALE
+            raise ArgumentError, "Scale #{scale} is larger than maximum scale #{MAX_SCALE}" if scale > MAX_SCALE
+            raise ArgumentError, "Scale #{scale} is smaller than minimum scale #{MIN_SCALE}" if scale < MIN_SCALE
 
             scale
           end
 
           def validate_size(size)
-            raise ArgumentError, "Max size #{size} is smaller than minimal size #{MIN_MAX_SIZE}" if size < MIN_MAX_SIZE
-            raise ArgumentError, "Max size #{size} is larger than maximal size #{MAX_MAX_SIZE}" if size > MAX_MAX_SIZE
+            raise ArgumentError, "Max size #{size} is smaller than minimum size #{MIN_MAX_SIZE}" if size < MIN_MAX_SIZE
+            raise ArgumentError, "Max size #{size} is larger than maximum size #{MAX_MAX_SIZE}" if size > MAX_MAX_SIZE
 
             size
           end
