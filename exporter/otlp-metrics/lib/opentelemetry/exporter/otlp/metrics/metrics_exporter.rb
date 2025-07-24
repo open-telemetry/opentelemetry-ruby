@@ -231,7 +231,7 @@ module OpenTelemetry
                 )
               )
 
-            when :counter, :up_down_counter
+            when :counter, :up_down_counter, :observable_counter, :observable_up_down_counter
               Opentelemetry::Proto::Metrics::V1::Metric.new(
                 name: metrics.name,
                 description: metrics.description,
