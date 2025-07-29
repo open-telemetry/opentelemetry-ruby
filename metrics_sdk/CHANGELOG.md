@@ -2,7 +2,7 @@
 
 ### v0.7.4 / 2025-07-29
 
-* FIXED: Validate scale range and raise exception if out of bounds
+* FIXED: Validate scale range and raise exception if out of bounds for exponential histograms
 
 ### v0.7.3 / 2025-07-09
 
