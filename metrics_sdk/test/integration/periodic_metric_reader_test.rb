@@ -11,6 +11,51 @@ describe OpenTelemetry::SDK do
   describe '#periodic_metric_reader' do
     before { reset_metrics_sdk }
 
+    # OTLP cannot export a metric without data points
+    it 'does not export metrics without data points' do
+      OpenTelemetry::SDK.configure
+
+      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+      periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval_millis: 5000, export_timeout_millis: 5000, exporter: metric_exporter)
+
+      OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
+
+      meter = OpenTelemetry.meter_provider.meter('test')
+      meter.create_histogram('example', unit: 's', description: 'test')
+
+      sleep(1)
+
+      periodic_metric_reader.shutdown
+      snapshot = metric_exporter.metric_snapshots
+
+      assert_empty snapshot
+    end
+
+    it 'does not export metrics without data points when they have a view' do
+      OpenTelemetry::SDK.configure
+
+      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+      periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval_millis: 5000, export_timeout_millis: 5000, exporter: metric_exporter)
+
+      OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
+
+      boundaries = [0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10]
+
+      OpenTelemetry.meter_provider.add_view('http.server.request.duration',
+                                            type: :histogram,
+                                            aggregation: OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(boundaries: boundaries))
+
+      meter = OpenTelemetry.meter_provider.meter('test')
+      meter.create_histogram('http.server.request.duration', unit: 's', description: 'Duration of HTTP server requests.')
+
+      sleep(8)
+
+      periodic_metric_reader.shutdown
+      snapshot = metric_exporter.metric_snapshots
+
+      assert_empty snapshot
+    end
+
     it 'emits 2 metrics after 10 seconds' do
       OpenTelemetry::SDK.configure
 
@@ -30,29 +75,34 @@ describe OpenTelemetry::SDK do
 
       sleep(8)
 
+      counter.add(5)
+      counter.add(6)
+
       periodic_metric_reader.shutdown
       snapshot = metric_exporter.metric_snapshots
 
       _(snapshot.size).must_equal(2)
 
-      first_snapshot = snapshot
-      _(first_snapshot[0].name).must_equal('counter')
-      _(first_snapshot[0].unit).must_equal('smidgen')
-      _(first_snapshot[0].description).must_equal('a small amount of something')
+      _(snapshot[0].name).must_equal('counter')
+      _(snapshot[0].unit).must_equal('smidgen')
+      _(snapshot[0].description).must_equal('a small amount of something')
 
-      _(first_snapshot[0].instrumentation_scope.name).must_equal('test')
+      _(snapshot[0].instrumentation_scope.name).must_equal('test')
 
-      _(first_snapshot[0].data_points[0].value).must_equal(1)
-      _(first_snapshot[0].data_points[0].attributes).must_equal({})
+      _(snapshot[0].data_points[0].value).must_equal(1)
+      _(snapshot[0].data_points[0].attributes).must_equal({})
 
-      _(first_snapshot[0].data_points[1].value).must_equal(4)
-      _(first_snapshot[0].data_points[1].attributes).must_equal('a' => 'b')
+      _(snapshot[0].data_points[1].value).must_equal(4)
+      _(snapshot[0].data_points[1].attributes).must_equal('a' => 'b')
 
-      _(first_snapshot[0].data_points[2].value).must_equal(3)
-      _(first_snapshot[0].data_points[2].attributes).must_equal('b' => 'c')
+      _(snapshot[0].data_points[2].value).must_equal(3)
+      _(snapshot[0].data_points[2].attributes).must_equal('b' => 'c')
 
-      _(first_snapshot[0].data_points[3].value).must_equal(4)
-      _(first_snapshot[0].data_points[3].attributes).must_equal('d' => 'e')
+      _(snapshot[0].data_points[3].value).must_equal(4)
+      _(snapshot[0].data_points[3].attributes).must_equal('d' => 'e')
+
+      _(snapshot[1].data_points.size).must_equal(1)
+      _(snapshot[1].data_points[0].value).must_equal(11)
 
       _(periodic_metric_reader.instance_variable_get(:@thread).alive?).must_equal false
     end

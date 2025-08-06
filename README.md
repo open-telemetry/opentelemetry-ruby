@@ -28,21 +28,21 @@ The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 
 ### Maintainers
 
-- [Robert Laurin](https://github.com/robertlaurin), Shopify
-- [Francis Bogsanyi](https://github.com/fbogsany), Shopify
-- [Matthew Wear](https://github.com/mwear), Lightstep
 - [Daniel Azuma](https://github.com/dazuma), Google
+- [Francis Bogsanyi](https://github.com/fbogsany), Shopify
 - [Kayla Reopelle](https://github.com/kaylareopelle), New Relic
+- [Matthew Wear](https://github.com/mwear), Lightstep
+- [Robert Laurin](https://github.com/robertlaurin), Shopify
 
 For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
 
 ### Approvers
 
-- [Eric Mustin](https://github.com/ericmustin)
-- [Ariel Valentin](https://github.com/arielvalentin), GitHub
 - [Andrew Hayworth](https://github.com/ahayworth), Shopify
-- [Sam Handler](https://github.com/plantfansam), Shopify
+- [Ariel Valentin](https://github.com/arielvalentin), GitHub
+- [Eric Mustin](https://github.com/ericmustin)
 - [Robb Kidd](https://github.com/robbkidd), Honeycomb
+- [Sam Handler](https://github.com/plantfansam), Shopify
 
 For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).
 
