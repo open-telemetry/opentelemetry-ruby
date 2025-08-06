@@ -18,7 +18,7 @@ module OpenTelemetry
             :observable_gauge
           end
 
-          # Observe the ObservableCounter with fixed timeout duartion.
+          # Observe the Gauge with fixed timeout duration.
           #
           # @param [int] timeout The timeout duration for callback to run, which MUST be a non-negative numeric value.
           # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes

@@ -1,5 +1,17 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.7.4 / 2025-07-29
+
+* FIXED: Validate scale range and raise exception if out of bounds for exponential histograms
+
+### v0.7.3 / 2025-07-09
+
+* FIXED: Stop exporting metrics with empty data points
+
+### v0.7.2 / 2025-07-03
+
+* FIXED: Coerce aggregation temporality to be a symbol for exponential histograms
+
 ### v0.7.1 / 2025-05-28
 
 * FIXED: Recover periodic metric readers after forking
