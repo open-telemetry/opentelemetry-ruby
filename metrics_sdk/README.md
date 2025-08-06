@@ -25,6 +25,7 @@ At this time, you should be able to:
   * observable up down counters
 * Export using a pull exporter
 * Use delta aggregation temporality
+* Periodic Exporting Metric Reader
 
 We do not yet have support for:
 
@@ -32,7 +33,6 @@ We do not yet have support for:
 * Cumulative aggregation temporality
 * Metrics Views
 * Metrics Exemplars
-* Periodic Exporting Metric Reader
 * Push metric exporting
 
 These lists are incomplete and are intended to give a broad description of what's available.

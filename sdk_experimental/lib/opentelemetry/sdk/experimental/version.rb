@@ -8,7 +8,7 @@ module OpenTelemetry
   module SDK
     module Experimental
       # Current OpenTelemetry experimental sdk version
-      VERSION = '0.3.2'
+      VERSION = '0.4.0'
     end
   end
 end

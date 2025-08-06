@@ -1,7 +1,13 @@
+plugins:
+  - rubocop-minitest
+  - rubocop-rspec
+  - rubocop-rake
+  - rubocop-performance
+
 AllCops:
   NewCops: disable
   SuggestExtensions: false
-  TargetRubyVersion: "3.0"
+  TargetRubyVersion: "3.1"
   Exclude:
     - "vendor/**/*"
 

@@ -214,18 +214,17 @@ module OpenTelemetry
           end
 
           # metrics_pb has following type of data: :gauge, :sum, :histogram, :exponential_histogram, :summary
-          # current metric sdk only implements instrument: :counter -> :sum, :histogram -> :histogram
+          # current metric sdk only implements instrument: :counter -> :sum, :histogram -> :histogram, :gauge -> :gauge
           #
           # metrics [MetricData]
           def as_otlp_metrics(metrics)
             case metrics.instrument_kind
-            when :observable_gauge
+            when :observable_gauge, :gauge
               Opentelemetry::Proto::Metrics::V1::Metric.new(
                 name: metrics.name,
                 description: metrics.description,
                 unit: metrics.unit,
                 gauge: Opentelemetry::Proto::Metrics::V1::Gauge.new(
-                  aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
                   data_points: metrics.data_points.map do |ndp|
                     number_data_point(ndp)
                   end
@@ -241,22 +240,14 @@ module OpenTelemetry
                   aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
                   data_points: metrics.data_points.map do |ndp|
                     number_data_point(ndp)
-                  end
+                  end,
+                  is_monotonic: metrics.is_monotonic
                 )
               )
 
             when :histogram
-              Opentelemetry::Proto::Metrics::V1::Metric.new(
-                name: metrics.name,
-                description: metrics.description,
-                unit: metrics.unit,
-                histogram: Opentelemetry::Proto::Metrics::V1::Histogram.new(
-                  aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
-                  data_points: metrics.data_points.map do |hdp|
-                    histogram_data_point(hdp)
-                  end
-                )
-              )
+              histogram_data_point(metrics)
+
             end
           end
 
@@ -268,7 +259,37 @@ module OpenTelemetry
             end
           end
 
-          def histogram_data_point(hdp)
+          def histogram_data_point(metrics)
+            return if metrics.data_points.empty?
+
+            if metrics.data_points.first.instance_of?(OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogramDataPoint)
+              Opentelemetry::Proto::Metrics::V1::Metric.new(
+                name: metrics.name,
+                description: metrics.description,
+                unit: metrics.unit,
+                exponential_histogram: Opentelemetry::Proto::Metrics::V1::ExponentialHistogram.new(
+                  aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
+                  data_points: metrics.data_points.map do |ehdp|
+                    exponential_histogram_data_point(ehdp)
+                  end
+                )
+              )
+            elsif metrics.data_points.first.instance_of?(OpenTelemetry::SDK::Metrics::Aggregation::HistogramDataPoint)
+              Opentelemetry::Proto::Metrics::V1::Metric.new(
+                name: metrics.name,
+                description: metrics.description,
+                unit: metrics.unit,
+                histogram: Opentelemetry::Proto::Metrics::V1::Histogram.new(
+                  aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
+                  data_points: metrics.data_points.map do |hdp|
+                    explicit_histogram_data_point(hdp)
+                  end
+                )
+              )
+            end
+          end
+
+          def explicit_histogram_data_point(hdp)
             Opentelemetry::Proto::Metrics::V1::HistogramDataPoint.new(
               attributes: hdp.attributes.map { |k, v| as_otlp_key_value(k, v) },
               start_time_unix_nano: hdp.start_time_unix_nano,
@@ -280,6 +301,31 @@ module OpenTelemetry
               exemplars: hdp.exemplars,
               min: hdp.min,
               max: hdp.max
+            )
+          end
+
+          def exponential_histogram_data_point(ehdp)
+            Opentelemetry::Proto::Metrics::V1::ExponentialHistogramDataPoint.new(
+              attributes: ehdp.attributes.map { |k, v| as_otlp_key_value(k, v) },
+              start_time_unix_nano: ehdp.start_time_unix_nano,
+              time_unix_nano: ehdp.time_unix_nano,
+              count: ehdp.count,
+              sum: ehdp.sum,
+              scale: ehdp.scale,
+              zero_count: ehdp.zero_count,
+              positive: Opentelemetry::Proto::Metrics::V1::ExponentialHistogramDataPoint::Buckets.new(
+                offset: ehdp.positive.offset,
+                bucket_counts: ehdp.positive.counts
+              ),
+              negative: Opentelemetry::Proto::Metrics::V1::ExponentialHistogramDataPoint::Buckets.new(
+                offset: ehdp.negative.offset,
+                bucket_counts: ehdp.negative.counts
+              ),
+              flags: ehdp.flags,
+              exemplars: ehdp.exemplars,
+              min: ehdp.min,
+              max: ehdp.max,
+              zero_threshold: ehdp.zero_threshold
             )
           end
 

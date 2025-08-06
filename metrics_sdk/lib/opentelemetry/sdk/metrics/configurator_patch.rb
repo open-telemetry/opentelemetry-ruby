@@ -25,6 +25,7 @@ module OpenTelemetry
         def metrics_configuration_hook
           OpenTelemetry.meter_provider = Metrics::MeterProvider.new(resource: @resource)
           configure_metric_readers
+          attach_fork_hooks!
         end
 
         def configure_metric_readers
@@ -51,6 +52,10 @@ module OpenTelemetry
               nil
             end
           end
+        end
+
+        def attach_fork_hooks!
+          ForkHooks.attach!
         end
       end
     end

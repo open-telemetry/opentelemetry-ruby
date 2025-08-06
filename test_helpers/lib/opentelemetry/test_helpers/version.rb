@@ -7,6 +7,6 @@
 module OpenTelemetry
   ## Current OpenTelemetry Test Helpers version
   module TestHelpers
-    VERSION = '0.4.0'
+    VERSION = '0.6.0'
   end
 end
