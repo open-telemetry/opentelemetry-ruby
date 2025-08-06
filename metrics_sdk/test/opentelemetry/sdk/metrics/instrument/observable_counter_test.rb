@@ -30,7 +30,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter do
     _(last_snapshot[0].instrumentation_scope.name).must_equal('test')
     _(last_snapshot[0].data_points[0].value).must_equal(10)
     _(last_snapshot[0].data_points[0].attributes).must_equal({})
-    _(last_snapshot[0].aggregation_temporality).must_equal(:delta)
+    _(last_snapshot[0].aggregation_temporality).must_equal(:cumulative)
   end
 
   it 'counts with set timeout and attributes' do
@@ -49,7 +49,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter do
     _(last_snapshot[0].instrumentation_scope.name).must_equal('test')
     _(last_snapshot[0].data_points[0].value).must_equal(10)
     _(last_snapshot[0].data_points[0].attributes).must_equal({ 'foo' => 'bar' })
-    _(last_snapshot[0].aggregation_temporality).must_equal(:delta)
+    _(last_snapshot[0].aggregation_temporality).must_equal(:cumulative)
   end
 
   it 'counts with observe' do
@@ -69,7 +69,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter do
 
     _(last_snapshot[0].data_points[1].value).must_equal(10)
     _(last_snapshot[0].data_points[1].attributes).must_equal({})
-    _(last_snapshot[0].aggregation_temporality).must_equal(:delta)
+    _(last_snapshot[0].aggregation_temporality).must_equal(:cumulative)
   end
 
   it 'counts with observe after initialization' do
