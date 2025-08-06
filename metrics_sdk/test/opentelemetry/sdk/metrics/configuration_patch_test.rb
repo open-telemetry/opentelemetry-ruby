@@ -37,7 +37,7 @@ describe OpenTelemetry::SDK::Metrics::ConfiguratorPatch do
     describe 'metric readers' do
       it 'defaults to a periodic reader with an otlp exporter' do
         skip 'OTLP exporter not compatible with JRuby' if RUBY_ENGINE == 'jruby'
-
+        ENV['OTEL_METRICS_EXPORTER'] = nil
         configurator.configure
 
         assert_equal 1, OpenTelemetry.meter_provider.metric_readers.size
