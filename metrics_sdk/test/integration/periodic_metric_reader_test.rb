@@ -9,7 +9,15 @@ require 'json'
 
 describe OpenTelemetry::SDK do
   describe '#periodic_metric_reader' do
-    before { reset_metrics_sdk }
+    before do
+      reset_metrics_sdk
+      @original_temp = ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE']
+      ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'] = 'delta'
+    end
+
+    after do
+      ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'] = @original_temp
+    end
 
     # OTLP cannot export a metric without data points
     it 'does not export metrics without data points' do

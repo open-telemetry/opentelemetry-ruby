@@ -10,14 +10,12 @@ module OpenTelemetry
       module Aggregation
         # Contains the implementation of the LastValue aggregation
         class LastValue
-          attr_reader :aggregation_temporality
-
           def initialize(aggregation_temporality: :delta)
-            @aggregation_temporality = aggregation_temporality
+            @aggregation_temporality = aggregation_temporality == :cumulative ? AggregationTemporality.cumulative : AggregationTemporality.delta
           end
 
           def collect(start_time, end_time, data_points)
-            if @aggregation_temporality == :delta
+            if @aggregation_temporality.delta?
               # Set timestamps and 'move' data point values to result.
               ndps = data_points.values.map! do |ndp|
                 ndp.start_time_unix_nano = start_time
@@ -45,6 +43,10 @@ module OpenTelemetry
               nil
             )
             nil
+          end
+
+          def aggregation_temporality
+            @aggregation_temporality.temporality
           end
         end
       end

@@ -652,7 +652,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
                           )
                         ],
                         is_monotonic: true,
-                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
+                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_CUMULATIVE
                       )
                     ),
                     Opentelemetry::Proto::Metrics::V1::Metric.new(
@@ -672,7 +672,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
                           )
                         ],
                         is_monotonic: false,
-                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
+                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_CUMULATIVE
                       )
                     ),
                     Opentelemetry::Proto::Metrics::V1::Metric.new(
@@ -696,7 +696,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
                             max: 10
                           )
                         ],
-                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
+                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_CUMULATIVE
                       )
                     ),
                     Opentelemetry::Proto::Metrics::V1::Metric.new(
