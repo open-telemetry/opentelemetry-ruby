@@ -93,7 +93,7 @@ module OpenTelemetry
         end
 
         # Returns a new, merged {Resource} by merging the current {Resource} with
-        # the other {Resource}. In case of a collision, the current {Resource}
+        # the other {Resource}. In case of a collision, the other {Resource}
         # takes precedence
         #
         # @param [Resource] other The other resource to merge
