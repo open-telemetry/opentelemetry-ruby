@@ -9,7 +9,7 @@ module OpenTelemetry
     module Instrument
       # No-op implementation of ObservableCounter.
       class ObservableCounter
-        # Observe the ObservableCounter with fixed timeout duartion.
+        # Observe the ObservableCounter with fixed timeout duration.
         #
         # @param [int] timeout The timeout duration for callback to run, which MUST be a non-negative numeric value.
         # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
