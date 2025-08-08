@@ -185,8 +185,8 @@ describe OpenTelemetry::SDK::Metrics::Meter do
       _(-> { meter.create_counter('1_counter') }).must_raise(INSTRUMENT_NAME_ERROR)
     end
 
-    it 'instrument name must not exceed 63 character limit' do
-      long_name = 'a' * 63
+    it 'instrument name must not exceed 256 character limit' do
+      long_name = 'a' * 256
       meter.create_counter(long_name)
       _(-> { meter.create_counter(long_name + 'a') }).must_raise(INSTRUMENT_NAME_ERROR)
     end
