@@ -11,7 +11,7 @@ module OpenTelemetry
     module Metrics
       # {Meter} is the SDK implementation of {OpenTelemetry::Metrics::Meter}.
       class Meter < OpenTelemetry::Metrics::Meter
-        NAME_REGEX = /\A[a-zA-Z][-.\/\w]{0,254}\z/
+        NAME_REGEX = %r{\A[a-zA-Z][-./\w]{0,254}\z}
 
         # @api private
         #

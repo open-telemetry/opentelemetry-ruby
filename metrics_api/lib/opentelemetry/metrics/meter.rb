@@ -16,7 +16,7 @@ module OpenTelemetry
       UP_DOWN_COUNTER = Instrument::UpDownCounter.new
       OBSERVABLE_UP_DOWN_COUNTER = Instrument::ObservableUpDownCounter.new
 
-      NAME_REGEX = /\A[a-zA-Z][-.\/\w]{0,254}\z/
+      NAME_REGEX = %r{\A[a-zA-Z][-.\/\w]{0,254}\z}
 
       private_constant(:COUNTER, :OBSERVABLE_COUNTER, :HISTOGRAM, :GAUGE, :OBSERVABLE_GAUGE, :UP_DOWN_COUNTER, :OBSERVABLE_UP_DOWN_COUNTER)
 
