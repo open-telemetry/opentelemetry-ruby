@@ -49,6 +49,9 @@ module OpenTelemetry
           def collect(start_time, end_time)
             invoke_callback(@timeout, @attributes)
 
+            is_monotonic = @aggregation.respond_to?(:monotonic?) ? @aggregation.monotonic? : nil
+            aggregation_temporality = @aggregation.respond_to?(:aggregation_temporality) ? @aggregation.aggregation_temporality : nil
+
             @mutex.synchronize do
               MetricData.new(
                 @name,
@@ -58,9 +61,10 @@ module OpenTelemetry
                 @meter_provider.resource,
                 @instrumentation_scope,
                 @aggregation.collect(start_time, end_time, @data_points),
-                @aggregation.aggregation_temporality,
+                aggregation_temporality,
                 start_time,
-                end_time
+                end_time,
+                is_monotonic
               )
             end
           end
