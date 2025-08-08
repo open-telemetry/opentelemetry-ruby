@@ -191,8 +191,8 @@ describe OpenTelemetry::SDK::Metrics::Meter do
       _(-> { meter.create_counter(long_name + 'a') }).must_raise(INSTRUMENT_NAME_ERROR)
     end
 
-    it 'instrument name must belong to alphanumeric characters, _, ., and -' do
-      meter.create_counter('a_-..-_a')
+    it 'instrument name must belong to alphanumeric characters, _, ., -, and /' do
+      meter.create_counter('a_/-..-/_a')
       _(-> { meter.create_counter('a@') }).must_raise(INSTRUMENT_NAME_ERROR)
       _(-> { meter.create_counter('a!') }).must_raise(INSTRUMENT_NAME_ERROR)
     end
