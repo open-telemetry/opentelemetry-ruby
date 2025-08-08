@@ -23,7 +23,7 @@ module OpenTelemetry
             boundaries: DEFAULT_BOUNDARIES,
             record_min_max: true
           )
-            @aggregation_temporality = aggregation_temporality.to_sym == :delta ? AggregationTemporality.delta : AggregationTemporality.cumulative
+            @aggregation_temporality = AggregationTemporality.determine_temporality(aggregation_temporality: aggregation_temporality, default: :cumulative)
             @boundaries = boundaries && !boundaries.empty? ? boundaries.sort : nil
             @record_min_max = record_min_max
           end

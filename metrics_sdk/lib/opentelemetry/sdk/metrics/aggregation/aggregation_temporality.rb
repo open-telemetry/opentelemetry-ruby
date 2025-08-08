@@ -28,6 +28,31 @@ module OpenTelemetry
             def cumulative
               new(CUMULATIVE)
             end
+
+            # | Preference Value | Counter    | Async Counter    | Histogram  | UpDownCounter | Async UpDownCounter |
+            # |------------------|------------|------------------|----------- |---------------|-------------------- |
+            # | **Cumulative**   | Cumulative | Cumulative       | Cumulative | Cumulative    | Cumulative          |
+            # | **Delta**        | Delta      | Delta            | Delta      | Cumulative    | Cumulative          |
+            # | **LowMemory**    | Delta      | Cumulative       | Delta      | Cumulative    | Cumulative          |
+            def determine_temporality(aggregation_temporality: nil, instrument_kind: nil, default: nil)
+              # aggregation_temporality can't be nil because it always has default value in symbol
+              if aggregation_temporality.is_a?(::Symbol)
+                aggregation_temporality == :delta ? delta : cumulative
+
+              elsif aggregation_temporality.is_a?(::String)
+                case aggregation_temporality
+                when 'LOWMEMORY', 'lowmemory'
+                  instrument_kind == :observable_counter ? cumulative : delta
+                when 'DELTA', 'delta'
+                  delta
+                when 'CUMULATIVE', 'cumulative'
+                  cumulative
+                else
+                  default == :delta ? delta : cumulative
+                end
+
+              end
+            end
           end
 
           attr_reader :temporality
