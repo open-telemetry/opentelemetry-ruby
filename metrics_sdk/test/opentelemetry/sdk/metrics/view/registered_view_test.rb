@@ -93,7 +93,7 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
   describe '#registered_view with asynchronous counters' do
     before { reset_metrics_sdk }
 
-    it 'emits asynchronous counter metrics with no data_points if view is drop' do
+    it 'emits asynchronous counter metrics with no data_points if view is drop xuan2' do
       OpenTelemetry::SDK.configure
 
       metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
@@ -136,15 +136,16 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
         final_count
       end
 
-      observable_counter = meter.create_observable_counter('async_counter', unit: 'smidgen', description: 'an async counter', callback: callback)
+      meter.create_observable_counter('async_counter', unit: 'smidgen', description: 'an async counter', callback: callback)
 
       # Trigger multiple collections to simulate multiple callback invocations
-      2.times { observable_counter.observe }
-      metric_exporter.pull
+      3.times { metric_exporter.pull }
       last_snapshot = metric_exporter.metric_snapshots
 
-      _(last_snapshot[0].data_points).wont_be_empty
-      _(last_snapshot[0].data_points[0].value).must_equal 30
+      # Reason that use 3rd from last_snapshot, because in_memory_metrics_pull exporter
+      # will store each collected metrics into its own data store unit (special case for the type of exporter)
+      _(last_snapshot[2].data_points).wont_be_empty
+      _(last_snapshot[2].data_points[0].value).must_equal 30
     end
 
     it 'emits asynchronous counter metrics with sum of values if view is drop but not matching to instrument' do
