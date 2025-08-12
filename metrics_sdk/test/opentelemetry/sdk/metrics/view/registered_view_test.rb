@@ -93,7 +93,7 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
   describe '#registered_view with asynchronous counters' do
     before { reset_metrics_sdk }
 
-    it 'emits asynchronous counter metrics with no data_points if view is drop xuan2' do
+    it 'emits asynchronous counter metrics with no data_points if view is drop' do
       OpenTelemetry::SDK.configure
 
       metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
@@ -119,7 +119,7 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
       _(last_snapshot[0].data_points[0].time_unix_nano).must_equal 0
     end
 
-    it 'emits asynchronous counter metrics with only last value in data_points if view is last_value xuan' do
+    it 'emits asynchronous counter metrics with only last value in data_points if view is last_value' do
       OpenTelemetry::SDK.configure
 
       metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
