@@ -23,7 +23,6 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter do
     metric_exporter.pull
     last_snapshot = metric_exporter.metric_snapshots
 
-    # puts "last_snapshot.inspect: #{last_snapshot.inspect}"
     _(last_snapshot[0].name).must_equal('counter')
     _(last_snapshot[0].unit).must_equal('smidgen')
     _(last_snapshot[0].description).must_equal('a small amount of something')
@@ -42,7 +41,6 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter do
     metric_exporter.pull
     last_snapshot = metric_exporter.metric_snapshots
 
-    # puts "last_snapshot.inspect: #{last_snapshot.inspect}"
     _(last_snapshot[0].name).must_equal('counter')
     _(last_snapshot[0].unit).must_equal('smidgen')
     _(last_snapshot[0].description).must_equal('a small amount of something')
@@ -103,11 +101,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter do
     metric_exporter.pull
     last_snapshot = metric_exporter.metric_snapshots
 
-    _(last_snapshot[0].name).must_equal('counter')
-    _(last_snapshot[0].unit).must_equal('smidgen')
-    _(last_snapshot[0].description).must_equal('a small amount of something')
-    _(last_snapshot[0].instrumentation_scope.name).must_equal('test')
-    _(last_snapshot[0].data_points.size).must_equal 0
+    _(last_snapshot.size).must_equal 0
   end
 
   it 'creation of instruments with more than one callabck' do
@@ -134,7 +128,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter do
 
     metric_exporter.pull
     last_snapshot = metric_exporter.metric_snapshots
-    _(last_snapshot[0].data_points.size).must_equal 0
+    _(last_snapshot.size).must_equal 0
   end
 
   it 'creation of instruments with invalid argument result no callback' do
@@ -144,6 +138,6 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter do
 
     metric_exporter.pull
     last_snapshot = metric_exporter.metric_snapshots
-    _(last_snapshot[0].data_points.size).must_equal 0
+    _(last_snapshot.size).must_equal 0
   end
 end
