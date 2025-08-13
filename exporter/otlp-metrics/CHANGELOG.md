@@ -1,5 +1,10 @@
 # Release History: opentelemetry-exporter-otlp-metrics
 
+### v0.6.0 / 2025-08-13
+
+* ADDED: Include async instrument for otlp exporter
+* FIXED: Add kind enum type for aggregation_temporality that only allow two types
+
 ### v0.5.0 / 2025-06-23
 
 * ADDED: Add exponential histogram in otlp metrics exporter

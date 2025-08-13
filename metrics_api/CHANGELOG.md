@@ -1,5 +1,10 @@
 # Release History: opentelemetry-metrics-api
 
+### v0.4.0 / 2025-08-13
+
+* ADDED: Add basic implementation of asynchronous metrics
+* FIXED: Update max instrument length from 63 to 255
+
 ### v0.3.0 / 2025-02-25
 
 - ADDED: Support 3.1 Min Version

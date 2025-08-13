@@ -1,5 +1,9 @@
 # Release History: opentelemetry-api
 
+### v1.6.0 / 2025-08-13
+
+* ADDED: Add noop for Trace::Span attributes and events
+
 ### v1.5.0 / 2025-02-20
 
 - ADDED: Support 3.1 Min Version

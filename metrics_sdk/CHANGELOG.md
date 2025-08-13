@@ -1,5 +1,14 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.8.0 / 2025-08-13
+
+* ADDED: Add basic implementation of asynchronous metrics
+* ADDED: Include async instrument for otlp exporter
+* ADDED: Add view for asych instrument
+* FIXED: Validate scale range and raise exception if out of bounds
+* FIXED: Add kind enum type for aggregation_temporality that only allow two types
+* FIXED: Update max instrument length from 63 to 255
+
 ### v0.7.4 / 2025-07-29
 
 * FIXED: Validate scale range and raise exception if out of bounds for exponential histograms
