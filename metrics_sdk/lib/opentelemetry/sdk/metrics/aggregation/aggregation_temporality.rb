@@ -41,7 +41,7 @@ module OpenTelemetry
 
               elsif aggregation_temporality.is_a?(::String)
                 case aggregation_temporality
-                when 'LOWMEMORY', 'lowmemory'
+                when 'LOWMEMORY', 'lowmemory', 'low_memory'
                   instrument_kind == :observable_counter ? cumulative : delta
                 when 'DELTA', 'delta'
                   delta
