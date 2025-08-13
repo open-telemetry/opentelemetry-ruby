@@ -18,7 +18,7 @@ module OpenTelemetry
             :observable_counter
           end
 
-          # Observe the Counter with fixed timeout duration.
+          # Observe the ObservableCounter with fixed timeout duration.
           #
           # @param [int] timeout The timeout duration for callback to run, which MUST be a non-negative numeric value.
           # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
@@ -32,7 +32,7 @@ module OpenTelemetry
           private
 
           def default_aggregation
-            OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
+            OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(monotonic: true)
           end
         end
       end

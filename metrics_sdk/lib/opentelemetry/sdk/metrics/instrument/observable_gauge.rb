@@ -32,7 +32,7 @@ module OpenTelemetry
           private
 
           def default_aggregation
-            OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
+            OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new
           end
         end
       end
