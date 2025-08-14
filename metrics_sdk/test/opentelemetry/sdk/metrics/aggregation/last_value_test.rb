@@ -8,34 +8,11 @@ require 'test_helper'
 
 describe OpenTelemetry::SDK::Metrics::Aggregation::LastValue do
   let(:data_points) { {} }
-  let(:last_value_aggregation) { OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new(aggregation_temporality:) }
-  let(:aggregation_temporality) { :delta }
+  let(:last_value_aggregation) { OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new }
 
   # Time in nano
   let(:start_time) { (Time.now.to_r * 1_000_000_000).to_i }
   let(:end_time) { ((Time.now + 60).to_r * 1_000_000_000).to_i }
-
-  describe '#initialize' do
-    it 'defaults to the delta aggregation temporality' do
-      exp = OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new
-      _(exp.aggregation_temporality).must_equal :delta
-    end
-
-    it 'valid aggregation_temporality delta as symbol from parameters' do
-      exp = OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new(aggregation_temporality: :delta)
-      _(exp.aggregation_temporality).must_equal :delta
-    end
-
-    it 'valid aggregation_temporality cumulative as symbol from parameters' do
-      exp = OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new(aggregation_temporality: :cumulative)
-      _(exp.aggregation_temporality).must_equal :cumulative
-    end
-
-    it 'invalid aggregation_temporality pickles as symbol from parameters return to defaults delta' do
-      exp = OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new(aggregation_temporality: :pickles)
-      _(exp.aggregation_temporality).must_equal :delta
-    end
-  end
 
   it 'sets the timestamps' do
     last_value_aggregation.update(0, {}, data_points)
