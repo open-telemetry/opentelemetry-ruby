@@ -10,11 +10,9 @@ module OpenTelemetry
       module State
         # @api private
         #
-        # The MetricStream class provides SDK internal functionality that is not a part of the
-        # public API.
-        class AsynchronousMetricStream
-          attr_reader :name, :description, :unit, :instrument_kind, :instrumentation_scope, :data_points
-
+        # The AsynchronousMetricStream class provides SDK internal functionality that is not a part of the
+        # public API. It extends MetricStream to support asynchronous instruments.
+        class AsynchronousMetricStream < MetricStream
           def initialize(
             name,
             description,
@@ -27,20 +25,14 @@ module OpenTelemetry
             timeout,
             attributes
           )
-            @name = name
-            @description = description
-            @unit = unit
-            @instrument_kind = instrument_kind
-            @meter_provider = meter_provider
-            @instrumentation_scope = instrumentation_scope
-            @aggregation = aggregation
+            # Call parent constructor with common parameters
+            super(name, description, unit, instrument_kind, meter_provider, instrumentation_scope, aggregation)
+
+            # Initialize asynchronous-specific attributes
             @callback = callback
             @start_time = now_in_nano
             @timeout = timeout
             @attributes = attributes
-            @data_points = {}
-
-            @mutex = Mutex.new
           end
 
           # When collect, if there are asynchronous SDK Instruments involved, their callback functions will be triggered.
@@ -49,49 +41,34 @@ module OpenTelemetry
           def collect(start_time, end_time)
             invoke_callback(@timeout, @attributes)
 
-            is_monotonic = @aggregation.respond_to?(:monotonic?) ? @aggregation.monotonic? : nil
-            aggregation_temporality = @aggregation.respond_to?(:aggregation_temporality) ? @aggregation.aggregation_temporality : nil
-
-            @mutex.synchronize do
-              MetricData.new(
-                @name,
-                @description,
-                @unit,
-                @instrument_kind,
-                @meter_provider.resource,
-                @instrumentation_scope,
-                @aggregation.collect(start_time, end_time, @data_points),
-                aggregation_temporality,
-                start_time,
-                end_time,
-                is_monotonic
-              )
-            end
+            # Call parent collect method for the core collection logic
+            super(start_time, end_time)
           end
 
           def invoke_callback(timeout, attributes)
-            @mutex.synchronize do
-              Timeout.timeout(timeout || 30) do
-                @callback.each do |cb|
-                  value = cb.call
-                  @aggregation.update(value, attributes, @data_points)
+            if @registered_views.empty?
+              @mutex.synchronize do
+                Timeout.timeout(timeout || 30) do
+                  @callback.each do |cb|
+                    value = cb.call
+                    @default_aggregation.update(value, attributes, @data_points)
+                  end
+                end
+              end
+            else
+              @registered_views.each do |view|
+                @mutex.synchronize do
+                  Timeout.timeout(timeout || 30) do
+                    @callback.each do |cb|
+                      value = cb.call
+                      merged_attributes = attributes || {}
+                      merged_attributes.merge!(view.attribute_keys)
+                      view.aggregation.update(value, merged_attributes, @data_points) if view.valid_aggregation?
+                    end
+                  end
                 end
               end
             end
-          end
-
-          def to_s
-            instrument_info = +''
-            instrument_info << "name=#{@name}"
-            instrument_info << " description=#{@description}" if @description
-            instrument_info << " unit=#{@unit}" if @unit
-            @data_points.map do |attributes, value|
-              metric_stream_string = +''
-              metric_stream_string << instrument_info
-              metric_stream_string << " attributes=#{attributes}" if attributes
-              metric_stream_string << " #{value}"
-              metric_stream_string
-            end.join("\n")
           end
 
           def now_in_nano
