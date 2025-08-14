@@ -1,6 +1,6 @@
 # Release History: opentelemetry-sdk
 
-### v1.8.1 / 2025-07-29
+### v1.8.1 / 2025-08-13
 
 * FIXED: Remove patch constraint on Zipkin exporter
 

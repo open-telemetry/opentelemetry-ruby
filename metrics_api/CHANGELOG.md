@@ -2,8 +2,8 @@
 
 ### v0.4.0 / 2025-08-13
 
-* ADDED: Add basic implementation of asynchronous metrics
-* FIXED: Update max instrument length from 63 to 255
+* ADDED: Support asynchronous instruments: ObservableGauge, ObservableCounter and ObservableUpDownCounter
+* FIXED: Update max instrument name length from 63 to 255 characters and allow `/` in instrument names
 
 ### v0.3.0 / 2025-02-25
 

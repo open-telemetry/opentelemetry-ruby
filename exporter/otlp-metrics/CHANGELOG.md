@@ -2,8 +2,7 @@
 
 ### v0.6.0 / 2025-08-13
 
-* ADDED: Include async instrument for otlp exporter
-* FIXED: Add kind enum type for aggregation_temporality that only allow two types
+* ADDED: Add support for exporting asynchronous instruments
 
 ### v0.5.0 / 2025-06-23
 

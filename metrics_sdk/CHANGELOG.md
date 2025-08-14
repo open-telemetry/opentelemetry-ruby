@@ -2,15 +2,11 @@
 
 ### v0.8.0 / 2025-08-13
 
-* ADDED: Add basic implementation of asynchronous metrics
-* ADDED: Include async instrument for otlp exporter
-* ADDED: Add view for asych instrument
-* FIXED: Validate scale range and raise exception if out of bounds
-* FIXED: Add kind enum type for aggregation_temporality that only allow two types
-* FIXED: Update max instrument length from 63 to 255
+* BREAKING CHANGE: Update default aggregation temporality for counter, histogram, and up down counter to cumulative
 
-### v0.7.4 / 2025-07-29
-
+* ADDED: Support asynchronous instruments: ObservableGauge, ObservableCounter and ObservableUpDownCounter
+* FIXED: Validate scale range on exponential histograms and raise exception if out of bounds
+* FIXED: Update max instrument name length from 63 to 255 characters and allow `/` in instrument names
 * FIXED: Validate scale range and raise exception if out of bounds for exponential histograms
 
 ### v0.7.3 / 2025-07-09

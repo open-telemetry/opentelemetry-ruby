@@ -1,6 +1,6 @@
 # Release History: opentelemetry-logs-sdk
 
-### v0.3.0 / 2025-07-29
+### v0.3.0 / 2025-08-13
 
 * ADDED: Update error message for invalid log record attribute
 * ADDED: Set logs exporter default to OTLP
