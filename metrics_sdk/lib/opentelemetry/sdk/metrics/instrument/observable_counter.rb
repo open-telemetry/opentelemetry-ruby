@@ -32,7 +32,7 @@ module OpenTelemetry
           private
 
           def default_aggregation
-            OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(monotonic: true)
+            OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(monotonic: true, instrument_kind: instrument_kind)
           end
         end
       end
