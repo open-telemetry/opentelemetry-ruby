@@ -1,9 +1,9 @@
 # Release History: opentelemetry-metrics-api
 
-### v0.4.0 / 2025-08-13
+### v0.4.0 / 2025-08-14
 
-* ADDED: Support asynchronous instruments: ObservableGauge, ObservableCounter and ObservableUpDownCounter
-* FIXED: Update max instrument name length from 63 to 255 characters and allow `/` in instrument names
+- ADDED: Support asynchronous instruments: ObservableGauge, ObservableCounter and ObservableUpDownCounter
+- FIXED: Update max instrument name length from 63 to 255 characters and allow `/` in instrument names
 
 ### v0.3.0 / 2025-02-25
 
