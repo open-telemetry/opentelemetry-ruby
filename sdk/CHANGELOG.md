@@ -3,6 +3,7 @@
 ### v1.8.1 / 2025-08-13
 
 * FIXED: Remove patch constraint on Zipkin exporter
+* DOCS: Fix Resource merge documentation
 
 ### v1.8.0 / 2025-02-25
 
