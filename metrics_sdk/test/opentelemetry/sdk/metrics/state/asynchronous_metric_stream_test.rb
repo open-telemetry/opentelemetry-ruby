@@ -10,7 +10,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
   let(:meter_provider) { OpenTelemetry::SDK::Metrics::MeterProvider.new }
   let(:instrumentation_scope) { OpenTelemetry::SDK::InstrumentationScope.new('test_scope', '1.0.0') }
   let(:aggregation) { OpenTelemetry::SDK::Metrics::Aggregation::Sum.new }
-  let(:callback) { proc { 42 } }
+  let(:callback) { [proc { 42 }] }
   let(:timeout) { 10 }
   let(:attributes) { { 'environment' => 'test' } }
   let(:async_metric_stream) do
@@ -40,7 +40,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
     end
 
     it 'stores callback and timeout' do
-      callback_proc = proc { 100 }
+      callback_proc = [proc { 100 }]
       stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'test',
         'description',
@@ -85,18 +85,18 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
     it 'invokes callback and returns metric data' do
       metric_data = async_metric_stream.collect(0, 1000)
 
-      _(metric_data).must_be_instance_of(OpenTelemetry::SDK::Metrics::MetricData)
+      _(metric_data).must_be_instance_of(OpenTelemetry::SDK::Metrics::State::MetricData)
       _(metric_data.name).must_equal('async_counter')
       _(metric_data.description).must_equal('An async counter')
       _(metric_data.unit).must_equal('count')
       _(metric_data.instrument_kind).must_equal(:observable_counter)
       _(metric_data.start_time_unix_nano).must_equal(0)
-      _(metric_data.end_time_unix_nano).must_equal(1000)
+      _(metric_data.time_unix_nano).must_equal(1000)
     end
 
     it 'uses callback return value in data points' do
       callback_value = 123
-      callback_proc = proc { callback_value }
+      callback_proc = [proc { callback_value }]
 
       stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter',
@@ -148,7 +148,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
 
       metric_data = async_metric_stream.collect(start_time, end_time)
       _(metric_data.start_time_unix_nano).must_equal(start_time)
-      _(metric_data.end_time_unix_nano).must_equal(end_time)
+      _(metric_data.time_unix_nano).must_equal(end_time)
     end
 
     it 'handles callback exceptions gracefully' do
@@ -175,10 +175,10 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
   describe '#invoke_callback' do
     it 'executes callback with timeout' do
       callback_executed = false
-      callback_proc = proc do
+      callback_proc = [proc do
         callback_executed = true
         42
-      end
+      end]
 
       stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter',
@@ -199,10 +199,10 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
 
     it 'uses default timeout when none provided' do
       callback_executed = false
-      callback_proc = proc do
+      callback_proc = [proc do
         callback_executed = true
         42
-      end
+      end]
 
       stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter',
@@ -248,10 +248,10 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
     end
 
     it 'respects timeout setting' do
-      slow_callback = proc do
+      slow_callback = [proc do
         sleep(0.1) # Sleep longer than timeout
         42
-      end
+      end]
 
       stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter',
@@ -270,12 +270,12 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       _(-> { stream.invoke_callback(0.05, attributes) }).must_raise(Timeout::Error)
     end
 
-    it 'is thread-safe' do
+    it 'is thread-safe xuan' do
       execution_count = 0
-      callback_proc = proc do
+      callback_proc = [proc do
         execution_count += 1
         42
-      end
+      end]
 
       stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter',
@@ -322,7 +322,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
   describe 'integration with aggregation' do
     it 'updates aggregation correctly with callback values' do
       callback_value = 100
-      callback_proc = proc { callback_value }
+      callback_proc = [proc { callback_value }]
 
       stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter',
@@ -352,7 +352,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
     it 'works with different aggregation types' do
       last_value_aggregation = OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new
       callback_value = 50
-      callback_proc = proc { callback_value }
+      callback_proc = [proc { callback_value }]
 
       stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_gauge',

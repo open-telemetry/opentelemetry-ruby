@@ -158,7 +158,7 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
 
       _(snapshot.size).must_equal(1)
       metric_data = snapshot.first
-      _(metric_data).must_be_instance_of(OpenTelemetry::SDK::Metrics::MetricData)
+      _(metric_data).must_be_instance_of(OpenTelemetry::SDK::Metrics::State::MetricData)
       _(metric_data.name).must_equal('test_counter')
       _(metric_data.description).must_equal('A test counter')
       _(metric_data.unit).must_equal('count')
@@ -204,7 +204,7 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
       metric_data = snapshot.first
 
       _(metric_data.start_time_unix_nano).must_equal(start_time)
-      _(metric_data.end_time_unix_nano).must_equal(end_time)
+      _(metric_data.time_unix_nano).must_equal(end_time)
     end
   end
 
@@ -213,7 +213,7 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
       metric_stream.update(10, {})
       metric_data = metric_stream.aggregate_metric_data(0, 1000)
 
-      _(metric_data).must_be_instance_of(OpenTelemetry::SDK::Metrics::MetricData)
+      _(metric_data).must_be_instance_of(OpenTelemetry::SDK::Metrics::State::MetricData)
       _(metric_data.name).must_equal('test_counter')
     end
 
@@ -222,7 +222,7 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
       custom_aggregation = OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new
       metric_data = metric_stream.aggregate_metric_data(0, 1000, aggregation: custom_aggregation)
 
-      _(metric_data).must_be_instance_of(OpenTelemetry::SDK::Metrics::MetricData)
+      _(metric_data).must_be_instance_of(OpenTelemetry::SDK::Metrics::State::MetricData)
     end
 
     it 'handles monotonic aggregations' do
@@ -231,7 +231,7 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
       metric_data = metric_stream.aggregate_metric_data(0, 1000)
 
       # Check that is_monotonic is set correctly (this depends on aggregation implementation)
-      _(metric_data.instance_variable_get(:@is_monotonic)).wont_be_nil
+      _(metric_data.is_monotonic).wont_be_nil
     end
   end
 
