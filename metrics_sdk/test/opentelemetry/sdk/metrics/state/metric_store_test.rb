@@ -98,7 +98,6 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStore do
       # First collection
       metric_stream.update(10, {})
       snapshot1 = metric_store.collect
-      start_time1 = snapshot1.first.start_time_unix_nano
       end_time1 = snapshot1.first.time_unix_nano
 
       sleep(0.001) # Small delay to ensure different timestamps
@@ -115,7 +114,7 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStore do
 
     it 'is thread-safe when adding metric streams' do
       # Create metric streams in multiple threads
-      threads = 10.times.map do |i|
+      threads = Array.new(10) do |i|
         Thread.new do
           metric_stream = OpenTelemetry::SDK::Metrics::State::MetricStream.new(
             "counter_#{i}",
