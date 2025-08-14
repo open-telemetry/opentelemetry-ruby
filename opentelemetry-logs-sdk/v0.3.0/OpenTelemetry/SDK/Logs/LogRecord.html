@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: OpenTelemetry::SDK::Logs::LogRecord
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::SDK::Logs::LogRecord";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (L)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../SDK.html" title="OpenTelemetry::SDK (module)">SDK</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Logs.html" title="OpenTelemetry::SDK::Logs (module)">Logs</a></span></span>
+     &raquo; 
+    <span class="title">LogRecord</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: OpenTelemetry::SDK::Logs::LogRecord
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Logs::LogRecord</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Logs::LogRecord</li>
+          
+            <li class="next">OpenTelemetry::SDK::Logs::LogRecord</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/sdk/logs/log_record.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Implementation of OpenTelemetry::Logs::LogRecord that records log events.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#attributes-instance_method" title="#attributes (instance method)">#<strong>attributes</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute attributes.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#body-instance_method" title="#body (instance method)">#<strong>body</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute body.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#instrumentation_scope-instance_method" title="#instrumentation_scope (instance method)">#<strong>instrumentation_scope</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute instrumentation_scope.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#observed_timestamp-instance_method" title="#observed_timestamp (instance method)">#<strong>observed_timestamp</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute observed_timestamp.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#resource-instance_method" title="#resource (instance method)">#<strong>resource</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute resource.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#severity_number-instance_method" title="#severity_number (instance method)">#<strong>severity_number</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute severity_number.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#severity_text-instance_method" title="#severity_text (instance method)">#<strong>severity_text</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute severity_text.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#span_id-instance_method" title="#span_id (instance method)">#<strong>span_id</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute span_id.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#timestamp-instance_method" title="#timestamp (instance method)">#<strong>timestamp</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute timestamp.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#trace_flags-instance_method" title="#trace_flags (instance method)">#<strong>trace_flags</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute trace_flags.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#trace_id-instance_method" title="#trace_id (instance method)">#<strong>trace_id</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute trace_id.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(timestamp: nil, observed_timestamp: nil, severity_text: nil, severity_number: nil, body: nil, attributes: nil, trace_id: nil, span_id: nil, trace_flags: nil, resource: nil, instrumentation_scope: nil, log_record_limits: nil)  &#x21d2; LogRecord </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Creates a new <span class='object_link'><a href="" title="OpenTelemetry::SDK::Logs::LogRecord (class)">LogRecord</a></span>.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#to_log_record_data-instance_method" title="#to_log_record_data (instance method)">#<strong>to_log_record_data</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  <div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(timestamp: nil, observed_timestamp: nil, severity_text: nil, severity_number: nil, body: nil, attributes: nil, trace_id: nil, span_id: nil, trace_flags: nil, resource: nil, instrumentation_scope: nil, log_record_limits: nil)  &#x21d2; <tt><span class='object_link'><a href="" title="OpenTelemetry::SDK::Logs::LogRecord (class)">LogRecord</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Creates a new <span class='object_link'><a href="" title="OpenTelemetry::SDK::Logs::LogRecord (class)">OpenTelemetry::SDK::Logs::LogRecord</a></span>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>timestamp</span>
+      
+      
+        <span class='type'>(<tt>optional Time</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Time when the event occurred.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>observed_timestamp</span>
+      
+      
+        <span class='type'>(<tt>optional Time</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Time when the event was observed by the collection system. If nil, will first attempt to set to <code>timestamp</code>. If <code>timestamp</code> is nil, will set to Time.now.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>span_context</span>
+      
+      
+        <span class='type'>(<tt>optional OpenTelemetry::Trace::SpanContext</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The OpenTelemetry::Trace::SpanContext to associate with the LogRecord.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>severity_text</span>
+      
+      
+        <span class='type'>(<tt>optional String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The log severity, also known as log level.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>severity_number</span>
+      
+      
+        <span class='type'>(<tt>optional Integer</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The numerical value of the log severity.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>body</span>
+      
+      
+        <span class='type'>(<tt>optional String</tt>, <tt>Numeric</tt>, <tt>Boolean</tt>, <tt>Array&lt;String, Numeric,
+Boolean&gt;</tt>, <tt>Hash{String =&gt; String, Numeric, Boolean, Array&lt;String,
+Numeric, Boolean&gt;}</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The body of the <span class='object_link'><a href="" title="OpenTelemetry::SDK::Logs::LogRecord (class)">OpenTelemetry::SDK::Logs::LogRecord</a></span>.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>attributes</span>
+      
+      
+        <span class='type'>(<tt>optional Hash{String =&gt; String, Numeric, Boolean,
+Array&lt;String, Numeric, Boolean&gt;}</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Attributes to associate with the <span class='object_link'><a href="" title="OpenTelemetry::SDK::Logs::LogRecord (class)">OpenTelemetry::SDK::Logs::LogRecord</a></span>.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>trace_id</span>
+      
+      
+        <span class='type'>(<tt>optional String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The trace ID associated with the current context.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>span_id</span>
+      
+      
+        <span class='type'>(<tt>optional String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The span ID associated with the current context.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>trace_flags</span>
+      
+      
+        <span class='type'>(<tt>optional OpenTelemetry::Trace::TraceFlags</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The trace flags associated with the current context.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>resource</span>
+      
+      
+        <span class='type'>(<tt>optional OpenTelemetry::SDK::Resources::Resource</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The source of the log, desrived from the LoggerProvider.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>instrumentation_scope</span>
+      
+      
+        <span class='type'>(<tt>optional OpenTelemetry::SDK::InstrumentationScope</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The instrumentation scope, derived from the emitting Logger</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>OpenTelemetry::SDK::LogRecordLimits]</span>
+      
+      
+        <span class='type'>(<tt>optional</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>log_record_limits Attribute limits</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/logs/log_record.rb', line 61</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span>
+  <span class='label'>timestamp:</span> <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>observed_timestamp:</span> <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>severity_text:</span> <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>severity_number:</span> <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>body:</span> <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>attributes:</span> <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>trace_id:</span> <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>span_id:</span> <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>trace_flags:</span> <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>resource:</span> <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>instrumentation_scope:</span> <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>log_record_limits:</span> <span class='kw'>nil</span>
+<span class='rparen'>)</span>
+  <span class='ivar'>@timestamp</span> <span class='op'>=</span> <span class='id identifier rubyid_timestamp'>timestamp</span>
+  <span class='ivar'>@observed_timestamp</span> <span class='op'>=</span> <span class='id identifier rubyid_observed_timestamp'>observed_timestamp</span> <span class='op'>||</span> <span class='id identifier rubyid_timestamp'>timestamp</span> <span class='op'>||</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span>
+  <span class='ivar'>@severity_text</span> <span class='op'>=</span> <span class='id identifier rubyid_severity_text'>severity_text</span>
+  <span class='ivar'>@severity_number</span> <span class='op'>=</span> <span class='id identifier rubyid_severity_number'>severity_number</span>
+  <span class='ivar'>@body</span> <span class='op'>=</span> <span class='id identifier rubyid_body'>body</span>
+  <span class='ivar'>@attributes</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>?</span> <span class='kw'>nil</span> <span class='op'>:</span> <span class='const'>Hash</span><span class='lbracket'>[</span><span class='id identifier rubyid_attributes'>attributes</span><span class='rbracket'>]</span> <span class='comment'># We need a mutable copy of attributes
+</span>  <span class='ivar'>@trace_id</span> <span class='op'>=</span> <span class='id identifier rubyid_trace_id'>trace_id</span>
+  <span class='ivar'>@span_id</span> <span class='op'>=</span> <span class='id identifier rubyid_span_id'>span_id</span>
+  <span class='ivar'>@trace_flags</span> <span class='op'>=</span> <span class='id identifier rubyid_trace_flags'>trace_flags</span>
+  <span class='ivar'>@resource</span> <span class='op'>=</span> <span class='id identifier rubyid_resource'>resource</span>
+  <span class='ivar'>@instrumentation_scope</span> <span class='op'>=</span> <span class='id identifier rubyid_instrumentation_scope'>instrumentation_scope</span>
+  <span class='ivar'>@log_record_limits</span> <span class='op'>=</span> <span class='id identifier rubyid_log_record_limits'>log_record_limits</span> <span class='op'>||</span> <span class='const'><span class='object_link'><a href="LogRecordLimits.html" title="OpenTelemetry::SDK::Logs::LogRecordLimits (class)">LogRecordLimits</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="LogRecordLimits.html#DEFAULT-constant" title="OpenTelemetry::SDK::Logs::LogRecordLimits::DEFAULT (constant)">DEFAULT</a></span></span>
+  <span class='ivar'>@total_recorded_attributes</span> <span class='op'>=</span> <span class='ivar'>@attributes</span><span class='op'>&amp;.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>||</span> <span class='int'>0</span>
+
+  <span class='id identifier rubyid_trim_attributes'>trim_attributes</span><span class='lparen'>(</span><span class='ivar'>@attributes</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id="attributes=-instance_method"></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="attributes-instance_method">
+  
+    #<strong>attributes</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute attributes.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+16
+17
+18</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/logs/log_record.rb', line 16</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_attributes'>attributes</span>
+  <span class='ivar'>@attributes</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="body=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="body-instance_method">
+  
+    #<strong>body</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute body.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+16
+17
+18</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/logs/log_record.rb', line 16</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_body'>body</span>
+  <span class='ivar'>@body</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="instrumentation_scope=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="instrumentation_scope-instance_method">
+  
+    #<strong>instrumentation_scope</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute instrumentation_scope.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+16
+17
+18</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/logs/log_record.rb', line 16</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_instrumentation_scope'>instrumentation_scope</span>
+  <span class='ivar'>@instrumentation_scope</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="observed_timestamp=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="observed_timestamp-instance_method">
+  
+    #<strong>observed_timestamp</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute observed_timestamp.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+16
+17
+18</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/logs/log_record.rb', line 16</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_observed_timestamp'>observed_timestamp</span>
+  <span class='ivar'>@observed_timestamp</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="resource=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="resource-instance_method">
+  
+    #<strong>resource</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute resource.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+16
+17
+18</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/logs/log_record.rb', line 16</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_resource'>resource</span>
+  <span class='ivar'>@resource</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="severity_number=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="severity_number-instance_method">
+  
+    #<strong>severity_number</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute severity_number.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+16
+17
+18</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/logs/log_record.rb', line 16</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_severity_number'>severity_number</span>
+  <span class='ivar'>@severity_number</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="severity_text=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="severity_text-instance_method">
+  
+    #<strong>severity_text</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute severity_text.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+16
+17
+18</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/logs/log_record.rb', line 16</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_severity_text'>severity_text</span>
+  <span class='ivar'>@severity_text</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="span_id=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="span_id-instance_method">
+  
+    #<strong>span_id</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute span_id.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+16
+17
+18</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/logs/log_record.rb', line 16</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_span_id'>span_id</span>
+  <span class='ivar'>@span_id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="timestamp=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="timestamp-instance_method">
+  
+    #<strong>timestamp</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute timestamp.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+16
+17
+18</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/logs/log_record.rb', line 16</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_timestamp'>timestamp</span>
+  <span class='ivar'>@timestamp</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="trace_flags=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="trace_flags-instance_method">
+  
+    #<strong>trace_flags</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute trace_flags.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+16
+17
+18</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/logs/log_record.rb', line 16</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_trace_flags'>trace_flags</span>
+  <span class='ivar'>@trace_flags</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="trace_id=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="trace_id-instance_method">
+  
+    #<strong>trace_id</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute trace_id.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+16
+17
+18</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/logs/log_record.rb', line 16</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_trace_id'>trace_id</span>
+  <span class='ivar'>@trace_id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="to_log_record_data-instance_method">
+  
+    #<strong>to_log_record_data</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/logs/log_record.rb', line 92</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_to_log_record_data'>to_log_record_data</span>
+  <span class='const'><span class='object_link'><a href="LogRecordData.html" title="OpenTelemetry::SDK::Logs::LogRecordData (class)">LogRecordData</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
+    <span class='id identifier rubyid_to_integer_nanoseconds'>to_integer_nanoseconds</span><span class='lparen'>(</span><span class='ivar'>@timestamp</span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='id identifier rubyid_to_integer_nanoseconds'>to_integer_nanoseconds</span><span class='lparen'>(</span><span class='ivar'>@observed_timestamp</span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='ivar'>@severity_text</span><span class='comma'>,</span>
+    <span class='ivar'>@severity_number</span><span class='comma'>,</span>
+    <span class='ivar'>@body</span><span class='comma'>,</span>
+    <span class='ivar'>@attributes</span><span class='comma'>,</span>
+    <span class='ivar'>@trace_id</span><span class='comma'>,</span>
+    <span class='ivar'>@span_id</span><span class='comma'>,</span>
+    <span class='ivar'>@trace_flags</span><span class='comma'>,</span>
+    <span class='ivar'>@resource</span><span class='comma'>,</span>
+    <span class='ivar'>@instrumentation_scope</span><span class='comma'>,</span>
+    <span class='ivar'>@total_recorded_attributes</span>
+  <span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Thu Aug 14 17:39:01 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.1.6).
+</div>
+
+    </div>
+  </body>
+</html>
