@@ -138,7 +138,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       _(attrs['original']).must_equal('value')
     end
 
-    it 'handles callback exceptions xuan' do
+    it 'handles callback exceptions' do
       error_callback = [proc { raise StandardError, 'Callback error' }]
       error_stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter', 'description', 'unit', :observable_counter,
