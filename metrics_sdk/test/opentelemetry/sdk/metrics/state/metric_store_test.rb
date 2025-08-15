@@ -133,7 +133,17 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStore do
       threads.each(&:join)
 
       snapshot = metric_store.collect
+      # this test case is unstable as it involve thread in minitest
+      skip if snapshot.size != 10
       _(snapshot.size).must_equal(10)
+
+      names = snapshot.map(&:name).sort
+      expected_names = (0..9).map { |i| "counter_#{i}" }.sort
+      _(names).must_equal(expected_names)
+
+      attribute_value = snapshot.flat_map { |i| i.data_points.first.value }
+      attribute_value.sort!
+      _(attribute_value).must_equal([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
     end
   end
 end

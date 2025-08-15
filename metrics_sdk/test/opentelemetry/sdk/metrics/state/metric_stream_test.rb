@@ -137,7 +137,6 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
         _(snapshot.first.data_points[i].value).must_equal 10
       end
 
-      # make sure the attributes are matching to
       attribute_value = snapshot.first.data_points.flat_map { |i| i.attributes['thread'].to_i }
       attribute_value.sort!
       _(attribute_value).must_equal([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])

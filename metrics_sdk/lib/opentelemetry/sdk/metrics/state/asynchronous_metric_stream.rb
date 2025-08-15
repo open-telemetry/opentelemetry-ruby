@@ -78,13 +78,24 @@ module OpenTelemetry
           private
 
           def safe_guard_callback(callback, timeout: DEFAULT_TIMEOUT)
-            Timeout.timeout(timeout) do
-              callback.call
+            result = nil
+            thread = Thread.new do
+              result = callback.call
+            rescue StandardError => e
+              OpenTelemetry.logger.error("Error invoking callback: #{e.message}")
+              result = :error
             end
-          rescue Timeout::Error => e
-            OpenTelemetry.logger.error("Timeout while invoking callback: #{e.message}")
+
+            unless thread.join(timeout)
+              thread.kill
+              OpenTelemetry.logger.error("Timeout while invoking callback after #{timeout} seconds")
+              return nil
+            end
+
+            result == :error ? nil : result
           rescue StandardError => e
-            OpenTelemetry.logger.error("Error invoking callback: #{e.message}")
+            OpenTelemetry.logger.error("Unexpected error in callback execution: #{e.message}")
+            nil
           end
         end
       end
