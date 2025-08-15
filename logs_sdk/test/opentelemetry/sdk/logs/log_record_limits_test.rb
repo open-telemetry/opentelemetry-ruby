@@ -15,9 +15,16 @@ describe OpenTelemetry::SDK::Logs::LogRecordLimits do
       _(log_record_limits.attribute_length_limit).must_be_nil
     end
 
-    it 'prioritizes specific environment varibles for attribute value length limits' do
+    it 'prioritizes specific environment variables for attribute value length limits' do
       OpenTelemetry::TestHelpers.with_env('OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '35',
                                           'OTEL_LOG_RECORD_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '33') do
+        _(log_record_limits.attribute_length_limit).must_equal 33
+      end
+    end
+
+    it 'prioritizes the spec naming of the environment variable for attribute value length limits' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_LOG_RECORD_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '35',
+                                          'OTEL_LOGRECORD_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '33') do
         _(log_record_limits.attribute_length_limit).must_equal 33
       end
     end
