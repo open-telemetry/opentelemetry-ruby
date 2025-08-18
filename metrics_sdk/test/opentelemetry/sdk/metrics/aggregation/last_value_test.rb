@@ -8,8 +8,7 @@ require 'test_helper'
 
 describe OpenTelemetry::SDK::Metrics::Aggregation::LastValue do
   let(:data_points) { {} }
-  let(:last_value_aggregation) { OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new(aggregation_temporality:) }
-  let(:aggregation_temporality) { :delta }
+  let(:last_value_aggregation) { OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new }
 
   # Time in nano
   let(:start_time) { (Time.now.to_r * 1_000_000_000).to_i }

@@ -36,6 +36,17 @@ describe OpenTelemetry::Trace::Span do
     end
   end
 
+  describe '#attributes' do
+    it 'returns empty hash' do
+      _(span.attributes).must_equal({})
+    end
+
+    it 'returns empty hash even after modification attempts' do
+      span.attributes['test'] = 'value'
+      _(span.attributes).must_equal({})
+    end
+  end
+
   describe '#add_link' do
     it 'returns self' do
       _(span.add_link(OpenTelemetry::Trace::Link.new(span_context))).must_equal(span)
@@ -57,6 +68,17 @@ describe OpenTelemetry::Trace::Span do
 
     it 'accepts a timestamp' do
       _(span.add_event('event-name', timestamp: Time.now)).must_equal(span)
+    end
+  end
+
+  describe '#events' do
+    it 'returns empty array' do
+      _(span.events).must_equal([])
+    end
+
+    it 'returns empty array even after modification attempts' do
+      span.events << 'test event'
+      _(span.events).must_equal([])
     end
   end
 

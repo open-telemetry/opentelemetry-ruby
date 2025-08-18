@@ -78,6 +78,13 @@ module OpenTelemetry
             Export::FAILURE
           end
 
+          def after_fork
+            @exporter.reset if @exporter.respond_to?(:reset)
+            collect # move past previously reported metrics from parent process
+            @thread = nil
+            start
+          end
+
           # Check both @thread and @continue object to determine if current
           # PeriodicMetricReader is still alive. If one of them is true/alive,
           # then PeriodicMetricReader is determined as alive

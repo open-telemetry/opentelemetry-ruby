@@ -512,7 +512,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
       OpenTelemetry.logger = ::Logger.new(log_stream)
 
       stub_request(:post, 'http://localhost:4318/v1/logs').to_return(status: 200)
-      log_record_data = OpenTelemetry::TestHelpers.create_log_record_data(total_recorded_attributes: 1, attributes: { 'a' => "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT) })
+      log_record_data = OpenTelemetry::TestHelpers.create_log_record_data(total_recorded_attributes: 1, attributes: { 'a' => (+"\xC2").force_encoding(::Encoding::ASCII_8BIT) })
 
       result = exporter.export([log_record_data])
 
@@ -651,8 +651,22 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
         observed_timestamp: Time.now + 5,
         severity_text: 'ERROR',
         severity_number: 17,
-        body: 'log_1',
-        attributes: { 'c' => 12_345 },
+        body: {
+          'kv_list' => { 'a' => 'b' },
+          'array' => [1],
+          'bool' => true,
+          'string' => 'lorem',
+          'double' => 3.14,
+          'int' => 42
+        },
+        attributes: {
+          'kv_list' => { 'a' => 'b' },
+          'array' => [1],
+          'bool' => true,
+          'string' => 'lorem',
+          'double' => 3.14,
+          'int' => 42
+        },
         trace_id: OpenTelemetry::Trace.generate_trace_id,
         span_id: OpenTelemetry::Trace.generate_span_id,
         trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT,
@@ -723,9 +737,99 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
                       observed_time_unix_nano: (lr3[:observed_timestamp].to_r * 1_000_000_000).to_i,
                       severity_number: 17,
                       severity_text: lr3[:severity_text],
-                      body: Opentelemetry::Proto::Common::V1::AnyValue.new(string_value: lr3[:body]),
+                      body: Opentelemetry::Proto::Common::V1::AnyValue.new(
+                        kvlist_value: Opentelemetry::Proto::Common::V1::KeyValueList.new(
+                          values: [
+                            Opentelemetry::Proto::Common::V1::KeyValue.new(
+                              key: 'kv_list',
+                              value: Opentelemetry::Proto::Common::V1::AnyValue.new(
+                                kvlist_value: Opentelemetry::Proto::Common::V1::KeyValueList.new(
+                                  values: [Opentelemetry::Proto::Common::V1::KeyValue.new(
+                                    key: 'a',
+                                    value: Opentelemetry::Proto::Common::V1::AnyValue.new(string_value: 'b')
+                                  )]
+                                )
+                              )
+                            ),
+                            Opentelemetry::Proto::Common::V1::KeyValue.new(
+                              key: 'array',
+                              value: Opentelemetry::Proto::Common::V1::AnyValue.new(
+                                array_value: Opentelemetry::Proto::Common::V1::ArrayValue.new(
+                                  values: [Opentelemetry::Proto::Common::V1::AnyValue.new(int_value: 1)]
+                                )
+                              )
+                            ),
+                            Opentelemetry::Proto::Common::V1::KeyValue.new(
+                              key: 'bool',
+                              value: Opentelemetry::Proto::Common::V1::AnyValue.new(
+                                bool_value: true
+                              )
+                            ),
+                            Opentelemetry::Proto::Common::V1::KeyValue.new(
+                              key: 'string',
+                              value: Opentelemetry::Proto::Common::V1::AnyValue.new(
+                                string_value: 'lorem'
+                              )
+                            ),
+                            Opentelemetry::Proto::Common::V1::KeyValue.new(
+                              key: 'double',
+                              value: Opentelemetry::Proto::Common::V1::AnyValue.new(
+                                double_value: 3.14
+                              )
+                            ),
+                            Opentelemetry::Proto::Common::V1::KeyValue.new(
+                              key: 'int',
+                              value: Opentelemetry::Proto::Common::V1::AnyValue.new(
+                                int_value: 42
+                              )
+                            )
+                          ]
+                        )
+                      ),
                       attributes: [
-                        Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'c', value: Opentelemetry::Proto::Common::V1::AnyValue.new(int_value: 12_345))
+                        Opentelemetry::Proto::Common::V1::KeyValue.new(
+                          key: 'kv_list',
+                          value: Opentelemetry::Proto::Common::V1::AnyValue.new(
+                            kvlist_value: Opentelemetry::Proto::Common::V1::KeyValueList.new(
+                              values: [Opentelemetry::Proto::Common::V1::KeyValue.new(
+                                key: 'a',
+                                value: Opentelemetry::Proto::Common::V1::AnyValue.new(string_value: 'b')
+                              )]
+                            )
+                          )
+                        ),
+                        Opentelemetry::Proto::Common::V1::KeyValue.new(
+                          key: 'array',
+                          value: Opentelemetry::Proto::Common::V1::AnyValue.new(
+                            array_value: Opentelemetry::Proto::Common::V1::ArrayValue.new(
+                              values: [Opentelemetry::Proto::Common::V1::AnyValue.new(int_value: 1)]
+                            )
+                          )
+                        ),
+                        Opentelemetry::Proto::Common::V1::KeyValue.new(
+                          key: 'bool',
+                          value: Opentelemetry::Proto::Common::V1::AnyValue.new(
+                            bool_value: true
+                          )
+                        ),
+                        Opentelemetry::Proto::Common::V1::KeyValue.new(
+                          key: 'string',
+                          value: Opentelemetry::Proto::Common::V1::AnyValue.new(
+                            string_value: 'lorem'
+                          )
+                        ),
+                        Opentelemetry::Proto::Common::V1::KeyValue.new(
+                          key: 'double',
+                          value: Opentelemetry::Proto::Common::V1::AnyValue.new(
+                            double_value: 3.14
+                          )
+                        ),
+                        Opentelemetry::Proto::Common::V1::KeyValue.new(
+                          key: 'int',
+                          value: Opentelemetry::Proto::Common::V1::AnyValue.new(
+                            int_value: 42
+                          )
+                        )
                       ],
                       dropped_attributes_count: 0,
                       flags: lr3[:trace_flags].instance_variable_get(:@flags),

@@ -445,7 +445,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 200)
 
       ndp = OpenTelemetry::SDK::Metrics::Aggregation::NumberDataPoint.new
-      ndp.attributes = { 'a' => "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT) }
+      ndp.attributes = { 'a' => (+"\xC2").force_encoding(::Encoding::ASCII_8BIT) }
       ndp.start_time_unix_nano = 0
       ndp.time_unix_nano = 0
       ndp.value = 1
@@ -560,6 +560,20 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       assert_requested(stub_post)
     end
 
+    # when the exporter.pull, it will automatically invoke callback once;
+    # if wants to record data (invoke callback) with attributes, do async_counter.observe(timeout, attributes)
+    it 'exports an async metric' do
+      stub_post = stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 200)
+      meter_provider.add_metric_reader(exporter)
+      meter       = meter_provider.meter('test')
+      pf_callback = proc { 10 }
+      meter.create_observable_counter('test_async_counter', callback: pf_callback, unit: 'smidgen', description: 'a small amount of something')
+      exporter.pull
+      meter_provider.shutdown
+
+      assert_requested(stub_post)
+    end
+
     it 'compresses with gzip if enabled' do
       exporter = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(compression: 'gzip')
       stub_post = stub_request(:post, 'http://localhost:4318/v1/metrics').to_return do |request|
@@ -609,6 +623,15 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       gauge = meter.create_gauge('test_gauge', unit: 'smidgen', description: 'a small amount of something')
       gauge.record(15, attributes: { 'baz' => 'qux' })
 
+      meter_provider.add_view('*exponential*', aggregation: OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_scale: 20), type: :histogram, unit: 'smidgen')
+
+      exponential_histogram = meter.create_histogram('test_exponential_histogram', unit: 'smidgen', description: 'a small amount of something')
+      exponential_histogram.record(20, attributes: { 'lox' => 'xol' })
+
+      pf_callback = proc { 30 }
+      async_gauge = meter.create_observable_gauge('test_async_gauge', callback: pf_callback, unit: 'smidgen', description: 'a small amount of something')
+      async_gauge.observe(attributes: { 'foo' => 'bar' })
+
       exporter.pull
       meter_provider.shutdown
 
@@ -647,7 +670,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
                           )
                         ],
                         is_monotonic: true,
-                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
+                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_CUMULATIVE
                       )
                     ),
                     Opentelemetry::Proto::Metrics::V1::Metric.new(
@@ -667,7 +690,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
                           )
                         ],
                         is_monotonic: false,
-                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
+                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_CUMULATIVE
                       )
                     ),
                     Opentelemetry::Proto::Metrics::V1::Metric.new(
@@ -691,7 +714,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
                             max: 10
                           )
                         ],
-                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
+                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_CUMULATIVE
                       )
                     ),
                     Opentelemetry::Proto::Metrics::V1::Metric.new(
@@ -705,6 +728,65 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
                               Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'baz', value: Opentelemetry::Proto::Common::V1::AnyValue.new(string_value: 'qux'))
                             ],
                             as_int: 15,
+                            start_time_unix_nano: 1_699_593_427_329_946_585,
+                            time_unix_nano: 1_699_593_427_329_946_586,
+                            exemplars: nil
+                          )
+                        ]
+                      )
+                    ),
+                    Opentelemetry::Proto::Metrics::V1::Metric.new(
+                      name: 'test_exponential_histogram',
+                      description: 'a small amount of something',
+                      unit: 'smidgen',
+                      exponential_histogram: Opentelemetry::Proto::Metrics::V1::ExponentialHistogram.new(
+                        data_points: [
+                          Opentelemetry::Proto::Metrics::V1::ExponentialHistogramDataPoint.new(
+                            attributes: [
+                              Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'lox', value: Opentelemetry::Proto::Common::V1::AnyValue.new(string_value: 'xol'))
+                            ],
+                            start_time_unix_nano: 1_699_593_427_329_946_585,
+                            time_unix_nano: 1_699_593_427_329_946_586,
+                            count: 1,
+                            sum: 20,
+                            scale: 20,
+                            zero_count: 0,
+                            positive: Opentelemetry::Proto::Metrics::V1::ExponentialHistogramDataPoint::Buckets.new(
+                              offset: 4_531_870,
+                              bucket_counts: [1]
+                            ),
+                            negative: Opentelemetry::Proto::Metrics::V1::ExponentialHistogramDataPoint::Buckets.new(
+                              offset: 0,
+                              bucket_counts: [0]
+                            ),
+                            flags: 0,
+                            exemplars: nil,
+                            min: 20,
+                            max: 20,
+                            zero_threshold: 0
+                          )
+                        ],
+                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
+                      )
+                    ),
+                    Opentelemetry::Proto::Metrics::V1::Metric.new(
+                      name: 'test_async_gauge',
+                      description: 'a small amount of something',
+                      unit: 'smidgen',
+                      gauge: Opentelemetry::Proto::Metrics::V1::Gauge.new(
+                        data_points: [
+                          Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(
+                            attributes: [
+                              Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'foo', value: Opentelemetry::Proto::Common::V1::AnyValue.new(string_value: 'bar'))
+                            ],
+                            as_int: 30,
+                            start_time_unix_nano: 1_699_593_427_329_946_585,
+                            time_unix_nano: 1_699_593_427_329_946_586,
+                            exemplars: nil
+                          ),
+                          Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(
+                            attributes: [],
+                            as_int: 30,
                             start_time_unix_nano: 1_699_593_427_329_946_585,
                             time_unix_nano: 1_699_593_427_329_946_586,
                             exemplars: nil

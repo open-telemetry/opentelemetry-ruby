@@ -41,6 +41,10 @@ module OpenTelemetry
           def collect(start_time, end_time)
             @mutex.synchronize do
               metric_data = []
+
+              # data points are required to export over OTLP
+              return metric_data if @data_points.empty?
+
               if @registered_views.empty?
                 metric_data << aggregate_metric_data(start_time, end_time)
               else
@@ -68,6 +72,7 @@ module OpenTelemetry
           def aggregate_metric_data(start_time, end_time, aggregation: nil)
             aggregator = aggregation || @default_aggregation
             is_monotonic = aggregator.respond_to?(:monotonic?) ? aggregator.monotonic? : nil
+            aggregation_temporality = aggregator.respond_to?(:aggregation_temporality) ? aggregator.aggregation_temporality : nil
 
             MetricData.new(
               @name,
@@ -77,7 +82,7 @@ module OpenTelemetry
               @meter_provider.resource,
               @instrumentation_scope,
               aggregator.collect(start_time, end_time, @data_points),
-              aggregator.aggregation_temporality,
+              aggregation_temporality,
               start_time,
               end_time,
               is_monotonic
@@ -91,12 +96,12 @@ module OpenTelemetry
           end
 
           def to_s
-            instrument_info = String.new
+            instrument_info = +''
             instrument_info << "name=#{@name}"
             instrument_info << " description=#{@description}" if @description
             instrument_info << " unit=#{@unit}" if @unit
             @data_points.map do |attributes, value|
-              metric_stream_string = String.new
+              metric_stream_string = +''
               metric_stream_string << instrument_info
               metric_stream_string << " attributes=#{attributes}" if attributes
               metric_stream_string << " #{value}"

@@ -26,25 +26,25 @@ requests.
 The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 [community page][ruby-sig] repo for information on this and other language SIGs.
 
-Approvers ([@open-telemetry/ruby-approvers](https://github.com/orgs/open-telemetry/teams/ruby-approvers)):
+### Maintainers
 
-- [Eric Mustin](https://github.com/ericmustin)
-- [Ariel Valentin](https://github.com/arielvalentin), GitHub
-- [Andrew Hayworth](https://github.com/ahayworth), Shopify
-- [Sam Handler](https://github.com/plantfansam), Shopify
-- [Robb Kidd](https://github.com/robbkidd), Honeycomb
-
-*Find more about the approver role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#approver).*
-
-Maintainers ([@open-telemetry/ruby-maintainers](https://github.com/orgs/open-telemetry/teams/ruby-maintainers)):
-
-- [Robert Laurin](https://github.com/robertlaurin), Shopify
-- [Francis Bogsanyi](https://github.com/fbogsany), Shopify
-- [Matthew Wear](https://github.com/mwear), Lightstep
 - [Daniel Azuma](https://github.com/dazuma), Google
+- [Francis Bogsanyi](https://github.com/fbogsany), Shopify
 - [Kayla Reopelle](https://github.com/kaylareopelle), New Relic
+- [Matthew Wear](https://github.com/mwear), Lightstep
+- [Robert Laurin](https://github.com/robertlaurin), Shopify
 
-*Find more about the maintainer role in [community repository](https://github.com/open-telemetry/community/blob/master/community-membership.md#maintainer).*
+For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
+
+### Approvers
+
+- [Andrew Hayworth](https://github.com/ahayworth), Shopify
+- [Ariel Valentin](https://github.com/arielvalentin), GitHub
+- [Eric Mustin](https://github.com/ericmustin)
+- [Robb Kidd](https://github.com/robbkidd), Honeycomb
+- [Sam Handler](https://github.com/plantfansam), Shopify
+
+For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).
 
 ## Contrib Repository
 
