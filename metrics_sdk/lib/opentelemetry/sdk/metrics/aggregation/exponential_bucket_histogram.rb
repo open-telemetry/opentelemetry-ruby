@@ -17,8 +17,6 @@ module OpenTelemetry
       module Aggregation
         # Contains the implementation of the {https://opentelemetry.io/docs/specs/otel/metrics/data-model/#exponentialhistogram ExponentialBucketHistogram} aggregation
         class ExponentialBucketHistogram # rubocop:disable Metrics/ClassLength
-          attr_reader :aggregation_temporality
-
           # relate to min max scale: https://opentelemetry.io/docs/specs/otel/metrics/sdk/#support-a-minimum-and-maximum-scale
           DEFAULT_SIZE  = 160
           DEFAULT_SCALE = 20
@@ -35,7 +33,7 @@ module OpenTelemetry
             record_min_max: true,
             zero_threshold: 0
           )
-            @aggregation_temporality = aggregation_temporality.to_sym
+            @aggregation_temporality = AggregationTemporality.determine_temporality(aggregation_temporality: aggregation_temporality, default: :delta)
             @record_min_max = record_min_max
             @min            = Float::INFINITY
             @max            = -Float::INFINITY
@@ -63,7 +61,7 @@ module OpenTelemetry
           # when aggregation temporality is cumulative, merge and downscale will happen.
           # rubocop:disable Metrics/MethodLength
           def collect(start_time, end_time, data_points)
-            if @aggregation_temporality == :delta
+            if @aggregation_temporality.delta?
               # Set timestamps and 'move' data point values to result.
               # puts "data_points.inspect: #{data_points.inspect}"
               hdps = data_points.values.map! do |hdp|
@@ -299,6 +297,10 @@ module OpenTelemetry
           end
           # rubocop:enable Metrics/MethodLength
 
+          def aggregation_temporality
+            @aggregation_temporality.temporality
+          end
+
           private
 
           def grow_buckets(span, buckets)
@@ -309,6 +311,7 @@ module OpenTelemetry
           end
 
           def new_mapping(scale)
+            scale = validate_scale(scale)
             scale <= 0 ? ExponentialHistogram::ExponentMapping.new(scale) : ExponentialHistogram::LogarithmMapping.new(scale)
           end
 
@@ -339,7 +342,6 @@ module OpenTelemetry
 
           def validate_scale(scale)
             raise ArgumentError, "Scale #{scale} is larger than maximum scale #{MAX_SCALE}" if scale > MAX_SCALE
-
             raise ArgumentError, "Scale #{scale} is smaller than minimum scale #{MIN_SCALE}" if scale < MIN_SCALE
 
             scale
@@ -347,7 +349,6 @@ module OpenTelemetry
 
           def validate_size(size)
             raise ArgumentError, "Buckets min size #{size} is smaller than minimum min size #{MIN_MAX_SIZE}" if size < MIN_MAX_SIZE
-
             raise ArgumentError, "Buckets max size #{size} is larger than maximum max size #{MAX_MAX_SIZE}" if size > MAX_MAX_SIZE
 
             size
