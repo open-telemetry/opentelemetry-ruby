@@ -29,7 +29,6 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableGauge do
     _(last_snapshot[0].instrumentation_scope.name).must_equal('test')
     _(last_snapshot[0].data_points[0].value).must_equal(10)
     _(last_snapshot[0].data_points[0].attributes).must_equal({})
-    _(last_snapshot[0].aggregation_temporality).must_equal(:delta)
   end
 
   it 'counts with observe' do
@@ -49,6 +48,5 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableGauge do
 
     _(last_snapshot[0].data_points[1].value).must_equal(10)
     _(last_snapshot[0].data_points[1].attributes).must_equal({})
-    _(last_snapshot[0].aggregation_temporality).must_equal(:delta)
   end
 end
