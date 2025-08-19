@@ -21,13 +21,11 @@ module OpenTelemetry
         # @raise [ArgumentError] if any of the max numbers are not positive.
         def initialize(attribute_count_limit: Integer(OpenTelemetry::Common::Utilities.config_opt(
                                                         'OTEL_LOGRECORD_ATTRIBUTE_COUNT_LIMIT',
-                                                        'OTEL_LOG_RECORD_ATTRIBUTE_COUNT_LIMIT',
                                                         'OTEL_ATTRIBUTE_COUNT_LIMIT',
                                                         default: 128
                                                       )),
                        attribute_length_limit: OpenTelemetry::Common::Utilities.config_opt(
                          'OTEL_LOGRECORD_ATTRIBUTE_VALUE_LENGTH_LIMIT',
-                         'OTEL_LOG_RECORD_ATTRIBUTE_VALUE_LENGTH_LIMIT',
                          'OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT'
                        ))
           raise ArgumentError, 'attribute_count_limit must be positive' unless attribute_count_limit.positive?
