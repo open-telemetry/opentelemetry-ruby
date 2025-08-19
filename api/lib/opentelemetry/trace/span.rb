@@ -78,6 +78,18 @@ module OpenTelemetry
         self
       end
 
+      # Retrieve attributes
+      #
+      # Note that the OpenTelemetry project
+      # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-semantic-conventions.md
+      # documents} certain "standard attributes" that have prescribed semantic
+      # meanings.
+      #
+      # @return [hash] returns empty hash
+      def attributes
+        {}
+      end
+
       # Add a link to a {Span}.
       #
       # Adding links at span creation using the `links` option is preferred
@@ -121,6 +133,18 @@ module OpenTelemetry
       # @return [self] returns itself
       def add_event(name, attributes: nil, timestamp: nil)
         self
+      end
+
+      # Retrieve events
+      #
+      # Note that the OpenTelemetry project
+      # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-semantic-conventions.md
+      # documents} certain "standard event names and keys" which have
+      # prescribed semantic meanings.
+      #
+      # @return [array] returns empty array
+      def events
+        []
       end
 
       # Record an exception during the execution of this span. Multiple exceptions
