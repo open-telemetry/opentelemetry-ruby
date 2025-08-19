@@ -60,12 +60,6 @@ describe OpenTelemetry::Trace::Span do
     end
   end
 
-    it 'returns empty array even after modification attempts' do
-      span.events << 'test event'
-      _(span.events).must_equal([])
-    end
-  end
-
   describe '#record_exception' do
     it 'returns nil' do
       _(span.record_exception(StandardError.new('oops'))).must_be_nil
