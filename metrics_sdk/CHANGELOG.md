@@ -1,5 +1,9 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.9.0 / 2025-08-19
+
+* ADDED: Add low memory to TEMPORALITY_PREFERENCE
+
 ### v0.8.0 / 2025-08-14
 
 - BREAKING CHANGE: Update default aggregation temporality for counter, histogram, and up down counter to cumulative
