@@ -24,64 +24,64 @@ module OpenTelemetry
       # @!group Metrics Names
     
       # Number of classes currently loaded.
-      # 
+      #
       # @note Stability Level: stable
       JVM_CLASS_COUNT = 'jvm.class.count'
   
       # Number of classes loaded since JVM start.
-      # 
+      #
       # @note Stability Level: stable
       JVM_CLASS_LOADED = 'jvm.class.loaded'
   
       # Number of classes unloaded since JVM start.
-      # 
+      #
       # @note Stability Level: stable
       JVM_CLASS_UNLOADED = 'jvm.class.unloaded'
   
       # Number of processors available to the Java virtual machine.
-      # 
+      #
       # @note Stability Level: stable
       JVM_CPU_COUNT = 'jvm.cpu.count'
   
       # Recent CPU utilization for the process as reported by the JVM.
-      # 
+      #
       # The value range is [0.0,1.0]. This utilization is not defined as being for the specific interval since last measurement (unlike `system.cpu.utilization`). [Reference](https://docs.oracle.com/en/java/javase/17/docs/api/jdk.management/com/sun/management/OperatingSystemMXBean.html#getProcessCpuLoad()).
-      # 
+      #
       # @note Stability Level: stable
       JVM_CPU_RECENT_UTILIZATION = 'jvm.cpu.recent_utilization'
   
       # CPU time used by the process as reported by the JVM.
-      # 
+      #
       # @note Stability Level: stable
       JVM_CPU_TIME = 'jvm.cpu.time'
   
       # Duration of JVM garbage collection actions.
-      # 
+      #
       # @note Stability Level: stable
       JVM_GC_DURATION = 'jvm.gc.duration'
   
       # Measure of memory committed.
-      # 
+      #
       # @note Stability Level: stable
       JVM_MEMORY_COMMITTED = 'jvm.memory.committed'
   
       # Measure of max obtainable memory.
-      # 
+      #
       # @note Stability Level: stable
       JVM_MEMORY_LIMIT = 'jvm.memory.limit'
   
       # Measure of memory used.
-      # 
+      #
       # @note Stability Level: stable
       JVM_MEMORY_USED = 'jvm.memory.used'
   
       # Measure of memory used, as measured after the most recent garbage collection event on this pool.
-      # 
+      #
       # @note Stability Level: stable
       JVM_MEMORY_USED_AFTER_LAST_GC = 'jvm.memory.used_after_last_gc'
   
       # Number of executing platform threads.
-      # 
+      #
       # @note Stability Level: stable
       JVM_THREAD_COUNT = 'jvm.thread.count'
   

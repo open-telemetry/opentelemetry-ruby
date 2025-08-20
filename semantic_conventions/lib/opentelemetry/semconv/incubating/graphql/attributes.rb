@@ -20,43 +20,43 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module GRAPHQL
-      # @!group Attribute Names
+    module Incubating
+      module GRAPHQL
+        # @!group Attribute Names
+      
+        # The GraphQL document being executed.
+        #
+        # The value may be sanitized to exclude sensitive information.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   query findBookById { bookById(id: ?) { name } }
+        #
+        GRAPHQL_DOCUMENT = 'graphql.document'
     
-      # The GraphQL document being executed.
-      # 
-      # The value may be sanitized to exclude sensitive information.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   query findBookById { bookById(id: ?) { name } }
-      #
-      GRAPHQL_DOCUMENT = 'graphql.document'
-  
-      # The name of the operation being executed.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   findBookById
-      #
-      GRAPHQL_OPERATION_NAME = 'graphql.operation.name'
-  
-      # The type of the operation being executed.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   query
-      #   mutation
-      #   subscription
-      #
-      GRAPHQL_OPERATION_TYPE = 'graphql.operation.type'
-  
-      # @!endgroup
+        # The name of the operation being executed.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   findBookById
+        #
+        GRAPHQL_OPERATION_NAME = 'graphql.operation.name'
+    
+        # The type of the operation being executed.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   query
+        #   mutation
+        #   subscription
+        #
+        GRAPHQL_OPERATION_TYPE = 'graphql.operation.type'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

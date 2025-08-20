@@ -20,21 +20,21 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module DISK
-      # @!group Attribute Names
+    module Incubating
+      module DISK
+        # @!group Attribute Names
+      
+        # The disk IO operation direction.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   read
+        #
+        DISK_IO_DIRECTION = 'disk.io.direction'
     
-      # The disk IO operation direction.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   read
-      #
-      DISK_IO_DIRECTION = 'disk.io.direction'
-  
-      # @!endgroup
+        # @!endgroup
+      end
     end
-  end
   end
 end

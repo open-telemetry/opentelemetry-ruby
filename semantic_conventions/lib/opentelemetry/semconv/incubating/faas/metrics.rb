@@ -20,57 +20,57 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module FAAS
-      # @!group Metrics Names
+    module Incubating
+      module FAAS
+        # @!group Metrics Names
+      
+        # Number of invocation cold starts
+        #
+        # @note Stability Level: development
+        FAAS_COLDSTARTS = 'faas.coldstarts'
     
-      # Number of invocation cold starts
-      # 
-      # @note Stability Level: experimental
-      FAAS_COLDSTARTS = 'faas.coldstarts'
-  
-      # Distribution of CPU usage per invocation
-      # 
-      # @note Stability Level: experimental
-      FAAS_CPU_USAGE = 'faas.cpu_usage'
-  
-      # Number of invocation errors
-      # 
-      # @note Stability Level: experimental
-      FAAS_ERRORS = 'faas.errors'
-  
-      # Measures the duration of the function's initialization, such as a cold start
-      # 
-      # @note Stability Level: experimental
-      FAAS_INIT_DURATION = 'faas.init_duration'
-  
-      # Number of successful invocations
-      # 
-      # @note Stability Level: experimental
-      FAAS_INVOCATIONS = 'faas.invocations'
-  
-      # Measures the duration of the function's logic execution
-      # 
-      # @note Stability Level: experimental
-      FAAS_INVOKE_DURATION = 'faas.invoke_duration'
-  
-      # Distribution of max memory usage per invocation
-      # 
-      # @note Stability Level: experimental
-      FAAS_MEM_USAGE = 'faas.mem_usage'
-  
-      # Distribution of net I/O usage per invocation
-      # 
-      # @note Stability Level: experimental
-      FAAS_NET_IO = 'faas.net_io'
-  
-      # Number of invocation timeouts
-      # 
-      # @note Stability Level: experimental
-      FAAS_TIMEOUTS = 'faas.timeouts'
-  
-      # @!endgroup
+        # Distribution of CPU usage per invocation
+        #
+        # @note Stability Level: development
+        FAAS_CPU_USAGE = 'faas.cpu_usage'
+    
+        # Number of invocation errors
+        #
+        # @note Stability Level: development
+        FAAS_ERRORS = 'faas.errors'
+    
+        # Measures the duration of the function's initialization, such as a cold start
+        #
+        # @note Stability Level: development
+        FAAS_INIT_DURATION = 'faas.init_duration'
+    
+        # Number of successful invocations
+        #
+        # @note Stability Level: development
+        FAAS_INVOCATIONS = 'faas.invocations'
+    
+        # Measures the duration of the function's logic execution
+        #
+        # @note Stability Level: development
+        FAAS_INVOKE_DURATION = 'faas.invoke_duration'
+    
+        # Distribution of max memory usage per invocation
+        #
+        # @note Stability Level: development
+        FAAS_MEM_USAGE = 'faas.mem_usage'
+    
+        # Distribution of net I/O usage per invocation
+        #
+        # @note Stability Level: development
+        FAAS_NET_IO = 'faas.net_io'
+    
+        # Number of invocation timeouts
+        #
+        # @note Stability Level: development
+        FAAS_TIMEOUTS = 'faas.timeouts'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

@@ -20,39 +20,39 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module WEBENGINE
-      # @!group Attribute Names
+    module Incubating
+      module WEBENGINE
+        # @!group Attribute Names
+      
+        # Additional description of the web engine (e.g. detailed version and edition information).
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   WildFly Full 21.0.0.Final (WildFly Core 13.0.1.Final) - 2.2.2.Final
+        #
+        WEBENGINE_DESCRIPTION = 'webengine.description'
     
-      # Additional description of the web engine (e.g. detailed version and edition information).
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   WildFly Full 21.0.0.Final (WildFly Core 13.0.1.Final) - 2.2.2.Final
-      #
-      WEBENGINE_DESCRIPTION = 'webengine.description'
-  
-      # The name of the web engine.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   WildFly
-      #
-      WEBENGINE_NAME = 'webengine.name'
-  
-      # The version of the web engine.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   21.0.0
-      #
-      WEBENGINE_VERSION = 'webengine.version'
-  
-      # @!endgroup
+        # The name of the web engine.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   WildFly
+        #
+        WEBENGINE_NAME = 'webengine.name'
+    
+        # The version of the web engine.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   21.0.0
+        #
+        WEBENGINE_VERSION = 'webengine.version'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

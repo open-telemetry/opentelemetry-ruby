@@ -20,20 +20,25 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module IOS
-      # @!group Attribute Names
+    module Incubating
+      module IOS
+        # @!group Attribute Names
+      
+        # This attribute represents the state of the application.
+        #
+        # The iOS lifecycle states are defined in the [UIApplicationDelegate documentation](https://developer.apple.com/documentation/uikit/uiapplicationdelegate), and from which the `OS terminology` column values are derived.
+        #
+        # @note Stability Level: development
+        IOS_APP_STATE = 'ios.app.state'
     
-      # Deprecated use the `device.app.lifecycle` event definition including `ios.state` as a payload field instead.
-      # 
-      # The iOS lifecycle states are defined in the [UIApplicationDelegate documentation](https://developer.apple.com/documentation/uikit/uiapplicationdelegate#1656902), and from which the `OS terminology` column values are derived.
-      # 
-      # @note Stability Level: experimental
-      # @deprecated Moved to a payload field of `device.app.lifecycle`.
-      IOS_STATE = 'ios.state'
-  
-      # @!endgroup
+        # The iOS lifecycle states are defined in the [UIApplicationDelegate documentation](https://developer.apple.com/documentation/uikit/uiapplicationdelegate), and from which the `OS terminology` column values are derived.
+        #
+        # @note Stability Level: development
+        # @deprecated {"note": "Replaced by the `ios.app.state` event body field.", "reason": "uncategorized"}
+        IOS_STATE = 'ios.state'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

@@ -24,7 +24,7 @@ module OpenTelemetry
       # @!group Attribute Names
     
       # SignalR HTTP connection closure status.
-      # 
+      #
       # @note Stability Level: stable
       #
       # @example Sample Values
@@ -34,7 +34,7 @@ module OpenTelemetry
       SIGNALR_CONNECTION_STATUS = 'signalr.connection.status'
   
       # [SignalR transport type](https://github.com/dotnet/aspnetcore/blob/main/src/SignalR/docs/specs/TransportProtocols.md)
-      # 
+      #
       # @note Stability Level: stable
       #
       # @example Sample Values

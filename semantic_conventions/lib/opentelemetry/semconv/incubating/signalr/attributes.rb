@@ -20,36 +20,36 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module SIGNALR
-      # @!group Attribute Names
+    module Incubating
+      module SIGNALR
+        # @!group Attribute Names
+      
+        # SignalR HTTP connection closure status.
+        #
+        # @note Stability Level: stable
+        #
+        # @example Sample Values
+        #   app_shutdown
+        #   timeout
+        #
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::SIGNALR::SIGNALR_CONNECTION_STATUS}.
+        SIGNALR_CONNECTION_STATUS = 'signalr.connection.status'
     
-      # SignalR HTTP connection closure status.
-      # 
-      # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   app_shutdown
-      #   timeout
-      #
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::SIGNALR::SIGNALR_CONNECTION_STATUS}.
-      SIGNALR_CONNECTION_STATUS = 'signalr.connection.status'
-  
-      # [SignalR transport type](https://github.com/dotnet/aspnetcore/blob/main/src/SignalR/docs/specs/TransportProtocols.md)
-      # 
-      # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   web_sockets
-      #   long_polling
-      #
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::SIGNALR::SIGNALR_TRANSPORT}.
-      SIGNALR_TRANSPORT = 'signalr.transport'
-  
-      # @!endgroup
+        # [SignalR transport type](https://github.com/dotnet/aspnetcore/blob/main/src/SignalR/docs/specs/TransportProtocols.md)
+        #
+        # @note Stability Level: stable
+        #
+        # @example Sample Values
+        #   web_sockets
+        #   long_polling
+        #
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::SIGNALR::SIGNALR_TRANSPORT}.
+        SIGNALR_TRANSPORT = 'signalr.transport'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

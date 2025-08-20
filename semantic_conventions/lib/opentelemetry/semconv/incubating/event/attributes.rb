@@ -20,24 +20,23 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module EVENT
-      # @!group Attribute Names
+    module Incubating
+      module EVENT
+        # @!group Attribute Names
+      
+        # Identifies the class / type of event.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   browser.mouse.click
+        #   device.app.lifecycle
+        #
+        # @deprecated {"note": "Replaced by EventName top-level field on the LogRecord.\n", "reason": "uncategorized"}
+        EVENT_NAME = 'event.name'
     
-      # Identifies the class / type of event.
-      # 
-      # Event names are subject to the same rules as [attribute names](https://github.com/open-telemetry/opentelemetry-specification/tree/v1.33.0/specification/common/attribute-naming.md). Notably, event names are namespaced to avoid collisions and provide a clean separation of semantics for events in separate domains like browser, mobile, and kubernetes.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   browser.mouse.click
-      #   device.app.lifecycle
-      #
-      EVENT_NAME = 'event.name'
-  
-      # @!endgroup
+        # @!endgroup
+      end
     end
-  end
   end
 end

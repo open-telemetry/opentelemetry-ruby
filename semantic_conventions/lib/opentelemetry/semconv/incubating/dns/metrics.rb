@@ -20,17 +20,17 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module DNS
-      # @!group Metrics Names
+    module Incubating
+      module DNS
+        # @!group Metrics Names
+      
+        # Measures the time taken to perform a DNS lookup.
+        #
+        # @note Stability Level: development
+        DNS_LOOKUP_DURATION = 'dns.lookup.duration'
     
-      # Measures the time taken to perform a DNS lookup.
-      # 
-      # @note Stability Level: experimental
-      DNS_LOOKUP_DURATION = 'dns.lookup.duration'
-  
-      # @!endgroup
+        # @!endgroup
+      end
     end
-  end
   end
 end

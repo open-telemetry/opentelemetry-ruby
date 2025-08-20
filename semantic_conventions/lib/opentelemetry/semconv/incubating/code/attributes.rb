@@ -20,66 +20,136 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module CODE
-      # @!group Attribute Names
+    module Incubating
+      module CODE
+        # @!group Attribute Names
+      
+        # Deprecated, use `code.column.number`
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   16
+        #
+        # @deprecated {"note": "Replaced by `code.column.number`.", "reason": "renamed", "renamed_to": "code.column.number"}
+        CODE_COLUMN = 'code.column'
     
-      # The column number in `code.filepath` best representing the operation. It SHOULD point within the code unit named in `code.function`.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   16
-      #
-      CODE_COLUMN = 'code.column'
-  
-      # The source code file name that identifies the code unit as uniquely as possible (preferably an absolute file path).
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   /usr/local/MyApplication/content_root/app/index.php
-      #
-      CODE_FILEPATH = 'code.filepath'
-  
-      # The method or function name, or equivalent (usually rightmost part of the code unit's name).
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   serveRequest
-      #
-      CODE_FUNCTION = 'code.function'
-  
-      # The line number in `code.filepath` best representing the operation. It SHOULD point within the code unit named in `code.function`.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   42
-      #
-      CODE_LINENO = 'code.lineno'
-  
-      # The "namespace" within which `code.function` is defined. Usually the qualified class or module name, such that `code.namespace` + some separator + `code.function` form a unique identifier for the code unit.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   com.example.MyHttpService
-      #
-      CODE_NAMESPACE = 'code.namespace'
-  
-      # A stacktrace as a string in the natural representation for the language runtime. The representation is to be determined and documented by each language SIG.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   at com.example.GenerateTrace.methodB(GenerateTrace.java:13)\n at com.example.GenerateTrace.methodA(GenerateTrace.java:9)\n at com.example.GenerateTrace.main(GenerateTrace.java:5)
-      #
-      CODE_STACKTRACE = 'code.stacktrace'
-  
-      # @!endgroup
+        # The column number in `code.file.path` best representing the operation. It SHOULD point within the code unit named in `code.function.name`. This attribute MUST NOT be used on the Profile signal since the data is already captured in 'message Line'. This constraint is imposed to prevent redundancy and maintain data integrity.
+        #
+        # @note Stability Level: stable
+        #
+        # @example Sample Values
+        #   16
+        #
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::CODE::CODE_COLUMN_NUMBER}.
+        CODE_COLUMN_NUMBER = 'code.column.number'
+    
+        # The source code file name that identifies the code unit as uniquely as possible (preferably an absolute file path). This attribute MUST NOT be used on the Profile signal since the data is already captured in 'message Function'. This constraint is imposed to prevent redundancy and maintain data integrity.
+        #
+        # @note Stability Level: stable
+        #
+        # @example Sample Values
+        #   /usr/local/MyApplication/content_root/app/index.php
+        #
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::CODE::CODE_FILE_PATH}.
+        CODE_FILE_PATH = 'code.file.path'
+    
+        # Deprecated, use `code.file.path` instead
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   /usr/local/MyApplication/content_root/app/index.php
+        #
+        # @deprecated {"note": "Replaced by `code.file.path`.", "reason": "renamed", "renamed_to": "code.file.path"}
+        CODE_FILEPATH = 'code.filepath'
+    
+        # Deprecated, use `code.function.name` instead
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   serveRequest
+        #
+        # @deprecated {"note": "Value should be included in `code.function.name` which is expected to be a fully-qualified name.\n", "reason": "uncategorized"}
+        CODE_FUNCTION = 'code.function'
+    
+        # The method or function fully-qualified name without arguments. The value should fit the natural representation of the language runtime, which is also likely the same used within `code.stacktrace` attribute value. This attribute MUST NOT be used on the Profile signal since the data is already captured in 'message Function'. This constraint is imposed to prevent redundancy and maintain data integrity.
+        #
+        # Values and format depends on each language runtime, thus it is impossible to provide an exhaustive list of examples.
+        # The values are usually the same (or prefixes of) the ones found in native stack trace representation stored in
+        # `code.stacktrace` without information on arguments.
+        #
+        # Examples:
+        #
+        # - Java method: `com.example.MyHttpService.serveRequest`
+        # - Java anonymous class method: `com.mycompany.Main$1.myMethod`
+        # - Java lambda method: `com.mycompany.Main$$Lambda/0x0000748ae4149c00.myMethod`
+        # - PHP function: `GuzzleHttp\Client::transfer`
+        # - Go function: `github.com/my/repo/pkg.foo.func5`
+        # - Elixir: `OpenTelemetry.Ctx.new`
+        # - Erlang: `opentelemetry_ctx:new`
+        # - Rust: `playground::my_module::my_cool_func`
+        # - C function: `fopen`
+        #
+        # @note Stability Level: stable
+        #
+        # @example Sample Values
+        #   com.example.MyHttpService.serveRequest
+        #   GuzzleHttp\Client::transfer
+        #   fopen
+        #
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::CODE::CODE_FUNCTION_NAME}.
+        CODE_FUNCTION_NAME = 'code.function.name'
+    
+        # The line number in `code.file.path` best representing the operation. It SHOULD point within the code unit named in `code.function.name`. This attribute MUST NOT be used on the Profile signal since the data is already captured in 'message Line'. This constraint is imposed to prevent redundancy and maintain data integrity.
+        #
+        # @note Stability Level: stable
+        #
+        # @example Sample Values
+        #   42
+        #
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::CODE::CODE_LINE_NUMBER}.
+        CODE_LINE_NUMBER = 'code.line.number'
+    
+        # Deprecated, use `code.line.number` instead
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   42
+        #
+        # @deprecated {"note": "Replaced by `code.line.number`.", "reason": "renamed", "renamed_to": "code.line.number"}
+        CODE_LINENO = 'code.lineno'
+    
+        # Deprecated, namespace is now included into `code.function.name`
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   com.example.MyHttpService
+        #
+        # @deprecated {"note": "Value should be included in `code.function.name` which is expected to be a fully-qualified name.\n", "reason": "uncategorized"}
+        CODE_NAMESPACE = 'code.namespace'
+    
+        # A stacktrace as a string in the natural representation for the language runtime. The representation is identical to [`exception.stacktrace`](/docs/exceptions/exceptions-spans.md#stacktrace-representation). This attribute MUST NOT be used on the Profile signal since the data is already captured in 'message Location'. This constraint is imposed to prevent redundancy and maintain data integrity.
+        #
+        # @note Stability Level: stable
+        #
+        # @example Sample Values
+        #   at com.example.GenerateTrace.methodB(GenerateTrace.java:13)\n at com.example.GenerateTrace.methodA(GenerateTrace.java:9)\n at com.example.GenerateTrace.main(GenerateTrace.java:5)
+
+        #
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::CODE::CODE_STACKTRACE}.
+        CODE_STACKTRACE = 'code.stacktrace'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

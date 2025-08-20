@@ -20,116 +20,137 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module DB
-      # @!group Metrics Names
+    module Incubating
+      module DB
+        # @!group Metrics Names
+      
+        # The number of connections that are currently in state described by the `state` attribute
+        #
+        # @note Stability Level: development
+        DB_CLIENT_CONNECTION_COUNT = 'db.client.connection.count'
     
-      # The number of connections that are currently in state described by the `state` attribute
-      # 
-      # @note Stability Level: experimental
-      DB_CLIENT_CONNECTION_COUNT = 'db.client.connection.count'
-  
-      # The time it took to create a new connection
-      # 
-      # @note Stability Level: experimental
-      DB_CLIENT_CONNECTION_CREATE_TIME = 'db.client.connection.create_time'
-  
-      # The maximum number of idle open connections allowed
-      # 
-      # @note Stability Level: experimental
-      DB_CLIENT_CONNECTION_IDLE_MAX = 'db.client.connection.idle.max'
-  
-      # The minimum number of idle open connections allowed
-      # 
-      # @note Stability Level: experimental
-      DB_CLIENT_CONNECTION_IDLE_MIN = 'db.client.connection.idle.min'
-  
-      # The maximum number of open connections allowed
-      # 
-      # @note Stability Level: experimental
-      DB_CLIENT_CONNECTION_MAX = 'db.client.connection.max'
-  
-      # The number of pending requests for an open connection, cumulative for the entire pool
-      # 
-      # @note Stability Level: experimental
-      DB_CLIENT_CONNECTION_PENDING_REQUESTS = 'db.client.connection.pending_requests'
-  
-      # The number of connection timeouts that have occurred trying to obtain a connection from the pool
-      # 
-      # @note Stability Level: experimental
-      DB_CLIENT_CONNECTION_TIMEOUTS = 'db.client.connection.timeouts'
-  
-      # The time between borrowing a connection and returning it to the pool
-      # 
-      # @note Stability Level: experimental
-      DB_CLIENT_CONNECTION_USE_TIME = 'db.client.connection.use_time'
-  
-      # The time it took to obtain an open connection from the pool
-      # 
-      # @note Stability Level: experimental
-      DB_CLIENT_CONNECTION_WAIT_TIME = 'db.client.connection.wait_time'
-  
-      # Deprecated, use `db.client.connection.create_time` instead. Note: the unit also changed from `ms` to `s`.
-      # 
-      # @note Stability Level: experimental
-      # @deprecated Replaced by `db.client.connection.create_time`. Note: the unit also changed from `ms` to `s`.
-      DB_CLIENT_CONNECTIONS_CREATE_TIME = 'db.client.connections.create_time'
-  
-      # Deprecated, use `db.client.connection.idle.max` instead.
-      # 
-      # @note Stability Level: experimental
-      # @deprecated Replaced by `db.client.connection.idle.max`.
-      DB_CLIENT_CONNECTIONS_IDLE_MAX = 'db.client.connections.idle.max'
-  
-      # Deprecated, use `db.client.connection.idle.min` instead.
-      # 
-      # @note Stability Level: experimental
-      # @deprecated Replaced by `db.client.connection.idle.min`.
-      DB_CLIENT_CONNECTIONS_IDLE_MIN = 'db.client.connections.idle.min'
-  
-      # Deprecated, use `db.client.connection.max` instead.
-      # 
-      # @note Stability Level: experimental
-      # @deprecated Replaced by `db.client.connection.max`.
-      DB_CLIENT_CONNECTIONS_MAX = 'db.client.connections.max'
-  
-      # Deprecated, use `db.client.connection.pending_requests` instead.
-      # 
-      # @note Stability Level: experimental
-      # @deprecated Replaced by `db.client.connection.pending_requests`.
-      DB_CLIENT_CONNECTIONS_PENDING_REQUESTS = 'db.client.connections.pending_requests'
-  
-      # Deprecated, use `db.client.connection.timeouts` instead.
-      # 
-      # @note Stability Level: experimental
-      # @deprecated Replaced by `db.client.connection.timeouts`.
-      DB_CLIENT_CONNECTIONS_TIMEOUTS = 'db.client.connections.timeouts'
-  
-      # Deprecated, use `db.client.connection.count` instead.
-      # 
-      # @note Stability Level: experimental
-      # @deprecated Replaced by `db.client.connection.count`.
-      DB_CLIENT_CONNECTIONS_USAGE = 'db.client.connections.usage'
-  
-      # Deprecated, use `db.client.connection.use_time` instead. Note: the unit also changed from `ms` to `s`.
-      # 
-      # @note Stability Level: experimental
-      # @deprecated Replaced by `db.client.connection.use_time`. Note: the unit also changed from `ms` to `s`.
-      DB_CLIENT_CONNECTIONS_USE_TIME = 'db.client.connections.use_time'
-  
-      # Deprecated, use `db.client.connection.wait_time` instead. Note: the unit also changed from `ms` to `s`.
-      # 
-      # @note Stability Level: experimental
-      # @deprecated Replaced by `db.client.connection.wait_time`. Note: the unit also changed from `ms` to `s`.
-      DB_CLIENT_CONNECTIONS_WAIT_TIME = 'db.client.connections.wait_time'
-  
-      # Duration of database client operations.
-      # 
-      # @note Stability Level: experimental
-      DB_CLIENT_OPERATION_DURATION = 'db.client.operation.duration'
-  
-      # @!endgroup
+        # The time it took to create a new connection
+        #
+        # @note Stability Level: development
+        DB_CLIENT_CONNECTION_CREATE_TIME = 'db.client.connection.create_time'
+    
+        # The maximum number of idle open connections allowed
+        #
+        # @note Stability Level: development
+        DB_CLIENT_CONNECTION_IDLE_MAX = 'db.client.connection.idle.max'
+    
+        # The minimum number of idle open connections allowed
+        #
+        # @note Stability Level: development
+        DB_CLIENT_CONNECTION_IDLE_MIN = 'db.client.connection.idle.min'
+    
+        # The maximum number of open connections allowed
+        #
+        # @note Stability Level: development
+        DB_CLIENT_CONNECTION_MAX = 'db.client.connection.max'
+    
+        # The number of current pending requests for an open connection
+        #
+        # @note Stability Level: development
+        DB_CLIENT_CONNECTION_PENDING_REQUESTS = 'db.client.connection.pending_requests'
+    
+        # The number of connection timeouts that have occurred trying to obtain a connection from the pool
+        #
+        # @note Stability Level: development
+        DB_CLIENT_CONNECTION_TIMEOUTS = 'db.client.connection.timeouts'
+    
+        # The time between borrowing a connection and returning it to the pool
+        #
+        # @note Stability Level: development
+        DB_CLIENT_CONNECTION_USE_TIME = 'db.client.connection.use_time'
+    
+        # The time it took to obtain an open connection from the pool
+        #
+        # @note Stability Level: development
+        DB_CLIENT_CONNECTION_WAIT_TIME = 'db.client.connection.wait_time'
+    
+        # Deprecated, use `db.client.connection.create_time` instead. Note: the unit also changed from `ms` to `s`.
+        #
+        # @note Stability Level: development
+        # @deprecated {"note": "Replaced by `db.client.connection.create_time` with unit `s`.", "reason": "uncategorized"}
+        DB_CLIENT_CONNECTIONS_CREATE_TIME = 'db.client.connections.create_time'
+    
+        # Deprecated, use `db.client.connection.idle.max` instead.
+        #
+        # @note Stability Level: development
+        # @deprecated {"note": "Replaced by `db.client.connection.idle.max`.", "reason": "renamed", "renamed_to": "db.client.connection.idle.max"}
+        DB_CLIENT_CONNECTIONS_IDLE_MAX = 'db.client.connections.idle.max'
+    
+        # Deprecated, use `db.client.connection.idle.min` instead.
+        #
+        # @note Stability Level: development
+        # @deprecated {"note": "Replaced by `db.client.connection.idle.min`.", "reason": "renamed", "renamed_to": "db.client.connection.idle.min"}
+        DB_CLIENT_CONNECTIONS_IDLE_MIN = 'db.client.connections.idle.min'
+    
+        # Deprecated, use `db.client.connection.max` instead.
+        #
+        # @note Stability Level: development
+        # @deprecated {"note": "Replaced by `db.client.connection.max`.", "reason": "renamed", "renamed_to": "db.client.connection.max"}
+        DB_CLIENT_CONNECTIONS_MAX = 'db.client.connections.max'
+    
+        # Deprecated, use `db.client.connection.pending_requests` instead.
+        #
+        # @note Stability Level: development
+        # @deprecated {"note": "Replaced by `db.client.connection.pending_requests`.", "reason": "renamed", "renamed_to": "db.client.connection.pending_requests"}
+        DB_CLIENT_CONNECTIONS_PENDING_REQUESTS = 'db.client.connections.pending_requests'
+    
+        # Deprecated, use `db.client.connection.timeouts` instead.
+        #
+        # @note Stability Level: development
+        # @deprecated {"note": "Replaced by `db.client.connection.timeouts`.", "reason": "renamed", "renamed_to": "db.client.connection.timeouts"}
+        DB_CLIENT_CONNECTIONS_TIMEOUTS = 'db.client.connections.timeouts'
+    
+        # Deprecated, use `db.client.connection.count` instead.
+        #
+        # @note Stability Level: development
+        # @deprecated {"note": "Replaced by `db.client.connection.count`.", "reason": "renamed", "renamed_to": "db.client.connection.count"}
+        DB_CLIENT_CONNECTIONS_USAGE = 'db.client.connections.usage'
+    
+        # Deprecated, use `db.client.connection.use_time` instead. Note: the unit also changed from `ms` to `s`.
+        #
+        # @note Stability Level: development
+        # @deprecated {"note": "Replaced by `db.client.connection.use_time` with unit `s`.", "reason": "uncategorized"}
+        DB_CLIENT_CONNECTIONS_USE_TIME = 'db.client.connections.use_time'
+    
+        # Deprecated, use `db.client.connection.wait_time` instead. Note: the unit also changed from `ms` to `s`.
+        #
+        # @note Stability Level: development
+        # @deprecated {"note": "Replaced by `db.client.connection.wait_time` with unit `s`.", "reason": "uncategorized"}
+        DB_CLIENT_CONNECTIONS_WAIT_TIME = 'db.client.connections.wait_time'
+    
+        # Deprecated, use `azure.cosmosdb.client.active_instance.count` instead.
+        #
+        # @note Stability Level: development
+        # @deprecated {"note": "Replaced by `azure.cosmosdb.client.active_instance.count`.", "reason": "renamed", "renamed_to": "azure.cosmosdb.client.active_instance.count"}
+        DB_CLIENT_COSMOSDB_ACTIVE_INSTANCE_COUNT = 'db.client.cosmosdb.active_instance.count'
+    
+        # Deprecated, use `azure.cosmosdb.client.operation.request_charge` instead.
+        #
+        # @note Stability Level: development
+        # @deprecated {"note": "Replaced by `azure.cosmosdb.client.operation.request_charge`.", "reason": "renamed", "renamed_to": "azure.cosmosdb.client.operation.request_charge"}
+        DB_CLIENT_COSMOSDB_OPERATION_REQUEST_CHARGE = 'db.client.cosmosdb.operation.request_charge'
+    
+        # Duration of database client operations.
+        #
+        # Batch operations SHOULD be recorded as a single operation.
+        #
+        # @note Stability Level: stable
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DB::DB_CLIENT_OPERATION_DURATION}.
+        DB_CLIENT_OPERATION_DURATION = 'db.client.operation.duration'
+    
+        # The actual number of records returned by the database operation.
+        #
+        # @note Stability Level: development
+        DB_CLIENT_RESPONSE_RETURNED_ROWS = 'db.client.response.returned_rows'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

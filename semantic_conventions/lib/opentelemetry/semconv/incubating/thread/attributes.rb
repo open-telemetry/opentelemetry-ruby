@@ -20,30 +20,30 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module THREAD
-      # @!group Attribute Names
+    module Incubating
+      module THREAD
+        # @!group Attribute Names
+      
+        # Current "managed" thread ID (as opposed to OS thread ID).
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   42
+        #
+        THREAD_ID = 'thread.id'
     
-      # Current "managed" thread ID (as opposed to OS thread ID).
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   42
-      #
-      THREAD_ID = 'thread.id'
-  
-      # Current thread name.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   main
-      #
-      THREAD_NAME = 'thread.name'
-  
-      # @!endgroup
+        # Current thread name.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   main
+        #
+        THREAD_NAME = 'thread.name'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

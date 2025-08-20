@@ -20,46 +20,62 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module ERROR
-      # @!group Attribute Names
+    module Incubating
+      module ERROR
+        # @!group Attribute Names
+      
+        # A message providing more detail about an error in human-readable form.
+        #
+        # `error.message` should provide additional context and detail about an error.
+        # It is NOT RECOMMENDED to duplicate the value of `error.type` in `error.message`.
+        # It is also NOT RECOMMENDED to duplicate the value of `exception.message` in `error.message`.
+        #
+        # `error.message` is NOT RECOMMENDED for metrics or spans due to its unbounded cardinality and overlap with span status.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   Unexpected input type: string
+        #   The user has exceeded their storage quota
+        #
+        ERROR_MESSAGE = 'error.message'
     
-      # Describes a class of error the operation ended with.
-      # 
-      # The `error.type` SHOULD be predictable, and SHOULD have low cardinality.
-      # 
-      # When `error.type` is set to a type (e.g., an exception type), its
-      # canonical class name identifying the type within the artifact SHOULD be used.
-      # 
-      # Instrumentations SHOULD document the list of errors they report.
-      # 
-      # The cardinality of `error.type` within one instrumentation library SHOULD be low.
-      # Telemetry consumers that aggregate data from multiple instrumentation libraries and applications
-      # should be prepared for `error.type` to have high cardinality at query time when no
-      # additional filters are applied.
-      # 
-      # If the operation has completed successfully, instrumentations SHOULD NOT set `error.type`.
-      # 
-      # If a specific domain defines its own set of error identifiers (such as HTTP or gRPC status codes),
-      # it's RECOMMENDED to:
-      # 
-      # - Use a domain-specific attribute
-      # - Set `error.type` to capture all errors, regardless of whether they are defined within the domain-specific set or not.
-      # 
-      # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   timeout
-      #   java.net.UnknownHostException
-      #   server_certificate_invalid
-      #   500
-      #
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ERROR::ERROR_TYPE}.
-      ERROR_TYPE = 'error.type'
-  
-      # @!endgroup
+        # Describes a class of error the operation ended with.
+        #
+        # The `error.type` SHOULD be predictable, and SHOULD have low cardinality.
+        #
+        # When `error.type` is set to a type (e.g., an exception type), its
+        # canonical class name identifying the type within the artifact SHOULD be used.
+        #
+        # Instrumentations SHOULD document the list of errors they report.
+        #
+        # The cardinality of `error.type` within one instrumentation library SHOULD be low.
+        # Telemetry consumers that aggregate data from multiple instrumentation libraries and applications
+        # should be prepared for `error.type` to have high cardinality at query time when no
+        # additional filters are applied.
+        #
+        # If the operation has completed successfully, instrumentations SHOULD NOT set `error.type`.
+        #
+        # If a specific domain defines its own set of error identifiers (such as HTTP or gRPC status codes),
+        # it's RECOMMENDED to:
+        #
+        # - Use a domain-specific attribute
+        # - Set `error.type` to capture all errors, regardless of whether they are defined within the domain-specific set or not.
+        #
+        # @note Stability Level: stable
+        #
+        # @example Sample Values
+        #   timeout
+        #   java.net.UnknownHostException
+        #   server_certificate_invalid
+        #   500
+        #
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ERROR::ERROR_TYPE}.
+        ERROR_TYPE = 'error.type'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

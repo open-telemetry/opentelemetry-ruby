@@ -20,19 +20,19 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module OPENTRACING
-      # @!group Attribute Names
+    module Incubating
+      module OPENTRACING
+        # @!group Attribute Names
+      
+        # Parent-child Reference type
+        #
+        # The causal relationship between a child Span and a parent Span.
+        #
+        # @note Stability Level: development
+        OPENTRACING_REF_TYPE = 'opentracing.ref_type'
     
-      # Parent-child Reference type
-      # 
-      # The causal relationship between a child Span and a parent Span.
-      # 
-      # @note Stability Level: experimental
-      OPENTRACING_REF_TYPE = 'opentracing.ref_type'
-  
-      # @!endgroup
+        # @!endgroup
+      end
     end
-  end
   end
 end

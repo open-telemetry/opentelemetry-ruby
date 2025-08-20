@@ -20,156 +20,156 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module NET
-      # @!group Attribute Names
+    module Incubating
+      module NET
+        # @!group Attribute Names
+      
+        # Deprecated, use `network.local.address`.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   192.168.0.1
+        #
+        # @deprecated {"note": "Replaced by `network.local.address`.", "reason": "renamed", "renamed_to": "network.local.address"}
+        NET_HOST_IP = 'net.host.ip'
     
-      # Deprecated, use `network.local.address`.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   192.168.0.1
-      #
-      # @deprecated Replaced by `network.local.address`.
-      NET_HOST_IP = 'net.host.ip'
-  
-      # Deprecated, use `server.address`.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   example.com
-      #
-      # @deprecated Replaced by `server.address`.
-      NET_HOST_NAME = 'net.host.name'
-  
-      # Deprecated, use `server.port`.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   8080
-      #
-      # @deprecated Replaced by `server.port`.
-      NET_HOST_PORT = 'net.host.port'
-  
-      # Deprecated, use `network.peer.address`.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   127.0.0.1
-      #
-      # @deprecated Replaced by `network.peer.address`.
-      NET_PEER_IP = 'net.peer.ip'
-  
-      # Deprecated, use `server.address` on client spans and `client.address` on server spans.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   example.com
-      #
-      # @deprecated Replaced by `server.address` on client spans and `client.address` on server spans.
-      NET_PEER_NAME = 'net.peer.name'
-  
-      # Deprecated, use `server.port` on client spans and `client.port` on server spans.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   8080
-      #
-      # @deprecated Replaced by `server.port` on client spans and `client.port` on server spans.
-      NET_PEER_PORT = 'net.peer.port'
-  
-      # Deprecated, use `network.protocol.name`.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   amqp
-      #   http
-      #   mqtt
-      #
-      # @deprecated Replaced by `network.protocol.name`.
-      NET_PROTOCOL_NAME = 'net.protocol.name'
-  
-      # Deprecated, use `network.protocol.version`.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   3.1.1
-      #
-      # @deprecated Replaced by `network.protocol.version`.
-      NET_PROTOCOL_VERSION = 'net.protocol.version'
-  
-      # Deprecated, use `network.transport` and `network.type`.
-      # 
-      # @note Stability Level: experimental
-      # @deprecated Split to `network.transport` and `network.type`.
-      NET_SOCK_FAMILY = 'net.sock.family'
-  
-      # Deprecated, use `network.local.address`.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   /var/my.sock
-      #
-      # @deprecated Replaced by `network.local.address`.
-      NET_SOCK_HOST_ADDR = 'net.sock.host.addr'
-  
-      # Deprecated, use `network.local.port`.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   8080
-      #
-      # @deprecated Replaced by `network.local.port`.
-      NET_SOCK_HOST_PORT = 'net.sock.host.port'
-  
-      # Deprecated, use `network.peer.address`.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   192.168.0.1
-      #
-      # @deprecated Replaced by `network.peer.address`.
-      NET_SOCK_PEER_ADDR = 'net.sock.peer.addr'
-  
-      # Deprecated, no replacement at this time.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   /var/my.sock
-      #
-      # @deprecated Removed.
-      NET_SOCK_PEER_NAME = 'net.sock.peer.name'
-  
-      # Deprecated, use `network.peer.port`.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   65531
-      #
-      # @deprecated Replaced by `network.peer.port`.
-      NET_SOCK_PEER_PORT = 'net.sock.peer.port'
-  
-      # Deprecated, use `network.transport`.
-      # 
-      # @note Stability Level: experimental
-      # @deprecated Replaced by `network.transport`.
-      NET_TRANSPORT = 'net.transport'
-  
-      # @!endgroup
+        # Deprecated, use `server.address`.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   example.com
+        #
+        # @deprecated {"note": "Replaced by `server.address`.", "reason": "renamed", "renamed_to": "server.address"}
+        NET_HOST_NAME = 'net.host.name'
+    
+        # Deprecated, use `server.port`.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   8080
+        #
+        # @deprecated {"note": "Replaced by `server.port`.", "reason": "renamed", "renamed_to": "server.port"}
+        NET_HOST_PORT = 'net.host.port'
+    
+        # Deprecated, use `network.peer.address`.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   127.0.0.1
+        #
+        # @deprecated {"note": "Replaced by `network.peer.address`.", "reason": "renamed", "renamed_to": "network.peer.address"}
+        NET_PEER_IP = 'net.peer.ip'
+    
+        # Deprecated, use `server.address` on client spans and `client.address` on server spans.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   example.com
+        #
+        # @deprecated {"note": "Replaced by `server.address` on client spans and `client.address` on server spans.", "reason": "uncategorized"}
+        NET_PEER_NAME = 'net.peer.name'
+    
+        # Deprecated, use `server.port` on client spans and `client.port` on server spans.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   8080
+        #
+        # @deprecated {"note": "Replaced by `server.port` on client spans and `client.port` on server spans.", "reason": "uncategorized"}
+        NET_PEER_PORT = 'net.peer.port'
+    
+        # Deprecated, use `network.protocol.name`.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   amqp
+        #   http
+        #   mqtt
+        #
+        # @deprecated {"note": "Replaced by `network.protocol.name`.", "reason": "renamed", "renamed_to": "network.protocol.name"}
+        NET_PROTOCOL_NAME = 'net.protocol.name'
+    
+        # Deprecated, use `network.protocol.version`.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   3.1.1
+        #
+        # @deprecated {"note": "Replaced by `network.protocol.version`.", "reason": "renamed", "renamed_to": "network.protocol.version"}
+        NET_PROTOCOL_VERSION = 'net.protocol.version'
+    
+        # Deprecated, use `network.transport` and `network.type`.
+        #
+        # @note Stability Level: development
+        # @deprecated {"note": "Split to `network.transport` and `network.type`.", "reason": "uncategorized"}
+        NET_SOCK_FAMILY = 'net.sock.family'
+    
+        # Deprecated, use `network.local.address`.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   /var/my.sock
+        #
+        # @deprecated {"note": "Replaced by `network.local.address`.", "reason": "renamed", "renamed_to": "network.local.address"}
+        NET_SOCK_HOST_ADDR = 'net.sock.host.addr'
+    
+        # Deprecated, use `network.local.port`.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   8080
+        #
+        # @deprecated {"note": "Replaced by `network.local.port`.", "reason": "renamed", "renamed_to": "network.local.port"}
+        NET_SOCK_HOST_PORT = 'net.sock.host.port'
+    
+        # Deprecated, use `network.peer.address`.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   192.168.0.1
+        #
+        # @deprecated {"note": "Replaced by `network.peer.address`.", "reason": "renamed", "renamed_to": "network.peer.address"}
+        NET_SOCK_PEER_ADDR = 'net.sock.peer.addr'
+    
+        # Deprecated, no replacement at this time.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   /var/my.sock
+        #
+        # @deprecated {"note": "Removed. No replacement at this time.", "reason": "obsoleted"}
+        NET_SOCK_PEER_NAME = 'net.sock.peer.name'
+    
+        # Deprecated, use `network.peer.port`.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   65531
+        #
+        # @deprecated {"note": "Replaced by `network.peer.port`.", "reason": "renamed", "renamed_to": "network.peer.port"}
+        NET_SOCK_PEER_PORT = 'net.sock.peer.port'
+    
+        # Deprecated, use `network.transport`.
+        #
+        # @note Stability Level: development
+        # @deprecated {"note": "Replaced by `network.transport`.", "reason": "renamed", "renamed_to": "network.transport"}
+        NET_TRANSPORT = 'net.transport'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

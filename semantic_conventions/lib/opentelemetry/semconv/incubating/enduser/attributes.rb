@@ -20,39 +20,60 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module ENDUSER
-      # @!group Attribute Names
+    module Incubating
+      module ENDUSER
+        # @!group Attribute Names
+      
+        # Unique identifier of an end user in the system. It maybe a username, email address, or other identifier.
+        #
+        # Unique identifier of an end user in the system.
+        #
+        # > [!Warning]
+        # > This field contains sensitive (PII) information.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   username
+        #
+        ENDUSER_ID = 'enduser.id'
     
-      # Username or client_id extracted from the access token or [Authorization](https://tools.ietf.org/html/rfc7235#section-4.2) header in the inbound request from outside the system.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   username
-      #
-      ENDUSER_ID = 'enduser.id'
-  
-      # Actual/assumed role the client is making the request under extracted from token or application security context.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   admin
-      #
-      ENDUSER_ROLE = 'enduser.role'
-  
-      # Scopes or granted authorities the client currently possesses extracted from token or application security context. The value would come from the scope associated with an [OAuth 2.0 Access Token](https://tools.ietf.org/html/rfc6749#section-3.3) or an attribute value in a [SAML 2.0 Assertion](http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-tech-overview-2.0.html).
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   read:message, write:files
-      #
-      ENDUSER_SCOPE = 'enduser.scope'
-  
-      # @!endgroup
+        # Pseudonymous identifier of an end user. This identifier should be a random value that is not directly linked or associated with the end user's actual identity.
+        #
+        # Pseudonymous identifier of an end user.
+        #
+        # > [!Warning]
+        # > This field contains sensitive (linkable PII) information.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   QdH5CAWJgqVT4rOr0qtumf
+        #
+        ENDUSER_PSEUDO_ID = 'enduser.pseudo.id'
+    
+        # Deprecated, use `user.roles` instead.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   admin
+        #
+        # @deprecated {"note": "Use `user.roles` attribute instead.", "reason": "uncategorized"}
+        ENDUSER_ROLE = 'enduser.role'
+    
+        # Deprecated, no replacement at this time.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   read:message, write:files
+        #
+        # @deprecated {"note": "Removed, no replacement at this time.", "reason": "obsoleted"}
+        ENDUSER_SCOPE = 'enduser.scope'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

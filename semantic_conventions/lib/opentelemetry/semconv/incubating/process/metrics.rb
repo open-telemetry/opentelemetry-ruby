@@ -20,62 +20,70 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module PROCESS
-      # @!group Metrics Names
+    module Incubating
+      module PROCESS
+        # @!group Metrics Names
+      
+        # Number of times the process has been context switched.
+        #
+        # @note Stability Level: development
+        PROCESS_CONTEXT_SWITCHES = 'process.context_switches'
     
-      # Number of times the process has been context switched.
-      # 
-      # @note Stability Level: experimental
-      PROCESS_CONTEXT_SWITCHES = 'process.context_switches'
-  
-      # Total CPU seconds broken down by different states.
-      # 
-      # @note Stability Level: experimental
-      PROCESS_CPU_TIME = 'process.cpu.time'
-  
-      # Difference in process.cpu.time since the last measurement, divided by the elapsed time and number of CPUs available to the process.
-      # 
-      # @note Stability Level: experimental
-      PROCESS_CPU_UTILIZATION = 'process.cpu.utilization'
-  
-      # Disk bytes transferred.
-      # 
-      # @note Stability Level: experimental
-      PROCESS_DISK_IO = 'process.disk.io'
-  
-      # The amount of physical memory in use.
-      # 
-      # @note Stability Level: experimental
-      PROCESS_MEMORY_USAGE = 'process.memory.usage'
-  
-      # The amount of committed virtual memory.
-      # 
-      # @note Stability Level: experimental
-      PROCESS_MEMORY_VIRTUAL = 'process.memory.virtual'
-  
-      # Network bytes transferred.
-      # 
-      # @note Stability Level: experimental
-      PROCESS_NETWORK_IO = 'process.network.io'
-  
-      # Number of file descriptors in use by the process.
-      # 
-      # @note Stability Level: experimental
-      PROCESS_OPEN_FILE_DESCRIPTOR_COUNT = 'process.open_file_descriptor.count'
-  
-      # Number of page faults the process has made.
-      # 
-      # @note Stability Level: experimental
-      PROCESS_PAGING_FAULTS = 'process.paging.faults'
-  
-      # Process threads count.
-      # 
-      # @note Stability Level: experimental
-      PROCESS_THREAD_COUNT = 'process.thread.count'
-  
-      # @!endgroup
+        # Total CPU seconds broken down by different states.
+        #
+        # @note Stability Level: development
+        PROCESS_CPU_TIME = 'process.cpu.time'
+    
+        # Difference in process.cpu.time since the last measurement, divided by the elapsed time and number of CPUs available to the process.
+        #
+        # @note Stability Level: development
+        PROCESS_CPU_UTILIZATION = 'process.cpu.utilization'
+    
+        # Disk bytes transferred.
+        #
+        # @note Stability Level: development
+        PROCESS_DISK_IO = 'process.disk.io'
+    
+        # The amount of physical memory in use.
+        #
+        # @note Stability Level: development
+        PROCESS_MEMORY_USAGE = 'process.memory.usage'
+    
+        # The amount of committed virtual memory.
+        #
+        # @note Stability Level: development
+        PROCESS_MEMORY_VIRTUAL = 'process.memory.virtual'
+    
+        # Network bytes transferred.
+        #
+        # @note Stability Level: development
+        PROCESS_NETWORK_IO = 'process.network.io'
+    
+        # Number of file descriptors in use by the process.
+        #
+        # @note Stability Level: development
+        PROCESS_OPEN_FILE_DESCRIPTOR_COUNT = 'process.open_file_descriptor.count'
+    
+        # Number of page faults the process has made.
+        #
+        # @note Stability Level: development
+        PROCESS_PAGING_FAULTS = 'process.paging.faults'
+    
+        # Process threads count.
+        #
+        # @note Stability Level: development
+        PROCESS_THREAD_COUNT = 'process.thread.count'
+    
+        # The time the process has been running.
+        #
+        # Instrumentations SHOULD use a gauge with type `double` and measure uptime in seconds as a floating point number with the highest precision available.
+        # The actual accuracy would depend on the instrumentation and operating system.
+        #
+        # @note Stability Level: development
+        PROCESS_UPTIME = 'process.uptime'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

@@ -20,39 +20,39 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module HEROKU
-      # @!group Attribute Names
+    module Incubating
+      module HEROKU
+        # @!group Attribute Names
+      
+        # Unique identifier for the application
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   2daa2797-e42b-4624-9322-ec3f968df4da
+        #
+        HEROKU_APP_ID = 'heroku.app.id'
     
-      # Unique identifier for the application
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   2daa2797-e42b-4624-9322-ec3f968df4da
-      #
-      HEROKU_APP_ID = 'heroku.app.id'
-  
-      # Commit hash for the current release
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   e6134959463efd8966b20e75b913cafe3f5ec
-      #
-      HEROKU_RELEASE_COMMIT = 'heroku.release.commit'
-  
-      # Time and date the release was created
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   2022-10-23T18:00:42Z
-      #
-      HEROKU_RELEASE_CREATION_TIMESTAMP = 'heroku.release.creation_timestamp'
-  
-      # @!endgroup
+        # Commit hash for the current release
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   e6134959463efd8966b20e75b913cafe3f5ec
+        #
+        HEROKU_RELEASE_COMMIT = 'heroku.release.commit'
+    
+        # Time and date the release was created
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   2022-10-23T18:00:42Z
+        #
+        HEROKU_RELEASE_CREATION_TIMESTAMP = 'heroku.release.creation_timestamp'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

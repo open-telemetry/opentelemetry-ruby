@@ -20,30 +20,30 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module SESSION
-      # @!group Attribute Names
+    module Incubating
+      module SESSION
+        # @!group Attribute Names
+      
+        # A unique id to identify a session.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   00112233-4455-6677-8899-aabbccddeeff
+        #
+        SESSION_ID = 'session.id'
     
-      # A unique id to identify a session.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   00112233-4455-6677-8899-aabbccddeeff
-      #
-      SESSION_ID = 'session.id'
-  
-      # The previous `session.id` for this user, when known.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   00112233-4455-6677-8899-aabbccddeeff
-      #
-      SESSION_PREVIOUS_ID = 'session.previous_id'
-  
-      # @!endgroup
+        # The previous `session.id` for this user, when known.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   00112233-4455-6677-8899-aabbccddeeff
+        #
+        SESSION_PREVIOUS_ID = 'session.previous_id'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

@@ -20,22 +20,22 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module OTHER
-      # @!group Attribute Names
+    module Incubating
+      module OTHER
+        # @!group Attribute Names
+      
+        # Deprecated, use `db.client.connection.state` instead.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   idle
+        #
+        # @deprecated {"note": "Replaced by `db.client.connection.state`.", "reason": "renamed", "renamed_to": "db.client.connection.state"}
+        STATE = 'state'
     
-      # Deprecated, use `db.client.connections.state` instead.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   idle
-      #
-      # @deprecated Replaced by `db.client.connections.state`.
-      STATE = 'state'
-  
-      # @!endgroup
+        # @!endgroup
+      end
     end
-  end
   end
 end

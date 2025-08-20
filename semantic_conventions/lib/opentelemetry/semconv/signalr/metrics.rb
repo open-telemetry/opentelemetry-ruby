@@ -24,16 +24,16 @@ module OpenTelemetry
       # @!group Metrics Names
     
       # Number of connections that are currently active on the server.
-      # 
+      #
       # Meter name: `Microsoft.AspNetCore.Http.Connections`; Added in: ASP.NET Core 8.0
-      # 
+      #
       # @note Stability Level: stable
       SIGNALR_SERVER_ACTIVE_CONNECTIONS = 'signalr.server.active_connections'
   
       # The duration of connections on the server.
-      # 
+      #
       # Meter name: `Microsoft.AspNetCore.Http.Connections`; Added in: ASP.NET Core 8.0
-      # 
+      #
       # @note Stability Level: stable
       SIGNALR_SERVER_CONNECTION_DURATION = 'signalr.server.connection.duration'
   

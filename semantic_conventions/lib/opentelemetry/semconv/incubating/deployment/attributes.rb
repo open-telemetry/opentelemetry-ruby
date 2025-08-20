@@ -20,30 +20,65 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module DEPLOYMENT
-      # @!group Attribute Names
+    module Incubating
+      module DEPLOYMENT
+        # @!group Attribute Names
+      
+        # 'Deprecated, use `deployment.environment.name` instead.'
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   staging
+        #   production
+        #
+        # @deprecated {"note": "Replaced by `deployment.environment.name`.", "reason": "renamed", "renamed_to": "deployment.environment.name"}
+        DEPLOYMENT_ENVIRONMENT = 'deployment.environment'
     
-      # Name of the [deployment environment](https://wikipedia.org/wiki/Deployment_environment) (aka deployment tier).
-      # 
-      # `deployment.environment` does not affect the uniqueness constraints defined through
-      # the `service.namespace`, `service.name` and `service.instance.id` resource attributes.
-      # This implies that resources carrying the following attribute combinations MUST be
-      # considered to be identifying the same service:
-      # 
-      # - `service.name=frontend`, `deployment.environment=production`
-      # - `service.name=frontend`, `deployment.environment=staging`.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   staging
-      #   production
-      #
-      DEPLOYMENT_ENVIRONMENT = 'deployment.environment'
-  
-      # @!endgroup
+        # Name of the [deployment environment](https://wikipedia.org/wiki/Deployment_environment) (aka deployment tier).
+        #
+        # `deployment.environment.name` does not affect the uniqueness constraints defined through
+        # the `service.namespace`, `service.name` and `service.instance.id` resource attributes.
+        # This implies that resources carrying the following attribute combinations MUST be
+        # considered to be identifying the same service:
+        #
+        # - `service.name=frontend`, `deployment.environment.name=production`
+        # - `service.name=frontend`, `deployment.environment.name=staging`.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   staging
+        #   production
+        #
+        DEPLOYMENT_ENVIRONMENT_NAME = 'deployment.environment.name'
+    
+        # The id of the deployment.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   1208
+        #
+        DEPLOYMENT_ID = 'deployment.id'
+    
+        # The name of the deployment.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   deploy my app
+        #   deploy-frontend
+        #
+        DEPLOYMENT_NAME = 'deployment.name'
+    
+        # The status of the deployment.
+        #
+        # @note Stability Level: development
+        DEPLOYMENT_STATUS = 'deployment.status'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

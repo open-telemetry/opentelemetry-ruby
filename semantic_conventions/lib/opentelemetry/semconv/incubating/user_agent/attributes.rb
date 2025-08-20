@@ -20,49 +20,81 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module USER_AGENT
-      # @!group Attribute Names
+    module Incubating
+      module USER_AGENT
+        # @!group Attribute Names
+      
+        # Name of the user-agent extracted from original. Usually refers to the browser's name.
+        #
+        # [Example](https://www.whatsmyua.info) of extracting browser's name from original string. In the case of using a user-agent for non-browser products, such as microservices with multiple names/versions inside the `user_agent.original`, the most significant name SHOULD be selected. In such a scenario it should align with `user_agent.version`
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   Safari
+        #   YourApp
+        #
+        USER_AGENT_NAME = 'user_agent.name'
     
-      # Name of the user-agent extracted from original. Usually refers to the browser's name.
-      # 
-      # [Example](https://www.whatsmyua.info) of extracting browser's name from original string. In the case of using a user-agent for non-browser products, such as microservices with multiple names/versions inside the `user_agent.original`, the most significant name SHOULD be selected. In such a scenario it should align with `user_agent.version`
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   Safari
-      #   YourApp
-      #
-      USER_AGENT_NAME = 'user_agent.name'
-  
-      # Value of the [HTTP User-Agent](https://www.rfc-editor.org/rfc/rfc9110.html#field.user-agent) header sent by the client.
-      # 
-      # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   CERN-LineMode/2.15 libwww/2.17b3
-      #   Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1
-      #   YourApp/1.0.0 grpc-java-okhttp/1.27.2
-      #
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::USER_AGENT::USER_AGENT_ORIGINAL}.
-      USER_AGENT_ORIGINAL = 'user_agent.original'
-  
-      # Version of the user-agent extracted from original. Usually refers to the browser's version
-      # 
-      # [Example](https://www.whatsmyua.info) of extracting browser's version from original string. In the case of using a user-agent for non-browser products, such as microservices with multiple names/versions inside the `user_agent.original`, the most significant version SHOULD be selected. In such a scenario it should align with `user_agent.name`
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   14.1.2
-      #   1.0.0
-      #
-      USER_AGENT_VERSION = 'user_agent.version'
-  
-      # @!endgroup
+        # Value of the [HTTP User-Agent](https://www.rfc-editor.org/rfc/rfc9110.html#field.user-agent) header sent by the client.
+        #
+        # @note Stability Level: stable
+        #
+        # @example Sample Values
+        #   CERN-LineMode/2.15 libwww/2.17b3
+        #   Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1
+        #   YourApp/1.0.0 grpc-java-okhttp/1.27.2
+        #
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::USER_AGENT::USER_AGENT_ORIGINAL}.
+        USER_AGENT_ORIGINAL = 'user_agent.original'
+    
+        # Human readable operating system name.
+        #
+        # For mapping user agent strings to OS names, libraries such as [ua-parser](https://github.com/ua-parser) can be utilized.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   iOS
+        #   Android
+        #   Ubuntu
+        #
+        USER_AGENT_OS_NAME = 'user_agent.os.name'
+    
+        # The version string of the operating system as defined in [Version Attributes](/docs/resource/README.md#version-attributes).
+        #
+        # For mapping user agent strings to OS versions, libraries such as [ua-parser](https://github.com/ua-parser) can be utilized.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   14.2.1
+        #   18.04.1
+        #
+        USER_AGENT_OS_VERSION = 'user_agent.os.version'
+    
+        # Specifies the category of synthetic traffic, such as tests or bots.
+        #
+        # This attribute MAY be derived from the contents of the `user_agent.original` attribute. Components that populate the attribute are responsible for determining what they consider to be synthetic bot or test traffic. This attribute can either be set for self-identification purposes, or on telemetry detected to be generated as a result of a synthetic request. This attribute is useful for distinguishing between genuine client traffic and synthetic traffic generated by bots or tests.
+        #
+        # @note Stability Level: development
+        USER_AGENT_SYNTHETIC_TYPE = 'user_agent.synthetic.type'
+    
+        # Version of the user-agent extracted from original. Usually refers to the browser's version
+        #
+        # [Example](https://www.whatsmyua.info) of extracting browser's version from original string. In the case of using a user-agent for non-browser products, such as microservices with multiple names/versions inside the `user_agent.original`, the most significant version SHOULD be selected. In such a scenario it should align with `user_agent.name`
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   14.1.2
+        #   1.0.0
+        #
+        USER_AGENT_VERSION = 'user_agent.version'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

@@ -20,35 +20,35 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module DESTINATION
-      # @!group Attribute Names
+    module Incubating
+      module DESTINATION
+        # @!group Attribute Names
+      
+        # Destination address - domain name if available without reverse DNS lookup; otherwise, IP address or Unix domain socket name.
+        #
+        # When observed from the source side, and when communicating through an intermediary, `destination.address` SHOULD represent the destination address behind any intermediaries, for example proxies, if it's available.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   destination.example.com
+        #   10.1.2.80
+        #   /tmp/my.sock
+        #
+        DESTINATION_ADDRESS = 'destination.address'
     
-      # Destination address - domain name if available without reverse DNS lookup; otherwise, IP address or Unix domain socket name.
-      # 
-      # When observed from the source side, and when communicating through an intermediary, `destination.address` SHOULD represent the destination address behind any intermediaries, for example proxies, if it's available.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   destination.example.com
-      #   10.1.2.80
-      #   /tmp/my.sock
-      #
-      DESTINATION_ADDRESS = 'destination.address'
-  
-      # Destination port number
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   3389
-      #   2888
-      #
-      DESTINATION_PORT = 'destination.port'
-  
-      # @!endgroup
+        # Destination port number
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   3389
+        #   2888
+        #
+        DESTINATION_PORT = 'destination.port'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

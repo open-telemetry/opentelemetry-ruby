@@ -20,24 +20,33 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module DNS
-      # @!group Attribute Names
+    module Incubating
+      module DNS
+        # @!group Attribute Names
+      
+        # The list of IPv4 or IPv6 addresses resolved during DNS lookup.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   ["10.0.0.1", "2001:0db8:85a3:0000:0000:8a2e:0370:7334"]
+        #
+        DNS_ANSWERS = 'dns.answers'
     
-      # The name being queried.
-      # 
-      # If the name field contains non-printable characters (below 32 or above 126), those characters should be represented as escaped base 10 integers (\DDD). Back slashes and quotes should be escaped. Tabs, carriage returns, and line feeds should be converted to \t, \r, and \n respectively.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   www.example.com
-      #   opentelemetry.io
-      #
-      DNS_QUESTION_NAME = 'dns.question.name'
-  
-      # @!endgroup
+        # The name being queried.
+        #
+        # If the name field contains non-printable characters (below 32 or above 126), those characters should be represented as escaped base 10 integers (\DDD). Back slashes and quotes should be escaped. Tabs, carriage returns, and line feeds should be converted to \t, \r, and \n respectively.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   www.example.com
+        #   opentelemetry.io
+        #
+        DNS_QUESTION_NAME = 'dns.question.name'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

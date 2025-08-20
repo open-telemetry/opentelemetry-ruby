@@ -20,65 +20,77 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module LOG
-      # @!group Attribute Names
+    module Incubating
+      module LOG
+        # @!group Attribute Names
+      
+        # The basename of the file.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   audit.log
+        #
+        LOG_FILE_NAME = 'log.file.name'
     
-      # The basename of the file.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   audit.log
-      #
-      LOG_FILE_NAME = 'log.file.name'
-  
-      # The basename of the file, with symlinks resolved.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   uuid.log
-      #
-      LOG_FILE_NAME_RESOLVED = 'log.file.name_resolved'
-  
-      # The full path to the file.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   /var/log/mysql/audit.log
-      #
-      LOG_FILE_PATH = 'log.file.path'
-  
-      # The full path to the file, with symlinks resolved.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   /var/lib/docker/uuid.log
-      #
-      LOG_FILE_PATH_RESOLVED = 'log.file.path_resolved'
-  
-      # The stream associated with the log. See below for a list of well-known values.
-      # 
-      # @note Stability Level: experimental
-      LOG_IOSTREAM = 'log.iostream'
-  
-      # A unique identifier for the Log Record.
-      # 
-      # If an id is provided, other log records with the same id will be considered duplicates and can be removed safely. This means, that two distinguishable log records MUST have different values.
-      # The id MAY be an [Universally Unique Lexicographically Sortable Identifier (ULID)](https://github.com/ulid/spec), but other identifiers (e.g. UUID) may be used as needed.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   01ARZ3NDEKTSV4RRFFQ69G5FAV
-      #
-      LOG_RECORD_UID = 'log.record.uid'
-  
-      # @!endgroup
+        # The basename of the file, with symlinks resolved.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   uuid.log
+        #
+        LOG_FILE_NAME_RESOLVED = 'log.file.name_resolved'
+    
+        # The full path to the file.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   /var/log/mysql/audit.log
+        #
+        LOG_FILE_PATH = 'log.file.path'
+    
+        # The full path to the file, with symlinks resolved.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   /var/lib/docker/uuid.log
+        #
+        LOG_FILE_PATH_RESOLVED = 'log.file.path_resolved'
+    
+        # The stream associated with the log. See below for a list of well-known values.
+        #
+        # @note Stability Level: development
+        LOG_IOSTREAM = 'log.iostream'
+    
+        # The complete original Log Record.
+        #
+        # This value MAY be added when processing a Log Record which was originally transmitted as a string or equivalent data type AND the Body field of the Log Record does not contain the same value. (e.g. a syslog or a log record read from a file.)
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   77 <86>1 2015-08-06T21:58:59.694Z 192.168.2.133 inactive - - - Something happened
+        #   [INFO] 8/3/24 12:34:56 Something happened
+        #
+        LOG_RECORD_ORIGINAL = 'log.record.original'
+    
+        # A unique identifier for the Log Record.
+        #
+        # If an id is provided, other log records with the same id will be considered duplicates and can be removed safely. This means, that two distinguishable log records MUST have different values.
+        # The id MAY be an [Universally Unique Lexicographically Sortable Identifier (ULID)](https://github.com/ulid/spec), but other identifiers (e.g. UUID) may be used as needed.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   01ARZ3NDEKTSV4RRFFQ69G5FAV
+        #
+        LOG_RECORD_UID = 'log.record.uid'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

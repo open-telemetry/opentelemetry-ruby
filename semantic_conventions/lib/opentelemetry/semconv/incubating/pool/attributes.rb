@@ -20,22 +20,22 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module POOL
-      # @!group Attribute Names
+    module Incubating
+      module POOL
+        # @!group Attribute Names
+      
+        # Deprecated, use `db.client.connection.pool.name` instead.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   myDataSource
+        #
+        # @deprecated {"note": "Replaced by `db.client.connection.pool.name`.", "reason": "renamed", "renamed_to": "db.client.connection.pool.name"}
+        POOL_NAME = 'pool.name'
     
-      # Deprecated, use `db.client.connections.pool.name` instead.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   myDataSource
-      #
-      # @deprecated Replaced by `db.client.connections.pool.name`.
-      POOL_NAME = 'pool.name'
-  
-      # @!endgroup
+        # @!endgroup
+      end
     end
-  end
   end
 end

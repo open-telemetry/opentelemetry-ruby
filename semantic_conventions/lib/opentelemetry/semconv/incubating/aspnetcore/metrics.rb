@@ -20,80 +20,80 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module ASPNETCORE
-      # @!group Metrics Names
+    module Incubating
+      module ASPNETCORE
+        # @!group Metrics Names
+      
+        # Number of exceptions caught by exception handling middleware.
+        #
+        # Meter name: `Microsoft.AspNetCore.Diagnostics`; Added in: ASP.NET Core 8.0
+        #
+        # @note Stability Level: stable
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_DIAGNOSTICS_EXCEPTIONS}.
+        ASPNETCORE_DIAGNOSTICS_EXCEPTIONS = 'aspnetcore.diagnostics.exceptions'
     
-      # Number of exceptions caught by exception handling middleware.
-      # 
-      # Meter name: `Microsoft.AspNetCore.Diagnostics`; Added in: ASP.NET Core 8.0
-      # 
-      # @note Stability Level: stable
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_DIAGNOSTICS_EXCEPTIONS}.
-      ASPNETCORE_DIAGNOSTICS_EXCEPTIONS = 'aspnetcore.diagnostics.exceptions'
-  
-      # Number of requests that are currently active on the server that hold a rate limiting lease.
-      # 
-      # Meter name: `Microsoft.AspNetCore.RateLimiting`; Added in: ASP.NET Core 8.0
-      # 
-      # @note Stability Level: stable
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_RATE_LIMITING_ACTIVE_REQUEST_LEASES}.
-      ASPNETCORE_RATE_LIMITING_ACTIVE_REQUEST_LEASES = 'aspnetcore.rate_limiting.active_request_leases'
-  
-      # Number of requests that are currently queued, waiting to acquire a rate limiting lease.
-      # 
-      # Meter name: `Microsoft.AspNetCore.RateLimiting`; Added in: ASP.NET Core 8.0
-      # 
-      # @note Stability Level: stable
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_RATE_LIMITING_QUEUED_REQUESTS}.
-      ASPNETCORE_RATE_LIMITING_QUEUED_REQUESTS = 'aspnetcore.rate_limiting.queued_requests'
-  
-      # The time the request spent in a queue waiting to acquire a rate limiting lease.
-      # 
-      # Meter name: `Microsoft.AspNetCore.RateLimiting`; Added in: ASP.NET Core 8.0
-      # 
-      # @note Stability Level: stable
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_RATE_LIMITING_REQUEST_TIME_IN_QUEUE}.
-      ASPNETCORE_RATE_LIMITING_REQUEST_TIME_IN_QUEUE = 'aspnetcore.rate_limiting.request.time_in_queue'
-  
-      # The duration of rate limiting lease held by requests on the server.
-      # 
-      # Meter name: `Microsoft.AspNetCore.RateLimiting`; Added in: ASP.NET Core 8.0
-      # 
-      # @note Stability Level: stable
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_RATE_LIMITING_REQUEST_LEASE_DURATION}.
-      ASPNETCORE_RATE_LIMITING_REQUEST_LEASE_DURATION = 'aspnetcore.rate_limiting.request_lease.duration'
-  
-      # Number of requests that tried to acquire a rate limiting lease.
-      # 
-      # Requests could be:
-      # 
-      # - Rejected by global or endpoint rate limiting policies
-      # - Canceled while waiting for the lease.
-      # 
-      # Meter name: `Microsoft.AspNetCore.RateLimiting`; Added in: ASP.NET Core 8.0
-      # 
-      # @note Stability Level: stable
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_RATE_LIMITING_REQUESTS}.
-      ASPNETCORE_RATE_LIMITING_REQUESTS = 'aspnetcore.rate_limiting.requests'
-  
-      # Number of requests that were attempted to be matched to an endpoint.
-      # 
-      # Meter name: `Microsoft.AspNetCore.Routing`; Added in: ASP.NET Core 8.0
-      # 
-      # @note Stability Level: stable
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_ROUTING_MATCH_ATTEMPTS}.
-      ASPNETCORE_ROUTING_MATCH_ATTEMPTS = 'aspnetcore.routing.match_attempts'
-  
-      # @!endgroup
+        # Number of requests that are currently active on the server that hold a rate limiting lease.
+        #
+        # Meter name: `Microsoft.AspNetCore.RateLimiting`; Added in: ASP.NET Core 8.0
+        #
+        # @note Stability Level: stable
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_RATE_LIMITING_ACTIVE_REQUEST_LEASES}.
+        ASPNETCORE_RATE_LIMITING_ACTIVE_REQUEST_LEASES = 'aspnetcore.rate_limiting.active_request_leases'
+    
+        # Number of requests that are currently queued, waiting to acquire a rate limiting lease.
+        #
+        # Meter name: `Microsoft.AspNetCore.RateLimiting`; Added in: ASP.NET Core 8.0
+        #
+        # @note Stability Level: stable
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_RATE_LIMITING_QUEUED_REQUESTS}.
+        ASPNETCORE_RATE_LIMITING_QUEUED_REQUESTS = 'aspnetcore.rate_limiting.queued_requests'
+    
+        # The time the request spent in a queue waiting to acquire a rate limiting lease.
+        #
+        # Meter name: `Microsoft.AspNetCore.RateLimiting`; Added in: ASP.NET Core 8.0
+        #
+        # @note Stability Level: stable
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_RATE_LIMITING_REQUEST_TIME_IN_QUEUE}.
+        ASPNETCORE_RATE_LIMITING_REQUEST_TIME_IN_QUEUE = 'aspnetcore.rate_limiting.request.time_in_queue'
+    
+        # The duration of rate limiting lease held by requests on the server.
+        #
+        # Meter name: `Microsoft.AspNetCore.RateLimiting`; Added in: ASP.NET Core 8.0
+        #
+        # @note Stability Level: stable
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_RATE_LIMITING_REQUEST_LEASE_DURATION}.
+        ASPNETCORE_RATE_LIMITING_REQUEST_LEASE_DURATION = 'aspnetcore.rate_limiting.request_lease.duration'
+    
+        # Number of requests that tried to acquire a rate limiting lease.
+        #
+        # Requests could be:
+        #
+        # - Rejected by global or endpoint rate limiting policies
+        # - Canceled while waiting for the lease.
+        #
+        # Meter name: `Microsoft.AspNetCore.RateLimiting`; Added in: ASP.NET Core 8.0
+        #
+        # @note Stability Level: stable
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_RATE_LIMITING_REQUESTS}.
+        ASPNETCORE_RATE_LIMITING_REQUESTS = 'aspnetcore.rate_limiting.requests'
+    
+        # Number of requests that were attempted to be matched to an endpoint.
+        #
+        # Meter name: `Microsoft.AspNetCore.Routing`; Added in: ASP.NET Core 8.0
+        #
+        # @note Stability Level: stable
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_ROUTING_MATCH_ATTEMPTS}.
+        ASPNETCORE_ROUTING_MATCH_ATTEMPTS = 'aspnetcore.routing.match_attempts'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

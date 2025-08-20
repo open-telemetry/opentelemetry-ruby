@@ -24,7 +24,7 @@ module OpenTelemetry
       # @!group Attribute Names
     
       # Value of the [HTTP User-Agent](https://www.rfc-editor.org/rfc/rfc9110.html#field.user-agent) header sent by the client.
-      # 
+      #
       # @note Stability Level: stable
       #
       # @example Sample Values

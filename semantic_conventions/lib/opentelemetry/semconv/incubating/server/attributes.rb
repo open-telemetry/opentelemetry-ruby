@@ -20,42 +20,42 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module SERVER
-      # @!group Attribute Names
+    module Incubating
+      module SERVER
+        # @!group Attribute Names
+      
+        # Server domain name if available without reverse DNS lookup; otherwise, IP address or Unix domain socket name.
+        #
+        # When observed from the client side, and when communicating through an intermediary, `server.address` SHOULD represent the server address behind any intermediaries, for example proxies, if it's available.
+        #
+        # @note Stability Level: stable
+        #
+        # @example Sample Values
+        #   example.com
+        #   10.1.2.80
+        #   /tmp/my.sock
+        #
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::SERVER::SERVER_ADDRESS}.
+        SERVER_ADDRESS = 'server.address'
     
-      # Server domain name if available without reverse DNS lookup; otherwise, IP address or Unix domain socket name.
-      # 
-      # When observed from the client side, and when communicating through an intermediary, `server.address` SHOULD represent the server address behind any intermediaries, for example proxies, if it's available.
-      # 
-      # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   example.com
-      #   10.1.2.80
-      #   /tmp/my.sock
-      #
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::SERVER::SERVER_ADDRESS}.
-      SERVER_ADDRESS = 'server.address'
-  
-      # Server port number.
-      # 
-      # When observed from the client side, and when communicating through an intermediary, `server.port` SHOULD represent the server port behind any intermediaries, for example proxies, if it's available.
-      # 
-      # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   80
-      #   8080
-      #   443
-      #
-      #
-      # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::SERVER::SERVER_PORT}.
-      SERVER_PORT = 'server.port'
-  
-      # @!endgroup
+        # Server port number.
+        #
+        # When observed from the client side, and when communicating through an intermediary, `server.port` SHOULD represent the server port behind any intermediaries, for example proxies, if it's available.
+        #
+        # @note Stability Level: stable
+        #
+        # @example Sample Values
+        #   80
+        #   8080
+        #   443
+        #
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::SERVER::SERVER_PORT}.
+        SERVER_PORT = 'server.port'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end

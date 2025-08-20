@@ -20,52 +20,140 @@
 
 module OpenTelemetry
   module SemConv
-  module Incubating
-    module GCP
-      # @!group Attribute Names
+    module Incubating
+      module GCP
+        # @!group Attribute Names
+      
+        # The container within GCP where the AppHub application is defined.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   projects/my-container-project
+        #
+        GCP_APPHUB_APPLICATION_CONTAINER = 'gcp.apphub.application.container'
     
-      # The name of the Cloud Run [execution](https://cloud.google.com/run/docs/managing/job-executions) being run for the Job, as set by the [`CLOUD_RUN_EXECUTION`](https://cloud.google.com/run/docs/container-contract#jobs-env-vars) environment variable.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   job-name-xxxx
-      #   sample-job-mdw84
-      #
-      GCP_CLOUD_RUN_JOB_EXECUTION = 'gcp.cloud_run.job.execution'
-  
-      # The index for a task within an execution as provided by the [`CLOUD_RUN_TASK_INDEX`](https://cloud.google.com/run/docs/container-contract#jobs-env-vars) environment variable.
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   0
-      #   1
-      #
-      GCP_CLOUD_RUN_JOB_TASK_INDEX = 'gcp.cloud_run.job.task_index'
-  
-      # The hostname of a GCE instance. This is the full value of the default or [custom hostname](https://cloud.google.com/compute/docs/instances/custom-hostname-vm).
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   my-host1234.example.com
-      #   sample-vm.us-west1-b.c.my-project.internal
-      #
-      GCP_GCE_INSTANCE_HOSTNAME = 'gcp.gce.instance.hostname'
-  
-      # The instance name of a GCE instance. This is the value provided by `host.name`, the visible name of the instance in the Cloud Console UI, and the prefix for the default hostname of the instance as defined by the [default internal DNS name](https://cloud.google.com/compute/docs/internal-dns#instance-fully-qualified-domain-names).
-      # 
-      # @note Stability Level: experimental
-      #
-      # @example Sample Values
-      #   instance-1
-      #   my-vm-name
-      #
-      GCP_GCE_INSTANCE_NAME = 'gcp.gce.instance.name'
-  
-      # @!endgroup
+        # The name of the application as configured in AppHub.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   my-application
+        #
+        GCP_APPHUB_APPLICATION_ID = 'gcp.apphub.application.id'
+    
+        # The GCP zone or region where the application is defined.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   us-central1
+        #
+        GCP_APPHUB_APPLICATION_LOCATION = 'gcp.apphub.application.location'
+    
+        # Criticality of a service indicates its importance to the business.
+        #
+        # [See AppHub type enum](https://cloud.google.com/app-hub/docs/reference/rest/v1/Attributes#type)
+        #
+        # @note Stability Level: development
+        GCP_APPHUB_SERVICE_CRITICALITY_TYPE = 'gcp.apphub.service.criticality_type'
+    
+        # Environment of a service is the stage of a software lifecycle.
+        #
+        # [See AppHub environment type](https://cloud.google.com/app-hub/docs/reference/rest/v1/Attributes#type_1)
+        #
+        # @note Stability Level: development
+        GCP_APPHUB_SERVICE_ENVIRONMENT_TYPE = 'gcp.apphub.service.environment_type'
+    
+        # The name of the service as configured in AppHub.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   my-service
+        #
+        GCP_APPHUB_SERVICE_ID = 'gcp.apphub.service.id'
+    
+        # Criticality of a workload indicates its importance to the business.
+        #
+        # [See AppHub type enum](https://cloud.google.com/app-hub/docs/reference/rest/v1/Attributes#type)
+        #
+        # @note Stability Level: development
+        GCP_APPHUB_WORKLOAD_CRITICALITY_TYPE = 'gcp.apphub.workload.criticality_type'
+    
+        # Environment of a workload is the stage of a software lifecycle.
+        #
+        # [See AppHub environment type](https://cloud.google.com/app-hub/docs/reference/rest/v1/Attributes#type_1)
+        #
+        # @note Stability Level: development
+        GCP_APPHUB_WORKLOAD_ENVIRONMENT_TYPE = 'gcp.apphub.workload.environment_type'
+    
+        # The name of the workload as configured in AppHub.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   my-workload
+        #
+        GCP_APPHUB_WORKLOAD_ID = 'gcp.apphub.workload.id'
+    
+        # Identifies the Google Cloud service for which the official client library is intended.
+        #
+        # Intended to be a stable identifier for Google Cloud client libraries that is uniform across implementation languages. The value should be derived from the canonical service domain for the service; for example, 'foo.googleapis.com' should result in a value of 'foo'.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   appengine
+        #   run
+        #   firestore
+        #   alloydb
+        #   spanner
+        #
+        GCP_CLIENT_SERVICE = 'gcp.client.service'
+    
+        # The name of the Cloud Run [execution](https://cloud.google.com/run/docs/managing/job-executions) being run for the Job, as set by the [`CLOUD_RUN_EXECUTION`](https://cloud.google.com/run/docs/container-contract#jobs-env-vars) environment variable.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   job-name-xxxx
+        #   sample-job-mdw84
+        #
+        GCP_CLOUD_RUN_JOB_EXECUTION = 'gcp.cloud_run.job.execution'
+    
+        # The index for a task within an execution as provided by the [`CLOUD_RUN_TASK_INDEX`](https://cloud.google.com/run/docs/container-contract#jobs-env-vars) environment variable.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   0
+        #   1
+        #
+        GCP_CLOUD_RUN_JOB_TASK_INDEX = 'gcp.cloud_run.job.task_index'
+    
+        # The hostname of a GCE instance. This is the full value of the default or [custom hostname](https://cloud.google.com/compute/docs/instances/custom-hostname-vm).
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   my-host1234.example.com
+        #   sample-vm.us-west1-b.c.my-project.internal
+        #
+        GCP_GCE_INSTANCE_HOSTNAME = 'gcp.gce.instance.hostname'
+    
+        # The instance name of a GCE instance. This is the value provided by `host.name`, the visible name of the instance in the Cloud Console UI, and the prefix for the default hostname of the instance as defined by the [default internal DNS name](https://cloud.google.com/compute/docs/internal-dns#instance-fully-qualified-domain-names).
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   instance-1
+        #   my-vm-name
+        #
+        GCP_GCE_INSTANCE_NAME = 'gcp.gce.instance.name'
+    
+        # @!endgroup
+      end
     end
-  end
   end
 end
