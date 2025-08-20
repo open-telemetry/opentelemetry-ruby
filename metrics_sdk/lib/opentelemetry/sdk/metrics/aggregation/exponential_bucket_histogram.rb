@@ -47,20 +47,19 @@ module OpenTelemetry
             @mapping = new_mapping(@scale)
           end
 
-          def collect(start_time, end_time, data_points: nil)
-            dp = data_points || @data_points
+          def collect(start_time, end_time)
             if @aggregation_temporality.delta?
               # Set timestamps and 'move' data point values to result.
-              hdps = dp.values.map! do |hdp|
+              hdps = @data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano = start_time
                 hdp.time_unix_nano = end_time
                 hdp
               end
-              dp.clear
+              @data_points.clear
               hdps
             else
               # Update timestamps and take a snapshot.
-              dp.values.map! do |hdp|
+              @data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano ||= start_time # Start time of a data point is from the first observation.
                 hdp.time_unix_nano = end_time
                 hdp = hdp.dup
@@ -72,16 +71,14 @@ module OpenTelemetry
           end
 
           # rubocop:disable Metrics/MethodLength
-          def update(amount, attributes, data_points: nil)
-            dp = data_points || @data_points
-            # fetch or initialize the ExponentialHistogramDataPoint
-            hdp = dp.fetch(attributes) do
+          def update(amount, attributes)
+            hdp = @data_points.fetch(attributes) do
               if @record_min_max
                 min = Float::INFINITY
                 max = -Float::INFINITY
               end
 
-              dp[attributes] = ExponentialHistogramDataPoint.new(
+              @data_points[attributes] = ExponentialHistogramDataPoint.new(
                 attributes,
                 nil,                                                               # :start_time_unix_nano
                 0,                                                                 # :time_unix_nano

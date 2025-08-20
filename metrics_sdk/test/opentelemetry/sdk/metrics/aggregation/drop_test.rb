@@ -7,7 +7,6 @@
 require 'test_helper'
 
 describe OpenTelemetry::SDK::Metrics::Aggregation::Drop do
-  let(:data_points) { {} }
   let(:drop_aggregation) { OpenTelemetry::SDK::Metrics::Aggregation::Drop.new }
   let(:aggregation_temporality) { :delta }
 
@@ -20,20 +19,20 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Drop do
   end
 
   it 'sets the timestamps' do
-    drop_aggregation.update(0, {}, data_points)
-    ndp = drop_aggregation.collect(start_time, end_time, data_points)[0]
+    drop_aggregation.update(0, {})
+    ndp = drop_aggregation.collect(start_time, end_time)[0]
     _(ndp.start_time_unix_nano).must_equal(0)
     _(ndp.time_unix_nano).must_equal(0)
   end
 
   it 'aggregates and collects should collect no value for all collection' do
-    drop_aggregation.update(1, {}, data_points)
-    drop_aggregation.update(2, {}, data_points)
+    drop_aggregation.update(1, {})
+    drop_aggregation.update(2, {})
 
-    drop_aggregation.update(2, { 'foo' => 'bar' }, data_points)
-    drop_aggregation.update(2, { 'foo' => 'bar' }, data_points)
+    drop_aggregation.update(2, { 'foo' => 'bar' })
+    drop_aggregation.update(2, { 'foo' => 'bar' })
 
-    ndps = drop_aggregation.collect(start_time, end_time, data_points)
+    ndps = drop_aggregation.collect(start_time, end_time)
 
     _(ndps.size).must_equal(2)
     _(ndps[0].value).must_equal(0)

@@ -52,7 +52,7 @@ module OpenTelemetry
               @mutex.synchronize do
                 @callback.each do |cb|
                   value = safe_guard_callback(cb, timeout: timeout)
-                  @default_aggregation.update(value, attributes, data_points: @data_points) if value.is_a?(Numeric)
+                  @default_aggregation.update(value, attributes) if value.is_a?(Numeric)
                 end
               end
             else

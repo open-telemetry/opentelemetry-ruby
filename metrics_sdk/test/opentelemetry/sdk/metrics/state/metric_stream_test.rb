@@ -29,8 +29,6 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
       _(metric_stream.unit).must_equal('count')
       _(metric_stream.instrument_kind).must_equal(:counter)
       _(metric_stream.instrumentation_scope).must_equal(instrumentation_scope)
-      _(metric_stream.data_points).must_be_instance_of(Hash)
-      _(metric_stream.data_points).must_be_empty
     end
 
     it 'initializes registered views from meter provider' do
@@ -258,25 +256,17 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
   end
 
   describe '#to_s' do
-    it 'returns string representation without data points' do
-      str = metric_stream.to_s
-      _(str).must_be_instance_of(String)
-      _(str).must_be_empty # No data points yet
-    end
-
-    it 'includes data points in string representation' do
-      metric_stream.update(10, { 'key1' => 'value1' })
-      metric_stream.update(20, { 'key2' => 'value2' })
+    it 'string representation' do
+      metric_stream.update(10, {})
+      metric_stream.update(20, {})
       str = metric_stream.to_s
 
       _(str).must_include('test_counter')
       _(str).must_include('A test counter')
       _(str).must_include('count')
-      _(str).must_include('key')
-      _(str).must_include('value')
-      _(str).must_include('key1')
-      _(str).must_include('key2')
-      _(str.lines.size).must_be :>=, 2
+      _(str).must_include('counter')
+      _(str).must_include('test_scope@1.0.0')
+      _(str).must_include('Aggregation::Sum')
     end
   end
 end

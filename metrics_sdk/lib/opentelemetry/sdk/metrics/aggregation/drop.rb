@@ -14,14 +14,12 @@ module OpenTelemetry
             @data_points = {}
           end
 
-          def collect(start_time, end_time, data_points)
-            dp = data_points || @data_points
-            dp.values.map!(&:dup)
+          def collect(start_time, end_time)
+            @data_points.values.map!(&:dup)
           end
 
-          def update(increment, attributes, data_points: nil)
-            dp = data_points || @data_points
-            dp[attributes] = NumberDataPoint.new(
+          def update(increment, attributes)
+            @data_points[attributes] = NumberDataPoint.new(
               {},
               0,
               0,
