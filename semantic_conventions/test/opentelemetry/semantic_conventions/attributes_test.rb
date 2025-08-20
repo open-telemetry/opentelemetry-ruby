@@ -6,22 +6,19 @@
 
 require 'test_helper'
 
-OLD_SEMCONV_ROOTS = %i[Resource Trace].freeze
-
-describe OpenTelemetry::SemanticConventions do
-  OpenTelemetry::SemanticConventions
+describe OpenTelemetry::SemConv do
+  OpenTelemetry::SemConv
     .constants
-    .reject { |const| const == :VERSION }
-    .reject { |root_namespace| OLD_SEMCONV_ROOTS.include?(root_namespace) }
+    .reject { |const| const == :Incubating }
     .each do |root_namespace|
-      describe "#{root_namespace} stable constants still exist in SemanticCandidates" do
-        OpenTelemetry::SemanticConventions
+      describe "#{root_namespace} stable constants still exist in SemConv::Incubating" do
+        OpenTelemetry::SemConv
           .const_get(root_namespace)
           .constants
           .each do |stable_const|
             it stable_const.to_s do
-              candidate_namespace = OpenTelemetry::SemanticCandidates.const_get(root_namespace)
-              assert candidate_namespace.constants.include?(stable_const), "Missing stable constant in candidates: #{stable_const}"
+              candidate_namespace = OpenTelemetry::SemConv::Incubating.const_get(root_namespace)
+              assert_includes candidate_namespace.constants, stable_const, "Missing stable constant in incubating: #{stable_const}"
             end
           end
       end
