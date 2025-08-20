@@ -16,8 +16,6 @@ module OpenTelemetry
       module Aggregation
         # Contains the implementation of the {https://opentelemetry.io/docs/specs/otel/metrics/data-model/#exponentialhistogram ExponentialBucketHistogram} aggregation
         class ExponentialBucketHistogram # rubocop:disable Metrics/ClassLength
-          attr_reader :aggregation_temporality
-
           # relate to min max scale: https://opentelemetry.io/docs/specs/otel/metrics/sdk/#support-a-minimum-and-maximum-scale
           DEFAULT_SIZE  = 160
           DEFAULT_SCALE = 20
@@ -34,7 +32,7 @@ module OpenTelemetry
             record_min_max: true,
             zero_threshold: 0
           )
-            @aggregation_temporality = aggregation_temporality.to_sym
+            @aggregation_temporality = AggregationTemporality.determine_temporality(aggregation_temporality: aggregation_temporality, default: :delta)
             @record_min_max = record_min_max
             @min            = Float::INFINITY
             @max            = -Float::INFINITY
@@ -51,7 +49,7 @@ module OpenTelemetry
 
           def collect(start_time, end_time, data_points: nil)
             dp = data_points || @data_points
-            if @aggregation_temporality == :delta
+            if @aggregation_temporality.delta?
               # Set timestamps and 'move' data point values to result.
               hdps = dp.values.map! do |hdp|
                 hdp.start_time_unix_nano = start_time
@@ -170,6 +168,10 @@ module OpenTelemetry
             nil
           end
           # rubocop:enable Metrics/MethodLength
+
+          def aggregation_temporality
+            @aggregation_temporality.temporality
+          end
 
           private
 

@@ -17,10 +17,6 @@ module OpenTelemetry
           def collect(start_time, end_time, data_points: nil)
             dp = data_points || @data_points
             ndps = dp.values.map! do |ndp|
-              ndp.start_time_unix_nano = start_time
-              ndp.time_unix_nano = end_time
-              ndp
-            end
             dp.clear
             ndps
           end

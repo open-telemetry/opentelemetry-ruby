@@ -14,7 +14,7 @@ module OpenTelemetry
             @data_points = {}
           end
 
-          def collect(start_time, end_time, data_points: nil)
+          def collect(start_time, end_time, data_points)
             dp = data_points || @data_points
             dp.values.map!(&:dup)
           end

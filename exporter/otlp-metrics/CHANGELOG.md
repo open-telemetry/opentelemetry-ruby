@@ -1,12 +1,16 @@
 # Release History: opentelemetry-exporter-otlp-metrics
 
+### v0.6.0 / 2025-08-14
+
+- ADDED: Add support for exporting asynchronous instruments
+
 ### v0.5.0 / 2025-06-23
 
-* ADDED: Add exponential histogram in otlp metrics exporter
+- ADDED: Add exponential histogram in otlp metrics exporter
 
 ### v0.4.1 / 2025-04-17
 
-* FIXED: Update out-of-date google-protobuf-any
+- FIXED: Update out-of-date google-protobuf-any
 
 ### v0.4.0 / 2025-02-25
 
