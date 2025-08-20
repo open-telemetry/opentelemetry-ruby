@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Install Ruby 3.4
-        uses: ruby/setup-ruby@v1.255.0
+        uses: ruby/setup-ruby@v1.256.0
         with:
           ruby-version: 3.4
       - name: Generate Gemfile.lock
@@ -27,15 +27,15 @@ jobs:
 
           find . -type f -name "Gemfile" -not -path "*/example/*" | sort | while read gemfile; do
               gemfile_dir=$(dirname "$gemfile")
-              
+
               # Change to the Gemfile's directory
               echo "Changing to directory: $gemfile_dir"
-              
+
               cd "$gemfile_dir" || continue
 
               echo "Current directory: $(pwd)"
               echo "Creating lock file for: $gemfile"
-              
+
               # Generate the gemlock files
               bundle lock || echo "Warning: Failed to generate lock file for $gemfile, continuing..."
 
