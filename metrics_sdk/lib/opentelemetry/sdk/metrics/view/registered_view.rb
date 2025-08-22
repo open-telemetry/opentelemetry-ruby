@@ -10,13 +10,14 @@ module OpenTelemetry
       module View
         # RegisteredView is an internal class used to match Views with a given {MetricStream}
         class RegisteredView
-          attr_reader :name, :aggregation, :attribute_keys, :regex
+          attr_reader :name, :aggregation, :attribute_keys, :regex, :aggregation_cardinality_limit
 
           def initialize(name, **options)
             @name = name
             @options = options
             @aggregation = options[:aggregation]
             @attribute_keys = options[:attribute_keys] || {}
+            @aggregation_cardinality_limit = options[:aggregation_cardinality_limit]
 
             generate_regex_pattern(name)
           end

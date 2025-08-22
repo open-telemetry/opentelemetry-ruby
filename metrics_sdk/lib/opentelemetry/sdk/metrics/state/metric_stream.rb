@@ -15,6 +15,8 @@ module OpenTelemetry
         class MetricStream
           attr_reader :name, :description, :unit, :instrument_kind, :instrumentation_scope, :data_points
 
+          DEFAULT_CARDINALITY_LIMIT = 2000
+
           def initialize(
             name,
             description,
@@ -38,7 +40,7 @@ module OpenTelemetry
             @mutex = Mutex.new
           end
 
-          def collect(start_time, end_time)
+          def collect(start_time, end_time, cardinality_limit: nil)
             @mutex.synchronize do
               metric_data = []
 
@@ -46,15 +48,27 @@ module OpenTelemetry
               return metric_data if @data_points.empty?
 
               if @registered_views.empty?
-                metric_data << aggregate_metric_data(start_time, end_time)
+                resolved_cardinality_limit = resolve_cardinality_limit(view: nil, cardinality_limit: cardinality_limit)
+                metric_data << aggregate_metric_data(start_time,
+                                                     end_time,
+                                                     resolved_cardinality_limit)
               else
-                @registered_views.each { |view| metric_data << aggregate_metric_data(start_time, end_time, aggregation: view.aggregation) }
+                @registered_views.each do |view|
+                  resolved_cardinality_limit = resolve_cardinality_limit(view: view, cardinality_limit: cardinality_limit)
+                  metric_data << aggregate_metric_data(start_time,
+                                                       end_time,
+                                                       resolved_cardinality_limit,
+                                                       aggregation: view.aggregation)
+                end
               end
 
               metric_data
             end
           end
 
+          # view has the cardinality, pass to aggregation update
+          # to determine if aggregation have the cardinality
+          # if the aggregation does not have the cardinality, then it will be default 2000
           def update(value, attributes)
             if @registered_views.empty?
               @mutex.synchronize { @default_aggregation.update(value, attributes, @data_points) }
@@ -69,7 +83,7 @@ module OpenTelemetry
             end
           end
 
-          def aggregate_metric_data(start_time, end_time, aggregation: nil)
+          def aggregate_metric_data(start_time, end_time, cardinality_limit, aggregation: nil)
             aggregator = aggregation || @default_aggregation
             is_monotonic = aggregator.respond_to?(:monotonic?) ? aggregator.monotonic? : nil
             aggregation_temporality = aggregator.respond_to?(:aggregation_temporality) ? aggregator.aggregation_temporality : nil
@@ -81,7 +95,7 @@ module OpenTelemetry
               @instrument_kind,
               @meter_provider.resource,
               @instrumentation_scope,
-              aggregator.collect(start_time, end_time, @data_points),
+              aggregator.collect(start_time, end_time, @data_points, cardinality_limit: cardinality_limit),
               aggregation_temporality,
               start_time,
               end_time,
@@ -93,6 +107,12 @@ module OpenTelemetry
             return if @meter_provider.nil?
 
             @meter_provider.registered_views.each { |view| @registered_views << view if view.match_instrument?(self) }
+          end
+
+          def resolve_cardinality_limit(view: nil, cardinality_limit: nil)
+            return view.aggregation_cardinality_limit if view&.aggregation_cardinality_limit
+            return cardinality_limit if cardinality_limit
+            DEFAULT_CARDINALITY_LIMIT
           end
 
           def to_s

@@ -20,10 +20,10 @@ module OpenTelemetry
             @metric_streams = []
           end
 
-          def collect
+          def collect(cardinality_limit: nil)
             @mutex.synchronize do
               @epoch_end_time = now_in_nano
-              snapshot = @metric_streams.flat_map { |ms| ms.collect(@epoch_start_time, @epoch_end_time) }
+              snapshot = @metric_streams.flat_map { |ms| ms.collect(@epoch_start_time, @epoch_end_time, cardinality_limit: cardinality_limit) }
               @epoch_start_time = @epoch_end_time
 
               snapshot
