@@ -16,6 +16,8 @@ module OpenTelemetry
       module Aggregation
         # Contains the implementation of the {https://opentelemetry.io/docs/specs/otel/metrics/data-model/#exponentialhistogram ExponentialBucketHistogram} aggregation
         class ExponentialBucketHistogram # rubocop:disable Metrics/ClassLength
+          OVERFLOW_ATTRIBUTE_SET = { 'otel.metric.overflow' => true }.freeze
+
           # relate to min max scale: https://opentelemetry.io/docs/specs/otel/metrics/sdk/#support-a-minimum-and-maximum-scale
           DEFAULT_SIZE  = 160
           DEFAULT_SCALE = 20
@@ -42,23 +44,61 @@ module OpenTelemetry
             @zero_count     = 0
             @size           = validate_size(max_size)
             @scale          = validate_scale(max_scale)
+            @overflow_started = false
 
             @mapping = new_mapping(@scale)
           end
 
-          def collect(start_time, end_time, data_points)
+          def collect(start_time, end_time, data_points, cardinality_limit: 2000)
+            all_points = data_points.values
+
+            # Apply cardinality limit
+            if all_points.size <= cardinality_limit
+              result = process_all_points(all_points, start_time, end_time)
+            else
+              result = process_with_cardinality_limit(all_points, start_time, end_time, cardinality_limit)
+            end
+
+            data_points.clear if @aggregation_temporality.delta?
+            result
+          end
+
+          # rubocop:disable Metrics/MethodLength
+          def update(amount, attributes, data_points, cardinality_limit: 2000)
+            # Check if we already have this attribute set
+            if data_points.key?(attributes)
+              hdp = data_points[attributes]
+            else
+              # Check cardinality limit for new attribute sets
+              if data_points.size >= cardinality_limit
+                # Overflow: aggregate into overflow data point
+                @overflow_started = true
+                hdp = data_points[OVERFLOW_ATTRIBUTE_SET] || create_overflow_data_point(data_points)
+              else
+                # Normal case - create new data point
+                hdp = create_new_data_point(attributes, data_points)
+              end
+            end
+
+            # Update the histogram data point with the new amount
+            update_histogram_data_point(hdp, amount)
+            nil
+          end
+          # rubocop:enable Metrics/MethodLength
+
+          private
+
+          def process_all_points(all_points, start_time, end_time)
             if @aggregation_temporality.delta?
               # Set timestamps and 'move' data point values to result.
-              hdps = data_points.values.map! do |hdp|
+              all_points.map! do |hdp|
                 hdp.start_time_unix_nano = start_time
                 hdp.time_unix_nano = end_time
                 hdp
               end
-              data_points.clear
-              hdps
             else
               # Update timestamps and take a snapshot.
-              data_points.values.map! do |hdp|
+              all_points.map! do |hdp|
                 hdp.start_time_unix_nano ||= start_time # Start time of a data point is from the first observation.
                 hdp.time_unix_nano = end_time
                 hdp = hdp.dup
@@ -69,33 +109,110 @@ module OpenTelemetry
             end
           end
 
-          # rubocop:disable Metrics/MethodLength
-          def update(amount, attributes, data_points)
-            # fetch or initialize the ExponentialHistogramDataPoint
-            hdp = data_points.fetch(attributes) do
-              if @record_min_max
-                min = Float::INFINITY
-                max = -Float::INFINITY
-              end
+          def process_with_cardinality_limit(all_points, start_time, end_time, cardinality_limit)
+            # Choose subset of histograms (prefer those with higher counts)
+            selected_points = choose_histogram_subset(all_points, cardinality_limit - 1)
+            remaining_points = all_points - selected_points
 
-              data_points[attributes] = ExponentialHistogramDataPoint.new(
-                attributes,
-                nil,                                                               # :start_time_unix_nano
-                0,                                                                 # :time_unix_nano
-                0,                                                                 # :count
-                0,                                                                 # :sum
-                @scale,                                                            # :scale
-                @zero_count,                                                       # :zero_count
-                ExponentialHistogram::Buckets.new,  # :positive
-                ExponentialHistogram::Buckets.new,  # :negative
-                0,                                                                 # :flags
-                nil,                                                               # :exemplars
-                min,                                                               # :min
-                max,                                                               # :max
-                @zero_threshold # :zero_threshold)
-              )
+            result = process_all_points(selected_points, start_time, end_time)
+
+            # Create overflow histogram by merging remaining points
+            if remaining_points.any?
+              overflow_point = merge_histogram_points(remaining_points, start_time, end_time)
+              result << overflow_point
             end
 
+            result
+          end
+
+          def choose_histogram_subset(points, count)
+            # Strategy: keep histograms with highest counts (most data)
+            points.sort_by { |hdp| -hdp.count }.first(count)
+          end
+
+          def merge_histogram_points(points, start_time, end_time)
+            # Create a merged histogram with overflow attributes
+            merged = ExponentialHistogramDataPoint.new(
+              OVERFLOW_ATTRIBUTE_SET,
+              start_time,
+              end_time,
+              0,   # count
+              0.0, # sum
+              @scale,
+              0,   # zero_count
+              ExponentialHistogram::Buckets.new,
+              ExponentialHistogram::Buckets.new,
+              0,   # flags
+              nil, # exemplars
+              Float::INFINITY,   # min
+              -Float::INFINITY,  # max
+              @zero_threshold
+            )
+
+            # Merge all remaining points into the overflow point
+            points.each do |hdp|
+              merged.count += hdp.count
+              merged.sum += hdp.sum
+              merged.zero_count += hdp.zero_count
+              merged.min = [merged.min, hdp.min].min if hdp.min
+              merged.max = [merged.max, hdp.max].max if hdp.max
+
+              # Note: Merging buckets would require complex logic to handle different scales
+              # For simplicity, we aggregate the counts and sums
+            end
+
+            merged
+          end
+
+          def create_overflow_data_point(data_points)
+            if @record_min_max
+              min = Float::INFINITY
+              max = -Float::INFINITY
+            end
+
+            data_points[OVERFLOW_ATTRIBUTE_SET] = ExponentialHistogramDataPoint.new(
+              OVERFLOW_ATTRIBUTE_SET,
+              nil,                                                               # :start_time_unix_nano
+              0,                                                                 # :time_unix_nano
+              0,                                                                 # :count
+              0,                                                                 # :sum
+              @scale,                                                            # :scale
+              @zero_count,                                                       # :zero_count
+              ExponentialHistogram::Buckets.new,  # :positive
+              ExponentialHistogram::Buckets.new,  # :negative
+              0,                                                                 # :flags
+              nil,                                                               # :exemplars
+              min,                                                               # :min
+              max,                                                               # :max
+              @zero_threshold # :zero_threshold)
+            )
+          end
+
+          def create_new_data_point(attributes, data_points)
+            if @record_min_max
+              min = Float::INFINITY
+              max = -Float::INFINITY
+            end
+
+            data_points[attributes] = ExponentialHistogramDataPoint.new(
+              attributes,
+              nil,                                                               # :start_time_unix_nano
+              0,                                                                 # :time_unix_nano
+              0,                                                                 # :count
+              0,                                                                 # :sum
+              @scale,                                                            # :scale
+              @zero_count,                                                       # :zero_count
+              ExponentialHistogram::Buckets.new,  # :positive
+              ExponentialHistogram::Buckets.new,  # :negative
+              0,                                                                 # :flags
+              nil,                                                               # :exemplars
+              min,                                                               # :min
+              max,                                                               # :max
+              @zero_threshold # :zero_threshold)
+            )
+          end
+
+          def update_histogram_data_point(hdp, amount)
             # Start to populate the data point (esp. the buckets)
             if @record_min_max
               hdp.max = amount if amount > hdp.max
@@ -162,21 +279,17 @@ module OpenTelemetry
             bucket_index += buckets.counts.size if bucket_index.negative?
 
             buckets.increment_bucket(bucket_index)
-            nil
           end
-          # rubocop:enable Metrics/MethodLength
-
-          def aggregation_temporality
-            @aggregation_temporality.temporality
-          end
-
-          private
 
           def grow_buckets(span, buckets)
             return if span < buckets.counts.size
 
             OpenTelemetry.logger.debug "buckets need to grow to #{span + 1} from #{buckets.counts.size} (max bucket size #{@size})"
             buckets.grow(span + 1, @size)
+          end
+
+          def aggregation_temporality
+            @aggregation_temporality.temporality
           end
 
           def new_mapping(scale)
