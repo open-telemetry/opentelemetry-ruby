@@ -72,22 +72,38 @@ describe OpenTelemetry::Trace::Tracer do
   end
 
   describe '#start_span' do
-    it 'returns a valid span with the parent context' do
-      span = tracer.start_span('op', with_parent: parent_context)
-      _(span.context).must_be :valid?
-      _(span.context).must_equal(parent_span_context)
+    # Specification:
+    # The API MUST return a non-recording Span with the SpanContext in the parent Context
+    #  (whether explicitly given or implicit current). If the Span in the parent Context
+    #  is already non-recording, it SHOULD be returned directly without instantiating a
+    #  new Span. If the parent Context contains no Span, an empty non-recording Span MUST
+    #  be returned instead (i.e., having a SpanContext with all-zero Span and Trace IDs,
+    #  empty Tracestate, and unsampled TraceFlags).
+
+    it 'should return the parent span directly if already not recording' do
+      parent_span = OpenTelemetry::Trace::Span.new
+      with_parent = OpenTelemetry::Trace.context_with_span(parent_span, parent_context: OpenTelemetry::Context.empty)
+      span = tracer.start_span('op', with_parent: with_parent)
+      _(span).must_equal(parent_span)
+      _(span).wont_be :recording?
     end
 
-    it 'returns an invalid unsampled span by default' do
-      span = tracer.start_span('op')
-      _(span.context).wont_be :valid?
-      _(span.context.trace_flags).wont_be :sampled?
+    it 'returns a non-recording span with the parent span context if the parent span is recording' do
+      parent_span = OpenTelemetry::Trace::Span.new
+      span = parent_span.stub(:recording?, true) do
+        with_parent = OpenTelemetry::Trace.context_with_span(parent_span, parent_context: OpenTelemetry::Context.empty)
+        tracer.start_span('op', with_parent: with_parent)
+      end
+      _(span).wont_equal(parent_span)
+      _(span.context).must_equal(parent_span.context)
+      _(span).wont_be :recording?
     end
 
-    it 'returns an invalid unsampled span when passed an invalid parent context' do
-      span = tracer.start_span('op', with_parent: invalid_parent_context)
+    it 'returns an invalid unsampled span when no parent is provided' do
+      span = tracer.start_span('op', with_parent: OpenTelemetry::Context.empty)
       _(span.context).wont_be :valid?
       _(span.context.trace_flags).wont_be :sampled?
+      _(span).wont_be :recording?
     end
   end
 end

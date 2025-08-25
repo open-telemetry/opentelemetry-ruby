@@ -58,10 +58,13 @@ module OpenTelemetry
       def start_span(name, with_parent: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
         span = OpenTelemetry::Trace.current_span(with_parent)
 
-        if span.context.valid?
-          span
+        if span.recording?
+          OpenTelemetry::Trace.non_recording_span(span.context)
         else
-          Span::INVALID
+          # Either the span is valid and non-recording, in which case we return it,
+          # or there was no span in the Context and Trace.current_span returned Span::INVALID,
+          # which is what we're supposed to return.
+          span
         end
       end
     end
