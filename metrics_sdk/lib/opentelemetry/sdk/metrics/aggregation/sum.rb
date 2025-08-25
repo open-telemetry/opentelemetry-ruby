@@ -4,19 +4,21 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'set'
+
 module OpenTelemetry
   module SDK
     module Metrics
       module Aggregation
         # Contains the implementation of the Sum aggregation
-        class Sum
+        class Sum # rubocop:disable Metrics/ClassLength
           OVERFLOW_ATTRIBUTE_SET = { 'otel.metric.overflow' => true }.freeze
 
           def initialize(aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :cumulative), monotonic: false, instrument_kind: nil)
             @aggregation_temporality = AggregationTemporality.determine_temporality(aggregation_temporality: aggregation_temporality, instrument_kind: instrument_kind, default: :cumulative)
             @monotonic = monotonic
             @overflow_started = false
-            @pre_overflow_attributes = Set.new if @aggregation_temporality.cumulative?
+            @pre_overflow_attributes = ::Set.new if @aggregation_temporality.cumulative?
           end
 
           def collect(start_time, end_time, data_points, cardinality_limit)
@@ -47,12 +49,10 @@ module OpenTelemetry
                 create_new_data_point(attributes, increment, data_points)
                 return
               end
-            else
+            elsif data_points.size < cardinality_limit
               # For delta: simple size check
-              if data_points.size < cardinality_limit
-                create_new_data_point(attributes, increment, data_points)
-                return
-              end
+              create_new_data_point(attributes, increment, data_points)
+              return
             end
 
             # Overflow case: aggregate into overflow data point

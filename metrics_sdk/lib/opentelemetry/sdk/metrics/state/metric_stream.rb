@@ -14,6 +14,7 @@ module OpenTelemetry
         # public API.
         class MetricStream
           attr_reader :name, :description, :unit, :instrument_kind, :instrumentation_scope, :data_points
+          attr_writer :cardinality_limit
 
           DEFAULT_CARDINALITY_LIMIT = 2000
 
@@ -40,7 +41,11 @@ module OpenTelemetry
             @mutex = Mutex.new
           end
 
-          def collect(start_time, end_time, cardinality_limit: nil)
+          # this cardinality_limit is from exporter.new(cardinality_limit: cardinality_limit)
+          #                                -> metric_reader.collect(...cardinality_limit)
+          #                                -> metric_store.collect(...cardinality_limit)
+          #                                -> metric_stream.collect(...cardinality_limit)
+          def collect(start_time, end_time)
             @mutex.synchronize do
               metric_data = []
 
@@ -48,13 +53,13 @@ module OpenTelemetry
               return metric_data if @data_points.empty?
 
               if @registered_views.empty?
-                resolved_cardinality_limit = resolve_cardinality_limit(view: nil, cardinality_limit: cardinality_limit)
+                resolved_cardinality_limit = @cardinality_limit || DEFAULT_CARDINALITY_LIMIT
                 metric_data << aggregate_metric_data(start_time,
                                                      end_time,
                                                      resolved_cardinality_limit)
               else
                 @registered_views.each do |view|
-                  resolved_cardinality_limit = resolve_cardinality_limit(view: view, cardinality_limit: cardinality_limit)
+                  resolved_cardinality_limit = resolve_cardinality_limit(view)
                   metric_data << aggregate_metric_data(start_time,
                                                        end_time,
                                                        resolved_cardinality_limit,
@@ -69,15 +74,20 @@ module OpenTelemetry
           # view has the cardinality, pass to aggregation update
           # to determine if aggregation have the cardinality
           # if the aggregation does not have the cardinality, then it will be default 2000
+          # it better to move overflowed data_points during update because if do it in collect,
+          # then we need to sort the entire data_points (~ 2000) based on time, which is time-consuming
           def update(value, attributes)
             if @registered_views.empty?
-              @mutex.synchronize { @default_aggregation.update(value, attributes, @data_points) }
+              resolved_cardinality_limit = @cardinality_limit || DEFAULT_CARDINALITY_LIMIT
+
+              @mutex.synchronize { @default_aggregation.update(value, attributes, @data_points, resolved_cardinality_limit) }
             else
               @registered_views.each do |view|
+                resolved_cardinality_limit = resolve_cardinality_limit(view)
                 @mutex.synchronize do
                   attributes ||= {}
                   attributes.merge!(view.attribute_keys)
-                  view.aggregation.update(value, attributes, @data_points) if view.valid_aggregation?
+                  view.aggregation.update(value, attributes, @data_points, resolved_cardinality_limit) if view.valid_aggregation?
                 end
               end
             end
@@ -95,7 +105,7 @@ module OpenTelemetry
               @instrument_kind,
               @meter_provider.resource,
               @instrumentation_scope,
-              aggregator.collect(start_time, end_time, @data_points, cardinality_limit: cardinality_limit),
+              aggregator.collect(start_time, end_time, @data_points, cardinality_limit),
               aggregation_temporality,
               start_time,
               end_time,
@@ -109,10 +119,8 @@ module OpenTelemetry
             @meter_provider.registered_views.each { |view| @registered_views << view if view.match_instrument?(self) }
           end
 
-          def resolve_cardinality_limit(view: nil, cardinality_limit: nil)
-            return view.aggregation_cardinality_limit if view&.aggregation_cardinality_limit
-            return cardinality_limit if cardinality_limit
-            DEFAULT_CARDINALITY_LIMIT
+          def resolve_cardinality_limit(view)
+            view.aggregation_cardinality_limit || @cardinality_limit || DEFAULT_CARDINALITY_LIMIT
           end
 
           def to_s

@@ -25,17 +25,18 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
   # Time in nano
   let(:start_time) { Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond) }
   let(:end_time) { Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond) + (60 * 1_000_000_000) }
+  let(:cardinality_limit) { 2000 }
 
   describe '#collect' do
     it 'returns all the data points' do
-      expbh.update(1.03, {}, data_points)
-      expbh.update(1.23, {}, data_points)
-      expbh.update(0, {}, data_points)
+      expbh.update(1.03, {}, data_points, cardinality_limit)
+      expbh.update(1.23, {}, data_points, cardinality_limit)
+      expbh.update(0, {}, data_points, cardinality_limit)
 
-      expbh.update(1.45, { 'foo' => 'bar' }, data_points)
-      expbh.update(1.67, { 'foo' => 'bar' }, data_points)
+      expbh.update(1.45, { 'foo' => 'bar' }, data_points, cardinality_limit)
+      expbh.update(1.67, { 'foo' => 'bar' }, data_points, cardinality_limit)
 
-      exphdps = expbh.collect(start_time, end_time, data_points)
+      exphdps = expbh.collect(start_time, end_time, data_points, cardinality_limit)
 
       _(exphdps.size).must_equal(2)
       _(exphdps[0].attributes).must_equal({})
@@ -80,11 +81,11 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         zero_threshold: 0
       )
 
-      expbh.update(2, {}, data_points)
-      expbh.update(4, {}, data_points)
-      expbh.update(1, {}, data_points)
+      expbh.update(2, {}, data_points, cardinality_limit)
+      expbh.update(4, {}, data_points, cardinality_limit)
+      expbh.update(1, {}, data_points, cardinality_limit)
 
-      exphdps = expbh.collect(start_time, end_time, data_points)
+      exphdps = expbh.collect(start_time, end_time, data_points, cardinality_limit)
 
       _(exphdps.size).must_equal(1)
       _(exphdps[0].attributes).must_equal({})
@@ -113,14 +114,14 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         zero_threshold: 0
       )
 
-      expbh.update(2, {}, data_points)
-      expbh.update(2, {}, data_points)
-      expbh.update(2, {}, data_points)
-      expbh.update(1, {}, data_points)
-      expbh.update(8, {}, data_points)
-      expbh.update(0.5, {}, data_points)
+      expbh.update(2, {}, data_points, cardinality_limit)
+      expbh.update(2, {}, data_points, cardinality_limit)
+      expbh.update(2, {}, data_points, cardinality_limit)
+      expbh.update(1, {}, data_points, cardinality_limit)
+      expbh.update(8, {}, data_points, cardinality_limit)
+      expbh.update(0.5, {}, data_points, cardinality_limit)
 
-      exphdps = expbh.collect(start_time, end_time, data_points)
+      exphdps = expbh.collect(start_time, end_time, data_points, cardinality_limit)
 
       _(exphdps.size).must_equal(1)
       _(exphdps[0].attributes).must_equal({})
@@ -181,10 +182,10 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
           )
 
           permutation.each do |value|
-            expbh.update(value, {}, data_points)
+            expbh.update(value, {}, data_points, cardinality_limit)
           end
 
-          exphdps = expbh.collect(start_time, end_time, data_points)
+          exphdps = expbh.collect(start_time, end_time, data_points, cardinality_limit)
 
           assert_equal expected[:scale], exphdps[0].scale
           assert_equal expected[:offset], exphdps[0].positive.offset
@@ -204,11 +205,11 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         zero_threshold: 0
       )
 
-      expbh.update(Float::MAX, {}, data_points)
-      expbh.update(1, {}, data_points)
-      expbh.update(2**-1074, {}, data_points)
+      expbh.update(Float::MAX, {}, data_points, cardinality_limit)
+      expbh.update(1, {}, data_points, cardinality_limit)
+      expbh.update(2**-1074, {}, data_points, cardinality_limit)
 
-      exphdps = expbh.collect(start_time, end_time, data_points)
+      exphdps = expbh.collect(start_time, end_time, data_points, cardinality_limit)
 
       assert_equal Float::MAX, exphdps[0].sum
       assert_equal 3, exphdps[0].count
@@ -228,10 +229,10 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       )
 
       [1, 3, 5, 7, 9].each do |value|
-        expbh.update(value, {}, data_points)
+        expbh.update(value, {}, data_points, cardinality_limit)
       end
 
-      exphdps = expbh.collect(start_time, end_time, data_points)
+      exphdps = expbh.collect(start_time, end_time, data_points, cardinality_limit)
 
       assert_equal 1, exphdps[0].min
       assert_equal 9, exphdps[0].max
@@ -243,10 +244,10 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       )
 
       [-1, -3, -5, -7, -9].each do |value|
-        expbh.update(value, {}, data_points)
+        expbh.update(value, {}, data_points, cardinality_limit)
       end
 
-      exphdps = expbh.collect(start_time, end_time, data_points)
+      exphdps = expbh.collect(start_time, end_time, data_points, cardinality_limit)
 
       assert_equal(-9, exphdps[0].min)
       assert_equal(-1, exphdps[0].max)

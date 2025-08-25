@@ -49,42 +49,38 @@ module OpenTelemetry
             @mapping = new_mapping(@scale)
           end
 
-          def collect(start_time, end_time, data_points, cardinality_limit: 2000)
+          def collect(start_time, end_time, data_points, cardinality_limit)
             all_points = data_points.values
 
             # Apply cardinality limit
-            if all_points.size <= cardinality_limit
-              result = process_all_points(all_points, start_time, end_time)
-            else
-              result = process_with_cardinality_limit(all_points, start_time, end_time, cardinality_limit)
-            end
+            result = if all_points.size <= cardinality_limit
+                       process_all_points(all_points, start_time, end_time)
+                     else
+                       process_with_cardinality_limit(all_points, start_time, end_time, cardinality_limit)
+                     end
 
             data_points.clear if @aggregation_temporality.delta?
             result
           end
 
-          # rubocop:disable Metrics/MethodLength
-          def update(amount, attributes, data_points, cardinality_limit: 2000)
+          def update(amount, attributes, data_points, cardinality_limit)
             # Check if we already have this attribute set
             if data_points.key?(attributes)
               hdp = data_points[attributes]
-            else
+            elsif data_points.size >= cardinality_limit
               # Check cardinality limit for new attribute sets
-              if data_points.size >= cardinality_limit
-                # Overflow: aggregate into overflow data point
-                @overflow_started = true
-                hdp = data_points[OVERFLOW_ATTRIBUTE_SET] || create_overflow_data_point(data_points)
-              else
-                # Normal case - create new data point
-                hdp = create_new_data_point(attributes, data_points)
-              end
+              @overflow_started = true
+              hdp = data_points[OVERFLOW_ATTRIBUTE_SET] || create_overflow_data_point(data_points)
+            # Overflow: aggregate into overflow data point
+            else
+              # Normal case - create new data point
+              hdp = create_new_data_point(attributes, data_points)
             end
 
             # Update the histogram data point with the new amount
             update_histogram_data_point(hdp, amount)
             nil
           end
-          # rubocop:enable Metrics/MethodLength
 
           private
 
@@ -157,7 +153,7 @@ module OpenTelemetry
               merged.min = [merged.min, hdp.min].min if hdp.min
               merged.max = [merged.max, hdp.max].max if hdp.max
 
-              # Note: Merging buckets would require complex logic to handle different scales
+              # NOTE: Merging buckets would require complex logic to handle different scales
               # For simplicity, we aggregate the counts and sums
             end
 

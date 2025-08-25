@@ -16,7 +16,7 @@ module OpenTelemetry
             @overflow_started = false
           end
 
-          def collect(start_time, end_time, data_points, cardinality_limit: 2000)
+          def collect(start_time, end_time, data_points, cardinality_limit)
             # Apply cardinality limit by choosing subset + overflow for LastValue
             all_points = data_points.values
 
@@ -57,7 +57,7 @@ module OpenTelemetry
             ndps
           end
 
-          def update(increment, attributes, data_points, cardinality_limit: 2000)
+          def update(increment, attributes, data_points, cardinality_limit)
             # Check if we already have this attribute set
             if data_points.key?(attributes)
               # Update existing data point (LastValue behavior - replace)

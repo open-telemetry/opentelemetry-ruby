@@ -15,12 +15,11 @@ module OpenTelemetry
           attr_reader :metric_store
 
           def initialize(aggregation_cardinality_limit: nil)
-            @metric_store = OpenTelemetry::SDK::Metrics::State::MetricStore.new
-            @cardinality_limit = aggregation_cardinality_limit
+            @metric_store = OpenTelemetry::SDK::Metrics::State::MetricStore.new(cardinality_limit: aggregation_cardinality_limit)
           end
 
           def collect
-            @metric_store.collect(cardinality_limit: @cardinality_limit)
+            @metric_store.collect
           end
 
           def shutdown(timeout: nil)

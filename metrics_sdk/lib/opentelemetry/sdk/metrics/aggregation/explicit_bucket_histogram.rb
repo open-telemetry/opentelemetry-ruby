@@ -10,7 +10,7 @@ module OpenTelemetry
       module Aggregation
         # Contains the implementation of the ExplicitBucketHistogram aggregation
         # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#explicit-bucket-histogram-aggregation
-        class ExplicitBucketHistogram
+        class ExplicitBucketHistogram # rubocop:disable Metrics/ClassLength
           OVERFLOW_ATTRIBUTE_SET = { 'otel.metric.overflow' => true }.freeze
           DEFAULT_BOUNDARIES = [0, 5, 10, 25, 50, 75, 100, 250, 500, 1000].freeze
           private_constant :DEFAULT_BOUNDARIES
@@ -30,34 +30,32 @@ module OpenTelemetry
             @overflow_started = false
           end
 
-          def collect(start_time, end_time, data_points, cardinality_limit: 2000)
+          def collect(start_time, end_time, data_points, cardinality_limit)
             all_points = data_points.values
 
             # Apply cardinality limit
-            if all_points.size <= cardinality_limit
-              result = process_all_points(all_points, start_time, end_time)
-            else
-              result = process_with_cardinality_limit(all_points, start_time, end_time, cardinality_limit)
-            end
+            result = if all_points.size <= cardinality_limit
+                       process_all_points(all_points, start_time, end_time)
+                     else
+                       process_with_cardinality_limit(all_points, start_time, end_time, cardinality_limit)
+                     end
 
             data_points.clear if @aggregation_temporality.delta?
             result
           end
 
-          def update(amount, attributes, data_points, cardinality_limit: 2000)
+          def update(amount, attributes, data_points, cardinality_limit)
             # Check if we already have this attribute set
             if data_points.key?(attributes)
               hdp = data_points[attributes]
-            else
+            elsif data_points.size >= cardinality_limit
               # Check cardinality limit for new attribute sets
-              if data_points.size >= cardinality_limit
-                # Overflow: aggregate into overflow data point
-                @overflow_started = true
-                hdp = data_points[OVERFLOW_ATTRIBUTE_SET] || create_overflow_data_point(data_points)
-              else
-                # Normal case - create new data point
-                hdp = create_new_data_point(attributes, data_points)
-              end
+              @overflow_started = true
+              hdp = data_points[OVERFLOW_ATTRIBUTE_SET] || create_overflow_data_point(data_points)
+            # Overflow: aggregate into overflow data point
+            else
+              # Normal case - create new data point
+              hdp = create_new_data_point(attributes, data_points)
             end
 
             # Update the histogram data point
@@ -137,10 +135,10 @@ module OpenTelemetry
               merged.max = [merged.max, hdp.max].max if hdp.max
 
               # Merge bucket counts
-              if merged_bucket_counts && hdp.bucket_counts
-                hdp.bucket_counts.each_with_index do |count, index|
-                  merged_bucket_counts[index] += count
-                end
+              next unless merged_bucket_counts && hdp.bucket_counts
+
+              hdp.bucket_counts.each_with_index do |count, index|
+                merged_bucket_counts[index] += count
               end
             end
 
@@ -195,10 +193,10 @@ module OpenTelemetry
 
             hdp.sum += amount
             hdp.count += 1
-            if @boundaries
-              bucket_index = @boundaries.bsearch_index { |i| i >= amount } || @boundaries.size
-              hdp.bucket_counts[bucket_index] += 1
-            end
+            return unless @boundaries
+
+            bucket_index = @boundaries.bsearch_index { |i| i >= amount } || @boundaries.size
+            hdp.bucket_counts[bucket_index] += 1
           end
 
           def empty_bucket_counts

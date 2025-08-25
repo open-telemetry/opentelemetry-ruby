@@ -47,23 +47,27 @@ module OpenTelemetry
 
           def invoke_callback(timeout, attributes)
             if @registered_views.empty?
+
+              resolved_cardinality_limit = @cardinality_limit || DEFAULT_CARDINALITY_LIMIT
               @mutex.synchronize do
                 Timeout.timeout(timeout || 30) do
                   @callback.each do |cb|
                     value = cb.call
-                    @default_aggregation.update(value, attributes, @data_points)
+                    @default_aggregation.update(value, attributes, @data_points, resolved_cardinality_limit)
                   end
                 end
               end
             else
               @registered_views.each do |view|
+                resolved_cardinality_limit = resolve_cardinality_limit(view)
+
                 @mutex.synchronize do
                   Timeout.timeout(timeout || 30) do
                     @callback.each do |cb|
                       value = cb.call
                       merged_attributes = attributes || {}
                       merged_attributes.merge!(view.attribute_keys)
-                      view.aggregation.update(value, merged_attributes, @data_points) if view.valid_aggregation?
+                      view.aggregation.update(value, merged_attributes, @data_points, resolved_cardinality_limit) if view.valid_aggregation?
                     end
                   end
                 end
