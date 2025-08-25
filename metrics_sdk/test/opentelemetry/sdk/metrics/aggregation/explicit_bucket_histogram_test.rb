@@ -338,4 +338,38 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
       end
     end
   end
+
+  describe 'cardinality limit' do
+    let(:cardinality_limit) { 2 }
+
+    it 'creates overflow data point when cardinality limit is exceeded' do
+      ebh.update(1, { 'key' => 'a' }, data_points, cardinality_limit)
+      ebh.update(5, { 'key' => 'b' }, data_points, cardinality_limit)
+      ebh.update(10, { 'key' => 'c' }, data_points, cardinality_limit) # This should overflow
+
+      hdps = ebh.collect(start_time, end_time, data_points, cardinality_limit)
+
+      _(hdps.size).must_equal(3)
+
+      overflow_point = hdps.find { |hdp| hdp.attributes == { 'otel.metric.overflow' => true } }
+      _(overflow_point).wont_be_nil
+      _(overflow_point.count).must_equal(1)
+      _(overflow_point.sum).must_equal(10)
+    end
+
+    it 'merges multiple overflow measurements correctly' do
+      ebh.update(1, { 'key' => 'a' }, data_points, cardinality_limit)
+      ebh.update(5, { 'key' => 'b' }, data_points, cardinality_limit)
+      ebh.update(10, { 'key' => 'c' }, data_points, cardinality_limit) # Overflow
+      ebh.update(15, { 'key' => 'd' }, data_points, cardinality_limit) # Also overflow
+
+      hdps = ebh.collect(start_time, end_time, data_points, cardinality_limit)
+
+      _(hdps.size).must_equal(3)
+
+      overflow_point = hdps.find { |hdp| hdp.attributes == { 'otel.metric.overflow' => true } }
+      _(overflow_point.count).must_equal(2)
+      _(overflow_point.sum).must_equal(25) # 10 + 15
+    end
+  end
 end

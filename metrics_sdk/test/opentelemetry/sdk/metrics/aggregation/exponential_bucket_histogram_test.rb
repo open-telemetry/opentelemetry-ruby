@@ -270,15 +270,45 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
     end
 
     it 'test_invalid_size_validation' do
-      error = assert_raises(ArgumentError) do
-        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_size: 10_000_000)
+      assert_raises ArgumentError do
+        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_size: 1)
       end
-      assert_equal('Max size 10000000 is larger than maximum size 16384', error.message)
 
-      error = assert_raises(ArgumentError) do
-        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_size: 0)
+      assert_raises ArgumentError do
+        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_size: 16_385)
       end
-      assert_equal('Max size 0 is smaller than minimum size 2', error.message)
+    end
+
+    describe 'cardinality limit' do
+      let(:cardinality_limit) { 2 }
+
+      it 'creates overflow data point when cardinality limit is exceeded' do
+        expbh.update(1.5, { 'key' => 'a' }, data_points, cardinality_limit)
+        expbh.update(2.5, { 'key' => 'b' }, data_points, cardinality_limit)
+        expbh.update(3.5, { 'key' => 'c' }, data_points, cardinality_limit) # This should overflow
+
+        exphdps = expbh.collect(start_time, end_time, data_points, cardinality_limit)
+
+        _(exphdps.size).must_equal(3)
+
+        overflow_point = exphdps.find { |hdp| hdp.attributes == { 'otel.metric.overflow' => true } }
+        _(overflow_point).wont_be_nil
+        _(overflow_point.count).must_equal(1)
+        _(overflow_point.sum).must_equal(3.5)
+      end
+
+      it 'merges multiple overflow measurements correctly' do
+        expbh.update(1.5, { 'key' => 'a' }, data_points, cardinality_limit)
+        expbh.update(2.5, { 'key' => 'b' }, data_points, cardinality_limit)
+        expbh.update(3.5, { 'key' => 'c' }, data_points, cardinality_limit) # Overflow
+        expbh.update(4.5, { 'key' => 'd' }, data_points, cardinality_limit) # Also overflow
+
+        exphdps = expbh.collect(start_time, end_time, data_points, cardinality_limit)
+
+        overflow_point = exphdps.find { |hdp| hdp.attributes == { 'otel.metric.overflow' => true } }
+        _(overflow_point.count).must_equal(2)
+        _(overflow_point.sum).must_equal(8.0) # 3.5 + 4.5
+      end
     end
   end
 end

@@ -163,4 +163,38 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
       _(ndps[0].value).must_equal(1)
     end
   end
+
+  describe 'cardinality limit' do
+    let(:cardinality_limit) { 3 }
+
+    it 'creates overflow data point when cardinality limit is exceeded' do
+      sum_aggregation.update(1, { 'key' => 'a' }, data_points, cardinality_limit)
+      sum_aggregation.update(2, { 'key' => 'b' }, data_points, cardinality_limit)
+      sum_aggregation.update(3, { 'key' => 'c' }, data_points, cardinality_limit)
+      sum_aggregation.update(4, { 'key' => 'd' }, data_points, cardinality_limit) # This should overflow
+
+      ndps = sum_aggregation.collect(start_time, end_time, data_points, cardinality_limit)
+
+      _(ndps.size).must_equal(4)
+
+      overflow_point = ndps.find { |ndp| ndp.attributes == { 'otel.metric.overflow' => true } }
+      _(overflow_point).wont_be_nil
+      _(overflow_point.value).must_equal(4)
+    end
+
+    describe 'with cumulative aggregation' do
+      it 'preserves pre-overflow attributes after overflow starts' do
+        sum_aggregation.update(1, { 'key' => 'a' }, data_points, cardinality_limit)
+        sum_aggregation.update(2, { 'key' => 'b' }, data_points, cardinality_limit)
+        sum_aggregation.update(3, { 'key' => 'c' }, data_points, cardinality_limit)
+        sum_aggregation.update(4, { 'key' => 'd' }, data_points, cardinality_limit) # This should overflow
+
+        # Add more to a pre-overflow attribute
+        sum_aggregation.update(5, { 'key' => 'a' }, data_points, cardinality_limit)
+
+        _(data_points.size).must_equal(4) # 3 original + 1 overflow
+        _(data_points[{ 'key' => 'a' }].value).must_equal(6) # 1 + 5
+      end
+    end
+  end
 end

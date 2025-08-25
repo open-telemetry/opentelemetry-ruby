@@ -111,8 +111,8 @@ module OpenTelemetry
                 ndp
               end
             else
-              # Apply cardinality limit by choosing subset + overflow
-              selected_points = choose_delta_subset(all_points, cardinality_limit - 1)
+              # Apply cardinality limit by choosing subset (first n data_point) + overflow
+              selected_points = all_points.first(cardinality_limit)
               remaining_points = all_points - selected_points
 
               result = selected_points.map do |ndp|
@@ -145,11 +145,6 @@ module OpenTelemetry
             # For cumulative, we should have already enforced this in update()
             # But as safety net, keep first N points
             result.first(cardinality_limit)
-          end
-
-          def choose_delta_subset(points, count)
-            # Strategy: keep points with highest absolute values
-            points.sort_by { |point| -point.value.abs }.first(count)
           end
         end
       end

@@ -107,7 +107,7 @@ module OpenTelemetry
 
           def process_with_cardinality_limit(all_points, start_time, end_time, cardinality_limit)
             # Choose subset of histograms (prefer those with higher counts)
-            selected_points = choose_histogram_subset(all_points, cardinality_limit - 1)
+            selected_points = all_points.first(cardinality_limit)
             remaining_points = all_points - selected_points
 
             result = process_all_points(selected_points, start_time, end_time)
@@ -119,11 +119,6 @@ module OpenTelemetry
             end
 
             result
-          end
-
-          def choose_histogram_subset(points, count)
-            # Strategy: keep histograms with highest counts (most data)
-            points.sort_by { |hdp| -hdp.count }.first(count)
           end
 
           def merge_histogram_points(points, start_time, end_time)
