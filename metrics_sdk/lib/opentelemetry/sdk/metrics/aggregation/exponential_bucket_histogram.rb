@@ -200,9 +200,6 @@ module OpenTelemetry
           end
 
           def get_scale_change(low, high)
-            # puts "get_scale_change: low: #{low}, high: #{high}, @size: #{@size}"
-            # python code also produce 18 with 0,1048575, the high is little bit off
-            # just checked, the mapping is also ok, produce the 1048575
             change = 0
             while high - low >= @size
               high >>= 1
