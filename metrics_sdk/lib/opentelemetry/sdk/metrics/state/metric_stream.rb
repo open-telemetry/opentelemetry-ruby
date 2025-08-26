@@ -74,7 +74,7 @@ module OpenTelemetry
           # then we need to sort the entire data_points (~ 2000) based on time, which is time-consuming
           def update(value, attributes)
             if @registered_views.empty?
-              resolved_cardinality_limit = @cardinality_limit || DEFAULT_CARDINALITY_LIMIT
+              resolved_cardinality_limit = resolve_cardinality_limit(nil)
 
               @mutex.synchronize { @default_aggregation.update(value, attributes, @data_points, resolved_cardinality_limit) }
             else
@@ -116,7 +116,7 @@ module OpenTelemetry
           end
 
           def resolve_cardinality_limit(view)
-            cardinality_limit = view.aggregation_cardinality_limit || @cardinality_limit || DEFAULT_CARDINALITY_LIMIT
+            cardinality_limit = view&.aggregation_cardinality_limit || @cardinality_limit || DEFAULT_CARDINALITY_LIMIT
             [cardinality_limit, 0].max # if cardinality_limit is negative, then give it 0
           end
 
