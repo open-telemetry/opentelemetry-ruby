@@ -84,6 +84,10 @@ module OpenTelemetry
             nil
           end
 
+          def aggregation_temporality
+            @aggregation_temporality.temporality
+          end
+
           private
 
           def create_new_data_point(attributes, data_points)
@@ -184,10 +188,6 @@ module OpenTelemetry
 
             OpenTelemetry.logger.debug "buckets need to grow to #{span + 1} from #{buckets.counts.size} (max bucket size #{@size})"
             buckets.grow(span + 1, @size)
-          end
-
-          def aggregation_temporality
-            @aggregation_temporality.temporality
           end
 
           def new_mapping(scale)
