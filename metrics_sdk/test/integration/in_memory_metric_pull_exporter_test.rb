@@ -49,5 +49,71 @@ describe OpenTelemetry::SDK do
 
       _(last_snapshot[0].aggregation_temporality).must_equal(:cumulative)
     end
+
+    describe 'cardinality limit' do
+      before do
+        OpenTelemetry::SDK.configure
+      end
+      it 'accepts cardinality_limit parameter on initialization' do
+        metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new(aggregation_cardinality_limit: 100)
+        OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+
+        meter = OpenTelemetry.meter_provider.meter('test')
+        counter = meter.create_counter('test_counter')
+        counter.add(1)
+
+        metric_exporter.pull
+        last_snapshot = metric_exporter.metric_snapshots
+
+        _(last_snapshot).wont_be_empty
+      end
+
+      it 'enforces cardinality limit when collecting metrics' do
+        metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new(aggregation_cardinality_limit: 2)
+        OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+
+        meter = OpenTelemetry.meter_provider.meter('test')
+        counter = meter.create_counter('test_counter')
+
+        # Add more data points than the cardinality limit
+        counter.add(1, attributes: { 'key' => 'a' })
+        counter.add(2, attributes: { 'key' => 'b' })
+        counter.add(3, attributes: { 'key' => 'c' }) # Should trigger overflow
+
+        metric_exporter.pull
+        last_snapshot = metric_exporter.metric_snapshots
+
+        _(last_snapshot[0].data_points.size).must_equal(3)
+
+        # Find overflow data point
+        overflow_point = last_snapshot[0].data_points.find do |dp|
+          dp.attributes == { 'otel.metric.overflow' => true }
+        end
+        _(overflow_point).wont_be_nil
+        _(overflow_point.value).must_equal(3)
+      end
+
+      it 'handles zero cardinality limit' do
+        metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new(aggregation_cardinality_limit: 0)
+        OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+
+        meter = OpenTelemetry.meter_provider.meter('test')
+        counter = meter.create_counter('test_counter')
+
+        counter.add(42, attributes: { 'key' => 'value' })
+
+        metric_exporter.pull
+        last_snapshot = metric_exporter.metric_snapshots
+
+        _(last_snapshot[0].data_points.size).must_equal(1)
+
+        # All should go to overflow
+        overflow_point = last_snapshot[0].data_points.find do |dp|
+          dp.attributes == { 'otel.metric.overflow' => true }
+        end
+        _(overflow_point).wont_be_nil
+        _(overflow_point.value).must_equal(42)
+      end
+    end
   end
 end

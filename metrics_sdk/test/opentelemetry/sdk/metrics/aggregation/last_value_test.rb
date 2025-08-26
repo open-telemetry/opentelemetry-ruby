@@ -62,5 +62,42 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::LastValue do
       _(data_points[{ 'key' => 'a' }].value).must_equal(15)
       _(data_points[{ 'key' => 'b' }].value).must_equal(20)
     end
+
+    describe 'edge cases' do
+      it 'handles cardinality limit of 0' do
+        cardinality_limit = 0
+        last_value_aggregation.update(42, { 'key' => 'value' }, data_points, cardinality_limit)
+
+        _(data_points.size).must_equal(1)
+        overflow_point = data_points[{ 'otel.metric.overflow' => true }]
+        _(overflow_point.value).must_equal(42)
+      end
+
+      it 'replaces overflow value with latest when multiple overflow updates' do
+        cardinality_limit = 1
+        last_value_aggregation.update(10, { 'key' => 'a' }, data_points, cardinality_limit)
+        last_value_aggregation.update(20, { 'key' => 'b' }, data_points, cardinality_limit) # Overflow
+        last_value_aggregation.update(30, { 'key' => 'c' }, data_points, cardinality_limit) # Replace overflow
+
+        _(data_points.size).must_equal(2)
+        assert_equal(data_points.keys[0], { 'key' => 'a' })
+        _(data_points.values[0].value).must_equal 10
+
+        overflow_point = data_points[{ 'otel.metric.overflow' => true }]
+        _(overflow_point.value).must_equal(30) # LastValue behavior - only keep latest
+      end
+
+      it 'handles negative values in overflow' do
+        cardinality_limit = 1
+        last_value_aggregation.update(10, { 'key' => 'a' }, data_points, cardinality_limit)
+        last_value_aggregation.update(-5, { 'key' => 'b' }, data_points, cardinality_limit) # Negative overflow
+
+        assert_equal(data_points.keys[0], { 'key' => 'a' })
+        _(data_points.values[0].value).must_equal 10
+
+        overflow_point = data_points[{ 'otel.metric.overflow' => true }]
+        _(overflow_point.value).must_equal(-5)
+      end
+    end
   end
 end

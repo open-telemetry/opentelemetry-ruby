@@ -139,8 +139,10 @@ module OpenTelemetry
             result
           end
 
+          # if cardinality is 0, but with update, then there will be one in result which is overflow
+          # if cardinality is n, with update, then there will be n+1 in result
           def apply_cardinality_limit_to_result(result, cardinality_limit)
-            return result if result.size <= cardinality_limit
+            return result if result.size <= cardinality_limit + 1
 
             # For cumulative, we should have already enforced this in update()
             # But as safety net, keep first N points

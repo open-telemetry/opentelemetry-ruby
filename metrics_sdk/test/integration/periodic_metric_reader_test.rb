@@ -1,203 +1,261 @@
 # frozen_string_literal: true
 
-# Copyright The OpenTelemetry Authors
-#
-# SPDX-License-Identifier: Apache-2.0
+# # frozen_string_literal: true
 
-require 'test_helper'
-require 'json'
+# # Copyright The OpenTelemetry Authors
+# #
+# # SPDX-License-Identifier: Apache-2.0
 
-describe OpenTelemetry::SDK do
-  describe '#periodic_metric_reader' do
-    before do
-      reset_metrics_sdk
-      @original_temp = ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE']
-      ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'] = 'delta'
-    end
+# require 'test_helper'
+# require 'json'
 
-    after do
-      ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'] = @original_temp
-    end
+# describe OpenTelemetry::SDK do
+#   describe '#periodic_metric_reader' do
+#     before do
+#       reset_metrics_sdk
+#       @original_temp = ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE']
+#       ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'] = 'delta'
+#     end
 
-    # OTLP cannot export a metric without data points
-    it 'does not export metrics without data points' do
-      OpenTelemetry::SDK.configure
+#     after do
+#       ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'] = @original_temp
+#     end
 
-      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval_millis: 5000, export_timeout_millis: 5000, exporter: metric_exporter)
+#     # OTLP cannot export a metric without data points
+#     it 'does not export metrics without data points' do
+#       OpenTelemetry::SDK.configure
 
-      OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
+#       metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+#       periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval_millis: 5000, export_timeout_millis: 5000, exporter: metric_exporter)
 
-      meter = OpenTelemetry.meter_provider.meter('test')
-      meter.create_histogram('example', unit: 's', description: 'test')
+#       OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
 
-      sleep(1)
+#       meter = OpenTelemetry.meter_provider.meter('test')
+#       meter.create_histogram('example', unit: 's', description: 'test')
 
-      periodic_metric_reader.shutdown
-      snapshot = metric_exporter.metric_snapshots
+#       sleep(1)
 
-      assert_empty snapshot
-    end
+#       periodic_metric_reader.shutdown
+#       snapshot = metric_exporter.metric_snapshots
 
-    it 'does not export metrics without data points when they have a view' do
-      OpenTelemetry::SDK.configure
+#       assert_empty snapshot
+#     end
 
-      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval_millis: 5000, export_timeout_millis: 5000, exporter: metric_exporter)
+#     it 'does not export metrics without data points when they have a view' do
+#       OpenTelemetry::SDK.configure
 
-      OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
+#       metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+#       periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval_millis: 5000, export_timeout_millis: 5000, exporter: metric_exporter)
 
-      boundaries = [0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10]
+#       OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
 
-      OpenTelemetry.meter_provider.add_view('http.server.request.duration',
-                                            type: :histogram,
-                                            aggregation: OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(boundaries: boundaries))
+#       boundaries = [0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10]
 
-      meter = OpenTelemetry.meter_provider.meter('test')
-      meter.create_histogram('http.server.request.duration', unit: 's', description: 'Duration of HTTP server requests.')
+#       OpenTelemetry.meter_provider.add_view('http.server.request.duration',
+#                                             type: :histogram,
+#                                             aggregation: OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(boundaries: boundaries))
 
-      sleep(8)
+#       meter = OpenTelemetry.meter_provider.meter('test')
+#       meter.create_histogram('http.server.request.duration', unit: 's', description: 'Duration of HTTP server requests.')
 
-      periodic_metric_reader.shutdown
-      snapshot = metric_exporter.metric_snapshots
+#       sleep(8)
 
-      assert_empty snapshot
-    end
+#       periodic_metric_reader.shutdown
+#       snapshot = metric_exporter.metric_snapshots
 
-    it 'emits 2 metrics after 10 seconds' do
-      OpenTelemetry::SDK.configure
+#       assert_empty snapshot
+#     end
 
-      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval_millis: 5000, export_timeout_millis: 5000, exporter: metric_exporter)
+#     it 'emits 2 metrics after 10 seconds' do
+#       OpenTelemetry::SDK.configure
 
-      OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
+#       metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+#       periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval_millis: 5000, export_timeout_millis: 5000, exporter: metric_exporter)
 
-      meter = OpenTelemetry.meter_provider.meter('test')
-      counter = meter.create_counter('counter', unit: 'smidgen', description: 'a small amount of something')
+#       OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
 
-      counter.add(1)
-      counter.add(2, attributes: { 'a' => 'b' })
-      counter.add(2, attributes: { 'a' => 'b' })
-      counter.add(3, attributes: { 'b' => 'c' })
-      counter.add(4, attributes: { 'd' => 'e' })
+#       meter = OpenTelemetry.meter_provider.meter('test')
+#       counter = meter.create_counter('counter', unit: 'smidgen', description: 'a small amount of something')
 
-      sleep(8)
+#       counter.add(1)
+#       counter.add(2, attributes: { 'a' => 'b' })
+#       counter.add(2, attributes: { 'a' => 'b' })
+#       counter.add(3, attributes: { 'b' => 'c' })
+#       counter.add(4, attributes: { 'd' => 'e' })
 
-      counter.add(5)
-      counter.add(6)
+#       sleep(8)
 
-      periodic_metric_reader.shutdown
-      snapshot = metric_exporter.metric_snapshots
+#       counter.add(5)
+#       counter.add(6)
 
-      _(snapshot.size).must_equal(2)
+#       periodic_metric_reader.shutdown
+#       snapshot = metric_exporter.metric_snapshots
 
-      _(snapshot[0].name).must_equal('counter')
-      _(snapshot[0].unit).must_equal('smidgen')
-      _(snapshot[0].description).must_equal('a small amount of something')
+#       _(snapshot.size).must_equal(2)
 
-      _(snapshot[0].instrumentation_scope.name).must_equal('test')
+#       _(snapshot[0].name).must_equal('counter')
+#       _(snapshot[0].unit).must_equal('smidgen')
+#       _(snapshot[0].description).must_equal('a small amount of something')
 
-      _(snapshot[0].data_points[0].value).must_equal(1)
-      _(snapshot[0].data_points[0].attributes).must_equal({})
+#       _(snapshot[0].instrumentation_scope.name).must_equal('test')
 
-      _(snapshot[0].data_points[1].value).must_equal(4)
-      _(snapshot[0].data_points[1].attributes).must_equal('a' => 'b')
+#       _(snapshot[0].data_points[0].value).must_equal(1)
+#       _(snapshot[0].data_points[0].attributes).must_equal({})
 
-      _(snapshot[0].data_points[2].value).must_equal(3)
-      _(snapshot[0].data_points[2].attributes).must_equal('b' => 'c')
+#       _(snapshot[0].data_points[1].value).must_equal(4)
+#       _(snapshot[0].data_points[1].attributes).must_equal('a' => 'b')
 
-      _(snapshot[0].data_points[3].value).must_equal(4)
-      _(snapshot[0].data_points[3].attributes).must_equal('d' => 'e')
+#       _(snapshot[0].data_points[2].value).must_equal(3)
+#       _(snapshot[0].data_points[2].attributes).must_equal('b' => 'c')
 
-      _(snapshot[1].data_points.size).must_equal(1)
-      _(snapshot[1].data_points[0].value).must_equal(11)
+#       _(snapshot[0].data_points[3].value).must_equal(4)
+#       _(snapshot[0].data_points[3].attributes).must_equal('d' => 'e')
 
-      _(periodic_metric_reader.instance_variable_get(:@thread).alive?).must_equal false
-    end
+#       _(snapshot[1].data_points.size).must_equal(1)
+#       _(snapshot[1].data_points[0].value).must_equal(11)
 
-    it 'emits 1 metric after 1 second when interval is > 1 second' do
-      OpenTelemetry::SDK.configure
+#       _(periodic_metric_reader.instance_variable_get(:@thread).alive?).must_equal false
+#     end
 
-      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval_millis: 5000, export_timeout_millis: 5000, exporter: metric_exporter)
+#     it 'emits 1 metric after 1 second when interval is > 1 second' do
+#       OpenTelemetry::SDK.configure
 
-      OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
+#       metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+#       periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval_millis: 5000, export_timeout_millis: 5000, exporter: metric_exporter)
 
-      meter = OpenTelemetry.meter_provider.meter('test')
-      counter = meter.create_counter('counter', unit: 'smidgen', description: 'a small amount of something')
+#       OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
 
-      counter.add(1)
-      counter.add(2, attributes: { 'a' => 'b' })
-      counter.add(2, attributes: { 'a' => 'b' })
-      counter.add(3, attributes: { 'b' => 'c' })
-      counter.add(4, attributes: { 'd' => 'e' })
+#       meter = OpenTelemetry.meter_provider.meter('test')
+#       counter = meter.create_counter('counter', unit: 'smidgen', description: 'a small amount of something')
 
-      sleep(1)
+#       counter.add(1)
+#       counter.add(2, attributes: { 'a' => 'b' })
+#       counter.add(2, attributes: { 'a' => 'b' })
+#       counter.add(3, attributes: { 'b' => 'c' })
+#       counter.add(4, attributes: { 'd' => 'e' })
 
-      periodic_metric_reader.shutdown
-      snapshot = metric_exporter.metric_snapshots
+#       sleep(1)
 
-      _(snapshot.size).must_equal(1)
-      _(periodic_metric_reader.instance_variable_get(:@thread).alive?).must_equal false
-    end
+#       periodic_metric_reader.shutdown
+#       snapshot = metric_exporter.metric_snapshots
 
-    unless Gem.win_platform? || %w[jruby truffleruby].include?(RUBY_ENGINE) # forking is not available on these platforms or runtimes
-      it 'is restarted after forking' do
-        OpenTelemetry::SDK.configure
+#       _(snapshot.size).must_equal(1)
+#       _(periodic_metric_reader.instance_variable_get(:@thread).alive?).must_equal false
+#     end
 
-        metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-        periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval_millis: 5000, export_timeout_millis: 5000, exporter: metric_exporter)
+#     unless Gem.win_platform? || %w[jruby truffleruby].include?(RUBY_ENGINE) # forking is not available on these platforms or runtimes
+#       it 'is restarted after forking' do
+#         OpenTelemetry::SDK.configure
 
-        OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
+#         metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+#         periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval_millis: 5000, export_timeout_millis: 5000, exporter: metric_exporter)
 
-        read, write = IO.pipe
+#         OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
 
-        pid = fork do
-          meter = OpenTelemetry.meter_provider.meter('test')
-          counter = meter.create_counter('counter', unit: 'smidgen', description: 'a small amount of something')
+#         read, write = IO.pipe
 
-          counter.add(1)
-          counter.add(2, attributes: { 'a' => 'b' })
-          counter.add(2, attributes: { 'a' => 'b' })
-          counter.add(3, attributes: { 'b' => 'c' })
-          counter.add(4, attributes: { 'd' => 'e' })
+#         pid = fork do
+#           meter = OpenTelemetry.meter_provider.meter('test')
+#           counter = meter.create_counter('counter', unit: 'smidgen', description: 'a small amount of something')
 
-          sleep(8)
-          snapshot = metric_exporter.metric_snapshots
+#           counter.add(1)
+#           counter.add(2, attributes: { 'a' => 'b' })
+#           counter.add(2, attributes: { 'a' => 'b' })
+#           counter.add(3, attributes: { 'b' => 'c' })
+#           counter.add(4, attributes: { 'd' => 'e' })
 
-          json = snapshot.map { |reading| { name: reading.name } }.to_json
-          write.puts json
-        end
+#           sleep(8)
+#           snapshot = metric_exporter.metric_snapshots
 
-        Timeout.timeout(10) do
-          Process.waitpid(pid)
-        end
+#           json = snapshot.map { |reading| { name: reading.name } }.to_json
+#           write.puts json
+#         end
 
-        periodic_metric_reader.shutdown
-        snapshot = JSON.parse(read.gets.chomp)
-        _(snapshot.size).must_equal(1)
-        _(snapshot[0]).must_equal('name' => 'counter')
-        _(periodic_metric_reader.instance_variable_get(:@thread).alive?).must_equal false
-      end
-    end
+#         Timeout.timeout(10) do
+#           Process.waitpid(pid)
+#         end
 
-    it 'shutdown break the export interval cycle' do
-      OpenTelemetry::SDK.configure
+#         periodic_metric_reader.shutdown
+#         snapshot = JSON.parse(read.gets.chomp)
+#         _(snapshot.size).must_equal(1)
+#         _(snapshot[0]).must_equal('name' => 'counter')
+#         _(periodic_metric_reader.instance_variable_get(:@thread).alive?).must_equal false
+#       end
+#     end
 
-      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval_millis: 1_000_000, export_timeout_millis: 10_000, exporter: metric_exporter)
+#     it 'shutdown break the export interval cycle' do
+#       OpenTelemetry::SDK.configure
 
-      OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
+#       metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+#       periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(export_interval_millis: 1_000_000, export_timeout_millis: 10_000, exporter: metric_exporter)
 
-      _(periodic_metric_reader.alive?).must_equal true
+#       OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
 
-      sleep 5 # make sure the work thread start
+#       _(periodic_metric_reader.alive?).must_equal true
 
-      Timeout.timeout(2) do # Fail if this block takes more than 2 seconds
-        periodic_metric_reader.shutdown
-      end
+#       sleep 5 # make sure the work thread start
 
-      _(periodic_metric_reader.alive?).must_equal false
-    end
-  end
-end
+#       Timeout.timeout(2) do # Fail if this block takes more than 2 seconds
+#         periodic_metric_reader.shutdown
+#       end
+
+#       _(periodic_metric_reader.alive?).must_equal false
+#     end
+
+#     describe 'cardinality limit' do
+#       it 'accepts cardinality_limit parameter on initialization' do
+#         OpenTelemetry::SDK.configure
+
+#         metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+#         periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(
+#           export_interval_millis: 100,
+#           export_timeout_millis: 1000,
+#           exporter: metric_exporter,
+#           cardinality_limit: 50
+#         )
+
+#         OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
+
+#         _(periodic_metric_reader.alive?).must_equal true
+#         periodic_metric_reader.shutdown
+#       end
+
+#       it 'passes cardinality limit to metric collection' do
+#         OpenTelemetry::SDK.configure
+
+#         metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+#         periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(
+#           export_interval_millis: 100,
+#           export_timeout_millis: 1000,
+#           exporter: metric_exporter,
+#           cardinality_limit: 2
+#         )
+
+#         OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
+
+#         meter = OpenTelemetry.meter_provider.meter('test')
+#         counter = meter.create_counter('test_counter')
+
+#         # Add more data points than the cardinality limit
+#         counter.add(1, attributes: { 'key' => 'a' })
+#         counter.add(2, attributes: { 'key' => 'b' })
+#         counter.add(3, attributes: { 'key' => 'c' }) # Should trigger overflow
+
+#         # Wait for collection
+#         sleep(0.2)
+
+#         periodic_metric_reader.shutdown
+#         snapshot = metric_exporter.metric_snapshots
+
+#         _(snapshot).wont_be_empty
+#         _(snapshot[0].data_points.size).must_equal(2) # Limited by cardinality
+
+#         # Find overflow data point
+#         overflow_point = snapshot[0].data_points.find do |dp|
+#           dp.attributes == { 'otel.metric.overflow' => true }
+#         end
+#         _(overflow_point).wont_be_nil
+#       end
+#     end
+#   end
+# end

@@ -59,5 +59,32 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Drop do
         _(ndp.value).must_equal(0)
       end
     end
+
+    describe 'edge cases' do
+      it 'handles cardinality limit of 0 gracefully' do
+        cardinality_limit = 0
+        drop_aggregation.update(100, { 'key' => 'value' }, data_points, cardinality_limit)
+
+        ndps = drop_aggregation.collect(start_time, end_time, data_points, cardinality_limit)
+
+        # Drop aggregation should still produce data points even with 0 limit
+        _(ndps).wont_be_empty
+        ndps.each { |ndp| _(ndp.value).must_equal(0) }
+      end
+
+      it 'maintains drop behavior with very high cardinality' do
+        cardinality_limit = 1000
+
+        100.times do |i|
+          drop_aggregation.update(i * 10, { 'key' => "value_#{i}" }, data_points, cardinality_limit)
+        end
+
+        ndps = drop_aggregation.collect(start_time, end_time, data_points, cardinality_limit)
+
+        # All values should still be 0
+        ndps.each { |ndp| _(ndp.value).must_equal(0) }
+        _(ndps.size).must_equal(100) # All data points should be present
+      end
+    end
   end
 end
