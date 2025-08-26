@@ -53,16 +53,12 @@ module OpenTelemetry
               return metric_data if @data_points.empty?
 
               if @registered_views.empty?
-                resolved_cardinality_limit = @cardinality_limit || DEFAULT_CARDINALITY_LIMIT
                 metric_data << aggregate_metric_data(start_time,
-                                                     end_time,
-                                                     resolved_cardinality_limit)
+                                                     end_time)
               else
                 @registered_views.each do |view|
-                  resolved_cardinality_limit = resolve_cardinality_limit(view)
                   metric_data << aggregate_metric_data(start_time,
                                                        end_time,
-                                                       resolved_cardinality_limit,
                                                        aggregation: view.aggregation)
                 end
               end
@@ -93,7 +89,7 @@ module OpenTelemetry
             end
           end
 
-          def aggregate_metric_data(start_time, end_time, cardinality_limit, aggregation: nil)
+          def aggregate_metric_data(start_time, end_time, aggregation: nil)
             aggregator = aggregation || @default_aggregation
             is_monotonic = aggregator.respond_to?(:monotonic?) ? aggregator.monotonic? : nil
             aggregation_temporality = aggregator.respond_to?(:aggregation_temporality) ? aggregator.aggregation_temporality : nil
@@ -105,7 +101,7 @@ module OpenTelemetry
               @instrument_kind,
               @meter_provider.resource,
               @instrumentation_scope,
-              aggregator.collect(start_time, end_time, @data_points, cardinality_limit),
+              aggregator.collect(start_time, end_time, @data_points),
               aggregation_temporality,
               start_time,
               end_time,
@@ -120,7 +116,8 @@ module OpenTelemetry
           end
 
           def resolve_cardinality_limit(view)
-            view.aggregation_cardinality_limit || @cardinality_limit || DEFAULT_CARDINALITY_LIMIT
+            cardinality_limit = view.aggregation_cardinality_limit || @cardinality_limit || DEFAULT_CARDINALITY_LIMIT
+            [cardinality_limit, 0].max # if cardinality_limit is negative, then give it 0
           end
 
           def to_s

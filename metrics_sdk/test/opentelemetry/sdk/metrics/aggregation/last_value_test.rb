@@ -16,7 +16,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::LastValue do
 
   it 'sets the timestamps' do
     last_value_aggregation.update(0, {}, data_points, cardinality_limit)
-    ndp = last_value_aggregation.collect(start_time, end_time, data_points, cardinality_limit)[0]
+    ndp = last_value_aggregation.collect(start_time, end_time, data_points)[0]
     _(ndp.start_time_unix_nano).must_equal(start_time)
     _(ndp.time_unix_nano).must_equal(end_time)
   end
@@ -28,7 +28,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::LastValue do
     last_value_aggregation.update(2, { 'foo' => 'bar' }, data_points, cardinality_limit)
     last_value_aggregation.update(2, { 'foo' => 'bar' }, data_points, cardinality_limit)
 
-    ndps = last_value_aggregation.collect(start_time, end_time, data_points, cardinality_limit)
+    ndps = last_value_aggregation.collect(start_time, end_time, data_points)
     _(ndps[0].value).must_equal(2)
     _(ndps[0].attributes).must_equal({}, data_points)
 
@@ -41,16 +41,23 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::LastValue do
 
     it 'creates overflow data point when cardinality limit is exceeded' do
       last_value_aggregation.update(10, { 'key' => 'a' }, data_points, cardinality_limit)
+      last_value_aggregation.update(20, { 'key' => 'a' }, data_points, cardinality_limit)
       last_value_aggregation.update(20, { 'key' => 'b' }, data_points, cardinality_limit)
       last_value_aggregation.update(30, { 'key' => 'c' }, data_points, cardinality_limit) # This should overflow
+      last_value_aggregation.update(40, { 'key' => 'e' }, data_points, cardinality_limit) # This should overflow
 
-      ndps = last_value_aggregation.collect(start_time, end_time, data_points, cardinality_limit)
+      ndps = last_value_aggregation.collect(start_time, end_time, data_points)
 
-      _(ndps.size).must_equal(2)
+      _(ndps.size).must_equal(3)
+
+      assert_equal(ndps[0].attributes, { 'key' => 'a' })
+      _(ndps[0].value).must_equal 20
+
+      assert_equal(ndps[1].attributes, { 'key' => 'b' })
+      _(ndps[1].value).must_equal 20
 
       overflow_point = ndps.find { |ndp| ndp.attributes == { 'otel.metric.overflow' => true } }
-      _(overflow_point).wont_be_nil
-      _(overflow_point.value).must_equal(30)
+      _(overflow_point.value).must_equal(40)
     end
 
     it 'updates existing attribute sets without triggering overflow' do
@@ -64,39 +71,15 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::LastValue do
     end
 
     describe 'edge cases' do
-      it 'handles cardinality limit of 0' do
+      it 'handles cardinality limits 0' do
+        # Test cardinality limit of 0 - everything overflows
         cardinality_limit = 0
         last_value_aggregation.update(42, { 'key' => 'value' }, data_points, cardinality_limit)
+        last_value_aggregation.update(30, { 'key' => 'value' }, data_points, cardinality_limit)
 
         _(data_points.size).must_equal(1)
         overflow_point = data_points[{ 'otel.metric.overflow' => true }]
-        _(overflow_point.value).must_equal(42)
-      end
-
-      it 'replaces overflow value with latest when multiple overflow updates' do
-        cardinality_limit = 1
-        last_value_aggregation.update(10, { 'key' => 'a' }, data_points, cardinality_limit)
-        last_value_aggregation.update(20, { 'key' => 'b' }, data_points, cardinality_limit) # Overflow
-        last_value_aggregation.update(30, { 'key' => 'c' }, data_points, cardinality_limit) # Replace overflow
-
-        _(data_points.size).must_equal(2)
-        assert_equal(data_points.keys[0], { 'key' => 'a' })
-        _(data_points.values[0].value).must_equal 10
-
-        overflow_point = data_points[{ 'otel.metric.overflow' => true }]
-        _(overflow_point.value).must_equal(30) # LastValue behavior - only keep latest
-      end
-
-      it 'handles negative values in overflow' do
-        cardinality_limit = 1
-        last_value_aggregation.update(10, { 'key' => 'a' }, data_points, cardinality_limit)
-        last_value_aggregation.update(-5, { 'key' => 'b' }, data_points, cardinality_limit) # Negative overflow
-
-        assert_equal(data_points.keys[0], { 'key' => 'a' })
-        _(data_points.values[0].value).must_equal 10
-
-        overflow_point = data_points[{ 'otel.metric.overflow' => true }]
-        _(overflow_point.value).must_equal(-5)
+        _(overflow_point.value).must_equal(30)
       end
     end
   end

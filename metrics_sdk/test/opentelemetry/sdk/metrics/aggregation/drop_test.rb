@@ -21,7 +21,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Drop do
 
   it 'sets the timestamps' do
     drop_aggregation.update(0, {}, data_points, cardinality_limit)
-    ndp = drop_aggregation.collect(start_time, end_time, data_points, cardinality_limit)[0]
+    ndp = drop_aggregation.collect(start_time, end_time, data_points)[0]
     _(ndp.start_time_unix_nano).must_equal(0)
     _(ndp.time_unix_nano).must_equal(0)
   end
@@ -33,7 +33,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Drop do
     drop_aggregation.update(2, { 'foo' => 'bar' }, data_points, cardinality_limit)
     drop_aggregation.update(2, { 'foo' => 'bar' }, data_points, cardinality_limit)
 
-    ndps = drop_aggregation.collect(start_time, end_time, data_points, cardinality_limit)
+    ndps = drop_aggregation.collect(start_time, end_time, data_points)
 
     _(ndps.size).must_equal(2)
     _(ndps[0].value).must_equal(0)
@@ -44,46 +44,18 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Drop do
   end
 
   describe 'cardinality limit' do
-    let(:cardinality_limit) { 2 }
-
     it 'respects cardinality limit but still drops all values' do
+      cardinality_limit = 2
       drop_aggregation.update(10, { 'key' => 'a' }, data_points, cardinality_limit)
       drop_aggregation.update(20, { 'key' => 'b' }, data_points, cardinality_limit)
       drop_aggregation.update(30, { 'key' => 'c' }, data_points, cardinality_limit) # Should be limited
       drop_aggregation.update(40, { 'key' => 'd' }, data_points, cardinality_limit) # Should be limited
 
-      ndps = drop_aggregation.collect(start_time, end_time, data_points, cardinality_limit)
+      ndps = drop_aggregation.collect(start_time, end_time, data_points)
 
       # All values should be 0 regardless of cardinality limit
       ndps.each do |ndp|
         _(ndp.value).must_equal(0)
-      end
-    end
-
-    describe 'edge cases' do
-      it 'handles cardinality limit of 0 gracefully' do
-        cardinality_limit = 0
-        drop_aggregation.update(100, { 'key' => 'value' }, data_points, cardinality_limit)
-
-        ndps = drop_aggregation.collect(start_time, end_time, data_points, cardinality_limit)
-
-        # Drop aggregation should still produce data points even with 0 limit
-        _(ndps).wont_be_empty
-        ndps.each { |ndp| _(ndp.value).must_equal(0) }
-      end
-
-      it 'maintains drop behavior with very high cardinality' do
-        cardinality_limit = 1000
-
-        100.times do |i|
-          drop_aggregation.update(i * 10, { 'key' => "value_#{i}" }, data_points, cardinality_limit)
-        end
-
-        ndps = drop_aggregation.collect(start_time, end_time, data_points, cardinality_limit)
-
-        # All values should still be 0
-        ndps.each { |ndp| _(ndp.value).must_equal(0) }
-        _(ndps.size).must_equal(100) # All data points should be present
       end
     end
   end

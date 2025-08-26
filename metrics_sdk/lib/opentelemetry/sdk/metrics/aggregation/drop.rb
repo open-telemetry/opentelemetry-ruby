@@ -10,7 +10,7 @@ module OpenTelemetry
       module Aggregation
         # Contains the implementation of the Drop aggregation
         class Drop
-          def collect(start_time, end_time, data_points, cardinality_limit)
+          def collect(start_time, end_time, data_points)
             data_points.values.map!(&:dup)
           end
 

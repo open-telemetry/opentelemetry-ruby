@@ -44,57 +44,23 @@ module OpenTelemetry
             @zero_count     = 0
             @size           = validate_size(max_size)
             @scale          = validate_scale(max_scale)
-            @overflow_started = false
 
             @mapping = new_mapping(@scale)
           end
 
-          def collect(start_time, end_time, data_points, cardinality_limit)
-            all_points = data_points.values
-
-            # Apply cardinality limit
-            result = if all_points.size <= cardinality_limit
-                       process_all_points(all_points, start_time, end_time)
-                     else
-                       process_with_cardinality_limit(all_points, start_time, end_time, cardinality_limit)
-                     end
-
-            data_points.clear if @aggregation_temporality.delta?
-            result
-          end
-
-          def update(amount, attributes, data_points, cardinality_limit)
-            # Check if we already have this attribute set
-            if data_points.key?(attributes)
-              hdp = data_points[attributes]
-            elsif data_points.size >= cardinality_limit
-              # Check cardinality limit for new attribute sets
-              @overflow_started = true
-              hdp = data_points[OVERFLOW_ATTRIBUTE_SET] || create_overflow_data_point(data_points)
-            # Overflow: aggregate into overflow data point
-            else
-              # Normal case - create new data point
-              hdp = create_new_data_point(attributes, data_points)
-            end
-
-            # Update the histogram data point with the new amount
-            update_histogram_data_point(hdp, amount)
-            nil
-          end
-
-          private
-
-          def process_all_points(all_points, start_time, end_time)
+          def collect(start_time, end_time, data_points)
             if @aggregation_temporality.delta?
               # Set timestamps and 'move' data point values to result.
-              all_points.map! do |hdp|
+              hdps = data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano = start_time
                 hdp.time_unix_nano = end_time
                 hdp
               end
+              data_points.clear
+              hdps
             else
               # Update timestamps and take a snapshot.
-              all_points.map! do |hdp|
+              data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano ||= start_time # Start time of a data point is from the first observation.
                 hdp.time_unix_nano = end_time
                 hdp = hdp.dup
@@ -105,79 +71,20 @@ module OpenTelemetry
             end
           end
 
-          def process_with_cardinality_limit(all_points, start_time, end_time, cardinality_limit)
-            # Choose subset of histograms (prefer those with higher counts)
-            selected_points = all_points.first(cardinality_limit)
-            remaining_points = all_points - selected_points
+          def update(amount, attributes, data_points, cardinality_limit)
+            hdp = if data_points.key?(attributes)
+                    data_points[attributes]
+                  elsif data_points.size >= cardinality_limit
+                    data_points[OVERFLOW_ATTRIBUTE_SET] || create_new_data_point(OVERFLOW_ATTRIBUTE_SET, data_points)
+                  else
+                    create_new_data_point(attributes, data_points)
+                  end
 
-            result = process_all_points(selected_points, start_time, end_time)
-
-            # Create overflow histogram by merging remaining points
-            if remaining_points.any?
-              overflow_point = merge_histogram_points(remaining_points, start_time, end_time)
-              result << overflow_point
-            end
-
-            result
+            update_histogram_data_point(hdp, amount)
+            nil
           end
 
-          def merge_histogram_points(points, start_time, end_time)
-            # Create a merged histogram with overflow attributes
-            merged = ExponentialHistogramDataPoint.new(
-              OVERFLOW_ATTRIBUTE_SET,
-              start_time,
-              end_time,
-              0,   # count
-              0.0, # sum
-              @scale,
-              0,   # zero_count
-              ExponentialHistogram::Buckets.new,
-              ExponentialHistogram::Buckets.new,
-              0,   # flags
-              nil, # exemplars
-              Float::INFINITY,   # min
-              -Float::INFINITY,  # max
-              @zero_threshold
-            )
-
-            # Merge all remaining points into the overflow point
-            points.each do |hdp|
-              merged.count += hdp.count
-              merged.sum += hdp.sum
-              merged.zero_count += hdp.zero_count
-              merged.min = [merged.min, hdp.min].min if hdp.min
-              merged.max = [merged.max, hdp.max].max if hdp.max
-
-              # NOTE: Merging buckets would require complex logic to handle different scales
-              # For simplicity, we aggregate the counts and sums
-            end
-
-            merged
-          end
-
-          def create_overflow_data_point(data_points)
-            if @record_min_max
-              min = Float::INFINITY
-              max = -Float::INFINITY
-            end
-
-            data_points[OVERFLOW_ATTRIBUTE_SET] = ExponentialHistogramDataPoint.new(
-              OVERFLOW_ATTRIBUTE_SET,
-              nil,                                                               # :start_time_unix_nano
-              0,                                                                 # :time_unix_nano
-              0,                                                                 # :count
-              0,                                                                 # :sum
-              @scale,                                                            # :scale
-              @zero_count,                                                       # :zero_count
-              ExponentialHistogram::Buckets.new,  # :positive
-              ExponentialHistogram::Buckets.new,  # :negative
-              0,                                                                 # :flags
-              nil,                                                               # :exemplars
-              min,                                                               # :min
-              max,                                                               # :max
-              @zero_threshold # :zero_threshold)
-            )
-          end
+          private
 
           def create_new_data_point(attributes, data_points)
             if @record_min_max
