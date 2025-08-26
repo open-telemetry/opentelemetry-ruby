@@ -213,6 +213,9 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       log_output = StringIO.new
       OpenTelemetry.logger = Logger.new(log_output)
       stream.invoke_callback(0.05, attributes)
+
+      sleep 0.2
+
       assert_includes log_output.string, 'Timeout while invoking callback'
       OpenTelemetry.logger = original_logger
     end

@@ -133,6 +133,8 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
       # this test case is unstable as it involve thread in minitest
       skip if snapshot.first.data_points.size != 10
 
+      sleep 0.2
+
       10.times.each do |i|
         _(snapshot.first.data_points[i].value).must_equal 10
       end
