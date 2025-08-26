@@ -15,7 +15,34 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - uses: fossas/fossa-action@93a52ecf7c3ac7eb40f5de77fd69b1a19524de94 # v1.5.0
+      - name: Install Ruby 3.4
+        uses: ruby/setup-ruby@v1.255.0
+        with:
+          ruby-version: 3.4
+      - name: Generate Gemfile.lock
+        run: |
+          echo "Finding all Gemfiles in the project..."
+          echo "======================================="
+          ORIGINAL_DIR=$(pwd)
+
+          find . -type f -name "Gemfile" -not -path "*/example/*" | sort | while read gemfile; do
+              gemfile_dir=$(dirname "$gemfile")
+              
+              # Change to the Gemfile's directory
+              echo "Changing to directory: $gemfile_dir"
+              
+              cd "$gemfile_dir" || continue
+
+              echo "Current directory: $(pwd)"
+              echo "Creating lock file for: $gemfile"
+              
+              # Generate the gemlock files
+              bundle lock || echo "Warning: Failed to generate lock file for $gemfile, continuing..."
+
+              cd "$ORIGINAL_DIR" || exit 1
+          done
+
+      - uses: fossas/fossa-action@3ebcea1862c6ffbd5cf1b4d0bd6b3fe7bd6f2cac # v1.7.0
         with:
           api-key: ${{secrets.FOSSA_API_KEY}}
           team: OpenTelemetry
