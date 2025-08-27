@@ -15,9 +15,9 @@ describe OpenTelemetry::SDK::Logs::LogRecordLimits do
       _(log_record_limits.attribute_length_limit).must_be_nil
     end
 
-    it 'prioritizes specific environment varibles for attribute value length limits' do
+    it 'prioritizes specific environment variables for attribute value length limits' do
       OpenTelemetry::TestHelpers.with_env('OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '35',
-                                          'OTEL_LOG_RECORD_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '33') do
+                                          'OTEL_LOGRECORD_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '33') do
         _(log_record_limits.attribute_length_limit).must_equal 33
       end
     end
@@ -29,16 +29,16 @@ describe OpenTelemetry::SDK::Logs::LogRecordLimits do
     end
 
     it 'reflects environment variables' do
-      OpenTelemetry::TestHelpers.with_env('OTEL_LOG_RECORD_ATTRIBUTE_COUNT_LIMIT' => '1',
-                                          'OTEL_LOG_RECORD_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '32') do
+      OpenTelemetry::TestHelpers.with_env('OTEL_LOGRECORD_ATTRIBUTE_COUNT_LIMIT' => '1',
+                                          'OTEL_LOGRECORD_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '32') do
         _(log_record_limits.attribute_count_limit).must_equal 1
         _(log_record_limits.attribute_length_limit).must_equal 32
       end
     end
 
     it 'reflects explicit overrides' do
-      OpenTelemetry::TestHelpers.with_env('OTEL_LOG_RECORD_ATTRIBUTE_COUNT_LIMIT' => '1',
-                                          'OTEL_LOG_RECORD_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '4') do
+      OpenTelemetry::TestHelpers.with_env('OTEL_LOGRECORD_ATTRIBUTE_COUNT_LIMIT' => '1',
+                                          'OTEL_LOGRECORD_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '4') do
         log_record_limits = OpenTelemetry::SDK::Logs::LogRecordLimits.new(attribute_count_limit: 10,
                                                                           attribute_length_limit: 32)
         _(log_record_limits.attribute_count_limit).must_equal 10
@@ -55,9 +55,9 @@ describe OpenTelemetry::SDK::Logs::LogRecordLimits do
     end
 
     it 'prefers model-specific attribute env vars over generic attribute env vars' do
-      OpenTelemetry::TestHelpers.with_env('OTEL_LOG_RECORD_ATTRIBUTE_COUNT_LIMIT' => '1',
+      OpenTelemetry::TestHelpers.with_env('OTEL_LOGRECORD_ATTRIBUTE_COUNT_LIMIT' => '1',
                                           'OTEL_ATTRIBUTE_COUNT_LIMIT' => '2',
-                                          'OTEL_LOG_RECORD_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '32',
+                                          'OTEL_LOGRECORD_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '32',
                                           'OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '33') do
         _(log_record_limits.attribute_count_limit).must_equal 1
         _(log_record_limits.attribute_length_limit).must_equal 32
