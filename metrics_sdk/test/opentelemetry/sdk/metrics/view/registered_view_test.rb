@@ -91,7 +91,15 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
   end
 
   describe '#registered_view with asynchronous counters' do
-    before { reset_metrics_sdk }
+    before do
+      reset_metrics_sdk
+      @original = ENV['OTEL_METRICS_EXPORTER']
+      ENV['OTEL_METRICS_EXPORTER'] = 'none'
+    end
+
+    after do
+      ENV['OTEL_METRICS_EXPORTER'] = @original
+    end
 
     it 'emits asynchronous counter metrics with no data_points if view is drop' do
       OpenTelemetry::SDK.configure
