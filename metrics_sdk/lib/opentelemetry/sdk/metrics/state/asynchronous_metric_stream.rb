@@ -56,7 +56,7 @@ module OpenTelemetry
                 end
               end
             else
-              @registered_views.each do |view|
+              @registered_views.each do |view, data_points|
                 @mutex.synchronize do
                   @callback.each do |cb|
                     value = safe_guard_callback(cb, timeout: timeout)
@@ -64,7 +64,7 @@ module OpenTelemetry
 
                     merged_attributes = attributes || {}
                     merged_attributes.merge!(view.attribute_keys)
-                    view.aggregation.update(value, merged_attributes, @data_points) if view.valid_aggregation?
+                    view.aggregation.update(value, merged_attributes, data_points) if view.valid_aggregation?
                   end
                 end
               end

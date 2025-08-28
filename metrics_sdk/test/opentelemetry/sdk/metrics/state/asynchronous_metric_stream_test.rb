@@ -67,7 +67,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
 
       registered_views = stream.instance_variable_get(:@registered_views)
       _(registered_views.size).must_equal(1)
-      _(registered_views.first.aggregation.class).must_equal ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue
+      _(registered_views.keys.first.aggregation.class).must_equal ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue
     end
   end
 
