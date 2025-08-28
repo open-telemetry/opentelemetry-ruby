@@ -123,7 +123,7 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStore do
             :counter,
             meter_provider,
             instrumentation_scope,
-            aggregation
+            OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
           )
           metric_store.add_metric_stream(metric_stream)
           metric_stream.update(i, {})

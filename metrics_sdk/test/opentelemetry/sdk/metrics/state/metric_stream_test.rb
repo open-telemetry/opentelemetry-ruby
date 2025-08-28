@@ -265,7 +265,7 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
       _(str).must_be_empty # No data points yet
     end
 
-    it 'includes data points in string representation' do
+    it 'string representation' do
       metric_stream.update(10, { 'key1' => 'value1' })
       metric_stream.update(20, { 'key2' => 'value2' })
       str = metric_stream.to_s

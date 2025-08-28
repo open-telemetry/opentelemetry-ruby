@@ -87,15 +87,18 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       _(metric_data.data_points.first.attributes).must_equal(attributes)
 
       # Test empty collection when callback returns nil
+      aggregation = OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
       empty_callback = [proc { nil }]
       empty_stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter', 'description', 'unit', :observable_counter,
         meter_provider, instrumentation_scope, aggregation,
         empty_callback, timeout, {}
       )
+
       _(empty_stream.collect(0, 1000)).must_be_empty
 
       # Test multiple callbacks accumulation
+      aggregation = OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
       multi_callbacks = [proc { 10 }, proc { 20 }, proc { 30 }]
       multi_stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter', 'description', 'unit', :observable_counter,
@@ -157,8 +160,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
   end
 
   describe '#invoke_callback' do
-    it 'executes callbacks with timeout and handles thread safety with multiple callback' do
-      # Test multiple callbacks in array
+    it 'executes multiple callbacks in array' do
       multi_callbacks = [
         proc { 10 },
         proc { 20 },
@@ -169,9 +171,15 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
         meter_provider, instrumentation_scope, aggregation,
         multi_callbacks, timeout, attributes
       )
-      multi_stream.invoke_callback(timeout, attributes)
+      metric_data = multi_stream.collect(0, 10_000)
 
-      # Test thread safety
+      _(metric_data.first.data_points.first.value).must_equal 60
+      _(metric_data.first.data_points.first.attributes['environment']).must_equal 'test'
+      _(metric_data.first.start_time_unix_nano).must_equal 0
+      _(metric_data.first.time_unix_nano).must_equal 10_000
+    end
+
+    it 'executes callbacks that handles thread safety' do
       thread_count = 0
       thread_callback = [proc {
         thread_count += 1
@@ -185,7 +193,6 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
 
       metric_data = nil
       threads = Array.new(5) do
-        # Thread.new { thread_stream.invoke_callback(timeout, attributes) }
         Thread.new { metric_data = thread_stream.collect(0, 10_000) }
       end
       threads.each(&:join)
