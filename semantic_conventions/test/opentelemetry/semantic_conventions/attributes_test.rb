@@ -18,6 +18,7 @@ describe OpenTelemetry::SemConv do
           .each do |stable_const|
             it stable_const.to_s do
               candidate_namespace = OpenTelemetry::SemConv::Incubating.const_get(root_namespace)
+
               assert_includes candidate_namespace.constants, stable_const, "Missing stable constant in incubating: #{stable_const}"
             end
           end

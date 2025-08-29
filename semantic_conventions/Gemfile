@@ -11,7 +11,7 @@ gemspec
 eval_gemfile '../contrib/Gemfile.shared'
 
 group :development, :test do
+  gem 'mutex_m' if RUBY_VERSION >= '3.4'
   gem 'opentelemetry-api', path: '../api'
   gem 'pry'
-  gem 'mutex_m' if RUBY_VERSION >= '3.4'
 end
