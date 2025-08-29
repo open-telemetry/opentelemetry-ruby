@@ -42,7 +42,7 @@ module OpenTelemetry
     end
 
     def exportable_timestamp(time = Time.now)
-      (time.to_r * 1_000_000_000).to_i
+      OpenTelemetry::Common::Utilities.time_in_nanoseconds(time)
     end
 
     def with_env(new_env)
