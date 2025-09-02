@@ -144,8 +144,8 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         zero_threshold: 0
       )
 
-      expbh.update(0, {}, data_points)
-      expbh.update(10_000, {}, data_points)
+      expbh.update(0, {}, data_points, cardinality_limit)
+      expbh.update(10_000, {}, data_points, cardinality_limit)
 
       exphdps = expbh.collect(start_time, end_time, data_points)
 
