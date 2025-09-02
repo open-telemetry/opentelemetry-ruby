@@ -159,12 +159,13 @@ module OpenTelemetry
               scale_change = get_scale_change(low, high)
               downscale(scale_change, hdp.positive, hdp.negative)
               new_scale = @mapping.scale - scale_change
-              hdp.scale = new_scale
               @mapping = new_mapping(new_scale)
               bucket_index = @mapping.map_to_index(amount)
 
               OpenTelemetry.logger.debug "Rescaled with new scale #{new_scale} from #{low} and #{high}; bucket_index is updated to #{bucket_index}"
             end
+
+            hdp.scale = @mapping.scale
 
             # adjust buckets based on the bucket_index
             if bucket_index < buckets.index_start
