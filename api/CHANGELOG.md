@@ -1,5 +1,11 @@
 # Release History: opentelemetry-api
 
+### v2.0.0 / 2025-09-02
+
+* BREAKING CHANGE: Remove Span APIs for attributes and events
+
+* FIXED: Remove Span APIs for attributes and events
+
 ### v1.6.0 / 2025-08-14
 
 - ADDED: Add noop methods on Trace::Span for `attributes` and `events`
