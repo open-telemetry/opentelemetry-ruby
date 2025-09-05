@@ -35,6 +35,21 @@ describe OpenTelemetry::Common::Utilities do
     end
   end
 
+  describe '#time_in_nanoseconds' do
+    it 'returns Time.now in nanoseconds when called without an argument' do
+      Time.stub :now, Time.at(0) do
+        expectation = (Time.now.to_r * 1_000_000_000).to_i
+        assert_equal expectation, common_utils.time_in_nanoseconds
+      end
+    end
+
+    it 'can accept a timestamp to be converted' do
+      time = Time.now
+      expectation = (time.to_r * 1_000_000_000).to_i
+      assert_equal expectation, common_utils.time_in_nanoseconds(time)
+    end
+  end
+
   describe '#utf8_encode' do
     it 'happy path' do
       str = 'pristine ￢'.encode(Encoding::UTF_8)
