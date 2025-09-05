@@ -31,12 +31,12 @@ module OpenTelemetry
       #
       # @yield [span, context] yields the newly created span and a context containing the
       #   span to the block.
-      def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
+      def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil, record_exception: true)
         span = nil
         span = start_span(name, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind)
         Trace.with_span(span) { |s, c| yield s, c }
       rescue Exception => e # rubocop:disable Lint/RescueException
-        span&.record_exception(e)
+        span&.record_exception(e) if record_exception
         span&.status = Status.error("Unhandled exception of type: #{e.class}")
         raise e
       ensure
