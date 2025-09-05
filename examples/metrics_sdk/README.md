@@ -40,18 +40,13 @@ exporters:
   debug:
     verbosity: detailed
 
-processors:
-  batch:
-
 service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [batch]
       exporters: [debug]
     metrics:
       receivers: [otlp]
-      processors: [batch]
       exporters: [debug]
 ```
 
