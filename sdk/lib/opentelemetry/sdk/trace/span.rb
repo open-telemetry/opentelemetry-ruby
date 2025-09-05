@@ -312,7 +312,8 @@ module OpenTelemetry
             context.span_id,
             context.trace_id,
             context.trace_flags,
-            context.tracestate
+            context.tracestate,
+            @parent_span_context
           )
         end
 
@@ -323,6 +324,7 @@ module OpenTelemetry
           @name = name
           @kind = kind
           @parent_span_id = parent_span_id.freeze || OpenTelemetry::Trace::INVALID_SPAN_ID
+          @parent_span_context = parent_span&.span_context
           @span_limits = span_limits
           @span_processors = span_processors
           @resource = resource

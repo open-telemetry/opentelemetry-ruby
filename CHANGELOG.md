@@ -4,6 +4,8 @@ All notable changes to this project were documented in this file. This is of his
 
 ## Unreleased
 
+* FEAT: Add span flags support for isRemote property in OTLP exporter [#XXXX](https://github.com/open-telemetry/opentelemetry-ruby/pull/XXXX)
+
 ## Alpha v0.5.1
 
 ### Bug Fix
