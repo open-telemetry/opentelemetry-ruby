@@ -28,7 +28,7 @@ module OpenTelemetry
                             :trace_id,                  # String (16-byte binary)
                             :trace_flags,               # Integer (8-bit byte of bit flags)
                             :tracestate,                # OpenTelemetry::Trace::Tracestate
-                            :parent_span_context) do    # OpenTelemetry::Trace::SpanContext (parent span context for flags)
+                            :parent_span_is_remote) do  # Boolean (whether parent span context is remote)
                               # Returns the lowercase [hex encoded](https://tools.ietf.org/html/rfc4648#section-8) span ID.
                               #
                               # @return [String] A 16-hex-character lowercase string.
