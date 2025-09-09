@@ -343,16 +343,14 @@ module OpenTelemetry
             end,
             dropped_events_count: span_data.total_recorded_events - span_data.events&.size.to_i,
             links: span_data.links&.map do |link|
-              link_proto = Opentelemetry::Proto::Trace::V1::Span::Link.new(
+              Opentelemetry::Proto::Trace::V1::Span::Link.new(
                 trace_id: link.span_context.trace_id,
                 span_id: link.span_context.span_id,
                 trace_state: link.span_context.tracestate.to_s,
-                attributes: link.attributes&.map { |k, v| as_otlp_key_value(k, v) }
+                attributes: link.attributes&.map { |k, v| as_otlp_key_value(k, v) },
                 # TODO: track dropped_attributes_count in Span#trim_links
+                flags: build_span_flags(link.span_context.remote?, link.span_context.trace_flags)
               )
-              # Add flags field for link
-              link_proto.flags = build_span_flags(link.span_context.remote?, link.span_context.trace_flags)
-              link_proto
             end,
             dropped_links_count: span_data.total_recorded_links - span_data.links&.size.to_i,
             status: span_data.status&.yield_self do |status|
