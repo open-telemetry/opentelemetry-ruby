@@ -322,7 +322,7 @@ module OpenTelemetry
         end
 
         def as_otlp_span(span_data) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-          span = Opentelemetry::Proto::Trace::V1::Span.new(
+          Opentelemetry::Proto::Trace::V1::Span.new(
             trace_id: span_data.trace_id,
             span_id: span_data.span_id,
             trace_state: span_data.tracestate.to_s,
@@ -361,10 +361,10 @@ module OpenTelemetry
                 message: status.description
               )
             end
-          )
-          # Add flags field for span
-          span.flags = build_span_flags(span_data.parent_span_is_remote, span_data.trace_flags)
-          span
+          ).tap do |span|
+            # Add flags field for span
+            span.flags = build_span_flags(span_data.parent_span_is_remote, span_data.trace_flags)
+          end
         end
 
         def as_otlp_status_code(code)
