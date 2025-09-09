@@ -324,7 +324,7 @@ module OpenTelemetry
           @name = name
           @kind = kind
           @parent_span_id = parent_span_id.freeze || OpenTelemetry::Trace::INVALID_SPAN_ID
-          @parent_span_is_remote = parent_span&.span_context&.remote? || false
+          @parent_span_is_remote = parent_span&.context&.remote? || false
           @span_limits = span_limits
           @span_processors = span_processors
           @resource = resource

@@ -878,7 +878,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
         span_id,                       # span_id
         trace_id,                      # trace_id
         OpenTelemetry::Trace::TraceFlags::DEFAULT, # trace_flags
-        OpenTelemetry::Trace::Tracestate.new, # tracestate
+        OpenTelemetry::Trace::Tracestate::DEFAULT, # tracestate
         parent_span_is_remote          # parent_span_is_remote
       )
     end
