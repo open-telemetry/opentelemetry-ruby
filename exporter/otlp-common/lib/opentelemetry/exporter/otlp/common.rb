@@ -12,7 +12,6 @@ require 'google/rpc/status_pb'
 require 'opentelemetry/proto/common/v1/common_pb'
 require 'opentelemetry/proto/resource/v1/resource_pb'
 require 'opentelemetry/proto/trace/v1/trace_pb'
-require 'opentelemetry/proto/trace/v1/span_flags'
 require 'opentelemetry/proto/collector/trace/v1/trace_service_pb'
 
 module OpenTelemetry
@@ -71,19 +70,8 @@ module OpenTelemetry
 
         private
 
-        # Builds span flags based on whether the parent span context is remote.
-        # This follows the OTLP specification for span flags.
-        def build_span_flags(parent_span_is_remote, base_flags = 0)
-          flags = base_flags
-          flags |= Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
-          if parent_span_is_remote
-            flags |= Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
-          end
-          flags
-        end
-
         def as_otlp_span(span_data)
-          span = Opentelemetry::Proto::Trace::V1::Span.new(
+          Opentelemetry::Proto::Trace::V1::Span.new(
             trace_id: span_data.trace_id,
             span_id: span_data.span_id,
             trace_state: span_data.tracestate.to_s,
@@ -104,16 +92,13 @@ module OpenTelemetry
             end,
             dropped_events_count: span_data.total_recorded_events - span_data.events&.size.to_i,
             links: span_data.links&.map do |link|
-              link_proto = Opentelemetry::Proto::Trace::V1::Span::Link.new(
+              Opentelemetry::Proto::Trace::V1::Span::Link.new(
                 trace_id: link.span_context.trace_id,
                 span_id: link.span_context.span_id,
                 trace_state: link.span_context.tracestate.to_s,
                 attributes: link.attributes&.map { |k, v| as_otlp_key_value(k, v) }
                 # TODO: track dropped_attributes_count in Span#trim_links
               )
-              # Add flags field for link
-              link_proto.flags = build_span_flags(link.span_context, link.span_context.trace_flags)
-              link_proto
             end,
             dropped_links_count: span_data.total_recorded_links - span_data.links&.size.to_i,
             status: span_data.status&.yield_self do |status|
@@ -123,9 +108,6 @@ module OpenTelemetry
               )
             end
           )
-          # Add flags field for span
-          span.flags = build_span_flags(span_data.parent_span_is_remote, span_data.trace_flags)
-          span
         end
 
         def as_otlp_status_code(code)
