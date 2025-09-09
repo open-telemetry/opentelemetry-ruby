@@ -14,7 +14,7 @@ require 'google/rpc/status_pb'
 require 'opentelemetry/proto/common/v1/common_pb'
 require 'opentelemetry/proto/resource/v1/resource_pb'
 require 'opentelemetry/proto/trace/v1/trace_pb'
-require 'opentelemetry/proto/trace/v1/span_flags'
+require 'opentelemetry/exporter/otlp/span_flags'
 require 'opentelemetry/proto/collector/trace/v1/trace_service_pb'
 
 module OpenTelemetry
@@ -107,9 +107,9 @@ module OpenTelemetry
         # Builds span flags based on whether the parent span context is remote.
         # This follows the OTLP specification for span flags.
         def build_span_flags(parent_span_is_remote, base_flags)
-          flags = base_flags | Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+          flags = base_flags | SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
           if parent_span_is_remote
-            flags |= Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+            flags |= SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
           end
           flags
         end
