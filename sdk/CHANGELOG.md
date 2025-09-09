@@ -1,5 +1,9 @@
 # Release History: opentelemetry-sdk
 
+### v1.9.0 / 2025-09-09
+
+* ADDED: Add record_exception option for in_span
+
 ### v1.8.1 / 2025-08-14
 
 - FIXED: Remove patch constraint on Zipkin exporter
