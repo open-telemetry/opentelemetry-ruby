@@ -360,11 +360,9 @@ module OpenTelemetry
                 code: as_otlp_status_code(status.code),
                 message: status.description
               )
-            end
-          ).tap do |span|
-            # Add flags field for span
-            span.flags = build_span_flags(span_data.parent_span_is_remote, span_data.trace_flags)
-          end
+            end,
+            flags: build_span_flags(span_data.parent_span_is_remote, span_data.trace_flags)
+          )
         end
 
         def as_otlp_status_code(code)
