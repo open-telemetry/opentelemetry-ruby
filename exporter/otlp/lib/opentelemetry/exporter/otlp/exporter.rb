@@ -107,7 +107,11 @@ module OpenTelemetry
         # Builds span flags based on whether the parent span context is remote.
         # This follows the OTLP specification for span flags.
         def build_span_flags(parent_span_is_remote, base_flags)
-          flags = base_flags | SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+          # Extract integer value from TraceFlags object if needed
+          base_flags_int = base_flags.is_a?(OpenTelemetry::Trace::TraceFlags) ? 
+                           base_flags.instance_variable_get(:@flags) : base_flags
+          
+          flags = base_flags_int | SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
           if parent_span_is_remote
             flags |= SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
           end

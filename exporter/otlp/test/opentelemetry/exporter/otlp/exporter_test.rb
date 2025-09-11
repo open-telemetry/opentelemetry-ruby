@@ -863,7 +863,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       OpenTelemetry::SDK::Trace::SpanData.new(
         'test-span',                    # name
         :internal,                      # kind
-        OpenTelemetry::Trace::Status::OK, # status
+        OpenTelemetry::Trace::Status.ok, # status
         parent_span_id,                 # parent_span_id
         0,                             # total_recorded_attributes
         0,                             # total_recorded_events
