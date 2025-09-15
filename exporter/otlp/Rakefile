@@ -32,7 +32,7 @@ default_tasks =
 
 task default: default_tasks
 
-# https://github.com/open-telemetry/opentelemetry-proto/tree/v0.20.0
+# https://github.com/open-telemetry/opentelemetry-proto/tree/v1.8.0
 PROTO_VERSION = 'v1.8.0'
 
 namespace :protobuf do
