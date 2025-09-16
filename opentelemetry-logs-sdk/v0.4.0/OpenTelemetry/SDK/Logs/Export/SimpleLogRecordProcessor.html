@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: OpenTelemetry::SDK::Logs::Export::SimpleLogRecordProcessor
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::SDK::Logs::Export::SimpleLogRecordProcessor";
+  relpath = '../../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../../_index.html">Index (S)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../../SDK.html" title="OpenTelemetry::SDK (module)">SDK</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Logs.html" title="OpenTelemetry::SDK::Logs (module)">Logs</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Export.html" title="OpenTelemetry::SDK::Logs::Export (module)">Export</a></span></span>
+     &raquo; 
+    <span class="title">SimpleLogRecordProcessor</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: OpenTelemetry::SDK::Logs::Export::SimpleLogRecordProcessor
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName"><span class='object_link'><a href="../LogRecordProcessor.html" title="OpenTelemetry::SDK::Logs::LogRecordProcessor (class)">LogRecordProcessor</a></span></span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next"><span class='object_link'><a href="../LogRecordProcessor.html" title="OpenTelemetry::SDK::Logs::LogRecordProcessor (class)">LogRecordProcessor</a></span></li>
+          
+            <li class="next">OpenTelemetry::SDK::Logs::Export::SimpleLogRecordProcessor</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/sdk/logs/export/simple_log_record_processor.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>An implementation of <span class='object_link'><a href="../LogRecordProcessor.html" title="OpenTelemetry::SDK::Logs::LogRecordProcessor (class)">LogRecordProcessor</a></span> that converts the LogRecord into a ReadableLogRecord and passes it to the configured exporter on emit.</p>
+
+<p>Typically, the SimpleLogRecordProcessor will be most suitable for use in testing; it should be used with caution in production. It may be appropriate for production use in scenarios where creating multiple threads is not desirable as well as scenarios where different custom attributes should be added to individual log records based on code scopes.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#force_flush-instance_method" title="#force_flush (instance method)">#<strong>force_flush</strong>(timeout: nil)  &#x21d2; Integer </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Export all log records to the configured <code>Exporter</code> that have not yet been exported, then call Exporter#force_flush.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(log_record_exporter)  &#x21d2; SimpleLogRecordProcessor </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns a new <span class='object_link'><a href="" title="OpenTelemetry::SDK::Logs::Export::SimpleLogRecordProcessor (class)">SimpleLogRecordProcessor</a></span> that converts log records to ReadableLogRecords and forwards them to the given log_record_exporter.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_emit-instance_method" title="#on_emit (instance method)">#<strong>on_emit</strong>(log_record, _context)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Called when a LogRecord is emitted.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#shutdown-instance_method" title="#shutdown (instance method)">#<strong>shutdown</strong>(timeout: nil)  &#x21d2; Integer </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Called when <span class='object_link'><a href="../LoggerProvider.html#shutdown-instance_method" title="OpenTelemetry::SDK::Logs::LoggerProvider#shutdown (method)">LoggerProvider#shutdown</a></span> is called.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  <div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(log_record_exporter)  &#x21d2; <tt><span class='object_link'><a href="" title="OpenTelemetry::SDK::Logs::Export::SimpleLogRecordProcessor (class)">SimpleLogRecordProcessor</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns a new <span class='object_link'><a href="" title="OpenTelemetry::SDK::Logs::Export::SimpleLogRecordProcessor (class)">OpenTelemetry::SDK::Logs::Export::SimpleLogRecordProcessor</a></span> that converts log records to ReadableLogRecords and forwards them to the given log_record_exporter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>log_record_exporter</span>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>the LogRecordExporter to push the recorded log records.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+        
+        <div class='inline'>
+<p>ArgumentError if the log_record_exporter is invalid or nil.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+30
+31
+32
+33
+34
+35</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/logs/export/simple_log_record_processor.rb', line 30</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_log_record_exporter'>log_record_exporter</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>exporter </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_log_record_exporter'>log_record_exporter</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_content'> does not appear to be a valid exporter</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>unless</span> <span class='const'>Common</span><span class='op'>::</span><span class='const'>Utilities</span><span class='period'>.</span><span class='id identifier rubyid_valid_exporter?'>valid_exporter?</span><span class='lparen'>(</span><span class='id identifier rubyid_log_record_exporter'>log_record_exporter</span><span class='rparen'>)</span>
+
+  <span class='ivar'>@log_record_exporter</span> <span class='op'>=</span> <span class='id identifier rubyid_log_record_exporter'>log_record_exporter</span>
+  <span class='ivar'>@stopped</span> <span class='op'>=</span> <span class='kw'>false</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="force_flush-instance_method">
+  
+    #<strong>force_flush</strong>(timeout: nil)  &#x21d2; <tt>Integer</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Export all log records to the configured <code>Exporter</code> that have not yet been exported, then call Exporter#force_flush.</p>
+
+<p>This method should only be called in cases where it is absolutely necessary, such as when using some FaaS providers that may suspend the process after an invocation, but before the <code>Processor</code> exports the completed log records.</p>
+
+<p>TODO: Should a rescue/handle error be added here for non-specific failures?</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>timeout</span>
+      
+      
+        <span class='type'>(<tt>optional Numeric</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>An optional timeout in seconds.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>SUCCESS if no error occurred, FAILURE if a non-specific failure occurred, TIMEOUT if a timeout occurred.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+65
+66
+67
+68
+69</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/logs/export/simple_log_record_processor.rb', line 65</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_force_flush'>force_flush</span><span class='lparen'>(</span><span class='label'>timeout:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='kw'>if</span> <span class='ivar'>@stopped</span>
+
+  <span class='ivar'>@log_record_exporter</span><span class='op'>&amp;.</span><span class='id identifier rubyid_force_flush'>force_flush</span><span class='lparen'>(</span><span class='label'>timeout:</span> <span class='id identifier rubyid_timeout'>timeout</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='const'><span class='object_link'><a href="../Export.html#SUCCESS-constant" title="OpenTelemetry::SDK::Logs::Export::SUCCESS (constant)">SUCCESS</a></span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_emit-instance_method">
+  
+    #<strong>on_emit</strong>(log_record, _context)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Called when a LogRecord is emitted.</p>
+
+<p>This method is called synchronously on the execution thread. It should not throw or block the execution thread. It may not be called after shutdown.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>log_record</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../LogRecord.html" title="OpenTelemetry::SDK::Logs::LogRecord (class)">LogRecord</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The emitted <span class='object_link'><a href="../LogRecord.html" title="OpenTelemetry::SDK::Logs::LogRecord (class)">LogRecord</a></span></p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>_context</span>
+      
+      
+        <span class='type'>(<tt>Context</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The current Context</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+45
+46
+47
+48
+49
+50
+51</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/logs/export/simple_log_record_processor.rb', line 45</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_emit'>on_emit</span><span class='lparen'>(</span><span class='id identifier rubyid_log_record'>log_record</span><span class='comma'>,</span> <span class='id identifier rubyid__context'>_context</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='kw'>if</span> <span class='ivar'>@stopped</span>
+
+  <span class='ivar'>@log_record_exporter</span><span class='op'>&amp;.</span><span class='id identifier rubyid_export'>export</span><span class='lparen'>(</span><span class='lbracket'>[</span><span class='id identifier rubyid_log_record'>log_record</span><span class='period'>.</span><span class='id identifier rubyid_to_log_record_data'>to_log_record_data</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+<span class='kw'>rescue</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span> <span class='comment'># rubocop:disable Style/RescueStandardError
+</span>  <span class='const'><span class='object_link'><a href="../../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='period'>.</span><span class='id identifier rubyid_handle_error'>handle_error</span><span class='lparen'>(</span><span class='label'>exception:</span> <span class='id identifier rubyid_e'>e</span><span class='comma'>,</span> <span class='label'>message:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Unexpected error in Logger#on_emit</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="shutdown-instance_method">
+  
+    #<strong>shutdown</strong>(timeout: nil)  &#x21d2; <tt>Integer</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Called when <span class='object_link'><a href="../LoggerProvider.html#shutdown-instance_method" title="OpenTelemetry::SDK::Logs::LoggerProvider#shutdown (method)">LoggerProvider#shutdown</a></span> is called.</p>
+
+<p>TODO: Should a rescue/handle error be added here for non-specific failures?</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>timeout</span>
+      
+      
+        <span class='type'>(<tt>optional Numeric</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>An optional timeout in seconds.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>SUCCESS if no error occurred, FAILURE if a non-specific failure occurred, TIMEOUT if a timeout occurred.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+77
+78
+79
+80
+81
+82
+83</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/opentelemetry/sdk/logs/export/simple_log_record_processor.rb', line 77</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_shutdown'>shutdown</span><span class='lparen'>(</span><span class='label'>timeout:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='kw'>if</span> <span class='ivar'>@stopped</span>
+
+  <span class='ivar'>@log_record_exporter</span><span class='op'>&amp;.</span><span class='id identifier rubyid_shutdown'>shutdown</span><span class='lparen'>(</span><span class='label'>timeout:</span> <span class='id identifier rubyid_timeout'>timeout</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='const'><span class='object_link'><a href="../Export.html#SUCCESS-constant" title="OpenTelemetry::SDK::Logs::Export::SUCCESS (constant)">SUCCESS</a></span></span>
+<span class='kw'>ensure</span>
+  <span class='ivar'>@stopped</span> <span class='op'>=</span> <span class='kw'>true</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Sep 16 19:43:08 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.1.6).
+</div>
+
+    </div>
+  </body>
+</html>

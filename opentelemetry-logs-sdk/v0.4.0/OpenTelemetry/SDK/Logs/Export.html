@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: OpenTelemetry::SDK::Logs::Export
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::SDK::Logs::Export";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (E)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../SDK.html" title="OpenTelemetry::SDK (module)">SDK</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Logs.html" title="OpenTelemetry::SDK::Logs (module)">Logs</a></span></span>
+     &raquo; 
+    <span class="title">Export</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: OpenTelemetry::SDK::Logs::Export
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/sdk/logs/export.rb<span class="defines">,<br />
+  lib/opentelemetry/sdk/logs/export/log_record_exporter.rb,<br /> lib/opentelemetry/sdk/logs/export/batch_log_record_processor.rb,<br /> lib/opentelemetry/sdk/logs/export/console_log_record_exporter.rb,<br /> lib/opentelemetry/sdk/logs/export/simple_log_record_processor.rb,<br /> lib/opentelemetry/sdk/logs/export/in_memory_log_record_exporter.rb</span>
+</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>The Export module contains the built-in exporters and log record processors for the OpenTelemetry reference implementation.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Export/BatchLogRecordProcessor.html" title="OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor (class)">BatchLogRecordProcessor</a></span>, <span class='object_link'><a href="Export/ConsoleLogRecordExporter.html" title="OpenTelemetry::SDK::Logs::Export::ConsoleLogRecordExporter (class)">ConsoleLogRecordExporter</a></span>, <span class='object_link'><a href="Export/InMemoryLogRecordExporter.html" title="OpenTelemetry::SDK::Logs::Export::InMemoryLogRecordExporter (class)">InMemoryLogRecordExporter</a></span>, <span class='object_link'><a href="Export/LogRecordExporter.html" title="OpenTelemetry::SDK::Logs::Export::LogRecordExporter (class)">LogRecordExporter</a></span>, <span class='object_link'><a href="Export/SimpleLogRecordProcessor.html" title="OpenTelemetry::SDK::Logs::Export::SimpleLogRecordProcessor (class)">SimpleLogRecordProcessor</a></span>
+    
+  
+</p>
+
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="ExportError-constant" class="">ExportError =
+          
+        </dt>
+        <dd><pre class="code"><span class='const'>Class</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'>Error</span><span class='rparen'>)</span></pre></dd>
+      
+        <dt id="SUCCESS-constant" class="">SUCCESS =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The operation finished successfully.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>0</span></pre></dd>
+      
+        <dt id="FAILURE-constant" class="">FAILURE =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The operation finished with an error.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>1</span></pre></dd>
+      
+        <dt id="TIMEOUT-constant" class="">TIMEOUT =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The operation timed out.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>2</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Sep 16 19:43:07 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.1.6).
+</div>
+
+    </div>
+  </body>
+</html>
