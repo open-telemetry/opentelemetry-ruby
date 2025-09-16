@@ -1,5 +1,9 @@
 # Release History: opentelemetry-semantic_conventions
 
+### v1.12.0 / 2025-09-16
+
+* ADDED: Update to v1.25 in a non-breaking way
+
 ### v1.11.0 / 2025-02-25
 
 - ADDED: Support 3.1 Min Version
