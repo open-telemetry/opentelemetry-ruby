@@ -2,7 +2,7 @@
 
 ### v0.9.1 / 2025-09-16
 
-* FIXED: Use mapping scale outside rescale logic
+* FIXED: Use mapping scale outside of rescale logic
 
 ### v0.9.0 / 2025-08-19
 
