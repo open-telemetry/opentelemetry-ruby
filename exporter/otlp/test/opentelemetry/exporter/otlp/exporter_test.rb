@@ -789,51 +789,69 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     let(:instrumentation_scope) { OpenTelemetry::SDK::InstrumentationScope.new('test-lib', '1.0.0') }
 
     describe 'build_span_flags' do
-      it 'sets flags to 0x100 for local parent span context' do
+      it 'sets flags to HAS_IS_REMOTE for local parent span context' do
         flags = exporter.send(:build_span_flags, false, 0)
-        _(flags).must_equal(0x100) # SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+        _(flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+        )
       end
 
-      it 'sets flags to 0x300 for remote parent span context' do
+      it 'sets flags to HAS_IS_REMOTE | IS_REMOTE for remote parent span context' do
         flags = exporter.send(:build_span_flags, true, 0)
-        _(flags).must_equal(0x300) # SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK | SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+        _(flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+        )
       end
 
       it 'preserves base trace flags' do
         flags = exporter.send(:build_span_flags, false, 0x01) # SAMPLED flag
-        _(flags).must_equal(0x101) # 0x01 (SAMPLED) | 0x100 (HAS_IS_REMOTE_MASK)
+        _(flags).must_equal(
+          0x01 |
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+        )
       end
     end
 
     describe 'as_otlp_span with flags' do
-      it 'sets flags to 0x100 for local parent span context' do
+      it 'sets flags to HAS_IS_REMOTE for local parent span context' do
         span_data = create_span_data(parent_span_is_remote: false)
         span = exporter.send(:as_otlp_span, span_data)
-        _(span.flags).must_equal(0x100) # SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+        _(span.flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+        )
       end
 
-      it 'sets flags to 0x300 for remote parent span context' do
+      it 'sets flags to HAS_IS_REMOTE | IS_REMOTE for remote parent span context' do
         span_data = create_span_data(parent_span_is_remote: true)
         span = exporter.send(:as_otlp_span, span_data)
-        _(span.flags).must_equal(0x300) # SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK | SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+        _(span.flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+        )
       end
     end
 
     describe 'as_otlp_span with link flags' do
-      it 'sets link flags to 0x100 for local link context' do
+      it 'sets link flags to HAS_IS_REMOTE for local link context' do
         local_span_context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: parent_span_id, remote: false)
         local_link = create_link(local_span_context)
         span_data = create_span_data(links: [local_link])
         span = exporter.send(:as_otlp_span, span_data)
-        _(span.links.first.flags).must_equal(0x100) # SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+        _(span.links.first.flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+        )
       end
 
-      it 'sets link flags to 0x300 for remote link context' do
+      it 'sets link flags to HAS_IS_REMOTE | IS_REMOTE for remote link context' do
         remote_span_context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: parent_span_id, remote: true)
         remote_link = create_link(remote_span_context)
         span_data = create_span_data(links: [remote_link])
         span = exporter.send(:as_otlp_span, span_data)
-        _(span.links.first.flags).must_equal(0x300) # SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK | SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+        _(span.links.first.flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+        )
       end
     end
 
@@ -843,7 +861,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
         encoded_data = exporter.send(:encode, [span_data])
         decoded = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(encoded_data)
         exported_span = decoded.resource_spans.first.scope_spans.first.spans.first
-        _(exported_span.flags).must_equal(0x300) # SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK | SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+        _(exported_span.flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+        )
       end
 
       it 'includes flags in exported links' do
@@ -853,7 +874,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
         encoded_data = exporter.send(:encode, [span_data])
         decoded = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(encoded_data)
         exported_link = decoded.resource_spans.first.scope_spans.first.spans.first.links.first
-        _(exported_link.flags).must_equal(0x300) # SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK | SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+        _(exported_link.flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+        )
       end
     end
 

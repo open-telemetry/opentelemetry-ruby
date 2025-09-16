@@ -14,7 +14,6 @@ require 'google/rpc/status_pb'
 require 'opentelemetry/proto/common/v1/common_pb'
 require 'opentelemetry/proto/resource/v1/resource_pb'
 require 'opentelemetry/proto/trace/v1/trace_pb'
-require 'opentelemetry/exporter/otlp/span_flags'
 require 'opentelemetry/proto/collector/trace/v1/trace_service_pb'
 
 module OpenTelemetry
@@ -108,13 +107,14 @@ module OpenTelemetry
         # This follows the OTLP specification for span flags.
         def build_span_flags(parent_span_is_remote, base_flags)
           # Extract integer value from TraceFlags object if needed
-          base_flags_int = base_flags.is_a?(OpenTelemetry::Trace::TraceFlags) ? 
+          base_flags_int = base_flags.is_a?(OpenTelemetry::Trace::TraceFlags) ?
                            base_flags.instance_variable_get(:@flags) : base_flags
-          
-          flags = base_flags_int | SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
-          if parent_span_is_remote
-            flags |= SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
-          end
+
+          has_remote_mask = Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+          is_remote_mask = Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+
+          flags = base_flags_int | has_remote_mask
+          flags |= is_remote_mask if parent_span_is_remote
           flags
         end
 
