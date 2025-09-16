@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: OpenTelemetry::SemConv::Incubating::FILE
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::SemConv::Incubating::FILE";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (F)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../SemConv.html" title="OpenTelemetry::SemConv (module)">SemConv</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Incubating.html" title="OpenTelemetry::SemConv::Incubating (module)">Incubating</a></span></span>
+     &raquo; 
+    <span class="title">FILE</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: OpenTelemetry::SemConv::Incubating::FILE
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/semconv/incubating/file/attributes.rb</dd>
+  </dl>
+  
+</div>
+
+
+  
+    <h2>
+      Attribute Names
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="FILE_ACCESSED-constant" class="">FILE_ACCESSED =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Time when the file was last accessed, in ISO 8601 format.</p>
+
+<p>This attribute might not be supported by some file systems — NFS, FAT32, in embedded OS, etc.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>2021-01-01T12:00:00Z</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>file.accessed</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FILE_ATTRIBUTES-constant" class="">FILE_ATTRIBUTES =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Array of file attributes.</p>
+
+<p>Attributes names depend on the OS or file system. Here’s a non-exhaustive list of values expected for this attribute: <code>archive</code>, <code>compressed</code>, <code>directory</code>, <code>encrypted</code>, <code>execute</code>, <code>hidden</code>, <code>immutable</code>, <code>journaled</code>, <code>read</code>, <code>readonly</code>, <code>symbolic link</code>, <code>system</code>, <code>temporary</code>, <code>write</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>readonly</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>hidden</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>file.attributes</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FILE_CHANGED-constant" class="">FILE_CHANGED =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Time when the file attributes or metadata was last changed, in ISO 8601 format.</p>
+
+<p><code>file.changed</code> captures the time when any of the file’s properties or attributes (including the content) are changed, while <code>file.modified</code> captures the timestamp when the file content is modified.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>2021-01-01T12:00:00Z</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>file.changed</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FILE_CREATED-constant" class="">FILE_CREATED =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Time when the file was created, in ISO 8601 format.</p>
+
+<p>This attribute might not be supported by some file systems — NFS, FAT32, in embedded OS, etc.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>2021-01-01T12:00:00Z</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>file.created</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FILE_DIRECTORY-constant" class="">FILE_DIRECTORY =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Directory where the file is located. It should include the drive letter, when appropriate.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>/home/user
+C:\Program Files\MyApp</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>file.directory</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FILE_EXTENSION-constant" class="">FILE_EXTENSION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>File extension, excluding the leading dot.</p>
+
+<p>When the file name has multiple extensions (example.tar.gz), only the last one should be captured (“gz”, not “tar.gz”).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_png'>png</span>
+<span class='id identifier rubyid_gz'>gz</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>file.extension</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FILE_FORK_NAME-constant" class="">FILE_FORK_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Name of the fork. A fork is additional data associated with a filesystem object.</p>
+
+<p>On Linux, a resource fork is used to store additional data with a filesystem object. A file always has at least one fork for the data portion, and additional forks may exist.
+On NTFS, this is analogous to an Alternate Data Stream (ADS), and the default data stream for a file is just called $DATA. Zone.Identifier is commonly used by Windows to track contents downloaded from the Internet. An ADS is typically of the form: C:\path\to\filename.extension:some_fork_name, and some_fork_name is the value that should populate <code>fork_name</code>. <code>filename.extension</code> should populate <code>file.name</code>, and <code>extension</code> should populate <code>file.extension</code>. The full path, <code>file.path</code>, will include the fork name.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='const'>Zone</span><span class='period'>.</span><span class='const'>Identifer</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>file.fork_name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FILE_GROUP_ID-constant" class="">FILE_GROUP_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Primary Group ID (GID) of the file.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>1000</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>file.group.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FILE_GROUP_NAME-constant" class="">FILE_GROUP_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Primary group name of the file.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_users'>users</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>file.group.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FILE_INODE-constant" class="">FILE_INODE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Inode representing the file in the filesystem.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>256383</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>file.inode</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FILE_MODE-constant" class="">FILE_MODE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Mode of the file in octal representation.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>0640</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>file.mode</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FILE_MODIFIED-constant" class="">FILE_MODIFIED =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Time when the file content was last modified, in ISO 8601 format.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>2021-01-01T12:00:00Z</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>file.modified</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FILE_NAME-constant" class="">FILE_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Name of the file including the extension, without the directory.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_example'>example</span><span class='period'>.</span><span class='id identifier rubyid_png'>png</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>file.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FILE_OWNER_ID-constant" class="">FILE_OWNER_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The user ID (UID) or security identifier (SID) of the file owner.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>1000</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>file.owner.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FILE_OWNER_NAME-constant" class="">FILE_OWNER_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Username of the file owner.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_root'><span class='object_link'><a href="../../../top-level-namespace.html" title="Top Level Namespace (root)">root</a></span></span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>file.owner.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FILE_PATH-constant" class="">FILE_PATH =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Full path to the file, including the file name. It should include the drive letter, when appropriate.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>/home/alice/example.png
+C:\Program Files\MyApp\myapp.exe</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>file.path</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FILE_SIZE-constant" class="">FILE_SIZE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>File size in bytes.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>file.size</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FILE_SYMBOLIC_LINK_TARGET_PATH-constant" class="">FILE_SYMBOLIC_LINK_TARGET_PATH =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Path to the target of a symbolic link.</p>
+
+<p>This attribute is only applicable to symbolic links.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>/usr/bin/python3</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>file.symbolic_link.target_path</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Sep 16 23:34:26 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.1.6).
+</div>
+
+    </div>
+  </body>
+</html>

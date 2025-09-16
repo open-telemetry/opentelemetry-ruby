@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: OpenTelemetry::SemConv::Incubating::URL
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::SemConv::Incubating::URL";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (U)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../SemConv.html" title="OpenTelemetry::SemConv (module)">SemConv</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Incubating.html" title="OpenTelemetry::SemConv::Incubating (module)">Incubating</a></span></span>
+     &raquo; 
+    <span class="title">URL</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: OpenTelemetry::SemConv::Incubating::URL
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/semconv/incubating/url/attributes.rb</dd>
+  </dl>
+  
+</div>
+
+
+  
+    <h2>
+      Attribute Names
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="URL_DOMAIN-constant" class="">URL_DOMAIN =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Domain extracted from the <code>url.full</code>, such as “opentelemetry.io”.</p>
+
+<p>In some cases a URL may refer to an IP and/or port directly, without a domain name. In this case, the IP address would go to the domain field. If the URL contains a <a href="https://www.rfc-editor.org/rfc/rfc2732#section-2">literal IPv6 address</a> enclosed by <code>[</code> and <code>]</code>, the <code>[</code> and <code>]</code> characters should also be captured in the domain field.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>www.foo.bar
+opentelemetry.io
+3.12.167.2
+[1080:0:0:0:8:800:200C:417A]</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>url.domain</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="URL_EXTENSION-constant" class="">URL_EXTENSION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The file extension extracted from the <code>url.full</code>, excluding the leading dot.</p>
+
+<p>The file extension is only set if it exists, as not every url has a file extension. When the file name has multiple extensions <code>example.tar.gz</code>, only the last one should be captured <code>gz</code>, not <code>tar.gz</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_png'>png</span>
+<span class='id identifier rubyid_gz'>gz</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>url.extension</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="URL_FRAGMENT-constant" class="deprecated">URL_FRAGMENT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Now available in the stable namespace at <span class='object_link'><a href="../URL.html#URL_FRAGMENT-constant" title="OpenTelemetry::SemConv::URL::URL_FRAGMENT (constant)">URL::URL_FRAGMENT</a></span>.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: stable</p>
+</div>
+  </div>
+
+<p>The <a href="https://www.rfc-editor.org/rfc/rfc3986#section-3.5">URI fragment</a> component</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='const'><span class='object_link'><a href="../../SemConv.html" title="OpenTelemetry::SemConv (module)">SemConv</a></span></span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>url.fragment</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="URL_FULL-constant" class="deprecated">URL_FULL =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Now available in the stable namespace at <span class='object_link'><a href="../URL.html#URL_FULL-constant" title="OpenTelemetry::SemConv::URL::URL_FULL (constant)">URL::URL_FULL</a></span>.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: stable</p>
+</div>
+  </div>
+
+<p>Absolute URL describing a network resource according to <a href="https://www.rfc-editor.org/rfc/rfc3986">RFC3986</a></p>
+
+<p>For network calls, URL usually has <code>scheme://host[:port][path][?query][#fragment]</code> format, where the fragment
+is not transmitted over HTTP, but if it is known, it SHOULD be included nevertheless.</p>
+
+<p><code>url.full</code> MUST NOT contain credentials passed via URL in form of <code>https://username:password@www.example.com/</code>.
+In such case username and password SHOULD be redacted and attribute’s value SHOULD be <code>https://REDACTED:REDACTED@www.example.com/</code>.</p>
+
+<p><code>url.full</code> SHOULD capture the absolute URL when it is available (or can be reconstructed).</p>
+
+<p>Sensitive content provided in <code>url.full</code> SHOULD be scrubbed when instrumentations can identify it.</p>
+
+<p>Query string values for the following keys SHOULD be redacted by default and replaced by the
+value <code>REDACTED</code>:</p>
+
+<ul>
+  <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/RESTAuthentication.html#RESTAuthenticationQueryStringAuth"><code>AWSAccessKeyId</code></a></li>
+  <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/RESTAuthentication.html#RESTAuthenticationQueryStringAuth"><code>Signature</code></a></li>
+  <li><a href="https://learn.microsoft.com/azure/storage/common/storage-sas-overview#sas-token"><code>sig</code></a></li>
+  <li><a href="https://cloud.google.com/storage/docs/access-control/signed-urls"><code>X-Goog-Signature</code></a></li>
+</ul>
+
+<p>This list is subject to change over time.</p>
+
+<p>When a query string value is redacted, the query string key SHOULD still be preserved, e.g.
+<code>https://www.example.com/path?color=blue&amp;sig=REDACTED</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>https://www.foo.bar/search?q=OpenTelemetry#SemConv
+//localhost</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>url.full</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="URL_ORIGINAL-constant" class="">URL_ORIGINAL =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Unmodified original URL as seen in the event source.</p>
+
+<p>In network monitoring, the observed URL may be a full URL, whereas in access logs, the URL is often just represented as a path. This field is meant to represent the URL as it was observed, complete or not.
+<code>url.original</code> might contain credentials passed via URL in form of <code>https://username:password@www.example.com/</code>. In such case password and username SHOULD NOT be redacted and attribute’s value SHOULD remain the same.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>https://www.foo.bar/search?q=OpenTelemetry#SemConv
+search?q=OpenTelemetry</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>url.original</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="URL_PATH-constant" class="deprecated">URL_PATH =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Now available in the stable namespace at <span class='object_link'><a href="../URL.html#URL_PATH-constant" title="OpenTelemetry::SemConv::URL::URL_PATH (constant)">URL::URL_PATH</a></span>.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: stable</p>
+</div>
+  </div>
+
+<p>The <a href="https://www.rfc-editor.org/rfc/rfc3986#section-3.3">URI path</a> component</p>
+
+<p>Sensitive content provided in <code>url.path</code> SHOULD be scrubbed when instrumentations can identify it.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>/search</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>url.path</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="URL_PORT-constant" class="">URL_PORT =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Port extracted from the <code>url.full</code></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>443</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>url.port</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="URL_QUERY-constant" class="deprecated">URL_QUERY =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Now available in the stable namespace at <span class='object_link'><a href="../URL.html#URL_QUERY-constant" title="OpenTelemetry::SemConv::URL::URL_QUERY (constant)">URL::URL_QUERY</a></span>.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: stable</p>
+</div>
+  </div>
+
+<p>The <a href="https://www.rfc-editor.org/rfc/rfc3986#section-3.4">URI query</a> component</p>
+
+<p>Sensitive content provided in <code>url.query</code> SHOULD be scrubbed when instrumentations can identify it.</p>
+
+<p>Query string values for the following keys SHOULD be redacted by default and replaced by the value <code>REDACTED</code>:</p>
+
+<ul>
+  <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/RESTAuthentication.html#RESTAuthenticationQueryStringAuth"><code>AWSAccessKeyId</code></a></li>
+  <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/RESTAuthentication.html#RESTAuthenticationQueryStringAuth"><code>Signature</code></a></li>
+  <li><a href="https://learn.microsoft.com/azure/storage/common/storage-sas-overview#sas-token"><code>sig</code></a></li>
+  <li><a href="https://cloud.google.com/storage/docs/access-control/signed-urls"><code>X-Goog-Signature</code></a></li>
+</ul>
+
+<p>This list is subject to change over time.</p>
+
+<p>When a query string value is redacted, the query string key SHOULD still be preserved, e.g.
+<code>q=OpenTelemetry&amp;sig=REDACTED</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_q'>q</span><span class='op'>=</span><span class='const'>OpenTelemetry</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>url.query</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="URL_REGISTERED_DOMAIN-constant" class="">URL_REGISTERED_DOMAIN =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The highest registered url domain, stripped of the subdomain.</p>
+
+<p>This value can be determined precisely with the <a href="https://publicsuffix.org/">public suffix list</a>. For example, the registered domain for <code>foo.example.com</code> is <code>example.com</code>. Trying to approximate this by simply taking the last two labels will not work well for TLDs such as <code>co.uk</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_example'>example</span><span class='period'>.</span><span class='id identifier rubyid_com'>com</span>
+<span class='id identifier rubyid_foo'>foo</span><span class='period'>.</span><span class='id identifier rubyid_co'>co</span><span class='period'>.</span><span class='id identifier rubyid_uk'>uk</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>url.registered_domain</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="URL_SCHEME-constant" class="deprecated">URL_SCHEME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Now available in the stable namespace at <span class='object_link'><a href="../URL.html#URL_SCHEME-constant" title="OpenTelemetry::SemConv::URL::URL_SCHEME (constant)">URL::URL_SCHEME</a></span>.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: stable</p>
+</div>
+  </div>
+
+<p>The <a href="https://www.rfc-editor.org/rfc/rfc3986#section-3.1">URI scheme</a> component identifying the used protocol.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_https'>https</span>
+<span class='id identifier rubyid_ftp'>ftp</span>
+<span class='id identifier rubyid_telnet'>telnet</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>url.scheme</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="URL_SUBDOMAIN-constant" class="">URL_SUBDOMAIN =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The subdomain portion of a fully qualified domain name includes all of the names except the host name under the registered_domain. In a partially qualified domain, or if the qualification level of the full name cannot be determined, subdomain contains all of the names below the registered domain.</p>
+
+<p>The subdomain portion of <code>www.east.mydomain.co.uk</code> is <code>east</code>. If the domain has multiple levels of subdomain, such as <code>sub2.sub1.example.com</code>, the subdomain field should contain <code>sub2.sub1</code>, with no trailing period.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_east'>east</span>
+<span class='id identifier rubyid_sub2'>sub2</span><span class='period'>.</span><span class='id identifier rubyid_sub1'>sub1</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>url.subdomain</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="URL_TEMPLATE-constant" class="">URL_TEMPLATE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The low-cardinality template of an <a href="https://www.rfc-editor.org/rfc/rfc3986#section-4.2">absolute path reference</a>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>/users/{id}
+/users/:id
+/users?id={id}</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>url.template</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="URL_TOP_LEVEL_DOMAIN-constant" class="">URL_TOP_LEVEL_DOMAIN =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The effective top level domain (eTLD), also known as the domain suffix, is the last part of the domain name. For example, the top level domain for example.com is <code>com</code>.</p>
+
+<p>This value can be determined precisely with the <a href="https://publicsuffix.org/">public suffix list</a>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_com'>com</span>
+<span class='id identifier rubyid_co'>co</span><span class='period'>.</span><span class='id identifier rubyid_uk'>uk</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>url.top_level_domain</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Sep 16 23:34:26 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.1.6).
+</div>
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,1869 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: OpenTelemetry::SemConv::Incubating::AWS
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::SemConv::Incubating::AWS";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (A)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../SemConv.html" title="OpenTelemetry::SemConv (module)">SemConv</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Incubating.html" title="OpenTelemetry::SemConv::Incubating (module)">Incubating</a></span></span>
+     &raquo; 
+    <span class="title">AWS</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: OpenTelemetry::SemConv::Incubating::AWS
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/semconv/incubating/aws/attributes.rb</dd>
+  </dl>
+  
+</div>
+
+
+  
+    <h2>
+      Attribute Names
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="AWS_BEDROCK_GUARDRAIL_ID-constant" class="">AWS_BEDROCK_GUARDRAIL_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The unique identifier of the AWS Bedrock Guardrail. A <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html">guardrail</a> helps safeguard and prevent unwanted behavior from model responses or user messages.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_sgi5gkybzqak'>sgi5gkybzqak</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.bedrock.guardrail.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_BEDROCK_KNOWLEDGE_BASE_ID-constant" class="">AWS_BEDROCK_KNOWLEDGE_BASE_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The unique identifier of the AWS Bedrock Knowledge base. A <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">knowledge base</a> is a bank of information that can be queried by models to generate more relevant responses and augment prompts.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='const'>XFWUPB9PAW</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.bedrock.knowledge_base.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_ATTRIBUTE_DEFINITIONS-constant" class="">AWS_DYNAMODB_ATTRIBUTE_DEFINITIONS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The JSON-serialized value of each item in the <code>AttributeDefinitions</code> request field.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>{ \&quot;AttributeName\&quot;: \&quot;string\&quot;, \&quot;AttributeType\&quot;: \&quot;string\&quot; }</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.attribute_definitions</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_ATTRIBUTES_TO_GET-constant" class="">AWS_DYNAMODB_ATTRIBUTES_TO_GET =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The value of the <code>AttributesToGet</code> request parameter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>lives</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>id</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.attributes_to_get</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_CONSISTENT_READ-constant" class="">AWS_DYNAMODB_CONSISTENT_READ =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The value of the <code>ConsistentRead</code> request parameter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.consistent_read</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_CONSUMED_CAPACITY-constant" class="">AWS_DYNAMODB_CONSUMED_CAPACITY =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The JSON-serialized value of each item in the <code>ConsumedCapacity</code> response field.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>{ \&quot;CapacityUnits\&quot;: number, \&quot;GlobalSecondaryIndexes\&quot;: { \&quot;string\&quot; : { \&quot;CapacityUnits\&quot;: number, \&quot;ReadCapacityUnits\&quot;: number, \&quot;WriteCapacityUnits\&quot;: number } }, \&quot;LocalSecondaryIndexes\&quot;: { \&quot;string\&quot; : { \&quot;CapacityUnits\&quot;: number, \&quot;ReadCapacityUnits\&quot;: number, \&quot;WriteCapacityUnits\&quot;: number } }, \&quot;ReadCapacityUnits\&quot;: number, \&quot;Table\&quot;: { \&quot;CapacityUnits\&quot;: number, \&quot;ReadCapacityUnits\&quot;: number, \&quot;WriteCapacityUnits\&quot;: number }, \&quot;TableName\&quot;: \&quot;string\&quot;, \&quot;WriteCapacityUnits\&quot;: number }</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.consumed_capacity</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_COUNT-constant" class="">AWS_DYNAMODB_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The value of the <code>Count</code> response parameter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>10</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_EXCLUSIVE_START_TABLE-constant" class="">AWS_DYNAMODB_EXCLUSIVE_START_TABLE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The value of the <code>ExclusiveStartTableName</code> request parameter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='const'>Users</span>
+<span class='const'>CatsTable</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.exclusive_start_table</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_GLOBAL_SECONDARY_INDEX_UPDATES-constant" class="">AWS_DYNAMODB_GLOBAL_SECONDARY_INDEX_UPDATES =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The JSON-serialized value of each item in the <code>GlobalSecondaryIndexUpdates</code> request field.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>{ \&quot;Create\&quot;: { \&quot;IndexName\&quot;: \&quot;string\&quot;, \&quot;KeySchema\&quot;: [ { \&quot;AttributeName\&quot;: \&quot;string\&quot;, \&quot;KeyType\&quot;: \&quot;string\&quot; } ], \&quot;Projection\&quot;: { \&quot;NonKeyAttributes\&quot;: [ \&quot;string\&quot; ], \&quot;ProjectionType\&quot;: \&quot;string\&quot; }, \&quot;ProvisionedThroughput\&quot;: { \&quot;ReadCapacityUnits\&quot;: number, \&quot;WriteCapacityUnits\&quot;: number } }</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.global_secondary_index_updates</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_GLOBAL_SECONDARY_INDEXES-constant" class="">AWS_DYNAMODB_GLOBAL_SECONDARY_INDEXES =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The JSON-serialized value of each item of the <code>GlobalSecondaryIndexes</code> request field</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>{ \&quot;IndexName\&quot;: \&quot;string\&quot;, \&quot;KeySchema\&quot;: [ { \&quot;AttributeName\&quot;: \&quot;string\&quot;, \&quot;KeyType\&quot;: \&quot;string\&quot; } ], \&quot;Projection\&quot;: { \&quot;NonKeyAttributes\&quot;: [ \&quot;string\&quot; ], \&quot;ProjectionType\&quot;: \&quot;string\&quot; }, \&quot;ProvisionedThroughput\&quot;: { \&quot;ReadCapacityUnits\&quot;: number, \&quot;WriteCapacityUnits\&quot;: number } }</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.global_secondary_indexes</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_INDEX_NAME-constant" class="">AWS_DYNAMODB_INDEX_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The value of the <code>IndexName</code> request parameter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_name_to_group'>name_to_group</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.index_name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_ITEM_COLLECTION_METRICS-constant" class="">AWS_DYNAMODB_ITEM_COLLECTION_METRICS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The JSON-serialized value of the <code>ItemCollectionMetrics</code> response field.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>{ &quot;string&quot; : [ { &quot;ItemCollectionKey&quot;: { &quot;string&quot; : { &quot;B&quot;: blob, &quot;BOOL&quot;: boolean, &quot;BS&quot;: [ blob ], &quot;L&quot;: [ &quot;AttributeValue&quot; ], &quot;M&quot;: { &quot;string&quot; : &quot;AttributeValue&quot; }, &quot;N&quot;: &quot;string&quot;, &quot;NS&quot;: [ &quot;string&quot; ], &quot;NULL&quot;: boolean, &quot;S&quot;: &quot;string&quot;, &quot;SS&quot;: [ &quot;string&quot; ] } }, &quot;SizeEstimateRangeGB&quot;: [ number ] } ] }</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.item_collection_metrics</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_LIMIT-constant" class="">AWS_DYNAMODB_LIMIT =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The value of the <code>Limit</code> request parameter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>10</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.limit</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_LOCAL_SECONDARY_INDEXES-constant" class="">AWS_DYNAMODB_LOCAL_SECONDARY_INDEXES =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The JSON-serialized value of each item of the <code>LocalSecondaryIndexes</code> request field.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>{ \&quot;IndexArn\&quot;: \&quot;string\&quot;, \&quot;IndexName\&quot;: \&quot;string\&quot;, \&quot;IndexSizeBytes\&quot;: number, \&quot;ItemCount\&quot;: number, \&quot;KeySchema\&quot;: [ { \&quot;AttributeName\&quot;: \&quot;string\&quot;, \&quot;KeyType\&quot;: \&quot;string\&quot; } ], \&quot;Projection\&quot;: { \&quot;NonKeyAttributes\&quot;: [ \&quot;string\&quot; ], \&quot;ProjectionType\&quot;: \&quot;string\&quot; } }</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.local_secondary_indexes</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_PROJECTION-constant" class="">AWS_DYNAMODB_PROJECTION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The value of the <code>ProjectionExpression</code> request parameter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>Title
+Title, Price, Color
+Title, Description, RelatedItems, ProductReviews</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.projection</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_PROVISIONED_READ_CAPACITY-constant" class="">AWS_DYNAMODB_PROVISIONED_READ_CAPACITY =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The value of the <code>ProvisionedThroughput.ReadCapacityUnits</code> request parameter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='float'>1.0</span>
+<span class='float'>2.0</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.provisioned_read_capacity</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_PROVISIONED_WRITE_CAPACITY-constant" class="">AWS_DYNAMODB_PROVISIONED_WRITE_CAPACITY =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The value of the <code>ProvisionedThroughput.WriteCapacityUnits</code> request parameter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='float'>1.0</span>
+<span class='float'>2.0</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.provisioned_write_capacity</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_SCAN_FORWARD-constant" class="">AWS_DYNAMODB_SCAN_FORWARD =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The value of the <code>ScanIndexForward</code> request parameter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.scan_forward</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_SCANNED_COUNT-constant" class="">AWS_DYNAMODB_SCANNED_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The value of the <code>ScannedCount</code> response parameter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>50</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.scanned_count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_SEGMENT-constant" class="">AWS_DYNAMODB_SEGMENT =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The value of the <code>Segment</code> request parameter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>10</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.segment</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_SELECT-constant" class="">AWS_DYNAMODB_SELECT =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The value of the <code>Select</code> request parameter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='const'>ALL_ATTRIBUTES</span>
+<span class='const'>COUNT</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.select</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_TABLE_COUNT-constant" class="">AWS_DYNAMODB_TABLE_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The number of items in the <code>TableNames</code> response parameter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>20</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.table_count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_TABLE_NAMES-constant" class="">AWS_DYNAMODB_TABLE_NAMES =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The keys in the <code>RequestItems</code> object field.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Users</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Cats</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.table_names</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_TOTAL_SEGMENTS-constant" class="">AWS_DYNAMODB_TOTAL_SEGMENTS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The value of the <code>TotalSegments</code> request parameter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>100</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.total_segments</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_ECS_CLUSTER_ARN-constant" class="">AWS_ECS_CLUSTER_ARN =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The ARN of an <a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/clusters.html">ECS cluster</a>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>arn:aws:ecs:us-west-2:123456789123:cluster/my-cluster</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.ecs.cluster.arn</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_ECS_CONTAINER_ARN-constant" class="">AWS_ECS_CONTAINER_ARN =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The Amazon Resource Name (ARN) of an <a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_instances.html">ECS container instance</a>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>arn:aws:ecs:us-west-1:123456789123:container/32624152-9086-4f0e-acae-1a75b14fe4d9</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.ecs.container.arn</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_ECS_LAUNCHTYPE-constant" class="">AWS_ECS_LAUNCHTYPE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The <a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/launch_types.html">launch type</a> for an ECS task.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.ecs.launchtype</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_ECS_TASK_ARN-constant" class="">AWS_ECS_TASK_ARN =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The ARN of a running <a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-account-settings.html#ecs-resource-ids">ECS task</a>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>arn:aws:ecs:us-west-1:123456789123:task/10838bed-421f-43ef-870a-f43feacbbb5b
+arn:aws:ecs:us-west-1:123456789123:task/my-cluster/task-id/23ebb8ac-c18f-46c6-8bbe-d55d0e37cfbd</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.ecs.task.arn</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_ECS_TASK_FAMILY-constant" class="">AWS_ECS_TASK_FAMILY =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The family name of the <a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definitions.html">ECS task definition</a> used to create the ECS task.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_opentelemetry'>opentelemetry</span><span class='op'>-</span><span class='id identifier rubyid_family'>family</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.ecs.task.family</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_ECS_TASK_ID-constant" class="">AWS_ECS_TASK_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The ID of a running ECS task. The ID MUST be extracted from <code>task.arn</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>10838bed-421f-43ef-870a-f43feacbbb5b
+23ebb8ac-c18f-46c6-8bbe-d55d0e37cfbd</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.ecs.task.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_ECS_TASK_REVISION-constant" class="">AWS_ECS_TASK_REVISION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The revision for the task definition used to create the ECS task.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>8</span>
+<span class='int'>26</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.ecs.task.revision</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_EKS_CLUSTER_ARN-constant" class="">AWS_EKS_CLUSTER_ARN =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The ARN of an EKS cluster.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>arn:aws:ecs:us-west-2:123456789123:cluster/my-cluster</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.eks.cluster.arn</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_EXTENDED_REQUEST_ID-constant" class="">AWS_EXTENDED_REQUEST_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The AWS extended request ID as returned in the response header <code>x-amz-id-2</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>wzHcyEWfmOGDIE5QOhTAqFDoDWP3y8IUvpNINCwL9N4TEHbUw0/gZJ+VZTmCNCWR7fezEN3eCiQ=</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.extended_request_id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_KINESIS_STREAM_NAME-constant" class="">AWS_KINESIS_STREAM_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The name of the AWS Kinesis <a href="https://docs.aws.amazon.com/streams/latest/dev/introduction.html">stream</a> the request refers to. Corresponds to the <code>--stream-name</code> parameter of the Kinesis <a href="https://docs.aws.amazon.com/cli/latest/reference/kinesis/describe-stream.html">describe-stream</a> operation.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_some'>some</span><span class='op'>-</span><span class='id identifier rubyid_stream'>stream</span><span class='op'>-</span><span class='id identifier rubyid_name'>name</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.kinesis.stream_name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_LAMBDA_INVOKED_ARN-constant" class="">AWS_LAMBDA_INVOKED_ARN =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The full invoked ARN as provided on the <code>Context</code> passed to the function (<code>Lambda-Runtime-Invoked-Function-Arn</code> header on the <code>/runtime/invocation/next</code> applicable).</p>
+
+<p>This may be different from <code>cloud.resource_id</code> if an alias is involved.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>arn:aws:lambda:us-east-1:123456:function:myfunction:myalias</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.lambda.invoked_arn</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_LAMBDA_RESOURCE_MAPPING_ID-constant" class="">AWS_LAMBDA_RESOURCE_MAPPING_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The UUID of the <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-eventsourcemapping.html">AWS Lambda EvenSource Mapping</a>. An event source is mapped to a lambda function. It’s contents are read by Lambda and used to trigger a function. This isn’t available in the lambda execution context or the lambda runtime environtment. This is going to be populated by the AWS SDK for each language when that UUID is present. Some of these operations are Create/Delete/Get/List/Update EventSourceMapping.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>587ad24b-03b9-4413-8202-bbd56b36e5b7</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.lambda.resource_mapping.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_LOG_GROUP_ARNS-constant" class="">AWS_LOG_GROUP_ARNS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The Amazon Resource Name(s) (ARN) of the AWS log group(s).</p>
+
+<p>See the <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/iam-access-control-overview-cwl.html#CWL_ARN_Format">log group ARN format documentation</a>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>arn:aws:logs:us-west-1:123456789012:log-group:/aws/my/group:*</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.log.group.arns</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_LOG_GROUP_NAMES-constant" class="">AWS_LOG_GROUP_NAMES =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The name(s) of the AWS log group(s) an application is writing to.</p>
+
+<p>Multiple log groups must be supported for cases like multi-container applications, where a single application has sidecar containers, and each write to their own log group.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/aws/lambda/my-function</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>opentelemetry-service</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.log.group.names</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_LOG_STREAM_ARNS-constant" class="">AWS_LOG_STREAM_ARNS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The ARN(s) of the AWS log stream(s).</p>
+
+<p>See the <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/iam-access-control-overview-cwl.html#CWL_ARN_Format">log stream ARN format documentation</a>. One log group can contain several log streams, so these ARNs necessarily identify both a log group and a log stream.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>arn:aws:logs:us-west-1:123456789012:log-group:/aws/my/group:log-stream:logs/main/10838bed-421f-43ef-870a-f43feacbbb5b</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.log.stream.arns</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_LOG_STREAM_NAMES-constant" class="">AWS_LOG_STREAM_NAMES =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The name(s) of the AWS log stream(s) an application is writing to.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>logs/main/10838bed-421f-43ef-870a-f43feacbbb5b</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.log.stream.names</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_REQUEST_ID-constant" class="">AWS_REQUEST_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The AWS request ID as returned in the response headers <code>x-amzn-requestid</code>, <code>x-amzn-request-id</code> or <code>x-amz-request-id</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>79b9da39-b7ae-508a-a6bc-864b2829c622
+C9ER4AJX75574TDJ</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.request_id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_S3_BUCKET-constant" class="">AWS_S3_BUCKET =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The S3 bucket name the request refers to. Corresponds to the <code>--bucket</code> parameter of the <a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/index.html">S3 API</a> operations.</p>
+
+<p>The <code>bucket</code> attribute is applicable to all S3 operations that reference a bucket, i.e. that require the bucket name as a mandatory parameter.
+This applies to almost all S3 operations except <code>list-buckets</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_some'>some</span><span class='op'>-</span><span class='id identifier rubyid_bucket'>bucket</span><span class='op'>-</span><span class='id identifier rubyid_name'>name</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.s3.bucket</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_S3_COPY_SOURCE-constant" class="">AWS_S3_COPY_SOURCE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The source object (in the form <code>bucket</code>/<code>key</code>) for the copy operation.</p>
+
+<p>The <code>copy_source</code> attribute applies to S3 copy operations and corresponds to the <code>--copy-source</code> parameter
+of the <a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/copy-object.html">copy-object operation within the S3 API</a>.
+This applies in particular to the following operations:</p>
+
+<ul>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/copy-object.html">copy-object</a></li>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/upload-part-copy.html">upload-part-copy</a></li>
+</ul>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_someFile'>someFile</span><span class='period'>.</span><span class='id identifier rubyid_yml'>yml</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.s3.copy_source</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_S3_DELETE-constant" class="">AWS_S3_DELETE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The delete request container that specifies the objects to be deleted.</p>
+
+<p>The <code>delete</code> attribute is only applicable to the <a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/delete-object.html">delete-object</a> operation.
+The <code>delete</code> attribute corresponds to the <code>--delete</code> parameter of the
+<a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/delete-objects.html">delete-objects operation within the S3 API</a>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>Objects=[{Key=string,VersionId=string},{Key=string,VersionId=string}],Quiet=boolean</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.s3.delete</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_S3_KEY-constant" class="">AWS_S3_KEY =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The S3 object key the request refers to. Corresponds to the <code>--key</code> parameter of the <a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/index.html">S3 API</a> operations.</p>
+
+<p>The <code>key</code> attribute is applicable to all object-related S3 operations, i.e. that require the object key as a mandatory parameter.
+This applies in particular to the following operations:</p>
+
+<ul>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/copy-object.html">copy-object</a></li>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/delete-object.html">delete-object</a></li>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/get-object.html">get-object</a></li>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/head-object.html">head-object</a></li>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/put-object.html">put-object</a></li>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/restore-object.html">restore-object</a></li>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/select-object-content.html">select-object-content</a></li>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/abort-multipart-upload.html">abort-multipart-upload</a></li>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/complete-multipart-upload.html">complete-multipart-upload</a></li>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/create-multipart-upload.html">create-multipart-upload</a></li>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/list-parts.html">list-parts</a></li>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/upload-part.html">upload-part</a></li>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/upload-part-copy.html">upload-part-copy</a></li>
+</ul>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_someFile'>someFile</span><span class='period'>.</span><span class='id identifier rubyid_yml'>yml</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.s3.key</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_S3_PART_NUMBER-constant" class="">AWS_S3_PART_NUMBER =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The part number of the part being uploaded in a multipart-upload operation. This is a positive integer between 1 and 10,000.</p>
+
+<p>The <code>part_number</code> attribute is only applicable to the <a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/upload-part.html">upload-part</a>
+and <a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/upload-part-copy.html">upload-part-copy</a> operations.
+The <code>part_number</code> attribute corresponds to the <code>--part-number</code> parameter of the
+<a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/upload-part.html">upload-part operation within the S3 API</a>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>3456</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.s3.part_number</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_S3_UPLOAD_ID-constant" class="">AWS_S3_UPLOAD_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Upload ID that identifies the multipart upload.</p>
+
+<p>The <code>upload_id</code> attribute applies to S3 multipart-upload operations and corresponds to the <code>--upload-id</code> parameter
+of the <a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/index.html">S3 API</a> multipart operations.
+This applies in particular to the following operations:</p>
+
+<ul>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/abort-multipart-upload.html">abort-multipart-upload</a></li>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/complete-multipart-upload.html">complete-multipart-upload</a></li>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/list-parts.html">list-parts</a></li>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/upload-part.html">upload-part</a></li>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/s3api/upload-part-copy.html">upload-part-copy</a></li>
+</ul>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_dfRtDYWFbkRONycy'>dfRtDYWFbkRONycy</span><span class='period'>.</span><span class='const'>Yxwh66Yjlx</span><span class='period'>.</span><span class='id identifier rubyid_cph0gtNBtJ'>cph0gtNBtJ</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.s3.upload_id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_SECRETSMANAGER_SECRET_ARN-constant" class="">AWS_SECRETSMANAGER_SECRET_ARN =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The ARN of the Secret stored in the Secrets Mangger</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>arn:aws:secretsmanager:us-east-1:123456789012:secret:SecretName-6RandomCharacters</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.secretsmanager.secret.arn</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_SNS_TOPIC_ARN-constant" class="">AWS_SNS_TOPIC_ARN =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The ARN of the AWS SNS Topic. An Amazon SNS <a href="https://docs.aws.amazon.com/sns/latest/dg/sns-create-topic.html">topic</a> is a logical access point that acts as a communication channel.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.sns.topic.arn</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_SQS_QUEUE_URL-constant" class="">AWS_SQS_QUEUE_URL =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The URL of the AWS SQS Queue. It’s a unique identifier for a queue in Amazon Simple Queue Service (SQS) and is used to access the queue and perform actions on it.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_https'>https</span><span class='symbol'>:/</span><span class='op'>/</span><span class='id identifier rubyid_sqs'>sqs</span><span class='period'>.</span><span class='id identifier rubyid_us'>us</span><span class='op'>-</span><span class='id identifier rubyid_east'>east</span><span class='op'>-</span><span class='int'>1</span><span class='period'>.</span><span class='id identifier rubyid_amazonaws'>amazonaws</span><span class='period'>.</span><span class='id identifier rubyid_com'>com</span><span class='op'>/</span><span class='int'>123456789012</span><span class='op'>/</span><span class='const'>MyQueue</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.sqs.queue.url</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_STEP_FUNCTIONS_ACTIVITY_ARN-constant" class="">AWS_STEP_FUNCTIONS_ACTIVITY_ARN =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The ARN of the AWS Step Functions Activity.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>arn:aws:states:us-east-1:123456789012:activity:get-greeting</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.step_functions.activity.arn</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_STEP_FUNCTIONS_STATE_MACHINE_ARN-constant" class="">AWS_STEP_FUNCTIONS_STATE_MACHINE_ARN =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The ARN of the AWS Step Functions State Machine.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>arn:aws:states:us-east-1:123456789012:stateMachine:myStateMachine:1</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.step_functions.state_machine.arn</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Sep 16 23:34:25 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.1.6).
+</div>
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,2369 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: OpenTelemetry::SemConv::Incubating::DB
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::SemConv::Incubating::DB";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (D)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../SemConv.html" title="OpenTelemetry::SemConv (module)">SemConv</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Incubating.html" title="OpenTelemetry::SemConv::Incubating (module)">Incubating</a></span></span>
+     &raquo; 
+    <span class="title">DB</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: OpenTelemetry::SemConv::Incubating::DB
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/semconv/incubating/db/metrics.rb<span class="defines">,<br />
+  lib/opentelemetry/semconv/incubating/db/attributes.rb</span>
+</dd>
+  </dl>
+  
+</div>
+
+
+  
+    <h2>
+      Metrics Names
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="DB_CLIENT_CONNECTION_COUNT-constant" class="">DB_CLIENT_CONNECTION_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The number of connections that are currently in state described by the <code>state</code> attribute</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connection.count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTION_CREATE_TIME-constant" class="">DB_CLIENT_CONNECTION_CREATE_TIME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The time it took to create a new connection</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connection.create_time</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTION_IDLE_MAX-constant" class="">DB_CLIENT_CONNECTION_IDLE_MAX =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The maximum number of idle open connections allowed</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connection.idle.max</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTION_IDLE_MIN-constant" class="">DB_CLIENT_CONNECTION_IDLE_MIN =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The minimum number of idle open connections allowed</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connection.idle.min</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTION_MAX-constant" class="">DB_CLIENT_CONNECTION_MAX =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The maximum number of open connections allowed</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connection.max</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTION_PENDING_REQUESTS-constant" class="">DB_CLIENT_CONNECTION_PENDING_REQUESTS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The number of current pending requests for an open connection</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connection.pending_requests</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTION_TIMEOUTS-constant" class="">DB_CLIENT_CONNECTION_TIMEOUTS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The number of connection timeouts that have occurred trying to obtain a connection from the pool</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connection.timeouts</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTION_USE_TIME-constant" class="">DB_CLIENT_CONNECTION_USE_TIME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The time between borrowing a connection and returning it to the pool</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connection.use_time</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTION_WAIT_TIME-constant" class="">DB_CLIENT_CONNECTION_WAIT_TIME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The time it took to obtain an open connection from the pool</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connection.wait_time</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTIONS_CREATE_TIME-constant" class="deprecated">DB_CLIENT_CONNECTIONS_CREATE_TIME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.client.connection.create_time</code> with unit <code>s</code>.”, “reason”: “uncategorized”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.client.connection.create_time</code> instead. Note: the unit also changed from <code>ms</code> to <code>s</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connections.create_time</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTIONS_IDLE_MAX-constant" class="deprecated">DB_CLIENT_CONNECTIONS_IDLE_MAX =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.client.connection.idle.max</code>.”, “reason”: “renamed”, “renamed_to”: “db.client.connection.idle.max”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.client.connection.idle.max</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connections.idle.max</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTIONS_IDLE_MIN-constant" class="deprecated">DB_CLIENT_CONNECTIONS_IDLE_MIN =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.client.connection.idle.min</code>.”, “reason”: “renamed”, “renamed_to”: “db.client.connection.idle.min”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.client.connection.idle.min</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connections.idle.min</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTIONS_MAX-constant" class="deprecated">DB_CLIENT_CONNECTIONS_MAX =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.client.connection.max</code>.”, “reason”: “renamed”, “renamed_to”: “db.client.connection.max”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.client.connection.max</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connections.max</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTIONS_PENDING_REQUESTS-constant" class="deprecated">DB_CLIENT_CONNECTIONS_PENDING_REQUESTS =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.client.connection.pending_requests</code>.”, “reason”: “renamed”, “renamed_to”: “db.client.connection.pending_requests”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.client.connection.pending_requests</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connections.pending_requests</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTIONS_TIMEOUTS-constant" class="deprecated">DB_CLIENT_CONNECTIONS_TIMEOUTS =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.client.connection.timeouts</code>.”, “reason”: “renamed”, “renamed_to”: “db.client.connection.timeouts”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.client.connection.timeouts</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connections.timeouts</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTIONS_USAGE-constant" class="deprecated">DB_CLIENT_CONNECTIONS_USAGE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.client.connection.count</code>.”, “reason”: “renamed”, “renamed_to”: “db.client.connection.count”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.client.connection.count</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connections.usage</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTIONS_USE_TIME-constant" class="deprecated">DB_CLIENT_CONNECTIONS_USE_TIME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.client.connection.use_time</code> with unit <code>s</code>.”, “reason”: “uncategorized”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.client.connection.use_time</code> instead. Note: the unit also changed from <code>ms</code> to <code>s</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connections.use_time</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTIONS_WAIT_TIME-constant" class="deprecated">DB_CLIENT_CONNECTIONS_WAIT_TIME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.client.connection.wait_time</code> with unit <code>s</code>.”, “reason”: “uncategorized”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.client.connection.wait_time</code> instead. Note: the unit also changed from <code>ms</code> to <code>s</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connections.wait_time</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_COSMOSDB_ACTIVE_INSTANCE_COUNT-constant" class="deprecated">DB_CLIENT_COSMOSDB_ACTIVE_INSTANCE_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>azure.cosmosdb.client.active_instance.count</code>.”, “reason”: “renamed”, “renamed_to”: “azure.cosmosdb.client.active_instance.count”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>azure.cosmosdb.client.active_instance.count</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.cosmosdb.active_instance.count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_COSMOSDB_OPERATION_REQUEST_CHARGE-constant" class="deprecated">DB_CLIENT_COSMOSDB_OPERATION_REQUEST_CHARGE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>azure.cosmosdb.client.operation.request_charge</code>.”, “reason”: “renamed”, “renamed_to”: “azure.cosmosdb.client.operation.request_charge”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>azure.cosmosdb.client.operation.request_charge</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.cosmosdb.operation.request_charge</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_OPERATION_DURATION-constant" class="deprecated">DB_CLIENT_OPERATION_DURATION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Now available in the stable namespace at <span class='object_link'><a href="../DB.html#DB_CLIENT_OPERATION_DURATION-constant" title="OpenTelemetry::SemConv::DB::DB_CLIENT_OPERATION_DURATION (constant)">DB::DB_CLIENT_OPERATION_DURATION</a></span>.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: stable</p>
+</div>
+  </div>
+
+<p>Duration of database client operations.</p>
+
+<p>Batch operations SHOULD be recorded as a single operation.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.operation.duration</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_RESPONSE_RETURNED_ROWS-constant" class="">DB_CLIENT_RESPONSE_RETURNED_ROWS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The actual number of records returned by the database operation.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.response.returned_rows</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+    </dl>
+  
+    <h2>
+      Attribute Names
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="DB_CASSANDRA_CONSISTENCY_LEVEL-constant" class="deprecated">DB_CASSANDRA_CONSISTENCY_LEVEL =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>cassandra.consistency.level</code>.”, “reason”: “renamed”, “renamed_to”: “cassandra.consistency.level”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>cassandra.consistency.level</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cassandra.consistency_level</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CASSANDRA_COORDINATOR_DC-constant" class="deprecated">DB_CASSANDRA_COORDINATOR_DC =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>cassandra.coordinator.dc</code>.”, “reason”: “renamed”, “renamed_to”: “cassandra.coordinator.dc”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>cassandra.coordinator.dc</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_us'>us</span><span class='op'>-</span><span class='id identifier rubyid_west'>west</span><span class='op'>-</span><span class='int'>2</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cassandra.coordinator.dc</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CASSANDRA_COORDINATOR_ID-constant" class="deprecated">DB_CASSANDRA_COORDINATOR_ID =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>cassandra.coordinator.id</code>.”, “reason”: “renamed”, “renamed_to”: “cassandra.coordinator.id”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>cassandra.coordinator.id</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>be13faa2-8574-4d71-926d-27f16cf8a7af</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cassandra.coordinator.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CASSANDRA_IDEMPOTENCE-constant" class="deprecated">DB_CASSANDRA_IDEMPOTENCE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>cassandra.query.idempotent</code>.”, “reason”: “renamed”, “renamed_to”: “cassandra.query.idempotent”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>cassandra.query.idempotent</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cassandra.idempotence</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CASSANDRA_PAGE_SIZE-constant" class="deprecated">DB_CASSANDRA_PAGE_SIZE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>cassandra.page.size</code>.”, “reason”: “renamed”, “renamed_to”: “cassandra.page.size”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>cassandra.page.size</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>5000</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cassandra.page_size</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CASSANDRA_SPECULATIVE_EXECUTION_COUNT-constant" class="deprecated">DB_CASSANDRA_SPECULATIVE_EXECUTION_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>cassandra.speculative_execution.count</code>.”, “reason”: “renamed”, “renamed_to”: “cassandra.speculative_execution.count”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>cassandra.speculative_execution.count</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>0</span>
+<span class='int'>2</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cassandra.speculative_execution_count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CASSANDRA_TABLE-constant" class="deprecated">DB_CASSANDRA_TABLE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.collection.name</code>.”, “reason”: “renamed”, “renamed_to”: “db.collection.name”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.collection.name</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_mytable'>mytable</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cassandra.table</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTION_POOL_NAME-constant" class="">DB_CLIENT_CONNECTION_POOL_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The name of the connection pool; unique within the instrumented application. In case the connection pool implementation doesn’t provide a name, instrumentation SHOULD use a combination of parameters that would make the name unique, for example, combining attributes <code>server.address</code>, <code>server.port</code>, and <code>db.namespace</code>, formatted as <code>server.address:server.port/db.namespace</code>. Instrumentations that generate connection pool name following different patterns SHOULD document it.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_myDataSource'>myDataSource</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connection.pool.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTION_STATE-constant" class="">DB_CLIENT_CONNECTION_STATE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The state of a connection in the pool</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_idle'>idle</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connection.state</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTIONS_POOL_NAME-constant" class="deprecated">DB_CLIENT_CONNECTIONS_POOL_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.client.connection.pool.name</code>.”, “reason”: “renamed”, “renamed_to”: “db.client.connection.pool.name”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.client.connection.pool.name</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_myDataSource'>myDataSource</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connections.pool.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CLIENT_CONNECTIONS_STATE-constant" class="deprecated">DB_CLIENT_CONNECTIONS_STATE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.client.connection.state</code>.”, “reason”: “renamed”, “renamed_to”: “db.client.connection.state”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.client.connection.state</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_idle'>idle</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.client.connections.state</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_COLLECTION_NAME-constant" class="deprecated">DB_COLLECTION_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Now available in the stable namespace at <span class='object_link'><a href="../DB.html#DB_COLLECTION_NAME-constant" title="OpenTelemetry::SemConv::DB::DB_COLLECTION_NAME (constant)">DB::DB_COLLECTION_NAME</a></span>.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: stable</p>
+</div>
+  </div>
+
+<p>The name of a collection (table, container) within the database.</p>
+
+<p>It is RECOMMENDED to capture the value as provided by the application
+without attempting to do any case normalization.</p>
+
+<p>The collection name SHOULD NOT be extracted from <code>db.query.text</code>,
+when the database system supports query text with multiple collections
+in non-batch operations.</p>
+
+<p>For batch operations, if the individual operations are known to have the same
+collection name then that collection name SHOULD be used.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_public'>public</span><span class='period'>.</span><span class='id identifier rubyid_users'>users</span>
+<span class='id identifier rubyid_customers'>customers</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.collection.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CONNECTION_STRING-constant" class="deprecated">DB_CONNECTION_STRING =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>server.address</code> and <code>server.port</code>.\n”, “reason”: “uncategorized”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>server.address</code>, <code>server.port</code> attributes instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>Server=(localdb)\v11.0;Integrated Security=true;</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.connection_string</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_COSMOSDB_CLIENT_ID-constant" class="deprecated">DB_COSMOSDB_CLIENT_ID =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>azure.client.id</code>.”, “reason”: “renamed”, “renamed_to”: “azure.client.id”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>azure.client.id</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>3ba4827d-4422-483f-b59f-85b74211c11d</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cosmosdb.client_id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_COSMOSDB_CONNECTION_MODE-constant" class="deprecated">DB_COSMOSDB_CONNECTION_MODE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>azure.cosmosdb.connection.mode</code>.”, “reason”: “renamed”, “renamed_to”: “azure.cosmosdb.connection.mode”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>azure.cosmosdb.connection.mode</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cosmosdb.connection_mode</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_COSMOSDB_CONSISTENCY_LEVEL-constant" class="deprecated">DB_COSMOSDB_CONSISTENCY_LEVEL =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>azure.cosmosdb.consistency.level</code>.”, “reason”: “renamed”, “renamed_to”: “azure.cosmosdb.consistency.level”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>cosmosdb.consistency.level</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='const'>Eventual</span>
+<span class='const'>ConsistentPrefix</span>
+<span class='const'>BoundedStaleness</span>
+<span class='const'>Strong</span>
+<span class='const'>Session</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cosmosdb.consistency_level</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_COSMOSDB_CONTAINER-constant" class="deprecated">DB_COSMOSDB_CONTAINER =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.collection.name</code>.”, “reason”: “renamed”, “renamed_to”: “db.collection.name”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.collection.name</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_mytable'>mytable</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cosmosdb.container</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_COSMOSDB_OPERATION_TYPE-constant" class="deprecated">DB_COSMOSDB_OPERATION_TYPE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Removed, no replacement at this time.\n”, “reason”: “obsoleted”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, no replacement at this time.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cosmosdb.operation_type</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_COSMOSDB_REGIONS_CONTACTED-constant" class="deprecated">DB_COSMOSDB_REGIONS_CONTACTED =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>azure.cosmosdb.operation.contacted_regions</code>.”, “reason”: “renamed”, “renamed_to”: “azure.cosmosdb.operation.contacted_regions”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>azure.cosmosdb.operation.contacted_regions</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>North Central US</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Australia East</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Australia Southeast</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cosmosdb.regions_contacted</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_COSMOSDB_REQUEST_CHARGE-constant" class="deprecated">DB_COSMOSDB_REQUEST_CHARGE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>azure.cosmosdb.operation.request_charge</code>.”, “reason”: “renamed”, “renamed_to”: “azure.cosmosdb.operation.request_charge”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>azure.cosmosdb.operation.request_charge</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='float'>46.18</span>
+<span class='float'>1.0</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cosmosdb.request_charge</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_COSMOSDB_REQUEST_CONTENT_LENGTH-constant" class="deprecated">DB_COSMOSDB_REQUEST_CONTENT_LENGTH =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>azure.cosmosdb.request.body.size</code>.”, “reason”: “renamed”, “renamed_to”: “azure.cosmosdb.request.body.size”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>azure.cosmosdb.request.body.size</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cosmosdb.request_content_length</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_COSMOSDB_STATUS_CODE-constant" class="deprecated">DB_COSMOSDB_STATUS_CODE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.response.status_code</code>.”, “reason”: “renamed”, “renamed_to”: “db.response.status_code”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.response.status_code</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>200</span>
+<span class='int'>201</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cosmosdb.status_code</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_COSMOSDB_SUB_STATUS_CODE-constant" class="deprecated">DB_COSMOSDB_SUB_STATUS_CODE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>azure.cosmosdb.response.sub_status_code</code>.”, “reason”: “renamed”, “renamed_to”: “azure.cosmosdb.response.sub_status_code”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>azure.cosmosdb.response.sub_status_code</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>1000</span>
+<span class='int'>1002</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cosmosdb.sub_status_code</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_ELASTICSEARCH_CLUSTER_NAME-constant" class="deprecated">DB_ELASTICSEARCH_CLUSTER_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.namespace</code>.”, “reason”: “renamed”, “renamed_to”: “db.namespace”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.namespace</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_e9106fc68e3044f0b1475b04bf4ffd5f'>e9106fc68e3044f0b1475b04bf4ffd5f</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.elasticsearch.cluster.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_ELASTICSEARCH_NODE_NAME-constant" class="deprecated">DB_ELASTICSEARCH_NODE_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>elasticsearch.node.name</code>.”, “reason”: “renamed”, “renamed_to”: “elasticsearch.node.name”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>elasticsearch.node.name</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_instance'>instance</span><span class='op'>-</span><span class='int'>0000000001</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.elasticsearch.node.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_ELASTICSEARCH_PATH_PARTS_LAMBDA-constant" class="deprecated">DB_ELASTICSEARCH_PATH_PARTS_LAMBDA =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.operation.parameter</code>.”, “reason”: “renamed”, “renamed_to”: “db.operation.parameter”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Must be called with a key for the full attribute name. See notes below about the expectations
+for the state of the key.</p>
+
+<p>Deprecated, use <code>db.operation.parameter</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Usage</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='const'>DB_ELASTICSEARCH_PATH_PARTS_LAMBDA</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>some-cool-key</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'>#=&gt; &#39;db.elasticsearch.path_parts.some-cool-key&#39;</span></code></pre>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_test'>test</span><span class='op'>-</span><span class='id identifier rubyid_index'>index</span>
+<span class='int'>123</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tlambda'>-&gt;</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span> <span class='tlambeg'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>db.elasticsearch.path_parts.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_key'>key</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span></pre></dd>
+      
+        <dt id="DB_INSTANCE_ID-constant" class="deprecated">DB_INSTANCE_ID =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Removed, no general replacement at this time. For Elasticsearch, use <code>db.elasticsearch.node.name</code> instead.\n”, “reason”: “obsoleted”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, no general replacement at this time. For Elasticsearch, use <code>db.elasticsearch.node.name</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_mysql'>mysql</span><span class='op'>-</span><span class='id identifier rubyid_e26b99z'>e26b99z</span><span class='period'>.</span><span class='id identifier rubyid_example'>example</span><span class='period'>.</span><span class='id identifier rubyid_com'>com</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.instance.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_JDBC_DRIVER_CLASSNAME-constant" class="deprecated">DB_JDBC_DRIVER_CLASSNAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Removed, no replacement at this time.\n”, “reason”: “obsoleted”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Removed, no replacement at this time.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_org'>org</span><span class='period'>.</span><span class='id identifier rubyid_postgresql'>postgresql</span><span class='period'>.</span><span class='const'>Driver</span>
+<span class='id identifier rubyid_com'>com</span><span class='period'>.</span><span class='id identifier rubyid_microsoft'>microsoft</span><span class='period'>.</span><span class='id identifier rubyid_sqlserver'>sqlserver</span><span class='period'>.</span><span class='id identifier rubyid_jdbc'>jdbc</span><span class='period'>.</span><span class='const'>SQLServerDriver</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.jdbc.driver_classname</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_MONGODB_COLLECTION-constant" class="deprecated">DB_MONGODB_COLLECTION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.collection.name</code>.”, “reason”: “renamed”, “renamed_to”: “db.collection.name”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.collection.name</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_mytable'>mytable</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.mongodb.collection</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_MSSQL_INSTANCE_NAME-constant" class="deprecated">DB_MSSQL_INSTANCE_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Removed, no replacement at this time.”, “reason”: “obsoleted”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, SQL Server instance is now populated as a part of <code>db.namespace</code> attribute.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='const'>MSSQLSERVER</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.mssql.instance_name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_NAME-constant" class="deprecated">DB_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.namespace</code>.”, “reason”: “renamed”, “renamed_to”: “db.namespace”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.namespace</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_customers'>customers</span>
+<span class='id identifier rubyid_main'>main</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_NAMESPACE-constant" class="deprecated">DB_NAMESPACE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Now available in the stable namespace at <span class='object_link'><a href="../DB.html#DB_NAMESPACE-constant" title="OpenTelemetry::SemConv::DB::DB_NAMESPACE (constant)">DB::DB_NAMESPACE</a></span>.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: stable</p>
+</div>
+  </div>
+
+<p>The name of the database, fully qualified within the server address and port.</p>
+
+<p>If a database system has multiple namespace components, they SHOULD be concatenated from the most general to the most specific namespace component, using <code>|</code> as a separator between the components. Any missing components (and their associated separators) SHOULD be omitted.
+Semantic conventions for individual database systems SHOULD document what <code>db.namespace</code> means in the context of that system.
+It is RECOMMENDED to capture the value as provided by the application without attempting to do any case normalization.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_customers'>customers</span>
+<span class='id identifier rubyid_test'>test</span><span class='period'>.</span><span class='id identifier rubyid_users'>users</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.namespace</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_OPERATION-constant" class="deprecated">DB_OPERATION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.operation.name</code>.”, “reason”: “renamed”, “renamed_to”: “db.operation.name”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.operation.name</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_findAndModify'>findAndModify</span>
+<span class='const'>HMSET</span>
+<span class='const'>SELECT</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.operation</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_OPERATION_BATCH_SIZE-constant" class="deprecated">DB_OPERATION_BATCH_SIZE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Now available in the stable namespace at <span class='object_link'><a href="../DB.html#DB_OPERATION_BATCH_SIZE-constant" title="OpenTelemetry::SemConv::DB::DB_OPERATION_BATCH_SIZE (constant)">DB::DB_OPERATION_BATCH_SIZE</a></span>.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: stable</p>
+</div>
+  </div>
+
+<p>The number of queries included in a batch operation.</p>
+
+<p>Operations are only considered batches when they contain two or more operations, and so <code>db.operation.batch.size</code> SHOULD never be <code>1</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>2</span>
+<span class='int'>3</span>
+<span class='int'>4</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.operation.batch.size</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_OPERATION_NAME-constant" class="deprecated">DB_OPERATION_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Now available in the stable namespace at <span class='object_link'><a href="../DB.html#DB_OPERATION_NAME-constant" title="OpenTelemetry::SemConv::DB::DB_OPERATION_NAME (constant)">DB::DB_OPERATION_NAME</a></span>.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: stable</p>
+</div>
+  </div>
+
+<p>The name of the operation or command being executed.</p>
+
+<p>It is RECOMMENDED to capture the value as provided by the application
+without attempting to do any case normalization.</p>
+
+<p>The operation name SHOULD NOT be extracted from <code>db.query.text</code>,
+when the database system supports query text with multiple operations
+in non-batch operations.</p>
+
+<p>If spaces can occur in the operation name, multiple consecutive spaces
+SHOULD be normalized to a single space.</p>
+
+<p>For batch operations, if the individual operations are known to have the same operation name
+then that operation name SHOULD be used prepended by <code>BATCH </code>,
+otherwise <code>db.operation.name</code> SHOULD be <code>BATCH</code> or some other database
+system specific term if more applicable.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_findAndModify'>findAndModify</span>
+<span class='const'>HMSET</span>
+<span class='const'>SELECT</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.operation.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_OPERATION_PARAMETER_LAMBDA-constant" class="">DB_OPERATION_PARAMETER_LAMBDA =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Must be called with a key for the full attribute name. See notes below about the expectations
+for the state of the key.</p>
+
+<p>A database operation parameter, with <code>&lt;key&gt;</code> being the parameter name, and the attribute value being a string representation of the parameter value.</p>
+
+<p>For example, a client-side maximum number of rows to read from the database
+MAY be recorded as the <code>db.operation.parameter.max_rows</code> attribute.</p>
+
+<p><code>db.query.text</code> parameters SHOULD be captured using <code>db.query.parameter.&lt;key&gt;</code>
+instead of <code>db.operation.parameter.&lt;key&gt;</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Usage</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='const'>DB_OPERATION_PARAMETER_LAMBDA</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>some-cool-key</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'>#=&gt; &#39;db.operation.parameter.some-cool-key&#39;</span></code></pre>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_someval'>someval</span>
+<span class='int'>55</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tlambda'>-&gt;</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span> <span class='tlambeg'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>db.operation.parameter.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_key'>key</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span></pre></dd>
+      
+        <dt id="DB_QUERY_PARAMETER_LAMBDA-constant" class="">DB_QUERY_PARAMETER_LAMBDA =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Must be called with a key for the full attribute name. See notes below about the expectations
+for the state of the key.</p>
+
+<p>A database query parameter, with <code>&lt;key&gt;</code> being the parameter name, and the attribute value being a string representation of the parameter value.</p>
+
+<p>If a query parameter has no name and instead is referenced only by index,
+then <code>&lt;key&gt;</code> SHOULD be the 0-based index.</p>
+
+<p><code>db.query.parameter.&lt;key&gt;</code> SHOULD match
+up with the parameterized placeholders present in <code>db.query.text</code>.</p>
+
+<p><code>db.query.parameter.&lt;key&gt;</code> SHOULD NOT be captured on batch operations.</p>
+
+<p>Examples:</p>
+
+<ul>
+  <li>For a query <code>SELECT * FROM users where username =  %s</code> with the parameter <code>"jdoe"</code>,
+the attribute <code>db.query.parameter.0</code> SHOULD be set to <code>"jdoe"</code>.</li>
+  <li>For a query <code>"SELECT * FROM users WHERE username = %(username)s;</code> with parameter
+<code>username = "jdoe"</code>, the attribute <code>db.query.parameter.username</code> SHOULD be set to <code>"jdoe"</code>.</li>
+</ul>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Usage</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='const'>DB_QUERY_PARAMETER_LAMBDA</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>some-cool-key</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'>#=&gt; &#39;db.query.parameter.some-cool-key&#39;</span></code></pre>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_someval'>someval</span>
+<span class='int'>55</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tlambda'>-&gt;</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span> <span class='tlambeg'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>db.query.parameter.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_key'>key</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span></pre></dd>
+      
+        <dt id="DB_QUERY_SUMMARY-constant" class="deprecated">DB_QUERY_SUMMARY =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Now available in the stable namespace at <span class='object_link'><a href="../DB.html#DB_QUERY_SUMMARY-constant" title="OpenTelemetry::SemConv::DB::DB_QUERY_SUMMARY (constant)">DB::DB_QUERY_SUMMARY</a></span>.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: stable</p>
+</div>
+  </div>
+
+<p>Low cardinality summary of a database query.</p>
+
+<p>The query summary describes a class of database queries and is useful
+as a grouping key, especially when analyzing telemetry for database
+calls involving complex queries.</p>
+
+<p>Summary may be available to the instrumentation through
+instrumentation hooks or other means. If it is not available, instrumentations
+that support query parsing SHOULD generate a summary following
+<a href="/docs/database/database-spans.md#generating-a-summary-of-the-query">Generating query summary</a>
+section.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='const'>SELECT</span> <span class='id identifier rubyid_wuser_table'>wuser_table</span>
+<span class='const'>INSERT</span> <span class='id identifier rubyid_shipping_details'>shipping_details</span> <span class='const'>SELECT</span> <span class='id identifier rubyid_orders'>orders</span>
+<span class='id identifier rubyid_get'>get</span> <span class='id identifier rubyid_user'>user</span> <span class='id identifier rubyid_by'>by</span> <span class='id identifier rubyid_id'>id</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.query.summary</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_QUERY_TEXT-constant" class="deprecated">DB_QUERY_TEXT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Now available in the stable namespace at <span class='object_link'><a href="../DB.html#DB_QUERY_TEXT-constant" title="OpenTelemetry::SemConv::DB::DB_QUERY_TEXT (constant)">DB::DB_QUERY_TEXT</a></span>.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: stable</p>
+</div>
+  </div>
+
+<p>The database query being executed.</p>
+
+<p>For sanitization see <a href="/docs/database/database-spans.md#sanitization-of-dbquerytext">Sanitization of <code>db.query.text</code></a>.
+For batch operations, if the individual operations are known to have the same query text then that query text SHOULD be used, otherwise all of the individual query texts SHOULD be concatenated with separator <code>; </code> or some other database system specific separator if more applicable.
+Parameterized query text SHOULD NOT be sanitized. Even though parameterized query text can potentially have sensitive data, by using a parameterized query the user is giving a strong signal that any sensitive data will be passed as parameter values, and the benefit to observability of capturing the static part of the query text by default outweighs the risk.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>SELECT * FROM wuser_table where username = ?
+SET mykey ?</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.query.text</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_REDIS_DATABASE_INDEX-constant" class="deprecated">DB_REDIS_DATABASE_INDEX =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.namespace</code>.”, “reason”: “renamed”, “renamed_to”: “db.namespace”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.namespace</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>0</span>
+<span class='int'>1</span>
+<span class='int'>15</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.redis.database_index</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_RESPONSE_RETURNED_ROWS-constant" class="">DB_RESPONSE_RETURNED_ROWS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Number of rows returned by the operation.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>10</span>
+<span class='int'>30</span>
+<span class='int'>1000</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.response.returned_rows</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_RESPONSE_STATUS_CODE-constant" class="deprecated">DB_RESPONSE_STATUS_CODE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Now available in the stable namespace at <span class='object_link'><a href="../DB.html#DB_RESPONSE_STATUS_CODE-constant" title="OpenTelemetry::SemConv::DB::DB_RESPONSE_STATUS_CODE (constant)">DB::DB_RESPONSE_STATUS_CODE</a></span>.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: stable</p>
+</div>
+  </div>
+
+<p>Database response status code.</p>
+
+<p>The status code returned by the database. Usually it represents an error code, but may also represent partial success, warning, or differentiate between various types of successful outcomes.
+Semantic conventions for individual database systems SHOULD document what <code>db.response.status_code</code> means in the context of that system.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>102
+ORA-17002
+08P01
+404</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.response.status_code</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_SQL_TABLE-constant" class="deprecated">DB_SQL_TABLE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.collection.name</code>, but only if not extracting the value from <code>db.query.text</code>.”, “reason”: “uncategorized”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.collection.name</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_mytable'>mytable</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.sql.table</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_STATEMENT-constant" class="deprecated">DB_STATEMENT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.query.text</code>.”, “reason”: “renamed”, “renamed_to”: “db.query.text”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The database statement being executed.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>SELECT * FROM wuser_table
+SET mykey &quot;WuValue&quot;</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.statement</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_STORED_PROCEDURE_NAME-constant" class="deprecated">DB_STORED_PROCEDURE_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Now available in the stable namespace at <span class='object_link'><a href="../DB.html#DB_STORED_PROCEDURE_NAME-constant" title="OpenTelemetry::SemConv::DB::DB_STORED_PROCEDURE_NAME (constant)">DB::DB_STORED_PROCEDURE_NAME</a></span>.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: stable</p>
+</div>
+  </div>
+
+<p>The name of a stored procedure within the database.</p>
+
+<p>It is RECOMMENDED to capture the value as provided by the application
+without attempting to do any case normalization.</p>
+
+<p>For batch operations, if the individual operations are known to have the same
+stored procedure name then that stored procedure name SHOULD be used.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='const'>GetCustomer</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.stored_procedure.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_SYSTEM-constant" class="deprecated">DB_SYSTEM =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>db.system.name</code>.”, “reason”: “renamed”, “renamed_to”: “db.system.name”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>db.system.name</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.system</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_SYSTEM_NAME-constant" class="deprecated">DB_SYSTEM_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Now available in the stable namespace at <span class='object_link'><a href="../DB.html#DB_SYSTEM_NAME-constant" title="OpenTelemetry::SemConv::DB::DB_SYSTEM_NAME (constant)">DB::DB_SYSTEM_NAME</a></span>.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: stable</p>
+</div>
+  </div>
+
+<p>The database management system (DBMS) product as identified by the client instrumentation.</p>
+
+<p>The actual DBMS may differ from the one identified by the client. For example, when using PostgreSQL client libraries to connect to a CockroachDB, the <code>db.system.name</code> is set to <code>postgresql</code> based on the instrumentation’s best knowledge.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.system.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_USER-constant" class="deprecated">DB_USER =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Removed, no replacement at this time.”, “reason”: “obsoleted”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, no replacement at this time.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_readonly_user'>readonly_user</span>
+<span class='id identifier rubyid_reporting_user'>reporting_user</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.user</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Sep 16 23:34:24 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.1.6).
+</div>
+
+    </div>
+  </body>
+</html>

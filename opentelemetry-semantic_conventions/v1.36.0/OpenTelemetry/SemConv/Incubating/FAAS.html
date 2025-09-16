@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: OpenTelemetry::SemConv::Incubating::FAAS
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::SemConv::Incubating::FAAS";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (F)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../SemConv.html" title="OpenTelemetry::SemConv (module)">SemConv</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Incubating.html" title="OpenTelemetry::SemConv::Incubating (module)">Incubating</a></span></span>
+     &raquo; 
+    <span class="title">FAAS</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: OpenTelemetry::SemConv::Incubating::FAAS
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/semconv/incubating/faas/metrics.rb<span class="defines">,<br />
+  lib/opentelemetry/semconv/incubating/faas/attributes.rb</span>
+</dd>
+  </dl>
+  
+</div>
+
+
+  
+    <h2>
+      Metrics Names
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="FAAS_COLDSTARTS-constant" class="">FAAS_COLDSTARTS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Number of invocation cold starts</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.coldstarts</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_CPU_USAGE-constant" class="">FAAS_CPU_USAGE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Distribution of CPU usage per invocation</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.cpu_usage</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_ERRORS-constant" class="">FAAS_ERRORS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Number of invocation errors</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.errors</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_INIT_DURATION-constant" class="">FAAS_INIT_DURATION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Measures the duration of the function’s initialization, such as a cold start</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.init_duration</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_INVOCATIONS-constant" class="">FAAS_INVOCATIONS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Number of successful invocations</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.invocations</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_INVOKE_DURATION-constant" class="">FAAS_INVOKE_DURATION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Measures the duration of the function’s logic execution</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.invoke_duration</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_MEM_USAGE-constant" class="">FAAS_MEM_USAGE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Distribution of max memory usage per invocation</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.mem_usage</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_NET_IO-constant" class="">FAAS_NET_IO =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Distribution of net I/O usage per invocation</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.net_io</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_TIMEOUTS-constant" class="">FAAS_TIMEOUTS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Number of invocation timeouts</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.timeouts</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+    </dl>
+  
+    <h2>
+      Attribute Names
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="FAAS_COLDSTART-constant" class="">FAAS_COLDSTART =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>A boolean that is true if the serverless function is executed for the first time (aka cold-start).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.coldstart</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_CRON-constant" class="">FAAS_CRON =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>A string containing the schedule period as <a href="https://docs.oracle.com/cd/E12058_01/doc/doc.1014/e12030/cron_expressions.htm">Cron Expression</a>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>0/5 * * * ? *</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.cron</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_DOCUMENT_COLLECTION-constant" class="">FAAS_DOCUMENT_COLLECTION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The name of the source on which the triggering operation was performed. For example, in Cloud Storage or S3 corresponds to the bucket name, and in Cosmos DB to the database name.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_myBucketName'>myBucketName</span>
+<span class='id identifier rubyid_myDbName'>myDbName</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.document.collection</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_DOCUMENT_NAME-constant" class="">FAAS_DOCUMENT_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The document name/table subjected to the operation. For example, in Cloud Storage or S3 is the name of the file, and in Cosmos DB the table name.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_myFile'>myFile</span><span class='period'>.</span><span class='id identifier rubyid_txt'>txt</span>
+<span class='id identifier rubyid_myTableName'>myTableName</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.document.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_DOCUMENT_OPERATION-constant" class="">FAAS_DOCUMENT_OPERATION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Describes the type of the operation that was performed on the data.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.document.operation</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_DOCUMENT_TIME-constant" class="">FAAS_DOCUMENT_TIME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>A string containing the time when the data was accessed in the <a href="https://www.iso.org/iso-8601-date-and-time-format.html">ISO 8601</a> format expressed in <a href="https://www.w3.org/TR/NOTE-datetime">UTC</a>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>2020-01-23T13:47:06Z</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.document.time</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_INSTANCE-constant" class="">FAAS_INSTANCE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The execution environment ID as a string, that will be potentially reused for other invocations to the same function/function version.</p>
+
+<ul>
+  <li><strong>AWS Lambda:</strong> Use the (full) log stream name.</li>
+</ul>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>2021/06/28/[$LATEST]2f399eb14537447da05ab2a2e39309de</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.instance</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_INVOCATION_ID-constant" class="">FAAS_INVOCATION_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The invocation ID of the current function invocation.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>af9d5aa4-a685-4c5f-a22b-444f80b3cc28</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.invocation_id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_INVOKED_NAME-constant" class="">FAAS_INVOKED_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The name of the invoked function.</p>
+
+<p>SHOULD be equal to the <code>faas.name</code> resource attribute of the invoked function.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_my'>my</span><span class='op'>-</span><span class='id identifier rubyid_function'>function</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.invoked_name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_INVOKED_PROVIDER-constant" class="">FAAS_INVOKED_PROVIDER =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The cloud provider of the invoked function.</p>
+
+<p>SHOULD be equal to the <code>cloud.provider</code> resource attribute of the invoked function.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.invoked_provider</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_INVOKED_REGION-constant" class="">FAAS_INVOKED_REGION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The cloud region of the invoked function.</p>
+
+<p>SHOULD be equal to the <code>cloud.region</code> resource attribute of the invoked function.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_eu'>eu</span><span class='op'>-</span><span class='id identifier rubyid_central'>central</span><span class='op'>-</span><span class='int'>1</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.invoked_region</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_MAX_MEMORY-constant" class="">FAAS_MAX_MEMORY =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The amount of memory available to the serverless function converted to Bytes.</p>
+
+<p>It’s recommended to set this attribute since e.g. too little memory can easily stop a Java AWS Lambda function from working correctly. On AWS Lambda, the environment variable <code>AWS_LAMBDA_FUNCTION_MEMORY_SIZE</code> provides this information (which must be multiplied by 1,048,576).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>134217728</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.max_memory</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_NAME-constant" class="">FAAS_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The name of the single function that this runtime instance executes.</p>
+
+<p>This is the name of the function as configured/deployed on the FaaS
+platform and is usually different from the name of the callback
+function (which may be stored in the
+<a href="/docs/general/attributes.md#source-code-attributes"><code>code.namespace</code>/<code>code.function.name</code></a>
+span attributes).</p>
+
+<p>For some cloud providers, the above definition is ambiguous. The following
+definition of function name MUST be used for this attribute
+(and consequently the span name) for the listed cloud providers/products:</p>
+
+<ul>
+  <li><strong>Azure:</strong>  The full name <code>&lt;FUNCAPP&gt;/&lt;FUNC&gt;</code>, i.e., function app name
+followed by a forward slash followed by the function name (this form
+can also be seen in the resource JSON for the function).
+This means that a span attribute MUST be used, as an Azure function
+app can host multiple functions that would usually share
+a TracerProvider (see also the <code>cloud.resource_id</code> attribute).</li>
+</ul>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_my'>my</span><span class='op'>-</span><span class='id identifier rubyid_function'>function</span>
+<span class='id identifier rubyid_myazurefunctionapp'>myazurefunctionapp</span><span class='op'>/</span><span class='id identifier rubyid_some'>some</span><span class='op'>-</span><span class='id identifier rubyid_function'>function</span><span class='op'>-</span><span class='id identifier rubyid_name'>name</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_TIME-constant" class="">FAAS_TIME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>A string containing the function invocation time in the <a href="https://www.iso.org/iso-8601-date-and-time-format.html">ISO 8601</a> format expressed in <a href="https://www.w3.org/TR/NOTE-datetime">UTC</a>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>2020-01-23T13:47:06Z</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.time</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_TRIGGER-constant" class="">FAAS_TRIGGER =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Type of the trigger which caused this function invocation.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.trigger</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_VERSION-constant" class="">FAAS_VERSION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The immutable version of the function being executed.</p>
+
+<p>Depending on the cloud provider and platform, use:</p>
+
+<ul>
+  <li><strong>AWS Lambda:</strong> The <a href="https://docs.aws.amazon.com/lambda/latest/dg/configuration-versions.html">function version</a>
+(an integer represented as a decimal string).</li>
+  <li><strong>Google Cloud Run (Services):</strong> The <a href="https://cloud.google.com/run/docs/managing/revisions">revision</a>
+(i.e., the function name plus the revision suffix).</li>
+  <li><strong>Google Cloud Functions:</strong> The value of the
+<a href="https://cloud.google.com/functions/docs/env-var#runtime_environment_variables_set_automatically"><code>K_REVISION</code> environment variable</a>.</li>
+  <li><strong>Azure Functions:</strong> Not applicable. Do not set this attribute.</li>
+</ul>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>26</span>
+<span class='id identifier rubyid_pinkfroid'>pinkfroid</span><span class='op'>-</span><span class='int'>00002</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.version</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Sep 16 23:34:25 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.1.6).
+</div>
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: OpenTelemetry::SemConv::Incubating::OTEL
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::SemConv::Incubating::OTEL";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (O)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../SemConv.html" title="OpenTelemetry::SemConv (module)">SemConv</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Incubating.html" title="OpenTelemetry::SemConv::Incubating (module)">Incubating</a></span></span>
+     &raquo; 
+    <span class="title">OTEL</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: OpenTelemetry::SemConv::Incubating::OTEL
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/semconv/incubating/otel/metrics.rb<span class="defines">,<br />
+  lib/opentelemetry/semconv/incubating/otel/attributes.rb</span>
+</dd>
+  </dl>
+  
+</div>
+
+
+  
+    <h2>
+      Metrics Names
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="OTEL_SDK_EXPORTER_LOG_EXPORTED-constant" class="">OTEL_SDK_EXPORTER_LOG_EXPORTED =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The number of log records for which the export has finished, either successful or failed</p>
+
+<p>For successful exports, <code>error.type</code> MUST NOT be set. For failed exports, <code>error.type</code> MUST contain the failure cause.
+For exporters with partial success semantics (e.g. OTLP with <code>rejected_log_records</code>), rejected log records MUST count as failed and only non-rejected log records count as success.
+If no rejection reason is available, <code>rejected</code> SHOULD be used as value for <code>error.type</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.exporter.log.exported</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_EXPORTER_LOG_INFLIGHT-constant" class="">OTEL_SDK_EXPORTER_LOG_INFLIGHT =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The number of log records which were passed to the exporter, but that have not been exported yet (neither successful, nor failed)</p>
+
+<p>For successful exports, <code>error.type</code> MUST NOT be set. For failed exports, <code>error.type</code> MUST contain the failure cause.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.exporter.log.inflight</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_EXPORTER_METRIC_DATA_POINT_EXPORTED-constant" class="">OTEL_SDK_EXPORTER_METRIC_DATA_POINT_EXPORTED =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The number of metric data points for which the export has finished, either successful or failed</p>
+
+<p>For successful exports, <code>error.type</code> MUST NOT be set. For failed exports, <code>error.type</code> MUST contain the failure cause.
+For exporters with partial success semantics (e.g. OTLP with <code>rejected_data_points</code>), rejected data points MUST count as failed and only non-rejected data points count as success.
+If no rejection reason is available, <code>rejected</code> SHOULD be used as value for <code>error.type</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.exporter.metric_data_point.exported</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_EXPORTER_METRIC_DATA_POINT_INFLIGHT-constant" class="">OTEL_SDK_EXPORTER_METRIC_DATA_POINT_INFLIGHT =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The number of metric data points which were passed to the exporter, but that have not been exported yet (neither successful, nor failed)</p>
+
+<p>For successful exports, <code>error.type</code> MUST NOT be set. For failed exports, <code>error.type</code> MUST contain the failure cause.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.exporter.metric_data_point.inflight</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_EXPORTER_OPERATION_DURATION-constant" class="">OTEL_SDK_EXPORTER_OPERATION_DURATION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The duration of exporting a batch of telemetry records.</p>
+
+<p>This metric defines successful operations using the full success definitions for <a href="https://github.com/open-telemetry/opentelemetry-proto/blob/v1.5.0/docs/specification.md#full-success-1">http</a>
+and <a href="https://github.com/open-telemetry/opentelemetry-proto/blob/v1.5.0/docs/specification.md#full-success">grpc</a>. Anything else is defined as an unsuccessful operation. For successful
+operations, <code>error.type</code> MUST NOT be set. For unsuccessful export operations, <code>error.type</code> MUST contain a relevant failure cause.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.exporter.operation.duration</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_EXPORTER_SPAN_EXPORTED-constant" class="">OTEL_SDK_EXPORTER_SPAN_EXPORTED =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The number of spans for which the export has finished, either successful or failed</p>
+
+<p>For successful exports, <code>error.type</code> MUST NOT be set. For failed exports, <code>error.type</code> MUST contain the failure cause.
+For exporters with partial success semantics (e.g. OTLP with <code>rejected_spans</code>), rejected spans MUST count as failed and only non-rejected spans count as success.
+If no rejection reason is available, <code>rejected</code> SHOULD be used as value for <code>error.type</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.exporter.span.exported</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_EXPORTER_SPAN_EXPORTED_COUNT-constant" class="deprecated">OTEL_SDK_EXPORTER_SPAN_EXPORTED_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>otel.sdk.exporter.span.exported</code>.”, “reason”: “renamed”, “renamed_to”: “otel.sdk.exporter.span.exported”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>otel.sdk.exporter.span.exported</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.exporter.span.exported.count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_EXPORTER_SPAN_INFLIGHT-constant" class="">OTEL_SDK_EXPORTER_SPAN_INFLIGHT =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The number of spans which were passed to the exporter, but that have not been exported yet (neither successful, nor failed)</p>
+
+<p>For successful exports, <code>error.type</code> MUST NOT be set. For failed exports, <code>error.type</code> MUST contain the failure cause.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.exporter.span.inflight</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_EXPORTER_SPAN_INFLIGHT_COUNT-constant" class="deprecated">OTEL_SDK_EXPORTER_SPAN_INFLIGHT_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>otel.sdk.exporter.span.inflight</code>.”, “reason”: “renamed”, “renamed_to”: “otel.sdk.exporter.span.inflight”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>otel.sdk.exporter.span.inflight</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.exporter.span.inflight.count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_LOG_CREATED-constant" class="">OTEL_SDK_LOG_CREATED =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The number of logs submitted to enabled SDK Loggers</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.log.created</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_METRIC_READER_COLLECTION_DURATION-constant" class="">OTEL_SDK_METRIC_READER_COLLECTION_DURATION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The duration of the collect operation of the metric reader.</p>
+
+<p>For successful collections, <code>error.type</code> MUST NOT be set. For failed collections, <code>error.type</code> SHOULD contain the failure cause.
+It can happen that metrics collection is successful for some MetricProducers, while others fail. In that case <code>error.type</code> SHOULD be set to any of the failure causes.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.metric_reader.collection.duration</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_PROCESSOR_LOG_PROCESSED-constant" class="">OTEL_SDK_PROCESSOR_LOG_PROCESSED =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The number of log records for which the processing has finished, either successful or failed</p>
+
+<p>For successful processing, <code>error.type</code> MUST NOT be set. For failed processing, <code>error.type</code> MUST contain the failure cause.
+For the SDK Simple and Batching Log Record Processor a log record is considered to be processed already when it has been submitted to the exporter,
+not when the corresponding export call has finished.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.processor.log.processed</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_PROCESSOR_LOG_QUEUE_CAPACITY-constant" class="">OTEL_SDK_PROCESSOR_LOG_QUEUE_CAPACITY =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The maximum number of log records the queue of a given instance of an SDK Log Record processor can hold</p>
+
+<p>Only applies to Log Record processors which use a queue, e.g. the SDK Batching Log Record Processor.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.processor.log.queue.capacity</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_PROCESSOR_LOG_QUEUE_SIZE-constant" class="">OTEL_SDK_PROCESSOR_LOG_QUEUE_SIZE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The number of log records in the queue of a given instance of an SDK log processor</p>
+
+<p>Only applies to log record processors which use a queue, e.g. the SDK Batching Log Record Processor.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.processor.log.queue.size</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_PROCESSOR_SPAN_PROCESSED-constant" class="">OTEL_SDK_PROCESSOR_SPAN_PROCESSED =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The number of spans for which the processing has finished, either successful or failed</p>
+
+<p>For successful processing, <code>error.type</code> MUST NOT be set. For failed processing, <code>error.type</code> MUST contain the failure cause.
+For the SDK Simple and Batching Span Processor a span is considered to be processed already when it has been submitted to the exporter, not when the corresponding export call has finished.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.processor.span.processed</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_PROCESSOR_SPAN_PROCESSED_COUNT-constant" class="deprecated">OTEL_SDK_PROCESSOR_SPAN_PROCESSED_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>otel.sdk.processor.span.processed</code>.”, “reason”: “renamed”, “renamed_to”: “otel.sdk.processor.span.processed”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>otel.sdk.processor.span.processed</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.processor.span.processed.count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_PROCESSOR_SPAN_QUEUE_CAPACITY-constant" class="">OTEL_SDK_PROCESSOR_SPAN_QUEUE_CAPACITY =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The maximum number of spans the queue of a given instance of an SDK span processor can hold</p>
+
+<p>Only applies to span processors which use a queue, e.g. the SDK Batching Span Processor.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.processor.span.queue.capacity</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_PROCESSOR_SPAN_QUEUE_SIZE-constant" class="">OTEL_SDK_PROCESSOR_SPAN_QUEUE_SIZE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The number of spans in the queue of a given instance of an SDK span processor</p>
+
+<p>Only applies to span processors which use a queue, e.g. the SDK Batching Span Processor.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.processor.span.queue.size</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_SPAN_ENDED-constant" class="deprecated">OTEL_SDK_SPAN_ENDED =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Obsoleted.”, “reason”: “obsoleted”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Use <code>otel.sdk.span.started</code> minus <code>otel.sdk.span.live</code> to derive this value.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.span.ended</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_SPAN_ENDED_COUNT-constant" class="deprecated">OTEL_SDK_SPAN_ENDED_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Obsoleted.”, “reason”: “obsoleted”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Use <code>otel.sdk.span.started</code> minus <code>otel.sdk.span.live</code> to derive this value.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.span.ended.count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_SPAN_LIVE-constant" class="">OTEL_SDK_SPAN_LIVE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The number of created spans with <code>recording=true</code> for which the end operation has not been called yet</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.span.live</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_SPAN_LIVE_COUNT-constant" class="deprecated">OTEL_SDK_SPAN_LIVE_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>otel.sdk.span.live</code>.”, “reason”: “renamed”, “renamed_to”: “otel.sdk.span.live”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>otel.sdk.span.live</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.span.live.count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SDK_SPAN_STARTED-constant" class="">OTEL_SDK_SPAN_STARTED =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The number of created spans</p>
+
+<p>Implementations MUST record this metric for all spans, even for non-recording ones.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.sdk.span.started</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+    </dl>
+  
+    <h2>
+      Attribute Names
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="OTEL_COMPONENT_NAME-constant" class="">OTEL_COMPONENT_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>A name uniquely identifying the instance of the OpenTelemetry component within its containing SDK instance.</p>
+
+<p>Implementations SHOULD ensure a low cardinality for this attribute, even across application or SDK restarts.
+E.g. implementations MUST NOT use UUIDs as values for this attribute.</p>
+
+<p>Implementations MAY achieve these goals by following a <code>&lt;otel.component.type&gt;/&lt;instance-counter&gt;</code> pattern, e.g. <code>batching_span_processor/0</code>.
+Hereby <code>otel.component.type</code> refers to the corresponding attribute value of the component.</p>
+
+<p>The value of <code>instance-counter</code> MAY be automatically assigned by the component and uniqueness within the enclosing SDK instance MUST be guaranteed.
+For example, <code>&lt;instance-counter&gt;</code> MAY be implemented by using a monotonically increasing counter (starting with <code>0</code>), which is incremented every time an
+instance of the given component type is started.</p>
+
+<p>With this implementation, for example the first Batching Span Processor would have <code>batching_span_processor/0</code>
+as <code>otel.component.name</code>, the second one <code>batching_span_processor/1</code> and so on.
+These values will therefore be reused in the case of an application restart.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_otlp_grpc_span_exporter'>otlp_grpc_span_exporter</span><span class='op'>/</span><span class='int'>0</span>
+<span class='id identifier rubyid_custom'>custom</span><span class='op'>-</span><span class='id identifier rubyid_name'>name</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.component.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_COMPONENT_TYPE-constant" class="">OTEL_COMPONENT_TYPE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>A name identifying the type of the OpenTelemetry component.</p>
+
+<p>If none of the standardized values apply, implementations SHOULD use the language-defined name of the type.
+E.g. for Java the fully qualified classname SHOULD be used in this case.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_batching_span_processor'>batching_span_processor</span>
+<span class='id identifier rubyid_com'>com</span><span class='period'>.</span><span class='id identifier rubyid_example'>example</span><span class='period'>.</span><span class='const'>MySpanExporter</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.component.type</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_LIBRARY_NAME-constant" class="deprecated">OTEL_LIBRARY_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>otel.scope.name</code>.”, “reason”: “renamed”, “renamed_to”: “otel.scope.name”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated. Use the <code>otel.scope.name</code> attribute</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_io'>io</span><span class='period'>.</span><span class='id identifier rubyid_opentelemetry'>opentelemetry</span><span class='period'>.</span><span class='id identifier rubyid_contrib'>contrib</span><span class='period'>.</span><span class='id identifier rubyid_mongodb'>mongodb</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.library.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_LIBRARY_VERSION-constant" class="deprecated">OTEL_LIBRARY_VERSION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>otel.scope.version</code>.”, “reason”: “renamed”, “renamed_to”: “otel.scope.version”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated. Use the <code>otel.scope.version</code> attribute.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>1.0.0</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.library.version</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SCOPE_NAME-constant" class="deprecated">OTEL_SCOPE_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Now available in the stable namespace at <span class='object_link'><a href="../OTEL.html#OTEL_SCOPE_NAME-constant" title="OpenTelemetry::SemConv::OTEL::OTEL_SCOPE_NAME (constant)">OTEL::OTEL_SCOPE_NAME</a></span>.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: stable</p>
+</div>
+  </div>
+
+<p>The name of the instrumentation scope - (<code>InstrumentationScope.Name</code> in OTLP).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_io'>io</span><span class='period'>.</span><span class='id identifier rubyid_opentelemetry'>opentelemetry</span><span class='period'>.</span><span class='id identifier rubyid_contrib'>contrib</span><span class='period'>.</span><span class='id identifier rubyid_mongodb'>mongodb</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.scope.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SCOPE_VERSION-constant" class="deprecated">OTEL_SCOPE_VERSION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Now available in the stable namespace at <span class='object_link'><a href="../OTEL.html#OTEL_SCOPE_VERSION-constant" title="OpenTelemetry::SemConv::OTEL::OTEL_SCOPE_VERSION (constant)">OTEL::OTEL_SCOPE_VERSION</a></span>.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: stable</p>
+</div>
+  </div>
+
+<p>The version of the instrumentation scope - (<code>InstrumentationScope.Version</code> in OTLP).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>1.0.0</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.scope.version</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SPAN_PARENT_ORIGIN-constant" class="">OTEL_SPAN_PARENT_ORIGIN =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Determines whether the span has a parent span, and if so, <a href="https://opentelemetry.io/docs/specs/otel/trace/api/#isremote">whether it is a remote parent</a></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.span.parent.origin</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_SPAN_SAMPLING_RESULT-constant" class="">OTEL_SPAN_SAMPLING_RESULT =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The result value of the sampler for this span</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.span.sampling_result</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_STATUS_CODE-constant" class="deprecated">OTEL_STATUS_CODE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Now available in the stable namespace at <span class='object_link'><a href="../OTEL.html#OTEL_STATUS_CODE-constant" title="OpenTelemetry::SemConv::OTEL::OTEL_STATUS_CODE (constant)">OTEL::OTEL_STATUS_CODE</a></span>.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: stable</p>
+</div>
+  </div>
+
+<p>Name of the code, either “OK” or “ERROR”. MUST NOT be set if the status code is UNSET.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.status_code</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OTEL_STATUS_DESCRIPTION-constant" class="deprecated">OTEL_STATUS_DESCRIPTION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Now available in the stable namespace at <span class='object_link'><a href="../OTEL.html#OTEL_STATUS_DESCRIPTION-constant" title="OpenTelemetry::SemConv::OTEL::OTEL_STATUS_DESCRIPTION (constant)">OTEL::OTEL_STATUS_DESCRIPTION</a></span>.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: stable</p>
+</div>
+  </div>
+
+<p>Description of the Status if it has a value, otherwise not set.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>resource not found</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>otel.status_description</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Sep 16 23:34:25 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.1.6).
+</div>
+
+    </div>
+  </body>
+</html>

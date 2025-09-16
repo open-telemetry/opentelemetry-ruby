@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: OpenTelemetry::SemConv::Incubating::PROCESS
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::SemConv::Incubating::PROCESS";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (P)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../SemConv.html" title="OpenTelemetry::SemConv (module)">SemConv</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Incubating.html" title="OpenTelemetry::SemConv::Incubating (module)">Incubating</a></span></span>
+     &raquo; 
+    <span class="title">PROCESS</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: OpenTelemetry::SemConv::Incubating::PROCESS
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/semconv/incubating/process/metrics.rb<span class="defines">,<br />
+  lib/opentelemetry/semconv/incubating/process/attributes.rb</span>
+</dd>
+  </dl>
+  
+</div>
+
+
+  
+    <h2>
+      Metrics Names
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="PROCESS_CONTEXT_SWITCHES-constant" class="">PROCESS_CONTEXT_SWITCHES =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Number of times the process has been context switched.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.context_switches</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_CPU_TIME-constant" class="">PROCESS_CPU_TIME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Total CPU seconds broken down by different states.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.cpu.time</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_CPU_UTILIZATION-constant" class="">PROCESS_CPU_UTILIZATION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Difference in process.cpu.time since the last measurement, divided by the elapsed time and number of CPUs available to the process.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.cpu.utilization</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_DISK_IO-constant" class="">PROCESS_DISK_IO =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Disk bytes transferred.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.disk.io</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_MEMORY_USAGE-constant" class="">PROCESS_MEMORY_USAGE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The amount of physical memory in use.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.memory.usage</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_MEMORY_VIRTUAL-constant" class="">PROCESS_MEMORY_VIRTUAL =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The amount of committed virtual memory.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.memory.virtual</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_NETWORK_IO-constant" class="">PROCESS_NETWORK_IO =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Network bytes transferred.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.network.io</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_OPEN_FILE_DESCRIPTOR_COUNT-constant" class="">PROCESS_OPEN_FILE_DESCRIPTOR_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Number of file descriptors in use by the process.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.open_file_descriptor.count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_PAGING_FAULTS-constant" class="">PROCESS_PAGING_FAULTS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Number of page faults the process has made.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.paging.faults</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_THREAD_COUNT-constant" class="">PROCESS_THREAD_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Process threads count.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.thread.count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_UPTIME-constant" class="">PROCESS_UPTIME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The time the process has been running.</p>
+
+<p>Instrumentations SHOULD use a gauge with type <code>double</code> and measure uptime in seconds as a floating point number with the highest precision available.
+The actual accuracy would depend on the instrumentation and operating system.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.uptime</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+    </dl>
+  
+    <h2>
+      Attribute Names
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="PROCESS_ARGS_COUNT-constant" class="">PROCESS_ARGS_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Length of the process.command_args array</p>
+
+<p>This field can be useful for querying or performing bucket analysis on how many arguments were provided to start a process. More arguments may be an indication of suspicious activity.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>4</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.args_count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_COMMAND-constant" class="">PROCESS_COMMAND =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The command used to launch the process (i.e. the command name). On Linux based systems, can be set to the zeroth string in <code>proc/[pid]/cmdline</code>. On Windows, can be set to the first parameter extracted from <code>GetCommandLineW</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_cmd'>cmd</span><span class='op'>/</span><span class='id identifier rubyid_otelcol'>otelcol</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.command</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_COMMAND_ARGS-constant" class="">PROCESS_COMMAND_ARGS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>All the command arguments (including the command/executable itself) as received by the process. On Linux-based systems (and some other Unixoid systems supporting procfs), can be set according to the list of null-delimited strings extracted from <code>proc/[pid]/cmdline</code>. For libc-based executables, this would be the full argv vector passed to <code>main</code>. SHOULD NOT be collected by default unless there is sanitization that excludes sensitive data.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>cmd/otecol</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>--config=config.yaml</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.command_args</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_COMMAND_LINE-constant" class="">PROCESS_COMMAND_LINE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The full command used to launch the process as a single string representing the full command. On Windows, can be set to the result of <code>GetCommandLineW</code>. Do not set this if you have to assemble it just for monitoring; use <code>process.command_args</code> instead. SHOULD NOT be collected by default unless there is sanitization that excludes sensitive data.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>C:\cmd\otecol --config=&quot;my directory\config.yaml&quot;</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.command_line</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_CONTEXT_SWITCH_TYPE-constant" class="">PROCESS_CONTEXT_SWITCH_TYPE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Specifies whether the context switches for this data point were voluntary or involuntary.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.context_switch_type</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_CPU_STATE-constant" class="deprecated">PROCESS_CPU_STATE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>cpu.mode</code>.”, “reason”: “renamed”, “renamed_to”: “cpu.mode”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>cpu.mode</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.cpu.state</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_CREATION_TIME-constant" class="">PROCESS_CREATION_TIME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The date and time the process was created, in ISO 8601 format.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>2023-11-21T09:25:34.853Z</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.creation.time</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_ENVIRONMENT_VARIABLE_LAMBDA-constant" class="">PROCESS_ENVIRONMENT_VARIABLE_LAMBDA =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Must be called with a key for the full attribute name. See notes below about the expectations
+for the state of the key.</p>
+
+<p>Process environment variables, <code>&lt;key&gt;</code> being the environment variable name, the value being the environment variable value.</p>
+
+<p>Examples:</p>
+
+<ul>
+  <li>an environment variable <code>USER</code> with value <code>"ubuntu"</code> SHOULD be recorded
+as the <code>process.environment_variable.USER</code> attribute with value <code>"ubuntu"</code>.</li>
+  <li>an environment variable <code>PATH</code> with value <code>"/usr/local/bin:/usr/bin"</code>
+SHOULD be recorded as the <code>process.environment_variable.PATH</code> attribute
+with value <code>"/usr/local/bin:/usr/bin"</code>.</li>
+</ul>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Usage</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='const'>PROCESS_ENVIRONMENT_VARIABLE_LAMBDA</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>some-cool-key</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'>#=&gt; &#39;process.environment_variable.some-cool-key&#39;</span></code></pre>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>ubuntu
+/usr/local/bin:/usr/bin</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tlambda'>-&gt;</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span> <span class='tlambeg'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>process.environment_variable.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_key'>key</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span></pre></dd>
+      
+        <dt id="PROCESS_EXECUTABLE_BUILD_ID_GNU-constant" class="">PROCESS_EXECUTABLE_BUILD_ID_GNU =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The GNU build ID as found in the <code>.note.gnu.build-id</code> ELF section (hex string).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_c89b11207f6479603b0d49bf291c092c2b719293'>c89b11207f6479603b0d49bf291c092c2b719293</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.executable.build_id.gnu</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_EXECUTABLE_BUILD_ID_GO-constant" class="">PROCESS_EXECUTABLE_BUILD_ID_GO =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The Go build ID as retrieved by <code>go tool buildid &lt;go executable&gt;</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_foh3mEXu7BLZjsN9pOwG'>foh3mEXu7BLZjsN9pOwG</span><span class='op'>/</span><span class='id identifier rubyid_kATcXlYVCDEFouRMQed_'>kATcXlYVCDEFouRMQed_</span><span class='op'>/</span><span class='const'>WwRFB1hPo9LBkekthSPG</span><span class='op'>/</span><span class='id identifier rubyid_x8hMC8emW2cCjXD0_1aY'>x8hMC8emW2cCjXD0_1aY</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.executable.build_id.go</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_EXECUTABLE_BUILD_ID_HTLHASH-constant" class="">PROCESS_EXECUTABLE_BUILD_ID_HTLHASH =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Profiling specific build ID for executables. See the OTel specification for Profiles for more information.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>600DCAFE4A110000F2BF38C493F5FB92</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.executable.build_id.htlhash</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_EXECUTABLE_BUILD_ID_PROFILING-constant" class="deprecated">PROCESS_EXECUTABLE_BUILD_ID_PROFILING =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>process.executable.build_id.htlhash</code>.”, “reason”: “renamed”, “renamed_to”: “process.executable.build_id.htlhash”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>“Deprecated, use <code>process.executable.build_id.htlhash</code> instead.”</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>600DCAFE4A110000F2BF38C493F5FB92</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.executable.build_id.profiling</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_EXECUTABLE_NAME-constant" class="">PROCESS_EXECUTABLE_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The name of the process executable. On Linux based systems, this SHOULD be set to the base name of the target of <code>/proc/[pid]/exe</code>. On Windows, this SHOULD be set to the base name of <code>GetProcessImageFileNameW</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_otelcol'>otelcol</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.executable.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_EXECUTABLE_PATH-constant" class="">PROCESS_EXECUTABLE_PATH =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The full path to the process executable. On Linux based systems, can be set to the target of <code>proc/[pid]/exe</code>. On Windows, can be set to the result of <code>GetProcessImageFileNameW</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>/usr/bin/cmd/otelcol</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.executable.path</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_EXIT_CODE-constant" class="">PROCESS_EXIT_CODE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The exit code of the process.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>127</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.exit.code</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_EXIT_TIME-constant" class="">PROCESS_EXIT_TIME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The date and time the process exited, in ISO 8601 format.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>2023-11-21T09:26:12.315Z</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.exit.time</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_GROUP_LEADER_PID-constant" class="">PROCESS_GROUP_LEADER_PID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The PID of the process’s group leader. This is also the process group ID (PGID) of the process.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>23</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.group_leader.pid</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_INTERACTIVE-constant" class="">PROCESS_INTERACTIVE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Whether the process is connected to an interactive shell.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.interactive</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_LINUX_CGROUP-constant" class="">PROCESS_LINUX_CGROUP =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The control group associated with the process.</p>
+
+<p>Control groups (cgroups) are a kernel feature used to organize and manage process resources. This attribute provides the path(s) to the cgroup(s) associated with the process, which should match the contents of the <a href="https://man7.org/linux/man-pages/man7/cgroups.7.html">/proc/[PID]/cgroup</a> file.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>1:name=systemd:/user.slice/user-1000.slice/session-3.scope
+0::/user.slice/user-1000.slice/user@1000.service/tmux-spawn-0267755b-4639-4a27-90ed-f19f88e53748.scope</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.linux.cgroup</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_OWNER-constant" class="">PROCESS_OWNER =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The username of the user that owns the process.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_root'><span class='object_link'><a href="../../../top-level-namespace.html" title="Top Level Namespace (root)">root</a></span></span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.owner</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_PAGING_FAULT_TYPE-constant" class="">PROCESS_PAGING_FAULT_TYPE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The type of page fault for this data point. Type <code>major</code> is for major/hard page faults, and <code>minor</code> is for minor/soft page faults.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.paging.fault_type</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_PARENT_PID-constant" class="">PROCESS_PARENT_PID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Parent Process identifier (PPID).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>111</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.parent_pid</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_PID-constant" class="">PROCESS_PID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Process identifier (PID).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>1234</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.pid</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_REAL_USER_ID-constant" class="">PROCESS_REAL_USER_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The real user ID (RUID) of the process.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>1000</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.real_user.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_REAL_USER_NAME-constant" class="">PROCESS_REAL_USER_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The username of the real user of the process.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_operator'>operator</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.real_user.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_RUNTIME_DESCRIPTION-constant" class="">PROCESS_RUNTIME_DESCRIPTION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>An additional description about the runtime of the process, for example a specific vendor customization of the runtime environment.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>Eclipse OpenJ9 Eclipse OpenJ9 VM openj9-0.21.0</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.runtime.description</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_RUNTIME_NAME-constant" class="">PROCESS_RUNTIME_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The name of the runtime of this process.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='const'>OpenJDK</span> <span class='const'>Runtime</span> <span class='const'>Environment</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.runtime.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_RUNTIME_VERSION-constant" class="">PROCESS_RUNTIME_VERSION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The version of the runtime of this process, as returned by the runtime without modification.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>14.0.2</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.runtime.version</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_SAVED_USER_ID-constant" class="">PROCESS_SAVED_USER_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The saved user ID (SUID) of the process.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>1002</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.saved_user.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_SAVED_USER_NAME-constant" class="">PROCESS_SAVED_USER_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The username of the saved user.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_operator'>operator</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.saved_user.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_SESSION_LEADER_PID-constant" class="">PROCESS_SESSION_LEADER_PID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The PID of the process’s session leader. This is also the session ID (SID) of the process.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>14</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.session_leader.pid</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_TITLE-constant" class="">PROCESS_TITLE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Process title (proctitle)</p>
+
+<p>In many Unix-like systems, process title (proctitle), is the string that represents the name or command line of a running process, displayed by system monitoring tools like ps, top, and htop.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>cat /etc/hostname
+xfce4-session
+bash</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.title</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_USER_ID-constant" class="">PROCESS_USER_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The effective user ID (EUID) of the process.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>1001</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.user.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_USER_NAME-constant" class="">PROCESS_USER_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The username of the effective user of the process.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_root'><span class='object_link'><a href="../../../top-level-namespace.html" title="Top Level Namespace (root)">root</a></span></span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.user.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_VPID-constant" class="">PROCESS_VPID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Virtual process identifier.</p>
+
+<p>The process ID within a PID namespace. This is not necessarily unique across all processes on the host but it is unique within the process namespace that the process exists within.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>12</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.vpid</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PROCESS_WORKING_DIRECTORY-constant" class="">PROCESS_WORKING_DIRECTORY =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The working directory of the process.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code>/root</code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>process.working_directory</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Sep 16 23:34:26 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.1.6).
+</div>
+
+    </div>
+  </body>
+</html>

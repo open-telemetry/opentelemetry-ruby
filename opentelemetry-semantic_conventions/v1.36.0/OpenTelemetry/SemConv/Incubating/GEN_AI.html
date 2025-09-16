@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: OpenTelemetry::SemConv::Incubating::GEN_AI
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::SemConv::Incubating::GEN_AI";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (G)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../SemConv.html" title="OpenTelemetry::SemConv (module)">SemConv</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Incubating.html" title="OpenTelemetry::SemConv::Incubating (module)">Incubating</a></span></span>
+     &raquo; 
+    <span class="title">GEN_AI</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: OpenTelemetry::SemConv::Incubating::GEN_AI
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/semconv/incubating/gen_ai/metrics.rb<span class="defines">,<br />
+  lib/opentelemetry/semconv/incubating/gen_ai/attributes.rb</span>
+</dd>
+  </dl>
+  
+</div>
+
+
+  
+    <h2>
+      Metrics Names
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="GEN_AI_CLIENT_OPERATION_DURATION-constant" class="">GEN_AI_CLIENT_OPERATION_DURATION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>GenAI operation duration</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.client.operation.duration</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_CLIENT_TOKEN_USAGE-constant" class="">GEN_AI_CLIENT_TOKEN_USAGE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Measures number of input and output tokens used</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.client.token.usage</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_SERVER_REQUEST_DURATION-constant" class="">GEN_AI_SERVER_REQUEST_DURATION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Generative AI server request duration such as time-to-last byte or last output token</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.server.request.duration</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_SERVER_TIME_PER_OUTPUT_TOKEN-constant" class="">GEN_AI_SERVER_TIME_PER_OUTPUT_TOKEN =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Time per output token generated after the first token for successful responses</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.server.time_per_output_token</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_SERVER_TIME_TO_FIRST_TOKEN-constant" class="">GEN_AI_SERVER_TIME_TO_FIRST_TOKEN =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Time to generate first token for successful responses</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.server.time_to_first_token</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+    </dl>
+  
+    <h2>
+      Attribute Names
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="GEN_AI_AGENT_DESCRIPTION-constant" class="">GEN_AI_AGENT_DESCRIPTION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Free-form description of the GenAI agent provided by the application.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='const'>Helps</span> <span class='id identifier rubyid_with'>with</span> <span class='id identifier rubyid_math'>math</span> <span class='id identifier rubyid_problems'>problems</span>
+<span class='const'>Generates</span> <span class='id identifier rubyid_fiction'>fiction</span> <span class='id identifier rubyid_stories'>stories</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.agent.description</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_AGENT_ID-constant" class="">GEN_AI_AGENT_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The unique identifier of the GenAI agent.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_asst_5j66UpCpwteGg4YSxUnt7lPY'>asst_5j66UpCpwteGg4YSxUnt7lPY</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.agent.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_AGENT_NAME-constant" class="">GEN_AI_AGENT_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Human-readable name of the GenAI agent provided by the application.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='const'>Math</span> <span class='const'>Tutor</span>
+<span class='const'>Fiction</span> <span class='const'>Writer</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.agent.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_COMPLETION-constant" class="deprecated">GEN_AI_COMPLETION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Removed, no replacement at this time.”, “reason”: “obsoleted”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use Event API to report completions contents.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='lbracket'>[</span><span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>role</span><span class='label_end'>&#39;:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>assistant</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>content</span><span class='label_end'>&#39;:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>The capital of France is Paris.</span><span class='tstring_end'>&#39;</span></span><span class='rbrace'>}</span><span class='rbracket'>]</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.completion</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_CONVERSATION_ID-constant" class="">GEN_AI_CONVERSATION_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The unique identifier for a conversation (session, thread), used to store and correlate messages within this conversation.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_conv_5j66UpCpwteGg4YSxUnt7lPY'>conv_5j66UpCpwteGg4YSxUnt7lPY</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.conversation.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_DATA_SOURCE_ID-constant" class="">GEN_AI_DATA_SOURCE_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The data source identifier.</p>
+
+<p>Data sources are used by AI agents and RAG applications to store grounding data. A data source may be an external database, object store, document collection, website, or any other storage system used by the GenAI agent or application. The <code>gen_ai.data_source.id</code> SHOULD match the identifier used by the GenAI system rather than a name specific to the external storage, such as a database or object store. Semantic conventions referencing <code>gen_ai.data_source.id</code> MAY also leverage additional attributes, such as <code>db.*</code>, to further identify and describe the data source.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='const'>H7STPQYOND</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.data_source.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_OPENAI_REQUEST_RESPONSE_FORMAT-constant" class="deprecated">GEN_AI_OPENAI_REQUEST_RESPONSE_FORMAT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>gen_ai.output.type</code>.”, “reason”: “renamed”, “renamed_to”: “gen_ai.output.type”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>gen_ai.output.type</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.openai.request.response_format</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_OPENAI_REQUEST_SEED-constant" class="deprecated">GEN_AI_OPENAI_REQUEST_SEED =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>gen_ai.request.seed</code>.”, “reason”: “renamed”, “renamed_to”: “gen_ai.request.seed”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>gen_ai.request.seed</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>100</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.openai.request.seed</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_OPENAI_REQUEST_SERVICE_TIER-constant" class="">GEN_AI_OPENAI_REQUEST_SERVICE_TIER =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The service tier requested. May be a specific tier, default, or auto.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_auto'>auto</span>
+<span class='id identifier rubyid_default'>default</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.openai.request.service_tier</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_OPENAI_RESPONSE_SERVICE_TIER-constant" class="">GEN_AI_OPENAI_RESPONSE_SERVICE_TIER =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The service tier used for the response.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_scale'>scale</span>
+<span class='id identifier rubyid_default'>default</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.openai.response.service_tier</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_OPENAI_RESPONSE_SYSTEM_FINGERPRINT-constant" class="">GEN_AI_OPENAI_RESPONSE_SYSTEM_FINGERPRINT =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>A fingerprint to track any eventual change in the Generative AI environment.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_fp_44709d6fcb'>fp_44709d6fcb</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.openai.response.system_fingerprint</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_OPERATION_NAME-constant" class="">GEN_AI_OPERATION_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The name of the operation being performed.</p>
+
+<p>If one of the predefined values applies, but specific system uses a different name it’s RECOMMENDED to document it in the semantic conventions for specific GenAI system and use system-specific name in the instrumentation. If a different name is not documented, instrumentation libraries SHOULD use applicable predefined value.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.operation.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_OUTPUT_TYPE-constant" class="">GEN_AI_OUTPUT_TYPE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Represents the content type requested by the client.</p>
+
+<p>This attribute SHOULD be used when the client requests output of a specific type. The model may return zero or more outputs of this type.
+This attribute specifies the output modality and not the actual output format. For example, if an image is requested, the actual output could be a URL pointing to an image file.
+Additional output format details may be recorded in the future in the <code>gen_ai.output.{type}.*</code> attributes.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.output.type</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_PROMPT-constant" class="deprecated">GEN_AI_PROMPT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Removed, no replacement at this time.”, “reason”: “obsoleted”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use Event API to report prompt contents.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='lbracket'>[</span><span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>role</span><span class='label_end'>&#39;:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>user</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>content</span><span class='label_end'>&#39;:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>What is the capital of France?</span><span class='tstring_end'>&#39;</span></span><span class='rbrace'>}</span><span class='rbracket'>]</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.prompt</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_REQUEST_CHOICE_COUNT-constant" class="">GEN_AI_REQUEST_CHOICE_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The target number of candidate completions to return.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>3</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.request.choice.count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_REQUEST_ENCODING_FORMATS-constant" class="">GEN_AI_REQUEST_ENCODING_FORMATS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The encoding formats requested in an embeddings operation, if specified.</p>
+
+<p>In some GenAI systems the encoding formats are called embedding types. Also, some GenAI systems only accept a single format per request.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>base64</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+<span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>float</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>binary</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.request.encoding_formats</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_REQUEST_FREQUENCY_PENALTY-constant" class="">GEN_AI_REQUEST_FREQUENCY_PENALTY =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The frequency penalty setting for the GenAI request.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='float'>0.1</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.request.frequency_penalty</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_REQUEST_MAX_TOKENS-constant" class="">GEN_AI_REQUEST_MAX_TOKENS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The maximum number of tokens the model generates for a request.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>100</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.request.max_tokens</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_REQUEST_MODEL-constant" class="">GEN_AI_REQUEST_MODEL =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The name of the GenAI model a request is being made to.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_gpt'>gpt</span><span class='op'>-</span><span class='int'>4</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.request.model</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_REQUEST_PRESENCE_PENALTY-constant" class="">GEN_AI_REQUEST_PRESENCE_PENALTY =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The presence penalty setting for the GenAI request.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='float'>0.1</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.request.presence_penalty</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_REQUEST_SEED-constant" class="">GEN_AI_REQUEST_SEED =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Requests with same seed value more likely to return same result.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>100</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.request.seed</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_REQUEST_STOP_SEQUENCES-constant" class="">GEN_AI_REQUEST_STOP_SEQUENCES =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>List of sequences that the model will use to stop generating further tokens.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>forest</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>lived</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.request.stop_sequences</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_REQUEST_TEMPERATURE-constant" class="">GEN_AI_REQUEST_TEMPERATURE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The temperature setting for the GenAI request.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='float'>0.0</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.request.temperature</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_REQUEST_TOP_K-constant" class="">GEN_AI_REQUEST_TOP_K =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The top_k sampling setting for the GenAI request.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='float'>1.0</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.request.top_k</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_REQUEST_TOP_P-constant" class="">GEN_AI_REQUEST_TOP_P =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The top_p sampling setting for the GenAI request.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='float'>1.0</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.request.top_p</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_RESPONSE_FINISH_REASONS-constant" class="">GEN_AI_RESPONSE_FINISH_REASONS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Array of reasons the model stopped generating tokens, corresponding to each generation received.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>stop</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+<span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>stop</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>length</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.response.finish_reasons</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_RESPONSE_ID-constant" class="">GEN_AI_RESPONSE_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The unique identifier for the completion.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_chatcmpl'>chatcmpl</span><span class='op'>-</span><span class='int'>123</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.response.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_RESPONSE_MODEL-constant" class="">GEN_AI_RESPONSE_MODEL =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The name of the model that generated the response.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_gpt'>gpt</span><span class='op'>-</span><span class='int'>4</span><span class='op'>-</span><span class='int'>0613</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.response.model</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_SYSTEM-constant" class="">GEN_AI_SYSTEM =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The Generative AI product as identified by the client or server instrumentation.</p>
+
+<p>The <code>gen_ai.system</code> describes a family of GenAI models with specific model identified
+by <code>gen_ai.request.model</code> and <code>gen_ai.response.model</code> attributes.</p>
+
+<p>The actual GenAI product may differ from the one identified by the client.
+Multiple systems, including Azure OpenAI and Gemini, are accessible by OpenAI client
+libraries. In such cases, the <code>gen_ai.system</code> is set to <code>openai</code> based on the
+instrumentation’s best knowledge, instead of the actual system. The <code>server.address</code>
+attribute may help identify the actual system in use for <code>openai</code>.</p>
+
+<p>For custom model, a custom friendly name SHOULD be used.
+If none of these options apply, the <code>gen_ai.system</code> SHOULD be set to <code>_OTHER</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_openai'>openai</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.system</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_TOKEN_TYPE-constant" class="">GEN_AI_TOKEN_TYPE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The type of token being counted.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_input'>input</span>
+<span class='id identifier rubyid_output'>output</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.token.type</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_TOOL_CALL_ID-constant" class="">GEN_AI_TOOL_CALL_ID =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The tool call identifier.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_call_mszuSIzqtI65i1wAUOE8w5H4'>call_mszuSIzqtI65i1wAUOE8w5H4</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.tool.call.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_TOOL_DESCRIPTION-constant" class="">GEN_AI_TOOL_DESCRIPTION =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The tool description.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='const'>Multiply</span> <span class='id identifier rubyid_two'>two</span> <span class='id identifier rubyid_numbers'>numbers</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.tool.description</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_TOOL_NAME-constant" class="">GEN_AI_TOOL_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Name of the tool utilized by the agent.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='const'>Flights</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.tool.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_TOOL_TYPE-constant" class="">GEN_AI_TOOL_TYPE =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Type of the tool utilized by the agent</p>
+
+<p>Extension: A tool executed on the agent-side to directly call external APIs, bridging the gap between the agent and real-world systems.
+Agent-side operations involve actions that are performed by the agent on the server or within the agent’s controlled environment.
+Function: A tool executed on the client-side, where the agent generates parameters for a predefined function, and the client executes the logic.
+Client-side operations are actions taken on the user’s end or within the client application.
+Datastore: A tool used by the agent to access and query structured or unstructured external data for retrieval-augmented tasks or knowledge updates.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_function'>function</span>
+<span class='id identifier rubyid_extension'>extension</span>
+<span class='id identifier rubyid_datastore'>datastore</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.tool.type</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_USAGE_COMPLETION_TOKENS-constant" class="deprecated">GEN_AI_USAGE_COMPLETION_TOKENS =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>gen_ai.usage.output_tokens</code>.”, “reason”: “renamed”, “renamed_to”: “gen_ai.usage.output_tokens”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>gen_ai.usage.output_tokens</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>42</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.usage.completion_tokens</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_USAGE_INPUT_TOKENS-constant" class="">GEN_AI_USAGE_INPUT_TOKENS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The number of tokens used in the GenAI input (prompt).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>100</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.usage.input_tokens</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_USAGE_OUTPUT_TOKENS-constant" class="">GEN_AI_USAGE_OUTPUT_TOKENS =
+          <div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>The number of tokens used in the GenAI response (completion).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>180</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.usage.output_tokens</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="GEN_AI_USAGE_PROMPT_TOKENS-constant" class="deprecated">GEN_AI_USAGE_PROMPT_TOKENS =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>“Replaced by <code>gen_ai.usage.input_tokens</code>.”, “reason”: “renamed”, “renamed_to”: “gen_ai.usage.input_tokens”</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>Stability Level: development</p>
+</div>
+  </div>
+
+<p>Deprecated, use <code>gen_ai.usage.input_tokens</code> instead.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Sample Values</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='int'>42</span></code></pre>
+    
+  </div>
+
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gen_ai.usage.prompt_tokens</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Sep 16 23:34:25 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.1.6).
+</div>
+
+    </div>
+  </body>
+</html>

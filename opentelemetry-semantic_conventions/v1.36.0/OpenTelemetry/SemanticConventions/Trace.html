@@ -1,0 +1,2839 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: OpenTelemetry::SemanticConventions::Trace
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "OpenTelemetry::SemanticConventions::Trace";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (T)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../SemanticConventions.html" title="OpenTelemetry::SemanticConventions (module)">SemanticConventions</a></span></span>
+     &raquo; 
+    <span class="title">Trace</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: OpenTelemetry::SemanticConventions::Trace
+  
+  <span class="deprecated note title">Deprecated</span>
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/opentelemetry/semantic_conventions/trace.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>This module is deprecated in favor of the namespaced modules under
+<span class='object_link'><a href="../SemConv/Incubating.html" title="OpenTelemetry::SemConv::Incubating (module)">OpenTelemetry::SemConv::Incubating</a></span> (all experimental and stable) and
+<span class='object_link'><a href="../SemConv.html" title="OpenTelemetry::SemConv (module)">OpenTelemetry::SemConv</a></span> (stable)</p>
+</div></div>
+<p>OpenTelemetry semantic conventions from v1.10.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="AWS_LAMBDA_INVOKED_ARN-constant" class="deprecated">AWS_LAMBDA_INVOKED_ARN =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_LAMBDA_INVOKED_ARN-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_LAMBDA_INVOKED_ARN (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_LAMBDA_INVOKED_ARN</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>This may be different from <code>faas.id</code> if an alias is involved</p>
+</div>
+  </div>
+
+<p>The full invoked ARN as provided on the <code>Context</code> passed to the function (<code>Lambda-Runtime-Invoked-Function-Arn</code> header on the <code>/runtime/invocation/next</code> applicable)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.lambda.invoked_arn</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="CLOUDEVENTS_EVENT_ID-constant" class="deprecated">CLOUDEVENTS_EVENT_ID =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/CLOUDEVENTS.html#CLOUDEVENTS_EVENT_ID-constant" title="OpenTelemetry::SemConv::Incubating::CLOUDEVENTS::CLOUDEVENTS_EVENT_ID (constant)">OpenTelemetry::SemConv::Incubating::CLOUDEVENTS::CLOUDEVENTS_EVENT_ID</a></span> for its replacement.</p>
+</div></div>
+<p>The <a href="https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md#id">event_id</a> uniquely identifies the event</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cloudevents.event_id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="CLOUDEVENTS_EVENT_SOURCE-constant" class="deprecated">CLOUDEVENTS_EVENT_SOURCE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/CLOUDEVENTS.html#CLOUDEVENTS_EVENT_SOURCE-constant" title="OpenTelemetry::SemConv::Incubating::CLOUDEVENTS::CLOUDEVENTS_EVENT_SOURCE (constant)">OpenTelemetry::SemConv::Incubating::CLOUDEVENTS::CLOUDEVENTS_EVENT_SOURCE</a></span> for its replacement.</p>
+</div></div>
+<p>The <a href="https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md#source-1">source</a> identifies the context in which an event happened</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cloudevents.event_source</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="CLOUDEVENTS_EVENT_SPEC_VERSION-constant" class="deprecated">CLOUDEVENTS_EVENT_SPEC_VERSION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/CLOUDEVENTS.html#CLOUDEVENTS_EVENT_SPEC_VERSION-constant" title="OpenTelemetry::SemConv::Incubating::CLOUDEVENTS::CLOUDEVENTS_EVENT_SPEC_VERSION (constant)">OpenTelemetry::SemConv::Incubating::CLOUDEVENTS::CLOUDEVENTS_EVENT_SPEC_VERSION</a></span> for its replacement.</p>
+</div></div>
+<p>The <a href="https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md#specversion">version of the CloudEvents specification</a> which the event uses</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cloudevents.event_spec_version</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="CLOUDEVENTS_EVENT_TYPE-constant" class="deprecated">CLOUDEVENTS_EVENT_TYPE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/CLOUDEVENTS.html#CLOUDEVENTS_EVENT_TYPE-constant" title="OpenTelemetry::SemConv::Incubating::CLOUDEVENTS::CLOUDEVENTS_EVENT_TYPE (constant)">OpenTelemetry::SemConv::Incubating::CLOUDEVENTS::CLOUDEVENTS_EVENT_TYPE</a></span> for its replacement.</p>
+</div></div>
+<p>The <a href="https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md#type">event_type</a> contains a value describing the type of event related to the originating occurrence</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cloudevents.event_type</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="CLOUDEVENTS_EVENT_SUBJECT-constant" class="deprecated">CLOUDEVENTS_EVENT_SUBJECT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/CLOUDEVENTS.html#CLOUDEVENTS_EVENT_SUBJECT-constant" title="OpenTelemetry::SemConv::Incubating::CLOUDEVENTS::CLOUDEVENTS_EVENT_SUBJECT (constant)">OpenTelemetry::SemConv::Incubating::CLOUDEVENTS::CLOUDEVENTS_EVENT_SUBJECT</a></span> for its replacement.</p>
+</div></div>
+<p>The <a href="https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md#subject">subject</a> of the event in the context of the event producer (identified by source)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cloudevents.event_subject</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="OPENTRACING_REF_TYPE-constant" class="deprecated">OPENTRACING_REF_TYPE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/OPENTRACING.html#OPENTRACING_REF_TYPE-constant" title="OpenTelemetry::SemConv::Incubating::OPENTRACING::OPENTRACING_REF_TYPE (constant)">OpenTelemetry::SemConv::Incubating::OPENTRACING::OPENTRACING_REF_TYPE</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>The causal relationship between a child Span and a parent Span</p>
+</div>
+  </div>
+
+<p>Parent-child Reference type</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>opentracing.ref_type</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_SYSTEM-constant" class="deprecated">DB_SYSTEM =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/DB.html#DB_SYSTEM-constant" title="OpenTelemetry::SemConv::Incubating::DB::DB_SYSTEM (constant)">OpenTelemetry::SemConv::Incubating::DB::DB_SYSTEM</a></span> for its replacement.</p>
+</div></div>
+<p>An identifier for the database management system (DBMS) product being used. See below for a list of well-known identifiers</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.system</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CONNECTION_STRING-constant" class="deprecated">DB_CONNECTION_STRING =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/DB.html#DB_CONNECTION_STRING-constant" title="OpenTelemetry::SemConv::Incubating::DB::DB_CONNECTION_STRING (constant)">OpenTelemetry::SemConv::Incubating::DB::DB_CONNECTION_STRING</a></span> for its replacement.</p>
+</div></div>
+<p>The connection string used to connect to the database. It is recommended to remove embedded credentials</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.connection_string</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_USER-constant" class="deprecated">DB_USER =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/DB.html#DB_USER-constant" title="OpenTelemetry::SemConv::Incubating::DB::DB_USER (constant)">OpenTelemetry::SemConv::Incubating::DB::DB_USER</a></span> for its replacement.</p>
+</div></div>
+<p>Username for accessing the database</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.user</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_JDBC_DRIVER_CLASSNAME-constant" class="deprecated">DB_JDBC_DRIVER_CLASSNAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/DB.html#DB_JDBC_DRIVER_CLASSNAME-constant" title="OpenTelemetry::SemConv::Incubating::DB::DB_JDBC_DRIVER_CLASSNAME (constant)">OpenTelemetry::SemConv::Incubating::DB::DB_JDBC_DRIVER_CLASSNAME</a></span> for its replacement.</p>
+</div></div>
+<p>The fully-qualified class name of the <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/">Java Database Connectivity (JDBC)</a> driver used to connect</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.jdbc.driver_classname</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_NAME-constant" class="deprecated">DB_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/DB.html#DB_NAME-constant" title="OpenTelemetry::SemConv::Incubating::DB::DB_NAME (constant)">OpenTelemetry::SemConv::Incubating::DB::DB_NAME</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>In some SQL databases, the database name to be used is called “schema name”. In case there are multiple layers that could be considered for database name (e.g. Oracle instance name and schema name), the database name to be used is the more specific layer (e.g. Oracle schema name)</p>
+</div>
+  </div>
+
+<p>This attribute is used to report the name of the database being accessed. For commands that switch the database, this should be set to the target database (even if the command fails)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_STATEMENT-constant" class="deprecated">DB_STATEMENT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/DB.html#DB_STATEMENT-constant" title="OpenTelemetry::SemConv::Incubating::DB::DB_STATEMENT (constant)">OpenTelemetry::SemConv::Incubating::DB::DB_STATEMENT</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>The value may be sanitized to exclude sensitive information</p>
+</div>
+  </div>
+
+<p>The database statement being executed</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.statement</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_OPERATION-constant" class="deprecated">DB_OPERATION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/DB.html#DB_OPERATION-constant" title="OpenTelemetry::SemConv::Incubating::DB::DB_OPERATION (constant)">OpenTelemetry::SemConv::Incubating::DB::DB_OPERATION</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>When setting this to an SQL keyword, it is not recommended to attempt any client-side parsing of <code>db.statement</code> just to get this property, but it should be set if the operation name is provided by the library being instrumented. If the SQL statement has an ambiguous operation, or performs more than one operation, this value may be omitted</p>
+</div>
+  </div>
+
+<p>The name of the operation being executed, e.g. the <a href="https://docs.mongodb.com/manual/reference/command/#database-operations">MongoDB command name</a> such as <code>findAndModify</code>, or the SQL keyword</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.operation</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="NET_PEER_NAME-constant" class="deprecated">NET_PEER_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/NET.html#NET_PEER_NAME-constant" title="OpenTelemetry::SemConv::Incubating::NET::NET_PEER_NAME (constant)">OpenTelemetry::SemConv::Incubating::NET::NET_PEER_NAME</a></span> for its replacement.</p>
+</div></div>
+<p>Remote hostname or similar, see note below</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>net.peer.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="NET_PEER_IP-constant" class="deprecated">NET_PEER_IP =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/NET.html#NET_SOCK_PEER_ADDR-constant" title="OpenTelemetry::SemConv::Incubating::NET::NET_SOCK_PEER_ADDR (constant)">OpenTelemetry::SemConv::Incubating::NET::NET_SOCK_PEER_ADDR</a></span> for its replacement.</p>
+</div></div>
+<p>Remote address of the peer (dotted decimal for IPv4 or <a href="https://tools.ietf.org/html/rfc5952">RFC5952</a> for IPv6)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>net.peer.ip</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="NET_PEER_PORT-constant" class="deprecated">NET_PEER_PORT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/NET.html#NET_PEER_PORT-constant" title="OpenTelemetry::SemConv::Incubating::NET::NET_PEER_PORT (constant)">OpenTelemetry::SemConv::Incubating::NET::NET_PEER_PORT</a></span> for its replacement.</p>
+</div></div>
+<p>Remote port number</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>net.peer.port</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="NET_TRANSPORT-constant" class="deprecated">NET_TRANSPORT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/NET.html#NET_TRANSPORT-constant" title="OpenTelemetry::SemConv::Incubating::NET::NET_TRANSPORT (constant)">OpenTelemetry::SemConv::Incubating::NET::NET_TRANSPORT</a></span> for its replacement.</p>
+</div></div>
+<p>Transport protocol used. See note below</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>net.transport</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_MSSQL_INSTANCE_NAME-constant" class="deprecated">DB_MSSQL_INSTANCE_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/DB.html#DB_MSSQL_INSTANCE_NAME-constant" title="OpenTelemetry::SemConv::Incubating::DB::DB_MSSQL_INSTANCE_NAME (constant)">OpenTelemetry::SemConv::Incubating::DB::DB_MSSQL_INSTANCE_NAME</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>If setting a <code>db.mssql.instance_name</code>, <code>net.peer.port</code> is no longer required (but still recommended if non-standard)</p>
+</div>
+  </div>
+
+<p>The Microsoft SQL Server <a href="https://docs.microsoft.com/en-us/sql/connect/jdbc/building-the-connection-url?view=sql-server-ver15">instance name</a> connecting to. This name is used to determine the port of a named instance</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.mssql.instance_name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CASSANDRA_PAGE_SIZE-constant" class="deprecated">DB_CASSANDRA_PAGE_SIZE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/DB.html#DB_CASSANDRA_PAGE_SIZE-constant" title="OpenTelemetry::SemConv::Incubating::DB::DB_CASSANDRA_PAGE_SIZE (constant)">OpenTelemetry::SemConv::Incubating::DB::DB_CASSANDRA_PAGE_SIZE</a></span> for its replacement.</p>
+</div></div>
+<p>The fetch size used for paging, i.e. how many rows will be returned at once</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cassandra.page_size</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CASSANDRA_CONSISTENCY_LEVEL-constant" class="deprecated">DB_CASSANDRA_CONSISTENCY_LEVEL =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/DB.html#DB_CASSANDRA_CONSISTENCY_LEVEL-constant" title="OpenTelemetry::SemConv::Incubating::DB::DB_CASSANDRA_CONSISTENCY_LEVEL (constant)">OpenTelemetry::SemConv::Incubating::DB::DB_CASSANDRA_CONSISTENCY_LEVEL</a></span> for its replacement.</p>
+</div></div>
+<p>The consistency level of the query. Based on consistency values from <a href="https://docs.datastax.com/en/cassandra-oss/3.0/cassandra/dml/dmlConfigConsistency.html">CQL</a></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cassandra.consistency_level</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CASSANDRA_TABLE-constant" class="deprecated">DB_CASSANDRA_TABLE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/DB.html#DB_CASSANDRA_TABLE-constant" title="OpenTelemetry::SemConv::Incubating::DB::DB_CASSANDRA_TABLE (constant)">OpenTelemetry::SemConv::Incubating::DB::DB_CASSANDRA_TABLE</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>This mirrors the db.sql.table attribute but references cassandra rather than sql. It is not recommended to attempt any client-side parsing of <code>db.statement</code> just to get this property, but it should be set if it is provided by the library being instrumented. If the operation is acting upon an anonymous table, or more than one table, this value MUST NOT be set</p>
+</div>
+  </div>
+
+<p>The name of the primary table that the operation is acting upon, including the keyspace name (if applicable)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cassandra.table</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CASSANDRA_IDEMPOTENCE-constant" class="deprecated">DB_CASSANDRA_IDEMPOTENCE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/DB.html#DB_CASSANDRA_IDEMPOTENCE-constant" title="OpenTelemetry::SemConv::Incubating::DB::DB_CASSANDRA_IDEMPOTENCE (constant)">OpenTelemetry::SemConv::Incubating::DB::DB_CASSANDRA_IDEMPOTENCE</a></span> for its replacement.</p>
+</div></div>
+<p>Whether or not the query is idempotent</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cassandra.idempotence</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CASSANDRA_SPECULATIVE_EXECUTION_COUNT-constant" class="deprecated">DB_CASSANDRA_SPECULATIVE_EXECUTION_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/DB.html#DB_CASSANDRA_SPECULATIVE_EXECUTION_COUNT-constant" title="OpenTelemetry::SemConv::Incubating::DB::DB_CASSANDRA_SPECULATIVE_EXECUTION_COUNT (constant)">OpenTelemetry::SemConv::Incubating::DB::DB_CASSANDRA_SPECULATIVE_EXECUTION_COUNT</a></span> for its replacement.</p>
+</div></div>
+<p>The number of times a query was speculatively executed. Not set or <code>0</code> if the query was not executed speculatively</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cassandra.speculative_execution_count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CASSANDRA_COORDINATOR_ID-constant" class="deprecated">DB_CASSANDRA_COORDINATOR_ID =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/DB.html#DB_CASSANDRA_COORDINATOR_ID-constant" title="OpenTelemetry::SemConv::Incubating::DB::DB_CASSANDRA_COORDINATOR_ID (constant)">OpenTelemetry::SemConv::Incubating::DB::DB_CASSANDRA_COORDINATOR_ID</a></span> for its replacement.</p>
+</div></div>
+<p>The ID of the coordinating node for a query</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cassandra.coordinator.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_CASSANDRA_COORDINATOR_DC-constant" class="deprecated">DB_CASSANDRA_COORDINATOR_DC =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/DB.html#DB_CASSANDRA_COORDINATOR_DC-constant" title="OpenTelemetry::SemConv::Incubating::DB::DB_CASSANDRA_COORDINATOR_DC (constant)">OpenTelemetry::SemConv::Incubating::DB::DB_CASSANDRA_COORDINATOR_DC</a></span> for its replacement.</p>
+</div></div>
+<p>The data center of the coordinating node for a query</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.cassandra.coordinator.dc</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_REDIS_DATABASE_INDEX-constant" class="deprecated">DB_REDIS_DATABASE_INDEX =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/DB.html#DB_REDIS_DATABASE_INDEX-constant" title="OpenTelemetry::SemConv::Incubating::DB::DB_REDIS_DATABASE_INDEX (constant)">OpenTelemetry::SemConv::Incubating::DB::DB_REDIS_DATABASE_INDEX</a></span> for its replacement.</p>
+</div></div>
+<p>The index of the database being accessed as used in the <a href="https://redis.io/commands/select"><code>SELECT</code> command</a>, provided as an integer. To be used instead of the generic <code>db.name</code> attribute</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.redis.database_index</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_MONGODB_COLLECTION-constant" class="deprecated">DB_MONGODB_COLLECTION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/DB.html#DB_MONGODB_COLLECTION-constant" title="OpenTelemetry::SemConv::Incubating::DB::DB_MONGODB_COLLECTION (constant)">OpenTelemetry::SemConv::Incubating::DB::DB_MONGODB_COLLECTION</a></span> for its replacement.</p>
+</div></div>
+<p>The collection being accessed within the database stated in <code>db.name</code></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.mongodb.collection</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="DB_SQL_TABLE-constant" class="deprecated">DB_SQL_TABLE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/DB.html#DB_SQL_TABLE-constant" title="OpenTelemetry::SemConv::Incubating::DB::DB_SQL_TABLE (constant)">OpenTelemetry::SemConv::Incubating::DB::DB_SQL_TABLE</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>It is not recommended to attempt any client-side parsing of <code>db.statement</code> just to get this property, but it should be set if it is provided by the library being instrumented. If the operation is acting upon an anonymous table, or more than one table, this value MUST NOT be set</p>
+</div>
+  </div>
+
+<p>The name of the primary table that the operation is acting upon, including the database name (if applicable)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db.sql.table</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="EXCEPTION_TYPE-constant" class="deprecated">EXCEPTION_TYPE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/EXCEPTION.html#EXCEPTION_TYPE-constant" title="OpenTelemetry::SemConv::Incubating::EXCEPTION::EXCEPTION_TYPE (constant)">OpenTelemetry::SemConv::Incubating::EXCEPTION::EXCEPTION_TYPE</a></span> for its replacement.</p>
+</div></div>
+<p>The type of the exception (its fully-qualified class name, if applicable). The dynamic type of the exception should be preferred over the static type in languages that support it</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>exception.type</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="EXCEPTION_MESSAGE-constant" class="deprecated">EXCEPTION_MESSAGE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/EXCEPTION.html#EXCEPTION_MESSAGE-constant" title="OpenTelemetry::SemConv::Incubating::EXCEPTION::EXCEPTION_MESSAGE (constant)">OpenTelemetry::SemConv::Incubating::EXCEPTION::EXCEPTION_MESSAGE</a></span> for its replacement.</p>
+</div></div>
+<p>The exception message</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>exception.message</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="EXCEPTION_STACKTRACE-constant" class="deprecated">EXCEPTION_STACKTRACE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/EXCEPTION.html#EXCEPTION_STACKTRACE-constant" title="OpenTelemetry::SemConv::Incubating::EXCEPTION::EXCEPTION_STACKTRACE (constant)">OpenTelemetry::SemConv::Incubating::EXCEPTION::EXCEPTION_STACKTRACE</a></span> for its replacement.</p>
+</div></div>
+<p>A stacktrace as a string in the natural representation for the language runtime. The representation is to be determined and documented by each language SIG</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>exception.stacktrace</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="EXCEPTION_ESCAPED-constant" class="deprecated">EXCEPTION_ESCAPED =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/EXCEPTION.html#EXCEPTION_ESCAPED-constant" title="OpenTelemetry::SemConv::Incubating::EXCEPTION::EXCEPTION_ESCAPED (constant)">OpenTelemetry::SemConv::Incubating::EXCEPTION::EXCEPTION_ESCAPED</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>An exception is considered to have escaped (or left) the scope of a span,
+if that span is ended while the exception is still logically “in flight”.
+This may be actually “in flight” in some languages (e.g. if the exception
+is passed to a Context manager’s <code>__exit__</code> method in Python) but will
+usually be caught at the point of recording the exception in most languages.</p>
+
+<p>It is usually not possible to determine at the point where an exception is thrown
+whether it will escape the scope of a span.
+However, it is trivial to know that an exception
+will escape, if one checks for an active exception just before ending the span,
+as done in the <a href="#recording-an-exception">example above</a>.</p>
+
+<p>It follows that an exception may still escape the scope of the span
+even if the <code>exception.escaped</code> attribute was not set or set to false,
+since the event might have been recorded at a time where it was not
+clear whether the exception will escape</p>
+</div>
+  </div>
+
+<p>SHOULD be set to true if the exception event is recorded at a point where it is known that the exception is escaping the scope of the span</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>exception.escaped</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_TRIGGER-constant" class="deprecated">FAAS_TRIGGER =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/FAAS.html#FAAS_TRIGGER-constant" title="OpenTelemetry::SemConv::Incubating::FAAS::FAAS_TRIGGER (constant)">OpenTelemetry::SemConv::Incubating::FAAS::FAAS_TRIGGER</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>For the server/consumer span on the incoming side,
+<code>faas.trigger</code> MUST be set.</p>
+
+<p>Clients invoking FaaS instances usually cannot set <code>faas.trigger</code>,
+since they would typically need to look in the payload to determine
+the event type. If clients set it, it should be the same as the
+trigger that corresponding incoming would have (i.e., this has
+nothing to do with the underlying transport used to make the API
+call to invoke the lambda, which is often HTTP)</p>
+</div>
+  </div>
+
+<p>Type of the trigger which caused this function execution</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.trigger</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_EXECUTION-constant" class="deprecated">FAAS_EXECUTION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/FAAS.html#FAAS_INVOCATION_ID-constant" title="OpenTelemetry::SemConv::Incubating::FAAS::FAAS_INVOCATION_ID (constant)">OpenTelemetry::SemConv::Incubating::FAAS::FAAS_INVOCATION_ID</a></span> for its replacement.</p>
+</div></div>
+<p>The execution ID of the current function execution</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.execution</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_DOCUMENT_COLLECTION-constant" class="deprecated">FAAS_DOCUMENT_COLLECTION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/FAAS.html#FAAS_DOCUMENT_COLLECTION-constant" title="OpenTelemetry::SemConv::Incubating::FAAS::FAAS_DOCUMENT_COLLECTION (constant)">OpenTelemetry::SemConv::Incubating::FAAS::FAAS_DOCUMENT_COLLECTION</a></span> for its replacement.</p>
+</div></div>
+<p>The name of the source on which the triggering operation was performed. For example, in Cloud Storage or S3 corresponds to the bucket name, and in Cosmos DB to the database name</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.document.collection</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_DOCUMENT_OPERATION-constant" class="deprecated">FAAS_DOCUMENT_OPERATION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/FAAS.html#FAAS_DOCUMENT_OPERATION-constant" title="OpenTelemetry::SemConv::Incubating::FAAS::FAAS_DOCUMENT_OPERATION (constant)">OpenTelemetry::SemConv::Incubating::FAAS::FAAS_DOCUMENT_OPERATION</a></span> for its replacement.</p>
+</div></div>
+<p>Describes the type of the operation that was performed on the data</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.document.operation</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_DOCUMENT_TIME-constant" class="deprecated">FAAS_DOCUMENT_TIME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/FAAS.html#FAAS_DOCUMENT_TIME-constant" title="OpenTelemetry::SemConv::Incubating::FAAS::FAAS_DOCUMENT_TIME (constant)">OpenTelemetry::SemConv::Incubating::FAAS::FAAS_DOCUMENT_TIME</a></span> for its replacement.</p>
+</div></div>
+<p>A string containing the time when the data was accessed in the <a href="https://www.iso.org/iso-8601-date-and-time-format.html">ISO 8601</a> format expressed in <a href="https://www.w3.org/TR/NOTE-datetime">UTC</a></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.document.time</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_DOCUMENT_NAME-constant" class="deprecated">FAAS_DOCUMENT_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/FAAS.html#FAAS_DOCUMENT_NAME-constant" title="OpenTelemetry::SemConv::Incubating::FAAS::FAAS_DOCUMENT_NAME (constant)">OpenTelemetry::SemConv::Incubating::FAAS::FAAS_DOCUMENT_NAME</a></span> for its replacement.</p>
+</div></div>
+<p>The document name/table subjected to the operation. For example, in Cloud Storage or S3 is the name of the file, and in Cosmos DB the table name</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.document.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HTTP_METHOD-constant" class="deprecated">HTTP_METHOD =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/HTTP.html#HTTP_METHOD-constant" title="OpenTelemetry::SemConv::Incubating::HTTP::HTTP_METHOD (constant)">OpenTelemetry::SemConv::Incubating::HTTP::HTTP_METHOD</a></span> for its replacement.</p>
+</div></div>
+<p>HTTP request method</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http.method</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HTTP_URL-constant" class="deprecated">HTTP_URL =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/HTTP.html#HTTP_URL-constant" title="OpenTelemetry::SemConv::Incubating::HTTP::HTTP_URL (constant)">OpenTelemetry::SemConv::Incubating::HTTP::HTTP_URL</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p><code>http.url</code> MUST NOT contain credentials passed via URL in form of <code>https://username:password@www.example.com/</code>. In such case the attribute’s value should be <code>https://www.example.com/</code></p>
+</div>
+  </div>
+
+<p>Full HTTP request URL in the form <code>scheme://host[:port]/path?query[#fragment]</code>. Usually the fragment is not transmitted over HTTP, but if it is known, it should be included nevertheless</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http.url</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HTTP_TARGET-constant" class="deprecated">HTTP_TARGET =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/HTTP.html#HTTP_TARGET-constant" title="OpenTelemetry::SemConv::Incubating::HTTP::HTTP_TARGET (constant)">OpenTelemetry::SemConv::Incubating::HTTP::HTTP_TARGET</a></span> for its replacement.</p>
+</div></div>
+<p>The full request target as passed in a HTTP request line or equivalent</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http.target</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HTTP_HOST-constant" class="deprecated">HTTP_HOST =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/HTTP.html#HTTP_REQUEST_HEADER_LAMBDA-constant" title="OpenTelemetry::SemConv::Incubating::HTTP::HTTP_REQUEST_HEADER_LAMBDA (constant)">OpenTelemetry::SemConv::Incubating::HTTP::HTTP_REQUEST_HEADER_LAMBDA</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>When the header is present but empty the attribute SHOULD be set to the empty string. Note that this is a valid situation that is expected in certain cases, according the aforementioned <a href="https://tools.ietf.org/html/rfc7230#section-5.4">section of RFC 7230</a>. When the header is not set the attribute MUST NOT be set</p>
+</div>
+  </div>
+
+<p>The value of the <a href="https://tools.ietf.org/html/rfc7230#section-5.4">HTTP host header</a>. An empty Host header should also be reported, see note</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http.host</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HTTP_SCHEME-constant" class="deprecated">HTTP_SCHEME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/HTTP.html#HTTP_SCHEME-constant" title="OpenTelemetry::SemConv::Incubating::HTTP::HTTP_SCHEME (constant)">OpenTelemetry::SemConv::Incubating::HTTP::HTTP_SCHEME</a></span> for its replacement.</p>
+</div></div>
+<p>The URI scheme identifying the used protocol</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http.scheme</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HTTP_STATUS_CODE-constant" class="deprecated">HTTP_STATUS_CODE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/HTTP.html#HTTP_STATUS_CODE-constant" title="OpenTelemetry::SemConv::Incubating::HTTP::HTTP_STATUS_CODE (constant)">OpenTelemetry::SemConv::Incubating::HTTP::HTTP_STATUS_CODE</a></span> for its replacement.</p>
+</div></div>
+<p><a href="https://tools.ietf.org/html/rfc7231#section-6">HTTP response status code</a></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http.status_code</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HTTP_FLAVOR-constant" class="deprecated">HTTP_FLAVOR =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/HTTP.html#HTTP_FLAVOR-constant" title="OpenTelemetry::SemConv::Incubating::HTTP::HTTP_FLAVOR (constant)">OpenTelemetry::SemConv::Incubating::HTTP::HTTP_FLAVOR</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>If <code>net.transport</code> is not specified, it can be assumed to be <code>IP.TCP</code> except if <code>http.flavor</code> is <code>QUIC</code>, in which case <code>IP.UDP</code> is assumed</p>
+</div>
+  </div>
+
+<p>Kind of HTTP protocol used</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http.flavor</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HTTP_USER_AGENT-constant" class="deprecated">HTTP_USER_AGENT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/HTTP.html#HTTP_USER_AGENT-constant" title="OpenTelemetry::SemConv::Incubating::HTTP::HTTP_USER_AGENT (constant)">OpenTelemetry::SemConv::Incubating::HTTP::HTTP_USER_AGENT</a></span> for its replacement.</p>
+</div></div>
+<p>Value of the <a href="https://tools.ietf.org/html/rfc7231#section-5.5.3">HTTP User-Agent</a> header sent by the client</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http.user_agent</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HTTP_REQUEST_CONTENT_LENGTH-constant" class="deprecated">HTTP_REQUEST_CONTENT_LENGTH =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/HTTP.html#HTTP_REQUEST_CONTENT_LENGTH-constant" title="OpenTelemetry::SemConv::Incubating::HTTP::HTTP_REQUEST_CONTENT_LENGTH (constant)">OpenTelemetry::SemConv::Incubating::HTTP::HTTP_REQUEST_CONTENT_LENGTH</a></span> for its replacement.</p>
+</div></div>
+<p>The size of the request payload body in bytes. This is the number of bytes transferred excluding headers and is often, but not always, present as the <a href="https://tools.ietf.org/html/rfc7230#section-3.3.2">Content-Length</a> header. For requests using transport encoding, this should be the compressed size</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http.request_content_length</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HTTP_REQUEST_CONTENT_LENGTH_UNCOMPRESSED-constant" class="deprecated">HTTP_REQUEST_CONTENT_LENGTH_UNCOMPRESSED =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+There is no replacement.
+Consider using the bare content length with <span class='object_link'><a href="../SemConv/Incubating/HTTP.html#HTTP_REQUEST_CONTENT_LENGTH-constant" title="OpenTelemetry::SemConv::Incubating::HTTP::HTTP_REQUEST_CONTENT_LENGTH (constant)">OpenTelemetry::SemConv::Incubating::HTTP::HTTP_REQUEST_CONTENT_LENGTH</a></span> instead.</p>
+</div></div>
+<p>The size of the uncompressed request payload body after transport decoding. Not set if transport encoding not used</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http.request_content_length_uncompressed</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HTTP_RESPONSE_CONTENT_LENGTH-constant" class="deprecated">HTTP_RESPONSE_CONTENT_LENGTH =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/HTTP.html#HTTP_RESPONSE_CONTENT_LENGTH-constant" title="OpenTelemetry::SemConv::Incubating::HTTP::HTTP_RESPONSE_CONTENT_LENGTH (constant)">OpenTelemetry::SemConv::Incubating::HTTP::HTTP_RESPONSE_CONTENT_LENGTH</a></span> for its replacement.</p>
+</div></div>
+<p>The size of the response payload body in bytes. This is the number of bytes transferred excluding headers and is often, but not always, present as the <a href="https://tools.ietf.org/html/rfc7230#section-3.3.2">Content-Length</a> header. For requests using transport encoding, this should be the compressed size</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http.response_content_length</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HTTP_RESPONSE_CONTENT_LENGTH_UNCOMPRESSED-constant" class="deprecated">HTTP_RESPONSE_CONTENT_LENGTH_UNCOMPRESSED =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+There is no replacement.
+Consider using the bare content length with <span class='object_link'><a href="../SemConv/Incubating/HTTP.html#HTTP_RESPONSE_CONTENT_LENGTH-constant" title="OpenTelemetry::SemConv::Incubating::HTTP::HTTP_RESPONSE_CONTENT_LENGTH (constant)">OpenTelemetry::SemConv::Incubating::HTTP::HTTP_RESPONSE_CONTENT_LENGTH</a></span> instead.</p>
+</div></div>
+<p>The size of the uncompressed response payload body after transport decoding. Not set if transport encoding not used</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http.response_content_length_uncompressed</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HTTP_RETRY_COUNT-constant" class="deprecated">HTTP_RETRY_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/HTTP.html#HTTP_REQUEST_RESEND_COUNT-constant" title="OpenTelemetry::SemConv::Incubating::HTTP::HTTP_REQUEST_RESEND_COUNT (constant)">OpenTelemetry::SemConv::Incubating::HTTP::HTTP_REQUEST_RESEND_COUNT</a></span> for its replacement.</p>
+</div></div>
+<p>The ordinal number of request re-sending attempt</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http.retry_count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HTTP_SERVER_NAME-constant" class="deprecated">HTTP_SERVER_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/NET.html#NET_HOST_NAME-constant" title="OpenTelemetry::SemConv::Incubating::NET::NET_HOST_NAME (constant)">OpenTelemetry::SemConv::Incubating::NET::NET_HOST_NAME</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p><code>http.url</code> is usually not readily available on the server side but would have to be assembled in a cumbersome and sometimes lossy process from other information (see e.g. open-telemetry/opentelemetry-python/pull/148). It is thus preferred to supply the raw data that is available</p>
+</div>
+  </div>
+
+<p>The primary server name of the matched virtual host. This should be obtained via configuration. If no such configuration can be obtained, this attribute MUST NOT be set ( <code>net.host.name</code> should be used instead)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http.server_name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HTTP_ROUTE-constant" class="deprecated">HTTP_ROUTE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/HTTP.html#HTTP_ROUTE-constant" title="OpenTelemetry::SemConv::Incubating::HTTP::HTTP_ROUTE (constant)">OpenTelemetry::SemConv::Incubating::HTTP::HTTP_ROUTE</a></span> for its replacement.</p>
+</div></div>
+<p>The matched route (path template)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http.route</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="HTTP_CLIENT_IP-constant" class="deprecated">HTTP_CLIENT_IP =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/CLIENT.html#CLIENT_ADDRESS-constant" title="OpenTelemetry::SemConv::Incubating::CLIENT::CLIENT_ADDRESS (constant)">OpenTelemetry::SemConv::Incubating::CLIENT::CLIENT_ADDRESS</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>This is not necessarily the same as <code>net.peer.ip</code>, which would
+identify the network-level peer, which may be a proxy.</p>
+
+<p>This attribute should be set when a source of information different
+from the one used for <code>net.peer.ip</code>, is available even if that other
+source just confirms the same value as <code>net.peer.ip</code>.
+Rationale: For <code>net.peer.ip</code>, one typically does not know if it
+comes from a proxy, reverse proxy, or the actual client. Setting
+<code>http.client_ip</code> when it’s the same as <code>net.peer.ip</code> means that
+one is at least somewhat confident that the address is not that of
+the closest proxy</p>
+</div>
+  </div>
+
+<p>The IP address of the original client behind all proxies, if known (e.g. from <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-For">X-Forwarded-For</a>)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http.client_ip</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="NET_HOST_IP-constant" class="deprecated">NET_HOST_IP =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/NET.html#NET_SOCK_HOST_ADDR-constant" title="OpenTelemetry::SemConv::Incubating::NET::NET_SOCK_HOST_ADDR (constant)">OpenTelemetry::SemConv::Incubating::NET::NET_SOCK_HOST_ADDR</a></span> for its replacement.</p>
+</div></div>
+<p>Like <code>net.peer.ip</code> but for the host IP. Useful in case of a multi-IP host</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>net.host.ip</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="NET_HOST_PORT-constant" class="deprecated">NET_HOST_PORT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/NET.html#NET_HOST_PORT-constant" title="OpenTelemetry::SemConv::Incubating::NET::NET_HOST_PORT (constant)">OpenTelemetry::SemConv::Incubating::NET::NET_HOST_PORT</a></span> for its replacement.</p>
+</div></div>
+<p>Like <code>net.peer.port</code> but for the host port</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>net.host.port</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="NET_HOST_NAME-constant" class="deprecated">NET_HOST_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/NET.html#NET_HOST_NAME-constant" title="OpenTelemetry::SemConv::Incubating::NET::NET_HOST_NAME (constant)">OpenTelemetry::SemConv::Incubating::NET::NET_HOST_NAME</a></span> for its replacement.</p>
+</div></div>
+<p>Local hostname or similar, see note below</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>net.host.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="NET_HOST_CONNECTION_TYPE-constant" class="deprecated">NET_HOST_CONNECTION_TYPE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/NETWORK.html#NETWORK_CONNECTION_TYPE-constant" title="OpenTelemetry::SemConv::Incubating::NETWORK::NETWORK_CONNECTION_TYPE (constant)">OpenTelemetry::SemConv::Incubating::NETWORK::NETWORK_CONNECTION_TYPE</a></span> for its replacement.</p>
+</div></div>
+<p>The internet connection type currently being used by the host</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>net.host.connection.type</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="NET_HOST_CONNECTION_SUBTYPE-constant" class="deprecated">NET_HOST_CONNECTION_SUBTYPE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/NETWORK.html#NETWORK_CONNECTION_SUBTYPE-constant" title="OpenTelemetry::SemConv::Incubating::NETWORK::NETWORK_CONNECTION_SUBTYPE (constant)">OpenTelemetry::SemConv::Incubating::NETWORK::NETWORK_CONNECTION_SUBTYPE</a></span> for its replacement.</p>
+</div></div>
+<p>This describes more details regarding the connection.type. It may be the type of cell technology connection, but it could be used for describing details about a wifi connection</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>net.host.connection.subtype</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="NET_HOST_CARRIER_NAME-constant" class="deprecated">NET_HOST_CARRIER_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/NETWORK.html#NETWORK_CARRIER_NAME-constant" title="OpenTelemetry::SemConv::Incubating::NETWORK::NETWORK_CARRIER_NAME (constant)">OpenTelemetry::SemConv::Incubating::NETWORK::NETWORK_CARRIER_NAME</a></span> for its replacement.</p>
+</div></div>
+<p>The name of the mobile carrier</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>net.host.carrier.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="NET_HOST_CARRIER_MCC-constant" class="deprecated">NET_HOST_CARRIER_MCC =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/NETWORK.html#NETWORK_CARRIER_MCC-constant" title="OpenTelemetry::SemConv::Incubating::NETWORK::NETWORK_CARRIER_MCC (constant)">OpenTelemetry::SemConv::Incubating::NETWORK::NETWORK_CARRIER_MCC</a></span> for its replacement.</p>
+</div></div>
+<p>The mobile carrier country code</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>net.host.carrier.mcc</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="NET_HOST_CARRIER_MNC-constant" class="deprecated">NET_HOST_CARRIER_MNC =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/NETWORK.html#NETWORK_CARRIER_MNC-constant" title="OpenTelemetry::SemConv::Incubating::NETWORK::NETWORK_CARRIER_MNC (constant)">OpenTelemetry::SemConv::Incubating::NETWORK::NETWORK_CARRIER_MNC</a></span> for its replacement.</p>
+</div></div>
+<p>The mobile carrier network code</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>net.host.carrier.mnc</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="NET_HOST_CARRIER_ICC-constant" class="deprecated">NET_HOST_CARRIER_ICC =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/NETWORK.html#NETWORK_CARRIER_ICC-constant" title="OpenTelemetry::SemConv::Incubating::NETWORK::NETWORK_CARRIER_ICC (constant)">OpenTelemetry::SemConv::Incubating::NETWORK::NETWORK_CARRIER_ICC</a></span> for its replacement.</p>
+</div></div>
+<p>The ISO 3166-1 alpha-2 2-character country code associated with the mobile carrier network</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>net.host.carrier.icc</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_SYSTEM-constant" class="deprecated">MESSAGING_SYSTEM =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_SYSTEM-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_SYSTEM (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_SYSTEM</a></span> for its replacement.</p>
+</div></div>
+<p>A string identifying the messaging system</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.system</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_DESTINATION-constant" class="deprecated">MESSAGING_DESTINATION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_DESTINATION_NAME-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_DESTINATION_NAME (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_DESTINATION_NAME</a></span> for its replacement.</p>
+</div></div>
+<p>The message destination name. This might be equal to the span name but is required nevertheless</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.destination</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_DESTINATION_KIND-constant" class="deprecated">MESSAGING_DESTINATION_KIND =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+This attribute was renamed in v1.17.0 and its replacement was removed in v1.20.0.</p>
+</div></div>
+<p>The kind of message destination</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.destination_kind</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_TEMP_DESTINATION-constant" class="deprecated">MESSAGING_TEMP_DESTINATION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_DESTINATION_TEMPORARY-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_DESTINATION_TEMPORARY (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_DESTINATION_TEMPORARY</a></span> for its replacement.</p>
+</div></div>
+<p>A boolean that is true if the message destination is temporary</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.temp_destination</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_PROTOCOL-constant" class="deprecated">MESSAGING_PROTOCOL =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/NET.html#NET_PROTOCOL_NAME-constant" title="OpenTelemetry::SemConv::Incubating::NET::NET_PROTOCOL_NAME (constant)">OpenTelemetry::SemConv::Incubating::NET::NET_PROTOCOL_NAME</a></span> for its replacement.</p>
+</div></div>
+<p>The name of the transport protocol</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.protocol</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_PROTOCOL_VERSION-constant" class="deprecated">MESSAGING_PROTOCOL_VERSION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/NET.html#NET_PROTOCOL_VERSION-constant" title="OpenTelemetry::SemConv::Incubating::NET::NET_PROTOCOL_VERSION (constant)">OpenTelemetry::SemConv::Incubating::NET::NET_PROTOCOL_VERSION</a></span> for its replacement.</p>
+</div></div>
+<p>The version of the transport protocol</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.protocol_version</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_URL-constant" class="deprecated">MESSAGING_URL =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+This attribute was removed in v1.17.0.</p>
+</div></div>
+<p>Connection string</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.url</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_MESSAGE_ID-constant" class="deprecated">MESSAGING_MESSAGE_ID =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_MESSAGE_ID-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_MESSAGE_ID (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_MESSAGE_ID</a></span> for its replacement.</p>
+</div></div>
+<p>A value used by the messaging system as an identifier for the message, represented as a string</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.message_id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_CONVERSATION_ID-constant" class="deprecated">MESSAGING_CONVERSATION_ID =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_MESSAGE_CONVERSATION_ID-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_MESSAGE_CONVERSATION_ID (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_MESSAGE_CONVERSATION_ID</a></span> for its replacement.</p>
+</div></div>
+<p>The <a href="#conversations">conversation ID</a> identifying the conversation to which the message belongs, represented as a string. Sometimes called “Correlation ID”</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.conversation_id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES-constant" class="deprecated">MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_MESSAGE_BODY_SIZE-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_MESSAGE_BODY_SIZE (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_MESSAGE_BODY_SIZE</a></span> for its replacement.</p>
+</div></div>
+<p>The (uncompressed) size of the message payload in bytes. Also use this attribute if it is unknown whether the compressed or uncompressed payload size is reported</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.message_payload_size_bytes</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_MESSAGE_PAYLOAD_COMPRESSED_SIZE_BYTES-constant" class="deprecated">MESSAGING_MESSAGE_PAYLOAD_COMPRESSED_SIZE_BYTES =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+This attribute was removed in v1.22.0.</p>
+</div></div>
+<p>The compressed size of the message payload in bytes</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.message_payload_compressed_size_bytes</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_TIME-constant" class="deprecated">FAAS_TIME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/FAAS.html#FAAS_TIME-constant" title="OpenTelemetry::SemConv::Incubating::FAAS::FAAS_TIME (constant)">OpenTelemetry::SemConv::Incubating::FAAS::FAAS_TIME</a></span> for its replacement.</p>
+</div></div>
+<p>A string containing the function invocation time in the <a href="https://www.iso.org/iso-8601-date-and-time-format.html">ISO 8601</a> format expressed in <a href="https://www.w3.org/TR/NOTE-datetime">UTC</a></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.time</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_CRON-constant" class="deprecated">FAAS_CRON =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/FAAS.html#FAAS_CRON-constant" title="OpenTelemetry::SemConv::Incubating::FAAS::FAAS_CRON (constant)">OpenTelemetry::SemConv::Incubating::FAAS::FAAS_CRON</a></span> for its replacement.</p>
+</div></div>
+<p>A string containing the schedule period as <a href="https://docs.oracle.com/cd/E12058_01/doc/doc.1014/e12030/cron_expressions.htm">Cron Expression</a></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.cron</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_COLDSTART-constant" class="deprecated">FAAS_COLDSTART =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/FAAS.html#FAAS_COLDSTART-constant" title="OpenTelemetry::SemConv::Incubating::FAAS::FAAS_COLDSTART (constant)">OpenTelemetry::SemConv::Incubating::FAAS::FAAS_COLDSTART</a></span> for its replacement.</p>
+</div></div>
+<p>A boolean that is true if the serverless function is executed for the first time (aka cold-start)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.coldstart</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_INVOKED_NAME-constant" class="deprecated">FAAS_INVOKED_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/FAAS.html#FAAS_INVOKED_NAME-constant" title="OpenTelemetry::SemConv::Incubating::FAAS::FAAS_INVOKED_NAME (constant)">OpenTelemetry::SemConv::Incubating::FAAS::FAAS_INVOKED_NAME</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>SHOULD be equal to the <code>faas.name</code> resource attribute of the invoked function</p>
+</div>
+  </div>
+
+<p>The name of the invoked function</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.invoked_name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_INVOKED_PROVIDER-constant" class="deprecated">FAAS_INVOKED_PROVIDER =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/FAAS.html#FAAS_INVOKED_PROVIDER-constant" title="OpenTelemetry::SemConv::Incubating::FAAS::FAAS_INVOKED_PROVIDER (constant)">OpenTelemetry::SemConv::Incubating::FAAS::FAAS_INVOKED_PROVIDER</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>SHOULD be equal to the <code>cloud.provider</code> resource attribute of the invoked function</p>
+</div>
+  </div>
+
+<p>The cloud provider of the invoked function</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.invoked_provider</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="FAAS_INVOKED_REGION-constant" class="deprecated">FAAS_INVOKED_REGION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/FAAS.html#FAAS_INVOKED_REGION-constant" title="OpenTelemetry::SemConv::Incubating::FAAS::FAAS_INVOKED_REGION (constant)">OpenTelemetry::SemConv::Incubating::FAAS::FAAS_INVOKED_REGION</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>SHOULD be equal to the <code>cloud.region</code> resource attribute of the invoked function</p>
+</div>
+  </div>
+
+<p>The cloud region of the invoked function</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>faas.invoked_region</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PEER_SERVICE-constant" class="deprecated">PEER_SERVICE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/PEER.html#PEER_SERVICE-constant" title="OpenTelemetry::SemConv::Incubating::PEER::PEER_SERVICE (constant)">OpenTelemetry::SemConv::Incubating::PEER::PEER_SERVICE</a></span> for its replacement.</p>
+</div></div>
+<p>The <a href="../../resource/semantic_conventions/README.md#service"><code>service.name</code></a> of the remote service. SHOULD be equal to the actual <code>service.name</code> resource attribute of the remote service if any</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>peer.service</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="ENDUSER_ID-constant" class="deprecated">ENDUSER_ID =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/ENDUSER.html#ENDUSER_ID-constant" title="OpenTelemetry::SemConv::Incubating::ENDUSER::ENDUSER_ID (constant)">OpenTelemetry::SemConv::Incubating::ENDUSER::ENDUSER_ID</a></span> for its replacement.</p>
+</div></div>
+<p>Username or client_id extracted from the access token or <a href="https://tools.ietf.org/html/rfc7235#section-4.2">Authorization</a> header in the inbound request from outside the system</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>enduser.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="ENDUSER_ROLE-constant" class="deprecated">ENDUSER_ROLE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/ENDUSER.html#ENDUSER_ROLE-constant" title="OpenTelemetry::SemConv::Incubating::ENDUSER::ENDUSER_ROLE (constant)">OpenTelemetry::SemConv::Incubating::ENDUSER::ENDUSER_ROLE</a></span> for its replacement.</p>
+</div></div>
+<p>Actual/assumed role the client is making the request under extracted from token or application security context</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>enduser.role</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="ENDUSER_SCOPE-constant" class="deprecated">ENDUSER_SCOPE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/ENDUSER.html#ENDUSER_SCOPE-constant" title="OpenTelemetry::SemConv::Incubating::ENDUSER::ENDUSER_SCOPE (constant)">OpenTelemetry::SemConv::Incubating::ENDUSER::ENDUSER_SCOPE</a></span> for its replacement.</p>
+</div></div>
+<p>Scopes or granted authorities the client currently possesses extracted from token or application security context. The value would come from the scope associated with an <a href="https://tools.ietf.org/html/rfc6749#section-3.3">OAuth 2.0 Access Token</a> or an attribute value in a <a href="http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-tech-overview-2.0.html">SAML 2.0 Assertion</a></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>enduser.scope</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="THREAD_ID-constant" class="deprecated">THREAD_ID =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/THREAD.html#THREAD_ID-constant" title="OpenTelemetry::SemConv::Incubating::THREAD::THREAD_ID (constant)">OpenTelemetry::SemConv::Incubating::THREAD::THREAD_ID</a></span> for its replacement.</p>
+</div></div>
+<p>Current “managed” thread ID (as opposed to OS thread ID)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>thread.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="THREAD_NAME-constant" class="deprecated">THREAD_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/THREAD.html#THREAD_NAME-constant" title="OpenTelemetry::SemConv::Incubating::THREAD::THREAD_NAME (constant)">OpenTelemetry::SemConv::Incubating::THREAD::THREAD_NAME</a></span> for its replacement.</p>
+</div></div>
+<p>Current thread name</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>thread.name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="CODE_FUNCTION-constant" class="deprecated">CODE_FUNCTION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/CODE.html#CODE_FUNCTION-constant" title="OpenTelemetry::SemConv::Incubating::CODE::CODE_FUNCTION (constant)">OpenTelemetry::SemConv::Incubating::CODE::CODE_FUNCTION</a></span> for its replacement.</p>
+</div></div>
+<p>The method or function name, or equivalent (usually rightmost part of the code unit’s name)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>code.function</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="CODE_NAMESPACE-constant" class="deprecated">CODE_NAMESPACE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/CODE.html#CODE_NAMESPACE-constant" title="OpenTelemetry::SemConv::Incubating::CODE::CODE_NAMESPACE (constant)">OpenTelemetry::SemConv::Incubating::CODE::CODE_NAMESPACE</a></span> for its replacement.</p>
+</div></div>
+<p>The “namespace” within which <code>code.function</code> is defined. Usually the qualified class or module name, such that <code>code.namespace</code> + some separator + <code>code.function</code> form a unique identifier for the code unit</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>code.namespace</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="CODE_FILEPATH-constant" class="deprecated">CODE_FILEPATH =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/CODE.html#CODE_FILEPATH-constant" title="OpenTelemetry::SemConv::Incubating::CODE::CODE_FILEPATH (constant)">OpenTelemetry::SemConv::Incubating::CODE::CODE_FILEPATH</a></span> for its replacement.</p>
+</div></div>
+<p>The source code file name that identifies the code unit as uniquely as possible (preferably an absolute file path)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>code.filepath</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="CODE_LINENO-constant" class="deprecated">CODE_LINENO =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/CODE.html#CODE_LINENO-constant" title="OpenTelemetry::SemConv::Incubating::CODE::CODE_LINENO (constant)">OpenTelemetry::SemConv::Incubating::CODE::CODE_LINENO</a></span> for its replacement.</p>
+</div></div>
+<p>The line number in <code>code.filepath</code> best representing the operation. It SHOULD point within the code unit named in <code>code.function</code></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>code.lineno</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="RPC_SYSTEM-constant" class="deprecated">RPC_SYSTEM =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/RPC.html#RPC_SYSTEM-constant" title="OpenTelemetry::SemConv::Incubating::RPC::RPC_SYSTEM (constant)">OpenTelemetry::SemConv::Incubating::RPC::RPC_SYSTEM</a></span> for its replacement.</p>
+</div></div>
+<p>The value <code>aws-api</code></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>rpc.system</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="RPC_SERVICE-constant" class="deprecated">RPC_SERVICE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/RPC.html#RPC_SERVICE-constant" title="OpenTelemetry::SemConv::Incubating::RPC::RPC_SERVICE (constant)">OpenTelemetry::SemConv::Incubating::RPC::RPC_SERVICE</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>This is the logical name of the service from the RPC interface perspective, which can be different from the name of any implementing class. The <code>code.namespace</code> attribute may be used to store the latter (despite the attribute name, it may include a class name; e.g., class with method actually executing the call on the server side, RPC client stub class on the client side)</p>
+</div>
+  </div>
+
+<p>The name of the service to which a request is made, as returned by the AWS SDK</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>rpc.service</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="RPC_METHOD-constant" class="deprecated">RPC_METHOD =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/RPC.html#RPC_METHOD-constant" title="OpenTelemetry::SemConv::Incubating::RPC::RPC_METHOD (constant)">OpenTelemetry::SemConv::Incubating::RPC::RPC_METHOD</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>This is the logical name of the method from the RPC interface perspective, which can be different from the name of any implementing method/function. The <code>code.function</code> attribute may be used to store the latter (e.g., method actually executing the call on the server side, RPC client stub method on the client side)</p>
+</div>
+  </div>
+
+<p>The name of the operation corresponding to the request, as returned by the AWS SDK</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>rpc.method</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_TABLE_NAMES-constant" class="deprecated">AWS_DYNAMODB_TABLE_NAMES =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_TABLE_NAMES-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_TABLE_NAMES (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_TABLE_NAMES</a></span> for its replacement.</p>
+</div></div>
+<p>The keys in the <code>RequestItems</code> object field</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.table_names</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_CONSUMED_CAPACITY-constant" class="deprecated">AWS_DYNAMODB_CONSUMED_CAPACITY =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_CONSUMED_CAPACITY-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_CONSUMED_CAPACITY (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_CONSUMED_CAPACITY</a></span> for its replacement.</p>
+</div></div>
+<p>The JSON-serialized value of each item in the <code>ConsumedCapacity</code> response field</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.consumed_capacity</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_ITEM_COLLECTION_METRICS-constant" class="deprecated">AWS_DYNAMODB_ITEM_COLLECTION_METRICS =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_ITEM_COLLECTION_METRICS-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_ITEM_COLLECTION_METRICS (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_ITEM_COLLECTION_METRICS</a></span> for its replacement.</p>
+</div></div>
+<p>The JSON-serialized value of the <code>ItemCollectionMetrics</code> response field</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.item_collection_metrics</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_PROVISIONED_READ_CAPACITY-constant" class="deprecated">AWS_DYNAMODB_PROVISIONED_READ_CAPACITY =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_PROVISIONED_READ_CAPACITY-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_PROVISIONED_READ_CAPACITY (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_PROVISIONED_READ_CAPACITY</a></span> for its replacement.</p>
+</div></div>
+<p>The value of the <code>ProvisionedThroughput.ReadCapacityUnits</code> request parameter</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.provisioned_read_capacity</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_PROVISIONED_WRITE_CAPACITY-constant" class="deprecated">AWS_DYNAMODB_PROVISIONED_WRITE_CAPACITY =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_PROVISIONED_WRITE_CAPACITY-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_PROVISIONED_WRITE_CAPACITY (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_PROVISIONED_WRITE_CAPACITY</a></span> for its replacement.</p>
+</div></div>
+<p>The value of the <code>ProvisionedThroughput.WriteCapacityUnits</code> request parameter</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.provisioned_write_capacity</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_CONSISTENT_READ-constant" class="deprecated">AWS_DYNAMODB_CONSISTENT_READ =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_CONSISTENT_READ-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_CONSISTENT_READ (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_CONSISTENT_READ</a></span> for its replacement.</p>
+</div></div>
+<p>The value of the <code>ConsistentRead</code> request parameter</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.consistent_read</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_PROJECTION-constant" class="deprecated">AWS_DYNAMODB_PROJECTION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_PROJECTION-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_PROJECTION (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_PROJECTION</a></span> for its replacement.</p>
+</div></div>
+<p>The value of the <code>ProjectionExpression</code> request parameter</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.projection</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_LIMIT-constant" class="deprecated">AWS_DYNAMODB_LIMIT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_LIMIT-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_LIMIT (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_LIMIT</a></span> for its replacement.</p>
+</div></div>
+<p>The value of the <code>Limit</code> request parameter</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.limit</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_ATTRIBUTES_TO_GET-constant" class="deprecated">AWS_DYNAMODB_ATTRIBUTES_TO_GET =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_ATTRIBUTES_TO_GET-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_ATTRIBUTES_TO_GET (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_ATTRIBUTES_TO_GET</a></span> for its replacement.</p>
+</div></div>
+<p>The value of the <code>AttributesToGet</code> request parameter</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.attributes_to_get</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_INDEX_NAME-constant" class="deprecated">AWS_DYNAMODB_INDEX_NAME =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_INDEX_NAME-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_INDEX_NAME (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_INDEX_NAME</a></span> for its replacement.</p>
+</div></div>
+<p>The value of the <code>IndexName</code> request parameter</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.index_name</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_SELECT-constant" class="deprecated">AWS_DYNAMODB_SELECT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_SELECT-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_SELECT (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_SELECT</a></span> for its replacement.</p>
+</div></div>
+<p>The value of the <code>Select</code> request parameter</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.select</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_GLOBAL_SECONDARY_INDEXES-constant" class="deprecated">AWS_DYNAMODB_GLOBAL_SECONDARY_INDEXES =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_GLOBAL_SECONDARY_INDEXES-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_GLOBAL_SECONDARY_INDEXES (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_GLOBAL_SECONDARY_INDEXES</a></span> for its replacement.</p>
+</div></div>
+<p>The JSON-serialized value of each item of the <code>GlobalSecondaryIndexes</code> request field</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.global_secondary_indexes</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_LOCAL_SECONDARY_INDEXES-constant" class="deprecated">AWS_DYNAMODB_LOCAL_SECONDARY_INDEXES =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_LOCAL_SECONDARY_INDEXES-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_LOCAL_SECONDARY_INDEXES (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_LOCAL_SECONDARY_INDEXES</a></span> for its replacement.</p>
+</div></div>
+<p>The JSON-serialized value of each item of the <code>LocalSecondaryIndexes</code> request field</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.local_secondary_indexes</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_EXCLUSIVE_START_TABLE-constant" class="deprecated">AWS_DYNAMODB_EXCLUSIVE_START_TABLE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_EXCLUSIVE_START_TABLE-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_EXCLUSIVE_START_TABLE (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_EXCLUSIVE_START_TABLE</a></span> for its replacement.</p>
+</div></div>
+<p>The value of the <code>ExclusiveStartTableName</code> request parameter</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.exclusive_start_table</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_TABLE_COUNT-constant" class="deprecated">AWS_DYNAMODB_TABLE_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_TABLE_COUNT-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_TABLE_COUNT (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_TABLE_COUNT</a></span> for its replacement.</p>
+</div></div>
+<p>The the number of items in the <code>TableNames</code> response parameter</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.table_count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_SCAN_FORWARD-constant" class="deprecated">AWS_DYNAMODB_SCAN_FORWARD =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_SCAN_FORWARD-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_SCAN_FORWARD (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_SCAN_FORWARD</a></span> for its replacement.</p>
+</div></div>
+<p>The value of the <code>ScanIndexForward</code> request parameter</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.scan_forward</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_SEGMENT-constant" class="deprecated">AWS_DYNAMODB_SEGMENT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_SEGMENT-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_SEGMENT (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_SEGMENT</a></span> for its replacement.</p>
+</div></div>
+<p>The value of the <code>Segment</code> request parameter</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.segment</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_TOTAL_SEGMENTS-constant" class="deprecated">AWS_DYNAMODB_TOTAL_SEGMENTS =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_TOTAL_SEGMENTS-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_TOTAL_SEGMENTS (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_TOTAL_SEGMENTS</a></span> for its replacement.</p>
+</div></div>
+<p>The value of the <code>TotalSegments</code> request parameter</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.total_segments</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_COUNT-constant" class="deprecated">AWS_DYNAMODB_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_COUNT-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_COUNT (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_COUNT</a></span> for its replacement.</p>
+</div></div>
+<p>The value of the <code>Count</code> response parameter</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_SCANNED_COUNT-constant" class="deprecated">AWS_DYNAMODB_SCANNED_COUNT =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_SCANNED_COUNT-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_SCANNED_COUNT (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_SCANNED_COUNT</a></span> for its replacement.</p>
+</div></div>
+<p>The value of the <code>ScannedCount</code> response parameter</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.scanned_count</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_ATTRIBUTE_DEFINITIONS-constant" class="deprecated">AWS_DYNAMODB_ATTRIBUTE_DEFINITIONS =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_ATTRIBUTE_DEFINITIONS-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_ATTRIBUTE_DEFINITIONS (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_ATTRIBUTE_DEFINITIONS</a></span> for its replacement.</p>
+</div></div>
+<p>The JSON-serialized value of each item in the <code>AttributeDefinitions</code> request field</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.attribute_definitions</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="AWS_DYNAMODB_GLOBAL_SECONDARY_INDEX_UPDATES-constant" class="deprecated">AWS_DYNAMODB_GLOBAL_SECONDARY_INDEX_UPDATES =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/AWS.html#AWS_DYNAMODB_GLOBAL_SECONDARY_INDEX_UPDATES-constant" title="OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_GLOBAL_SECONDARY_INDEX_UPDATES (constant)">OpenTelemetry::SemConv::Incubating::AWS::AWS_DYNAMODB_GLOBAL_SECONDARY_INDEX_UPDATES</a></span> for its replacement.</p>
+</div></div>
+<p>The JSON-serialized value of each item in the the <code>GlobalSecondaryIndexUpdates</code> request field</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>aws.dynamodb.global_secondary_index_updates</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_OPERATION-constant" class="deprecated">MESSAGING_OPERATION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_OPERATION-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_OPERATION (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_OPERATION</a></span> for its replacement.</p>
+</div></div>
+<p>A string identifying the kind of message consumption as defined in the <a href="#operation-names">Operation names</a> section above. If the operation is “send”, this attribute MUST NOT be set, since the operation can be inferred from the span kind in that case</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.operation</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_CONSUMER_ID-constant" class="deprecated">MESSAGING_CONSUMER_ID =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_CLIENT_ID-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_CLIENT_ID (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_CLIENT_ID</a></span> for its replacement.</p>
+</div></div>
+<p>The identifier for the consumer receiving a message. For Kafka, set it to <code>{messaging.kafka.consumer_group} - {messaging.kafka.client_id}</code>, if both are present, or only <code>messaging.kafka.consumer_group</code>. For brokers, such as RabbitMQ and Artemis, set it to the <code>client_id</code> of the client consuming the message</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.consumer_id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_RABBITMQ_ROUTING_KEY-constant" class="deprecated">MESSAGING_RABBITMQ_ROUTING_KEY =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_RABBITMQ_DESTINATION_ROUTING_KEY-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_RABBITMQ_DESTINATION_ROUTING_KEY (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_RABBITMQ_DESTINATION_ROUTING_KEY</a></span> for its replacement.</p>
+</div></div>
+<p>RabbitMQ message routing key</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.rabbitmq.routing_key</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_KAFKA_MESSAGE_KEY-constant" class="deprecated">MESSAGING_KAFKA_MESSAGE_KEY =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_KAFKA_MESSAGE_KEY-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_KAFKA_MESSAGE_KEY (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_KAFKA_MESSAGE_KEY</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>If the key type is not string, it’s string representation has to be supplied for the attribute. If the key has no unambiguous, canonical string form, don’t include its value</p>
+</div>
+  </div>
+
+<p>Message keys in Kafka are used for grouping alike messages to ensure they’re processed on the same partition. They differ from <code>messaging.message_id</code> in that they’re not unique. If the key is <code>null</code>, the attribute MUST NOT be set</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.kafka.message_key</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_KAFKA_CONSUMER_GROUP-constant" class="deprecated">MESSAGING_KAFKA_CONSUMER_GROUP =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_KAFKA_CONSUMER_GROUP-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_KAFKA_CONSUMER_GROUP (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_KAFKA_CONSUMER_GROUP</a></span> for its replacement.</p>
+</div></div>
+<p>Name of the Kafka Consumer Group that is handling the message. Only applies to consumers, not producers</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.kafka.consumer_group</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_KAFKA_CLIENT_ID-constant" class="deprecated">MESSAGING_KAFKA_CLIENT_ID =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_CLIENT_ID-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_CLIENT_ID (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_CLIENT_ID</a></span> for its replacement.</p>
+</div></div>
+<p>Client Id for the Consumer or Producer that is handling the message</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.kafka.client_id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_KAFKA_PARTITION-constant" class="deprecated">MESSAGING_KAFKA_PARTITION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_KAFKA_DESTINATION_PARTITION-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_KAFKA_DESTINATION_PARTITION (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_KAFKA_DESTINATION_PARTITION</a></span> for its replacement.</p>
+</div></div>
+<p>Partition the message is sent to</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.kafka.partition</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_KAFKA_TOMBSTONE-constant" class="deprecated">MESSAGING_KAFKA_TOMBSTONE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_KAFKA_MESSAGE_TOMBSTONE-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_KAFKA_MESSAGE_TOMBSTONE (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_KAFKA_MESSAGE_TOMBSTONE</a></span> for its replacement.</p>
+</div></div>
+<p>A boolean that is true if the message is a tombstone</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.kafka.tombstone</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_ROCKETMQ_NAMESPACE-constant" class="deprecated">MESSAGING_ROCKETMQ_NAMESPACE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_ROCKETMQ_NAMESPACE-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_ROCKETMQ_NAMESPACE (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_ROCKETMQ_NAMESPACE</a></span> for its replacement.</p>
+</div></div>
+<p>Namespace of RocketMQ resources, resources in different namespaces are individual</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.rocketmq.namespace</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_ROCKETMQ_CLIENT_GROUP-constant" class="deprecated">MESSAGING_ROCKETMQ_CLIENT_GROUP =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_ROCKETMQ_CLIENT_GROUP-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_ROCKETMQ_CLIENT_GROUP (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_ROCKETMQ_CLIENT_GROUP</a></span> for its replacement.</p>
+</div></div>
+<p>Name of the RocketMQ producer/consumer group that is handling the message. The client type is identified by the SpanKind</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.rocketmq.client_group</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_ROCKETMQ_CLIENT_ID-constant" class="deprecated">MESSAGING_ROCKETMQ_CLIENT_ID =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_CLIENT_ID-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_CLIENT_ID (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_CLIENT_ID</a></span> for its replacement.</p>
+</div></div>
+<p>The unique identifier for each client</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.rocketmq.client_id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_ROCKETMQ_MESSAGE_TYPE-constant" class="deprecated">MESSAGING_ROCKETMQ_MESSAGE_TYPE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_ROCKETMQ_MESSAGE_TYPE-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_ROCKETMQ_MESSAGE_TYPE (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_ROCKETMQ_MESSAGE_TYPE</a></span> for its replacement.</p>
+</div></div>
+<p>Type of message</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.rocketmq.message_type</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_ROCKETMQ_MESSAGE_TAG-constant" class="deprecated">MESSAGING_ROCKETMQ_MESSAGE_TAG =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_ROCKETMQ_MESSAGE_TAG-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_ROCKETMQ_MESSAGE_TAG (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_ROCKETMQ_MESSAGE_TAG</a></span> for its replacement.</p>
+</div></div>
+<p>The secondary classifier of message besides topic</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.rocketmq.message_tag</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_ROCKETMQ_MESSAGE_KEYS-constant" class="deprecated">MESSAGING_ROCKETMQ_MESSAGE_KEYS =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_ROCKETMQ_MESSAGE_KEYS-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_ROCKETMQ_MESSAGE_KEYS (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_ROCKETMQ_MESSAGE_KEYS</a></span> for its replacement.</p>
+</div></div>
+<p>Key(s) of message, another way to mark message besides message id</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.rocketmq.message_keys</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGING_ROCKETMQ_CONSUMPTION_MODEL-constant" class="deprecated">MESSAGING_ROCKETMQ_CONSUMPTION_MODEL =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGING.html#MESSAGING_ROCKETMQ_CONSUMPTION_MODEL-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_ROCKETMQ_CONSUMPTION_MODEL (constant)">OpenTelemetry::SemConv::Incubating::MESSAGING::MESSAGING_ROCKETMQ_CONSUMPTION_MODEL</a></span> for its replacement.</p>
+</div></div>
+<p>Model of message consumption. This only applies to consumer spans</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>messaging.rocketmq.consumption_model</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="RPC_GRPC_STATUS_CODE-constant" class="deprecated">RPC_GRPC_STATUS_CODE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/RPC.html#RPC_GRPC_STATUS_CODE-constant" title="OpenTelemetry::SemConv::Incubating::RPC::RPC_GRPC_STATUS_CODE (constant)">OpenTelemetry::SemConv::Incubating::RPC::RPC_GRPC_STATUS_CODE</a></span> for its replacement.</p>
+</div></div>
+<p>The <a href="https://github.com/grpc/grpc/blob/v1.33.2/doc/statuscodes.md">numeric status code</a> of the gRPC request</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>rpc.grpc.status_code</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="RPC_JSONRPC_VERSION-constant" class="deprecated">RPC_JSONRPC_VERSION =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/RPC.html#RPC_JSONRPC_VERSION-constant" title="OpenTelemetry::SemConv::Incubating::RPC::RPC_JSONRPC_VERSION (constant)">OpenTelemetry::SemConv::Incubating::RPC::RPC_JSONRPC_VERSION</a></span> for its replacement.</p>
+</div></div>
+<p>Protocol version as in <code>jsonrpc</code> property of request/response. Since JSON-RPC 1.0 does not specify this, the value can be omitted</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>rpc.jsonrpc.version</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="RPC_JSONRPC_REQUEST_ID-constant" class="deprecated">RPC_JSONRPC_REQUEST_ID =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/RPC.html#RPC_JSONRPC_REQUEST_ID-constant" title="OpenTelemetry::SemConv::Incubating::RPC::RPC_JSONRPC_REQUEST_ID (constant)">OpenTelemetry::SemConv::Incubating::RPC::RPC_JSONRPC_REQUEST_ID</a></span> for its replacement.</p>
+</div></div>
+<p><code>id</code> property of request or response. Since protocol allows id to be int, string, <code>null</code> or missing (for notifications), value is expected to be cast to string for simplicity. Use empty string in case of <code>null</code> value. Omit entirely if this is a notification</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>rpc.jsonrpc.request_id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="RPC_JSONRPC_ERROR_CODE-constant" class="deprecated">RPC_JSONRPC_ERROR_CODE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/RPC.html#RPC_JSONRPC_ERROR_CODE-constant" title="OpenTelemetry::SemConv::Incubating::RPC::RPC_JSONRPC_ERROR_CODE (constant)">OpenTelemetry::SemConv::Incubating::RPC::RPC_JSONRPC_ERROR_CODE</a></span> for its replacement.</p>
+</div></div>
+<p><code>error.code</code> property of response if it is an error response</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>rpc.jsonrpc.error_code</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="RPC_JSONRPC_ERROR_MESSAGE-constant" class="deprecated">RPC_JSONRPC_ERROR_MESSAGE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/RPC.html#RPC_JSONRPC_ERROR_MESSAGE-constant" title="OpenTelemetry::SemConv::Incubating::RPC::RPC_JSONRPC_ERROR_MESSAGE (constant)">OpenTelemetry::SemConv::Incubating::RPC::RPC_JSONRPC_ERROR_MESSAGE</a></span> for its replacement.</p>
+</div></div>
+<p><code>error.message</code> property of response if it is an error response</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>rpc.jsonrpc.error_message</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGE_TYPE-constant" class="deprecated">MESSAGE_TYPE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGE.html#MESSAGE_TYPE-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGE::MESSAGE_TYPE (constant)">OpenTelemetry::SemConv::Incubating::MESSAGE::MESSAGE_TYPE</a></span> for its replacement.</p>
+</div></div>
+<p>Whether this is a received or sent message</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>message.type</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGE_ID-constant" class="deprecated">MESSAGE_ID =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGE.html#MESSAGE_ID-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGE::MESSAGE_ID (constant)">OpenTelemetry::SemConv::Incubating::MESSAGE::MESSAGE_ID</a></span> for its replacement.</p>
+</div></div>
+
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>This way we guarantee that the values will be consistent between different implementations</p>
+</div>
+  </div>
+
+<p>MUST be calculated as two different counters starting from <code>1</code> one for sent messages and one for received message</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>message.id</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGE_COMPRESSED_SIZE-constant" class="deprecated">MESSAGE_COMPRESSED_SIZE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGE.html#MESSAGE_COMPRESSED_SIZE-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGE::MESSAGE_COMPRESSED_SIZE (constant)">OpenTelemetry::SemConv::Incubating::MESSAGE::MESSAGE_COMPRESSED_SIZE</a></span> for its replacement.</p>
+</div></div>
+<p>Compressed size of the message in bytes</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>message.compressed_size</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MESSAGE_UNCOMPRESSED_SIZE-constant" class="deprecated">MESSAGE_UNCOMPRESSED_SIZE =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>The <span class='object_link'><a href="" title="OpenTelemetry::SemanticConventions::Trace (module)">OpenTelemetry::SemanticConventions::Trace</a></span> module is deprecated.
+See <span class='object_link'><a href="../SemConv/Incubating/MESSAGE.html#MESSAGE_UNCOMPRESSED_SIZE-constant" title="OpenTelemetry::SemConv::Incubating::MESSAGE::MESSAGE_UNCOMPRESSED_SIZE (constant)">OpenTelemetry::SemConv::Incubating::MESSAGE::MESSAGE_UNCOMPRESSED_SIZE</a></span> for its replacement.</p>
+</div></div>
+<p>Uncompressed size of the message in bytes</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>message.uncompressed_size</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+
+
+</div>
+
+      <div id="footer">
+  Generated on Tue Sep 16 23:34:24 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.1.6).
+</div>
+
+    </div>
+  </body>
+</html>
