@@ -330,6 +330,18 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       _(span.status.description).must_equal('Unhandled exception of type: RuntimeError')
     end
 
+    it 'does not record an exception if record_exception is false' do
+      span = nil
+      _(proc do
+        tracer.in_span('op', record_exception: false) do |s|
+          span = s
+          raise 'this is fine'
+        end
+      end).must_raise(RuntimeError)
+
+      _(span.events).must_be_nil
+    end
+
     it 'yields a no-op span within an untraced block' do
       tracer.in_span('root') do
         span_id = OpenTelemetry::Trace.current_span.context.span_id
