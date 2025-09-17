@@ -672,6 +672,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_INTERNAL,
                       start_time_unix_nano: (start_timestamp.to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
+                      flags: (
+                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                        0x01
+                      ),
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_OK
                       )
@@ -684,6 +688,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_CLIENT,
                       start_time_unix_nano: ((start_timestamp + 2).to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
+                      flags: (
+                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                        0x01
+                      ),
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_UNSET
                       )
@@ -696,6 +704,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_CONSUMER,
                       start_time_unix_nano: ((start_timestamp + 5).to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
+                      flags: (
+                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                        0x01
+                      ),
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_UNSET
                       )
@@ -740,11 +752,19 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                           span_id: root_span_id,
                           attributes: [
                             Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'attr', value: Opentelemetry::Proto::Common::V1::AnyValue.new(int_value: 4))
-                          ]
+                          ],
+                          flags: (
+                            Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                            0x01
+                          )
                         )
                       ],
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_ERROR
+                      ),
+                      flags: (
+                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                        0x01
                       )
                     )
                   ]
@@ -762,6 +782,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_SERVER,
                       start_time_unix_nano: ((start_timestamp + 3).to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
+                      flags: (
+                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                        0x01
+                      ),
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_UNSET
                       )
