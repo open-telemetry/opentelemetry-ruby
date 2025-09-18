@@ -912,7 +912,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
         'test-span',                    # name
         :internal,                      # kind
         OpenTelemetry::Trace::Status.ok, # status
-        parent_span_id,                 # parent_span_id
+        parent_span_id, # parent_span_id
         0,                             # total_recorded_attributes
         0,                             # total_recorded_events
         links.size,                    # total_recorded_links
@@ -927,7 +927,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
         trace_id,                      # trace_id
         OpenTelemetry::Trace::TraceFlags::DEFAULT, # trace_flags
         OpenTelemetry::Trace::Tracestate::DEFAULT, # tracestate
-        parent_span_is_remote          # parent_span_is_remote
+        parent_span_is_remote # parent_span_is_remote
       )
     end
 
