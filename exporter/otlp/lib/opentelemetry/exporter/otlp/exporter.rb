@@ -107,11 +107,12 @@ module OpenTelemetry
         # This follows the OTLP specification for span flags.
         def build_span_flags(parent_span_is_remote, base_flags)
           # Extract integer value from TraceFlags object if needed
-          base_flags_int = if base_flags.is_a?(OpenTelemetry::Trace::TraceFlags)
-                              base_flags.instance_variable_get(:@flags)
-                            else
-                              base_flags
-                            end
+          base_flags_int =
+            if base_flags.is_a?(OpenTelemetry::Trace::TraceFlags)
+              base_flags.instance_variable_get(:@flags)
+            else
+              base_flags
+            end
 
           has_remote_mask = Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
           is_remote_mask = Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
