@@ -107,11 +107,12 @@ module OpenTelemetry
         # This follows the OTLP specification for span flags.
         def build_span_flags(parent_span_is_remote, base_flags)
           # Extract integer value from TraceFlags object if needed
+          # Derive the low 8-bit W3C trace flags using the public API.
           base_flags_int =
-            if base_flags.is_a?(OpenTelemetry::Trace::TraceFlags)
-              base_flags.instance_variable_get(:@flags)
+            if base_flags.sampled?
+              1
             else
-              base_flags
+              0
             end
 
           has_remote_mask = Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
