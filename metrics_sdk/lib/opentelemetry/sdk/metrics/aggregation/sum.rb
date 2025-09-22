@@ -3,7 +3,6 @@
 # Copyright The OpenTelemetry Authors
 #
 # SPDX-License-Identifier: Apache-2.0
-
 module OpenTelemetry
   module SDK
     module Metrics
@@ -11,9 +10,17 @@ module OpenTelemetry
         # Contains the implementation of the Sum aggregation
         # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#sum-aggregation
         class Sum
-          def initialize(aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :cumulative), monotonic: false, instrument_kind: nil)
+          # if no reservior pass from instrument, then use this empty reservior to avoid no method found error
+          DEFAULT_RESERVOIR = Metrics::Exemplar::FixedSizeExemplarReservoir.new
+          private_constant :DEFAULT_RESERVOIR
+
+          def initialize(aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :cumulative),
+                         monotonic: false,
+                         instrument_kind: nil,
+                         exemplar_reservoir: DEFAULT_RESERVOIR)
             @aggregation_temporality = AggregationTemporality.determine_temporality(aggregation_temporality: aggregation_temporality, instrument_kind: instrument_kind, default: :cumulative)
             @monotonic = monotonic
+            @exemplar_reservoir = exemplar_reservoir
           end
 
           def collect(start_time, end_time, data_points)
@@ -48,7 +55,8 @@ module OpenTelemetry
               nil,
               nil,
               0,
-              nil
+              # will this cause the reservoir overloaded with old exemplars?
+              @exemplar_reservoir.collect(attributes: attributes, aggregation_temporality: @aggregation_temporality) # exemplar
             )
 
             ndp.value += increment
