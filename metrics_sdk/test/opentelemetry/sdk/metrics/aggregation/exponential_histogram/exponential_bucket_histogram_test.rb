@@ -789,8 +789,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
 
       hdp = data_points[{}]
 
-      # this is different python because ruby starts from new scale after collect; python will use the last scale in record
-      _(hdp.scale).must_equal(20)
+      _(hdp.scale).must_equal(0)
       _(hdp.positive.offset).must_equal(-4)
       _(hdp.positive.counts).must_equal([1, 1, 1, 1])
 
