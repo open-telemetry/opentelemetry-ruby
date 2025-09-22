@@ -1,5 +1,9 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.9.1 / 2025-09-16
+
+* FIXED: Use mapping scale outside of rescale logic
+
 ### v0.9.0 / 2025-08-19
 
 * ADDED: Add `LOWMEMORY` option to `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE`

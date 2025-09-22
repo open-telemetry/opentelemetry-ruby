@@ -42,6 +42,14 @@ module OpenTelemetry
         Process.clock_gettime(Process::CLOCK_MONOTONIC)
       end
 
+      # Converts the provided timestamp to nanosecond integer
+      #
+      # @param timestamp [Time] the timestamp to convert, defaults to Time.now
+      # @return [Integer]
+      def time_in_nanoseconds(timestamp = Time.now)
+        (timestamp.to_r * 1_000_000_000).to_i
+      end
+
       # Encodes a string in utf8
       #
       # @param [String] string The string to be utf8 encoded
@@ -129,7 +137,7 @@ module OpenTelemetry
       # @param default The fallback value to return if the requested
       #  env var(s) are not present
       #
-      # @returns [String]
+      # @return [String]
       def config_opt(*env_vars, default: nil)
         ENV.values_at(*env_vars).compact.fetch(0, default)
       end

@@ -32,7 +32,7 @@ module OpenTelemetry
 
             # Initialize asynchronous-specific attributes
             @callback = callback
-            @start_time = now_in_nano
+            @start_time = OpenTelemetry::Common::Utilities.time_in_nanoseconds
             @timeout = timeout
             @attributes = attributes
           end
