@@ -17,16 +17,11 @@ exporters:
     tls:
       insecure: true
 
-processors:
-  batch:
-
 service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [batch]
       exporters: [debug, zipkin, otlp]
     metrics:
       receivers: [otlp]
-      processors: [batch]
       exporters: [debug]

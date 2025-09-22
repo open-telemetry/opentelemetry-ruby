@@ -136,6 +136,28 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       _(exphdps[0].zero_threshold).must_equal(0)
     end
 
+    it 'adjusts_scale_after_initial_zero_value' do
+      expbh = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
+        aggregation_temporality: aggregation_temporality,
+        record_min_max: record_min_max,
+        zero_threshold: 0
+      )
+
+      expbh.update(0, {}, data_points)
+      expbh.update(10_000, {}, data_points)
+
+      exphdps = expbh.collect(start_time, end_time, data_points)
+
+      _(exphdps.size).must_equal(1)
+      _(exphdps[0].count).must_equal(2)
+      _(exphdps[0].sum).must_equal(10_000)
+      _(exphdps[0].min).must_equal(0)
+      _(exphdps[0].max).must_equal(10_000)
+      _(exphdps[0].scale).must_equal(20)
+      _(exphdps[0].zero_count).must_equal(1)
+      _(exphdps[0].zero_threshold).must_equal(0)
+    end
+
     it 'test_permutations' do
       test_cases = [
         [
