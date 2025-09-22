@@ -16,22 +16,23 @@ module OpenTelemetry
       module Aggregation
         # Contains the implementation of the {https://opentelemetry.io/docs/specs/otel/metrics/data-model/#exponentialhistogram ExponentialBucketHistogram} aggregation
         class ExponentialBucketHistogram # rubocop:disable Metrics/ClassLength
-          attr_reader :aggregation_temporality
-
           # relate to min max scale: https://opentelemetry.io/docs/specs/otel/metrics/sdk/#support-a-minimum-and-maximum-scale
+          DEFAULT_SIZE  = 160
+          DEFAULT_SCALE = 20
           MAX_SCALE = 20
           MIN_SCALE = -10
-          MAX_SIZE  = 160
+          MIN_MAX_SIZE = 2
+          MAX_MAX_SIZE = 16_384
 
           # The default boundaries are calculated based on default max_size and max_scale values
           def initialize(
             aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta),
-            max_size: MAX_SIZE,
-            max_scale: MAX_SCALE,
+            max_size: DEFAULT_SIZE,
+            max_scale: DEFAULT_SCALE,
             record_min_max: true,
             zero_threshold: 0
           )
-            @aggregation_temporality = aggregation_temporality
+            @aggregation_temporality = AggregationTemporality.determine_temporality(aggregation_temporality: aggregation_temporality, default: :delta)
             @record_min_max = record_min_max
             @min            = Float::INFINITY
             @max            = -Float::INFINITY
@@ -46,7 +47,7 @@ module OpenTelemetry
           end
 
           def collect(start_time, end_time, data_points)
-            if @aggregation_temporality == :delta
+            if @aggregation_temporality.delta?
               # Set timestamps and 'move' data point values to result.
               hdps = data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano = start_time
@@ -139,12 +140,13 @@ module OpenTelemetry
               scale_change = get_scale_change(low, high)
               downscale(scale_change, hdp.positive, hdp.negative)
               new_scale = @mapping.scale - scale_change
-              hdp.scale = new_scale
               @mapping = new_mapping(new_scale)
               bucket_index = @mapping.map_to_index(amount)
 
               OpenTelemetry.logger.debug "Rescaled with new scale #{new_scale} from #{low} and #{high}; bucket_index is updated to #{bucket_index}"
             end
+
+            hdp.scale = @mapping.scale
 
             # adjust buckets based on the bucket_index
             if bucket_index < buckets.index_start
@@ -165,6 +167,10 @@ module OpenTelemetry
           end
           # rubocop:enable Metrics/MethodLength
 
+          def aggregation_temporality
+            @aggregation_temporality.temporality
+          end
+
           private
 
           def grow_buckets(span, buckets)
@@ -175,6 +181,7 @@ module OpenTelemetry
           end
 
           def new_mapping(scale)
+            scale = validate_scale(scale)
             scale <= 0 ? ExponentialHistogram::ExponentMapping.new(scale) : ExponentialHistogram::LogarithmMapping.new(scale)
           end
 
@@ -203,17 +210,17 @@ module OpenTelemetry
           end
 
           def validate_scale(scale)
-            return scale unless scale > MAX_SCALE || scale < MIN_SCALE
+            raise ArgumentError, "Scale #{scale} is larger than maximum scale #{MAX_SCALE}" if scale > MAX_SCALE
+            raise ArgumentError, "Scale #{scale} is smaller than minimum scale #{MIN_SCALE}" if scale < MIN_SCALE
 
-            OpenTelemetry.logger.warn "Scale #{scale} is invalid, using default max scale #{MAX_SCALE}"
-            MAX_SCALE
+            scale
           end
 
           def validate_size(size)
-            return size unless size > MAX_SIZE || size < 0
+            raise ArgumentError, "Max size #{size} is smaller than minimum size #{MIN_MAX_SIZE}" if size < MIN_MAX_SIZE
+            raise ArgumentError, "Max size #{size} is larger than maximum size #{MAX_MAX_SIZE}" if size > MAX_MAX_SIZE
 
-            OpenTelemetry.logger.warn "Size #{size} is invalid, using default max size #{MAX_SIZE}"
-            MAX_SIZE
+            size
           end
         end
       end

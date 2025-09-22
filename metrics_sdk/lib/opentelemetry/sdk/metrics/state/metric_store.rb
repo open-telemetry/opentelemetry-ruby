@@ -15,17 +15,17 @@ module OpenTelemetry
         class MetricStore
           def initialize
             @mutex = Mutex.new
-            @epoch_start_time = now_in_nano
+            @epoch_start_time = OpenTelemetry::Common::Utilities.time_in_nanoseconds
             @epoch_end_time = nil
             @metric_streams = []
           end
 
           def collect
             @mutex.synchronize do
-              @epoch_end_time = now_in_nano
-              # snapshot = @metric_streams.map { |ms| ms.collect(@epoch_start_time, @epoch_end_time) }
+              @epoch_end_time = OpenTelemetry::Common::Utilities.time_in_nanoseconds
               snapshot = @metric_streams.flat_map { |ms| ms.collect(@epoch_start_time, @epoch_end_time) }
               @epoch_start_time = @epoch_end_time
+
               snapshot
             end
           end
@@ -35,12 +35,6 @@ module OpenTelemetry
               @metric_streams = @metric_streams.dup.push(metric_stream)
               nil
             end
-          end
-
-          private
-
-          def now_in_nano
-            (Time.now.to_r * 1_000_000_000).to_i
           end
         end
       end

@@ -14,20 +14,17 @@ module OpenTelemetry
           DEFAULT_RESERVOIR = Metrics::Exemplar::FixedSizeExemplarReservoir.new
           private_constant :DEFAULT_RESERVOIR
 
-          attr_reader :aggregation_temporality
-
-          def initialize(aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta),
+          def initialize(aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :cumulative),
                          monotonic: false,
+                         instrument_kind: nil,
                          exemplar_reservoir: DEFAULT_RESERVOIR)
-
-            # TODO: the default should be :cumulative, see issue #1555
-            @exemplar_reservoir = exemplar_reservoir
-            @aggregation_temporality = aggregation_temporality.to_sym
+            @aggregation_temporality = AggregationTemporality.determine_temporality(aggregation_temporality: aggregation_temporality, instrument_kind: instrument_kind, default: :cumulative)
             @monotonic = monotonic
+            @exemplar_reservoir = exemplar_reservoir
           end
 
           def collect(start_time, end_time, data_points)
-            if @aggregation_temporality == :delta
+            if @aggregation_temporality.delta?
               # Set timestamps and 'move' data point values to result.
               ndps = data_points.values.map! do |ndp|
                 ndp.start_time_unix_nano = start_time
@@ -64,6 +61,10 @@ module OpenTelemetry
 
             ndp.value += increment
             nil
+          end
+
+          def aggregation_temporality
+            @aggregation_temporality.temporality
           end
         end
       end

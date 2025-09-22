@@ -18,26 +18,24 @@ module OpenTelemetry
           DEFAULT_RESERVOIR = Metrics::Exemplar::FixedSizeExemplarReservoir.new
           private_constant :DEFAULT_RESERVOIR
 
-          attr_reader :aggregation_temporality
-
           # The default value for boundaries represents the following buckets:
           # (-inf, 0], (0, 5.0], (5.0, 10.0], (10.0, 25.0], (25.0, 50.0],
           # (50.0, 75.0], (75.0, 100.0], (100.0, 250.0], (250.0, 500.0],
           # (500.0, 1000.0], (1000.0, +inf)
           def initialize(
-            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta), # TODO: the default should be :cumulative, see issue #1555
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :cumulative),
             boundaries: DEFAULT_BOUNDARIES,
             record_min_max: true,
             exemplar_reservoir: DEFAULT_RESERVOIR
           )
+            @aggregation_temporality = AggregationTemporality.determine_temporality(aggregation_temporality: aggregation_temporality, default: :cumulative)
             @exemplar_reservoir = exemplar_reservoir
-            @aggregation_temporality = aggregation_temporality.to_sym
             @boundaries = boundaries && !boundaries.empty? ? boundaries.sort : nil
             @record_min_max = record_min_max
           end
 
           def collect(start_time, end_time, data_points)
-            if @aggregation_temporality == :delta
+            if @aggregation_temporality.delta?
               # Set timestamps and 'move' data point values to result.
               hdps = data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano = start_time
@@ -91,6 +89,10 @@ module OpenTelemetry
               hdp.bucket_counts[bucket_index] += 1
             end
             nil
+          end
+
+          def aggregation_temporality
+            @aggregation_temporality.temporality
           end
 
           private

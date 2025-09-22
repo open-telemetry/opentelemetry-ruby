@@ -3,6 +3,9 @@ name: Markdown Lint Check
 on:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   markdownlint-check:
     runs-on: ubuntu-latest

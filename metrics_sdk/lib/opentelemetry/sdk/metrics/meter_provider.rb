@@ -129,6 +129,7 @@ module OpenTelemetry
             end
           end
         end
+        alias register_asynchronous_instrument register_synchronous_instrument
 
         # spec: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/configuration/sdk-environment-variables.md#exemplar
         # this is one way to turn on the exemplar (exemplar should be turned off by default)

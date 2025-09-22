@@ -26,6 +26,8 @@ Metrics/MethodLength:
 Metrics/ModuleLength:
   Enabled: false
 
+Naming/ClassAndModuleCamelCase: # because the source for generating module names isn't Rubyish enough
+  Enabled: false
 Naming/FileName:
   Exclude:
     - lib/opentelemetry-semantic_conventions.rb

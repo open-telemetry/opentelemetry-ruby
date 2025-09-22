@@ -136,6 +136,28 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       _(exphdps[0].zero_threshold).must_equal(0)
     end
 
+    it 'adjusts_scale_after_initial_zero_value' do
+      expbh = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
+        aggregation_temporality: aggregation_temporality,
+        record_min_max: record_min_max,
+        zero_threshold: 0
+      )
+
+      expbh.update(0, {}, data_points)
+      expbh.update(10_000, {}, data_points)
+
+      exphdps = expbh.collect(start_time, end_time, data_points)
+
+      _(exphdps.size).must_equal(1)
+      _(exphdps[0].count).must_equal(2)
+      _(exphdps[0].sum).must_equal(10_000)
+      _(exphdps[0].min).must_equal(0)
+      _(exphdps[0].max).must_equal(10_000)
+      _(exphdps[0].scale).must_equal(20)
+      _(exphdps[0].zero_count).must_equal(1)
+      _(exphdps[0].zero_threshold).must_equal(0)
+    end
+
     it 'test_permutations' do
       test_cases = [
         [
@@ -254,6 +276,30 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
 
     it 'test_merge' do
       # TODO
+    end
+
+    it 'test_invalid_scale_validation' do
+      error = assert_raises(ArgumentError) do
+        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_scale: 100)
+      end
+      assert_equal('Scale 100 is larger than maximum scale 20', error.message)
+
+      error = assert_raises(ArgumentError) do
+        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_scale: -20)
+      end
+      assert_equal('Scale -20 is smaller than minimum scale -10', error.message)
+    end
+
+    it 'test_invalid_size_validation' do
+      error = assert_raises(ArgumentError) do
+        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_size: 10_000_000)
+      end
+      assert_equal('Max size 10000000 is larger than maximum size 16384', error.message)
+
+      error = assert_raises(ArgumentError) do
+        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_size: 0)
+      end
+      assert_equal('Max size 0 is smaller than minimum size 2', error.message)
     end
   end
 end

@@ -8,7 +8,7 @@ module OpenTelemetry
   module SDK
     module Logs
       # Current OpenTelemetry logs sdk version
-      VERSION = '0.2.0'
+      VERSION = '0.4.0'
     end
   end
 end
