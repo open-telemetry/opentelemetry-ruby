@@ -814,14 +814,14 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
 
     describe 'build_span_flags' do
       it 'sets flags to HAS_IS_REMOTE for local parent span context' do
-        flags = exporter.send(:build_span_flags, false, 0)
+        flags = exporter.send(:build_span_flags, false, OpenTelemetry::Trace::TraceFlags::DEFAULT)
         _(flags).must_equal(
           Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
         )
       end
 
       it 'sets flags to HAS_IS_REMOTE | IS_REMOTE for remote parent span context' do
-        flags = exporter.send(:build_span_flags, true, 0)
+        flags = exporter.send(:build_span_flags, true, OpenTelemetry::Trace::TraceFlags::DEFAULT)
         _(flags).must_equal(
           Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
           Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
@@ -829,7 +829,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       end
 
       it 'preserves base trace flags' do
-        flags = exporter.send(:build_span_flags, false, 0x01) # SAMPLED flag
+        flags = exporter.send(:build_span_flags, false, OpenTelemetry::Trace::TraceFlags::SAMPLED)
         _(flags).must_equal(
           0x01 |
           Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
