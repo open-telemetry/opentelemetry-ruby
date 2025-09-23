@@ -1,5 +1,9 @@
 # Release History: opentelemetry-common
 
+### v0.23.0 / 2025-09-23
+
+* ADDED: Create method for returning timestamp in nanoseconds
+
 ### v0.22.0 / 2025-02-25
 
 - ADDED: Support 3.1 Min Version
