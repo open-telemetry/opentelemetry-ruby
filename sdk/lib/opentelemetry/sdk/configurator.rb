@@ -90,6 +90,16 @@ module OpenTelemetry
         )
       end
 
+      # Accepts a string that is merged in as the service.namespace resource attribute.
+      # The most recent assigned value will be used in the event of repeated
+      # calls to this setter.
+      # @param [String] service_namespace The value to be used as the service namespace
+      def service_namespace=(service_namespace)
+        self.resource = OpenTelemetry::SDK::Resources::Resource.create(
+          OpenTelemetry::SemanticConventions::Resource::SERVICE_NAMESPACE => service_namespace
+        )
+      end
+
       # Install an instrumentation with specified optional +config+.
       # Use can be called multiple times to install multiple instrumentation.
       # Only +use+ or +use_all+, but not both when installing
