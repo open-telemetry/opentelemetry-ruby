@@ -23,7 +23,8 @@ Gem::Specification.new do |spec|
                ::Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 3.1'
+  spec.required_ruby_version = ">= #{File.read(File.expand_path('../../gemspecs/RUBY_REQUIREMENT', __dir__))}"
+
 
   spec.add_dependency 'opentelemetry-api', '~> 1.1'
   spec.add_dependency 'opentelemetry-common', '~> 0.20'
@@ -56,4 +57,6 @@ Gem::Specification.new do |spec|
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/issues'
     spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-sdk/v#{OpenTelemetry::SDK::VERSION}"
   end
+
+  spec.post_install_message = File.read(File.expand_path('../../gemspecs/POST_INSTALL_MESSAGE', __dir__))
 end
