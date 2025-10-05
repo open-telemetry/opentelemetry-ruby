@@ -14,6 +14,9 @@ module OpenTelemetry
         # public API.
         class MetricStream
           attr_reader :name, :description, :unit, :instrument_kind, :instrumentation_scope, :data_points
+          attr_writer :cardinality_limit
+
+          DEFAULT_CARDINALITY_LIMIT = 2000
 
           def initialize(
             name,
@@ -38,6 +41,10 @@ module OpenTelemetry
             @mutex = Mutex.new
           end
 
+          # this cardinality_limit is from exporter.new(cardinality_limit: cardinality_limit)
+          #                                -> metric_reader.collect(...cardinality_limit)
+          #                                -> metric_store.collect(...cardinality_limit)
+          #                                -> metric_stream.collect(...cardinality_limit)
           def collect(start_time, end_time)
             @mutex.synchronize do
               metric_data = []
@@ -46,24 +53,37 @@ module OpenTelemetry
               return metric_data if @data_points.empty?
 
               if @registered_views.empty?
-                metric_data << aggregate_metric_data(start_time, end_time)
+                metric_data << aggregate_metric_data(start_time,
+                                                     end_time)
               else
-                @registered_views.each { |view| metric_data << aggregate_metric_data(start_time, end_time, aggregation: view.aggregation) }
+                @registered_views.each do |view|
+                  metric_data << aggregate_metric_data(start_time,
+                                                       end_time,
+                                                       aggregation: view.aggregation)
+                end
               end
 
               metric_data
             end
           end
 
+          # view has the cardinality, pass to aggregation update
+          # to determine if aggregation have the cardinality
+          # if the aggregation does not have the cardinality, then it will be default 2000
+          # it better to move overflowed data_points during update because if do it in collect,
+          # then we need to sort the entire data_points (~ 2000) based on time, which is time-consuming
           def update(value, attributes)
             if @registered_views.empty?
-              @mutex.synchronize { @default_aggregation.update(value, attributes, @data_points) }
+              resolved_cardinality_limit = resolve_cardinality_limit(nil)
+
+              @mutex.synchronize { @default_aggregation.update(value, attributes, @data_points, resolved_cardinality_limit) }
             else
               @registered_views.each do |view|
+                resolved_cardinality_limit = resolve_cardinality_limit(view)
                 @mutex.synchronize do
                   attributes ||= {}
                   attributes.merge!(view.attribute_keys)
-                  view.aggregation.update(value, attributes, @data_points) if view.valid_aggregation?
+                  view.aggregation.update(value, attributes, @data_points, resolved_cardinality_limit) if view.valid_aggregation?
                 end
               end
             end
@@ -93,6 +113,11 @@ module OpenTelemetry
             return if @meter_provider.nil?
 
             @meter_provider.registered_views.each { |view| @registered_views << view if view.match_instrument?(self) }
+          end
+
+          def resolve_cardinality_limit(view)
+            cardinality_limit = view&.aggregation_cardinality_limit || @cardinality_limit || DEFAULT_CARDINALITY_LIMIT
+            [cardinality_limit, 0].max # if cardinality_limit is negative, then give it 0
           end
 
           def to_s
