@@ -103,6 +103,26 @@ module OpenTelemetry
 
         private
 
+        # Builds span flags based on whether the parent span context is remote.
+        # This follows the OTLP specification for span flags.
+        def build_span_flags(parent_span_is_remote, base_flags)
+          # Extract integer value from TraceFlags object if needed
+          # Derive the low 8-bit W3C trace flags using the public API.
+          base_flags_int =
+            if base_flags.sampled?
+              1
+            else
+              0
+            end
+
+          has_remote_mask = Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+          is_remote_mask = Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+
+          flags = base_flags_int | has_remote_mask
+          flags |= is_remote_mask if parent_span_is_remote
+          flags
+        end
+
         def http_connection(uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = uri.scheme == 'https'
@@ -336,8 +356,9 @@ module OpenTelemetry
                 trace_id: link.span_context.trace_id,
                 span_id: link.span_context.span_id,
                 trace_state: link.span_context.tracestate.to_s,
-                attributes: link.attributes&.map { |k, v| as_otlp_key_value(k, v) }
+                attributes: link.attributes&.map { |k, v| as_otlp_key_value(k, v) },
                 # TODO: track dropped_attributes_count in Span#trim_links
+                flags: build_span_flags(link.span_context.remote?, link.span_context.trace_flags)
               )
             end,
             dropped_links_count: span_data.total_recorded_links - span_data.links&.size.to_i,
@@ -346,7 +367,8 @@ module OpenTelemetry
                 code: as_otlp_status_code(status.code),
                 message: status.description
               )
-            end
+            end,
+            flags: build_span_flags(span_data.parent_span_is_remote, span_data.trace_flags)
           )
         end
 
