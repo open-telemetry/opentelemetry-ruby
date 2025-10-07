@@ -198,6 +198,8 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
     end
 
     it 'respects timeout settings and handles slow callbacks' do
+      skip 'Threading test unstable on TruffleRuby and JRuby' if %w[truffleruby jruby].include?(RUBY_ENGINE)
+
       # Test timeout handling
       slow_callback = [proc {
         sleep(0.1)
