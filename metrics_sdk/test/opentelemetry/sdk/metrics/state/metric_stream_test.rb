@@ -120,7 +120,7 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
     end
 
     it 'is thread-safe' do
-      skip 'Threading test unstable on TruffleRuby and JRuby' if ['truffleruby', 'jruby'].include?(RUBY_ENGINE)
+      skip 'Threading test unstable on TruffleRuby and JRuby' if %w[truffleruby jruby].include?(RUBY_ENGINE)
 
       threads = Array.new(10) do |i|
         Thread.new do
