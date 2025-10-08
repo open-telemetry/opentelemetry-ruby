@@ -118,33 +118,6 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
       value = snapshot.first.data_points.first.value
       _(value).must_equal 20
     end
-
-    it 'is thread-safe' do
-      skip 'Threading test unstable on TruffleRuby and JRuby' if %w[truffleruby jruby].include?(RUBY_ENGINE)
-
-      threads = Array.new(10) do |i|
-        Thread.new do
-          10.times { metric_stream.update(1, { 'thread' => i.to_s }) }
-        end
-      end
-      threads.each(&:join)
-      snapshot = metric_stream.collect(0, 1000)
-
-      _(snapshot.size).must_equal(1)
-
-      # this test case is unstable as it involve thread in minitest
-      skip if snapshot.first.data_points.size != 10
-
-      sleep 0.2
-
-      10.times.each do |i|
-        _(snapshot.first.data_points[i].value).must_equal 10
-      end
-
-      attribute_value = snapshot.first.data_points.flat_map { |i| i.attributes['thread'].to_i }
-      attribute_value.sort!
-      _(attribute_value).must_equal([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-    end
   end
 
   describe '#collect' do

@@ -71,10 +71,6 @@ module OpenTelemetry
             end
           end
 
-          def now_in_nano
-            (Time.now.to_r * 1_000_000_000).to_i
-          end
-
           private
 
           def safe_guard_callback(callback, timeout: DEFAULT_TIMEOUT)

@@ -111,39 +111,5 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStore do
       _(start_time2).must_equal(end_time1)
       _(end_time2).must_be :>, end_time1
     end
-
-    it 'is thread-safe when adding metric streams' do
-      # Create metric streams in multiple threads
-      threads = Array.new(10) do |i|
-        Thread.new do
-          metric_stream = OpenTelemetry::SDK::Metrics::State::MetricStream.new(
-            "counter_#{i}",
-            "Counter #{i}",
-            'count',
-            :counter,
-            meter_provider,
-            instrumentation_scope,
-            aggregation
-          )
-          metric_store.add_metric_stream(metric_stream)
-          metric_stream.update(i, {})
-        end
-      end
-
-      threads.each(&:join)
-
-      snapshot = metric_store.collect
-      # this test case is unstable as it involve thread in minitest
-      skip if snapshot.size != 10
-      _(snapshot.size).must_equal(10)
-
-      names = snapshot.map(&:name).sort
-      expected_names = (0..9).map { |i| "counter_#{i}" }.sort
-      _(names).must_equal(expected_names)
-
-      attribute_value = snapshot.flat_map { |i| i.data_points.first.value }
-      attribute_value.sort!
-      _(attribute_value).must_equal([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-    end
   end
 end

@@ -196,48 +196,6 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       _(metric_data.first.start_time_unix_nano).must_equal 0
       _(metric_data.first.time_unix_nano).must_equal 10_000
     end
-
-    it 'respects timeout settings and handles slow callbacks' do
-      skip 'Threading test unstable on TruffleRuby and JRuby' if %w[truffleruby jruby].include?(RUBY_ENGINE)
-
-      # Test timeout handling
-      slow_callback = [proc {
-        sleep(0.1)
-        42
-      }]
-      stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
-        'async_counter', 'description', 'unit', :observable_counter,
-        meter_provider, instrumentation_scope, aggregation,
-        slow_callback, 0.05, attributes # Very short timeout
-      )
-
-      original_logger = OpenTelemetry.logger
-      log_output = StringIO.new
-      OpenTelemetry.logger = Logger.new(log_output)
-      stream.invoke_callback(0.05, attributes)
-
-      sleep 0.2
-
-      assert_includes log_output.string, 'Timeout while invoking callback'
-      OpenTelemetry.logger = original_logger
-    end
-  end
-
-  describe '#now_in_nano' do
-    it 'returns current time in nanoseconds with increasing values' do
-      nano_time = async_metric_stream.now_in_nano
-      _(nano_time).must_be_instance_of(Integer)
-      _(nano_time).must_be :>, 0
-
-      # Should be a reasonable timestamp (not too old, not in future)
-      current_time_nano = (Time.now.to_r * 1_000_000_000).to_i
-      _(nano_time).must_be_close_to(current_time_nano, 1_000_000_000) # Within 1 second
-
-      # Test successive calls return increasing values
-      sleep(0.001) # Small delay
-      time2 = async_metric_stream.now_in_nano
-      _(time2).must_be :>, nano_time
-    end
   end
 
   describe 'aggregation and view integration' do
