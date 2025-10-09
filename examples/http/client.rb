@@ -26,14 +26,14 @@ connection = Faraday.new("http://#{host}:4567")
 url = '/hello'
 
 # For attribute naming, see:
-# https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/http.md
+# https://github.com/open-telemetry/semantic-conventions/blob/main/docs/http/http-spans.md#http-client-span
 
 # Span name should be set to URI path value:
 tracer.in_span(
   url,
   attributes: {
-    'component' => 'http',
-    'http.method' => 'GET',
+    'url.scheme' => 'http',
+    'http.request.method' => 'GET',
   },
   kind: :client
 ) do |span|
@@ -42,6 +42,6 @@ tracer.in_span(
     OpenTelemetry.propagation.inject(request.headers)
   end
 
-  span.set_attribute('http.url', response.env.url.to_s)
-  span.set_attribute('http.status_code', response.status)
+  span.set_attribute('url.full', response.env.url.to_s)
+  span.set_attribute('http.response.status_code', response.status)
 end
