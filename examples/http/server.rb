@@ -10,6 +10,8 @@ require 'bundler/setup'
 require 'sinatra/base'
 # Require otel-ruby
 require 'opentelemetry/sdk'
+require 'opentelemetry/semconv/http'
+require 'opentelemetry/semconv/url'
 
 # Export traces to console by default
 ENV['OTEL_TRACES_EXPORTER'] ||= 'console'
@@ -46,17 +48,17 @@ class OpenTelemetryMiddleware
       @tracer.in_span(
         span_name,
         attributes: {
-          'url.scheme' => 'http',
-          'http.request.method' => env['REQUEST_METHOD'],
-          'http.route' => env['PATH_INFO'],
-          'url.path' => env['REQUEST_URI'],
+          OpenTelemetry::SemConv::URL::URL_SCHEME => 'http',
+          OpenTelemetry::SemConv::HTTP::HTTP_REQUEST_METHOD => env['REQUEST_METHOD'],
+          OpenTelemetry::SemConv::HTTP::HTTP_ROUTE => env['PATH_INFO'],
+          OpenTelemetry::SemConv::URL::URL_PATH => env['REQUEST_URI'],
         },
         kind: :server
       ) do |span|
         # Run application stack
         status, headers, response_body = @app.call(env)
 
-        span.set_attribute('http.request.status_code', status)
+        span.set_attribute(OpenTelemetry::SemConv::HTTP::HTTP_RESPONSE_STATUS_CODE, status)
       end
     end
 

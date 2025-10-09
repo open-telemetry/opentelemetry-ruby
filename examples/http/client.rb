@@ -9,6 +9,8 @@ require 'bundler/setup'
 require 'faraday'
 # Require otel-ruby
 require 'opentelemetry/sdk'
+require 'opentelemetry/semconv/http'
+require 'opentelemetry/semconv/url'
 
 # Export traces to console by default
 ENV['OTEL_TRACES_EXPORTER'] ||= 'console'
@@ -32,8 +34,8 @@ url = '/hello'
 tracer.in_span(
   url,
   attributes: {
-    'url.scheme' => 'http',
-    'http.request.method' => 'GET',
+    OpenTelemetry::SemConv::URL::URL_SCHEME => 'http',
+    OpenTelemetry::SemConv::HTTP::HTTP_REQUEST_METHOD => 'GET',
   },
   kind: :client
 ) do |span|
@@ -42,6 +44,6 @@ tracer.in_span(
     OpenTelemetry.propagation.inject(request.headers)
   end
 
-  span.set_attribute('url.full', response.env.url.to_s)
-  span.set_attribute('http.response.status_code', response.status)
+  span.set_attribute(OpenTelemetry::SemConv::URL::URL_FULL, response.env.url.to_s)
+  span.set_attribute(OpenTelemetry::SemConv::HTTP::HTTP_RESPONSE_STATUS_CODE, response.status)
 end
