@@ -167,27 +167,29 @@ module OpenTelemetry
                 response.body # Read and discard body
                 SUCCESS
               when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
-                response.body # Read and discard body
+                body = response.body
                 redo if backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1, reason: response.code)
                 OpenTelemetry.logger.error("OTLP::HTTP::TraceExporter: export failed with #{response.code} after #{retry_count} retries")
-                OpenTelemetry::SDK::Trace::Export.failure(message: "export failed with HTTP #{response.code} after #{retry_count} retries")
+                OpenTelemetry::SDK::Trace::Export.failure(message: "export failed with HTTP #{response.code} (#{response.message}) after #{retry_count} retries: #{body}")
               when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
-                response.body # Read and discard body
+                body = response.body
                 redo if backoff?(retry_count: retry_count += 1, reason: response.code)
                 OpenTelemetry.logger.error("OTLP::HTTP::TraceExporter: export failed with #{response.code} after #{retry_count} retries")
-                OpenTelemetry::SDK::Trace::Export.failure(message: "export failed with HTTP #{response.code} after #{retry_count} retries")
+                OpenTelemetry::SDK::Trace::Export.failure(message: "export failed with HTTP #{response.code} (#{response.message}) after #{retry_count} retries: #{body}")
               when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
-                log_status(response.body)
+                body = response.body
+                log_status(body)
                 @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response.code })
-                OpenTelemetry::SDK::Trace::Export.failure(message: "export failed with HTTP #{response.code}")
+                OpenTelemetry::SDK::Trace::Export.failure(message: "export failed with HTTP #{response.code} (#{response.message}): #{body}")
               when Net::HTTPRedirection
                 @http.finish
                 handle_redirect(response['location'])
                 redo if backoff?(retry_after: 0, retry_count: retry_count += 1, reason: response.code)
               else
                 @http.finish
+                body = response.body
                 OpenTelemetry.logger.error("OTLP::HTTP::TraceExporter: export failed with unexpected HTTP response #{response.code}")
-                OpenTelemetry::SDK::Trace::Export.failure(message: "export failed with unexpected HTTP response #{response.code}")
+                OpenTelemetry::SDK::Trace::Export.failure(message: "export failed with unexpected HTTP response #{response.code} (#{response.message}): #{body}")
               end
             rescue Net::OpenTimeout, Net::ReadTimeout => e
               retry if backoff?(retry_count: retry_count += 1, reason: 'timeout')
