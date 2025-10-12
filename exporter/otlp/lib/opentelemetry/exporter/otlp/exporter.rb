@@ -76,9 +76,16 @@ module OpenTelemetry
         # @param [optional Numeric] timeout An optional timeout in seconds.
         # @return [Integer] the result of the export.
         def export(span_data, timeout: nil)
+          OpenTelemetry.logger.debug("OTLP::Exporter#export: Called with #{span_data.size} spans, timeout=#{timeout.inspect}, shutdown=#{@shutdown}")
           return OpenTelemetry::SDK::Trace::Export.failure(message: 'exporter is shutdown') if @shutdown
 
-          send_bytes(encode(span_data), timeout: timeout)
+          OpenTelemetry.logger.debug("OTLP::Exporter#export: Calling encode for #{span_data.size} spans")
+          encoded = encode(span_data)
+          OpenTelemetry.logger.debug("OTLP::Exporter#export: Encode returned #{encoded.nil? ? 'nil' : "#{encoded.bytesize} bytes"}")
+
+          result = send_bytes(encoded, timeout: timeout)
+          OpenTelemetry.logger.debug("OTLP::Exporter#export: send_bytes returned result with class #{result.class}")
+          result
         end
 
         # Called when {OpenTelemetry::SDK::Trace::TracerProvider#force_flush} is called, if
@@ -146,17 +153,22 @@ module OpenTelemetry
         end
 
         def send_bytes(bytes, timeout:) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+          OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Entry with bytes.nil?=#{bytes.nil?}, timeout=#{timeout.inspect}")
+          OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: URI=#{@uri}, path=#{@path}")
           return OpenTelemetry::SDK::Trace::Export.failure(message: 'send_bytes called with nil bytes') if bytes.nil?
 
           @metrics_reporter.record_value('otel.otlp_exporter.message.uncompressed_size', value: bytes.bytesize)
+          OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Uncompressed size=#{bytes.bytesize} bytes")
 
           request = Net::HTTP::Post.new(@path)
           if @compression == 'gzip'
             request.add_field('Content-Encoding', 'gzip')
             body = Zlib.gzip(bytes)
             @metrics_reporter.record_value('otel.otlp_exporter.message.compressed_size', value: body.bytesize)
+            OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Compressed size=#{body.bytesize} bytes")
           else
             body = bytes
+            OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: No compression applied")
           end
           request.body = body
           request.add_field('Content-Type', 'application/x-protobuf')
@@ -165,74 +177,105 @@ module OpenTelemetry
           retry_count = 0
           timeout ||= @timeout
           start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
+          OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Starting request to #{@uri} with timeout=#{timeout}s")
 
-          around_request do
+          result = around_request do
             remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
+            OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Remaining timeout=#{remaining_timeout}s, retry_count=#{retry_count}")
             return OpenTelemetry::SDK::Trace::Export.failure(message: 'timeout exceeded before sending request') if remaining_timeout.zero?
 
             @http.open_timeout = remaining_timeout
             @http.read_timeout = remaining_timeout
             @http.write_timeout = remaining_timeout
             @http.start unless @http.started?
+            OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Sending HTTP request")
             response = measure_request_duration { @http.request(request) }
+            OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Received response code=#{response.code}, message=#{response.message}")
 
             case response
             when Net::HTTPOK
+              OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: SUCCESS - HTTP 200 OK")
               response.body # Read and discard body
               SUCCESS
             when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
               body = response.body
+              OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: ServiceUnavailable/TooManyRequests - retry_count=#{retry_count + 1}, retry_after=#{response['Retry-After']}")
               redo if backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1, reason: response.code)
+              OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: FAILURE after max retries - HTTP #{response.code}")
               OpenTelemetry::SDK::Trace::Export.failure(message: "export failed with HTTP #{response.code} (#{response.message}) after #{retry_count} retries: #{body}")
             when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
               body = response.body
+              OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Timeout/Gateway error - retry_count=#{retry_count + 1}, code=#{response.code}")
               redo if backoff?(retry_count: retry_count += 1, reason: response.code)
+              OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: FAILURE after max retries - HTTP #{response.code}")
               OpenTelemetry::SDK::Trace::Export.failure(message: "export failed with HTTP #{response.code} (#{response.message}) after #{retry_count} retries: #{body}")
             when Net::HTTPNotFound
               body = response.body
+              OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: NotFound - HTTP #{response.code}")
               log_request_failure(response.code)
               OpenTelemetry::SDK::Trace::Export.failure(message: "export failed with HTTP #{response.code} (#{response.message}): #{body}")
             when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
               body = response.body
+              OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Client/Server error - HTTP #{response.code}")
               log_status(body)
               @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response.code })
               OpenTelemetry::SDK::Trace::Export.failure(message: "export failed with HTTP #{response.code} (#{response.message}): #{body}")
             when Net::HTTPRedirection
+              OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Redirect to location=#{response['location']}")
               @http.finish
               handle_redirect(response['location'])
               redo if backoff?(retry_after: 0, retry_count: retry_count += 1, reason: response.code)
             else
+              OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Unexpected response - code=#{response.code}, class=#{response.class}")
               @http.finish
               body = response.body
               log_request_failure(response.code)
               OpenTelemetry::SDK::Trace::Export.failure(message: "export failed with unexpected HTTP response #{response.code} (#{response.message}): #{body}")
             end
           rescue Net::OpenTimeout, Net::ReadTimeout => e
+            OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Caught #{e.class}: #{e.message}, retry_count=#{retry_count + 1}")
             retry if backoff?(retry_count: retry_count += 1, reason: 'timeout')
+            OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Max retries exceeded for #{e.class}")
             return OpenTelemetry::SDK::Trace::Export.failure(error: e, message: "export failed due to #{e.class} after #{retry_count} retries")
           rescue OpenSSL::SSL::SSLError => e
+            OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Caught SSLError: #{e.message}, retry_count=#{retry_count + 1}")
             retry if backoff?(retry_count: retry_count += 1, reason: 'openssl_error')
+            OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Max retries exceeded for SSLError")
             OpenTelemetry.handle_error(exception: e, message: 'SSL error in OTLP::Exporter#send_bytes')
             return OpenTelemetry::SDK::Trace::Export.failure(error: e, message: 'SSL error in OTLP::Exporter#send_bytes')
           rescue SocketError => e
+            OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Caught SocketError: #{e.message}, retry_count=#{retry_count + 1}")
             retry if backoff?(retry_count: retry_count += 1, reason: 'socket_error')
+            OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Max retries exceeded for SocketError")
             return OpenTelemetry::SDK::Trace::Export.failure(error: e, message: "export failed due to SocketError after #{retry_count} retries: #{e.message}")
           rescue SystemCallError => e
+            OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Caught #{e.class}: #{e.message}, retry_count=#{retry_count + 1}")
             retry if backoff?(retry_count: retry_count += 1, reason: e.class.name)
+            OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Max retries exceeded for #{e.class}")
             return OpenTelemetry::SDK::Trace::Export.failure(error: e, message: "export failed due to #{e.class} after #{retry_count} retries: #{e.message}")
           rescue EOFError => e
+            OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Caught EOFError: #{e.message}, retry_count=#{retry_count + 1}")
             retry if backoff?(retry_count: retry_count += 1, reason: 'eof_error')
+            OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Max retries exceeded for EOFError")
             return OpenTelemetry::SDK::Trace::Export.failure(error: e, message: "export failed due to EOFError after #{retry_count} retries: #{e.message}")
           rescue Zlib::DataError => e
+            OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Caught Zlib::DataError: #{e.message}, retry_count=#{retry_count + 1}")
             retry if backoff?(retry_count: retry_count += 1, reason: 'zlib_error')
+            OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Max retries exceeded for Zlib::DataError")
             return OpenTelemetry::SDK::Trace::Export.failure(error: e, message: "export failed due to Zlib::DataError after #{retry_count} retries: #{e.message}")
           rescue StandardError => e
+            OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Caught unexpected #{e.class}: #{e.message}")
+            OpenTelemetry.logger.debug { "OTLP::Exporter#send_bytes: Exception backtrace: #{e.backtrace.first(10).join(' | ')}" }
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#send_bytes')
             @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => e.class.to_s })
-            return OpenTelemetry::SDK::Trace::Export.failure(error: e, message: 'unexpected error in OTLP::Exporter#send_bytes')
+            result = OpenTelemetry::SDK::Trace::Export.failure(error: e, message: 'unexpected error in OTLP::Exporter#send_bytes')
           end
+
+          OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Returning result with value #{result.to_i}")
+          result
         ensure
           # Reset timeouts to defaults for the next call.
+          OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Resetting timeouts to default #{@timeout}s")
           @http.open_timeout = @timeout
           @http.read_timeout = @timeout
           @http.write_timeout = @timeout
@@ -248,13 +291,15 @@ module OpenTelemetry
             klass_or_nil = ::Google::Protobuf::DescriptorPool.generated_pool.lookup(detail.type_name).msgclass
             detail.unpack(klass_or_nil) if klass_or_nil
           end.compact
-          OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}} for uri=#{@uri}")
+          uri_str = @uri.to_s rescue @uri.inspect
+          OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}} for uri=#{uri_str}")
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
         end
 
         def log_request_failure(response_code)
-          OpenTelemetry.handle_error(message: "OTLP exporter received http.code=#{response_code} for uri='#{@uri}' in OTLP::Exporter#send_bytes")
+          uri_str = @uri.to_s rescue @uri.inspect
+          OpenTelemetry.handle_error(message: "OTLP exporter received http.code=#{response_code} for uri='#{uri_str}' in OTLP::Exporter#send_bytes")
           @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response_code })
         end
 
@@ -298,8 +343,9 @@ module OpenTelemetry
         end
 
         def encode(span_data) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
+          OpenTelemetry.logger.debug("OTLP::Exporter#encode: Starting encode of #{span_data.size} spans")
           start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-          Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(
+          result = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(
             Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
               resource_spans: span_data
                 .group_by(&:resource)
@@ -323,7 +369,10 @@ module OpenTelemetry
                 end
             )
           )
+          OpenTelemetry.logger.debug("OTLP::Exporter#encode: Successfully encoded to #{result.bytesize} bytes")
+          result
         rescue StandardError => e
+          OpenTelemetry.logger.debug("OTLP::Exporter#encode: Exception during encoding - #{e.class}: #{e.message}")
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#encode')
           nil
         ensure
@@ -331,6 +380,7 @@ module OpenTelemetry
           duration_ms = 1000.0 * (stop - start)
           @metrics_reporter.record_value('otel.otlp_exporter.encode_duration',
                                          value: duration_ms)
+          OpenTelemetry.logger.debug("OTLP::Exporter#encode: Encoding took #{duration_ms.round(2)}ms")
         end
 
         def as_otlp_span(span_data) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity

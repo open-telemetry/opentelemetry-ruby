@@ -71,6 +71,7 @@ module OpenTelemetry
           # @param [optional Numeric] timeout An optional timeout in seconds.
           # @return [Integer] the result of the export.
           def export(span_data, timeout: nil)
+            OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#export: Called with #{span_data.size} spans, timeout=#{timeout.inspect}")
             return OpenTelemetry::SDK::Trace::Export.failure(message: 'exporter is shutdown') if @shutdown
 
             send_bytes(OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr(span_data), timeout: timeout)
@@ -131,26 +132,33 @@ module OpenTelemetry
           end
 
           def send_bytes(bytes, timeout:) # rubocop:disable Metrics/MethodLength
+            OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Entry with bytes.nil?=#{bytes.nil?}, timeout=#{timeout.inspect}")
             if bytes.nil?
               OpenTelemetry.logger.error('OTLP::HTTP::TraceExporter: send_bytes called with nil bytes')
               return OpenTelemetry::SDK::Trace::Export.failure(message: 'send_bytes called with nil bytes')
             end
 
+            OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Uncompressed size=#{bytes.bytesize} bytes")
             retry_count = 0
             timeout ||= @timeout
             start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
+            OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Starting request to #{@uri} with timeout=#{timeout}s")
             around_request do # rubocop:disable Metrics/BlockLength
               request = Net::HTTP::Post.new(@path)
               request.body = if @compression == 'gzip'
                                request.add_field('Content-Encoding', 'gzip')
-                               Zlib.gzip(bytes)
+                               compressed = Zlib.gzip(bytes)
+                               OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Compressed size=#{compressed.bytesize} bytes")
+                               compressed
                              else
+                               OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: No compression applied")
                                bytes
                              end
               request.add_field('Content-Type', 'application/x-protobuf')
               @headers.each { |key, value| request.add_field(key, value) }
 
               remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
+              OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Remaining timeout=#{remaining_timeout}s, retry_count=#{retry_count}")
               if remaining_timeout.zero?
                 OpenTelemetry.logger.error('OTLP::HTTP::TraceExporter: timeout exceeded before sending request')
                 return OpenTelemetry::SDK::Trace::Export.failure(message: 'timeout exceeded before sending request')
@@ -160,68 +168,92 @@ module OpenTelemetry
               @http.read_timeout = remaining_timeout
               @http.write_timeout = remaining_timeout
               @http.start unless @http.started?
+              OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Sending HTTP request")
               response = measure_request_duration { @http.request(request) }
+              OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Received response code=#{response.code}, message=#{response.message}")
 
               case response
               when Net::HTTPOK
+                OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: SUCCESS - HTTP 200 OK")
                 response.body # Read and discard body
                 SUCCESS
               when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
                 body = response.body
+                OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: ServiceUnavailable/TooManyRequests - retry_count=#{retry_count + 1}, retry_after=#{response['Retry-After']}")
                 redo if backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1, reason: response.code)
+                OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: FAILURE after max retries - HTTP #{response.code}")
                 OpenTelemetry.logger.error("OTLP::HTTP::TraceExporter: export failed with #{response.code} after #{retry_count} retries")
                 OpenTelemetry::SDK::Trace::Export.failure(message: "export failed with HTTP #{response.code} (#{response.message}) after #{retry_count} retries: #{body}")
               when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
                 body = response.body
+                OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Timeout/Gateway error - retry_count=#{retry_count + 1}, code=#{response.code}")
                 redo if backoff?(retry_count: retry_count += 1, reason: response.code)
+                OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: FAILURE after max retries - HTTP #{response.code}")
                 OpenTelemetry.logger.error("OTLP::HTTP::TraceExporter: export failed with #{response.code} after #{retry_count} retries")
                 OpenTelemetry::SDK::Trace::Export.failure(message: "export failed with HTTP #{response.code} (#{response.message}) after #{retry_count} retries: #{body}")
               when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
                 body = response.body
+                OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Client/Server error - HTTP #{response.code}")
                 log_status(body)
                 @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response.code })
                 OpenTelemetry::SDK::Trace::Export.failure(message: "export failed with HTTP #{response.code} (#{response.message}): #{body}")
               when Net::HTTPRedirection
+                OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Redirect to location=#{response['location']}")
                 @http.finish
                 handle_redirect(response['location'])
                 redo if backoff?(retry_after: 0, retry_count: retry_count += 1, reason: response.code)
               else
+                OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Unexpected response - code=#{response.code}, class=#{response.class}")
                 @http.finish
                 body = response.body
                 OpenTelemetry.logger.error("OTLP::HTTP::TraceExporter: export failed with unexpected HTTP response #{response.code}")
                 OpenTelemetry::SDK::Trace::Export.failure(message: "export failed with unexpected HTTP response #{response.code} (#{response.message}): #{body}")
               end
             rescue Net::OpenTimeout, Net::ReadTimeout => e
+              OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Caught #{e.class}: #{e.message}, retry_count=#{retry_count + 1}")
               retry if backoff?(retry_count: retry_count += 1, reason: 'timeout')
+              OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Max retries exceeded for #{e.class}")
               OpenTelemetry.logger.error("OTLP::HTTP::TraceExporter: export failed due to #{e.class} after #{retry_count} retries")
               return OpenTelemetry::SDK::Trace::Export.failure(error: e, message: "export failed due to #{e.class} after #{retry_count} retries")
             rescue OpenSSL::SSL::SSLError => e
+              OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Caught SSLError: #{e.message}, retry_count=#{retry_count + 1}")
               retry if backoff?(retry_count: retry_count += 1, reason: 'openssl_error')
+              OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Max retries exceeded for SSLError")
               OpenTelemetry.handle_error(exception: e, message: 'SSL error in OTLP::Exporter#send_bytes')
               return OpenTelemetry::SDK::Trace::Export.failure(error: e, message: 'SSL error in OTLP::Exporter#send_bytes')
             rescue SocketError => e
+              OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Caught SocketError: #{e.message}, retry_count=#{retry_count + 1}")
               retry if backoff?(retry_count: retry_count += 1, reason: 'socket_error')
+              OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Max retries exceeded for SocketError")
               OpenTelemetry.logger.error("OTLP::HTTP::TraceExporter: export failed due to SocketError after #{retry_count} retries: #{e.message}")
               return OpenTelemetry::SDK::Trace::Export.failure(error: e, message: "export failed due to SocketError after #{retry_count} retries: #{e.message}")
             rescue SystemCallError => e
+              OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Caught #{e.class}: #{e.message}, retry_count=#{retry_count + 1}")
               retry if backoff?(retry_count: retry_count += 1, reason: e.class.name)
+              OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Max retries exceeded for #{e.class}")
               OpenTelemetry.logger.error("OTLP::HTTP::TraceExporter: export failed due to #{e.class} after #{retry_count} retries: #{e.message}")
               return OpenTelemetry::SDK::Trace::Export.failure(error: e, message: "export failed due to #{e.class} after #{retry_count} retries: #{e.message}")
             rescue EOFError => e
+              OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Caught EOFError: #{e.message}, retry_count=#{retry_count + 1}")
               retry if backoff?(retry_count: retry_count += 1, reason: 'eof_error')
+              OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Max retries exceeded for EOFError")
               OpenTelemetry.logger.error("OTLP::HTTP::TraceExporter: export failed due to EOFError after #{retry_count} retries: #{e.message}")
               return OpenTelemetry::SDK::Trace::Export.failure(error: e, message: "export failed due to EOFError after #{retry_count} retries: #{e.message}")
             rescue Zlib::DataError => e
+              OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Caught Zlib::DataError: #{e.message}, retry_count=#{retry_count + 1}")
               retry if backoff?(retry_count: retry_count += 1, reason: 'zlib_error')
+              OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Max retries exceeded for Zlib::DataError")
               OpenTelemetry.logger.error("OTLP::HTTP::TraceExporter: export failed due to Zlib::DataError after #{retry_count} retries: #{e.message}")
               return OpenTelemetry::SDK::Trace::Export.failure(error: e, message: "export failed due to Zlib::DataError after #{retry_count} retries: #{e.message}")
             rescue StandardError => e
+              OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Caught unexpected #{e.class}: #{e.message}")
               OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#send_bytes')
               @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => e.class.to_s })
               return OpenTelemetry::SDK::Trace::Export.failure(error: e, message: 'unexpected error in OTLP::Exporter#send_bytes')
             end
           ensure
             # Reset timeouts to defaults for the next call.
+            OpenTelemetry.logger.debug("OTLP::HTTP::TraceExporter#send_bytes: Resetting timeouts to default #{@timeout}s")
             @http.open_timeout = @timeout
             @http.read_timeout = @timeout
             @http.write_timeout = @timeout

@@ -185,11 +185,20 @@ module OpenTelemetry
 
           def export_batch(span_array, timeout: @exporter_timeout_seconds)
             batch = span_array.map(&:to_span_data)
-            result = @export_mutex.synchronize { @exporter.export(batch, timeout: timeout) }
+            result = @export_mutex.synchronize do
+              OpenTelemetry.logger.debug("BatchSpanProcessor#export_batch: exporter=#{@exporter.class.name}")
+              OpenTelemetry.logger.debug("BatchSpanProcessor#export_batch: Exporting batch of #{batch.size} spans with timeout #{timeout}")
+              @exporter.export(batch, timeout: timeout)
+            end
+
+            OpenTelemetry.logger.debug("BatchSpanProcessor#export_batch: Exporter returned result with class #{result.class}")
 
             # Extract error context if available
             error = result.respond_to?(:error) ? result.error : nil
             message = result.respond_to?(:message) ? result.message : nil
+
+            OpenTelemetry.logger.debug("BatchSpanProcessor#export_batch: Extracted error=#{error&.class}, message=#{message ? 'present' : 'nil'}")
+            OpenTelemetry.logger.debug("BatchSpanProcessor#export_batch: result.to_i=#{result.to_i}")
 
             report_result(result.to_i, span_array, error: error, message: message)
             result.to_i
@@ -211,6 +220,7 @@ module OpenTelemetry
                 OpenTelemetry.logger.error("BatchSpanProcessor: export failed: #{message}")
               else
                 OpenTelemetry.logger.error('BatchSpanProcessor: export failed (no error details available)')
+                OpenTelemetry.logger.error("BatchSpanProcessor: call stack:\n#{caller.join("\n")}")
               end
 
               OpenTelemetry.handle_error(exception: ExportError.new(span_array))
