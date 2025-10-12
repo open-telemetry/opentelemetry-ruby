@@ -463,6 +463,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       metrics_data = create_metrics_data
       result = exporter.export([metrics_data])
       _(log_stream.string).must_match(/ERROR -- : OpenTelemetry error: Unable to export metrics/)
+      _(log_stream.string).must_match(/ERROR -- : Result code: 1/)
       _(result).must_equal(METRICS_FAILURE)
     ensure
       OpenTelemetry.logger = logger
