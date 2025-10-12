@@ -312,17 +312,19 @@ module OpenTelemetry
             context.span_id,
             context.trace_id,
             context.trace_flags,
-            context.tracestate
+            context.tracestate,
+            @parent_span_is_remote
           )
         end
 
         # @api private
-        def initialize(context, parent_context, parent_span, name, kind, parent_span_id, span_limits, span_processors, attributes, links, start_timestamp, resource, instrumentation_scope) # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
+        def initialize(context, parent_context, parent_span, name, kind, parent_span_id, span_limits, span_processors, attributes, links, start_timestamp, resource, instrumentation_scope) # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
           super(span_context: context)
           @mutex = Mutex.new
           @name = name
           @kind = kind
           @parent_span_id = parent_span_id.freeze || OpenTelemetry::Trace::INVALID_SPAN_ID
+          @parent_span_is_remote = parent_span&.context&.remote? || false
           @span_limits = span_limits
           @span_processors = span_processors
           @resource = resource
