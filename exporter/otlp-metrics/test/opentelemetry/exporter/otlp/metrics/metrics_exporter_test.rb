@@ -437,6 +437,37 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       _(result).must_equal(METRICS_SUCCESS)
     end
 
+    it 'logs successful export at debug level' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+      OpenTelemetry.logger.level = ::Logger::DEBUG
+
+      stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 200)
+
+      metrics_data = create_metrics_data
+      result = exporter.export([metrics_data])
+      _(log_stream.string).must_match(/DEBUG -- : Successfully exported metrics/)
+      _(result).must_equal(METRICS_SUCCESS)
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
+    it "logs failure to export at error level" do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 500)
+
+      metrics_data = create_metrics_data
+      result = exporter.export([metrics_data])
+      _(log_stream.string).must_match(/ERROR -- : OpenTelemetry error: Unable to export metrics/)
+      _(result).must_equal(METRICS_FAILURE)
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
     it 'handles encoding errors with poise and grace' do
       log_stream = StringIO.new
       logger = OpenTelemetry.logger
