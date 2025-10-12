@@ -453,7 +453,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       OpenTelemetry.logger = logger
     end
 
-    it "logs failure to export at error level" do
+    it 'logs failure to export at error level' do
       log_stream = StringIO.new
       logger = OpenTelemetry.logger
       OpenTelemetry.logger = ::Logger.new(log_stream)

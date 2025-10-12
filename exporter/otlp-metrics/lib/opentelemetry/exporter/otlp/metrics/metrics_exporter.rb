@@ -84,9 +84,9 @@ module OpenTelemetry
 
           def report_result(result_code, metrics)
             if result_code == SUCCESS
-              OpenTelemetry.logger.debug("Successfully exported metrics")
+              OpenTelemetry.logger.debug('Successfully exported metrics')
             else
-              OpenTelemetry.handle_error(exception: OpenTelemetry::SDK::Metrics::Export::ExportError.new("Unable to export metrics"))
+              OpenTelemetry.handle_error(exception: OpenTelemetry::SDK::Metrics::Export::ExportError.new('Unable to export metrics'))
               OpenTelemetry.logger.error("Result code: #{result_code}")
             end
           end
