@@ -2,7 +2,7 @@
 
 ### v0.10.0 / 2025-10-14
 
-* ADDED: Create method for returning timestamp in nanoseconds
+* ADDED: Use common method for returning timestamp in nanoseconds
 
 ### v0.9.1 / 2025-09-16
 
