@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  File: README
+  
+    &mdash; OpenTelemetry
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "README";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><div id='filecontents'>
+<h1 id="label-opentelemetry-sdk">opentelemetry-sdk</h1>
+
+<p>The <code>opentelemetry-sdk</code> gem provides the reference implementation of the OpenTelemetry Ruby API. Using <code>opentelemetry-sdk</code>, an application can collect, analyze, and export telemetry data such as distributed traces and metrics.</p>
+
+<h2 id="label-What+is+OpenTelemetry-3F">What is OpenTelemetry?</h2>
+
+<p><a href="https://opentelemetry.io">OpenTelemetry</a> is an open source observability framework, providing a general-purpose API, SDK, and related tools required for the instrumentation of cloud-native software, frameworks, and libraries.</p>
+
+<p>OpenTelemetry provides a single set of APIs, libraries, agents, and collector services to capture distributed traces and metrics from your application. You can analyze them using Prometheus, Jaeger, and other observability tools.</p>
+
+<h2 id="label-How+does+this+gem+fit+in-3F">How does this gem fit in?</h2>
+
+<p>The <code>opentelemetry-sdk</code> gem provides the reference implementation of the OpenTelemetry Ruby interfaces defined in the <code>opentelemetry-api</code> gem. That is, it includes the <em>functionality</em> needed to collect, analyze, and export telemetry data produced using the API.</p>
+
+<p>Generally, Ruby <em>applications</em> should install <code>opentelemetry-sdk</code> (or other concrete implementation of the OpenTelemetry API). Using the SDK, an application can configure how it wants telemetry data to be handled, including which data should be persisted, how it should be formatted, and where it should be recorded or exported. However, <em>libraries</em> that produce telemetry data should generally depend only on <code>opentelemetry-api</code>, deferring the choice of concrete implementation to the application developer.</p>
+
+<h2 id="label-How+do+I+get+started-3F">How do I get started?</h2>
+
+<p>Install the gem using:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_gem'>gem</span> <span class='id identifier rubyid_install'>install</span> <span class='id identifier rubyid_opentelemetry'>opentelemetry</span><span class='op'>-</span><span class='id identifier rubyid_sdk'>sdk</span>
+</code></pre>
+
+<p>Or, if you use <a href="https://bundler.io">bundler</a>, include <code>opentelemetry-sdk</code> in your <code>Gemfile</code>.</p>
+
+<p>Then, configure the SDK according to your desired handling of telemetry data, and use the OpenTelemetry interfaces to produces traces and other information. Following is a basic example.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>opentelemetry/sdk</span><span class='tstring_end'>&#39;</span></span>
+
+<span class='comment'># Configure the sdk with default export and context propagation formats.
+</span><span class='const'><span class='object_link'><a href="OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="OpenTelemetry/SDK.html" title="OpenTelemetry::SDK (module)">SDK</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="OpenTelemetry/SDK.html#configure-instance_method" title="OpenTelemetry::SDK#configure (method)">configure</a></span></span>
+
+<span class='comment'># Many configuration options may be set via the environment. To use them,
+</span><span class='comment'># set the appropriate variable before calling configure. For example:
+</span><span class='comment'>#
+</span><span class='comment'># ENV[&#39;OTEL_TRACES_EXPORTER&#39;] = &#39;console&#39;
+</span><span class='comment'># ENV[&#39;OTEL_PROPAGATORS&#39;] = &#39;ottrace&#39;
+</span><span class='comment'># OpenTelemetry::SDK.configure
+</span><span class='comment'>#
+</span><span class='comment'># You may also configure the SDK programmatically, for advanced usage or to
+</span><span class='comment'># enable auto-instrumentation. For example:
+</span><span class='comment'>#
+</span><span class='comment'># OpenTelemetry::SDK.configure do |c|
+</span><span class='comment'>#   c.service_name = something_calculated_dynamically
+</span><span class='comment'>#   c.add_span_processor(
+</span><span class='comment'>#     OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(
+</span><span class='comment'>#       OpenTelemetry::SDK::Trace::Export::ConsoleSpanExporter.new
+</span><span class='comment'>#     )
+</span><span class='comment'>#   )
+</span><span class='comment'>#
+</span><span class='comment'>#   c.use &#39;OpenTelemetry::Instrumentation::Net::HTTP&#39;
+</span><span class='comment'># end
+</span><span class='comment'>#
+</span><span class='comment'># Note that the SimpleSpanProcessor is not recommended for use in production.
+</span>
+
+<span class='comment'># To start a trace you need to get a Tracer from the TracerProvider
+</span><span class='id identifier rubyid_tracer'>tracer</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="OpenTelemetry.html" title="OpenTelemetry (module)">OpenTelemetry</a></span></span><span class='period'>.</span><span class='id identifier rubyid_tracer_provider'>tracer_provider</span><span class='period'>.</span><span class='id identifier rubyid_tracer'>tracer</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>my_app_or_gem</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0.1.0</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+<span class='comment'># create a span
+</span><span class='id identifier rubyid_tracer'>tracer</span><span class='period'>.</span><span class='id identifier rubyid_in_span'>in_span</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>foo</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_span'>span</span><span class='op'>|</span>
+  <span class='comment'># set an attribute
+</span>  <span class='id identifier rubyid_span'>span</span><span class='period'>.</span><span class='id identifier rubyid_set_attribute'>set_attribute</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>platform</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>osx</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='comment'># add an event
+</span>  <span class='id identifier rubyid_span'>span</span><span class='period'>.</span><span class='id identifier rubyid_add_event'>add_event</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>event in bar</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='comment'># create bar as child of foo
+</span>  <span class='id identifier rubyid_tracer'>tracer</span><span class='period'>.</span><span class='id identifier rubyid_in_span'>in_span</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>bar</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_child_span'>child_span</span><span class='op'>|</span>
+    <span class='comment'># inspect the span
+</span>    <span class='id identifier rubyid_pp'>pp</span> <span class='id identifier rubyid_child_span'>child_span</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span>
+</code></pre>
+
+<p>For additional examples, see the <a href="https://github.com/open-telemetry/opentelemetry-ruby/tree/main/examples">examples on github</a>.</p>
+
+<h2 id="label-How+can+I+get+involved-3F">How can I get involved?</h2>
+
+<p>The <code>opentelemetry-sdk</code> gem source is <a href="https://github.com/open-telemetry/opentelemetry-ruby">on github</a>, along with related gems including <code>opentelemetry-api</code>.</p>
+
+<p>The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us in <a href="https://github.com/open-telemetry/opentelemetry-ruby/discussions">GitHub Discussions</a> or attending our weekly meeting. See the <a href="https://github.com/open-telemetry/community#community-meetings">meeting calendar</a> for dates and times. For more information on this and other language SIGs, see the OpenTelemetry <a href="https://github.com/open-telemetry/community#ruby-sig">community page</a>.</p>
+
+<h2 id="label-License">License</h2>
+
+<p>The <code>opentelemetry-sdk</code> gem is distributed under the Apache 2.0 license. See <a href="https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE">LICENSE</a> for more information.</p>
+</div></div>
+
+      <div id="footer">
+  Generated on Tue Oct 14 16:56:08 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.1.6).
+</div>
+
+    </div>
+  </body>
+</html>
