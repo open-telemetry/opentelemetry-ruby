@@ -55,7 +55,6 @@ module OpenTelemetry
             @previous_count = {} # 0
             @previous_zero_count = {} # 0
             @previous_scale = {} # nil
-            # @start_time_unix_nano = {} #nil
           end
 
           # when aggregation temporality is cumulative, merge and downscale will happen.
@@ -63,7 +62,6 @@ module OpenTelemetry
           def collect(start_time, end_time, data_points)
             if @aggregation_temporality.delta?
               # Set timestamps and 'move' data point values to result.
-              # puts "data_points.inspect: #{data_points.inspect}"
               hdps = data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano = start_time
                 hdp.time_unix_nano = end_time
