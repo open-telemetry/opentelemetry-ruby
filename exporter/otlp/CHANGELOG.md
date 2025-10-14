@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.31.0 / 2025-10-14
+
+* ADDED: Add span flags support for isRemote property
+
 ### v0.30.0 / 2025-02-25
 
 - ADDED: Support 3.1 Min Version

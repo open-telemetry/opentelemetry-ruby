@@ -1,5 +1,9 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.10.0 / 2025-10-14
+
+* ADDED: Use common method for returning timestamp in nanoseconds
+
 ### v0.9.1 / 2025-09-16
 
 * FIXED: Use mapping scale outside of rescale logic

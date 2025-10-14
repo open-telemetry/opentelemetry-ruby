@@ -1,5 +1,9 @@
 # Release History: opentelemetry-sdk
 
+### v1.10.0 / 2025-10-14
+
+* ADDED: Add span flags support for isRemote property
+
 ### v1.9.0 / 2025-09-16
 
 * ADDED: Add record_exception option for in_span
