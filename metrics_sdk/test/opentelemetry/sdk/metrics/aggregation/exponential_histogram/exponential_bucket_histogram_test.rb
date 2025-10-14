@@ -1040,9 +1040,8 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
           _(metric_data.start_time_unix_nano).must_equal(previous_metric_data.start_time_unix_nano)
           _(metric_data.min).must_equal(previous_metric_data.min)
           _(metric_data.max).must_equal(previous_metric_data.max)
-          # _(metric_data.sum).must_be_within_epsilon(previous_metric_data.sum, 1e-10)
+          _(metric_data.sum).must_be_within_epsilon(previous_metric_data.sum, 1e-10)
 
-          # omit the test case for now before cumulative aggregation is tested
           _(metric_data.positive.counts).must_equal(expected_bucket_counts)
           _(metric_data.negative.counts).must_equal([0])
         end

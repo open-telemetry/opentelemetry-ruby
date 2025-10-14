@@ -369,7 +369,6 @@ module OpenTelemetry
             end
           end
 
-          # checked
           def get_low_high(buckets, scale, min_scale)
             return [0, -1] if buckets.nil? || buckets.counts == [0] || buckets.counts.empty?
 

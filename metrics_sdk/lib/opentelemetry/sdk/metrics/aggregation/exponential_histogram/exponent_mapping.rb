@@ -13,9 +13,6 @@ module OpenTelemetry
           class ExponentMapping
             attr_reader :scale
 
-            MINIMAL_SCALE = -10
-            MAXIMAL_SCALE = 0
-
             def initialize(scale)
               @scale = scale
               @min_normal_lower_boundary_index = calculate_min_normal_lower_boundary_index(scale)

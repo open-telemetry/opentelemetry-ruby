@@ -160,7 +160,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
     end
 
     it 'test_exponent_mapping_min_scale' do
-      min_scale = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::ExponentMapping::MINIMAL_SCALE
+      min_scale = -10
       exponent_mapping = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::ExponentMapping.new(min_scale)
       _(exponent_mapping.map_to_index(1.000001)).must_equal(0)
       _(exponent_mapping.map_to_index(1)).must_equal(-1)
