@@ -78,5 +78,31 @@ describe OpenTelemetry::SDK do
 
       _(exporter.export(metrics)).must_equal export::FAILURE
     end
+
+    describe 'cardinality limit' do
+      it 'accepts cardinality_limit parameter on initialization' do
+        exporter_with_limit = export::ConsoleMetricPullExporter.new(aggregation_cardinality_limit: 100)
+        _(exporter_with_limit.export(metrics)).must_equal export::SUCCESS
+      end
+
+      it 'enforces cardinality limit when collecting metrics' do
+        exporter_with_limit = export::ConsoleMetricPullExporter.new(aggregation_cardinality_limit: 2)
+
+        OpenTelemetry::SDK.configure
+        OpenTelemetry.meter_provider.add_metric_reader(exporter_with_limit)
+        meter = OpenTelemetry.meter_provider.meter('test')
+        counter = meter.create_counter('test_counter')
+
+        # Add more data points than the cardinality limit
+        counter.add(1, attributes: { 'key' => 'a' })
+        counter.add(2, attributes: { 'key' => 'b' })
+        counter.add(3, attributes: { 'key' => 'c' }) # Should trigger overflow
+
+        exporter_with_limit.pull
+
+        # Check that overflow attribute is present in output
+        _(captured_stdout.string).must_match(/otel\.metric\.overflow.*true/)
+      end
+    end
   end
 end
