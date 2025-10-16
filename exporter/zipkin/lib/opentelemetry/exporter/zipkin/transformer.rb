@@ -117,12 +117,12 @@ module OpenTelemetry
           events = span_data.events.map do |event|
             if event.attributes.keys.length.zero?
               {
-                timestamp: (event.timestamp / 1_000).to_s,
+                timestamp: event.timestamp / 1_000,
                 value: event.name
               }
             else
               {
-                timestamp: (event.timestamp / 1_000).to_s,
+                timestamp: event.timestamp / 1_000,
                 value: { event.name => event.attributes.transform_values(&:to_s) }.to_json
               }
             end
