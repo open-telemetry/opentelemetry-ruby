@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp-logs
 
+### v0.2.2 / 2025-10-17
+
+* (No significant changes)
+
 ### v0.2.1 / 2025-08-14
 
 - FIXED: Support hash bodies and attribute values in OTLP logs exporter
