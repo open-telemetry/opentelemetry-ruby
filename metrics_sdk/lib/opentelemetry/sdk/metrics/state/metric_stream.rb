@@ -55,6 +55,7 @@ module OpenTelemetry
             end
           end
 
+          # view will modify the data_point that is not suitable when there are multiple views
           def update(value, attributes)
             if @registered_views.empty?
               @mutex.synchronize { @default_aggregation.update(value, attributes, @data_points) }
