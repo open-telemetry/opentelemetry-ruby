@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp-metrics
 
+### v0.6.1 / 2025-10-17
+
+* FIXED: Increase OTLP Proto version to 1.8.0 to match version in opentelemetry-exporter-otlp
+
 ### v0.6.0 / 2025-08-14
 
 - ADDED: Add support for exporting asynchronous instruments
