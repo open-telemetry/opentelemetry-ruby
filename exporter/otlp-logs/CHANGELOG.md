@@ -2,7 +2,7 @@
 
 ### v0.2.2 / 2025-10-17
 
-* (No significant changes)
+* FIXED: Increase OTLP Proto version to 1.8.0 to match version in opentelemetry-exporter-otlp
 
 ### v0.2.1 / 2025-08-14
 
