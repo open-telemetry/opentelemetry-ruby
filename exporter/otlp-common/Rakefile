@@ -32,7 +32,7 @@ default_tasks =
 
 task default: default_tasks
 
-PROTO_VERSION = 'v0.18.0'
+PROTO_VERSION = 'v1.8.0'
 PROTOBUF_FILES = [
   'collector/logs/v1/logs_service.proto',
   'collector/metrics/v1/metrics_service.proto',
@@ -41,8 +41,7 @@ PROTOBUF_FILES = [
   'logs/v1/logs.proto',
   'metrics/v1/metrics.proto',
   'resource/v1/resource.proto',
-  'trace/v1/trace.proto',
-  'trace/v1/trace_config.proto'
+  'trace/v1/trace.proto'
 ].freeze
 
 desc 'Update probobuf'
