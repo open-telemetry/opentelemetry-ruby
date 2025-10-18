@@ -123,7 +123,18 @@ module OpenTelemetry
           def export(timeout: nil)
             @export_mutex.synchronize do
               collected_metrics = collect
-              @exporter.export(collected_metrics, timeout: timeout || @export_timeout) unless collected_metrics.empty?
+              result_code = @exporter.export(collected_metrics, timeout: timeout || @export_timeout) unless collected_metrics.empty?
+              report_result(result_code)
+              result_code
+            end
+          end
+
+          def report_result(result_code)
+            if result_code == Export::SUCCESS
+              OpenTelemetry.logger.debug 'Successfully exported metrics'
+            else
+              OpenTelemetry.handle_error(exception: ExportError.new('Unable to export metrics'))
+              OpenTelemetry.logger.error("Result code: #{result_code}")
             end
           end
 
