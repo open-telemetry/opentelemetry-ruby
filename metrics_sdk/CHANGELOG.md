@@ -1,5 +1,9 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.10.1 / 2025-10-21
+
+* FIXED: Add test case for metric_store and metric_view
+
 ### v0.10.0 / 2025-10-14
 
 * ADDED: Use common method for returning timestamp in nanoseconds
