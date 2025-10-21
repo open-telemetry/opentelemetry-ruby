@@ -82,10 +82,21 @@ module OpenTelemetry
             export(collect)
           end
 
+          def report_result(result_code, metrics)
+            if result_code == SUCCESS
+              OpenTelemetry.logger.debug('Successfully exported metrics')
+            else
+              OpenTelemetry.handle_error(exception: OpenTelemetry::SDK::Metrics::Export::ExportError.new('Unable to export metrics'))
+              OpenTelemetry.logger.error("Result code: #{result_code}")
+            end
+          end
+
           # metrics Array[MetricData]
           def export(metrics, timeout: nil)
             @mutex.synchronize do
-              send_bytes(encode(metrics), timeout: timeout)
+              result = send_bytes(encode(metrics), timeout: timeout)
+              report_result(result, metrics)
+              result
             end
           end
 
