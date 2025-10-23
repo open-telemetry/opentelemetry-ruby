@@ -15,13 +15,12 @@ module OpenTelemetry
           # Returns the {Span} array for this exception
           #
           # @return [Array<OpenTelemetry::SDK::Trace::Span>]
-          attr_reader :spans, :error
+          attr_reader :spans
 
           # @param [Array<OpenTelemetry::SDK::Trace::Span>] spans the array of spans that failed to export
           def initialize(spans)
             super("Unable to export #{spans.size} spans")
             @spans = spans
-            @error = error
           end
         end
 
@@ -43,14 +42,7 @@ module OpenTelemetry
           # @param other [Integer, ExportResult] value to compare against
           # @return [Boolean]
           def ==(other)
-            case other
-            when Integer
-              @code == other
-            when ExportResult
-              @code == other.code
-            else
-              super
-            end
+            other.to_i == @code
           end
 
           # @return [Integer] the result code

@@ -76,12 +76,11 @@ module OpenTelemetry
         # @param [optional Numeric] timeout An optional timeout in seconds.
         # @return [Integer] the result of the export.
         def export(span_data, timeout: nil)
-          OpenTelemetry.logger.debug("OTLP::Exporter#export: Called with #{span_data&.size || 0} spans, timeout=#{timeout.inspect}, shutdown=#{@shutdown}")
           return OpenTelemetry::SDK::Trace::Export.failure(message: 'exporter is shutdown') if @shutdown
 
           OpenTelemetry.logger.debug("OTLP::Exporter#export: Calling encode for #{span_data&.size || 0} spans")
           encoded = encode(span_data)
-          OpenTelemetry.logger.debug("OTLP::Exporter#export: Encode returned #{encoded.nil? ? 0 : "#{encoded.bytesize} bytes"}")
+
 
           result = send_bytes(encoded, timeout: timeout)
           OpenTelemetry.logger.debug("OTLP::Exporter#export: send_bytes returned result with class #{result.class}")
@@ -153,22 +152,18 @@ module OpenTelemetry
         end
 
         def send_bytes(bytes, timeout:) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-          OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Entry with bytes.nil?=#{bytes.nil?}, timeout=#{timeout.inspect}")
-          OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: URI=#{@uri}, path=#{@path}")
+          OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Entry with bytes.nil?=#{bytes.nil?}, timeout=#{timeout.inspect}, URI=#{@uri}, path=#{@path}")
           return OpenTelemetry::SDK::Trace::Export.failure(message: 'send_bytes called with nil bytes') if bytes.nil?
 
           @metrics_reporter.record_value('otel.otlp_exporter.message.uncompressed_size', value: bytes.bytesize)
-          OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Uncompressed size=#{bytes.bytesize} bytes")
 
           request = Net::HTTP::Post.new(@path)
           if @compression == 'gzip'
             request.add_field('Content-Encoding', 'gzip')
             body = Zlib.gzip(bytes)
             @metrics_reporter.record_value('otel.otlp_exporter.message.compressed_size', value: body.bytesize)
-            OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Compressed size=#{body.bytesize} bytes")
           else
             body = bytes
-            OpenTelemetry.logger.debug('OTLP::Exporter#send_bytes: No compression applied')
           end
           request.body = body
           request.add_field('Content-Type', 'application/x-protobuf')
@@ -188,9 +183,7 @@ module OpenTelemetry
             @http.read_timeout = remaining_timeout
             @http.write_timeout = remaining_timeout
             @http.start unless @http.started?
-            OpenTelemetry.logger.debug('OTLP::Exporter#send_bytes: Sending HTTP request')
             response = measure_request_duration { @http.request(request) }
-            OpenTelemetry.logger.debug("OTLP::Exporter#send_bytes: Received response code=#{response.code}, message=#{response.message}")
 
             case response
             when Net::HTTPOK
