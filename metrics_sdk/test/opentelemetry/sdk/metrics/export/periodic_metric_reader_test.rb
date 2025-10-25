@@ -41,11 +41,7 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
       skip if Gem.win_platform?
 
       exporter = TestExporter.new(status_codes: [FAILURE])
-      periodic_metric_reader = PeriodicMetricReader.new(
-        exporter: exporter,
-        export_interval_millis: 60_000, # Long interval so we control when export happens
-        export_timeout_millis: 5000
-      )
+      periodic_metric_reader = PeriodicMetricReader.new(exporter: exporter)
 
       mock_logger = Minitest::Mock.new
       mock_logger.expect(:error, nil, [/Unable to export/])
@@ -67,11 +63,7 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
       skip if Gem.win_platform?
 
       exporter = TestExporter.new(status_codes: [SUCCESS])
-      periodic_metric_reader = PeriodicMetricReader.new(
-        exporter: exporter,
-#        export_interval_millis: 60_000, # Long interval so we control when export happens
-#        export_timeout_millis: 5000
-      )
+      periodic_metric_reader = PeriodicMetricReader.new(exporter: exporter)
 
       mock_logger = Minitest::Mock.new
       mock_logger.expect(:debug, nil, ['Successfully exported metrics'])
