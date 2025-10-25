@@ -36,16 +36,6 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
     def force_flush(timeout: nil) = SUCCESS
   end
 
-  class RaisingExporter
-    def export(metrics, timeout: nil)
-      raise 'boom!'
-    end
-
-    def shutdown(timeout: nil) = SUCCESS
-
-    def force_flush(timeout: nil) = SUCCESS
-  end
-
   describe 'faulty exporter' do
     it 'reports export failures' do
       skip if Gem.win_platform?
@@ -79,8 +69,8 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
       exporter = TestExporter.new(status_codes: [SUCCESS])
       periodic_metric_reader = PeriodicMetricReader.new(
         exporter: exporter,
-        export_interval_millis: 60_000, # Long interval so we control when export happens
-        export_timeout_millis: 5000
+#        export_interval_millis: 60_000, # Long interval so we control when export happens
+#        export_timeout_millis: 5000
       )
 
       mock_logger = Minitest::Mock.new
