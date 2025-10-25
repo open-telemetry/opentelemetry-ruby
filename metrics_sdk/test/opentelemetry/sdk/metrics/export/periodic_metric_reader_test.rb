@@ -36,47 +36,50 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
     def force_flush(timeout: nil) = SUCCESS
   end
 
-  describe 'faulty exporter' do
+  describe 'exporter with failure' do
+    let(:exporter) { TestExporter.new(status_codes: [FAILURE]) }
+    let(:reader) { PeriodicMetricReader.new(exporter: exporter) }
+
     it 'reports export failures' do
       skip if Gem.win_platform?
 
-      exporter = TestExporter.new(status_codes: [FAILURE])
-      periodic_metric_reader = PeriodicMetricReader.new(exporter: exporter)
-
       mock_logger = Minitest::Mock.new
-      mock_logger.expect(:error, nil, [/Unable to export/])
+      mock_logger.expect(:error, nil, [/Unable to export metrics/])
       mock_logger.expect(:error, nil, [/Result code: 1/])
 
       # Stub collect to return a non-empty array so export is actually called
-      periodic_metric_reader.stub(:collect, ['mock_metric']) do
+      reader.stub(:collect, ['mock_metric']) do
         OpenTelemetry.stub(:logger, mock_logger) do
           # Call export directly to trigger the report_result method
-          periodic_metric_reader.send(:export)
+          reader.send(:export)
         end
       end
 
-      periodic_metric_reader.shutdown
+      reader.shutdown
       mock_logger.verify
     end
+  end
+
+  describe 'succesful exporter' do
+    let(:exporter) { TestExporter.new(status_codes: [SUCCESS]) }
+    let(:reader) { PeriodicMetricReader.new(exporter: exporter) }
 
     it 'reports successful exports' do
       skip if Gem.win_platform?
-
-      exporter = TestExporter.new(status_codes: [SUCCESS])
-      periodic_metric_reader = PeriodicMetricReader.new(exporter: exporter)
 
       mock_logger = Minitest::Mock.new
       mock_logger.expect(:debug, nil, ['Successfully exported metrics'])
 
       # Stub collect to return a non-empty array so export is actually called
-      periodic_metric_reader.stub(:collect, ['mock_metric']) do
+      reader.stub(:collect, ['mock_metric']) do
         OpenTelemetry.stub(:logger, mock_logger) do
           # Call export directly to trigger the report_result method
-          periodic_metric_reader.send(:export)
+          reader.send(:export)
+
         end
       end
 
-      periodic_metric_reader.shutdown
+      reader.shutdown
       mock_logger.verify
     end
   end
