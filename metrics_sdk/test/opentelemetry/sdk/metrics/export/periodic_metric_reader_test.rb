@@ -31,13 +31,9 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
       end
     end
 
-    def shutdown(timeout: nil)
-      SUCCESS
-    end
+    def shutdown(timeout: nil) = SUCCESS
 
-    def force_flush(timeout: nil)
-      SUCCESS
-    end
+    def force_flush(timeout: nil) = SUCCESS
   end
 
   class RaisingExporter
@@ -45,13 +41,9 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
       raise 'boom!'
     end
 
-    def shutdown(timeout: nil)
-      SUCCESS
-    end
+    def shutdown(timeout: nil) = SUCCESS
 
-    def force_flush(timeout: nil)
-      SUCCESS
-    end
+    def force_flush(timeout: nil) = SUCCESS
   end
 
   describe 'faulty exporter' do
