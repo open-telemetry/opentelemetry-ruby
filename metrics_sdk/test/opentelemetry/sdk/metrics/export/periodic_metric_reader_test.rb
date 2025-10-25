@@ -6,7 +6,6 @@
 
 require 'test_helper'
 
-# rubocop:disable Lint/ConstantDefinitionInBlock, Style/Documentation
 describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
   PeriodicMetricReader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader
   SUCCESS = OpenTelemetry::SDK::Metrics::Export::SUCCESS
@@ -108,4 +107,3 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
     end
   end
 end
-# rubocop:enable Lint/ConstantDefinitionInBlock, Style/Documentation
