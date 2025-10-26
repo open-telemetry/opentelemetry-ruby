@@ -21,7 +21,7 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
     attr_reader :exported_metrics
 
     def export(metrics, timeout: nil)
-      # If status codes are empty, return success for less verbose testing
+      puts "TestExporter export called"
       s = @status_codes.shift
       if s.nil? || s == SUCCESS
         @exported_metrics.concat(metrics)
@@ -40,7 +40,7 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
     let(:exporter) { TestExporter.new(status_codes: [FAILURE]) }
     let(:reader) { PeriodicMetricReader.new(exporter: exporter) }
 
-    it 'reports export failures' do
+    it 'logs export failure as error' do
       skip if Gem.win_platform?
 
       mock_logger = Minitest::Mock.new
@@ -50,8 +50,7 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
       # Stub collect to return a non-empty array so export is actually called
       reader.stub(:collect, ['mock_metric']) do
         OpenTelemetry.stub(:logger, mock_logger) do
-          # Call export directly to trigger the report_result method
-          reader.send(:export)
+          reader.force_flush
         end
       end
 
@@ -64,7 +63,7 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
     let(:exporter) { TestExporter.new(status_codes: [SUCCESS]) }
     let(:reader) { PeriodicMetricReader.new(exporter: exporter) }
 
-    it 'reports successful exports' do
+    it 'logs successful export as debug' do
       skip if Gem.win_platform?
 
       mock_logger = Minitest::Mock.new
@@ -73,9 +72,7 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
       # Stub collect to return a non-empty array so export is actually called
       reader.stub(:collect, ['mock_metric']) do
         OpenTelemetry.stub(:logger, mock_logger) do
-          # Call export directly to trigger the report_result method
-          reader.send(:export)
-
+          reader.force_flush
         end
       end
 
