@@ -41,8 +41,6 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
     let(:reader) { PeriodicMetricReader.new(exporter: exporter) }
 
     it 'logs export failure as error' do
-      skip if Gem.win_platform?
-
       mock_logger = Minitest::Mock.new
       mock_logger.expect(:error, nil, [/Unable to export metrics/])
       mock_logger.expect(:error, nil, [/Result code: 1/])
@@ -64,8 +62,6 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
     let(:reader) { PeriodicMetricReader.new(exporter: exporter) }
 
     it 'logs successful export as debug' do
-      skip if Gem.win_platform?
-
       mock_logger = Minitest::Mock.new
       mock_logger.expect(:debug, nil, ['Successfully exported metrics'])
 
