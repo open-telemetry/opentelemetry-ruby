@@ -21,7 +21,6 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
     attr_reader :exported_metrics
 
     def export(metrics, timeout: nil)
-      puts "TestExporter export called"
       s = @status_codes.shift
       if s.nil? || s == SUCCESS
         @exported_metrics.concat(metrics)
