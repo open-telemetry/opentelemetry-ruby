@@ -72,6 +72,7 @@ module OpenTelemetry
           # if the aggregation does not have the cardinality, then it will be default 2000
           # it better to move overflowed data_points during update because if do it in collect,
           # then we need to sort the entire data_points (~ 2000) based on time, which is time-consuming
+          # view will modify the data_point that is not suitable when there are multiple views
           def update(value, attributes)
             if @registered_views.empty?
               resolved_cardinality_limit = resolve_cardinality_limit(nil)
