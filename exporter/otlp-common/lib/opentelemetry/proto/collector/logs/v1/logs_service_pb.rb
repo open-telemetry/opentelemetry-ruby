@@ -7,9 +7,9 @@ require 'google/protobuf'
 require 'opentelemetry/proto/logs/v1/logs_pb'
 
 
-descriptor_data = "\n8opentelemetry/proto/collector/logs/v1/logs_service.proto\x12%opentelemetry.proto.collector.logs.v1\x1a&opentelemetry/proto/logs/v1/logs.proto\"\\\n\x18\x45xportLogsServiceRequest\x12@\n\rresource_logs\x18\x01 \x03(\x0b\x32).opentelemetry.proto.logs.v1.ResourceLogs\"\x1b\n\x19\x45xportLogsServiceResponse2\x9d\x01\n\x0bLogsService\x12\x8d\x01\n\x06\x45xport\x12?.opentelemetry.proto.collector.logs.v1.ExportLogsServiceRequest\x1a@.opentelemetry.proto.collector.logs.v1.ExportLogsServiceResponse\"\x00\x42p\n(io.opentelemetry.proto.collector.logs.v1B\x10LogsServiceProtoP\x01Z0go.opentelemetry.io/proto/otlp/collector/logs/v1b\x06proto3"
+descriptor_data = "\n8opentelemetry/proto/collector/logs/v1/logs_service.proto\x12%opentelemetry.proto.collector.logs.v1\x1a&opentelemetry/proto/logs/v1/logs.proto\"\\\n\x18\x45xportLogsServiceRequest\x12@\n\rresource_logs\x18\x01 \x03(\x0b\x32).opentelemetry.proto.logs.v1.ResourceLogs\"u\n\x19\x45xportLogsServiceResponse\x12X\n\x0fpartial_success\x18\x01 \x01(\x0b\x32?.opentelemetry.proto.collector.logs.v1.ExportLogsPartialSuccess\"O\n\x18\x45xportLogsPartialSuccess\x12\x1c\n\x14rejected_log_records\x18\x01 \x01(\x03\x12\x15\n\rerror_message\x18\x02 \x01(\t2\x9d\x01\n\x0bLogsService\x12\x8d\x01\n\x06\x45xport\x12?.opentelemetry.proto.collector.logs.v1.ExportLogsServiceRequest\x1a@.opentelemetry.proto.collector.logs.v1.ExportLogsServiceResponse\"\x00\x42\x98\x01\n(io.opentelemetry.proto.collector.logs.v1B\x10LogsServiceProtoP\x01Z0go.opentelemetry.io/proto/otlp/collector/logs/v1\xaa\x02%OpenTelemetry.Proto.Collector.Logs.V1b\x06proto3"
 
-pool = Google::Protobuf::DescriptorPool.generated_pool
+pool = ::Google::Protobuf::DescriptorPool.generated_pool
 pool.add_serialized_file(descriptor_data)
 
 module Opentelemetry
@@ -19,6 +19,7 @@ module Opentelemetry
         module V1
           ExportLogsServiceRequest = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.collector.logs.v1.ExportLogsServiceRequest").msgclass
           ExportLogsServiceResponse = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.collector.logs.v1.ExportLogsServiceResponse").msgclass
+          ExportLogsPartialSuccess = ::Google::Protobuf::DescriptorPool.generated_pool.lookup("opentelemetry.proto.collector.logs.v1.ExportLogsPartialSuccess").msgclass
         end
       end
     end

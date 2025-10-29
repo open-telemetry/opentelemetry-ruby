@@ -1,5 +1,13 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.11.0 / 2025-10-28
+
+* ADDED: Add logging about export status to Metrics SDK
+
+### v0.10.1 / 2025-10-21
+
+* FIXED: Update callback timeout mechanism to use Thread
+
 ### v0.10.0 / 2025-10-14
 
 * ADDED: Use common method for returning timestamp in nanoseconds

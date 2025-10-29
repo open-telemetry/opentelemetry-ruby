@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-zipkin
 
+### v0.24.1 / 2025-10-21
+
+* FIXED: Change zipkin annotations timestamp from string to int
+
 ### v0.24.0 / 2025-02-25
 
 - ADDED: Support 3.1 Min Version
