@@ -227,7 +227,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       _(metric_data.first.data_points.first.value).must_equal 100
     end
 
-    it 'handles view filtering and drop aggregation xuan' do
+    it 'handles view filtering and drop aggregation' do
       # Test view filtering by instrument name (non-matching)
       non_matching_view = OpenTelemetry::SDK::Metrics::View::RegisteredView.new(
         'different_counter',
