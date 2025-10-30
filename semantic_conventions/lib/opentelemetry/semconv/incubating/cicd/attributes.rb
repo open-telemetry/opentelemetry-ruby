@@ -29,9 +29,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   BUILD
-        #   RUN
-        #   SYNC
+        #   # BUILD
+        #   # RUN
+        #   # SYNC
         #
         CICD_PIPELINE_ACTION_NAME = 'cicd.pipeline.action.name'
     
@@ -40,10 +40,10 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Build and Test
-        #   Lint
-        #   Deploy Go Project
-        #   deploy_to_environment
+        #   # Build and Test
+        #   # Lint
+        #   # Deploy Go Project
+        #   # deploy_to_environment
         #
         CICD_PIPELINE_NAME = 'cicd.pipeline.name'
     
@@ -52,10 +52,10 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   success
-        #   failure
-        #   timeout
-        #   skipped
+        #   # success
+        #   # failure
+        #   # timeout
+        #   # skipped
         #
         CICD_PIPELINE_RESULT = 'cicd.pipeline.result'
     
@@ -64,7 +64,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   120912
+        #   # 120912
         #
         CICD_PIPELINE_RUN_ID = 'cicd.pipeline.run.id'
     
@@ -73,9 +73,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   pending
-        #   executing
-        #   finalizing
+        #   # pending
+        #   # executing
+        #   # finalizing
         #
         CICD_PIPELINE_RUN_STATE = 'cicd.pipeline.run.state'
     
@@ -84,7 +84,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   https://github.com/open-telemetry/semantic-conventions/actions/runs/9753949763?pr=1075
+        #   # https://github.com/open-telemetry/semantic-conventions/actions/runs/9753949763?pr=1075
         #
         CICD_PIPELINE_RUN_URL_FULL = 'cicd.pipeline.run.url.full'
     
@@ -93,10 +93,10 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Run GoLang Linter
-        #   Go Build
-        #   go-test
-        #   deploy_binary
+        #   # Run GoLang Linter
+        #   # Go Build
+        #   # go-test
+        #   # deploy_binary
         #
         CICD_PIPELINE_TASK_NAME = 'cicd.pipeline.task.name'
     
@@ -105,7 +105,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   12097
+        #   # 12097
         #
         CICD_PIPELINE_TASK_RUN_ID = 'cicd.pipeline.task.run.id'
     
@@ -114,10 +114,10 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   success
-        #   failure
-        #   timeout
-        #   skipped
+        #   # success
+        #   # failure
+        #   # timeout
+        #   # skipped
         #
         CICD_PIPELINE_TASK_RUN_RESULT = 'cicd.pipeline.task.run.result'
     
@@ -126,7 +126,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   https://github.com/open-telemetry/semantic-conventions/actions/runs/9753949763/job/26920038674?pr=1075
+        #   # https://github.com/open-telemetry/semantic-conventions/actions/runs/9753949763/job/26920038674?pr=1075
         #
         CICD_PIPELINE_TASK_RUN_URL_FULL = 'cicd.pipeline.task.run.url.full'
     
@@ -135,9 +135,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   build
-        #   test
-        #   deploy
+        #   # build
+        #   # test
+        #   # deploy
         #
         CICD_PIPELINE_TASK_TYPE = 'cicd.pipeline.task.type'
     
@@ -146,9 +146,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   controller
-        #   scheduler
-        #   agent
+        #   # controller
+        #   # scheduler
+        #   # agent
         #
         CICD_SYSTEM_COMPONENT = 'cicd.system.component'
     
@@ -157,9 +157,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   abc123
-        #   10.0.1.2
-        #   controller
+        #   # abc123
+        #   # 10.0.1.2
+        #   # controller
         #
         CICD_WORKER_ID = 'cicd.worker.id'
     
@@ -168,9 +168,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   agent-abc
-        #   controller
-        #   Ubuntu LTS
+        #   # agent-abc
+        #   # controller
+        #   # Ubuntu LTS
         #
         CICD_WORKER_NAME = 'cicd.worker.name'
     
@@ -179,9 +179,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   idle
-        #   busy
-        #   down
+        #   # idle
+        #   # busy
+        #   # down
         #
         CICD_WORKER_STATE = 'cicd.worker.state'
     
@@ -190,7 +190,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   https://cicd.example.org/worker/abc123
+        #   # https://cicd.example.org/worker/abc123
         #
         CICD_WORKER_URL_FULL = 'cicd.worker.url.full'
     

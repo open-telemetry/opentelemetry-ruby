@@ -24,6 +24,48 @@ module OpenTelemetry
       module ASPNETCORE
         # @!group Metrics Names
       
+        # The authentication duration for a request.
+        #
+        # Meter name: `Microsoft.AspNetCore.Authentication`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_AUTHENTICATION_AUTHENTICATE_DURATION = 'aspnetcore.authentication.authenticate.duration'
+    
+        # The total number of times a scheme is challenged.
+        #
+        # Meter name: `Microsoft.AspNetCore.Authentication`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_AUTHENTICATION_CHALLENGES = 'aspnetcore.authentication.challenges'
+    
+        # The total number of times an authenticated user attempts to access a resource they are not permitted to access.
+        #
+        # Meter name: `Microsoft.AspNetCore.Authentication`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_AUTHENTICATION_FORBIDS = 'aspnetcore.authentication.forbids'
+    
+        # The total number of times a principal is signed in with a scheme.
+        #
+        # Meter name: `Microsoft.AspNetCore.Authentication`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_AUTHENTICATION_SIGN_INS = 'aspnetcore.authentication.sign_ins'
+    
+        # The total number of times a principal is signed out with a scheme.
+        #
+        # Meter name: `Microsoft.AspNetCore.Authentication`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_AUTHENTICATION_SIGN_OUTS = 'aspnetcore.authentication.sign_outs'
+    
+        # The total number of authorization attempts.
+        #
+        # Meter name: `Microsoft.AspNetCore.Authorization`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_AUTHORIZATION_ATTEMPTS = 'aspnetcore.authorization.attempts'
+    
         # Number of exceptions caught by exception handling middleware.
         #
         # Meter name: `Microsoft.AspNetCore.Diagnostics`; Added in: ASP.NET Core 8.0
@@ -32,6 +74,118 @@ module OpenTelemetry
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_DIAGNOSTICS_EXCEPTIONS}.
         ASPNETCORE_DIAGNOSTICS_EXCEPTIONS = 'aspnetcore.diagnostics.exceptions'
+    
+        # The duration of authenticate attempts. The authenticate metrics is recorded by sign in methods such as PasswordSignInAsync and TwoFactorSignInAsync.
+        #
+        # Meter name: `Microsoft.AspNetCore.Identity`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_SIGN_IN_AUTHENTICATE_DURATION = 'aspnetcore.identity.sign_in.authenticate.duration'
+    
+        # The total number of check password attempts. Checks that the account is in a state that can log in and that the password is valid using the UserManager.CheckPasswordAsync method.
+        #
+        # Meter name: `Microsoft.AspNetCore.Identity`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_SIGN_IN_CHECK_PASSWORD_ATTEMPTS = 'aspnetcore.identity.sign_in.check_password_attempts'
+    
+        # The total number of calls to sign in user principals.
+        #
+        # Meter name: `Microsoft.AspNetCore.Identity`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_SIGN_IN_SIGN_INS = 'aspnetcore.identity.sign_in.sign_ins'
+    
+        # The total number of calls to sign out user principals.
+        #
+        # Meter name: `Microsoft.AspNetCore.Identity`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_SIGN_IN_SIGN_OUTS = 'aspnetcore.identity.sign_in.sign_outs'
+    
+        # The total number of two factor clients forgotten.
+        #
+        # Meter name: `Microsoft.AspNetCore.Identity`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_SIGN_IN_TWO_FACTOR_CLIENTS_FORGOTTEN = 'aspnetcore.identity.sign_in.two_factor_clients_forgotten'
+    
+        # The total number of two factor clients remembered.
+        #
+        # Meter name: `Microsoft.AspNetCore.Identity`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_SIGN_IN_TWO_FACTOR_CLIENTS_REMEMBERED = 'aspnetcore.identity.sign_in.two_factor_clients_remembered'
+    
+        # The number of check password attempts. Only checks whether the password is valid and not whether the user account is in a state that can log in.
+        #
+        # Meter name: `Microsoft.AspNetCore.Identity`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_USER_CHECK_PASSWORD_ATTEMPTS = 'aspnetcore.identity.user.check_password_attempts'
+    
+        # The duration of user creation operations.
+        #
+        # Meter name: `Microsoft.AspNetCore.Identity`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_USER_CREATE_DURATION = 'aspnetcore.identity.user.create.duration'
+    
+        # The duration of user deletion operations.
+        #
+        # Meter name: `Microsoft.AspNetCore.Identity`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_USER_DELETE_DURATION = 'aspnetcore.identity.user.delete.duration'
+    
+        # The total number of token generations.
+        #
+        # Meter name: `Microsoft.AspNetCore.Identity`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_USER_GENERATED_TOKENS = 'aspnetcore.identity.user.generated_tokens'
+    
+        # The duration of user update operations.
+        #
+        # Meter name: `Microsoft.AspNetCore.Identity`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_USER_UPDATE_DURATION = 'aspnetcore.identity.user.update.duration'
+    
+        # The total number of token verification attempts.
+        #
+        # Meter name: `Microsoft.AspNetCore.Identity`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_USER_VERIFY_TOKEN_ATTEMPTS = 'aspnetcore.identity.user.verify_token_attempts'
+    
+        # Total number of bytes allocated by the memory pool. Allocation occurs when a memory rental request exceeds the available pooled memory.
+        #
+        # Meter name: `Microsoft.AspNetCore.MemoryPool`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_MEMORY_POOL_ALLOCATED = 'aspnetcore.memory_pool.allocated'
+    
+        # Total number of bytes evicted from the memory pool. Eviction occurs when idle pooled memory is reclaimed.
+        #
+        # Meter name: `Microsoft.AspNetCore.MemoryPool`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_MEMORY_POOL_EVICTED = 'aspnetcore.memory_pool.evicted'
+    
+        # Number of bytes currently pooled and available for reuse.
+        #
+        # Meter name: `Microsoft.AspNetCore.MemoryPool`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_MEMORY_POOL_POOLED = 'aspnetcore.memory_pool.pooled'
+    
+        # Total number of bytes rented from the memory pool.
+        #
+        # Meter name: `Microsoft.AspNetCore.MemoryPool`; Added in: ASP.NET Core 10.0
+        #
+        # @note Stability Level: development
+        ASPNETCORE_MEMORY_POOL_RENTED = 'aspnetcore.memory_pool.rented'
     
         # Number of requests that are currently active on the server that hold a rate limiting lease.
         #

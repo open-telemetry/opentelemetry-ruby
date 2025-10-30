@@ -50,7 +50,7 @@ task default: default_tasks
 desc 'update semantic conventions'
 task generate: %i[update_gem_version generate_semconv generate_require_rollups rubocop_autocorrect]
 
-SPEC_VERSION = '1.36.0'
+SPEC_VERSION = '1.37.0'
 OTEL_WEAVER_VERSION = 'v0.17.1'
 semconv_source_dir = Pathname.new('./tmp/semconvrepo')
 semconv_output_dir = Pathname.new('./lib/opentelemetry/semconv')

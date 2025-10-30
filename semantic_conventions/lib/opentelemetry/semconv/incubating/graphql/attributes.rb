@@ -49,9 +49,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   query
-        #   mutation
-        #   subscription
+        #   # query
+        #   # mutation
+        #   # subscription
         #
         GRAPHQL_OPERATION_TYPE = 'graphql.operation.type'
     

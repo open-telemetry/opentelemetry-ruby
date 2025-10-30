@@ -30,9 +30,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   example.com
-      #   10.1.2.80
-      #   /tmp/my.sock
+      #   # example.com
+      #   # 10.1.2.80
+      #   # /tmp/my.sock
       #
       SERVER_ADDRESS = 'server.address'
   
@@ -43,9 +43,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   80
-      #   8080
-      #   443
+      #   # 80
+      #   # 8080
+      #   # 443
       #
       SERVER_PORT = 'server.port'
   

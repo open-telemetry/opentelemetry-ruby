@@ -30,7 +30,7 @@ module OpenTelemetry
         # However, it might be resettable by the user for all apps on a device.
         # Hardware IDs (e.g. vendor-specific serial number, IMEI or MAC address) MAY be used as values.
         #
-        # More information about Android identifier best practices can be found [here](https://developer.android.com/training/articles/user-data-ids).
+        # More information about Android identifier best practices can be found in the [Android user data IDs guide](https://developer.android.com/training/articles/user-data-ids).
         #
         # > [!WARNING]> This attribute may contain sensitive (PII) information. Caution should be taken when storing personal data or anything which can identify a user. GDPR and data protection laws may apply,
         # > ensure you do your own due diligence.> Due to these reasons, this identifier is not recommended for consumer applications and will likely result in rejection from both Google Play and App Store.
@@ -40,8 +40,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   123456789012345
-        #   01:23:45:67:89:AB
+        #   # 123456789012345
+        #   # 01:23:45:67:89:AB
         #
         DEVICE_ID = 'device.id'
     
@@ -52,8 +52,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Apple
-        #   Samsung
+        #   # Apple
+        #   # Samsung
         #
         DEVICE_MANUFACTURER = 'device.manufacturer'
     
@@ -64,8 +64,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   iPhone3,4
-        #   SM-G920F
+        #   # iPhone3,4
+        #   # SM-G920F
         #
         DEVICE_MODEL_IDENTIFIER = 'device.model.identifier'
     
@@ -76,8 +76,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   iPhone 6s Plus
-        #   Samsung Galaxy S6
+        #   # iPhone 6s Plus
+        #   # Samsung Galaxy S6
         #
         DEVICE_MODEL_NAME = 'device.model.name'
     

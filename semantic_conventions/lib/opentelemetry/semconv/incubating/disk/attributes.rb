@@ -29,7 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   read
+        #   # read
         #
         DISK_IO_DIRECTION = 'disk.io.direction'
     

@@ -97,9 +97,9 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   com.example.MyHttpService.serveRequest
-        #   GuzzleHttp\Client::transfer
-        #   fopen
+        #   # com.example.MyHttpService.serveRequest
+        #   # GuzzleHttp\Client::transfer
+        #   # fopen
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::CODE::CODE_FUNCTION_NAME}.

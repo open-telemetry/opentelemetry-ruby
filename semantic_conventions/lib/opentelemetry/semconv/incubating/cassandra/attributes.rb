@@ -52,7 +52,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   5000
+        #   # 5000
         #
         CASSANDRA_PAGE_SIZE = 'cassandra.page.size'
     
@@ -66,8 +66,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0
-        #   2
+        #   # 0
+        #   # 2
         #
         CASSANDRA_SPECULATIVE_EXECUTION_COUNT = 'cassandra.speculative_execution.count'
     

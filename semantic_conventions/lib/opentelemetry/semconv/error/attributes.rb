@@ -48,10 +48,10 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   timeout
-      #   java.net.UnknownHostException
-      #   server_certificate_invalid
-      #   500
+      #   # timeout
+      #   # java.net.UnknownHostException
+      #   # server_certificate_invalid
+      #   # 500
       #
       ERROR_TYPE = 'error.type'
   

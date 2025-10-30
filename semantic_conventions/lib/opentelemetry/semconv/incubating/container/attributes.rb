@@ -31,7 +31,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   otelcontribcol
+        #   # otelcontribcol
         #
         CONTAINER_COMMAND = 'container.command'
     
@@ -40,8 +40,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["otelcontribcol", "--config", "config.yaml"]
-        #
+        #   # otelcontribcol
+        # --config
+        # config.yaml
         CONTAINER_COMMAND_ARGS = 'container.command_args'
     
         # The full command run by the container as a single string representing the full command.
@@ -49,7 +50,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   otelcontribcol --config config.yaml
+        #   # otelcontribcol --config config.yaml
         #
         CONTAINER_COMMAND_LINE = 'container.command_line'
     
@@ -58,8 +59,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   user
-        #   kernel
+        #   # user
+        #   # kernel
         #
         # @deprecated {"note": "Replaced by `cpu.mode`.", "reason": "renamed", "renamed_to": "cpu.mode"}
         CONTAINER_CPU_STATE = 'container.cpu.state'
@@ -71,7 +72,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   pd.csi.storage.gke.io
+        #   # pd.csi.storage.gke.io
         #
         CONTAINER_CSI_PLUGIN_NAME = 'container.csi.plugin.name'
     
@@ -82,7 +83,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   projects/my-gcp-project/zones/my-gcp-zone/disks/my-gcp-disk
+        #   # projects/my-gcp-project/zones/my-gcp-zone/disks/my-gcp-disk
         #
         CONTAINER_CSI_VOLUME_ID = 'container.csi.volume.id'
     
@@ -91,7 +92,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   a3bf90e006b2
+        #   # a3bf90e006b2
         #
         CONTAINER_ID = 'container.id'
     
@@ -104,7 +105,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   sha256:19c92d0a00d1b66d897bceaa7319bee0dd38a10a851c60bcec9474aa3f01e50f
+        #   # sha256:19c92d0a00d1b66d897bceaa7319bee0dd38a10a851c60bcec9474aa3f01e50f
         #
         CONTAINER_IMAGE_ID = 'container.image.id'
     
@@ -113,7 +114,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   gcr.io/opentelemetry/operator
+        #   # gcr.io/opentelemetry/operator
         #
         CONTAINER_IMAGE_NAME = 'container.image.name'
     
@@ -124,8 +125,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["example@sha256:afcc7f1ac1b49db317a7196c902e61c6c3c4607d63599ee1a82d702d249a0ccb", "internal.registry.example.com:5000/example@sha256:b69959407d21e8a062e0416bf13405bb2b71ed7a84dde4158ebafacfa06f5578"]
-        #
+        #   # example@sha256:afcc7f1ac1b49db317a7196c902e61c6c3c4607d63599ee1a82d702d249a0ccb
+        # internal.registry.example.com:5000/example@sha256:b69959407d21e8a062e0416bf13405bb2b71ed7a84dde4158ebafacfa06f5578
         CONTAINER_IMAGE_REPO_DIGESTS = 'container.image.repo_digests'
     
         # Container image tags. An example can be found in [Docker Image Inspect](https://docs.docker.com/engine/api/v1.43/#tag/Image/operation/ImageInspect). Should be only the `<tag>` section of the full name for example from `registry.example.com/my-org/my-image:<tag>`.
@@ -133,8 +134,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["v1.27.1", "3.5.7-0"]
-        #
+        #   # v1.27.1
+        # 3.5.7-0
         CONTAINER_IMAGE_TAGS = 'container.image.tags'
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -150,7 +151,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   nginx
+        #   # nginx
         #
         CONTAINER_LABEL_LAMBDA = ->(key) { "container.label.#{key}" }
     
@@ -165,7 +166,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   nginx
+        #   # nginx
         #
         # @deprecated {"note": "Replaced by `container.label`.", "reason": "renamed", "renamed_to": "container.label"}
         CONTAINER_LABELS_LAMBDA = ->(key) { "container.labels.#{key}" }
@@ -175,7 +176,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry-autoconf
+        #   # opentelemetry-autoconf
         #
         CONTAINER_NAME = 'container.name'
     
@@ -184,11 +185,41 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   docker
-        #   containerd
-        #   rkt
+        #   # docker
+        #   # containerd
+        #   # rkt
         #
+        # @deprecated {"note": "Replaced by `container.runtime.name`.", "reason": "renamed", "renamed_to": "container.runtime.name"}
         CONTAINER_RUNTIME = 'container.runtime'
+    
+        # A description about the runtime which could include, for example details about the CRI/API version being used or other customisations.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # docker://19.3.1 - CRI: 1.22.0
+        #
+        CONTAINER_RUNTIME_DESCRIPTION = 'container.runtime.description'
+    
+        # The container runtime managing this container.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # docker
+        #   # containerd
+        #   # rkt
+        #
+        CONTAINER_RUNTIME_NAME = 'container.runtime.name'
+    
+        # The version of the runtime of this process, as returned by the runtime without modification.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   1.0.0
+        #
+        CONTAINER_RUNTIME_VERSION = 'container.runtime.version'
     
         # @!endgroup
       end

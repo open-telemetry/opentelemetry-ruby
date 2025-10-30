@@ -29,8 +29,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   browser.mouse.click
-        #   device.app.lifecycle
+        #   # browser.mouse.click
+        #   # device.app.lifecycle
         #
         # @deprecated {"note": "Replaced by EventName top-level field on the LogRecord.\n", "reason": "uncategorized"}
         EVENT_NAME = 'event.name'

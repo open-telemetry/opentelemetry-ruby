@@ -44,7 +44,7 @@ module OpenTelemetry
       # @example Sample Values
         {%- if attribute.examples is sequence %}
           {%- for example in attribute.examples %}
-      #   {{ example }}
+      #   {{ example | comment }}
           {%- endfor %}
         {%- else %}
       #   {{ attribute.examples }}

@@ -24,27 +24,27 @@ module OpenTelemetry
       module GEN_AI
         # @!group Metrics Names
       
-        # GenAI operation duration
+        # GenAI operation duration.
         #
         # @note Stability Level: development
         GEN_AI_CLIENT_OPERATION_DURATION = 'gen_ai.client.operation.duration'
     
-        # Measures number of input and output tokens used
+        # Number of input and output tokens used.
         #
         # @note Stability Level: development
         GEN_AI_CLIENT_TOKEN_USAGE = 'gen_ai.client.token.usage'
     
-        # Generative AI server request duration such as time-to-last byte or last output token
+        # Generative AI server request duration such as time-to-last byte or last output token.
         #
         # @note Stability Level: development
         GEN_AI_SERVER_REQUEST_DURATION = 'gen_ai.server.request.duration'
     
-        # Time per output token generated after the first token for successful responses
+        # Time per output token generated after the first token for successful responses.
         #
         # @note Stability Level: development
         GEN_AI_SERVER_TIME_PER_OUTPUT_TOKEN = 'gen_ai.server.time_per_output_token'
     
-        # Time to generate first token for successful responses
+        # Time to generate first token for successful responses.
         #
         # @note Stability Level: development
         GEN_AI_SERVER_TIME_TO_FIRST_TOKEN = 'gen_ai.server.time_to_first_token'

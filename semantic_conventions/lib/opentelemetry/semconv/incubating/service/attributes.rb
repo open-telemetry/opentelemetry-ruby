@@ -56,7 +56,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   627cc493-f310-47de-96bd-71410b7dec09
+        #   # 627cc493-f310-47de-96bd-71410b7dec09
         #
         SERVICE_INSTANCE_ID = 'service.instance.id'
     
@@ -67,7 +67,7 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   shoppingcart
+        #   # shoppingcart
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::SERVICE::SERVICE_NAME}.
@@ -80,7 +80,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Shop
+        #   # Shop
         #
         SERVICE_NAMESPACE = 'service.namespace'
     
@@ -89,8 +89,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   2.0.0
-        #   a01dbef8a
+        #   # 2.0.0
+        #   # a01dbef8a
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::SERVICE::SERVICE_VERSION}.

@@ -29,9 +29,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Microsoft.Storage
-        #   Microsoft.KeyVault
-        #   Microsoft.ServiceBus
+        #   # Microsoft.Storage
+        #   # Microsoft.KeyVault
+        #   # Microsoft.ServiceBus
         #
         # @deprecated {"note": "Replaced by `azure.resource_provider.namespace`.", "reason": "renamed", "renamed_to": "azure.resource_provider.namespace"}
         AZ_NAMESPACE = 'az.namespace'
@@ -41,7 +41,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   00000000-0000-0000-0000-000000000000
+        #   # 00000000-0000-0000-0000-000000000000
         #
         # @deprecated {"note": "Replaced by `azure.service.request.id`.", "reason": "renamed", "renamed_to": "azure.service.request.id"}
         AZ_SERVICE_REQUEST_ID = 'az.service_request_id'

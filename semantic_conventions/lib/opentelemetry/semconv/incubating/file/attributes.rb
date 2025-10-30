@@ -31,7 +31,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   2021-01-01T12:00:00Z
+        #   # 2021-01-01T12:00:00Z
         #
         FILE_ACCESSED = 'file.accessed'
     
@@ -42,8 +42,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["readonly", "hidden"]
-        #
+        #   # readonly
+        # hidden
         FILE_ATTRIBUTES = 'file.attributes'
     
         # Time when the file attributes or metadata was last changed, in ISO 8601 format.
@@ -53,7 +53,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   2021-01-01T12:00:00Z
+        #   # 2021-01-01T12:00:00Z
         #
         FILE_CHANGED = 'file.changed'
     
@@ -64,7 +64,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   2021-01-01T12:00:00Z
+        #   # 2021-01-01T12:00:00Z
         #
         FILE_CREATED = 'file.created'
     
@@ -73,8 +73,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   /home/user
-        #   C:\Program Files\MyApp
+        #   # /home/user
+        #   # C:\Program Files\MyApp
         #
         FILE_DIRECTORY = 'file.directory'
     
@@ -85,8 +85,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   png
-        #   gz
+        #   # png
+        #   # gz
         #
         FILE_EXTENSION = 'file.extension'
     
@@ -98,7 +98,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Zone.Identifer
+        #   # Zone.Identifier
         #
         FILE_FORK_NAME = 'file.fork_name'
     
@@ -107,7 +107,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1000
+        #   # 1000
         #
         FILE_GROUP_ID = 'file.group.id'
     
@@ -116,7 +116,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   users
+        #   # users
         #
         FILE_GROUP_NAME = 'file.group.name'
     
@@ -125,7 +125,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   256383
+        #   # 256383
         #
         FILE_INODE = 'file.inode'
     
@@ -134,7 +134,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0640
+        #   # 0640
         #
         FILE_MODE = 'file.mode'
     
@@ -143,7 +143,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   2021-01-01T12:00:00Z
+        #   # 2021-01-01T12:00:00Z
         #
         FILE_MODIFIED = 'file.modified'
     
@@ -152,7 +152,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   example.png
+        #   # example.png
         #
         FILE_NAME = 'file.name'
     
@@ -161,7 +161,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1000
+        #   # 1000
         #
         FILE_OWNER_ID = 'file.owner.id'
     
@@ -170,7 +170,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   root
+        #   # root
         #
         FILE_OWNER_NAME = 'file.owner.name'
     
@@ -179,8 +179,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   /home/alice/example.png
-        #   C:\Program Files\MyApp\myapp.exe
+        #   # /home/alice/example.png
+        #   # C:\Program Files\MyApp\myapp.exe
         #
         FILE_PATH = 'file.path'
     
@@ -196,7 +196,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   /usr/bin/python3
+        #   # /usr/bin/python3
         #
         FILE_SYMBOLIC_LINK_TARGET_PATH = 'file.symbolic_link.target_path'
     

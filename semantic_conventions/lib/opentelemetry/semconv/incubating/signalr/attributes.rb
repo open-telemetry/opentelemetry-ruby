@@ -29,8 +29,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   app_shutdown
-        #   timeout
+        #   # app_shutdown
+        #   # timeout
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::SIGNALR::SIGNALR_CONNECTION_STATUS}.
@@ -41,8 +41,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   web_sockets
-        #   long_polling
+        #   # web_sockets
+        #   # long_polling
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::SIGNALR::SIGNALR_TRANSPORT}.

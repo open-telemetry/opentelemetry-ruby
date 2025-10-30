@@ -29,9 +29,9 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   gen0
-        #   gen1
-        #   gen2
+        #   # gen0
+        #   # gen1
+        #   # gen2
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DOTNET::DOTNET_GC_HEAP_GENERATION}.
