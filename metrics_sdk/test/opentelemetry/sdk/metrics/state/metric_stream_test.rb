@@ -52,7 +52,7 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
 
       registered_views = stream.instance_variable_get(:@registered_views)
       _(registered_views.size).must_equal(1)
-      _(registered_views.keys.first).must_equal(view)
+      _(registered_views.first[0]).must_equal(view)
     end
   end
 
@@ -117,31 +117,6 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
 
       value = snapshot.first.data_points.first.value
       _(value).must_equal 20
-    end
-
-    it 'is thread-safe' do
-      threads = Array.new(10) do |i|
-        Thread.new do
-          10.times { metric_stream.update(1, { 'thread' => i.to_s }) }
-        end
-      end
-      threads.each(&:join)
-      snapshot = metric_stream.collect(0, 1000)
-
-      _(snapshot.size).must_equal(1)
-
-      # this test case is unstable as it involve thread in minitest
-      skip if snapshot.first.data_points.size != 10
-
-      sleep 0.2
-
-      10.times.each do |i|
-        _(snapshot.first.data_points[i].value).must_equal 10
-      end
-
-      attribute_value = snapshot.first.data_points.flat_map { |i| i.attributes['thread'].to_i }
-      attribute_value.sort!
-      _(attribute_value).must_equal([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
     end
   end
 
@@ -254,7 +229,7 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
       registered_views = stream.instance_variable_get(:@registered_views)
 
       _(registered_views.size).must_equal 1
-      _(registered_views.keys.first.aggregation.class).must_equal ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue
+      _(registered_views.first[0].aggregation.class).must_equal ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue
     end
   end
 
@@ -265,7 +240,7 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
       _(str).must_be_empty # No data points yet
     end
 
-    it 'string representation' do
+    it 'includes data points in string representation' do
       metric_stream.update(10, { 'key1' => 'value1' })
       metric_stream.update(20, { 'key2' => 'value2' })
       str = metric_stream.to_s

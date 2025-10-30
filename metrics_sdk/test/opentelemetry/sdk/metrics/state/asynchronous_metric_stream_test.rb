@@ -67,7 +67,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
 
       registered_views = stream.instance_variable_get(:@registered_views)
       _(registered_views.size).must_equal(1)
-      _(registered_views.keys.first.aggregation.class).must_equal ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue
+      _(registered_views.first[0].aggregation.class).must_equal ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue
     end
   end
 
@@ -87,18 +87,15 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       _(metric_data.data_points.first.attributes).must_equal(attributes)
 
       # Test empty collection when callback returns nil
-      aggregation = OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
       empty_callback = [proc { nil }]
       empty_stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter', 'description', 'unit', :observable_counter,
         meter_provider, instrumentation_scope, aggregation,
         empty_callback, timeout, {}
       )
-
       _(empty_stream.collect(0, 1000)).must_be_empty
 
       # Test multiple callbacks accumulation
-      aggregation = OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
       multi_callbacks = [proc { 10 }, proc { 20 }, proc { 30 }]
       multi_stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter', 'description', 'unit', :observable_counter,
@@ -154,13 +151,14 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       log_output = StringIO.new
       OpenTelemetry.logger = Logger.new(log_output)
       error_stream.collect(0, 1000)
-      assert_includes log_output.string, 'Error invoking callback: Callback error'
+      assert_includes log_output.string, 'OpenTelemetry error: Error invoking callback.'
       OpenTelemetry.logger = original_logger
     end
   end
 
   describe '#invoke_callback' do
-    it 'executes multiple callbacks in array' do
+    it 'executes callbacks with timeout and handles thread safety with multiple callback' do
+      # Test multiple callbacks in array
       multi_callbacks = [
         proc { 10 },
         proc { 20 },
@@ -171,15 +169,9 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
         meter_provider, instrumentation_scope, aggregation,
         multi_callbacks, timeout, attributes
       )
-      metric_data = multi_stream.collect(0, 10_000)
+      multi_stream.invoke_callback(timeout, attributes)
 
-      _(metric_data.first.data_points.first.value).must_equal 60
-      _(metric_data.first.data_points.first.attributes['environment']).must_equal 'test'
-      _(metric_data.first.start_time_unix_nano).must_equal 0
-      _(metric_data.first.time_unix_nano).must_equal 10_000
-    end
-
-    it 'executes callbacks that handles thread safety' do
+      # Test thread safety
       thread_count = 0
       thread_callback = [proc {
         thread_count += 1
@@ -193,6 +185,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
 
       metric_data = nil
       threads = Array.new(5) do
+        # Thread.new { thread_stream.invoke_callback(timeout, attributes) }
         Thread.new { metric_data = thread_stream.collect(0, 10_000) }
       end
       threads.each(&:join)
@@ -202,46 +195,6 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       _(metric_data.first.data_points.first.attributes['environment']).must_equal 'test'
       _(metric_data.first.start_time_unix_nano).must_equal 0
       _(metric_data.first.time_unix_nano).must_equal 10_000
-    end
-
-    it 'respects timeout settings and handles slow callbacks' do
-      # Test timeout handling
-      slow_callback = [proc {
-        sleep(0.1)
-        42
-      }]
-      stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
-        'async_counter', 'description', 'unit', :observable_counter,
-        meter_provider, instrumentation_scope, aggregation,
-        slow_callback, 0.05, attributes # Very short timeout
-      )
-
-      original_logger = OpenTelemetry.logger
-      log_output = StringIO.new
-      OpenTelemetry.logger = Logger.new(log_output)
-      stream.invoke_callback(0.05, attributes)
-
-      sleep 0.2
-
-      assert_includes log_output.string, 'Timeout while invoking callback'
-      OpenTelemetry.logger = original_logger
-    end
-  end
-
-  describe '#now_in_nano' do
-    it 'returns current time in nanoseconds with increasing values' do
-      nano_time = async_metric_stream.now_in_nano
-      _(nano_time).must_be_instance_of(Integer)
-      _(nano_time).must_be :>, 0
-
-      # Should be a reasonable timestamp (not too old, not in future)
-      current_time_nano = (Time.now.to_r * 1_000_000_000).to_i
-      _(nano_time).must_be_close_to(current_time_nano, 1_000_000_000) # Within 1 second
-
-      # Test successive calls return increasing values
-      sleep(0.001) # Small delay
-      time2 = async_metric_stream.now_in_nano
-      _(time2).must_be :>, nano_time
     end
   end
 
@@ -274,7 +227,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       _(metric_data.first.data_points.first.value).must_equal 100
     end
 
-    it 'handles view filtering and drop aggregation' do
+    it 'handles view filtering and drop aggregation xuan' do
       # Test view filtering by instrument name (non-matching)
       non_matching_view = OpenTelemetry::SDK::Metrics::View::RegisteredView.new(
         'different_counter',

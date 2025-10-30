@@ -32,7 +32,7 @@ module OpenTelemetry
 
             # Initialize asynchronous-specific attributes
             @callback = callback
-            @start_time = now_in_nano
+            @start_time = OpenTelemetry::Common::Utilities.time_in_nanoseconds
             @timeout = timeout
             @attributes = attributes
           end
@@ -71,10 +71,6 @@ module OpenTelemetry
             end
           end
 
-          def now_in_nano
-            (Time.now.to_r * 1_000_000_000).to_i
-          end
-
           private
 
           def safe_guard_callback(callback, timeout: DEFAULT_TIMEOUT)
@@ -82,19 +78,19 @@ module OpenTelemetry
             thread = Thread.new do
               result = callback.call
             rescue StandardError => e
-              OpenTelemetry.logger.error("Error invoking callback: #{e.message}")
+              OpenTelemetry.handle_error(exception: e, message: 'Error invoking callback.')
               result = :error
             end
 
             unless thread.join(timeout)
               thread.kill
-              OpenTelemetry.logger.error("Timeout while invoking callback after #{timeout} seconds")
+              OpenTelemetry.handle_error(message: "Timeout while invoking callback after #{timeout} seconds")
               return nil
             end
 
             result == :error ? nil : result
           rescue StandardError => e
-            OpenTelemetry.logger.error("Unexpected error in callback execution: #{e.message}")
+            OpenTelemetry.handle_error(exception: e, message: 'Unexpected error in callback execution.')
             nil
           end
         end
