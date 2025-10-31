@@ -32,7 +32,7 @@ module OpenTelemetry
             @instrumentation_scope = instrumentation_scope
             @default_aggregation = aggregation
             @data_points = {}
-            @registered_views = []
+            @registered_views = {}
 
             find_registered_view
             @mutex = Mutex.new
@@ -43,12 +43,14 @@ module OpenTelemetry
               metric_data = []
 
               # data points are required to export over OTLP
-              return metric_data if @data_points.empty?
+              return metric_data if empty_data_point?
 
               if @registered_views.empty?
                 metric_data << aggregate_metric_data(start_time, end_time)
               else
-                @registered_views.each { |view| metric_data << aggregate_metric_data(start_time, end_time, aggregation: view.aggregation) }
+                @registered_views.each do |view, data_points|
+                  metric_data << aggregate_metric_data(start_time, end_time, aggregation: view.aggregation, data_points: data_points)
+                end
               end
 
               metric_data
@@ -60,20 +62,21 @@ module OpenTelemetry
             if @registered_views.empty?
               @mutex.synchronize { @default_aggregation.update(value, attributes, @data_points) }
             else
-              @registered_views.each do |view|
+              @registered_views.each do |view, data_points|
                 @mutex.synchronize do
                   attributes ||= {}
                   attributes.merge!(view.attribute_keys)
-                  view.aggregation.update(value, attributes, @data_points) if view.valid_aggregation?
+                  view.aggregation.update(value, attributes, data_points) if view.valid_aggregation?
                 end
               end
             end
           end
 
-          def aggregate_metric_data(start_time, end_time, aggregation: nil)
+          def aggregate_metric_data(start_time, end_time, aggregation: nil, data_points: nil)
             aggregator = aggregation || @default_aggregation
             is_monotonic = aggregator.respond_to?(:monotonic?) ? aggregator.monotonic? : nil
             aggregation_temporality = aggregator.respond_to?(:aggregation_temporality) ? aggregator.aggregation_temporality : nil
+            data_point = data_points || @data_points
 
             MetricData.new(
               @name,
@@ -82,7 +85,7 @@ module OpenTelemetry
               @instrument_kind,
               @meter_provider.resource,
               @instrumentation_scope,
-              aggregator.collect(start_time, end_time, @data_points),
+              aggregator.collect(start_time, end_time, data_point),
               aggregation_temporality,
               start_time,
               end_time,
@@ -93,7 +96,17 @@ module OpenTelemetry
           def find_registered_view
             return if @meter_provider.nil?
 
-            @meter_provider.registered_views.each { |view| @registered_views << view if view.match_instrument?(self) }
+            @meter_provider.registered_views.each { |view| @registered_views[view] = {} if view.match_instrument?(self) }
+          end
+
+          def empty_data_point?
+            if @registered_views.empty?
+              @data_points.empty?
+            else
+              @registered_views.each_value do |data_points|
+                return false unless data_points.empty?
+              end
+            end
           end
 
           def to_s
