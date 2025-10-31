@@ -34,7 +34,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   12288000
+        #   # 12288000
         #
         HOST_CPU_CACHE_L2_SIZE = 'host.cpu.cache.l2.size'
     
@@ -43,8 +43,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   6
-        #   PA-RISC 1.1e
+        #   # 6
+        #   # PA-RISC 1.1e
         #
         HOST_CPU_FAMILY = 'host.cpu.family'
     
@@ -53,8 +53,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   6
-        #   9000/778/B180L
+        #   # 6
+        #   # 9000/778/B180L
         #
         HOST_CPU_MODEL_ID = 'host.cpu.model.id'
     
@@ -63,7 +63,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz
+        #   # 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz
         #
         HOST_CPU_MODEL_NAME = 'host.cpu.model.name'
     
@@ -72,8 +72,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1
-        #   r1p1
+        #   # 1
+        #   # r1p1
         #
         HOST_CPU_STEPPING = 'host.cpu.stepping'
     
@@ -84,7 +84,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   GenuineIntel
+        #   # GenuineIntel
         #
         HOST_CPU_VENDOR_ID = 'host.cpu.vendor.id'
     
@@ -93,7 +93,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   fdbf79e8af94cb7f9e8df36789187052
+        #   # fdbf79e8af94cb7f9e8df36789187052
         #
         HOST_ID = 'host.id'
     
@@ -102,7 +102,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ami-07b06b442921831e5
+        #   # ami-07b06b442921831e5
         #
         HOST_IMAGE_ID = 'host.image.id'
     
@@ -111,8 +111,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   infra-ami-eks-worker-node-7d4ec78312
-        #   CentOS-8-x86_64-1905
+        #   # infra-ami-eks-worker-node-7d4ec78312
+        #   # CentOS-8-x86_64-1905
         #
         HOST_IMAGE_NAME = 'host.image.name'
     
@@ -121,7 +121,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0.1
+        #   # 0.1
         #
         HOST_IMAGE_VERSION = 'host.image.version'
     
@@ -132,8 +132,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["192.168.1.140", "fe80::abc2:4a28:737a:609e"]
-        #
+        #   # 192.168.1.140
+        # fe80::abc2:4a28:737a:609e
         HOST_IP = 'host.ip'
     
         # Available MAC addresses of the host, excluding loopback interfaces.
@@ -143,8 +143,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["AC-DE-48-23-45-67", "AC-DE-48-23-45-67-01-9F"]
-        #
+        #   # AC-DE-48-23-45-67
+        # AC-DE-48-23-45-67-01-9F
         HOST_MAC = 'host.mac'
     
         # Name of the host. On Unix systems, it may contain what the hostname command returns, or the fully qualified hostname, or another name specified by the user.
@@ -152,7 +152,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry-test
+        #   # opentelemetry-test
         #
         HOST_NAME = 'host.name'
     
@@ -161,7 +161,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   n1-standard-1
+        #   # n1-standard-1
         #
         HOST_TYPE = 'host.type'
     

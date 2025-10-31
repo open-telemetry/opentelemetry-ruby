@@ -31,24 +31,24 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   created
+        #   # created
         #
         ANDROID_APP_STATE = 'android.app.state'
     
-        # Uniquely identifies the framework API revision offered by a version (`os.version`) of the android operating system. More information can be found [here](https://developer.android.com/guide/topics/manifest/uses-sdk-element#ApiLevels).
+        # Uniquely identifies the framework API revision offered by a version (`os.version`) of the android operating system. More information can be found in the [Android API levels documentation](https://developer.android.com/guide/topics/manifest/uses-sdk-element#ApiLevels).
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   33
-        #   32
+        #   # 33
+        #   # 32
         #
         ANDROID_OS_API_LEVEL = 'android.os.api_level'
     
-        # Deprecated. Use `android.app.state` body field instead.
+        # Deprecated. Use `android.app.state` attribute instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Use `android.app.state` body field instead.", "reason": "uncategorized"}
+        # @deprecated {"note": "Replaced by `android.app.state`.", "reason": "renamed", "renamed_to": "android.app.state"}
         ANDROID_STATE = 'android.state'
     
         # @!endgroup

@@ -31,7 +31,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   4
+        #   # 4
         #
         PROCESS_ARGS_COUNT = 'process.args_count'
     
@@ -40,7 +40,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   cmd/otelcol
+        #   # cmd/otelcol
         #
         PROCESS_COMMAND = 'process.command'
     
@@ -49,8 +49,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["cmd/otecol", "--config=config.yaml"]
-        #
+        #   # cmd/otecol
+        # --config=config.yaml
         PROCESS_COMMAND_ARGS = 'process.command_args'
     
         # The full command used to launch the process as a single string representing the full command. On Windows, can be set to the result of `GetCommandLineW`. Do not set this if you have to assemble it just for monitoring; use `process.command_args` instead. SHOULD NOT be collected by default unless there is sanitization that excludes sensitive data.
@@ -58,7 +58,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   C:\cmd\otecol --config="my directory\config.yaml"
+        #   # C:\cmd\otecol --config="my directory\config.yaml"
         #
         PROCESS_COMMAND_LINE = 'process.command_line'
     
@@ -78,7 +78,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   2023-11-21T09:25:34.853Z
+        #   # 2023-11-21T09:25:34.853Z
         #
         PROCESS_CREATION_TIME = 'process.creation.time'
     
@@ -101,8 +101,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ubuntu
-        #   /usr/local/bin:/usr/bin
+        #   # ubuntu
+        #   # /usr/local/bin:/usr/bin
         #
         PROCESS_ENVIRONMENT_VARIABLE_LAMBDA = ->(key) { "process.environment_variable.#{key}" }
     
@@ -111,7 +111,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   c89b11207f6479603b0d49bf291c092c2b719293
+        #   # c89b11207f6479603b0d49bf291c092c2b719293
         #
         PROCESS_EXECUTABLE_BUILD_ID_GNU = 'process.executable.build_id.gnu'
     
@@ -120,7 +120,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   foh3mEXu7BLZjsN9pOwG/kATcXlYVCDEFouRMQed_/WwRFB1hPo9LBkekthSPG/x8hMC8emW2cCjXD0_1aY
+        #   # foh3mEXu7BLZjsN9pOwG/kATcXlYVCDEFouRMQed_/WwRFB1hPo9LBkekthSPG/x8hMC8emW2cCjXD0_1aY
         #
         PROCESS_EXECUTABLE_BUILD_ID_GO = 'process.executable.build_id.go'
     
@@ -129,7 +129,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   600DCAFE4A110000F2BF38C493F5FB92
+        #   # 600DCAFE4A110000F2BF38C493F5FB92
         #
         PROCESS_EXECUTABLE_BUILD_ID_HTLHASH = 'process.executable.build_id.htlhash'
     
@@ -138,7 +138,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   600DCAFE4A110000F2BF38C493F5FB92
+        #   # 600DCAFE4A110000F2BF38C493F5FB92
         #
         # @deprecated {"note": "Replaced by `process.executable.build_id.htlhash`.", "reason": "renamed", "renamed_to": "process.executable.build_id.htlhash"}
         PROCESS_EXECUTABLE_BUILD_ID_PROFILING = 'process.executable.build_id.profiling'
@@ -148,7 +148,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   otelcol
+        #   # otelcol
         #
         PROCESS_EXECUTABLE_NAME = 'process.executable.name'
     
@@ -157,7 +157,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   /usr/bin/cmd/otelcol
+        #   # /usr/bin/cmd/otelcol
         #
         PROCESS_EXECUTABLE_PATH = 'process.executable.path'
     
@@ -166,7 +166,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   127
+        #   # 127
         #
         PROCESS_EXIT_CODE = 'process.exit.code'
     
@@ -175,7 +175,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   2023-11-21T09:26:12.315Z
+        #   # 2023-11-21T09:26:12.315Z
         #
         PROCESS_EXIT_TIME = 'process.exit.time'
     
@@ -184,7 +184,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   23
+        #   # 23
         #
         PROCESS_GROUP_LEADER_PID = 'process.group_leader.pid'
     
@@ -200,8 +200,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1:name=systemd:/user.slice/user-1000.slice/session-3.scope
-        #   0::/user.slice/user-1000.slice/user@1000.service/tmux-spawn-0267755b-4639-4a27-90ed-f19f88e53748.scope
+        #   # 1:name=systemd:/user.slice/user-1000.slice/session-3.scope
+        #   # 0::/user.slice/user-1000.slice/user@1000.service/tmux-spawn-0267755b-4639-4a27-90ed-f19f88e53748.scope
         #
         PROCESS_LINUX_CGROUP = 'process.linux.cgroup'
     
@@ -210,7 +210,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   root
+        #   # root
         #
         PROCESS_OWNER = 'process.owner'
     
@@ -224,7 +224,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   111
+        #   # 111
         #
         PROCESS_PARENT_PID = 'process.parent_pid'
     
@@ -233,7 +233,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1234
+        #   # 1234
         #
         PROCESS_PID = 'process.pid'
     
@@ -242,7 +242,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1000
+        #   # 1000
         #
         PROCESS_REAL_USER_ID = 'process.real_user.id'
     
@@ -251,7 +251,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   operator
+        #   # operator
         #
         PROCESS_REAL_USER_NAME = 'process.real_user.name'
     
@@ -269,7 +269,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   OpenJDK Runtime Environment
+        #   # OpenJDK Runtime Environment
         #
         PROCESS_RUNTIME_NAME = 'process.runtime.name'
     
@@ -287,7 +287,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1002
+        #   # 1002
         #
         PROCESS_SAVED_USER_ID = 'process.saved_user.id'
     
@@ -296,7 +296,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   operator
+        #   # operator
         #
         PROCESS_SAVED_USER_NAME = 'process.saved_user.name'
     
@@ -305,7 +305,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   14
+        #   # 14
         #
         PROCESS_SESSION_LEADER_PID = 'process.session_leader.pid'
     
@@ -316,9 +316,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   cat /etc/hostname
-        #   xfce4-session
-        #   bash
+        #   # cat /etc/hostname
+        #   # xfce4-session
+        #   # bash
         #
         PROCESS_TITLE = 'process.title'
     
@@ -327,7 +327,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1001
+        #   # 1001
         #
         PROCESS_USER_ID = 'process.user.id'
     
@@ -336,7 +336,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   root
+        #   # root
         #
         PROCESS_USER_NAME = 'process.user.name'
     
@@ -347,7 +347,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   12
+        #   # 12
         #
         PROCESS_VPID = 'process.vpid'
     
@@ -356,7 +356,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   /root
+        #   # /root
         #
         PROCESS_WORKING_DIRECTORY = 'process.working_directory'
     
