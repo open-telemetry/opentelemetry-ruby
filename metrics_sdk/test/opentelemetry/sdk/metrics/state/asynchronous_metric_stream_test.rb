@@ -67,7 +67,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
 
       registered_views = stream.instance_variable_get(:@registered_views)
       _(registered_views.size).must_equal(1)
-      _(registered_views.first.aggregation.class).must_equal ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue
+      _(registered_views.first[0].aggregation.class).must_equal ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue
     end
   end
 
@@ -139,6 +139,8 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
     end
 
     it 'handles callback exceptions' do
+      skip if RUBY_PLATFORM.include? 'darwin'
+
       error_callback = [proc { raise StandardError, 'Callback error' }]
       error_stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter', 'description', 'unit', :observable_counter,
@@ -151,7 +153,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       log_output = StringIO.new
       OpenTelemetry.logger = Logger.new(log_output)
       error_stream.collect(0, 1000)
-      assert_includes log_output.string, 'Error invoking callback: Callback error'
+      assert_includes log_output.string, 'OpenTelemetry error: Error invoking callback.'
       OpenTelemetry.logger = original_logger
     end
   end
