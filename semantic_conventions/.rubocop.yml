@@ -4,6 +4,7 @@ AllCops:
   NewCops: enable
   Exclude:
     - 'tmp/semconvrepo/**/*'
+    - 'vendor/**/*'
 
 Bundler/OrderedGems:
   Exclude:
