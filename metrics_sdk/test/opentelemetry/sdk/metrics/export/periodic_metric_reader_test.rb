@@ -75,4 +75,23 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
       mock_logger.verify
     end
   end
+
+  describe 'exporter with empty metrics collection' do
+    let(:exporter) { TestExporter.new }
+    let(:reader) { PeriodicMetricReader.new(exporter: exporter) }
+
+    it 'logs when collected_metrics is empty' do
+      mock_logger = Minitest::Mock.new
+      mock_logger.expect(:debug, nil, [/No metrics to export/])
+
+      reader.stub(:collect, []) do
+        OpenTelemetry.stub(:logger, mock_logger) do
+          reader.force_flush
+        end
+      end
+
+      reader.shutdown
+      mock_logger.verify
+    end
+  end
 end
