@@ -82,19 +82,19 @@ module OpenTelemetry
             thread = Thread.new do
               result = callback.call
             rescue StandardError => e
-              OpenTelemetry.logger.error("Error invoking callback: #{e.message}")
+              OpenTelemetry.handle_error(exception: e, message: 'Error invoking callback.')
               result = :error
             end
 
             unless thread.join(timeout)
               thread.kill
-              OpenTelemetry.logger.error("Timeout while invoking callback after #{timeout} seconds")
+              OpenTelemetry.handle_error(message: "Timeout while invoking callback after #{timeout} seconds")
               return nil
             end
 
             result == :error ? nil : result
           rescue StandardError => e
-            OpenTelemetry.logger.error("Unexpected error in callback execution: #{e.message}")
+            OpenTelemetry.handle_error(exception: e, message: 'Unexpected error in callback execution.')
             nil
           end
         end

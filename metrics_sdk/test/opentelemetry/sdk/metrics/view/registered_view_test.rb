@@ -181,7 +181,9 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
       OpenTelemetry.meter_provider.add_view('async_counter', aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new)
 
       callback = proc { 25 }
-      meter.create_observable_counter('async_counter', unit: 'smidgen', description: 'an async counter', callback: callback)
+      asynch_counter = meter.create_observable_counter('async_counter', unit: 'smidgen', description: 'an async counter', callback: callback)
+      asynch_counter.observe
+      asynch_counter.observe
 
       metric_exporter.pull
       last_snapshot = metric_exporter.metric_snapshots
@@ -197,6 +199,9 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
         _(snapshot.instrumentation_scope.name).must_equal('test')
         _(snapshot.data_points).wont_be_empty
       end
+
+      _(last_snapshot[0].data_points.first.value).must_equal 75 # view aggregation sum
+      _(last_snapshot[1].data_points.first.value).must_equal 25 # view aggregation last value
     end
 
     it 'emits asynchronous counter metrics with view attribute filtering' do
