@@ -12,6 +12,8 @@ module OpenTelemetry
         #
         # The MetricStream class provides SDK internal functionality that is not a part of the
         # public API.
+        #
+        # rubocop:disable Metrics/ClassLength
         class MetricStream
           attr_reader :name, :description, :unit, :instrument_kind, :instrumentation_scope, :data_points
           attr_writer :cardinality_limit
@@ -56,10 +58,11 @@ module OpenTelemetry
                 metric_data << aggregate_metric_data(start_time,
                                                      end_time)
               else
-                @registered_views.each do |view|
+                @registered_views.each do |view, data_points|
                   metric_data << aggregate_metric_data(start_time,
                                                        end_time,
-                                                       aggregation: view.aggregation)
+                                                       aggregation: view.aggregation,
+                                                       data_points: data_points)
                 end
               end
 
@@ -79,12 +82,12 @@ module OpenTelemetry
 
               @mutex.synchronize { @default_aggregation.update(value, attributes, @data_points, resolved_cardinality_limit) }
             else
-              @registered_views.each do |view|
+              @registered_views.each do |view, data_points|
                 resolved_cardinality_limit = resolve_cardinality_limit(view)
                 @mutex.synchronize do
                   attributes ||= {}
                   attributes.merge!(view.attribute_keys)
-                  view.aggregation.update(value, attributes, @data_points, resolved_cardinality_limit) if view.valid_aggregation?
+                  view.aggregation.update(value, attributes, data_points, resolved_cardinality_limit) if view.valid_aggregation?
                 end
               end
             end
@@ -146,6 +149,7 @@ module OpenTelemetry
             end.join("\n")
           end
         end
+        # rubocop:enable Metrics/ClassLength
       end
     end
   end

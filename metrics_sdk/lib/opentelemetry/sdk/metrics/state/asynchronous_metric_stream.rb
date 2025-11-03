@@ -58,7 +58,7 @@ module OpenTelemetry
                 end
               end
             else
-              @registered_views.each do |view|
+              @registered_views.each do |view, data_points|
                 resolved_cardinality_limit = resolve_cardinality_limit(view)
 
                 @mutex.synchronize do
@@ -68,7 +68,7 @@ module OpenTelemetry
 
                     merged_attributes = attributes || {}
                     merged_attributes.merge!(view.attribute_keys)
-                    view.aggregation.update(value, merged_attributes, @data_points, resolved_cardinality_limit) if view.valid_aggregation?
+                    view.aggregation.update(value, merged_attributes, data_points, resolved_cardinality_limit) if view.valid_aggregation?
                   end
                 end
               end
