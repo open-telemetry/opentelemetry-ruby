@@ -42,7 +42,26 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
     it 'logs export failure as error' do
       mock_logger = Minitest::Mock.new
       mock_logger.expect(:error, nil, [/Unable to export metrics/])
-      mock_logger.expect(:error, nil, [/Result code: 1/])
+
+      # Stub collect to return a non-empty array so export is actually called
+      reader.stub(:collect, ['mock_metric']) do
+        OpenTelemetry.stub(:logger, mock_logger) do
+          reader.force_flush
+        end
+      end
+
+      reader.shutdown
+      mock_logger.verify
+    end
+  end
+
+  describe 'exporter with timeout' do
+    let(:exporter) { TestExporter.new(status_codes: [TIMEOUT]) }
+    let(:reader) { PeriodicMetricReader.new(exporter: exporter) }
+
+    it 'logs export timeout as error' do
+      mock_logger = Minitest::Mock.new
+      mock_logger.expect(:error, nil, [/Export operation timed out/])
 
       # Stub collect to return a non-empty array so export is actually called
       reader.stub(:collect, ['mock_metric']) do
