@@ -130,9 +130,7 @@ module OpenTelemetry
           end
 
           def report_result(result_code)
-            if result_code == Export::SUCCESS
-              OpenTelemetry.logger.debug 'Successfully exported metrics'
-            end
+            OpenTelemetry.logger.debug 'Successfully exported metrics' if result_code == Export::SUCCESS
           end
 
           def lock(&block)
