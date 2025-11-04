@@ -130,17 +130,8 @@ module OpenTelemetry
           end
 
           def report_result(result_code)
-            case result_code
-            when Export::SUCCESS
+            if result_code == Export::SUCCESS
               OpenTelemetry.logger.debug 'Successfully exported metrics'
-            when Export::FAILURE
-              OpenTelemetry.handle_error(exception: ExportError.new('Unable to export metrics'))
-            when Export::TIMEOUT
-              OpenTelemetry.handle_error(exception: ExportError.new('Export operation timed out'))
-            when nil
-              OpenTelemetry.logger.debug 'No metrics to export'
-            else
-              OpenTelemetry.logger.warn "Unknown result code when exporting metrics: #{result_code}"
             end
           end
 
