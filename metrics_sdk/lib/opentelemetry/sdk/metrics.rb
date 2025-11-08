@@ -4,6 +4,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/sdk'
+require 'opentelemetry-metrics-api'
+
 module OpenTelemetry
   module SDK
     # The Metrics module contains the OpenTelemetry metrics reference
