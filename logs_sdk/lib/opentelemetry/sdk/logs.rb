@@ -4,6 +4,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'opentelemetry/sdk'
+require 'opentelemetry-logs-api'
+
 require_relative 'logs/version'
 require_relative 'logs/configurator_patch'
 require_relative 'logs/logger'
