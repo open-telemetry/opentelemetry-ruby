@@ -56,12 +56,6 @@ jobs:
         with:
           gem: "${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           build: true
@@ -120,12 +114,6 @@ jobs:
         with:
           gem: "${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           build: true
@@ -193,12 +181,6 @@ jobs:
         with:
           gem: "${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           build: true

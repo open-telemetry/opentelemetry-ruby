@@ -1,6 +1,6 @@
 # Configuration for Ruby base image
 ARG ALPINE_VERSION=3.21
-ARG RUBY_VERSION=3.1.6
+ARG RUBY_VERSION=3.2.8
 
 FROM ruby:"${RUBY_VERSION}-alpine${ALPINE_VERSION}" as ruby
 
@@ -15,7 +15,7 @@ ARG APP_GROUP=app
 ARG APP_DIR=/app
 
 # Rubygems Bundler version
-ARG BUNDLER_VERSION=2.0.2
+ARG BUNDLER_VERSION=2.7.2
 
 ENV SHELL /bin/bash
 

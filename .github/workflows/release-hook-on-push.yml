@@ -15,7 +15,7 @@ jobs:
       contents: write # required for pushing changes
       pull-requests: write # required for updating open release PRs
     env:
-      ruby_version: "3.1"
+      ruby_version: "3.2"
     runs-on: ubuntu-latest
     steps:
       - name: Install Ruby ${{ env.ruby_version }}
