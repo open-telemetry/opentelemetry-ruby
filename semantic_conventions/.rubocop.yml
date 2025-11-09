@@ -12,6 +12,8 @@ Gemspec/DevelopmentDependencies:
 Gemspec/RequireMFA:
   Enabled: false
 
+Layout/EndOfLine:
+  Enabled: false
 Layout/EmptyLinesAroundModuleBody:
   Enabled: false
 Layout/TrailingEmptyLines:
