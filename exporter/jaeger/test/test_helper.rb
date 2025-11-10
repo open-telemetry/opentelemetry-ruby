@@ -15,6 +15,8 @@ require 'minitest/autorun'
 require 'webmock/minitest'
 require 'rspec/mocks/minitest_integration'
 
+Fixnum = Integer if RUBY_PLATFORM == 'java'
+
 def create_span_data(name: '', kind: nil, status: nil, parent_span_id: OpenTelemetry::Trace::INVALID_SPAN_ID,
                      total_recorded_attributes: 0, total_recorded_events: 0, total_recorded_links: 0, start_timestamp: OpenTelemetry::TestHelpers.exportable_timestamp,
                      end_timestamp: OpenTelemetry::TestHelpers.exportable_timestamp, attributes: nil, links: nil, events: nil, resource: nil, instrumentation_scope: nil,
