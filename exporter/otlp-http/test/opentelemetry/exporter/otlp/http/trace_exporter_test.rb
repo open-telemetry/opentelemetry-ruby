@@ -356,6 +356,55 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
       @retry_count = 0
     end
 
+    describe 'HTTP status code retry behavior' do
+      describe 'retryable status codes' do
+        [
+          { code: 429, name: 'Too Many Requests' },
+          { code: 503, name: 'Service Unavailable' },
+          { code: 408, name: 'Request Timeout' },
+          { code: 504, name: 'Gateway Timeout' },
+          { code: 502, name: 'Bad Gateway' }
+        ].each do |status|
+          it "retries on #{status[:code]} (#{status[:name]}) and eventually fails after max retries" do
+            request_stub = stub_request(:post, 'http://localhost:4318/v1/traces')
+                           .to_return { { status: status[:code] } }
+
+            span_data = OpenTelemetry::TestHelpers.create_span_data
+            empty_backoff_delay = ->(_) { nil }
+
+            exporter.stub(:sleep, empty_backoff_delay) do
+              result = exporter.export([span_data])
+              _(result).must_equal(export_failure)
+
+              retry_count = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.const_get(:RETRY_COUNT)
+              assert_requested(request_stub, times: 1 + retry_count)
+            end
+          end
+        end
+      end
+
+      describe 'non-retryable status codes' do
+        [
+          { code: 400, name: 'Bad Request' },
+          { code: 401, name: 'Unauthorized' },
+          { code: 403, name: 'Forbidden' },
+          { code: 404, name: 'Not Found' },
+          { code: 500, name: 'Internal Server Error' }
+        ].each do |status|
+          it "does not retry on #{status[:code]} (#{status[:name]})" do
+            request_stub = stub_request(:post, 'http://localhost:4318/v1/traces')
+                           .to_return(status: status[:code])
+
+            span_data = OpenTelemetry::TestHelpers.create_span_data
+            result = exporter.export([span_data])
+
+            _(result).must_equal(export_failure)
+            assert_requested(request_stub, times: 1)
+          end
+        end
+      end
+    end
+
     it 'returns FAILURE when shutdown' do
       exporter.shutdown
       result = exporter.export(nil)
