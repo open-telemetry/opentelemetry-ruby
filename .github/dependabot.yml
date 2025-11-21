@@ -85,7 +85,3 @@ updates:
   directory: "/semantic_conventions"
   schedule:
     interval: weekly
-- package-ecosystem: bundler
-  directory: "/"
-  schedule:
-    interval: weekly
