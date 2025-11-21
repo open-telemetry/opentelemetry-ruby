@@ -100,6 +100,10 @@ The `opentelemetry-exporter-jaeger` gem source is [on github][repo-github], alon
 
 The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special interest group (SIG). You can get involved by joining us in [GitHub Discussions][discussions-url] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
+## Compatibility with JRuby
+
+The `opentelemetry-exporter-jaeger` gem can only work with JRuby version less than 10.0.0.0 (e.g. <= jruby-9.4.14.0)
+
 ## License
 
 The `opentelemetry-exporter-jaeger` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
