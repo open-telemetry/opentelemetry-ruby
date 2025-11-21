@@ -130,17 +130,17 @@ jobs:
           rubocop: true
           build: true
       - name: "Test Zipkin with JRuby"
-          if: "${{ matrix.os == 'ubuntu-latest' && matrix.gem == 'opentelemetry-exporter-zipkin' }}"
-          uses: ./.github/actions/test_gem
-          with:
-             gem: "${{ matrix.gem }}"
-             ruby: "jruby"
+        if: "${{ matrix.os == 'ubuntu-latest' && matrix.gem == 'opentelemetry-exporter-zipkin' }}"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "jruby"
       - name: "Test Jaeger with JRuby"
-          if: "${{ matrix.os == 'ubuntu-latest' && matrix.gem == 'opentelemetry-exporter-jaeger' }}"
-          uses: ./.github/actions/test_gem
-          with:
-             gem: "${{ matrix.gem }}"
-             ruby: "jruby-9.4"
+        if: "${{ matrix.os == 'ubuntu-latest' && matrix.gem == 'opentelemetry-exporter-jaeger' }}"
+        uses: ./.github/actions/test_gem
+        with:
+           gem: "${{ matrix.gem }}"
+           ruby: "jruby-9.4"
       - name: "Truffleruby Filter"
         id: truffleruby_skip
         shell: bash
