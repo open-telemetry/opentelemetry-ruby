@@ -93,6 +93,9 @@ jobs:
           # Doesn't build on macos
           - os: macos-latest
             gem: opentelemetry-exporter-jaeger
+         # Windows runs Ruby 3.4, which isn't compatible with this gem
+          - os: windows-latest
+            gem: opentelemetry-exporter-jaeger
           - os: windows-latest
             gem: opentelemetry-exporter-otlp-grpc
     name: ${{ matrix.gem }} / ${{ matrix.os }}
@@ -100,16 +103,19 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: "Test Ruby 3.4"
+        if: "${{ matrix.gem != 'opentelemetry-exporter-jaeger' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
           ruby: "3.4"
       - name: "Test Ruby 3.3"
+        if: "${{ matrix.gem != 'opentelemetry-exporter-jaeger' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
           ruby: "3.3"
       - name: "Test Ruby 3.2"
+        if: "${{ matrix.gem != 'opentelemetry-exporter-jaeger' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
@@ -117,31 +123,25 @@ jobs:
           yard: true
           rubocop: true
           build: true
-      - name: "JRuby Filter"
-        id: jruby_skip
-        shell: bash
-        run: |
-          echo "skip=false" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp"        ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-common" ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-grpc"   ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-http"   ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-logs" ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-metrics" ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
-          true
-      - name: "Test JRuby"
-        if: "${{ matrix.os == 'ubuntu-latest' && steps.jruby_skip.outputs.skip == 'false' }}"
+      - name: "Test Zipkin with JRuby"
+        if: "${{ matrix.os == 'ubuntu-latest' && matrix.gem == 'opentelemetry-exporter-zipkin' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
           ruby: "jruby"
+      - name: "Test Jaeger with JRuby"
+        if: "${{ matrix.os == 'ubuntu-latest' && matrix.gem == 'opentelemetry-exporter-jaeger' }}"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "jruby-9.4"
       - name: "Truffleruby Filter"
         id: truffleruby_skip
         shell: bash
         run: |
           echo "skip=false" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-grpc"   ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-grpc" ]] && echo "skip=true" >> $GITHUB_OUTPUT
+          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-jaeger" ]] && echo "skip=true" >> $GITHUB_OUTPUT
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
           true
       - name: "Test truffleruby"
