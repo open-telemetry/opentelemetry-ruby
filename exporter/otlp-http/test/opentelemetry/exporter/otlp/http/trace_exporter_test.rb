@@ -301,7 +301,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
       _(result).must_equal(export_failure)
     end
 
-    it 'returns FAILURE on unexpected exceptions' do
+    it 'returns FAILURE with error context on unexpected exceptions' do
       log_stream = StringIO.new
       logger = OpenTelemetry.logger
       OpenTelemetry.logger = ::Logger.new(log_stream)
@@ -310,11 +310,14 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
       span_data = OpenTelemetry::TestHelpers.create_span_data
       result = exporter.export([span_data], timeout: 1)
 
+      _(result).must_equal(export_failure)
+      _(result.error).must_be_kind_of(StandardError)
+      _(result.error.message).must_equal('something unexpected')
+      _(result.message).must_equal('unexpected error in OTLP::Exporter#send_bytes')
+
       _(log_stream.string).must_match(
         /ERROR -- : OpenTelemetry error: unexpected error in OTLP::Exporter#send_bytes - something unexpected/
       )
-
-      _(result).must_equal(export_failure)
     ensure
       OpenTelemetry.logger = logger
     end

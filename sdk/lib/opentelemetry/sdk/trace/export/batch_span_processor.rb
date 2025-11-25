@@ -185,21 +185,40 @@ module OpenTelemetry
 
           def export_batch(span_array, timeout: @exporter_timeout_seconds)
             batch = span_array.map(&:to_span_data)
-            result_code = @export_mutex.synchronize { @exporter.export(batch, timeout: timeout) }
-            report_result(result_code, span_array)
-            result_code
+            result = @export_mutex.synchronize do
+              OpenTelemetry.logger.debug("BatchSpanProcessor#export_batch: exporter=#{@exporter.class.name} Exporting batch of #{batch.size} spans with timeout #{timeout}")
+              @exporter.export(batch, timeout: timeout)
+            end
+
+            # Extract error context if available
+            error = result.respond_to?(:error) ? result.error : nil
+            message = result.respond_to?(:message) ? result.message : nil
+
+            OpenTelemetry.logger.debug("BatchSpanProcessor#export_batch: Extracted error=#{error&.class}, message=#{message ? 'present' : 'nil'}, result=#{result.to_i}")
+
+            report_result(result.to_i, span_array, error: error, message: message)
+            result.to_i
           rescue StandardError => e
-            report_result(FAILURE, span_array)
+            report_result(FAILURE, span_array, error: e)
             @metrics_reporter.add_to_counter('otel.bsp.error', labels: { 'reason' => e.class.to_s })
             FAILURE
           end
 
-          def report_result(result_code, span_array)
+          def report_result(result_code, span_array, error: nil, message: nil)
             if result_code == SUCCESS
               @metrics_reporter.add_to_counter('otel.bsp.export.success')
               @metrics_reporter.add_to_counter('otel.bsp.exported_spans', increment: span_array.size)
             else
-              OpenTelemetry.handle_error(exception: ExportError.new(span_array))
+              # Log detailed error information if available
+              error_message = if error
+                "BatchSpanProcessor: export failed due to #{error.class}: #{error.message}"
+              elsif message
+                "BatchSpanProcessor: export failed: #{message}"
+              else
+                "BatchSpanProcessor: export failed (no error details available) \n Call stack: #{caller.join("\n")}"
+              end
+
+              OpenTelemetry.handle_error(exception: ExportError.new(span_array), message: error_message)
               @metrics_reporter.add_to_counter('otel.bsp.export.failure')
               report_dropped_spans(span_array, reason: 'export-failure')
             end
