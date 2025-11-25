@@ -294,12 +294,12 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       error = assert_raises(ArgumentError) do
         OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_size: 10_000_000)
       end
-      assert_equal('Max size 10000000 is larger than maximum size 16384', error.message)
+      assert_equal('Buckets max size 10000000 is larger than maximum max size 16384', error.message)
 
       error = assert_raises(ArgumentError) do
         OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_size: 0)
       end
-      assert_equal('Max size 0 is smaller than minimum size 2', error.message)
+      assert_equal('Buckets min size 0 is smaller than minimum min size 2', error.message)
     end
   end
 end

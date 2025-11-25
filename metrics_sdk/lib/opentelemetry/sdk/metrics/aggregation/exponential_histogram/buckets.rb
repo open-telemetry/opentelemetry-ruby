@@ -27,7 +27,6 @@ module OpenTelemetry
               old_positive_limit = size - bias
 
               new_size = [2**Math.log2(needed).ceil, max_size].min
-
               new_positive_limit = new_size - bias
 
               tmp = Array.new(new_size, 0)
@@ -104,6 +103,15 @@ module OpenTelemetry
 
             def increment_bucket(bucket_index, increment = 1)
               @counts[bucket_index] += increment
+            end
+
+            def copy_empty
+              new_buckets = self.class.new
+              new_buckets.instance_variable_set(:@counts, Array.new(@counts.size, 0))
+              new_buckets.instance_variable_set(:@index_base, @index_base)
+              new_buckets.instance_variable_set(:@index_start, @index_start)
+              new_buckets.instance_variable_set(:@index_end, @index_end)
+              new_buckets
             end
           end
         end
