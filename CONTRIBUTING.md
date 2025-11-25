@@ -346,6 +346,35 @@ For releases to succeed, new gems MUST include the following:
 *  A `CHANGELOG.md` file.
 *  A `yard` rake task.
 
+## Updating Ruby version requirements
+
+To update the minimum Ruby version requirement across all gems in the repository, use the `bin/update-ruby-version` script:
+
+```console
+# Update to Ruby 3.3 minimum
+bin/update-ruby-version 3.3
+
+# Supports patch versions and pre-releases
+bin/update-ruby-version 3.2.0
+bin/update-ruby-version 3.4.0.alpha
+```
+
+The script will:
+
+1. Validate the version format
+2. Update `spec.required_ruby_version` in all gemspec files
+3. Show a summary of changes
+
+After running the script:
+
+1. Review changes with `git diff`
+2. Test against the new minimum Ruby version
+3. Update CI configurations in `.github/workflows`
+4. Update `contrib/.rubocop.yml` to set the `TargetRubyVersion`
+5. Remove any conditional logic handling Ruby versions in Appraisal files that are no longer needed
+6. Remove any conditional logic in test cases that are no longer needed
+7. Commit with a message like `chore: update minimum Ruby version to 3.3`
+
 [cncf-cla]: https://identity.linuxfoundation.org/projects/cncf
 [github-draft]: https://github.blog/2019-02-14-introducing-draft-pull-requests/
 [kube-github-workflow-pr]: https://github.com/kubernetes/community/blob/master/contributors/guide/github-workflow.md#7-create-a-pull-request
