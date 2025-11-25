@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-jaeger
 
+### v0.24.1 / 2025-11-25
+
+* FIXED: Update version compatibility: < Ruby 3.2, < JRuby 10.0
+
 ### v0.24.0 / 2025-02-25
 
 - ADDED: Support 3.1 Min Version
