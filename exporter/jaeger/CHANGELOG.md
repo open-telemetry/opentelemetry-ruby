@@ -2,7 +2,7 @@
 
 ### v0.24.1 / 2025-11-25
 
-* FIXED: Update setup-ruby action
+* FIXED: Update version compatibility: < Ruby 3.2, < JRuby 10.0
 
 ### v0.24.0 / 2025-02-25
 
