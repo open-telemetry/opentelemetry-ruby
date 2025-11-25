@@ -51,9 +51,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   ["application/json"]
-      #   ["1.2.3.4", "1.2.3.5"]
-      #
+      #   # application/json
+      #   # 1.2.3.4
+      # 1.2.3.5
       HTTP_REQUEST_HEADER_LAMBDA = ->(key) { "http.request.header.#{key}" }
   
       # HTTP request method.
@@ -76,9 +76,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   GET
-      #   POST
-      #   HEAD
+      #   # GET
+      #   # POST
+      #   # HEAD
       #
       HTTP_REQUEST_METHOD = 'http.request.method'
   
@@ -87,9 +87,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   GeT
-      #   ACL
-      #   foo
+      #   # GeT
+      #   # ACL
+      #   # foo
       #
       HTTP_REQUEST_METHOD_ORIGINAL = 'http.request.method_original'
   
@@ -131,9 +131,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   ["application/json"]
-      #   ["abc", "def"]
-      #
+      #   # application/json
+      #   # abc
+      # def
       HTTP_RESPONSE_HEADER_LAMBDA = ->(key) { "http.response.header.#{key}" }
   
       # [HTTP response status code](https://tools.ietf.org/html/rfc7231#section-6).
@@ -141,7 +141,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   200
+      #   # 200
       #
       HTTP_RESPONSE_STATUS_CODE = 'http.response.status_code'
   
@@ -153,8 +153,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   /users/:userID?
-      #   {controller}/{action}/{id?}
+      #   # /users/:userID?
+      #   # {controller}/{action}/{id?}
       #
       HTTP_ROUTE = 'http.route'
   

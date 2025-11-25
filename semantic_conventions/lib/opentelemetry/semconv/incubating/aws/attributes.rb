@@ -29,7 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   sgi5gkybzqak
+        #   # sgi5gkybzqak
         #
         AWS_BEDROCK_GUARDRAIL_ID = 'aws.bedrock.guardrail.id'
     
@@ -38,7 +38,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   XFWUPB9PAW
+        #   # XFWUPB9PAW
         #
         AWS_BEDROCK_KNOWLEDGE_BASE_ID = 'aws.bedrock.knowledge_base.id'
     
@@ -47,7 +47,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["{ \"AttributeName\": \"string\", \"AttributeType\": \"string\" }"]
+        #   # { "AttributeName": "string", "AttributeType": "string" }
         #
         AWS_DYNAMODB_ATTRIBUTE_DEFINITIONS = 'aws.dynamodb.attribute_definitions'
     
@@ -56,8 +56,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["lives", "id"]
-        #
+        #   # lives
+        # id
         AWS_DYNAMODB_ATTRIBUTES_TO_GET = 'aws.dynamodb.attributes_to_get'
     
         # The value of the `ConsistentRead` request parameter.
@@ -70,7 +70,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["{ \"CapacityUnits\": number, \"GlobalSecondaryIndexes\": { \"string\" : { \"CapacityUnits\": number, \"ReadCapacityUnits\": number, \"WriteCapacityUnits\": number } }, \"LocalSecondaryIndexes\": { \"string\" : { \"CapacityUnits\": number, \"ReadCapacityUnits\": number, \"WriteCapacityUnits\": number } }, \"ReadCapacityUnits\": number, \"Table\": { \"CapacityUnits\": number, \"ReadCapacityUnits\": number, \"WriteCapacityUnits\": number }, \"TableName\": \"string\", \"WriteCapacityUnits\": number }"]
+        #   # { "CapacityUnits": number, "GlobalSecondaryIndexes": { "string" : { "CapacityUnits": number, "ReadCapacityUnits": number, "WriteCapacityUnits": number } }, "LocalSecondaryIndexes": { "string" : { "CapacityUnits": number, "ReadCapacityUnits": number, "WriteCapacityUnits": number } }, "ReadCapacityUnits": number, "Table": { "CapacityUnits": number, "ReadCapacityUnits": number, "WriteCapacityUnits": number }, "TableName": "string", "WriteCapacityUnits": number }
         #
         AWS_DYNAMODB_CONSUMED_CAPACITY = 'aws.dynamodb.consumed_capacity'
     
@@ -79,7 +79,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   10
+        #   # 10
         #
         AWS_DYNAMODB_COUNT = 'aws.dynamodb.count'
     
@@ -88,8 +88,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Users
-        #   CatsTable
+        #   # Users
+        #   # CatsTable
         #
         AWS_DYNAMODB_EXCLUSIVE_START_TABLE = 'aws.dynamodb.exclusive_start_table'
     
@@ -98,7 +98,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["{ \"Create\": { \"IndexName\": \"string\", \"KeySchema\": [ { \"AttributeName\": \"string\", \"KeyType\": \"string\" } ], \"Projection\": { \"NonKeyAttributes\": [ \"string\" ], \"ProjectionType\": \"string\" }, \"ProvisionedThroughput\": { \"ReadCapacityUnits\": number, \"WriteCapacityUnits\": number } }"]
+        #   # { "Create": { "IndexName": "string", "KeySchema": [ { "AttributeName": "string", "KeyType": "string" } ], "Projection": { "NonKeyAttributes": [ "string" ], "ProjectionType": "string" }, "ProvisionedThroughput": { "ReadCapacityUnits": number, "WriteCapacityUnits": number } }
         #
         AWS_DYNAMODB_GLOBAL_SECONDARY_INDEX_UPDATES = 'aws.dynamodb.global_secondary_index_updates'
     
@@ -107,7 +107,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["{ \"IndexName\": \"string\", \"KeySchema\": [ { \"AttributeName\": \"string\", \"KeyType\": \"string\" } ], \"Projection\": { \"NonKeyAttributes\": [ \"string\" ], \"ProjectionType\": \"string\" }, \"ProvisionedThroughput\": { \"ReadCapacityUnits\": number, \"WriteCapacityUnits\": number } }"]
+        #   # { "IndexName": "string", "KeySchema": [ { "AttributeName": "string", "KeyType": "string" } ], "Projection": { "NonKeyAttributes": [ "string" ], "ProjectionType": "string" }, "ProvisionedThroughput": { "ReadCapacityUnits": number, "WriteCapacityUnits": number } }
         #
         AWS_DYNAMODB_GLOBAL_SECONDARY_INDEXES = 'aws.dynamodb.global_secondary_indexes'
     
@@ -116,7 +116,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   name_to_group
+        #   # name_to_group
         #
         AWS_DYNAMODB_INDEX_NAME = 'aws.dynamodb.index_name'
     
@@ -125,7 +125,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   { "string" : [ { "ItemCollectionKey": { "string" : { "B": blob, "BOOL": boolean, "BS": [ blob ], "L": [ "AttributeValue" ], "M": { "string" : "AttributeValue" }, "N": "string", "NS": [ "string" ], "NULL": boolean, "S": "string", "SS": [ "string" ] } }, "SizeEstimateRangeGB": [ number ] } ] }
+        #   # { "string" : [ { "ItemCollectionKey": { "string" : { "B": blob, "BOOL": boolean, "BS": [ blob ], "L": [ "AttributeValue" ], "M": { "string" : "AttributeValue" }, "N": "string", "NS": [ "string" ], "NULL": boolean, "S": "string", "SS": [ "string" ] } }, "SizeEstimateRangeGB": [ number ] } ] }
         #
         AWS_DYNAMODB_ITEM_COLLECTION_METRICS = 'aws.dynamodb.item_collection_metrics'
     
@@ -134,7 +134,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   10
+        #   # 10
         #
         AWS_DYNAMODB_LIMIT = 'aws.dynamodb.limit'
     
@@ -143,7 +143,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["{ \"IndexArn\": \"string\", \"IndexName\": \"string\", \"IndexSizeBytes\": number, \"ItemCount\": number, \"KeySchema\": [ { \"AttributeName\": \"string\", \"KeyType\": \"string\" } ], \"Projection\": { \"NonKeyAttributes\": [ \"string\" ], \"ProjectionType\": \"string\" } }"]
+        #   # { "IndexArn": "string", "IndexName": "string", "IndexSizeBytes": number, "ItemCount": number, "KeySchema": [ { "AttributeName": "string", "KeyType": "string" } ], "Projection": { "NonKeyAttributes": [ "string" ], "ProjectionType": "string" } }
         #
         AWS_DYNAMODB_LOCAL_SECONDARY_INDEXES = 'aws.dynamodb.local_secondary_indexes'
     
@@ -152,9 +152,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Title
-        #   Title, Price, Color
-        #   Title, Description, RelatedItems, ProductReviews
+        #   # Title
+        #   # Title, Price, Color
+        #   # Title, Description, RelatedItems, ProductReviews
         #
         AWS_DYNAMODB_PROJECTION = 'aws.dynamodb.projection'
     
@@ -163,8 +163,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1.0
-        #   2.0
+        #   # 1.0
+        #   # 2.0
         #
         AWS_DYNAMODB_PROVISIONED_READ_CAPACITY = 'aws.dynamodb.provisioned_read_capacity'
     
@@ -173,8 +173,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1.0
-        #   2.0
+        #   # 1.0
+        #   # 2.0
         #
         AWS_DYNAMODB_PROVISIONED_WRITE_CAPACITY = 'aws.dynamodb.provisioned_write_capacity'
     
@@ -188,7 +188,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   50
+        #   # 50
         #
         AWS_DYNAMODB_SCANNED_COUNT = 'aws.dynamodb.scanned_count'
     
@@ -197,7 +197,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   10
+        #   # 10
         #
         AWS_DYNAMODB_SEGMENT = 'aws.dynamodb.segment'
     
@@ -206,8 +206,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ALL_ATTRIBUTES
-        #   COUNT
+        #   # ALL_ATTRIBUTES
+        #   # COUNT
         #
         AWS_DYNAMODB_SELECT = 'aws.dynamodb.select'
     
@@ -216,7 +216,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   20
+        #   # 20
         #
         AWS_DYNAMODB_TABLE_COUNT = 'aws.dynamodb.table_count'
     
@@ -225,8 +225,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["Users", "Cats"]
-        #
+        #   # Users
+        # Cats
         AWS_DYNAMODB_TABLE_NAMES = 'aws.dynamodb.table_names'
     
         # The value of the `TotalSegments` request parameter.
@@ -234,7 +234,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   100
+        #   # 100
         #
         AWS_DYNAMODB_TOTAL_SEGMENTS = 'aws.dynamodb.total_segments'
     
@@ -243,7 +243,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   arn:aws:ecs:us-west-2:123456789123:cluster/my-cluster
+        #   # arn:aws:ecs:us-west-2:123456789123:cluster/my-cluster
         #
         AWS_ECS_CLUSTER_ARN = 'aws.ecs.cluster.arn'
     
@@ -252,7 +252,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   arn:aws:ecs:us-west-1:123456789123:container/32624152-9086-4f0e-acae-1a75b14fe4d9
+        #   # arn:aws:ecs:us-west-1:123456789123:container/32624152-9086-4f0e-acae-1a75b14fe4d9
         #
         AWS_ECS_CONTAINER_ARN = 'aws.ecs.container.arn'
     
@@ -266,8 +266,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   arn:aws:ecs:us-west-1:123456789123:task/10838bed-421f-43ef-870a-f43feacbbb5b
-        #   arn:aws:ecs:us-west-1:123456789123:task/my-cluster/task-id/23ebb8ac-c18f-46c6-8bbe-d55d0e37cfbd
+        #   # arn:aws:ecs:us-west-1:123456789123:task/10838bed-421f-43ef-870a-f43feacbbb5b
+        #   # arn:aws:ecs:us-west-1:123456789123:task/my-cluster/task-id/23ebb8ac-c18f-46c6-8bbe-d55d0e37cfbd
         #
         AWS_ECS_TASK_ARN = 'aws.ecs.task.arn'
     
@@ -276,7 +276,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry-family
+        #   # opentelemetry-family
         #
         AWS_ECS_TASK_FAMILY = 'aws.ecs.task.family'
     
@@ -285,8 +285,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   10838bed-421f-43ef-870a-f43feacbbb5b
-        #   23ebb8ac-c18f-46c6-8bbe-d55d0e37cfbd
+        #   # 10838bed-421f-43ef-870a-f43feacbbb5b
+        #   # 23ebb8ac-c18f-46c6-8bbe-d55d0e37cfbd
         #
         AWS_ECS_TASK_ID = 'aws.ecs.task.id'
     
@@ -295,8 +295,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   8
-        #   26
+        #   # 8
+        #   # 26
         #
         AWS_ECS_TASK_REVISION = 'aws.ecs.task.revision'
     
@@ -305,7 +305,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   arn:aws:ecs:us-west-2:123456789123:cluster/my-cluster
+        #   # arn:aws:ecs:us-west-2:123456789123:cluster/my-cluster
         #
         AWS_EKS_CLUSTER_ARN = 'aws.eks.cluster.arn'
     
@@ -314,7 +314,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   wzHcyEWfmOGDIE5QOhTAqFDoDWP3y8IUvpNINCwL9N4TEHbUw0/gZJ+VZTmCNCWR7fezEN3eCiQ=
+        #   # wzHcyEWfmOGDIE5QOhTAqFDoDWP3y8IUvpNINCwL9N4TEHbUw0/gZJ+VZTmCNCWR7fezEN3eCiQ=
         #
         AWS_EXTENDED_REQUEST_ID = 'aws.extended_request_id'
     
@@ -323,7 +323,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   some-stream-name
+        #   # some-stream-name
         #
         AWS_KINESIS_STREAM_NAME = 'aws.kinesis.stream_name'
     
@@ -334,7 +334,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   arn:aws:lambda:us-east-1:123456:function:myfunction:myalias
+        #   # arn:aws:lambda:us-east-1:123456:function:myfunction:myalias
         #
         AWS_LAMBDA_INVOKED_ARN = 'aws.lambda.invoked_arn'
     
@@ -343,7 +343,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   587ad24b-03b9-4413-8202-bbd56b36e5b7
+        #   # 587ad24b-03b9-4413-8202-bbd56b36e5b7
         #
         AWS_LAMBDA_RESOURCE_MAPPING_ID = 'aws.lambda.resource_mapping.id'
     
@@ -354,7 +354,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["arn:aws:logs:us-west-1:123456789012:log-group:/aws/my/group:*"]
+        #   # arn:aws:logs:us-west-1:123456789012:log-group:/aws/my/group:*
         #
         AWS_LOG_GROUP_ARNS = 'aws.log.group.arns'
     
@@ -365,8 +365,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["/aws/lambda/my-function", "opentelemetry-service"]
-        #
+        #   # /aws/lambda/my-function
+        # opentelemetry-service
         AWS_LOG_GROUP_NAMES = 'aws.log.group.names'
     
         # The ARN(s) of the AWS log stream(s).
@@ -376,7 +376,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["arn:aws:logs:us-west-1:123456789012:log-group:/aws/my/group:log-stream:logs/main/10838bed-421f-43ef-870a-f43feacbbb5b"]
+        #   # arn:aws:logs:us-west-1:123456789012:log-group:/aws/my/group:log-stream:logs/main/10838bed-421f-43ef-870a-f43feacbbb5b
         #
         AWS_LOG_STREAM_ARNS = 'aws.log.stream.arns'
     
@@ -385,7 +385,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["logs/main/10838bed-421f-43ef-870a-f43feacbbb5b"]
+        #   # logs/main/10838bed-421f-43ef-870a-f43feacbbb5b
         #
         AWS_LOG_STREAM_NAMES = 'aws.log.stream.names'
     
@@ -394,8 +394,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   79b9da39-b7ae-508a-a6bc-864b2829c622
-        #   C9ER4AJX75574TDJ
+        #   # 79b9da39-b7ae-508a-a6bc-864b2829c622
+        #   # C9ER4AJX75574TDJ
         #
         AWS_REQUEST_ID = 'aws.request_id'
     
@@ -407,7 +407,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   some-bucket-name
+        #   # some-bucket-name
         #
         AWS_S3_BUCKET = 'aws.s3.bucket'
     
@@ -423,7 +423,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   someFile.yml
+        #   # someFile.yml
         #
         AWS_S3_COPY_SOURCE = 'aws.s3.copy_source'
     
@@ -436,7 +436,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Objects=[{Key=string,VersionId=string},{Key=string,VersionId=string}],Quiet=boolean
+        #   # Objects=[{Key=string,VersionId=string},{Key=string,VersionId=string}],Quiet=boolean
         #
         AWS_S3_DELETE = 'aws.s3.delete'
     
@@ -462,7 +462,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   someFile.yml
+        #   # someFile.yml
         #
         AWS_S3_KEY = 'aws.s3.key'
     
@@ -476,7 +476,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   3456
+        #   # 3456
         #
         AWS_S3_PART_NUMBER = 'aws.s3.part_number'
     
@@ -495,7 +495,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   dfRtDYWFbkRONycy.Yxwh66Yjlx.cph0gtNBtJ
+        #   # dfRtDYWFbkRONycy.Yxwh66Yjlx.cph0gtNBtJ
         #
         AWS_S3_UPLOAD_ID = 'aws.s3.upload_id'
     
@@ -504,7 +504,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   arn:aws:secretsmanager:us-east-1:123456789012:secret:SecretName-6RandomCharacters
+        #   # arn:aws:secretsmanager:us-east-1:123456789012:secret:SecretName-6RandomCharacters
         #
         AWS_SECRETSMANAGER_SECRET_ARN = 'aws.secretsmanager.secret.arn'
     
@@ -513,7 +513,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE
+        #   # arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE
         #
         AWS_SNS_TOPIC_ARN = 'aws.sns.topic.arn'
     
@@ -522,7 +522,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   https://sqs.us-east-1.amazonaws.com/123456789012/MyQueue
+        #   # https://sqs.us-east-1.amazonaws.com/123456789012/MyQueue
         #
         AWS_SQS_QUEUE_URL = 'aws.sqs.queue.url'
     
@@ -531,7 +531,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   arn:aws:states:us-east-1:123456789012:activity:get-greeting
+        #   # arn:aws:states:us-east-1:123456789012:activity:get-greeting
         #
         AWS_STEP_FUNCTIONS_ACTIVITY_ARN = 'aws.step_functions.activity.arn'
     
@@ -540,7 +540,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   arn:aws:states:us-east-1:123456789012:stateMachine:myStateMachine:1
+        #   # arn:aws:states:us-east-1:123456789012:stateMachine:myStateMachine:1
         #
         AWS_STEP_FUNCTIONS_STATE_MACHINE_ARN = 'aws.step_functions.state_machine.arn'
     

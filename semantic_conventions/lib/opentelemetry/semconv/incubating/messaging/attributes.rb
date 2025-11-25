@@ -31,9 +31,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0
-        #   1
-        #   2
+        #   # 0
+        #   # 1
+        #   # 2
         #
         MESSAGING_BATCH_MESSAGE_COUNT = 'messaging.batch.message_count'
     
@@ -42,8 +42,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   client-5
-        #   myhost@8742@s8083jm
+        #   # client-5
+        #   # myhost@8742@s8083jm
         #
         MESSAGING_CLIENT_ID = 'messaging.client.id'
     
@@ -54,8 +54,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   my-group
-        #   indexer
+        #   # my-group
+        #   # indexer
         #
         MESSAGING_CONSUMER_GROUP_NAME = 'messaging.consumer.group.name'
     
@@ -72,8 +72,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   MyQueue
-        #   MyTopic
+        #   # MyQueue
+        #   # MyTopic
         #
         MESSAGING_DESTINATION_NAME = 'messaging.destination.name'
     
@@ -93,7 +93,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   subscription-a
+        #   # subscription-a
         #
         MESSAGING_DESTINATION_SUBSCRIPTION_NAME = 'messaging.destination.subscription.name'
     
@@ -104,7 +104,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   /customers/{customerId}
+        #   # /customers/{customerId}
         #
         MESSAGING_DESTINATION_TEMPLATE = 'messaging.destination.template'
     
@@ -124,8 +124,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   MyQueue
-        #   MyTopic
+        #   # MyQueue
+        #   # MyTopic
         #
         # @deprecated {"note": "Removed. No replacement at this time.", "reason": "obsoleted"}
         MESSAGING_DESTINATION_PUBLISH_NAME = 'messaging.destination_publish.name'
@@ -287,9 +287,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   publish
-        #   create
-        #   process
+        #   # publish
+        #   # create
+        #   # process
         #
         # @deprecated {"note": "Replaced by `messaging.operation.type`.", "reason": "renamed", "renamed_to": "messaging.operation.type"}
         MESSAGING_OPERATION = 'messaging.operation'
@@ -299,9 +299,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ack
-        #   nack
-        #   send
+        #   # ack
+        #   # nack
+        #   # send
         #
         MESSAGING_OPERATION_NAME = 'messaging.operation.name'
     
@@ -377,8 +377,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["keyA", "keyB"]
-        #
+        #   # keyA
+        # keyB
         MESSAGING_ROCKETMQ_MESSAGE_KEYS = 'messaging.rocketmq.message.keys'
     
         # The secondary classifier of message besides topic.

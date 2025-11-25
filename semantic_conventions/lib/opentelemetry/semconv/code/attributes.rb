@@ -62,9 +62,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   com.example.MyHttpService.serveRequest
-      #   GuzzleHttp\Client::transfer
-      #   fopen
+      #   # com.example.MyHttpService.serveRequest
+      #   # GuzzleHttp\Client::transfer
+      #   # fopen
       #
       CODE_FUNCTION_NAME = 'code.function.name'
   

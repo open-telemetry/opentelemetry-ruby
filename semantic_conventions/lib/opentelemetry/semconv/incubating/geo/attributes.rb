@@ -34,7 +34,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   CA
+        #   # CA
         #
         GEO_COUNTRY_ISO_CODE = 'geo.country.iso_code'
     
@@ -43,8 +43,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Montreal
-        #   Berlin
+        #   # Montreal
+        #   # Berlin
         #
         GEO_LOCALITY_NAME = 'geo.locality.name'
     
@@ -53,7 +53,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   45.505918
+        #   # 45.505918
         #
         GEO_LOCATION_LAT = 'geo.location.lat'
     
@@ -62,7 +62,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   -73.61483
+        #   # -73.61483
         #
         GEO_LOCATION_LON = 'geo.location.lon'
     
@@ -71,7 +71,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   94040
+        #   # 94040
         #
         GEO_POSTAL_CODE = 'geo.postal_code'
     
@@ -80,7 +80,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   CA-QC
+        #   # CA-QC
         #
         GEO_REGION_ISO_CODE = 'geo.region.iso_code'
     

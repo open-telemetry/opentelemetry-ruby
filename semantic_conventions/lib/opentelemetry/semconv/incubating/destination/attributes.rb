@@ -31,9 +31,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   destination.example.com
-        #   10.1.2.80
-        #   /tmp/my.sock
+        #   # destination.example.com
+        #   # 10.1.2.80
+        #   # /tmp/my.sock
         #
         DESTINATION_ADDRESS = 'destination.address'
     
@@ -42,8 +42,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   3389
-        #   2888
+        #   # 3389
+        #   # 2888
         #
         DESTINATION_PORT = 'destination.port'
     

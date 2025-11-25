@@ -29,8 +29,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["10.0.0.1", "2001:0db8:85a3:0000:0000:8a2e:0370:7334"]
-        #
+        #   # 10.0.0.1
+        # 2001:0db8:85a3:0000:0000:8a2e:0370:7334
         DNS_ANSWERS = 'dns.answers'
     
         # The name being queried.
@@ -40,8 +40,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   www.example.com
-        #   opentelemetry.io
+        #   # www.example.com
+        #   # opentelemetry.io
         #
         DNS_QUESTION_NAME = 'dns.question.name'
     

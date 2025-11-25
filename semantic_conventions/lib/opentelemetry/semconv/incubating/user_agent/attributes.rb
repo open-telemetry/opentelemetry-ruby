@@ -31,8 +31,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Safari
-        #   YourApp
+        #   # Safari
+        #   # YourApp
         #
         USER_AGENT_NAME = 'user_agent.name'
     
@@ -41,9 +41,9 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   CERN-LineMode/2.15 libwww/2.17b3
-        #   Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1
-        #   YourApp/1.0.0 grpc-java-okhttp/1.27.2
+        #   # CERN-LineMode/2.15 libwww/2.17b3
+        #   # Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1
+        #   # YourApp/1.0.0 grpc-java-okhttp/1.27.2
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::USER_AGENT::USER_AGENT_ORIGINAL}.
@@ -56,9 +56,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   iOS
-        #   Android
-        #   Ubuntu
+        #   # iOS
+        #   # Android
+        #   # Ubuntu
         #
         USER_AGENT_OS_NAME = 'user_agent.os.name'
     
@@ -69,8 +69,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   14.2.1
-        #   18.04.1
+        #   # 14.2.1
+        #   # 18.04.1
         #
         USER_AGENT_OS_VERSION = 'user_agent.os.version'
     
@@ -88,8 +88,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   14.1.2
-        #   1.0.0
+        #   # 14.1.2
+        #   # 1.0.0
         #
         USER_AGENT_VERSION = 'user_agent.version'
     

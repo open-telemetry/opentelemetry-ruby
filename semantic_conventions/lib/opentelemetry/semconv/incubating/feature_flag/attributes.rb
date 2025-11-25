@@ -29,7 +29,7 @@ module OpenTelemetry
         # @note Stability Level: release_candidate
         #
         # @example Sample Values
-        #   5157782b-2203-4c80-a857-dbbd5e7761db
+        #   # 5157782b-2203-4c80-a857-dbbd5e7761db
         #
         FEATURE_FLAG_CONTEXT_ID = 'feature_flag.context.id'
     
@@ -38,7 +38,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Flag `header-color` expected type `string` but found type `number`
+        #   # Flag `header-color` expected type `string` but found type `number`
         #
         # @deprecated {"note": "Replaced by `error.message`.", "reason": "renamed", "renamed_to": "error.message"}
         FEATURE_FLAG_EVALUATION_ERROR_MESSAGE = 'feature_flag.evaluation.error.message'
@@ -48,10 +48,10 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   static
-        #   targeting_match
-        #   error
-        #   default
+        #   # static
+        #   # targeting_match
+        #   # error
+        #   # default
         #
         # @deprecated {"note": "Replaced by `feature_flag.result.reason`.", "reason": "renamed", "renamed_to": "feature_flag.result.reason"}
         FEATURE_FLAG_EVALUATION_REASON = 'feature_flag.evaluation.reason'
@@ -61,7 +61,7 @@ module OpenTelemetry
         # @note Stability Level: release_candidate
         #
         # @example Sample Values
-        #   logo-color
+        #   # logo-color
         #
         FEATURE_FLAG_KEY = 'feature_flag.key'
     
@@ -70,7 +70,7 @@ module OpenTelemetry
         # @note Stability Level: release_candidate
         #
         # @example Sample Values
-        #   Flag Manager
+        #   # Flag Manager
         #
         FEATURE_FLAG_PROVIDER_NAME = 'feature_flag.provider.name'
     
@@ -79,10 +79,10 @@ module OpenTelemetry
         # @note Stability Level: release_candidate
         #
         # @example Sample Values
-        #   static
-        #   targeting_match
-        #   error
-        #   default
+        #   # static
+        #   # targeting_match
+        #   # error
+        #   # default
         #
         FEATURE_FLAG_RESULT_REASON = 'feature_flag.result.reason'
     
@@ -97,9 +97,9 @@ module OpenTelemetry
         # @note Stability Level: release_candidate
         #
         # @example Sample Values
-        #   #ff0000
-        #   true
-        #   3
+        #   # #ff0000
+        #   # true
+        #   # 3
         #
         FEATURE_FLAG_RESULT_VALUE = 'feature_flag.result.value'
     
@@ -113,9 +113,9 @@ module OpenTelemetry
         # @note Stability Level: release_candidate
         #
         # @example Sample Values
-        #   red
-        #   true
-        #   on
+        #   # red
+        #   # true
+        #   # on
         #
         FEATURE_FLAG_RESULT_VARIANT = 'feature_flag.result.variant'
     
@@ -124,9 +124,9 @@ module OpenTelemetry
         # @note Stability Level: release_candidate
         #
         # @example Sample Values
-        #   proj-1
-        #   ab98sgs
-        #   service1/dev
+        #   # proj-1
+        #   # ab98sgs
+        #   # service1/dev
         #
         FEATURE_FLAG_SET_ID = 'feature_flag.set.id'
     
@@ -135,9 +135,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   red
-        #   true
-        #   on
+        #   # red
+        #   # true
+        #   # on
         #
         # @deprecated {"note": "Replaced by `feature_flag.result.variant`.", "reason": "renamed", "renamed_to": "feature_flag.result.variant"}
         FEATURE_FLAG_VARIANT = 'feature_flag.variant'
@@ -147,8 +147,8 @@ module OpenTelemetry
         # @note Stability Level: release_candidate
         #
         # @example Sample Values
-        #   1
-        #   01ABCDEF
+        #   # 1
+        #   # 01ABCDEF
         #
         FEATURE_FLAG_VERSION = 'feature_flag.version'
     
