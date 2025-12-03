@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
                ::Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 3.1'
+  spec.required_ruby_version = '>= 3.2'
   spec.add_dependency 'logger'
 
   spec.add_development_dependency 'benchmark-ipsa', '~> 0.2.0'
