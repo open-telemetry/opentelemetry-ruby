@@ -24,7 +24,7 @@ module OpenTelemetry
       module VCS
         # @!group Metrics Names
       
-        # The number of changes (pull requests/merge requests/changelists) in a repository, categorized by their state (e.g. open or merged)
+        # The number of changes (pull requests/merge requests/changelists) in a repository, categorized by their state (e.g. open or merged).
         #
         # @note Stability Level: development
         VCS_CHANGE_COUNT = 'vcs.change.count'
@@ -44,7 +44,7 @@ module OpenTelemetry
         # @note Stability Level: development
         VCS_CHANGE_TIME_TO_MERGE = 'vcs.change.time_to_merge'
     
-        # The number of unique contributors to a repository
+        # The number of unique contributors to a repository.
         #
         # @note Stability Level: development
         VCS_CONTRIBUTOR_COUNT = 'vcs.contributor.count'
@@ -63,7 +63,7 @@ module OpenTelemetry
         # @note Stability Level: development
         VCS_REF_LINES_DELTA = 'vcs.ref.lines_delta'
     
-        # The number of revisions (commits) a ref (branch) is ahead/behind the branch from the `vcs.ref.base.name` attribute
+        # The number of revisions (commits) a ref (branch) is ahead/behind the branch from the `vcs.ref.base.name` attribute.
         #
         # This metric should be reported for each `vcs.revision_delta.direction` value. For example if branch `a` is 3 commits behind and 2 commits ahead of `trunk`,
         # instrumentation SHOULD report two measurements: 3 and 2 (both positive numbers) and `vcs.ref.base.name` is set to `trunk`.
@@ -71,7 +71,7 @@ module OpenTelemetry
         # @note Stability Level: development
         VCS_REF_REVISIONS_DELTA = 'vcs.ref.revisions_delta'
     
-        # Time a ref (branch) created from the default branch (trunk) has existed. The `ref.type` attribute will always be `branch`
+        # Time a ref (branch) created from the default branch (trunk) has existed. The `ref.type` attribute will always be `branch`.
         #
         # @note Stability Level: development
         VCS_REF_TIME = 'vcs.ref.time'

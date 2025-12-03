@@ -38,8 +38,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   public.users
-      #   customers
+      #   # public.users
+      #   # customers
       #
       DB_COLLECTION_NAME = 'db.collection.name'
   
@@ -52,8 +52,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   customers
-      #   test.users
+      #   # customers
+      #   # test.users
       #
       DB_NAMESPACE = 'db.namespace'
   
@@ -64,9 +64,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   2
-      #   3
-      #   4
+      #   # 2
+      #   # 3
+      #   # 4
       #
       DB_OPERATION_BATCH_SIZE = 'db.operation.batch.size'
   
@@ -90,9 +90,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   findAndModify
-      #   HMSET
-      #   SELECT
+      #   # findAndModify
+      #   # HMSET
+      #   # SELECT
       #
       DB_OPERATION_NAME = 'db.operation.name'
   
@@ -111,9 +111,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   SELECT wuser_table
-      #   INSERT shipping_details SELECT orders
-      #   get user by id
+      #   # SELECT wuser_table
+      #   # INSERT shipping_details SELECT orders
+      #   # get user by id
       #
       DB_QUERY_SUMMARY = 'db.query.summary'
   
@@ -126,8 +126,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   SELECT * FROM wuser_table where username = ?
-      #   SET mykey ?
+      #   # SELECT * FROM wuser_table where username = ?
+      #   # SET mykey ?
       #
       DB_QUERY_TEXT = 'db.query.text'
   
@@ -139,10 +139,10 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   102
-      #   ORA-17002
-      #   08P01
-      #   404
+      #   # 102
+      #   # ORA-17002
+      #   # 08P01
+      #   # 404
       #
       DB_RESPONSE_STATUS_CODE = 'db.response.status_code'
   
@@ -157,7 +157,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   GetCustomer
+      #   # GetCustomer
       #
       DB_STORED_PROCEDURE_NAME = 'db.stored_procedure.name'
   

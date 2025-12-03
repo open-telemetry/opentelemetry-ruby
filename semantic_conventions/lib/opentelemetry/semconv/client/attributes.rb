@@ -30,9 +30,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   client.example.com
-      #   10.1.2.80
-      #   /tmp/my.sock
+      #   # client.example.com
+      #   # 10.1.2.80
+      #   # /tmp/my.sock
       #
       CLIENT_ADDRESS = 'client.address'
   
@@ -43,7 +43,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   65123
+      #   # 65123
       #
       CLIENT_PORT = 'client.port'
   

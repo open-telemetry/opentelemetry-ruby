@@ -39,7 +39,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   example.com
+        #   # example.com
         #
         # @deprecated {"note": "Replaced by `server.address`.", "reason": "renamed", "renamed_to": "server.address"}
         NET_HOST_NAME = 'net.host.name'
@@ -49,7 +49,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   8080
+        #   # 8080
         #
         # @deprecated {"note": "Replaced by `server.port`.", "reason": "renamed", "renamed_to": "server.port"}
         NET_HOST_PORT = 'net.host.port'
@@ -69,7 +69,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   example.com
+        #   # example.com
         #
         # @deprecated {"note": "Replaced by `server.address` on client spans and `client.address` on server spans.", "reason": "uncategorized"}
         NET_PEER_NAME = 'net.peer.name'
@@ -79,7 +79,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   8080
+        #   # 8080
         #
         # @deprecated {"note": "Replaced by `server.port` on client spans and `client.port` on server spans.", "reason": "uncategorized"}
         NET_PEER_PORT = 'net.peer.port'
@@ -89,9 +89,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   amqp
-        #   http
-        #   mqtt
+        #   # amqp
+        #   # http
+        #   # mqtt
         #
         # @deprecated {"note": "Replaced by `network.protocol.name`.", "reason": "renamed", "renamed_to": "network.protocol.name"}
         NET_PROTOCOL_NAME = 'net.protocol.name'
@@ -117,7 +117,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   /var/my.sock
+        #   # /var/my.sock
         #
         # @deprecated {"note": "Replaced by `network.local.address`.", "reason": "renamed", "renamed_to": "network.local.address"}
         NET_SOCK_HOST_ADDR = 'net.sock.host.addr'
@@ -127,7 +127,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   8080
+        #   # 8080
         #
         # @deprecated {"note": "Replaced by `network.local.port`.", "reason": "renamed", "renamed_to": "network.local.port"}
         NET_SOCK_HOST_PORT = 'net.sock.host.port'
@@ -137,7 +137,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   192.168.0.1
+        #   # 192.168.0.1
         #
         # @deprecated {"note": "Replaced by `network.peer.address`.", "reason": "renamed", "renamed_to": "network.peer.address"}
         NET_SOCK_PEER_ADDR = 'net.sock.peer.addr'
@@ -147,7 +147,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   /var/my.sock
+        #   # /var/my.sock
         #
         # @deprecated {"note": "Removed. No replacement at this time.", "reason": "obsoleted"}
         NET_SOCK_PEER_NAME = 'net.sock.peer.name'
@@ -157,7 +157,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   65531
+        #   # 65531
         #
         # @deprecated {"note": "Replaced by `network.peer.port`.", "reason": "renamed", "renamed_to": "network.peer.port"}
         NET_SOCK_PEER_PORT = 'net.sock.peer.port'

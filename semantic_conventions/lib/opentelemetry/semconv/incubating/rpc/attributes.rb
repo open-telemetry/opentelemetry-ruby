@@ -46,8 +46,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["1.2.3.4", "1.2.3.5"]
-        #
+        #   # 1.2.3.4
+        # 1.2.3.5
         RPC_CONNECT_RPC_REQUEST_METADATA_LAMBDA = ->(key) { "rpc.connect_rpc.request.metadata.#{key}" }
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -67,7 +67,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["attribute_value"]
+        #   # attribute_value
         #
         RPC_CONNECT_RPC_RESPONSE_METADATA_LAMBDA = ->(key) { "rpc.connect_rpc.response.metadata.#{key}" }
     
@@ -88,8 +88,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["1.2.3.4", "1.2.3.5"]
-        #
+        #   # 1.2.3.4
+        # 1.2.3.5
         RPC_GRPC_REQUEST_METADATA_LAMBDA = ->(key) { "rpc.grpc.request.metadata.#{key}" }
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -109,7 +109,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["attribute_value"]
+        #   # attribute_value
         #
         RPC_GRPC_RESPONSE_METADATA_LAMBDA = ->(key) { "rpc.grpc.response.metadata.#{key}" }
     
@@ -123,8 +123,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   -32700
-        #   100
+        #   # -32700
+        #   # 100
         #
         RPC_JSONRPC_ERROR_CODE = 'rpc.jsonrpc.error_code'
     
@@ -133,8 +133,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Parse error
-        #   User already exists
+        #   # Parse error
+        #   # User already exists
         #
         RPC_JSONRPC_ERROR_MESSAGE = 'rpc.jsonrpc.error_message'
     
@@ -143,8 +143,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   10
-        #   request-7
+        #   # 10
+        #   # request-7
         #   
         #
         RPC_JSONRPC_REQUEST_ID = 'rpc.jsonrpc.request_id'
@@ -154,8 +154,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   2.0
-        #   1.0
+        #   # 2.0
+        #   # 1.0
         #
         RPC_JSONRPC_VERSION = 'rpc.jsonrpc.version'
     

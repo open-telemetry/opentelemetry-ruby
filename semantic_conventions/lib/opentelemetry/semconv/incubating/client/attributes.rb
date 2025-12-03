@@ -31,9 +31,9 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   client.example.com
-        #   10.1.2.80
-        #   /tmp/my.sock
+        #   # client.example.com
+        #   # 10.1.2.80
+        #   # /tmp/my.sock
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::CLIENT::CLIENT_ADDRESS}.
@@ -46,7 +46,7 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   65123
+        #   # 65123
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::CLIENT::CLIENT_PORT}.

@@ -31,8 +31,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   mapped
-        #   direct
+        #   # mapped
+        #   # direct
         #
         JVM_BUFFER_POOL_NAME = 'jvm.buffer.pool.name'
     
@@ -43,8 +43,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   end of minor GC
-        #   end of major GC
+        #   # end of minor GC
+        #   # end of major GC
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::JVM::JVM_GC_ACTION}.
@@ -57,8 +57,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   System.gc()
-        #   Allocation Failure
+        #   # System.gc()
+        #   # Allocation Failure
         #
         JVM_GC_CAUSE = 'jvm.gc.cause'
     
@@ -69,8 +69,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   G1 Young Generation
-        #   G1 Old Generation
+        #   # G1 Young Generation
+        #   # G1 Old Generation
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::JVM::JVM_GC_NAME}.
@@ -83,9 +83,9 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   G1 Old Gen
-        #   G1 Eden space
-        #   G1 Survivor Space
+        #   # G1 Old Gen
+        #   # G1 Eden space
+        #   # G1 Survivor Space
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::JVM::JVM_MEMORY_POOL_NAME}.
@@ -96,8 +96,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   heap
-        #   non_heap
+        #   # heap
+        #   # non_heap
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::JVM::JVM_MEMORY_TYPE}.
@@ -115,8 +115,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   runnable
-        #   blocked
+        #   # runnable
+        #   # blocked
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::JVM::JVM_THREAD_STATE}.

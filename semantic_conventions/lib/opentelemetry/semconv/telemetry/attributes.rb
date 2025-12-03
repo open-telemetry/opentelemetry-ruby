@@ -40,7 +40,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   opentelemetry
+      #   # opentelemetry
       #
       TELEMETRY_SDK_NAME = 'telemetry.sdk.name'
   
@@ -49,7 +49,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   1.2.3
+      #   # 1.2.3
       #
       TELEMETRY_SDK_VERSION = 'telemetry.sdk.version'
   
