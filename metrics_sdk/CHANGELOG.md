@@ -1,6 +1,6 @@
 # Release History: opentelemetry-metrics-sdk
 
-### v0.11.2 / 2025-11-25
+### v0.11.2 / 2025-12-02
 
 * FIXED: Add merge logic for exponential histogram when the temporality cumulative
 
