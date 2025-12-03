@@ -16,7 +16,7 @@ module OpenTelemetry
           DEFAULT_USER_AGENT = "OTel-OTLP-MetricsExporter-Ruby/#{OpenTelemetry::Exporter::OTLP::Metrics::VERSION} Ruby/#{RUBY_VERSION} (#{RUBY_PLATFORM}; #{RUBY_ENGINE}/#{RUBY_ENGINE_VERSION})".freeze
 
           def http_connection(uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
-            http = Net::HTTP.new(uri.host, uri.port)
+            http = Net::HTTP.new(uri.hostname, uri.port)
             http.use_ssl = uri.scheme == 'https'
             http.verify_mode = ssl_verify_mode
             http.ca_file = certificate_file unless certificate_file.nil?
