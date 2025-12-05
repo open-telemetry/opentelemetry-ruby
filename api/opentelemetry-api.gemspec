@@ -24,6 +24,7 @@ Gem::Specification.new do |spec|
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 3.1'
+  spec.add_dependency 'logger'
 
   spec.add_development_dependency 'benchmark-ipsa', '~> 0.2.0'
   spec.add_development_dependency 'bundler', '>= 1.17'

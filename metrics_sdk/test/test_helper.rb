@@ -36,3 +36,30 @@ end
 
 # Suppress warn-level logs about a missing OTLP exporter for traces
 ENV['OTEL_TRACES_EXPORTER'] = 'none'
+
+MAX_NORMAL_EXPONENT = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MAX_NORMAL_EXPONENT
+MIN_NORMAL_EXPONENT = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MIN_NORMAL_EXPONENT
+MAX_NORMAL_VALUE = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MAX_NORMAL_VALUE
+MIN_NORMAL_VALUE = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MIN_NORMAL_VALUE
+
+def left_boundary(scale, inds)
+  while scale > 0 && inds < -1022
+    inds /= 2.to_f
+    scale -= 1
+  end
+
+  result = 2.0**inds
+
+  scale.times { result = Math.sqrt(result) }
+  result
+end
+
+def right_boundary(scale, index)
+  result = 2**index
+
+  scale.abs.times do
+    result *= result
+  end
+
+  result
+end

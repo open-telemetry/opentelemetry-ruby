@@ -1,5 +1,13 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.11.2 / 2025-12-02
+
+* FIXED: Add merge logic for exponential histogram when the temporality cumulative
+
+### v0.11.1 / 2025-11-04
+
+* FIXED: Do not log error when there are no metrics to export
+
 ### v0.11.0 / 2025-10-28
 
 * ADDED: Add logging about export status to Metrics SDK
