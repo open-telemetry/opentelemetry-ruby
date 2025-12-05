@@ -199,5 +199,62 @@ describe OpenTelemetry::SDK do
 
       _(periodic_metric_reader.alive?).must_equal false
     end
+
+    describe 'cardinality limit' do
+      it 'accepts cardinality_limit parameter on initialization' do
+        OpenTelemetry::SDK.configure
+
+        metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+        periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(
+          export_interval_millis: 100,
+          export_timeout_millis: 1000,
+          exporter: metric_exporter,
+          aggregation_cardinality_limit: 50
+        )
+
+        OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
+
+        _(periodic_metric_reader.alive?).must_equal true
+        periodic_metric_reader.shutdown
+      end
+
+      it 'passes cardinality limit to metric collection' do
+        OpenTelemetry::SDK.configure
+
+        metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+        periodic_metric_reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(
+          export_interval_millis: 100,
+          export_timeout_millis: 1000,
+          exporter: metric_exporter,
+          aggregation_cardinality_limit: 2
+        )
+
+        OpenTelemetry.meter_provider.add_metric_reader(periodic_metric_reader)
+
+        meter = OpenTelemetry.meter_provider.meter('test')
+        counter = meter.create_counter('test_counter')
+
+        # Add more data points than the cardinality limit
+        counter.add(1, attributes: { 'key' => 'a' })
+        counter.add(2, attributes: { 'key' => 'b' })
+        counter.add(3, attributes: { 'key' => 'c' }) # Should trigger overflow
+        counter.add(4, attributes: { 'key' => 'e' })
+
+        # Wait for collection
+        sleep(0.2)
+
+        periodic_metric_reader.shutdown
+        snapshot = metric_exporter.metric_snapshots
+
+        _(snapshot).wont_be_empty
+        _(snapshot[0].data_points.size).must_equal(3) # Limited by cardinality
+
+        # Find overflow data point
+        overflow_point = snapshot[0].data_points.find do |dp|
+          dp.attributes == { 'otel.metric.overflow' => true }
+        end
+        _(overflow_point).wont_be_nil
+      end
+    end
   end
 end
