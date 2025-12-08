@@ -13,6 +13,8 @@ module OpenTelemetry
         # The AsynchronousMetricStream class provides SDK internal functionality that is not a part of the
         # public API. It extends MetricStream to support asynchronous instruments.
         class AsynchronousMetricStream < MetricStream
+          DEFAULT_TIMEOUT = 30
+
           def initialize(
             name,
             description,
@@ -48,27 +50,48 @@ module OpenTelemetry
           def invoke_callback(timeout, attributes)
             if @registered_views.empty?
               @mutex.synchronize do
-                Timeout.timeout(timeout || 30) do
-                  @callback.each do |cb|
-                    value = cb.call
-                    @default_aggregation.update(value, attributes, @data_points)
-                  end
+                @callback.each do |cb|
+                  value = safe_guard_callback(cb, timeout: timeout)
+                  @default_aggregation.update(value, attributes, @data_points) if value.is_a?(Numeric)
                 end
               end
             else
-              @registered_views.each do |view|
+              @registered_views.each do |view, data_points|
                 @mutex.synchronize do
-                  Timeout.timeout(timeout || 30) do
-                    @callback.each do |cb|
-                      value = cb.call
-                      merged_attributes = attributes || {}
-                      merged_attributes.merge!(view.attribute_keys)
-                      view.aggregation.update(value, merged_attributes, @data_points) if view.valid_aggregation?
-                    end
+                  @callback.each do |cb|
+                    value = safe_guard_callback(cb, timeout: timeout)
+                    next unless value.is_a?(Numeric) # ignore if value is not valid number
+
+                    merged_attributes = attributes || {}
+                    merged_attributes.merge!(view.attribute_keys)
+                    view.aggregation.update(value, merged_attributes, data_points) if view.valid_aggregation?
                   end
                 end
               end
             end
+          end
+
+          private
+
+          def safe_guard_callback(callback, timeout: DEFAULT_TIMEOUT)
+            result = nil
+            thread = Thread.new do
+              result = callback.call
+            rescue StandardError => e
+              OpenTelemetry.handle_error(exception: e, message: 'Error invoking callback.')
+              result = :error
+            end
+
+            unless thread.join(timeout)
+              thread.kill
+              OpenTelemetry.handle_error(message: "Timeout while invoking callback after #{timeout} seconds")
+              return nil
+            end
+
+            result == :error ? nil : result
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e, message: 'Unexpected error in callback execution.')
+            nil
           end
         end
       end

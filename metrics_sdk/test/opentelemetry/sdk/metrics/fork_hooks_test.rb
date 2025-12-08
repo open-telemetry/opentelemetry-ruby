@@ -55,12 +55,15 @@ describe OpenTelemetry::SDK::Metrics::ForkHooks do
         after_fork_write_io.puts message
       end
 
-      forking_pid, forked_pid = fork_with_fork_hooks(after_fork_lambda)
-      pid_from_after_fork = JSON.parse(after_fork_read_io.gets.chomp)['after_fork_pid'].to_i
+      meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+      ::OpenTelemetry.stub(:meter_provider, meter_provider) do
+        forking_pid, forked_pid = fork_with_fork_hooks(after_fork_lambda)
+        pid_from_after_fork = JSON.parse(after_fork_read_io.gets.chomp)['after_fork_pid'].to_i
 
-      refute_equal(pid_from_after_fork, Process.pid)
-      refute_equal(pid_from_after_fork, forking_pid)
-      assert_equal(forked_pid, pid_from_after_fork)
+        refute_equal(pid_from_after_fork, Process.pid)
+        refute_equal(pid_from_after_fork, forking_pid)
+        assert_equal(forked_pid, pid_from_after_fork)
+      end
     end
   end
 
