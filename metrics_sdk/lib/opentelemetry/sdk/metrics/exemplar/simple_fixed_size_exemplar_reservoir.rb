@@ -32,10 +32,8 @@ module OpenTelemetry
             exemplar = Exemplar.new(value, timestamp, attributes, span_context.hex_span_id, span_context.hex_trace_id)
 
             if @num_measurements_seen < @max_size
-              # Fill the reservoir up to max_size
               @exemplars[@num_measurements_seen] = exemplar
             else
-              # Use reservoir sampling: randomly replace with decreasing probability
               bucket = rand(0..@num_measurements_seen)
               @exemplars[bucket] = exemplar if bucket < @max_size
             end

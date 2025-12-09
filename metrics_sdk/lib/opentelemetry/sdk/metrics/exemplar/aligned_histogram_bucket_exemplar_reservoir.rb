@@ -20,7 +20,6 @@ module OpenTelemetry
           private_constant :DEFAULT_BOUNDARIES
 
           # @param boundaries [Array<Numeric>] The bucket boundaries for the histogram
-          #   If not provided, uses default boundaries matching ExplicitBucketHistogram
           def initialize(boundaries: nil)
             super()
             @boundaries = boundaries || DEFAULT_BOUNDARIES
@@ -36,15 +35,11 @@ module OpenTelemetry
           def offer(value: nil, timestamp: nil, attributes: nil, context: nil)
             bucket = find_histogram_bucket(value)
 
-            # Guard against invalid bucket index
             return if bucket > @boundaries.size
 
             span_context = current_span_context(context)
             num_seen = @num_measurements_seen[bucket]
 
-            # Reservoir sampling: decide if this measurement should replace the current exemplar
-            # For the first measurement (num_seen == 0), always accept
-            # For subsequent measurements, accept with probability 1/(num_seen + 1)
             if num_seen == 0 || rand(0..num_seen) == 0
               @exemplars[bucket] = Exemplar.new(
                 value,
@@ -66,11 +61,7 @@ module OpenTelemetry
           # @return [Array<Exemplar>] The collected exemplars
           def collect(attributes: nil, aggregation_temporality: nil)
             exemplars = super(attributes: attributes, aggregation_temporality: aggregation_temporality)
-
-            # Reset measurement counters for delta temporality
-            # For cumulative, keep the counters to maintain proper sampling probabilities
             @num_measurements_seen = Array.new(@boundaries.size + 1, 0) if aggregation_temporality == :delta
-
             exemplars
           end
 

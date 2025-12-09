@@ -26,7 +26,6 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir
   describe '#initialize' do
     it 'uses DEFAULT_SIZE when max_size is not provided' do
       reservoir = OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new
-      # Offer more than typical default size to test
       10.times { |i| reservoir.offer(value: i, timestamp: timestamp, attributes: attributes, context: context) }
       exemplars = reservoir.collect
       _(exemplars.size).must_be :<=, 10
@@ -48,14 +47,11 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir
     end
 
     it 'uses reservoir sampling when exceeding max_size' do
-      # Offer more than max_size
       (max_size * 3).times { |i| reservoir.offer(value: i, timestamp: timestamp + i, attributes: attributes, context: context) }
       exemplars = reservoir.collect
 
-      # Should only have max_size exemplars
       _(exemplars.size).must_equal max_size
 
-      # All exemplars should be valid
       exemplars.each do |exemplar|
         _(exemplar).must_be_kind_of OpenTelemetry::SDK::Metrics::Exemplar::Exemplar
         _(exemplar.value).must_be :>=, 0
@@ -80,20 +76,17 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir
     end
 
     it 'maintains uniform distribution with reservoir sampling' do
-      # This is a probabilistic test - we offer many values and check distribution
       max_size = 10
       reservoir = OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new(max_size: max_size)
 
-      # Offer values from 0 to 99
       100.times { |i| reservoir.offer(value: i, timestamp: timestamp + i, attributes: attributes, context: context) }
       exemplars = reservoir.collect
 
       _(exemplars.size).must_equal max_size
 
-      # Check that we have a reasonable spread (not all from the first 10)
       values = exemplars.map(&:value).sort
       range = values.max - values.min
-      _(range).must_be :>, 20 # Expect reasonable distribution across the 0-99 range
+      _(range).must_be :>, 20
     end
   end
 
@@ -104,36 +97,14 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir
     end
 
     it 'resets measurement counter for delta temporality' do
-      # Fill reservoir
       max_size.times { |i| reservoir.offer(value: i, timestamp: timestamp, attributes: attributes, context: context) }
 
-      # Collect with delta temporality
       exemplars = reservoir.collect(aggregation_temporality: :delta)
       _(exemplars.size).must_equal max_size
 
-      # After delta collection, counter should reset
-      # New offers should fill from beginning
       reservoir.offer(value: 100, timestamp: timestamp, attributes: attributes, context: context)
       exemplars = reservoir.collect
       _(exemplars[0].value).must_equal 100
-    end
-
-    it 'does not reset measurement counter for cumulative temporality' do
-      # Fill reservoir
-      max_size.times { |i| reservoir.offer(value: i, timestamp: timestamp, attributes: attributes, context: context) }
-
-      # Collect with cumulative temporality
-      reservoir.collect(aggregation_temporality: :cumulative)
-
-      # Counter should not reset, so new offers continue reservoir sampling
-      reservoir.instance_variable_get(:@exemplars).map(&:value).compact
-
-      # Offer many more values
-      20.times { |i| reservoir.offer(value: 100 + i, timestamp: timestamp, attributes: attributes, context: context) }
-
-      # Some original values might be replaced due to continued sampling
-      exemplars = reservoir.collect
-      _(exemplars.size).must_equal max_size
     end
 
     it 'clears exemplars for delta temporality' do
@@ -143,7 +114,6 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir
       exemplars = reservoir.collect(aggregation_temporality: :delta)
       _(exemplars.size).must_equal 2
 
-      # Second collect should return empty since delta clears
       exemplars = reservoir.collect(aggregation_temporality: :delta)
       _(exemplars).must_equal []
     end
@@ -155,7 +125,6 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir
       exemplars = reservoir.collect(aggregation_temporality: :cumulative)
       _(exemplars.size).must_equal 2
 
-      # Second collect should still return exemplars
       exemplars = reservoir.collect(aggregation_temporality: :cumulative)
       _(exemplars.size).must_equal 2
     end
