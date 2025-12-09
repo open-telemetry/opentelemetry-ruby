@@ -134,8 +134,6 @@ module OpenTelemetry
         # this is one way to turn on the exemplar (exemplar should be turned off by default)
         #
         def exemplar_filter_setup
-          return unless ENV.key?('OTEL_METRICS_EXEMPLAR_FILTER')
-
           case ENV['OTEL_METRICS_EXEMPLAR_FILTER']
           when 'always_on'
             @exemplar_filter = Exemplar::AlwaysOnExemplarFilter

@@ -8,21 +8,23 @@ require 'test_helper'
 
 describe OpenTelemetry::SDK do
   describe '#exemplar_integration_test' do
-    before { reset_metrics_sdk }
+    let(:metric_exporter) { OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new }
+    let(:meter) { OpenTelemetry.meter_provider.meter('test') }
+
+    before do
+      reset_metrics_sdk
+      ENV['OTEL_METRICS_EXPORTER'] = 'none'
+      OpenTelemetry::SDK.configure
+      OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+      OpenTelemetry.meter_provider.exemplar_filter_on(exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter)
+    end
+
+    after do
+      ENV.delete('OTEL_METRICS_EXPORTER')
+    end
 
     it 'emits metrics with list of exemplar' do
-      ENV['OTEL_METRICS_EXPORTER'] = 'none'
-
-      OpenTelemetry::SDK.configure
-
-      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
-
-      OpenTelemetry.meter_provider.exemplar_filter_on(exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter)
-
       exemplar_reservoir = OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir.new
-
-      meter = OpenTelemetry.meter_provider.meter('test')
       counter = meter.create_counter('counter', unit: 'smidgen', description: 'a small amount of something', exemplar_reservoir: exemplar_reservoir)
 
       counter.add(1)
@@ -55,18 +57,7 @@ describe OpenTelemetry::SDK do
     end
 
     it 'emits histogram metrics with exemplars' do
-      ENV['OTEL_METRICS_EXPORTER'] = 'none'
-
-      OpenTelemetry::SDK.configure
-
-      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
-
-      OpenTelemetry.meter_provider.exemplar_filter_on(exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter)
-
       exemplar_reservoir = OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir.new
-
-      meter = OpenTelemetry.meter_provider.meter('test')
       histogram = meter.create_histogram('histogram', unit: 'ms', description: 'response time', exemplar_reservoir: exemplar_reservoir)
 
       histogram.record(10)
@@ -90,18 +81,7 @@ describe OpenTelemetry::SDK do
     end
 
     it 'emits gauge metrics with exemplars' do
-      ENV['OTEL_METRICS_EXPORTER'] = 'none'
-
-      OpenTelemetry::SDK.configure
-
-      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
-
-      OpenTelemetry.meter_provider.exemplar_filter_on(exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter)
-
       exemplar_reservoir = OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir.new
-
-      meter = OpenTelemetry.meter_provider.meter('test')
       gauge = meter.create_gauge('gauge', unit: 'celsius', description: 'temperature', exemplar_reservoir: exemplar_reservoir)
 
       gauge.record(25)
@@ -120,18 +100,7 @@ describe OpenTelemetry::SDK do
     end
 
     it 'emits up_down_counter metrics with exemplars' do
-      ENV['OTEL_METRICS_EXPORTER'] = 'none'
-
-      OpenTelemetry::SDK.configure
-
-      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
-
-      OpenTelemetry.meter_provider.exemplar_filter_on(exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter)
-
       exemplar_reservoir = OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir.new
-
-      meter = OpenTelemetry.meter_provider.meter('test')
       up_down_counter = meter.create_up_down_counter('up_down_counter', unit: 'items', description: 'queue size', exemplar_reservoir: exemplar_reservoir)
 
       up_down_counter.add(5)
@@ -149,29 +118,19 @@ describe OpenTelemetry::SDK do
     end
 
     it 'emits observable_counter metrics with exemplars' do
-      ENV['OTEL_METRICS_EXPORTER'] = 'none'
-
-      OpenTelemetry::SDK.configure
-
-      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
-
-      OpenTelemetry.meter_provider.exemplar_filter_on(exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter)
-
       exemplar_reservoir = OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir.new
 
-      meter = OpenTelemetry.meter_provider.meter('test')
-
-      meter.create_observable_counter(
+      counter = meter.create_observable_counter(
         'observable_counter',
         unit: 'requests',
         description: 'total requests',
         exemplar_reservoir: exemplar_reservoir,
-        callback: lambda do |observer|
-          observer.observe(100)
-          observer.observe(200, attributes: { 'endpoint' => '/api' })
+        callback: lambda do
+          100
         end
       )
+
+      counter.observe
 
       metric_exporter.pull
       last_snapshot = metric_exporter.metric_snapshots
@@ -184,29 +143,19 @@ describe OpenTelemetry::SDK do
     end
 
     it 'emits observable_gauge metrics with exemplars' do
-      ENV['OTEL_METRICS_EXPORTER'] = 'none'
-
-      OpenTelemetry::SDK.configure
-
-      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
-
-      OpenTelemetry.meter_provider.exemplar_filter_on(exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter)
-
       exemplar_reservoir = OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir.new
 
-      meter = OpenTelemetry.meter_provider.meter('test')
-
-      meter.create_observable_gauge(
+      gauge = meter.create_observable_gauge(
         'observable_gauge',
-        unit: 'MB',
-        description: 'memory usage',
+        unit: 'Objects',
+        description: 'Object Slots',
         exemplar_reservoir: exemplar_reservoir,
-        callback: lambda do |observer|
-          observer.observe(512)
-          observer.observe(768, attributes: { 'process' => 'worker' })
+        callback: lambda do
+          GC.stat[:heap_live_slots]
         end
       )
+
+      gauge.observe
 
       metric_exporter.pull
       last_snapshot = metric_exporter.metric_snapshots
@@ -219,33 +168,22 @@ describe OpenTelemetry::SDK do
     end
 
     it 'emits observable_up_down_counter metrics with exemplars' do
-      ENV['OTEL_METRICS_EXPORTER'] = 'none'
-
-      OpenTelemetry::SDK.configure
-
-      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
-      OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
-
-      OpenTelemetry.meter_provider.exemplar_filter_on(exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter)
-
       exemplar_reservoir = OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir.new
 
-      meter = OpenTelemetry.meter_provider.meter('test')
-
-      meter.create_observable_up_down_counter(
+      counter = meter.create_observable_up_down_counter(
         'observable_up_down_counter',
         unit: 'connections',
         description: 'active connections',
         exemplar_reservoir: exemplar_reservoir,
-        callback: lambda do |observer|
-          observer.observe(50)
-          observer.observe(-10, attributes: { 'server' => 'backend' })
+        callback: lambda do
+          50
         end
       )
 
+      counter.observe
+
       metric_exporter.pull
       last_snapshot = metric_exporter.metric_snapshots
-
       _(last_snapshot).wont_be_empty
       _(last_snapshot[0].name).must_equal('observable_up_down_counter')
 
