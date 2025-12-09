@@ -162,4 +162,11 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
       _(ndps[0].value).must_equal(1)
     end
   end
+
+  it 'includes exemplars field' do
+    sum_aggregation.update(1, {}, data_points)
+    ndps = sum_aggregation.collect(start_time, end_time, data_points)
+    _(ndps[0]).must_respond_to(:exemplars)
+    _(ndps[0].exemplars).must_be_kind_of(Array)
+  end
 end

@@ -35,4 +35,11 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::LastValue do
     _(ndps[1].value).must_equal(2)
     _(ndps[1].attributes).must_equal('foo' => 'bar')
   end
+
+  it 'includes exemplars field' do
+    last_value_aggregation.update(1, {}, data_points)
+    ndps = last_value_aggregation.collect(start_time, end_time, data_points)
+    _(ndps[0]).must_respond_to(:exemplars)
+    _(ndps[0].exemplars).must_be_kind_of(Array)
+  end
 end

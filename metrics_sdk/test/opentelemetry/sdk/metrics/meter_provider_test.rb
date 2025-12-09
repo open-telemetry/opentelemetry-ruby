@@ -138,7 +138,7 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
     end
   end
 
-  describe 'exempler' do
+  describe 'exemplar' do
     describe '#exemplar_filter_setup' do
       after do
         ENV.delete('OTEL_METRICS_EXEMPLAR_FILTER')
@@ -175,7 +175,7 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
     end
 
     describe '#exemplar_filter_on' do
-      it 'will turn it on with default exempler filter' do
+      it 'will turn it on with default exemplar filter' do
         OpenTelemetry.meter_provider.exemplar_filter_setup
         _(OpenTelemetry.meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOffExemplarFilter
 

@@ -10,6 +10,14 @@ module OpenTelemetry
       module Aggregation
         # Contains the implementation of the LastValue aggregation
         class LastValue
+          # if no reservoir pass from instrument, then use this empty reservoir to avoid no method found error
+          DEFAULT_RESERVOIR = Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new
+          private_constant :DEFAULT_RESERVOIR
+
+          def initialize(exemplar_reservoir: DEFAULT_RESERVOIR)
+            @exemplar_reservoir = exemplar_reservoir
+          end
+
           def collect(start_time, end_time, data_points)
             ndps = data_points.values.map! do |ndp|
               ndp.start_time_unix_nano = start_time
@@ -26,7 +34,7 @@ module OpenTelemetry
               nil,
               nil,
               increment,
-              nil
+              @exemplar_reservoir.collect(attributes: attributes, aggregation_temporality: :delta)
             )
             nil
           end

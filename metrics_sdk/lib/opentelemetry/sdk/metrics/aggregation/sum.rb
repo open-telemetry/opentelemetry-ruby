@@ -11,7 +11,7 @@ module OpenTelemetry
         # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#sum-aggregation
         class Sum
           # if no reservior pass from instrument, then use this empty reservior to avoid no method found error
-          DEFAULT_RESERVOIR = Metrics::Exemplar::FixedSizeExemplarReservoir.new
+          DEFAULT_RESERVOIR = Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new
           private_constant :DEFAULT_RESERVOIR
 
           def initialize(aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :cumulative),
@@ -55,8 +55,7 @@ module OpenTelemetry
               nil,
               nil,
               0,
-              # will this cause the reservoir overloaded with old exemplars?
-              @exemplar_reservoir.collect(attributes: attributes, aggregation_temporality: @aggregation_temporality) # exemplar
+              @exemplar_reservoir.collect(attributes: attributes, aggregation_temporality: @aggregation_temporality)
             )
 
             ndp.value += increment

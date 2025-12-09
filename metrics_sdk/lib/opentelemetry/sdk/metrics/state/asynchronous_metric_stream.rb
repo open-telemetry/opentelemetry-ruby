@@ -25,7 +25,9 @@ module OpenTelemetry
             aggregation,
             callback,
             timeout,
-            attributes
+            attributes,
+            exemplar_filter,
+            exemplar_reservoir
           )
             # Call parent constructor with common parameters
             super(name, description, unit, instrument_kind, meter_provider, instrumentation_scope, aggregation)
@@ -35,6 +37,8 @@ module OpenTelemetry
             @start_time = OpenTelemetry::Common::Utilities.time_in_nanoseconds
             @timeout = timeout
             @attributes = attributes
+            @exemplar_filter = exemplar_filter
+            @exemplar_reservoir = exemplar_reservoir
           end
 
           # When collect, if there are asynchronous SDK Instruments involved, their callback functions will be triggered.
@@ -52,7 +56,10 @@ module OpenTelemetry
               @mutex.synchronize do
                 @callback.each do |cb|
                   value = safe_guard_callback(cb, timeout: timeout)
-                  @default_aggregation.update(value, attributes, @data_points) if value.is_a?(Numeric)
+                  if value.is_a?(Numeric)
+                    exemplar_offer(value, attributes)
+                    @default_aggregation.update(value, attributes, @data_points)
+                  end
                 end
               end
             else
@@ -64,6 +71,7 @@ module OpenTelemetry
 
                     merged_attributes = attributes || {}
                     merged_attributes.merge!(view.attribute_keys)
+                    exemplar_offer(value, merged_attributes)
                     view.aggregation.update(value, merged_attributes, data_points) if view.valid_aggregation?
                   end
                 end
@@ -92,6 +100,14 @@ module OpenTelemetry
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'Unexpected error in callback execution.')
             nil
+          end
+
+          def exemplar_offer(value, attributes)
+            context = OpenTelemetry::Context.current
+            time = OpenTelemetry::Common::Utilities.time_in_nanoseconds
+            return unless @exemplar_filter&.should_sample?(value, time, attributes, context)
+
+            @exemplar_reservoir&.offer(value: value, timestamp: time, attributes: attributes, context: context)
           end
         end
       end

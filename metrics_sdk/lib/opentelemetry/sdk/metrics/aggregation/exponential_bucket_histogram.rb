@@ -25,13 +25,18 @@ module OpenTelemetry
           MIN_MAX_SIZE = 2
           MAX_MAX_SIZE = 16_384
 
+          # if no reservoir pass from instrument, then use this empty reservoir to avoid no method found error
+          DEFAULT_RESERVOIR = Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new
+          private_constant :DEFAULT_RESERVOIR
+
           # The default boundaries are calculated based on default max_size and max_scale values
           def initialize(
             aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta),
             max_size: DEFAULT_SIZE,
             max_scale: DEFAULT_SCALE,
             record_min_max: true,
-            zero_threshold: 0
+            zero_threshold: 0,
+            exemplar_reservoir: DEFAULT_RESERVOIR
           )
             @aggregation_temporality = AggregationTemporality.determine_temporality(aggregation_temporality: aggregation_temporality, default: :delta)
             @record_min_max = record_min_max
@@ -43,6 +48,8 @@ module OpenTelemetry
             @zero_count     = 0
             @size           = validate_size(max_size)
             @scale          = validate_scale(max_scale)
+
+            @exemplar_reservoir = exemplar_reservoir
 
             @mapping = new_mapping(@scale)
 
@@ -65,6 +72,7 @@ module OpenTelemetry
               hdps = data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano = start_time
                 hdp.time_unix_nano = end_time
+                hdp.exemplars = @exemplar_reservoir.collect(attributes: hdp.attributes, aggregation_temporality: @aggregation_temporality)
                 hdp
               end
               data_points.clear
@@ -154,7 +162,7 @@ module OpenTelemetry
                   @previous_positive[attributes].dup,
                   @previous_negative[attributes].dup,
                   0, # flags
-                  nil, # exemplars
+                  @exemplar_reservoir.collect(attributes: attributes, aggregation_temporality: @aggregation_temporality), # exemplars
                   @previous_min[attributes],
                   @previous_max[attributes],
                   @zero_threshold
@@ -179,7 +187,7 @@ module OpenTelemetry
                     @previous_positive[attributes].dup,
                     @previous_negative[attributes].dup,
                     0, # flags
-                    nil, # exemplars
+                    @exemplar_reservoir.collect(attributes: attributes, aggregation_temporality: @aggregation_temporality), # exemplars
                     @previous_min[attributes],
                     @previous_max[attributes],
                     @zero_threshold
@@ -217,8 +225,8 @@ module OpenTelemetry
                 @zero_count,                                                       # :zero_count
                 ExponentialHistogram::Buckets.new,  # :positive
                 ExponentialHistogram::Buckets.new,  # :negative
-                0,                                                                 # :flags
-                nil,                                                               # :exemplars
+                0, # :flags
+                @exemplar_reservoir.collect(attributes: attributes, aggregation_temporality: @aggregation_temporality), # :exemplars
                 min,                                                               # :min
                 max,                                                               # :max
                 @zero_threshold # :zero_threshold)

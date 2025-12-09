@@ -14,10 +14,6 @@ module OpenTelemetry
           DEFAULT_BOUNDARIES = [0, 5, 10, 25, 50, 75, 100, 250, 500, 1000].freeze
           private_constant :DEFAULT_BOUNDARIES
 
-          # if no reservior pass from instrument, then use this empty reservior to avoid no method found error
-          DEFAULT_RESERVOIR = Metrics::Exemplar::FixedSizeExemplarReservoir.new
-          private_constant :DEFAULT_RESERVOIR
-
           # The default value for boundaries represents the following buckets:
           # (-inf, 0], (0, 5.0], (5.0, 10.0], (10.0, 25.0], (25.0, 50.0],
           # (50.0, 75.0], (75.0, 100.0], (100.0, 250.0], (250.0, 500.0],
@@ -26,12 +22,15 @@ module OpenTelemetry
             aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :cumulative),
             boundaries: DEFAULT_BOUNDARIES,
             record_min_max: true,
-            exemplar_reservoir: DEFAULT_RESERVOIR
+            exemplar_reservoir: nil
           )
             @aggregation_temporality = AggregationTemporality.determine_temporality(aggregation_temporality: aggregation_temporality, default: :cumulative)
-            @exemplar_reservoir = exemplar_reservoir
             @boundaries = boundaries && !boundaries.empty? ? boundaries.sort : nil
             @record_min_max = record_min_max
+
+            # Create reservoir with matching boundaries if not provided
+            # Per spec: Explicit bucket histogram SHOULD use AlignedHistogramBucketExemplarReservoir
+            @exemplar_reservoir = exemplar_reservoir || create_default_reservoir(@boundaries)
           end
 
           def collect(start_time, end_time, data_points)
@@ -96,6 +95,16 @@ module OpenTelemetry
           end
 
           private
+
+          def create_default_reservoir(boundaries)
+            if boundaries && !boundaries.empty?
+              # Per spec: Explicit bucket histogram with more than 1 bucket SHOULD use AlignedHistogramBucketExemplarReservoir
+              Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir.new(boundaries: boundaries)
+            else
+              # Fallback to SimpleFixedSizeExemplarReservoir if no boundaries
+              Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new
+            end
+          end
 
           def empty_bucket_counts
             @boundaries ? Array.new(@boundaries.size + 1, 0) : nil

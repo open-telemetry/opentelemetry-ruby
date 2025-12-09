@@ -37,7 +37,7 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir do
     end
 
     it 'basic test for fixed size exemplar reservoir' do
-      exemplar = OpenTelemetry::SDK::Metrics::Exemplar::FixedSizeExemplarReservoir.new(max_size: 2)
+      exemplar = OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new(max_size: 2)
       exemplar.offer(value: 1, timestamp: timestamp, attributes: attributes, context: context)
       exemplars = exemplar.collect
 
@@ -51,7 +51,7 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir do
     end
 
     it 'basic test for fixed size exemplar reservoir when more offers' do
-      exemplar = OpenTelemetry::SDK::Metrics::Exemplar::FixedSizeExemplarReservoir.new(max_size: 2)
+      exemplar = OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new(max_size: 2)
       exemplar.offer(value: 1, timestamp: timestamp, attributes: attributes, context: context)
       exemplar.offer(value: 2, timestamp: timestamp, attributes: attributes, context: context)
       exemplar.offer(value: 3, timestamp: timestamp, attributes: attributes, context: context)
@@ -63,7 +63,7 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir do
     end
 
     it 'basic test for histogram exemplar reservoir' do
-      exemplar = OpenTelemetry::SDK::Metrics::Exemplar::HistogramExemplarReservoir.new
+      exemplar = OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir.new
       exemplar.offer(value: 20, timestamp: timestamp, attributes: attributes, context: context)
       exemplars = exemplar.collect
 
@@ -80,7 +80,7 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir do
   describe 'complex exemplar reservoir integration test always on filter' do
     let(:metric_exporter) { OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new }
     let(:exemplar_filter) { OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter }
-    let(:exemplar_reservoir) { OpenTelemetry::SDK::Metrics::Exemplar::FixedSizeExemplarReservoir.new(max_size: 2) }
+    let(:exemplar_reservoir) { OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new(max_size: 2) }
 
     it 'integrate fixed size exemplar reservior with simple counter' do
       reset_metrics_sdk
@@ -102,7 +102,7 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir do
   describe 'complex exemplar reservoir integration test always off filter' do
     let(:metric_exporter) { OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new }
     let(:exemplar_filter) { OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOffExemplarFilter }
-    let(:exemplar_reservoir) { OpenTelemetry::SDK::Metrics::Exemplar::FixedSizeExemplarReservoir.new(max_size: 2) }
+    let(:exemplar_reservoir) { OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new(max_size: 2) }
 
     it 'integrate fixed size exemplar reservior with simple counter' do
       reset_metrics_sdk

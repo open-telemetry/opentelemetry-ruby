@@ -23,7 +23,6 @@ module OpenTelemetry
           @stopped = false
           @metric_readers = []
           @resource = resource
-          @exemplar_filter = Exemplar::AlwaysOffExemplarFilter
           @registered_views = []
           exemplar_filter_setup
         end
@@ -146,6 +145,7 @@ module OpenTelemetry
             @exemplar_filter = Exemplar::AlwaysOffExemplarFilter
           else
             OpenTelemetry.logger.warn("OTEL_METRICS_EXEMPLAR_FILTER #{ENV['OTEL_METRICS_EXEMPLAR_FILTER']} is not part of provided exemplar filter; Exemplar is off.")
+            @exemplar_filter = Exemplar::AlwaysOffExemplarFilter
           end
         end
 

@@ -336,5 +336,12 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
         _(hdp.max).must_equal(3)
       end
     end
+
+    it 'includes exemplars field' do
+      ebh.update(1, {}, data_points)
+      hdps = ebh.collect(start_time, end_time, data_points)
+      _(hdps[0]).must_respond_to(:exemplars)
+      _(hdps[0].exemplars).must_be_kind_of(Array)
+    end
   end
 end

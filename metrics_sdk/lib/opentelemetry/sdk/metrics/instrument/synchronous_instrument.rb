@@ -48,7 +48,7 @@ module OpenTelemetry
           end
 
           # Adding the exemplar to reservoir
-          #
+          # Only record the exemplar if exemplar_filter decide to sample/record it
           def exemplar_offer(value, attributes)
             context = OpenTelemetry::Context.current
             time = (Time.now.to_r * 1_000_000).to_i
