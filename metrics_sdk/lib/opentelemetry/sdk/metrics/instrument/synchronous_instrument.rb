@@ -33,7 +33,9 @@ module OpenTelemetry
               instrument_kind,
               @meter_provider,
               @instrumentation_scope,
-              aggregation
+              aggregation,
+              @exemplar_filter,
+              @exemplar_reservoir
             )
             @metric_streams << ms
             metric_store.add_metric_stream(ms)
@@ -43,16 +45,6 @@ module OpenTelemetry
 
           def update(value, attributes)
             @metric_streams.each { |ms| ms.update(value, attributes) }
-          end
-
-          # Adding the exemplar to reservoir
-          # Only record the exemplar if exemplar_filter decide to sample/record it
-          def exemplar_offer(value, attributes)
-            context = OpenTelemetry::Context.current
-            time = (Time.now.to_r * 1_000_000).to_i
-            return unless @exemplar_filter.should_sample?(value, time, attributes, context)
-
-            @exemplar_reservoir.offer(value: value, timestamp: time, attributes: attributes, context: context)
           end
         end
       end

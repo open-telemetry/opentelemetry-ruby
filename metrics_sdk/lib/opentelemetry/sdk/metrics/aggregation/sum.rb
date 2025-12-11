@@ -19,10 +19,10 @@ module OpenTelemetry
           def initialize(aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :cumulative),
                          monotonic: false,
                          instrument_kind: nil,
-                         exemplar_reservoir: DEFAULT_RESERVOIR)
+                         exemplar_reservoir: nil)
             @aggregation_temporality = AggregationTemporality.determine_temporality(aggregation_temporality: aggregation_temporality, instrument_kind: instrument_kind, default: :cumulative)
             @monotonic = monotonic
-            @exemplar_reservoir = exemplar_reservoir
+            @exemplar_reservoir = exemplar_reservoir || DEFAULT_RESERVOIR
           end
 
           def collect(start_time, end_time, data_points)
@@ -31,6 +31,7 @@ module OpenTelemetry
               ndps = data_points.values.map! do |ndp|
                 ndp.start_time_unix_nano = start_time
                 ndp.time_unix_nano = end_time
+                ndp.exemplars = @exemplar_reservoir.collect(attributes: ndp.attributes, aggregation_temporality: @aggregation_temporality)
                 ndp
               end
               data_points.clear
@@ -40,6 +41,7 @@ module OpenTelemetry
               data_points.values.map! do |ndp|
                 ndp.start_time_unix_nano ||= start_time # Start time of a data point is from the first observation.
                 ndp.time_unix_nano = end_time
+                ndp.exemplars = @exemplar_reservoir.collect(attributes: ndp.attributes, aggregation_temporality: @aggregation_temporality)
                 ndp.dup
               end
             end
@@ -57,7 +59,7 @@ module OpenTelemetry
               nil,
               nil,
               0,
-              @exemplar_reservoir.collect(attributes: attributes, aggregation_temporality: @aggregation_temporality)
+              nil
             )
 
             ndp.value += increment

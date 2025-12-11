@@ -22,7 +22,9 @@ module OpenTelemetry
             instrument_kind,
             meter_provider,
             instrumentation_scope,
-            aggregation
+            aggregation,
+            exemplar_filter,
+            exemplar_reservoir
           )
             @name = name
             @description = description
@@ -33,6 +35,8 @@ module OpenTelemetry
             @default_aggregation = aggregation
             @data_points = {}
             @registered_views = {}
+            @exemplar_filter = exemplar_filter
+            @exemplar_reservoir = exemplar_reservoir
 
             find_registered_view
             @mutex = Mutex.new
@@ -57,16 +61,21 @@ module OpenTelemetry
             end
           end
 
-          # view will modify the data_point that is not suitable when there are multiple views
           def update(value, attributes)
             if @registered_views.empty?
-              @mutex.synchronize { @default_aggregation.update(value, attributes, @data_points) }
+              @mutex.synchronize do
+                exemplar_offer(value, attributes)
+                @default_aggregation.update(value, attributes, @data_points)
+              end
             else
               @registered_views.each do |view, data_points|
                 @mutex.synchronize do
                   attributes ||= {}
                   attributes.merge!(view.attribute_keys)
-                  view.aggregation.update(value, attributes, data_points) if view.valid_aggregation?
+                  if view.valid_aggregation?
+                    exemplar_offer(value, attributes, view: view)
+                    view.aggregation.update(value, attributes, data_points)
+                  end
                 end
               end
             end
@@ -106,6 +115,20 @@ module OpenTelemetry
               @registered_views.each_value do |data_points|
                 return false unless data_points.empty?
               end
+            end
+          end
+
+          # when view exist, the view should have its own aggregation, which mean has its own reservior
+          def exemplar_offer(value, attributes, view: nil)
+            context = OpenTelemetry::Context.current
+            time = OpenTelemetry::Common::Utilities.time_in_nanoseconds
+            return unless @exemplar_filter&.should_sample?(value, time, attributes, context)
+
+            if view
+              puts "view.aggregation.exemplar_reservoir: #{view.aggregation.exemplar_reservoir.inspect}"
+              view.aggregation.exemplar_reservoir&.offer(value: value, timestamp: time, attributes: attributes, context: context)
+            else
+              @exemplar_reservoir&.offer(value: value, timestamp: time, attributes: attributes, context: context)
             end
           end
 

@@ -38,7 +38,7 @@ module OpenTelemetry
             max_scale: DEFAULT_SCALE,
             record_min_max: true,
             zero_threshold: 0,
-            exemplar_reservoir: DEFAULT_RESERVOIR
+            exemplar_reservoir: nil
           )
             @aggregation_temporality = AggregationTemporality.determine_temporality(aggregation_temporality: aggregation_temporality, default: :delta)
             @record_min_max = record_min_max
@@ -51,7 +51,7 @@ module OpenTelemetry
             @size           = validate_size(max_size)
             @scale          = validate_scale(max_scale)
 
-            @exemplar_reservoir = exemplar_reservoir
+            @exemplar_reservoir = exemplar_reservoir || DEFAULT_RESERVOIR
 
             @mapping = new_mapping(@scale)
 
