@@ -25,6 +25,8 @@ module OpenTelemetry
           MIN_MAX_SIZE = 2
           MAX_MAX_SIZE = 16_384
 
+          attr_reader :exemplar_reservoir
+
           # if no reservoir pass from instrument, then use this empty reservoir to avoid no method found error
           DEFAULT_RESERVOIR = Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new
           private_constant :DEFAULT_RESERVOIR

@@ -10,6 +10,8 @@ module OpenTelemetry
       module Aggregation
         # Contains the implementation of the LastValue aggregation
         class LastValue
+          attr_reader :exemplar_reservoir
+
           # if no reservoir pass from instrument, then use this empty reservoir to avoid no method found error
           DEFAULT_RESERVOIR = Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new
           private_constant :DEFAULT_RESERVOIR

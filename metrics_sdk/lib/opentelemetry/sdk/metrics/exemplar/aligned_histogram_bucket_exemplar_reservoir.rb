@@ -45,8 +45,8 @@ module OpenTelemetry
                 value,
                 timestamp,
                 attributes,
-                span_context.hex_span_id,
-                span_context.hex_trace_id
+                span_context.span_id,
+                span_context.trace_id
               )
             end
 

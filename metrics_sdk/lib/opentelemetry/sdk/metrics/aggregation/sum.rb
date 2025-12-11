@@ -10,6 +10,8 @@ module OpenTelemetry
         # Contains the implementation of the Sum aggregation
         # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#sum-aggregation
         class Sum
+          attr_reader :exemplar_reservoir
+
           # if no reservior pass from instrument, then use this empty reservior to avoid no method found error
           DEFAULT_RESERVOIR = Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new
           private_constant :DEFAULT_RESERVOIR

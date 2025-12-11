@@ -11,8 +11,6 @@ module OpenTelemetry
         # {SynchronousInstrument} contains the common functionality shared across
         # the synchronous instruments SDK instruments.
         class SynchronousInstrument
-          NOOP_EXEMPLAR_RESERVOIR = Exemplar::NoopExemplarReservoir.new
-
           def initialize(name, unit, description, instrumentation_scope, meter_provider, exemplar_filter, exemplar_reservoir)
             @name = name
             @unit = unit
@@ -21,7 +19,7 @@ module OpenTelemetry
             @meter_provider = meter_provider
             @metric_streams = []
             @exemplar_filter = exemplar_filter || meter_provider.exemplar_filter
-            @exemplar_reservoir = exemplar_reservoir || NOOP_EXEMPLAR_RESERVOIR
+            @exemplar_reservoir = exemplar_reservoir
 
             meter_provider.register_synchronous_instrument(self)
           end

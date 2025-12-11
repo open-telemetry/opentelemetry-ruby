@@ -24,7 +24,7 @@ module OpenTelemetry
             @timeout   = nil
             @attributes = {}
             @exemplar_filter = exemplar_filter || meter_provider.exemplar_filter
-            @exemplar_reservoir = exemplar_reservoir || NOOP_EXEMPLAR_RESERVOIR
+            @exemplar_reservoir = exemplar_reservoir
 
             init_callback(callback)
             meter_provider.register_asynchronous_instrument(self)

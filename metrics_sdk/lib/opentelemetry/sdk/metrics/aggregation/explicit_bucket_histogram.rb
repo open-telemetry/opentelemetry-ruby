@@ -11,6 +11,8 @@ module OpenTelemetry
         # Contains the implementation of the ExplicitBucketHistogram aggregation
         # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#explicit-bucket-histogram-aggregation
         class ExplicitBucketHistogram
+          attr_reader :exemplar_reservoir
+
           DEFAULT_BOUNDARIES = [0, 5, 10, 25, 50, 75, 100, 250, 500, 1000].freeze
           private_constant :DEFAULT_BOUNDARIES
 
@@ -39,6 +41,7 @@ module OpenTelemetry
               hdps = data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano = start_time
                 hdp.time_unix_nano = end_time
+                hdp.exemplars = @exemplar_reservoir.collect(attributes: hdp.attributes, aggregation_temporality: @aggregation_temporality)
                 hdp
               end
               data_points.clear
@@ -48,6 +51,7 @@ module OpenTelemetry
               data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano ||= start_time # Start time of a data point is from the first observation.
                 hdp.time_unix_nano = end_time
+                hdp.exemplars = @exemplar_reservoir.collect(attributes: hdp.attributes, aggregation_temporality: @aggregation_temporality)
                 hdp = hdp.dup
                 hdp.bucket_counts = hdp.bucket_counts.dup
                 hdp

@@ -29,7 +29,7 @@ module OpenTelemetry
           # Uses reservoir sampling algorithm: https://en.wikipedia.org/wiki/Reservoir_sampling
           def offer(value: nil, timestamp: nil, attributes: nil, context: nil)
             span_context = current_span_context(context)
-            exemplar = Exemplar.new(value, timestamp, attributes, span_context.hex_span_id, span_context.hex_trace_id)
+            exemplar = Exemplar.new(value, timestamp, attributes, span_context.span_id, span_context.trace_id)
 
             if @num_measurements_seen < @max_size
               @exemplars[@num_measurements_seen] = exemplar
