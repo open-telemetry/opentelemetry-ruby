@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # equivalent cli: markdownlint-cli2  "**/*.md" "#**/CHANGELOG.md"  --config .markdownlint.json
+      # equivalent cli: markdownlint-cli2  "**/*.md" "#**/CHANGELOG.md" "#.github/**" --config .markdownlint.json
       - name: "Markdown Lint Check"
         uses: DavidAnson/markdownlint-cli2-action@v19
         with:
