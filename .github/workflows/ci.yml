@@ -40,7 +40,7 @@ jobs:
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -107,7 +107,7 @@ jobs:
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: "Test Ruby 3.4"
         if: "${{ matrix.gem != 'opentelemetry-exporter-jaeger' }}"
         uses: ./.github/actions/test_gem
@@ -177,7 +177,7 @@ jobs:
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -218,5 +218,5 @@ jobs:
   codespell:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - run: make codespell
