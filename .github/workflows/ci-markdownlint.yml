@@ -14,7 +14,7 @@ jobs:
 
       # equivalent cli: markdownlint-cli2  "**/*.md" "#**/CHANGELOG.md" "#.github/**" --config .markdownlint.json
       - name: "Markdown Lint Check"
-        uses: DavidAnson/markdownlint-cli2-action@v19
+        uses: DavidAnson/markdownlint-cli2-action@v22
         with:
           config: .markdownlint.json
           fix: false
