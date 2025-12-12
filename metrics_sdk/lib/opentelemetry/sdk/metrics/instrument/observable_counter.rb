@@ -32,9 +32,7 @@ module OpenTelemetry
           private
 
           def default_aggregation
-            aggregation = OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(exemplar_reservoir: @exemplar_reservoir, monotonic: true, instrument_kind: instrument_kind)
-            @exemplar_reservoir = aggregation.exemplar_reservoir if @exemplar_reservoir.nil?
-            aggregation
+            OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(exemplar_reservoir: @exemplar_reservoir, monotonic: true, instrument_kind: instrument_kind)
           end
         end
       end

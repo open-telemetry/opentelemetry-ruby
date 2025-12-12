@@ -64,8 +64,8 @@ module OpenTelemetry
           def update(value, attributes)
             if @registered_views.empty?
               @mutex.synchronize do
-                exemplar_offer(value, attributes)
-                @default_aggregation.update(value, attributes, @data_points)
+                exemplar_offer = should_exemplar_offer(value, attributes)
+                @default_aggregation.update(value, attributes, @data_points, exemplar_offer: exemplar_offer)
               end
             else
               @registered_views.each do |view, data_points|
@@ -73,8 +73,8 @@ module OpenTelemetry
                   attributes ||= {}
                   attributes.merge!(view.attribute_keys)
                   if view.valid_aggregation?
-                    exemplar_offer(value, attributes, view: view)
-                    view.aggregation.update(value, attributes, data_points)
+                    exemplar_offer = should_exemplar_offer(value, attributes)
+                    view.aggregation.update(value, attributes, data_points, exemplar_offer: exemplar_offer)
                   end
                 end
               end
@@ -118,18 +118,10 @@ module OpenTelemetry
             end
           end
 
-          # when view exist, the view should have its own aggregation, which mean has its own reservior
-          def exemplar_offer(value, attributes, view: nil)
+          def should_exemplar_offer(value, attributes)
             context = OpenTelemetry::Context.current
             time = OpenTelemetry::Common::Utilities.time_in_nanoseconds
-            return unless @exemplar_filter&.should_sample?(value, time, attributes, context)
-
-            if view
-              puts "view.aggregation.exemplar_reservoir: #{view.aggregation.exemplar_reservoir.inspect}"
-              view.aggregation.exemplar_reservoir&.offer(value: value, timestamp: time, attributes: attributes, context: context)
-            else
-              @exemplar_reservoir&.offer(value: value, timestamp: time, attributes: attributes, context: context)
-            end
+            @exemplar_filter&.should_sample?(value, time, attributes, context)
           end
 
           def to_s

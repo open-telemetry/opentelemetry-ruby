@@ -38,9 +38,7 @@ module OpenTelemetry
           private
 
           def default_aggregation
-            aggregation = OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new(exemplar_reservoir: @exemplar_reservoir)
-            @exemplar_reservoir = aggregation.exemplar_reservoir if @exemplar_reservoir.nil?
-            aggregation
+            OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new(exemplar_reservoir: @exemplar_reservoir)
           end
         end
       end

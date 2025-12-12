@@ -16,6 +16,7 @@ module OpenTelemetry
 end
 
 require 'opentelemetry/sdk/metrics/exemplar/exemplar'
+require 'opentelemetry/sdk/metrics/exemplar/exemplar_bucket'
 require 'opentelemetry/sdk/metrics/exemplar/exemplar_filter'
 require 'opentelemetry/sdk/metrics/exemplar/exemplar_reservoir'
 require 'opentelemetry/sdk/metrics/exemplar/always_off_exemplar_filter'

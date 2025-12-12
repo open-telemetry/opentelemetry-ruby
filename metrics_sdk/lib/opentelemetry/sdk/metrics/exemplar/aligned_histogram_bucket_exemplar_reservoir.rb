@@ -21,9 +21,8 @@ module OpenTelemetry
 
           # @param boundaries [Array<Numeric>] The bucket boundaries for the histogram
           def initialize(boundaries: nil)
-            super()
             @boundaries = boundaries || DEFAULT_BOUNDARIES
-            @num_measurements_seen = Array.new(@boundaries.size + 1, 0)
+            reset
           end
 
           # Offers a measurement to the reservoir for potential sampling
@@ -33,36 +32,28 @@ module OpenTelemetry
           # @param attributes [Hash] The complete set of attributes
           # @param context [Context] The OpenTelemetry context
           def offer(value: nil, timestamp: nil, attributes: nil, context: nil)
-            bucket = find_histogram_bucket(value)
-
-            return if bucket > @boundaries.size
-
-            span_context = current_span_context(context)
-            num_seen = @num_measurements_seen[bucket]
-
-            if num_seen == 0 || rand(0..num_seen) == 0
-              @exemplars[bucket] = Exemplar.new(
-                value,
-                timestamp,
-                attributes,
-                span_context.span_id,
-                span_context.trace_id
-              )
-            end
-
-            @num_measurements_seen[bucket] += 1
+            bucket_index = find_histogram_bucket(value)
+            @exemplar_buckets[bucket_index].offer(value: value, time_unix_nano: timestamp, attributes: attributes, context: context)
             nil
           end
 
           # Collects accumulated exemplars and optionally resets state
           #
-          # @param attributes [Hash] The attributes (currently unused, for future filtering)
+          # @param attributes [Hash] The attributes to filter from exemplar attributes
           # @param aggregation_temporality [Symbol] :delta or :cumulative
           # @return [Array<Exemplar>] The collected exemplars
           def collect(attributes: nil, aggregation_temporality: nil)
-            exemplars = super(attributes: attributes, aggregation_temporality: aggregation_temporality)
-            @num_measurements_seen = Array.new(@boundaries.size + 1, 0) if aggregation_temporality == :delta
+            exemplars = []
+            @exemplar_buckets.each do |bucket|
+              exemplars << bucket.collect(point_attributes: attributes)
+            end
+            reset if aggregation_temporality == :delta
+            exemplars.compact!
             exemplars
+          end
+
+          def reset
+            @exemplar_buckets = Array.new(@boundaries.size + 1) { ExemplarBucket.new }
           end
 
           private

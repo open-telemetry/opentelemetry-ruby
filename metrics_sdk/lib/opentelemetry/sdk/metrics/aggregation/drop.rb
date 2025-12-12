@@ -14,8 +14,8 @@ module OpenTelemetry
           DEFAULT_RESERVOIR = Metrics::Exemplar::NoopExemplarReservoir.new
           private_constant :DEFAULT_RESERVOIR
 
-          def initialize(exemplar_reservoir: DEFAULT_RESERVOIR)
-            @exemplar_reservoir = exemplar_reservoir
+          def initialize(exemplar_reservoir: nil)
+            @exemplar_reservoir = DEFAULT_RESERVOIR
           end
 
           def collect(start_time, end_time, data_points)
@@ -28,7 +28,7 @@ module OpenTelemetry
               0,
               0,
               0,
-              @exemplar_reservoir.collect(attributes: attributes, aggregation_temporality: :delta)
+              nil
             )
             nil
           end

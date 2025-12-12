@@ -23,6 +23,7 @@ module OpenTelemetry
             @aggregation_temporality = AggregationTemporality.determine_temporality(aggregation_temporality: aggregation_temporality, instrument_kind: instrument_kind, default: :cumulative)
             @monotonic = monotonic
             @exemplar_reservoir = exemplar_reservoir || DEFAULT_RESERVOIR
+            @exemplar_reservoir_storage = {}
           end
 
           def collect(start_time, end_time, data_points)
@@ -31,7 +32,7 @@ module OpenTelemetry
               ndps = data_points.values.map! do |ndp|
                 ndp.start_time_unix_nano = start_time
                 ndp.time_unix_nano = end_time
-                ndp.exemplars = @exemplar_reservoir.collect(attributes: ndp.attributes, aggregation_temporality: @aggregation_temporality)
+                ndp.exemplars = @exemplar_reservoir_storage[ndp.attributes].collect(attributes: ndp.attributes, aggregation_temporality: @aggregation_temporality)
                 ndp
               end
               data_points.clear
@@ -41,7 +42,7 @@ module OpenTelemetry
               data_points.values.map! do |ndp|
                 ndp.start_time_unix_nano ||= start_time # Start time of a data point is from the first observation.
                 ndp.time_unix_nano = end_time
-                ndp.exemplars = @exemplar_reservoir.collect(attributes: ndp.attributes, aggregation_temporality: @aggregation_temporality)
+                ndp.exemplars = @exemplar_reservoir_storage[ndp.attributes].collect(attributes: ndp.attributes, aggregation_temporality: @aggregation_temporality)
                 ndp.dup
               end
             end
@@ -51,7 +52,7 @@ module OpenTelemetry
             @monotonic
           end
 
-          def update(increment, attributes, data_points)
+          def update(increment, attributes, data_points, exemplar_offer: false)
             return if @monotonic && increment < 0
 
             ndp = data_points[attributes] || data_points[attributes] = NumberDataPoint.new(
@@ -61,6 +62,20 @@ module OpenTelemetry
               0,
               nil
             )
+
+            reservoir = @exemplar_reservoir_storage[attributes]
+            unless reservoir
+              reservoir = @exemplar_reservoir.dup
+              reservoir.reset
+              @exemplar_reservoir_storage[attributes] = reservoir
+            end
+
+            if exemplar_offer
+              reservoir.offer(value: increment,
+                              timestamp: OpenTelemetry::Common::Utilities.time_in_nanoseconds,
+                              attributes: attributes,
+                              context: OpenTelemetry::Context.current)
+            end
 
             ndp.value += increment
             nil

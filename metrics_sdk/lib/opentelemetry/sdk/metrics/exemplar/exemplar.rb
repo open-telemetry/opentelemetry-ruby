@@ -9,17 +9,13 @@ module OpenTelemetry
     module Metrics
       module Exemplar
         # Exemplar
-        class Exemplar
-          attr_reader :value, :time_unix_nano, :attributes, :span_id, :trace_id
-
-          def initialize(value, time_unix_nano, attributes, span_id, trace_id)
-            @value = value
-            @time_unix_nano = time_unix_nano
-            @attributes = attributes
-            @span_id  = span_id
-            @trace_id = trace_id
-          end
-        end
+        Exemplar = Struct.new(
+          :filtered_attributes,  # Hash - attributes filtered from point attributes
+          :value,                # Numeric - measured value
+          :time_unix_nano,       # Integer - measurement timestamp in nanoseconds
+          :span_id,              # String - hex span ID
+          :trace_id              # String - hex trace ID
+        )
       end
     end
   end

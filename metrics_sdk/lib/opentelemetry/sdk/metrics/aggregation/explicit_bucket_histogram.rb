@@ -29,10 +29,8 @@ module OpenTelemetry
             @aggregation_temporality = AggregationTemporality.determine_temporality(aggregation_temporality: aggregation_temporality, default: :cumulative)
             @boundaries = boundaries && !boundaries.empty? ? boundaries.sort : nil
             @record_min_max = record_min_max
-
-            # Create reservoir with matching boundaries if not provided
-            # Per spec: Explicit bucket histogram SHOULD use AlignedHistogramBucketExemplarReservoir
-            @exemplar_reservoir = exemplar_reservoir || create_default_reservoir(@boundaries)
+            @exemplar_reservoir = exemplar_reservoir || Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir.new(boundaries: @boundaries)
+            @exemplar_reservoir_storage = {}
           end
 
           def collect(start_time, end_time, data_points)
@@ -41,7 +39,8 @@ module OpenTelemetry
               hdps = data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano = start_time
                 hdp.time_unix_nano = end_time
-                hdp.exemplars = @exemplar_reservoir.collect(attributes: hdp.attributes, aggregation_temporality: @aggregation_temporality)
+                reservoir = @exemplar_reservoir_storage[hdp.attributes]
+                hdp.exemplars = reservoir&.collect(attributes: hdp.attributes, aggregation_temporality: @aggregation_temporality)
                 hdp
               end
               data_points.clear
@@ -51,7 +50,8 @@ module OpenTelemetry
               data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano ||= start_time # Start time of a data point is from the first observation.
                 hdp.time_unix_nano = end_time
-                hdp.exemplars = @exemplar_reservoir.collect(attributes: hdp.attributes, aggregation_temporality: @aggregation_temporality)
+                reservoir = @exemplar_reservoir_storage[hdp.attributes]
+                hdp.exemplars = reservoir&.collect(attributes: hdp.attributes, aggregation_temporality: @aggregation_temporality)
                 hdp = hdp.dup
                 hdp.bucket_counts = hdp.bucket_counts.dup
                 hdp
@@ -59,7 +59,7 @@ module OpenTelemetry
             end
           end
 
-          def update(amount, attributes, data_points)
+          def update(amount, attributes, data_points, exemplar_offer: false)
             hdp = data_points.fetch(attributes) do
               if @record_min_max
                 min = Float::INFINITY
@@ -74,10 +74,24 @@ module OpenTelemetry
                 0,                   # :sum
                 empty_bucket_counts, # :bucket_counts
                 @boundaries,         # :explicit_bounds
-                @exemplar_reservoir.collect(attributes: attributes, aggregation_temporality: @aggregation_temporality), # :exemplars
+                nil,                 # :exemplars
                 min,                 # :min
                 max                  # :max
               )
+            end
+
+            reservoir = @exemplar_reservoir_storage[attributes]
+            unless reservoir
+              reservoir = @exemplar_reservoir.dup
+              reservoir.reset
+              @exemplar_reservoir_storage[attributes] = reservoir
+            end
+
+            if exemplar_offer
+              reservoir.offer(value: amount,
+                              timestamp: OpenTelemetry::Common::Utilities.time_in_nanoseconds,
+                              attributes: attributes,
+                              context: OpenTelemetry::Context.current)
             end
 
             if @record_min_max
@@ -99,16 +113,6 @@ module OpenTelemetry
           end
 
           private
-
-          def create_default_reservoir(boundaries)
-            if boundaries && !boundaries.empty?
-              # Per spec: Explicit bucket histogram with more than 1 bucket SHOULD use AlignedHistogramBucketExemplarReservoir
-              Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir.new(boundaries: boundaries)
-            else
-              # Fallback to SimpleFixedSizeExemplarReservoir if no boundaries
-              Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new
-            end
-          end
 
           def empty_bucket_counts
             @boundaries ? Array.new(@boundaries.size + 1, 0) : nil
