@@ -10,11 +10,12 @@ module OpenTelemetry
     # implementation.
     module Metrics
       # {MeterProvider} is the SDK implementation of {OpenTelemetry::Metrics::MeterProvider}.
+      # rubocop:disable Metrics/ClassLength
       class MeterProvider < OpenTelemetry::Metrics::MeterProvider
         Key = Struct.new(:name, :version)
         private_constant(:Key)
 
-        attr_reader :resource, :metric_readers, :registered_views
+        attr_reader :resource, :metric_readers, :registered_views, :exemplar_filter
 
         def initialize(resource: OpenTelemetry::SDK::Resources::Resource.create)
           @mutex = Mutex.new
@@ -23,6 +24,7 @@ module OpenTelemetry
           @metric_readers = []
           @resource = resource
           @registered_views = []
+          exemplar_filter_setup
         end
 
         # Returns a {Meter} instance.
@@ -128,6 +130,36 @@ module OpenTelemetry
         end
         alias register_asynchronous_instrument register_synchronous_instrument
 
+        # spec: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/configuration/sdk-environment-variables.md#exemplar
+        # this is one way to turn on the exemplar (exemplar should be turned off by default)
+        #
+        def exemplar_filter_setup
+          case ENV['OTEL_METRICS_EXEMPLAR_FILTER']
+          when 'always_on'
+            @exemplar_filter = Exemplar::AlwaysOnExemplarFilter
+          when 'trace_based'
+            @exemplar_filter = Exemplar::TraceBasedExemplarFilter
+          when 'always_off'
+            @exemplar_filter = Exemplar::AlwaysOffExemplarFilter
+          else
+            OpenTelemetry.logger.warn("OTEL_METRICS_EXEMPLAR_FILTER #{ENV['OTEL_METRICS_EXEMPLAR_FILTER']} is not part of provided exemplar filter; Exemplar is off.")
+            @exemplar_filter = Exemplar::AlwaysOffExemplarFilter
+          end
+        end
+
+        # Adds a new exemplar_filter to replace exist exemplar_filter
+        # Default to TraceBasedExemplarFilter
+        #
+        # @param exemplar_filter the new ExemplarFilter to be added.
+        def exemplar_filter_on(exemplar_filter: Exemplar::TraceBasedExemplarFilter)
+          @exemplar_filter = exemplar_filter
+        end
+
+        # turn off exemplar_filter by setting the exemplar_fitler to AlwaysOffExemplarFilter
+        def exemplar_filter_off
+          @exemplar_filter = Exemplar::AlwaysOffExemplarFilter
+        end
+
         # A View provides SDK users with the flexibility to customize the metrics that are output by the SDK.
         #
         # Example:
@@ -154,6 +186,7 @@ module OpenTelemetry
           nil
         end
       end
+      # rubocop:enable Metrics/ClassLength
     end
   end
 end
