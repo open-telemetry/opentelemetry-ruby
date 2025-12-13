@@ -21,7 +21,7 @@ jobs:
     name: Conventional Commits Validation
     runs-on: ubuntu-latest
     steps:
-      - uses: dev-build-deploy/commit-me@v1.5.0
+      - uses: dev-build-deploy/commit-me@3e4b05860d83d9120140d8dd220b0d389ddc79a9 # v1.5.0
         env:
           FORCE_COLOR: 3
         with:
