@@ -30,7 +30,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   shoppingcart
+      #   # shoppingcart
       #
       SERVICE_NAME = 'service.name'
   
@@ -39,8 +39,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   2.0.0
-      #   a01dbef8a
+      #   # 2.0.0
+      #   # a01dbef8a
       #
       SERVICE_VERSION = 'service.version'
   

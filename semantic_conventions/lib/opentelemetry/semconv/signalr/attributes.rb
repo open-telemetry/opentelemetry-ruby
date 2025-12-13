@@ -28,8 +28,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   app_shutdown
-      #   timeout
+      #   # app_shutdown
+      #   # timeout
       #
       SIGNALR_CONNECTION_STATUS = 'signalr.connection.status'
   
@@ -38,8 +38,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   web_sockets
-      #   long_polling
+      #   # web_sockets
+      #   # long_polling
       #
       SIGNALR_TRANSPORT = 'signalr.transport'
   

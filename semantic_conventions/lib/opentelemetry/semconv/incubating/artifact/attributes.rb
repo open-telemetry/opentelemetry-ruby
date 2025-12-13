@@ -29,10 +29,10 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   golang-binary-amd64-v0.1.0.attestation
-        #   docker-image-amd64-v0.1.0.intoto.json1
-        #   release-1.tar.gz.attestation
-        #   file-name-package.tar.gz.intoto.json1
+        #   # golang-binary-amd64-v0.1.0.attestation
+        #   # docker-image-amd64-v0.1.0.intoto.json1
+        #   # release-1.tar.gz.attestation
+        #   # file-name-package.tar.gz.intoto.json1
         #
         ARTIFACT_ATTESTATION_FILENAME = 'artifact.attestation.filename'
     
@@ -41,7 +41,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1b31dfcd5b7f9267bf2ff47651df1cfb9147b9e4df1f335accf65b4cda498408
+        #   # 1b31dfcd5b7f9267bf2ff47651df1cfb9147b9e4df1f335accf65b4cda498408
         #
         ARTIFACT_ATTESTATION_HASH = 'artifact.attestation.hash'
     
@@ -50,7 +50,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   123
+        #   # 123
         #
         ARTIFACT_ATTESTATION_ID = 'artifact.attestation.id'
     
@@ -64,10 +64,10 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   golang-binary-amd64-v0.1.0
-        #   docker-image-amd64-v0.1.0
-        #   release-1.tar.gz
-        #   file-name-package.tar.gz
+        #   # golang-binary-amd64-v0.1.0
+        #   # docker-image-amd64-v0.1.0
+        #   # release-1.tar.gz
+        #   # file-name-package.tar.gz
         #
         ARTIFACT_FILENAME = 'artifact.filename'
     
@@ -85,7 +85,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   9ff4c52759e2c4ac70b7d517bc7fcdc1cda631ca0045271ddd1b192544f8a3e9
+        #   # 9ff4c52759e2c4ac70b7d517bc7fcdc1cda631ca0045271ddd1b192544f8a3e9
         #
         ARTIFACT_HASH = 'artifact.hash'
     
@@ -94,8 +94,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   pkg:github/package-url/purl-spec@1209109710924
-        #   pkg:npm/foo@12.12.3
+        #   # pkg:github/package-url/purl-spec@1209109710924
+        #   # pkg:npm/foo@12.12.3
         #
         ARTIFACT_PURL = 'artifact.purl'
     
@@ -104,9 +104,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   v0.1.0
-        #   1.2.1
-        #   122691-build
+        #   # v0.1.0
+        #   # 1.2.1
+        #   # 122691-build
         #
         ARTIFACT_VERSION = 'artifact.version'
     

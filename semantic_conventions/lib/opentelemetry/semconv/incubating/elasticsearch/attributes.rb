@@ -29,7 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   instance-0000000001
+        #   # instance-0000000001
         #
         ELASTICSEARCH_NODE_NAME = 'elasticsearch.node.name'
     

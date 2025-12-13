@@ -24,13 +24,13 @@ module OpenTelemetry
       module DEPLOYMENT
         # @!group Attribute Names
       
-        # 'Deprecated, use `deployment.environment.name` instead.'
+        # Deprecated, use `deployment.environment.name` instead.
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   staging
-        #   production
+        #   # staging
+        #   # production
         #
         # @deprecated {"note": "Replaced by `deployment.environment.name`.", "reason": "renamed", "renamed_to": "deployment.environment.name"}
         DEPLOYMENT_ENVIRONMENT = 'deployment.environment'
@@ -48,8 +48,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   staging
-        #   production
+        #   # staging
+        #   # production
         #
         DEPLOYMENT_ENVIRONMENT_NAME = 'deployment.environment.name'
     
@@ -58,7 +58,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1208
+        #   # 1208
         #
         DEPLOYMENT_ID = 'deployment.id'
     
@@ -67,8 +67,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   deploy my app
-        #   deploy-frontend
+        #   # deploy my app
+        #   # deploy-frontend
         #
         DEPLOYMENT_NAME = 'deployment.name'
     

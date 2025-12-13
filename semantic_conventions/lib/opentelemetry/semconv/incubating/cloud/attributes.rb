@@ -29,8 +29,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   111111111111
-        #   opentelemetry
+        #   # 111111111111
+        #   # opentelemetry
         #
         CLOUD_ACCOUNT_ID = 'cloud.account.id'
     
@@ -41,7 +41,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   us-east-1c
+        #   # us-east-1c
         #
         CLOUD_AVAILABILITY_ZONE = 'cloud.availability_zone'
     
@@ -64,8 +64,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   us-central1
-        #   us-east-1
+        #   # us-central1
+        #   # us-east-1
         #
         CLOUD_REGION = 'cloud.region'
     
@@ -92,9 +92,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   arn:aws:lambda:REGION:ACCOUNT_ID:function:my-function
-        #   //run.googleapis.com/projects/PROJECT_ID/locations/LOCATION_ID/services/SERVICE_ID
-        #   /subscriptions/<SUBSCRIPTION_GUID>/resourceGroups/<RG>/providers/Microsoft.Web/sites/<FUNCAPP>/functions/<FUNC>
+        #   # arn:aws:lambda:REGION:ACCOUNT_ID:function:my-function
+        #   # //run.googleapis.com/projects/PROJECT_ID/locations/LOCATION_ID/services/SERVICE_ID
+        #   # /subscriptions/<SUBSCRIPTION_GUID>/resourceGroups/<RG>/providers/Microsoft.Web/sites/<FUNCAPP>/functions/<FUNC>
         #
         CLOUD_RESOURCE_ID = 'cloud.resource_id'
     

@@ -29,7 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   audit.log
+        #   # audit.log
         #
         LOG_FILE_NAME = 'log.file.name'
     
@@ -38,7 +38,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   uuid.log
+        #   # uuid.log
         #
         LOG_FILE_NAME_RESOLVED = 'log.file.name_resolved'
     
@@ -47,7 +47,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   /var/log/mysql/audit.log
+        #   # /var/log/mysql/audit.log
         #
         LOG_FILE_PATH = 'log.file.path'
     
@@ -56,7 +56,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   /var/lib/docker/uuid.log
+        #   # /var/lib/docker/uuid.log
         #
         LOG_FILE_PATH_RESOLVED = 'log.file.path_resolved'
     
@@ -72,8 +72,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   77 <86>1 2015-08-06T21:58:59.694Z 192.168.2.133 inactive - - - Something happened
-        #   [INFO] 8/3/24 12:34:56 Something happened
+        #   # 77 <86>1 2015-08-06T21:58:59.694Z 192.168.2.133 inactive - - - Something happened
+        #   # [INFO] 8/3/24 12:34:56 Something happened
         #
         LOG_RECORD_ORIGINAL = 'log.record.original'
     
@@ -85,7 +85,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   01ARZ3NDEKTSV4RRFFQ69G5FAV
+        #   # 01ARZ3NDEKTSV4RRFFQ69G5FAV
         #
         LOG_RECORD_UID = 'log.record.uid'
     
