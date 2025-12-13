@@ -27,13 +27,13 @@ module OpenTelemetry
           end
 
           def collect(start_time, end_time, data_points)
-            reservoir_temporality = @aggregation_temporality&.temporality || :cumulative
             if @aggregation_temporality.delta?
               # Set timestamps and 'move' data point values to result.
               ndps = data_points.values.map! do |ndp|
                 ndp.start_time_unix_nano = start_time
                 ndp.time_unix_nano = end_time
-                ndp.exemplars = collect_exemplars(ndp.attributes, reservoir_temporality)
+                reservoir = @exemplar_reservoir_storage[ndp.attributes]
+                ndp.exemplars = reservoir&.collect(attributes: ndp.attributes, aggregation_temporality: @aggregation_temporality)
                 ndp
               end
               data_points.clear
@@ -43,7 +43,8 @@ module OpenTelemetry
               data_points.values.map! do |ndp|
                 ndp.start_time_unix_nano ||= start_time # Start time of a data point is from the first observation.
                 ndp.time_unix_nano = end_time
-                ndp.exemplars = collect_exemplars(ndp.attributes, reservoir_temporality)
+                reservoir = @exemplar_reservoir_storage[ndp.attributes]
+                ndp.exemplars = reservoir&.collect(attributes: ndp.attributes, aggregation_temporality: @aggregation_temporality)
                 ndp.dup
               end
             end
@@ -84,17 +85,6 @@ module OpenTelemetry
 
           def aggregation_temporality
             @aggregation_temporality.temporality
-          end
-
-          private
-
-          def collect_exemplars(attributes, temporality)
-            reservoir = @exemplar_reservoir_storage[attributes]
-            return [] unless reservoir
-
-            exemplars = reservoir.collect(attributes: attributes, aggregation_temporality: temporality)
-            @exemplar_reservoir_storage.delete(attributes) if temporality == :delta
-            exemplars || []
           end
         end
       end
