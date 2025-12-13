@@ -66,6 +66,8 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarRe
       reservoir.offer(value: 10, timestamp: timestamp + 2, attributes: { 'exact' => '10' }, context: context)
 
       exemplars = reservoir.collect
+      _(exemplars.size).must_equal 3
+      _(exemplars.map(&:value).sort).must_equal [0, 5, 10]
     end
 
     it 'uses reservoir sampling within each bucket' do
@@ -117,6 +119,15 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarRe
       _(exemplars).must_equal []
     end
 
+    it 'filters collected attributes already present on a point' do
+      reservoir.offer(value: 3, timestamp: timestamp, attributes: { 'shared' => 'value', 'bucket' => 'keep' }, context: context)
+
+      exemplars = reservoir.collect(attributes: { 'shared' => 'value' })
+
+      _(exemplars.size).must_equal 1
+      _(exemplars.first.filtered_attributes).must_equal({ 'bucket' => 'keep' })
+    end
+
     it 'returns only non-nil exemplars' do
       reservoir.offer(value: 3, timestamp: timestamp, attributes: attributes, context: context)
       reservoir.offer(value: 15, timestamp: timestamp, attributes: attributes, context: context)
@@ -125,13 +136,6 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarRe
 
       _(exemplars.size).must_equal 2
       _(exemplars.all? { |e| e.is_a?(OpenTelemetry::SDK::Metrics::Exemplar::Exemplar) }).must_equal true
-    end
-
-    it 'resets measurement counters for delta temporality' do
-      reservoir.offer(value: 3, timestamp: timestamp, attributes: { 'first' => 'true' }, context: context)
-      exemplars = reservoir.collect(aggregation_temporality: :delta)
-      reservoir.offer(value: 4, timestamp: timestamp + 1, attributes: { 'second' => 'true' }, context: context)
-      exemplars = reservoir.collect
     end
 
     it 'clears exemplars for delta temporality' do

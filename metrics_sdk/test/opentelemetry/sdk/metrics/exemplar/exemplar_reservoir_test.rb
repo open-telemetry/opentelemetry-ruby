@@ -7,63 +7,12 @@
 require 'test_helper'
 
 describe OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir do
-  describe 'basic exemplar reservoir operation test' do
-    let(:context) do
-      ::OpenTelemetry::Trace.context_with_span(
-        ::OpenTelemetry::Trace.non_recording_span(
-          ::OpenTelemetry::Trace::SpanContext.new(
-            trace_id: Array("w\xCBl\xCCR-1\x06\x11M\xD6\xEC\xBBp\x03j").pack('H*'),
-            span_id: Array("1\xE1u\x12\x8E\xFC@\x18").pack('H*'),
-            trace_flags: ::OpenTelemetry::Trace::TraceFlags::DEFAULT
-          )
-        )
-      )
-    end
-    let(:timestamp) { 123_456_789 }
-    let(:attributes) { { 'test': 'test' } }
+  describe 'interface contract' do
+    it 'requires subclasses to implement offer and collect' do
+      reservoir = OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir.new
 
-    it 'basic test for exemplar reservoir' do
-      exemplar = OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir.new
-      _(-> { exemplar.offer(value: 1, timestamp: timestamp, attributes: attributes, context: context) }).must_raise(NotImplementedError)
-      _(-> { exemplar.collect }).must_raise(NotImplementedError)
-    end
-
-    it 'basic test for fixed size exemplar reservoir' do
-      exemplar = OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new(max_size: 2)
-      exemplar.offer(value: 1, timestamp: timestamp, attributes: attributes, context: context)
-      exemplars = exemplar.collect
-
-      _(exemplars.class).must_equal Array
-      _(exemplars[0].class).must_equal OpenTelemetry::SDK::Metrics::Exemplar::Exemplar
-      _(exemplars[0].value).must_equal 1
-      _(exemplars[0].time_unix_nano).must_equal 123_456_789
-      _(span_id_hex(exemplars[0].span_id)).must_equal '11e2ec08'
-      _(trace_id_hex(exemplars[0].trace_id)).must_equal '0b5cbd16166cb933'
-    end
-
-    it 'basic test for fixed size exemplar reservoir when more offers' do
-      exemplar = OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new(max_size: 2)
-      exemplar.offer(value: 1, timestamp: timestamp, attributes: attributes, context: context)
-      exemplar.offer(value: 2, timestamp: timestamp, attributes: attributes, context: context)
-      exemplar.offer(value: 3, timestamp: timestamp, attributes: attributes, context: context)
-
-      exemplars = exemplar.collect
-      _(exemplars.class).must_equal Array
-      _(exemplars[0].class).must_equal OpenTelemetry::SDK::Metrics::Exemplar::Exemplar
-      _(exemplars.size).must_equal 2
-    end
-
-    it 'basic test for histogram exemplar reservoir' do
-      exemplar = OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir.new
-      exemplar.offer(value: 20, timestamp: timestamp, attributes: attributes, context: context)
-      exemplars = exemplar.collect
-
-      _(exemplars.class).must_equal Array
-      _(exemplars[0].class).must_equal OpenTelemetry::SDK::Metrics::Exemplar::Exemplar
-      _(exemplars[0].value).must_equal 20
-      _(exemplars[0].time_unix_nano).must_equal 123_456_789
-      _(span_id_hex(exemplars[0].span_id)).must_equal '11e2ec08'
-      _(trace_id_hex(exemplars[0].trace_id)).must_equal '0b5cbd16166cb933'
+      _(-> { reservoir.offer }).must_raise(NotImplementedError)
+      _(-> { reservoir.collect }).must_raise(NotImplementedError)
     end
   end
 

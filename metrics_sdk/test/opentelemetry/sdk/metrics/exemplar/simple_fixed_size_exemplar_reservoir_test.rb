@@ -96,26 +96,26 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir
       _(exemplars).must_equal []
     end
 
+    it 'filters collected attributes already present on a point' do
+      reservoir.offer(value: 1, timestamp: timestamp, attributes: { 'shared' => 'value', 'unique' => 'keep' }, context: context)
+
+      exemplars = reservoir.collect(attributes: { 'shared' => 'value' })
+
+      _(exemplars.size).must_equal 1
+      _(exemplars.first.filtered_attributes).must_equal({ 'unique' => 'keep' })
+    end
+
     it 'resets measurement counter for delta temporality' do
       max_size.times { |i| reservoir.offer(value: i, timestamp: timestamp, attributes: attributes, context: context) }
 
       exemplars = reservoir.collect(aggregation_temporality: :delta)
       _(exemplars.size).must_equal max_size
 
+      _(reservoir.collect(aggregation_temporality: :delta)).must_equal []
+
       reservoir.offer(value: 100, timestamp: timestamp, attributes: attributes, context: context)
       exemplars = reservoir.collect
       _(exemplars[0].value).must_equal 100
-    end
-
-    it 'clears exemplars for delta temporality' do
-      reservoir.offer(value: 1, timestamp: timestamp, attributes: attributes, context: context)
-      reservoir.offer(value: 2, timestamp: timestamp, attributes: attributes, context: context)
-
-      exemplars = reservoir.collect(aggregation_temporality: :delta)
-      _(exemplars.size).must_equal 2
-
-      exemplars = reservoir.collect(aggregation_temporality: :delta)
-      _(exemplars).must_equal []
     end
 
     it 'clears exemplars for cumulative temporality' do
