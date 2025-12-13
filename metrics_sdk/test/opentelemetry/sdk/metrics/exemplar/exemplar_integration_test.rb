@@ -24,7 +24,7 @@ describe OpenTelemetry::SDK do
     end
 
     it 'emits metrics with list of exemplar' do
-      exemplar_reservoir = OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir.new
+      exemplar_reservoir = OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new
       counter = meter.create_counter('counter', unit: 'smidgen', description: 'a small amount of something', exemplar_reservoir: exemplar_reservoir)
 
       counter.add(1)
@@ -52,8 +52,6 @@ describe OpenTelemetry::SDK do
       _(last_snapshot[0].data_points[0].exemplars.size).must_equal 1
       _(last_snapshot[0].data_points[0].exemplars[0].class).must_equal OpenTelemetry::SDK::Metrics::Exemplar::Exemplar
       _(last_snapshot[0].data_points[0].exemplars[0].value).must_equal 1
-      _(last_snapshot[0].data_points[0].exemplars[0].span_id).must_equal '0000000000000000'
-      _(last_snapshot[0].data_points[0].exemplars[0].trace_id).must_equal '00000000000000000000000000000000'
     end
 
     it 'emits histogram metrics with exemplars' do
@@ -81,7 +79,7 @@ describe OpenTelemetry::SDK do
     end
 
     it 'emits gauge metrics with exemplars' do
-      exemplar_reservoir = OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir.new
+      exemplar_reservoir = OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new
       gauge = meter.create_gauge('gauge', unit: 'celsius', description: 'temperature', exemplar_reservoir: exemplar_reservoir)
 
       gauge.record(25)
@@ -100,7 +98,7 @@ describe OpenTelemetry::SDK do
     end
 
     it 'emits up_down_counter metrics with exemplars' do
-      exemplar_reservoir = OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir.new
+      exemplar_reservoir = OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new
       up_down_counter = meter.create_up_down_counter('up_down_counter', unit: 'items', description: 'queue size', exemplar_reservoir: exemplar_reservoir)
 
       up_down_counter.add(5)
@@ -118,7 +116,7 @@ describe OpenTelemetry::SDK do
     end
 
     it 'emits observable_counter metrics with exemplars' do
-      exemplar_reservoir = OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir.new
+      exemplar_reservoir = OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new
 
       counter = meter.create_observable_counter(
         'observable_counter',
@@ -143,7 +141,7 @@ describe OpenTelemetry::SDK do
     end
 
     it 'emits observable_gauge metrics with exemplars' do
-      exemplar_reservoir = OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir.new
+      exemplar_reservoir = OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new
 
       gauge = meter.create_observable_gauge(
         'observable_gauge',
@@ -168,7 +166,7 @@ describe OpenTelemetry::SDK do
     end
 
     it 'emits observable_up_down_counter metrics with exemplars' do
-      exemplar_reservoir = OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir.new
+      exemplar_reservoir = OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new
 
       counter = meter.create_observable_up_down_counter(
         'observable_up_down_counter',

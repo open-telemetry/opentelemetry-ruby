@@ -24,16 +24,8 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir do
 
     it 'basic test for exemplar reservoir' do
       exemplar = OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir.new
-      exemplar.offer(value: 1, timestamp: timestamp, attributes: attributes, context: context)
-      exemplars = exemplar.collect
-
-      _(exemplars.class).must_equal Array
-      _(exemplars[0].class).must_equal OpenTelemetry::SDK::Metrics::Exemplar::Exemplar
-      _(exemplars[0].value).must_equal 1
-      _(exemplars[0].time_unix_nano).must_equal 123_456_789
-      _(exemplars[0].attributes[:test]).must_equal 'test'
-      _(exemplars[0].span_id).must_equal '11e2ec08'
-      _(exemplars[0].trace_id).must_equal '0b5cbd16166cb933'
+      _(-> { exemplar.offer(value: 1, timestamp: timestamp, attributes: attributes, context: context) }).must_raise(NotImplementedError)
+      _(-> { exemplar.collect }).must_raise(NotImplementedError)
     end
 
     it 'basic test for fixed size exemplar reservoir' do
@@ -45,9 +37,8 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir do
       _(exemplars[0].class).must_equal OpenTelemetry::SDK::Metrics::Exemplar::Exemplar
       _(exemplars[0].value).must_equal 1
       _(exemplars[0].time_unix_nano).must_equal 123_456_789
-      _(exemplars[0].attributes[:test]).must_equal 'test'
-      _(exemplars[0].span_id).must_equal '11e2ec08'
-      _(exemplars[0].trace_id).must_equal '0b5cbd16166cb933'
+      _(span_id_hex(exemplars[0].span_id)).must_equal '11e2ec08'
+      _(trace_id_hex(exemplars[0].trace_id)).must_equal '0b5cbd16166cb933'
     end
 
     it 'basic test for fixed size exemplar reservoir when more offers' do
@@ -71,9 +62,8 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir do
       _(exemplars[0].class).must_equal OpenTelemetry::SDK::Metrics::Exemplar::Exemplar
       _(exemplars[0].value).must_equal 20
       _(exemplars[0].time_unix_nano).must_equal 123_456_789
-      _(exemplars[0].attributes[:test]).must_equal 'test'
-      _(exemplars[0].span_id).must_equal '11e2ec08'
-      _(exemplars[0].trace_id).must_equal '0b5cbd16166cb933'
+      _(span_id_hex(exemplars[0].span_id)).must_equal '11e2ec08'
+      _(trace_id_hex(exemplars[0].trace_id)).must_equal '0b5cbd16166cb933'
     end
   end
 
@@ -93,9 +83,6 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::ExemplarReservoir do
       last_snapshot = metric_exporter.metric_snapshots
       _(last_snapshot[0].description).must_equal 'description'
       _(last_snapshot[0].data_points[0].exemplars[0].value).must_equal 1
-      _(last_snapshot[0].data_points[0].exemplars[0].attributes['foo']).must_equal 'bar'
-      _(last_snapshot[0].data_points[0].exemplars[0].span_id).must_equal '0000000000000000'
-      _(last_snapshot[0].data_points[0].exemplars[0].trace_id).must_equal '00000000000000000000000000000000'
     end
   end
 

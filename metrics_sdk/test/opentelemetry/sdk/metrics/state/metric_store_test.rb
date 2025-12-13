@@ -34,7 +34,9 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStore do
         :counter,
         meter_provider,
         instrumentation_scope,
-        aggregation
+        aggregation,
+        nil,
+        nil
       )
 
       # Add some data to the metric stream
@@ -56,7 +58,9 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStore do
         :counter,
         meter_provider,
         instrumentation_scope,
-        aggregation
+        aggregation,
+        nil,
+        nil
       )
 
       metric_stream2 = OpenTelemetry::SDK::Metrics::State::MetricStream.new(
@@ -66,7 +70,9 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStore do
         :counter,
         meter_provider,
         instrumentation_scope,
-        aggregation
+        aggregation,
+        nil,
+        nil
       )
 
       metric_store.add_metric_stream(metric_stream1)
@@ -90,7 +96,9 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStore do
         :counter,
         meter_provider,
         instrumentation_scope,
-        aggregation
+        aggregation,
+        nil,
+        nil
       )
 
       metric_store.add_metric_stream(metric_stream)

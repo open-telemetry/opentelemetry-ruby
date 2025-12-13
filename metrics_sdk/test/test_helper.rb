@@ -72,3 +72,11 @@ def right_boundary(scale, index)
 
   result
 end
+
+def span_id_hex(span_id)
+  span_id.unpack1('H*')
+end
+
+def trace_id_hex(trace_id)
+  trace_id.unpack1('H*')
+end

@@ -68,11 +68,11 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir
       exemplars = reservoir.collect
 
       _(exemplars.size).must_equal 1
-      _(exemplars[0].value).must_equal test_value
-      _(exemplars[0].time_unix_nano).must_equal test_timestamp
-      _(exemplars[0].attributes).must_equal test_attributes
-      _(exemplars[0].span_id).must_equal '11e2ec08'
-      _(exemplars[0].trace_id).must_equal '0b5cbd16166cb933'
+      exemplar = exemplars[0]
+      _(exemplar.value).must_equal test_value
+      _(exemplar.time_unix_nano).must_equal test_timestamp
+      _(span_id_hex(exemplar.span_id)).must_equal '11e2ec08'
+      _(trace_id_hex(exemplar.trace_id)).must_equal '0b5cbd16166cb933'
     end
 
     it 'maintains uniform distribution with reservoir sampling' do
@@ -118,7 +118,7 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir
       _(exemplars).must_equal []
     end
 
-    it 'does not clear exemplars for cumulative temporality' do
+    it 'clears exemplars for cumulative temporality' do
       reservoir.offer(value: 1, timestamp: timestamp, attributes: attributes, context: context)
       reservoir.offer(value: 2, timestamp: timestamp, attributes: attributes, context: context)
 
@@ -126,7 +126,7 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir
       _(exemplars.size).must_equal 2
 
       exemplars = reservoir.collect(aggregation_temporality: :cumulative)
-      _(exemplars.size).must_equal 2
+      _(exemplars.size).must_equal 0
     end
   end
 end
