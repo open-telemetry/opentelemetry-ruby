@@ -10,7 +10,7 @@ jobs:
   markdownlint-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       # equivalent cli: markdownlint-cli2  "**/*.md" "#**/CHANGELOG.md" "#.github/**" --config .markdownlint.json
       - name: "Markdown Lint Check"
