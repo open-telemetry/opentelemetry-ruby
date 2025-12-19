@@ -1,0 +1,87 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Script to update Ruby version requirements in all gemspecs
+# Usage: bin/update-ruby-version [new_version]
+# Example: bin/update-ruby-version 3.3
+
+require 'fileutils'
+require 'rubygems'
+
+def update_gemspec_ruby_version(file_path, new_version)
+  content = File.read(file_path)
+
+  # Pattern to match existing inline version (supports alpha/beta/pre-release versions)
+  inline_pattern = /spec\.required_ruby_version = '>= [^']+'/
+  replacement = "spec.required_ruby_version = '>= #{new_version}'"
+
+  updated_content = content.gsub(inline_pattern, replacement)
+  File.write(file_path, updated_content)
+end
+
+def find_gemspecs_with_ruby_requirement
+  # Find all .gemspec files that contain inline Ruby version requirements
+  gemspec_files = Dir.glob('**/*.gemspec')
+
+  gemspec_files.select do |file|
+    content = File.read(file)
+    # Match inline version pattern (supports alpha/beta/pre-release versions)
+    content.match?(/spec\.required_ruby_version = '>= [^']+/)
+  end
+end
+
+# Main execution
+def main
+  new_version = ARGV[0]
+
+  # Check if version parameter is provided
+  if new_version.nil? || new_version.empty?
+    puts 'Error: No Ruby version specified.'
+    puts
+    puts "Usage: #{$0} <new_ruby_version>"
+    puts 'Examples:'
+    puts "  #{$0} 3.2"
+    puts "  #{$0} 3.3"
+    puts "  #{$0} 3.1.0"
+    puts
+    puts 'The version should be a valid Ruby version number (e.g., 3.2, 3.3, 3.4.0)'
+    exit 1
+  end
+
+  # Validate version format using Ruby's Gem::Version parser
+  begin
+    # Try to parse as a valid gem version (this will raise ArgumentError for malformed versions)
+    Gem::Version.new(new_version)
+  rescue ArgumentError => e
+    puts "Error: Invalid Ruby version format '#{new_version}'"
+    puts "Details: #{e.message}"
+    puts
+    puts 'The version must be a valid Ruby version number like:'
+    puts '  - 3.2'
+    puts '  - 3.3'
+    puts '  - 3.4.0.alpha'
+    puts '  - 3.3.0.beta1'
+    puts
+    puts "Usage: #{$0} <new_ruby_version>"
+    exit 1
+  end
+
+  puts "Updating Ruby version requirement to: >= #{new_version}"
+  puts 'Finding gemspec files...'
+
+  gemspec_files = find_gemspecs_with_ruby_requirement
+  puts "Found #{gemspec_files.length} gemspec files to update:"
+
+  gemspec_files.each do |file|
+    update_gemspec_ruby_version(file, new_version)
+    puts "Updated: #{file}"
+  end
+
+  puts "\nSummary:"
+  puts "- Total files found: #{gemspec_files.length}"
+  puts "- Successfully updated: #{gemspec_files.length}"
+
+  puts "\nDone! All gemspecs have been updated to require Ruby >= #{new_version}"
+end
+
+main if __FILE__ == $0
