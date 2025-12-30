@@ -43,9 +43,7 @@ module OpenTelemetry
           def collect(point_attributes:)
             return nil unless @offered
 
-            filtered_attributes = if @attributes && point_attributes
-                                    @attributes.reject { |k, _v| point_attributes.key?(k) }
-                                  end
+            filtered_attributes = (@attributes.reject { |k, _v| point_attributes.key?(k) } if @attributes && point_attributes)
 
             exemplar = Exemplar.new(
               filtered_attributes,

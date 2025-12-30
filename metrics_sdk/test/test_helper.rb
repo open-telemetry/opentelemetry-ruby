@@ -39,7 +39,7 @@ def create_meter
   ENV['OTEL_METRICS_EXPORTER'] = 'none'
   OpenTelemetry::SDK.configure
   OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
-  OpenTelemetry.meter_provider.exemplar_filter_on(exemplar_filter: exemplar_filter)
+  OpenTelemetry.meter_provider.exemplar_filter_on(exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter)
   OpenTelemetry.meter_provider.meter('SAMPLE_METER_NAME')
 end
 
@@ -73,10 +73,5 @@ def right_boundary(scale, index)
   result
 end
 
-def span_id_hex(span_id)
-  span_id.unpack1('H*')
-end
-
-def trace_id_hex(trace_id)
-  trace_id.unpack1('H*')
-end
+# Suppress warn-level logs about a missing OTEL_METRICS_EXEMPLAR_FILTER for exemplars
+ENV['OTEL_METRICS_EXEMPLAR_FILTER'] = 'always_off'

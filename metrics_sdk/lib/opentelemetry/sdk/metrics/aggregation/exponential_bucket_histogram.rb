@@ -192,7 +192,7 @@ module OpenTelemetry
                     @previous_zero_count[attributes],
                     @previous_positive[attributes].dup,
                     @previous_negative[attributes].dup,
-                    0,   # flags
+                    0, # flags
                     reservoir&.collect(attributes: attributes, aggregation_temporality: @aggregation_temporality), # exemplars
                     @previous_min[attributes],
                     @previous_max[attributes],
@@ -211,7 +211,7 @@ module OpenTelemetry
           # rubocop:enable Metrics/MethodLength
 
           # this is aggregate in python; there is no merge in aggregate; but rescale happened
-          # rubocop:disable Metrics/MethodLength
+          # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
           def update(amount, attributes, data_points, exemplar_offer: false)
             # fetch or initialize the ExponentialHistogramDataPoint
             hdp = data_points.fetch(attributes) do
@@ -322,7 +322,7 @@ module OpenTelemetry
             buckets.increment_bucket(bucket_index)
             nil
           end
-          # rubocop:enable Metrics/MethodLength
+          # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity
 
           def aggregation_temporality
             @aggregation_temporality.temporality

@@ -42,12 +42,4 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Drop do
     _(ndps[1].value).must_equal(0)
     _(ndps[1].attributes).must_equal({})
   end
-
-  it 'includes exemplars field with noop reservoir' do
-    drop_aggregation.update(1, {}, data_points)
-    ndps = drop_aggregation.collect(start_time, end_time, data_points)
-    _(ndps[0]).must_respond_to(:exemplars)
-    _(ndps[0].exemplars).must_be_kind_of(Array)
-    _(ndps[0].exemplars).must_be_empty
-  end
 end

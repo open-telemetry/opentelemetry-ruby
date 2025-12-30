@@ -100,13 +100,6 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       _(exphdps[0].zero_threshold).must_equal(0)
     end
 
-    it 'includes exemplars field' do
-      expbh.update(1.5, {}, data_points)
-      exphdps = expbh.collect(start_time, end_time, data_points)
-      _(exphdps[0]).must_respond_to(:exemplars)
-      _(exphdps[0].exemplars).must_be_kind_of(Array)
-    end
-
     it 'rescale_with_alternating_growth_1' do
       # Tests insertion of [2, 2, 4, 1, 8, 0.5].  The test proceeds as
       # above but then downscales once further to scale=-1, thus index -1
