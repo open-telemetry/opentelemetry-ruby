@@ -232,7 +232,7 @@ describe OpenTelemetry::SDK do
       meter = create_meter
       OpenTelemetry.meter_provider.add_view(
         'exponential_histogram',
-        aggregation: OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new
+        aggregation: OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(exemplar_reservoir: OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new(max_size: 4))
       )
       OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
       OpenTelemetry.meter_provider.exemplar_filter_on(exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter)
@@ -310,12 +310,12 @@ describe OpenTelemetry::SDK do
       OpenTelemetry.meter_provider.add_view(
         'request_counter',
         name: 'request_counter_view1',
-        aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
+        aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(exemplar_reservoir: OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new(max_size: 4))
       )
       OpenTelemetry.meter_provider.add_view(
         'request_counter',
         name: 'request_counter_view2',
-        aggregation: OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new
+        aggregation: OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new(exemplar_reservoir: OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new(max_size: 4))
       )
 
       OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
