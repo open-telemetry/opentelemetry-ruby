@@ -179,7 +179,7 @@ describe OpenTelemetry::SDK do
         unit: 'Objects',
         description: 'Object Slots',
         callback: lambda do
-          GC.stat[:heap_live_slots]
+          100
         end
       )
 
@@ -196,8 +196,8 @@ describe OpenTelemetry::SDK do
       _(last_snapshot[0].data_points[0].attributes).must_equal({})
       _(last_snapshot[0].data_points[0].exemplars).must_be_kind_of(Array)
       _(last_snapshot[0].data_points[0].exemplars.size).must_equal 2
-      _(last_snapshot[0].data_points[0].exemplars[0].value).must_be :>, 0
-      _(last_snapshot[0].data_points[0].exemplars[1].value).must_be :>, 0
+      _(last_snapshot[0].data_points[0].exemplars[0].value).must_equal 100
+      _(last_snapshot[0].data_points[0].exemplars[1].value).must_equal 100
     end
 
     it 'emits observable_up_down_counter metrics with exemplars' do
