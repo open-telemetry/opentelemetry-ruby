@@ -24,6 +24,17 @@ module OpenTelemetry
       module APP
         # @!group Attribute Names
       
+        # Unique identifier for a particular build or compilation of the application.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # 6cff0a7e-cefc-4668-96f5-1273d8b334d0
+        #   # 9f2b833506aa6973a92fde9733e6271f
+        #   # my-app-1.0.0-code-123
+        #
+        APP_BUILD_ID = 'app.build_id'
+    
         # A unique identifier representing the installation of an application on a specific device
         #
         # Its value SHOULD persist across launches of the same application installation, including through application upgrades.
@@ -42,22 +53,56 @@ module OpenTelemetry
         # - [App set ID](https://developer.android.com/identity/app-set-id).
         # - [`Settings.getString(Settings.Secure.ANDROID_ID)`](https://developer.android.com/reference/android/provider/Settings.Secure#ANDROID_ID).
         #
-        # More information about Android identifier best practices can be found [here](https://developer.android.com/training/articles/user-data-ids).
+        # More information about Android identifier best practices can be found in the [Android user data IDs guide](https://developer.android.com/training/articles/user-data-ids).
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   2ab2916d-a51f-4ac8-80ee-45ac31a28092
+        #   # 2ab2916d-a51f-4ac8-80ee-45ac31a28092
         #
         APP_INSTALLATION_ID = 'app.installation.id'
+    
+        # A number of frame renders that experienced jank.
+        #
+        # Depending on platform limitations, the value provided MAY be approximation.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # 9
+        #   # 42
+        #
+        APP_JANK_FRAME_COUNT = 'app.jank.frame_count'
+    
+        # The time period, in seconds, for which this jank is being reported.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # 1.0
+        #   # 5.0
+        #   # 10.24
+        #
+        APP_JANK_PERIOD = 'app.jank.period'
+    
+        # The minimum rendering threshold for this jank, in seconds.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # 0.016
+        #   # 0.7
+        #   # 1.024
+        #
+        APP_JANK_THRESHOLD = 'app.jank.threshold'
     
         # The x (horizontal) coordinate of a screen coordinate, in screen pixels.
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0
-        #   131
+        #   # 0
+        #   # 131
         #
         APP_SCREEN_COORDINATE_X = 'app.screen.coordinate.x'
     
@@ -66,8 +111,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   12
-        #   99
+        #   # 12
+        #   # 99
         #
         APP_SCREEN_COORDINATE_Y = 'app.screen.coordinate.y'
     
@@ -78,8 +123,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   f9bc787d-ff05-48ad-90e1-fca1d46130b3
-        #   submit_order_1829
+        #   # f9bc787d-ff05-48ad-90e1-fca1d46130b3
+        #   # submit_order_1829
         #
         APP_WIDGET_ID = 'app.widget.id'
     
@@ -90,9 +135,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   submit
-        #   attack
-        #   Clear Cart
+        #   # submit
+        #   # attack
+        #   # Clear Cart
         #
         APP_WIDGET_NAME = 'app.widget.name'
     

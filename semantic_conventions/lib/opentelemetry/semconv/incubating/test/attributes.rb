@@ -29,9 +29,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   org.example.TestCase1.test1
-        #   example/tests/TestCase1.test1
-        #   ExampleTestCase1_test1
+        #   # org.example.TestCase1.test1
+        #   # example/tests/TestCase1.test1
+        #   # ExampleTestCase1_test1
         #
         TEST_CASE_NAME = 'test.case.name'
     
@@ -40,8 +40,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   pass
-        #   fail
+        #   # pass
+        #   # fail
         #
         TEST_CASE_RESULT_STATUS = 'test.case.result.status'
     
@@ -50,7 +50,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   TestSuite1
+        #   # TestSuite1
         #
         TEST_SUITE_NAME = 'test.suite.name'
     
@@ -59,12 +59,12 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   success
-        #   failure
-        #   skipped
-        #   aborted
-        #   timed_out
-        #   in_progress
+        #   # success
+        #   # failure
+        #   # skipped
+        #   # aborted
+        #   # timed_out
+        #   # in_progress
         #
         TEST_SUITE_RUN_STATUS = 'test.suite.run.status'
     

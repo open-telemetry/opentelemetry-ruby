@@ -30,8 +30,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   end of minor GC
-      #   end of major GC
+      #   # end of minor GC
+      #   # end of major GC
       #
       JVM_GC_ACTION = 'jvm.gc.action'
   
@@ -42,8 +42,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   G1 Young Generation
-      #   G1 Old Generation
+      #   # G1 Young Generation
+      #   # G1 Old Generation
       #
       JVM_GC_NAME = 'jvm.gc.name'
   
@@ -54,9 +54,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   G1 Old Gen
-      #   G1 Eden space
-      #   G1 Survivor Space
+      #   # G1 Old Gen
+      #   # G1 Eden space
+      #   # G1 Survivor Space
       #
       JVM_MEMORY_POOL_NAME = 'jvm.memory.pool.name'
   
@@ -65,8 +65,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   heap
-      #   non_heap
+      #   # heap
+      #   # non_heap
       #
       JVM_MEMORY_TYPE = 'jvm.memory.type'
   
@@ -80,8 +80,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   runnable
-      #   blocked
+      #   # runnable
+      #   # blocked
       #
       JVM_THREAD_STATE = 'jvm.thread.state'
   

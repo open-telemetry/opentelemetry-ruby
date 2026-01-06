@@ -29,7 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   idle
+        #   # idle
         #
         # @deprecated {"note": "Replaced by `db.client.connection.state`.", "reason": "renamed", "renamed_to": "db.client.connection.state"}
         STATE = 'state'

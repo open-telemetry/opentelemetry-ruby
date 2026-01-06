@@ -31,10 +31,10 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   www.foo.bar
-        #   opentelemetry.io
-        #   3.12.167.2
-        #   [1080:0:0:0:8:800:200C:417A]
+        #   # www.foo.bar
+        #   # opentelemetry.io
+        #   # 3.12.167.2
+        #   # [1080:0:0:0:8:800:200C:417A]
         #
         URL_DOMAIN = 'url.domain'
     
@@ -45,8 +45,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   png
-        #   gz
+        #   # png
+        #   # gz
         #
         URL_EXTENSION = 'url.extension'
     
@@ -55,7 +55,7 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   SemConv
+        #   # SemConv
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::URL::URL_FRAGMENT}.
@@ -90,8 +90,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   https://www.foo.bar/search?q=OpenTelemetry#SemConv
-        #   //localhost
+        #   # https://www.foo.bar/search?q=OpenTelemetry#SemConv
+        #   # //localhost
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::URL::URL_FULL}.
@@ -105,8 +105,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   https://www.foo.bar/search?q=OpenTelemetry#SemConv
-        #   search?q=OpenTelemetry
+        #   # https://www.foo.bar/search?q=OpenTelemetry#SemConv
+        #   # search?q=OpenTelemetry
         #
         URL_ORIGINAL = 'url.original'
     
@@ -117,7 +117,7 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   /search
+        #   # /search
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::URL::URL_PATH}.
@@ -128,7 +128,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   443
+        #   # 443
         #
         URL_PORT = 'url.port'
     
@@ -152,7 +152,7 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   q=OpenTelemetry
+        #   # q=OpenTelemetry
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::URL::URL_QUERY}.
@@ -165,8 +165,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   example.com
-        #   foo.co.uk
+        #   # example.com
+        #   # foo.co.uk
         #
         URL_REGISTERED_DOMAIN = 'url.registered_domain'
     
@@ -175,9 +175,9 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   https
-        #   ftp
-        #   telnet
+        #   # https
+        #   # ftp
+        #   # telnet
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::URL::URL_SCHEME}.
@@ -190,8 +190,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   east
-        #   sub2.sub1
+        #   # east
+        #   # sub2.sub1
         #
         URL_SUBDOMAIN = 'url.subdomain'
     
@@ -200,9 +200,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   /users/{id}
-        #   /users/:id
-        #   /users?id={id}
+        #   # /users/{id}
+        #   # /users/:id
+        #   # /users?id={id}
         #
         URL_TEMPLATE = 'url.template'
     
@@ -213,8 +213,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   com
-        #   co.uk
+        #   # com
+        #   # co.uk
         #
         URL_TOP_LEVEL_DOMAIN = 'url.top_level_domain'
     

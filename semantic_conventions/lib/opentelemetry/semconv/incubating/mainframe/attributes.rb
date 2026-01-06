@@ -29,7 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   LPAR01
+        #   # LPAR01
         #
         MAINFRAME_LPAR_NAME = 'mainframe.lpar.name'
     
