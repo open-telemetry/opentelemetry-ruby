@@ -17,14 +17,12 @@ jobs:
     permissions:
       contents: write # required for pushing changes
       pull-requests: write # required for creating release PRs
-    env:
-      ruby_version: "4.0"
     runs-on: ubuntu-latest
     steps:
-      - name: Install Ruby ${{ env.ruby_version }}
+      - name: Install Ruby
         uses: ruby/setup-ruby@b90be12699fdfcbee4440c2bba85f6f460446bb0 # v1.279.0
         with:
-          ruby-version: ${{ env.ruby_version }}
+          ruby-version: "4.0"
       - name: Checkout repo
         uses: actions/checkout@v6
       - name: Install Toys
