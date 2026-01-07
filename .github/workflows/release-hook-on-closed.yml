@@ -15,7 +15,7 @@ jobs:
       pull-requests: write # required for updating label on PR, posting comments
       issues: write # required for creating new issues on failed releases
     env:
-      ruby_version: "3.1"
+      ruby_version: "4.0"
     runs-on: ubuntu-latest
     steps:
       - name: Install Ruby ${{ env.ruby_version }}
@@ -25,13 +25,12 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v6
       - name: Install Toys
-        run: "gem install --no-document toys -v 0.15.5"
+        run: "gem install --no-document toys -v 0.19.1"
       - name: Process release request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
         run: |
           toys release _onclosed --verbose \
-            "--enable-releases=${{ secrets.ENABLE_RELEASES }}" \
             "--event-path=${{ github.event_path }}" \
-            "--rubygems-api-key=${{ secrets.RUBYGEMS_API_KEY }}" \
             < /dev/null

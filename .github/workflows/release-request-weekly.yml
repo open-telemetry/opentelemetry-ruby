@@ -14,7 +14,7 @@ jobs:
       contents: write # required for pushing changes
       pull-requests: write # required for creating release PRs
     env:
-      ruby_version: "3.1"
+      ruby_version: "4.0"
     runs-on: ubuntu-latest
     steps:
       - name: Install Ruby ${{ env.ruby_version }}
@@ -24,7 +24,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v6
       - name: Install Toys
-        run: "gem install --no-document toys -v 0.15.5"
+        run: "gem install --no-document toys -v 0.19.1"
       - name: Create otelbot app token
         uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
         id: app-token
@@ -37,5 +37,5 @@ jobs:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           toys release request --yes --verbose \
-            "--release-ref=${{ github.ref }}" \
+            "--target-branch=${{ github.ref }}" \
             < /dev/null
