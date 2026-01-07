@@ -19,27 +19,24 @@ jobs:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     permissions:
       contents: write # required for creating releases
-      pull-requests: write # required for updating open release PRs
+      pull-requests: write # required for updating label on PR, posting comments
       issues: write # required for creating new issues on failed releases
-    env:
-      ruby_version: "3.1"
     runs-on: ubuntu-latest
     steps:
-      - name: Install Ruby ${{ env.ruby_version }}
+      - name: Install Ruby
         uses: ruby/setup-ruby@b90be12699fdfcbee4440c2bba85f6f460446bb0 # v1.279.0
         with:
-          ruby-version: ${{ env.ruby_version }}
+          ruby-version: "4.0"
       - name: Checkout repo
         uses: actions/checkout@v6
       - name: Install Toys
-        run: "gem install --no-document toys -v 0.15.5"
+        run: "gem install --no-document toys -v 0.19.1"
       - name: Retry release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
         run: |
           toys release retry --yes --verbose \
-            "--enable-releases=${{ secrets.ENABLE_RELEASES }}" \
-            "--rubygems-api-key=${{ secrets.RUBYGEMS_API_KEY }}" \
             ${{ github.event.inputs.flags }} \
             "${{ github.event.inputs.release_pr }}" \
             < /dev/null
