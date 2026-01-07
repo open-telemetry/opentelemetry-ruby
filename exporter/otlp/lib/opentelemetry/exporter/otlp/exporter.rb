@@ -124,7 +124,7 @@ module OpenTelemetry
         end
 
         def http_connection(uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
-          http = Net::HTTP.new(uri.host, uri.port)
+          http = Net::HTTP.new(uri.hostname, uri.port)
           http.use_ssl = uri.scheme == 'https'
           http.verify_mode = ssl_verify_mode
           http.ca_file = certificate_file unless certificate_file.nil?
