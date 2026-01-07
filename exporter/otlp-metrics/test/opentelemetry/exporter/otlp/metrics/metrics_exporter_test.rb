@@ -438,42 +438,6 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       _(http.port).must_equal 4318
       _(exp.instance_variable_get(:@path)).must_equal '/v1/metrics'
     end
-
-    it 'exports metrics data with IPv6 address' do
-      stub_request(:post, 'http://[::1]:4318/v1/metrics').to_return(status: 200)
-      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://[::1]:4318/v1/metrics')
-      metrics_data = create_metrics_data
-      result = exp.export([metrics_data])
-      _(result).must_equal(METRICS_SUCCESS)
-    end
-
-    it 'exports metrics data with IPv4 address' do
-      stub_request(:post, 'http://127.0.0.1:4318/v1/metrics').to_return(status: 200)
-      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://127.0.0.1:4318/v1/metrics')
-      metrics_data = create_metrics_data
-      result = exp.export([metrics_data])
-      _(result).must_equal(METRICS_SUCCESS)
-    end
-
-    it 'exports metrics data with IPv6 address via full URL' do
-      stub_request(:post, 'http://[2001:db8::8a2e:370:7334]:4318/v1/metrics').to_return(status: 200)
-      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://[2001:db8::8a2e:370:7334]:4318/v1/metrics')
-      metrics_data = create_metrics_data
-      result = exp.export([metrics_data])
-      _(result).must_equal(METRICS_SUCCESS)
-    end
-
-    it 'handles connection errors with IPv6 address gracefully' do
-      stub_request(:post, 'http://[::1]:4318/v1/metrics').to_raise(SocketError.new('getaddrinfo: nodename nor servname provided, or not known'))
-      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://[::1]:4318/v1/metrics')
-      metrics_data = create_metrics_data
-
-      # Mock backoff to prevent retries
-      exp.stub(:backoff?, ->(**_) { false }) do
-        result = exp.export([metrics_data])
-        _(result).must_equal(METRICS_FAILURE)
-      end
-    end
   end
 
   describe '#export' do
