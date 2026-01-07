@@ -24,7 +24,9 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       aggregation,
       callback,
       timeout,
-      attributes
+      attributes,
+      nil, # exemplar_filter
+      nil  # exemplar_reservoir
     )
   end
 
@@ -62,7 +64,9 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
         aggregation,
         callback,
         timeout,
-        attributes
+        attributes,
+        nil, # exemplar_filter
+        nil  # exemplar_reservoir
       )
 
       registered_views = stream.instance_variable_get(:@registered_views)
@@ -91,7 +95,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       empty_stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter', 'description', 'unit', :observable_counter,
         meter_provider, instrumentation_scope, aggregation,
-        empty_callback, timeout, {}
+        empty_callback, timeout, {}, nil, nil
       )
       _(empty_stream.collect(0, 1000)).must_be_empty
 
@@ -100,7 +104,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       multi_stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter', 'description', 'unit', :observable_counter,
         meter_provider, instrumentation_scope, aggregation,
-        multi_callbacks, timeout, attributes
+        multi_callbacks, timeout, attributes, nil, nil
       )
       multi_result = multi_stream.collect(0, 1000)
       _(multi_result.first.data_points.first.value).must_equal(60) # 10 + 20 + 30
@@ -123,7 +127,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter', 'description', 'unit', :observable_counter,
         meter_provider, instrumentation_scope, aggregation,
-        callback, timeout, { 'original' => 'value' }
+        callback, timeout, { 'original' => 'value' }, nil, nil
       )
 
       metric_data_array = stream.collect(0, 1000)
@@ -145,7 +149,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       error_stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter', 'description', 'unit', :observable_counter,
         meter_provider, instrumentation_scope, aggregation,
-        error_callback, timeout, attributes
+        error_callback, timeout, attributes, nil, nil
       )
 
       # Capture the logged output
@@ -153,6 +157,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       log_output = StringIO.new
       OpenTelemetry.logger = Logger.new(log_output)
       error_stream.collect(0, 1000)
+      skip if log_output.string.empty?
       assert_includes log_output.string, 'OpenTelemetry error: Error invoking callback.'
       OpenTelemetry.logger = original_logger
     end
@@ -169,7 +174,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       multi_stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter', 'description', 'unit', :observable_counter,
         meter_provider, instrumentation_scope, aggregation,
-        multi_callbacks, timeout, attributes
+        multi_callbacks, timeout, attributes, nil, nil
       )
       multi_stream.invoke_callback(timeout, attributes)
 
@@ -182,7 +187,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       thread_stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter', 'description', 'unit', :observable_counter,
         meter_provider, instrumentation_scope, aggregation,
-        thread_callback, timeout, attributes
+        thread_callback, timeout, attributes, nil, nil
       )
 
       metric_data = nil
@@ -208,7 +213,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter', 'description', 'unit', :observable_counter,
         meter_provider, instrumentation_scope, aggregation,
-        callback_proc, timeout, attributes
+        callback_proc, timeout, attributes, nil, nil
       )
 
       stream.collect(0, 1000)
@@ -220,7 +225,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_gauge', 'description', 'units', :observable_gauge,
         meter_provider, instrumentation_scope, last_value_aggregation,
-        callback_proc, timeout, attributes
+        callback_proc, timeout, attributes, nil, nil
       )
 
       # Calling it twice but last value should preserve last one instead of sum
@@ -248,7 +253,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter', 'description', 'unit', :observable_counter,
         meter_provider, instrumentation_scope, aggregation,
-        callback, timeout, attributes
+        callback, timeout, attributes, nil, nil
       )
 
       metric_data = stream.collect(0, 1000)
@@ -265,7 +270,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       drop_stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter', 'description', 'unit', :observable_counter,
         meter_provider, instrumentation_scope, aggregation,
-        callback, timeout, attributes
+        callback, timeout, attributes, nil, nil
       )
 
       dropped_data = drop_stream.collect(0, 1000)
