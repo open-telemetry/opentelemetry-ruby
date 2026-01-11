@@ -19,11 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Ruby ${{ env.ruby_version }}
-        uses: ruby/setup-ruby@v1.267.0
+        uses: ruby/setup-ruby@b90be12699fdfcbee4440c2bba85f6f460446bb0 # v1.279.0
         with:
           ruby-version: ${{ env.ruby_version }}
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
       - name: Install Toys
         run: "gem install --no-document toys -v 0.15.5"
       - name: Process release request
