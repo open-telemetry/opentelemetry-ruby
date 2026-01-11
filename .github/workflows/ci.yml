@@ -215,8 +215,14 @@ jobs:
           gem: "${{ matrix.gem }}"
           ruby: "truffleruby"
 
-  codespell:
+  spelling-check:
+    name: Spelling Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - run: make codespell
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: streetsidesoftware/cspell-action@24fa8d3096a314ce263f39578744e9d9f8d80acf # v8.1.2
+        with:
+          use_cspell_files: true
+          config: .cspell.yml
+          suggestions: true
+          treat_flagged_words_as_errors: true
