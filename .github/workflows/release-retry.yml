@@ -21,14 +21,12 @@ jobs:
       contents: write # required for creating releases
       pull-requests: write # required for updating open release PRs
       issues: write # required for creating new issues on failed releases
-    env:
-      ruby_version: "3.1"
     runs-on: ubuntu-latest
     steps:
-      - name: Install Ruby ${{ env.ruby_version }}
+      - name: Install Ruby
         uses: ruby/setup-ruby@b90be12699fdfcbee4440c2bba85f6f460446bb0 # v1.279.0
         with:
-          ruby-version: ${{ env.ruby_version }}
+          ruby-version: 3.1
       - name: Checkout repo
         uses: actions/checkout@v6
       - name: Install Toys
