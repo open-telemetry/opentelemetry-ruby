@@ -37,11 +37,13 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-semantic_conventions'
 
   spec.add_development_dependency 'bundler', '>= 1.17'
+  spec.add_development_dependency 'cgi', '~> 0.5.1'
   spec.add_development_dependency 'faraday', '~> 0.13'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'opentelemetry-exporter-zipkin', '~> 0.19'
   spec.add_development_dependency 'opentelemetry-instrumentation-base', '~> 0.20'
   spec.add_development_dependency 'opentelemetry-test-helpers'
+  spec.add_development_dependency 'ostruct', '~> 0.6.3'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake', '~> 12.0'
   spec.add_development_dependency 'rubocop', '~> 1.65'
