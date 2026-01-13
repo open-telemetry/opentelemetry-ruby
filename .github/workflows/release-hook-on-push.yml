@@ -19,11 +19,11 @@ jobs:
       - name: Install Ruby
         uses: ruby/setup-ruby@675dd7ba1b06c8786a1480d89c384f5620a42647 # v1.281.0
         with:
-          ruby-version: 3.1
+          ruby-version: "4.0"
       - name: Checkout repo
         uses: actions/checkout@v6
       - name: Install Toys
-        run: "gem install --no-document toys -v 0.15.5"
+        run: "gem install --no-document toys -v 0.19.1"
       - name: Update open releases
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
