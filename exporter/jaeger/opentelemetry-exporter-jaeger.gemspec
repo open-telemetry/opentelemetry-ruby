@@ -33,7 +33,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-semantic_conventions'
   spec.add_dependency 'thrift'
 
-  spec.add_development_dependency 'bundler', '>= 1.17'
   spec.add_development_dependency 'faraday', '~> 0.13'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'opentelemetry-test-helpers'

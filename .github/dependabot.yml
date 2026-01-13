@@ -1,10 +1,6 @@
 ---
 version: 2
 updates:
-- package-ecosystem: github-actions
-  directory: "/"
-  schedule:
-    interval: daily
 - package-ecosystem: bundler
   directory: "/"
   schedule:
@@ -15,10 +11,6 @@ updates:
     interval: weekly
 - package-ecosystem: bundler
   directory: "/common"
-  schedule:
-    interval: weekly
-- package-ecosystem: bundler
-  directory: "/exporter/jaeger"
   schedule:
     interval: weekly
 - package-ecosystem: bundler
