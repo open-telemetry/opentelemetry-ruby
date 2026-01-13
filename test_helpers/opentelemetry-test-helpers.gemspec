@@ -26,10 +26,8 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 3.1'
 
   spec.add_development_dependency 'bundler', '>= 1.17'
-  spec.add_development_dependency 'cgi', '~> 0.5.1'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'opentelemetry-sdk'
-  spec.add_development_dependency 'ostruct', '~> 0.6.3'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'pry-byebug' unless RUBY_ENGINE == 'jruby'
   spec.add_development_dependency 'rake', '~> 13.3'

@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'cgi'
+require 'uri'
 
 module OpenTelemetry
   module Baggage
@@ -99,7 +99,8 @@ module OpenTelemetry
         end
 
         def encode_value(key, entry)
-          result = +"#{CGI.escape(key.to_s)}=#{CGI.escape(entry.value.to_s)}"
+          # result = +"#{CGI.escape(key.to_s)}=#{CGI.escape(entry.value.to_s)}"
+          result = +"#{URI.encode_www_form_component(key.to_s)}=#{URI.encode_www_form_component(entry.value.to_s)}"
           # We preserve metadata received on extract and assume it's already formatted
           # for transport. It's sent as-is without further processing.
           result << ";#{entry.metadata}" if entry.metadata
