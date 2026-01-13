@@ -18,7 +18,7 @@ jobs:
       - name: Install Ruby 3.4
         uses: ruby/setup-ruby@b90be12699fdfcbee4440c2bba85f6f460446bb0 # v1.279.0
         with:
-          ruby-version: 3.4
+          ruby-version: 4.0.1
       - name: Generate Gemfile.lock
         run: |
           echo "Finding all Gemfiles in the project..."
