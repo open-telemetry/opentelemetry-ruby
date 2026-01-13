@@ -51,10 +51,6 @@ gems:
     directory: common
     version_constant: [OpenTelemetry, Common, VERSION]
 
-  - name: opentelemetry-exporter-jaeger
-    directory: exporter/jaeger
-    version_constant: [OpenTelemetry, Exporter, Jaeger, VERSION]
-
   - name: opentelemetry-exporter-otlp
     directory: exporter/otlp
     version_constant: [OpenTelemetry, Exporter, OTLP, VERSION]
