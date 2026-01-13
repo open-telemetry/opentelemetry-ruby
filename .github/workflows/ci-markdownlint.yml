@@ -11,7 +11,7 @@ jobs:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.1
 
       # equivalent cli: markdownlint-cli2  "**/*.md" "#**/CHANGELOG.md" "#.github/**" --config .markdownlint.json
       - name: "Markdown Lint Check"
