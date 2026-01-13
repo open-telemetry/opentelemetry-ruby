@@ -2,11 +2,11 @@
 
 ### v0.31.1 / 2025-10-21
 
-* FIXED: Requires minimum SDK support for new parent_span_is_remote attribute
+- FIXED: Requires minimum SDK support for new parent_span_is_remote attribute
 
 ### v0.31.0 / 2025-10-14
 
-* ADDED: Add span flags support for isRemote property
+- ADDED: Add span flags support for isRemote property
 
 ### v0.30.0 / 2025-02-25
 
@@ -98,7 +98,7 @@
 
 ### v0.20.6 / 2021-10-29
 
-- FIXED: Add unexpected error handlign in BSP and OTLP exporter (#995)
+- FIXED: Add unexpected error handling in BSP and OTLP exporter (#995)
 - FIXED: Handle otlp exporter race condition gzip errors with retry
 
 ### v0.20.5 / 2021-09-29
@@ -216,7 +216,7 @@
 
 - FIXED: OTLP parent_span_id should be nil for root
 - DOCS: Fix use of add_event in OTLP doc
-- DOCS: Standardize toplevel docs structure and readme
+- DOCS: Standardize top-level docs structure and readme
 - DOCS: Use BatchSpanProcessor in examples
 
 ### v0.6.0 / 2020-09-10

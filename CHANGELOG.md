@@ -8,7 +8,7 @@ All notable changes to this project were documented in this file. This is of his
 
 ### Bug Fix
 
-* [#299](https://github.com/open-telemetry/opentelemetry-ruby/pull/299) Fix probabilility sampler. ([@fbogsany](https://github.com/fbogsany))
+* [#299](https://github.com/open-telemetry/opentelemetry-ruby/pull/299) Fix probability sampler. ([@fbogsany](https://github.com/fbogsany))
 
 * [#301](https://github.com/open-telemetry/opentelemetry-ruby/pull/301) Fix require 'opentelemetry/instrumentation'. ([@fbogsany](https://github.com/fbogsany))
 
