@@ -8,6 +8,7 @@ permissions:
 
 jobs:
   markdownlint-check:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
