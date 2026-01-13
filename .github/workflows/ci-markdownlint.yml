@@ -8,16 +8,18 @@ permissions:
 
 jobs:
   markdownlint-check:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      # equivalent cli: markdownlint-cli2  "**/*.md" "#**/CHANGELOG.md"  --config .markdownlint.json
+      # equivalent cli: markdownlint-cli2  "**/*.md" "#**/CHANGELOG.md" "#.github/**" --config .markdownlint.json
       - name: "Markdown Lint Check"
-        uses: DavidAnson/markdownlint-cli2-action@v19
-        continue-on-error: true
+        uses: DavidAnson/markdownlint-cli2-action@v22
         with:
+          config: .markdownlint.json
           fix: false
           globs: |
             **/*.md
             !**/CHANGELOG.md
+            !.github/**

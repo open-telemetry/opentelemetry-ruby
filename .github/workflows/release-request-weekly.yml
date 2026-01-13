@@ -13,20 +13,18 @@ jobs:
     permissions:
       contents: write # required for pushing changes
       pull-requests: write # required for creating release PRs
-    env:
-      ruby_version: "3.1"
     runs-on: ubuntu-latest
     steps:
-      - name: Install Ruby ${{ env.ruby_version }}
-        uses: ruby/setup-ruby@v1.267.0
+      - name: Install Ruby
+        uses: ruby/setup-ruby@675dd7ba1b06c8786a1480d89c384f5620a42647 # v1.281.0
         with:
-          ruby-version: ${{ env.ruby_version }}
+          ruby-version: 3.1
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install Toys
         run: "gem install --no-document toys -v 0.15.5"
       - name: Create otelbot app token
-        uses: actions/create-github-app-token@df432ceedc7162793a195dd1713ff69aefc7379e # v2.0.6
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
         id: app-token
         with:
           app-id: ${{ vars.OTELBOT_RUBY_APP_ID }}

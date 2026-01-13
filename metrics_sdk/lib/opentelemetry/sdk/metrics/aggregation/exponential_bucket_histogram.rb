@@ -46,8 +46,6 @@ module OpenTelemetry
             @size           = validate_size(max_size)
             @scale          = validate_scale(max_scale)
 
-            @mapping = new_mapping(@scale)
-
             # Previous state for cumulative aggregation
             @previous_positive = {} # nil
             @previous_negative = {} # nil
@@ -57,6 +55,10 @@ module OpenTelemetry
             @previous_count = {} # 0
             @previous_zero_count = {} # 0
             @previous_scale = {} # nil
+
+            # Cache mappings per attribute set
+            @mappings = {}
+            @previous_mappings = {}
           end
 
           # when aggregation temporality is cumulative, merge and downscale will happen.
@@ -70,6 +72,7 @@ module OpenTelemetry
                 hdp
               end
               data_points.clear
+              @mappings.clear
               hdps
             else
               # CUMULATIVE temporality - merge current data_points to previous data_points
@@ -163,6 +166,7 @@ module OpenTelemetry
                 )
 
                 merged_data_points[attributes] = merged_hdp
+                @previous_mappings[attributes] = @mappings[attributes] if @mappings[attributes] # Preserve mapping for next collection
               end
               # rubocop:enable Metrics/BlockLength
 
@@ -190,6 +194,10 @@ module OpenTelemetry
                 end
               end
 
+              # Swap current with previous mappings for next cycle
+              @mappings = @previous_mappings
+              @previous_mappings = {}
+
               # clear data_points since the data is merged into previous_* already;
               # otherwise we will have duplicated data_points in the next collect
               data_points.clear
@@ -207,7 +215,7 @@ module OpenTelemetry
                     create_new_data_point(attributes, data_points)
                   end
 
-            update_histogram_data_point(hdp, amount)
+            update_histogram_data_point(hdp, attributes, amount)
             nil
           end
 
@@ -231,17 +239,18 @@ module OpenTelemetry
               0,                                                                 # :sum
               @scale,                                                            # :scale
               @zero_count,                                                       # :zero_count
-              ExponentialHistogram::Buckets.new,  # :positive
-              ExponentialHistogram::Buckets.new,  # :negative
+              ExponentialHistogram::Buckets.new,                                 # :positive
+              ExponentialHistogram::Buckets.new,                                 # :negative
               0,                                                                 # :flags
               nil,                                                               # :exemplars
               min,                                                               # :min
               max,                                                               # :max
-              @zero_threshold # :zero_threshold)
+              @zero_threshold                                                    # :zero_threshold
             )
           end
 
-          def update_histogram_data_point(hdp, amount)
+          # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
+          def update_histogram_data_point(hdp, attributes, amount)
             # Start to populate the data point (esp. the buckets)
             if @record_min_max
               hdp.max = amount if amount > hdp.max
@@ -261,7 +270,15 @@ module OpenTelemetry
             buckets = amount.positive? ? hdp.positive : hdp.negative
             amount = -amount if amount.negative?
 
-            bucket_index = @mapping.map_to_index(amount)
+            # Reset scale to max_scale if transitioning from all-zeros to first non-zero value
+            if buckets.counts == [0] && hdp.scale == 0 && hdp.count > hdp.zero_count
+              hdp.scale = @scale
+              @mappings.delete(attributes) # Clear any cached mapping
+            end
+
+            # Get or create mapping for this attribute set
+            mapping = @mappings[attributes] ||= new_mapping(hdp.scale)
+            bucket_index = mapping.map_to_index(amount)
 
             rescaling_needed = false
             low = high = 0
@@ -285,14 +302,15 @@ module OpenTelemetry
             if rescaling_needed
               scale_change = get_scale_change(low, high)
               downscale(scale_change, hdp.positive, hdp.negative)
-              new_scale = @mapping.scale - scale_change
-              @mapping = new_mapping(new_scale)
-              bucket_index = @mapping.map_to_index(amount)
+              new_scale = mapping.scale - scale_change
+              mapping = new_mapping(new_scale)
+              @mappings[attributes] = mapping # Update cache
+              bucket_index = mapping.map_to_index(amount)
 
               OpenTelemetry.logger.debug "Rescaled with new scale #{new_scale} from #{low} and #{high}; bucket_index is updated to #{bucket_index}"
             end
 
-            hdp.scale = @mapping.scale
+            hdp.scale = mapping.scale
 
             # adjust buckets based on the bucket_index
             if bucket_index < buckets.index_start
@@ -310,6 +328,7 @@ module OpenTelemetry
 
             buckets.increment_bucket(bucket_index)
           end
+          # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
           def grow_buckets(span, buckets)
             return if span < buckets.counts.size

@@ -10,11 +10,12 @@ permissions:
 
 jobs:
   markdown-link-check:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     permissions:
       pull-requests: write # required for posting review comments
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # equivalent cli: linkspector check
       - name: Run linkspector
