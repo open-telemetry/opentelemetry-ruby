@@ -22,14 +22,12 @@ jobs:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     permissions:
       contents: write # required for creating releases
-    env:
-      ruby_version: "3.1"
     runs-on: ubuntu-latest
     steps:
-      - name: Install Ruby ${{ env.ruby_version }}
-        uses: ruby/setup-ruby@v1.267.0
+      - name: Install Ruby
+        uses: ruby/setup-ruby@675dd7ba1b06c8786a1480d89c384f5620a42647 # v1.281.0
         with:
-          ruby-version: ${{ env.ruby_version }}
+          ruby-version: 3.1
       - name: Checkout repo
         uses: actions/checkout@v6
       - name: Install Toys
