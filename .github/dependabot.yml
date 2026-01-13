@@ -18,10 +18,6 @@ updates:
   schedule:
     interval: weekly
 - package-ecosystem: bundler
-  directory: "/exporter/jaeger"
-  schedule:
-    interval: weekly
-- package-ecosystem: bundler
   directory: "/exporter/otlp"
   schedule:
     interval: weekly
