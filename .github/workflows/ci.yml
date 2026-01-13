@@ -52,25 +52,26 @@ jobs:
           gem: "${{ matrix.gem }}"
           ruby: "3.3"
       - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.2"
-      - name: "Test Ruby 3.1"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
-          ruby: "3.1"
+          ruby: "3.2"
           yard: true
           rubocop: true
           build: true
+      - name: "Test Ruby 3.2"
+        if: "${{ matrix.os != 'ubuntu-latest' }}"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "3.2"
       - name: "Test JRuby"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
-          ruby: "jruby"
+          ruby: "jruby-10.0.2.0"
       - name: "Test truffleruby"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
@@ -121,32 +122,32 @@ jobs:
           gem: "${{ matrix.gem }}"
           ruby: "3.3"
       - name: "Test Ruby 3.2"
-        if: "${{ matrix.gem != 'opentelemetry-exporter-jaeger' }}"
+        if: "${{ matrix.gem != 'opentelemetry-exporter-jaeger' && matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
           ruby: "3.2"
-      - name: "Test Ruby 3.1"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.1"
           yard: true
           rubocop: true
           build: true
+      - name: "Test Ruby 3.2"
+        if: "${{ matrix.gem != 'opentelemetry-exporter-jaeger' && matrix.os != 'ubuntu-latest' }}"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "3.2"
       - name: "Test Zipkin with JRuby"
         if: "${{ matrix.os == 'ubuntu-latest' && matrix.gem == 'opentelemetry-exporter-zipkin' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
-          ruby: "jruby"
+          ruby: "jruby-10.0.2.0"
       - name: "Test Jaeger with JRuby"
         if: "${{ matrix.os == 'ubuntu-latest' && matrix.gem == 'opentelemetry-exporter-jaeger' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
-          ruby: "jruby-9.4"
+          ruby: "jruby-10.0.2.0"
       - name: "Truffleruby Filter"
         id: truffleruby_skip
         shell: bash
@@ -189,25 +190,26 @@ jobs:
           gem: "${{ matrix.gem }}"
           ruby: "3.3"
       - name: "Test Ruby 3.2"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.2"
-      - name: "Test Ruby 3.1"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
-          ruby: "3.1"
+          ruby: "3.2"
           yard: true
           rubocop: true
           build: true
+      - name: "Test Ruby 3.2"
+        if: "${{ matrix.os != 'ubuntu-latest' }}"
+        uses: ./.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "3.2"
       - name: "Test JRuby"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
-          ruby: "jruby"
+          ruby: "jruby-10.0.2.0"
       - name: "Test truffleruby"
         if: "${{ matrix.os == 'ubuntu-latest' }}"
         uses: ./.github/actions/test_gem
