@@ -35,8 +35,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   Division by zero
-        #   Can't convert 'int' object to str implicitly
+        #   # Division by zero
+        #   # Can't convert 'int' object to str implicitly
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::EXCEPTION::EXCEPTION_MESSAGE}.
@@ -59,8 +59,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   java.net.ConnectException
-        #   OSError
+        #   # java.net.ConnectException
+        #   # OSError
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::EXCEPTION::EXCEPTION_TYPE}.

@@ -29,8 +29,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   3ba4827d-4422-483f-b59f-85b74211c11d
-        #   storage-client-1
+        #   # 3ba4827d-4422-483f-b59f-85b74211c11d
+        #   # storage-client-1
         #
         AZURE_CLIENT_ID = 'azure.client.id'
     
@@ -44,11 +44,11 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Eventual
-        #   ConsistentPrefix
-        #   BoundedStaleness
-        #   Strong
-        #   Session
+        #   # Eventual
+        #   # ConsistentPrefix
+        #   # BoundedStaleness
+        #   # Strong
+        #   # Session
         #
         AZURE_COSMOSDB_CONSISTENCY_LEVEL = 'azure.cosmosdb.consistency.level'
     
@@ -59,8 +59,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["North Central US", "Australia East", "Australia Southeast"]
-        #
+        #   # North Central US
+        # Australia East
+        # Australia Southeast
         AZURE_COSMOSDB_OPERATION_CONTACTED_REGIONS = 'azure.cosmosdb.operation.contacted_regions'
     
         # The number of request units consumed by the operation.
@@ -68,8 +69,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   46.18
-        #   1.0
+        #   # 46.18
+        #   # 1.0
         #
         AZURE_COSMOSDB_OPERATION_REQUEST_CHARGE = 'azure.cosmosdb.operation.request_charge'
     
@@ -83,8 +84,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1000
-        #   1002
+        #   # 1000
+        #   # 1002
         #
         AZURE_COSMOSDB_RESPONSE_SUB_STATUS_CODE = 'azure.cosmosdb.response.sub_status_code'
     
@@ -93,9 +94,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Microsoft.Storage
-        #   Microsoft.KeyVault
-        #   Microsoft.ServiceBus
+        #   # Microsoft.Storage
+        #   # Microsoft.KeyVault
+        #   # Microsoft.ServiceBus
         #
         AZURE_RESOURCE_PROVIDER_NAMESPACE = 'azure.resource_provider.namespace'
     
@@ -104,7 +105,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   00000000-0000-0000-0000-000000000000
+        #   # 00000000-0000-0000-0000-000000000000
         #
         AZURE_SERVICE_REQUEST_ID = 'azure.service.request.id'
     

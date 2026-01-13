@@ -34,8 +34,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   Division by zero
-      #   Can't convert 'int' object to str implicitly
+      #   # Division by zero
+      #   # Can't convert 'int' object to str implicitly
       #
       EXCEPTION_MESSAGE = 'exception.message'
   
@@ -53,8 +53,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   java.net.ConnectException
-      #   OSError
+      #   # java.net.ConnectException
+      #   # OSError
       #
       EXCEPTION_TYPE = 'exception.type'
   

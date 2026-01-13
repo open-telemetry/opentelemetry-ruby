@@ -31,9 +31,9 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   example.com
-        #   10.1.2.80
-        #   /tmp/my.sock
+        #   # example.com
+        #   # 10.1.2.80
+        #   # /tmp/my.sock
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::SERVER::SERVER_ADDRESS}.
@@ -46,9 +46,9 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   80
-        #   8080
-        #   443
+        #   # 80
+        #   # 8080
+        #   # 443
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::SERVER::SERVER_PORT}.

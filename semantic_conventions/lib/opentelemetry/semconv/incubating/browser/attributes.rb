@@ -31,8 +31,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   [" Not A;Brand 99", "Chromium 99", "Chrome 99"]
-        #
+        #   # Not A;Brand 99
+        # Chromium 99
+        # Chrome 99
         BROWSER_BRANDS = 'browser.brands'
     
         # Preferred language of the user using the browser
@@ -42,10 +43,10 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   en
-        #   en-US
-        #   fr
-        #   fr-FR
+        #   # en
+        #   # en-US
+        #   # fr
+        #   # fr-FR
         #
         BROWSER_LANGUAGE = 'browser.language'
     
@@ -64,9 +65,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Windows
-        #   macOS
-        #   Android
+        #   # Windows
+        #   # macOS
+        #   # Android
         #
         BROWSER_PLATFORM = 'browser.platform'
     

@@ -29,7 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1
+        #   # 1
         #
         SYSTEM_CPU_LOGICAL_NUMBER = 'system.cpu.logical_number'
     
@@ -38,8 +38,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   idle
-        #   interrupt
+        #   # idle
+        #   # interrupt
         #
         # @deprecated {"note": "Replaced by `cpu.mode`.", "reason": "renamed", "renamed_to": "cpu.mode"}
         SYSTEM_CPU_STATE = 'system.cpu.state'
@@ -49,7 +49,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   (identifier)
+        #   # (identifier)
         #
         SYSTEM_DEVICE = 'system.device'
     
@@ -58,7 +58,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   rw, ro
+        #   # rw, ro
         #
         SYSTEM_FILESYSTEM_MODE = 'system.filesystem.mode'
     
@@ -67,7 +67,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   /mnt/data
+        #   # /mnt/data
         #
         SYSTEM_FILESYSTEM_MOUNTPOINT = 'system.filesystem.mountpoint'
     
@@ -76,7 +76,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   used
+        #   # used
         #
         SYSTEM_FILESYSTEM_STATE = 'system.filesystem.state'
     
@@ -85,7 +85,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ext4
+        #   # ext4
         #
         SYSTEM_FILESYSTEM_TYPE = 'system.filesystem.type'
     
@@ -94,8 +94,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   free
-        #   cached
+        #   # free
+        #   # cached
         #
         SYSTEM_MEMORY_STATE = 'system.memory.state'
     
@@ -104,7 +104,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   close_wait
+        #   # close_wait
         #
         # @deprecated {"note": "Replaced by `network.connection.state`.", "reason": "renamed", "renamed_to": "network.connection.state"}
         SYSTEM_NETWORK_STATE = 'system.network.state'
@@ -114,7 +114,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   in
+        #   # in
         #
         SYSTEM_PAGING_DIRECTION = 'system.paging.direction'
     
@@ -123,7 +123,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   free
+        #   # free
         #
         SYSTEM_PAGING_STATE = 'system.paging.state'
     
@@ -132,7 +132,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   minor
+        #   # minor
         #
         SYSTEM_PAGING_TYPE = 'system.paging.type'
     
@@ -141,7 +141,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   running
+        #   # running
         #
         SYSTEM_PROCESS_STATUS = 'system.process.status'
     
@@ -150,7 +150,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   running
+        #   # running
         #
         # @deprecated {"note": "Replaced by `system.process.status`.", "reason": "renamed", "renamed_to": "system.process.status"}
         SYSTEM_PROCESSES_STATUS = 'system.processes.status'

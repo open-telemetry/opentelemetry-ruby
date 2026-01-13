@@ -29,7 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry-cluster
+        #   # opentelemetry-cluster
         #
         K8S_CLUSTER_NAME = 'k8s.cluster.name'
     
@@ -61,7 +61,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   218fc5a9-a5f1-4b54-aa05-46717d0ab26d
+        #   # 218fc5a9-a5f1-4b54-aa05-46717d0ab26d
         #
         K8S_CLUSTER_UID = 'k8s.cluster.uid'
     
@@ -70,7 +70,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   redis
+        #   # redis
         #
         K8S_CONTAINER_NAME = 'k8s.container.name'
     
@@ -84,8 +84,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Evicted
-        #   Error
+        #   # Evicted
+        #   # Error
         #
         K8S_CONTAINER_STATUS_LAST_TERMINATED_REASON = 'k8s.container.status.last_terminated_reason'
     
@@ -94,15 +94,15 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ContainerCreating
-        #   CrashLoopBackOff
-        #   CreateContainerConfigError
-        #   ErrImagePull
-        #   ImagePullBackOff
-        #   OOMKilled
-        #   Completed
-        #   Error
-        #   ContainerCannotRun
+        #   # ContainerCreating
+        #   # CrashLoopBackOff
+        #   # CreateContainerConfigError
+        #   # ErrImagePull
+        #   # ImagePullBackOff
+        #   # OOMKilled
+        #   # Completed
+        #   # Error
+        #   # ContainerCannotRun
         #
         K8S_CONTAINER_STATUS_REASON = 'k8s.container.status.reason'
     
@@ -111,9 +111,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   terminated
-        #   running
-        #   waiting
+        #   # terminated
+        #   # running
+        #   # waiting
         #
         K8S_CONTAINER_STATUS_STATE = 'k8s.container.status.state'
     
@@ -135,7 +135,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   4
+        #   # 4
         #   
         #
         K8S_CRONJOB_ANNOTATION_LAMBDA = ->(key) { "k8s.cronjob.annotation.#{key}" }
@@ -158,7 +158,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   weekly
+        #   # weekly
         #   
         #
         K8S_CRONJOB_LABEL_LAMBDA = ->(key) { "k8s.cronjob.label.#{key}" }
@@ -168,7 +168,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry
+        #   # opentelemetry
         #
         K8S_CRONJOB_NAME = 'k8s.cronjob.name'
     
@@ -177,7 +177,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
+        #   # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
         #
         K8S_CRONJOB_UID = 'k8s.cronjob.uid'
     
@@ -199,7 +199,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1
+        #   # 1
         #   
         #
         K8S_DAEMONSET_ANNOTATION_LAMBDA = ->(key) { "k8s.daemonset.annotation.#{key}" }
@@ -222,7 +222,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   guestbook
+        #   # guestbook
         #   
         #
         K8S_DAEMONSET_LABEL_LAMBDA = ->(key) { "k8s.daemonset.label.#{key}" }
@@ -232,7 +232,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry
+        #   # opentelemetry
         #
         K8S_DAEMONSET_NAME = 'k8s.daemonset.name'
     
@@ -241,7 +241,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
+        #   # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
         #
         K8S_DAEMONSET_UID = 'k8s.daemonset.uid'
     
@@ -263,7 +263,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1
+        #   # 1
         #   
         #
         K8S_DEPLOYMENT_ANNOTATION_LAMBDA = ->(key) { "k8s.deployment.annotation.#{key}" }
@@ -286,7 +286,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   guestbook
+        #   # guestbook
         #   
         #
         K8S_DEPLOYMENT_LABEL_LAMBDA = ->(key) { "k8s.deployment.label.#{key}" }
@@ -296,7 +296,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry
+        #   # opentelemetry
         #
         K8S_DEPLOYMENT_NAME = 'k8s.deployment.name'
     
@@ -305,7 +305,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
+        #   # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
         #
         K8S_DEPLOYMENT_UID = 'k8s.deployment.uid'
     
@@ -316,8 +316,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Resource
-        #   ContainerResource
+        #   # Resource
+        #   # ContainerResource
         #
         K8S_HPA_METRIC_TYPE = 'k8s.hpa.metric.type'
     
@@ -326,7 +326,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry
+        #   # opentelemetry
         #
         K8S_HPA_NAME = 'k8s.hpa.name'
     
@@ -337,8 +337,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   apps/v1
-        #   autoscaling/v2
+        #   # apps/v1
+        #   # autoscaling/v2
         #
         K8S_HPA_SCALETARGETREF_API_VERSION = 'k8s.hpa.scaletargetref.api_version'
     
@@ -349,8 +349,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Deployment
-        #   StatefulSet
+        #   # Deployment
+        #   # StatefulSet
         #
         K8S_HPA_SCALETARGETREF_KIND = 'k8s.hpa.scaletargetref.kind'
     
@@ -361,8 +361,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   my-deployment
-        #   my-statefulset
+        #   # my-deployment
+        #   # my-statefulset
         #
         K8S_HPA_SCALETARGETREF_NAME = 'k8s.hpa.scaletargetref.name'
     
@@ -371,7 +371,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
+        #   # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
         #
         K8S_HPA_UID = 'k8s.hpa.uid'
     
@@ -380,7 +380,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   2Mi
+        #   # 2Mi
         #
         K8S_HUGEPAGE_SIZE = 'k8s.hugepage.size'
     
@@ -402,7 +402,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1
+        #   # 1
         #   
         #
         K8S_JOB_ANNOTATION_LAMBDA = ->(key) { "k8s.job.annotation.#{key}" }
@@ -425,7 +425,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ci
+        #   # ci
         #   
         #
         K8S_JOB_LABEL_LAMBDA = ->(key) { "k8s.job.label.#{key}" }
@@ -435,7 +435,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry
+        #   # opentelemetry
         #
         K8S_JOB_NAME = 'k8s.job.name'
     
@@ -444,7 +444,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
+        #   # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
         #
         K8S_JOB_UID = 'k8s.job.uid'
     
@@ -466,7 +466,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0
+        #   # 0
         #   
         #
         K8S_NAMESPACE_ANNOTATION_LAMBDA = ->(key) { "k8s.namespace.annotation.#{key}" }
@@ -489,7 +489,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   default
+        #   # default
         #   
         #
         K8S_NAMESPACE_LABEL_LAMBDA = ->(key) { "k8s.namespace.label.#{key}" }
@@ -499,7 +499,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   default
+        #   # default
         #
         K8S_NAMESPACE_NAME = 'k8s.namespace.name'
     
@@ -511,8 +511,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   active
-        #   terminating
+        #   # active
+        #   # terminating
         #
         K8S_NAMESPACE_PHASE = 'k8s.namespace.phase'
     
@@ -534,7 +534,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0
+        #   # 0
         #   
         #
         K8S_NODE_ANNOTATION_LAMBDA = ->(key) { "k8s.node.annotation.#{key}" }
@@ -547,9 +547,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   true
-        #   false
-        #   unknown
+        #   # true
+        #   # false
+        #   # unknown
         #
         K8S_NODE_CONDITION_STATUS = 'k8s.node.condition.status'
     
@@ -568,8 +568,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Ready
-        #   DiskPressure
+        #   # Ready
+        #   # DiskPressure
         #
         K8S_NODE_CONDITION_TYPE = 'k8s.node.condition.type'
     
@@ -591,7 +591,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   arm64
+        #   # arm64
         #   
         #
         K8S_NODE_LABEL_LAMBDA = ->(key) { "k8s.node.label.#{key}" }
@@ -601,7 +601,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   node-1
+        #   # node-1
         #
         K8S_NODE_NAME = 'k8s.node.name'
     
@@ -610,7 +610,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1eb3a0c6-0477-4080-a9cb-0cb7db65c6a2
+        #   # 1eb3a0c6-0477-4080-a9cb-0cb7db65c6a2
         #
         K8S_NODE_UID = 'k8s.node.uid'
     
@@ -634,8 +634,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   true
-        #   x64
+        #   # true
+        #   # x64
         #   
         #
         K8S_POD_ANNOTATION_LAMBDA = ->(key) { "k8s.pod.annotation.#{key}" }
@@ -660,8 +660,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   my-app
-        #   x64
+        #   # my-app
+        #   # x64
         #   
         #
         K8S_POD_LABEL_LAMBDA = ->(key) { "k8s.pod.label.#{key}" }
@@ -677,7 +677,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   my-app
+        #   # my-app
         #
         # @deprecated {"note": "Replaced by `k8s.pod.label`.", "reason": "renamed", "renamed_to": "k8s.pod.label"}
         K8S_POD_LABELS_LAMBDA = ->(key) { "k8s.pod.labels.#{key}" }
@@ -687,7 +687,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry-pod-autoconf
+        #   # opentelemetry-pod-autoconf
         #
         K8S_POD_NAME = 'k8s.pod.name'
     
@@ -696,7 +696,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
+        #   # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
         #
         K8S_POD_UID = 'k8s.pod.uid'
     
@@ -718,7 +718,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0
+        #   # 0
         #   
         #
         K8S_REPLICASET_ANNOTATION_LAMBDA = ->(key) { "k8s.replicaset.annotation.#{key}" }
@@ -741,7 +741,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   guestbook
+        #   # guestbook
         #   
         #
         K8S_REPLICASET_LABEL_LAMBDA = ->(key) { "k8s.replicaset.label.#{key}" }
@@ -751,7 +751,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry
+        #   # opentelemetry
         #
         K8S_REPLICASET_NAME = 'k8s.replicaset.name'
     
@@ -760,7 +760,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
+        #   # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
         #
         K8S_REPLICASET_UID = 'k8s.replicaset.uid'
     
@@ -769,7 +769,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry
+        #   # opentelemetry
         #
         K8S_REPLICATIONCONTROLLER_NAME = 'k8s.replicationcontroller.name'
     
@@ -778,7 +778,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
+        #   # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
         #
         K8S_REPLICATIONCONTROLLER_UID = 'k8s.replicationcontroller.uid'
     
@@ -787,7 +787,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry
+        #   # opentelemetry
         #
         K8S_RESOURCEQUOTA_NAME = 'k8s.resourcequota.name'
     
@@ -798,7 +798,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   count/replicationcontrollers
+        #   # count/replicationcontrollers
         #
         K8S_RESOURCEQUOTA_RESOURCE_NAME = 'k8s.resourcequota.resource_name'
     
@@ -807,7 +807,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
+        #   # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
         #
         K8S_RESOURCEQUOTA_UID = 'k8s.resourcequota.uid'
     
@@ -829,7 +829,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1
+        #   # 1
         #   
         #
         K8S_STATEFULSET_ANNOTATION_LAMBDA = ->(key) { "k8s.statefulset.annotation.#{key}" }
@@ -852,7 +852,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   guestbook
+        #   # guestbook
         #   
         #
         K8S_STATEFULSET_LABEL_LAMBDA = ->(key) { "k8s.statefulset.label.#{key}" }
@@ -862,7 +862,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry
+        #   # opentelemetry
         #
         K8S_STATEFULSET_NAME = 'k8s.statefulset.name'
     
@@ -871,7 +871,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
+        #   # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
         #
         K8S_STATEFULSET_UID = 'k8s.statefulset.uid'
     
@@ -880,7 +880,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   gold.storageclass.storage.k8s.io
+        #   # gold.storageclass.storage.k8s.io
         #
         K8S_STORAGECLASS_NAME = 'k8s.storageclass.name'
     
@@ -889,7 +889,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   volume0
+        #   # volume0
         #
         K8S_VOLUME_NAME = 'k8s.volume.name'
     
@@ -898,8 +898,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   emptyDir
-        #   persistentVolumeClaim
+        #   # emptyDir
+        #   # persistentVolumeClaim
         #
         K8S_VOLUME_TYPE = 'k8s.volume.type'
     
