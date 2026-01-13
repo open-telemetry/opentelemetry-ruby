@@ -18,6 +18,7 @@ concurrency:
 
 jobs:
   validate-commits:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     name: Conventional Commits Validation
     runs-on: ubuntu-latest
     steps:
