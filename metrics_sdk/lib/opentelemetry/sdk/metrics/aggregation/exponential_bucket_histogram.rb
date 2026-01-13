@@ -17,6 +17,8 @@ module OpenTelemetry
       module Aggregation
         # Contains the implementation of the {https://opentelemetry.io/docs/specs/otel/metrics/data-model/#exponentialhistogram ExponentialBucketHistogram} aggregation
         class ExponentialBucketHistogram # rubocop:disable Metrics/ClassLength
+          OVERFLOW_ATTRIBUTE_SET = { 'otel.metric.overflow' => true }.freeze
+
           # relate to min max scale: https://opentelemetry.io/docs/specs/otel/metrics/sdk/#support-a-minimum-and-maximum-scale
           DEFAULT_SIZE  = 160
           DEFAULT_SCALE = 20
@@ -204,35 +206,51 @@ module OpenTelemetry
           end
           # rubocop:enable Metrics/MethodLength
 
-          # this is aggregate in python; there is no merge in aggregate; but rescale happened
-          # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
-          def update(amount, attributes, data_points)
-            # fetch or initialize the ExponentialHistogramDataPoint
-            hdp = data_points.fetch(attributes) do
-              if @record_min_max
-                min = Float::INFINITY
-                max = -Float::INFINITY
-              end
+          def update(amount, attributes, data_points, cardinality_limit)
+            hdp = if data_points.key?(attributes)
+                    data_points[attributes]
+                  elsif data_points.size >= cardinality_limit
+                    data_points[OVERFLOW_ATTRIBUTE_SET] || create_new_data_point(OVERFLOW_ATTRIBUTE_SET, data_points)
+                  else
+                    create_new_data_point(attributes, data_points)
+                  end
 
-              # this code block will only be executed if no data_points was found with the attributes
-              data_points[attributes] = ExponentialHistogramDataPoint.new(
-                attributes,
-                nil,                                                               # :start_time_unix_nano
-                0,                                                                 # :time_unix_nano
-                0,                                                                 # :count
-                0,                                                                 # :sum
-                @scale,                                                            # :scale
-                @zero_count,                                                       # :zero_count
-                ExponentialHistogram::Buckets.new,                                 # :positive
-                ExponentialHistogram::Buckets.new,                                 # :negative
-                0,                                                                 # :flags
-                nil,                                                               # :exemplars
-                min,                                                               # :min
-                max,                                                               # :max
-                @zero_threshold                                                    # :zero_threshold
-              )
+            update_histogram_data_point(hdp, attributes, amount)
+            nil
+          end
+
+          def aggregation_temporality
+            @aggregation_temporality.temporality
+          end
+
+          private
+
+          def create_new_data_point(attributes, data_points)
+            if @record_min_max
+              min = Float::INFINITY
+              max = -Float::INFINITY
             end
 
+            data_points[attributes] = ExponentialHistogramDataPoint.new(
+              attributes,
+              nil,                                                               # :start_time_unix_nano
+              0,                                                                 # :time_unix_nano
+              0,                                                                 # :count
+              0,                                                                 # :sum
+              @scale,                                                            # :scale
+              @zero_count,                                                       # :zero_count
+              ExponentialHistogram::Buckets.new,                                 # :positive
+              ExponentialHistogram::Buckets.new,                                 # :negative
+              0,                                                                 # :flags
+              nil,                                                               # :exemplars
+              min,                                                               # :min
+              max,                                                               # :max
+              @zero_threshold                                                    # :zero_threshold
+            )
+          end
+
+          # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
+          def update_histogram_data_point(hdp, attributes, amount)
             # Start to populate the data point (esp. the buckets)
             if @record_min_max
               hdp.max = amount if amount > hdp.max
@@ -309,15 +327,8 @@ module OpenTelemetry
             bucket_index += buckets.counts.size if bucket_index.negative?
 
             buckets.increment_bucket(bucket_index)
-            nil
           end
-          # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity
-
-          def aggregation_temporality
-            @aggregation_temporality.temporality
-          end
-
-          private
+          # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
           def grow_buckets(span, buckets)
             return if span < buckets.counts.size
@@ -336,9 +347,6 @@ module OpenTelemetry
           end
 
           def get_scale_change(low, high)
-            # puts "get_scale_change: low: #{low}, high: #{high}, @size: #{@size}"
-            # python code also produce 18 with 0,1048575, the high is little bit off
-            # just checked, the mapping is also ok, produce the 1048575
             change = 0
             while high - low >= @size
               high >>= 1
