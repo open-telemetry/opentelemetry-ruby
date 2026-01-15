@@ -4,8 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'cgi/escape'
-
 module OpenTelemetry
   module Exporter
     module OTLP
