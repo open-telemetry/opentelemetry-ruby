@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'uri'
+require 'cgi'
 
 module OpenTelemetry
   module Baggage
@@ -63,7 +63,7 @@ module OpenTelemetry
               # the W3C spec where it's referred to as properties. We preserve
               # the properties (as-is) so that they can be propagated elsewhere.
               kv, meta = entry.split(';', 2)
-              k, v = kv.split('=').map!(&URI.method(:decode_www_form_component))
+              k, v = kv.split('=').map!(&CGI.method(:unescape))
               builder.set_value(k, v, metadata: meta)
             end
           end
@@ -99,7 +99,7 @@ module OpenTelemetry
         end
 
         def encode_value(key, entry)
-          result = +"#{URI.encode_www_form_component(key.to_s)}=#{URI.encode_www_form_component(entry.value.to_s)}"
+          result = +"#{CGI.escape(key.to_s)}=#{CGI.escape(entry.value.to_s)}"
           # We preserve metadata received on extract and assume it's already formatted
           # for transport. It's sent as-is without further processing.
           result << ";#{entry.metadata}" if entry.metadata

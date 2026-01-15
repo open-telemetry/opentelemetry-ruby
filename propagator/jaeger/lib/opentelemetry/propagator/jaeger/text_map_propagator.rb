@@ -75,7 +75,7 @@ module OpenTelemetry
           setter.set(carrier, IDENTITY_KEY, trace_span_identity_value)
           OpenTelemetry::Baggage.values(context: context).each do |key, value|
             baggage_key = 'uberctx-' + key
-            encoded_value = URI.encode_www_form_component(value)
+            encoded_value = CGI.escape(value)
             setter.set(carrier, baggage_key, encoded_value)
           end
           carrier
@@ -110,7 +110,7 @@ module OpenTelemetry
               next unless baggage_key
 
               raw_value = getter.get(carrier, carrier_key)
-              value = URI.decode_www_form_component(raw_value)
+              value = CGI.unescape(raw_value)
               b.set_value(baggage_key, value)
             end
           end
