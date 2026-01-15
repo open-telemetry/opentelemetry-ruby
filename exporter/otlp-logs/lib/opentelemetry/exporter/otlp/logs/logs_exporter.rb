@@ -10,6 +10,7 @@ require 'opentelemetry-logs-api' # the sdk isn't loading the api, but not sure w
 require 'opentelemetry/sdk/logs'
 require 'net/http'
 require 'zlib'
+require 'cgi/escape'
 
 require 'google/rpc/status_pb'
 

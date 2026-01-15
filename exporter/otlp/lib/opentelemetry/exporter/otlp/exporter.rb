@@ -8,6 +8,7 @@ require 'opentelemetry/common'
 require 'opentelemetry/sdk'
 require 'net/http'
 require 'zlib'
+require 'cgi/escape'
 
 require 'google/rpc/status_pb'
 

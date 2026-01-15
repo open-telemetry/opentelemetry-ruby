@@ -9,6 +9,7 @@ require 'opentelemetry/exporter/otlp/common'
 require 'opentelemetry/sdk'
 require 'net/http'
 require 'zlib'
+require 'cgi/escape'
 
 require 'google/rpc/status_pb'
 
@@ -270,7 +271,7 @@ module OpenTelemetry
             raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if entries.empty?
 
             entries.each_with_object({}) do |entry, headers|
-              k, v = entry.split('=', 2).map(&URI.method(:decode_www_form_component))
+              k, v = entry.split('=', 2).map(&CGI.method(:unescape))
               begin
                 k = k.to_s.strip
                 v = v.to_s.strip
