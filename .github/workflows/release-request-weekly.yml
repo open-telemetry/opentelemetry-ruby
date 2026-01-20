@@ -17,12 +17,13 @@ jobs:
     steps:
       - name: Install Ruby
         uses: ruby/setup-ruby@675dd7ba1b06c8786a1480d89c384f5620a42647 # v1.281.0
+        env:
+          BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
         with:
           ruby-version: "4.0"
+          bundler-cache: true
       - name: Checkout repo
         uses: actions/checkout@v6
-      - name: Install Toys
-        run: "gem install --no-document toys -v 0.19.1"
       - name: Create otelbot app token
         uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
         id: app-token
