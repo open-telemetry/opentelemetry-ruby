@@ -3,8 +3,12 @@
 # The repo organization and name.
 repo: open-telemetry/opentelemetry-ruby
 
-# Time in seconds for release scripts to wait for CI to complete.
-required_checks_timeout: 1200
+# Disable pre-release GitHub check requirements.
+required_checks: false
+
+# If commits are added when release pull requests are open, update those pull
+# requests to reflect the new commits.
+update_existing_requests: true
 
 # Git user attached to commits for release pull requests.
 git_user_name: otelbot
