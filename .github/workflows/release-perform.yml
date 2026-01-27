@@ -3,8 +3,8 @@ name: Force release
 on:
   workflow_dispatch:
     inputs:
-      gem:
-        description: Gem to release
+      name:
+        description: Component to release
         required: true
       version:
         description: Version to release
@@ -22,24 +22,26 @@ jobs:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     permissions:
       contents: write # required for creating releases
+      pull-requests: write # required for updating label on PR, posting comments
+      issues: write # required for creating new issues on failed releases
     runs-on: ubuntu-latest
     steps:
       - name: Install Ruby
         uses: ruby/setup-ruby@675dd7ba1b06c8786a1480d89c384f5620a42647 # v1.281.0
+        env:
+          BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
         with:
-          ruby-version: 3.1
+          ruby-version: "4.0"
+          bundler-cache: true
       - name: Checkout repo
         uses: actions/checkout@v6
-      - name: Install Toys
-        run: "gem install --no-document toys -v 0.15.5"
       - name: Perform release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
         run: |
           toys release perform --yes --verbose \
-            "--enable-releases=${{ secrets.ENABLE_RELEASES }}" \
-            "--release-sha=${{ github.sha }}" \
-            "--rubygems-api-key=${{ secrets.RUBYGEMS_API_KEY }}" \
+            "--release-ref=${{ github.sha }}" \
             ${{ github.event.inputs.flags }} \
-            "${{ github.event.inputs.gem }}" "${{ github.event.inputs.version }}" \
+            "${{ github.event.inputs.name }}" "${{ github.event.inputs.version }}" \
             < /dev/null
