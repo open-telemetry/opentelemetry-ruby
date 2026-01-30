@@ -472,6 +472,7 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
     let(:processor) { BatchLogRecordProcessor.new(exporter) }
 
     it 'reports export failures' do
+      # See: https://github.com/open-telemetry/opentelemetry-ruby/issues/2027
       skip 'Test is unreliable on Windows and MacOS CI' if ENV['CI']
 
       # skip the work method's behavior, we rely on shutdown to get us to the failures
