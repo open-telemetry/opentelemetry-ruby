@@ -19,7 +19,7 @@ commit_lint:
   # Merge types allowed by the repo.
   merge: squash
 
-# List of all releaseable gems. Each gem should include:
+# List of all releasable gems. Each gem should include:
 #  *  name: The name of the gem. (Required.)
 #  *  directory: Gem directory relative to the repo root. (Required.)
 #  *  version_rb_path: Path to version.rb relative to the gem directory.
@@ -28,7 +28,7 @@ commit_lint:
 #  *  version_constant: The fully-qualified version constant as an array.
 #     (Required because the OpenTelemetry namespace does not match the gem
 #     name "opentelemetry".)
-#  *  changelog_path: Path to CHANGLEOG.md relative to the gem directory.
+#  *  changelog_path: Path to CHANGELOG.md relative to the gem directory.
 #     (Required only if it is not in the expected location.)
 gems:
   - name: opentelemetry-api
@@ -57,7 +57,7 @@ gems:
 
   - name: opentelemetry-exporter-otlp
     # we append a slash here to avoid the naive substring start_with? directory-matching condition in underlying toys gem
-    # which casues exporter/otlp to incorrectly match when changes occur in exporter/otlp-logs or exporter/otlp-metrics
+    # which causes exporter/otlp to incorrectly match when changes occur in exporter/otlp-logs or exporter/otlp-metrics
     # https://github.com/dazuma/toys/blob/17ed449da8299f272b834470ff6b279a59e8070b/.toys/release/.lib/release_utils.rb#L436
     # https://github.com/open-telemetry/opentelemetry-ruby/issues/1792
     directory: exporter/otlp/
