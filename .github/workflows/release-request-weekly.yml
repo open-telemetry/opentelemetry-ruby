@@ -20,7 +20,7 @@ jobs:
         with:
           ruby-version: 3.1
       - name: Checkout repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - name: Install Toys
         run: "gem install --no-document toys -v 0.15.5"
       - name: Create otelbot app token
