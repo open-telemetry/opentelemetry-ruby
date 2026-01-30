@@ -1,5 +1,10 @@
 # opentelemetry-exporter-jaeger
 
+## :warning: EOL NOTICE 2025-12-31
+
+  The `opentelemetry-exporter-jaeger` gem is deprecated and will no longer be maintained. Users are encouraged to migrate to the `opentelemetry-exporter-otlp` gem for future-proof OpenTelemetry integration. See the offical docs for details <https://www.jaegertracing.io/docs/latest/migration/>
+
+
 The `opentelemetry-exporter-jaeger` gem provides Jaeger exporters for OpenTelemetry for Ruby. Using `opentelemetry-exporter-jaeger`, an application can configure OpenTelemetry to export collected tracing data to [Jaeger][jaeger-home]. Two exporters are included: the `AgentExporter` exports in Thrift Compact format over UDP to the Jaeger agent; and the `CollectorExporter` exports in Thrift Binary format over HTTP to the Jaeger collector.
 
 ## What is OpenTelemetry?
