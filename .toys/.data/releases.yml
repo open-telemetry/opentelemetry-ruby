@@ -14,7 +14,7 @@ update_existing_requests: true
 git_user_name: otelbot
 git_user_email: 197425009+otelbot@users.noreply.github.com
 
-# List of all releaseable gems. Each gem should include:
+# List of all releasable gems. Each gem should include:
 #  *  name: The name of the gem. (Required.)
 #  *  directory: Gem directory relative to the repo root.
 #     (Required unless the gem name matches the directory name exactly. This
