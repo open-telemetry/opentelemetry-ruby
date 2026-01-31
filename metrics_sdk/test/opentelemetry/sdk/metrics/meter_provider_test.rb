@@ -33,6 +33,20 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
 
       _(meter_a).must_equal(meter_b)
     end
+
+    it 'repeated calls does not recreate a meter of the same name, schema_url and attributes' do
+      meter_a = OpenTelemetry.meter_provider.meter('test', schema_url: 'http//:otel/v0.1', attributes: { foo: 'bar' })
+      meter_b = OpenTelemetry.meter_provider.meter('test', schema_url: 'http//:otel/v0.1', attributes: { foo: 'bar' })
+
+      _(meter_a).must_equal(meter_b)
+    end
+
+    it 'repeated calls does create a new meter of the same name, different schema_url' do
+      meter_a = OpenTelemetry.meter_provider.meter('test', schema_url: 'http//:otel/v0.1')
+      meter_b = OpenTelemetry.meter_provider.meter('test', schema_url: 'http//:otel/v0.2')
+
+      _(meter_a).wont_equal(meter_b)
+    end
   end
 
   describe '#shutdown' do
