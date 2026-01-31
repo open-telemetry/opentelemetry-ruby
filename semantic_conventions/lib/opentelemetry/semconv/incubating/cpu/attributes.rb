@@ -29,7 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1
+        #   # 1
         #
         CPU_LOGICAL_NUMBER = 'cpu.logical_number'
     
@@ -38,8 +38,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   user
-        #   system
+        #   # user
+        #   # system
         #
         CPU_MODE = 'cpu.mode'
     

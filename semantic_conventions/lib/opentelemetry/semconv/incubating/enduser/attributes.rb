@@ -34,7 +34,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   username
+        #   # username
         #
         ENDUSER_ID = 'enduser.id'
     
@@ -48,7 +48,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   QdH5CAWJgqVT4rOr0qtumf
+        #   # QdH5CAWJgqVT4rOr0qtumf
         #
         ENDUSER_PSEUDO_ID = 'enduser.pseudo.id'
     
@@ -59,7 +59,7 @@ module OpenTelemetry
         # @example Sample Values
         #   admin
         #
-        # @deprecated {"note": "Use `user.roles` attribute instead.", "reason": "uncategorized"}
+        # @deprecated {"note": "Replaced by `user.roles`.", "reason": "renamed", "renamed_to": "user.roles"}
         ENDUSER_ROLE = 'enduser.role'
     
         # Deprecated, no replacement at this time.

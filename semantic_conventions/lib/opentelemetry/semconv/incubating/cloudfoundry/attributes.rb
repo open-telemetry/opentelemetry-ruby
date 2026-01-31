@@ -33,7 +33,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   218fc5a9-a5f1-4b54-aa05-46717d0ab26d
+        #   # 218fc5a9-a5f1-4b54-aa05-46717d0ab26d
         #
         CLOUDFOUNDRY_APP_ID = 'cloudfoundry.app.id'
     
@@ -50,8 +50,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0
-        #   1
+        #   # 0
+        #   # 1
         #
         CLOUDFOUNDRY_APP_INSTANCE_ID = 'cloudfoundry.app.instance.id'
     
@@ -64,7 +64,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   my-app-name
+        #   # my-app-name
         #
         CLOUDFOUNDRY_APP_NAME = 'cloudfoundry.app.name'
     
@@ -77,7 +77,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   218fc5a9-a5f1-4b54-aa05-46717d0ab26d
+        #   # 218fc5a9-a5f1-4b54-aa05-46717d0ab26d
         #
         CLOUDFOUNDRY_ORG_ID = 'cloudfoundry.org.id'
     
@@ -90,7 +90,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   my-org-name
+        #   # my-org-name
         #
         CLOUDFOUNDRY_ORG_NAME = 'cloudfoundry.org.name'
     
@@ -104,7 +104,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   218fc5a9-a5f1-4b54-aa05-46717d0ab26d
+        #   # 218fc5a9-a5f1-4b54-aa05-46717d0ab26d
         #
         CLOUDFOUNDRY_PROCESS_ID = 'cloudfoundry.process.id'
     
@@ -117,7 +117,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   web
+        #   # web
         #
         CLOUDFOUNDRY_PROCESS_TYPE = 'cloudfoundry.process.type'
     
@@ -130,7 +130,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   218fc5a9-a5f1-4b54-aa05-46717d0ab26d
+        #   # 218fc5a9-a5f1-4b54-aa05-46717d0ab26d
         #
         CLOUDFOUNDRY_SPACE_ID = 'cloudfoundry.space.id'
     
@@ -143,7 +143,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   my-space-name
+        #   # my-space-name
         #
         CLOUDFOUNDRY_SPACE_NAME = 'cloudfoundry.space.name'
     
@@ -162,7 +162,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   cf/gorouter
+        #   # cf/gorouter
         #
         CLOUDFOUNDRY_SYSTEM_ID = 'cloudfoundry.system.id'
     
@@ -179,7 +179,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   218fc5a9-a5f1-4b54-aa05-46717d0ab26d
+        #   # 218fc5a9-a5f1-4b54-aa05-46717d0ab26d
         #
         CLOUDFOUNDRY_SYSTEM_INSTANCE_ID = 'cloudfoundry.system.instance.id'
     

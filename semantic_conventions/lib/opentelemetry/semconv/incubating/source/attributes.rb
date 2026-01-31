@@ -31,9 +31,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   source.example.com
-        #   10.1.2.80
-        #   /tmp/my.sock
+        #   # source.example.com
+        #   # 10.1.2.80
+        #   # /tmp/my.sock
         #
         SOURCE_ADDRESS = 'source.address'
     
@@ -42,8 +42,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   3389
-        #   2888
+        #   # 3389
+        #   # 2888
         #
         SOURCE_PORT = 'source.port'
     

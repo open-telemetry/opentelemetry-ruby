@@ -29,7 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   123
+        #   # 123
         #
         VCS_CHANGE_ID = 'vcs.change.id'
     
@@ -38,9 +38,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   open
-        #   closed
-        #   merged
+        #   # open
+        #   # closed
+        #   # merged
         #
         VCS_CHANGE_STATE = 'vcs.change.state'
     
@@ -49,9 +49,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Fixes broken thing
-        #   feat: add my new feature
-        #   [chore] update dependency
+        #   # Fixes broken thing
+        #   # feat: add my new feature
+        #   # [chore] update dependency
         #
         VCS_CHANGE_TITLE = 'vcs.change.title'
     
@@ -60,8 +60,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   added
-        #   removed
+        #   # added
+        #   # removed
         #
         VCS_LINE_CHANGE_TYPE = 'vcs.line_change.type'
     
@@ -70,9 +70,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   my-org
-        #   myteam
-        #   business-unit
+        #   # my-org
+        #   # myteam
+        #   # business-unit
         #
         VCS_OWNER_NAME = 'vcs.owner.name'
     
@@ -81,10 +81,10 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   github
-        #   gitlab
-        #   gitea
-        #   bitbucket
+        #   # github
+        #   # gitlab
+        #   # gitea
+        #   # bitbucket
         #
         VCS_PROVIDER_NAME = 'vcs.provider.name'
     
@@ -97,8 +97,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   my-feature-branch
-        #   tag-1-test
+        #   # my-feature-branch
+        #   # tag-1-test
         #
         VCS_REF_BASE_NAME = 'vcs.ref.base.name'
     
@@ -121,10 +121,10 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   9d59409acf479dfa0df1aa568182e43e43df8bbe28d60fcf2bc52e30068802cc
-        #   main
-        #   123
-        #   HEAD
+        #   # 9d59409acf479dfa0df1aa568182e43e43df8bbe28d60fcf2bc52e30068802cc
+        #   # main
+        #   # 123
+        #   # HEAD
         #
         VCS_REF_BASE_REVISION = 'vcs.ref.base.revision'
     
@@ -137,8 +137,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   branch
-        #   tag
+        #   # branch
+        #   # tag
         #
         VCS_REF_BASE_TYPE = 'vcs.ref.base.type'
     
@@ -150,8 +150,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   my-feature-branch
-        #   tag-1-test
+        #   # my-feature-branch
+        #   # tag-1-test
         #
         VCS_REF_HEAD_NAME = 'vcs.ref.head.name'
     
@@ -172,10 +172,10 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   9d59409acf479dfa0df1aa568182e43e43df8bbe28d60fcf2bc52e30068802cc
-        #   main
-        #   123
-        #   HEAD
+        #   # 9d59409acf479dfa0df1aa568182e43e43df8bbe28d60fcf2bc52e30068802cc
+        #   # main
+        #   # 123
+        #   # HEAD
         #
         VCS_REF_HEAD_REVISION = 'vcs.ref.head.revision'
     
@@ -187,8 +187,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   branch
-        #   tag
+        #   # branch
+        #   # tag
         #
         VCS_REF_HEAD_TYPE = 'vcs.ref.head.type'
     
@@ -197,8 +197,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   branch
-        #   tag
+        #   # branch
+        #   # tag
         #
         VCS_REF_TYPE = 'vcs.ref.type'
     
@@ -207,7 +207,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   123
+        #   # 123
         #
         # @deprecated {"note": "Replaced by `vcs.change.id`.", "reason": "renamed", "renamed_to": "vcs.change.id"}
         VCS_REPOSITORY_CHANGE_ID = 'vcs.repository.change.id'
@@ -217,9 +217,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Fixes broken thing
-        #   feat: add my new feature
-        #   [chore] update dependency
+        #   # Fixes broken thing
+        #   # feat: add my new feature
+        #   # [chore] update dependency
         #
         # @deprecated {"note": "Replaced by `vcs.change.title`.", "reason": "renamed", "renamed_to": "vcs.change.title"}
         VCS_REPOSITORY_CHANGE_TITLE = 'vcs.repository.change.title'
@@ -233,8 +233,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   semantic-conventions
-        #   my-cool-repo
+        #   # semantic-conventions
+        #   # my-cool-repo
         #
         VCS_REPOSITORY_NAME = 'vcs.repository.name'
     
@@ -243,8 +243,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   my-feature-branch
-        #   tag-1-test
+        #   # my-feature-branch
+        #   # tag-1-test
         #
         # @deprecated {"note": "Replaced by `vcs.ref.head.name`.", "reason": "renamed", "renamed_to": "vcs.ref.head.name"}
         VCS_REPOSITORY_REF_NAME = 'vcs.repository.ref.name'
@@ -254,10 +254,10 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   9d59409acf479dfa0df1aa568182e43e43df8bbe28d60fcf2bc52e30068802cc
-        #   main
-        #   123
-        #   HEAD
+        #   # 9d59409acf479dfa0df1aa568182e43e43df8bbe28d60fcf2bc52e30068802cc
+        #   # main
+        #   # 123
+        #   # HEAD
         #
         # @deprecated {"note": "Replaced by `vcs.ref.head.revision`.", "reason": "renamed", "renamed_to": "vcs.ref.head.revision"}
         VCS_REPOSITORY_REF_REVISION = 'vcs.repository.ref.revision'
@@ -267,8 +267,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   branch
-        #   tag
+        #   # branch
+        #   # tag
         #
         # @deprecated {"note": "Replaced by `vcs.ref.head.type`.", "reason": "renamed", "renamed_to": "vcs.ref.head.type"}
         VCS_REPOSITORY_REF_TYPE = 'vcs.repository.ref.type'
@@ -281,8 +281,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   https://github.com/opentelemetry/open-telemetry-collector-contrib
-        #   https://gitlab.com/my-org/my-project/my-projects-project/repo
+        #   # https://github.com/opentelemetry/open-telemetry-collector-contrib
+        #   # https://gitlab.com/my-org/my-project/my-projects-project/repo
         #
         VCS_REPOSITORY_URL_FULL = 'vcs.repository.url.full'
     
@@ -291,8 +291,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ahead
-        #   behind
+        #   # ahead
+        #   # behind
         #
         VCS_REVISION_DELTA_DIRECTION = 'vcs.revision_delta.direction'
     

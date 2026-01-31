@@ -29,8 +29,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Helps with math problems
-        #   Generates fiction stories
+        #   # Helps with math problems
+        #   # Generates fiction stories
         #
         GEN_AI_AGENT_DESCRIPTION = 'gen_ai.agent.description'
     
@@ -39,7 +39,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   asst_5j66UpCpwteGg4YSxUnt7lPY
+        #   # asst_5j66UpCpwteGg4YSxUnt7lPY
         #
         GEN_AI_AGENT_ID = 'gen_ai.agent.id'
     
@@ -48,8 +48,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Math Tutor
-        #   Fiction Writer
+        #   # Math Tutor
+        #   # Fiction Writer
         #
         GEN_AI_AGENT_NAME = 'gen_ai.agent.name'
     
@@ -58,7 +58,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   [{'role': 'assistant', 'content': 'The capital of France is Paris.'}]
+        #   # [{'role': 'assistant', 'content': 'The capital of France is Paris.'}]
         #
         # @deprecated {"note": "Removed, no replacement at this time.", "reason": "obsoleted"}
         GEN_AI_COMPLETION = 'gen_ai.completion'
@@ -68,7 +68,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   conv_5j66UpCpwteGg4YSxUnt7lPY
+        #   # conv_5j66UpCpwteGg4YSxUnt7lPY
         #
         GEN_AI_CONVERSATION_ID = 'gen_ai.conversation.id'
     
@@ -79,9 +79,65 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   H7STPQYOND
+        #   # H7STPQYOND
         #
         GEN_AI_DATA_SOURCE_ID = 'gen_ai.data_source.id'
+    
+        # The chat history provided to the model as an input.
+        #
+        # Instrumentations MUST follow [Input messages JSON schema](/docs/gen-ai/gen-ai-input-messages.json).
+        # When the attribute is recorded on events, it MUST be recorded in structured
+        # form. When recorded on spans, it MAY be recorded as a JSON string if structured
+        # format is not supported and SHOULD be recorded in structured form otherwise.
+        #
+        # Messages MUST be provided in the order they were sent to the model.
+        # Instrumentations MAY provide a way for users to filter or truncate
+        # input messages.
+        #
+        # > [!Warning]
+        # > This attribute is likely to contain sensitive information including user/PII data.
+        #
+        # See [Recording content on attributes](/docs/gen-ai/gen-ai-spans.md#recording-content-on-attributes)
+        # section for more details.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # [
+        # {
+        # "role": "user",
+        # "parts": [
+        # {
+        # "type": "text",
+        # "content": "Weather in Paris?"
+        # }
+        # ]
+        # },
+        # {
+        # "role": "assistant",
+        # "parts": [
+        # {
+        # "type": "tool_call",
+        # "id": "call_VSPygqKTWdrhaFErNvMV18Yl",
+        # "name": "get_weather",
+        # "arguments": {
+        # "location": "Paris"
+        # }
+        # }
+        # ]
+        # },
+        # {
+        # "role": "tool",
+        # "parts": [
+        # {
+        # "type": "tool_call_response",
+        # "id": " call_VSPygqKTWdrhaFErNvMV18Yl",
+        # "result": "rainy, 57°F"
+        # }
+        # ]
+        # }
+        # ]
+        GEN_AI_INPUT_MESSAGES = 'gen_ai.input.messages'
     
         # Deprecated, use `gen_ai.output.type`.
         #
@@ -94,38 +150,36 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   100
+        #   # 100
         #
         # @deprecated {"note": "Replaced by `gen_ai.request.seed`.", "reason": "renamed", "renamed_to": "gen_ai.request.seed"}
         GEN_AI_OPENAI_REQUEST_SEED = 'gen_ai.openai.request.seed'
     
-        # The service tier requested. May be a specific tier, default, or auto.
+        # Deprecated, use `openai.request.service_tier`.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   auto
-        #   default
-        #
+        # @deprecated {"note": "Replaced by `openai.request.service_tier`.", "reason": "renamed", "renamed_to": "openai.request.service_tier"}
         GEN_AI_OPENAI_REQUEST_SERVICE_TIER = 'gen_ai.openai.request.service_tier'
     
-        # The service tier used for the response.
+        # Deprecated, use `openai.response.service_tier`.
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   scale
-        #   default
+        #   # scale
+        #   # default
         #
+        # @deprecated {"note": "Replaced by `openai.response.service_tier`.", "reason": "renamed", "renamed_to": "openai.response.service_tier"}
         GEN_AI_OPENAI_RESPONSE_SERVICE_TIER = 'gen_ai.openai.response.service_tier'
     
-        # A fingerprint to track any eventual change in the Generative AI environment.
+        # Deprecated, use `openai.response.system_fingerprint`.
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   fp_44709d6fcb
+        #   # fp_44709d6fcb
         #
+        # @deprecated {"note": "Replaced by `openai.response.system_fingerprint`.", "reason": "renamed", "renamed_to": "openai.response.system_fingerprint"}
         GEN_AI_OPENAI_RESPONSE_SYSTEM_FINGERPRINT = 'gen_ai.openai.response.system_fingerprint'
     
         # The name of the operation being performed.
@@ -134,6 +188,45 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         GEN_AI_OPERATION_NAME = 'gen_ai.operation.name'
+    
+        # Messages returned by the model where each message represents a specific model response (choice, candidate).
+        #
+        # Instrumentations MUST follow [Output messages JSON schema](/docs/gen-ai/gen-ai-output-messages.json)
+        #
+        # Each message represents a single output choice/candidate generated by
+        # the model. Each message corresponds to exactly one generation
+        # (choice/candidate) and vice versa - one choice cannot be split across
+        # multiple messages or one message cannot contain parts from multiple choices.
+        #
+        # When the attribute is recorded on events, it MUST be recorded in structured
+        # form. When recorded on spans, it MAY be recorded as a JSON string if structured
+        # format is not supported and SHOULD be recorded in structured form otherwise.
+        #
+        # Instrumentations MAY provide a way for users to filter or truncate
+        # output messages.
+        #
+        # > [!Warning]
+        # > This attribute is likely to contain sensitive information including user/PII data.
+        #
+        # See [Recording content on attributes](/docs/gen-ai/gen-ai-spans.md#recording-content-on-attributes)
+        # section for more details.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # [
+        # {
+        # "role": "assistant",
+        # "parts": [
+        # {
+        # "type": "text",
+        # "content": "The weather in Paris is currently rainy with a temperature of 57°F."
+        # }
+        # ],
+        # "finish_reason": "stop"
+        # }
+        # ]
+        GEN_AI_OUTPUT_MESSAGES = 'gen_ai.output.messages'
     
         # Represents the content type requested by the client.
         #
@@ -149,17 +242,41 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   [{'role': 'user', 'content': 'What is the capital of France?'}]
+        #   # [{'role': 'user', 'content': 'What is the capital of France?'}]
         #
         # @deprecated {"note": "Removed, no replacement at this time.", "reason": "obsoleted"}
         GEN_AI_PROMPT = 'gen_ai.prompt'
+    
+        # The Generative AI provider as identified by the client or server instrumentation.
+        #
+        # The attribute SHOULD be set based on the instrumentation's best
+        # knowledge and may differ from the actual model provider.
+        #
+        # Multiple providers, including Azure OpenAI, Gemini, and AI hosting platforms
+        # are accessible using the OpenAI REST API and corresponding client libraries,
+        # but may proxy or host models from different providers.
+        #
+        # The `gen_ai.request.model`, `gen_ai.response.model`, and `server.address`
+        # attributes may help identify the actual system in use.
+        #
+        # The `gen_ai.provider.name` attribute acts as a discriminator that
+        # identifies the GenAI telemetry format flavor specific to that provider
+        # within GenAI semantic conventions.
+        # It SHOULD be set consistently with provider-specific attributes and signals.
+        # For example, GenAI spans, metrics, and events related to AWS Bedrock
+        # should have the `gen_ai.provider.name` set to `aws.bedrock` and include
+        # applicable `aws.bedrock.*` attributes and are not expected to include
+        # `openai.*` attributes.
+        #
+        # @note Stability Level: development
+        GEN_AI_PROVIDER_NAME = 'gen_ai.provider.name'
     
         # The target number of candidate completions to return.
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   3
+        #   # 3
         #
         GEN_AI_REQUEST_CHOICE_COUNT = 'gen_ai.request.choice.count'
     
@@ -170,9 +287,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["base64"]
-        #   ["float", "binary"]
-        #
+        #   # base64
+        #   # float
+        # binary
         GEN_AI_REQUEST_ENCODING_FORMATS = 'gen_ai.request.encoding_formats'
     
         # The frequency penalty setting for the GenAI request.
@@ -180,7 +297,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0.1
+        #   # 0.1
         #
         GEN_AI_REQUEST_FREQUENCY_PENALTY = 'gen_ai.request.frequency_penalty'
     
@@ -189,7 +306,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   100
+        #   # 100
         #
         GEN_AI_REQUEST_MAX_TOKENS = 'gen_ai.request.max_tokens'
     
@@ -207,7 +324,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0.1
+        #   # 0.1
         #
         GEN_AI_REQUEST_PRESENCE_PENALTY = 'gen_ai.request.presence_penalty'
     
@@ -216,7 +333,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   100
+        #   # 100
         #
         GEN_AI_REQUEST_SEED = 'gen_ai.request.seed'
     
@@ -225,8 +342,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["forest", "lived"]
-        #
+        #   # forest
+        # lived
         GEN_AI_REQUEST_STOP_SEQUENCES = 'gen_ai.request.stop_sequences'
     
         # The temperature setting for the GenAI request.
@@ -234,7 +351,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0.0
+        #   # 0.0
         #
         GEN_AI_REQUEST_TEMPERATURE = 'gen_ai.request.temperature'
     
@@ -243,7 +360,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1.0
+        #   # 1.0
         #
         GEN_AI_REQUEST_TOP_K = 'gen_ai.request.top_k'
     
@@ -252,7 +369,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1.0
+        #   # 1.0
         #
         GEN_AI_REQUEST_TOP_P = 'gen_ai.request.top_p'
     
@@ -261,9 +378,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["stop"]
-        #   ["stop", "length"]
-        #
+        #   # stop
+        #   # stop
+        # length
         GEN_AI_RESPONSE_FINISH_REASONS = 'gen_ai.response.finish_reasons'
     
         # The unique identifier for the completion.
@@ -271,7 +388,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   chatcmpl-123
+        #   # chatcmpl-123
         #
         GEN_AI_RESPONSE_ID = 'gen_ai.response.id'
     
@@ -280,38 +397,67 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   gpt-4-0613
+        #   # gpt-4-0613
         #
         GEN_AI_RESPONSE_MODEL = 'gen_ai.response.model'
     
-        # The Generative AI product as identified by the client or server instrumentation.
+        # Deprecated, use `gen_ai.provider.name` instead.
         #
-        # The `gen_ai.system` describes a family of GenAI models with specific model identified
-        # by `gen_ai.request.model` and `gen_ai.response.model` attributes.
+        # @note Stability Level: development
+        # @deprecated {"note": "Replaced by `gen_ai.provider.name`.", "reason": "renamed", "renamed_to": "gen_ai.provider.name"}
+        GEN_AI_SYSTEM = 'gen_ai.system'
+    
+        # The system message or instructions provided to the GenAI model separately from the chat history.
         #
-        # The actual GenAI product may differ from the one identified by the client.
-        # Multiple systems, including Azure OpenAI and Gemini, are accessible by OpenAI client
-        # libraries. In such cases, the `gen_ai.system` is set to `openai` based on the
-        # instrumentation's best knowledge, instead of the actual system. The `server.address`
-        # attribute may help identify the actual system in use for `openai`.
+        # This attribute SHOULD be used when the corresponding provider or API
+        # allows to provide system instructions or messages separately from the
+        # chat history.
         #
-        # For custom model, a custom friendly name SHOULD be used.
-        # If none of these options apply, the `gen_ai.system` SHOULD be set to `_OTHER`.
+        # Instructions that are part of the chat history SHOULD be recorded in
+        # `gen_ai.input.messages` attribute instead.
+        #
+        # Instrumentations MUST follow [System instructions JSON schema](/docs/gen-ai/gen-ai-system-instructions.json).
+        #
+        # When recorded on spans, it MAY be recorded as a JSON string if structured
+        # format is not supported and SHOULD be recorded in structured form otherwise.
+        #
+        # Instrumentations MAY provide a way for users to filter or truncate
+        # system instructions.
+        #
+        # > [!Warning]
+        # > This attribute may contain sensitive information.
+        #
+        # See [Recording content on attributes](/docs/gen-ai/gen-ai-spans.md#recording-content-on-attributes)
+        # section for more details.
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   openai
-        #
-        GEN_AI_SYSTEM = 'gen_ai.system'
+        #   # [
+        # {
+        # "type": "text",
+        # "content": "You are an Agent that greet users, always use greetings tool to respond"
+        # }
+        # ]
+        #   # [
+        # {
+        # "type": "text",
+        # "content": "You are a language translator."
+        # },
+        # {
+        # "type": "text",
+        # "content": "Your mission is to translate text in English to French."
+        # }
+        # ]
+        GEN_AI_SYSTEM_INSTRUCTIONS = 'gen_ai.system_instructions'
     
         # The type of token being counted.
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   input
-        #   output
+        #   # input
+        #   # output
         #
         GEN_AI_TOKEN_TYPE = 'gen_ai.token.type'
     
@@ -320,7 +466,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   call_mszuSIzqtI65i1wAUOE8w5H4
+        #   # call_mszuSIzqtI65i1wAUOE8w5H4
         #
         GEN_AI_TOOL_CALL_ID = 'gen_ai.tool.call.id'
     
@@ -329,7 +475,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Multiply two numbers
+        #   # Multiply two numbers
         #
         GEN_AI_TOOL_DESCRIPTION = 'gen_ai.tool.description'
     
@@ -338,7 +484,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Flights
+        #   # Flights
         #
         GEN_AI_TOOL_NAME = 'gen_ai.tool.name'
     
@@ -353,9 +499,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   function
-        #   extension
-        #   datastore
+        #   # function
+        #   # extension
+        #   # datastore
         #
         GEN_AI_TOOL_TYPE = 'gen_ai.tool.type'
     
@@ -364,7 +510,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   42
+        #   # 42
         #
         # @deprecated {"note": "Replaced by `gen_ai.usage.output_tokens`.", "reason": "renamed", "renamed_to": "gen_ai.usage.output_tokens"}
         GEN_AI_USAGE_COMPLETION_TOKENS = 'gen_ai.usage.completion_tokens'
@@ -374,7 +520,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   100
+        #   # 100
         #
         GEN_AI_USAGE_INPUT_TOKENS = 'gen_ai.usage.input_tokens'
     
@@ -383,7 +529,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   180
+        #   # 180
         #
         GEN_AI_USAGE_OUTPUT_TOKENS = 'gen_ai.usage.output_tokens'
     
@@ -392,7 +538,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   42
+        #   # 42
         #
         # @deprecated {"note": "Replaced by `gen_ai.usage.input_tokens`.", "reason": "renamed", "renamed_to": "gen_ai.usage.input_tokens"}
         GEN_AI_USAGE_PROMPT_TOKENS = 'gen_ai.usage.prompt_tokens'

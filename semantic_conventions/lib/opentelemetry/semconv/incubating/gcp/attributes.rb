@@ -29,7 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   projects/my-container-project
+        #   # projects/my-container-project
         #
         GCP_APPHUB_APPLICATION_CONTAINER = 'gcp.apphub.application.container'
     
@@ -38,7 +38,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   my-application
+        #   # my-application
         #
         GCP_APPHUB_APPLICATION_ID = 'gcp.apphub.application.id'
     
@@ -47,7 +47,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   us-central1
+        #   # us-central1
         #
         GCP_APPHUB_APPLICATION_LOCATION = 'gcp.apphub.application.location'
     
@@ -70,7 +70,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   my-service
+        #   # my-service
         #
         GCP_APPHUB_SERVICE_ID = 'gcp.apphub.service.id'
     
@@ -93,7 +93,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   my-workload
+        #   # my-workload
         #
         GCP_APPHUB_WORKLOAD_ID = 'gcp.apphub.workload.id'
     
@@ -104,11 +104,11 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   appengine
-        #   run
-        #   firestore
-        #   alloydb
-        #   spanner
+        #   # appengine
+        #   # run
+        #   # firestore
+        #   # alloydb
+        #   # spanner
         #
         GCP_CLIENT_SERVICE = 'gcp.client.service'
     
@@ -117,8 +117,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   job-name-xxxx
-        #   sample-job-mdw84
+        #   # job-name-xxxx
+        #   # sample-job-mdw84
         #
         GCP_CLOUD_RUN_JOB_EXECUTION = 'gcp.cloud_run.job.execution'
     
@@ -127,8 +127,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0
-        #   1
+        #   # 0
+        #   # 1
         #
         GCP_CLOUD_RUN_JOB_TASK_INDEX = 'gcp.cloud_run.job.task_index'
     
@@ -137,8 +137,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   my-host1234.example.com
-        #   sample-vm.us-west1-b.c.my-project.internal
+        #   # my-host1234.example.com
+        #   # sample-vm.us-west1-b.c.my-project.internal
         #
         GCP_GCE_INSTANCE_HOSTNAME = 'gcp.gce.instance.hostname'
     
@@ -147,8 +147,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   instance-1
-        #   my-vm-name
+        #   # instance-1
+        #   # my-vm-name
         #
         GCP_GCE_INSTANCE_NAME = 'gcp.gce.instance.name'
     

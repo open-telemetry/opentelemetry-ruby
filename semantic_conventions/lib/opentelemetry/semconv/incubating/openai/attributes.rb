@@ -21,17 +21,37 @@
 module OpenTelemetry
   module SemConv
     module Incubating
-      module PROFILE
+      module OPENAI
         # @!group Attribute Names
       
-        # Describes the interpreter or compiler of a single frame.
+        # The service tier requested. May be a specific tier, default, or auto.
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # cpython
+        #   # auto
+        #   # default
         #
-        PROFILE_FRAME_TYPE = 'profile.frame.type'
+        OPENAI_REQUEST_SERVICE_TIER = 'openai.request.service_tier'
+    
+        # The service tier used for the response.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # scale
+        #   # default
+        #
+        OPENAI_RESPONSE_SERVICE_TIER = 'openai.response.service_tier'
+    
+        # A fingerprint to track any eventual change in the Generative AI environment.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # fp_44709d6fcb
+        #
+        OPENAI_RESPONSE_SYSTEM_FINGERPRINT = 'openai.response.system_fingerprint'
     
         # @!endgroup
       end

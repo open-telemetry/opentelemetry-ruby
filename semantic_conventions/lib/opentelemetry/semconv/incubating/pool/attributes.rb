@@ -29,7 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   myDataSource
+        #   # myDataSource
         #
         # @deprecated {"note": "Replaced by `db.client.connection.pool.name`.", "reason": "renamed", "renamed_to": "db.client.connection.pool.name"}
         POOL_NAME = 'pool.name'

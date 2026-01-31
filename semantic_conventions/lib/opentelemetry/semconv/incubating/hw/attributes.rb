@@ -24,37 +24,224 @@ module OpenTelemetry
       module HW
         # @!group Attribute Names
       
+        # Design capacity in Watts-hours or Amper-hours
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # 9.3Ah
+        #   # 50Wh
+        #
+        HW_BATTERY_CAPACITY = 'hw.battery.capacity'
+    
+        # Battery [chemistry](https://schemas.dmtf.org/wbem/cim-html/2.31.0/CIM_Battery.html), e.g. Lithium-Ion, Nickel-Cadmium, etc.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # Li-ion
+        #   # NiMH
+        #
+        HW_BATTERY_CHEMISTRY = 'hw.battery.chemistry'
+    
+        # The current state of the battery
+        #
+        # @note Stability Level: development
+        HW_BATTERY_STATE = 'hw.battery.state'
+    
+        # BIOS version of the hardware component
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # 1.2.3
+        #
+        HW_BIOS_VERSION = 'hw.bios_version'
+    
+        # Driver version for the hardware component
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # 10.2.1-3
+        #
+        HW_DRIVER_VERSION = 'hw.driver_version'
+    
+        # Type of the enclosure (useful for modular systems)
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # Computer
+        #   # Storage
+        #   # Switch
+        #
+        HW_ENCLOSURE_TYPE = 'hw.enclosure.type'
+    
+        # Firmware version of the hardware component
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # 2.0.1
+        #
+        HW_FIRMWARE_VERSION = 'hw.firmware_version'
+    
+        # Type of task the GPU is performing
+        #
+        # @note Stability Level: development
+        HW_GPU_TASK = 'hw.gpu.task'
+    
         # An identifier for the hardware component, unique within the monitored host
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   win32battery_battery_testsysa33_1
+        #   # win32battery_battery_testsysa33_1
         #
         HW_ID = 'hw.id'
+    
+        # Type of limit for hardware components
+        #
+        # @note Stability Level: development
+        HW_LIMIT_TYPE = 'hw.limit_type'
+    
+        # RAID Level of the logical disk
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # RAID0+1
+        #   # RAID5
+        #   # RAID10
+        #
+        HW_LOGICAL_DISK_RAID_LEVEL = 'hw.logical_disk.raid_level'
+    
+        # State of the logical disk space usage
+        #
+        # @note Stability Level: development
+        HW_LOGICAL_DISK_STATE = 'hw.logical_disk.state'
+    
+        # Type of the memory module
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # DDR4
+        #   # DDR5
+        #   # LPDDR5
+        #
+        HW_MEMORY_TYPE = 'hw.memory.type'
+    
+        # Descriptive model name of the hardware component
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # PERC H740P
+        #   # Intel(R) Core(TM) i7-10700K
+        #   # Dell XPS 15 Battery
+        #
+        HW_MODEL = 'hw.model'
     
         # An easily-recognizable name for the hardware component
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   eth0
+        #   # eth0
         #
         HW_NAME = 'hw.name'
+    
+        # Logical addresses of the adapter (e.g. IP address, or WWPN)
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # 172.16.8.21
+        # 57.11.193.42
+        HW_NETWORK_LOGICAL_ADDRESSES = 'hw.network.logical_addresses'
+    
+        # Physical address of the adapter (e.g. MAC address, or WWNN)
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # 00-90-F5-E9-7B-36
+        #
+        HW_NETWORK_PHYSICAL_ADDRESS = 'hw.network.physical_address'
     
         # Unique identifier of the parent component (typically the `hw.id` attribute of the enclosure, or disk controller)
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   dellStorage_perc_0
+        #   # dellStorage_perc_0
         #
         HW_PARENT = 'hw.parent'
+    
+        # [S.M.A.R.T.](https://wikipedia.org/wiki/S.M.A.R.T.) (Self-Monitoring, Analysis, and Reporting Technology) attribute of the physical disk
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # Spin Retry Count
+        #   # Seek Error Rate
+        #   # Raw Read Error Rate
+        #
+        HW_PHYSICAL_DISK_SMART_ATTRIBUTE = 'hw.physical_disk.smart_attribute'
+    
+        # State of the physical disk endurance utilization
+        #
+        # @note Stability Level: development
+        HW_PHYSICAL_DISK_STATE = 'hw.physical_disk.state'
+    
+        # Type of the physical disk
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # HDD
+        #   # SSD
+        #   # 10K
+        #
+        HW_PHYSICAL_DISK_TYPE = 'hw.physical_disk.type'
+    
+        # Location of the sensor
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # cpu0
+        #   # ps1
+        #   # INLET
+        #   # CPU0_DIE
+        #   # AMBIENT
+        #   # MOTHERBOARD
+        #   # PS0 V3_3
+        #   # MAIN_12V
+        #   # CPU_VCORE
+        #
+        HW_SENSOR_LOCATION = 'hw.sensor_location'
+    
+        # Serial number of the hardware component
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # CNFCP0123456789
+        #
+        HW_SERIAL_NUMBER = 'hw.serial_number'
     
         # The current state of the component
         #
         # @note Stability Level: development
         HW_STATE = 'hw.state'
+    
+        # Type of tape drive operation
+        #
+        # @note Stability Level: development
+        HW_TAPE_DRIVE_OPERATION_TYPE = 'hw.tape_drive.operation_type'
     
         # Type of the component
         #
@@ -62,6 +249,20 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         HW_TYPE = 'hw.type'
+    
+        # Vendor name of the hardware component
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   # Dell
+        #   # HP
+        #   # Intel
+        #   # AMD
+        #   # LSI
+        #   # Lenovo
+        #
+        HW_VENDOR = 'hw.vendor'
     
         # @!endgroup
       end

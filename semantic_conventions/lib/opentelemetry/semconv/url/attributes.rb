@@ -28,7 +28,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   SemConv
+      #   # SemConv
       #
       URL_FRAGMENT = 'url.fragment'
   
@@ -61,8 +61,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   https://www.foo.bar/search?q=OpenTelemetry#SemConv
-      #   //localhost
+      #   # https://www.foo.bar/search?q=OpenTelemetry#SemConv
+      #   # //localhost
       #
       URL_FULL = 'url.full'
   
@@ -73,7 +73,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   /search
+      #   # /search
       #
       URL_PATH = 'url.path'
   
@@ -97,7 +97,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   q=OpenTelemetry
+      #   # q=OpenTelemetry
       #
       URL_QUERY = 'url.query'
   
@@ -106,9 +106,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   https
-      #   ftp
-      #   telnet
+      #   # https
+      #   # ftp
+      #   # telnet
       #
       URL_SCHEME = 'url.scheme'
   

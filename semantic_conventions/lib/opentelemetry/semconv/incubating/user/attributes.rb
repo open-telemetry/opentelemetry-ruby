@@ -29,7 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   a.einstein@example.com
+        #   # a.einstein@example.com
         #
         USER_EMAIL = 'user.email'
     
@@ -38,7 +38,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Albert Einstein
+        #   # Albert Einstein
         #
         USER_FULL_NAME = 'user.full_name'
     
@@ -49,7 +49,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   364fc68eaf4c8acec74a4e52d7d1feaa
+        #   # 364fc68eaf4c8acec74a4e52d7d1feaa
         #
         USER_HASH = 'user.hash'
     
@@ -58,7 +58,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   S-1-5-21-202424912787-2692429404-2351956786-1000
+        #   # S-1-5-21-202424912787-2692429404-2351956786-1000
         #
         USER_ID = 'user.id'
     
@@ -67,7 +67,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   a.einstein
+        #   # a.einstein
         #
         USER_NAME = 'user.name'
     
@@ -76,8 +76,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["admin", "reporting_user"]
-        #
+        #   # admin
+        # reporting_user
         USER_ROLES = 'user.roles'
     
         # @!endgroup

@@ -31,8 +31,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   TLS_RSA_WITH_3DES_EDE_CBC_SHA
-        #   TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
+        #   # TLS_RSA_WITH_3DES_EDE_CBC_SHA
+        #   # TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
         #
         TLS_CIPHER = 'tls.cipher'
     
@@ -41,7 +41,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   MII...
+        #   # MII...
         #
         TLS_CLIENT_CERTIFICATE = 'tls.client.certificate'
     
@@ -50,8 +50,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["MII...", "MI..."]
-        #
+        #   # MII...
+        # MI...
         TLS_CLIENT_CERTIFICATE_CHAIN = 'tls.client.certificate_chain'
     
         # Certificate fingerprint using the MD5 digest of DER-encoded version of certificate offered by the client. For consistency with other hash values, this value should be formatted as an uppercase hash.
@@ -59,7 +59,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0F76C7F2C55BFD7D8E8B8F4BFBF0C9EC
+        #   # 0F76C7F2C55BFD7D8E8B8F4BFBF0C9EC
         #
         TLS_CLIENT_HASH_MD5 = 'tls.client.hash.md5'
     
@@ -68,7 +68,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   9E393D93138888D288266C2D915214D1D1CCEB2A
+        #   # 9E393D93138888D288266C2D915214D1D1CCEB2A
         #
         TLS_CLIENT_HASH_SHA1 = 'tls.client.hash.sha1'
     
@@ -77,7 +77,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0687F666A054EF17A08E2F2162EAB4CBC0D265E1D7875BE74BF3C712CA92DAF0
+        #   # 0687F666A054EF17A08E2F2162EAB4CBC0D265E1D7875BE74BF3C712CA92DAF0
         #
         TLS_CLIENT_HASH_SHA256 = 'tls.client.hash.sha256'
     
@@ -86,7 +86,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   CN=Example Root CA, OU=Infrastructure Team, DC=example, DC=com
+        #   # CN=Example Root CA, OU=Infrastructure Team, DC=example, DC=com
         #
         TLS_CLIENT_ISSUER = 'tls.client.issuer'
     
@@ -95,7 +95,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   d4e5b18d6b55c71272893221c96ba240
+        #   # d4e5b18d6b55c71272893221c96ba240
         #
         TLS_CLIENT_JA3 = 'tls.client.ja3'
     
@@ -104,7 +104,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   2021-01-01T00:00:00.000Z
+        #   # 2021-01-01T00:00:00.000Z
         #
         TLS_CLIENT_NOT_AFTER = 'tls.client.not_after'
     
@@ -113,7 +113,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1970-01-01T00:00:00.000Z
+        #   # 1970-01-01T00:00:00.000Z
         #
         TLS_CLIENT_NOT_BEFORE = 'tls.client.not_before'
     
@@ -122,7 +122,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry.io
+        #   # opentelemetry.io
         #
         # @deprecated {"note": "Replaced by `server.address`.", "reason": "renamed", "renamed_to": "server.address"}
         TLS_CLIENT_SERVER_NAME = 'tls.client.server_name'
@@ -132,7 +132,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   CN=myclient, OU=Documentation Team, DC=example, DC=com
+        #   # CN=myclient, OU=Documentation Team, DC=example, DC=com
         #
         TLS_CLIENT_SUBJECT = 'tls.client.subject'
     
@@ -141,8 +141,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384", "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"]
-        #
+        #   # TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        # TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
         TLS_CLIENT_SUPPORTED_CIPHERS = 'tls.client.supported_ciphers'
     
         # String indicating the curve used for the given cipher, when applicable
@@ -150,7 +150,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   secp256r1
+        #   # secp256r1
         #
         TLS_CURVE = 'tls.curve'
     
@@ -159,7 +159,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   true
+        #   # true
         #
         TLS_ESTABLISHED = 'tls.established'
     
@@ -168,7 +168,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   http/1.1
+        #   # http/1.1
         #
         TLS_NEXT_PROTOCOL = 'tls.next_protocol'
     
@@ -182,8 +182,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1.2
-        #   3
+        #   # 1.2
+        #   # 3
         #
         TLS_PROTOCOL_VERSION = 'tls.protocol.version'
     
@@ -192,7 +192,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   true
+        #   # true
         #
         TLS_RESUMED = 'tls.resumed'
     
@@ -201,7 +201,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   MII...
+        #   # MII...
         #
         TLS_SERVER_CERTIFICATE = 'tls.server.certificate'
     
@@ -210,8 +210,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["MII...", "MI..."]
-        #
+        #   # MII...
+        # MI...
         TLS_SERVER_CERTIFICATE_CHAIN = 'tls.server.certificate_chain'
     
         # Certificate fingerprint using the MD5 digest of DER-encoded version of certificate offered by the server. For consistency with other hash values, this value should be formatted as an uppercase hash.
@@ -219,7 +219,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0F76C7F2C55BFD7D8E8B8F4BFBF0C9EC
+        #   # 0F76C7F2C55BFD7D8E8B8F4BFBF0C9EC
         #
         TLS_SERVER_HASH_MD5 = 'tls.server.hash.md5'
     
@@ -228,7 +228,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   9E393D93138888D288266C2D915214D1D1CCEB2A
+        #   # 9E393D93138888D288266C2D915214D1D1CCEB2A
         #
         TLS_SERVER_HASH_SHA1 = 'tls.server.hash.sha1'
     
@@ -237,7 +237,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0687F666A054EF17A08E2F2162EAB4CBC0D265E1D7875BE74BF3C712CA92DAF0
+        #   # 0687F666A054EF17A08E2F2162EAB4CBC0D265E1D7875BE74BF3C712CA92DAF0
         #
         TLS_SERVER_HASH_SHA256 = 'tls.server.hash.sha256'
     
@@ -246,7 +246,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   CN=Example Root CA, OU=Infrastructure Team, DC=example, DC=com
+        #   # CN=Example Root CA, OU=Infrastructure Team, DC=example, DC=com
         #
         TLS_SERVER_ISSUER = 'tls.server.issuer'
     
@@ -255,7 +255,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   d4e5b18d6b55c71272893221c96ba240
+        #   # d4e5b18d6b55c71272893221c96ba240
         #
         TLS_SERVER_JA3S = 'tls.server.ja3s'
     
@@ -264,7 +264,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   2021-01-01T00:00:00.000Z
+        #   # 2021-01-01T00:00:00.000Z
         #
         TLS_SERVER_NOT_AFTER = 'tls.server.not_after'
     
@@ -273,7 +273,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1970-01-01T00:00:00.000Z
+        #   # 1970-01-01T00:00:00.000Z
         #
         TLS_SERVER_NOT_BEFORE = 'tls.server.not_before'
     
@@ -282,7 +282,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   CN=myserver, OU=Documentation Team, DC=example, DC=com
+        #   # CN=myserver, OU=Documentation Team, DC=example, DC=com
         #
         TLS_SERVER_SUBJECT = 'tls.server.subject'
     

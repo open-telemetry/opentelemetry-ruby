@@ -28,8 +28,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   10.1.2.80
-      #   /tmp/my.sock
+      #   # 10.1.2.80
+      #   # /tmp/my.sock
       #
       NETWORK_LOCAL_ADDRESS = 'network.local.address'
   
@@ -38,7 +38,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   65123
+      #   # 65123
       #
       NETWORK_LOCAL_PORT = 'network.local.port'
   
@@ -47,8 +47,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   10.1.2.80
-      #   /tmp/my.sock
+      #   # 10.1.2.80
+      #   # /tmp/my.sock
       #
       NETWORK_PEER_ADDRESS = 'network.peer.address'
   
@@ -57,7 +57,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   65123
+      #   # 65123
       #
       NETWORK_PEER_PORT = 'network.peer.port'
   
@@ -68,9 +68,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   amqp
-      #   http
-      #   mqtt
+      #   # amqp
+      #   # http
+      #   # mqtt
       #
       NETWORK_PROTOCOL_NAME = 'network.protocol.name'
   
@@ -81,8 +81,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   1.1
-      #   2
+      #   # 1.1
+      #   # 2
       #
       NETWORK_PROTOCOL_VERSION = 'network.protocol.version'
   
@@ -97,8 +97,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   tcp
-      #   udp
+      #   # tcp
+      #   # udp
       #
       NETWORK_TRANSPORT = 'network.transport'
   
@@ -109,8 +109,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   ipv4
-      #   ipv6
+      #   # ipv4
+      #   # ipv6
       #
       NETWORK_TYPE = 'network.type'
   

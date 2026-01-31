@@ -29,7 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Attempted Information Leak
+        #   # Attempted Information Leak
         #
         SECURITY_RULE_CATEGORY = 'security_rule.category'
     
@@ -38,7 +38,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Block requests to public DNS over HTTPS / TLS protocols
+        #   # Block requests to public DNS over HTTPS / TLS protocols
         #
         SECURITY_RULE_DESCRIPTION = 'security_rule.description'
     
@@ -47,7 +47,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Apache 2.0
+        #   # Apache 2.0
         #
         SECURITY_RULE_LICENSE = 'security_rule.license'
     
@@ -56,7 +56,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   BLOCK_DNS_over_TLS
+        #   # BLOCK_DNS_over_TLS
         #
         SECURITY_RULE_NAME = 'security_rule.name'
     
@@ -67,7 +67,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   https://en.wikipedia.org/wiki/DNS_over_TLS
+        #   # https://en.wikipedia.org/wiki/DNS_over_TLS
         #
         SECURITY_RULE_REFERENCE = 'security_rule.reference'
     
@@ -76,7 +76,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Standard_Protocol_Filters
+        #   # Standard_Protocol_Filters
         #
         SECURITY_RULE_RULESET_NAME = 'security_rule.ruleset.name'
     
@@ -85,8 +85,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   550e8400-e29b-41d4-a716-446655440000
-        #   1100110011
+        #   # 550e8400-e29b-41d4-a716-446655440000
+        #   # 1100110011
         #
         SECURITY_RULE_UUID = 'security_rule.uuid'
     
@@ -95,7 +95,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1.0.0
+        #   # 1.0.0
         #
         SECURITY_RULE_VERSION = 'security_rule.version'
     
