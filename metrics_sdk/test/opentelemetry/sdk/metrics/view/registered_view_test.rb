@@ -245,7 +245,7 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
     end
 
     let(:metric_stream) do
-      OpenTelemetry::SDK::Metrics::State::MetricStream.new('test', 'description', 'smidgen', :counter, nil, instrumentation_scope, nil)
+      OpenTelemetry::SDK::Metrics::State::MetricStream.new('test', 'description', 'smidgen', :counter, nil, instrumentation_scope, nil, nil, nil)
     end
 
     it 'registered view with matching name' do

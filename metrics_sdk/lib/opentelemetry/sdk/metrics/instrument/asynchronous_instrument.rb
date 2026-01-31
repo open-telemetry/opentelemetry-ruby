@@ -11,7 +11,9 @@ module OpenTelemetry
         # {AsynchronousInstrument} contains the common functionality shared across
         # the asynchronous instruments SDK instruments.
         class AsynchronousInstrument
-          def initialize(name, unit, description, callback, instrumentation_scope, meter_provider)
+          NOOP_EXEMPLAR_RESERVOIR = Exemplar::NoopExemplarReservoir.new
+
+          def initialize(name, unit, description, callback, instrumentation_scope, meter_provider, exemplar_filter, exemplar_reservoir)
             @name = name
             @unit = unit
             @description = description
@@ -21,6 +23,8 @@ module OpenTelemetry
             @callbacks = []
             @timeout   = nil
             @attributes = {}
+            @exemplar_filter = exemplar_filter || meter_provider.exemplar_filter
+            @exemplar_reservoir = exemplar_reservoir
 
             init_callback(callback)
             meter_provider.register_asynchronous_instrument(self)
@@ -38,7 +42,9 @@ module OpenTelemetry
               aggregation,
               @callbacks,
               @timeout,
-              @attributes
+              @attributes,
+              @exemplar_filter,
+              @exemplar_reservoir
             )
             @metric_streams << ms
             metric_store.add_metric_stream(ms)
@@ -85,6 +91,16 @@ module OpenTelemetry
           # invoke callback will execute callback and export metric_data that is observed
           def update(timeout, attributes)
             @metric_streams.each { |ms| ms.invoke_callback(timeout, attributes) }
+          end
+
+          # Adding the exemplar to reservoir
+          # Only record the exemplar if exemplar_filter decide to sample/record it
+          def exemplar_offer(value, attributes)
+            context = OpenTelemetry::Context.current
+            time = OpenTelemetry::Common::Utilities.time_in_nanoseconds
+            return unless @exemplar_filter.should_sample?(value, time, attributes, context)
+
+            @exemplar_reservoir.offer(value: value, timestamp: time, attributes: attributes, context: context)
           end
         end
       end

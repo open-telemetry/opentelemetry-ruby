@@ -12,6 +12,7 @@ module OpenTelemetry
         #
         # The MetricStream class provides SDK internal functionality that is not a part of the
         # public API.
+        # rubocop:disable Metrics/ClassLength
         class MetricStream
           attr_reader :name, :description, :unit, :instrument_kind, :instrumentation_scope, :data_points
 
@@ -22,7 +23,9 @@ module OpenTelemetry
             instrument_kind,
             meter_provider,
             instrumentation_scope,
-            aggregation
+            aggregation,
+            exemplar_filter,
+            exemplar_reservoir
           )
             @name = name
             @description = description
@@ -33,6 +36,8 @@ module OpenTelemetry
             @default_aggregation = aggregation
             @data_points = {}
             @registered_views = {}
+            @exemplar_filter = exemplar_filter
+            @exemplar_reservoir = exemplar_reservoir
 
             find_registered_view
             @mutex = Mutex.new
@@ -57,16 +62,21 @@ module OpenTelemetry
             end
           end
 
-          # view will modify the data_point that is not suitable when there are multiple views
           def update(value, attributes)
             if @registered_views.empty?
-              @mutex.synchronize { @default_aggregation.update(value, attributes, @data_points) }
+              @mutex.synchronize do
+                exemplar_offer = should_exemplar_offer(value, attributes)
+                @default_aggregation.update(value, attributes, @data_points, exemplar_offer: exemplar_offer)
+              end
             else
               @registered_views.each do |view, data_points|
                 @mutex.synchronize do
                   attributes ||= {}
                   attributes.merge!(view.attribute_keys)
-                  view.aggregation.update(value, attributes, data_points) if view.valid_aggregation?
+                  if view.valid_aggregation?
+                    exemplar_offer = should_exemplar_offer(value, attributes)
+                    view.aggregation.update(value, attributes, data_points, exemplar_offer: exemplar_offer)
+                  end
                 end
               end
             end
@@ -109,6 +119,12 @@ module OpenTelemetry
             end
           end
 
+          def should_exemplar_offer(value, attributes)
+            context = OpenTelemetry::Context.current
+            time = OpenTelemetry::Common::Utilities.time_in_nanoseconds
+            @exemplar_filter&.should_sample?(value, time, attributes, context)
+          end
+
           def to_s
             instrument_info = +''
             instrument_info << "name=#{@name}"
@@ -123,6 +139,7 @@ module OpenTelemetry
             end.join("\n")
           end
         end
+        # rubocop:enable Metrics/ClassLength
       end
     end
   end
