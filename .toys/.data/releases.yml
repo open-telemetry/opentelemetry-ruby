@@ -1,35 +1,37 @@
-# This file controls the release system.
+# This file controls the toys-release gem.
 
 # The repo organization and name.
 repo: open-telemetry/opentelemetry-ruby
-# The main branch name. Releases must happen on this branch.
-main_branch: main
-# Time in seconds for release scripts to wait for CI to complete.
-required_checks_timeout: 1200
+
+# Disable pre-release GitHub check requirements.
+required_checks: false
+
+# If commits are added when release pull requests are open, update those pull
+# requests to reflect the new commits.
+update_existing_requests: true
+
 # Git user attached to commits for release pull requests.
 git_user_name: otelbot
 git_user_email: 197425009+otelbot@users.noreply.github.com
-# Toys tool that builds YARD reference docs
-docs_builder_tool: [yardoc]
-
-# Control the conventional commit linter.
-commit_lint:
-  # Whether conventional commit errors should cause a GitHub check fail.
-  fail_checks: true
-  # Merge types allowed by the repo.
-  merge: squash
 
 # List of all releasable gems. Each gem should include:
 #  *  name: The name of the gem. (Required.)
-#  *  directory: Gem directory relative to the repo root. (Required.)
+#  *  directory: Gem directory relative to the repo root.
+#     (Required unless the gem name matches the directory name exactly. This
+#     means it's always required in this repo because all the gem names include
+#     the word "opentelemetry" whereas the directory names do not.)
 #  *  version_rb_path: Path to version.rb relative to the gem directory.
 #     (Required only if it does not match the gem name. e.g. The gem
-#     "opentelemetry-sdk" would default to lib/opentelemetry/sdk/version.rb)
+#     "opentelemetry-sdk" would default to "lib/opentelemetry/sdk/version.rb",
+#     so this field is required only if the actual path is different.)
 #  *  version_constant: The fully-qualified version constant as an array.
-#     (Required because the OpenTelemetry namespace does not match the gem
-#     name "opentelemetry".)
+#     (Required if the actual constant name, including its capitalization,
+#     differs from what would be inferred from the gem name. This means it's
+#     always required in this repo, because the capitalization of the
+#     "OpenTelemetry" namespace does not match the gem name "opentelemetry".)
 #  *  changelog_path: Path to CHANGELOG.md relative to the gem directory.
-#     (Required only if it is not in the expected location.)
+#     (Required only if it is not in the expected location, which is the file
+#     "CHANGELOG.md" at the root of the gem directory.)
 gems:
   - name: opentelemetry-api
     directory: api
@@ -47,20 +49,14 @@ gems:
 
   - name: opentelemetry-sdk-experimental
     directory: sdk_experimental
-    version_rb_path: lib/opentelemetry/sdk/experimental/version.rb
     version_constant: [OpenTelemetry, SDK, Experimental, VERSION]
 
   - name: opentelemetry-common
     directory: common
-    version_rb_path: lib/opentelemetry/common/version.rb
     version_constant: [OpenTelemetry, Common, VERSION]
 
   - name: opentelemetry-exporter-otlp
-    # we append a slash here to avoid the naive substring start_with? directory-matching condition in underlying toys gem
-    # which causes exporter/otlp to incorrectly match when changes occur in exporter/otlp-logs or exporter/otlp-metrics
-    # https://github.com/dazuma/toys/blob/17ed449da8299f272b834470ff6b279a59e8070b/.toys/release/.lib/release_utils.rb#L436
-    # https://github.com/open-telemetry/opentelemetry-ruby/issues/1792
-    directory: exporter/otlp/
+    directory: exporter/otlp
     version_constant: [OpenTelemetry, Exporter, OTLP, VERSION]
 
   - name: opentelemetry-exporter-otlp-logs
@@ -85,7 +81,6 @@ gems:
 
   - name: opentelemetry-semantic_conventions
     directory: semantic_conventions
-    version_rb_path: lib/opentelemetry/semantic_conventions/version.rb
     version_constant: [OpenTelemetry, SemanticConventions, VERSION]
 
   - name: opentelemetry-test-helpers

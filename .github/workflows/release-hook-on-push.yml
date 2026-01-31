@@ -15,18 +15,19 @@ jobs:
       contents: write # required for pushing changes
       pull-requests: write # required for updating open release PRs
     runs-on: ubuntu-latest
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Install Ruby
         uses: ruby/setup-ruby@8d27f39a5e7ad39aebbcbd1324f7af020229645c # v1.287.0
         with:
-          ruby-version: 3.1
-      - name: Checkout repo
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Install Toys
-        run: "gem install --no-document toys -v 0.15.5"
+          ruby-version: "4.0"
+          bundler-cache: true
       - name: Update open releases
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          toys release _onpush --verbose \
+          bundle exec toys release _onpush --verbose \
             < /dev/null
