@@ -15,13 +15,13 @@ jobs:
       pull-requests: write # required for updating label on PR, posting comments
       issues: write # required for creating new issues on failed releases
     runs-on: ubuntu-latest
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
     steps:
       - name: Checkout repo
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Install Ruby
         uses: ruby/setup-ruby@8d27f39a5e7ad39aebbcbd1324f7af020229645c # v1.287.0
-        env:
-          BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
         with:
           ruby-version: "4.0"
           bundler-cache: true
@@ -30,6 +30,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
         run: |
-          toys release _onclosed --verbose \
+          bundle exec toys release _onclosed --verbose \
             "--event-path=${{ github.event_path }}" \
             < /dev/null

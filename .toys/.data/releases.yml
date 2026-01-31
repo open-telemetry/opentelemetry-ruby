@@ -29,7 +29,7 @@ git_user_email: 197425009+otelbot@users.noreply.github.com
 #     differs from what would be inferred from the gem name. This means it's
 #     always required in this repo, because the capitalization of the
 #     "OpenTelemetry" namespace does not match the gem name "opentelemetry".)
-#  *  changelog_path: Path to CHANGLEOG.md relative to the gem directory.
+#  *  changelog_path: Path to CHANGELOG.md relative to the gem directory.
 #     (Required only if it is not in the expected location, which is the file
 #     "CHANGELOG.md" at the root of the gem directory.)
 gems:
