@@ -11,8 +11,8 @@ gemspec
 eval_gemfile '../contrib/Gemfile.shared'
 
 group :test, :development do
-  gem 'opentelemetry-api', path: '../api'
-  gem 'opentelemetry-common', path: '../common'
-  gem 'opentelemetry-registry', path: '../registry'
-  gem 'opentelemetry-sdk', path: '../sdk'
+  gem 'opentelemetry-api', path: '../api', require: false
+  gem 'opentelemetry-common', path: '../common', require: false
+  gem 'opentelemetry-registry', path: '../registry', require: false
+  gem 'opentelemetry-sdk', path: '../sdk', require: false
 end

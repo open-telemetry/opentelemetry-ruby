@@ -11,13 +11,13 @@ gemspec
 eval_gemfile '../contrib/Gemfile.shared'
 
 group :test, :development do
-  gem 'opentelemetry-api', path: '../api'
-  gem 'opentelemetry-common', path: '../common'
-  gem 'opentelemetry-exporter-otlp-metrics', path: '../exporter/otlp-metrics' unless RUBY_ENGINE == 'jruby'
-  gem 'opentelemetry-metrics-api', path: '../metrics_api'
-  gem 'opentelemetry-registry', path: '../registry'
-  gem 'opentelemetry-sdk', path: '../sdk'
-  gem 'opentelemetry-test-helpers', path: '../test_helpers'
+  gem 'opentelemetry-api', path: '../api', require: false
+  gem 'opentelemetry-common', path: '../common', require: false
+  gem 'opentelemetry-exporter-otlp-metrics', path: '../exporter/otlp-metrics', require: false unless RUBY_ENGINE == 'jruby'
+  gem 'opentelemetry-metrics-api', path: '../metrics_api', require: false
+  gem 'opentelemetry-registry', path: '../registry', require: false
+  gem 'opentelemetry-sdk', path: '../sdk', require: false
+  gem 'opentelemetry-test-helpers', path: '../test_helpers', require: false
   gem 'pry'
   gem 'pry-byebug' unless RUBY_ENGINE == 'jruby'
 end
