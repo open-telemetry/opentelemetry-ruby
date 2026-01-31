@@ -292,5 +292,141 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
         _(registered_view.name_match('!@#$%^&')).must_equal true
       end
     end
+
+    describe 'cardinality limit in views' do
+      before { reset_metrics_sdk }
+
+      it 'applies cardinality limit from view configuration' do
+        OpenTelemetry::SDK.configure
+
+        metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+        OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+
+        meter = OpenTelemetry.meter_provider.meter('test')
+
+        # Create a view with cardinality limit
+        OpenTelemetry.meter_provider.add_view(
+          'test_counter',
+          aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new,
+          aggregation_cardinality_limit: 2
+        )
+
+        counter = meter.create_counter('test_counter')
+
+        # Add more data points than the view's cardinality limit
+        counter.add(1, attributes: { 'key' => 'a' })
+        counter.add(2, attributes: { 'key' => 'b' })
+        counter.add(3, attributes: { 'key' => 'c' }) # Should trigger overflow
+
+        metric_exporter.pull
+        last_snapshot = metric_exporter.metric_snapshots
+
+        _(last_snapshot).wont_be_empty
+        _(last_snapshot[0].data_points.size).must_equal(3)
+
+        # Find overflow data point
+        overflow_point = last_snapshot[0].data_points.find do |dp|
+          dp.attributes == { 'otel.metric.overflow' => true }
+        end
+        _(overflow_point).wont_be_nil
+        _(overflow_point.value).must_equal(3)
+      end
+
+      it 'view cardinality limit overrides global limit' do
+        OpenTelemetry::SDK.configure
+
+        metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new(aggregation_cardinality_limit: 10)
+        OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+
+        meter = OpenTelemetry.meter_provider.meter('test')
+
+        # View with stricter cardinality limit than global
+        OpenTelemetry.meter_provider.add_view(
+          'test_counter',
+          aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new,
+          aggregation_cardinality_limit: 1
+        )
+
+        counter = meter.create_counter('test_counter')
+
+        counter.add(1, attributes: { 'key' => 'a' })
+        counter.add(2, attributes: { 'key' => 'b' }) # Should trigger overflow immediately
+
+        metric_exporter.pull
+        last_snapshot = metric_exporter.metric_snapshots
+
+        _(last_snapshot[0].data_points.size).must_equal(2) # Limited by view's cardinality limit
+
+        overflow_point = last_snapshot[0].data_points.find do |dp|
+          dp.attributes == { 'otel.metric.overflow' => true }
+        end
+        _(overflow_point).wont_be_nil
+        _(overflow_point.value).must_equal(2)
+      end
+
+      it 'handles zero cardinality limit in view' do
+        OpenTelemetry::SDK.configure
+
+        metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+        OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+
+        meter = OpenTelemetry.meter_provider.meter('test')
+
+        OpenTelemetry.meter_provider.add_view(
+          'test_counter',
+          aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new,
+          aggregation_cardinality_limit: 0
+        )
+
+        counter = meter.create_counter('test_counter')
+
+        counter.add(42, attributes: { 'key' => 'value' })
+
+        metric_exporter.pull
+        last_snapshot = metric_exporter.metric_snapshots
+
+        _(last_snapshot[0].data_points.size).must_equal(1)
+
+        # All should go to overflow
+        overflow_point = last_snapshot[0].data_points.find do |dp|
+          dp.attributes == { 'otel.metric.overflow' => true }
+        end
+        _(overflow_point).wont_be_nil
+        _(overflow_point.value).must_equal(42)
+      end
+
+      it 'works with histogram aggregation and cardinality limit' do
+        OpenTelemetry::SDK.configure
+
+        metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+        OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+
+        meter = OpenTelemetry.meter_provider.meter('test')
+
+        OpenTelemetry.meter_provider.add_view(
+          'test_histogram',
+          aggregation: OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new,
+          aggregation_cardinality_limit: 1
+        )
+
+        histogram = meter.create_histogram('test_histogram')
+
+        histogram.record(5, attributes: { 'key' => 'a' })
+        histogram.record(15, attributes: { 'key' => 'b' }) # Should trigger overflow
+        histogram.record(20, attributes: { 'key' => 'c' })
+
+        metric_exporter.pull
+        last_snapshot = metric_exporter.metric_snapshots
+
+        _(last_snapshot[0].data_points.size).must_equal(2)
+
+        overflow_point = last_snapshot[0].data_points.find do |dp|
+          dp.attributes == { 'otel.metric.overflow' => true }
+        end
+        _(overflow_point).wont_be_nil
+        _(overflow_point.count).must_equal(2)
+        _(overflow_point.sum).must_equal(35)
+      end
+    end
   end
 end

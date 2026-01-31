@@ -13,11 +13,12 @@ module OpenTelemetry
         # The MetricStore module provides SDK internal functionality that is not a part of the
         # public API.
         class MetricStore
-          def initialize
+          def initialize(cardinality_limit: nil)
             @mutex = Mutex.new
             @epoch_start_time = OpenTelemetry::Common::Utilities.time_in_nanoseconds
             @epoch_end_time = nil
             @metric_streams = []
+            @cardinality_limit = cardinality_limit
           end
 
           def collect
@@ -32,6 +33,7 @@ module OpenTelemetry
 
           def add_metric_stream(metric_stream)
             @mutex.synchronize do
+              metric_stream.cardinality_limit = @cardinality_limit
               @metric_streams = @metric_streams.dup.push(metric_stream)
               nil
             end

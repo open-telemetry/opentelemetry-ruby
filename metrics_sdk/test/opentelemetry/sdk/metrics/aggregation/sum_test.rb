@@ -11,6 +11,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
   let(:sum_aggregation) { OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality:, monotonic:) }
   let(:aggregation_temporality) { :delta }
   let(:monotonic) { false }
+  let(:cardinality_limit) { 2000 }
 
   # Time in nano
   let(:start_time) { (Time.now.to_r * 1_000_000_000).to_i }
@@ -84,18 +85,18 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
   end
 
   it 'sets the timestamps' do
-    sum_aggregation.update(0, {}, data_points)
+    sum_aggregation.update(0, {}, data_points, cardinality_limit)
     ndp = sum_aggregation.collect(start_time, end_time, data_points)[0]
     _(ndp.start_time_unix_nano).must_equal(start_time)
     _(ndp.time_unix_nano).must_equal(end_time)
   end
 
   it 'aggregates and collects' do
-    sum_aggregation.update(1, {}, data_points)
-    sum_aggregation.update(2, {}, data_points)
+    sum_aggregation.update(1, {}, data_points, cardinality_limit)
+    sum_aggregation.update(2, {}, data_points, cardinality_limit)
 
-    sum_aggregation.update(2, { 'foo' => 'bar' }, data_points)
-    sum_aggregation.update(2, { 'foo' => 'bar' }, data_points)
+    sum_aggregation.update(2, { 'foo' => 'bar' }, data_points, cardinality_limit)
+    sum_aggregation.update(2, { 'foo' => 'bar' }, data_points, cardinality_limit)
 
     ndps = sum_aggregation.collect(start_time, end_time, data_points)
     _(ndps[0].value).must_equal(3)
@@ -106,19 +107,19 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
   end
 
   it 'aggregates and collects negative values' do
-    sum_aggregation.update(1, {}, data_points)
-    sum_aggregation.update(-2, {}, data_points)
+    sum_aggregation.update(1, {}, data_points, cardinality_limit)
+    sum_aggregation.update(-2, {}, data_points, cardinality_limit)
 
     ndps = sum_aggregation.collect(start_time, end_time, data_points)
     _(ndps[0].value).must_equal(-1)
   end
 
   it 'does not aggregate between collects' do
-    sum_aggregation.update(1, {}, data_points)
-    sum_aggregation.update(2, {}, data_points)
+    sum_aggregation.update(1, {}, data_points, cardinality_limit)
+    sum_aggregation.update(2, {}, data_points, cardinality_limit)
     ndps = sum_aggregation.collect(start_time, end_time, data_points)
 
-    sum_aggregation.update(1, {}, data_points)
+    sum_aggregation.update(1, {}, data_points, cardinality_limit)
     # Assert that the recent update does not
     # impact the already collected metrics
     _(ndps[0].value).must_equal(3)
@@ -133,11 +134,11 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
     let(:aggregation_temporality) { :not_delta }
 
     it 'allows metrics to accumulate' do
-      sum_aggregation.update(1, {}, data_points)
-      sum_aggregation.update(2, {}, data_points)
+      sum_aggregation.update(1, {}, data_points, cardinality_limit)
+      sum_aggregation.update(2, {}, data_points, cardinality_limit)
       ndps = sum_aggregation.collect(start_time, end_time, data_points)
 
-      sum_aggregation.update(1, {}, data_points)
+      sum_aggregation.update(1, {}, data_points, cardinality_limit)
       # Assert that the recent update does not
       # impact the already collected metrics
       _(ndps[0].value).must_equal(3)
@@ -155,11 +156,45 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
     let(:monotonic) { true }
 
     it 'does not allow negative values to accumulate' do
-      sum_aggregation.update(1, {}, data_points)
-      sum_aggregation.update(-2, {}, data_points)
+      sum_aggregation.update(1, {}, data_points, cardinality_limit)
+      sum_aggregation.update(-2, {}, data_points, cardinality_limit)
       ndps = sum_aggregation.collect(start_time, end_time, data_points)
 
       _(ndps[0].value).must_equal(1)
+    end
+  end
+
+  describe 'cardinality limit' do
+    describe 'with cumulative aggregation' do
+      it 'preserves pre-overflow attributes after overflow starts' do
+        cardinality_limit = 3
+        sum_aggregation.update(1, { 'key' => 'a' }, data_points, cardinality_limit)
+        sum_aggregation.update(2, { 'key' => 'b' }, data_points, cardinality_limit)
+        sum_aggregation.update(3, { 'key' => 'c' }, data_points, cardinality_limit)
+        sum_aggregation.update(4, { 'key' => 'd' }, data_points, cardinality_limit) # This should overflow
+        sum_aggregation.update(5, { 'key' => 'e' }, data_points, cardinality_limit)
+        sum_aggregation.update(5, { 'key' => 'a' }, data_points, cardinality_limit)
+
+        _(data_points.size).must_equal(4) # 3 original + 1 overflow
+        _(data_points[{ 'key' => 'a' }].value).must_equal(6) # 1 + 5
+        _(data_points[{ 'key' => 'b' }].value).must_equal(2) # 1 + 5
+        _(data_points[{ 'otel.metric.overflow' => true }].value).must_equal(9)
+        _(data_points[{ 'key' => 'd' }]).must_be_nil
+        _(data_points[{ 'key' => 'e' }]).must_be_nil
+      end
+    end
+
+    describe 'edge cases' do
+      it 'handles cardinality limits 0' do
+        # Test cardinality limit of 0 - everything overflows
+        cardinality_limit = 0
+        sum_aggregation.update(10, { 'key' => 'a' }, data_points, cardinality_limit)
+        sum_aggregation.update(12, { 'key' => 'd' }, data_points, cardinality_limit)
+
+        _(data_points.size).must_equal(1)
+        overflow_point = data_points[{ 'otel.metric.overflow' => true }]
+        _(overflow_point.value).must_equal(22)
+      end
     end
   end
 end

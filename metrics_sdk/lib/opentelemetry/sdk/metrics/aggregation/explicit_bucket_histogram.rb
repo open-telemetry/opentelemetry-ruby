@@ -11,6 +11,7 @@ module OpenTelemetry
         # Contains the implementation of the ExplicitBucketHistogram aggregation
         # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#explicit-bucket-histogram-aggregation
         class ExplicitBucketHistogram
+          OVERFLOW_ATTRIBUTE_SET = { 'otel.metric.overflow' => true }.freeze
           DEFAULT_BOUNDARIES = [0, 5, 10, 25, 50, 75, 100, 250, 500, 1000].freeze
           private_constant :DEFAULT_BOUNDARIES
 
@@ -50,38 +51,16 @@ module OpenTelemetry
             end
           end
 
-          def update(amount, attributes, data_points)
-            hdp = data_points.fetch(attributes) do
-              if @record_min_max
-                min = Float::INFINITY
-                max = -Float::INFINITY
-              end
+          def update(amount, attributes, data_points, cardinality_limit)
+            hdp = if data_points.key?(attributes)
+                    data_points[attributes]
+                  elsif data_points.size >= cardinality_limit
+                    data_points[OVERFLOW_ATTRIBUTE_SET] || create_new_data_point(OVERFLOW_ATTRIBUTE_SET, data_points)
+                  else
+                    create_new_data_point(attributes, data_points)
+                  end
 
-              data_points[attributes] = HistogramDataPoint.new(
-                attributes,
-                nil,                 # :start_time_unix_nano
-                nil,                 # :time_unix_nano
-                0,                   # :count
-                0,                   # :sum
-                empty_bucket_counts, # :bucket_counts
-                @boundaries,         # :explicit_bounds
-                nil,                 # :exemplars
-                min,                 # :min
-                max                  # :max
-              )
-            end
-
-            if @record_min_max
-              hdp.max = amount if amount > hdp.max
-              hdp.min = amount if amount < hdp.min
-            end
-
-            hdp.sum += amount
-            hdp.count += 1
-            if @boundaries
-              bucket_index = @boundaries.bsearch_index { |i| i >= amount } || @boundaries.size
-              hdp.bucket_counts[bucket_index] += 1
-            end
+            update_histogram_data_point(hdp, amount)
             nil
           end
 
@@ -90,6 +69,40 @@ module OpenTelemetry
           end
 
           private
+
+          def create_new_data_point(attributes, data_points)
+            if @record_min_max
+              min = Float::INFINITY
+              max = -Float::INFINITY
+            end
+
+            data_points[attributes] = HistogramDataPoint.new(
+              attributes,
+              nil,                 # :start_time_unix_nano
+              nil,                 # :time_unix_nano
+              0,                   # :count
+              0,                   # :sum
+              empty_bucket_counts, # :bucket_counts
+              @boundaries,         # :explicit_bounds
+              nil,                 # :exemplars
+              min,                 # :min
+              max                  # :max
+            )
+          end
+
+          def update_histogram_data_point(hdp, amount)
+            if @record_min_max
+              hdp.max = amount if amount > hdp.max
+              hdp.min = amount if amount < hdp.min
+            end
+
+            hdp.sum += amount
+            hdp.count += 1
+            return unless @boundaries
+
+            bucket_index = @boundaries.bsearch_index { |i| i >= amount } || @boundaries.size
+            hdp.bucket_counts[bucket_index] += 1
+          end
 
           def empty_bucket_counts
             @boundaries ? Array.new(@boundaries.size + 1, 0) : nil

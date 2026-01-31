@@ -49,14 +49,18 @@ module OpenTelemetry
 
           def invoke_callback(timeout, attributes)
             if @registered_views.empty?
+
+              resolved_cardinality_limit = @cardinality_limit || DEFAULT_CARDINALITY_LIMIT
               @mutex.synchronize do
                 @callback.each do |cb|
                   value = safe_guard_callback(cb, timeout: timeout)
-                  @default_aggregation.update(value, attributes, @data_points) if value.is_a?(Numeric)
+                  @default_aggregation.update(value, attributes, @data_points, resolved_cardinality_limit) if value.is_a?(Numeric)
                 end
               end
             else
               @registered_views.each do |view, data_points|
+                resolved_cardinality_limit = resolve_cardinality_limit(view)
+
                 @mutex.synchronize do
                   @callback.each do |cb|
                     value = safe_guard_callback(cb, timeout: timeout)
@@ -64,7 +68,7 @@ module OpenTelemetry
 
                     merged_attributes = attributes || {}
                     merged_attributes.merge!(view.attribute_keys)
-                    view.aggregation.update(value, merged_attributes, data_points) if view.valid_aggregation?
+                    view.aggregation.update(value, merged_attributes, data_points, resolved_cardinality_limit) if view.valid_aggregation?
                   end
                 end
               end
