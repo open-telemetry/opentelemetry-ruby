@@ -42,7 +42,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'opentelemetry-instrumentation-base', '~> 0.20'
   spec.add_development_dependency 'opentelemetry-test-helpers'
   spec.add_development_dependency 'pry'
-  spec.add_development_dependency 'rake', '~> 12.0'
+  spec.add_development_dependency 'rake', '>= 13.3'
   spec.add_development_dependency 'rubocop', '~> 1.65'
   spec.add_development_dependency 'simplecov', '~> 0.17'
   spec.add_development_dependency 'yard', '~> 0.9'
