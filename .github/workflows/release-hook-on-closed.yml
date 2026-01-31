@@ -16,6 +16,8 @@ jobs:
       issues: write # required for creating new issues on failed releases
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Install Ruby
         uses: ruby/setup-ruby@8d27f39a5e7ad39aebbcbd1324f7af020229645c # v1.287.0
         env:
@@ -23,8 +25,6 @@ jobs:
         with:
           ruby-version: "4.0"
           bundler-cache: true
-      - name: Checkout repo
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Process release request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
