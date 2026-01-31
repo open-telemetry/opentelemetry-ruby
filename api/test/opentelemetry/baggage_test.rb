@@ -7,7 +7,6 @@
 require 'test_helper'
 
 describe OpenTelemetry::Baggage do
-  Context = OpenTelemetry::Context
   let(:manager) { OpenTelemetry::Baggage }
 
   after do

@@ -17,3 +17,5 @@ require 'minitest/autorun'
 require 'pry'
 
 OpenTelemetry.logger = Logger.new(File::NULL)
+
+SpanLimits = OpenTelemetry::SDK::Trace::SpanLimits
