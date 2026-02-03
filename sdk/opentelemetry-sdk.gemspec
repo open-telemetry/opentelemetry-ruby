@@ -41,6 +41,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'opentelemetry-exporter-zipkin', '~> 0.19'
   spec.add_development_dependency 'opentelemetry-instrumentation-base', '~> 0.20'
   spec.add_development_dependency 'opentelemetry-test-helpers'
+  spec.add_development_dependency 'ostruct'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake', '~> 12.0'
   spec.add_development_dependency 'rubocop', '~> 1.65'

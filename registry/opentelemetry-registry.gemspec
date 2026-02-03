@@ -29,6 +29,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'appraisal', '~> 2.2.0'
   spec.add_development_dependency 'minitest', '~> 5.0'
+  spec.add_development_dependency 'ostruct'
   spec.add_development_dependency 'rake', '~> 12.3.3'
   spec.add_development_dependency 'rspec-mocks'
   spec.add_development_dependency 'rubocop', '~> 1.65'

@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'cgi'
+require 'cgi/escape'
 
 module OpenTelemetry
   module Baggage
