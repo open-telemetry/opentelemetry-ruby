@@ -12,9 +12,11 @@ module OpenTelemetry
       #
       # @param [optional String] name Instrumentation package name
       # @param [optional String] version Instrumentation package version
+      # @param [optional String] schema_url Specifies the Schema URL
+      # @param [optional Hash] attributes Specifies the scope attributes
       #
       # @return [Tracer]
-      def tracer(name = nil, version = nil)
+      def tracer(name = nil, version = nil, schema_url = nil, attributes = nil)
         @tracer ||= Tracer.new
       end
     end

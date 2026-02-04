@@ -18,7 +18,7 @@ module OpenTelemetry
         # @param [TracerProvider] tracer_provider TracerProvider that initialized the tracer
         #
         # @return [Tracer]
-        def initialize(name, version, tracer_provider)
+        def initialize(name, version, schema_url, attributes, tracer_provider)
           @instrumentation_scope = InstrumentationScope.new(name, version)
           @tracer_provider = tracer_provider
         end

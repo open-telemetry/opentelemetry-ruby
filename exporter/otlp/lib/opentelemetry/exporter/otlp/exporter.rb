@@ -311,7 +311,9 @@ module OpenTelemetry
                                                  Opentelemetry::Proto::Trace::V1::ScopeSpans.new(
                                                    scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
                                                      name: il.name,
-                                                     version: il.version
+                                                     version: il.version,
+                                                     schema_url: il.schema_url,
+                                                     attributes: il.attribute&.map { |k, v| as_otlp_key_value(k, v) }
                                                    ),
                                                    spans: sds.map { |sd| as_otlp_span(sd) }
                                                  )

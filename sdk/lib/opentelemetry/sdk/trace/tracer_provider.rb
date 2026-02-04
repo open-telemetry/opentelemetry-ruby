@@ -46,13 +46,15 @@ module OpenTelemetry
         #
         # @param [optional String] name Instrumentation package name
         # @param [optional String] version Instrumentation package version
+        # @param [optional String] schema_url Specifies the Schema URL
+        # @param [optional Hash] attributes Specifies the scope attributes
         #
         # @return [Tracer]
-        def tracer(name = nil, version = nil)
+        def tracer(name = nil, version = nil, schema_url = nil, attributes = nil)
           name ||= ''
           version ||= ''
           OpenTelemetry.logger.warn 'calling TracerProvider#tracer without providing a tracer name.' if name.empty?
-          @registry_mutex.synchronize { @registry[Key.new(name, version)] ||= Tracer.new(name, version, self) }
+          @registry_mutex.synchronize { @registry[Key.new(name, version)] ||= Tracer.new(name, version, schema_url, attributes, self) }
         end
 
         # Attempts to stop all the activity for this {TracerProvider}. Calls
