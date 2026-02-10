@@ -1,79 +1,79 @@
----
-version: 2
-updates:
-- package-ecosystem: bundler
-  directory: "/"
-  schedule:
-    interval: weekly
-- package-ecosystem: bundler
-  directory: "/api"
-  schedule:
-    interval: weekly
-- package-ecosystem: bundler
-  directory: "/common"
-  schedule:
-    interval: weekly
-- package-ecosystem: bundler
-  directory: "/exporter/otlp"
-  schedule:
-    interval: weekly
-- package-ecosystem: bundler
-  directory: "/exporter/otlp-common"
-  schedule:
-    interval: weekly
-- package-ecosystem: bundler
-  directory: "/exporter/otlp-grpc"
-  schedule:
-    interval: weekly
-- package-ecosystem: bundler
-  directory: "/exporter/otlp-http"
-  schedule:
-    interval: weekly
-- package-ecosystem: bundler
-  directory: "/exporter/otlp-metrics"
-  schedule:
-    interval: weekly
-- package-ecosystem: bundler
-  directory: "/exporter/zipkin"
-  schedule:
-    interval: weekly
-- package-ecosystem: bundler
-  directory: "/logs_api"
-  schedule:
-    interval: weekly
-- package-ecosystem: bundler
-  directory: "/logs_sdk"
-  schedule:
-    interval: weekly
-- package-ecosystem: bundler
-  directory: "/metrics_api"
-  schedule:
-    interval: weekly
-- package-ecosystem: bundler
-  directory: "/metrics_sdk"
-  schedule:
-    interval: weekly
-- package-ecosystem: bundler
-  directory: "/propagator/b3"
-  schedule:
-    interval: weekly
-- package-ecosystem: bundler
-  directory: "/propagator/jaeger"
-  schedule:
-    interval: weekly
-- package-ecosystem: bundler
-  directory: "/registry"
-  schedule:
-    interval: weekly
-- package-ecosystem: bundler
-  directory: "/sdk"
-  schedule:
-    interval: weekly
-- package-ecosystem: bundler
-  directory: "/sdk_experimental"
-  schedule:
-    interval: weekly
-- package-ecosystem: bundler
-  directory: "/semantic_conventions"
-  schedule:
-    interval: weekly
+# ---
+# version: 2
+# updates:
+# - package-ecosystem: bundler
+#   directory: "/"
+#   schedule:
+#     interval: weekly
+# - package-ecosystem: bundler
+#   directory: "/api"
+#   schedule:
+#     interval: weekly
+# - package-ecosystem: bundler
+#   directory: "/common"
+#   schedule:
+#     interval: weekly
+# - package-ecosystem: bundler
+#   directory: "/exporter/otlp"
+#   schedule:
+#     interval: weekly
+# - package-ecosystem: bundler
+#   directory: "/exporter/otlp-common"
+#   schedule:
+#     interval: weekly
+# - package-ecosystem: bundler
+#   directory: "/exporter/otlp-grpc"
+#   schedule:
+#     interval: weekly
+# - package-ecosystem: bundler
+#   directory: "/exporter/otlp-http"
+#   schedule:
+#     interval: weekly
+# - package-ecosystem: bundler
+#   directory: "/exporter/otlp-metrics"
+#   schedule:
+#     interval: weekly
+# - package-ecosystem: bundler
+#   directory: "/exporter/zipkin"
+#   schedule:
+#     interval: weekly
+# - package-ecosystem: bundler
+#   directory: "/logs_api"
+#   schedule:
+#     interval: weekly
+# - package-ecosystem: bundler
+#   directory: "/logs_sdk"
+#   schedule:
+#     interval: weekly
+# - package-ecosystem: bundler
+#   directory: "/metrics_api"
+#   schedule:
+#     interval: weekly
+# - package-ecosystem: bundler
+#   directory: "/metrics_sdk"
+#   schedule:
+#     interval: weekly
+# - package-ecosystem: bundler
+#   directory: "/propagator/b3"
+#   schedule:
+#     interval: weekly
+# - package-ecosystem: bundler
+#   directory: "/propagator/jaeger"
+#   schedule:
+#     interval: weekly
+# - package-ecosystem: bundler
+#   directory: "/registry"
+#   schedule:
+#     interval: weekly
+# - package-ecosystem: bundler
+#   directory: "/sdk"
+#   schedule:
+#     interval: weekly
+# - package-ecosystem: bundler
+#   directory: "/sdk_experimental"
+#   schedule:
+#     interval: weekly
+# - package-ecosystem: bundler
+#   directory: "/semantic_conventions"
+#   schedule:
+#     interval: weekly
