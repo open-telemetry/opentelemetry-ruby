@@ -1,0 +1,30 @@
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+
+# Core OTel
+gem "opentelemetry-sdk"
+
+# Metrics
+gem "opentelemetry-metrics-api"
+gem "opentelemetry-metrics-sdk"
+
+# Logs
+gem "opentelemetry-logs-api"
+gem "opentelemetry-logs-sdk"
+
+# Instrumentation (from contrib)
+gem "opentelemetry-instrumentation-sinatra"
+gem "opentelemetry-instrumentation-logger"
+
+# OTLP exporter (optional — used when OTEL_*_EXPORTER=otlp)
+gem "opentelemetry-exporter-otlp"
+gem "opentelemetry-exporter-otlp-metrics"
+gem "opentelemetry-exporter-otlp-logs"
+
+# Web server
+gem "puma"
+gem "rackup"
+gem "sinatra", "~> 4.0"
+
+gem "opentelemetry-api", "~> 1.7"
