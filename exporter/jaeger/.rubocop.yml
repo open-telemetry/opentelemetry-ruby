@@ -19,3 +19,5 @@ Metrics/BlockLength:
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-exporter-jaeger.rb"
+Gemspec/RequiredRubyVersion:
+  Severity: info

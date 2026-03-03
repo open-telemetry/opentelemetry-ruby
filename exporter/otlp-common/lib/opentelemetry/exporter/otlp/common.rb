@@ -46,25 +46,25 @@ module OpenTelemetry
         def as_etsr(span_data)
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
             resource_spans: span_data
-              .group_by(&:resource)
-              .map do |resource, span_datas|
-                Opentelemetry::Proto::Trace::V1::ResourceSpans.new(
-                  resource: Opentelemetry::Proto::Resource::V1::Resource.new(
-                    attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
-                  ),
-                  scope_spans: span_datas
-                    .group_by(&:instrumentation_scope)
-                    .map do |il, sds|
-                      Opentelemetry::Proto::Trace::V1::ScopeSpans.new(
-                        scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
-                          name: il.name,
-                          version: il.version
-                        ),
-                        spans: sds.map { |sd| as_otlp_span(sd) }
-                      )
-                    end
-                )
-              end
+                            .group_by(&:resource)
+                            .map do |resource, span_datas|
+                              Opentelemetry::Proto::Trace::V1::ResourceSpans.new(
+                                resource: Opentelemetry::Proto::Resource::V1::Resource.new(
+                                  attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
+                                ),
+                                scope_spans: span_datas
+                                             .group_by(&:instrumentation_scope)
+                                             .map do |il, sds|
+                                               Opentelemetry::Proto::Trace::V1::ScopeSpans.new(
+                                                 scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
+                                                   name: il.name,
+                                                   version: il.version
+                                                 ),
+                                                 spans: sds.map { |sd| as_otlp_span(sd) }
+                                               )
+                                             end
+                              )
+                            end
           )
         end
 

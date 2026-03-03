@@ -1,5 +1,15 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.12.0 / 2026-02-11
+
+* BREAKING CHANGE: Fix the issue of mixed scale with multiple attributes
+
+* FIXED: Fix the issue of mixed scale with multiple attributes
+
+### v0.11.2 / 2025-12-02
+
+* FIXED: Add merge logic for exponential histogram when the temporality cumulative
+
 ### v0.11.1 / 2025-11-04
 
 * FIXED: Do not log error when there are no metrics to export

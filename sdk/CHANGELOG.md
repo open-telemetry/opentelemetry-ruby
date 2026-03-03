@@ -2,11 +2,11 @@
 
 ### v1.10.0 / 2025-10-14
 
-* ADDED: Add span flags support for isRemote property
+- ADDED: Add span flags support for isRemote property
 
 ### v1.9.0 / 2025-09-16
 
-* ADDED: Add record_exception option for in_span
+- ADDED: Add record_exception option for in_span
 
 ### v1.8.1 / 2025-08-14
 
@@ -86,7 +86,7 @@
 
 ### v1.0.1 / 2021-10-29
 
-- FIXED: Add unexpected error handlign in BSP and OTLP exporter (#995)
+- FIXED: Add unexpected error handling in BSP and OTLP exporter (#995)
 
 ### v1.0.0 / 2021-09-29
 
@@ -267,7 +267,7 @@
 - FIXED: Fork safety for batch processor
 - FIXED: Don't generate a span ID unnecessarily
 - DOCS: Fix Configurator#add_span_processor
-- DOCS: Standardize toplevel docs structure and readme
+- DOCS: Standardize top-level docs structure and readme
 
 ### v0.6.0 / 2020-09-10
 
