@@ -259,7 +259,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
       end
       carrier = {}
       propagator.inject(carrier, context: context)
-      _(carrier['uberctx-key1']).must_equal('value+1+%2F+blah')
+      _(carrier['uberctx-key1']).must_equal('value%201%20%2F%20blah')
     end
 
     it 'injects to rack keys' do
