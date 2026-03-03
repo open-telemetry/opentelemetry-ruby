@@ -30,8 +30,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # shoppingcart
-      #
+      # shoppingcart
       SERVICE_NAME = 'service.name'
   
       # The version string of the service API or implementation. The format is not defined by these conventions.
@@ -39,9 +38,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # 2.0.0
-      #   # a01dbef8a
-      #
+      # 2.0.0
+      # a01dbef8a
       SERVICE_VERSION = 'service.version'
   
       # @!endgroup

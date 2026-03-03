@@ -29,9 +29,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # success
-        #   # failure
-        #
+        # success
+        # failure
         ASPNETCORE_AUTHENTICATION_RESULT = 'aspnetcore.authentication.result'
     
         # The identifier that names a particular authentication handler.
@@ -39,10 +38,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # Cookies
-        #   # Bearer
-        #   # Identity.Application
-        #
+        # Cookies
+        # Bearer
+        # Identity.Application
         ASPNETCORE_AUTHENTICATION_SCHEME = 'aspnetcore.authentication.scheme'
     
         # The name of the authorization policy.
@@ -50,8 +48,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # RequireAdminRole
-        #
+        # RequireAdminRole
         ASPNETCORE_AUTHORIZATION_POLICY = 'aspnetcore.authorization.policy'
     
         # The result of calling the authorization service.
@@ -59,9 +56,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # success
-        #   # failure
-        #
+        # success
+        # failure
         ASPNETCORE_AUTHORIZATION_RESULT = 'aspnetcore.authorization.result'
     
         # ASP.NET Core exception middleware handling result.
@@ -69,8 +65,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   # handled
-        #   # unhandled
+        # handled
+        # unhandled
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_DIAGNOSTICS_EXCEPTION_RESULT}.
@@ -81,7 +77,7 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   # Contoso.MyHandler
+        # Contoso.MyHandler
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_DIAGNOSTICS_HANDLER_TYPE}.
@@ -92,9 +88,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # DefaultError
-        #   # PasswordMismatch
-        #
+        # DefaultError
+        # PasswordMismatch
         ASPNETCORE_IDENTITY_ERROR_CODE = 'aspnetcore.identity.error_code'
     
         # The result from checking the password.
@@ -102,9 +97,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # success
-        #   # failure
-        #
+        # success
+        # failure
         ASPNETCORE_IDENTITY_PASSWORD_CHECK_RESULT = 'aspnetcore.identity.password_check_result'
     
         # The result of the identity operation.
@@ -112,9 +106,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # success
-        #   # failure
-        #
+        # success
+        # failure
         ASPNETCORE_IDENTITY_RESULT = 'aspnetcore.identity.result'
     
         # Whether the sign in result was success or failure.
@@ -122,9 +115,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # password
-        #   # two_factor
-        #
+        # password
+        # two_factor
         ASPNETCORE_IDENTITY_SIGN_IN_RESULT = 'aspnetcore.identity.sign_in.result'
     
         # The authentication type.
@@ -132,9 +124,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # password
-        #   # two_factor
-        #
+        # password
+        # two_factor
         ASPNETCORE_IDENTITY_SIGN_IN_TYPE = 'aspnetcore.identity.sign_in.type'
     
         # What the token will be used for.
@@ -142,9 +133,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # success
-        #   # failure
-        #
+        # success
+        # failure
         ASPNETCORE_IDENTITY_TOKEN_PURPOSE = 'aspnetcore.identity.token_purpose'
     
         # The result of token verification.
@@ -152,9 +142,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # success
-        #   # failure
-        #
+        # success
+        # failure
         ASPNETCORE_IDENTITY_TOKEN_VERIFIED = 'aspnetcore.identity.token_verified'
     
         # The user update type.
@@ -162,10 +151,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # update
-        #   # user_name
-        #   # reset_password
-        #
+        # update
+        # user_name
+        # reset_password
         ASPNETCORE_IDENTITY_USER_UPDATE_TYPE = 'aspnetcore.identity.user.update_type'
     
         # The full name of the identity user type.
@@ -173,8 +161,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # Contoso.ContosoUser
-        #
+        # Contoso.ContosoUser
         ASPNETCORE_IDENTITY_USER_TYPE = 'aspnetcore.identity.user_type'
     
         # The name of the library or subsystem using the memory pool instance.
@@ -182,9 +169,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # kestrel
-        #   # iis
-        #
+        # kestrel
+        # iis
         ASPNETCORE_MEMORY_POOL_OWNER = 'aspnetcore.memory_pool.owner'
     
         # Rate limiting policy name.
@@ -192,9 +178,9 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   # fixed
-        #   # sliding
-        #   # token
+        # fixed
+        # sliding
+        # token
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_RATE_LIMITING_POLICY}.
@@ -205,8 +191,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   # acquired
-        #   # request_canceled
+        # acquired
+        # request_canceled
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_RATE_LIMITING_RESULT}.
@@ -217,7 +203,7 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   # true
+        # true
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_REQUEST_IS_UNHANDLED}.
@@ -228,7 +214,7 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   # true
+        # true
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_ROUTING_IS_FALLBACK}.
@@ -239,8 +225,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   # success
-        #   # failure
+        # success
+        # failure
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_ROUTING_MATCH_STATUS}.
@@ -256,7 +242,7 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   # true
+        # true
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_USER_IS_AUTHENTICATED}.

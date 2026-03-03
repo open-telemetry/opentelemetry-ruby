@@ -62,10 +62,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # com.example.MyHttpService.serveRequest
-      #   # GuzzleHttp\Client::transfer
-      #   # fopen
-      #
+      # com.example.MyHttpService.serveRequest
+      # GuzzleHttp\Client::transfer
+      # fopen
       CODE_FUNCTION_NAME = 'code.function.name'
   
       # The line number in `code.file.path` best representing the operation. It SHOULD point within the code unit named in `code.function.name`. This attribute MUST NOT be used on the Profile signal since the data is already captured in 'message Line'. This constraint is imposed to prevent redundancy and maintain data integrity.

@@ -29,8 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # cpython
-        #
+        # cpython
         PROFILE_FRAME_TYPE = 'profile.frame.type'
     
         # @!endgroup

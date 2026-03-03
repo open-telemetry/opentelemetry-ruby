@@ -29,8 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # Attempted Information Leak
-        #
+        # Attempted Information Leak
         SECURITY_RULE_CATEGORY = 'security_rule.category'
     
         # The description of the rule generating the event.
@@ -38,8 +37,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # Block requests to public DNS over HTTPS / TLS protocols
-        #
+        # Block requests to public DNS over HTTPS / TLS protocols
         SECURITY_RULE_DESCRIPTION = 'security_rule.description'
     
         # Name of the license under which the rule used to generate this event is made available.
@@ -47,8 +45,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # Apache 2.0
-        #
+        # Apache 2.0
         SECURITY_RULE_LICENSE = 'security_rule.license'
     
         # The name of the rule or signature generating the event.
@@ -56,8 +53,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # BLOCK_DNS_over_TLS
-        #
+        # BLOCK_DNS_over_TLS
         SECURITY_RULE_NAME = 'security_rule.name'
     
         # Reference URL to additional information about the rule used to generate this event.
@@ -67,8 +63,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # https://en.wikipedia.org/wiki/DNS_over_TLS
-        #
+        # https://en.wikipedia.org/wiki/DNS_over_TLS
         SECURITY_RULE_REFERENCE = 'security_rule.reference'
     
         # Name of the ruleset, policy, group, or parent category in which the rule used to generate this event is a member.
@@ -76,8 +71,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # Standard_Protocol_Filters
-        #
+        # Standard_Protocol_Filters
         SECURITY_RULE_RULESET_NAME = 'security_rule.ruleset.name'
     
         # A rule ID that is unique within the scope of a set or group of agents, observers, or other entities using the rule for detection of this event.
@@ -85,9 +79,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 550e8400-e29b-41d4-a716-446655440000
-        #   # 1100110011
-        #
+        # 550e8400-e29b-41d4-a716-446655440000
+        # 1100110011
         SECURITY_RULE_UUID = 'security_rule.uuid'
     
         # The version / revision of the rule being used for analysis.
@@ -95,8 +88,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 1.0.0
-        #
+        # 1.0.0
         SECURITY_RULE_VERSION = 'security_rule.version'
     
         # @!endgroup

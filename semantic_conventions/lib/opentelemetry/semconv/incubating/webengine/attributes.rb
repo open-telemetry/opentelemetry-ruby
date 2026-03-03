@@ -29,8 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # WildFly Full 21.0.0.Final (WildFly Core 13.0.1.Final) - 2.2.2.Final
-        #
+        # WildFly Full 21.0.0.Final (WildFly Core 13.0.1.Final) - 2.2.2.Final
         WEBENGINE_DESCRIPTION = 'webengine.description'
     
         # The name of the web engine.
@@ -38,8 +37,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # WildFly
-        #
+        # WildFly
         WEBENGINE_NAME = 'webengine.name'
     
         # The version of the web engine.
@@ -47,8 +45,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 21.0.0
-        #
+        # 21.0.0
         WEBENGINE_VERSION = 'webengine.version'
     
         # @!endgroup

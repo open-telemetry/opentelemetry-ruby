@@ -29,8 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # a.einstein@example.com
-        #
+        # a.einstein@example.com
         USER_EMAIL = 'user.email'
     
         # User's full name
@@ -38,8 +37,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # Albert Einstein
-        #
+        # Albert Einstein
         USER_FULL_NAME = 'user.full_name'
     
         # Unique user hash to correlate information for a user in anonymized form.
@@ -49,8 +47,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 364fc68eaf4c8acec74a4e52d7d1feaa
-        #
+        # 364fc68eaf4c8acec74a4e52d7d1feaa
         USER_HASH = 'user.hash'
     
         # Unique identifier of the user.
@@ -58,8 +55,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # S-1-5-21-202424912787-2692429404-2351956786-1000
-        #
+        # S-1-5-21-202424912787-2692429404-2351956786-1000
         USER_ID = 'user.id'
     
         # Short name or login/username of the user.
@@ -67,8 +63,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # a.einstein
-        #
+        # a.einstein
         USER_NAME = 'user.name'
     
         # Array of user roles at the time of the event.
@@ -76,7 +71,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # admin
+        # admin
         # reporting_user
         USER_ROLES = 'user.roles'
     

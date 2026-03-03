@@ -28,9 +28,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # 10.1.2.80
-      #   # /tmp/my.sock
-      #
+      # 10.1.2.80
+      # /tmp/my.sock
       NETWORK_LOCAL_ADDRESS = 'network.local.address'
   
       # Local port number of the network connection.
@@ -38,8 +37,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # 65123
-      #
+      # 65123
       NETWORK_LOCAL_PORT = 'network.local.port'
   
       # Peer address of the network connection - IP address or Unix domain socket name.
@@ -47,9 +45,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # 10.1.2.80
-      #   # /tmp/my.sock
-      #
+      # 10.1.2.80
+      # /tmp/my.sock
       NETWORK_PEER_ADDRESS = 'network.peer.address'
   
       # Peer port number of the network connection.
@@ -57,8 +54,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # 65123
-      #
+      # 65123
       NETWORK_PEER_PORT = 'network.peer.port'
   
       # [OSI application layer](https://wikipedia.org/wiki/Application_layer) or non-OSI equivalent.
@@ -68,10 +64,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # amqp
-      #   # http
-      #   # mqtt
-      #
+      # amqp
+      # http
+      # mqtt
       NETWORK_PROTOCOL_NAME = 'network.protocol.name'
   
       # The actual version of the protocol used for network communication.
@@ -81,9 +76,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # 1.1
-      #   # 2
-      #
+      # 1.1
+      # 2
       NETWORK_PROTOCOL_VERSION = 'network.protocol.version'
   
       # [OSI transport layer](https://wikipedia.org/wiki/Transport_layer) or [inter-process communication method](https://wikipedia.org/wiki/Inter-process_communication).
@@ -97,9 +91,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # tcp
-      #   # udp
-      #
+      # tcp
+      # udp
       NETWORK_TRANSPORT = 'network.transport'
   
       # [OSI network layer](https://wikipedia.org/wiki/Network_layer) or non-OSI equivalent.
@@ -109,9 +102,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # ipv4
-      #   # ipv6
-      #
+      # ipv4
+      # ipv6
       NETWORK_TYPE = 'network.type'
   
       # @!endgroup

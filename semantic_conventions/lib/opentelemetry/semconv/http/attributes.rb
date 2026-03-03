@@ -51,8 +51,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # application/json
-      #   # 1.2.3.4
+      # application/json
+      # 1.2.3.4
       # 1.2.3.5
       HTTP_REQUEST_HEADER_LAMBDA = ->(key) { "http.request.header.#{key}" }
   
@@ -76,10 +76,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # GET
-      #   # POST
-      #   # HEAD
-      #
+      # GET
+      # POST
+      # HEAD
       HTTP_REQUEST_METHOD = 'http.request.method'
   
       # Original HTTP method sent by the client in the request line.
@@ -87,10 +86,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # GeT
-      #   # ACL
-      #   # foo
-      #
+      # GeT
+      # ACL
+      # foo
       HTTP_REQUEST_METHOD_ORIGINAL = 'http.request.method_original'
   
       # The ordinal number of request resending attempt (for any reason, including redirects).
@@ -131,8 +129,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # application/json
-      #   # abc
+      # application/json
+      # abc
       # def
       HTTP_RESPONSE_HEADER_LAMBDA = ->(key) { "http.response.header.#{key}" }
   
@@ -141,8 +139,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # 200
-      #
+      # 200
       HTTP_RESPONSE_STATUS_CODE = 'http.response.status_code'
   
       # The matched route, that is, the path template in the format used by the respective server framework.
@@ -153,9 +150,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # /users/:userID?
-      #   # {controller}/{action}/{id?}
-      #
+      # /users/:userID?
+      # {controller}/{action}/{id?}
       HTTP_ROUTE = 'http.route'
   
       # @!endgroup

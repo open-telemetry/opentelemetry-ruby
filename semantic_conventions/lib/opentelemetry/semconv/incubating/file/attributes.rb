@@ -31,8 +31,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 2021-01-01T12:00:00Z
-        #
+        # 2021-01-01T12:00:00Z
         FILE_ACCESSED = 'file.accessed'
     
         # Array of file attributes.
@@ -42,7 +41,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # readonly
+        # readonly
         # hidden
         FILE_ATTRIBUTES = 'file.attributes'
     
@@ -53,8 +52,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 2021-01-01T12:00:00Z
-        #
+        # 2021-01-01T12:00:00Z
         FILE_CHANGED = 'file.changed'
     
         # Time when the file was created, in ISO 8601 format.
@@ -64,8 +62,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 2021-01-01T12:00:00Z
-        #
+        # 2021-01-01T12:00:00Z
         FILE_CREATED = 'file.created'
     
         # Directory where the file is located. It should include the drive letter, when appropriate.
@@ -73,9 +70,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # /home/user
-        #   # C:\Program Files\MyApp
-        #
+        # /home/user
+        # C:\Program Files\MyApp
         FILE_DIRECTORY = 'file.directory'
     
         # File extension, excluding the leading dot.
@@ -85,9 +81,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # png
-        #   # gz
-        #
+        # png
+        # gz
         FILE_EXTENSION = 'file.extension'
     
         # Name of the fork. A fork is additional data associated with a filesystem object.
@@ -98,8 +93,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # Zone.Identifier
-        #
+        # Zone.Identifier
         FILE_FORK_NAME = 'file.fork_name'
     
         # Primary Group ID (GID) of the file.
@@ -107,8 +101,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 1000
-        #
+        # 1000
         FILE_GROUP_ID = 'file.group.id'
     
         # Primary group name of the file.
@@ -116,8 +109,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # users
-        #
+        # users
         FILE_GROUP_NAME = 'file.group.name'
     
         # Inode representing the file in the filesystem.
@@ -125,8 +117,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 256383
-        #
+        # 256383
         FILE_INODE = 'file.inode'
     
         # Mode of the file in octal representation.
@@ -134,8 +125,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 0640
-        #
+        # 0640
         FILE_MODE = 'file.mode'
     
         # Time when the file content was last modified, in ISO 8601 format.
@@ -143,8 +133,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 2021-01-01T12:00:00Z
-        #
+        # 2021-01-01T12:00:00Z
         FILE_MODIFIED = 'file.modified'
     
         # Name of the file including the extension, without the directory.
@@ -152,8 +141,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # example.png
-        #
+        # example.png
         FILE_NAME = 'file.name'
     
         # The user ID (UID) or security identifier (SID) of the file owner.
@@ -161,8 +149,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 1000
-        #
+        # 1000
         FILE_OWNER_ID = 'file.owner.id'
     
         # Username of the file owner.
@@ -170,8 +157,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # root
-        #
+        # root
         FILE_OWNER_NAME = 'file.owner.name'
     
         # Full path to the file, including the file name. It should include the drive letter, when appropriate.
@@ -179,9 +165,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # /home/alice/example.png
-        #   # C:\Program Files\MyApp\myapp.exe
-        #
+        # /home/alice/example.png
+        # C:\Program Files\MyApp\myapp.exe
         FILE_PATH = 'file.path'
     
         # File size in bytes.
@@ -196,8 +181,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # /usr/bin/python3
-        #
+        # /usr/bin/python3
         FILE_SYMBOLIC_LINK_TARGET_PATH = 'file.symbolic_link.target_path'
     
         # @!endgroup

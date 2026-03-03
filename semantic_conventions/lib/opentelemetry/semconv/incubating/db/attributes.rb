@@ -61,7 +61,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 5000
+        # 5000
         #
         # @deprecated {"note": "Replaced by `cassandra.page.size`.", "reason": "renamed", "renamed_to": "cassandra.page.size"}
         DB_CASSANDRA_PAGE_SIZE = 'db.cassandra.page_size'
@@ -71,8 +71,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 0
-        #   # 2
+        # 0
+        # 2
         #
         # @deprecated {"note": "Replaced by `cassandra.speculative_execution.count`.", "reason": "renamed", "renamed_to": "cassandra.speculative_execution.count"}
         DB_CASSANDRA_SPECULATIVE_EXECUTION_COUNT = 'db.cassandra.speculative_execution_count'
@@ -92,8 +92,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # myDataSource
-        #
+        # myDataSource
         DB_CLIENT_CONNECTION_POOL_NAME = 'db.client.connection.pool.name'
     
         # The state of a connection in the pool
@@ -101,8 +100,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # idle
-        #
+        # idle
         DB_CLIENT_CONNECTION_STATE = 'db.client.connection.state'
     
         # Deprecated, use `db.client.connection.pool.name` instead.
@@ -110,7 +108,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # myDataSource
+        # myDataSource
         #
         # @deprecated {"note": "Replaced by `db.client.connection.pool.name`.", "reason": "renamed", "renamed_to": "db.client.connection.pool.name"}
         DB_CLIENT_CONNECTIONS_POOL_NAME = 'db.client.connections.pool.name'
@@ -120,7 +118,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # idle
+        # idle
         #
         # @deprecated {"note": "Replaced by `db.client.connection.state`.", "reason": "renamed", "renamed_to": "db.client.connection.state"}
         DB_CLIENT_CONNECTIONS_STATE = 'db.client.connections.state'
@@ -140,8 +138,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   # public.users
-        #   # customers
+        # public.users
+        # customers
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DB::DB_COLLECTION_NAME}.
@@ -178,11 +176,11 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # Eventual
-        #   # ConsistentPrefix
-        #   # BoundedStaleness
-        #   # Strong
-        #   # Session
+        # Eventual
+        # ConsistentPrefix
+        # BoundedStaleness
+        # Strong
+        # Session
         #
         # @deprecated {"note": "Replaced by `azure.cosmosdb.consistency.level`.", "reason": "renamed", "renamed_to": "azure.cosmosdb.consistency.level"}
         DB_COSMOSDB_CONSISTENCY_LEVEL = 'db.cosmosdb.consistency_level'
@@ -208,7 +206,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # North Central US
+        # North Central US
         # Australia East
         # Australia Southeast
         #
@@ -220,8 +218,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 46.18
-        #   # 1.0
+        # 46.18
+        # 1.0
         #
         # @deprecated {"note": "Replaced by `azure.cosmosdb.operation.request_charge`.", "reason": "renamed", "renamed_to": "azure.cosmosdb.operation.request_charge"}
         DB_COSMOSDB_REQUEST_CHARGE = 'db.cosmosdb.request_charge'
@@ -237,8 +235,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 200
-        #   # 201
+        # 200
+        # 201
         #
         # @deprecated {"note": "Replaced by `db.response.status_code`.", "reason": "renamed", "renamed_to": "db.response.status_code"}
         DB_COSMOSDB_STATUS_CODE = 'db.cosmosdb.status_code'
@@ -248,8 +246,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 1000
-        #   # 1002
+        # 1000
+        # 1002
         #
         # @deprecated {"note": "Replaced by `azure.cosmosdb.response.sub_status_code`.", "reason": "renamed", "renamed_to": "azure.cosmosdb.response.sub_status_code"}
         DB_COSMOSDB_SUB_STATUS_CODE = 'db.cosmosdb.sub_status_code'
@@ -259,7 +257,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # e9106fc68e3044f0b1475b04bf4ffd5f
+        # e9106fc68e3044f0b1475b04bf4ffd5f
         #
         # @deprecated {"note": "Replaced by `db.namespace`.", "reason": "renamed", "renamed_to": "db.namespace"}
         DB_ELASTICSEARCH_CLUSTER_NAME = 'db.elasticsearch.cluster.name'
@@ -269,7 +267,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # instance-0000000001
+        # instance-0000000001
         #
         # @deprecated {"note": "Replaced by `elasticsearch.node.name`.", "reason": "renamed", "renamed_to": "elasticsearch.node.name"}
         DB_ELASTICSEARCH_NODE_NAME = 'db.elasticsearch.node.name'
@@ -285,8 +283,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # test-index
-        #   # 123
+        # test-index
+        # 123
         #
         # @deprecated {"note": "Replaced by `db.operation.parameter`.", "reason": "renamed", "renamed_to": "db.operation.parameter"}
         DB_ELASTICSEARCH_PATH_PARTS_LAMBDA = ->(key) { "db.elasticsearch.path_parts.#{key}" }
@@ -306,8 +304,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # org.postgresql.Driver
-        #   # com.microsoft.sqlserver.jdbc.SQLServerDriver
+        # org.postgresql.Driver
+        # com.microsoft.sqlserver.jdbc.SQLServerDriver
         #
         # @deprecated {"note": "Removed, no replacement at this time.\n", "reason": "obsoleted"}
         DB_JDBC_DRIVER_CLASSNAME = 'db.jdbc.driver_classname'
@@ -337,8 +335,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # customers
-        #   # main
+        # customers
+        # main
         #
         # @deprecated {"note": "Replaced by `db.namespace`.", "reason": "renamed", "renamed_to": "db.namespace"}
         DB_NAME = 'db.name'
@@ -352,8 +350,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   # customers
-        #   # test.users
+        # customers
+        # test.users
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DB::DB_NAMESPACE}.
@@ -364,9 +362,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # findAndModify
-        #   # HMSET
-        #   # SELECT
+        # findAndModify
+        # HMSET
+        # SELECT
         #
         # @deprecated {"note": "Replaced by `db.operation.name`.", "reason": "renamed", "renamed_to": "db.operation.name"}
         DB_OPERATION = 'db.operation'
@@ -378,9 +376,9 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   # 2
-        #   # 3
-        #   # 4
+        # 2
+        # 3
+        # 4
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DB::DB_OPERATION_BATCH_SIZE}.
@@ -406,9 +404,9 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   # findAndModify
-        #   # HMSET
-        #   # SELECT
+        # findAndModify
+        # HMSET
+        # SELECT
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DB::DB_OPERATION_NAME}.
@@ -431,9 +429,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # someval
-        #   # 55
-        #
+        # someval
+        # 55
         DB_OPERATION_PARAMETER_LAMBDA = ->(key) { "db.operation.parameter.#{key}" }
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -462,9 +459,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # someval
-        #   # 55
-        #
+        # someval
+        # 55
         DB_QUERY_PARAMETER_LAMBDA = ->(key) { "db.query.parameter.#{key}" }
     
         # Low cardinality summary of a database query.
@@ -482,9 +478,9 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   # SELECT wuser_table
-        #   # INSERT shipping_details SELECT orders
-        #   # get user by id
+        # SELECT wuser_table
+        # INSERT shipping_details SELECT orders
+        # get user by id
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DB::DB_QUERY_SUMMARY}.
@@ -499,8 +495,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   # SELECT * FROM wuser_table where username = ?
-        #   # SET mykey ?
+        # SELECT * FROM wuser_table where username = ?
+        # SET mykey ?
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DB::DB_QUERY_TEXT}.
@@ -511,9 +507,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 0
-        #   # 1
-        #   # 15
+        # 0
+        # 1
+        # 15
         #
         # @deprecated {"note": "Replaced by `db.namespace`.", "reason": "renamed", "renamed_to": "db.namespace"}
         DB_REDIS_DATABASE_INDEX = 'db.redis.database_index'
@@ -523,10 +519,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 10
-        #   # 30
-        #   # 1000
-        #
+        # 10
+        # 30
+        # 1000
         DB_RESPONSE_RETURNED_ROWS = 'db.response.returned_rows'
     
         # Database response status code.
@@ -537,10 +532,10 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   # 102
-        #   # ORA-17002
-        #   # 08P01
-        #   # 404
+        # 102
+        # ORA-17002
+        # 08P01
+        # 404
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DB::DB_RESPONSE_STATUS_CODE}.
@@ -561,8 +556,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # SELECT * FROM wuser_table
-        #   # SET mykey "WuValue"
+        # SELECT * FROM wuser_table
+        # SET mykey "WuValue"
         #
         # @deprecated {"note": "Replaced by `db.query.text`.", "reason": "renamed", "renamed_to": "db.query.text"}
         DB_STATEMENT = 'db.statement'
@@ -578,7 +573,7 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   # GetCustomer
+        # GetCustomer
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DB::DB_STORED_PROCEDURE_NAME}.
@@ -604,8 +599,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # readonly_user
-        #   # reporting_user
+        # readonly_user
+        # reporting_user
         #
         # @deprecated {"note": "Removed, no replacement at this time.", "reason": "obsoleted"}
         DB_USER = 'db.user'

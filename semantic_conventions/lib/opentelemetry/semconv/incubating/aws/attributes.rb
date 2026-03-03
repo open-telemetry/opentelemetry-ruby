@@ -29,8 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # sgi5gkybzqak
-        #
+        # sgi5gkybzqak
         AWS_BEDROCK_GUARDRAIL_ID = 'aws.bedrock.guardrail.id'
     
         # The unique identifier of the AWS Bedrock Knowledge base. A [knowledge base](https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html) is a bank of information that can be queried by models to generate more relevant responses and augment prompts.
@@ -38,8 +37,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # XFWUPB9PAW
-        #
+        # XFWUPB9PAW
         AWS_BEDROCK_KNOWLEDGE_BASE_ID = 'aws.bedrock.knowledge_base.id'
     
         # The JSON-serialized value of each item in the `AttributeDefinitions` request field.
@@ -47,8 +45,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # { "AttributeName": "string", "AttributeType": "string" }
-        #
+        # { "AttributeName": "string", "AttributeType": "string" }
         AWS_DYNAMODB_ATTRIBUTE_DEFINITIONS = 'aws.dynamodb.attribute_definitions'
     
         # The value of the `AttributesToGet` request parameter.
@@ -56,7 +53,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # lives
+        # lives
         # id
         AWS_DYNAMODB_ATTRIBUTES_TO_GET = 'aws.dynamodb.attributes_to_get'
     
@@ -70,8 +67,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # { "CapacityUnits": number, "GlobalSecondaryIndexes": { "string" : { "CapacityUnits": number, "ReadCapacityUnits": number, "WriteCapacityUnits": number } }, "LocalSecondaryIndexes": { "string" : { "CapacityUnits": number, "ReadCapacityUnits": number, "WriteCapacityUnits": number } }, "ReadCapacityUnits": number, "Table": { "CapacityUnits": number, "ReadCapacityUnits": number, "WriteCapacityUnits": number }, "TableName": "string", "WriteCapacityUnits": number }
-        #
+        # { "CapacityUnits": number, "GlobalSecondaryIndexes": { "string" : { "CapacityUnits": number, "ReadCapacityUnits": number, "WriteCapacityUnits": number } }, "LocalSecondaryIndexes": { "string" : { "CapacityUnits": number, "ReadCapacityUnits": number, "WriteCapacityUnits": number } }, "ReadCapacityUnits": number, "Table": { "CapacityUnits": number, "ReadCapacityUnits": number, "WriteCapacityUnits": number }, "TableName": "string", "WriteCapacityUnits": number }
         AWS_DYNAMODB_CONSUMED_CAPACITY = 'aws.dynamodb.consumed_capacity'
     
         # The value of the `Count` response parameter.
@@ -79,8 +75,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 10
-        #
+        # 10
         AWS_DYNAMODB_COUNT = 'aws.dynamodb.count'
     
         # The value of the `ExclusiveStartTableName` request parameter.
@@ -88,9 +83,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # Users
-        #   # CatsTable
-        #
+        # Users
+        # CatsTable
         AWS_DYNAMODB_EXCLUSIVE_START_TABLE = 'aws.dynamodb.exclusive_start_table'
     
         # The JSON-serialized value of each item in the `GlobalSecondaryIndexUpdates` request field.
@@ -98,8 +92,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # { "Create": { "IndexName": "string", "KeySchema": [ { "AttributeName": "string", "KeyType": "string" } ], "Projection": { "NonKeyAttributes": [ "string" ], "ProjectionType": "string" }, "ProvisionedThroughput": { "ReadCapacityUnits": number, "WriteCapacityUnits": number } }
-        #
+        # { "Create": { "IndexName": "string", "KeySchema": [ { "AttributeName": "string", "KeyType": "string" } ], "Projection": { "NonKeyAttributes": [ "string" ], "ProjectionType": "string" }, "ProvisionedThroughput": { "ReadCapacityUnits": number, "WriteCapacityUnits": number } }
         AWS_DYNAMODB_GLOBAL_SECONDARY_INDEX_UPDATES = 'aws.dynamodb.global_secondary_index_updates'
     
         # The JSON-serialized value of each item of the `GlobalSecondaryIndexes` request field
@@ -107,8 +100,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # { "IndexName": "string", "KeySchema": [ { "AttributeName": "string", "KeyType": "string" } ], "Projection": { "NonKeyAttributes": [ "string" ], "ProjectionType": "string" }, "ProvisionedThroughput": { "ReadCapacityUnits": number, "WriteCapacityUnits": number } }
-        #
+        # { "IndexName": "string", "KeySchema": [ { "AttributeName": "string", "KeyType": "string" } ], "Projection": { "NonKeyAttributes": [ "string" ], "ProjectionType": "string" }, "ProvisionedThroughput": { "ReadCapacityUnits": number, "WriteCapacityUnits": number } }
         AWS_DYNAMODB_GLOBAL_SECONDARY_INDEXES = 'aws.dynamodb.global_secondary_indexes'
     
         # The value of the `IndexName` request parameter.
@@ -116,8 +108,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # name_to_group
-        #
+        # name_to_group
         AWS_DYNAMODB_INDEX_NAME = 'aws.dynamodb.index_name'
     
         # The JSON-serialized value of the `ItemCollectionMetrics` response field.
@@ -125,8 +116,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # { "string" : [ { "ItemCollectionKey": { "string" : { "B": blob, "BOOL": boolean, "BS": [ blob ], "L": [ "AttributeValue" ], "M": { "string" : "AttributeValue" }, "N": "string", "NS": [ "string" ], "NULL": boolean, "S": "string", "SS": [ "string" ] } }, "SizeEstimateRangeGB": [ number ] } ] }
-        #
+        # { "string" : [ { "ItemCollectionKey": { "string" : { "B": blob, "BOOL": boolean, "BS": [ blob ], "L": [ "AttributeValue" ], "M": { "string" : "AttributeValue" }, "N": "string", "NS": [ "string" ], "NULL": boolean, "S": "string", "SS": [ "string" ] } }, "SizeEstimateRangeGB": [ number ] } ] }
         AWS_DYNAMODB_ITEM_COLLECTION_METRICS = 'aws.dynamodb.item_collection_metrics'
     
         # The value of the `Limit` request parameter.
@@ -134,8 +124,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 10
-        #
+        # 10
         AWS_DYNAMODB_LIMIT = 'aws.dynamodb.limit'
     
         # The JSON-serialized value of each item of the `LocalSecondaryIndexes` request field.
@@ -143,8 +132,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # { "IndexArn": "string", "IndexName": "string", "IndexSizeBytes": number, "ItemCount": number, "KeySchema": [ { "AttributeName": "string", "KeyType": "string" } ], "Projection": { "NonKeyAttributes": [ "string" ], "ProjectionType": "string" } }
-        #
+        # { "IndexArn": "string", "IndexName": "string", "IndexSizeBytes": number, "ItemCount": number, "KeySchema": [ { "AttributeName": "string", "KeyType": "string" } ], "Projection": { "NonKeyAttributes": [ "string" ], "ProjectionType": "string" } }
         AWS_DYNAMODB_LOCAL_SECONDARY_INDEXES = 'aws.dynamodb.local_secondary_indexes'
     
         # The value of the `ProjectionExpression` request parameter.
@@ -152,10 +140,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # Title
-        #   # Title, Price, Color
-        #   # Title, Description, RelatedItems, ProductReviews
-        #
+        # Title
+        # Title, Price, Color
+        # Title, Description, RelatedItems, ProductReviews
         AWS_DYNAMODB_PROJECTION = 'aws.dynamodb.projection'
     
         # The value of the `ProvisionedThroughput.ReadCapacityUnits` request parameter.
@@ -163,9 +150,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 1.0
-        #   # 2.0
-        #
+        # 1.0
+        # 2.0
         AWS_DYNAMODB_PROVISIONED_READ_CAPACITY = 'aws.dynamodb.provisioned_read_capacity'
     
         # The value of the `ProvisionedThroughput.WriteCapacityUnits` request parameter.
@@ -173,9 +159,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 1.0
-        #   # 2.0
-        #
+        # 1.0
+        # 2.0
         AWS_DYNAMODB_PROVISIONED_WRITE_CAPACITY = 'aws.dynamodb.provisioned_write_capacity'
     
         # The value of the `ScanIndexForward` request parameter.
@@ -188,8 +173,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 50
-        #
+        # 50
         AWS_DYNAMODB_SCANNED_COUNT = 'aws.dynamodb.scanned_count'
     
         # The value of the `Segment` request parameter.
@@ -197,8 +181,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 10
-        #
+        # 10
         AWS_DYNAMODB_SEGMENT = 'aws.dynamodb.segment'
     
         # The value of the `Select` request parameter.
@@ -206,9 +189,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # ALL_ATTRIBUTES
-        #   # COUNT
-        #
+        # ALL_ATTRIBUTES
+        # COUNT
         AWS_DYNAMODB_SELECT = 'aws.dynamodb.select'
     
         # The number of items in the `TableNames` response parameter.
@@ -216,8 +198,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 20
-        #
+        # 20
         AWS_DYNAMODB_TABLE_COUNT = 'aws.dynamodb.table_count'
     
         # The keys in the `RequestItems` object field.
@@ -225,7 +206,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # Users
+        # Users
         # Cats
         AWS_DYNAMODB_TABLE_NAMES = 'aws.dynamodb.table_names'
     
@@ -234,8 +215,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 100
-        #
+        # 100
         AWS_DYNAMODB_TOTAL_SEGMENTS = 'aws.dynamodb.total_segments'
     
         # The ARN of an [ECS cluster](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/clusters.html).
@@ -243,8 +223,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # arn:aws:ecs:us-west-2:123456789123:cluster/my-cluster
-        #
+        # arn:aws:ecs:us-west-2:123456789123:cluster/my-cluster
         AWS_ECS_CLUSTER_ARN = 'aws.ecs.cluster.arn'
     
         # The Amazon Resource Name (ARN) of an [ECS container instance](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_instances.html).
@@ -252,8 +231,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # arn:aws:ecs:us-west-1:123456789123:container/32624152-9086-4f0e-acae-1a75b14fe4d9
-        #
+        # arn:aws:ecs:us-west-1:123456789123:container/32624152-9086-4f0e-acae-1a75b14fe4d9
         AWS_ECS_CONTAINER_ARN = 'aws.ecs.container.arn'
     
         # The [launch type](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/launch_types.html) for an ECS task.
@@ -266,9 +244,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # arn:aws:ecs:us-west-1:123456789123:task/10838bed-421f-43ef-870a-f43feacbbb5b
-        #   # arn:aws:ecs:us-west-1:123456789123:task/my-cluster/task-id/23ebb8ac-c18f-46c6-8bbe-d55d0e37cfbd
-        #
+        # arn:aws:ecs:us-west-1:123456789123:task/10838bed-421f-43ef-870a-f43feacbbb5b
+        # arn:aws:ecs:us-west-1:123456789123:task/my-cluster/task-id/23ebb8ac-c18f-46c6-8bbe-d55d0e37cfbd
         AWS_ECS_TASK_ARN = 'aws.ecs.task.arn'
     
         # The family name of the [ECS task definition](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definitions.html) used to create the ECS task.
@@ -276,8 +253,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # opentelemetry-family
-        #
+        # opentelemetry-family
         AWS_ECS_TASK_FAMILY = 'aws.ecs.task.family'
     
         # The ID of a running ECS task. The ID MUST be extracted from `task.arn`.
@@ -285,9 +261,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 10838bed-421f-43ef-870a-f43feacbbb5b
-        #   # 23ebb8ac-c18f-46c6-8bbe-d55d0e37cfbd
-        #
+        # 10838bed-421f-43ef-870a-f43feacbbb5b
+        # 23ebb8ac-c18f-46c6-8bbe-d55d0e37cfbd
         AWS_ECS_TASK_ID = 'aws.ecs.task.id'
     
         # The revision for the task definition used to create the ECS task.
@@ -295,9 +270,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 8
-        #   # 26
-        #
+        # 8
+        # 26
         AWS_ECS_TASK_REVISION = 'aws.ecs.task.revision'
     
         # The ARN of an EKS cluster.
@@ -305,8 +279,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # arn:aws:ecs:us-west-2:123456789123:cluster/my-cluster
-        #
+        # arn:aws:ecs:us-west-2:123456789123:cluster/my-cluster
         AWS_EKS_CLUSTER_ARN = 'aws.eks.cluster.arn'
     
         # The AWS extended request ID as returned in the response header `x-amz-id-2`.
@@ -314,8 +287,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # wzHcyEWfmOGDIE5QOhTAqFDoDWP3y8IUvpNINCwL9N4TEHbUw0/gZJ+VZTmCNCWR7fezEN3eCiQ=
-        #
+        # wzHcyEWfmOGDIE5QOhTAqFDoDWP3y8IUvpNINCwL9N4TEHbUw0/gZJ+VZTmCNCWR7fezEN3eCiQ=
         AWS_EXTENDED_REQUEST_ID = 'aws.extended_request_id'
     
         # The name of the AWS Kinesis [stream](https://docs.aws.amazon.com/streams/latest/dev/introduction.html) the request refers to. Corresponds to the `--stream-name` parameter of the Kinesis [describe-stream](https://docs.aws.amazon.com/cli/latest/reference/kinesis/describe-stream.html) operation.
@@ -323,8 +295,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # some-stream-name
-        #
+        # some-stream-name
         AWS_KINESIS_STREAM_NAME = 'aws.kinesis.stream_name'
     
         # The full invoked ARN as provided on the `Context` passed to the function (`Lambda-Runtime-Invoked-Function-Arn` header on the `/runtime/invocation/next` applicable).
@@ -334,17 +305,15 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # arn:aws:lambda:us-east-1:123456:function:myfunction:myalias
-        #
+        # arn:aws:lambda:us-east-1:123456:function:myfunction:myalias
         AWS_LAMBDA_INVOKED_ARN = 'aws.lambda.invoked_arn'
     
-        # The UUID of the [AWS Lambda EvenSource Mapping](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-eventsourcemapping.html). An event source is mapped to a lambda function. It's contents are read by Lambda and used to trigger a function. This isn't available in the lambda execution context or the lambda runtime environment. This is going to be populated by the AWS SDK for each language when that UUID is present. Some of these operations are Create/Delete/Get/List/Update EventSourceMapping.
+        # The UUID of the [AWS Lambda EvenSource Mapping](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-eventsourcemapping.html). An event source is mapped to a lambda function. It's contents are read by Lambda and used to trigger a function. This isn't available in the lambda execution context or the lambda runtime environtment. This is going to be populated by the AWS SDK for each language when that UUID is present. Some of these operations are Create/Delete/Get/List/Update EventSourceMapping.
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 587ad24b-03b9-4413-8202-bbd56b36e5b7
-        #
+        # 587ad24b-03b9-4413-8202-bbd56b36e5b7
         AWS_LAMBDA_RESOURCE_MAPPING_ID = 'aws.lambda.resource_mapping.id'
     
         # The Amazon Resource Name(s) (ARN) of the AWS log group(s).
@@ -354,8 +323,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # arn:aws:logs:us-west-1:123456789012:log-group:/aws/my/group:*
-        #
+        # arn:aws:logs:us-west-1:123456789012:log-group:/aws/my/group:*
         AWS_LOG_GROUP_ARNS = 'aws.log.group.arns'
     
         # The name(s) of the AWS log group(s) an application is writing to.
@@ -365,7 +333,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # /aws/lambda/my-function
+        # /aws/lambda/my-function
         # opentelemetry-service
         AWS_LOG_GROUP_NAMES = 'aws.log.group.names'
     
@@ -376,8 +344,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # arn:aws:logs:us-west-1:123456789012:log-group:/aws/my/group:log-stream:logs/main/10838bed-421f-43ef-870a-f43feacbbb5b
-        #
+        # arn:aws:logs:us-west-1:123456789012:log-group:/aws/my/group:log-stream:logs/main/10838bed-421f-43ef-870a-f43feacbbb5b
         AWS_LOG_STREAM_ARNS = 'aws.log.stream.arns'
     
         # The name(s) of the AWS log stream(s) an application is writing to.
@@ -385,8 +352,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # logs/main/10838bed-421f-43ef-870a-f43feacbbb5b
-        #
+        # logs/main/10838bed-421f-43ef-870a-f43feacbbb5b
         AWS_LOG_STREAM_NAMES = 'aws.log.stream.names'
     
         # The AWS request ID as returned in the response headers `x-amzn-requestid`, `x-amzn-request-id` or `x-amz-request-id`.
@@ -394,9 +360,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 79b9da39-b7ae-508a-a6bc-864b2829c622
-        #   # C9ER4AJX75574TDJ
-        #
+        # 79b9da39-b7ae-508a-a6bc-864b2829c622
+        # C9ER4AJX75574TDJ
         AWS_REQUEST_ID = 'aws.request_id'
     
         # The S3 bucket name the request refers to. Corresponds to the `--bucket` parameter of the [S3 API](https://docs.aws.amazon.com/cli/latest/reference/s3api/index.html) operations.
@@ -407,8 +372,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # some-bucket-name
-        #
+        # some-bucket-name
         AWS_S3_BUCKET = 'aws.s3.bucket'
     
         # The source object (in the form `bucket`/`key`) for the copy operation.
@@ -423,8 +387,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # someFile.yml
-        #
+        # someFile.yml
         AWS_S3_COPY_SOURCE = 'aws.s3.copy_source'
     
         # The delete request container that specifies the objects to be deleted.
@@ -436,8 +399,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # Objects=[{Key=string,VersionId=string},{Key=string,VersionId=string}],Quiet=boolean
-        #
+        # Objects=[{Key=string,VersionId=string},{Key=string,VersionId=string}],Quiet=boolean
         AWS_S3_DELETE = 'aws.s3.delete'
     
         # The S3 object key the request refers to. Corresponds to the `--key` parameter of the [S3 API](https://docs.aws.amazon.com/cli/latest/reference/s3api/index.html) operations.
@@ -462,8 +424,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # someFile.yml
-        #
+        # someFile.yml
         AWS_S3_KEY = 'aws.s3.key'
     
         # The part number of the part being uploaded in a multipart-upload operation. This is a positive integer between 1 and 10,000.
@@ -476,8 +437,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 3456
-        #
+        # 3456
         AWS_S3_PART_NUMBER = 'aws.s3.part_number'
     
         # Upload ID that identifies the multipart upload.
@@ -495,8 +455,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # dfRtDYWFbkRONycy.Yxwh66Yjlx.cph0gtNBtJ
-        #
+        # dfRtDYWFbkRONycy.Yxwh66Yjlx.cph0gtNBtJ
         AWS_S3_UPLOAD_ID = 'aws.s3.upload_id'
     
         # The ARN of the Secret stored in the Secrets Mangger
@@ -504,8 +463,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # arn:aws:secretsmanager:us-east-1:123456789012:secret:SecretName-6RandomCharacters
-        #
+        # arn:aws:secretsmanager:us-east-1:123456789012:secret:SecretName-6RandomCharacters
         AWS_SECRETSMANAGER_SECRET_ARN = 'aws.secretsmanager.secret.arn'
     
         # The ARN of the AWS SNS Topic. An Amazon SNS [topic](https://docs.aws.amazon.com/sns/latest/dg/sns-create-topic.html) is a logical access point that acts as a communication channel.
@@ -513,8 +471,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE
-        #
+        # arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE
         AWS_SNS_TOPIC_ARN = 'aws.sns.topic.arn'
     
         # The URL of the AWS SQS Queue. It's a unique identifier for a queue in Amazon Simple Queue Service (SQS) and is used to access the queue and perform actions on it.
@@ -522,8 +479,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # https://sqs.us-east-1.amazonaws.com/123456789012/MyQueue
-        #
+        # https://sqs.us-east-1.amazonaws.com/123456789012/MyQueue
         AWS_SQS_QUEUE_URL = 'aws.sqs.queue.url'
     
         # The ARN of the AWS Step Functions Activity.
@@ -531,8 +487,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # arn:aws:states:us-east-1:123456789012:activity:get-greeting
-        #
+        # arn:aws:states:us-east-1:123456789012:activity:get-greeting
         AWS_STEP_FUNCTIONS_ACTIVITY_ARN = 'aws.step_functions.activity.arn'
     
         # The ARN of the AWS Step Functions State Machine.
@@ -540,8 +495,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # arn:aws:states:us-east-1:123456789012:stateMachine:myStateMachine:1
-        #
+        # arn:aws:states:us-east-1:123456789012:stateMachine:myStateMachine:1
         AWS_STEP_FUNCTIONS_STATE_MACHINE_ARN = 'aws.step_functions.state_machine.arn'
     
         # @!endgroup

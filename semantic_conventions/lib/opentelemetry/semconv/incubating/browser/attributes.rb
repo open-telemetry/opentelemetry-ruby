@@ -31,7 +31,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # Not A;Brand 99
+        # Not A;Brand 99
         # Chromium 99
         # Chrome 99
         BROWSER_BRANDS = 'browser.brands'
@@ -43,11 +43,10 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # en
-        #   # en-US
-        #   # fr
-        #   # fr-FR
-        #
+        # en
+        # en-US
+        # fr
+        # fr-FR
         BROWSER_LANGUAGE = 'browser.language'
     
         # A boolean that is true if the browser is running on a mobile device
@@ -65,10 +64,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # Windows
-        #   # macOS
-        #   # Android
-        #
+        # Windows
+        # macOS
+        # Android
         BROWSER_PLATFORM = 'browser.platform'
     
         # @!endgroup

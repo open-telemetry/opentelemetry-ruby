@@ -29,8 +29,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # staging
-        #   # production
+        # staging
+        # production
         #
         # @deprecated {"note": "Replaced by `deployment.environment.name`.", "reason": "renamed", "renamed_to": "deployment.environment.name"}
         DEPLOYMENT_ENVIRONMENT = 'deployment.environment'
@@ -48,9 +48,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # staging
-        #   # production
-        #
+        # staging
+        # production
         DEPLOYMENT_ENVIRONMENT_NAME = 'deployment.environment.name'
     
         # The id of the deployment.
@@ -58,8 +57,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 1208
-        #
+        # 1208
         DEPLOYMENT_ID = 'deployment.id'
     
         # The name of the deployment.
@@ -67,9 +65,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # deploy my app
-        #   # deploy-frontend
-        #
+        # deploy my app
+        # deploy-frontend
         DEPLOYMENT_NAME = 'deployment.name'
     
         # The status of the deployment.

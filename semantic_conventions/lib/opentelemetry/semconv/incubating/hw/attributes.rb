@@ -29,9 +29,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 9.3Ah
-        #   # 50Wh
-        #
+        # 9.3Ah
+        # 50Wh
         HW_BATTERY_CAPACITY = 'hw.battery.capacity'
     
         # Battery [chemistry](https://schemas.dmtf.org/wbem/cim-html/2.31.0/CIM_Battery.html), e.g. Lithium-Ion, Nickel-Cadmium, etc.
@@ -39,9 +38,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # Li-ion
-        #   # NiMH
-        #
+        # Li-ion
+        # NiMH
         HW_BATTERY_CHEMISTRY = 'hw.battery.chemistry'
     
         # The current state of the battery
@@ -54,8 +52,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 1.2.3
-        #
+        # 1.2.3
         HW_BIOS_VERSION = 'hw.bios_version'
     
         # Driver version for the hardware component
@@ -63,8 +60,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 10.2.1-3
-        #
+        # 10.2.1-3
         HW_DRIVER_VERSION = 'hw.driver_version'
     
         # Type of the enclosure (useful for modular systems)
@@ -72,10 +68,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # Computer
-        #   # Storage
-        #   # Switch
-        #
+        # Computer
+        # Storage
+        # Switch
         HW_ENCLOSURE_TYPE = 'hw.enclosure.type'
     
         # Firmware version of the hardware component
@@ -83,8 +78,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 2.0.1
-        #
+        # 2.0.1
         HW_FIRMWARE_VERSION = 'hw.firmware_version'
     
         # Type of task the GPU is performing
@@ -97,8 +91,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # win32battery_battery_testsysa33_1
-        #
+        # win32battery_battery_testsysa33_1
         HW_ID = 'hw.id'
     
         # Type of limit for hardware components
@@ -111,10 +104,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # RAID0+1
-        #   # RAID5
-        #   # RAID10
-        #
+        # RAID0+1
+        # RAID5
+        # RAID10
         HW_LOGICAL_DISK_RAID_LEVEL = 'hw.logical_disk.raid_level'
     
         # State of the logical disk space usage
@@ -127,10 +119,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # DDR4
-        #   # DDR5
-        #   # LPDDR5
-        #
+        # DDR4
+        # DDR5
+        # LPDDR5
         HW_MEMORY_TYPE = 'hw.memory.type'
     
         # Descriptive model name of the hardware component
@@ -138,10 +129,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # PERC H740P
-        #   # Intel(R) Core(TM) i7-10700K
-        #   # Dell XPS 15 Battery
-        #
+        # PERC H740P
+        # Intel(R) Core(TM) i7-10700K
+        # Dell XPS 15 Battery
         HW_MODEL = 'hw.model'
     
         # An easily-recognizable name for the hardware component
@@ -149,8 +139,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # eth0
-        #
+        # eth0
         HW_NAME = 'hw.name'
     
         # Logical addresses of the adapter (e.g. IP address, or WWPN)
@@ -158,7 +147,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 172.16.8.21
+        # 172.16.8.21
         # 57.11.193.42
         HW_NETWORK_LOGICAL_ADDRESSES = 'hw.network.logical_addresses'
     
@@ -167,8 +156,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 00-90-F5-E9-7B-36
-        #
+        # 00-90-F5-E9-7B-36
         HW_NETWORK_PHYSICAL_ADDRESS = 'hw.network.physical_address'
     
         # Unique identifier of the parent component (typically the `hw.id` attribute of the enclosure, or disk controller)
@@ -176,8 +164,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # dellStorage_perc_0
-        #
+        # dellStorage_perc_0
         HW_PARENT = 'hw.parent'
     
         # [S.M.A.R.T.](https://wikipedia.org/wiki/S.M.A.R.T.) (Self-Monitoring, Analysis, and Reporting Technology) attribute of the physical disk
@@ -185,10 +172,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # Spin Retry Count
-        #   # Seek Error Rate
-        #   # Raw Read Error Rate
-        #
+        # Spin Retry Count
+        # Seek Error Rate
+        # Raw Read Error Rate
         HW_PHYSICAL_DISK_SMART_ATTRIBUTE = 'hw.physical_disk.smart_attribute'
     
         # State of the physical disk endurance utilization
@@ -201,10 +187,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # HDD
-        #   # SSD
-        #   # 10K
-        #
+        # HDD
+        # SSD
+        # 10K
         HW_PHYSICAL_DISK_TYPE = 'hw.physical_disk.type'
     
         # Location of the sensor
@@ -212,16 +197,15 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # cpu0
-        #   # ps1
-        #   # INLET
-        #   # CPU0_DIE
-        #   # AMBIENT
-        #   # MOTHERBOARD
-        #   # PS0 V3_3
-        #   # MAIN_12V
-        #   # CPU_VCORE
-        #
+        # cpu0
+        # ps1
+        # INLET
+        # CPU0_DIE
+        # AMBIENT
+        # MOTHERBOARD
+        # PS0 V3_3
+        # MAIN_12V
+        # CPU_VCORE
         HW_SENSOR_LOCATION = 'hw.sensor_location'
     
         # Serial number of the hardware component
@@ -229,8 +213,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # CNFCP0123456789
-        #
+        # CNFCP0123456789
         HW_SERIAL_NUMBER = 'hw.serial_number'
     
         # The current state of the component
@@ -255,13 +238,12 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # Dell
-        #   # HP
-        #   # Intel
-        #   # AMD
-        #   # LSI
-        #   # Lenovo
-        #
+        # Dell
+        # HP
+        # Intel
+        # AMD
+        # LSI
+        # Lenovo
         HW_VENDOR = 'hw.vendor'
     
         # @!endgroup

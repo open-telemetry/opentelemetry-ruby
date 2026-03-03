@@ -29,11 +29,10 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # golang-binary-amd64-v0.1.0.attestation
-        #   # docker-image-amd64-v0.1.0.intoto.json1
-        #   # release-1.tar.gz.attestation
-        #   # file-name-package.tar.gz.intoto.json1
-        #
+        # golang-binary-amd64-v0.1.0.attestation
+        # docker-image-amd64-v0.1.0.intoto.json1
+        # release-1.tar.gz.attestation
+        # file-name-package.tar.gz.intoto.json1
         ARTIFACT_ATTESTATION_FILENAME = 'artifact.attestation.filename'
     
         # The full [hash value (see glossary)](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf), of the built attestation. Some envelopes in the [software attestation space](https://github.com/in-toto/attestation/tree/main/spec) also refer to this as the **digest**.
@@ -41,8 +40,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 1b31dfcd5b7f9267bf2ff47651df1cfb9147b9e4df1f335accf65b4cda498408
-        #
+        # 1b31dfcd5b7f9267bf2ff47651df1cfb9147b9e4df1f335accf65b4cda498408
         ARTIFACT_ATTESTATION_HASH = 'artifact.attestation.hash'
     
         # The id of the build [software attestation](https://slsa.dev/attestation-model).
@@ -50,8 +48,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 123
-        #
+        # 123
         ARTIFACT_ATTESTATION_ID = 'artifact.attestation.id'
     
         # The human readable file name of the artifact, typically generated during build and release processes. Often includes the package name and version in the file name.
@@ -64,11 +61,10 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # golang-binary-amd64-v0.1.0
-        #   # docker-image-amd64-v0.1.0
-        #   # release-1.tar.gz
-        #   # file-name-package.tar.gz
-        #
+        # golang-binary-amd64-v0.1.0
+        # docker-image-amd64-v0.1.0
+        # release-1.tar.gz
+        # file-name-package.tar.gz
         ARTIFACT_FILENAME = 'artifact.filename'
     
         # The full [hash value (see glossary)](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf), often found in checksum.txt on a release of the artifact and used to verify package integrity.
@@ -85,8 +81,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 9ff4c52759e2c4ac70b7d517bc7fcdc1cda631ca0045271ddd1b192544f8a3e9
-        #
+        # 9ff4c52759e2c4ac70b7d517bc7fcdc1cda631ca0045271ddd1b192544f8a3e9
         ARTIFACT_HASH = 'artifact.hash'
     
         # The [Package URL](https://github.com/package-url/purl-spec) of the [package artifact](https://slsa.dev/spec/v1.0/terminology#package-model) provides a standard way to identify and locate the packaged artifact.
@@ -94,9 +89,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # pkg:github/package-url/purl-spec@1209109710924
-        #   # pkg:npm/foo@12.12.3
-        #
+        # pkg:github/package-url/purl-spec@1209109710924
+        # pkg:npm/foo@12.12.3
         ARTIFACT_PURL = 'artifact.purl'
     
         # The version of the artifact.
@@ -104,10 +98,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # v0.1.0
-        #   # 1.2.1
-        #   # 122691-build
-        #
+        # v0.1.0
+        # 1.2.1
+        # 122691-build
         ARTIFACT_VERSION = 'artifact.version'
     
         # @!endgroup

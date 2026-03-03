@@ -38,9 +38,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # public.users
-      #   # customers
-      #
+      # public.users
+      # customers
       DB_COLLECTION_NAME = 'db.collection.name'
   
       # The name of the database, fully qualified within the server address and port.
@@ -52,9 +51,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # customers
-      #   # test.users
-      #
+      # customers
+      # test.users
       DB_NAMESPACE = 'db.namespace'
   
       # The number of queries included in a batch operation.
@@ -64,10 +62,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # 2
-      #   # 3
-      #   # 4
-      #
+      # 2
+      # 3
+      # 4
       DB_OPERATION_BATCH_SIZE = 'db.operation.batch.size'
   
       # The name of the operation or command being executed.
@@ -90,10 +87,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # findAndModify
-      #   # HMSET
-      #   # SELECT
-      #
+      # findAndModify
+      # HMSET
+      # SELECT
       DB_OPERATION_NAME = 'db.operation.name'
   
       # Low cardinality summary of a database query.
@@ -111,10 +107,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # SELECT wuser_table
-      #   # INSERT shipping_details SELECT orders
-      #   # get user by id
-      #
+      # SELECT wuser_table
+      # INSERT shipping_details SELECT orders
+      # get user by id
       DB_QUERY_SUMMARY = 'db.query.summary'
   
       # The database query being executed.
@@ -126,9 +121,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # SELECT * FROM wuser_table where username = ?
-      #   # SET mykey ?
-      #
+      # SELECT * FROM wuser_table where username = ?
+      # SET mykey ?
       DB_QUERY_TEXT = 'db.query.text'
   
       # Database response status code.
@@ -139,11 +133,10 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # 102
-      #   # ORA-17002
-      #   # 08P01
-      #   # 404
-      #
+      # 102
+      # ORA-17002
+      # 08P01
+      # 404
       DB_RESPONSE_STATUS_CODE = 'db.response.status_code'
   
       # The name of a stored procedure within the database.
@@ -157,8 +150,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # GetCustomer
-      #
+      # GetCustomer
       DB_STORED_PROCEDURE_NAME = 'db.stored_procedure.name'
   
       # The database management system (DBMS) product as identified by the client instrumentation.

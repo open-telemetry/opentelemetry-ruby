@@ -29,8 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # SYS1
-        #
+        # SYS1
         ZOS_SMF_ID = 'zos.smf.id'
     
         # The name of the SYSPLEX to which the z/OS system belongs too.
@@ -38,8 +37,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # SYSPLEX1
-        #
+        # SYSPLEX1
         ZOS_SYSPLEX_NAME = 'zos.sysplex.name'
     
         # @!endgroup

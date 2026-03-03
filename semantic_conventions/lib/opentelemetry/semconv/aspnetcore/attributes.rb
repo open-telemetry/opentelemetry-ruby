@@ -28,9 +28,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # handled
-      #   # unhandled
-      #
+      # handled
+      # unhandled
       ASPNETCORE_DIAGNOSTICS_EXCEPTION_RESULT = 'aspnetcore.diagnostics.exception.result'
   
       # Full type name of the [`IExceptionHandler`](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.diagnostics.iexceptionhandler) implementation that handled the exception.
@@ -38,8 +37,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # Contoso.MyHandler
-      #
+      # Contoso.MyHandler
       ASPNETCORE_DIAGNOSTICS_HANDLER_TYPE = 'aspnetcore.diagnostics.handler.type'
   
       # Rate limiting policy name.
@@ -47,10 +45,9 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # fixed
-      #   # sliding
-      #   # token
-      #
+      # fixed
+      # sliding
+      # token
       ASPNETCORE_RATE_LIMITING_POLICY = 'aspnetcore.rate_limiting.policy'
   
       # Rate-limiting result, shows whether the lease was acquired or contains a rejection reason
@@ -58,9 +55,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # acquired
-      #   # request_canceled
-      #
+      # acquired
+      # request_canceled
       ASPNETCORE_RATE_LIMITING_RESULT = 'aspnetcore.rate_limiting.result'
   
       # Flag indicating if request was handled by the application pipeline.
@@ -68,8 +64,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # true
-      #
+      # true
       ASPNETCORE_REQUEST_IS_UNHANDLED = 'aspnetcore.request.is_unhandled'
   
       # A value that indicates whether the matched route is a fallback route.
@@ -77,8 +72,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # true
-      #
+      # true
       ASPNETCORE_ROUTING_IS_FALLBACK = 'aspnetcore.routing.is_fallback'
   
       # Match result - success or failure
@@ -86,9 +80,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # success
-      #   # failure
-      #
+      # success
+      # failure
       ASPNETCORE_ROUTING_MATCH_STATUS = 'aspnetcore.routing.match_status'
   
       # A value that indicates whether the user is authenticated.
@@ -96,8 +89,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   # true
-      #
+      # true
       ASPNETCORE_USER_IS_AUTHENTICATED = 'aspnetcore.user.is_authenticated'
   
       # @!endgroup

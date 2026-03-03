@@ -32,8 +32,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # parts-unlimited-java
-        #
+        # parts-unlimited-java
         TELEMETRY_DISTRO_NAME = 'telemetry.distro.name'
     
         # The version string of the auto instrumentation agent or distribution, if used.
@@ -41,8 +40,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 1.2.3
-        #
+        # 1.2.3
         TELEMETRY_DISTRO_VERSION = 'telemetry.distro.version'
     
         # The language of the telemetry SDK.
@@ -64,7 +62,7 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   # opentelemetry
+        # opentelemetry
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::TELEMETRY::TELEMETRY_SDK_NAME}.
@@ -75,7 +73,7 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   # 1.2.3
+        # 1.2.3
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::TELEMETRY::TELEMETRY_SDK_VERSION}.

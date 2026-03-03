@@ -40,9 +40,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # 123456789012345
-        #   # 01:23:45:67:89:AB
-        #
+        # 123456789012345
+        # 01:23:45:67:89:AB
         DEVICE_ID = 'device.id'
     
         # The name of the device manufacturer
@@ -52,9 +51,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # Apple
-        #   # Samsung
-        #
+        # Apple
+        # Samsung
         DEVICE_MANUFACTURER = 'device.manufacturer'
     
         # The model identifier for the device
@@ -64,9 +62,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # iPhone3,4
-        #   # SM-G920F
-        #
+        # iPhone3,4
+        # SM-G920F
         DEVICE_MODEL_IDENTIFIER = 'device.model.identifier'
     
         # The marketing name for the device model
@@ -76,9 +73,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   # iPhone 6s Plus
-        #   # Samsung Galaxy S6
-        #
+        # iPhone 6s Plus
+        # Samsung Galaxy S6
         DEVICE_MODEL_NAME = 'device.model.name'
     
         # @!endgroup
