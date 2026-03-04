@@ -166,7 +166,7 @@ module OpenTelemetry
               response = @http.request(request)
 
               case response
-              when Net::HTTPOK
+              when Net::HTTPSuccess
                 response.body # Read and discard body
                 SUCCESS
               when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
