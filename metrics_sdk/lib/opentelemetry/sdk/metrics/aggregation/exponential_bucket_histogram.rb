@@ -25,13 +25,20 @@ module OpenTelemetry
           MIN_MAX_SIZE = 2
           MAX_MAX_SIZE = 16_384
 
+          attr_reader :exemplar_reservoir
+
+          # if no reservoir pass from instrument, then use this empty reservoir to avoid no method found error
+          DEFAULT_RESERVOIR = Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new
+          private_constant :DEFAULT_RESERVOIR
+
           # The default boundaries are calculated based on default max_size and max_scale values
           def initialize(
             aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta),
             max_size: DEFAULT_SIZE,
             max_scale: DEFAULT_SCALE,
             record_min_max: true,
-            zero_threshold: 0
+            zero_threshold: 0,
+            exemplar_reservoir: nil
           )
             @aggregation_temporality = AggregationTemporality.determine_temporality(aggregation_temporality: aggregation_temporality, default: :delta)
             @record_min_max = record_min_max
@@ -43,6 +50,11 @@ module OpenTelemetry
             @zero_count     = 0
             @size           = validate_size(max_size)
             @scale          = validate_scale(max_scale)
+
+            @exemplar_reservoir = exemplar_reservoir || DEFAULT_RESERVOIR
+            @exemplar_reservoir_storage = {}
+
+            @mapping = new_mapping(@scale)
 
             # Previous state for cumulative aggregation
             @previous_positive = {} # nil
@@ -67,6 +79,8 @@ module OpenTelemetry
               hdps = data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano = start_time
                 hdp.time_unix_nano = end_time
+                reservoir = @exemplar_reservoir_storage[hdp.attributes]
+                hdp.exemplars = reservoir&.collect(attributes: hdp.attributes, aggregation_temporality: @aggregation_temporality)
                 hdp
               end
               data_points.clear
@@ -146,6 +160,7 @@ module OpenTelemetry
                 @previous_scale[attributes] = min_scale
 
                 # Create merged data point
+                reservoir = @exemplar_reservoir_storage[attributes]
                 merged_hdp = ExponentialHistogramDataPoint.new(
                   attributes,
                   start_time,
@@ -157,7 +172,7 @@ module OpenTelemetry
                   @previous_positive[attributes].dup,
                   @previous_negative[attributes].dup,
                   0, # flags
-                  nil, # exemplars
+                  reservoir&.collect(attributes: attributes, aggregation_temporality: @aggregation_temporality), # exemplars
                   @previous_min[attributes],
                   @previous_max[attributes],
                   @zero_threshold
@@ -172,6 +187,7 @@ module OpenTelemetry
               # so return last merged data points if exists
               if data_points.empty? && !@previous_positive.empty?
                 @previous_positive.each_key do |attributes|
+                  reservoir = @exemplar_reservoir_storage[attributes]
                   merged_hdp = ExponentialHistogramDataPoint.new(
                     attributes,
                     start_time,
@@ -183,7 +199,7 @@ module OpenTelemetry
                     @previous_positive[attributes].dup,
                     @previous_negative[attributes].dup,
                     0, # flags
-                    nil, # exemplars
+                    reservoir&.collect(attributes: attributes, aggregation_temporality: @aggregation_temporality), # exemplars
                     @previous_min[attributes],
                     @previous_max[attributes],
                     @zero_threshold
@@ -206,7 +222,7 @@ module OpenTelemetry
 
           # this is aggregate in python; there is no merge in aggregate; but rescale happened
           # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
-          def update(amount, attributes, data_points)
+          def update(amount, attributes, data_points, exemplar_offer: false)
             # fetch or initialize the ExponentialHistogramDataPoint
             hdp = data_points.fetch(attributes) do
               if @record_min_max
@@ -231,6 +247,20 @@ module OpenTelemetry
                 max,                                                               # :max
                 @zero_threshold                                                    # :zero_threshold
               )
+            end
+
+            reservoir = @exemplar_reservoir_storage[attributes]
+            unless reservoir
+              reservoir = @exemplar_reservoir.dup
+              reservoir.reset
+              @exemplar_reservoir_storage[attributes] = reservoir
+            end
+
+            if exemplar_offer
+              reservoir.offer(value: amount,
+                              timestamp: OpenTelemetry::Common::Utilities.time_in_nanoseconds,
+                              attributes: attributes,
+                              context: OpenTelemetry::Context.current)
             end
 
             # Start to populate the data point (esp. the buckets)
@@ -336,9 +366,6 @@ module OpenTelemetry
           end
 
           def get_scale_change(low, high)
-            # puts "get_scale_change: low: #{low}, high: #{high}, @size: #{@size}"
-            # python code also produce 18 with 0,1048575, the high is little bit off
-            # just checked, the mapping is also ok, produce the 1048575
             change = 0
             while high - low >= @size
               high >>= 1

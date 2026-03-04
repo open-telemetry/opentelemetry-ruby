@@ -25,10 +25,12 @@ module OpenTelemetry
             aggregation,
             callback,
             timeout,
-            attributes
+            attributes,
+            exemplar_filter,
+            exemplar_reservoir
           )
             # Call parent constructor with common parameters
-            super(name, description, unit, instrument_kind, meter_provider, instrumentation_scope, aggregation)
+            super(name, description, unit, instrument_kind, meter_provider, instrumentation_scope, aggregation, exemplar_filter, exemplar_reservoir)
 
             # Initialize asynchronous-specific attributes
             @callback = callback
@@ -52,7 +54,10 @@ module OpenTelemetry
               @mutex.synchronize do
                 @callback.each do |cb|
                   value = safe_guard_callback(cb, timeout: timeout)
-                  @default_aggregation.update(value, attributes, @data_points) if value.is_a?(Numeric)
+                  if value.is_a?(Numeric)
+                    exemplar_offer = should_exemplar_offer(value, attributes)
+                    @default_aggregation.update(value, attributes, @data_points, exemplar_offer: exemplar_offer)
+                  end
                 end
               end
             else
@@ -64,7 +69,10 @@ module OpenTelemetry
 
                     merged_attributes = attributes || {}
                     merged_attributes.merge!(view.attribute_keys)
-                    view.aggregation.update(value, merged_attributes, data_points) if view.valid_aggregation?
+                    if view.valid_aggregation?
+                      exemplar_offer = should_exemplar_offer(value, merged_attributes)
+                      view.aggregation.update(value, attributes, data_points, exemplar_offer: exemplar_offer)
+                    end
                   end
                 end
               end
