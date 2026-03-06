@@ -28,8 +28,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   io.opentelemetry.contrib.mongodb
-      #
+      # io.opentelemetry.contrib.mongodb
       OTEL_SCOPE_NAME = 'otel.scope.name'
   
       # The version of the instrumentation scope - (`InstrumentationScope.Version` in OTLP).
@@ -37,8 +36,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   1.0.0
-      #
+      # 1.0.0
       OTEL_SCOPE_VERSION = 'otel.scope.version'
   
       # Name of the code, either "OK" or "ERROR". MUST NOT be set if the status code is UNSET.
@@ -51,8 +49,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   resource not found
-      #
+      # resource not found
       OTEL_STATUS_DESCRIPTION = 'otel.status_description'
   
       # @!endgroup
