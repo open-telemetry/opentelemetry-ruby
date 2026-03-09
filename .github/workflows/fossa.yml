@@ -13,12 +13,12 @@ jobs:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@675dd7ba1b06c8786a1480d89c384f5620a42647 # v1.281.0
+        uses: ruby/setup-ruby@8d27f39a5e7ad39aebbcbd1324f7af020229645c # v1.287.0
         with:
-          ruby-version: 3.4
+          ruby-version: 3.4.8
       - name: Generate Gemfile.lock
         run: |
           echo "Finding all Gemfiles in the project..."
@@ -36,7 +36,7 @@ jobs:
               echo "Current directory: $(pwd)"
               echo "Creating lock file for: $gemfile"
               
-              # Generate the gemlock files
+              # Generate the Gemfile.lock files
               bundle lock || echo "Warning: Failed to generate lock file for $gemfile, continuing..."
 
               cd "$ORIGINAL_DIR" || exit 1

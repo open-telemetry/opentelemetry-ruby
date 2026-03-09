@@ -41,7 +41,7 @@ jobs:
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -103,7 +103,7 @@ jobs:
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -164,7 +164,7 @@ jobs:
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -202,9 +202,15 @@ jobs:
           gem: "${{ matrix.gem }}"
           ruby: "truffleruby"
 
-  codespell:
+  spelling-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
+    name: Spelling Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - run: make codespell
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: streetsidesoftware/cspell-action@24fa8d3096a314ce263f39578744e9d9f8d80acf # v8.1.2
+        with:
+          use_cspell_files: true
+          config: .cspell.yml
+          suggestions: true
+          treat_flagged_words_as_errors: true

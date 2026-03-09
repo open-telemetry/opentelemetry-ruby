@@ -187,25 +187,25 @@ module OpenTelemetry
             Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.encode(
               Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.new(
                 resource_metrics: metrics_data
-                  .group_by(&:resource)
-                  .map do |resource, scope_metrics|
-                    Opentelemetry::Proto::Metrics::V1::ResourceMetrics.new(
-                      resource: Opentelemetry::Proto::Resource::V1::Resource.new(
-                        attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
-                      ),
-                      scope_metrics: scope_metrics
-                        .group_by(&:instrumentation_scope)
-                        .map do |instrumentation_scope, metrics|
-                          Opentelemetry::Proto::Metrics::V1::ScopeMetrics.new(
-                            scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
-                              name: instrumentation_scope.name,
-                              version: instrumentation_scope.version
-                            ),
-                            metrics: metrics.map { |sd| as_otlp_metrics(sd) }
-                          )
-                        end
-                    )
-                  end
+                                  .group_by(&:resource)
+                                  .map do |resource, scope_metrics|
+                                    Opentelemetry::Proto::Metrics::V1::ResourceMetrics.new(
+                                      resource: Opentelemetry::Proto::Resource::V1::Resource.new(
+                                        attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
+                                      ),
+                                      scope_metrics: scope_metrics
+                                                     .group_by(&:instrumentation_scope)
+                                                     .map do |instrumentation_scope, metrics|
+                                                       Opentelemetry::Proto::Metrics::V1::ScopeMetrics.new(
+                                                         scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
+                                                           name: instrumentation_scope.name,
+                                                           version: instrumentation_scope.version
+                                                         ),
+                                                         metrics: metrics.map { |sd| as_otlp_metrics(sd) }
+                                                       )
+                                                     end
+                                    )
+                                  end
               )
             )
           rescue StandardError => e

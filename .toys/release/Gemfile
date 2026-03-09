@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+source 'https://rubygems.org'
+
+gem 'toys', '= 0.19.1'
+gem 'toys-release', '= 0.6.0'

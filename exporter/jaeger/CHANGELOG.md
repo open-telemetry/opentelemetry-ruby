@@ -111,7 +111,7 @@
 
 - ADDED: Add service_version setter to configurator
 - FIXED: Update IL attribute naming convention to match spec
-- DOCS: Standardize toplevel docs structure and readme
+- DOCS: Standardize top-level docs structure and readme
 - DOCS: Use BatchSpanProcessor in examples
 
 ### v0.6.0 / 2020-09-10
