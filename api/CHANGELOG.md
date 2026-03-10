@@ -1,5 +1,9 @@
 # Release History: opentelemetry-api
 
+### v1.8.0 / 2026-03-10
+
+* ADDED: Replace cgi with uri for encode and decode (#2028)
+
 ### v1.7.0 / 2025-09-17
 
 - BREAKING CHANGE: Remove Span APIs for attributes and events
