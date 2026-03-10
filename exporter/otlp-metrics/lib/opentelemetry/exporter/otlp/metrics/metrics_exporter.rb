@@ -355,7 +355,7 @@ module OpenTelemetry
             }
 
             # Add filtered_attributes if present
-            args[:filtered_attributes] = exemplar.attributes.map { |k, v| as_otlp_key_value(k, v) } if exemplar.attributes
+            args[:filtered_attributes] = exemplar.filtered_attributes.map { |k, v| as_otlp_key_value(k, v) } if exemplar.filtered_attributes
 
             # Set value based on type
             if exemplar.value.is_a?(Float)
