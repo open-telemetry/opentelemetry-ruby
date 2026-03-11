@@ -29,9 +29,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   123e4567-e89b-12d3-a456-426614174000
-        #   0001
-        #
+        # 123e4567-e89b-12d3-a456-426614174000
+        # 0001
         CLOUDEVENTS_EVENT_ID = 'cloudevents.event_id'
     
         # The [source](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md#source-1) identifies the context in which an event happened.
@@ -39,10 +38,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   https://github.com/cloudevents
-        #   /cloudevents/spec/pull/123
-        #   my-service
-        #
+        # https://github.com/cloudevents
+        # /cloudevents/spec/pull/123
+        # my-service
         CLOUDEVENTS_EVENT_SOURCE = 'cloudevents.event_source'
     
         # The [version of the CloudEvents specification](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md#specversion) which the event uses.
@@ -68,9 +66,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   com.github.pull_request.opened
-        #   com.example.object.deleted.v2
-        #
+        # com.github.pull_request.opened
+        # com.example.object.deleted.v2
         CLOUDEVENTS_EVENT_TYPE = 'cloudevents.event_type'
     
         # @!endgroup

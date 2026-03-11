@@ -35,9 +35,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Unexpected input type: string
-        #   The user has exceeded their storage quota
-        #
+        # Unexpected input type: string
+        # The user has exceeded their storage quota
         ERROR_MESSAGE = 'error.message'
     
         # Describes a class of error the operation ended with.
@@ -65,10 +64,10 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   timeout
-        #   java.net.UnknownHostException
-        #   server_certificate_invalid
-        #   500
+        # timeout
+        # java.net.UnknownHostException
+        # server_certificate_invalid
+        # 500
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ERROR::ERROR_TYPE}.

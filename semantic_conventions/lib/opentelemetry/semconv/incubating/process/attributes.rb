@@ -31,8 +31,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   4
-        #
+        # 4
         PROCESS_ARGS_COUNT = 'process.args_count'
     
         # The command used to launch the process (i.e. the command name). On Linux based systems, can be set to the zeroth string in `proc/[pid]/cmdline`. On Windows, can be set to the first parameter extracted from `GetCommandLineW`.
@@ -40,8 +39,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   cmd/otelcol
-        #
+        # cmd/otelcol
         PROCESS_COMMAND = 'process.command'
     
         # All the command arguments (including the command/executable itself) as received by the process. On Linux-based systems (and some other Unixoid systems supporting procfs), can be set according to the list of null-delimited strings extracted from `proc/[pid]/cmdline`. For libc-based executables, this would be the full argv vector passed to `main`. SHOULD NOT be collected by default unless there is sanitization that excludes sensitive data.
@@ -49,8 +47,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["cmd/otecol", "--config=config.yaml"]
-        #
+        # cmd/otecol
+        # --config=config.yaml
         PROCESS_COMMAND_ARGS = 'process.command_args'
     
         # The full command used to launch the process as a single string representing the full command. On Windows, can be set to the result of `GetCommandLineW`. Do not set this if you have to assemble it just for monitoring; use `process.command_args` instead. SHOULD NOT be collected by default unless there is sanitization that excludes sensitive data.
@@ -58,8 +56,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   C:\cmd\otecol --config="my directory\config.yaml"
-        #
+        # C:\cmd\otecol --config="my directory\config.yaml"
         PROCESS_COMMAND_LINE = 'process.command_line'
     
         # Specifies whether the context switches for this data point were voluntary or involuntary.
@@ -78,8 +75,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   2023-11-21T09:25:34.853Z
-        #
+        # 2023-11-21T09:25:34.853Z
         PROCESS_CREATION_TIME = 'process.creation.time'
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -101,9 +97,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ubuntu
-        #   /usr/local/bin:/usr/bin
-        #
+        # ubuntu
+        # /usr/local/bin:/usr/bin
         PROCESS_ENVIRONMENT_VARIABLE_LAMBDA = ->(key) { "process.environment_variable.#{key}" }
     
         # The GNU build ID as found in the `.note.gnu.build-id` ELF section (hex string).
@@ -111,8 +106,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   c89b11207f6479603b0d49bf291c092c2b719293
-        #
+        # c89b11207f6479603b0d49bf291c092c2b719293
         PROCESS_EXECUTABLE_BUILD_ID_GNU = 'process.executable.build_id.gnu'
     
         # The Go build ID as retrieved by `go tool buildid <go executable>`.
@@ -120,8 +114,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   foh3mEXu7BLZjsN9pOwG/kATcXlYVCDEFouRMQed_/WwRFB1hPo9LBkekthSPG/x8hMC8emW2cCjXD0_1aY
-        #
+        # foh3mEXu7BLZjsN9pOwG/kATcXlYVCDEFouRMQed_/WwRFB1hPo9LBkekthSPG/x8hMC8emW2cCjXD0_1aY
         PROCESS_EXECUTABLE_BUILD_ID_GO = 'process.executable.build_id.go'
     
         # Profiling specific build ID for executables. See the OTel specification for Profiles for more information.
@@ -129,8 +122,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   600DCAFE4A110000F2BF38C493F5FB92
-        #
+        # 600DCAFE4A110000F2BF38C493F5FB92
         PROCESS_EXECUTABLE_BUILD_ID_HTLHASH = 'process.executable.build_id.htlhash'
     
         # "Deprecated, use `process.executable.build_id.htlhash` instead."
@@ -138,7 +130,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   600DCAFE4A110000F2BF38C493F5FB92
+        # 600DCAFE4A110000F2BF38C493F5FB92
         #
         # @deprecated {"note": "Replaced by `process.executable.build_id.htlhash`.", "reason": "renamed", "renamed_to": "process.executable.build_id.htlhash"}
         PROCESS_EXECUTABLE_BUILD_ID_PROFILING = 'process.executable.build_id.profiling'
@@ -148,8 +140,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   otelcol
-        #
+        # otelcol
         PROCESS_EXECUTABLE_NAME = 'process.executable.name'
     
         # The full path to the process executable. On Linux based systems, can be set to the target of `proc/[pid]/exe`. On Windows, can be set to the result of `GetProcessImageFileNameW`.
@@ -157,8 +148,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   /usr/bin/cmd/otelcol
-        #
+        # /usr/bin/cmd/otelcol
         PROCESS_EXECUTABLE_PATH = 'process.executable.path'
     
         # The exit code of the process.
@@ -166,8 +156,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   127
-        #
+        # 127
         PROCESS_EXIT_CODE = 'process.exit.code'
     
         # The date and time the process exited, in ISO 8601 format.
@@ -175,8 +164,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   2023-11-21T09:26:12.315Z
-        #
+        # 2023-11-21T09:26:12.315Z
         PROCESS_EXIT_TIME = 'process.exit.time'
     
         # The PID of the process's group leader. This is also the process group ID (PGID) of the process.
@@ -184,8 +172,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   23
-        #
+        # 23
         PROCESS_GROUP_LEADER_PID = 'process.group_leader.pid'
     
         # Whether the process is connected to an interactive shell.
@@ -200,9 +187,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1:name=systemd:/user.slice/user-1000.slice/session-3.scope
-        #   0::/user.slice/user-1000.slice/user@1000.service/tmux-spawn-0267755b-4639-4a27-90ed-f19f88e53748.scope
-        #
+        # 1:name=systemd:/user.slice/user-1000.slice/session-3.scope
+        # 0::/user.slice/user-1000.slice/user@1000.service/tmux-spawn-0267755b-4639-4a27-90ed-f19f88e53748.scope
         PROCESS_LINUX_CGROUP = 'process.linux.cgroup'
     
         # The username of the user that owns the process.
@@ -210,8 +196,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   root
-        #
+        # root
         PROCESS_OWNER = 'process.owner'
     
         # The type of page fault for this data point. Type `major` is for major/hard page faults, and `minor` is for minor/soft page faults.
@@ -224,8 +209,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   111
-        #
+        # 111
         PROCESS_PARENT_PID = 'process.parent_pid'
     
         # Process identifier (PID).
@@ -233,8 +217,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1234
-        #
+        # 1234
         PROCESS_PID = 'process.pid'
     
         # The real user ID (RUID) of the process.
@@ -242,8 +225,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1000
-        #
+        # 1000
         PROCESS_REAL_USER_ID = 'process.real_user.id'
     
         # The username of the real user of the process.
@@ -251,8 +233,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   operator
-        #
+        # operator
         PROCESS_REAL_USER_NAME = 'process.real_user.name'
     
         # An additional description about the runtime of the process, for example a specific vendor customization of the runtime environment.
@@ -269,8 +250,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   OpenJDK Runtime Environment
-        #
+        # OpenJDK Runtime Environment
         PROCESS_RUNTIME_NAME = 'process.runtime.name'
     
         # The version of the runtime of this process, as returned by the runtime without modification.
@@ -287,8 +267,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1002
-        #
+        # 1002
         PROCESS_SAVED_USER_ID = 'process.saved_user.id'
     
         # The username of the saved user.
@@ -296,8 +275,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   operator
-        #
+        # operator
         PROCESS_SAVED_USER_NAME = 'process.saved_user.name'
     
         # The PID of the process's session leader. This is also the session ID (SID) of the process.
@@ -305,8 +283,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   14
-        #
+        # 14
         PROCESS_SESSION_LEADER_PID = 'process.session_leader.pid'
     
         # Process title (proctitle)
@@ -316,10 +293,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   cat /etc/hostname
-        #   xfce4-session
-        #   bash
-        #
+        # cat /etc/hostname
+        # xfce4-session
+        # bash
         PROCESS_TITLE = 'process.title'
     
         # The effective user ID (EUID) of the process.
@@ -327,8 +303,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1001
-        #
+        # 1001
         PROCESS_USER_ID = 'process.user.id'
     
         # The username of the effective user of the process.
@@ -336,8 +311,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   root
-        #
+        # root
         PROCESS_USER_NAME = 'process.user.name'
     
         # Virtual process identifier.
@@ -347,8 +321,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   12
-        #
+        # 12
         PROCESS_VPID = 'process.vpid'
     
         # The working directory of the process.
@@ -356,8 +329,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   /root
-        #
+        # /root
         PROCESS_WORKING_DIRECTORY = 'process.working_directory'
     
         # @!endgroup

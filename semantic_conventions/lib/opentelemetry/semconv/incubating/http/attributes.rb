@@ -39,9 +39,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   active
-        #   idle
-        #
+        # active
+        # idle
         HTTP_CONNECTION_STATE = 'http.connection.state'
     
         # Deprecated, use `network.protocol.name` instead.
@@ -55,7 +54,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   www.example.org
+        # www.example.org
         #
         # @deprecated {"note": "Replaced by one of `server.address`, `client.address` or `http.request.header.host`, depending on the usage.\n", "reason": "uncategorized"}
         HTTP_HOST = 'http.host'
@@ -65,9 +64,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   GET
-        #   POST
-        #   HEAD
+        # GET
+        # POST
+        # HEAD
         #
         # @deprecated {"note": "Replaced by `http.request.method`.", "reason": "renamed", "renamed_to": "http.request.method"}
         HTTP_METHOD = 'http.method'
@@ -109,8 +108,9 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   ["application/json"]
-        #   ["1.2.3.4", "1.2.3.5"]
+        # application/json
+        # 1.2.3.4
+        # 1.2.3.5
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::HTTP::HTTP_REQUEST_HEADER_LAMBDA}.
@@ -136,9 +136,9 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   GET
-        #   POST
-        #   HEAD
+        # GET
+        # POST
+        # HEAD
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::HTTP::HTTP_REQUEST_METHOD}.
@@ -149,9 +149,9 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   GeT
-        #   ACL
-        #   foo
+        # GeT
+        # ACL
+        # foo
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::HTTP::HTTP_REQUEST_METHOD_ORIGINAL}.
@@ -235,8 +235,9 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   ["application/json"]
-        #   ["abc", "def"]
+        # application/json
+        # abc
+        # def
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::HTTP::HTTP_RESPONSE_HEADER_LAMBDA}.
@@ -256,7 +257,7 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   200
+        # 200
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::HTTP::HTTP_RESPONSE_STATUS_CODE}.
@@ -290,8 +291,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   /users/:userID?
-        #   {controller}/{action}/{id?}
+        # /users/:userID?
+        # {controller}/{action}/{id?}
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::HTTP::HTTP_ROUTE}.
@@ -302,8 +303,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   http
-        #   https
+        # http
+        # https
         #
         # @deprecated {"note": "Replaced by `url.scheme`.", "reason": "renamed", "renamed_to": "url.scheme"}
         HTTP_SCHEME = 'http.scheme'
@@ -313,7 +314,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   example.com
+        # example.com
         #
         # @deprecated {"note": "Replaced by `server.address`.", "reason": "renamed", "renamed_to": "server.address"}
         HTTP_SERVER_NAME = 'http.server_name'
@@ -323,7 +324,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   200
+        # 200
         #
         # @deprecated {"note": "Replaced by `http.response.status_code`.", "reason": "renamed", "renamed_to": "http.response.status_code"}
         HTTP_STATUS_CODE = 'http.status_code'
@@ -333,7 +334,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   /search?q=OpenTelemetry#SemConv
+        # /search?q=OpenTelemetry#SemConv
         #
         # @deprecated {"note": "Split to `url.path` and `url.query`.", "reason": "obsoleted"}
         HTTP_TARGET = 'http.target'
@@ -343,7 +344,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   https://www.foo.bar/search?q=OpenTelemetry#SemConv
+        # https://www.foo.bar/search?q=OpenTelemetry#SemConv
         #
         # @deprecated {"note": "Replaced by `url.full`.", "reason": "renamed", "renamed_to": "url.full"}
         HTTP_URL = 'http.url'
@@ -353,8 +354,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   CERN-LineMode/2.15 libwww/2.17b3
-        #   Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1
+        # CERN-LineMode/2.15 libwww/2.17b3
+        # Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1
         #
         # @deprecated {"note": "Replaced by `user_agent.original`.", "reason": "renamed", "renamed_to": "user_agent.original"}
         HTTP_USER_AGENT = 'http.user_agent'

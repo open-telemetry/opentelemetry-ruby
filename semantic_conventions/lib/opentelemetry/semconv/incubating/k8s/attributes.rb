@@ -29,8 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry-cluster
-        #
+        # opentelemetry-cluster
         K8S_CLUSTER_NAME = 'k8s.cluster.name'
     
         # A pseudo-ID for the cluster, set to the UID of the `kube-system` namespace.
@@ -61,8 +60,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   218fc5a9-a5f1-4b54-aa05-46717d0ab26d
-        #
+        # 218fc5a9-a5f1-4b54-aa05-46717d0ab26d
         K8S_CLUSTER_UID = 'k8s.cluster.uid'
     
         # The name of the Container from Pod specification, must be unique within a Pod. Container runtime usually uses different globally unique name (`container.name`).
@@ -70,8 +68,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   redis
-        #
+        # redis
         K8S_CONTAINER_NAME = 'k8s.container.name'
     
         # Number of times the container was restarted. This attribute can be used to identify a particular container (running or stopped) within a container spec.
@@ -84,9 +81,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Evicted
-        #   Error
-        #
+        # Evicted
+        # Error
         K8S_CONTAINER_STATUS_LAST_TERMINATED_REASON = 'k8s.container.status.last_terminated_reason'
     
         # The reason for the container state. Corresponds to the `reason` field of the: [K8s ContainerStateWaiting](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#containerstatewaiting-v1-core) or [K8s ContainerStateTerminated](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#containerstateterminated-v1-core)
@@ -94,16 +90,15 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ContainerCreating
-        #   CrashLoopBackOff
-        #   CreateContainerConfigError
-        #   ErrImagePull
-        #   ImagePullBackOff
-        #   OOMKilled
-        #   Completed
-        #   Error
-        #   ContainerCannotRun
-        #
+        # ContainerCreating
+        # CrashLoopBackOff
+        # CreateContainerConfigError
+        # ErrImagePull
+        # ImagePullBackOff
+        # OOMKilled
+        # Completed
+        # Error
+        # ContainerCannotRun
         K8S_CONTAINER_STATUS_REASON = 'k8s.container.status.reason'
     
         # The state of the container. [K8s ContainerState](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#containerstate-v1-core)
@@ -111,10 +106,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   terminated
-        #   running
-        #   waiting
-        #
+        # terminated
+        # running
+        # waiting
         K8S_CONTAINER_STATUS_STATE = 'k8s.container.status.state'
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -135,9 +129,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   4
-        #   
-        #
+        # 4
+            
         K8S_CRONJOB_ANNOTATION_LAMBDA = ->(key) { "k8s.cronjob.annotation.#{key}" }
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -158,9 +151,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   weekly
-        #   
-        #
+        # weekly
+            
         K8S_CRONJOB_LABEL_LAMBDA = ->(key) { "k8s.cronjob.label.#{key}" }
     
         # The name of the CronJob.
@@ -168,8 +160,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry
-        #
+        # opentelemetry
         K8S_CRONJOB_NAME = 'k8s.cronjob.name'
     
         # The UID of the CronJob.
@@ -177,8 +168,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
-        #
+        # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
         K8S_CRONJOB_UID = 'k8s.cronjob.uid'
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -199,9 +189,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1
-        #   
-        #
+        # 1
+            
         K8S_DAEMONSET_ANNOTATION_LAMBDA = ->(key) { "k8s.daemonset.annotation.#{key}" }
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -222,9 +211,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   guestbook
-        #   
-        #
+        # guestbook
+            
         K8S_DAEMONSET_LABEL_LAMBDA = ->(key) { "k8s.daemonset.label.#{key}" }
     
         # The name of the DaemonSet.
@@ -232,8 +220,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry
-        #
+        # opentelemetry
         K8S_DAEMONSET_NAME = 'k8s.daemonset.name'
     
         # The UID of the DaemonSet.
@@ -241,8 +228,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
-        #
+        # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
         K8S_DAEMONSET_UID = 'k8s.daemonset.uid'
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -263,9 +249,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1
-        #   
-        #
+        # 1
+            
         K8S_DEPLOYMENT_ANNOTATION_LAMBDA = ->(key) { "k8s.deployment.annotation.#{key}" }
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -286,9 +271,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   guestbook
-        #   
-        #
+        # guestbook
+            
         K8S_DEPLOYMENT_LABEL_LAMBDA = ->(key) { "k8s.deployment.label.#{key}" }
     
         # The name of the Deployment.
@@ -296,8 +280,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry
-        #
+        # opentelemetry
         K8S_DEPLOYMENT_NAME = 'k8s.deployment.name'
     
         # The UID of the Deployment.
@@ -305,8 +288,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
-        #
+        # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
         K8S_DEPLOYMENT_UID = 'k8s.deployment.uid'
     
         # The type of metric source for the horizontal pod autoscaler.
@@ -316,9 +298,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Resource
-        #   ContainerResource
-        #
+        # Resource
+        # ContainerResource
         K8S_HPA_METRIC_TYPE = 'k8s.hpa.metric.type'
     
         # The name of the horizontal pod autoscaler.
@@ -326,8 +307,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry
-        #
+        # opentelemetry
         K8S_HPA_NAME = 'k8s.hpa.name'
     
         # The API version of the target resource to scale for the HorizontalPodAutoscaler.
@@ -337,9 +317,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   apps/v1
-        #   autoscaling/v2
-        #
+        # apps/v1
+        # autoscaling/v2
         K8S_HPA_SCALETARGETREF_API_VERSION = 'k8s.hpa.scaletargetref.api_version'
     
         # The kind of the target resource to scale for the HorizontalPodAutoscaler.
@@ -349,9 +328,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Deployment
-        #   StatefulSet
-        #
+        # Deployment
+        # StatefulSet
         K8S_HPA_SCALETARGETREF_KIND = 'k8s.hpa.scaletargetref.kind'
     
         # The name of the target resource to scale for the HorizontalPodAutoscaler.
@@ -361,9 +339,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   my-deployment
-        #   my-statefulset
-        #
+        # my-deployment
+        # my-statefulset
         K8S_HPA_SCALETARGETREF_NAME = 'k8s.hpa.scaletargetref.name'
     
         # The UID of the horizontal pod autoscaler.
@@ -371,8 +348,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
-        #
+        # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
         K8S_HPA_UID = 'k8s.hpa.uid'
     
         # The size (identifier) of the K8s huge page.
@@ -380,8 +356,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   2Mi
-        #
+        # 2Mi
         K8S_HUGEPAGE_SIZE = 'k8s.hugepage.size'
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -402,9 +377,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1
-        #   
-        #
+        # 1
+            
         K8S_JOB_ANNOTATION_LAMBDA = ->(key) { "k8s.job.annotation.#{key}" }
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -425,9 +399,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ci
-        #   
-        #
+        # ci
+            
         K8S_JOB_LABEL_LAMBDA = ->(key) { "k8s.job.label.#{key}" }
     
         # The name of the Job.
@@ -435,8 +408,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry
-        #
+        # opentelemetry
         K8S_JOB_NAME = 'k8s.job.name'
     
         # The UID of the Job.
@@ -444,8 +416,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
-        #
+        # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
         K8S_JOB_UID = 'k8s.job.uid'
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -466,9 +437,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0
-        #   
-        #
+        # 0
+            
         K8S_NAMESPACE_ANNOTATION_LAMBDA = ->(key) { "k8s.namespace.annotation.#{key}" }
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -489,9 +459,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   default
-        #   
-        #
+        # default
+            
         K8S_NAMESPACE_LABEL_LAMBDA = ->(key) { "k8s.namespace.label.#{key}" }
     
         # The name of the namespace that the pod is running in.
@@ -499,8 +468,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   default
-        #
+        # default
         K8S_NAMESPACE_NAME = 'k8s.namespace.name'
     
         # The phase of the K8s namespace.
@@ -511,9 +479,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   active
-        #   terminating
-        #
+        # active
+        # terminating
         K8S_NAMESPACE_PHASE = 'k8s.namespace.phase'
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -534,9 +501,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0
-        #   
-        #
+        # 0
+            
         K8S_NODE_ANNOTATION_LAMBDA = ->(key) { "k8s.node.annotation.#{key}" }
     
         # The status of the condition, one of True, False, Unknown.
@@ -547,10 +513,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   true
-        #   false
-        #   unknown
-        #
+        # true
+        # false
+        # unknown
         K8S_NODE_CONDITION_STATUS = 'k8s.node.condition.status'
     
         # The condition type of a K8s Node.
@@ -568,9 +533,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Ready
-        #   DiskPressure
-        #
+        # Ready
+        # DiskPressure
         K8S_NODE_CONDITION_TYPE = 'k8s.node.condition.type'
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -591,9 +555,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   arm64
-        #   
-        #
+        # arm64
+            
         K8S_NODE_LABEL_LAMBDA = ->(key) { "k8s.node.label.#{key}" }
     
         # The name of the Node.
@@ -601,8 +564,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   node-1
-        #
+        # node-1
         K8S_NODE_NAME = 'k8s.node.name'
     
         # The UID of the Node.
@@ -610,8 +572,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1eb3a0c6-0477-4080-a9cb-0cb7db65c6a2
-        #
+        # 1eb3a0c6-0477-4080-a9cb-0cb7db65c6a2
         K8S_NODE_UID = 'k8s.node.uid'
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -634,10 +595,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   true
-        #   x64
-        #   
-        #
+        # true
+        # x64
+            
         K8S_POD_ANNOTATION_LAMBDA = ->(key) { "k8s.pod.annotation.#{key}" }
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -660,10 +620,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   my-app
-        #   x64
-        #   
-        #
+        # my-app
+        # x64
+            
         K8S_POD_LABEL_LAMBDA = ->(key) { "k8s.pod.label.#{key}" }
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -677,7 +636,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   my-app
+        # my-app
         #
         # @deprecated {"note": "Replaced by `k8s.pod.label`.", "reason": "renamed", "renamed_to": "k8s.pod.label"}
         K8S_POD_LABELS_LAMBDA = ->(key) { "k8s.pod.labels.#{key}" }
@@ -687,8 +646,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry-pod-autoconf
-        #
+        # opentelemetry-pod-autoconf
         K8S_POD_NAME = 'k8s.pod.name'
     
         # The UID of the Pod.
@@ -696,8 +654,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
-        #
+        # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
         K8S_POD_UID = 'k8s.pod.uid'
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -718,9 +675,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0
-        #   
-        #
+        # 0
+            
         K8S_REPLICASET_ANNOTATION_LAMBDA = ->(key) { "k8s.replicaset.annotation.#{key}" }
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -741,9 +697,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   guestbook
-        #   
-        #
+        # guestbook
+            
         K8S_REPLICASET_LABEL_LAMBDA = ->(key) { "k8s.replicaset.label.#{key}" }
     
         # The name of the ReplicaSet.
@@ -751,8 +706,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry
-        #
+        # opentelemetry
         K8S_REPLICASET_NAME = 'k8s.replicaset.name'
     
         # The UID of the ReplicaSet.
@@ -760,8 +714,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
-        #
+        # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
         K8S_REPLICASET_UID = 'k8s.replicaset.uid'
     
         # The name of the replication controller.
@@ -769,8 +722,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry
-        #
+        # opentelemetry
         K8S_REPLICATIONCONTROLLER_NAME = 'k8s.replicationcontroller.name'
     
         # The UID of the replication controller.
@@ -778,8 +730,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
-        #
+        # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
         K8S_REPLICATIONCONTROLLER_UID = 'k8s.replicationcontroller.uid'
     
         # The name of the resource quota.
@@ -787,8 +738,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry
-        #
+        # opentelemetry
         K8S_RESOURCEQUOTA_NAME = 'k8s.resourcequota.name'
     
         # The name of the K8s resource a resource quota defines.
@@ -798,8 +748,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   count/replicationcontrollers
-        #
+        # count/replicationcontrollers
         K8S_RESOURCEQUOTA_RESOURCE_NAME = 'k8s.resourcequota.resource_name'
     
         # The UID of the resource quota.
@@ -807,8 +756,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
-        #
+        # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
         K8S_RESOURCEQUOTA_UID = 'k8s.resourcequota.uid'
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -829,9 +777,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1
-        #   
-        #
+        # 1
+            
         K8S_STATEFULSET_ANNOTATION_LAMBDA = ->(key) { "k8s.statefulset.annotation.#{key}" }
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -852,9 +799,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   guestbook
-        #   
-        #
+        # guestbook
+            
         K8S_STATEFULSET_LABEL_LAMBDA = ->(key) { "k8s.statefulset.label.#{key}" }
     
         # The name of the StatefulSet.
@@ -862,8 +808,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry
-        #
+        # opentelemetry
         K8S_STATEFULSET_NAME = 'k8s.statefulset.name'
     
         # The UID of the StatefulSet.
@@ -871,8 +816,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
-        #
+        # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
         K8S_STATEFULSET_UID = 'k8s.statefulset.uid'
     
         # The name of K8s [StorageClass](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#storageclass-v1-storage-k8s-io) object.
@@ -880,8 +824,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   gold.storageclass.storage.k8s.io
-        #
+        # gold.storageclass.storage.k8s.io
         K8S_STORAGECLASS_NAME = 'k8s.storageclass.name'
     
         # The name of the K8s volume.
@@ -889,8 +832,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   volume0
-        #
+        # volume0
         K8S_VOLUME_NAME = 'k8s.volume.name'
     
         # The type of the K8s volume.
@@ -898,9 +840,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   emptyDir
-        #   persistentVolumeClaim
-        #
+        # emptyDir
+        # persistentVolumeClaim
         K8S_VOLUME_TYPE = 'k8s.volume.type'
     
         # @!endgroup
