@@ -239,7 +239,7 @@ OpenTelemetry.meter_provider.add_view('my_histogram', aggregation: hist_agg, typ
 ```
 
 | Temporality preference | Counter | Observable Counter | Histogram | UpDownCounter | Observable UpDownCounter |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | `cumulative` | Cumulative | Cumulative | Cumulative | Cumulative | Cumulative |
 | `delta` | Delta | Delta | Delta | Cumulative | Cumulative |
 | `lowmemory` | Delta | Cumulative | Delta | Cumulative | Cumulative |
