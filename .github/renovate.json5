@@ -81,6 +81,17 @@
       matchUpdateTypes: ["digest"],
       enabled: false,
     },
+    {
+      description: "Create PRs for older semantic conventions versions",
+      separateMultipleMinor: true,
+      separateMinorPatch: true,
+      schedule: ["at any time"],
+      matchDatasources: ["github-releases"],
+      matchDepNames: ["open-telemetry/semantic-conventions"],
+      semanticCommitType: "feat",
+      semanticCommitScope: "semconv",
+      labels: ["dependencies", "semconv"]
+    },
   ],
   customManagers: [
     {
@@ -151,6 +162,18 @@
       datasourceTemplate: "github-runners",
       currentValueTemplate: "{{depVersion}}",
       depTypeTemplate: "github-runner",
+    },
+    {
+      "customType": "regex",
+      "description": "Update Semantic Conventions version in Rake files",
+      "managerFilePatterns": ["/^semantic_conventions/Rakefile$/"],
+      "matchStrings": [
+        "SPEC_VERSION = '(?<currentValue>.*?)'"
+      ],
+      "depNameTemplate": "open-telemetry/semantic-conventions",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver",
+      "extractVersionTemplate": "^v(?<version>.*)$"
     },
   ],
   lockFileMaintenance: {
