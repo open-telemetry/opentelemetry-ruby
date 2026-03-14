@@ -4,6 +4,18 @@
     "config:best-practices",
     "helpers:pinGitHubActionDigestsToSemver"
   ],
+  "regexManagers": [
+    {
+      "fileMatch": ["^semantic_conventions/Rakefile$"],
+      "matchStrings": [
+        "SPEC_VERSION = '(?<currentValue>.*?)'"
+      ],
+      "depNameTemplate": "open-telemetry/semantic-conventions",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver",
+      "extractVersionTemplate": "^v(?<version>.*)$"
+    }
+  ],
   "packageRules": [
     {
       "groupName": "all patch versions",
@@ -13,6 +25,13 @@
     {
       "matchUpdateTypes": ["minor", "major"],
       "schedule": ["before 8am on Monday"]
+    },
+    {
+      "matchDatasources": ["github-releases"],
+      "matchDepNames": ["open-telemetry/semantic-conventions"],
+      "semanticCommitType": "feat",
+      "semanticCommitScope": "semconv",
+      "labels": ["dependencies", "semconv"]
     }
   ],
   "labels": [
