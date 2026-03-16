@@ -59,9 +59,10 @@ module OpenTelemetry
         # @note Stability Level: development
         PROCESS_NETWORK_IO = 'process.network.io'
     
-        # Number of file descriptors in use by the process.
+        # Deprecated, use `process.unix.file_descriptor.count` instead.
         #
         # @note Stability Level: development
+        # @deprecated {"note": "Replaced by `process.unix.file_descriptor.count`.", "reason": "renamed", "renamed_to": "process.unix.file_descriptor.count"}
         PROCESS_OPEN_FILE_DESCRIPTOR_COUNT = 'process.open_file_descriptor.count'
     
         # Number of page faults the process has made.
@@ -74,6 +75,11 @@ module OpenTelemetry
         # @note Stability Level: development
         PROCESS_THREAD_COUNT = 'process.thread.count'
     
+        # Number of unix file descriptors in use by the process.
+        #
+        # @note Stability Level: development
+        PROCESS_UNIX_FILE_DESCRIPTOR_COUNT = 'process.unix.file_descriptor.count'
+    
         # The time the process has been running.
         #
         # Instrumentations SHOULD use a gauge with type `double` and measure uptime in seconds as a floating point number with the highest precision available.
@@ -81,6 +87,11 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         PROCESS_UPTIME = 'process.uptime'
+    
+        # Number of handles held by the process.
+        #
+        # @note Stability Level: development
+        PROCESS_WINDOWS_HANDLE_COUNT = 'process.windows.handle.count'
     
         # @!endgroup
       end

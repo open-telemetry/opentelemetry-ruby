@@ -57,7 +57,7 @@ module OpenTelemetry
         # @example Sample Values
         #   admin
         #
-        # @deprecated {"note": "Replaced by `user.roles`.", "reason": "renamed", "renamed_to": "user.roles"}
+        # @deprecated {"note": "Use `user.roles` instead.", "reason": "uncategorized"}
         ENDUSER_ROLE = 'enduser.role'
     
         # Deprecated, no replacement at this time.

@@ -26,11 +26,17 @@ module OpenTelemetry
       
         # The [`service.name`](/docs/resource/README.md#service) of the remote service. SHOULD be equal to the actual `service.name` resource attribute of the remote service if any.
         #
+        # Examples of `peer.service` that users may specify:
+        #
+        # - A Redis cache of auth tokens as `peer.service="AuthTokenCache"`.
+        # - A gRPC service `rpc.service="io.opentelemetry.AuthService"` may be hosted in both a gateway, `peer.service="ExternalApiService"` and a backend, `peer.service="AuthService"`.
+        #
         # @note Stability Level: development
         #
         # @example Sample Values
         #   AuthTokenCache
         #
+        # @deprecated {"note": "Replaced by `service.peer.name`.", "reason": "renamed", "renamed_to": "service.peer.name"}
         PEER_SERVICE = 'peer.service'
     
         # @!endgroup

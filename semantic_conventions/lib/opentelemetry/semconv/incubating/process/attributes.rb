@@ -62,7 +62,7 @@ module OpenTelemetry
         # Specifies whether the context switches for this data point were voluntary or involuntary.
         #
         # @note Stability Level: development
-        PROCESS_CONTEXT_SWITCH_TYPE = 'process.context_switch_type'
+        PROCESS_CONTEXT_SWITCH_TYPE = 'process.context_switch.type'
     
         # Deprecated, use `cpu.mode` instead.
         #
@@ -199,9 +199,10 @@ module OpenTelemetry
         # root
         PROCESS_OWNER = 'process.owner'
     
-        # The type of page fault for this data point. Type `major` is for major/hard page faults, and `minor` is for minor/soft page faults.
+        # Deprecated, use `system.paging.fault.type` instead.
         #
         # @note Stability Level: development
+        # @deprecated {"note": "Replaced by `system.paging.fault.type`.", "reason": "renamed", "renamed_to": "system.paging.fault.type"}
         PROCESS_PAGING_FAULT_TYPE = 'process.paging.fault_type'
     
         # Parent Process identifier (PPID).
@@ -285,6 +286,14 @@ module OpenTelemetry
         # @example Sample Values
         # 14
         PROCESS_SESSION_LEADER_PID = 'process.session_leader.pid'
+    
+        # The process state, e.g., [Linux Process State Codes](https://man7.org/linux/man-pages/man1/ps.1.html#PROCESS_STATE_CODES)
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        # running
+        PROCESS_STATE = 'process.state'
     
         # Process title (proctitle)
         #

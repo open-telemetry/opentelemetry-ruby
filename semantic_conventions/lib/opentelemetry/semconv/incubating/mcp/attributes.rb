@@ -21,28 +21,40 @@
 module OpenTelemetry
   module SemConv
     module Incubating
-      module DNS
+      module MCP
         # @!group Attribute Names
       
-        # The list of IPv4 or IPv6 addresses resolved during DNS lookup.
+        # The name of the request or notification method.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 10.0.0.1
-        # 2001:0db8:85a3:0000:0000:8a2e:0370:7334
-        DNS_ANSWERS = 'dns.answers'
+        MCP_METHOD_NAME = 'mcp.method.name'
     
-        # The name being queried.
-        #
-        # The name represents the queried domain name as it appears in the DNS query without any additional normalization.
+        # The [version](https://modelcontextprotocol.io/specification/versioning) of the Model Context Protocol used.
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        # www.example.com
-        # opentelemetry.io
-        DNS_QUESTION_NAME = 'dns.question.name'
+        # 2025-06-18
+        MCP_PROTOCOL_VERSION = 'mcp.protocol.version'
+    
+        # The value of the resource uri.
+        #
+        # This is a URI of the resource provided in the following requests or notifications: `resources/read`, `resources/subscribe`, `resources/unsubscribe`, or `notifications/resources/updated`.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        # postgres://database/customers/schema
+        # file:///home/user/documents/report.pdf
+        MCP_RESOURCE_URI = 'mcp.resource.uri'
+    
+        # Identifies [MCP session](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports#session-management).
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        # 191c4850af6c49e08843a3f6c80e5046
+        MCP_SESSION_ID = 'mcp.session.id'
     
         # @!endgroup
       end

@@ -238,7 +238,7 @@ module OpenTelemetry
         # 200
         # 201
         #
-        # @deprecated {"note": "Replaced by `db.response.status_code`.", "reason": "renamed", "renamed_to": "db.response.status_code"}
+        # @deprecated {"note": "Use `db.response.status_code` instead.", "reason": "uncategorized"}
         DB_COSMOSDB_STATUS_CODE = 'db.cosmosdb.status_code'
     
         # Deprecated, use `azure.cosmosdb.response.sub_status_code` instead.
@@ -447,14 +447,17 @@ module OpenTelemetry
         # `db.query.parameter.<key>` SHOULD match
         # up with the parameterized placeholders present in `db.query.text`.
         #
+        # It is RECOMMENDED to capture the value as provided by the application
+        # without attempting to do any case normalization.
+        #
         # `db.query.parameter.<key>` SHOULD NOT be captured on batch operations.
         #
         # Examples:
         #
         # - For a query `SELECT * FROM users where username =  %s` with the parameter `"jdoe"`,
         #   the attribute `db.query.parameter.0` SHOULD be set to `"jdoe"`.
-        # - For a query `"SELECT * FROM users WHERE username = %(username)s;` with parameter
-        #   `username = "jdoe"`, the attribute `db.query.parameter.username` SHOULD be set to `"jdoe"`.
+        # - For a query `"SELECT * FROM users WHERE username = %(userName)s;` with parameter
+        #   `userName = "jdoe"`, the attribute `db.query.parameter.userName` SHOULD be set to `"jdoe"`.
         #
         # @note Stability Level: development
         #
@@ -472,7 +475,7 @@ module OpenTelemetry
         # Summary may be available to the instrumentation through
         # instrumentation hooks or other means. If it is not available, instrumentations
         # that support query parsing SHOULD generate a summary following
-        # [Generating query summary](/docs/database/database-spans.md#generating-a-summary-of-the-query)
+        # [Generating query summary](/docs/db/database-spans.md#generating-a-summary-of-the-query)
         # section.
         #
         # @note Stability Level: stable
@@ -488,7 +491,7 @@ module OpenTelemetry
     
         # The database query being executed.
         #
-        # For sanitization see [Sanitization of `db.query.text`](/docs/database/database-spans.md#sanitization-of-dbquerytext).
+        # For sanitization see [Sanitization of `db.query.text`](/docs/db/database-spans.md#sanitization-of-dbquerytext).
         # For batch operations, if the individual operations are known to have the same query text then that query text SHOULD be used, otherwise all of the individual query texts SHOULD be concatenated with separator `; ` or some other database system specific separator if more applicable.
         # Parameterized query text SHOULD NOT be sanitized. Even though parameterized query text can potentially have sensitive data, by using a parameterized query the user is giving a strong signal that any sensitive data will be passed as parameter values, and the benefit to observability of capturing the static part of the query text by default outweighs the risk.
         #
@@ -511,7 +514,7 @@ module OpenTelemetry
         # 1
         # 15
         #
-        # @deprecated {"note": "Replaced by `db.namespace`.", "reason": "renamed", "renamed_to": "db.namespace"}
+        # @deprecated {"note": "Uncategorized.", "reason": "uncategorized"}
         DB_REDIS_DATABASE_INDEX = 'db.redis.database_index'
     
         # Number of rows returned by the operation.

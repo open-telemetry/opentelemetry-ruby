@@ -21,19 +21,37 @@
 module OpenTelemetry
   module SemConv
     module Incubating
-      module EVENT
+      module ONC_RPC
         # @!group Attribute Names
       
-        # Identifies the class / type of event.
+        # ONC/Sun RPC procedure name.
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        # browser.mouse.click
-        # device.app.lifecycle
+        # OPEN
+        # READ
+        # GETATTR
+        ONC_RPC_PROCEDURE_NAME = 'onc_rpc.procedure.name'
+    
+        # ONC/Sun RPC procedure number.
         #
-        # @deprecated {"note": "The value of this attribute MUST now be set as the value of the EventName field on the LogRecord to indicate that the LogRecord represents an Event.\n", "reason": "uncategorized"}
-        EVENT_NAME = 'event.name'
+        # @note Stability Level: development
+        ONC_RPC_PROCEDURE_NUMBER = 'onc_rpc.procedure.number'
+    
+        # ONC/Sun RPC program name.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        # portmapper
+        # nfs
+        ONC_RPC_PROGRAM_NAME = 'onc_rpc.program.name'
+    
+        # ONC/Sun RPC program version.
+        #
+        # @note Stability Level: development
+        ONC_RPC_VERSION = 'onc_rpc.version'
     
         # @!endgroup
       end

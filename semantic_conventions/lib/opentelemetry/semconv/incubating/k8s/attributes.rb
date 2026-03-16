@@ -26,7 +26,7 @@ module OpenTelemetry
       
         # The name of the cluster.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # opentelemetry-cluster
@@ -57,7 +57,7 @@ module OpenTelemetry
         # Therefore, UIDs between clusters should be extremely unlikely to
         # conflict.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # 218fc5a9-a5f1-4b54-aa05-46717d0ab26d
@@ -65,7 +65,7 @@ module OpenTelemetry
     
         # The name of the Container from Pod specification, must be unique within a Pod. Container runtime usually uses different globally unique name (`container.name`).
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # redis
@@ -73,7 +73,7 @@ module OpenTelemetry
     
         # Number of times the container was restarted. This attribute can be used to identify a particular container (running or stopped) within a container spec.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         K8S_CONTAINER_RESTART_COUNT = 'k8s.container.restart_count'
     
         # Last terminated reason of the Container.
@@ -126,7 +126,7 @@ module OpenTelemetry
         # - An annotation `data` with empty string value SHOULD be recorded as
         #   the `k8s.cronjob.annotation.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # 4
@@ -148,7 +148,7 @@ module OpenTelemetry
         # - A label `automated` with empty string value SHOULD be recorded as
         #   the `k8s.cronjob.label.automated` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # weekly
@@ -157,7 +157,7 @@ module OpenTelemetry
     
         # The name of the CronJob.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # opentelemetry
@@ -165,7 +165,7 @@ module OpenTelemetry
     
         # The UID of the CronJob.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
@@ -186,7 +186,7 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.daemonset.annotation.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # 1
@@ -208,7 +208,7 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.daemonset.label.injected` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # guestbook
@@ -217,7 +217,7 @@ module OpenTelemetry
     
         # The name of the DaemonSet.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # opentelemetry
@@ -225,7 +225,7 @@ module OpenTelemetry
     
         # The UID of the DaemonSet.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
@@ -246,7 +246,7 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.deployment.annotation.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # 1
@@ -268,7 +268,7 @@ module OpenTelemetry
         # - A label `injected` with empty string value SHOULD be recorded as
         #   the `k8s.deployment.label.injected` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # guestbook
@@ -277,7 +277,7 @@ module OpenTelemetry
     
         # The name of the Deployment.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # opentelemetry
@@ -285,7 +285,7 @@ module OpenTelemetry
     
         # The UID of the Deployment.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
@@ -374,7 +374,7 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.job.annotation.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # 1
@@ -396,7 +396,7 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.job.label.automated` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # ci
@@ -405,7 +405,7 @@ module OpenTelemetry
     
         # The name of the Job.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # opentelemetry
@@ -413,7 +413,7 @@ module OpenTelemetry
     
         # The UID of the Job.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
@@ -434,7 +434,7 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.namespace.annotation.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # 0
@@ -456,7 +456,7 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.namespace.label.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # default
@@ -465,7 +465,7 @@ module OpenTelemetry
     
         # The name of the namespace that the pod is running in.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # default
@@ -498,7 +498,7 @@ module OpenTelemetry
         # - An annotation `data` with empty string value SHOULD be recorded as
         #   the `k8s.node.annotation.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # 0
@@ -552,7 +552,7 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.node.label.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # arm64
@@ -561,7 +561,7 @@ module OpenTelemetry
     
         # The name of the Node.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # node-1
@@ -569,7 +569,7 @@ module OpenTelemetry
     
         # The UID of the Node.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # 1eb3a0c6-0477-4080-a9cb-0cb7db65c6a2
@@ -592,13 +592,39 @@ module OpenTelemetry
         # - An annotation `data` with empty string value SHOULD be recorded as
         #   the `k8s.pod.annotation.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # true
         # x64
             
         K8S_POD_ANNOTATION_LAMBDA = ->(key) { "k8s.pod.annotation.#{key}" }
+    
+        # Specifies the hostname of the Pod.
+        #
+        # The K8s Pod spec has an optional hostname field, which can be used to specify a hostname.
+        # Refer to [K8s docs](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-hostname-and-subdomain-field)
+        # for more information about this field.
+        #
+        # This attribute aligns with the `hostname` field of the
+        # [K8s PodSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#podspec-v1-core).
+        #
+        # @note Stability Level: alpha
+        #
+        # @example Sample Values
+        # collector-gateway
+        K8S_POD_HOSTNAME = 'k8s.pod.hostname'
+    
+        # IP address allocated to the Pod.
+        #
+        # This attribute aligns with the `podIP` field of the
+        # [K8s PodStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#podstatus-v1-core).
+        #
+        # @note Stability Level: alpha
+        #
+        # @example Sample Values
+        # 172.18.0.2
+        K8S_POD_IP = 'k8s.pod.ip'
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
         # for the state of the key.
@@ -617,7 +643,7 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.pod.label.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # my-app
@@ -643,15 +669,48 @@ module OpenTelemetry
     
         # The name of the Pod.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # opentelemetry-pod-autoconf
         K8S_POD_NAME = 'k8s.pod.name'
     
-        # The UID of the Pod.
+        # The start timestamp of the Pod.
+        #
+        # Date and time at which the object was acknowledged by the Kubelet.
+        # This is before the Kubelet pulled the container image(s) for the pod.
+        #
+        # This attribute aligns with the `startTime` field of the
+        # [K8s PodStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#podstatus-v1-core),
+        # in ISO 8601 (RFC 3339 compatible) format.
+        #
+        # @note Stability Level: alpha
+        #
+        # @example Sample Values
+        # 2025-12-04T08:41:03Z
+        K8S_POD_START_TIME = 'k8s.pod.start_time'
+    
+        # The phase for the pod. Corresponds to the `phase` field of the: [K8s PodStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.33/#podstatus-v1-core)
         #
         # @note Stability Level: development
+        #
+        # @example Sample Values
+        # Pending
+        # Running
+        K8S_POD_STATUS_PHASE = 'k8s.pod.status.phase'
+    
+        # The reason for the pod state. Corresponds to the `reason` field of the: [K8s PodStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.33/#podstatus-v1-core)
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        # Evicted
+        # NodeAffinity
+        K8S_POD_STATUS_REASON = 'k8s.pod.status.reason'
+    
+        # The UID of the Pod.
+        #
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
@@ -672,7 +731,7 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.replicaset.annotation.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # 0
@@ -694,7 +753,7 @@ module OpenTelemetry
         # - A label `injected` with empty string value SHOULD be recorded as
         #   the `k8s.replicaset.label.injected` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # guestbook
@@ -703,7 +762,7 @@ module OpenTelemetry
     
         # The name of the ReplicaSet.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # opentelemetry
@@ -711,7 +770,7 @@ module OpenTelemetry
     
         # The UID of the ReplicaSet.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
@@ -743,7 +802,7 @@ module OpenTelemetry
     
         # The name of the K8s resource a resource quota defines.
         #
-        # The value for this attribute can be either the full `count/<resource>[.<group>]` string (e.g., count/deployments.apps, count/pods), or, for certain core Kubernetes resources, just the resource name (e.g., pods, services, configmaps). Both forms are supported by Kubernetes for object count quotas. See [Kubernetes Resource Quotas documentation](https://kubernetes.io/docs/concepts/policy/resource-quotas/#object-count-quota) for more details.
+        # The value for this attribute can be either the full `count/<resource>[.<group>]` string (e.g., count/deployments.apps, count/pods), or, for certain core Kubernetes resources, just the resource name (e.g., pods, services, configmaps). Both forms are supported by Kubernetes for object count quotas. See [Kubernetes Resource Quotas documentation](https://kubernetes.io/docs/concepts/policy/resource-quotas/#quota-on-object-count) for more details.
         #
         # @note Stability Level: development
         #
@@ -774,7 +833,7 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.statefulset.annotation.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # 1
@@ -796,7 +855,7 @@ module OpenTelemetry
         # - A label `injected` with empty string value SHOULD be recorded as
         #   the `k8s.statefulset.label.injected` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # guestbook
@@ -805,7 +864,7 @@ module OpenTelemetry
     
         # The name of the StatefulSet.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # opentelemetry
@@ -813,7 +872,7 @@ module OpenTelemetry
     
         # The UID of the StatefulSet.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         #
         # @example Sample Values
         # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff

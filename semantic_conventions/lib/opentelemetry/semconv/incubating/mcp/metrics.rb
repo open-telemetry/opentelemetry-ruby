@@ -21,28 +21,28 @@
 module OpenTelemetry
   module SemConv
     module Incubating
-      module DNS
-        # @!group Attribute Names
+      module MCP
+        # @!group Metrics Names
       
-        # The list of IPv4 or IPv6 addresses resolved during DNS lookup.
+        # The duration of the MCP request or notification as observed on the sender from the time it was sent until the response or ack is received.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 10.0.0.1
-        # 2001:0db8:85a3:0000:0000:8a2e:0370:7334
-        DNS_ANSWERS = 'dns.answers'
+        MCP_CLIENT_OPERATION_DURATION = 'mcp.client.operation.duration'
     
-        # The name being queried.
-        #
-        # The name represents the queried domain name as it appears in the DNS query without any additional normalization.
+        # The duration of the MCP session as observed on the MCP client.
         #
         # @note Stability Level: development
+        MCP_CLIENT_SESSION_DURATION = 'mcp.client.session.duration'
+    
+        # MCP request or notification duration as observed on the receiver from the time it was received until the result or ack is sent.
         #
-        # @example Sample Values
-        # www.example.com
-        # opentelemetry.io
-        DNS_QUESTION_NAME = 'dns.question.name'
+        # @note Stability Level: development
+        MCP_SERVER_OPERATION_DURATION = 'mcp.server.operation.duration'
+    
+        # The duration of the MCP session as observed on the MCP server.
+        #
+        # @note Stability Level: development
+        MCP_SERVER_SESSION_DURATION = 'mcp.server.session.duration'
     
         # @!endgroup
       end

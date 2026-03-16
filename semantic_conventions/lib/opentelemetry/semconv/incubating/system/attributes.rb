@@ -30,6 +30,8 @@ module OpenTelemetry
         #
         # @example Sample Values
         # 1
+        #
+        # @deprecated {"note": "Replaced by `cpu.logical_number`.", "reason": "renamed", "renamed_to": "cpu.logical_number"}
         SYSTEM_CPU_LOGICAL_NUMBER = 'system.cpu.logical_number'
     
         # Deprecated, use `cpu.mode` instead.
@@ -83,6 +85,15 @@ module OpenTelemetry
         # ext4
         SYSTEM_FILESYSTEM_TYPE = 'system.filesystem.type'
     
+        # The Linux Slab memory state
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        # reclaimable
+        # unreclaimable
+        SYSTEM_MEMORY_LINUX_SLAB_STATE = 'system.memory.linux.slab.state'
+    
         # The memory state
         #
         # @note Stability Level: development
@@ -110,6 +121,14 @@ module OpenTelemetry
         # in
         SYSTEM_PAGING_DIRECTION = 'system.paging.direction'
     
+        # The paging fault type
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        # minor
+        SYSTEM_PAGING_FAULT_TYPE = 'system.paging.fault.type'
+    
         # The memory paging state
         #
         # @note Stability Level: development
@@ -118,30 +137,34 @@ module OpenTelemetry
         # free
         SYSTEM_PAGING_STATE = 'system.paging.state'
     
-        # The memory paging type
+        # Deprecated, use `system.paging.fault.type` instead.
         #
         # @note Stability Level: development
         #
         # @example Sample Values
         # minor
+        #
+        # @deprecated {"note": "Replaced by `system.paging.fault.type`.", "reason": "renamed", "renamed_to": "system.paging.fault.type"}
         SYSTEM_PAGING_TYPE = 'system.paging.type'
     
-        # The process state, e.g., [Linux Process State Codes](https://man7.org/linux/man-pages/man1/ps.1.html#PROCESS_STATE_CODES)
+        # Deprecated, use `process.state` instead.
         #
         # @note Stability Level: development
         #
         # @example Sample Values
         # running
+        #
+        # @deprecated {"note": "Replaced by `process.state`.", "reason": "renamed", "renamed_to": "process.state"}
         SYSTEM_PROCESS_STATUS = 'system.process.status'
     
-        # Deprecated, use `system.process.status` instead.
+        # Deprecated, use `process.state` instead.
         #
         # @note Stability Level: development
         #
         # @example Sample Values
         # running
         #
-        # @deprecated {"note": "Replaced by `system.process.status`.", "reason": "renamed", "renamed_to": "system.process.status"}
+        # @deprecated {"note": "Replaced by `process.state`.", "reason": "renamed", "renamed_to": "process.state"}
         SYSTEM_PROCESSES_STATUS = 'system.processes.status'
     
         # @!endgroup
