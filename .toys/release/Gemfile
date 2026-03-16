@@ -7,4 +7,4 @@
 source 'https://rubygems.org'
 
 gem 'toys', '= 0.20.0'
-gem 'toys-release', '= 0.6.0'
+gem 'toys-release', '= 0.8.1'
