@@ -21,19 +21,29 @@
 module OpenTelemetry
   module SemConv
     module Incubating
-      module EVENT
+      module JSONRPC
         # @!group Attribute Names
       
-        # Identifies the class / type of event.
+        # Protocol version, as specified in the `jsonrpc` property of the request and its corresponding response.
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        # browser.mouse.click
-        # device.app.lifecycle
+        # 2.0
+        # 1.0
+        JSONRPC_PROTOCOL_VERSION = 'jsonrpc.protocol.version'
+    
+        # A string representation of the `id` property of the request and its corresponding response.
         #
-        # @deprecated {"note": "The value of this attribute MUST now be set as the value of the EventName field on the LogRecord to indicate that the LogRecord represents an Event.\n", "reason": "uncategorized"}
-        EVENT_NAME = 'event.name'
+        # Under the [JSON-RPC specification](https://www.jsonrpc.org/specification), the `id` property may be a string, number, null, or omitted entirely. When omitted, the request is treated as a notification. Using `null` is not equivalent to omitting the `id`, but it is discouraged.
+        # Instrumentations SHOULD NOT capture this attribute when the `id` is `null` or omitted.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        # 10
+        # request-7
+        JSONRPC_REQUEST_ID = 'jsonrpc.request.id'
     
         # @!endgroup
       end

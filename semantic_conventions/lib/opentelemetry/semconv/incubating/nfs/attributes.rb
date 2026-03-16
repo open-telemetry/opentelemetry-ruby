@@ -21,19 +21,27 @@
 module OpenTelemetry
   module SemConv
     module Incubating
-      module EVENT
+      module NFS
         # @!group Attribute Names
       
-        # Identifies the class / type of event.
+        # NFSv4+ operation name.
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        # browser.mouse.click
-        # device.app.lifecycle
+        # OPEN
+        # READ
+        # GETATTR
+        NFS_OPERATION_NAME = 'nfs.operation.name'
+    
+        # Linux: one of "hit" (NFSD_STATS_RC_HITS), "miss" (NFSD_STATS_RC_MISSES), or "nocache" (NFSD_STATS_RC_NOCACHE -- uncacheable)
         #
-        # @deprecated {"note": "The value of this attribute MUST now be set as the value of the EventName field on the LogRecord to indicate that the LogRecord represents an Event.\n", "reason": "uncategorized"}
-        EVENT_NAME = 'event.name'
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        #   hit
+        #
+        NFS_SERVER_REPCACHE_STATUS = 'nfs.server.repcache.status'
     
         # @!endgroup
       end

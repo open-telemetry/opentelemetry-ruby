@@ -26,7 +26,7 @@ module OpenTelemetry
       
         # Name of the user-agent extracted from original. Usually refers to the browser's name.
         #
-        # [Example](https://www.whatsmyua.info) of extracting browser's name from original string. In the case of using a user-agent for non-browser products, such as microservices with multiple names/versions inside the `user_agent.original`, the most significant name SHOULD be selected. In such a scenario it should align with `user_agent.version`
+        # [Example](https://uaparser.dev/#demo) of extracting browser's name from original string. In the case of using a user-agent for non-browser products, such as microservices with multiple names/versions inside the `user_agent.original`, the most significant name SHOULD be selected. In such a scenario it should align with `user_agent.version`
         #
         # @note Stability Level: development
         #
@@ -80,7 +80,7 @@ module OpenTelemetry
     
         # Version of the user-agent extracted from original. Usually refers to the browser's version
         #
-        # [Example](https://www.whatsmyua.info) of extracting browser's version from original string. In the case of using a user-agent for non-browser products, such as microservices with multiple names/versions inside the `user_agent.original`, the most significant version SHOULD be selected. In such a scenario it should align with `user_agent.name`
+        # [Example](https://uaparser.dev/#demo) of extracting browser's version from original string. In the case of using a user-agent for non-browser products, such as microservices with multiple names/versions inside the `user_agent.original`, the most significant version SHOULD be selected. In such a scenario it should align with `user_agent.name`
         #
         # @note Stability Level: development
         #

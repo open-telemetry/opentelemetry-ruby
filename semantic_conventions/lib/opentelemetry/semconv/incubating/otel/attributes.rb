@@ -59,6 +59,17 @@ module OpenTelemetry
         # com.example.MySpanExporter
         OTEL_COMPONENT_TYPE = 'otel.component.type'
     
+        # Identifies the class / type of event.
+        #
+        # This attribute SHOULD be used by non-OTLP exporters when destination does not support `EventName` or equivalent field. This attribute MAY be used by applications using existing logging libraries so that it can be used to set the `EventName` field by Collector or SDK components.
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        # browser.mouse.click
+        # device.app.lifecycle
+        OTEL_EVENT_NAME = 'otel.event.name'
+    
         # Deprecated. Use the `otel.scope.name` attribute
         #
         # @note Stability Level: development

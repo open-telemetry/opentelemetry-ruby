@@ -109,6 +109,33 @@ module OpenTelemetry
         # 99
         APP_SCREEN_COORDINATE_Y = 'app.screen.coordinate.y'
     
+        # An identifier that uniquely differentiates this screen from other screens in the same application.
+        #
+        # A screen represents only the part of the device display drawn by the app. It typically contains multiple widgets or UI components and is larger in scope than individual widgets. Multiple screens can coexist on the same display simultaneously (e.g., split view on tablets).
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        # f9bc787d-ff05-48ad-90e1-fca1d46130b3
+        # com.example.app.MainActivity
+        # com.example.shop.ProductDetailFragment
+        # MyApp.ProfileView
+        # MyApp.ProfileViewController
+        APP_SCREEN_ID = 'app.screen.id'
+    
+        # The name of an application screen.
+        #
+        # A screen represents only the part of the device display drawn by the app. It typically contains multiple widgets or UI components and is larger in scope than individual widgets. Multiple screens can coexist on the same display simultaneously (e.g., split view on tablets).
+        #
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        # MainActivity
+        # ProductDetailFragment
+        # ProfileView
+        # ProfileViewController
+        APP_SCREEN_NAME = 'app.screen.name'
+    
         # An identifier that uniquely differentiates this widget from other widgets in the same application.
         #
         # A widget is an application component, typically an on-screen visual GUI element.

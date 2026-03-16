@@ -21,19 +21,24 @@
 module OpenTelemetry
   module SemConv
     module Incubating
-      module EVENT
+      module OPENSHIFT
         # @!group Attribute Names
       
-        # Identifies the class / type of event.
+        # The name of the cluster quota.
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        # browser.mouse.click
-        # device.app.lifecycle
+        # opentelemetry
+        OPENSHIFT_CLUSTERQUOTA_NAME = 'openshift.clusterquota.name'
+    
+        # The UID of the cluster quota.
         #
-        # @deprecated {"note": "The value of this attribute MUST now be set as the value of the EventName field on the LogRecord to indicate that the LogRecord represents an Event.\n", "reason": "uncategorized"}
-        EVENT_NAME = 'event.name'
+        # @note Stability Level: development
+        #
+        # @example Sample Values
+        # 275ecb36-5aa8-4c2a-9c47-d8bb681b9aff
+        OPENSHIFT_CLUSTERQUOTA_UID = 'openshift.clusterquota.uid'
     
         # @!endgroup
       end

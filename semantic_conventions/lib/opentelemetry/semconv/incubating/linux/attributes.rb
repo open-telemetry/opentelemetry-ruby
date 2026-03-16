@@ -31,6 +31,8 @@ module OpenTelemetry
         # @example Sample Values
         # reclaimable
         # unreclaimable
+        #
+        # @deprecated {"note": "Replaced by `system.memory.linux.slab.state`.", "reason": "renamed", "renamed_to": "system.memory.linux.slab.state"}
         LINUX_MEMORY_SLAB_STATE = 'linux.memory.slab.state'
     
         # @!endgroup

@@ -196,7 +196,7 @@ module OpenTelemetry
         # @example Sample Values
         #   2
         #
-        # @deprecated {"note": "Replaced by `messaging.destination.partition.id`.", "reason": "renamed", "renamed_to": "messaging.destination.partition.id"}
+        # @deprecated {"note": "Record string representation of the partition id in `messaging.destination.partition.id` attribute.", "reason": "uncategorized"}
         MESSAGING_KAFKA_DESTINATION_PARTITION = 'messaging.kafka.destination.partition'
     
         # Message keys in Kafka are used for grouping alike messages to ensure they're processed on the same partition. They differ from `messaging.message.id` in that they're not unique. If the key is `null`, the attribute MUST NOT be set.
