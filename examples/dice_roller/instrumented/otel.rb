@@ -11,6 +11,7 @@ require 'opentelemetry/instrumentation/sinatra'
 require 'opentelemetry/instrumentation/logger'
 require 'opentelemetry-exporter-otlp-metrics'
 require 'opentelemetry-exporter-otlp-logs'
+require 'opentelemetry/resource/detector'
 
 # ---------------------------------------------------------------------------
 # Exporters
@@ -33,6 +34,13 @@ OpenTelemetry::SDK.configure do |c|
   # Resource attributes (service.name etc.) are read from env vars:
   #   OTEL_SERVICE_NAME=dice_roller
   #   OTEL_RESOURCE_ATTRIBUTES=deployment.environment=production,...
+
+  # Merge resource detectors: process (built-in), container, and env vars
+  # The SDK already includes process and telemetry_sdk detectors by default.
+  # We add the container detector to detect container.id when running in containers.
+  c.resource = OpenTelemetry::SDK::Resources::Resource.default.merge(
+    OpenTelemetry::Resource::Detector::Container.detect
+  )
 
   # Auto-instrument Sinatra (HTTP server spans) and Ruby Logger (log bridge)
   c.use 'OpenTelemetry::Instrumentation::Sinatra'

@@ -48,15 +48,14 @@ class DiceApp < Sinatra::Base
       return { status: 'error', message: 'Parameter rolls must be a positive integer' }.to_json
     end
 
-    # Validate: must be positive (rolls == 0 or negative → 400)
-    if rolls <= 0
-      status 400
-      LOGGER.warn "Invalid rolls parameter: #{rolls_param}"
-      return { status: 'error', message: 'Parameter rolls must be a positive integer' }.to_json
-    end
+    dice = Dice.new
 
-    dice   = Dice.new
-    result = dice.roll_dice(rolls)
+    begin
+      result = dice.roll_dice(rolls)
+    rescue ArgumentError => e
+      LOGGER.error "Failed to roll dice: #{e.message}"
+      halt 500
+    end
 
     if player
       LOGGER.debug "#{player} is rolling the dice: #{result}"

@@ -76,21 +76,21 @@ runs:
         echo "Status: $STATUS"
         [ "$STATUS" = "400" ]
 
-    - name: Verify /rolldice?rolls=0 returns HTTP 400
+    - name: Verify /rolldice?rolls=0 returns HTTP 500
       shell: bash
       run: |
         # ❌ Zero rolls 🎲
         STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8080/rolldice?rolls=0")
         echo "Status: $STATUS"
-        [ "$STATUS" = "400" ]
+        [ "$STATUS" = "500" ]
 
-    - name: Verify /rolldice?rolls=-1 returns HTTP 400
+    - name: Verify /rolldice?rolls=-1 returns HTTP 500
       shell: bash
       run: |
         # ❌ Negative rolls 🎲
         STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8080/rolldice?rolls=-1")
         echo "Status: $STATUS"
-        [ "$STATUS" = "400" ]
+        [ "$STATUS" = "500" ]
 
     - name: Stop app
       shell: bash

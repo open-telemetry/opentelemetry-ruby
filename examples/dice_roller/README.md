@@ -117,6 +117,25 @@ docker run -p 9090:9090 -e APPLICATION_PORT=9090 dice_roller:instrumented
 
 The instrumented version emits the following signals:
 
+### Resources
+
+The application automatically detects and includes the following resource attributes:
+
+| Attribute                        | Source                          | Description                                    |
+|----------------------------------|---------------------------------|------------------------------------------------|
+| `service.name`                   | `OTEL_SERVICE_NAME` env var     | Service name (e.g., `dice_roller`)             |
+| `telemetry.sdk.name`             | Built-in detector               | Always `opentelemetry`                         |
+| `telemetry.sdk.language`         | Built-in detector               | Always `ruby`                                  |
+| `telemetry.sdk.version`          | Built-in detector               | OpenTelemetry SDK version                      |
+| `process.pid`                    | Built-in detector               | Process ID                                     |
+| `process.command`                | Built-in detector               | Command name                                   |
+| `process.runtime.name`           | Built-in detector               | Ruby engine (e.g., `ruby`, `jruby`)            |
+| `process.runtime.version`        | Built-in detector               | Ruby version                                   |
+| `process.runtime.description`    | Built-in detector               | Full Ruby description                          |
+| `container.id`                   | Container detector              | Container ID (when running in a container)     |
+
+Additional attributes can be set via `OTEL_RESOURCE_ATTRIBUTES` environment variable.
+
 ### Traces
 
 | Span name       | Kind       | Attributes                                                          |
@@ -138,11 +157,12 @@ The instrumented version emits the following signals:
 All Ruby `Logger` output is bridged to OpenTelemetry via
 `opentelemetry-instrumentation-logger`.
 
-| Level   | Condition                              |
-|---------|----------------------------------------|
-| `INFO`  | Every successful request               |
-| `WARN`  | Invalid `rolls` parameter (status 400) |
-| `DEBUG` | Player name and rolled value           |
+| Level   | Condition                                |
+|---------|------------------------------------------|
+| `INFO`  | Every successful request                 |
+| `WARN`  | Invalid `rolls` parameter (status 400)   |
+| `ERROR` | Failed to roll dice (status 500)         |
+| `DEBUG` | Player name and rolled value             |
 
 ---
 

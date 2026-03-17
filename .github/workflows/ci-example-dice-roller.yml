@@ -113,6 +113,12 @@ jobs:
           echo "Response: $RESPONSE"
           echo "$RESPONSE" | grep -qE '^\[[1-6],[1-6]\]$'
 
+      - name: Verify /rolldice?player=Alice (with player name)
+        run: |
+          RESPONSE=$(curl -sf "http://localhost:8080/rolldice?player=Alice")
+          echo "Response: $RESPONSE"
+          echo "$RESPONSE" | grep -qE '^[1-6]$'
+
       - name: Stop and remove container
         if: always()
         run: |
