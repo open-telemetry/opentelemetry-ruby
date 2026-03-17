@@ -29,29 +29,16 @@ module OpenTelemetry
         # The value may be sanitized to exclude sensitive information.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   query findBookById { bookById(id: ?) { name } }
-        #
         GRAPHQL_DOCUMENT = 'graphql.document'
     
         # The name of the operation being executed.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   findBookById
-        #
         GRAPHQL_OPERATION_NAME = 'graphql.operation.name'
     
         # The type of the operation being executed.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # query
-        # mutation
-        # subscription
         GRAPHQL_OPERATION_TYPE = 'graphql.operation.type'
     
         # @!endgroup

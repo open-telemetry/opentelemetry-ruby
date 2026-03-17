@@ -27,10 +27,6 @@ module OpenTelemetry
         # Deprecated, use `db.client.connection.pool.name` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # myDataSource
-        #
         # @deprecated Replaced by `db.client.connection.pool.name`.
         POOL_NAME = 'pool.name'
     

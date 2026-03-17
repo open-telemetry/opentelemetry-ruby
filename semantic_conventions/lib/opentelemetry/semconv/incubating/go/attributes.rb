@@ -27,10 +27,6 @@ module OpenTelemetry
         # The type of memory.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # other
-        # stack
         GO_MEMORY_TYPE = 'go.memory.type'
     
         # @!endgroup

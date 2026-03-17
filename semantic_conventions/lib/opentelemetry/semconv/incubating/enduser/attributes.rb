@@ -32,9 +32,6 @@ module OpenTelemetry
         # > This field contains sensitive (PII) information.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # username
         ENDUSER_ID = 'enduser.id'
     
         # Pseudonymous identifier of an end user. This identifier should be a random value that is not directly linked or associated with the end user's actual identity.
@@ -45,28 +42,17 @@ module OpenTelemetry
         # > This field contains sensitive (linkable PII) information.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # QdH5CAWJgqVT4rOr0qtumf
         ENDUSER_PSEUDO_ID = 'enduser.pseudo.id'
     
         # Deprecated, use `user.roles` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   admin
-        #
         # @deprecated Replaced by `user.roles`.
         ENDUSER_ROLE = 'enduser.role'
     
         # Deprecated, no replacement at this time.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   read:message, write:files
-        #
         # @deprecated Removed, no replacement at this time.
         ENDUSER_SCOPE = 'enduser.scope'
     

@@ -27,10 +27,6 @@ module OpenTelemetry
         # The cloud account ID the resource is assigned to.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 111111111111
-        # opentelemetry
         CLOUD_ACCOUNT_ID = 'cloud.account.id'
     
         # Cloud regions often have multiple, isolated locations known as zones to increase availability. Availability zone represents the zone where the resource is running.
@@ -38,9 +34,6 @@ module OpenTelemetry
         # Availability zones are called "zones" on Alibaba Cloud and Google Cloud.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # us-east-1c
         CLOUD_AVAILABILITY_ZONE = 'cloud.availability_zone'
     
         # The cloud platform in use.
@@ -60,10 +53,6 @@ module OpenTelemetry
         # Refer to your provider's docs to see the available regions, for example [Alibaba Cloud regions](https://www.alibabacloud.com/help/doc-detail/40654.htm), [AWS regions](https://aws.amazon.com/about-aws/global-infrastructure/regions_az/), [Azure regions](https://azure.microsoft.com/global-infrastructure/geographies/), [Google Cloud regions](https://cloud.google.com/about/locations), or [Tencent Cloud regions](https://www.tencentcloud.com/document/product/213/6091).
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # us-central1
-        # us-east-1
         CLOUD_REGION = 'cloud.region'
     
         # Cloud provider-specific native identifier of the monitored cloud resource (e.g. an [ARN](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html) on AWS, a [fully qualified resource ID](https://learn.microsoft.com/rest/api/resources/resources/get-by-id) on Azure, a [full resource name](https://google.aip.dev/122#full-resource-names) on GCP)
@@ -87,11 +76,6 @@ module OpenTelemetry
         #   a TracerProvider.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # arn:aws:lambda:REGION:ACCOUNT_ID:function:my-function
-        # //run.googleapis.com/projects/PROJECT_ID/locations/LOCATION_ID/services/SERVICE_ID
-        # /subscriptions/<SUBSCRIPTION_GUID>/resourceGroups/<RG>/providers/Microsoft.Web/sites/<FUNCAPP>/functions/<FUNC>
         CLOUD_RESOURCE_ID = 'cloud.resource_id'
     
         # @!endgroup

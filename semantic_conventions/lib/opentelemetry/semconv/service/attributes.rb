@@ -28,18 +28,11 @@ module OpenTelemetry
       # MUST be the same for all instances of horizontally scaled services. If the value was not specified, SDKs MUST fallback to `unknown_service:` concatenated with [`process.executable.name`](process.md), e.g. `unknown_service:bash`. If `process.executable.name` is not available, the value MUST be set to `unknown_service`.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      # shoppingcart
       SERVICE_NAME = 'service.name'
   
       # The version string of the service API or implementation. The format is not defined by these conventions.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      # 2.0.0
-      # a01dbef8a
       SERVICE_VERSION = 'service.version'
   
       # @!endgroup

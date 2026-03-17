@@ -28,11 +28,6 @@ module OpenTelemetry
       # When observed from the server side, and when communicating through an intermediary, `client.address` SHOULD represent the client address behind any intermediaries,  for example proxies, if it's available.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      # client.example.com
-      # 10.1.2.80
-      # /tmp/my.sock
       CLIENT_ADDRESS = 'client.address'
   
       # Client port number.
@@ -40,9 +35,6 @@ module OpenTelemetry
       # When observed from the server side, and when communicating through an intermediary, `client.port` SHOULD represent the client port behind any intermediaries,  for example proxies, if it's available.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      # 65123
       CLIENT_PORT = 'client.port'
   
       # @!endgroup

@@ -27,10 +27,6 @@ module OpenTelemetry
         # Deprecated, use `db.client.connection.state` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # idle
-        #
         # @deprecated Replaced by `db.client.connection.state`.
         STATE = 'state'
     

@@ -27,9 +27,6 @@ module OpenTelemetry
         # Represents the human-readable identifier of the node/instance to which a request was routed.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # instance-0000000001
         ELASTICSEARCH_NODE_NAME = 'elasticsearch.node.name'
     
         # @!endgroup

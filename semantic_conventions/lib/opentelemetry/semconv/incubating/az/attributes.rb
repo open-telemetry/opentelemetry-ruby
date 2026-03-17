@@ -27,22 +27,12 @@ module OpenTelemetry
         # Deprecated, use `azure.resource_provider.namespace` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # Microsoft.Storage
-        # Microsoft.KeyVault
-        # Microsoft.ServiceBus
-        #
         # @deprecated Replaced by `azure.resource_provider.namespace`.
         AZ_NAMESPACE = 'az.namespace'
     
         # Deprecated, use `azure.service.request.id` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 00000000-0000-0000-0000-000000000000
-        #
         # @deprecated Replaced by `azure.service.request.id`.
         AZ_SERVICE_REQUEST_ID = 'az.service_request_id'
     
