@@ -66,7 +66,7 @@ module OpenTelemetry
         # @example Sample Values
         # io.opentelemetry.contrib.mongodb
         #
-        # @deprecated {"note": "Replaced by `otel.scope.name`.", "reason": "renamed", "renamed_to": "otel.scope.name"}
+        # @deprecated Replaced by `otel.scope.name`.
         OTEL_LIBRARY_NAME = 'otel.library.name'
     
         # Deprecated. Use the `otel.scope.version` attribute.
@@ -76,7 +76,7 @@ module OpenTelemetry
         # @example Sample Values
         # 1.0.0
         #
-        # @deprecated {"note": "Replaced by `otel.scope.version`.", "reason": "renamed", "renamed_to": "otel.scope.version"}
+        # @deprecated Replaced by `otel.scope.version`.
         OTEL_LIBRARY_VERSION = 'otel.library.version'
     
         # The name of the instrumentation scope - (`InstrumentationScope.Name` in OTLP).

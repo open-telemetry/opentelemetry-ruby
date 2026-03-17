@@ -57,7 +57,7 @@ module OpenTelemetry
         # @example Sample Values
         # [{'role': 'assistant', 'content': 'The capital of France is Paris.'}]
         #
-        # @deprecated {"note": "Removed, no replacement at this time.", "reason": "obsoleted"}
+        # @deprecated Removed, no replacement at this time.
         GEN_AI_COMPLETION = 'gen_ai.completion'
     
         # The unique identifier for a conversation (session, thread), used to store and correlate messages within this conversation.
@@ -137,7 +137,7 @@ module OpenTelemetry
         # Deprecated, use `gen_ai.output.type`.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `gen_ai.output.type`.", "reason": "renamed", "renamed_to": "gen_ai.output.type"}
+        # @deprecated Replaced by `gen_ai.output.type`.
         GEN_AI_OPENAI_REQUEST_RESPONSE_FORMAT = 'gen_ai.openai.request.response_format'
     
         # Deprecated, use `gen_ai.request.seed`.
@@ -147,13 +147,13 @@ module OpenTelemetry
         # @example Sample Values
         # 100
         #
-        # @deprecated {"note": "Replaced by `gen_ai.request.seed`.", "reason": "renamed", "renamed_to": "gen_ai.request.seed"}
+        # @deprecated Replaced by `gen_ai.request.seed`.
         GEN_AI_OPENAI_REQUEST_SEED = 'gen_ai.openai.request.seed'
     
         # Deprecated, use `openai.request.service_tier`.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `openai.request.service_tier`.", "reason": "renamed", "renamed_to": "openai.request.service_tier"}
+        # @deprecated Replaced by `openai.request.service_tier`.
         GEN_AI_OPENAI_REQUEST_SERVICE_TIER = 'gen_ai.openai.request.service_tier'
     
         # Deprecated, use `openai.response.service_tier`.
@@ -164,7 +164,7 @@ module OpenTelemetry
         # scale
         # default
         #
-        # @deprecated {"note": "Replaced by `openai.response.service_tier`.", "reason": "renamed", "renamed_to": "openai.response.service_tier"}
+        # @deprecated Replaced by `openai.response.service_tier`.
         GEN_AI_OPENAI_RESPONSE_SERVICE_TIER = 'gen_ai.openai.response.service_tier'
     
         # Deprecated, use `openai.response.system_fingerprint`.
@@ -174,7 +174,7 @@ module OpenTelemetry
         # @example Sample Values
         # fp_44709d6fcb
         #
-        # @deprecated {"note": "Replaced by `openai.response.system_fingerprint`.", "reason": "renamed", "renamed_to": "openai.response.system_fingerprint"}
+        # @deprecated Replaced by `openai.response.system_fingerprint`.
         GEN_AI_OPENAI_RESPONSE_SYSTEM_FINGERPRINT = 'gen_ai.openai.response.system_fingerprint'
     
         # The name of the operation being performed.
@@ -239,7 +239,7 @@ module OpenTelemetry
         # @example Sample Values
         # [{'role': 'user', 'content': 'What is the capital of France?'}]
         #
-        # @deprecated {"note": "Removed, no replacement at this time.", "reason": "obsoleted"}
+        # @deprecated Removed, no replacement at this time.
         GEN_AI_PROMPT = 'gen_ai.prompt'
     
         # The Generative AI provider as identified by the client or server instrumentation.
@@ -389,7 +389,7 @@ module OpenTelemetry
         # Deprecated, use `gen_ai.provider.name` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `gen_ai.provider.name`.", "reason": "renamed", "renamed_to": "gen_ai.provider.name"}
+        # @deprecated Replaced by `gen_ai.provider.name`.
         GEN_AI_SYSTEM = 'gen_ai.system'
     
         # The system message or instructions provided to the GenAI model separately from the chat history.
@@ -492,7 +492,7 @@ module OpenTelemetry
         # @example Sample Values
         # 42
         #
-        # @deprecated {"note": "Replaced by `gen_ai.usage.output_tokens`.", "reason": "renamed", "renamed_to": "gen_ai.usage.output_tokens"}
+        # @deprecated Replaced by `gen_ai.usage.output_tokens`.
         GEN_AI_USAGE_COMPLETION_TOKENS = 'gen_ai.usage.completion_tokens'
     
         # The number of tokens used in the GenAI input (prompt).
@@ -518,7 +518,7 @@ module OpenTelemetry
         # @example Sample Values
         # 42
         #
-        # @deprecated {"note": "Replaced by `gen_ai.usage.input_tokens`.", "reason": "renamed", "renamed_to": "gen_ai.usage.input_tokens"}
+        # @deprecated Replaced by `gen_ai.usage.input_tokens`.
         GEN_AI_USAGE_PROMPT_TOKENS = 'gen_ai.usage.prompt_tokens'
     
         # @!endgroup

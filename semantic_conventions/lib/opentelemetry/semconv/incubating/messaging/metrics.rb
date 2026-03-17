@@ -42,7 +42,7 @@ module OpenTelemetry
         # Deprecated. Use `messaging.client.sent.messages` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `messaging.client.sent.messages`.", "reason": "renamed", "renamed_to": "messaging.client.sent.messages"}
+        # @deprecated Replaced by `messaging.client.sent.messages`.
         MESSAGING_CLIENT_PUBLISHED_MESSAGES = 'messaging.client.published.messages'
     
         # Number of messages producer attempted to send to the broker.
@@ -62,31 +62,31 @@ module OpenTelemetry
         # Deprecated. Use `messaging.client.consumed.messages` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `messaging.client.consumed.messages`.", "reason": "renamed", "renamed_to": "messaging.client.consumed.messages"}
+        # @deprecated Replaced by `messaging.client.consumed.messages`.
         MESSAGING_PROCESS_MESSAGES = 'messaging.process.messages'
     
         # Deprecated. Use `messaging.client.operation.duration` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `messaging.client.operation.duration`.", "reason": "renamed", "renamed_to": "messaging.client.operation.duration"}
+        # @deprecated Replaced by `messaging.client.operation.duration`.
         MESSAGING_PUBLISH_DURATION = 'messaging.publish.duration'
     
         # Deprecated. Use `messaging.client.sent.messages` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `messaging.client.sent.messages`.", "reason": "renamed", "renamed_to": "messaging.client.sent.messages"}
+        # @deprecated Replaced by `messaging.client.sent.messages`.
         MESSAGING_PUBLISH_MESSAGES = 'messaging.publish.messages'
     
         # Deprecated. Use `messaging.client.operation.duration` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `messaging.client.operation.duration`.", "reason": "renamed", "renamed_to": "messaging.client.operation.duration"}
+        # @deprecated Replaced by `messaging.client.operation.duration`.
         MESSAGING_RECEIVE_DURATION = 'messaging.receive.duration'
     
         # Deprecated. Use `messaging.client.consumed.messages` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `messaging.client.consumed.messages`.", "reason": "renamed", "renamed_to": "messaging.client.consumed.messages"}
+        # @deprecated Replaced by `messaging.client.consumed.messages`.
         MESSAGING_RECEIVE_MESSAGES = 'messaging.receive.messages'
     
         # @!endgroup

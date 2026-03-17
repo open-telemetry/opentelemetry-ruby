@@ -32,7 +32,7 @@ module OpenTelemetry
         # staging
         # production
         #
-        # @deprecated {"note": "Replaced by `deployment.environment.name`.", "reason": "renamed", "renamed_to": "deployment.environment.name"}
+        # @deprecated Replaced by `deployment.environment.name`.
         DEPLOYMENT_ENVIRONMENT = 'deployment.environment'
     
         # Name of the [deployment environment](https://wikipedia.org/wiki/Deployment_environment) (aka deployment tier).

@@ -40,7 +40,7 @@ module OpenTelemetry
         # idle
         # interrupt
         #
-        # @deprecated {"note": "Replaced by `cpu.mode`.", "reason": "renamed", "renamed_to": "cpu.mode"}
+        # @deprecated Replaced by `cpu.mode`.
         SYSTEM_CPU_STATE = 'system.cpu.state'
     
         # The device identifier
@@ -99,7 +99,7 @@ module OpenTelemetry
         # @example Sample Values
         # close_wait
         #
-        # @deprecated {"note": "Replaced by `network.connection.state`.", "reason": "renamed", "renamed_to": "network.connection.state"}
+        # @deprecated Replaced by `network.connection.state`.
         SYSTEM_NETWORK_STATE = 'system.network.state'
     
         # The paging access direction
@@ -141,7 +141,7 @@ module OpenTelemetry
         # @example Sample Values
         # running
         #
-        # @deprecated {"note": "Replaced by `system.process.status`.", "reason": "renamed", "renamed_to": "system.process.status"}
+        # @deprecated Replaced by `system.process.status`.
         SYSTEM_PROCESSES_STATUS = 'system.processes.status'
     
         # @!endgroup

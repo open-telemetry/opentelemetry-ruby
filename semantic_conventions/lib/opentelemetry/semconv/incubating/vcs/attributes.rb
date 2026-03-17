@@ -196,7 +196,7 @@ module OpenTelemetry
         # @example Sample Values
         # 123
         #
-        # @deprecated {"note": "Replaced by `vcs.change.id`.", "reason": "renamed", "renamed_to": "vcs.change.id"}
+        # @deprecated Replaced by `vcs.change.id`.
         VCS_REPOSITORY_CHANGE_ID = 'vcs.repository.change.id'
     
         # Deprecated, use `vcs.change.title` instead.
@@ -208,7 +208,7 @@ module OpenTelemetry
         # feat: add my new feature
         # [chore] update dependency
         #
-        # @deprecated {"note": "Replaced by `vcs.change.title`.", "reason": "renamed", "renamed_to": "vcs.change.title"}
+        # @deprecated Replaced by `vcs.change.title`.
         VCS_REPOSITORY_CHANGE_TITLE = 'vcs.repository.change.title'
     
         # The human readable name of the repository. It SHOULD NOT include any additional identifier like Group/SubGroup in GitLab or organization in GitHub.
@@ -232,7 +232,7 @@ module OpenTelemetry
         # my-feature-branch
         # tag-1-test
         #
-        # @deprecated {"note": "Replaced by `vcs.ref.head.name`.", "reason": "renamed", "renamed_to": "vcs.ref.head.name"}
+        # @deprecated Replaced by `vcs.ref.head.name`.
         VCS_REPOSITORY_REF_NAME = 'vcs.repository.ref.name'
     
         # Deprecated, use `vcs.ref.head.revision` instead.
@@ -245,7 +245,7 @@ module OpenTelemetry
         # 123
         # HEAD
         #
-        # @deprecated {"note": "Replaced by `vcs.ref.head.revision`.", "reason": "renamed", "renamed_to": "vcs.ref.head.revision"}
+        # @deprecated Replaced by `vcs.ref.head.revision`.
         VCS_REPOSITORY_REF_REVISION = 'vcs.repository.ref.revision'
     
         # Deprecated, use `vcs.ref.head.type` instead.
@@ -256,7 +256,7 @@ module OpenTelemetry
         # branch
         # tag
         #
-        # @deprecated {"note": "Replaced by `vcs.ref.head.type`.", "reason": "renamed", "renamed_to": "vcs.ref.head.type"}
+        # @deprecated Replaced by `vcs.ref.head.type`.
         VCS_REPOSITORY_REF_TYPE = 'vcs.repository.ref.type'
     
         # The [canonical URL](https://support.google.com/webmasters/answer/10347851?hl=en#:~:text=A%20canonical%20URL%20is%20the,Google%20chooses%20one%20as%20canonical.) of the repository providing the complete HTTP(S) address in order to locate and identify the repository through a browser.

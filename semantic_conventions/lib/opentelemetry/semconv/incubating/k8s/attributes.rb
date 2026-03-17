@@ -638,7 +638,7 @@ module OpenTelemetry
         # @example Sample Values
         # my-app
         #
-        # @deprecated {"note": "Replaced by `k8s.pod.label`.", "reason": "renamed", "renamed_to": "k8s.pod.label"}
+        # @deprecated Replaced by `k8s.pod.label`.
         K8S_POD_LABELS_LAMBDA = ->(key) { "k8s.pod.labels.#{key}" }
     
         # The name of the Pod.

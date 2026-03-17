@@ -37,7 +37,7 @@ module OpenTelemetry
         # Deprecated, use `jvm.buffer.memory.used` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `jvm.buffer.memory.used`.", "reason": "renamed", "renamed_to": "jvm.buffer.memory.used"}
+        # @deprecated Replaced by `jvm.buffer.memory.used`.
         JVM_BUFFER_MEMORY_USAGE = 'jvm.buffer.memory.usage'
     
         # Measure of memory used by buffers.

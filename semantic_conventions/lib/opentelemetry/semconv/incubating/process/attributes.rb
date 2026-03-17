@@ -67,7 +67,7 @@ module OpenTelemetry
         # Deprecated, use `cpu.mode` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `cpu.mode`.", "reason": "renamed", "renamed_to": "cpu.mode"}
+        # @deprecated Replaced by `cpu.mode`.
         PROCESS_CPU_STATE = 'process.cpu.state'
     
         # The date and time the process was created, in ISO 8601 format.
@@ -132,7 +132,7 @@ module OpenTelemetry
         # @example Sample Values
         # 600DCAFE4A110000F2BF38C493F5FB92
         #
-        # @deprecated {"note": "Replaced by `process.executable.build_id.htlhash`.", "reason": "renamed", "renamed_to": "process.executable.build_id.htlhash"}
+        # @deprecated Replaced by `process.executable.build_id.htlhash`.
         PROCESS_EXECUTABLE_BUILD_ID_PROFILING = 'process.executable.build_id.profiling'
     
         # The name of the process executable. On Linux based systems, this SHOULD be set to the base name of the target of `/proc/[pid]/exe`. On Windows, this SHOULD be set to the base name of `GetProcessImageFileNameW`.

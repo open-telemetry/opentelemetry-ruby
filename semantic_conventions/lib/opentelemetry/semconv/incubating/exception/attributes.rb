@@ -27,7 +27,7 @@ module OpenTelemetry
         # Indicates that the exception is escaping the scope of the span.
         #
         # @note Stability Level: stable
-        # @deprecated {"note": "It's no longer recommended to record exceptions that are handled and do not escape the scope of a span.\n", "reason": "obsoleted"}
+        # @deprecated It's no longer recommended to record exceptions that are handled and do not escape the scope of a span.
         EXCEPTION_ESCAPED = 'exception.escaped'
     
         # The exception message.

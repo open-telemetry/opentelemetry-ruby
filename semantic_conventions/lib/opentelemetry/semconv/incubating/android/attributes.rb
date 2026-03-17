@@ -46,7 +46,7 @@ module OpenTelemetry
         # Deprecated. Use `android.app.state` attribute instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `android.app.state`.", "reason": "renamed", "renamed_to": "android.app.state"}
+        # @deprecated Replaced by `android.app.state`.
         ANDROID_STATE = 'android.state'
     
         # @!endgroup

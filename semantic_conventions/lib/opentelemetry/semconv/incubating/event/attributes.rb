@@ -32,7 +32,7 @@ module OpenTelemetry
         # browser.mouse.click
         # device.app.lifecycle
         #
-        # @deprecated {"note": "Replaced by EventName top-level field on the LogRecord.\n", "reason": "uncategorized"}
+        # @deprecated Replaced by EventName top-level field on the LogRecord.
         EVENT_NAME = 'event.name'
     
         # @!endgroup

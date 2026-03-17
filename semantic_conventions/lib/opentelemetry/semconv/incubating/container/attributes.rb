@@ -60,7 +60,7 @@ module OpenTelemetry
         # user
         # kernel
         #
-        # @deprecated {"note": "Replaced by `cpu.mode`.", "reason": "renamed", "renamed_to": "cpu.mode"}
+        # @deprecated Replaced by `cpu.mode`.
         CONTAINER_CPU_STATE = 'container.cpu.state'
     
         # The name of the CSI ([Container Storage Interface](https://github.com/container-storage-interface/spec)) plugin used by the volume.
@@ -160,7 +160,7 @@ module OpenTelemetry
         # @example Sample Values
         # nginx
         #
-        # @deprecated {"note": "Replaced by `container.label`.", "reason": "renamed", "renamed_to": "container.label"}
+        # @deprecated Replaced by `container.label`.
         CONTAINER_LABELS_LAMBDA = ->(key) { "container.labels.#{key}" }
     
         # Container name used by container runtime.
@@ -180,7 +180,7 @@ module OpenTelemetry
         # containerd
         # rkt
         #
-        # @deprecated {"note": "Replaced by `container.runtime.name`.", "reason": "renamed", "renamed_to": "container.runtime.name"}
+        # @deprecated Replaced by `container.runtime.name`.
         CONTAINER_RUNTIME = 'container.runtime'
     
         # A description about the runtime which could include, for example details about the CRI/API version being used or other customisations.

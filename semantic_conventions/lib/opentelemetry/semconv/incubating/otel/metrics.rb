@@ -77,7 +77,7 @@ module OpenTelemetry
         # Deprecated, use `otel.sdk.exporter.span.exported` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `otel.sdk.exporter.span.exported`.", "reason": "renamed", "renamed_to": "otel.sdk.exporter.span.exported"}
+        # @deprecated Replaced by `otel.sdk.exporter.span.exported`.
         OTEL_SDK_EXPORTER_SPAN_EXPORTED_COUNT = 'otel.sdk.exporter.span.exported.count'
     
         # The number of spans which were passed to the exporter, but that have not been exported yet (neither successful, nor failed).
@@ -90,7 +90,7 @@ module OpenTelemetry
         # Deprecated, use `otel.sdk.exporter.span.inflight` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `otel.sdk.exporter.span.inflight`.", "reason": "renamed", "renamed_to": "otel.sdk.exporter.span.inflight"}
+        # @deprecated Replaced by `otel.sdk.exporter.span.inflight`.
         OTEL_SDK_EXPORTER_SPAN_INFLIGHT_COUNT = 'otel.sdk.exporter.span.inflight.count'
     
         # The number of logs submitted to enabled SDK Loggers.
@@ -140,7 +140,7 @@ module OpenTelemetry
         # Deprecated, use `otel.sdk.processor.span.processed` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `otel.sdk.processor.span.processed`.", "reason": "renamed", "renamed_to": "otel.sdk.processor.span.processed"}
+        # @deprecated Replaced by `otel.sdk.processor.span.processed`.
         OTEL_SDK_PROCESSOR_SPAN_PROCESSED_COUNT = 'otel.sdk.processor.span.processed.count'
     
         # The maximum number of spans the queue of a given instance of an SDK span processor can hold.
@@ -160,13 +160,13 @@ module OpenTelemetry
         # Use `otel.sdk.span.started` minus `otel.sdk.span.live` to derive this value.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Obsoleted.", "reason": "obsoleted"}
+        # @deprecated Obsoleted.
         OTEL_SDK_SPAN_ENDED = 'otel.sdk.span.ended'
     
         # Use `otel.sdk.span.started` minus `otel.sdk.span.live` to derive this value.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Obsoleted.", "reason": "obsoleted"}
+        # @deprecated Obsoleted.
         OTEL_SDK_SPAN_ENDED_COUNT = 'otel.sdk.span.ended.count'
     
         # The number of created spans with `recording=true` for which the end operation has not been called yet.
@@ -177,7 +177,7 @@ module OpenTelemetry
         # Deprecated, use `otel.sdk.span.live` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `otel.sdk.span.live`.", "reason": "renamed", "renamed_to": "otel.sdk.span.live"}
+        # @deprecated Replaced by `otel.sdk.span.live`.
         OTEL_SDK_SPAN_LIVE_COUNT = 'otel.sdk.span.live.count'
     
         # The number of created spans.

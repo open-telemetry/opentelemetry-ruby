@@ -110,7 +110,7 @@ module OpenTelemetry
         # Deprecated, no replacement at this time.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Removed. No replacement at this time.", "reason": "obsoleted"}
+        # @deprecated Removed. No replacement at this time.
         MESSAGING_DESTINATION_PUBLISH_ANONYMOUS = 'messaging.destination_publish.anonymous'
     
         # Deprecated, no replacement at this time.
@@ -121,7 +121,7 @@ module OpenTelemetry
         # MyQueue
         # MyTopic
         #
-        # @deprecated {"note": "Removed. No replacement at this time.", "reason": "obsoleted"}
+        # @deprecated Removed. No replacement at this time.
         MESSAGING_DESTINATION_PUBLISH_NAME = 'messaging.destination_publish.name'
     
         # Deprecated, use `messaging.consumer.group.name` instead.
@@ -131,7 +131,7 @@ module OpenTelemetry
         # @example Sample Values
         #   $Default
         #
-        # @deprecated {"note": "Replaced by `messaging.consumer.group.name`.", "reason": "renamed", "renamed_to": "messaging.consumer.group.name"}
+        # @deprecated Replaced by `messaging.consumer.group.name`.
         MESSAGING_EVENTHUBS_CONSUMER_GROUP = 'messaging.eventhubs.consumer.group'
     
         # The UTC epoch seconds at which the message has been accepted and stored in the entity.
@@ -186,7 +186,7 @@ module OpenTelemetry
         # @example Sample Values
         #   my-group
         #
-        # @deprecated {"note": "Replaced by `messaging.consumer.group.name`.", "reason": "renamed", "renamed_to": "messaging.consumer.group.name"}
+        # @deprecated Replaced by `messaging.consumer.group.name`.
         MESSAGING_KAFKA_CONSUMER_GROUP = 'messaging.kafka.consumer.group'
     
         # Deprecated, use `messaging.destination.partition.id` instead.
@@ -196,7 +196,7 @@ module OpenTelemetry
         # @example Sample Values
         #   2
         #
-        # @deprecated {"note": "Replaced by `messaging.destination.partition.id`.", "reason": "renamed", "renamed_to": "messaging.destination.partition.id"}
+        # @deprecated Replaced by `messaging.destination.partition.id`.
         MESSAGING_KAFKA_DESTINATION_PARTITION = 'messaging.kafka.destination.partition'
     
         # Message keys in Kafka are used for grouping alike messages to ensure they're processed on the same partition. They differ from `messaging.message.id` in that they're not unique. If the key is `null`, the attribute MUST NOT be set.
@@ -217,7 +217,7 @@ module OpenTelemetry
         # @example Sample Values
         #   42
         #
-        # @deprecated {"note": "Replaced by `messaging.kafka.offset`.", "reason": "renamed", "renamed_to": "messaging.kafka.offset"}
+        # @deprecated Replaced by `messaging.kafka.offset`.
         MESSAGING_KAFKA_MESSAGE_OFFSET = 'messaging.kafka.message.offset'
     
         # A boolean that is true if the message is a tombstone.
@@ -285,7 +285,7 @@ module OpenTelemetry
         # create
         # process
         #
-        # @deprecated {"note": "Replaced by `messaging.operation.type`.", "reason": "renamed", "renamed_to": "messaging.operation.type"}
+        # @deprecated Replaced by `messaging.operation.type`.
         MESSAGING_OPERATION = 'messaging.operation'
     
         # The system-specific name of the messaging operation.
@@ -330,7 +330,7 @@ module OpenTelemetry
         # @example Sample Values
         #   myConsumerGroup
         #
-        # @deprecated {"note": "Replaced by `messaging.consumer.group.name` on the consumer spans. No replacement for producer spans.\n", "reason": "uncategorized"}
+        # @deprecated Replaced by `messaging.consumer.group.name` on the consumer spans. No replacement for producer spans.
         MESSAGING_ROCKETMQ_CLIENT_GROUP = 'messaging.rocketmq.client_group'
     
         # Model of message consumption. This only applies to consumer spans.
@@ -404,7 +404,7 @@ module OpenTelemetry
         # @example Sample Values
         #   subscription-a
         #
-        # @deprecated {"note": "Replaced by `messaging.destination.subscription.name`.", "reason": "renamed", "renamed_to": "messaging.destination.subscription.name"}
+        # @deprecated Replaced by `messaging.destination.subscription.name`.
         MESSAGING_SERVICEBUS_DESTINATION_SUBSCRIPTION_NAME = 'messaging.servicebus.destination.subscription_name'
     
         # Describes the [settlement type](https://learn.microsoft.com/azure/service-bus-messaging/message-transfers-locks-settlement#peeklock).

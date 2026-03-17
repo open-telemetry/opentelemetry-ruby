@@ -115,7 +115,7 @@ module OpenTelemetry
         # @example Sample Values
         # opentelemetry.io
         #
-        # @deprecated {"note": "Replaced by `server.address`.", "reason": "renamed", "renamed_to": "server.address"}
+        # @deprecated Replaced by `server.address`.
         TLS_CLIENT_SERVER_NAME = 'tls.client.server_name'
     
         # Distinguished name of subject of the x.509 certificate presented by the client.

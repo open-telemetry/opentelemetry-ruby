@@ -164,7 +164,7 @@ module OpenTelemetry
         # Deprecated, use `system.network.connection.count` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `system.network.connection.count`.", "reason": "renamed", "renamed_to": "system.network.connection.count"}
+        # @deprecated Replaced by `system.network.connection.count`.
         SYSTEM_NETWORK_CONNECTIONS = 'system.network.connections'
     
         # Count of network errors detected.

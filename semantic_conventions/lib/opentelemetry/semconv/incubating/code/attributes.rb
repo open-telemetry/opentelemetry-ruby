@@ -31,7 +31,7 @@ module OpenTelemetry
         # @example Sample Values
         #   16
         #
-        # @deprecated {"note": "Replaced by `code.column.number`.", "reason": "renamed", "renamed_to": "code.column.number"}
+        # @deprecated Replaced by `code.column.number`.
         CODE_COLUMN = 'code.column'
     
         # The column number in `code.file.path` best representing the operation. It SHOULD point within the code unit named in `code.function.name`. This attribute MUST NOT be used on the Profile signal since the data is already captured in 'message Line'. This constraint is imposed to prevent redundancy and maintain data integrity.
@@ -63,7 +63,7 @@ module OpenTelemetry
         # @example Sample Values
         #   /usr/local/MyApplication/content_root/app/index.php
         #
-        # @deprecated {"note": "Replaced by `code.file.path`.", "reason": "renamed", "renamed_to": "code.file.path"}
+        # @deprecated Replaced by `code.file.path`.
         CODE_FILEPATH = 'code.filepath'
     
         # Deprecated, use `code.function.name` instead
@@ -73,7 +73,7 @@ module OpenTelemetry
         # @example Sample Values
         #   serveRequest
         #
-        # @deprecated {"note": "Value should be included in `code.function.name` which is expected to be a fully-qualified name.\n", "reason": "uncategorized"}
+        # @deprecated Value should be included in `code.function.name` which is expected to be a fully-qualified name.
         CODE_FUNCTION = 'code.function'
     
         # The method or function fully-qualified name without arguments. The value should fit the natural representation of the language runtime, which is also likely the same used within `code.stacktrace` attribute value. This attribute MUST NOT be used on the Profile signal since the data is already captured in 'message Function'. This constraint is imposed to prevent redundancy and maintain data integrity.
@@ -123,7 +123,7 @@ module OpenTelemetry
         # @example Sample Values
         #   42
         #
-        # @deprecated {"note": "Replaced by `code.line.number`.", "reason": "renamed", "renamed_to": "code.line.number"}
+        # @deprecated Replaced by `code.line.number`.
         CODE_LINENO = 'code.lineno'
     
         # Deprecated, namespace is now included into `code.function.name`
@@ -133,7 +133,7 @@ module OpenTelemetry
         # @example Sample Values
         #   com.example.MyHttpService
         #
-        # @deprecated {"note": "Value should be included in `code.function.name` which is expected to be a fully-qualified name.\n", "reason": "uncategorized"}
+        # @deprecated Value should be included in `code.function.name` which is expected to be a fully-qualified name.
         CODE_NAMESPACE = 'code.namespace'
     
         # A stacktrace as a string in the natural representation for the language runtime. The representation is identical to [`exception.stacktrace`](/docs/exceptions/exceptions-spans.md#stacktrace-representation). This attribute MUST NOT be used on the Profile signal since the data is already captured in 'message Location'. This constraint is imposed to prevent redundancy and maintain data integrity.

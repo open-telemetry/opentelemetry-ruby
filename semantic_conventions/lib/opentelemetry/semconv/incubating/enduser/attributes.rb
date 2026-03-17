@@ -57,7 +57,7 @@ module OpenTelemetry
         # @example Sample Values
         #   admin
         #
-        # @deprecated {"note": "Replaced by `user.roles`.", "reason": "renamed", "renamed_to": "user.roles"}
+        # @deprecated Replaced by `user.roles`.
         ENDUSER_ROLE = 'enduser.role'
     
         # Deprecated, no replacement at this time.
@@ -67,7 +67,7 @@ module OpenTelemetry
         # @example Sample Values
         #   read:message, write:files
         #
-        # @deprecated {"note": "Removed, no replacement at this time.", "reason": "obsoleted"}
+        # @deprecated Removed, no replacement at this time.
         ENDUSER_SCOPE = 'enduser.scope'
     
         # @!endgroup

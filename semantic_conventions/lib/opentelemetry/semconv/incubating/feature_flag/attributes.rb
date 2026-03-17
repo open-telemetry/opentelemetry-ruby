@@ -39,7 +39,7 @@ module OpenTelemetry
         # @example Sample Values
         # Flag `header-color` expected type `string` but found type `number`
         #
-        # @deprecated {"note": "Replaced by `error.message`.", "reason": "renamed", "renamed_to": "error.message"}
+        # @deprecated Replaced by `error.message`.
         FEATURE_FLAG_EVALUATION_ERROR_MESSAGE = 'feature_flag.evaluation.error.message'
     
         # Deprecated, use `feature_flag.result.reason` instead.
@@ -52,7 +52,7 @@ module OpenTelemetry
         # error
         # default
         #
-        # @deprecated {"note": "Replaced by `feature_flag.result.reason`.", "reason": "renamed", "renamed_to": "feature_flag.result.reason"}
+        # @deprecated Replaced by `feature_flag.result.reason`.
         FEATURE_FLAG_EVALUATION_REASON = 'feature_flag.evaluation.reason'
     
         # The lookup key of the feature flag.
@@ -132,7 +132,7 @@ module OpenTelemetry
         # true
         # on
         #
-        # @deprecated {"note": "Replaced by `feature_flag.result.variant`.", "reason": "renamed", "renamed_to": "feature_flag.result.variant"}
+        # @deprecated Replaced by `feature_flag.result.variant`.
         FEATURE_FLAG_VARIANT = 'feature_flag.variant'
     
         # The version of the ruleset used during the evaluation. This may be any stable value which uniquely identifies the ruleset.

@@ -31,7 +31,7 @@ module OpenTelemetry
         # @example Sample Values
         # myDataSource
         #
-        # @deprecated {"note": "Replaced by `db.client.connection.pool.name`.", "reason": "renamed", "renamed_to": "db.client.connection.pool.name"}
+        # @deprecated Replaced by `db.client.connection.pool.name`.
         POOL_NAME = 'pool.name'
     
         # @!endgroup
