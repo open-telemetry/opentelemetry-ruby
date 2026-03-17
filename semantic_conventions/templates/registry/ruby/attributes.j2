@@ -39,18 +39,6 @@ module OpenTelemetry
           concat_if("\n", attribute.note),
           concat_if("\n@note Stability Level: ", attribute.stability),
           ] | comment(indent=6) }}
-      {%- if attribute.examples %}
-      #
-      # @example Sample Values
-        {%- if attribute.examples is sequence %}
-          {%- for example in attribute.examples %}
-          {{ example | comment }}
-          {%- endfor %}
-        {%- else %}
-      #   {{ attribute.examples }}
-        {%- endif %}
-      #
-      {%- endif %}
       {%- if attribute is deprecated %}
       {{ concat_if("\n@deprecated ", attribute.deprecated.note | default(attribute.deprecated.reason | capitalize ~ ".")) | comment(indent=6)}}
       {%- elif attribute is stable and params.incubating %}
