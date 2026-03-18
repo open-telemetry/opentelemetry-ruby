@@ -126,7 +126,8 @@ end
 
 desc 'Bump the semantic_conventions gem version to match the spec'
 task :update_spec_version_constant do
-  puts "\n+++ Updating spec version constant to #{SPEC_VERSION}\n"
+  puts "\n+++ Updating library SPEC_VERSION constant to #{SPEC_VERSION}.\n"
+  puts "    ℹ️  VERSION is managed by release automation and left unchanged.\n"
   sh %(sed -i.bak "s/SPEC_VERSION = '.*'/SPEC_VERSION = '#{SPEC_VERSION}'/g" lib/opentelemetry/semantic_conventions/version.rb)
   sh 'rm lib/opentelemetry/semantic_conventions/version.rb.bak'
 end
