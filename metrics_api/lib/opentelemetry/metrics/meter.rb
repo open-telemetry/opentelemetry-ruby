@@ -41,6 +41,10 @@ module OpenTelemetry
       # @param name [String] the name of the counter
       # @param unit [optional String] an optional string provided by user.
       # @param description [optional String] an optional free-form text provided by user.
+      # @param exemplar_filter [optional Object] an optional filter to control which measurements are
+      #   eligible to become exemplars. Must respond to `#should_sample?`.
+      # @param exemplar_reservoir [optional Object] an optional reservoir used to sample exemplars
+      #   from eligible measurements. Must respond to `#offer` and `#collect`.
       #
       # @return [nil] after creation of counter, it will be stored in instrument_registry
       def create_counter(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
@@ -60,6 +64,10 @@ module OpenTelemetry
       # @param name [String] the name of the histogram
       # @param unit [optional String] an optional string provided by user.
       # @param description [optional String] an optional free-form text provided by user.
+      # @param exemplar_filter [optional Object] an optional filter to control which measurements are
+      #   eligible to become exemplars. Must respond to `#should_sample?`.
+      # @param exemplar_reservoir [optional Object] an optional reservoir used to sample exemplars
+      #   from eligible measurements. Must respond to `#offer` and `#collect`.
       #
       # @return [nil] after creation of histogram, it will be stored in instrument_registry
       def create_histogram(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
@@ -78,6 +86,10 @@ module OpenTelemetry
       # @param name [String] the name of the gauge.
       # @param unit [optional String] an optional string provided by user.
       # @param description [optional String] an optional free-form text provided by user.
+      # @param exemplar_filter [optional Object] an optional filter to control which measurements are
+      #   eligible to become exemplars. Must respond to `#should_sample?`.
+      # @param exemplar_reservoir [optional Object] an optional reservoir used to sample exemplars
+      #   from eligible measurements. Must respond to `#offer` and `#collect`.
       #
       # @return [nil] after creation of gauge, it will be stored in instrument_registry
       def create_gauge(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
@@ -95,6 +107,10 @@ module OpenTelemetry
       # @param name [String] the name of the up_down_counter
       # @param unit [optional String] an optional string provided by user.
       # @param description [optional String] an optional free-form text provided by user.
+      # @param exemplar_filter [optional Object] an optional filter to control which measurements are
+      #   eligible to become exemplars. Must respond to `#should_sample?`.
+      # @param exemplar_reservoir [optional Object] an optional reservoir used to sample exemplars
+      #   from eligible measurements. Must respond to `#offer` and `#collect`.
       #
       # @return [nil] after creation of up_down_counter, it will be stored in instrument_registry
       def create_up_down_counter(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
@@ -117,6 +133,10 @@ module OpenTelemetry
       # @param callback [Proc] the callback function that used to collect metrics
       # @param unit [optional String] an optional string provided by user.
       # @param description [optional String] an optional free-form text provided by user.
+      # @param exemplar_filter [optional Object] an optional filter to control which measurements are
+      #   eligible to become exemplars. Must respond to `#should_sample?`.
+      # @param exemplar_reservoir [optional Object] an optional reservoir used to sample exemplars
+      #   from eligible measurements. Must respond to `#offer` and `#collect`.
       #
       # @return [nil] after creation of observable_counter, it will be stored in instrument_registry
       def create_observable_counter(name, callback:, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
@@ -140,6 +160,10 @@ module OpenTelemetry
       # @param callback [Proc] the callback function that used to collect metrics
       # @param unit [optional String] an optional string provided by user.
       # @param description [optional String] an optional free-form text provided by user.
+      # @param exemplar_filter [optional Object] an optional filter to control which measurements are
+      #   eligible to become exemplars. Must respond to `#should_sample?`.
+      # @param exemplar_reservoir [optional Object] an optional reservoir used to sample exemplars
+      #   from eligible measurements. Must respond to `#offer` and `#collect`.
       #
       # @return [nil] after creation of observable_gauge, it will be stored in instrument_registry
       def create_observable_gauge(name, callback:, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
@@ -163,6 +187,10 @@ module OpenTelemetry
       # @param callback [Proc] the callback function that used to collect metrics
       # @param unit [optional String] an optional string provided by user.
       # @param description [optional String] an optional free-form text provided by user.
+      # @param exemplar_filter [optional Object] an optional filter to control which measurements are
+      #   eligible to become exemplars. Must respond to `#should_sample?`.
+      # @param exemplar_reservoir [optional Object] an optional reservoir used to sample exemplars
+      #   from eligible measurements. Must respond to `#offer` and `#collect`.
       #
       # @return [nil] after creation of observable_up_down_counter, it will be stored in instrument_registry
       def create_observable_up_down_counter(name, callback:, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
