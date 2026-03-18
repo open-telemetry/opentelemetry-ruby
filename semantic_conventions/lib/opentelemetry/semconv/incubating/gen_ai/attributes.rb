@@ -27,45 +27,27 @@ module OpenTelemetry
         # Free-form description of the GenAI agent provided by the application.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # Helps with math problems
-        # Generates fiction stories
         GEN_AI_AGENT_DESCRIPTION = 'gen_ai.agent.description'
     
         # The unique identifier of the GenAI agent.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # asst_5j66UpCpwteGg4YSxUnt7lPY
         GEN_AI_AGENT_ID = 'gen_ai.agent.id'
     
         # Human-readable name of the GenAI agent provided by the application.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # Math Tutor
-        # Fiction Writer
         GEN_AI_AGENT_NAME = 'gen_ai.agent.name'
     
         # Deprecated, use Event API to report completions contents.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # [{'role': 'assistant', 'content': 'The capital of France is Paris.'}]
-        #
-        # @deprecated {"note": "Removed, no replacement at this time.", "reason": "obsoleted"}
+        # @deprecated Removed, no replacement at this time.
         GEN_AI_COMPLETION = 'gen_ai.completion'
     
         # The unique identifier for a conversation (session, thread), used to store and correlate messages within this conversation.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # conv_5j66UpCpwteGg4YSxUnt7lPY
         GEN_AI_CONVERSATION_ID = 'gen_ai.conversation.id'
     
         # The data source identifier.
@@ -73,9 +55,6 @@ module OpenTelemetry
         # Data sources are used by AI agents and RAG applications to store grounding data. A data source may be an external database, object store, document collection, website, or any other storage system used by the GenAI agent or application. The `gen_ai.data_source.id` SHOULD match the identifier used by the GenAI system rather than a name specific to the external storage, such as a database or object store. Semantic conventions referencing `gen_ai.data_source.id` MAY also leverage additional attributes, such as `db.*`, to further identify and describe the data source.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # H7STPQYOND
         GEN_AI_DATA_SOURCE_ID = 'gen_ai.data_source.id'
     
         # The chat history provided to the model as an input.
@@ -96,85 +75,36 @@ module OpenTelemetry
         # section for more details.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # [
-        # {
-        # "role": "user",
-        # "parts": [
-        # {
-        # "type": "text",
-        # "content": "Weather in Paris?"
-        # }
-        # ]
-        # },
-        # {
-        # "role": "assistant",
-        # "parts": [
-        # {
-        # "type": "tool_call",
-        # "id": "call_VSPygqKTWdrhaFErNvMV18Yl",
-        # "name": "get_weather",
-        # "arguments": {
-        # "location": "Paris"
-        # }
-        # }
-        # ]
-        # },
-        # {
-        # "role": "tool",
-        # "parts": [
-        # {
-        # "type": "tool_call_response",
-        # "id": " call_VSPygqKTWdrhaFErNvMV18Yl",
-        # "result": "rainy, 57°F"
-        # }
-        # ]
-        # }
-        # ]
         GEN_AI_INPUT_MESSAGES = 'gen_ai.input.messages'
     
         # Deprecated, use `gen_ai.output.type`.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `gen_ai.output.type`.", "reason": "renamed", "renamed_to": "gen_ai.output.type"}
+        # @deprecated Replaced by `gen_ai.output.type`.
         GEN_AI_OPENAI_REQUEST_RESPONSE_FORMAT = 'gen_ai.openai.request.response_format'
     
         # Deprecated, use `gen_ai.request.seed`.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 100
-        #
-        # @deprecated {"note": "Replaced by `gen_ai.request.seed`.", "reason": "renamed", "renamed_to": "gen_ai.request.seed"}
+        # @deprecated Replaced by `gen_ai.request.seed`.
         GEN_AI_OPENAI_REQUEST_SEED = 'gen_ai.openai.request.seed'
     
         # Deprecated, use `openai.request.service_tier`.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `openai.request.service_tier`.", "reason": "renamed", "renamed_to": "openai.request.service_tier"}
+        # @deprecated Replaced by `openai.request.service_tier`.
         GEN_AI_OPENAI_REQUEST_SERVICE_TIER = 'gen_ai.openai.request.service_tier'
     
         # Deprecated, use `openai.response.service_tier`.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # scale
-        # default
-        #
-        # @deprecated {"note": "Replaced by `openai.response.service_tier`.", "reason": "renamed", "renamed_to": "openai.response.service_tier"}
+        # @deprecated Replaced by `openai.response.service_tier`.
         GEN_AI_OPENAI_RESPONSE_SERVICE_TIER = 'gen_ai.openai.response.service_tier'
     
         # Deprecated, use `openai.response.system_fingerprint`.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # fp_44709d6fcb
-        #
-        # @deprecated {"note": "Replaced by `openai.response.system_fingerprint`.", "reason": "renamed", "renamed_to": "openai.response.system_fingerprint"}
+        # @deprecated Replaced by `openai.response.system_fingerprint`.
         GEN_AI_OPENAI_RESPONSE_SYSTEM_FINGERPRINT = 'gen_ai.openai.response.system_fingerprint'
     
         # The name of the operation being performed.
@@ -207,20 +137,6 @@ module OpenTelemetry
         # section for more details.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # [
-        # {
-        # "role": "assistant",
-        # "parts": [
-        # {
-        # "type": "text",
-        # "content": "The weather in Paris is currently rainy with a temperature of 57°F."
-        # }
-        # ],
-        # "finish_reason": "stop"
-        # }
-        # ]
         GEN_AI_OUTPUT_MESSAGES = 'gen_ai.output.messages'
     
         # Represents the content type requested by the client.
@@ -235,11 +151,7 @@ module OpenTelemetry
         # Deprecated, use Event API to report prompt contents.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # [{'role': 'user', 'content': 'What is the capital of France?'}]
-        #
-        # @deprecated {"note": "Removed, no replacement at this time.", "reason": "obsoleted"}
+        # @deprecated Removed, no replacement at this time.
         GEN_AI_PROMPT = 'gen_ai.prompt'
     
         # The Generative AI provider as identified by the client or server instrumentation.
@@ -269,9 +181,6 @@ module OpenTelemetry
         # The target number of candidate completions to return.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 3
         GEN_AI_REQUEST_CHOICE_COUNT = 'gen_ai.request.choice.count'
     
         # The encoding formats requested in an embeddings operation, if specified.
@@ -279,117 +188,72 @@ module OpenTelemetry
         # In some GenAI systems the encoding formats are called embedding types. Also, some GenAI systems only accept a single format per request.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # base64
-        # float
-        # binary
         GEN_AI_REQUEST_ENCODING_FORMATS = 'gen_ai.request.encoding_formats'
     
         # The frequency penalty setting for the GenAI request.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 0.1
         GEN_AI_REQUEST_FREQUENCY_PENALTY = 'gen_ai.request.frequency_penalty'
     
         # The maximum number of tokens the model generates for a request.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 100
         GEN_AI_REQUEST_MAX_TOKENS = 'gen_ai.request.max_tokens'
     
         # The name of the GenAI model a request is being made to.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   gpt-4
-        #
         GEN_AI_REQUEST_MODEL = 'gen_ai.request.model'
     
         # The presence penalty setting for the GenAI request.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 0.1
         GEN_AI_REQUEST_PRESENCE_PENALTY = 'gen_ai.request.presence_penalty'
     
         # Requests with same seed value more likely to return same result.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 100
         GEN_AI_REQUEST_SEED = 'gen_ai.request.seed'
     
         # List of sequences that the model will use to stop generating further tokens.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # forest
-        # lived
         GEN_AI_REQUEST_STOP_SEQUENCES = 'gen_ai.request.stop_sequences'
     
         # The temperature setting for the GenAI request.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 0.0
         GEN_AI_REQUEST_TEMPERATURE = 'gen_ai.request.temperature'
     
         # The top_k sampling setting for the GenAI request.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 1.0
         GEN_AI_REQUEST_TOP_K = 'gen_ai.request.top_k'
     
         # The top_p sampling setting for the GenAI request.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 1.0
         GEN_AI_REQUEST_TOP_P = 'gen_ai.request.top_p'
     
         # Array of reasons the model stopped generating tokens, corresponding to each generation received.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # stop
-        # stop
-        # length
         GEN_AI_RESPONSE_FINISH_REASONS = 'gen_ai.response.finish_reasons'
     
         # The unique identifier for the completion.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # chatcmpl-123
         GEN_AI_RESPONSE_ID = 'gen_ai.response.id'
     
         # The name of the model that generated the response.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # gpt-4-0613
         GEN_AI_RESPONSE_MODEL = 'gen_ai.response.model'
     
         # Deprecated, use `gen_ai.provider.name` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `gen_ai.provider.name`.", "reason": "renamed", "renamed_to": "gen_ai.provider.name"}
+        # @deprecated Replaced by `gen_ai.provider.name`.
         GEN_AI_SYSTEM = 'gen_ai.system'
     
         # The system message or instructions provided to the GenAI model separately from the chat history.
@@ -416,57 +280,26 @@ module OpenTelemetry
         # section for more details.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # [
-        # {
-        # "type": "text",
-        # "content": "You are an Agent that greet users, always use greetings tool to respond"
-        # }
-        # ]
-        # [
-        # {
-        # "type": "text",
-        # "content": "You are a language translator."
-        # },
-        # {
-        # "type": "text",
-        # "content": "Your mission is to translate text in English to French."
-        # }
-        # ]
         GEN_AI_SYSTEM_INSTRUCTIONS = 'gen_ai.system_instructions'
     
         # The type of token being counted.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # input
-        # output
         GEN_AI_TOKEN_TYPE = 'gen_ai.token.type'
     
         # The tool call identifier.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # call_mszuSIzqtI65i1wAUOE8w5H4
         GEN_AI_TOOL_CALL_ID = 'gen_ai.tool.call.id'
     
         # The tool description.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # Multiply two numbers
         GEN_AI_TOOL_DESCRIPTION = 'gen_ai.tool.description'
     
         # Name of the tool utilized by the agent.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # Flights
         GEN_AI_TOOL_NAME = 'gen_ai.tool.name'
     
         # Type of the tool utilized by the agent
@@ -478,47 +311,28 @@ module OpenTelemetry
         # Datastore: A tool used by the agent to access and query structured or unstructured external data for retrieval-augmented tasks or knowledge updates.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # function
-        # extension
-        # datastore
         GEN_AI_TOOL_TYPE = 'gen_ai.tool.type'
     
         # Deprecated, use `gen_ai.usage.output_tokens` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 42
-        #
-        # @deprecated {"note": "Replaced by `gen_ai.usage.output_tokens`.", "reason": "renamed", "renamed_to": "gen_ai.usage.output_tokens"}
+        # @deprecated Replaced by `gen_ai.usage.output_tokens`.
         GEN_AI_USAGE_COMPLETION_TOKENS = 'gen_ai.usage.completion_tokens'
     
         # The number of tokens used in the GenAI input (prompt).
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 100
         GEN_AI_USAGE_INPUT_TOKENS = 'gen_ai.usage.input_tokens'
     
         # The number of tokens used in the GenAI response (completion).
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 180
         GEN_AI_USAGE_OUTPUT_TOKENS = 'gen_ai.usage.output_tokens'
     
         # Deprecated, use `gen_ai.usage.input_tokens` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 42
-        #
-        # @deprecated {"note": "Replaced by `gen_ai.usage.input_tokens`.", "reason": "renamed", "renamed_to": "gen_ai.usage.input_tokens"}
+        # @deprecated Replaced by `gen_ai.usage.input_tokens`.
         GEN_AI_USAGE_PROMPT_TOKENS = 'gen_ai.usage.prompt_tokens'
     
         # @!endgroup

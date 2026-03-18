@@ -72,67 +72,67 @@ module OpenTelemetry
         # Deprecated, use `db.client.connection.create_time` instead. Note: the unit also changed from `ms` to `s`.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `db.client.connection.create_time` with unit `s`.", "reason": "uncategorized"}
+        # @deprecated Replaced by `db.client.connection.create_time` with unit `s`.
         DB_CLIENT_CONNECTIONS_CREATE_TIME = 'db.client.connections.create_time'
     
         # Deprecated, use `db.client.connection.idle.max` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `db.client.connection.idle.max`.", "reason": "renamed", "renamed_to": "db.client.connection.idle.max"}
+        # @deprecated Replaced by `db.client.connection.idle.max`.
         DB_CLIENT_CONNECTIONS_IDLE_MAX = 'db.client.connections.idle.max'
     
         # Deprecated, use `db.client.connection.idle.min` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `db.client.connection.idle.min`.", "reason": "renamed", "renamed_to": "db.client.connection.idle.min"}
+        # @deprecated Replaced by `db.client.connection.idle.min`.
         DB_CLIENT_CONNECTIONS_IDLE_MIN = 'db.client.connections.idle.min'
     
         # Deprecated, use `db.client.connection.max` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `db.client.connection.max`.", "reason": "renamed", "renamed_to": "db.client.connection.max"}
+        # @deprecated Replaced by `db.client.connection.max`.
         DB_CLIENT_CONNECTIONS_MAX = 'db.client.connections.max'
     
         # Deprecated, use `db.client.connection.pending_requests` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `db.client.connection.pending_requests`.", "reason": "renamed", "renamed_to": "db.client.connection.pending_requests"}
+        # @deprecated Replaced by `db.client.connection.pending_requests`.
         DB_CLIENT_CONNECTIONS_PENDING_REQUESTS = 'db.client.connections.pending_requests'
     
         # Deprecated, use `db.client.connection.timeouts` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `db.client.connection.timeouts`.", "reason": "renamed", "renamed_to": "db.client.connection.timeouts"}
+        # @deprecated Replaced by `db.client.connection.timeouts`.
         DB_CLIENT_CONNECTIONS_TIMEOUTS = 'db.client.connections.timeouts'
     
         # Deprecated, use `db.client.connection.count` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `db.client.connection.count`.", "reason": "renamed", "renamed_to": "db.client.connection.count"}
+        # @deprecated Replaced by `db.client.connection.count`.
         DB_CLIENT_CONNECTIONS_USAGE = 'db.client.connections.usage'
     
         # Deprecated, use `db.client.connection.use_time` instead. Note: the unit also changed from `ms` to `s`.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `db.client.connection.use_time` with unit `s`.", "reason": "uncategorized"}
+        # @deprecated Replaced by `db.client.connection.use_time` with unit `s`.
         DB_CLIENT_CONNECTIONS_USE_TIME = 'db.client.connections.use_time'
     
         # Deprecated, use `db.client.connection.wait_time` instead. Note: the unit also changed from `ms` to `s`.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `db.client.connection.wait_time` with unit `s`.", "reason": "uncategorized"}
+        # @deprecated Replaced by `db.client.connection.wait_time` with unit `s`.
         DB_CLIENT_CONNECTIONS_WAIT_TIME = 'db.client.connections.wait_time'
     
         # Deprecated, use `azure.cosmosdb.client.active_instance.count` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `azure.cosmosdb.client.active_instance.count`.", "reason": "renamed", "renamed_to": "azure.cosmosdb.client.active_instance.count"}
+        # @deprecated Replaced by `azure.cosmosdb.client.active_instance.count`.
         DB_CLIENT_COSMOSDB_ACTIVE_INSTANCE_COUNT = 'db.client.cosmosdb.active_instance.count'
     
         # Deprecated, use `azure.cosmosdb.client.operation.request_charge` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `azure.cosmosdb.client.operation.request_charge`.", "reason": "renamed", "renamed_to": "azure.cosmosdb.client.operation.request_charge"}
+        # @deprecated Replaced by `azure.cosmosdb.client.operation.request_charge`.
         DB_CLIENT_COSMOSDB_OPERATION_REQUEST_CHARGE = 'db.client.cosmosdb.operation.request_charge'
     
         # Duration of database client operations.

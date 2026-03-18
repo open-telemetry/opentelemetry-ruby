@@ -530,13 +530,13 @@ module OpenTelemetry
         # Deprecated, use `k8s.replicationcontroller.available_pods` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `k8s.replicationcontroller.available_pods`.", "reason": "renamed", "renamed_to": "k8s.replicationcontroller.available_pods"}
+        # @deprecated Replaced by `k8s.replicationcontroller.available_pods`.
         K8S_REPLICATION_CONTROLLER_AVAILABLE_PODS = 'k8s.replication_controller.available_pods'
     
         # Deprecated, use `k8s.replicationcontroller.desired_pods` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `k8s.replicationcontroller.desired_pods`.", "reason": "renamed", "renamed_to": "k8s.replicationcontroller.desired_pods"}
+        # @deprecated Replaced by `k8s.replicationcontroller.desired_pods`.
         K8S_REPLICATION_CONTROLLER_DESIRED_PODS = 'k8s.replication_controller.desired_pods'
     
         # Total number of available replica pods (ready for at least minReadySeconds) targeted by this replication controller.

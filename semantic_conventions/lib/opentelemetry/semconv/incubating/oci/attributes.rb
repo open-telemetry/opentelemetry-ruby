@@ -30,9 +30,6 @@ module OpenTelemetry
         # An example can be found in [Example Image Manifest](https://github.com/opencontainers/image-spec/blob/main/manifest.md#example-image-manifest).
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # sha256:e4ca62c0d62f3e886e684806dfe9d4e0cda60d54986898173c1083856cfda0f4
         OCI_MANIFEST_DIGEST = 'oci.manifest.digest'
     
         # @!endgroup

@@ -44,10 +44,6 @@ module OpenTelemetry
         # the `rpc.connect_rpc.request.metadata.my-custom-key` attribute with value `["1.2.3.4", "1.2.3.5"]`
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 1.2.3.4
-        # 1.2.3.5
         RPC_CONNECT_RPC_REQUEST_METADATA_LAMBDA = ->(key) { "rpc.connect_rpc.request.metadata.#{key}" }
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -65,9 +61,6 @@ module OpenTelemetry
         # the `rpc.connect_rpc.response.metadata.my-custom-key` attribute with value `["attribute_value"]`
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # attribute_value
         RPC_CONNECT_RPC_RESPONSE_METADATA_LAMBDA = ->(key) { "rpc.connect_rpc.response.metadata.#{key}" }
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -85,10 +78,6 @@ module OpenTelemetry
         # `rpc.grpc.request.metadata.my-custom-key` attribute with value `["1.2.3.4", "1.2.3.5"]`
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 1.2.3.4
-        # 1.2.3.5
         RPC_GRPC_REQUEST_METADATA_LAMBDA = ->(key) { "rpc.grpc.request.metadata.#{key}" }
     
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -106,9 +95,6 @@ module OpenTelemetry
         # the `rpc.grpc.response.metadata.my-custom-key` attribute with value `["attribute_value"]`
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # attribute_value
         RPC_GRPC_RESPONSE_METADATA_LAMBDA = ->(key) { "rpc.grpc.response.metadata.#{key}" }
     
         # The [numeric status code](https://github.com/grpc/grpc/blob/v1.33.2/doc/statuscodes.md) of the gRPC request.
@@ -119,38 +105,21 @@ module OpenTelemetry
         # `error.code` property of response if it is an error response.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # -32700
-        # 100
         RPC_JSONRPC_ERROR_CODE = 'rpc.jsonrpc.error_code'
     
         # `error.message` property of response if it is an error response.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # Parse error
-        # User already exists
         RPC_JSONRPC_ERROR_MESSAGE = 'rpc.jsonrpc.error_message'
     
         # `id` property of request or response. Since protocol allows id to be int, string, `null` or missing (for notifications), value is expected to be cast to string for simplicity. Use empty string in case of `null` value. Omit entirely if this is a notification.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 10
-        # request-7
-            
         RPC_JSONRPC_REQUEST_ID = 'rpc.jsonrpc.request_id'
     
         # Protocol version as in `jsonrpc` property of request/response. Since JSON-RPC 1.0 doesn't specify this, the value can be omitted.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 2.0
-        # 1.0
         RPC_JSONRPC_VERSION = 'rpc.jsonrpc.version'
     
         # Compressed size of the message in bytes.
@@ -180,10 +149,6 @@ module OpenTelemetry
         # This is the logical name of the method from the RPC interface perspective, which can be different from the name of any implementing method/function. The `code.function.name` attribute may be used to store the latter (e.g., method actually executing the call on the server side, RPC client stub method on the client side).
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   exampleMethod
-        #
         RPC_METHOD = 'rpc.method'
     
         # The full (logical) name of the service being called, including its package name, if applicable.
@@ -191,10 +156,6 @@ module OpenTelemetry
         # This is the logical name of the service from the RPC interface perspective, which can be different from the name of any implementing class. The `code.namespace` attribute may be used to store the latter (despite the attribute name, it may include a class name; e.g., class with method actually executing the call on the server side, RPC client stub class on the client side).
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   myservice.EchoService
-        #
         RPC_SERVICE = 'rpc.service'
     
         # A string identifying the remoting system. See below for a list of well-known identifiers.

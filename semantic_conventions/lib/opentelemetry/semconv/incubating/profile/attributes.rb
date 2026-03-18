@@ -27,9 +27,6 @@ module OpenTelemetry
         # Describes the interpreter or compiler of a single frame.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # cpython
         PROFILE_FRAME_TYPE = 'profile.frame.type'
     
         # @!endgroup

@@ -29,20 +29,11 @@ module OpenTelemetry
         # Instrumentations SHOULD NOT set `messaging.batch.message_count` on spans that operate with a single message. When a messaging client library supports both batch and single-message API for the same operation, instrumentations SHOULD use `messaging.batch.message_count` for batching APIs and SHOULD NOT use it for single-message APIs.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # 0
-        # 1
-        # 2
         MESSAGING_BATCH_MESSAGE_COUNT = 'messaging.batch.message_count'
     
         # A unique identifier for the client that consumes or produces a message.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # client-5
-        # myhost@8742@s8083jm
         MESSAGING_CLIENT_ID = 'messaging.client.id'
     
         # The name of the consumer group with which a consumer is associated.
@@ -50,10 +41,6 @@ module OpenTelemetry
         # Semantic conventions for individual messaging systems SHOULD document whether `messaging.consumer.group.name` is applicable and what it means in the context of that system.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # my-group
-        # indexer
         MESSAGING_CONSUMER_GROUP_NAME = 'messaging.consumer.group.name'
     
         # A boolean that is true if the message destination is anonymous (could be unnamed or have auto-generated name).
@@ -67,19 +54,11 @@ module OpenTelemetry
         # the broker doesn't have such notion, the destination name SHOULD uniquely identify the broker.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # MyQueue
-        # MyTopic
         MESSAGING_DESTINATION_NAME = 'messaging.destination.name'
     
         # The identifier of the partition messages are sent to or received from, unique within the `messaging.destination.name`.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   1
-        #
         MESSAGING_DESTINATION_PARTITION_ID = 'messaging.destination.partition.id'
     
         # The name of the destination subscription from which a message is consumed.
@@ -87,9 +66,6 @@ module OpenTelemetry
         # Semantic conventions for individual messaging systems SHOULD document whether `messaging.destination.subscription.name` is applicable and what it means in the context of that system.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # subscription-a
         MESSAGING_DESTINATION_SUBSCRIPTION_NAME = 'messaging.destination.subscription.name'
     
         # Low cardinality representation of the messaging destination name
@@ -97,9 +73,6 @@ module OpenTelemetry
         # Destination names could be constructed from templates. An example would be a destination name involving a user name or product id. Although the destination name in this case is of high cardinality, the underlying template is of low cardinality and can be effectively used for grouping and aggregation.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # /customers/{customerId}
         MESSAGING_DESTINATION_TEMPLATE = 'messaging.destination.template'
     
         # A boolean that is true if the message destination is temporary and might not exist anymore after messages are processed.
@@ -110,93 +83,56 @@ module OpenTelemetry
         # Deprecated, no replacement at this time.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Removed. No replacement at this time.", "reason": "obsoleted"}
+        # @deprecated Removed. No replacement at this time.
         MESSAGING_DESTINATION_PUBLISH_ANONYMOUS = 'messaging.destination_publish.anonymous'
     
         # Deprecated, no replacement at this time.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # MyQueue
-        # MyTopic
-        #
-        # @deprecated {"note": "Removed. No replacement at this time.", "reason": "obsoleted"}
+        # @deprecated Removed. No replacement at this time.
         MESSAGING_DESTINATION_PUBLISH_NAME = 'messaging.destination_publish.name'
     
         # Deprecated, use `messaging.consumer.group.name` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   $Default
-        #
-        # @deprecated {"note": "Replaced by `messaging.consumer.group.name`.", "reason": "renamed", "renamed_to": "messaging.consumer.group.name"}
+        # @deprecated Replaced by `messaging.consumer.group.name`.
         MESSAGING_EVENTHUBS_CONSUMER_GROUP = 'messaging.eventhubs.consumer.group'
     
         # The UTC epoch seconds at which the message has been accepted and stored in the entity.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   1701393730
-        #
         MESSAGING_EVENTHUBS_MESSAGE_ENQUEUED_TIME = 'messaging.eventhubs.message.enqueued_time'
     
         # The ack deadline in seconds set for the modify ack deadline request.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   10
-        #
         MESSAGING_GCP_PUBSUB_MESSAGE_ACK_DEADLINE = 'messaging.gcp_pubsub.message.ack_deadline'
     
         # The ack id for a given message.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   ack_id
-        #
         MESSAGING_GCP_PUBSUB_MESSAGE_ACK_ID = 'messaging.gcp_pubsub.message.ack_id'
     
         # The delivery attempt for a given message.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   2
-        #
         MESSAGING_GCP_PUBSUB_MESSAGE_DELIVERY_ATTEMPT = 'messaging.gcp_pubsub.message.delivery_attempt'
     
         # The ordering key for a given message. If the attribute is not present, the message does not have an ordering key.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   ordering_key
-        #
         MESSAGING_GCP_PUBSUB_MESSAGE_ORDERING_KEY = 'messaging.gcp_pubsub.message.ordering_key'
     
         # Deprecated, use `messaging.consumer.group.name` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   my-group
-        #
-        # @deprecated {"note": "Replaced by `messaging.consumer.group.name`.", "reason": "renamed", "renamed_to": "messaging.consumer.group.name"}
+        # @deprecated Replaced by `messaging.consumer.group.name`.
         MESSAGING_KAFKA_CONSUMER_GROUP = 'messaging.kafka.consumer.group'
     
         # Deprecated, use `messaging.destination.partition.id` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   2
-        #
-        # @deprecated {"note": "Replaced by `messaging.destination.partition.id`.", "reason": "renamed", "renamed_to": "messaging.destination.partition.id"}
+        # @deprecated Replaced by `messaging.destination.partition.id`.
         MESSAGING_KAFKA_DESTINATION_PARTITION = 'messaging.kafka.destination.partition'
     
         # Message keys in Kafka are used for grouping alike messages to ensure they're processed on the same partition. They differ from `messaging.message.id` in that they're not unique. If the key is `null`, the attribute MUST NOT be set.
@@ -204,20 +140,12 @@ module OpenTelemetry
         # If the key type is not string, it's string representation has to be supplied for the attribute. If the key has no unambiguous, canonical string form, don't include its value.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   myKey
-        #
         MESSAGING_KAFKA_MESSAGE_KEY = 'messaging.kafka.message.key'
     
         # Deprecated, use `messaging.kafka.offset` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   42
-        #
-        # @deprecated {"note": "Replaced by `messaging.kafka.offset`.", "reason": "renamed", "renamed_to": "messaging.kafka.offset"}
+        # @deprecated Replaced by `messaging.kafka.offset`.
         MESSAGING_KAFKA_MESSAGE_OFFSET = 'messaging.kafka.message.offset'
     
         # A boolean that is true if the message is a tombstone.
@@ -228,10 +156,6 @@ module OpenTelemetry
         # The offset of a record in the corresponding Kafka partition.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   42
-        #
         MESSAGING_KAFKA_OFFSET = 'messaging.kafka.offset'
     
         # The size of the message body in bytes.
@@ -240,19 +164,11 @@ module OpenTelemetry
         # body size should be used.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   1439
-        #
         MESSAGING_MESSAGE_BODY_SIZE = 'messaging.message.body.size'
     
         # The conversation ID identifying the conversation to which the message belongs, represented as a string. Sometimes called "Correlation ID".
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   MyConversationId
-        #
         MESSAGING_MESSAGE_CONVERSATION_ID = 'messaging.message.conversation_id'
     
         # The size of the message body and metadata in bytes.
@@ -261,41 +177,22 @@ module OpenTelemetry
         # size should be used.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   2738
-        #
         MESSAGING_MESSAGE_ENVELOPE_SIZE = 'messaging.message.envelope.size'
     
         # A value used by the messaging system as an identifier for the message, represented as a string.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   452a7c7c7c7048c2f887f61572b18fc2
-        #
         MESSAGING_MESSAGE_ID = 'messaging.message.id'
     
         # Deprecated, use `messaging.operation.type` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # publish
-        # create
-        # process
-        #
-        # @deprecated {"note": "Replaced by `messaging.operation.type`.", "reason": "renamed", "renamed_to": "messaging.operation.type"}
+        # @deprecated Replaced by `messaging.operation.type`.
         MESSAGING_OPERATION = 'messaging.operation'
     
         # The system-specific name of the messaging operation.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # ack
-        # nack
-        # send
         MESSAGING_OPERATION_NAME = 'messaging.operation.name'
     
         # A string identifying the type of the messaging operation.
@@ -308,29 +205,17 @@ module OpenTelemetry
         # RabbitMQ message routing key.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   myKey
-        #
         MESSAGING_RABBITMQ_DESTINATION_ROUTING_KEY = 'messaging.rabbitmq.destination.routing_key'
     
         # RabbitMQ message delivery tag
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   123
-        #
         MESSAGING_RABBITMQ_MESSAGE_DELIVERY_TAG = 'messaging.rabbitmq.message.delivery_tag'
     
         # Deprecated, use `messaging.consumer.group.name` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   myConsumerGroup
-        #
-        # @deprecated {"note": "Replaced by `messaging.consumer.group.name` on the consumer spans. No replacement for producer spans.\n", "reason": "uncategorized"}
+        # @deprecated Replaced by `messaging.consumer.group.name` on the consumer spans. No replacement for producer spans.
         MESSAGING_ROCKETMQ_CLIENT_GROUP = 'messaging.rocketmq.client_group'
     
         # Model of message consumption. This only applies to consumer spans.
@@ -341,46 +226,26 @@ module OpenTelemetry
         # The delay time level for delay message, which determines the message delay time.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   3
-        #
         MESSAGING_ROCKETMQ_MESSAGE_DELAY_TIME_LEVEL = 'messaging.rocketmq.message.delay_time_level'
     
         # The timestamp in milliseconds that the delay message is expected to be delivered to consumer.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   1665987217045
-        #
         MESSAGING_ROCKETMQ_MESSAGE_DELIVERY_TIMESTAMP = 'messaging.rocketmq.message.delivery_timestamp'
     
         # It is essential for FIFO message. Messages that belong to the same message group are always processed one by one within the same consumer group.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   myMessageGroup
-        #
         MESSAGING_ROCKETMQ_MESSAGE_GROUP = 'messaging.rocketmq.message.group'
     
         # Key(s) of message, another way to mark message besides message id.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        # keyA
-        # keyB
         MESSAGING_ROCKETMQ_MESSAGE_KEYS = 'messaging.rocketmq.message.keys'
     
         # The secondary classifier of message besides topic.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   tagA
-        #
         MESSAGING_ROCKETMQ_MESSAGE_TAG = 'messaging.rocketmq.message.tag'
     
         # Type of message.
@@ -391,20 +256,12 @@ module OpenTelemetry
         # Namespace of RocketMQ resources, resources in different namespaces are individual.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   myNamespace
-        #
         MESSAGING_ROCKETMQ_NAMESPACE = 'messaging.rocketmq.namespace'
     
         # Deprecated, use `messaging.destination.subscription.name` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   subscription-a
-        #
-        # @deprecated {"note": "Replaced by `messaging.destination.subscription.name`.", "reason": "renamed", "renamed_to": "messaging.destination.subscription.name"}
+        # @deprecated Replaced by `messaging.destination.subscription.name`.
         MESSAGING_SERVICEBUS_DESTINATION_SUBSCRIPTION_NAME = 'messaging.servicebus.destination.subscription_name'
     
         # Describes the [settlement type](https://learn.microsoft.com/azure/service-bus-messaging/message-transfers-locks-settlement#peeklock).
@@ -415,19 +272,11 @@ module OpenTelemetry
         # Number of deliveries that have been attempted for this message.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   2
-        #
         MESSAGING_SERVICEBUS_MESSAGE_DELIVERY_COUNT = 'messaging.servicebus.message.delivery_count'
     
         # The UTC epoch seconds at which the message has been accepted and stored in the entity.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   1701393730
-        #
         MESSAGING_SERVICEBUS_MESSAGE_ENQUEUED_TIME = 'messaging.servicebus.message.enqueued_time'
     
         # The messaging system as identified by the client instrumentation.

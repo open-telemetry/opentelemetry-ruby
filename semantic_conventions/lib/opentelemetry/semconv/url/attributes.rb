@@ -26,9 +26,6 @@ module OpenTelemetry
       # The [URI fragment](https://www.rfc-editor.org/rfc/rfc3986#section-3.5) component
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      # SemConv
       URL_FRAGMENT = 'url.fragment'
   
       # Absolute URL describing a network resource according to [RFC3986](https://www.rfc-editor.org/rfc/rfc3986)
@@ -58,10 +55,6 @@ module OpenTelemetry
       # `https://www.example.com/path?color=blue&sig=REDACTED`.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      # https://www.foo.bar/search?q=OpenTelemetry#SemConv
-      # //localhost
       URL_FULL = 'url.full'
   
       # The [URI path](https://www.rfc-editor.org/rfc/rfc3986#section-3.3) component
@@ -69,9 +62,6 @@ module OpenTelemetry
       # Sensitive content provided in `url.path` SHOULD be scrubbed when instrumentations can identify it.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      # /search
       URL_PATH = 'url.path'
   
       # The [URI query](https://www.rfc-editor.org/rfc/rfc3986#section-3.4) component
@@ -92,19 +82,11 @@ module OpenTelemetry
       # `q=OpenTelemetry&sig=REDACTED`.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      # q=OpenTelemetry
       URL_QUERY = 'url.query'
   
       # The [URI scheme](https://www.rfc-editor.org/rfc/rfc3986#section-3.1) component identifying the used protocol.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      # https
-      # ftp
-      # telnet
       URL_SCHEME = 'url.scheme'
   
       # @!endgroup
