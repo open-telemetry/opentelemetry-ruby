@@ -21,48 +21,34 @@
 module OpenTelemetry
   module SemConv
     module Incubating
-      module TEST
+      module OPENAI
         # @!group Attribute Names
       
-        # The fully qualified human readable name of the [test case](https://wikipedia.org/wiki/Test_case).
+        # The service tier requested. May be a specific tier, default, or auto.
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        # org.example.TestCase1.test1
-        # example/tests/TestCase1.test1
-        # ExampleTestCase1_test1
-        TEST_CASE_NAME = 'test.case.name'
+        # auto
+        # default
+        OPENAI_REQUEST_SERVICE_TIER = 'openai.request.service_tier'
     
-        # The status of the actual test case result from test execution.
+        # The service tier used for the response.
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        # pass
-        # fail
-        TEST_CASE_RESULT_STATUS = 'test.case.result.status'
+        # scale
+        # default
+        OPENAI_RESPONSE_SERVICE_TIER = 'openai.response.service_tier'
     
-        # The human readable name of a [test suite](https://wikipedia.org/wiki/Test_suite).
+        # A fingerprint to track any eventual change in the Generative AI environment.
         #
         # @note Stability Level: development
         #
         # @example Sample Values
-        # TestSuite1
-        TEST_SUITE_NAME = 'test.suite.name'
-    
-        # The status of the test suite run.
-        #
-        # @note Stability Level: development
-        #
-        # @example Sample Values
-        # success
-        # failure
-        # skipped
-        # aborted
-        # timed_out
-        # in_progress
-        TEST_SUITE_RUN_STATUS = 'test.suite.run.status'
+        # fp_44709d6fcb
+        OPENAI_RESPONSE_SYSTEM_FINGERPRINT = 'openai.response.system_fingerprint'
     
         # @!endgroup
       end

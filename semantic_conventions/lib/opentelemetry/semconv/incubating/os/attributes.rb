@@ -29,10 +29,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   TQ3C.230805.001.B2
-        #   20E247
-        #   22621
-        #
+        # TQ3C.230805.001.B2
+        # 20E247
+        # 22621
         OS_BUILD_ID = 'os.build_id'
     
         # Human readable (not intended to be parsed) OS version information, like e.g. reported by `ver` or `lsb_release -a` commands.
@@ -40,9 +39,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   Microsoft Windows [Version 10.0.18363.778]
-        #   Ubuntu 18.04.1 LTS
-        #
+        # Microsoft Windows [Version 10.0.18363.778]
+        # Ubuntu 18.04.1 LTS
         OS_DESCRIPTION = 'os.description'
     
         # Human readable operating system name.
@@ -50,10 +48,9 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   iOS
-        #   Android
-        #   Ubuntu
-        #
+        # iOS
+        # Android
+        # Ubuntu
         OS_NAME = 'os.name'
     
         # The operating system type.
@@ -66,9 +63,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   14.2.1
-        #   18.04.1
-        #
+        # 14.2.1
+        # 18.04.1
         OS_VERSION = 'os.version'
     
         # @!endgroup

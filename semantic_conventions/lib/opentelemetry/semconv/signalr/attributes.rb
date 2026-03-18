@@ -28,9 +28,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   app_shutdown
-      #   timeout
-      #
+      # app_shutdown
+      # timeout
       SIGNALR_CONNECTION_STATUS = 'signalr.connection.status'
   
       # [SignalR transport type](https://github.com/dotnet/aspnetcore/blob/main/src/SignalR/docs/specs/TransportProtocols.md)
@@ -38,9 +37,8 @@ module OpenTelemetry
       # @note Stability Level: stable
       #
       # @example Sample Values
-      #   web_sockets
-      #   long_polling
-      #
+      # web_sockets
+      # long_polling
       SIGNALR_TRANSPORT = 'signalr.transport'
   
       # @!endgroup

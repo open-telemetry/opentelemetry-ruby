@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp-metrics
 
+### v0.7.0 / 2026-03-10
+
+* ADDED: Replace cgi with uri for encode and decode (#2028)
+
 ### v0.6.1 / 2025-10-17
 
 * FIXED: Increase OTLP Proto version to 1.8.0 to match version in opentelemetry-exporter-otlp

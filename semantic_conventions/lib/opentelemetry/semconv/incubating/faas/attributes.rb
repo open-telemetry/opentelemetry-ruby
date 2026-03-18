@@ -43,9 +43,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   myBucketName
-        #   myDbName
-        #
+        # myBucketName
+        # myDbName
         FAAS_DOCUMENT_COLLECTION = 'faas.document.collection'
     
         # The document name/table subjected to the operation. For example, in Cloud Storage or S3 is the name of the file, and in Cosmos DB the table name.
@@ -53,9 +52,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   myFile.txt
-        #   myTableName
-        #
+        # myFile.txt
+        # myTableName
         FAAS_DOCUMENT_NAME = 'faas.document.name'
     
         # Describes the type of the operation that was performed on the data.
@@ -79,8 +77,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   2021/06/28/[$LATEST]2f399eb14537447da05ab2a2e39309de
-        #
+        # 2021/06/28/[$LATEST]2f399eb14537447da05ab2a2e39309de
         FAAS_INSTANCE = 'faas.instance'
     
         # The invocation ID of the current function invocation.
@@ -154,9 +151,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   my-function
-        #   myazurefunctionapp/some-function-name
-        #
+        # my-function
+        # myazurefunctionapp/some-function-name
         FAAS_NAME = 'faas.name'
     
         # A string containing the function invocation time in the [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format expressed in [UTC](https://www.w3.org/TR/NOTE-datetime).
@@ -188,9 +184,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   26
-        #   pinkfroid-00002
-        #
+        # 26
+        # pinkfroid-00002
         FAAS_VERSION = 'faas.version'
     
         # @!endgroup

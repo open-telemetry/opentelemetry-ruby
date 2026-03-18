@@ -34,8 +34,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   12288000
-        #
+        # 12288000
         HOST_CPU_CACHE_L2_SIZE = 'host.cpu.cache.l2.size'
     
         # Family or generation of the CPU.
@@ -43,9 +42,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   6
-        #   PA-RISC 1.1e
-        #
+        # 6
+        # PA-RISC 1.1e
         HOST_CPU_FAMILY = 'host.cpu.family'
     
         # Model identifier. It provides more granular information about the CPU, distinguishing it from other CPUs within the same family.
@@ -53,9 +51,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   6
-        #   9000/778/B180L
-        #
+        # 6
+        # 9000/778/B180L
         HOST_CPU_MODEL_ID = 'host.cpu.model.id'
     
         # Model designation of the processor.
@@ -63,8 +60,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz
-        #
+        # 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz
         HOST_CPU_MODEL_NAME = 'host.cpu.model.name'
     
         # Stepping or core revisions.
@@ -72,9 +68,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   1
-        #   r1p1
-        #
+        # 1
+        # r1p1
         HOST_CPU_STEPPING = 'host.cpu.stepping'
     
         # Processor manufacturer identifier. A maximum 12-character string.
@@ -84,8 +79,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   GenuineIntel
-        #
+        # GenuineIntel
         HOST_CPU_VENDOR_ID = 'host.cpu.vendor.id'
     
         # Unique host ID. For Cloud, this must be the instance_id assigned by the cloud provider. For non-containerized systems, this should be the `machine-id`. See the table below for the sources to use to determine the `machine-id` based on operating system.
@@ -93,8 +87,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   fdbf79e8af94cb7f9e8df36789187052
-        #
+        # fdbf79e8af94cb7f9e8df36789187052
         HOST_ID = 'host.id'
     
         # VM image ID or host OS image ID. For Cloud, this value is from the provider.
@@ -102,8 +95,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ami-07b06b442921831e5
-        #
+        # ami-07b06b442921831e5
         HOST_IMAGE_ID = 'host.image.id'
     
         # Name of the VM image or OS install the host was instantiated from.
@@ -111,9 +103,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   infra-ami-eks-worker-node-7d4ec78312
-        #   CentOS-8-x86_64-1905
-        #
+        # infra-ami-eks-worker-node-7d4ec78312
+        # CentOS-8-x86_64-1905
         HOST_IMAGE_NAME = 'host.image.name'
     
         # The version string of the VM image or host OS as defined in [Version Attributes](/docs/resource/README.md#version-attributes).
@@ -121,8 +112,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   0.1
-        #
+        # 0.1
         HOST_IMAGE_VERSION = 'host.image.version'
     
         # Available IP addresses of the host, excluding loopback interfaces.
@@ -132,8 +122,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["192.168.1.140", "fe80::abc2:4a28:737a:609e"]
-        #
+        # 192.168.1.140
+        # fe80::abc2:4a28:737a:609e
         HOST_IP = 'host.ip'
     
         # Available MAC addresses of the host, excluding loopback interfaces.
@@ -143,8 +133,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   ["AC-DE-48-23-45-67", "AC-DE-48-23-45-67-01-9F"]
-        #
+        # AC-DE-48-23-45-67
+        # AC-DE-48-23-45-67-01-9F
         HOST_MAC = 'host.mac'
     
         # Name of the host. On Unix systems, it may contain what the hostname command returns, or the fully qualified hostname, or another name specified by the user.
@@ -152,8 +142,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   opentelemetry-test
-        #
+        # opentelemetry-test
         HOST_NAME = 'host.name'
     
         # Type of host. For Cloud, this must be the machine type.
@@ -161,8 +150,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   n1-standard-1
-        #
+        # n1-standard-1
         HOST_TYPE = 'host.type'
     
         # @!endgroup

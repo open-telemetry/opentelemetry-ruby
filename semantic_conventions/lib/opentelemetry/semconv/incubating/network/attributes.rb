@@ -67,8 +67,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   close_wait
-        #
+        # close_wait
         NETWORK_CONNECTION_STATE = 'network.connection.state'
     
         # This describes more details regarding the connection.type. It may be the type of cell technology connection, but it could be used for describing details about a wifi connection.
@@ -94,9 +93,8 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   lo
-        #   eth0
-        #
+        # lo
+        # eth0
         NETWORK_INTERFACE_NAME = 'network.interface.name'
     
         # The network IO operation direction.
@@ -104,8 +102,7 @@ module OpenTelemetry
         # @note Stability Level: development
         #
         # @example Sample Values
-        #   transmit
-        #
+        # transmit
         NETWORK_IO_DIRECTION = 'network.io.direction'
     
         # Local address of the network connection - IP address or Unix domain socket name.
@@ -113,8 +110,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   10.1.2.80
-        #   /tmp/my.sock
+        # 10.1.2.80
+        # /tmp/my.sock
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_LOCAL_ADDRESS}.
@@ -125,7 +122,7 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   65123
+        # 65123
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_LOCAL_PORT}.
@@ -136,8 +133,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   10.1.2.80
-        #   /tmp/my.sock
+        # 10.1.2.80
+        # /tmp/my.sock
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_PEER_ADDRESS}.
@@ -148,7 +145,7 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   65123
+        # 65123
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_PEER_PORT}.
@@ -161,9 +158,9 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   amqp
-        #   http
-        #   mqtt
+        # amqp
+        # http
+        # mqtt
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_PROTOCOL_NAME}.
@@ -176,8 +173,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   1.1
-        #   2
+        # 1.1
+        # 2
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_PROTOCOL_VERSION}.
@@ -194,8 +191,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   tcp
-        #   udp
+        # tcp
+        # udp
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_TRANSPORT}.
@@ -208,8 +205,8 @@ module OpenTelemetry
         # @note Stability Level: stable
         #
         # @example Sample Values
-        #   ipv4
-        #   ipv6
+        # ipv4
+        # ipv6
         #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_TYPE}.

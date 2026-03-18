@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.32.0 / 2026-03-10
+
+* ADDED: Replace cgi with uri for encode and decode (#2028)
+
 ### v0.31.1 / 2025-10-21
 
 - FIXED: Requires minimum SDK support for new parent_span_is_remote attribute

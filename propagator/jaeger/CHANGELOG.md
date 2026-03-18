@@ -1,5 +1,9 @@
 # Release History: opentelemetry-propagator-jaeger
 
+### v0.23.0 / 2026-03-10
+
+* ADDED: Replace cgi with uri for encode and decode (#2028)
+
 ### v0.22.0 / 2025-02-25
 
 - ADDED: Support 3.1 Min Version
