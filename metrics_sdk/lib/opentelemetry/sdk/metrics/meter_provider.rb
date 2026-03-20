@@ -142,7 +142,7 @@ module OpenTelemetry
           when 'always_off'
             @exemplar_filter = Exemplar::AlwaysOffExemplarFilter
           else
-            OpenTelemetry.logger.warn("OTEL_METRICS_EXEMPLAR_FILTER #{ENV['OTEL_METRICS_EXEMPLAR_FILTER']} is not part of provided exemplar filter; Exemplar is off.")
+            OpenTelemetry.logger.warn("OTEL_METRICS_EXEMPLAR_FILTER #{ENV['OTEL_METRICS_EXEMPLAR_FILTER']} is not part of the provided exemplar filters. Exemplar is off.")
             @exemplar_filter = Exemplar::AlwaysOffExemplarFilter
           end
         end

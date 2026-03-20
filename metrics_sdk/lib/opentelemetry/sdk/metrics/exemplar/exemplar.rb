@@ -8,7 +8,8 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Exemplar
-        # Exemplar
+        # Exemplar is a Struct containing Exemplar data for export.
+
         Exemplar = Struct.new(
           :filtered_attributes,  # Hash - attributes filtered from point attributes
           :value,                # Numeric - measured value

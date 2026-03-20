@@ -10,7 +10,7 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Exemplar
-        # SimpleFixedSizeExemplarReservoir
+        # SimpleFixedSizeExemplarReservoir uses a uniformly-weighted sampling algorithm based on the number of samples the reservoir has seen so far to determine if the offered measurements should be sampled
         class SimpleFixedSizeExemplarReservoir < ExemplarReservoir
           # Default to number of CPUs for better concurrent performance, fallback to 1
           DEFAULT_SIZE = begin

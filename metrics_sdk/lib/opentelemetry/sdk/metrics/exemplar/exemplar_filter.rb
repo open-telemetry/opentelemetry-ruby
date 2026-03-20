@@ -8,7 +8,7 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Exemplar
-        # ExemplarFilter
+        # ExemplarFilter determines which measurements are eligible for becoming an Exemplar. Available Filters include: AlwaysOn, AlwaysOff, and TraceBased.
         class ExemplarFilter
           # Returns a {Boolean} value.
           #

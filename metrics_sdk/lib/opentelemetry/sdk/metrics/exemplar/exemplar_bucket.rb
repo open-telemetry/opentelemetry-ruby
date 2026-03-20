@@ -18,7 +18,7 @@ module OpenTelemetry
           # Offers a measurement to be sampled
           #
           # @param value [Numeric] Measured value
-          # @param time_unix_nano [Integer] Measurement instant in nanoseconds
+          # @param time_unix_nano [Integer] Measurement observation time in nanoseconds
           # @param attributes [Hash] Measurement attributes
           # @param context [Context] Measurement context
           def offer(value:, time_unix_nano:, attributes:, context:)

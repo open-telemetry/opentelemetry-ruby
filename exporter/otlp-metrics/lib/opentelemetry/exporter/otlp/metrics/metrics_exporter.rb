@@ -347,7 +347,6 @@ module OpenTelemetry
           end
 
           def as_otlp_exemplar(exemplar)
-            puts "exemplar: #{exemplar.inspect}"
             args = {
               time_unix_nano: exemplar.time_unix_nano,
               span_id: exemplar.span_id,
