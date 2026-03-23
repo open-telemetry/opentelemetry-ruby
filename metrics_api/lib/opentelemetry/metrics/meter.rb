@@ -36,15 +36,23 @@ module OpenTelemetry
       #
       #   exception_counter = meter.create_counter("exceptions",
       #                                            description: "number of exceptions caught",
-      #                                            unit: 's')
+      #                                            unit: 's',
+      #                                            exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter,
+      #                                            exemplar_reservoir: OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new)
       #
       # @param name [String] the name of the counter
       # @param unit [optional String] an optional string provided by user.
       # @param description [optional String] an optional free-form text provided by user.
       # @param exemplar_filter [optional Object] an optional filter to control which measurements are
-      #   eligible to become exemplars. Must respond to `#should_sample?`.
+      #   eligible to become exemplars. Must respond to `#should_sample?`. Available SDK implementations:
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter` - all measurements are eligible
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOffExemplarFilter` - no measurements are eligible
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter` - only measurements in a sampled span context are eligible
       # @param exemplar_reservoir [optional Object] an optional reservoir used to sample exemplars
-      #   from eligible measurements. Must respond to `#offer` and `#collect`.
+      #   from eligible measurements. Must respond to `#offer` and `#collect`. Available SDK implementations:
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir` - uniformly-weighted sampling
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir` - one exemplar per histogram bucket (recommended for histograms)
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
       #
       # @return [nil] after creation of counter, it will be stored in instrument_registry
       def create_counter(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
@@ -59,15 +67,23 @@ module OpenTelemetry
       #
       #   http_server_duration = meter.create_histogram("http.server.duration",
       #                                                 description: "measures the duration of the inbound HTTP request",
-      #                                                 unit: "s")
+      #                                                 unit: "s",
+      #                                                 exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter,
+      #                                                 exemplar_reservoir: OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir.new)
       #
       # @param name [String] the name of the histogram
       # @param unit [optional String] an optional string provided by user.
       # @param description [optional String] an optional free-form text provided by user.
       # @param exemplar_filter [optional Object] an optional filter to control which measurements are
-      #   eligible to become exemplars. Must respond to `#should_sample?`.
+      #   eligible to become exemplars. Must respond to `#should_sample?`. Available SDK implementations:
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter` - all measurements are eligible
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOffExemplarFilter` - no measurements are eligible
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter` - only measurements in a sampled span context are eligible
       # @param exemplar_reservoir [optional Object] an optional reservoir used to sample exemplars
-      #   from eligible measurements. Must respond to `#offer` and `#collect`.
+      #   from eligible measurements. Must respond to `#offer` and `#collect`. Available SDK implementations:
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir` - uniformly-weighted sampling
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir` - one exemplar per histogram bucket (recommended for histograms)
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
       #
       # @return [nil] after creation of histogram, it will be stored in instrument_registry
       def create_histogram(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
@@ -80,16 +96,23 @@ module OpenTelemetry
       #
       #   meter.create_gauge("cpu.frequency",
       #                       description: "the real-time CPU clock speed",
-      #                       unit: "ms")
-      #
+      #                       unit: "ms",
+      #                       exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter,
+      #                       exemplar_reservoir: OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new)
       #
       # @param name [String] the name of the gauge.
       # @param unit [optional String] an optional string provided by user.
       # @param description [optional String] an optional free-form text provided by user.
       # @param exemplar_filter [optional Object] an optional filter to control which measurements are
-      #   eligible to become exemplars. Must respond to `#should_sample?`.
+      #   eligible to become exemplars. Must respond to `#should_sample?`. Available SDK implementations:
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter` - all measurements are eligible
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOffExemplarFilter` - no measurements are eligible
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter` - only measurements in a sampled span context are eligible
       # @param exemplar_reservoir [optional Object] an optional reservoir used to sample exemplars
-      #   from eligible measurements. Must respond to `#offer` and `#collect`.
+      #   from eligible measurements. Must respond to `#offer` and `#collect`. Available SDK implementations:
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir` - uniformly-weighted sampling
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir` - one exemplar per histogram bucket (recommended for histograms)
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
       #
       # @return [nil] after creation of gauge, it will be stored in instrument_registry
       def create_gauge(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
@@ -102,15 +125,23 @@ module OpenTelemetry
       #
       #   items_counter = meter.create_up_down_counter("store.inventory",
       #                                                description: "the number of the items available",
-      #                                                unit: "s")
+      #                                                unit: "s",
+      #                                                exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter,
+      #                                                exemplar_reservoir: OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new)
       #
       # @param name [String] the name of the up_down_counter
       # @param unit [optional String] an optional string provided by user.
       # @param description [optional String] an optional free-form text provided by user.
       # @param exemplar_filter [optional Object] an optional filter to control which measurements are
-      #   eligible to become exemplars. Must respond to `#should_sample?`.
+      #   eligible to become exemplars. Must respond to `#should_sample?`. Available SDK implementations:
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter` - all measurements are eligible
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOffExemplarFilter` - no measurements are eligible
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter` - only measurements in a sampled span context are eligible
       # @param exemplar_reservoir [optional Object] an optional reservoir used to sample exemplars
-      #   from eligible measurements. Must respond to `#offer` and `#collect`.
+      #   from eligible measurements. Must respond to `#offer` and `#collect`. Available SDK implementations:
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir` - uniformly-weighted sampling
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir` - one exemplar per histogram bucket (recommended for histograms)
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
       #
       # @return [nil] after creation of up_down_counter, it will be stored in instrument_registry
       def create_up_down_counter(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
@@ -126,17 +157,24 @@ module OpenTelemetry
       #   meter.create_observable_counter("PF",
       #                                    pf_callback,
       #                                    description: "process page faults",
-      #                                    unit: 'ms')
-      #
+      #                                    unit: 'ms',
+      #                                    exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter,
+      #                                    exemplar_reservoir: OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new)
       #
       # @param name [String] the name of the observable_counter
       # @param callback [Proc] the callback function that used to collect metrics
       # @param unit [optional String] an optional string provided by user.
       # @param description [optional String] an optional free-form text provided by user.
       # @param exemplar_filter [optional Object] an optional filter to control which measurements are
-      #   eligible to become exemplars. Must respond to `#should_sample?`.
+      #   eligible to become exemplars. Must respond to `#should_sample?`. Available SDK implementations:
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter` - all measurements are eligible
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOffExemplarFilter` - no measurements are eligible
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter` - only measurements in a sampled span context are eligible
       # @param exemplar_reservoir [optional Object] an optional reservoir used to sample exemplars
-      #   from eligible measurements. Must respond to `#offer` and `#collect`.
+      #   from eligible measurements. Must respond to `#offer` and `#collect`. Available SDK implementations:
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir` - uniformly-weighted sampling
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir` - one exemplar per histogram bucket (recommended for histograms)
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
       #
       # @return [nil] after creation of observable_counter, it will be stored in instrument_registry
       def create_observable_counter(name, callback:, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
@@ -150,20 +188,27 @@ module OpenTelemetry
       # With this api call:
       #
       #   pf_callback = -> { # collect metrics here }
-      #   meter.create_observable_counter("cpu.frequency",
-      #                                    pf_callback,
-      #                                    description: "the real-time CPU clock speed",
-      #                                    unit: 'ms')
-      #
+      #   meter.create_observable_gauge("cpu.frequency",
+      #                                  pf_callback,
+      #                                  description: "the real-time CPU clock speed",
+      #                                  unit: 'ms',
+      #                                  exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter,
+      #                                  exemplar_reservoir: OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new)
       #
       # @param name [String] the name of the observable_gauge
       # @param callback [Proc] the callback function that used to collect metrics
       # @param unit [optional String] an optional string provided by user.
       # @param description [optional String] an optional free-form text provided by user.
       # @param exemplar_filter [optional Object] an optional filter to control which measurements are
-      #   eligible to become exemplars. Must respond to `#should_sample?`.
+      #   eligible to become exemplars. Must respond to `#should_sample?`. Available SDK implementations:
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter` - all measurements are eligible
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOffExemplarFilter` - no measurements are eligible
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter` - only measurements in a sampled span context are eligible
       # @param exemplar_reservoir [optional Object] an optional reservoir used to sample exemplars
-      #   from eligible measurements. Must respond to `#offer` and `#collect`.
+      #   from eligible measurements. Must respond to `#offer` and `#collect`. Available SDK implementations:
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir` - uniformly-weighted sampling
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir` - one exemplar per histogram bucket (recommended for histograms)
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
       #
       # @return [nil] after creation of observable_gauge, it will be stored in instrument_registry
       def create_observable_gauge(name, callback:, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
@@ -180,17 +225,24 @@ module OpenTelemetry
       #   meter.create_observable_up_down_counter("process.workingset",
       #                                            pf_callback,
       #                                            description: "process working set",
-      #                                            unit: 'KB')
-      #
+      #                                            unit: 'KB',
+      #                                            exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter,
+      #                                            exemplar_reservoir: OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new)
       #
       # @param name [String] the name of the observable_up_down_counter
       # @param callback [Proc] the callback function that used to collect metrics
       # @param unit [optional String] an optional string provided by user.
       # @param description [optional String] an optional free-form text provided by user.
       # @param exemplar_filter [optional Object] an optional filter to control which measurements are
-      #   eligible to become exemplars. Must respond to `#should_sample?`.
+      #   eligible to become exemplars. Must respond to `#should_sample?`. Available SDK implementations:
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter` - all measurements are eligible
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOffExemplarFilter` - no measurements are eligible
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter` - only measurements in a sampled span context are eligible
       # @param exemplar_reservoir [optional Object] an optional reservoir used to sample exemplars
-      #   from eligible measurements. Must respond to `#offer` and `#collect`.
+      #   from eligible measurements. Must respond to `#offer` and `#collect`. Available SDK implementations:
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir` - uniformly-weighted sampling
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir` - one exemplar per histogram bucket (recommended for histograms)
+      #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
       #
       # @return [nil] after creation of observable_up_down_counter, it will be stored in instrument_registry
       def create_observable_up_down_counter(name, callback:, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)

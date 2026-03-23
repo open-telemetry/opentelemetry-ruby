@@ -298,7 +298,7 @@ module OpenTelemetry
               sum: hdp.sum,
               bucket_counts: hdp.bucket_counts,
               explicit_bounds: hdp.explicit_bounds,
-              exemplars: hdp.exemplars&.map { |ex| as_otlp_exemplar(ex) } || [],
+              exemplars: as_otlp_exemplars(hdp.exemplars),
               min: hdp.min,
               max: hdp.max
             )
@@ -322,7 +322,7 @@ module OpenTelemetry
                 bucket_counts: ehdp.negative.counts
               ),
               flags: ehdp.flags,
-              exemplars: ehdp.exemplars&.map { |ex| as_otlp_exemplar(ex) } || [],
+              exemplars: as_otlp_exemplars(ehdp.exemplars),
               min: ehdp.min,
               max: ehdp.max,
               zero_threshold: ehdp.zero_threshold
@@ -334,7 +334,7 @@ module OpenTelemetry
               attributes: ndp.attributes.map { |k, v| as_otlp_key_value(k, v) },
               start_time_unix_nano: ndp.start_time_unix_nano,
               time_unix_nano: ndp.time_unix_nano,
-              exemplars: ndp.exemplars&.map { |ex| as_otlp_exemplar(ex) } || []
+              exemplars: as_otlp_exemplars(ndp.exemplars)
             }
 
             if ndp.value.is_a?(Float)
@@ -344,6 +344,10 @@ module OpenTelemetry
             end
 
             Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(**args)
+          end
+
+          def as_otlp_exemplars(exemplars)
+            exemplars&.map { |ex| as_otlp_exemplar(ex) } || []
           end
 
           def as_otlp_exemplar(exemplar)

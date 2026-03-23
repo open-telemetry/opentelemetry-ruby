@@ -9,10 +9,10 @@ module OpenTelemetry
     module Metrics
       # The Exemplar module contains the OpenTelemetry metrics reference
       # exemplar implementations. Exemplars are example data points for
-      # aggregated data. They provide specific context to otherwise general 
-      # aggregations. Exemplars allow correlation between aggregated metric 
-      # data and the original API calls where measurements are recorded. 
-      # Exemplars work for trace-metric correlation across any metric, not just 
+      # aggregated data. They provide specific context to otherwise general
+      # aggregations. Exemplars allow correlation between aggregated metric
+      # data and the original API calls where measurements are recorded.
+      # Exemplars work for trace-metric correlation across any metric, not just
       # those that can also be derived from Spans.
       module Exemplar
       end

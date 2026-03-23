@@ -132,7 +132,6 @@ module OpenTelemetry
 
         # spec: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/configuration/sdk-environment-variables.md#exemplar
         # this is one way to turn on the exemplar (exemplar should be turned off by default)
-        #
         def exemplar_filter_setup
           case ENV['OTEL_METRICS_EXEMPLAR_FILTER']
           when 'always_on'
@@ -151,12 +150,12 @@ module OpenTelemetry
         # Default to TraceBasedExemplarFilter
         #
         # @param exemplar_filter the new ExemplarFilter to be added.
-        def exemplar_filter_on(exemplar_filter: Exemplar::TraceBasedExemplarFilter)
+        def enable_exemplar_filter(exemplar_filter: Exemplar::TraceBasedExemplarFilter)
           @exemplar_filter = exemplar_filter
         end
 
         # turn off exemplar_filter by setting the exemplar_fitler to AlwaysOffExemplarFilter
-        def exemplar_filter_off
+        def disable_exemplar_filter
           @exemplar_filter = Exemplar::AlwaysOffExemplarFilter
         end
 

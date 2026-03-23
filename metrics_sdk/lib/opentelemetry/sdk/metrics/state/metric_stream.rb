@@ -65,7 +65,7 @@ module OpenTelemetry
           def update(value, attributes)
             if @registered_views.empty?
               @mutex.synchronize do
-                exemplar_offer = should_exemplar_offer(value, attributes)
+                exemplar_offer = should_offer_exemplar?(value, attributes)
                 @default_aggregation.update(value, attributes, @data_points, exemplar_offer: exemplar_offer)
               end
             else
@@ -74,7 +74,7 @@ module OpenTelemetry
                   attributes ||= {}
                   attributes.merge!(view.attribute_keys)
                   if view.valid_aggregation?
-                    exemplar_offer = should_exemplar_offer(value, attributes)
+                    exemplar_offer = should_offer_exemplar?(value, attributes)
                     view.aggregation.update(value, attributes, data_points, exemplar_offer: exemplar_offer)
                   end
                 end
@@ -119,7 +119,7 @@ module OpenTelemetry
             end
           end
 
-          def should_exemplar_offer(value, attributes)
+          def should_offer_exemplar?(value, attributes)
             context = OpenTelemetry::Context.current
             time = OpenTelemetry::Common::Utilities.time_in_nanoseconds
             @exemplar_filter&.should_sample?(value, time, attributes, context)

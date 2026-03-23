@@ -37,8 +37,14 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::ExemplarFilter do
   end
 
   it 'filter on when trace context flag is 1' do
-    context.instance_variable_get(:@entries).values[0].instance_variable_get(:@context).instance_variable_set(:@trace_flags, ::OpenTelemetry::Trace::TraceFlags::SAMPLED)
-    result = OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter.should_sample?(1, timestamp, attributes, context)
+    sampled_context = ::OpenTelemetry::Trace.context_with_span(
+      ::OpenTelemetry::Trace.non_recording_span(
+        ::OpenTelemetry::Trace::SpanContext.new(
+          trace_flags: ::OpenTelemetry::Trace::TraceFlags::SAMPLED
+        )
+      )
+    )
+    result = OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter.should_sample?(1, timestamp, attributes, sampled_context)
     _(result).must_equal true
   end
 end

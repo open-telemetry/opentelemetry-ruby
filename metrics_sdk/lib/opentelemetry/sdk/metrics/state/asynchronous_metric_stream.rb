@@ -55,7 +55,7 @@ module OpenTelemetry
                 @callback.each do |cb|
                   value = safe_guard_callback(cb, timeout: timeout)
                   if value.is_a?(Numeric)
-                    exemplar_offer = should_exemplar_offer(value, attributes)
+                    exemplar_offer = should_offer_exemplar?(value, attributes)
                     @default_aggregation.update(value, attributes, @data_points, exemplar_offer: exemplar_offer)
                   end
                 end
@@ -70,7 +70,7 @@ module OpenTelemetry
                     merged_attributes = attributes || {}
                     merged_attributes.merge!(view.attribute_keys)
                     if view.valid_aggregation?
-                      exemplar_offer = should_exemplar_offer(value, merged_attributes)
+                      exemplar_offer = should_offer_exemplar?(value, merged_attributes)
                       view.aggregation.update(value, attributes, data_points, exemplar_offer: exemplar_offer)
                     end
                   end
