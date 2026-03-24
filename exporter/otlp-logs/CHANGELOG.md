@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp-logs
 
+### v0.3.1 / 2026-03-24
+
+* DOCS: Fix exporter-otlp-logs gemspec metadata links (#2060)
+
 ### v0.3.0 / 2026-03-10
 
 * ADDED: Replace cgi with uri for encode and decode (#2028)
