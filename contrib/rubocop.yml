@@ -11,6 +11,9 @@ AllCops:
   Exclude:
     - "vendor/**/*"
 
+Layout/EndOfLine:
+  EnforcedStyle: lf
+
 Layout/LineLength:
   Enabled: false
 
