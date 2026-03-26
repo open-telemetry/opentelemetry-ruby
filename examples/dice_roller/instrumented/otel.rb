@@ -48,38 +48,19 @@ OpenTelemetry::SDK.configure do |c|
 end
 
 # ---------------------------------------------------------------------------
-# Metrics SDK — add a console reader so metrics are visible without a backend
+# Metrics and Logs Configuration
 # ---------------------------------------------------------------------------
-case ENV['OTEL_METRICS_EXPORTER']
-when 'otlp'
-  otlp_metric_exporter = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new
-  OpenTelemetry.meter_provider.add_metric_reader(
-    OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(exporter: otlp_metric_exporter)
-  )
-else
-  console_metric_exporter = OpenTelemetry::SDK::Metrics::Export::ConsoleMetricPullExporter.new
-  OpenTelemetry.meter_provider.add_metric_reader(console_metric_exporter)
-end
-
-# ---------------------------------------------------------------------------
-# Logs SDK — wire up a console exporter and bridge Ruby's Logger
-# ---------------------------------------------------------------------------
-logs_logger_provider = OpenTelemetry::SDK::Logs::LoggerProvider.new
-case ENV['OTEL_LOGS_EXPORTER']
-when 'otlp'
-  log_processor = OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor.new(
-    OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
-  )
-  logs_logger_provider.add_log_record_processor(log_processor)
-else
-  log_processor = OpenTelemetry::SDK::Logs::Export::SimpleLogRecordProcessor.new(
-    OpenTelemetry::SDK::Logs::Export::ConsoleLogRecordExporter.new
-  )
-  logs_logger_provider.add_log_record_processor(log_processor)
-end
-OpenTelemetry.logger_provider = logs_logger_provider
-
+# NOTE: Metrics and logs providers are automatically configured by
+# OpenTelemetry::SDK.configure above based on the OTEL_METRICS_EXPORTER
+# and OTEL_LOGS_EXPORTER environment variables. The SDK handles:
+#
+# - Creating the meter_provider and logger_provider
+# - Setting up appropriate exporters (console, otlp, etc.)
+# - Adding metric readers and log record processors
+#
+# However, we still need to explicitly shutdown the providers at exit
+# to ensure all telemetry data is flushed before the application terminates.
 at_exit do
   OpenTelemetry.meter_provider.shutdown
-  logs_logger_provider.shutdown
+  OpenTelemetry.logger_provider.shutdown
 end

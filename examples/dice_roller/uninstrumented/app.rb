@@ -29,15 +29,14 @@ class DiceApp < Sinatra::Base
     rolls_param = params[:rolls]
     player      = params[:player]
 
-    # Default rolls to 1 if not provided
-    rolls = rolls_param.nil? ? 1 : rolls_param.to_i
-
     # Validate: must be a number
     unless rolls_param.nil? || rolls_param.match?(/\A-?\d+\z/)
       status 400
       LOGGER.warn "Invalid rolls parameter: #{rolls_param}"
-      return { status: 'error', message: 'Parameter rolls must be a positive integer' }.to_json
+      return { status: 'error', message: 'Parameter rolls must be an integer' }.to_json
     end
+
+    rolls = rolls_param.nil? ? 1 : rolls_param.to_i
 
     dice = Dice.new
 

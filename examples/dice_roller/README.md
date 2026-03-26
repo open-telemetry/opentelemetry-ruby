@@ -48,6 +48,15 @@ OTEL_LOGS_EXPORTER=otlp \
 OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318 \
 OTEL_SERVICE_NAME=dice_roller \
 ruby app.rb
+You can also export your telemetry to more than one location. To send to an OpenTelemetry Collector and to the console, set the exporter env vars:
+
+```bash
+OTEL_TRACES_EXPORTER=otlp,console \
+OTEL_METRICS_EXPORTER=otlp,console \
+OTEL_LOGS_EXPORTER=otlp,console \
+OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318 \
+OTEL_SERVICE_NAME=dice_roller \
+ruby app.rb
 ```
 
 ---
@@ -177,4 +186,4 @@ All Ruby `Logger` output is bridged to OpenTelemetry via
 | `OTEL_METRICS_EXPORTER`        | `console`               | Metrics exporter (`console` or `otlp`)                    |
 | `OTEL_LOGS_EXPORTER`           | `console`               | Logs exporter (`console` or `otlp`)                       |
 | `OTEL_EXPORTER_OTLP_ENDPOINT`  | `http://localhost:4318` | OTLP endpoint                                             |
-| `OTEL_LOG_LEVEL`               | _(unset)_               | OTel internal diagnostic log level (e.g. `debug`)         |
+| `OTEL_LOG_LEVEL`               | _(unset)_               | OTel internal log level (e.g. `debug`, default: `info`)   |
