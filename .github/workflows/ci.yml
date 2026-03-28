@@ -52,6 +52,7 @@ jobs:
         with:
           gem: "${{ matrix.gem }}"
           ruby: "3.3"
+          rubocop: true
       - name: "Test Ruby 3.2"
         uses: ./.github/actions/test_gem
         with:
