@@ -23,71 +23,71 @@ module OpenTelemetry
     module Incubating
       module DB
         # @!group Attribute Names
-      
+
         # Deprecated, use `cassandra.consistency.level` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `cassandra.consistency.level`.
         DB_CASSANDRA_CONSISTENCY_LEVEL = 'db.cassandra.consistency_level'
-    
+
         # Deprecated, use `cassandra.coordinator.dc` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `cassandra.coordinator.dc`.
         DB_CASSANDRA_COORDINATOR_DC = 'db.cassandra.coordinator.dc'
-    
+
         # Deprecated, use `cassandra.coordinator.id` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `cassandra.coordinator.id`.
         DB_CASSANDRA_COORDINATOR_ID = 'db.cassandra.coordinator.id'
-    
+
         # Deprecated, use `cassandra.query.idempotent` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `cassandra.query.idempotent`.
         DB_CASSANDRA_IDEMPOTENCE = 'db.cassandra.idempotence'
-    
+
         # Deprecated, use `cassandra.page.size` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `cassandra.page.size`.
         DB_CASSANDRA_PAGE_SIZE = 'db.cassandra.page_size'
-    
+
         # Deprecated, use `cassandra.speculative_execution.count` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `cassandra.speculative_execution.count`.
         DB_CASSANDRA_SPECULATIVE_EXECUTION_COUNT = 'db.cassandra.speculative_execution_count'
-    
+
         # Deprecated, use `db.collection.name` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `db.collection.name`.
         DB_CASSANDRA_TABLE = 'db.cassandra.table'
-    
+
         # The name of the connection pool; unique within the instrumented application. In case the connection pool implementation doesn't provide a name, instrumentation SHOULD use a combination of parameters that would make the name unique, for example, combining attributes `server.address`, `server.port`, and `db.namespace`, formatted as `server.address:server.port/db.namespace`. Instrumentations that generate connection pool name following different patterns SHOULD document it.
         #
         # @note Stability Level: development
         DB_CLIENT_CONNECTION_POOL_NAME = 'db.client.connection.pool.name'
-    
+
         # The state of a connection in the pool
         #
         # @note Stability Level: development
         DB_CLIENT_CONNECTION_STATE = 'db.client.connection.state'
-    
+
         # Deprecated, use `db.client.connection.pool.name` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `db.client.connection.pool.name`.
         DB_CLIENT_CONNECTIONS_POOL_NAME = 'db.client.connections.pool.name'
-    
+
         # Deprecated, use `db.client.connection.state` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `db.client.connection.state`.
         DB_CLIENT_CONNECTIONS_STATE = 'db.client.connections.state'
-    
+
         # The name of a collection (table, container) within the database.
         #
         # It is RECOMMENDED to capture the value as provided by the application
@@ -104,85 +104,85 @@ module OpenTelemetry
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DB::DB_COLLECTION_NAME}.
         DB_COLLECTION_NAME = 'db.collection.name'
-    
+
         # Deprecated, use `server.address`, `server.port` attributes instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `server.address` and `server.port`.
         DB_CONNECTION_STRING = 'db.connection_string'
-    
+
         # Deprecated, use `azure.client.id` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `azure.client.id`.
         DB_COSMOSDB_CLIENT_ID = 'db.cosmosdb.client_id'
-    
+
         # Deprecated, use `azure.cosmosdb.connection.mode` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `azure.cosmosdb.connection.mode`.
         DB_COSMOSDB_CONNECTION_MODE = 'db.cosmosdb.connection_mode'
-    
+
         # Deprecated, use `cosmosdb.consistency.level` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `azure.cosmosdb.consistency.level`.
         DB_COSMOSDB_CONSISTENCY_LEVEL = 'db.cosmosdb.consistency_level'
-    
+
         # Deprecated, use `db.collection.name` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `db.collection.name`.
         DB_COSMOSDB_CONTAINER = 'db.cosmosdb.container'
-    
+
         # Deprecated, no replacement at this time.
         #
         # @note Stability Level: development
         # @deprecated Removed, no replacement at this time.
         DB_COSMOSDB_OPERATION_TYPE = 'db.cosmosdb.operation_type'
-    
+
         # Deprecated, use `azure.cosmosdb.operation.contacted_regions` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `azure.cosmosdb.operation.contacted_regions`.
         DB_COSMOSDB_REGIONS_CONTACTED = 'db.cosmosdb.regions_contacted'
-    
+
         # Deprecated, use `azure.cosmosdb.operation.request_charge` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `azure.cosmosdb.operation.request_charge`.
         DB_COSMOSDB_REQUEST_CHARGE = 'db.cosmosdb.request_charge'
-    
+
         # Deprecated, use `azure.cosmosdb.request.body.size` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `azure.cosmosdb.request.body.size`.
         DB_COSMOSDB_REQUEST_CONTENT_LENGTH = 'db.cosmosdb.request_content_length'
-    
+
         # Deprecated, use `db.response.status_code` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `db.response.status_code`.
         DB_COSMOSDB_STATUS_CODE = 'db.cosmosdb.status_code'
-    
+
         # Deprecated, use `azure.cosmosdb.response.sub_status_code` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `azure.cosmosdb.response.sub_status_code`.
         DB_COSMOSDB_SUB_STATUS_CODE = 'db.cosmosdb.sub_status_code'
-    
+
         # Deprecated, use `db.namespace` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `db.namespace`.
         DB_ELASTICSEARCH_CLUSTER_NAME = 'db.elasticsearch.cluster.name'
-    
+
         # Deprecated, use `elasticsearch.node.name` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `elasticsearch.node.name`.
         DB_ELASTICSEARCH_NODE_NAME = 'db.elasticsearch.node.name'
-    
+
         # Must be called with a key for the full attribute name. See notes below about the expectations
         # for the state of the key.
         #
@@ -194,37 +194,37 @@ module OpenTelemetry
         # @note Stability Level: development
         # @deprecated Replaced by `db.operation.parameter`.
         DB_ELASTICSEARCH_PATH_PARTS_LAMBDA = ->(key) { "db.elasticsearch.path_parts.#{key}" }
-    
+
         # Deprecated, no general replacement at this time. For Elasticsearch, use `db.elasticsearch.node.name` instead.
         #
         # @note Stability Level: development
         # @deprecated Removed, no general replacement at this time. For Elasticsearch, use `db.elasticsearch.node.name` instead.
         DB_INSTANCE_ID = 'db.instance.id'
-    
+
         # Removed, no replacement at this time.
         #
         # @note Stability Level: development
         # @deprecated Removed, no replacement at this time.
         DB_JDBC_DRIVER_CLASSNAME = 'db.jdbc.driver_classname'
-    
+
         # Deprecated, use `db.collection.name` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `db.collection.name`.
         DB_MONGODB_COLLECTION = 'db.mongodb.collection'
-    
+
         # Deprecated, SQL Server instance is now populated as a part of `db.namespace` attribute.
         #
         # @note Stability Level: development
         # @deprecated Removed, no replacement at this time.
         DB_MSSQL_INSTANCE_NAME = 'db.mssql.instance_name'
-    
+
         # Deprecated, use `db.namespace` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `db.namespace`.
         DB_NAME = 'db.name'
-    
+
         # The name of the database, fully qualified within the server address and port.
         #
         # If a database system has multiple namespace components, they SHOULD be concatenated from the most general to the most specific namespace component, using `|` as a separator between the components. Any missing components (and their associated separators) SHOULD be omitted.
@@ -235,13 +235,13 @@ module OpenTelemetry
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DB::DB_NAMESPACE}.
         DB_NAMESPACE = 'db.namespace'
-    
+
         # Deprecated, use `db.operation.name` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `db.operation.name`.
         DB_OPERATION = 'db.operation'
-    
+
         # The number of queries included in a batch operation.
         #
         # Operations are only considered batches when they contain two or more operations, and so `db.operation.batch.size` SHOULD never be `1`.
@@ -250,7 +250,7 @@ module OpenTelemetry
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DB::DB_OPERATION_BATCH_SIZE}.
         DB_OPERATION_BATCH_SIZE = 'db.operation.batch.size'
-    
+
         # The name of the operation or command being executed.
         #
         # It is RECOMMENDED to capture the value as provided by the application
@@ -272,7 +272,7 @@ module OpenTelemetry
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DB::DB_OPERATION_NAME}.
         DB_OPERATION_NAME = 'db.operation.name'
-    
+
         # Must be called with a key for the full attribute name. See notes below about the expectations
         # for the state of the key.
         #
@@ -289,7 +289,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         DB_OPERATION_PARAMETER_LAMBDA = ->(key) { "db.operation.parameter.#{key}" }
-    
+
         # Must be called with a key for the full attribute name. See notes below about the expectations
         # for the state of the key.
         #
@@ -315,7 +315,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         DB_QUERY_PARAMETER_LAMBDA = ->(key) { "db.query.parameter.#{key}" }
-    
+
         # Low cardinality summary of a database query.
         #
         # The query summary describes a class of database queries and is useful
@@ -332,7 +332,7 @@ module OpenTelemetry
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DB::DB_QUERY_SUMMARY}.
         DB_QUERY_SUMMARY = 'db.query.summary'
-    
+
         # The database query being executed.
         #
         # For sanitization see [Sanitization of `db.query.text`](/docs/database/database-spans.md#sanitization-of-dbquerytext).
@@ -343,18 +343,18 @@ module OpenTelemetry
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DB::DB_QUERY_TEXT}.
         DB_QUERY_TEXT = 'db.query.text'
-    
+
         # Deprecated, use `db.namespace` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `db.namespace`.
         DB_REDIS_DATABASE_INDEX = 'db.redis.database_index'
-    
+
         # Number of rows returned by the operation.
         #
         # @note Stability Level: development
         DB_RESPONSE_RETURNED_ROWS = 'db.response.returned_rows'
-    
+
         # Database response status code.
         #
         # The status code returned by the database. Usually it represents an error code, but may also represent partial success, warning, or differentiate between various types of successful outcomes.
@@ -364,19 +364,19 @@ module OpenTelemetry
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DB::DB_RESPONSE_STATUS_CODE}.
         DB_RESPONSE_STATUS_CODE = 'db.response.status_code'
-    
+
         # Deprecated, use `db.collection.name` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `db.collection.name`, but only if not extracting the value from `db.query.text`.
         DB_SQL_TABLE = 'db.sql.table'
-    
+
         # The database statement being executed.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `db.query.text`.
         DB_STATEMENT = 'db.statement'
-    
+
         # The name of a stored procedure within the database.
         #
         # It is RECOMMENDED to capture the value as provided by the application
@@ -389,13 +389,13 @@ module OpenTelemetry
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DB::DB_STORED_PROCEDURE_NAME}.
         DB_STORED_PROCEDURE_NAME = 'db.stored_procedure.name'
-    
+
         # Deprecated, use `db.system.name` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `db.system.name`.
         DB_SYSTEM = 'db.system'
-    
+
         # The database management system (DBMS) product as identified by the client instrumentation.
         #
         # The actual DBMS may differ from the one identified by the client. For example, when using PostgreSQL client libraries to connect to a CockroachDB, the `db.system.name` is set to `postgresql` based on the instrumentation's best knowledge.
@@ -404,13 +404,13 @@ module OpenTelemetry
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DB::DB_SYSTEM_NAME}.
         DB_SYSTEM_NAME = 'db.system.name'
-    
+
         # Deprecated, no replacement at this time.
         #
         # @note Stability Level: development
         # @deprecated Removed, no replacement at this time.
         DB_USER = 'db.user'
-    
+
         # @!endgroup
       end
     end

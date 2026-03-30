@@ -23,28 +23,28 @@ module OpenTelemetry
     module Incubating
       module BROWSER
         # @!group Attribute Names
-      
+
         # Array of brand name and version separated by a space
         #
         # This value is intended to be taken from the [UA client hints API](https://wicg.github.io/ua-client-hints/#interface) (`navigator.userAgentData.brands`).
         #
         # @note Stability Level: development
         BROWSER_BRANDS = 'browser.brands'
-    
+
         # Preferred language of the user using the browser
         #
         # This value is intended to be taken from the Navigator API `navigator.language`.
         #
         # @note Stability Level: development
         BROWSER_LANGUAGE = 'browser.language'
-    
+
         # A boolean that is true if the browser is running on a mobile device
         #
         # This value is intended to be taken from the [UA client hints API](https://wicg.github.io/ua-client-hints/#interface) (`navigator.userAgentData.mobile`). If unavailable, this attribute SHOULD be left unset.
         #
         # @note Stability Level: development
         BROWSER_MOBILE = 'browser.mobile'
-    
+
         # The platform on which the browser is running
         #
         # This value is intended to be taken from the [UA client hints API](https://wicg.github.io/ua-client-hints/#interface) (`navigator.userAgentData.platform`). If unavailable, the legacy `navigator.platform` API SHOULD NOT be used instead and this attribute SHOULD be left unset in order for the values to be consistent.
@@ -52,7 +52,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         BROWSER_PLATFORM = 'browser.platform'
-    
+
         # @!endgroup
       end
     end

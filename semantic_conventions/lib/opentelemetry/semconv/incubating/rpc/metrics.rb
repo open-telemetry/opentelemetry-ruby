@@ -23,7 +23,7 @@ module OpenTelemetry
     module Incubating
       module RPC
         # @!group Metrics Names
-      
+
         # Measures the duration of outbound RPC.
         #
         # While streaming RPCs may record this metric as start-of-batch
@@ -33,14 +33,14 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         RPC_CLIENT_DURATION = 'rpc.client.duration'
-    
+
         # Measures the size of RPC request messages (uncompressed).
         #
         # **Streaming**: Recorded per message in a streaming batch
         #
         # @note Stability Level: development
         RPC_CLIENT_REQUEST_SIZE = 'rpc.client.request.size'
-    
+
         # Measures the number of messages received per RPC.
         #
         # Should be 1 for all non-streaming RPCs.
@@ -49,14 +49,14 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         RPC_CLIENT_REQUESTS_PER_RPC = 'rpc.client.requests_per_rpc'
-    
+
         # Measures the size of RPC response messages (uncompressed).
         #
         # **Streaming**: Recorded per response in a streaming batch
         #
         # @note Stability Level: development
         RPC_CLIENT_RESPONSE_SIZE = 'rpc.client.response.size'
-    
+
         # Measures the number of messages sent per RPC.
         #
         # Should be 1 for all non-streaming RPCs.
@@ -65,7 +65,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         RPC_CLIENT_RESPONSES_PER_RPC = 'rpc.client.responses_per_rpc'
-    
+
         # Measures the duration of inbound RPC.
         #
         # While streaming RPCs may record this metric as start-of-batch
@@ -75,14 +75,14 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         RPC_SERVER_DURATION = 'rpc.server.duration'
-    
+
         # Measures the size of RPC request messages (uncompressed).
         #
         # **Streaming**: Recorded per message in a streaming batch
         #
         # @note Stability Level: development
         RPC_SERVER_REQUEST_SIZE = 'rpc.server.request.size'
-    
+
         # Measures the number of messages received per RPC.
         #
         # Should be 1 for all non-streaming RPCs.
@@ -91,14 +91,14 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         RPC_SERVER_REQUESTS_PER_RPC = 'rpc.server.requests_per_rpc'
-    
+
         # Measures the size of RPC response messages (uncompressed).
         #
         # **Streaming**: Recorded per response in a streaming batch
         #
         # @note Stability Level: development
         RPC_SERVER_RESPONSE_SIZE = 'rpc.server.response.size'
-    
+
         # Measures the number of messages sent per RPC.
         #
         # Should be 1 for all non-streaming RPCs.
@@ -107,7 +107,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         RPC_SERVER_RESPONSES_PER_RPC = 'rpc.server.responses_per_rpc'
-    
+
         # @!endgroup
       end
     end

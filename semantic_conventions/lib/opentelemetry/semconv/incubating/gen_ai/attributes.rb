@@ -23,40 +23,40 @@ module OpenTelemetry
     module Incubating
       module GEN_AI
         # @!group Attribute Names
-      
+
         # Free-form description of the GenAI agent provided by the application.
         #
         # @note Stability Level: development
         GEN_AI_AGENT_DESCRIPTION = 'gen_ai.agent.description'
-    
+
         # The unique identifier of the GenAI agent.
         #
         # @note Stability Level: development
         GEN_AI_AGENT_ID = 'gen_ai.agent.id'
-    
+
         # Human-readable name of the GenAI agent provided by the application.
         #
         # @note Stability Level: development
         GEN_AI_AGENT_NAME = 'gen_ai.agent.name'
-    
+
         # Deprecated, use Event API to report completions contents.
         #
         # @note Stability Level: development
         # @deprecated Removed, no replacement at this time.
         GEN_AI_COMPLETION = 'gen_ai.completion'
-    
+
         # The unique identifier for a conversation (session, thread), used to store and correlate messages within this conversation.
         #
         # @note Stability Level: development
         GEN_AI_CONVERSATION_ID = 'gen_ai.conversation.id'
-    
+
         # The data source identifier.
         #
         # Data sources are used by AI agents and RAG applications to store grounding data. A data source may be an external database, object store, document collection, website, or any other storage system used by the GenAI agent or application. The `gen_ai.data_source.id` SHOULD match the identifier used by the GenAI system rather than a name specific to the external storage, such as a database or object store. Semantic conventions referencing `gen_ai.data_source.id` MAY also leverage additional attributes, such as `db.*`, to further identify and describe the data source.
         #
         # @note Stability Level: development
         GEN_AI_DATA_SOURCE_ID = 'gen_ai.data_source.id'
-    
+
         # The chat history provided to the model as an input.
         #
         # Instrumentations MUST follow [Input messages JSON schema](/docs/gen-ai/gen-ai-input-messages.json).
@@ -76,44 +76,44 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         GEN_AI_INPUT_MESSAGES = 'gen_ai.input.messages'
-    
+
         # Deprecated, use `gen_ai.output.type`.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `gen_ai.output.type`.
         GEN_AI_OPENAI_REQUEST_RESPONSE_FORMAT = 'gen_ai.openai.request.response_format'
-    
+
         # Deprecated, use `gen_ai.request.seed`.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `gen_ai.request.seed`.
         GEN_AI_OPENAI_REQUEST_SEED = 'gen_ai.openai.request.seed'
-    
+
         # Deprecated, use `openai.request.service_tier`.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `openai.request.service_tier`.
         GEN_AI_OPENAI_REQUEST_SERVICE_TIER = 'gen_ai.openai.request.service_tier'
-    
+
         # Deprecated, use `openai.response.service_tier`.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `openai.response.service_tier`.
         GEN_AI_OPENAI_RESPONSE_SERVICE_TIER = 'gen_ai.openai.response.service_tier'
-    
+
         # Deprecated, use `openai.response.system_fingerprint`.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `openai.response.system_fingerprint`.
         GEN_AI_OPENAI_RESPONSE_SYSTEM_FINGERPRINT = 'gen_ai.openai.response.system_fingerprint'
-    
+
         # The name of the operation being performed.
         #
         # If one of the predefined values applies, but specific system uses a different name it's RECOMMENDED to document it in the semantic conventions for specific GenAI system and use system-specific name in the instrumentation. If a different name is not documented, instrumentation libraries SHOULD use applicable predefined value.
         #
         # @note Stability Level: development
         GEN_AI_OPERATION_NAME = 'gen_ai.operation.name'
-    
+
         # Messages returned by the model where each message represents a specific model response (choice, candidate).
         #
         # Instrumentations MUST follow [Output messages JSON schema](/docs/gen-ai/gen-ai-output-messages.json)
@@ -138,7 +138,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         GEN_AI_OUTPUT_MESSAGES = 'gen_ai.output.messages'
-    
+
         # Represents the content type requested by the client.
         #
         # This attribute SHOULD be used when the client requests output of a specific type. The model may return zero or more outputs of this type.
@@ -147,13 +147,13 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         GEN_AI_OUTPUT_TYPE = 'gen_ai.output.type'
-    
+
         # Deprecated, use Event API to report prompt contents.
         #
         # @note Stability Level: development
         # @deprecated Removed, no replacement at this time.
         GEN_AI_PROMPT = 'gen_ai.prompt'
-    
+
         # The Generative AI provider as identified by the client or server instrumentation.
         #
         # The attribute SHOULD be set based on the instrumentation's best
@@ -177,85 +177,85 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         GEN_AI_PROVIDER_NAME = 'gen_ai.provider.name'
-    
+
         # The target number of candidate completions to return.
         #
         # @note Stability Level: development
         GEN_AI_REQUEST_CHOICE_COUNT = 'gen_ai.request.choice.count'
-    
+
         # The encoding formats requested in an embeddings operation, if specified.
         #
         # In some GenAI systems the encoding formats are called embedding types. Also, some GenAI systems only accept a single format per request.
         #
         # @note Stability Level: development
         GEN_AI_REQUEST_ENCODING_FORMATS = 'gen_ai.request.encoding_formats'
-    
+
         # The frequency penalty setting for the GenAI request.
         #
         # @note Stability Level: development
         GEN_AI_REQUEST_FREQUENCY_PENALTY = 'gen_ai.request.frequency_penalty'
-    
+
         # The maximum number of tokens the model generates for a request.
         #
         # @note Stability Level: development
         GEN_AI_REQUEST_MAX_TOKENS = 'gen_ai.request.max_tokens'
-    
+
         # The name of the GenAI model a request is being made to.
         #
         # @note Stability Level: development
         GEN_AI_REQUEST_MODEL = 'gen_ai.request.model'
-    
+
         # The presence penalty setting for the GenAI request.
         #
         # @note Stability Level: development
         GEN_AI_REQUEST_PRESENCE_PENALTY = 'gen_ai.request.presence_penalty'
-    
+
         # Requests with same seed value more likely to return same result.
         #
         # @note Stability Level: development
         GEN_AI_REQUEST_SEED = 'gen_ai.request.seed'
-    
+
         # List of sequences that the model will use to stop generating further tokens.
         #
         # @note Stability Level: development
         GEN_AI_REQUEST_STOP_SEQUENCES = 'gen_ai.request.stop_sequences'
-    
+
         # The temperature setting for the GenAI request.
         #
         # @note Stability Level: development
         GEN_AI_REQUEST_TEMPERATURE = 'gen_ai.request.temperature'
-    
+
         # The top_k sampling setting for the GenAI request.
         #
         # @note Stability Level: development
         GEN_AI_REQUEST_TOP_K = 'gen_ai.request.top_k'
-    
+
         # The top_p sampling setting for the GenAI request.
         #
         # @note Stability Level: development
         GEN_AI_REQUEST_TOP_P = 'gen_ai.request.top_p'
-    
+
         # Array of reasons the model stopped generating tokens, corresponding to each generation received.
         #
         # @note Stability Level: development
         GEN_AI_RESPONSE_FINISH_REASONS = 'gen_ai.response.finish_reasons'
-    
+
         # The unique identifier for the completion.
         #
         # @note Stability Level: development
         GEN_AI_RESPONSE_ID = 'gen_ai.response.id'
-    
+
         # The name of the model that generated the response.
         #
         # @note Stability Level: development
         GEN_AI_RESPONSE_MODEL = 'gen_ai.response.model'
-    
+
         # Deprecated, use `gen_ai.provider.name` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `gen_ai.provider.name`.
         GEN_AI_SYSTEM = 'gen_ai.system'
-    
+
         # The system message or instructions provided to the GenAI model separately from the chat history.
         #
         # This attribute SHOULD be used when the corresponding provider or API
@@ -281,27 +281,27 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         GEN_AI_SYSTEM_INSTRUCTIONS = 'gen_ai.system_instructions'
-    
+
         # The type of token being counted.
         #
         # @note Stability Level: development
         GEN_AI_TOKEN_TYPE = 'gen_ai.token.type'
-    
+
         # The tool call identifier.
         #
         # @note Stability Level: development
         GEN_AI_TOOL_CALL_ID = 'gen_ai.tool.call.id'
-    
+
         # The tool description.
         #
         # @note Stability Level: development
         GEN_AI_TOOL_DESCRIPTION = 'gen_ai.tool.description'
-    
+
         # Name of the tool utilized by the agent.
         #
         # @note Stability Level: development
         GEN_AI_TOOL_NAME = 'gen_ai.tool.name'
-    
+
         # Type of the tool utilized by the agent
         #
         # Extension: A tool executed on the agent-side to directly call external APIs, bridging the gap between the agent and real-world systems.
@@ -312,29 +312,29 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         GEN_AI_TOOL_TYPE = 'gen_ai.tool.type'
-    
+
         # Deprecated, use `gen_ai.usage.output_tokens` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `gen_ai.usage.output_tokens`.
         GEN_AI_USAGE_COMPLETION_TOKENS = 'gen_ai.usage.completion_tokens'
-    
+
         # The number of tokens used in the GenAI input (prompt).
         #
         # @note Stability Level: development
         GEN_AI_USAGE_INPUT_TOKENS = 'gen_ai.usage.input_tokens'
-    
+
         # The number of tokens used in the GenAI response (completion).
         #
         # @note Stability Level: development
         GEN_AI_USAGE_OUTPUT_TOKENS = 'gen_ai.usage.output_tokens'
-    
+
         # Deprecated, use `gen_ai.usage.input_tokens` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `gen_ai.usage.input_tokens`.
         GEN_AI_USAGE_PROMPT_TOKENS = 'gen_ai.usage.prompt_tokens'
-    
+
         # @!endgroup
       end
     end

@@ -22,7 +22,7 @@ module OpenTelemetry
   module SemConv
     module ERROR
       # @!group Attribute Names
-    
+
       # Describes a class of error the operation ended with.
       #
       # The `error.type` SHOULD be predictable, and SHOULD have low cardinality.
@@ -47,7 +47,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       ERROR_TYPE = 'error.type'
-  
+
       # @!endgroup
     end
   end

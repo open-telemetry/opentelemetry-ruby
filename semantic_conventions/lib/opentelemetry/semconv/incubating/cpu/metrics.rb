@@ -23,25 +23,25 @@ module OpenTelemetry
     module Incubating
       module CPU
         # @!group Metrics Names
-      
+
         # Deprecated. Use `system.cpu.frequency` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `system.cpu.frequency`.
         CPU_FREQUENCY = 'cpu.frequency'
-    
+
         # Deprecated. Use `system.cpu.time` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `system.cpu.time`.
         CPU_TIME = 'cpu.time'
-    
+
         # Deprecated. Use `system.cpu.utilization` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `system.cpu.utilization`.
         CPU_UTILIZATION = 'cpu.utilization'
-    
+
         # @!endgroup
       end
     end

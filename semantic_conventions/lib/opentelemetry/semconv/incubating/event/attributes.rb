@@ -23,13 +23,13 @@ module OpenTelemetry
     module Incubating
       module EVENT
         # @!group Attribute Names
-      
+
         # Identifies the class / type of event.
         #
         # @note Stability Level: development
         # @deprecated Replaced by EventName top-level field on the LogRecord.
         EVENT_NAME = 'event.name'
-    
+
         # @!endgroup
       end
     end

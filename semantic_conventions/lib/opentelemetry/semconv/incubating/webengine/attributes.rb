@@ -23,22 +23,22 @@ module OpenTelemetry
     module Incubating
       module WEBENGINE
         # @!group Attribute Names
-      
+
         # Additional description of the web engine (e.g. detailed version and edition information).
         #
         # @note Stability Level: development
         WEBENGINE_DESCRIPTION = 'webengine.description'
-    
+
         # The name of the web engine.
         #
         # @note Stability Level: development
         WEBENGINE_NAME = 'webengine.name'
-    
+
         # The version of the web engine.
         #
         # @note Stability Level: development
         WEBENGINE_VERSION = 'webengine.version'
-    
+
         # @!endgroup
       end
     end

@@ -23,13 +23,13 @@ module OpenTelemetry
     module Incubating
       module OTHER
         # @!group Attribute Names
-      
+
         # Deprecated, use `db.client.connection.state` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `db.client.connection.state`.
         STATE = 'state'
-    
+
         # @!endgroup
       end
     end

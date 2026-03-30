@@ -23,7 +23,7 @@ module OpenTelemetry
     module Incubating
       module ERROR
         # @!group Attribute Names
-      
+
         # A message providing more detail about an error in human-readable form.
         #
         # `error.message` should provide additional context and detail about an error.
@@ -34,7 +34,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         ERROR_MESSAGE = 'error.message'
-    
+
         # Describes a class of error the operation ended with.
         #
         # The `error.type` SHOULD be predictable, and SHOULD have low cardinality.
@@ -61,7 +61,7 @@ module OpenTelemetry
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ERROR::ERROR_TYPE}.
         ERROR_TYPE = 'error.type'
-    
+
         # @!endgroup
       end
     end

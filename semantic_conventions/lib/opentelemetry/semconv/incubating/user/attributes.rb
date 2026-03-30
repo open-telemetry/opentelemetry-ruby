@@ -23,39 +23,39 @@ module OpenTelemetry
     module Incubating
       module USER
         # @!group Attribute Names
-      
+
         # User email address.
         #
         # @note Stability Level: development
         USER_EMAIL = 'user.email'
-    
+
         # User's full name
         #
         # @note Stability Level: development
         USER_FULL_NAME = 'user.full_name'
-    
+
         # Unique user hash to correlate information for a user in anonymized form.
         #
         # Useful if `user.id` or `user.name` contain confidential information and cannot be used.
         #
         # @note Stability Level: development
         USER_HASH = 'user.hash'
-    
+
         # Unique identifier of the user.
         #
         # @note Stability Level: development
         USER_ID = 'user.id'
-    
+
         # Short name or login/username of the user.
         #
         # @note Stability Level: development
         USER_NAME = 'user.name'
-    
+
         # Array of user roles at the time of the event.
         #
         # @note Stability Level: development
         USER_ROLES = 'user.roles'
-    
+
         # @!endgroup
       end
     end
