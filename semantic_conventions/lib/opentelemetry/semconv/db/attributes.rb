@@ -36,11 +36,6 @@ module OpenTelemetry
       # collection name then that collection name SHOULD be used.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   public.users
-      #   customers
-      #
       DB_COLLECTION_NAME = 'db.collection.name'
   
       # The name of the database, fully qualified within the server address and port.
@@ -50,11 +45,6 @@ module OpenTelemetry
       # It is RECOMMENDED to capture the value as provided by the application without attempting to do any case normalization.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   customers
-      #   test.users
-      #
       DB_NAMESPACE = 'db.namespace'
   
       # The number of queries included in a batch operation.
@@ -62,12 +52,6 @@ module OpenTelemetry
       # Operations are only considered batches when they contain two or more operations, and so `db.operation.batch.size` SHOULD never be `1`.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   2
-      #   3
-      #   4
-      #
       DB_OPERATION_BATCH_SIZE = 'db.operation.batch.size'
   
       # The name of the operation or command being executed.
@@ -88,12 +72,6 @@ module OpenTelemetry
       # system specific term if more applicable.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   findAndModify
-      #   HMSET
-      #   SELECT
-      #
       DB_OPERATION_NAME = 'db.operation.name'
   
       # Low cardinality summary of a database query.
@@ -109,12 +87,6 @@ module OpenTelemetry
       # section.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   SELECT wuser_table
-      #   INSERT shipping_details SELECT orders
-      #   get user by id
-      #
       DB_QUERY_SUMMARY = 'db.query.summary'
   
       # The database query being executed.
@@ -124,11 +96,6 @@ module OpenTelemetry
       # Parameterized query text SHOULD NOT be sanitized. Even though parameterized query text can potentially have sensitive data, by using a parameterized query the user is giving a strong signal that any sensitive data will be passed as parameter values, and the benefit to observability of capturing the static part of the query text by default outweighs the risk.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   SELECT * FROM wuser_table where username = ?
-      #   SET mykey ?
-      #
       DB_QUERY_TEXT = 'db.query.text'
   
       # Database response status code.
@@ -137,13 +104,6 @@ module OpenTelemetry
       # Semantic conventions for individual database systems SHOULD document what `db.response.status_code` means in the context of that system.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   102
-      #   ORA-17002
-      #   08P01
-      #   404
-      #
       DB_RESPONSE_STATUS_CODE = 'db.response.status_code'
   
       # The name of a stored procedure within the database.
@@ -155,10 +115,6 @@ module OpenTelemetry
       # stored procedure name then that stored procedure name SHOULD be used.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   GetCustomer
-      #
       DB_STORED_PROCEDURE_NAME = 'db.stored_procedure.name'
   
       # The database management system (DBMS) product as identified by the client instrumentation.

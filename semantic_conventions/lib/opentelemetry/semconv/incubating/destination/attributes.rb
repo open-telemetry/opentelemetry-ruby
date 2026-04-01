@@ -29,22 +29,11 @@ module OpenTelemetry
         # When observed from the source side, and when communicating through an intermediary, `destination.address` SHOULD represent the destination address behind any intermediaries, for example proxies, if it's available.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   destination.example.com
-        #   10.1.2.80
-        #   /tmp/my.sock
-        #
         DESTINATION_ADDRESS = 'destination.address'
     
         # Destination port number
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   3389
-        #   2888
-        #
         DESTINATION_PORT = 'destination.port'
     
         # @!endgroup

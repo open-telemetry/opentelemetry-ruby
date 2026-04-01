@@ -27,11 +27,6 @@ module OpenTelemetry
         # The Linux Slab memory state
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   reclaimable
-        #   unreclaimable
-        #
         LINUX_MEMORY_SLAB_STATE = 'linux.memory.slab.state'
     
         # @!endgroup

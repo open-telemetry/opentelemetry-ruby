@@ -29,11 +29,6 @@ module OpenTelemetry
         # Pool names are generally obtained via [BufferPoolMXBean#getName()](https://docs.oracle.com/en/java/javase/11/docs/api/java.management/java/lang/management/BufferPoolMXBean.html#getName()).
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   mapped
-        #   direct
-        #
         JVM_BUFFER_POOL_NAME = 'jvm.buffer.pool.name'
     
         # Name of the garbage collector action.
@@ -41,11 +36,6 @@ module OpenTelemetry
         # Garbage collector action is generally obtained via [GarbageCollectionNotificationInfo#getGcAction()](https://docs.oracle.com/en/java/javase/11/docs/api/jdk.management/com/sun/management/GarbageCollectionNotificationInfo.html#getGcAction()).
         #
         # @note Stability Level: stable
-        #
-        # @example Sample Values
-        #   end of minor GC
-        #   end of major GC
-        #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::JVM::JVM_GC_ACTION}.
         JVM_GC_ACTION = 'jvm.gc.action'
@@ -55,11 +45,6 @@ module OpenTelemetry
         # Garbage collector cause is generally obtained via [GarbageCollectionNotificationInfo#getGcCause()](https://docs.oracle.com/en/java/javase/11/docs/api/jdk.management/com/sun/management/GarbageCollectionNotificationInfo.html#getGcCause()).
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   System.gc()
-        #   Allocation Failure
-        #
         JVM_GC_CAUSE = 'jvm.gc.cause'
     
         # Name of the garbage collector.
@@ -67,11 +52,6 @@ module OpenTelemetry
         # Garbage collector name is generally obtained via [GarbageCollectionNotificationInfo#getGcName()](https://docs.oracle.com/en/java/javase/11/docs/api/jdk.management/com/sun/management/GarbageCollectionNotificationInfo.html#getGcName()).
         #
         # @note Stability Level: stable
-        #
-        # @example Sample Values
-        #   G1 Young Generation
-        #   G1 Old Generation
-        #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::JVM::JVM_GC_NAME}.
         JVM_GC_NAME = 'jvm.gc.name'
@@ -82,23 +62,12 @@ module OpenTelemetry
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   G1 Old Gen
-        #   G1 Eden space
-        #   G1 Survivor Space
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::JVM::JVM_MEMORY_POOL_NAME}.
         JVM_MEMORY_POOL_NAME = 'jvm.memory.pool.name'
     
         # The type of memory.
         #
         # @note Stability Level: stable
-        #
-        # @example Sample Values
-        #   heap
-        #   non_heap
-        #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::JVM::JVM_MEMORY_TYPE}.
         JVM_MEMORY_TYPE = 'jvm.memory.type'
@@ -113,11 +82,6 @@ module OpenTelemetry
         # State of the thread.
         #
         # @note Stability Level: stable
-        #
-        # @example Sample Values
-        #   runnable
-        #   blocked
-        #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::JVM::JVM_THREAD_STATE}.
         JVM_THREAD_STATE = 'jvm.thread.state'

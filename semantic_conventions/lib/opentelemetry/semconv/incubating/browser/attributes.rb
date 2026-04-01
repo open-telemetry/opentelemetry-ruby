@@ -29,10 +29,6 @@ module OpenTelemetry
         # This value is intended to be taken from the [UA client hints API](https://wicg.github.io/ua-client-hints/#interface) (`navigator.userAgentData.brands`).
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   [" Not A;Brand 99", "Chromium 99", "Chrome 99"]
-        #
         BROWSER_BRANDS = 'browser.brands'
     
         # Preferred language of the user using the browser
@@ -40,13 +36,6 @@ module OpenTelemetry
         # This value is intended to be taken from the Navigator API `navigator.language`.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   en
-        #   en-US
-        #   fr
-        #   fr-FR
-        #
         BROWSER_LANGUAGE = 'browser.language'
     
         # A boolean that is true if the browser is running on a mobile device
@@ -62,12 +51,6 @@ module OpenTelemetry
         # The list of possible values is defined in the [W3C User-Agent Client Hints specification](https://wicg.github.io/ua-client-hints/#sec-ch-ua-platform). Note that some (but not all) of these values can overlap with values in the [`os.type` and `os.name` attributes](./os.md). However, for consistency, the values in the `browser.platform` attribute should capture the exact value that the user agent provides.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   Windows
-        #   macOS
-        #   Android
-        #
         BROWSER_PLATFORM = 'browser.platform'
     
         # @!endgroup

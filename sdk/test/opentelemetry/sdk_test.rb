@@ -33,7 +33,7 @@ describe OpenTelemetry::SDK do
       config = OpenTelemetry::TestHelpers.with_env('OTEL_SDK_DISABLED' => 'true') do
         OpenTelemetry::SDK.configure
       end
-      _(config).must_equal nil
+      assert_nil(config)
     end
   end
 end

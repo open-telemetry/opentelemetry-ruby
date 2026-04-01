@@ -87,7 +87,10 @@ upstream [OpenTelemetry Semantic Conventions version][semconv].
 
 ## How do I rebuild the conventions?
 
-Bump the version number in the Rakefile, and then run `rake generate`.
+To build the library against a new version of the semantic conventions, update SPEC_VERSION in the Rakefile, and then run `rake generate`.
+
+Do not update the library's VERSION in version.rb.
+That will be handled by the automation for releasing the gem.
 
 ## How can I get involved?
 

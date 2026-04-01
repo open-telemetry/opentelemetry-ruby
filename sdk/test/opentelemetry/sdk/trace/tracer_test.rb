@@ -8,7 +8,6 @@ require 'test_helper'
 
 describe OpenTelemetry::SDK::Trace::Tracer do
   Tracer = OpenTelemetry::SDK::Trace::Tracer
-  SpanLimits = OpenTelemetry::SDK::Trace::SpanLimits
 
   let(:tracer_provider) { OpenTelemetry::SDK::Trace::TracerProvider.new }
   let(:tracer) do

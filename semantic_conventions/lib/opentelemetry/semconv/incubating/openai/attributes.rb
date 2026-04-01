@@ -21,23 +21,23 @@
 module OpenTelemetry
   module SemConv
     module Incubating
-      module HEROKU
+      module OPENAI
         # @!group Attribute Names
       
-        # Unique identifier for the application
+        # The service tier requested. May be a specific tier, default, or auto.
         #
         # @note Stability Level: development
-        HEROKU_APP_ID = 'heroku.app.id'
+        OPENAI_REQUEST_SERVICE_TIER = 'openai.request.service_tier'
     
-        # Commit hash for the current release
+        # The service tier used for the response.
         #
         # @note Stability Level: development
-        HEROKU_RELEASE_COMMIT = 'heroku.release.commit'
+        OPENAI_RESPONSE_SERVICE_TIER = 'openai.response.service_tier'
     
-        # Time and date the release was created
+        # A fingerprint to track any eventual change in the Generative AI environment.
         #
         # @note Stability Level: development
-        HEROKU_RELEASE_CREATION_TIMESTAMP = 'heroku.release.creation_timestamp'
+        OPENAI_RESPONSE_SYSTEM_FINGERPRINT = 'openai.response.system_fingerprint'
     
         # @!endgroup
       end
