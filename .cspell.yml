@@ -65,6 +65,7 @@ ignoreWords:
   - MILLIS
   - otcorrelations
   - Rubyish
+  - rolldice
 words:
   - LOGRECORD
   - traceid
