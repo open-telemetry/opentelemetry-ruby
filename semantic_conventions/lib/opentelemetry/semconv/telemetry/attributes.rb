@@ -38,19 +38,11 @@ module OpenTelemetry
       # All custom identifiers SHOULD be stable across different versions of an implementation.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   opentelemetry
-      #
       TELEMETRY_SDK_NAME = 'telemetry.sdk.name'
   
       # The version string of the telemetry SDK.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   1.2.3
-      #
       TELEMETRY_SDK_VERSION = 'telemetry.sdk.version'
   
       # @!endgroup

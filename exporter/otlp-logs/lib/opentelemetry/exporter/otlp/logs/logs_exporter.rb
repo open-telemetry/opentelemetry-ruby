@@ -273,25 +273,25 @@ module OpenTelemetry
             Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.encode(
               Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.new(
                 resource_logs: log_record_data
-                  .group_by(&:resource)
-                  .map do |resource, log_record_datas|
-                    Opentelemetry::Proto::Logs::V1::ResourceLogs.new(
-                      resource: Opentelemetry::Proto::Resource::V1::Resource.new(
-                        attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
-                      ),
-                      scope_logs: log_record_datas
-                        .group_by(&:instrumentation_scope)
-                        .map do |il, lrd|
-                          Opentelemetry::Proto::Logs::V1::ScopeLogs.new(
-                            scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
-                              name: il.name,
-                              version: il.version
-                            ),
-                            log_records: lrd.map { |lr| as_otlp_log_record(lr) }
-                          )
-                        end
-                    )
-                  end
+                               .group_by(&:resource)
+                               .map do |resource, log_record_datas|
+                                 Opentelemetry::Proto::Logs::V1::ResourceLogs.new(
+                                   resource: Opentelemetry::Proto::Resource::V1::Resource.new(
+                                     attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
+                                   ),
+                                   scope_logs: log_record_datas
+                                               .group_by(&:instrumentation_scope)
+                                               .map do |il, lrd|
+                                                 Opentelemetry::Proto::Logs::V1::ScopeLogs.new(
+                                                   scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
+                                                     name: il.name,
+                                                     version: il.version
+                                                   ),
+                                                   log_records: lrd.map { |lr| as_otlp_log_record(lr) }
+                                                 )
+                                               end
+                                 )
+                               end
               )
             )
           rescue StandardError => e
@@ -361,7 +361,7 @@ module OpenTelemetry
             raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if entries.empty?
 
             entries.each_with_object({}) do |entry, headers|
-              k, v = entry.split('=', 2).map(&CGI.method(:unescape))
+              k, v = entry.split('=', 2).map(&URI.method(:decode_uri_component))
               begin
                 k = k.to_s.strip
                 v = v.to_s.strip

@@ -11,7 +11,6 @@ describe OpenTelemetry::SDK::Trace::Span do
   SpanKind = OpenTelemetry::Trace::SpanKind
   Status = OpenTelemetry::Trace::Status
   Context = OpenTelemetry::Context
-  SpanLimits = OpenTelemetry::SDK::Trace::SpanLimits
 
   let(:context) { OpenTelemetry::Trace::SpanContext.new }
   let(:mock_span_processor) { Minitest::Mock.new }
@@ -507,7 +506,7 @@ describe OpenTelemetry::SDK::Trace::Span do
 
   describe '#instrumentation_library' do
     it 'is identical to the instrumentation_scope' do
-      mock_span_processor.expect(:on_start, nil) { |s| yielded_span = s } # rubocop:disable Lint/UselessAssignment
+      mock_span_processor.expect(:on_start, nil) { |_s| pass }
       span = Span.new(
         context,
         Context.empty,

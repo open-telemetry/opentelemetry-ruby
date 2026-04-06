@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Notify us of an error or incorrect behaviour
+about: Notify us of an error or incorrect behavior
 title: ''
 labels: 'bug'
 assignees: ''
@@ -9,7 +9,7 @@ assignees: ''
 
 <!--
 
-NOTE: Please use this form to submit bugs or demonstrations of non spec compliant behaviour
+NOTE: Please use this form to submit bugs or demonstrations of non spec compliant behavior
 
 -->
 
@@ -17,7 +17,7 @@ NOTE: Please use this form to submit bugs or demonstrations of non spec complian
 
 <!--
 
-If this for behaviour that is not compliant with the OpenTelemetry Specification, please describe
+If this for behavior that is not compliant with the OpenTelemetry Specification, please describe
 what happened and what you expected with a link to the relevant portion of the spec.
 
 -->

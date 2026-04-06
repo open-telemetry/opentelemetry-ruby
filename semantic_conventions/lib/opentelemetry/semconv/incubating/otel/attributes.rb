@@ -41,11 +41,6 @@ module OpenTelemetry
         # These values will therefore be reused in the case of an application restart.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   otlp_grpc_span_exporter/0
-        #   custom-name
-        #
         OTEL_COMPONENT_NAME = 'otel.component.name'
     
         # A name identifying the type of the OpenTelemetry component.
@@ -54,51 +49,35 @@ module OpenTelemetry
         # E.g. for Java the fully qualified classname SHOULD be used in this case.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   batching_span_processor
-        #   com.example.MySpanExporter
-        #
         OTEL_COMPONENT_TYPE = 'otel.component.type'
     
         # Deprecated. Use the `otel.scope.name` attribute
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   io.opentelemetry.contrib.mongodb
-        #
-        # @deprecated {"note": "Replaced by `otel.scope.name`.", "reason": "renamed", "renamed_to": "otel.scope.name"}
+        # @deprecated Replaced by `otel.scope.name`.
         OTEL_LIBRARY_NAME = 'otel.library.name'
     
         # Deprecated. Use the `otel.scope.version` attribute.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   1.0.0
-        #
-        # @deprecated {"note": "Replaced by `otel.scope.version`.", "reason": "renamed", "renamed_to": "otel.scope.version"}
+        # @deprecated Replaced by `otel.scope.version`.
         OTEL_LIBRARY_VERSION = 'otel.library.version'
     
         # The name of the instrumentation scope - (`InstrumentationScope.Name` in OTLP).
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   io.opentelemetry.contrib.mongodb
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::OTEL::OTEL_SCOPE_NAME}.
         OTEL_SCOPE_NAME = 'otel.scope.name'
+    
+        # The schema URL of the instrumentation scope.
+        #
+        # @note Stability Level: development
+        OTEL_SCOPE_SCHEMA_URL = 'otel.scope.schema_url'
     
         # The version of the instrumentation scope - (`InstrumentationScope.Version` in OTLP).
         #
         # @note Stability Level: stable
-        #
-        # @example Sample Values
-        #   1.0.0
-        #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::OTEL::OTEL_SCOPE_VERSION}.
         OTEL_SCOPE_VERSION = 'otel.scope.version'
@@ -123,10 +102,6 @@ module OpenTelemetry
         # Description of the Status if it has a value, otherwise not set.
         #
         # @note Stability Level: stable
-        #
-        # @example Sample Values
-        #   resource not found
-        #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::OTEL::OTEL_STATUS_DESCRIPTION}.
         OTEL_STATUS_DESCRIPTION = 'otel.status_description'

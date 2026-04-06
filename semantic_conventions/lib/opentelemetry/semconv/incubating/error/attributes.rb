@@ -33,11 +33,6 @@ module OpenTelemetry
         # `error.message` is NOT RECOMMENDED for metrics or spans due to its unbounded cardinality and overlap with span status.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   Unexpected input type: string
-        #   The user has exceeded their storage quota
-        #
         ERROR_MESSAGE = 'error.message'
     
         # Describes a class of error the operation ended with.
@@ -63,13 +58,6 @@ module OpenTelemetry
         # - Set `error.type` to capture all errors, regardless of whether they are defined within the domain-specific set or not.
         #
         # @note Stability Level: stable
-        #
-        # @example Sample Values
-        #   timeout
-        #   java.net.UnknownHostException
-        #   server_certificate_invalid
-        #   500
-        #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ERROR::ERROR_TYPE}.
         ERROR_TYPE = 'error.type'

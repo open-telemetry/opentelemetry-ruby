@@ -32,28 +32,16 @@ module OpenTelemetry
         # The data center of the coordinating node for a query.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   us-west-2
-        #
         CASSANDRA_COORDINATOR_DC = 'cassandra.coordinator.dc'
     
         # The ID of the coordinating node for a query.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   be13faa2-8574-4d71-926d-27f16cf8a7af
-        #
         CASSANDRA_COORDINATOR_ID = 'cassandra.coordinator.id'
     
         # The fetch size used for paging, i.e. how many rows will be returned at once.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   5000
-        #
         CASSANDRA_PAGE_SIZE = 'cassandra.page.size'
     
         # Whether or not the query is idempotent.
@@ -64,11 +52,6 @@ module OpenTelemetry
         # The number of times a query was speculatively executed. Not set or `0` if the query was not executed speculatively.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   0
-        #   2
-        #
         CASSANDRA_SPECULATIVE_EXECUTION_COUNT = 'cassandra.speculative_execution.count'
     
         # @!endgroup

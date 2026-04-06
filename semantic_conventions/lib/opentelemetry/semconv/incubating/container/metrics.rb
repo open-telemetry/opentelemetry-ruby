@@ -24,14 +24,14 @@ module OpenTelemetry
       module CONTAINER
         # @!group Metrics Names
       
-        # Total CPU time consumed
+        # Total CPU time consumed.
         #
         # Total CPU time consumed by the specific container on all available CPU cores
         #
         # @note Stability Level: development
         CONTAINER_CPU_TIME = 'container.cpu.time'
     
-        # Container's CPU usage, measured in cpus. Range from 0 to the number of allocatable CPUs
+        # Container's CPU usage, measured in cpus. Range from 0 to the number of allocatable CPUs.
         #
         # CPU usage of the specific container on all available CPU cores, averaged over the sample window
         #
@@ -44,6 +44,38 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         CONTAINER_DISK_IO = 'container.disk.io'
+    
+        # Container filesystem available bytes.
+        #
+        # In K8s, this metric is derived from the
+        # [FsStats.AvailableBytes](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#FsStats) field
+        # of the [ContainerStats.Rootfs](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#ContainerStats)
+        # of the Kubelet's stats API.
+        #
+        # @note Stability Level: development
+        CONTAINER_FILESYSTEM_AVAILABLE = 'container.filesystem.available'
+    
+        # Container filesystem capacity.
+        #
+        # In K8s, this metric is derived from the
+        # [FsStats.CapacityBytes](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#FsStats) field
+        # of the [ContainerStats.Rootfs](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#ContainerStats)
+        # of the Kubelet's stats API.
+        #
+        # @note Stability Level: development
+        CONTAINER_FILESYSTEM_CAPACITY = 'container.filesystem.capacity'
+    
+        # Container filesystem usage.
+        #
+        # This may not equal capacity - available.
+        #
+        # In K8s, this metric is derived from the
+        # [FsStats.UsedBytes](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#FsStats) field
+        # of the [ContainerStats.Rootfs](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#ContainerStats)
+        # of the Kubelet's stats API.
+        #
+        # @note Stability Level: development
+        CONTAINER_FILESYSTEM_USAGE = 'container.filesystem.usage'
     
         # Memory usage of the container.
         #
@@ -59,7 +91,7 @@ module OpenTelemetry
         # @note Stability Level: development
         CONTAINER_NETWORK_IO = 'container.network.io'
     
-        # The time the container has been running
+        # The time the container has been running.
         #
         # Instrumentations SHOULD use a gauge with type `double` and measure uptime in seconds as a floating point number with the highest precision available.
         # The actual accuracy would depend on the instrumentation and operating system.

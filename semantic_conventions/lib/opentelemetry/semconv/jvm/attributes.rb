@@ -28,11 +28,6 @@ module OpenTelemetry
       # Garbage collector action is generally obtained via [GarbageCollectionNotificationInfo#getGcAction()](https://docs.oracle.com/en/java/javase/11/docs/api/jdk.management/com/sun/management/GarbageCollectionNotificationInfo.html#getGcAction()).
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   end of minor GC
-      #   end of major GC
-      #
       JVM_GC_ACTION = 'jvm.gc.action'
   
       # Name of the garbage collector.
@@ -40,11 +35,6 @@ module OpenTelemetry
       # Garbage collector name is generally obtained via [GarbageCollectionNotificationInfo#getGcName()](https://docs.oracle.com/en/java/javase/11/docs/api/jdk.management/com/sun/management/GarbageCollectionNotificationInfo.html#getGcName()).
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   G1 Young Generation
-      #   G1 Old Generation
-      #
       JVM_GC_NAME = 'jvm.gc.name'
   
       # Name of the memory pool.
@@ -52,22 +42,11 @@ module OpenTelemetry
       # Pool names are generally obtained via [MemoryPoolMXBean#getName()](https://docs.oracle.com/en/java/javase/11/docs/api/java.management/java/lang/management/MemoryPoolMXBean.html#getName()).
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   G1 Old Gen
-      #   G1 Eden space
-      #   G1 Survivor Space
-      #
       JVM_MEMORY_POOL_NAME = 'jvm.memory.pool.name'
   
       # The type of memory.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   heap
-      #   non_heap
-      #
       JVM_MEMORY_TYPE = 'jvm.memory.type'
   
       # Whether the thread is daemon or not.
@@ -78,11 +57,6 @@ module OpenTelemetry
       # State of the thread.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   runnable
-      #   blocked
-      #
       JVM_THREAD_STATE = 'jvm.thread.state'
   
       # @!endgroup

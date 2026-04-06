@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-jaeger
 
+### v0.24.1 / 2025-12-02
+
+* FIXED: Update version compatibility: < Ruby 3.2, < JRuby 10.0
+
 ### v0.24.0 / 2025-02-25
 
 - ADDED: Support 3.1 Min Version
@@ -107,7 +111,7 @@
 
 - ADDED: Add service_version setter to configurator
 - FIXED: Update IL attribute naming convention to match spec
-- DOCS: Standardize toplevel docs structure and readme
+- DOCS: Standardize top-level docs structure and readme
 - DOCS: Use BatchSpanProcessor in examples
 
 ### v0.6.0 / 2020-09-10

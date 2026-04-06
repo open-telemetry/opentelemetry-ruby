@@ -27,19 +27,11 @@ module OpenTelemetry
         # Current "managed" thread ID (as opposed to OS thread ID).
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   42
-        #
         THREAD_ID = 'thread.id'
     
         # Current thread name.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   main
-        #
         THREAD_NAME = 'thread.name'
     
         # @!endgroup

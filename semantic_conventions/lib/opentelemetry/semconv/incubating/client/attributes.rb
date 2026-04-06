@@ -30,12 +30,6 @@ module OpenTelemetry
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   client.example.com
-        #   10.1.2.80
-        #   /tmp/my.sock
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::CLIENT::CLIENT_ADDRESS}.
         CLIENT_ADDRESS = 'client.address'
     
@@ -44,10 +38,6 @@ module OpenTelemetry
         # When observed from the server side, and when communicating through an intermediary, `client.port` SHOULD represent the client port behind any intermediaries,  for example proxies, if it's available.
         #
         # @note Stability Level: stable
-        #
-        # @example Sample Values
-        #   65123
-        #
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::CLIENT::CLIENT_PORT}.
         CLIENT_PORT = 'client.port'
