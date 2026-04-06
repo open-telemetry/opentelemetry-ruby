@@ -22,12 +22,12 @@ module OpenTelemetry
   module SemConv
     module URL
       # @!group Attribute Names
-    
+
       # The [URI fragment](https://www.rfc-editor.org/rfc/rfc3986#section-3.5) component
       #
       # @note Stability Level: stable
       URL_FRAGMENT = 'url.fragment'
-  
+
       # Absolute URL describing a network resource according to [RFC3986](https://www.rfc-editor.org/rfc/rfc3986)
       #
       # For network calls, URL usually has `scheme://host[:port][path][?query][#fragment]` format, where the fragment
@@ -56,14 +56,14 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       URL_FULL = 'url.full'
-  
+
       # The [URI path](https://www.rfc-editor.org/rfc/rfc3986#section-3.3) component
       #
       # Sensitive content provided in `url.path` SHOULD be scrubbed when instrumentations can identify it.
       #
       # @note Stability Level: stable
       URL_PATH = 'url.path'
-  
+
       # The [URI query](https://www.rfc-editor.org/rfc/rfc3986#section-3.4) component
       #
       # Sensitive content provided in `url.query` SHOULD be scrubbed when instrumentations can identify it.
@@ -83,12 +83,12 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       URL_QUERY = 'url.query'
-  
+
       # The [URI scheme](https://www.rfc-editor.org/rfc/rfc3986#section-3.1) component identifying the used protocol.
       #
       # @note Stability Level: stable
       URL_SCHEME = 'url.scheme'
-  
+
       # @!endgroup
     end
   end

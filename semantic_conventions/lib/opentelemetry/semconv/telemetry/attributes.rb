@@ -22,12 +22,12 @@ module OpenTelemetry
   module SemConv
     module TELEMETRY
       # @!group Attribute Names
-    
+
       # The language of the telemetry SDK.
       #
       # @note Stability Level: stable
       TELEMETRY_SDK_LANGUAGE = 'telemetry.sdk.language'
-  
+
       # The name of the telemetry SDK as defined above.
       #
       # The OpenTelemetry SDK MUST set the `telemetry.sdk.name` attribute to `opentelemetry`.
@@ -39,12 +39,12 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       TELEMETRY_SDK_NAME = 'telemetry.sdk.name'
-  
+
       # The version string of the telemetry SDK.
       #
       # @note Stability Level: stable
       TELEMETRY_SDK_VERSION = 'telemetry.sdk.version'
-  
+
       # @!endgroup
     end
   end

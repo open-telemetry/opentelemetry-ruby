@@ -23,17 +23,17 @@ module OpenTelemetry
     module Incubating
       module SESSION
         # @!group Attribute Names
-      
+
         # A unique id to identify a session.
         #
         # @note Stability Level: development
         SESSION_ID = 'session.id'
-    
+
         # The previous `session.id` for this user, when known.
         #
         # @note Stability Level: development
         SESSION_PREVIOUS_ID = 'session.previous_id'
-    
+
         # @!endgroup
       end
     end

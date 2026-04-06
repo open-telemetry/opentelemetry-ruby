@@ -23,82 +23,82 @@ module OpenTelemetry
     module Incubating
       module NETWORK
         # @!group Attribute Names
-      
+
         # The ISO 3166-1 alpha-2 2-character country code associated with the mobile carrier network.
         #
         # @note Stability Level: development
         NETWORK_CARRIER_ICC = 'network.carrier.icc'
-    
+
         # The mobile carrier country code.
         #
         # @note Stability Level: development
         NETWORK_CARRIER_MCC = 'network.carrier.mcc'
-    
+
         # The mobile carrier network code.
         #
         # @note Stability Level: development
         NETWORK_CARRIER_MNC = 'network.carrier.mnc'
-    
+
         # The name of the mobile carrier.
         #
         # @note Stability Level: development
         NETWORK_CARRIER_NAME = 'network.carrier.name'
-    
+
         # The state of network connection
         #
         # Connection states are defined as part of the [rfc9293](https://datatracker.ietf.org/doc/html/rfc9293#section-3.3.2)
         #
         # @note Stability Level: development
         NETWORK_CONNECTION_STATE = 'network.connection.state'
-    
+
         # This describes more details regarding the connection.type. It may be the type of cell technology connection, but it could be used for describing details about a wifi connection.
         #
         # @note Stability Level: development
         NETWORK_CONNECTION_SUBTYPE = 'network.connection.subtype'
-    
+
         # The internet connection type.
         #
         # @note Stability Level: development
         NETWORK_CONNECTION_TYPE = 'network.connection.type'
-    
+
         # The network interface name.
         #
         # @note Stability Level: development
         NETWORK_INTERFACE_NAME = 'network.interface.name'
-    
+
         # The network IO operation direction.
         #
         # @note Stability Level: development
         NETWORK_IO_DIRECTION = 'network.io.direction'
-    
+
         # Local address of the network connection - IP address or Unix domain socket name.
         #
         # @note Stability Level: stable
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_LOCAL_ADDRESS}.
         NETWORK_LOCAL_ADDRESS = 'network.local.address'
-    
+
         # Local port number of the network connection.
         #
         # @note Stability Level: stable
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_LOCAL_PORT}.
         NETWORK_LOCAL_PORT = 'network.local.port'
-    
+
         # Peer address of the network connection - IP address or Unix domain socket name.
         #
         # @note Stability Level: stable
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_PEER_ADDRESS}.
         NETWORK_PEER_ADDRESS = 'network.peer.address'
-    
+
         # Peer port number of the network connection.
         #
         # @note Stability Level: stable
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_PEER_PORT}.
         NETWORK_PEER_PORT = 'network.peer.port'
-    
+
         # [OSI application layer](https://wikipedia.org/wiki/Application_layer) or non-OSI equivalent.
         #
         # The value SHOULD be normalized to lowercase.
@@ -107,7 +107,7 @@ module OpenTelemetry
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_PROTOCOL_NAME}.
         NETWORK_PROTOCOL_NAME = 'network.protocol.name'
-    
+
         # The actual version of the protocol used for network communication.
         #
         # If protocol version is subject to negotiation (for example using [ALPN](https://www.rfc-editor.org/rfc/rfc7301.html)), this attribute SHOULD be set to the negotiated version. If the actual protocol version is not known, this attribute SHOULD NOT be set.
@@ -116,7 +116,7 @@ module OpenTelemetry
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_PROTOCOL_VERSION}.
         NETWORK_PROTOCOL_VERSION = 'network.protocol.version'
-    
+
         # [OSI transport layer](https://wikipedia.org/wiki/Transport_layer) or [inter-process communication method](https://wikipedia.org/wiki/Inter-process_communication).
         #
         # The value SHOULD be normalized to lowercase.
@@ -129,7 +129,7 @@ module OpenTelemetry
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_TRANSPORT}.
         NETWORK_TRANSPORT = 'network.transport'
-    
+
         # [OSI network layer](https://wikipedia.org/wiki/Network_layer) or non-OSI equivalent.
         #
         # The value SHOULD be normalized to lowercase.
@@ -138,7 +138,7 @@ module OpenTelemetry
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_TYPE}.
         NETWORK_TYPE = 'network.type'
-    
+
         # @!endgroup
       end
     end

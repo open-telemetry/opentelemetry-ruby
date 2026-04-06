@@ -23,28 +23,28 @@ module OpenTelemetry
     module Incubating
       module CONTAINER
         # @!group Metrics Names
-      
+
         # Total CPU time consumed.
         #
         # Total CPU time consumed by the specific container on all available CPU cores
         #
         # @note Stability Level: development
         CONTAINER_CPU_TIME = 'container.cpu.time'
-    
+
         # Container's CPU usage, measured in cpus. Range from 0 to the number of allocatable CPUs.
         #
         # CPU usage of the specific container on all available CPU cores, averaged over the sample window
         #
         # @note Stability Level: development
         CONTAINER_CPU_USAGE = 'container.cpu.usage'
-    
+
         # Disk bytes for the container.
         #
         # The total number of bytes read/written successfully (aggregated from all disks).
         #
         # @note Stability Level: development
         CONTAINER_DISK_IO = 'container.disk.io'
-    
+
         # Container filesystem available bytes.
         #
         # In K8s, this metric is derived from the
@@ -54,7 +54,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         CONTAINER_FILESYSTEM_AVAILABLE = 'container.filesystem.available'
-    
+
         # Container filesystem capacity.
         #
         # In K8s, this metric is derived from the
@@ -64,7 +64,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         CONTAINER_FILESYSTEM_CAPACITY = 'container.filesystem.capacity'
-    
+
         # Container filesystem usage.
         #
         # This may not equal capacity - available.
@@ -76,21 +76,21 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         CONTAINER_FILESYSTEM_USAGE = 'container.filesystem.usage'
-    
+
         # Memory usage of the container.
         #
         # Memory usage of the container.
         #
         # @note Stability Level: development
         CONTAINER_MEMORY_USAGE = 'container.memory.usage'
-    
+
         # Network bytes for the container.
         #
         # The number of bytes sent/received on all network interfaces by the container.
         #
         # @note Stability Level: development
         CONTAINER_NETWORK_IO = 'container.network.io'
-    
+
         # The time the container has been running.
         #
         # Instrumentations SHOULD use a gauge with type `double` and measure uptime in seconds as a floating point number with the highest precision available.
@@ -98,7 +98,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         CONTAINER_UPTIME = 'container.uptime'
-    
+
         # @!endgroup
       end
     end

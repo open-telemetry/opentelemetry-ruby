@@ -23,39 +23,39 @@ module OpenTelemetry
     module Incubating
       module FEATURE_FLAG
         # @!group Attribute Names
-      
+
         # The unique identifier for the flag evaluation context. For example, the targeting key.
         #
         # @note Stability Level: release_candidate
         FEATURE_FLAG_CONTEXT_ID = 'feature_flag.context.id'
-    
+
         # Deprecated, use `error.message` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `error.message`.
         FEATURE_FLAG_EVALUATION_ERROR_MESSAGE = 'feature_flag.evaluation.error.message'
-    
+
         # Deprecated, use `feature_flag.result.reason` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `feature_flag.result.reason`.
         FEATURE_FLAG_EVALUATION_REASON = 'feature_flag.evaluation.reason'
-    
+
         # The lookup key of the feature flag.
         #
         # @note Stability Level: release_candidate
         FEATURE_FLAG_KEY = 'feature_flag.key'
-    
+
         # Identifies the feature flag provider.
         #
         # @note Stability Level: release_candidate
         FEATURE_FLAG_PROVIDER_NAME = 'feature_flag.provider.name'
-    
+
         # The reason code which shows how a feature flag value was determined.
         #
         # @note Stability Level: release_candidate
         FEATURE_FLAG_RESULT_REASON = 'feature_flag.result.reason'
-    
+
         # The evaluated value of the feature flag.
         #
         # With some feature flag providers, feature flag results can be quite large or contain private or sensitive details.
@@ -66,7 +66,7 @@ module OpenTelemetry
         #
         # @note Stability Level: release_candidate
         FEATURE_FLAG_RESULT_VALUE = 'feature_flag.result.value'
-    
+
         # A semantic identifier for an evaluated flag value.
         #
         # A semantic identifier, commonly referred to as a variant, provides a means
@@ -76,23 +76,23 @@ module OpenTelemetry
         #
         # @note Stability Level: release_candidate
         FEATURE_FLAG_RESULT_VARIANT = 'feature_flag.result.variant'
-    
+
         # The identifier of the [flag set](https://openfeature.dev/specification/glossary/#flag-set) to which the feature flag belongs.
         #
         # @note Stability Level: release_candidate
         FEATURE_FLAG_SET_ID = 'feature_flag.set.id'
-    
+
         # Deprecated, use `feature_flag.result.variant` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `feature_flag.result.variant`.
         FEATURE_FLAG_VARIANT = 'feature_flag.variant'
-    
+
         # The version of the ruleset used during the evaluation. This may be any stable value which uniquely identifies the ruleset.
         #
         # @note Stability Level: release_candidate
         FEATURE_FLAG_VERSION = 'feature_flag.version'
-    
+
         # @!endgroup
       end
     end

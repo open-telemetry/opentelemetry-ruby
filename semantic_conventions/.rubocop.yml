@@ -15,13 +15,6 @@ Gemspec/DevelopmentDependencies:
 Gemspec/RequireMFA:
   Enabled: false
 
-Layout/EmptyLinesAroundModuleBody:
-  Enabled: false
-Layout/TrailingEmptyLines:
-  Enabled: false
-Layout/TrailingWhitespace:
-  Enabled: false
-
 Metrics/BlockLength:
   Enabled: false
 Metrics/MethodLength:
