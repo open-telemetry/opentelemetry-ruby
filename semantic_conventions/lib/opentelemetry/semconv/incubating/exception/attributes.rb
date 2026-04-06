@@ -23,34 +23,34 @@ module OpenTelemetry
     module Incubating
       module EXCEPTION
         # @!group Attribute Names
-      
+
         # Indicates that the exception is escaping the scope of the span.
         #
         # @note Stability Level: stable
         # @deprecated It's no longer recommended to record exceptions that are handled and do not escape the scope of a span.
         EXCEPTION_ESCAPED = 'exception.escaped'
-    
+
         # The exception message.
         #
         # @note Stability Level: stable
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::EXCEPTION::EXCEPTION_MESSAGE}.
         EXCEPTION_MESSAGE = 'exception.message'
-    
+
         # A stacktrace as a string in the natural representation for the language runtime. The representation is to be determined and documented by each language SIG.
         #
         # @note Stability Level: stable
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::EXCEPTION::EXCEPTION_STACKTRACE}.
         EXCEPTION_STACKTRACE = 'exception.stacktrace'
-    
+
         # The type of the exception (its fully-qualified class name, if applicable). The dynamic type of the exception should be preferred over the static type in languages that support it.
         #
         # @note Stability Level: stable
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::EXCEPTION::EXCEPTION_TYPE}.
         EXCEPTION_TYPE = 'exception.type'
-    
+
         # @!endgroup
       end
     end

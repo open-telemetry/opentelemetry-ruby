@@ -22,12 +22,12 @@ module OpenTelemetry
   module SemConv
     module DOTNET
       # @!group Attribute Names
-    
+
       # Name of the garbage collector managed heap generation.
       #
       # @note Stability Level: stable
       DOTNET_GC_HEAP_GENERATION = 'dotnet.gc.heap.generation'
-  
+
       # @!endgroup
     end
   end

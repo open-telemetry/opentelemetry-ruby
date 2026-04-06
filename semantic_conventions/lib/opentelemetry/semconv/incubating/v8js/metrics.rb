@@ -23,42 +23,42 @@ module OpenTelemetry
     module Incubating
       module V8JS
         # @!group Metrics Names
-      
+
         # Garbage collection duration.
         #
         # The values can be retrieved from [`perf_hooks.PerformanceObserver(...).observe({ entryTypes: ['gc'] })`](https://nodejs.org/api/perf_hooks.html#performanceobserverobserveoptions)
         #
         # @note Stability Level: development
         V8JS_GC_DURATION = 'v8js.gc.duration'
-    
+
         # Heap space available size.
         #
         # Value can be retrieved from value `space_available_size` of [`v8.getHeapSpaceStatistics()`](https://nodejs.org/api/v8.html#v8getheapspacestatistics)
         #
         # @note Stability Level: development
         V8JS_HEAP_SPACE_AVAILABLE_SIZE = 'v8js.heap.space.available_size'
-    
+
         # Committed size of a heap space.
         #
         # Value can be retrieved from value `physical_space_size` of [`v8.getHeapSpaceStatistics()`](https://nodejs.org/api/v8.html#v8getheapspacestatistics)
         #
         # @note Stability Level: development
         V8JS_HEAP_SPACE_PHYSICAL_SIZE = 'v8js.heap.space.physical_size'
-    
+
         # Total heap memory size pre-allocated.
         #
         # The value can be retrieved from value `space_size` of [`v8.getHeapSpaceStatistics()`](https://nodejs.org/api/v8.html#v8getheapspacestatistics)
         #
         # @note Stability Level: development
         V8JS_MEMORY_HEAP_LIMIT = 'v8js.memory.heap.limit'
-    
+
         # Heap Memory size allocated.
         #
         # The value can be retrieved from value `space_used_size` of [`v8.getHeapSpaceStatistics()`](https://nodejs.org/api/v8.html#v8getheapspacestatistics)
         #
         # @note Stability Level: development
         V8JS_MEMORY_HEAP_USED = 'v8js.memory.heap.used'
-    
+
         # @!endgroup
       end
     end

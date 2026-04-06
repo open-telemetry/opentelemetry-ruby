@@ -23,22 +23,22 @@ module OpenTelemetry
     module Incubating
       module OPENAI
         # @!group Attribute Names
-      
+
         # The service tier requested. May be a specific tier, default, or auto.
         #
         # @note Stability Level: development
         OPENAI_REQUEST_SERVICE_TIER = 'openai.request.service_tier'
-    
+
         # The service tier used for the response.
         #
         # @note Stability Level: development
         OPENAI_RESPONSE_SERVICE_TIER = 'openai.response.service_tier'
-    
+
         # A fingerprint to track any eventual change in the Generative AI environment.
         #
         # @note Stability Level: development
         OPENAI_RESPONSE_SYSTEM_FINGERPRINT = 'openai.response.system_fingerprint'
-    
+
         # @!endgroup
       end
     end

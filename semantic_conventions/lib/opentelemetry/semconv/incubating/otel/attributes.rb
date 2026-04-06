@@ -23,7 +23,7 @@ module OpenTelemetry
     module Incubating
       module OTEL
         # @!group Attribute Names
-      
+
         # A name uniquely identifying the instance of the OpenTelemetry component within its containing SDK instance.
         #
         # Implementations SHOULD ensure a low cardinality for this attribute, even across application or SDK restarts.
@@ -42,7 +42,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         OTEL_COMPONENT_NAME = 'otel.component.name'
-    
+
         # A name identifying the type of the OpenTelemetry component.
         #
         # If none of the standardized values apply, implementations SHOULD use the language-defined name of the type.
@@ -50,62 +50,62 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         OTEL_COMPONENT_TYPE = 'otel.component.type'
-    
+
         # Deprecated. Use the `otel.scope.name` attribute
         #
         # @note Stability Level: development
         # @deprecated Replaced by `otel.scope.name`.
         OTEL_LIBRARY_NAME = 'otel.library.name'
-    
+
         # Deprecated. Use the `otel.scope.version` attribute.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `otel.scope.version`.
         OTEL_LIBRARY_VERSION = 'otel.library.version'
-    
+
         # The name of the instrumentation scope - (`InstrumentationScope.Name` in OTLP).
         #
         # @note Stability Level: stable
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::OTEL::OTEL_SCOPE_NAME}.
         OTEL_SCOPE_NAME = 'otel.scope.name'
-    
+
         # The schema URL of the instrumentation scope.
         #
         # @note Stability Level: development
         OTEL_SCOPE_SCHEMA_URL = 'otel.scope.schema_url'
-    
+
         # The version of the instrumentation scope - (`InstrumentationScope.Version` in OTLP).
         #
         # @note Stability Level: stable
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::OTEL::OTEL_SCOPE_VERSION}.
         OTEL_SCOPE_VERSION = 'otel.scope.version'
-    
+
         # Determines whether the span has a parent span, and if so, [whether it is a remote parent](https://opentelemetry.io/docs/specs/otel/trace/api/#isremote)
         #
         # @note Stability Level: development
         OTEL_SPAN_PARENT_ORIGIN = 'otel.span.parent.origin'
-    
+
         # The result value of the sampler for this span
         #
         # @note Stability Level: development
         OTEL_SPAN_SAMPLING_RESULT = 'otel.span.sampling_result'
-    
+
         # Name of the code, either "OK" or "ERROR". MUST NOT be set if the status code is UNSET.
         #
         # @note Stability Level: stable
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::OTEL::OTEL_STATUS_CODE}.
         OTEL_STATUS_CODE = 'otel.status_code'
-    
+
         # Description of the Status if it has a value, otherwise not set.
         #
         # @note Stability Level: stable
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::OTEL::OTEL_STATUS_DESCRIPTION}.
         OTEL_STATUS_DESCRIPTION = 'otel.status_description'
-    
+
         # @!endgroup
       end
     end

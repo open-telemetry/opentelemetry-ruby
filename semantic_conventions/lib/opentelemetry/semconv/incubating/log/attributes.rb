@@ -23,39 +23,39 @@ module OpenTelemetry
     module Incubating
       module LOG
         # @!group Attribute Names
-      
+
         # The basename of the file.
         #
         # @note Stability Level: development
         LOG_FILE_NAME = 'log.file.name'
-    
+
         # The basename of the file, with symlinks resolved.
         #
         # @note Stability Level: development
         LOG_FILE_NAME_RESOLVED = 'log.file.name_resolved'
-    
+
         # The full path to the file.
         #
         # @note Stability Level: development
         LOG_FILE_PATH = 'log.file.path'
-    
+
         # The full path to the file, with symlinks resolved.
         #
         # @note Stability Level: development
         LOG_FILE_PATH_RESOLVED = 'log.file.path_resolved'
-    
+
         # The stream associated with the log. See below for a list of well-known values.
         #
         # @note Stability Level: development
         LOG_IOSTREAM = 'log.iostream'
-    
+
         # The complete original Log Record.
         #
         # This value MAY be added when processing a Log Record which was originally transmitted as a string or equivalent data type AND the Body field of the Log Record does not contain the same value. (e.g. a syslog or a log record read from a file.)
         #
         # @note Stability Level: development
         LOG_RECORD_ORIGINAL = 'log.record.original'
-    
+
         # A unique identifier for the Log Record.
         #
         # If an id is provided, other log records with the same id will be considered duplicates and can be removed safely. This means, that two distinguishable log records MUST have different values.
@@ -63,7 +63,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         LOG_RECORD_UID = 'log.record.uid'
-    
+
         # @!endgroup
       end
     end

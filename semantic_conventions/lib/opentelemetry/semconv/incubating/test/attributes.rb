@@ -23,27 +23,27 @@ module OpenTelemetry
     module Incubating
       module TEST
         # @!group Attribute Names
-      
+
         # The fully qualified human readable name of the [test case](https://wikipedia.org/wiki/Test_case).
         #
         # @note Stability Level: development
         TEST_CASE_NAME = 'test.case.name'
-    
+
         # The status of the actual test case result from test execution.
         #
         # @note Stability Level: development
         TEST_CASE_RESULT_STATUS = 'test.case.result.status'
-    
+
         # The human readable name of a [test suite](https://wikipedia.org/wiki/Test_suite).
         #
         # @note Stability Level: development
         TEST_SUITE_NAME = 'test.suite.name'
-    
+
         # The status of the test suite run.
         #
         # @note Stability Level: development
         TEST_SUITE_RUN_STATUS = 'test.suite.run.status'
-    
+
         # @!endgroup
       end
     end

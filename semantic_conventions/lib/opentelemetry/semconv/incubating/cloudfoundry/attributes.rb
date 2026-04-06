@@ -23,7 +23,7 @@ module OpenTelemetry
     module Incubating
       module CLOUDFOUNDRY
         # @!group Attribute Names
-      
+
         # The guid of the application.
         #
         # Application instrumentation should use the value from environment
@@ -32,7 +32,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         CLOUDFOUNDRY_APP_ID = 'cloudfoundry.app.id'
-    
+
         # The index of the application instance. 0 when just one instance is active.
         #
         # CloudFoundry defines the `instance_id` in the [Loggregator v2 envelope](https://github.com/cloudfoundry/loggregator-api#v2-envelope).
@@ -45,7 +45,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         CLOUDFOUNDRY_APP_INSTANCE_ID = 'cloudfoundry.app.instance.id'
-    
+
         # The name of the application.
         #
         # Application instrumentation should use the value from environment
@@ -54,7 +54,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         CLOUDFOUNDRY_APP_NAME = 'cloudfoundry.app.name'
-    
+
         # The guid of the CloudFoundry org the application is running in.
         #
         # Application instrumentation should use the value from environment
@@ -63,7 +63,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         CLOUDFOUNDRY_ORG_ID = 'cloudfoundry.org.id'
-    
+
         # The name of the CloudFoundry organization the app is running in.
         #
         # Application instrumentation should use the value from environment
@@ -72,7 +72,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         CLOUDFOUNDRY_ORG_NAME = 'cloudfoundry.org.name'
-    
+
         # The UID identifying the process.
         #
         # Application instrumentation should use the value from environment
@@ -82,7 +82,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         CLOUDFOUNDRY_PROCESS_ID = 'cloudfoundry.process.id'
-    
+
         # The type of process.
         #
         # CloudFoundry applications can consist of multiple jobs. Usually the
@@ -91,7 +91,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         CLOUDFOUNDRY_PROCESS_TYPE = 'cloudfoundry.process.type'
-    
+
         # The guid of the CloudFoundry space the application is running in.
         #
         # Application instrumentation should use the value from environment
@@ -100,7 +100,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         CLOUDFOUNDRY_SPACE_ID = 'cloudfoundry.space.id'
-    
+
         # The name of the CloudFoundry space the application is running in.
         #
         # Application instrumentation should use the value from environment
@@ -109,7 +109,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         CLOUDFOUNDRY_SPACE_NAME = 'cloudfoundry.space.name'
-    
+
         # A guid or another name describing the event source.
         #
         # CloudFoundry defines the `source_id` in the [Loggregator v2 envelope](https://github.com/cloudfoundry/loggregator-api#v2-envelope).
@@ -124,7 +124,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         CLOUDFOUNDRY_SYSTEM_ID = 'cloudfoundry.system.id'
-    
+
         # A guid describing the concrete instance of the event source.
         #
         # CloudFoundry defines the `instance_id` in the [Loggregator v2 envelope](https://github.com/cloudfoundry/loggregator-api#v2-envelope).
@@ -137,7 +137,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         CLOUDFOUNDRY_SYSTEM_INSTANCE_ID = 'cloudfoundry.system.instance.id'
-    
+
         # @!endgroup
       end
     end

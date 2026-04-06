@@ -23,14 +23,14 @@ module OpenTelemetry
     module Incubating
       module JVM
         # @!group Attribute Names
-      
+
         # Name of the buffer pool.
         #
         # Pool names are generally obtained via [BufferPoolMXBean#getName()](https://docs.oracle.com/en/java/javase/11/docs/api/java.management/java/lang/management/BufferPoolMXBean.html#getName()).
         #
         # @note Stability Level: development
         JVM_BUFFER_POOL_NAME = 'jvm.buffer.pool.name'
-    
+
         # Name of the garbage collector action.
         #
         # Garbage collector action is generally obtained via [GarbageCollectionNotificationInfo#getGcAction()](https://docs.oracle.com/en/java/javase/11/docs/api/jdk.management/com/sun/management/GarbageCollectionNotificationInfo.html#getGcAction()).
@@ -39,14 +39,14 @@ module OpenTelemetry
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::JVM::JVM_GC_ACTION}.
         JVM_GC_ACTION = 'jvm.gc.action'
-    
+
         # Name of the garbage collector cause.
         #
         # Garbage collector cause is generally obtained via [GarbageCollectionNotificationInfo#getGcCause()](https://docs.oracle.com/en/java/javase/11/docs/api/jdk.management/com/sun/management/GarbageCollectionNotificationInfo.html#getGcCause()).
         #
         # @note Stability Level: development
         JVM_GC_CAUSE = 'jvm.gc.cause'
-    
+
         # Name of the garbage collector.
         #
         # Garbage collector name is generally obtained via [GarbageCollectionNotificationInfo#getGcName()](https://docs.oracle.com/en/java/javase/11/docs/api/jdk.management/com/sun/management/GarbageCollectionNotificationInfo.html#getGcName()).
@@ -55,7 +55,7 @@ module OpenTelemetry
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::JVM::JVM_GC_NAME}.
         JVM_GC_NAME = 'jvm.gc.name'
-    
+
         # Name of the memory pool.
         #
         # Pool names are generally obtained via [MemoryPoolMXBean#getName()](https://docs.oracle.com/en/java/javase/11/docs/api/java.management/java/lang/management/MemoryPoolMXBean.html#getName()).
@@ -64,28 +64,28 @@ module OpenTelemetry
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::JVM::JVM_MEMORY_POOL_NAME}.
         JVM_MEMORY_POOL_NAME = 'jvm.memory.pool.name'
-    
+
         # The type of memory.
         #
         # @note Stability Level: stable
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::JVM::JVM_MEMORY_TYPE}.
         JVM_MEMORY_TYPE = 'jvm.memory.type'
-    
+
         # Whether the thread is daemon or not.
         #
         # @note Stability Level: stable
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::JVM::JVM_THREAD_DAEMON}.
         JVM_THREAD_DAEMON = 'jvm.thread.daemon'
-    
+
         # State of the thread.
         #
         # @note Stability Level: stable
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::JVM::JVM_THREAD_STATE}.
         JVM_THREAD_STATE = 'jvm.thread.state'
-    
+
         # @!endgroup
       end
     end
