@@ -48,6 +48,8 @@ OTEL_LOGS_EXPORTER=otlp \
 OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318 \
 OTEL_SERVICE_NAME=dice_roller \
 ruby app.rb
+```
+
 You can also export your telemetry to more than one location. To send to an OpenTelemetry Collector and to the console, set the exporter env vars:
 
 ```bash
