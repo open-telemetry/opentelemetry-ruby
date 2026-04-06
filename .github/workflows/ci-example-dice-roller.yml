@@ -1,0 +1,126 @@
+name: CI - Example Dice Roller
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'examples/dice_roller/**'
+      - '.github/actions/test_dice_roller/**'
+      - '.github/workflows/ci-example-dice-roller.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'examples/dice_roller/**'
+      - '.github/actions/test_dice_roller/**'
+      - '.github/workflows/ci-example-dice-roller.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Verify both versions build and run correctly across Ruby versions
+  # ---------------------------------------------------------------------------
+  dice-roller:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
+    name: ${{ matrix.version }} / Ruby ${{ matrix.ruby }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - uninstrumented
+          - instrumented
+        ruby:
+          - "3.2"
+          - "3.3"
+          - "3.4"
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Test Dice Roller (${{ matrix.version }}, Ruby ${{ matrix.ruby }})
+        uses: ./.github/actions/test_dice_roller
+        with:
+          version: ${{ matrix.version }}
+          ruby: ${{ matrix.ruby }}
+
+  # ---------------------------------------------------------------------------
+  # Verify both Docker images build and the container starts correctly
+  # ---------------------------------------------------------------------------
+  dice-roller-docker:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
+    name: Docker ${{ matrix.version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - uninstrumented
+          - instrumented
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Build Docker image (${{ matrix.version }})
+        working-directory: examples/dice_roller
+        run: |
+          # 🐳 Build ${{ matrix.version }} image 🐳
+          docker build \
+            --target ${{ matrix.version }} \
+            -t dice_roller:${{ matrix.version }} \
+            .
+
+      - name: Run container (${{ matrix.version }})
+        run: |
+          # 🐳 Start container 🐳
+          docker run -d \
+            --name dice_roller_${{ matrix.version }} \
+            -p 8080:8080 \
+            -e OTEL_TRACES_EXPORTER=none \
+            -e OTEL_METRICS_EXPORTER=none \
+            -e OTEL_LOGS_EXPORTER=none \
+            -e OTEL_SERVICE_NAME=dice_roller_ci \
+            dice_roller:${{ matrix.version }}
+          echo "Waiting for container to be ready..."
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8080/rolldice > /dev/null 2>&1; then
+              echo "Container ready after ${i}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Container did not start in time" >&2
+          docker logs dice_roller_${{ matrix.version }}
+          exit 1
+
+      - name: Verify /rolldice (single roll)
+        run: |
+          RESPONSE=$(curl -sf http://localhost:8080/rolldice)
+          echo "Response: $RESPONSE"
+          echo "$RESPONSE" | grep -qE '^[1-6]$'
+
+      - name: Verify /rolldice?rolls=2 (multiple rolls)
+        run: |
+          RESPONSE=$(curl -sf "http://localhost:8080/rolldice?rolls=2")
+          echo "Response: $RESPONSE"
+          echo "$RESPONSE" | grep -qE '^\[[1-6],[1-6]\]$'
+
+      - name: Verify /rolldice?player=Alice (with player name)
+        run: |
+          RESPONSE=$(curl -sf "http://localhost:8080/rolldice?player=Alice")
+          echo "Response: $RESPONSE"
+          echo "$RESPONSE" | grep -qE '^[1-6]$'
+
+      - name: Stop and remove container
+        if: always()
+        run: |
+          docker stop dice_roller_${{ matrix.version }} || true
+          docker rm  dice_roller_${{ matrix.version }} || true
