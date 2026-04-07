@@ -23,32 +23,32 @@ module OpenTelemetry
     module Incubating
       module OS
         # @!group Attribute Names
-      
+
         # Unique identifier for a particular build or compilation of the operating system.
         #
         # @note Stability Level: development
         OS_BUILD_ID = 'os.build_id'
-    
+
         # Human readable (not intended to be parsed) OS version information, like e.g. reported by `ver` or `lsb_release -a` commands.
         #
         # @note Stability Level: development
         OS_DESCRIPTION = 'os.description'
-    
+
         # Human readable operating system name.
         #
         # @note Stability Level: development
         OS_NAME = 'os.name'
-    
+
         # The operating system type.
         #
         # @note Stability Level: development
         OS_TYPE = 'os.type'
-    
+
         # The version string of the operating system as defined in [Version Attributes](/docs/resource/README.md#version-attributes).
         #
         # @note Stability Level: development
         OS_VERSION = 'os.version'
-    
+
         # @!endgroup
       end
     end

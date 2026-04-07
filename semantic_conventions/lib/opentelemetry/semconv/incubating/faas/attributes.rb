@@ -23,77 +23,77 @@ module OpenTelemetry
     module Incubating
       module FAAS
         # @!group Attribute Names
-      
+
         # A boolean that is true if the serverless function is executed for the first time (aka cold-start).
         #
         # @note Stability Level: development
         FAAS_COLDSTART = 'faas.coldstart'
-    
+
         # A string containing the schedule period as [Cron Expression](https://docs.oracle.com/cd/E12058_01/doc/doc.1014/e12030/cron_expressions.htm).
         #
         # @note Stability Level: development
         FAAS_CRON = 'faas.cron'
-    
+
         # The name of the source on which the triggering operation was performed. For example, in Cloud Storage or S3 corresponds to the bucket name, and in Cosmos DB to the database name.
         #
         # @note Stability Level: development
         FAAS_DOCUMENT_COLLECTION = 'faas.document.collection'
-    
+
         # The document name/table subjected to the operation. For example, in Cloud Storage or S3 is the name of the file, and in Cosmos DB the table name.
         #
         # @note Stability Level: development
         FAAS_DOCUMENT_NAME = 'faas.document.name'
-    
+
         # Describes the type of the operation that was performed on the data.
         #
         # @note Stability Level: development
         FAAS_DOCUMENT_OPERATION = 'faas.document.operation'
-    
+
         # A string containing the time when the data was accessed in the [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format expressed in [UTC](https://www.w3.org/TR/NOTE-datetime).
         #
         # @note Stability Level: development
         FAAS_DOCUMENT_TIME = 'faas.document.time'
-    
+
         # The execution environment ID as a string, that will be potentially reused for other invocations to the same function/function version.
         #
         # - **AWS Lambda:** Use the (full) log stream name.
         #
         # @note Stability Level: development
         FAAS_INSTANCE = 'faas.instance'
-    
+
         # The invocation ID of the current function invocation.
         #
         # @note Stability Level: development
         FAAS_INVOCATION_ID = 'faas.invocation_id'
-    
+
         # The name of the invoked function.
         #
         # SHOULD be equal to the `faas.name` resource attribute of the invoked function.
         #
         # @note Stability Level: development
         FAAS_INVOKED_NAME = 'faas.invoked_name'
-    
+
         # The cloud provider of the invoked function.
         #
         # SHOULD be equal to the `cloud.provider` resource attribute of the invoked function.
         #
         # @note Stability Level: development
         FAAS_INVOKED_PROVIDER = 'faas.invoked_provider'
-    
+
         # The cloud region of the invoked function.
         #
         # SHOULD be equal to the `cloud.region` resource attribute of the invoked function.
         #
         # @note Stability Level: development
         FAAS_INVOKED_REGION = 'faas.invoked_region'
-    
+
         # The amount of memory available to the serverless function converted to Bytes.
         #
         # It's recommended to set this attribute since e.g. too little memory can easily stop a Java AWS Lambda function from working correctly. On AWS Lambda, the environment variable `AWS_LAMBDA_FUNCTION_MEMORY_SIZE` provides this information (which must be multiplied by 1,048,576).
         #
         # @note Stability Level: development
         FAAS_MAX_MEMORY = 'faas.max_memory'
-    
+
         # The name of the single function that this runtime instance executes.
         #
         # This is the name of the function as configured/deployed on the FaaS
@@ -115,17 +115,17 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         FAAS_NAME = 'faas.name'
-    
+
         # A string containing the function invocation time in the [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format expressed in [UTC](https://www.w3.org/TR/NOTE-datetime).
         #
         # @note Stability Level: development
         FAAS_TIME = 'faas.time'
-    
+
         # Type of the trigger which caused this function invocation.
         #
         # @note Stability Level: development
         FAAS_TRIGGER = 'faas.trigger'
-    
+
         # The immutable version of the function being executed.
         #
         # Depending on the cloud provider and platform, use:
@@ -140,7 +140,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         FAAS_VERSION = 'faas.version'
-    
+
         # @!endgroup
       end
     end

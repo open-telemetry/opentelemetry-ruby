@@ -23,14 +23,14 @@ module OpenTelemetry
     module Incubating
       module IOS
         # @!group Attribute Names
-      
+
         # This attribute represents the state of the application.
         #
         # The iOS lifecycle states are defined in the [UIApplicationDelegate documentation](https://developer.apple.com/documentation/uikit/uiapplicationdelegate), and from which the `OS terminology` column values are derived.
         #
         # @note Stability Level: development
         IOS_APP_STATE = 'ios.app.state'
-    
+
         # Deprecated. Use the `ios.app.state` attribute.
         #
         # The iOS lifecycle states are defined in the [UIApplicationDelegate documentation](https://developer.apple.com/documentation/uikit/uiapplicationdelegate), and from which the `OS terminology` column values are derived.
@@ -38,7 +38,7 @@ module OpenTelemetry
         # @note Stability Level: development
         # @deprecated Replaced by `ios.app.state`.
         IOS_STATE = 'ios.state'
-    
+
         # @!endgroup
       end
     end

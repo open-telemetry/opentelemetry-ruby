@@ -22,7 +22,7 @@ module OpenTelemetry
   module SemConv
     module DB
       # @!group Attribute Names
-    
+
       # The name of a collection (table, container) within the database.
       #
       # It is RECOMMENDED to capture the value as provided by the application
@@ -37,7 +37,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DB_COLLECTION_NAME = 'db.collection.name'
-  
+
       # The name of the database, fully qualified within the server address and port.
       #
       # If a database system has multiple namespace components, they SHOULD be concatenated from the most general to the most specific namespace component, using `|` as a separator between the components. Any missing components (and their associated separators) SHOULD be omitted.
@@ -46,14 +46,14 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DB_NAMESPACE = 'db.namespace'
-  
+
       # The number of queries included in a batch operation.
       #
       # Operations are only considered batches when they contain two or more operations, and so `db.operation.batch.size` SHOULD never be `1`.
       #
       # @note Stability Level: stable
       DB_OPERATION_BATCH_SIZE = 'db.operation.batch.size'
-  
+
       # The name of the operation or command being executed.
       #
       # It is RECOMMENDED to capture the value as provided by the application
@@ -73,7 +73,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DB_OPERATION_NAME = 'db.operation.name'
-  
+
       # Low cardinality summary of a database query.
       #
       # The query summary describes a class of database queries and is useful
@@ -88,7 +88,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DB_QUERY_SUMMARY = 'db.query.summary'
-  
+
       # The database query being executed.
       #
       # For sanitization see [Sanitization of `db.query.text`](/docs/database/database-spans.md#sanitization-of-dbquerytext).
@@ -97,7 +97,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DB_QUERY_TEXT = 'db.query.text'
-  
+
       # Database response status code.
       #
       # The status code returned by the database. Usually it represents an error code, but may also represent partial success, warning, or differentiate between various types of successful outcomes.
@@ -105,7 +105,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DB_RESPONSE_STATUS_CODE = 'db.response.status_code'
-  
+
       # The name of a stored procedure within the database.
       #
       # It is RECOMMENDED to capture the value as provided by the application
@@ -116,14 +116,14 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DB_STORED_PROCEDURE_NAME = 'db.stored_procedure.name'
-  
+
       # The database management system (DBMS) product as identified by the client instrumentation.
       #
       # The actual DBMS may differ from the one identified by the client. For example, when using PostgreSQL client libraries to connect to a CockroachDB, the `db.system.name` is set to `postgresql` based on the instrumentation's best knowledge.
       #
       # @note Stability Level: stable
       DB_SYSTEM_NAME = 'db.system.name'
-  
+
       # @!endgroup
     end
   end

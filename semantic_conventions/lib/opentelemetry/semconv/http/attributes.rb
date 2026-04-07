@@ -22,7 +22,7 @@ module OpenTelemetry
   module SemConv
     module HTTP
       # @!group Attribute Names
-    
+
       # Must be called with a key for the full attribute name. See notes below about the expectations
       # for the state of the key.
       #
@@ -50,7 +50,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       HTTP_REQUEST_HEADER_LAMBDA = ->(key) { "http.request.header.#{key}" }
-  
+
       # HTTP request method.
       #
       # HTTP request method value SHOULD be "known" to the instrumentation.
@@ -70,19 +70,19 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       HTTP_REQUEST_METHOD = 'http.request.method'
-  
+
       # Original HTTP method sent by the client in the request line.
       #
       # @note Stability Level: stable
       HTTP_REQUEST_METHOD_ORIGINAL = 'http.request.method_original'
-  
+
       # The ordinal number of request resending attempt (for any reason, including redirects).
       #
       # The resend count SHOULD be updated each time an HTTP request gets resent by the client, regardless of what was the cause of the resending (e.g. redirection, authorization failure, 503 Server Unavailable, network issues, or any other).
       #
       # @note Stability Level: stable
       HTTP_REQUEST_RESEND_COUNT = 'http.request.resend_count'
-  
+
       # Must be called with a key for the full attribute name. See notes below about the expectations
       # for the state of the key.
       #
@@ -109,12 +109,12 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       HTTP_RESPONSE_HEADER_LAMBDA = ->(key) { "http.response.header.#{key}" }
-  
+
       # [HTTP response status code](https://tools.ietf.org/html/rfc7231#section-6).
       #
       # @note Stability Level: stable
       HTTP_RESPONSE_STATUS_CODE = 'http.response.status_code'
-  
+
       # The matched route, that is, the path template in the format used by the respective server framework.
       #
       # MUST NOT be populated when this is not supported by the HTTP server framework as the route attribute should have low-cardinality and the URI path can NOT substitute it.
@@ -122,7 +122,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       HTTP_ROUTE = 'http.route'
-  
+
       # @!endgroup
     end
   end

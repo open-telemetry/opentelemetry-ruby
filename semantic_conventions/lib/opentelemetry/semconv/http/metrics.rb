@@ -22,17 +22,17 @@ module OpenTelemetry
   module SemConv
     module HTTP
       # @!group Metrics Names
-    
+
       # Duration of HTTP client requests.
       #
       # @note Stability Level: stable
       HTTP_CLIENT_REQUEST_DURATION = 'http.client.request.duration'
-  
+
       # Duration of HTTP server requests.
       #
       # @note Stability Level: stable
       HTTP_SERVER_REQUEST_DURATION = 'http.server.request.duration'
-  
+
       # @!endgroup
     end
   end

@@ -23,13 +23,13 @@ module OpenTelemetry
     module Incubating
       module POOL
         # @!group Attribute Names
-      
+
         # Deprecated, use `db.client.connection.pool.name` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `db.client.connection.pool.name`.
         POOL_NAME = 'pool.name'
-    
+
         # @!endgroup
       end
     end

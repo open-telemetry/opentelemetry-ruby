@@ -23,17 +23,17 @@ module OpenTelemetry
     module Incubating
       module THREAD
         # @!group Attribute Names
-      
+
         # Current "managed" thread ID (as opposed to OS thread ID).
         #
         # @note Stability Level: development
         THREAD_ID = 'thread.id'
-    
+
         # Current thread name.
         #
         # @note Stability Level: development
         THREAD_NAME = 'thread.name'
-    
+
         # @!endgroup
       end
     end

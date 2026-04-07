@@ -22,7 +22,7 @@ module OpenTelemetry
   module SemConv
     module DOTNET
       # @!group Metrics Names
-    
+
       # The number of .NET assemblies that are currently loaded.
       #
       # Meter name: `System.Runtime`; Added in: .NET 9.0.
@@ -30,7 +30,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DOTNET_ASSEMBLY_COUNT = 'dotnet.assembly.count'
-  
+
       # The number of exceptions that have been thrown in managed code.
       #
       # Meter name: `System.Runtime`; Added in: .NET 9.0.
@@ -38,7 +38,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DOTNET_EXCEPTIONS = 'dotnet.exceptions'
-  
+
       # The number of garbage collections that have occurred since the process has started.
       #
       # Meter name: `System.Runtime`; Added in: .NET 9.0.
@@ -46,7 +46,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DOTNET_GC_COLLECTIONS = 'dotnet.gc.collections'
-  
+
       # The *approximate* number of bytes allocated on the managed GC heap since the process has started. The returned value does not include any native allocations.
       #
       # Meter name: `System.Runtime`; Added in: .NET 9.0.
@@ -54,7 +54,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DOTNET_GC_HEAP_TOTAL_ALLOCATED = 'dotnet.gc.heap.total_allocated'
-  
+
       # The heap fragmentation, as observed during the latest garbage collection.
       #
       # Meter name: `System.Runtime`; Added in: .NET 9.0.
@@ -62,7 +62,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DOTNET_GC_LAST_COLLECTION_HEAP_FRAGMENTATION_SIZE = 'dotnet.gc.last_collection.heap.fragmentation.size'
-  
+
       # The managed GC heap size (including fragmentation), as observed during the latest garbage collection.
       #
       # Meter name: `System.Runtime`; Added in: .NET 9.0.
@@ -70,7 +70,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DOTNET_GC_LAST_COLLECTION_HEAP_SIZE = 'dotnet.gc.last_collection.heap.size'
-  
+
       # The amount of committed virtual memory in use by the .NET GC, as observed during the latest garbage collection.
       #
       # Meter name: `System.Runtime`; Added in: .NET 9.0.
@@ -78,7 +78,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DOTNET_GC_LAST_COLLECTION_MEMORY_COMMITTED_SIZE = 'dotnet.gc.last_collection.memory.committed_size'
-  
+
       # The total amount of time paused in GC since the process has started.
       #
       # Meter name: `System.Runtime`; Added in: .NET 9.0.
@@ -86,7 +86,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DOTNET_GC_PAUSE_TIME = 'dotnet.gc.pause.time'
-  
+
       # The amount of time the JIT compiler has spent compiling methods since the process has started.
       #
       # Meter name: `System.Runtime`; Added in: .NET 9.0.
@@ -94,7 +94,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DOTNET_JIT_COMPILATION_TIME = 'dotnet.jit.compilation.time'
-  
+
       # Count of bytes of intermediate language that have been compiled since the process has started.
       #
       # Meter name: `System.Runtime`; Added in: .NET 9.0.
@@ -102,7 +102,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DOTNET_JIT_COMPILED_IL_SIZE = 'dotnet.jit.compiled_il.size'
-  
+
       # The number of times the JIT compiler (re)compiled methods since the process has started.
       #
       # Meter name: `System.Runtime`; Added in: .NET 9.0.
@@ -110,7 +110,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DOTNET_JIT_COMPILED_METHODS = 'dotnet.jit.compiled_methods'
-  
+
       # The number of times there was contention when trying to acquire a monitor lock since the process has started.
       #
       # Meter name: `System.Runtime`; Added in: .NET 9.0.
@@ -118,7 +118,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DOTNET_MONITOR_LOCK_CONTENTIONS = 'dotnet.monitor.lock_contentions'
-  
+
       # The number of processors available to the process.
       #
       # Meter name: `System.Runtime`; Added in: .NET 9.0.
@@ -126,7 +126,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DOTNET_PROCESS_CPU_COUNT = 'dotnet.process.cpu.count'
-  
+
       # CPU time used by the process.
       #
       # Meter name: `System.Runtime`; Added in: .NET 9.0.
@@ -134,7 +134,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DOTNET_PROCESS_CPU_TIME = 'dotnet.process.cpu.time'
-  
+
       # The number of bytes of physical memory mapped to the process context.
       #
       # Meter name: `System.Runtime`; Added in: .NET 9.0.
@@ -142,7 +142,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DOTNET_PROCESS_MEMORY_WORKING_SET = 'dotnet.process.memory.working_set'
-  
+
       # The number of work items that are currently queued to be processed by the thread pool.
       #
       # Meter name: `System.Runtime`; Added in: .NET 9.0.
@@ -150,7 +150,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DOTNET_THREAD_POOL_QUEUE_LENGTH = 'dotnet.thread_pool.queue.length'
-  
+
       # The number of thread pool threads that currently exist.
       #
       # Meter name: `System.Runtime`; Added in: .NET 9.0.
@@ -158,7 +158,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DOTNET_THREAD_POOL_THREAD_COUNT = 'dotnet.thread_pool.thread.count'
-  
+
       # The number of work items that the thread pool has completed since the process has started.
       #
       # Meter name: `System.Runtime`; Added in: .NET 9.0.
@@ -166,7 +166,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DOTNET_THREAD_POOL_WORK_ITEM_COUNT = 'dotnet.thread_pool.work_item.count'
-  
+
       # The number of timer instances that are currently active.
       #
       # Meter name: `System.Runtime`; Added in: .NET 9.0.
@@ -174,7 +174,7 @@ module OpenTelemetry
       #
       # @note Stability Level: stable
       DOTNET_TIMER_COUNT = 'dotnet.timer.count'
-  
+
       # @!endgroup
     end
   end

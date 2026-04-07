@@ -23,12 +23,12 @@ module OpenTelemetry
     module Incubating
       module GO
         # @!group Attribute Names
-      
+
         # The type of memory.
         #
         # @note Stability Level: development
         GO_MEMORY_TYPE = 'go.memory.type'
-    
+
         # @!endgroup
       end
     end

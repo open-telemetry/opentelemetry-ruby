@@ -23,14 +23,14 @@ module OpenTelemetry
     module Incubating
       module DOTNET
         # @!group Attribute Names
-      
+
         # Name of the garbage collector managed heap generation.
         #
         # @note Stability Level: stable
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DOTNET::DOTNET_GC_HEAP_GENERATION}.
         DOTNET_GC_HEAP_GENERATION = 'dotnet.gc.heap.generation'
-    
+
         # @!endgroup
       end
     end

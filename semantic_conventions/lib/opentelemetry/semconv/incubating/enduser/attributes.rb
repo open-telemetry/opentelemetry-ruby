@@ -23,7 +23,7 @@ module OpenTelemetry
     module Incubating
       module ENDUSER
         # @!group Attribute Names
-      
+
         # Unique identifier of an end user in the system. It maybe a username, email address, or other identifier.
         #
         # Unique identifier of an end user in the system.
@@ -33,7 +33,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         ENDUSER_ID = 'enduser.id'
-    
+
         # Pseudonymous identifier of an end user. This identifier should be a random value that is not directly linked or associated with the end user's actual identity.
         #
         # Pseudonymous identifier of an end user.
@@ -43,19 +43,19 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         ENDUSER_PSEUDO_ID = 'enduser.pseudo.id'
-    
+
         # Deprecated, use `user.roles` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `user.roles`.
         ENDUSER_ROLE = 'enduser.role'
-    
+
         # Deprecated, no replacement at this time.
         #
         # @note Stability Level: development
         # @deprecated Removed, no replacement at this time.
         ENDUSER_SCOPE = 'enduser.scope'
-    
+
         # @!endgroup
       end
     end

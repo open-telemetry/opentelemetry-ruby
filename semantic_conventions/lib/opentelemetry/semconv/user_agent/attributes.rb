@@ -22,12 +22,12 @@ module OpenTelemetry
   module SemConv
     module USER_AGENT
       # @!group Attribute Names
-    
+
       # Value of the [HTTP User-Agent](https://www.rfc-editor.org/rfc/rfc9110.html#field.user-agent) header sent by the client.
       #
       # @note Stability Level: stable
       USER_AGENT_ORIGINAL = 'user_agent.original'
-  
+
       # @!endgroup
     end
   end

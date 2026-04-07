@@ -23,19 +23,19 @@ module OpenTelemetry
     module Incubating
       module AZ
         # @!group Attribute Names
-      
+
         # Deprecated, use `azure.resource_provider.namespace` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `azure.resource_provider.namespace`.
         AZ_NAMESPACE = 'az.namespace'
-    
+
         # Deprecated, use `azure.service.request.id` instead.
         #
         # @note Stability Level: development
         # @deprecated Replaced by `azure.service.request.id`.
         AZ_SERVICE_REQUEST_ID = 'az.service_request_id'
-    
+
         # @!endgroup
       end
     end

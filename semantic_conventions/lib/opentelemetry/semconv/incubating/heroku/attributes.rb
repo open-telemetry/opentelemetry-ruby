@@ -23,22 +23,22 @@ module OpenTelemetry
     module Incubating
       module HEROKU
         # @!group Attribute Names
-      
+
         # Unique identifier for the application
         #
         # @note Stability Level: development
         HEROKU_APP_ID = 'heroku.app.id'
-    
+
         # Commit hash for the current release
         #
         # @note Stability Level: development
         HEROKU_RELEASE_COMMIT = 'heroku.release.commit'
-    
+
         # Time and date the release was created
         #
         # @note Stability Level: development
         HEROKU_RELEASE_CREATION_TIMESTAMP = 'heroku.release.creation_timestamp'
-    
+
         # @!endgroup
       end
     end
