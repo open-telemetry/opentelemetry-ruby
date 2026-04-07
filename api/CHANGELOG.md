@@ -1,8 +1,7 @@
 # Release History: opentelemetry-api
 
-### v2.0.0 / 2026-04-07
+### v1.9.0 / 2026-04-07
 
-* BREAKING CHANGE: Min Ruby Version 3.3 (#2070)
 * ADDED: Min Ruby Version 3.3 (#2070)
 
 ### v1.8.0 / 2026-03-10

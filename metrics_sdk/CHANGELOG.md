@@ -2,7 +2,6 @@
 
 ### v0.13.0 / 2026-04-07
 
-* BREAKING CHANGE: Min Ruby Version 3.3 (#2070)
 * ADDED: Min Ruby Version 3.3 (#2070)
 * ADDED: Add basic support for metrics exemplar (#1609)
 

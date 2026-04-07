@@ -2,7 +2,6 @@
 
 ### v0.4.0 / 2026-04-07
 
-* BREAKING CHANGE: Min Ruby Version 3.3 (#2070)
 * ADDED: Min Ruby Version 3.3 (#2070)
 * ADDED: Handle HTTP 2XX responses as successful in OTLP exporters (#2044)
 * FIXED: Issue with sending traces to IPv6 endpoints (#1935)

@@ -2,7 +2,6 @@
 
 ### v0.8.0 / 2026-04-07
 
-* BREAKING CHANGE: Min Ruby Version 3.3 (#2070)
 * ADDED: Min Ruby Version 3.3 (#2070)
 * ADDED: Handle HTTP 2XX responses as successful in OTLP exporters (#2044)
 * ADDED: Add basic support for metrics exemplar (#1609)

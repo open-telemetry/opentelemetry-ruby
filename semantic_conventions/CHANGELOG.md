@@ -1,8 +1,7 @@
 # Release History: opentelemetry-semantic_conventions
 
-### v2.0.0 / 2026-04-07
+### v1.37.0 / 2026-04-07
 
-* BREAKING CHANGE: Min Ruby Version 3.3 (#2070)
 * ADDED: Bump semantic conventions to version 1.37.0 (#1952)
 * ADDED: Min Ruby Version 3.3 (#2070)
 * FIXED: Correct & simplify codegen templates (#2059)
