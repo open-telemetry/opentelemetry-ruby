@@ -68,6 +68,7 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
           severity_number: 0,
           body: 'body',
           attributes: { 'a' => 'b' },
+          event_name: 'event_name',
           trace_id: span_context.trace_id,
           span_id: span_context.span_id,
           trace_flags: span_context.trace_flags,
@@ -85,6 +86,7 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
         assert_equal(args[:severity_number], log_record_data.severity_number)
         assert_equal(args[:body], log_record_data.body)
         assert_equal(args[:attributes], log_record_data.attributes)
+        assert_equal(args[:event_name], log_record_data.event_name)
         assert_equal(args[:trace_id], log_record_data.trace_id)
         assert_equal(args[:span_id], log_record_data.span_id)
         assert_equal(args[:trace_flags], log_record_data.trace_flags)
