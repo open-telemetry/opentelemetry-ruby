@@ -30,7 +30,9 @@ module OpenTelemetry
           ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
           private_constant(:ERROR_MESSAGE_INVALID_HEADERS)
 
-          def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4318/v1/traces'),
+          DEFAULT_USER_AGENT = "OTel-OTLP-Exporter-Ruby/#{OpenTelemetry::Exporter::OTLP::HTTP::VERSION} Ruby/#{RUBY_VERSION} (#{RUBY_PLATFORM}; #{RUBY_ENGINE}/#{RUBY_ENGINE_VERSION})".freeze
+
+          def initialize(endpoint: nil,
                          certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
                          client_certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_CLIENT_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE'),
                          client_key_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_CLIENT_KEY', 'OTEL_EXPORTER_OTLP_CLIENT_KEY'),
@@ -39,24 +41,14 @@ module OpenTelemetry
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                          timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
                          metrics_reporter: nil)
-            raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
-            @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
-                     URI("#{endpoint}/v1/traces")
-                   else
-                     URI(endpoint)
-                   end
+            @uri = prepare_endpoint(endpoint)
 
             @http = http_connection(@uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
 
             @path = @uri.path
-            @headers = case headers
-                       when String then parse_headers(headers)
-                       when Hash then headers
-                       else
-                         raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS
-                       end
+            @headers = prepare_headers(headers)
             @timeout = timeout.to_f
             @compression = compression
             @metrics_reporter = metrics_reporter || OpenTelemetry::SDK::Trace::Export::MetricsReporter
@@ -133,17 +125,21 @@ module OpenTelemetry
           def send_bytes(bytes, timeout:) # rubocop:disable Metrics/MethodLength
             return FAILURE if bytes.nil?
 
+            @metrics_reporter.record_value('otel.otlp_exporter.message.uncompressed_size', value: bytes.bytesize)
+
             retry_count = 0
             timeout ||= @timeout
             start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
             around_request do # rubocop:disable Metrics/BlockLength
               request = Net::HTTP::Post.new(@path)
-              request.body = if @compression == 'gzip'
-                               request.add_field('Content-Encoding', 'gzip')
-                               Zlib.gzip(bytes)
-                             else
-                               bytes
-                             end
+              if @compression == 'gzip'
+                request.add_field('Content-Encoding', 'gzip')
+                body = Zlib.gzip(bytes)
+                @metrics_reporter.record_value('otel.otlp_exporter.message.compressed_size', value: body.bytesize)
+              else
+                body = bytes
+              end
+              request.body = body
               request.add_field('Content-Type', 'application/x-protobuf')
               @headers.each { |key, value| request.add_field(key, value) }
 
@@ -167,6 +163,9 @@ module OpenTelemetry
               when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
                 response.body # Read and discard body
                 redo if backoff?(retry_count: retry_count += 1, reason: response.code)
+                FAILURE
+              when Net::HTTPNotFound
+                log_request_failure(response.code)
                 FAILURE
               when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
                 log_status(response.body)
@@ -226,6 +225,11 @@ module OpenTelemetry
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
           end
 
+          def log_request_failure(response_code)
+            OpenTelemetry.handle_error(message: "OTLP exporter received http.code=#{response_code} for uri='#{@uri}' in OTLP::Exporter#send_bytes")
+            @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response_code })
+          end
+
           def measure_request_duration
             start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
             begin
@@ -263,6 +267,34 @@ module OpenTelemetry
 
             sleep(sleep_interval)
             true
+          end
+
+          def prepare_headers(config_headers)
+            headers = case config_headers
+                      when String then parse_headers(config_headers)
+                      when Hash then config_headers.dup
+                      else
+                        raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS
+                      end
+
+            headers['User-Agent'] = "#{headers.fetch('User-Agent', '')} #{DEFAULT_USER_AGENT}".strip
+
+            headers
+          end
+
+          def prepare_endpoint(endpoint)
+            endpoint ||= ENV['OTEL_EXPORTER_OTLP_TRACES_ENDPOINT']
+            if endpoint.nil?
+              endpoint = ENV['OTEL_EXPORTER_OTLP_ENDPOINT'] || 'http://localhost:4318'
+              endpoint += '/' unless endpoint.end_with?('/')
+              URI.join(endpoint, 'v1/traces')
+            elsif endpoint.strip.empty?
+              raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}"
+            else
+              URI(endpoint)
+            end
+          rescue URI::InvalidURIError
+            raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}"
           end
 
           def parse_headers(raw)
