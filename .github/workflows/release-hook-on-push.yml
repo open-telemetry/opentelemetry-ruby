@@ -23,7 +23,7 @@ jobs:
       - name: Install Ruby
         uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
         with:
-          ruby-version: "4.0"
+          ruby-version: "4.0.2"
           bundler-cache: true
       - name: Update open releases
         env:
