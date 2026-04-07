@@ -1,5 +1,9 @@
 # Release History: opentelemetry-sdk
 
+### v1.11.0 / 2026-04-07
+
+* ADDED: Min Ruby Version 3.3 (#2070)
+
 ### v1.10.0 / 2025-10-14
 
 - ADDED: Add span flags support for isRemote property

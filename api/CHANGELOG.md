@@ -1,5 +1,9 @@
 # Release History: opentelemetry-api
 
+### v1.9.0 / 2026-04-07
+
+* ADDED: Min Ruby Version 3.3 (#2070)
+
 ### v1.8.0 / 2026-03-10
 
 * ADDED: Replace cgi with uri for encode and decode (#2028)
