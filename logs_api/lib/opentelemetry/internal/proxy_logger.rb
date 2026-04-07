@@ -32,6 +32,7 @@ module OpenTelemetry
         span_id: nil,
         trace_flags: nil,
         attributes: nil,
+        event_name: nil,
         context: nil
       )
         unless @delegate.nil?
@@ -45,6 +46,7 @@ module OpenTelemetry
             span_id: nil,
             trace_flags: nil,
             attributes: nil,
+            event_name: nil,
             context: nil
           )
         end

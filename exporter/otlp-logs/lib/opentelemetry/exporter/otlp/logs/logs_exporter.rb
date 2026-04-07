@@ -308,6 +308,7 @@ module OpenTelemetry
               body: as_otlp_any_value(log_record_data.body),
               attributes: log_record_data.attributes&.map { |k, v| as_otlp_key_value(k, v) },
               dropped_attributes_count: log_record_data.total_recorded_attributes - log_record_data.attributes&.size.to_i,
+              event_name: log_record_data.event_name,
               flags: log_record_data.trace_flags.instance_variable_get(:@flags),
               trace_id: log_record_data.trace_id,
               span_id: log_record_data.span_id

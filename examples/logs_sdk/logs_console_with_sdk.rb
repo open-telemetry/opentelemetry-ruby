@@ -29,3 +29,12 @@ logger.on_emit(
   body: 'Thuja plicata',
   attributes: { 'cedar' => true },
 )
+
+# You can also use your Logger to emit an event
+logger.on_emit(
+  timestamp: Time.now,
+  severity_text: 'INFO',
+  body: 'Picea sitchensis',
+  attributes: { 'spruce' => true },
+  event_name: 'TreeSpecies'
+)
