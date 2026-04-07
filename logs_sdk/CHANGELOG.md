@@ -1,5 +1,10 @@
 # Release History: opentelemetry-logs-sdk
 
+### v0.5.0 / 2026-04-07
+
+* BREAKING CHANGE: Min Ruby Version 3.3 (#2070)
+* ADDED: Min Ruby Version 3.3 (#2070)
+
 ### v0.4.0 / 2025-09-16
 
 * BREAKING CHANGE: Add OTEL_LOGRECORD_ATTRIBUTE_* env vars. Remove OTEL_LOG_RECORD_ATTRIBUTE_* env vars.
