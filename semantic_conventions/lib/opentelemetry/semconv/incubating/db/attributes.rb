@@ -162,7 +162,7 @@ module OpenTelemetry
         # Deprecated, use `db.response.status_code` instead.
         #
         # @note Stability Level: development
-        # @deprecated Replaced by `db.response.status_code`.
+        # @deprecated Use `db.response.status_code` instead.
         DB_COSMOSDB_STATUS_CODE = 'db.cosmosdb.status_code'
 
         # Deprecated, use `azure.cosmosdb.response.sub_status_code` instead.
@@ -304,14 +304,17 @@ module OpenTelemetry
         # `db.query.parameter.<key>` SHOULD match
         # up with the parameterized placeholders present in `db.query.text`.
         #
+        # It is RECOMMENDED to capture the value as provided by the application
+        # without attempting to do any case normalization.
+        #
         # `db.query.parameter.<key>` SHOULD NOT be captured on batch operations.
         #
         # Examples:
         #
         # - For a query `SELECT * FROM users where username =  %s` with the parameter `"jdoe"`,
         #   the attribute `db.query.parameter.0` SHOULD be set to `"jdoe"`.
-        # - For a query `"SELECT * FROM users WHERE username = %(username)s;` with parameter
-        #   `username = "jdoe"`, the attribute `db.query.parameter.username` SHOULD be set to `"jdoe"`.
+        # - For a query `"SELECT * FROM users WHERE username = %(userName)s;` with parameter
+        #   `userName = "jdoe"`, the attribute `db.query.parameter.userName` SHOULD be set to `"jdoe"`.
         #
         # @note Stability Level: development
         DB_QUERY_PARAMETER_LAMBDA = ->(key) { "db.query.parameter.#{key}" }
@@ -347,7 +350,7 @@ module OpenTelemetry
         # Deprecated, use `db.namespace` instead.
         #
         # @note Stability Level: development
-        # @deprecated Replaced by `db.namespace`.
+        # @deprecated Uncategorized.
         DB_REDIS_DATABASE_INDEX = 'db.redis.database_index'
 
         # Number of rows returned by the operation.

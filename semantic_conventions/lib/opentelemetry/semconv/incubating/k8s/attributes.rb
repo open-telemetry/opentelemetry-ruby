@@ -484,6 +484,16 @@ module OpenTelemetry
         # @note Stability Level: development
         K8S_POD_NAME = 'k8s.pod.name'
 
+        # The phase for the pod. Corresponds to the `phase` field of the: [K8s PodStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.33/#podstatus-v1-core)
+        #
+        # @note Stability Level: development
+        K8S_POD_STATUS_PHASE = 'k8s.pod.status.phase'
+
+        # The reason for the pod state. Corresponds to the `reason` field of the: [K8s PodStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.33/#podstatus-v1-core)
+        #
+        # @note Stability Level: development
+        K8S_POD_STATUS_REASON = 'k8s.pod.status.reason'
+
         # The UID of the Pod.
         #
         # @note Stability Level: development
@@ -552,7 +562,7 @@ module OpenTelemetry
 
         # The name of the K8s resource a resource quota defines.
         #
-        # The value for this attribute can be either the full `count/<resource>[.<group>]` string (e.g., count/deployments.apps, count/pods), or, for certain core Kubernetes resources, just the resource name (e.g., pods, services, configmaps). Both forms are supported by Kubernetes for object count quotas. See [Kubernetes Resource Quotas documentation](https://kubernetes.io/docs/concepts/policy/resource-quotas/#object-count-quota) for more details.
+        # The value for this attribute can be either the full `count/<resource>[.<group>]` string (e.g., count/deployments.apps, count/pods), or, for certain core Kubernetes resources, just the resource name (e.g., pods, services, configmaps). Both forms are supported by Kubernetes for object count quotas. See [Kubernetes Resource Quotas documentation](https://kubernetes.io/docs/concepts/policy/resource-quotas/#quota-on-object-count) for more details.
         #
         # @note Stability Level: development
         K8S_RESOURCEQUOTA_RESOURCE_NAME = 'k8s.resourcequota.resource_name'

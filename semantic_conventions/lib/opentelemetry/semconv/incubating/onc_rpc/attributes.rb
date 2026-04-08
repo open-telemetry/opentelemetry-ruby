@@ -21,18 +21,28 @@
 module OpenTelemetry
   module SemConv
     module Incubating
-      module PEER
+      module ONC_RPC
         # @!group Attribute Names
 
-        # The [`service.name`](/docs/resource/README.md#service) of the remote service. SHOULD be equal to the actual `service.name` resource attribute of the remote service if any.
-        #
-        # Examples of `peer.service` that users may specify:
-        #
-        # - A Redis cache of auth tokens as `peer.service="AuthTokenCache"`.
-        # - A gRPC service `rpc.service="io.opentelemetry.AuthService"` may be hosted in both a gateway, `peer.service="ExternalApiService"` and a backend, `peer.service="AuthService"`.
+        # ONC/Sun RPC procedure name.
         #
         # @note Stability Level: development
-        PEER_SERVICE = 'peer.service'
+        ONC_RPC_PROCEDURE_NAME = 'onc_rpc.procedure.name'
+
+        # ONC/Sun RPC procedure number.
+        #
+        # @note Stability Level: development
+        ONC_RPC_PROCEDURE_NUMBER = 'onc_rpc.procedure.number'
+
+        # ONC/Sun RPC program name.
+        #
+        # @note Stability Level: development
+        ONC_RPC_PROGRAM_NAME = 'onc_rpc.program.name'
+
+        # ONC/Sun RPC program version.
+        #
+        # @note Stability Level: development
+        ONC_RPC_VERSION = 'onc_rpc.version'
 
         # @!endgroup
       end
