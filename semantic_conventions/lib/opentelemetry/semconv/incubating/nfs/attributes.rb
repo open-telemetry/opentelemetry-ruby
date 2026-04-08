@@ -21,18 +21,18 @@
 module OpenTelemetry
   module SemConv
     module Incubating
-      module PEER
+      module NFS
         # @!group Attribute Names
 
-        # The [`service.name`](/docs/resource/README.md#service) of the remote service. SHOULD be equal to the actual `service.name` resource attribute of the remote service if any.
-        #
-        # Examples of `peer.service` that users may specify:
-        #
-        # - A Redis cache of auth tokens as `peer.service="AuthTokenCache"`.
-        # - A gRPC service `rpc.service="io.opentelemetry.AuthService"` may be hosted in both a gateway, `peer.service="ExternalApiService"` and a backend, `peer.service="AuthService"`.
+        # NFSv4+ operation name.
         #
         # @note Stability Level: development
-        PEER_SERVICE = 'peer.service'
+        NFS_OPERATION_NAME = 'nfs.operation.name'
+
+        # Linux: one of "hit" (NFSD_STATS_RC_HITS), "miss" (NFSD_STATS_RC_MISSES), or "nocache" (NFSD_STATS_RC_NOCACHE -- uncacheable)
+        #
+        # @note Stability Level: development
+        NFS_SERVER_REPCACHE_STATUS = 'nfs.server.repcache.status'
 
         # @!endgroup
       end

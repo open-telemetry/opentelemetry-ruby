@@ -53,7 +53,7 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_CPU_UTILIZATION = 'system.cpu.utilization'
 
-        # TODO.
+        # Disk bytes transferred.
         #
         # @note Stability Level: development
         SYSTEM_DISK_IO = 'system.disk.io'
@@ -75,7 +75,7 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_DISK_LIMIT = 'system.disk.limit'
 
-        # TODO.
+        # The number of disk reads/writes merged into single physical disk access operations.
         #
         # @note Stability Level: development
         SYSTEM_DISK_MERGED = 'system.disk.merged'
@@ -90,7 +90,7 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_DISK_OPERATION_TIME = 'system.disk.operation_time'
 
-        # TODO.
+        # Disk operations count.
         #
         # @note Stability Level: development
         SYSTEM_DISK_OPERATIONS = 'system.disk.operations'
@@ -108,7 +108,7 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_FILESYSTEM_USAGE = 'system.filesystem.usage'
 
-        # TODO.
+        # Fraction of filesystem bytes used.
         #
         # @note Stability Level: development
         SYSTEM_FILESYSTEM_UTILIZATION = 'system.filesystem.utilization'
@@ -151,12 +151,12 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_MEMORY_USAGE = 'system.memory.usage'
 
-        # TODO.
+        # Percentage of memory bytes in use.
         #
         # @note Stability Level: development
         SYSTEM_MEMORY_UTILIZATION = 'system.memory.utilization'
 
-        # TODO.
+        # The number of connections.
         #
         # @note Stability Level: development
         SYSTEM_NETWORK_CONNECTION_COUNT = 'system.network.connection.count'
@@ -166,6 +166,18 @@ module OpenTelemetry
         # @note Stability Level: development
         # @deprecated Replaced by `system.network.connection.count`.
         SYSTEM_NETWORK_CONNECTIONS = 'system.network.connections'
+
+        # Count of packets that are dropped or discarded even though there was no error.
+        #
+        # Measured as:
+        #
+        # - Linux: the `drop` column in `/proc/dev/net` ([source](https://web.archive.org/web/20180321091318/http://www.onlamp.com/pub/a/linux/2000/11/16/LinuxAdmin.html))
+        # - Windows: [`InDiscards`/`OutDiscards`](https://docs.microsoft.com/windows/win32/api/netioapi/ns-netioapi-mib_if_row2)
+        #   from [`GetIfEntry2`](https://docs.microsoft.com/windows/win32/api/netioapi/nf-netioapi-getifentry2)
+        #
+        # @note Stability Level: development
+        # @deprecated Replaced by `system.network.packet.dropped`.
+        SYSTEM_NETWORK_DROPPED = 'system.network.dropped'
 
         # Count of network errors detected.
         #
@@ -178,12 +190,12 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_NETWORK_ERRORS = 'system.network.errors'
 
-        # TODO.
+        # The number of bytes transmitted and received.
         #
         # @note Stability Level: development
         SYSTEM_NETWORK_IO = 'system.network.io'
 
-        # TODO.
+        # The number of packets transferred.
         #
         # @note Stability Level: development
         SYSTEM_NETWORK_PACKET_COUNT = 'system.network.packet.count'
@@ -199,12 +211,18 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_NETWORK_PACKET_DROPPED = 'system.network.packet.dropped'
 
-        # TODO.
+        # The number of packets transferred.
+        #
+        # @note Stability Level: development
+        # @deprecated Replaced by `system.network.packet.count`.
+        SYSTEM_NETWORK_PACKETS = 'system.network.packets'
+
+        # The number of page faults.
         #
         # @note Stability Level: development
         SYSTEM_PAGING_FAULTS = 'system.paging.faults'
 
-        # TODO.
+        # The number of paging operations.
         #
         # @note Stability Level: development
         SYSTEM_PAGING_OPERATIONS = 'system.paging.operations'
@@ -214,7 +232,7 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_PAGING_USAGE = 'system.paging.usage'
 
-        # TODO.
+        # Swap (unix) or pagefile (windows) utilization.
         #
         # @note Stability Level: development
         SYSTEM_PAGING_UTILIZATION = 'system.paging.utilization'
