@@ -1,0 +1,58 @@
+name: Renovate Semantic Conventions Post-Update
+
+on:
+  pull_request:
+    paths:
+      - 'semantic_conventions/Rakefile'
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  regenerate-semconv:
+    # Only run on Renovate PRs
+    if: startsWith(github.head_ref, 'renovate/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+          working-directory: semantic_conventions
+
+      - name: Check if SPEC_VERSION changed
+        id: check_changes
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          if git diff origin/${{ github.base_ref }} HEAD -- semantic_conventions/Rakefile | grep -q "SPEC_VERSION"; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Regenerate semantic conventions
+        if: steps.check_changes.outputs.changed == 'true'
+        working-directory: semantic_conventions
+        run: bundle exec rake generate
+
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add semantic_conventions/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: regenerate semantic conventions"
+            git push
+          fi
