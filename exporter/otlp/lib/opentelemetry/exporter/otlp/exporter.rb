@@ -28,7 +28,8 @@ module OpenTelemetry
         # Default timeouts in seconds.
         KEEP_ALIVE_TIMEOUT = 30
         RETRY_COUNT = 5
-        private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT)
+        RESPONSE_BODY_LIMIT = 4_194_304 # 4 MB
+        private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT, :RESPONSE_BODY_LIMIT)
 
         ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
         private_constant(:ERROR_MESSAGE_INVALID_HEADERS)
@@ -178,21 +179,22 @@ module OpenTelemetry
 
             case response
             when Net::HTTPSuccess
-              response.body # Read and discard body
+              response.read_body(nil) # Discard without reading into memory
               SUCCESS
             when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
-              response.body # Read and discard body
+              response.read_body(nil) # Discard without reading into memory
               redo if backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1, reason: response.code)
               FAILURE
             when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
-              response.body # Read and discard body
+              response.read_body(nil) # Discard without reading into memory
               redo if backoff?(retry_count: retry_count += 1, reason: response.code)
               FAILURE
             when Net::HTTPNotFound
               log_request_failure(response.code)
               FAILURE
             when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
-              log_status(response.body)
+              body = read_response_body(response)
+              log_status(body)
               @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response.code })
               FAILURE
             when Net::HTTPRedirection
@@ -240,14 +242,42 @@ module OpenTelemetry
         end
 
         def log_status(body)
+          truncation_note = @body_truncated ? ' (body truncated due to size limit)' : ''
           status = Google::Rpc::Status.decode(body)
           details = status.details.map do |detail|
             klass_or_nil = ::Google::Protobuf::DescriptorPool.generated_pool.lookup(detail.type_name).msgclass
             detail.unpack(klass_or_nil) if klass_or_nil
           end.compact
-          OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}} for uri=#{@uri}")
+          OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}}#{truncation_note} for uri=#{@uri}")
         rescue StandardError => e
-          OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
+          OpenTelemetry.handle_error(exception: e, message: "unexpected error decoding rpc.Status in OTLP::Exporter#log_status#{truncation_note}")
+        ensure
+          @body_truncated = false
+        end
+
+        def read_response_body(response)
+          return '' if response.nil?
+
+          body = +''
+          truncated = false
+
+          response.read_body do |chunk|
+            if body.bytesize + chunk.bytesize <= RESPONSE_BODY_LIMIT
+              body << chunk
+            else
+              remaining = RESPONSE_BODY_LIMIT - body.bytesize
+              body << chunk.byteslice(0, remaining) if remaining > 0
+              truncated = true
+              break
+            end
+          end
+
+          body.force_encoding('UTF-8')
+          @body_truncated = truncated
+          body
+        rescue StandardError => e
+          OpenTelemetry.handle_error(exception: e, message: 'error reading response body')
+          ''
         end
 
         def log_request_failure(response_code)

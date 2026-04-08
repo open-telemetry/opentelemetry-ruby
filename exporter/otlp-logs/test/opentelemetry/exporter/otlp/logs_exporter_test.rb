@@ -955,4 +955,81 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
       end
     end
   end
+
+  describe 'response body reading' do
+    let(:exporter) { OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new }
+    let(:log_record_data) { OpenTelemetry::TestHelpers.create_log_record_data }
+
+    it 'discards body for successful responses without reading into memory' do
+      stub_request(:post, 'http://localhost:4318/v1/logs').to_return(status: 200, body: 'success body')
+
+      result = exporter.export([log_record_data])
+
+      _(result).must_equal(SUCCESS)
+    end
+
+    it 'discards body for retryable responses without reading into memory' do
+      stub_request(:post, 'http://localhost:4318/v1/logs')
+        .to_return(status: 503, body: 'service unavailable', headers: { 'Retry-After' => '0' })
+        .then.to_return(status: 200)
+
+      result = exporter.export([log_record_data])
+
+      _(result).must_equal(SUCCESS)
+    end
+
+    it 'reads and parses error response body smaller than limit' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      details = [::Google::Protobuf::Any.pack(::Google::Protobuf::StringValue.new(value: 'error details'))]
+      status = ::Google::Rpc::Status.encode(::Google::Rpc::Status.new(code: 3, message: 'invalid argument', details: details))
+      stub_request(:post, 'http://localhost:4318/v1/logs').to_return(status: 400, body: status)
+
+      result = exporter.export([log_record_data])
+
+      _(result).must_equal(FAILURE)
+      _(log_stream.string).must_match(/invalid argument/)
+      _(log_stream.string).wont_match(/truncated/)
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
+    it 'truncates error response body larger than 4 MB limit' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      # Create a body larger than 4 MB
+      large_message = 'x' * 5_000_000 # 5 MB
+      details = [::Google::Protobuf::Any.pack(::Google::Protobuf::StringValue.new(value: large_message))]
+      large_status = ::Google::Rpc::Status.new(code: 3, message: 'large error', details: details)
+      large_body = ::Google::Rpc::Status.encode(large_status)
+
+      stub_request(:post, 'http://localhost:4318/v1/logs').to_return(status: 400, body: large_body)
+
+      result = exporter.export([log_record_data])
+
+      _(result).must_equal(FAILURE)
+      _(log_stream.string).must_match(/body truncated due to size limit/)
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
+    it 'handles malformed error response body gracefully' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      stub_request(:post, 'http://localhost:4318/v1/logs').to_return(status: 400, body: 'not valid protobuf')
+
+      result = exporter.export([log_record_data])
+
+      _(result).must_equal(FAILURE)
+      _(log_stream.string).must_match(/unexpected error decoding rpc.Status/)
+    ensure
+      OpenTelemetry.logger = logger
+    end
+  end
 end
