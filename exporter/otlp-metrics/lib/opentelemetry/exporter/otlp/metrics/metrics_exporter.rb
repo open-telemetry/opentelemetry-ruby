@@ -120,15 +120,15 @@ module OpenTelemetry
               response = @http.request(request)
               case response
               when Net::HTTPSuccess
-                response.body # Read and discard body
+                response.read_body(nil) # Discard without reading into memory
                 SUCCESS
               when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
-                response.body # Read and discard body
+                response.read_body(nil) # Discard without reading into memory
                 redo if backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1, reason: response.code)
                 OpenTelemetry.logger.warn('Net::HTTPServiceUnavailable/Net::HTTPTooManyRequests in MetricsExporter#send_bytes')
                 FAILURE
               when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
-                response.body # Read and discard body
+                response.read_body(nil) # Discard without reading into memory
                 redo if backoff?(retry_count: retry_count += 1, reason: response.code)
                 OpenTelemetry.logger.warn('Net::HTTPRequestTimeOut/Net::HTTPGatewayTimeOut/Net::HTTPBadGateway in MetricsExporter#send_bytes')
                 FAILURE
@@ -136,7 +136,8 @@ module OpenTelemetry
                 OpenTelemetry.handle_error(message: "OTLP metrics_exporter received http.code=404 for uri: '#{@path}'")
                 FAILURE
               when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
-                log_status(response.body)
+                body = read_response_body(response)
+                log_status(body)
                 OpenTelemetry.logger.warn('Net::HTTPBadRequest/Net::HTTPClientError/Net::HTTPServerError in MetricsExporter#send_bytes')
                 FAILURE
               when Net::HTTPRedirection
