@@ -12,6 +12,6 @@ eval_gemfile '../contrib/Gemfile.shared'
 
 group :development, :test do
   # Use the opentelemetry-api gem from source
-  gem 'opentelemetry-api', path: '../api'
+  gem 'opentelemetry-api', path: '../api', require: false
   gem 'pry'
 end
