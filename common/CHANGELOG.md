@@ -1,5 +1,9 @@
 # Release History: opentelemetry-common
 
+### v0.24.1 / 2026-04-14
+
+* FIXED: Move the logs-sdk and metrics-sdk requires (#1956)
+
 ### v0.24.0 / 2026-04-07
 
 * ADDED: Min Ruby Version 3.3 (#2070)

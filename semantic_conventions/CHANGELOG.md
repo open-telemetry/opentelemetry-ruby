@@ -1,5 +1,9 @@
 # Release History: opentelemetry-semantic_conventions
 
+### v1.37.1 / 2026-04-14
+
+* FIXED: Move the logs-sdk and metrics-sdk requires (#1956)
+
 ### v1.37.0 / 2026-04-07
 
 * ADDED: Bump semantic conventions to version 1.37.0 (#1952)
