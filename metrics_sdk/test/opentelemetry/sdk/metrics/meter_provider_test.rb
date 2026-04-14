@@ -191,7 +191,6 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
     end
   end
 
-  # TODO: OpenTelemetry.meter_provider.add_view
   describe '#add_view' do
     it 'adds a view with aggregation' do
       OpenTelemetry.meter_provider.add_view('test', aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::Drop.new)

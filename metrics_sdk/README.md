@@ -37,10 +37,13 @@ At this time, you should be able to:
   * `ConsoleMetricPullExporter`
   * `InMemoryMetricPullExporter` (for testing)
 * Export metrics on a schedule using `PeriodicMetricReader` with any compatible push exporter (e.g. OTLP via `opentelemetry-exporter-otlp-metrics`)
+* Attach exemplars to metric data points for trace correlation:
+  * `AlwaysOnExemplarFilter` — every measurement is eligible
+  * `AlwaysOffExemplarFilter` — no exemplars collected (default)
+  * `TraceBasedExemplarFilter` — only measurements inside a sampled trace
 
 We do not yet have support for:
 
-* Metrics Exemplars
 * `schema_url` in view configuration
 
 These lists are incomplete and are intended to give a broad description of what's available.
@@ -269,6 +272,67 @@ counter = meter.create_counter('requests.total', unit: '1')
 counter.add(1, attributes: { 'service' => 'web' })
 
 OpenTelemetry.meter_provider.shutdown
+```
+
+### Exemplars
+
+Exemplars attach individual raw measurements — along with the trace context active at the time of the measurement — to an exported metric data point. This lets you jump from a metric spike directly to the trace that caused it.
+
+By default exemplars are **disabled** (`AlwaysOffExemplarFilter`). Enable them via an environment variable or programmatically.
+
+#### Enable via environment variable
+
+```bash
+# Eligible only when the measurement occurs inside a sampled trace (recommended)
+export OTEL_METRICS_EXEMPLAR_FILTER=trace_based
+
+# Eligible for every measurement regardless of trace context
+export OTEL_METRICS_EXEMPLAR_FILTER=always_on
+
+# Disabled (default)
+export OTEL_METRICS_EXEMPLAR_FILTER=always_off
+```
+
+#### Enable programmatically
+
+```ruby
+require 'opentelemetry/sdk'
+require 'opentelemetry-metrics-sdk'
+
+ENV['OTEL_METRICS_EXPORTER'] = 'none'
+OpenTelemetry::SDK.configure
+
+exporter = OpenTelemetry::SDK::Metrics::Export::ConsoleMetricPullExporter.new
+OpenTelemetry.meter_provider.add_metric_reader(exporter)
+
+# Enable exemplar, by default using trace_based
+OpenTelemetry.meter_provider.enable_exemplar_filter
+```
+
+#### AlwaysOn Exemplars and Customized Exemplars
+
+```ruby
+# Use AlwaysOn Exemplars
+OpenTelemetry.meter_provider.enable_exemplar_filter(
+  exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter
+)
+
+# Customized Exemplars
+class CustomExemplarFilter < OpenTelemetry::SDK::Metrics::Exemplar::ExemplarFilter
+  def self.should_sample?(value, timestamp, attributes, context)
+    # customized logic to determine should sample
+  end
+end
+
+OpenTelemetry.meter_provider.enable_exemplar_filter(
+  exemplar_filter: CustomExemplarFilter
+)
+```
+
+#### Disabling exemplars
+
+```ruby
+OpenTelemetry.meter_provider.disable_exemplar_filter
 ```
 
 ### Using InMemoryMetricPullExporter for testing
