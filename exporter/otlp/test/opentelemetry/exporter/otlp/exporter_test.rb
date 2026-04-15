@@ -1042,6 +1042,70 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     end
   end
 
+  describe 'response body reading with real sockets' do
+    # These tests use a real TCPServer instead of WebMock to verify
+    # behavior against actual Net::HTTP socket I/O. WebMock's patching
+    # of Net::HTTP changes how read_body works — even with
+    # allow_net_connect!, responses go through WebMock's adapter which
+    # doesn't exercise the same code paths as real Net::HTTP.
+
+    def with_fake_server(response_body_size:, status: 400)
+      server = TCPServer.new('127.0.0.1', 0)
+      port = server.addr[1]
+      body = 'X' * response_body_size
+
+      server_thread = Thread.new do
+        client = server.accept
+        content_length = 0
+        while (line = client.gets) && line != "\r\n"
+          content_length = line.split(': ', 2).last.to_i if line.start_with?('Content-Length')
+        end
+        client.read(content_length) if content_length > 0
+
+        client.print "HTTP/1.1 #{status} Bad Request\r\n"
+        client.print "Content-Type: application/octet-stream\r\n"
+        client.print "Content-Length: #{body.bytesize}\r\n"
+        client.print "Connection: close\r\n"
+        client.print "\r\n"
+        client.write body
+        client.close
+      rescue => e
+        # client may disconnect early
+      end
+
+      # Fully disable WebMock's Net::HTTP adapter so we get real
+      # socket behavior, not WebMock's patched read_body.
+      WebMock::HttpLibAdapters::NetHttpAdapter.disable!
+      yield port
+    ensure
+      WebMock::HttpLibAdapters::NetHttpAdapter.enable!
+      server&.close
+      server_thread&.join(2)
+    end
+
+    it 'limits error response body read to 4 MB against a real HTTP server' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      with_fake_server(response_body_size: 5_000_000) do |port|
+        exporter = OpenTelemetry::Exporter::OTLP::Exporter.new(
+          endpoint: "http://127.0.0.1:#{port}/v1/traces"
+        )
+        span_data = OpenTelemetry::TestHelpers.create_span_data
+        result = exporter.export([span_data])
+
+        _(result).must_equal(FAILURE)
+        # The body cap should work without hitting "read_body called twice".
+        # If we see this error, it means read_response_body was called after
+        # Net::HTTP already read the full body during @http.request().
+        _(log_stream.string).wont_match(/read_body called twice/)
+      end
+    ensure
+      OpenTelemetry.logger = logger
+    end
+  end
+
   describe 'response body reading' do
     let(:exporter) { OpenTelemetry::Exporter::OTLP::Exporter.new }
     let(:span_data) { OpenTelemetry::TestHelpers.create_span_data }
