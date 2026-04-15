@@ -1112,8 +1112,8 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
 
       spy = Module.new do
         define_method(:read_response_body) do |response|
-          super(response).tap do |result|
-            captured_body_size = result.bytesize
+          super(response).tap do |result_body, _truncated|
+            captured_body_size = result_body.bytesize
             internal_body = response.body
           end
         end

@@ -197,8 +197,8 @@ module OpenTelemetry
                   log_request_failure(response.code)
                   result = FAILURE
                 when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
-                  body = read_response_body(response)
-                  log_status(body)
+                  body, truncated = read_response_body(response)
+                  log_status(body, truncated: truncated)
                   @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response.code })
                   result = FAILURE
                 when Net::HTTPRedirection
@@ -253,8 +253,8 @@ module OpenTelemetry
           # TODO: figure out destination and reinitialize @http and @path
         end
 
-        def log_status(body)
-          truncation_note = @body_truncated ? ' (body truncated due to size limit)' : ''
+        def log_status(body, truncated: false)
+          truncation_note = truncated ? ' (body truncated due to size limit)' : ''
           status = Google::Rpc::Status.decode(body)
           details = status.details.map do |detail|
             klass_or_nil = ::Google::Protobuf::DescriptorPool.generated_pool.lookup(detail.type_name).msgclass
@@ -263,12 +263,10 @@ module OpenTelemetry
           OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}}#{truncation_note} for uri=#{@uri}")
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: "unexpected error decoding rpc.Status in OTLP::Exporter#log_status#{truncation_note}")
-        ensure
-          @body_truncated = false
         end
 
         def read_response_body(response)
-          return '' if response.nil?
+          return ['', false] if response.nil?
 
           body = +''
           truncated = false
@@ -286,17 +284,15 @@ module OpenTelemetry
           end
 
           body.force_encoding('UTF-8')
-          @body_truncated = truncated
-          body
+          [body, truncated]
         rescue IOError => e
           raise unless truncated # we'll handle this when we know net/http is upset trying to read after http.finish
 
           body&.force_encoding('UTF-8')
-          @body_truncated = truncated
-          body || ''
+          [body || '', truncated]
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'error reading response body')
-          ''
+          ['', false]
         end
 
         def log_request_failure(response_code)
