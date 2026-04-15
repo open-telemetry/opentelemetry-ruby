@@ -280,6 +280,7 @@ module OpenTelemetry
               remaining = RESPONSE_BODY_LIMIT - body.bytesize
               body << chunk.byteslice(0, remaining) if remaining > 0
               truncated = true
+              @http.finish # closes socket, nil's the body or else net/http will attempt to read the rest of the response
               break
             end
           end
@@ -287,6 +288,12 @@ module OpenTelemetry
           body.force_encoding('UTF-8')
           @body_truncated = truncated
           body
+        rescue IOError => e
+          raise unless truncated # we'll handle this when we know net/http is upset trying to read after http.finish
+
+          body&.force_encoding('UTF-8')
+          @body_truncated = truncated
+          body || ''
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'error reading response body')
           ''

@@ -1107,13 +1107,14 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     end
 
     it 'does not buffer beyond the limit internally' do
-      response_body_internal_size = nil
+      captured_body_size = nil
+      internal_body = :not_checked
 
       spy = Module.new do
         define_method(:read_response_body) do |response|
-          super(response).tap do
-            internal = response.body
-            response_body_internal_size = internal.bytesize if internal.is_a?(String)
+          super(response).tap do |result|
+            captured_body_size = result.bytesize
+            internal_body = response.body
           end
         end
       end
@@ -1129,9 +1130,17 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
         OpenTelemetry.logger = ::Logger.new(File::NULL)
         exporter.export([OpenTelemetry::TestHelpers.create_span_data])
 
-        _(response_body_internal_size).wont_be_nil
-        _(response_body_internal_size).must_be :<=, limit,
-          "Net::HTTP buffered #{response_body_internal_size} bytes internally, exceeding the #{limit} byte limit"
+        # read_response_body must cap the returned body at the limit
+        _(captured_body_size).wont_be_nil
+        _(captured_body_size).must_be :<=, limit
+
+        # Net::HTTP must NOT have the full 10 MB response buffered internally.
+        # After @http.finish closes the socket mid-read, response.body is nil
+        # (block-form read_body doesn't accumulate into @body).
+        if internal_body.is_a?(String)
+          _(internal_body.bytesize).must_be :<=, limit,
+            "Net::HTTP buffered #{internal_body.bytesize} bytes internally, exceeding the #{limit} byte limit"
+        end
       end
     end
   end
