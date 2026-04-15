@@ -2,7 +2,7 @@
 
 ### v0.5.1 / 2026-04-15
 
-* FIXED: Move the logs-sdk and metrics-sdk requires (#1956)
+* FIXED: Move the logs-sdk requires to support "require 'opentelemetry/sdk/logs'" (#1956)
 
 ### v0.5.0 / 2026-04-07
 
