@@ -175,37 +175,49 @@ module OpenTelemetry
             @http.read_timeout = remaining_timeout
             @http.write_timeout = remaining_timeout
             @http.start unless @http.started?
-            response = measure_request_duration { @http.request(request) }
+            result = nil
+            should_redo = false
 
-            case response
-            when Net::HTTPSuccess
-              response.read_body(nil) # Discard without reading into memory
-              SUCCESS
-            when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
-              response.read_body(nil) # Discard without reading into memory
-              redo if backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1, reason: response.code)
-              FAILURE
-            when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
-              response.read_body(nil) # Discard without reading into memory
-              redo if backoff?(retry_count: retry_count += 1, reason: response.code)
-              FAILURE
-            when Net::HTTPNotFound
-              log_request_failure(response.code)
-              FAILURE
-            when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
-              body = read_response_body(response)
-              log_status(body)
-              @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response.code })
-              FAILURE
-            when Net::HTTPRedirection
-              @http.finish
-              handle_redirect(response['location'])
-              redo if backoff?(retry_after: 0, retry_count: retry_count += 1, reason: response.code)
-            else
-              @http.finish
-              log_request_failure(response.code)
-              FAILURE
+            measure_request_duration do
+              @http.request(request) do |response|
+                case response
+                when Net::HTTPSuccess
+                  response.read_body { |_| } # Drain and discard, preserves keep-alive
+                  result = SUCCESS
+                when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
+                  response.read_body { |_| }
+                  should_redo = backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1, reason: response.code)
+                  result = FAILURE
+                when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
+                  response.read_body { |_| }
+                  should_redo = backoff?(retry_count: retry_count += 1, reason: response.code)
+                  result = FAILURE
+                when Net::HTTPNotFound
+                  response.read_body { |_| }
+                  log_request_failure(response.code)
+                  result = FAILURE
+                when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
+                  body = read_response_body(response)
+                  log_status(body)
+                  @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response.code })
+                  result = FAILURE
+                when Net::HTTPRedirection
+                  response.read_body { |_| }
+                  @http.finish
+                  handle_redirect(response['location'])
+                  should_redo = backoff?(retry_after: 0, retry_count: retry_count += 1, reason: response.code)
+                else
+                  response.read_body { |_| }
+                  @http.finish
+                  log_request_failure(response.code)
+                  result = FAILURE
+                end
+              end
             end
+
+            redo if should_redo
+
+            result
           rescue Net::OpenTimeout, Net::ReadTimeout
             retry if backoff?(retry_count: retry_count += 1, reason: 'timeout')
             return FAILURE
