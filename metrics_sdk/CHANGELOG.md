@@ -1,5 +1,9 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.13.1 / 2026-04-15
+
+* FIXED: Move the metrics-sdk requires to support "require 'opentelemetry/sdk/metrics'" (#1956)
+
 ### v0.13.0 / 2026-04-07
 
 * ADDED: Min Ruby Version 3.3 (#2070)
