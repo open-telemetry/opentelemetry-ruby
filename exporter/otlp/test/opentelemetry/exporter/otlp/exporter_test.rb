@@ -1105,6 +1105,35 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     ensure
       OpenTelemetry.logger = logger
     end
+
+    it 'does not buffer beyond the limit internally' do
+      response_body_internal_size = nil
+
+      spy = Module.new do
+        define_method(:read_response_body) do |response|
+          super(response).tap do
+            internal = response.body
+            response_body_internal_size = internal.bytesize if internal.is_a?(String)
+          end
+        end
+      end
+
+      limit = OpenTelemetry::Exporter::OTLP::Exporter.const_get(:RESPONSE_BODY_LIMIT)
+
+      with_fake_server(response_body_size: 10_000_000) do |port|
+        exporter = OpenTelemetry::Exporter::OTLP::Exporter.new(
+          endpoint: "http://127.0.0.1:#{port}/v1/traces"
+        )
+        exporter.singleton_class.prepend(spy)
+
+        OpenTelemetry.logger = ::Logger.new(File::NULL)
+        exporter.export([OpenTelemetry::TestHelpers.create_span_data])
+
+        _(response_body_internal_size).wont_be_nil
+        _(response_body_internal_size).must_be :<=, limit,
+          "Net::HTTP buffered #{response_body_internal_size} bytes internally, exceeding the #{limit} byte limit"
+      end
+    end
   end
 
   describe 'response body reading' do
