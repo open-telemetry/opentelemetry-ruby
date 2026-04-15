@@ -1096,9 +1096,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
         result = exporter.export([span_data])
 
         _(result).must_equal(FAILURE)
-        # The body cap should work without hitting "read_body called twice".
-        # If we see this error, it means read_response_body was called after
-        # Net::HTTP already read the full body during @http.request().
+        # The chunked reader should cap at 4 MB and note the truncation.
+        _(log_stream.string).must_match(/body truncated due to size limit/)
+        # And it should work without hitting "read_body called twice",
+        # which would mean the body was already fully read into memory.
         _(log_stream.string).wont_match(/read_body called twice/)
       end
     ensure
