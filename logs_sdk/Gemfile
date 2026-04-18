@@ -16,7 +16,7 @@ group :test, :development do
   gem 'rubocop-performance', '~> 1.25.0'
   gem 'rubocop-rake', '~> 0.7.1'
   gem 'rubocop-rspec', '~> 3.5.0'
-  gem 'simplecov', '~> 0.17.0'
+  gem 'simplecov', '~> 0.22.0'
   gem 'yard', '~> 0.9.0'
   gem 'yard-doctest', '~> 0.1.17'
   gem 'opentelemetry-api', path: '../api', require: false

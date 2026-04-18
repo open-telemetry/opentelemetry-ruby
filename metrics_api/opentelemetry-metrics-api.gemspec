@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
 
   spec.add_development_dependency 'benchmark-ipsa', '~> 0.2.0'
-    
+
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-metrics-api/v#{OpenTelemetry::Metrics::VERSION}/file.CHANGELOG.html"
     spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/metrics_api'
