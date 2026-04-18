@@ -9,6 +9,18 @@ source 'https://rubygems.org'
 gemspec
 
 group :test, :development do
+  gem 'appraisal', '~> 2.2.0'
+  gem 'minitest', '~> 5.0.0'
+  gem 'rake', '~> 13.3.0'
+  gem 'rubocop', '~> 1.3.0'
+  gem 'rubocop-minitest', '~> 0.38.0'
+  gem 'rubocop-performance', '~> 1.25.0'
+  gem 'rubocop-rake', '~> 0.7.1'
+  gem 'rubocop-rspec', '~> 3.5.0'
+  gem 'simplecov', '~> 0.17.0'
+  gem 'webmock', '~> 3.24'
+  gem 'yard', '~> 0.9.0'
+  gem 'yard-doctest', '~> 0.1.6'
   gem 'opentelemetry-api', path: '../../api', require: false
   gem 'opentelemetry-common', path: '../../common', require: false
   gem 'opentelemetry-logs-api', path: '../../logs_api', require: false

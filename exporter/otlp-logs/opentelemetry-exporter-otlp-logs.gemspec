@@ -34,20 +34,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-sdk'
   spec.add_dependency 'opentelemetry-semantic_conventions'
 
-  spec.add_development_dependency 'appraisal', '~> 2.2.0'
-  spec.add_development_dependency 'minitest', '~> 5.0'
-  spec.add_development_dependency 'opentelemetry-test-helpers'
   spec.add_development_dependency 'pry-byebug' unless RUBY_ENGINE == 'jruby'
-  spec.add_development_dependency 'rake', '~> 13.3'
-  spec.add_development_dependency 'rubocop', '~> 1.3'
-  spec.add_development_dependency 'rubocop-minitest', '~> 0.38.0'
-  spec.add_development_dependency 'rubocop-performance', '~> 1.25'
-  spec.add_development_dependency 'rubocop-rake', '~> 0.7.1'
-  spec.add_development_dependency 'rubocop-rspec', '~> 3.5'
-  spec.add_development_dependency 'simplecov', '~> 0.17'
-  spec.add_development_dependency 'webmock', '~> 3.24'
-  spec.add_development_dependency 'yard', '~> 0.9'
-  spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-exporter-otlp-logs/v#{OpenTelemetry::Exporter::OTLP::Logs::VERSION}/file.CHANGELOG.html"

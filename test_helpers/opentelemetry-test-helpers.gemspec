@@ -25,16 +25,10 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 3.3'
 
-  spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'opentelemetry-sdk'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'pry-byebug' unless RUBY_ENGINE == 'jruby'
-  spec.add_development_dependency 'rake', '~> 13.3'
-  spec.add_development_dependency 'rubocop', '~> 1.65'
-  spec.add_development_dependency 'simplecov', '~> 0.17'
-  spec.add_development_dependency 'yard', '~> 0.9'
-  spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
-
+    
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-test-helpers/v#{OpenTelemetry::TestHelpers::VERSION}/file.CHANGELOG.html"
     spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/test_helpers'
