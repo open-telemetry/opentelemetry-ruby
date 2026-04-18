@@ -21,5 +21,6 @@ group :development, :test do
   gem 'yard-doctest', '~> 0.1.6'
   # Use the opentelemetry-api gem from source
   gem 'opentelemetry-api', path: '../api', require: false
+  gem 'opentelemetry-test-helpers', path: '../test_helpers', require: false
   gem 'pry'
 end

@@ -20,6 +20,7 @@ group :test, :development do
   gem 'yard', '~> 0.9.0'
   gem 'yard-doctest', '~> 0.1.6'
   gem 'opentelemetry-api', path: '../api', require: false
+  gem 'opentelemetry-test-helpers', path: '../test_helpers', require: false
   gem 'pry'
   gem 'pry-byebug' unless RUBY_ENGINE == 'jruby'
 end
