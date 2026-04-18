@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-api', '~> 1.1'
 
   spec.add_development_dependency 'opentelemetry-sdk', '~> 1.2'
-  
+
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-propagator-jaeger/v#{OpenTelemetry::Propagator::Jaeger::VERSION}/file.CHANGELOG.html"
     spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/master/propagator/jaeger'

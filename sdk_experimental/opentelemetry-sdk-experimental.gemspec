@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-sdk', '~> 1.2'
 
   spec.add_development_dependency 'benchmark-ipsa', '~> 0.2.0'
-    
+
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-sdk-experimental/v#{OpenTelemetry::SDK::Experimental::VERSION}/file.CHANGELOG.html"
     spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/sdk_experimental'

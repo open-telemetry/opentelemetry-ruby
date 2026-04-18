@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 3.3'
 
   spec.add_dependency 'opentelemetry-api', '~> 1.1'
-  
+
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-propagator-b3/v#{OpenTelemetry::Propagator::B3::VERSION}/file.CHANGELOG.html"
     spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/propagator/b3'
