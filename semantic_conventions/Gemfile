@@ -9,7 +9,8 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :test do
-  gem 'minitest', '~> 5.0.0'
+  gem 'minitest', '~> 5.27.0'
+  gem 'mutex_m' if RUBY_VERSION >= '3.4'
   gem 'rake', '~> 13.3.0'
   gem 'rubocop', '~> 1.75.0'
   gem 'rubocop-minitest', '~> 0.38.0'
@@ -19,7 +20,6 @@ group :development, :test do
   gem 'simplecov', '~> 0.17.0'
   gem 'yard', '~> 0.9.0'
   gem 'yard-doctest', '~> 0.1.6'
-  gem 'mutex_m' if RUBY_VERSION >= '3.4'
   gem 'opentelemetry-api', path: '../api', require: false
   gem 'pry'
 end
