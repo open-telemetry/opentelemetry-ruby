@@ -128,7 +128,7 @@ $> bundle exec rake test
 
 ```
 
-**Commit the chnages and open a PR!**
+**Commit the changes and open a PR!**
 
 [opentelemetry-collector-home]: https://opentelemetry.io/docs/collector/about/
 [opentelemetry-home]: https://opentelemetry.io

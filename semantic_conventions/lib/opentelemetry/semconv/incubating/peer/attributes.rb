@@ -23,16 +23,12 @@ module OpenTelemetry
     module Incubating
       module PEER
         # @!group Attribute Names
-      
+
         # The [`service.name`](/docs/resource/README.md#service) of the remote service. SHOULD be equal to the actual `service.name` resource attribute of the remote service if any.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   AuthTokenCache
-        #
         PEER_SERVICE = 'peer.service'
-    
+
         # @!endgroup
       end
     end

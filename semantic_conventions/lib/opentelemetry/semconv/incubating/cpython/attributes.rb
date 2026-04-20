@@ -23,18 +23,12 @@ module OpenTelemetry
     module Incubating
       module CPYTHON
         # @!group Attribute Names
-      
+
         # Value of the garbage collector collection generation.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   0
-        #   1
-        #   2
-        #
         CPYTHON_GC_GENERATION = 'cpython.gc.generation'
-    
+
         # @!endgroup
       end
     end

@@ -23,18 +23,13 @@ module OpenTelemetry
     module Incubating
       module EVENT
         # @!group Attribute Names
-      
+
         # Identifies the class / type of event.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   browser.mouse.click
-        #   device.app.lifecycle
-        #
-        # @deprecated {"note": "Replaced by EventName top-level field on the LogRecord.\n", "reason": "uncategorized"}
+        # @deprecated Replaced by EventName top-level field on the LogRecord.
         EVENT_NAME = 'event.name'
-    
+
         # @!endgroup
       end
     end

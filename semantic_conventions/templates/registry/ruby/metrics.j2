@@ -32,7 +32,7 @@ module OpenTelemetry
           concat_if("\n@note Stability Level: ", attribute.stability),
           ] | comment(indent=6) }}
       {%- if attribute is deprecated %}
-      {{ concat_if("\n@deprecated ", attribute.deprecated) | comment(indent=6)}}
+      {{ concat_if("\n@deprecated ", attribute.deprecated.note | default(attribute.deprecated.reason | capitalize ~ ".")) | comment(indent=6)}}
       {%- elif attribute is stable and params.incubating %}
       #
       # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::{{ ctx.root_namespace | screaming_snake_case }}::{{ attr_const_name }}}.
@@ -50,3 +50,4 @@ module OpenTelemetry
   {%- endif %}
   end
 end
+

@@ -23,64 +23,41 @@ module OpenTelemetry
     module Incubating
       module HTTP
         # @!group Attribute Names
-      
+
         # Deprecated, use `client.address` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   83.164.160.102
-        #
-        # @deprecated {"note": "Replaced by `client.address`.", "reason": "renamed", "renamed_to": "client.address"}
+        # @deprecated Replaced by `client.address`.
         HTTP_CLIENT_IP = 'http.client_ip'
-    
+
         # State of the HTTP connection in the HTTP connection pool.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   active
-        #   idle
-        #
         HTTP_CONNECTION_STATE = 'http.connection.state'
-    
+
         # Deprecated, use `network.protocol.name` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `network.protocol.name`.", "reason": "renamed", "renamed_to": "network.protocol.name"}
+        # @deprecated Replaced by `network.protocol.name`.
         HTTP_FLAVOR = 'http.flavor'
-    
+
         # Deprecated, use one of `server.address`, `client.address` or `http.request.header.host` instead, depending on the usage.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   www.example.org
-        #
-        # @deprecated {"note": "Replaced by one of `server.address`, `client.address` or `http.request.header.host`, depending on the usage.\n", "reason": "uncategorized"}
+        # @deprecated Replaced by one of `server.address`, `client.address` or `http.request.header.host`, depending on the usage.
         HTTP_HOST = 'http.host'
-    
+
         # Deprecated, use `http.request.method` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   GET
-        #   POST
-        #   HEAD
-        #
-        # @deprecated {"note": "Replaced by `http.request.method`.", "reason": "renamed", "renamed_to": "http.request.method"}
+        # @deprecated Replaced by `http.request.method`.
         HTTP_METHOD = 'http.method'
-    
+
         # The size of the request payload body in bytes. This is the number of bytes transferred excluding headers and is often, but not always, present as the [Content-Length](https://www.rfc-editor.org/rfc/rfc9110.html#field.content-length) header. For requests using transport encoding, this should be the compressed size.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   3495
-        #
         HTTP_REQUEST_BODY_SIZE = 'http.request.body.size'
-    
+
         # Must be called with a key for the full attribute name. See notes below about the expectations
         # for the state of the key.
         #
@@ -108,14 +85,9 @@ module OpenTelemetry
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   ["application/json"]
-        #   ["1.2.3.4", "1.2.3.5"]
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::HTTP::HTTP_REQUEST_HEADER_LAMBDA}.
         HTTP_REQUEST_HEADER_LAMBDA = ->(key) { "http.request.header.#{key}" }
-    
+
         # HTTP request method.
         #
         # HTTP request method value SHOULD be "known" to the instrumentation.
@@ -135,79 +107,47 @@ module OpenTelemetry
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   GET
-        #   POST
-        #   HEAD
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::HTTP::HTTP_REQUEST_METHOD}.
         HTTP_REQUEST_METHOD = 'http.request.method'
-    
+
         # Original HTTP method sent by the client in the request line.
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   GeT
-        #   ACL
-        #   foo
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::HTTP::HTTP_REQUEST_METHOD_ORIGINAL}.
         HTTP_REQUEST_METHOD_ORIGINAL = 'http.request.method_original'
-    
+
         # The ordinal number of request resending attempt (for any reason, including redirects).
         #
         # The resend count SHOULD be updated each time an HTTP request gets resent by the client, regardless of what was the cause of the resending (e.g. redirection, authorization failure, 503 Server Unavailable, network issues, or any other).
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   3
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::HTTP::HTTP_REQUEST_RESEND_COUNT}.
         HTTP_REQUEST_RESEND_COUNT = 'http.request.resend_count'
-    
+
         # The total size of the request in bytes. This should be the total number of bytes sent over the wire, including the request line (HTTP/1.1), framing (HTTP/2 and HTTP/3), headers, and request body if any.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   1437
-        #
         HTTP_REQUEST_SIZE = 'http.request.size'
-    
+
         # Deprecated, use `http.request.header.content-length` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   3495
-        #
-        # @deprecated {"note": "Replaced by `http.request.header.content-length`.", "reason": "uncategorized"}
+        # @deprecated Replaced by `http.request.header.content-length`.
         HTTP_REQUEST_CONTENT_LENGTH = 'http.request_content_length'
-    
+
         # Deprecated, use `http.request.body.size` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   5493
-        #
-        # @deprecated {"note": "Replaced by `http.request.body.size`.", "reason": "renamed", "renamed_to": "http.request.body.size"}
+        # @deprecated Replaced by `http.request.body.size`.
         HTTP_REQUEST_CONTENT_LENGTH_UNCOMPRESSED = 'http.request_content_length_uncompressed'
-    
+
         # The size of the response payload body in bytes. This is the number of bytes transferred excluding headers and is often, but not always, present as the [Content-Length](https://www.rfc-editor.org/rfc/rfc9110.html#field.content-length) header. For requests using transport encoding, this should be the compressed size.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   3495
-        #
         HTTP_RESPONSE_BODY_SIZE = 'http.response.body.size'
-    
+
         # Must be called with a key for the full attribute name. See notes below about the expectations
         # for the state of the key.
         #
@@ -234,54 +174,33 @@ module OpenTelemetry
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   ["application/json"]
-        #   ["abc", "def"]
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::HTTP::HTTP_RESPONSE_HEADER_LAMBDA}.
         HTTP_RESPONSE_HEADER_LAMBDA = ->(key) { "http.response.header.#{key}" }
-    
+
         # The total size of the response in bytes. This should be the total number of bytes sent over the wire, including the status line (HTTP/1.1), framing (HTTP/2 and HTTP/3), headers, and response body and trailers if any.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   1437
-        #
         HTTP_RESPONSE_SIZE = 'http.response.size'
-    
+
         # [HTTP response status code](https://tools.ietf.org/html/rfc7231#section-6).
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   200
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::HTTP::HTTP_RESPONSE_STATUS_CODE}.
         HTTP_RESPONSE_STATUS_CODE = 'http.response.status_code'
-    
+
         # Deprecated, use `http.response.header.content-length` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   3495
-        #
-        # @deprecated {"note": "Replaced by `http.response.header.content-length`.", "reason": "uncategorized"}
+        # @deprecated Replaced by `http.response.header.content-length`.
         HTTP_RESPONSE_CONTENT_LENGTH = 'http.response_content_length'
-    
+
         # Deprecated, use `http.response.body.size` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   5493
-        #
-        # @deprecated {"note": "Replaced by `http.response.body.size`.", "reason": "renamed", "renamed_to": "http.response.body.size"}
+        # @deprecated Replaced by `http.response.body.size`.
         HTTP_RESPONSE_CONTENT_LENGTH_UNCOMPRESSED = 'http.response_content_length_uncompressed'
-    
+
         # The matched route, that is, the path template in the format used by the respective server framework.
         #
         # MUST NOT be populated when this is not supported by the HTTP server framework as the route attribute should have low-cardinality and the URI path can NOT substitute it.
@@ -289,76 +208,45 @@ module OpenTelemetry
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   /users/:userID?
-        #   {controller}/{action}/{id?}
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::HTTP::HTTP_ROUTE}.
         HTTP_ROUTE = 'http.route'
-    
+
         # Deprecated, use `url.scheme` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   http
-        #   https
-        #
-        # @deprecated {"note": "Replaced by `url.scheme`.", "reason": "renamed", "renamed_to": "url.scheme"}
+        # @deprecated Replaced by `url.scheme`.
         HTTP_SCHEME = 'http.scheme'
-    
+
         # Deprecated, use `server.address` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   example.com
-        #
-        # @deprecated {"note": "Replaced by `server.address`.", "reason": "renamed", "renamed_to": "server.address"}
+        # @deprecated Replaced by `server.address`.
         HTTP_SERVER_NAME = 'http.server_name'
-    
+
         # Deprecated, use `http.response.status_code` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   200
-        #
-        # @deprecated {"note": "Replaced by `http.response.status_code`.", "reason": "renamed", "renamed_to": "http.response.status_code"}
+        # @deprecated Replaced by `http.response.status_code`.
         HTTP_STATUS_CODE = 'http.status_code'
-    
+
         # Deprecated, use `url.path` and `url.query` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   /search?q=OpenTelemetry#SemConv
-        #
-        # @deprecated {"note": "Split to `url.path` and `url.query`.", "reason": "obsoleted"}
+        # @deprecated Split to `url.path` and `url.query`.
         HTTP_TARGET = 'http.target'
-    
+
         # Deprecated, use `url.full` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   https://www.foo.bar/search?q=OpenTelemetry#SemConv
-        #
-        # @deprecated {"note": "Replaced by `url.full`.", "reason": "renamed", "renamed_to": "url.full"}
+        # @deprecated Replaced by `url.full`.
         HTTP_URL = 'http.url'
-    
+
         # Deprecated, use `user_agent.original` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   CERN-LineMode/2.15 libwww/2.17b3
-        #   Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1
-        #
-        # @deprecated {"note": "Replaced by `user_agent.original`.", "reason": "renamed", "renamed_to": "user_agent.original"}
+        # @deprecated Replaced by `user_agent.original`.
         HTTP_USER_AGENT = 'http.user_agent'
-    
+
         # @!endgroup
       end
     end

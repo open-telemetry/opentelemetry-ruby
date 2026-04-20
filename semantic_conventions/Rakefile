@@ -48,10 +48,10 @@ default_tasks =
 task default: default_tasks
 
 desc 'update semantic conventions'
-task generate: %i[update_gem_version generate_semconv generate_require_rollups rubocop_autocorrect]
+task generate: %i[update_spec_version_constant generate_require_rollups]
 
-SPEC_VERSION = '1.36.0'
-OTEL_WEAVER_VERSION = 'v0.17.1'
+SPEC_VERSION = '1.37.0'
+OTEL_WEAVER_VERSION = 'v0.22.1'
 semconv_source_dir = Pathname.new('./tmp/semconvrepo')
 semconv_output_dir = Pathname.new('./lib/opentelemetry/semconv')
 
@@ -97,7 +97,7 @@ task generate_semconv: %i[check_out_semconv_version clean_generated_code] do
   DOCKER_COMMAND
 end
 
-task generate_require_rollups: %i[generate_semconv] do
+task generate_require_rollups: %i[generate_semconv rubocop_autocorrect] do
   puts "\n+++ Generating rollup/barrel files for semconv namespaces.\n"
 
   Rake::FileList[  # find all the generated semconv files
@@ -125,8 +125,9 @@ task generate_require_rollups: %i[generate_semconv] do
 end
 
 desc 'Bump the semantic_conventions gem version to match the spec'
-task :update_gem_version do
-  puts "\n+++ Updating gem version to #{SPEC_VERSION}\n"
-  sh %(sed -i.bak "s/VERSION = '.*'/VERSION = '#{SPEC_VERSION}'/g" lib/opentelemetry/semantic_conventions/version.rb)
+task :update_spec_version_constant do
+  puts "\n+++ Updating library SPEC_VERSION constant to #{SPEC_VERSION}.\n"
+  puts "    ℹ️  VERSION is managed by release automation and left unchanged.\n"
+  sh %(sed -i.bak "s/SPEC_VERSION = '.*'/SPEC_VERSION = '#{SPEC_VERSION}'/g" lib/opentelemetry/semantic_conventions/version.rb)
   sh 'rm lib/opentelemetry/semantic_conventions/version.rb.bak'
 end

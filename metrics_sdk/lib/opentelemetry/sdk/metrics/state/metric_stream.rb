@@ -27,7 +27,9 @@ module OpenTelemetry
             instrument_kind,
             meter_provider,
             instrumentation_scope,
-            aggregation
+            aggregation,
+            exemplar_filter,
+            exemplar_reservoir
           )
             @name = name
             @description = description
@@ -38,6 +40,8 @@ module OpenTelemetry
             @default_aggregation = aggregation
             @data_points = {}
             @registered_views = {}
+            @exemplar_filter = exemplar_filter
+            @exemplar_reservoir = exemplar_reservoir
 
             find_registered_view
             @mutex = Mutex.new
@@ -79,15 +83,21 @@ module OpenTelemetry
           def update(value, attributes)
             if @registered_views.empty?
               resolved_cardinality_limit = resolve_cardinality_limit(nil)
-
-              @mutex.synchronize { @default_aggregation.update(value, attributes, @data_points, resolved_cardinality_limit) }
+              @mutex.synchronize do
+                exemplar_offer = should_offer_exemplar?(value, attributes)
+                @default_aggregation.update(value, attributes, @data_points, resolved_cardinality_limit, exemplar_offer: exemplar_offer)
+              end
             else
               @registered_views.each do |view, data_points|
                 resolved_cardinality_limit = resolve_cardinality_limit(view)
                 @mutex.synchronize do
                   attributes ||= {}
                   attributes.merge!(view.attribute_keys)
-                  view.aggregation.update(value, attributes, data_points, resolved_cardinality_limit) if view.valid_aggregation?
+
+                  if view.valid_aggregation?
+                    exemplar_offer = should_offer_exemplar?(value, attributes)
+                    view.aggregation.update(value, attributes, data_points, resolved_cardinality_limit, exemplar_offer: exemplar_offer)
+                  end
                 end
               end
             end
@@ -133,6 +143,12 @@ module OpenTelemetry
           def resolve_cardinality_limit(view)
             cardinality_limit = view&.aggregation_cardinality_limit || @cardinality_limit || DEFAULT_CARDINALITY_LIMIT
             [cardinality_limit, 0].max # if cardinality_limit is negative, then give it 0
+          end
+
+          def should_offer_exemplar?(value, attributes)
+            context = OpenTelemetry::Context.current
+            time = OpenTelemetry::Common::Utilities.time_in_nanoseconds
+            @exemplar_filter&.should_sample?(value, time, attributes, context)
           end
 
           def to_s

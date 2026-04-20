@@ -23,49 +23,34 @@ module OpenTelemetry
     module Incubating
       module EXCEPTION
         # @!group Attribute Names
-      
+
         # Indicates that the exception is escaping the scope of the span.
         #
         # @note Stability Level: stable
-        # @deprecated {"note": "It's no longer recommended to record exceptions that are handled and do not escape the scope of a span.\n", "reason": "obsoleted"}
+        # @deprecated It's no longer recommended to record exceptions that are handled and do not escape the scope of a span.
         EXCEPTION_ESCAPED = 'exception.escaped'
-    
+
         # The exception message.
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   Division by zero
-        #   Can't convert 'int' object to str implicitly
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::EXCEPTION::EXCEPTION_MESSAGE}.
         EXCEPTION_MESSAGE = 'exception.message'
-    
+
         # A stacktrace as a string in the natural representation for the language runtime. The representation is to be determined and documented by each language SIG.
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   Exception in thread "main" java.lang.RuntimeException: Test exception\n at com.example.GenerateTrace.methodB(GenerateTrace.java:13)\n at com.example.GenerateTrace.methodA(GenerateTrace.java:9)\n at com.example.GenerateTrace.main(GenerateTrace.java:5)
-
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::EXCEPTION::EXCEPTION_STACKTRACE}.
         EXCEPTION_STACKTRACE = 'exception.stacktrace'
-    
+
         # The type of the exception (its fully-qualified class name, if applicable). The dynamic type of the exception should be preferred over the static type in languages that support it.
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   java.net.ConnectException
-        #   OSError
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::EXCEPTION::EXCEPTION_TYPE}.
         EXCEPTION_TYPE = 'exception.type'
-    
+
         # @!endgroup
       end
     end

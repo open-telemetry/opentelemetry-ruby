@@ -22,7 +22,7 @@ module OpenTelemetry
   module SemConv
     module HTTP
       # @!group Attribute Names
-    
+
       # Must be called with a key for the full attribute name. See notes below about the expectations
       # for the state of the key.
       #
@@ -49,13 +49,8 @@ module OpenTelemetry
       #   attribute with value `["1.2.3.4", "1.2.3.5"]` or `["1.2.3.4, 1.2.3.5"]` depending on the HTTP library.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   ["application/json"]
-      #   ["1.2.3.4", "1.2.3.5"]
-      #
       HTTP_REQUEST_HEADER_LAMBDA = ->(key) { "http.request.header.#{key}" }
-  
+
       # HTTP request method.
       #
       # HTTP request method value SHOULD be "known" to the instrumentation.
@@ -74,36 +69,20 @@ module OpenTelemetry
       # Tracing instrumentations that do so, MUST also set `http.request.method_original` to the original value.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   GET
-      #   POST
-      #   HEAD
-      #
       HTTP_REQUEST_METHOD = 'http.request.method'
-  
+
       # Original HTTP method sent by the client in the request line.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   GeT
-      #   ACL
-      #   foo
-      #
       HTTP_REQUEST_METHOD_ORIGINAL = 'http.request.method_original'
-  
+
       # The ordinal number of request resending attempt (for any reason, including redirects).
       #
       # The resend count SHOULD be updated each time an HTTP request gets resent by the client, regardless of what was the cause of the resending (e.g. redirection, authorization failure, 503 Server Unavailable, network issues, or any other).
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   3
-      #
       HTTP_REQUEST_RESEND_COUNT = 'http.request.resend_count'
-  
+
       # Must be called with a key for the full attribute name. See notes below about the expectations
       # for the state of the key.
       #
@@ -129,35 +108,21 @@ module OpenTelemetry
       #   attribute with value `["abc", "def"]` or `["abc, def"]` depending on the HTTP library.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   ["application/json"]
-      #   ["abc", "def"]
-      #
       HTTP_RESPONSE_HEADER_LAMBDA = ->(key) { "http.response.header.#{key}" }
-  
+
       # [HTTP response status code](https://tools.ietf.org/html/rfc7231#section-6).
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   200
-      #
       HTTP_RESPONSE_STATUS_CODE = 'http.response.status_code'
-  
+
       # The matched route, that is, the path template in the format used by the respective server framework.
       #
       # MUST NOT be populated when this is not supported by the HTTP server framework as the route attribute should have low-cardinality and the URI path can NOT substitute it.
       # SHOULD include the [application root](/docs/http/http-spans.md#http-server-definitions) if there is one.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   /users/:userID?
-      #   {controller}/{action}/{id?}
-      #
       HTTP_ROUTE = 'http.route'
-  
+
       # @!endgroup
     end
   end

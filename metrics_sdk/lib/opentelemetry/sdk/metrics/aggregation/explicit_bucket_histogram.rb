@@ -12,6 +12,8 @@ module OpenTelemetry
         # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#explicit-bucket-histogram-aggregation
         class ExplicitBucketHistogram
           OVERFLOW_ATTRIBUTE_SET = { 'otel.metric.overflow' => true }.freeze
+          attr_reader :exemplar_reservoir
+
           DEFAULT_BOUNDARIES = [0, 5, 10, 25, 50, 75, 100, 250, 500, 1000].freeze
           private_constant :DEFAULT_BOUNDARIES
 
@@ -22,11 +24,14 @@ module OpenTelemetry
           def initialize(
             aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :cumulative),
             boundaries: DEFAULT_BOUNDARIES,
-            record_min_max: true
+            record_min_max: true,
+            exemplar_reservoir: nil
           )
             @aggregation_temporality = AggregationTemporality.determine_temporality(aggregation_temporality: aggregation_temporality, default: :cumulative)
             @boundaries = boundaries && !boundaries.empty? ? boundaries.sort : nil
             @record_min_max = record_min_max
+            @exemplar_reservoir = exemplar_reservoir || Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir.new(boundaries: @boundaries)
+            @exemplar_reservoir_storage = {}
           end
 
           def collect(start_time, end_time, data_points)
@@ -35,6 +40,8 @@ module OpenTelemetry
               hdps = data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano = start_time
                 hdp.time_unix_nano = end_time
+                reservoir = @exemplar_reservoir_storage[hdp.attributes]
+                hdp.exemplars = reservoir&.collect(attributes: hdp.attributes, aggregation_temporality: @aggregation_temporality)
                 hdp
               end
               data_points.clear
@@ -44,6 +51,8 @@ module OpenTelemetry
               data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano ||= start_time # Start time of a data point is from the first observation.
                 hdp.time_unix_nano = end_time
+                reservoir = @exemplar_reservoir_storage[hdp.attributes]
+                hdp.exemplars = reservoir&.collect(attributes: hdp.attributes, aggregation_temporality: @aggregation_temporality)
                 hdp = hdp.dup
                 hdp.bucket_counts = hdp.bucket_counts.dup
                 hdp
@@ -51,7 +60,7 @@ module OpenTelemetry
             end
           end
 
-          def update(amount, attributes, data_points, cardinality_limit)
+          def update(amount, attributes, data_points, cardinality_limit, exemplar_offer: false)
             hdp = if data_points.key?(attributes)
                     data_points[attributes]
                   elsif data_points.size >= cardinality_limit
@@ -60,7 +69,7 @@ module OpenTelemetry
                     create_new_data_point(attributes, data_points)
                   end
 
-            update_histogram_data_point(hdp, amount)
+            update_histogram_data_point(hdp, amount, exemplar_offer: exemplar_offer)
             nil
           end
 
@@ -90,7 +99,9 @@ module OpenTelemetry
             )
           end
 
-          def update_histogram_data_point(hdp, amount)
+          def update_histogram_data_point(hdp, amount, exemplar_offer: false)
+            reservior_update(hdp.attributes, amount, exemplar_offer)
+
             if @record_min_max
               hdp.max = amount if amount > hdp.max
               hdp.min = amount if amount < hdp.min
@@ -102,6 +113,22 @@ module OpenTelemetry
 
             bucket_index = @boundaries.bsearch_index { |i| i >= amount } || @boundaries.size
             hdp.bucket_counts[bucket_index] += 1
+          end
+
+          def reservior_update(attributes, amount, exemplar_offer)
+            reservoir = @exemplar_reservoir_storage[attributes]
+            unless reservoir
+              reservoir = @exemplar_reservoir.dup
+              reservoir.reset
+              @exemplar_reservoir_storage[attributes] = reservoir
+            end
+
+            return unless exemplar_offer
+
+            reservoir.offer(value: amount,
+                            timestamp: OpenTelemetry::Common::Utilities.time_in_nanoseconds,
+                            attributes: attributes,
+                            context: OpenTelemetry::Context.current)
           end
 
           def empty_bucket_counts

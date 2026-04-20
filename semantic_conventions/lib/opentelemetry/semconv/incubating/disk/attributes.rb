@@ -23,16 +23,12 @@ module OpenTelemetry
     module Incubating
       module DISK
         # @!group Attribute Names
-      
+
         # The disk IO operation direction.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   read
-        #
         DISK_IO_DIRECTION = 'disk.io.direction'
-    
+
         # @!endgroup
       end
     end

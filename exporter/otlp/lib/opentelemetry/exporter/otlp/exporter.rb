@@ -124,7 +124,7 @@ module OpenTelemetry
         end
 
         def http_connection(uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
-          http = Net::HTTP.new(uri.host, uri.port)
+          http = Net::HTTP.new(uri.hostname, uri.port)
           http.use_ssl = uri.scheme == 'https'
           http.verify_mode = ssl_verify_mode
           http.ca_file = certificate_file unless certificate_file.nil?
@@ -177,7 +177,7 @@ module OpenTelemetry
             response = measure_request_duration { @http.request(request) }
 
             case response
-            when Net::HTTPOK
+            when Net::HTTPSuccess
               response.body # Read and discard body
               SUCCESS
             when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
@@ -299,25 +299,25 @@ module OpenTelemetry
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(
             Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
               resource_spans: span_data
-                .group_by(&:resource)
-                .map do |resource, span_datas|
-                  Opentelemetry::Proto::Trace::V1::ResourceSpans.new(
-                    resource: Opentelemetry::Proto::Resource::V1::Resource.new(
-                      attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
-                    ),
-                    scope_spans: span_datas
-                      .group_by(&:instrumentation_scope)
-                      .map do |il, sds|
-                        Opentelemetry::Proto::Trace::V1::ScopeSpans.new(
-                          scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
-                            name: il.name,
-                            version: il.version
-                          ),
-                          spans: sds.map { |sd| as_otlp_span(sd) }
-                        )
-                      end
-                  )
-                end
+                              .group_by(&:resource)
+                              .map do |resource, span_datas|
+                                Opentelemetry::Proto::Trace::V1::ResourceSpans.new(
+                                  resource: Opentelemetry::Proto::Resource::V1::Resource.new(
+                                    attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
+                                  ),
+                                  scope_spans: span_datas
+                                               .group_by(&:instrumentation_scope)
+                                               .map do |il, sds|
+                                                 Opentelemetry::Proto::Trace::V1::ScopeSpans.new(
+                                                   scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
+                                                     name: il.name,
+                                                     version: il.version
+                                                   ),
+                                                   spans: sds.map { |sd| as_otlp_span(sd) }
+                                                 )
+                                               end
+                                )
+                              end
             )
           )
         rescue StandardError => e
@@ -450,7 +450,7 @@ module OpenTelemetry
           raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if entries.empty?
 
           entries.each_with_object({}) do |entry, headers|
-            k, v = entry.split('=', 2).map(&CGI.method(:unescape))
+            k, v = entry.split('=', 2).map(&URI.method(:decode_uri_component))
             begin
               k = k.to_s.strip
               v = v.to_s.strip

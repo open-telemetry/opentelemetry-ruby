@@ -23,25 +23,17 @@ module OpenTelemetry
     module Incubating
       module ZOS
         # @!group Attribute Names
-      
+
         # The System Management Facility (SMF) Identifier uniquely identified a z/OS system within a SYSPLEX or mainframe environment and is used for system and performance analysis.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   SYS1
-        #
         ZOS_SMF_ID = 'zos.smf.id'
-    
+
         # The name of the SYSPLEX to which the z/OS system belongs too.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   SYSPLEX1
-        #
         ZOS_SYSPLEX_NAME = 'zos.sysplex.name'
-    
+
         # @!endgroup
       end
     end

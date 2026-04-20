@@ -23,138 +23,80 @@ module OpenTelemetry
     module Incubating
       module SYSTEM
         # @!group Attribute Names
-      
+
         # Deprecated, use `cpu.logical_number` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   1
-        #
         SYSTEM_CPU_LOGICAL_NUMBER = 'system.cpu.logical_number'
-    
+
         # Deprecated, use `cpu.mode` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   idle
-        #   interrupt
-        #
-        # @deprecated {"note": "Replaced by `cpu.mode`.", "reason": "renamed", "renamed_to": "cpu.mode"}
+        # @deprecated Replaced by `cpu.mode`.
         SYSTEM_CPU_STATE = 'system.cpu.state'
-    
+
         # The device identifier
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   (identifier)
-        #
         SYSTEM_DEVICE = 'system.device'
-    
+
         # The filesystem mode
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   rw, ro
-        #
         SYSTEM_FILESYSTEM_MODE = 'system.filesystem.mode'
-    
+
         # The filesystem mount path
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   /mnt/data
-        #
         SYSTEM_FILESYSTEM_MOUNTPOINT = 'system.filesystem.mountpoint'
-    
+
         # The filesystem state
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   used
-        #
         SYSTEM_FILESYSTEM_STATE = 'system.filesystem.state'
-    
+
         # The filesystem type
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   ext4
-        #
         SYSTEM_FILESYSTEM_TYPE = 'system.filesystem.type'
-    
+
         # The memory state
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   free
-        #   cached
-        #
         SYSTEM_MEMORY_STATE = 'system.memory.state'
-    
+
         # Deprecated, use `network.connection.state` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   close_wait
-        #
-        # @deprecated {"note": "Replaced by `network.connection.state`.", "reason": "renamed", "renamed_to": "network.connection.state"}
+        # @deprecated Replaced by `network.connection.state`.
         SYSTEM_NETWORK_STATE = 'system.network.state'
-    
+
         # The paging access direction
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   in
-        #
         SYSTEM_PAGING_DIRECTION = 'system.paging.direction'
-    
+
         # The memory paging state
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   free
-        #
         SYSTEM_PAGING_STATE = 'system.paging.state'
-    
+
         # The memory paging type
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   minor
-        #
         SYSTEM_PAGING_TYPE = 'system.paging.type'
-    
+
         # The process state, e.g., [Linux Process State Codes](https://man7.org/linux/man-pages/man1/ps.1.html#PROCESS_STATE_CODES)
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   running
-        #
         SYSTEM_PROCESS_STATUS = 'system.process.status'
-    
+
         # Deprecated, use `system.process.status` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   running
-        #
-        # @deprecated {"note": "Replaced by `system.process.status`.", "reason": "renamed", "renamed_to": "system.process.status"}
+        # @deprecated Replaced by `system.process.status`.
         SYSTEM_PROCESSES_STATUS = 'system.processes.status'
-    
+
         # @!endgroup
       end
     end

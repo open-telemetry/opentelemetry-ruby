@@ -1,11 +1,19 @@
 # Release History: opentelemetry-api
 
+### v1.9.0 / 2026-04-07
+
+* ADDED: Min Ruby Version 3.3 (#2070)
+
+### v1.8.0 / 2026-03-10
+
+* ADDED: Replace cgi with uri for encode and decode (#2028)
+
 ### v1.7.0 / 2025-09-17
 
-* BREAKING CHANGE: Remove Span APIs for attributes and events
+- BREAKING CHANGE: Remove Span APIs for attributes and events
 
-* ADDED: Add record_exception option for in_span
-* FIXED: Remove Span APIs for attributes and events
+- ADDED: Add record_exception option for in_span
+- FIXED: Remove Span APIs for attributes and events
 
 ### v1.6.0 / 2025-08-14
 
@@ -190,7 +198,7 @@
 ### v0.7.0 / 2020-10-07
 
 - FIXED: Safely navigate span variable during error cases
-- DOCS: Standardize toplevel docs structure and readme
+- DOCS: Standardize top-level docs structure and readme
 - DOCS: Fix param description in TextMapInjector for Baggage
 
 ### v0.6.0 / 2020-09-10

@@ -11,5 +11,5 @@ gemspec
 eval_gemfile '../contrib/Gemfile.shared'
 
 group :test, :development do
-  gem 'opentelemetry-test-helpers', path: '../test_helpers'
+  gem 'opentelemetry-test-helpers', path: '../test_helpers', require: false
 end

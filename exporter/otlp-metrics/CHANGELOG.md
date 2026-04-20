@@ -1,5 +1,16 @@
 # Release History: opentelemetry-exporter-otlp-metrics
 
+### v0.8.0 / 2026-04-07
+
+* ADDED: Min Ruby Version 3.3 (#2070)
+* ADDED: Handle HTTP 2XX responses as successful in OTLP exporters (#2044)
+* ADDED: Add basic support for metrics exemplar (#1609)
+* FIXED: Issue with sending traces to IPv6 endpoints (#1935)
+
+### v0.7.0 / 2026-03-10
+
+* ADDED: Replace cgi with uri for encode and decode (#2028)
+
 ### v0.6.1 / 2025-10-17
 
 * FIXED: Increase OTLP Proto version to 1.8.0 to match version in opentelemetry-exporter-otlp

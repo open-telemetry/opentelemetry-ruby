@@ -23,14 +23,14 @@ module OpenTelemetry
     module Incubating
       module OPENTRACING
         # @!group Attribute Names
-      
+
         # Parent-child Reference type
         #
         # The causal relationship between a child Span and a parent Span.
         #
         # @note Stability Level: development
         OPENTRACING_REF_TYPE = 'opentracing.ref_type'
-    
+
         # @!endgroup
       end
     end

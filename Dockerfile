@@ -1,8 +1,4 @@
-# Configuration for Ruby base image
-ARG ALPINE_VERSION=3.21
-ARG RUBY_VERSION=3.1.6
-
-FROM ruby:"${RUBY_VERSION}-alpine${ALPINE_VERSION}" as ruby
+FROM ruby:3.3.6-alpine3.21@sha256:f73a08ebc40dc2bb3ef7ae3ac700b315b2288b498d323644522bd643b59be709 as ruby
 
 # Metadata
 LABEL maintainer="open-telemetry/opentelemetry-ruby"

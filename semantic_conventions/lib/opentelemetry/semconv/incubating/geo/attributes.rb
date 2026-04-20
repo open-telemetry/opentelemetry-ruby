@@ -23,67 +23,42 @@ module OpenTelemetry
     module Incubating
       module GEO
         # @!group Attribute Names
-      
+
         # Two-letter code representing continent’s name.
         #
         # @note Stability Level: development
         GEO_CONTINENT_CODE = 'geo.continent.code'
-    
+
         # Two-letter ISO Country Code ([ISO 3166-1 alpha2](https://wikipedia.org/wiki/ISO_3166-1#Codes)).
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   CA
-        #
         GEO_COUNTRY_ISO_CODE = 'geo.country.iso_code'
-    
+
         # Locality name. Represents the name of a city, town, village, or similar populated place.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   Montreal
-        #   Berlin
-        #
         GEO_LOCALITY_NAME = 'geo.locality.name'
-    
+
         # Latitude of the geo location in [WGS84](https://wikipedia.org/wiki/World_Geodetic_System#WGS84).
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   45.505918
-        #
         GEO_LOCATION_LAT = 'geo.location.lat'
-    
+
         # Longitude of the geo location in [WGS84](https://wikipedia.org/wiki/World_Geodetic_System#WGS84).
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   -73.61483
-        #
         GEO_LOCATION_LON = 'geo.location.lon'
-    
+
         # Postal code associated with the location. Values appropriate for this field may also be known as a postcode or ZIP code and will vary widely from country to country.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   94040
-        #
         GEO_POSTAL_CODE = 'geo.postal_code'
-    
+
         # Region ISO code ([ISO 3166-2](https://wikipedia.org/wiki/ISO_3166-2)).
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   CA-QC
-        #
         GEO_REGION_ISO_CODE = 'geo.region.iso_code'
-    
+
         # @!endgroup
       end
     end

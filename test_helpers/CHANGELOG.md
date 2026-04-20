@@ -1,5 +1,9 @@
 # Release History: opentelemetry-test-helpers
 
+### v0.8.0 / 2026-04-07
+
+* ADDED: Min Ruby Version 3.3 (#2070)
+
 ### v0.7.0 / 2025-10-14
 
 * ADDED: Use common method for returning timestamp in nanoseconds

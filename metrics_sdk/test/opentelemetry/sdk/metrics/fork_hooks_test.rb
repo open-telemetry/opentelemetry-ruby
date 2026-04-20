@@ -76,7 +76,7 @@ describe OpenTelemetry::SDK::Metrics::ForkHooks do
       end
     end.new
 
-    reader2 = OpenStruct.new
+    reader2 = Struct.new(:dummy).new
 
     meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
     meter_provider.add_metric_reader(reader1)

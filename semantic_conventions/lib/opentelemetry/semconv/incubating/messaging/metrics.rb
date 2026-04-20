@@ -23,7 +23,7 @@ module OpenTelemetry
     module Incubating
       module MESSAGING
         # @!group Metrics Names
-      
+
         # Number of messages that were delivered to the application.
         #
         # Records the number of messages pulled from the broker or number of messages dispatched to the application in push-based scenarios.
@@ -31,64 +31,64 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         MESSAGING_CLIENT_CONSUMED_MESSAGES = 'messaging.client.consumed.messages'
-    
+
         # Duration of messaging operation initiated by a producer or consumer client.
         #
         # This metric SHOULD NOT be used to report processing duration - processing duration is reported in `messaging.process.duration` metric.
         #
         # @note Stability Level: development
         MESSAGING_CLIENT_OPERATION_DURATION = 'messaging.client.operation.duration'
-    
+
         # Deprecated. Use `messaging.client.sent.messages` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `messaging.client.sent.messages`.", "reason": "renamed", "renamed_to": "messaging.client.sent.messages"}
+        # @deprecated Replaced by `messaging.client.sent.messages`.
         MESSAGING_CLIENT_PUBLISHED_MESSAGES = 'messaging.client.published.messages'
-    
+
         # Number of messages producer attempted to send to the broker.
         #
         # This metric MUST NOT count messages that were created but haven't yet been sent.
         #
         # @note Stability Level: development
         MESSAGING_CLIENT_SENT_MESSAGES = 'messaging.client.sent.messages'
-    
+
         # Duration of processing operation.
         #
         # This metric MUST be reported for operations with `messaging.operation.type` that matches `process`.
         #
         # @note Stability Level: development
         MESSAGING_PROCESS_DURATION = 'messaging.process.duration'
-    
+
         # Deprecated. Use `messaging.client.consumed.messages` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `messaging.client.consumed.messages`.", "reason": "renamed", "renamed_to": "messaging.client.consumed.messages"}
+        # @deprecated Replaced by `messaging.client.consumed.messages`.
         MESSAGING_PROCESS_MESSAGES = 'messaging.process.messages'
-    
+
         # Deprecated. Use `messaging.client.operation.duration` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `messaging.client.operation.duration`.", "reason": "renamed", "renamed_to": "messaging.client.operation.duration"}
+        # @deprecated Replaced by `messaging.client.operation.duration`.
         MESSAGING_PUBLISH_DURATION = 'messaging.publish.duration'
-    
+
         # Deprecated. Use `messaging.client.sent.messages` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `messaging.client.sent.messages`.", "reason": "renamed", "renamed_to": "messaging.client.sent.messages"}
+        # @deprecated Replaced by `messaging.client.sent.messages`.
         MESSAGING_PUBLISH_MESSAGES = 'messaging.publish.messages'
-    
+
         # Deprecated. Use `messaging.client.operation.duration` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `messaging.client.operation.duration`.", "reason": "renamed", "renamed_to": "messaging.client.operation.duration"}
+        # @deprecated Replaced by `messaging.client.operation.duration`.
         MESSAGING_RECEIVE_DURATION = 'messaging.receive.duration'
-    
+
         # Deprecated. Use `messaging.client.consumed.messages` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `messaging.client.consumed.messages`.", "reason": "renamed", "renamed_to": "messaging.client.consumed.messages"}
+        # @deprecated Replaced by `messaging.client.consumed.messages`.
         MESSAGING_RECEIVE_MESSAGES = 'messaging.receive.messages'
-    
+
         # @!endgroup
       end
     end

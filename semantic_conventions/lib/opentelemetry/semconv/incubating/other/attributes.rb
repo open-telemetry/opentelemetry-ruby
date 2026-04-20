@@ -23,17 +23,13 @@ module OpenTelemetry
     module Incubating
       module OTHER
         # @!group Attribute Names
-      
+
         # Deprecated, use `db.client.connection.state` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   idle
-        #
-        # @deprecated {"note": "Replaced by `db.client.connection.state`.", "reason": "renamed", "renamed_to": "db.client.connection.state"}
+        # @deprecated Replaced by `db.client.connection.state`.
         STATE = 'state'
-    
+
         # @!endgroup
       end
     end

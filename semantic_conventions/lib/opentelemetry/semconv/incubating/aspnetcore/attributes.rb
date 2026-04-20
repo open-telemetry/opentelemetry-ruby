@@ -23,89 +23,138 @@ module OpenTelemetry
     module Incubating
       module ASPNETCORE
         # @!group Attribute Names
-      
-        # ASP.NET Core exception middleware handling result
+
+        # The result of the authentication operation.
+        #
+        # @note Stability Level: development
+        ASPNETCORE_AUTHENTICATION_RESULT = 'aspnetcore.authentication.result'
+
+        # The identifier that names a particular authentication handler.
+        #
+        # @note Stability Level: development
+        ASPNETCORE_AUTHENTICATION_SCHEME = 'aspnetcore.authentication.scheme'
+
+        # The name of the authorization policy.
+        #
+        # @note Stability Level: development
+        ASPNETCORE_AUTHORIZATION_POLICY = 'aspnetcore.authorization.policy'
+
+        # The result of calling the authorization service.
+        #
+        # @note Stability Level: development
+        ASPNETCORE_AUTHORIZATION_RESULT = 'aspnetcore.authorization.result'
+
+        # ASP.NET Core exception middleware handling result.
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   handled
-        #   unhandled
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_DIAGNOSTICS_EXCEPTION_RESULT}.
         ASPNETCORE_DIAGNOSTICS_EXCEPTION_RESULT = 'aspnetcore.diagnostics.exception.result'
-    
+
         # Full type name of the [`IExceptionHandler`](https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.diagnostics.iexceptionhandler) implementation that handled the exception.
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   Contoso.MyHandler
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_DIAGNOSTICS_HANDLER_TYPE}.
         ASPNETCORE_DIAGNOSTICS_HANDLER_TYPE = 'aspnetcore.diagnostics.handler.type'
-    
+
+        # The error code for a failed identity operation.
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_ERROR_CODE = 'aspnetcore.identity.error_code'
+
+        # The result from checking the password.
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_PASSWORD_CHECK_RESULT = 'aspnetcore.identity.password_check_result'
+
+        # The result of the identity operation.
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_RESULT = 'aspnetcore.identity.result'
+
+        # Whether the sign in result was success or failure.
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_SIGN_IN_RESULT = 'aspnetcore.identity.sign_in.result'
+
+        # The authentication type.
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_SIGN_IN_TYPE = 'aspnetcore.identity.sign_in.type'
+
+        # What the token will be used for.
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_TOKEN_PURPOSE = 'aspnetcore.identity.token_purpose'
+
+        # The result of token verification.
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_TOKEN_VERIFIED = 'aspnetcore.identity.token_verified'
+
+        # The user update type.
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_USER_UPDATE_TYPE = 'aspnetcore.identity.user.update_type'
+
+        # The full name of the identity user type.
+        #
+        # @note Stability Level: development
+        ASPNETCORE_IDENTITY_USER_TYPE = 'aspnetcore.identity.user_type'
+
+        # The name of the library or subsystem using the memory pool instance.
+        #
+        # @note Stability Level: development
+        ASPNETCORE_MEMORY_POOL_OWNER = 'aspnetcore.memory_pool.owner'
+
         # Rate limiting policy name.
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   fixed
-        #   sliding
-        #   token
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_RATE_LIMITING_POLICY}.
         ASPNETCORE_RATE_LIMITING_POLICY = 'aspnetcore.rate_limiting.policy'
-    
+
         # Rate-limiting result, shows whether the lease was acquired or contains a rejection reason
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   acquired
-        #   request_canceled
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_RATE_LIMITING_RESULT}.
         ASPNETCORE_RATE_LIMITING_RESULT = 'aspnetcore.rate_limiting.result'
-    
+
         # Flag indicating if request was handled by the application pipeline.
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   true
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_REQUEST_IS_UNHANDLED}.
         ASPNETCORE_REQUEST_IS_UNHANDLED = 'aspnetcore.request.is_unhandled'
-    
+
         # A value that indicates whether the matched route is a fallback route.
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   true
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_ROUTING_IS_FALLBACK}.
         ASPNETCORE_ROUTING_IS_FALLBACK = 'aspnetcore.routing.is_fallback'
-    
+
         # Match result - success or failure
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   success
-        #   failure
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_ROUTING_MATCH_STATUS}.
         ASPNETCORE_ROUTING_MATCH_STATUS = 'aspnetcore.routing.match_status'
-    
+
+        # A flag indicating whether the sign in is persistent.
+        #
+        # @note Stability Level: development
+        ASPNETCORE_SIGN_IN_IS_PERSISTENT = 'aspnetcore.sign_in.is_persistent'
+
+        # A value that indicates whether the user is authenticated.
+        #
+        # @note Stability Level: stable
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::ASPNETCORE::ASPNETCORE_USER_IS_AUTHENTICATED}.
+        ASPNETCORE_USER_IS_AUTHENTICATED = 'aspnetcore.user.is_authenticated'
+
         # @!endgroup
       end
     end

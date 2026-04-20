@@ -23,35 +23,27 @@ module OpenTelemetry
     module Incubating
       module TELEMETRY
         # @!group Attribute Names
-      
+
         # The name of the auto instrumentation agent or distribution, if used.
         #
         # Official auto instrumentation agents and distributions SHOULD set the `telemetry.distro.name` attribute to
         # a string starting with `opentelemetry-`, e.g. `opentelemetry-java-instrumentation`.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   parts-unlimited-java
-        #
         TELEMETRY_DISTRO_NAME = 'telemetry.distro.name'
-    
+
         # The version string of the auto instrumentation agent or distribution, if used.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   1.2.3
-        #
         TELEMETRY_DISTRO_VERSION = 'telemetry.distro.version'
-    
+
         # The language of the telemetry SDK.
         #
         # @note Stability Level: stable
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::TELEMETRY::TELEMETRY_SDK_LANGUAGE}.
         TELEMETRY_SDK_LANGUAGE = 'telemetry.sdk.language'
-    
+
         # The name of the telemetry SDK as defined above.
         #
         # The OpenTelemetry SDK MUST set the `telemetry.sdk.name` attribute to `opentelemetry`.
@@ -63,24 +55,16 @@ module OpenTelemetry
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   opentelemetry
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::TELEMETRY::TELEMETRY_SDK_NAME}.
         TELEMETRY_SDK_NAME = 'telemetry.sdk.name'
-    
+
         # The version string of the telemetry SDK.
         #
         # @note Stability Level: stable
         #
-        # @example Sample Values
-        #   1.2.3
-        #
-        #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::TELEMETRY::TELEMETRY_SDK_VERSION}.
         TELEMETRY_SDK_VERSION = 'telemetry.sdk.version'
-    
+
         # @!endgroup
       end
     end

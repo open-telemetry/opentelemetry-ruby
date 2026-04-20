@@ -120,7 +120,7 @@ module OpenTelemetry
               @http.start unless @http.started?
               response = @http.request(request)
               case response
-              when Net::HTTPOK
+              when Net::HTTPSuccess
                 response.body # Read and discard body
                 SUCCESS
               when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
@@ -188,25 +188,25 @@ module OpenTelemetry
             Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.encode(
               Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.new(
                 resource_metrics: metrics_data
-                  .group_by(&:resource)
-                  .map do |resource, scope_metrics|
-                    Opentelemetry::Proto::Metrics::V1::ResourceMetrics.new(
-                      resource: Opentelemetry::Proto::Resource::V1::Resource.new(
-                        attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
-                      ),
-                      scope_metrics: scope_metrics
-                        .group_by(&:instrumentation_scope)
-                        .map do |instrumentation_scope, metrics|
-                          Opentelemetry::Proto::Metrics::V1::ScopeMetrics.new(
-                            scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
-                              name: instrumentation_scope.name,
-                              version: instrumentation_scope.version
-                            ),
-                            metrics: metrics.map { |sd| as_otlp_metrics(sd) }
-                          )
-                        end
-                    )
-                  end
+                                  .group_by(&:resource)
+                                  .map do |resource, scope_metrics|
+                                    Opentelemetry::Proto::Metrics::V1::ResourceMetrics.new(
+                                      resource: Opentelemetry::Proto::Resource::V1::Resource.new(
+                                        attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
+                                      ),
+                                      scope_metrics: scope_metrics
+                                                     .group_by(&:instrumentation_scope)
+                                                     .map do |instrumentation_scope, metrics|
+                                                       Opentelemetry::Proto::Metrics::V1::ScopeMetrics.new(
+                                                         scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
+                                                           name: instrumentation_scope.name,
+                                                           version: instrumentation_scope.version
+                                                         ),
+                                                         metrics: metrics.map { |sd| as_otlp_metrics(sd) }
+                                                       )
+                                                     end
+                                    )
+                                  end
               )
             )
           rescue StandardError => e
@@ -299,7 +299,7 @@ module OpenTelemetry
               sum: hdp.sum,
               bucket_counts: hdp.bucket_counts,
               explicit_bounds: hdp.explicit_bounds,
-              exemplars: hdp.exemplars,
+              exemplars: as_otlp_exemplars(hdp.exemplars),
               min: hdp.min,
               max: hdp.max
             )
@@ -323,7 +323,7 @@ module OpenTelemetry
                 bucket_counts: ehdp.negative.counts
               ),
               flags: ehdp.flags,
-              exemplars: ehdp.exemplars,
+              exemplars: as_otlp_exemplars(ehdp.exemplars),
               min: ehdp.min,
               max: ehdp.max,
               zero_threshold: ehdp.zero_threshold
@@ -335,7 +335,7 @@ module OpenTelemetry
               attributes: ndp.attributes.map { |k, v| as_otlp_key_value(k, v) },
               start_time_unix_nano: ndp.start_time_unix_nano,
               time_unix_nano: ndp.time_unix_nano,
-              exemplars: ndp.exemplars # exemplars not implemented yet from metrics sdk
+              exemplars: as_otlp_exemplars(ndp.exemplars)
             }
 
             if ndp.value.is_a?(Float)
@@ -345,6 +345,30 @@ module OpenTelemetry
             end
 
             Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(**args)
+          end
+
+          def as_otlp_exemplars(exemplars)
+            exemplars&.map { |ex| as_otlp_exemplar(ex) } || []
+          end
+
+          def as_otlp_exemplar(exemplar)
+            args = {
+              time_unix_nano: exemplar.time_unix_nano,
+              span_id: exemplar.span_id,
+              trace_id: exemplar.trace_id
+            }
+
+            # Add filtered_attributes if present
+            args[:filtered_attributes] = exemplar.filtered_attributes.map { |k, v| as_otlp_key_value(k, v) } if exemplar.filtered_attributes
+
+            # Set value based on type
+            if exemplar.value.is_a?(Float)
+              args[:as_double] = exemplar.value
+            else
+              args[:as_int] = exemplar.value
+            end
+
+            Opentelemetry::Proto::Metrics::V1::Exemplar.new(**args)
           end
 
           # may not need this

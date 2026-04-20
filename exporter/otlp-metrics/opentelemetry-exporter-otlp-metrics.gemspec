@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
                ::Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 3.1'
+  spec.required_ruby_version = '>= 3.3'
 
   spec.add_dependency 'googleapis-common-protos-types', '~> 1.3'
   spec.add_dependency 'google-protobuf', '>= 3.18', '< 5.0'
@@ -35,11 +35,10 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-semantic_conventions'
 
   spec.add_development_dependency 'appraisal', '~> 2.2.0'
-  spec.add_development_dependency 'faraday', '~> 0.13'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'opentelemetry-test-helpers'
   spec.add_development_dependency 'pry-byebug' unless RUBY_ENGINE == 'jruby'
-  spec.add_development_dependency 'rake', '~> 12.0'
+  spec.add_development_dependency 'rake', '~> 13.3'
   spec.add_development_dependency 'rubocop', '~> 1.65'
   spec.add_development_dependency 'rubocop-minitest', '~> 0.38.0'
   spec.add_development_dependency 'rubocop-performance', '~> 1.25'

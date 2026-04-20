@@ -23,40 +23,42 @@ module OpenTelemetry
     module Incubating
       module SYSTEM
         # @!group Metrics Names
-      
+
         # Operating frequency of the logical CPU in Hertz.
         #
         # @note Stability Level: development
         SYSTEM_CPU_FREQUENCY = 'system.cpu.frequency'
-    
-        # Reports the number of logical (virtual) processor cores created by the operating system to manage multitasking
+
+        # Reports the number of logical (virtual) processor cores created by the operating system to manage multitasking.
         #
         # Calculated by multiplying the number of sockets by the number of cores per socket, and then by the number of threads per core
         #
         # @note Stability Level: development
         SYSTEM_CPU_LOGICAL_COUNT = 'system.cpu.logical.count'
-    
-        # Reports the number of actual physical processor cores on the hardware
+
+        # Reports the number of actual physical processor cores on the hardware.
         #
         # Calculated by multiplying the number of sockets by the number of cores per socket
         #
         # @note Stability Level: development
         SYSTEM_CPU_PHYSICAL_COUNT = 'system.cpu.physical.count'
-    
-        # Seconds each logical CPU spent on each mode
+
+        # Seconds each logical CPU spent on each mode.
         #
         # @note Stability Level: development
         SYSTEM_CPU_TIME = 'system.cpu.time'
-    
+
         # For each logical CPU, the utilization is calculated as the change in cumulative CPU time (cpu.time) over a measurement interval, divided by the elapsed time.
         #
         # @note Stability Level: development
         SYSTEM_CPU_UTILIZATION = 'system.cpu.utilization'
-    
+
+        # TODO.
+        #
         # @note Stability Level: development
         SYSTEM_DISK_IO = 'system.disk.io'
-    
-        # Time disk spent activated
+
+        # Time disk spent activated.
         #
         # The real elapsed time ("wall clock") used in the I/O path (time from operations running in parallel are not counted). Measured as:
         #
@@ -67,16 +69,18 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         SYSTEM_DISK_IO_TIME = 'system.disk.io_time'
-    
-        # The total storage capacity of the disk
+
+        # The total storage capacity of the disk.
         #
         # @note Stability Level: development
         SYSTEM_DISK_LIMIT = 'system.disk.limit'
-    
+
+        # TODO.
+        #
         # @note Stability Level: development
         SYSTEM_DISK_MERGED = 'system.disk.merged'
-    
-        # Sum of the time each operation took to complete
+
+        # Sum of the time each operation took to complete.
         #
         # Because it is the sum of time each request took, parallel-issued requests each contribute to make the count grow. Measured as:
         #
@@ -85,15 +89,17 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         SYSTEM_DISK_OPERATION_TIME = 'system.disk.operation_time'
-    
+
+        # TODO.
+        #
         # @note Stability Level: development
         SYSTEM_DISK_OPERATIONS = 'system.disk.operations'
-    
-        # The total storage capacity of the filesystem
+
+        # The total storage capacity of the filesystem.
         #
         # @note Stability Level: development
         SYSTEM_FILESYSTEM_LIMIT = 'system.filesystem.limit'
-    
+
         # Reports a filesystem's space usage across different states.
         #
         # The sum of all `system.filesystem.usage` values over the different `system.filesystem.state` attributes
@@ -101,11 +107,13 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         SYSTEM_FILESYSTEM_USAGE = 'system.filesystem.usage'
-    
+
+        # TODO.
+        #
         # @note Stability Level: development
         SYSTEM_FILESYSTEM_UTILIZATION = 'system.filesystem.utilization'
-    
-        # An estimate of how much memory is available for starting new applications, without causing swapping
+
+        # An estimate of how much memory is available for starting new applications, without causing swapping.
         #
         # This is an alternative to `system.memory.usage` metric with `state=free`.
         # Linux starting from 3.14 exports "available" memory. It takes "free" memory as a baseline, and then factors in kernel-specific values.
@@ -115,7 +123,7 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         SYSTEM_LINUX_MEMORY_AVAILABLE = 'system.linux.memory.available'
-    
+
         # Reports the memory used by the Linux kernel for managing caches of frequently used objects.
         #
         # The sum over the `reclaimable` and `unreclaimable` state values in `linux.memory.slab.usage` SHOULD be equal to the total slab memory available on the system.
@@ -124,14 +132,12 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         SYSTEM_LINUX_MEMORY_SLAB_USAGE = 'system.linux.memory.slab.usage'
-    
-        # Total memory available in the system.
-        #
-        # Its value SHOULD equal the sum of `system.memory.state` over all states.
+
+        # Total virtual memory available in the system.
         #
         # @note Stability Level: development
         SYSTEM_MEMORY_LIMIT = 'system.memory.limit'
-    
+
         # Shared memory used (mostly by tmpfs).
         #
         # Equivalent of `shared` from [`free` command](https://man7.org/linux/man-pages/man1/free.1.html) or
@@ -139,87 +145,98 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         SYSTEM_MEMORY_SHARED = 'system.memory.shared'
-    
+
         # Reports memory in use by state.
-        #
-        # The sum over all `system.memory.state` values SHOULD equal the total memory
-        # available on the system, that is `system.memory.limit`.
         #
         # @note Stability Level: development
         SYSTEM_MEMORY_USAGE = 'system.memory.usage'
-    
+
+        # TODO.
+        #
         # @note Stability Level: development
         SYSTEM_MEMORY_UTILIZATION = 'system.memory.utilization'
-    
+
+        # TODO.
+        #
         # @note Stability Level: development
         SYSTEM_NETWORK_CONNECTION_COUNT = 'system.network.connection.count'
-    
-        # Deprecated, use `system.network.connection.count` instead
+
+        # Deprecated, use `system.network.connection.count` instead.
         #
         # @note Stability Level: development
-        # @deprecated {"note": "Replaced by `system.network.connection.count`.", "reason": "renamed", "renamed_to": "system.network.connection.count"}
+        # @deprecated Replaced by `system.network.connection.count`.
         SYSTEM_NETWORK_CONNECTIONS = 'system.network.connections'
-    
-        # Count of packets that are dropped or discarded even though there was no error
+
+        # Count of network errors detected.
         #
         # Measured as:
         #
-        # - Linux: the `drop` column in `/proc/dev/net` ([source](https://web.archive.org/web/20180321091318/http://www.onlamp.com/pub/a/linux/2000/11/16/LinuxAdmin.html))
-        # - Windows: [`InDiscards`/`OutDiscards`](https://docs.microsoft.com/windows/win32/api/netioapi/ns-netioapi-mib_if_row2)
-        #   from [`GetIfEntry2`](https://docs.microsoft.com/windows/win32/api/netioapi/nf-netioapi-getifentry2)
-        #
-        # @note Stability Level: development
-        SYSTEM_NETWORK_DROPPED = 'system.network.dropped'
-    
-        # Count of network errors detected
-        #
-        # Measured as:
-        #
-        # - Linux: the `errs` column in `/proc/dev/net` ([source](https://web.archive.org/web/20180321091318/http://www.onlamp.com/pub/a/linux/2000/11/16/LinuxAdmin.html)).
+        # - Linux: the `errs` column in `/proc/net/dev` ([source](https://web.archive.org/web/20180321091318/http://www.onlamp.com/pub/a/linux/2000/11/16/LinuxAdmin.html)).
         # - Windows: [`InErrors`/`OutErrors`](https://docs.microsoft.com/windows/win32/api/netioapi/ns-netioapi-mib_if_row2)
         #   from [`GetIfEntry2`](https://docs.microsoft.com/windows/win32/api/netioapi/nf-netioapi-getifentry2).
         #
         # @note Stability Level: development
         SYSTEM_NETWORK_ERRORS = 'system.network.errors'
-    
+
+        # TODO.
+        #
         # @note Stability Level: development
         SYSTEM_NETWORK_IO = 'system.network.io'
-    
+
+        # TODO.
+        #
         # @note Stability Level: development
-        SYSTEM_NETWORK_PACKETS = 'system.network.packets'
-    
+        SYSTEM_NETWORK_PACKET_COUNT = 'system.network.packet.count'
+
+        # Count of packets that are dropped or discarded even though there was no error.
+        #
+        # Measured as:
+        #
+        # - Linux: the `drop` column in `/proc/net/dev` ([source](https://web.archive.org/web/20180321091318/http://www.onlamp.com/pub/a/linux/2000/11/16/LinuxAdmin.html))
+        # - Windows: [`InDiscards`/`OutDiscards`](https://docs.microsoft.com/windows/win32/api/netioapi/ns-netioapi-mib_if_row2)
+        #   from [`GetIfEntry2`](https://docs.microsoft.com/windows/win32/api/netioapi/nf-netioapi-getifentry2)
+        #
+        # @note Stability Level: development
+        SYSTEM_NETWORK_PACKET_DROPPED = 'system.network.packet.dropped'
+
+        # TODO.
+        #
         # @note Stability Level: development
         SYSTEM_PAGING_FAULTS = 'system.paging.faults'
-    
+
+        # TODO.
+        #
         # @note Stability Level: development
         SYSTEM_PAGING_OPERATIONS = 'system.paging.operations'
-    
-        # Unix swap or windows pagefile usage
+
+        # Unix swap or windows pagefile usage.
         #
         # @note Stability Level: development
         SYSTEM_PAGING_USAGE = 'system.paging.usage'
-    
+
+        # TODO.
+        #
         # @note Stability Level: development
         SYSTEM_PAGING_UTILIZATION = 'system.paging.utilization'
-    
-        # Total number of processes in each state
+
+        # Total number of processes in each state.
         #
         # @note Stability Level: development
         SYSTEM_PROCESS_COUNT = 'system.process.count'
-    
-        # Total number of processes created over uptime of the host
+
+        # Total number of processes created over uptime of the host.
         #
         # @note Stability Level: development
         SYSTEM_PROCESS_CREATED = 'system.process.created'
-    
-        # The time the system has been running
+
+        # The time the system has been running.
         #
         # Instrumentations SHOULD use a gauge with type `double` and measure uptime in seconds as a floating point number with the highest precision available.
         # The actual accuracy would depend on the instrumentation and operating system.
         #
         # @note Stability Level: development
         SYSTEM_UPTIME = 'system.uptime'
-    
+
         # @!endgroup
       end
     end

@@ -1,5 +1,20 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.13.1 / 2026-04-15
+
+* FIXED: Move the metrics-sdk requires to support "require 'opentelemetry/sdk/metrics'" (#1956)
+
+### v0.13.0 / 2026-04-07
+
+* ADDED: Min Ruby Version 3.3 (#2070)
+* ADDED: Add basic support for metrics exemplar (#1609)
+
+### v0.12.0 / 2026-02-11
+
+* BREAKING CHANGE: Fix the issue of mixed scale with multiple attributes
+
+* FIXED: Fix the issue of mixed scale with multiple attributes
+
 ### v0.11.2 / 2025-12-02
 
 * FIXED: Add merge logic for exponential histogram when the temporality cumulative
