@@ -24,13 +24,14 @@ runs:
       shell: bash
       working-directory: examples/dice_roller/${{ inputs.version }}
       env:
+        VERSION: ${{ inputs.version }}
         APPLICATION_PORT: "8080"
         OTEL_TRACES_EXPORTER: none
         OTEL_METRICS_EXPORTER: none
         OTEL_LOGS_EXPORTER: none
         OTEL_SERVICE_NAME: dice_roller_ci
       run: |
-        # 🎲 Start dice roller (${{ inputs.version }}) 🎲
+        # 🎲 Start dice roller ($VERSION) 🎲
         ruby app.rb &
         echo "APP_PID=$!" >> "$GITHUB_ENV"
         echo "Waiting for server to be ready..."
