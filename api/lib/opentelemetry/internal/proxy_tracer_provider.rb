@@ -16,6 +16,19 @@ module OpenTelemetry
       Key = Struct.new(:name, :version, :attributes)
       private_constant(:Key)
 
+      # Wraps a legacy TracerProvider whose `#tracer` method does not accept
+      # the `attributes:` keyword argument, dropping the argument on delegation.
+      class LegacyProviderWrapper
+        def initialize(legacy_provider)
+          @legacy_provider = legacy_provider
+        end
+
+        def tracer(name = nil, version = nil, attributes: nil) # rubocop:disable Lint/UnusedMethodArgument
+          @legacy_provider.tracer(name, version)
+        end
+      end
+      private_constant(:LegacyProviderWrapper)
+
       # Returns a new {ProxyTracerProvider} instance.
       #
       # @return [ProxyTracerProvider]
@@ -35,10 +48,11 @@ module OpenTelemetry
           return
         end
 
+        provider = LegacyProviderWrapper.new(provider) unless supports_attributes?(provider)
+
         @mutex.synchronize do
           @delegate = provider
-          @delegate_supports_attributes = supports_attributes?(provider)
-          @registry.each { |key, tracer| tracer.delegate = build_tracer(key.name, key.version, key.attributes) }
+          @registry.each { |key, tracer| tracer.delegate = @delegate.tracer(key.name, key.version, attributes: key.attributes) }
         end
       end
 
@@ -61,7 +75,7 @@ module OpenTelemetry
         name ||= deprecated_name
         version ||= deprecated_version
         @mutex.synchronize do
-          return build_tracer(name, version, attributes) unless @delegate.nil?
+          return @delegate.tracer(name, version, attributes: attributes) unless @delegate.nil?
 
           @registry[Key.new(name, version, attributes)] ||= ProxyTracer.new
         end
@@ -72,16 +86,6 @@ module OpenTelemetry
       def supports_attributes?(provider)
         provider.respond_to?(:tracer) &&
           provider.method(:tracer).parameters.any? { |_, n| n == :attributes }
-      end
-
-      # Delegates to the provider's tracer method, gracefully handling
-      # older SDK implementations that do not accept the attributes keyword.
-      def build_tracer(name, version, attributes)
-        if @delegate_supports_attributes
-          @delegate.tracer(name, version, attributes: attributes)
-        else
-          @delegate.tracer(name, version)
-        end
       end
     end
   end
