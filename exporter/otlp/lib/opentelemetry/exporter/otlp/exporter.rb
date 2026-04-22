@@ -254,15 +254,19 @@ module OpenTelemetry
         end
 
         def log_status(body, truncated: false)
-          truncation_note = truncated ? ' (body truncated due to size limit)' : ''
+          if truncated
+            OpenTelemetry.handle_error(message: "OTLP exporter received an oversized error response body (truncated at #{RESPONSE_BODY_LIMIT} bytes) for uri=#{@uri}")
+            return
+          end
+
           status = Google::Rpc::Status.decode(body)
           details = status.details.map do |detail|
             klass_or_nil = ::Google::Protobuf::DescriptorPool.generated_pool.lookup(detail.type_name).msgclass
             detail.unpack(klass_or_nil) if klass_or_nil
           end.compact
-          OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}}#{truncation_note} for uri=#{@uri}")
+          OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}} for uri=#{@uri}")
         rescue StandardError => e
-          OpenTelemetry.handle_error(exception: e, message: "unexpected error decoding rpc.Status in OTLP::Exporter#log_status#{truncation_note}")
+          OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
         end
 
         def read_response_body(response)
