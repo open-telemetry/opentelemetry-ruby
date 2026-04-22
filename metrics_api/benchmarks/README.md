@@ -19,7 +19,7 @@ bundle exec ruby benchmarks/view_bench.rb
 ## Benchmark Files
 
 | File | What it measures |
-|------|-----------------|
+| ---- | --------------- |
 | `instrument_bench.rb` | No-op API instruments vs real SDK instruments — all synchronous types (counter, histogram, gauge, up-down counter) |
 | `noop_instrument_bench.rb` | No-op API instruments only — micro-benchmark of the lightest possible instrumentation layer |
 | `attributes_bench.rb` | How attribute set size (0 / 1 / 3 / 8 keys) affects SDK counter throughput |
