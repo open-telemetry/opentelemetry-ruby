@@ -4,9 +4,11 @@
     "config:best-practices",
     "helpers:pinGitHubActionDigestsToSemver"
   ],
-  "regexManagers": [
+  "customManagers": [
     {
-      "fileMatch": ["^semantic_conventions/Rakefile$"],
+      "customType": "regex",
+      "description": "Update Semantic Conventions version in Rake files",
+      "managerFilePatterns": ["/^semantic_conventions/Rakefile$/"],
       "matchStrings": [
         "SPEC_VERSION = '(?<currentValue>.*?)'"
       ],
