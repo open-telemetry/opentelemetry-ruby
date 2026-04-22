@@ -1096,8 +1096,9 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
         result = exporter.export([span_data])
 
         _(result).must_equal(FAILURE)
-        # The chunked reader should cap at 4 MB and note the truncation.
-        _(log_stream.string).must_match(/body truncated due to size limit/)
+        # The chunked reader should cap at 4 MB and log a clear oversized message.
+        _(log_stream.string).must_match(/oversized error response body/)
+        _(log_stream.string).wont_match(/unexpected error decoding/)
         # And it should work without hitting "read_body called twice",
         # which would mean the body was already fully read into memory.
         _(log_stream.string).wont_match(/read_body called twice/)
@@ -1201,7 +1202,8 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       result = exporter.export([span_data])
 
       _(result).must_equal(FAILURE)
-      _(log_stream.string).must_match(/body truncated due to size limit/)
+      _(log_stream.string).must_match(/oversized error response body/)
+      _(log_stream.string).wont_match(/unexpected error decoding/)
     ensure
       OpenTelemetry.logger = logger
     end
@@ -1260,7 +1262,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       result = exporter.export([span_data])
 
       _(result).must_equal(FAILURE)
-      _(log_stream.string).must_match(/body truncated due to size limit/)
+      _(log_stream.string).must_match(/oversized error response body/)
     ensure
       OpenTelemetry.logger = logger
     end
