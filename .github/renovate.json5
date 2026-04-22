@@ -29,6 +29,9 @@
       "schedule": ["before 8am on Monday"]
     },
     {
+     "separateMultipleMinor": true,
+     "separateMinorPatch": true,
+     "schedule": ["at any time"],
       "matchDatasources": ["github-releases"],
       "matchDepNames": ["open-telemetry/semantic-conventions"],
       "semanticCommitType": "feat",
