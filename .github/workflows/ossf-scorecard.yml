@@ -13,7 +13,7 @@ permissions: read-all
 jobs:
   analysis:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       # Needed for Code scanning upload
       security-events: write
