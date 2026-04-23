@@ -733,6 +733,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
         severity_number: 5,
         body: 'log_1',
         attributes: { 'b' => true },
+        event_name: 'Event',
         trace_id: OpenTelemetry::Trace.generate_trace_id,
         span_id: OpenTelemetry::Trace.generate_span_id,
         trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT,
@@ -746,6 +747,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
         severity_number: 13,
         body: 'log_1',
         attributes: { 'a' => false },
+        event_name: 'Event',
         trace_id: OpenTelemetry::Trace.generate_trace_id,
         span_id: OpenTelemetry::Trace.generate_span_id,
         trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT,
@@ -812,6 +814,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
                         Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'b', value: Opentelemetry::Proto::Common::V1::AnyValue.new(bool_value: true))
                       ],
                       dropped_attributes_count: 0,
+                      event_name: lr1[:event_name],
                       flags: lr1[:trace_flags].instance_variable_get(:@flags),
                       trace_id: lr1[:trace_id],
                       span_id: lr1[:span_id]
@@ -826,6 +829,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
                         Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'a', value: Opentelemetry::Proto::Common::V1::AnyValue.new(bool_value: false))
                       ],
                       dropped_attributes_count: 0,
+                      event_name: lr2[:event_name],
                       flags: lr2[:trace_flags].instance_variable_get(:@flags),
                       trace_id: lr2[:trace_id],
                       span_id: lr2[:span_id]
