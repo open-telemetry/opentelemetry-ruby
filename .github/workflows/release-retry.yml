@@ -36,8 +36,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+          RELEASE_FLAGS: ${{ github.event.inputs.flags }}
+          RELEASE_PR: ${{ github.event.inputs.release_pr }}
         run: |
           bundle exec toys release retry --yes --verbose \
-            ${{ github.event.inputs.flags }} \
-            "${{ github.event.inputs.release_pr }}" \
+            $RELEASE_FLAGS \
+            "$RELEASE_PR" \
             < /dev/null

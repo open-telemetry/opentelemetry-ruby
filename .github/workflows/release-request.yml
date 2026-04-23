@@ -38,8 +38,10 @@ jobs:
         env:
           # Use an app token instead of GITHUB_TOKEN to trigger workflows
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          RELEASE_NAMES: ${{ github.event.inputs.names }}
+          TARGET_BRANCH: ${{ github.ref }}
         run: |
           bundle exec toys release request --yes --verbose \
-            "--target-branch=${{ github.ref }}" \
-            ${{ github.event.inputs.names }} \
+            "--target-branch=$TARGET_BRANCH" \
+            $RELEASE_NAMES \
             < /dev/null

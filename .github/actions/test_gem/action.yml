@@ -31,9 +31,12 @@ runs:
     - name: Setup
       id: setup
       shell: bash
+      env:
+        GEM: ${{ inputs.gem }}
+        RUBY_VERSION: ${{ inputs.ruby }}
       run: |
         # 🛠️ Setup 🛠️
-        dir=$(find . -iname '${{ inputs.gem }}.gemspec' -exec dirname {} \;)
+        dir=$(find . -iname "${GEM}.gemspec" -exec dirname {} \;)
         echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
 
         # We install multiple ruby versions here, and that makes for some
@@ -43,9 +46,9 @@ runs:
         rm -f "${dir}/Gemfile.lock"
 
         echo "cache_key=mri" >> $GITHUB_OUTPUT
-        if [[ "${{ inputs.ruby }}" == "jruby" ]]; then
+        if [[ "$RUBY_VERSION" == "jruby" ]]; then
           echo "cache_key=jruby" >> $GITHUB_OUTPUT
-        elif [[ "${{ inputs.ruby }}" == "truffleruby" ]]; then
+        elif [[ "$RUBY_VERSION" == "truffleruby" ]]; then
           echo "cache_key=truffleruby" >> $GITHUB_OUTPUT
         fi
 
@@ -119,7 +122,9 @@ runs:
     - name: Build Gem
       shell: bash
       if: "${{ inputs.build == 'true' }}"
+      env:
+        GEM: ${{ inputs.gem }}
       run: |
         # 📦 Build Gem 📦
-        gem build ${{ inputs.gem }}.gemspec
+        gem build "${GEM}.gemspec"
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
