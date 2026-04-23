@@ -32,6 +32,18 @@ module OpenTelemetry
           def collect(attributes: nil, aggregation_temporality: :delta)
             raise NotImplementedError, "#{self.class} must implement #collect"
           end
+
+          # Called after dup to reset internal state before reuse for a new attribute set.
+          # Subclasses that hold mutable per-attribute state must override this.
+          def reset; end
+
+          # Returns true if this reservoir never stores exemplars.
+          # Used to skip the exemplar filter and timestamp lookups entirely.
+          #
+          # @return [Boolean]
+          def noop?
+            false
+          end
         end
       end
     end

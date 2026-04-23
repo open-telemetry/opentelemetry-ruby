@@ -120,6 +120,8 @@ module OpenTelemetry
           end
 
           def should_offer_exemplar?(value, attributes)
+            return false if @exemplar_reservoir&.noop?
+
             context = OpenTelemetry::Context.current
             time = OpenTelemetry::Common::Utilities.time_in_nanoseconds
             @exemplar_filter&.should_sample?(value, time, attributes, context)
