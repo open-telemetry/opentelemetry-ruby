@@ -47,7 +47,7 @@ module OpenTelemetry
         # Deprecated, use `user.roles` instead.
         #
         # @note Stability Level: development
-        # @deprecated Replaced by `user.roles`.
+        # @deprecated Use `user.roles` instead.
         ENDUSER_ROLE = 'enduser.role'
 
         # Deprecated, no replacement at this time.

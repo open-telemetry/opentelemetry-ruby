@@ -168,7 +168,7 @@ module OpenTelemetry
         # @deprecated Replaced by `vcs.ref.head.type`.
         VCS_REPOSITORY_REF_TYPE = 'vcs.repository.ref.type'
 
-        # The [canonical URL](https://support.google.com/webmasters/answer/10347851?hl=en#:~:text=A%20canonical%20URL%20is%20the,Google%20chooses%20one%20as%20canonical.) of the repository providing the complete HTTP(S) address in order to locate and identify the repository through a browser.
+        # The [canonical URL](https://support.google.com/webmasters/answer/10347851) of the repository providing the complete HTTP(S) address in order to locate and identify the repository through a browser.
         #
         # In Git Version Control Systems, the canonical URL SHOULD NOT include
         # the `.git` extension.
