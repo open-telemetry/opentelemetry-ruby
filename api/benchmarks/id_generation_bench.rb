@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'benchmark/ipsa'
+require 'benchmark/ips'
 
 INVALID_SPAN_ID = ("\0" * 8).b
 INVALID_TRACE_ID = ("\0" * 16).b
@@ -45,19 +45,19 @@ def generate_r_in_place(trace_id)
   64 - x.bit_length
 end
 
-Benchmark.ipsa do |x|
+Benchmark.ips do |x|
   x.report('generate_trace_id') { generate_trace_id }
   x.report('generate_trace_id_while') { generate_trace_id_while }
   x.compare!
 end
 
-Benchmark.ipsa do |x|
+Benchmark.ips do |x|
   x.report('generate_span_id') { generate_span_id }
   x.report('generate_span_id_while') { generate_span_id_while }
   x.compare!
 end
 
-Benchmark.ipsa do |x|
+Benchmark.ips do |x|
   trace_id = generate_trace_id
   x.report('generate_r') { generate_r(trace_id) }
   x.report('generate_r_in_place') { generate_r_in_place(trace_id) }
