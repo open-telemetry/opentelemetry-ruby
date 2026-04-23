@@ -11,6 +11,7 @@ module OpenTelemetry
         # Contains the implementation of the ExplicitBucketHistogram aggregation
         # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#explicit-bucket-histogram-aggregation
         class ExplicitBucketHistogram
+          OVERFLOW_ATTRIBUTE_SET = { 'otel.metric.overflow' => true }.freeze
           attr_reader :exemplar_reservoir
 
           DEFAULT_BOUNDARIES = [0, 5, 10, 25, 50, 75, 100, 250, 500, 1000].freeze
@@ -59,52 +60,16 @@ module OpenTelemetry
             end
           end
 
-          def update(amount, attributes, data_points, exemplar_offer: false)
-            hdp = data_points.fetch(attributes) do
-              if @record_min_max
-                min = Float::INFINITY
-                max = -Float::INFINITY
-              end
+          def update(amount, attributes, data_points, cardinality_limit, exemplar_offer: false)
+            hdp = if data_points.key?(attributes)
+                    data_points[attributes]
+                  elsif data_points.size >= cardinality_limit
+                    data_points[OVERFLOW_ATTRIBUTE_SET] || create_new_data_point(OVERFLOW_ATTRIBUTE_SET, data_points)
+                  else
+                    create_new_data_point(attributes, data_points)
+                  end
 
-              data_points[attributes] = HistogramDataPoint.new(
-                attributes,
-                nil,                 # :start_time_unix_nano
-                nil,                 # :time_unix_nano
-                0,                   # :count
-                0,                   # :sum
-                empty_bucket_counts, # :bucket_counts
-                @boundaries,         # :explicit_bounds
-                nil,                 # :exemplars
-                min,                 # :min
-                max                  # :max
-              )
-            end
-
-            reservoir = @exemplar_reservoir_storage[attributes]
-            unless reservoir
-              reservoir = @exemplar_reservoir.dup
-              reservoir.reset
-              @exemplar_reservoir_storage[attributes] = reservoir
-            end
-
-            if exemplar_offer
-              reservoir.offer(value: amount,
-                              timestamp: OpenTelemetry::Common::Utilities.time_in_nanoseconds,
-                              attributes: attributes,
-                              context: OpenTelemetry::Context.current)
-            end
-
-            if @record_min_max
-              hdp.max = amount if amount > hdp.max
-              hdp.min = amount if amount < hdp.min
-            end
-
-            hdp.sum += amount
-            hdp.count += 1
-            if @boundaries
-              bucket_index = @boundaries.bsearch_index { |i| i >= amount } || @boundaries.size
-              hdp.bucket_counts[bucket_index] += 1
-            end
+            update_histogram_data_point(hdp, amount, exemplar_offer: exemplar_offer)
             nil
           end
 
@@ -113,6 +78,58 @@ module OpenTelemetry
           end
 
           private
+
+          def create_new_data_point(attributes, data_points)
+            if @record_min_max
+              min = Float::INFINITY
+              max = -Float::INFINITY
+            end
+
+            data_points[attributes] = HistogramDataPoint.new(
+              attributes,
+              nil,                 # :start_time_unix_nano
+              nil,                 # :time_unix_nano
+              0,                   # :count
+              0,                   # :sum
+              empty_bucket_counts, # :bucket_counts
+              @boundaries,         # :explicit_bounds
+              nil,                 # :exemplars
+              min,                 # :min
+              max                  # :max
+            )
+          end
+
+          def update_histogram_data_point(hdp, amount, exemplar_offer: false)
+            reservior_update(hdp.attributes, amount, exemplar_offer)
+
+            if @record_min_max
+              hdp.max = amount if amount > hdp.max
+              hdp.min = amount if amount < hdp.min
+            end
+
+            hdp.sum += amount
+            hdp.count += 1
+            return unless @boundaries
+
+            bucket_index = @boundaries.bsearch_index { |i| i >= amount } || @boundaries.size
+            hdp.bucket_counts[bucket_index] += 1
+          end
+
+          def reservior_update(attributes, amount, exemplar_offer)
+            reservoir = @exemplar_reservoir_storage[attributes]
+            unless reservoir
+              reservoir = @exemplar_reservoir.dup
+              reservoir.reset
+              @exemplar_reservoir_storage[attributes] = reservoir
+            end
+
+            return unless exemplar_offer
+
+            reservoir.offer(value: amount,
+                            timestamp: OpenTelemetry::Common::Utilities.time_in_nanoseconds,
+                            attributes: attributes,
+                            context: OpenTelemetry::Context.current)
+          end
 
           def empty_bucket_counts
             @boundaries ? Array.new(@boundaries.size + 1, 0) : nil
