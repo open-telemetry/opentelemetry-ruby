@@ -13,13 +13,15 @@ module OpenTelemetry
         #
         # Returns a new {Tracer} instance.
         #
-        # @param [String] name Instrumentation package name
-        # @param [String] version Instrumentation package version
+        # @param [String] name Instrumentation scope name
+        # @param [String] version Instrumentation scope version
         # @param [TracerProvider] tracer_provider TracerProvider that initialized the tracer
+        # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
+        #   Instrumentation scope attributes
         #
         # @return [Tracer]
-        def initialize(name, version, tracer_provider)
-          @instrumentation_scope = InstrumentationScope.new(name, version)
+        def initialize(name, version, tracer_provider, attributes: nil)
+          @instrumentation_scope = InstrumentationScope.new(name, version, attributes || {}.freeze)
           @tracer_provider = tracer_provider
         end
 
