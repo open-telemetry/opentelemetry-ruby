@@ -387,6 +387,27 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     end
   end
 
+  describe 'dropped spans metrics' do
+    let(:metrics_reporter) { TestMetricsReporter.new }
+
+    it 'reports consistent label keys' do
+      exporter = TestExporter.new(status_codes: [FAILURE])
+      bsp = BatchSpanProcessor.new(exporter,
+                                   metrics_reporter: metrics_reporter,
+                                   max_queue_size: 1,
+                                   max_export_batch_size: 1)
+
+      bsp.on_finish(TestSpan.new('dropped-because-buffer-full'))
+      bsp.on_finish(TestSpan.new('causes-export-failure'))
+      bsp.shutdown # triggers export failure, no function associated
+
+      dropped = metrics_reporter.reported_metrics['otel.bsp.dropped_spans']
+      _(dropped).wont_be_nil
+      dropped_buffer_full_label_names, dropped_export_failure_label_names = dropped.map { |_count, labels| labels.keys.sort }
+      _(dropped_buffer_full_label_names).must_equal(dropped_export_failure_label_names)
+    end
+  end
+
   describe 'fork safety test' do
     let(:exporter) { TestExporter.new }
     let(:bsp) do
