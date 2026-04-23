@@ -68,13 +68,12 @@ ignoreWords:
   - rolldice
   - codegen
 words:
+  - autocorrection
+  - configurator
+  - linkspector
+  - loggregator
   - LOGRECORD
+  - SARIF
+  - semconv
   - traceid
   - tracestate
-  - loggregator
-  - configurator
-
-  - autocorrection
-
-  - linkspector
-  - SARIF
