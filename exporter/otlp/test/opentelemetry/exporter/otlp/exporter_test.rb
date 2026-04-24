@@ -1041,4 +1041,237 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       OpenTelemetry::Trace::Link.new(span_context, { 'link-attribute' => 'link-value' })
     end
   end
+
+  describe 'response body reading with real sockets' do
+    # These tests use a real TCPServer instead of WebMock to verify
+    # behavior against actual Net::HTTP socket I/O. WebMock's patching
+    # of Net::HTTP changes how read_body works — even with
+    # allow_net_connect!, responses go through WebMock's adapter which
+    # doesn't exercise the same code paths as real Net::HTTP.
+
+    def with_fake_server(response_body_size:, status: 400)
+      server = TCPServer.new('127.0.0.1', 0)
+      port = server.addr[1]
+      body = 'X' * response_body_size
+
+      server_thread = Thread.new { handle_fake_request(server, body, status) }
+
+      # Fully disable WebMock's Net::HTTP adapter so we get real
+      # socket behavior, not WebMock's patched read_body.
+      WebMock::HttpLibAdapters::NetHttpAdapter.disable!
+      yield port
+    ensure
+      WebMock::HttpLibAdapters::NetHttpAdapter.enable!
+      server&.close
+      server_thread&.join(2)
+    end
+
+    def handle_fake_request(server, body, status)
+      client = server.accept
+      content_length = read_content_length(client)
+      client.read(content_length) if content_length > 0
+
+      client.print "HTTP/1.1 #{status} Bad Request\r\n"
+      client.print "Content-Type: application/octet-stream\r\n"
+      client.print "Content-Length: #{body.bytesize}\r\n"
+      client.print "Connection: close\r\n"
+      client.print "\r\n"
+      client.write body
+      client.close
+    rescue StandardError
+      # client may disconnect early
+    end
+
+    def read_content_length(client)
+      content_length = 0
+      while (line = client.gets) && line != "\r\n"
+        content_length = line.split(': ', 2).last.to_i if line.start_with?('Content-Length')
+      end
+      content_length
+    end
+
+    it 'limits error response body read to 4 MB against a real HTTP server' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      with_fake_server(response_body_size: 5_000_000) do |port|
+        exporter = OpenTelemetry::Exporter::OTLP::Exporter.new(
+          endpoint: "http://127.0.0.1:#{port}/v1/traces"
+        )
+        span_data = OpenTelemetry::TestHelpers.create_span_data
+        result = exporter.export([span_data])
+
+        _(result).must_equal(FAILURE)
+        # The chunked reader should cap at 4 MB and log a clear oversized message.
+        _(log_stream.string).must_match(/oversized error response body/)
+        _(log_stream.string).wont_match(/unexpected error decoding/)
+        # And it should work without hitting "read_body called twice",
+        # which would mean the body was already fully read into memory.
+        _(log_stream.string).wont_match(/read_body called twice/)
+      end
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
+    it 'does not buffer beyond the limit internally' do
+      captured_body_size = nil
+      internal_body = :not_checked
+
+      spy = Module.new do
+        define_method(:read_response_body) do |response|
+          super(response).tap do |result_body, _truncated|
+            captured_body_size = result_body.bytesize
+            internal_body = response.body
+          end
+        end
+      end
+
+      limit = OpenTelemetry::Exporter::OTLP::Exporter.const_get(:RESPONSE_BODY_LIMIT)
+
+      with_fake_server(response_body_size: 10_000_000) do |port|
+        exporter = OpenTelemetry::Exporter::OTLP::Exporter.new(
+          endpoint: "http://127.0.0.1:#{port}/v1/traces"
+        )
+        exporter.singleton_class.prepend(spy)
+
+        OpenTelemetry.logger = ::Logger.new(File::NULL)
+        exporter.export([OpenTelemetry::TestHelpers.create_span_data])
+
+        # read_response_body must cap the returned body at the limit
+        _(captured_body_size).wont_be_nil
+        _(captured_body_size).must_be :<=, limit
+
+        # Net::HTTP must NOT have the full 10 MB response buffered internally.
+        # After @http.finish closes the socket mid-read, response.body is nil
+        # (block-form read_body doesn't accumulate into @body).
+        if internal_body.is_a?(String)
+          _(internal_body.bytesize).must_be :<=, limit,
+                                            "Net::HTTP buffered #{internal_body.bytesize} bytes internally, exceeding the #{limit} byte limit"
+        end
+      end
+    end
+  end
+
+  describe 'response body reading' do
+    let(:exporter) { OpenTelemetry::Exporter::OTLP::Exporter.new }
+    let(:span_data) { OpenTelemetry::TestHelpers.create_span_data }
+
+    it 'discards body for successful responses without reading into memory' do
+      stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 200, body: 'success body')
+
+      result = exporter.export([span_data])
+
+      _(result).must_equal(SUCCESS)
+    end
+
+    it 'discards body for retryable responses without reading into memory' do
+      stub_request(:post, 'http://localhost:4318/v1/traces')
+        .to_return(status: 503, body: 'service unavailable', headers: { 'Retry-After' => '0' })
+        .then.to_return(status: 200)
+
+      result = exporter.export([span_data])
+
+      _(result).must_equal(SUCCESS)
+    end
+
+    it 'reads and parses error response body smaller than limit' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      details = [::Google::Protobuf::Any.pack(::Google::Protobuf::StringValue.new(value: 'error details'))]
+      status = ::Google::Rpc::Status.encode(::Google::Rpc::Status.new(code: 3, message: 'invalid argument', details: details))
+      stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 400, body: status)
+
+      result = exporter.export([span_data])
+
+      _(result).must_equal(FAILURE)
+      _(log_stream.string).must_match(/invalid argument/)
+      _(log_stream.string).wont_match(/truncated/)
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
+    it 'truncates error response body larger than 4 MB limit' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      # Create a body larger than 4 MB
+      large_message = 'x' * 5_000_000 # 5 MB
+      details = [::Google::Protobuf::Any.pack(::Google::Protobuf::StringValue.new(value: large_message))]
+      large_status = ::Google::Rpc::Status.new(code: 3, message: 'large error', details: details)
+      large_body = ::Google::Rpc::Status.encode(large_status)
+
+      stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 400, body: large_body)
+
+      result = exporter.export([span_data])
+
+      _(result).must_equal(FAILURE)
+      _(log_stream.string).must_match(/oversized error response body/)
+      _(log_stream.string).wont_match(/unexpected error decoding/)
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
+    it 'handles error response body at exactly 4 MB limit' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      # Create a body at exactly 4 MB
+      exact_size_message = 'y' * (4_194_304 - 100) # Account for protobuf overhead
+      details = [::Google::Protobuf::Any.pack(::Google::Protobuf::StringValue.new(value: exact_size_message))]
+      exact_status = ::Google::Rpc::Status.new(code: 3, message: 'exact size', details: details)
+      exact_body = ::Google::Rpc::Status.encode(exact_status)
+
+      # Skip if encoded body is still larger than 4 MB due to protobuf overhead
+      skip 'Protobuf overhead makes this test impractical' if exact_body.bytesize > 4_194_304
+
+      stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 400, body: exact_body)
+
+      result = exporter.export([span_data])
+
+      _(result).must_equal(FAILURE)
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
+    it 'handles malformed error response body gracefully' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 400, body: 'not valid protobuf')
+
+      result = exporter.export([span_data])
+
+      _(result).must_equal(FAILURE)
+      _(log_stream.string).must_match(/unexpected error decoding rpc.Status/)
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
+    it 'handles truncated protobuf in error response' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      # Create a large protobuf that will be truncated, making it invalid
+      large_message = 'z' * 5_000_000
+      details = [::Google::Protobuf::Any.pack(::Google::Protobuf::StringValue.new(value: large_message))]
+      large_status = ::Google::Rpc::Status.new(code: 3, message: 'truncation test', details: details)
+      large_body = ::Google::Rpc::Status.encode(large_status)
+
+      stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 400, body: large_body)
+
+      result = exporter.export([span_data])
+
+      _(result).must_equal(FAILURE)
+      _(log_stream.string).must_match(/oversized error response body/)
+    ensure
+      OpenTelemetry.logger = logger
+    end
+  end
 end
