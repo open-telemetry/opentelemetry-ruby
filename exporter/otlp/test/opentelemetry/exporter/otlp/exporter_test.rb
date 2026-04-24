@@ -1054,24 +1054,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       port = server.addr[1]
       body = 'X' * response_body_size
 
-      server_thread = Thread.new do
-        client = server.accept
-        content_length = 0
-        while (line = client.gets) && line != "\r\n"
-          content_length = line.split(': ', 2).last.to_i if line.start_with?('Content-Length')
-        end
-        client.read(content_length) if content_length > 0
-
-        client.print "HTTP/1.1 #{status} Bad Request\r\n"
-        client.print "Content-Type: application/octet-stream\r\n"
-        client.print "Content-Length: #{body.bytesize}\r\n"
-        client.print "Connection: close\r\n"
-        client.print "\r\n"
-        client.write body
-        client.close
-      rescue => e
-        # client may disconnect early
-      end
+      server_thread = Thread.new { handle_fake_request(server, body, status) }
 
       # Fully disable WebMock's Net::HTTP adapter so we get real
       # socket behavior, not WebMock's patched read_body.
@@ -1081,6 +1064,30 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       WebMock::HttpLibAdapters::NetHttpAdapter.enable!
       server&.close
       server_thread&.join(2)
+    end
+
+    def handle_fake_request(server, body, status)
+      client = server.accept
+      content_length = read_content_length(client)
+      client.read(content_length) if content_length > 0
+
+      client.print "HTTP/1.1 #{status} Bad Request\r\n"
+      client.print "Content-Type: application/octet-stream\r\n"
+      client.print "Content-Length: #{body.bytesize}\r\n"
+      client.print "Connection: close\r\n"
+      client.print "\r\n"
+      client.write body
+      client.close
+    rescue StandardError
+      # client may disconnect early
+    end
+
+    def read_content_length(client)
+      content_length = 0
+      while (line = client.gets) && line != "\r\n"
+        content_length = line.split(': ', 2).last.to_i if line.start_with?('Content-Length')
+      end
+      content_length
     end
 
     it 'limits error response body read to 4 MB against a real HTTP server' do
@@ -1140,7 +1147,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
         # (block-form read_body doesn't accumulate into @body).
         if internal_body.is_a?(String)
           _(internal_body.bytesize).must_be :<=, limit,
-            "Net::HTTP buffered #{internal_body.bytesize} bytes internally, exceeding the #{limit} byte limit"
+                                            "Net::HTTP buffered #{internal_body.bytesize} bytes internally, exceeding the #{limit} byte limit"
         end
       end
     end

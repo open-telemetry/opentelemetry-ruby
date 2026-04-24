@@ -272,31 +272,34 @@ module OpenTelemetry
         def read_response_body(response)
           return ['', false] if response.nil?
 
+          body, truncated = collect_response_chunks(response)
+          body.force_encoding('UTF-8')
+          [body, truncated]
+        rescue StandardError => e
+          OpenTelemetry.handle_error(exception: e, message: 'error reading response body')
+          ['', false]
+        end
+
+        def collect_response_chunks(response)
           body = +''
           truncated = false
 
           response.read_body do |chunk|
-            if body.bytesize + chunk.bytesize <= RESPONSE_BODY_LIMIT
-              body << chunk
-            else
-              remaining = RESPONSE_BODY_LIMIT - body.bytesize
-              body << chunk.byteslice(0, remaining) if remaining > 0
+            remaining = RESPONSE_BODY_LIMIT - body.bytesize
+            body << chunk.byteslice(0, remaining)
+
+            if chunk.bytesize > remaining
               truncated = true
               @http.finish # closes socket, nil's the body or else net/http will attempt to read the rest of the response
               break
             end
           end
 
-          body.force_encoding('UTF-8')
           [body, truncated]
-        rescue IOError => e
+        rescue IOError
           raise unless truncated # we'll handle this when we know net/http is upset trying to read after http.finish
 
-          body&.force_encoding('UTF-8')
           [body || '', truncated]
-        rescue StandardError => e
-          OpenTelemetry.handle_error(exception: e, message: 'error reading response body')
-          ['', false]
         end
 
         def log_request_failure(response_code)
