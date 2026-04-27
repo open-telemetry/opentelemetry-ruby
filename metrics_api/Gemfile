@@ -12,6 +12,7 @@ eval_gemfile '../contrib/Gemfile.shared'
 
 group :test, :development do
   gem 'opentelemetry-api', path: '../api', require: false
+  gem 'opentelemetry-metrics-sdk', path: '../metrics_sdk', require: false
   gem 'pry'
   gem 'pry-byebug' unless RUBY_ENGINE == 'jruby'
 end
