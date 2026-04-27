@@ -8,6 +8,7 @@ require_relative 'bench_helper'
 
 ATTRS_NONE   = {}.freeze
 ATTRS_SMALL  = { 'env' => 'prod' }.freeze
+ATTRS_MEDIUM = { 'http.method' => 'GET', 'http.status_code' => 200, 'http.route' => '/api/users' }.freeze
 ATTRS_LARGE  = {
   'http.method' => 'GET',
   'http.status_code' => 200,

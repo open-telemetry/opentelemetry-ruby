@@ -6,16 +6,6 @@
 
 require_relative 'bench_helper'
 
-def counter_with(exemplar_filter:, exemplar_reservoir: nil)
-  meter = build_sdk_meter(exemplar_filter: exemplar_filter)
-  meter.create_counter('bench.exemplar.counter', exemplar_reservoir: exemplar_reservoir)
-end
-
-def histogram_with(exemplar_filter:, exemplar_reservoir: nil)
-  meter = build_sdk_meter(exemplar_filter: exemplar_filter)
-  meter.create_histogram('bench.exemplar.histogram', exemplar_reservoir: exemplar_reservoir)
-end
-
 always_off_counter  = counter_with(exemplar_filter: Ex::AlwaysOffExemplarFilter)
 always_on_counter   = counter_with(exemplar_filter: Ex::AlwaysOnExemplarFilter)
 trace_based_counter = counter_with(exemplar_filter: Ex::TraceBasedExemplarFilter)

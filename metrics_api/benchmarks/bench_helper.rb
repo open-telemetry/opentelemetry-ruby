@@ -14,10 +14,18 @@ Agg    = OpenTelemetry::SDK::Metrics::Aggregation
 Ex     = OpenTelemetry::SDK::Metrics::Exemplar
 Export = OpenTelemetry::SDK::Metrics::Export
 
-ATTRS_MEDIUM = { 'http.method' => 'GET', 'http.status_code' => 200, 'http.route' => '/api/users' }.freeze
-
 def new_reader
   Export::InMemoryMetricPullExporter.new
+end
+
+def counter_with(exemplar_filter:, exemplar_reservoir: nil)
+  meter = build_sdk_meter(exemplar_filter: exemplar_filter)
+  meter.create_counter('bench.exemplar.counter', exemplar_reservoir: exemplar_reservoir)
+end
+
+def histogram_with(exemplar_filter:, exemplar_reservoir: nil)
+  meter = build_sdk_meter(exemplar_filter: exemplar_filter)
+  meter.create_histogram('bench.exemplar.histogram', exemplar_reservoir: exemplar_reservoir)
 end
 
 def build_sdk_meter(exemplar_filter: nil, views: [])
