@@ -67,6 +67,7 @@ ignoreWords:
   - Rubyish
   - rolldice
   - codegen
+  - Dockerfiles
 words:
   - LOGRECORD
   - traceid
@@ -78,3 +79,5 @@ words:
 
   - linkspector
   - SARIF
+  - bigdecimal
+  - confluentinc
