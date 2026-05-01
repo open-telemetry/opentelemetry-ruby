@@ -8,9 +8,13 @@ source 'https://rubygems.org'
 
 gemspec
 
-eval_gemfile '../contrib/Gemfile.shared'
+eval_gemfile '../Gemfile'
 
 group :test, :development do
+  gem 'opentelemetry-instrumentation-base', '~> 0.26.0'
+  gem 'minitest', '~> 5.27.0'
+  gem 'yard', '~> 0.9.0'
+  gem 'yard-doctest', '~> 0.1.6'
   gem 'opentelemetry-api', path: '../api', require: false
   gem 'opentelemetry-common', path: '../common', require: false
   gem 'opentelemetry-exporter-zipkin', path: '../exporter/zipkin', require: false

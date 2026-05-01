@@ -8,8 +8,11 @@ source 'https://rubygems.org'
 
 gemspec
 
-eval_gemfile '../../contrib/Gemfile.shared'
+eval_gemfile '../../Gemfile'
 
 group :test do
+  gem 'minitest', '~> 5.27.0'
+  gem 'yard', '~> 0.9.0'
+  gem 'yard-doctest', '~> 0.1.6'
   gem 'opentelemetry-api', path: '../../api', require: false
 end

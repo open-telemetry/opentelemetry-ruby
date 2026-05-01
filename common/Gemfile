@@ -8,10 +8,14 @@ source 'https://rubygems.org'
 
 gemspec
 
-eval_gemfile '../contrib/Gemfile.shared'
+eval_gemfile '../Gemfile'
 
 group :development, :test do
+  gem 'minitest', '~> 5.27.0'
+  gem 'yard', '~> 0.9.0'
+  gem 'yard-doctest', '~> 0.1.6'
   # Use the opentelemetry-api gem from source
   gem 'opentelemetry-api', path: '../api', require: false
+  gem 'opentelemetry-test-helpers', path: '../test_helpers', require: false
   gem 'pry'
 end

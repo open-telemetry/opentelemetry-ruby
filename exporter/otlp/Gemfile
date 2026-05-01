@@ -8,7 +8,14 @@ source 'https://rubygems.org'
 
 gemspec
 
+eval_gemfile '../../Gemfile'
+
 group :test, :development do
+  gem 'appraisal', '~> 2.2.0'
+  gem 'minitest', '~> 5.27.0'
+  gem 'webmock', '~> 3.24'
+  gem 'yard', '~> 0.9.0'
+  gem 'yard-doctest', '~> 0.1.6'
   gem 'opentelemetry-api', path: '../../api', require: false
   gem 'opentelemetry-common', path: '../../common', require: false
   gem 'opentelemetry-registry', path: '../../registry', require: false

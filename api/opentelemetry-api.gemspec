@@ -28,13 +28,6 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'benchmark-ipsa', '~> 0.2.0'
   spec.add_development_dependency 'concurrent-ruby', '~> 1.3'
-  spec.add_development_dependency 'minitest', '~> 5.0'
-  spec.add_development_dependency 'opentelemetry-test-helpers'
-  spec.add_development_dependency 'rake', '~> 13.3'
-  spec.add_development_dependency 'rubocop', '~> 1.65'
-  spec.add_development_dependency 'simplecov', '~> 0.17'
-  spec.add_development_dependency 'yard', '~> 0.9'
-  spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-api/v#{OpenTelemetry::VERSION}/file.CHANGELOG.html"

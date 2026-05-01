@@ -11,6 +11,9 @@ AllCops:
   Exclude:
     - "vendor/**/*"
 
+Bundler/OrderedGems:
+  Enabled: false
+
 Layout/LineLength:
   Enabled: false
 
