@@ -66,6 +66,7 @@ the [Ruby language](https://www.ruby-lang.org/en/downloads/branches/).
 
 ### Emeritus
 
+- [Andrew Hayworth](https://github.com/ahayworth), Approver
 - [Matthew Wear](https://github.com/mwear), Maintainer
 - [Sam Handler](https://github.com/plantfansam), Approver
 
