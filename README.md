@@ -31,7 +31,6 @@ The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 - [Daniel Azuma](https://github.com/dazuma), Google
 - [Francis Bogsanyi](https://github.com/fbogsany), Shopify
 - [Kayla Reopelle](https://github.com/kaylareopelle), New Relic
-- [Matthew Wear](https://github.com/mwear), Lightstep
 - [Robert Laurin](https://github.com/robertlaurin), Shopify
 
 For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
@@ -42,7 +41,6 @@ For more information about the maintainer role, see the [community repository](h
 - [Ariel Valentin](https://github.com/arielvalentin), GitHub
 - [Eric Mustin](https://github.com/ericmustin)
 - [Robb Kidd](https://github.com/robbkidd), Honeycomb
-- [Sam Handler](https://github.com/plantfansam), Shopify
 - [Xuan Cao](https://github.com/xuan-cao-swi), Solarwinds
 
 For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).
@@ -65,6 +63,14 @@ the [Ruby language](https://www.ruby-lang.org/en/downloads/branches/).
 - For more information on OpenTelemetry, visit: <https://opentelemetry.io/>
 - For help or feedback on this project, join us in [GitHub Discussions][discussions-url].
 - For more examples, check [SDK example][examples-github].
+
+### Emeritus
+
+- [Matthew Wear](https://github.com/mwear), Maintainer
+- [Sam Handler](https://github.com/plantfansam), Approver
+
+For more information about the emeritus role, see the
+[community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#emeritus-maintainerapprovertriager).
 
 ## License
 
