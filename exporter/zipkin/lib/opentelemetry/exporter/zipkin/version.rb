@@ -8,7 +8,7 @@ module OpenTelemetry
   module Exporter
     module Zipkin
       ## Current OpenTelemetry Zipkin exporter version
-      VERSION = '0.25.0'
+      VERSION = '0.25.1'
     end
   end
 end
