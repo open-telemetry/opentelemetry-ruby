@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
 
+  spec.add_development_dependency 'benchmark-ips', '~> 2.14'
   spec.add_development_dependency 'logger', '~> 1.7'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'rake', '~> 13.3'

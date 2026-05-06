@@ -29,3 +29,18 @@ default_tasks =
   end
 
 task default: default_tasks
+
+namespace :bench do
+  bench_files = FileList['benchmarks/*_bench.rb']
+
+  bench_files.each do |file|
+    name = File.basename(file, '_bench.rb')
+    desc "Run #{name} benchmarks"
+    task name do
+      sh "bundle exec ruby #{file}"
+    end
+  end
+
+  desc 'Run all benchmarks'
+  task all: bench_files.map { |f| File.basename(f, '_bench.rb') }
+end

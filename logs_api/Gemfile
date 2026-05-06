@@ -9,3 +9,7 @@ source 'https://rubygems.org'
 gemspec
 
 eval_gemfile '../contrib/Gemfile.shared'
+
+group :test, :development do
+  gem 'opentelemetry-logs-sdk', path: '../logs_sdk', require: false
+end
