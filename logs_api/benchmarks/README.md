@@ -56,37 +56,33 @@ bundle exec ruby benchmarks/logger_bench.rb
 
 `bundle exec ruby benchmarks/log_record_bench.rb`
 
-**LogRecord Creation:**
+**LogRecord Creation by Attribute Size:**
 
 | Operation | Throughput | Time/Op | Relative Performance |
 | --- | --- | --- | --- |
-| LogRecord.new (minimal) | 511,624.1 i/s | 1.95 μs/i | **Fastest** |
-| LogRecord.new with body | 498,418.1 i/s | 2.01 μs/i | 1.03x slower |
-| LogRecord.new with attributes | 305,710.8 i/s | 3.27 μs/i | 1.67x slower |
-| LogRecord.new with body and attributes | 298,887.7 i/s | 3.35 μs/i | 1.71x slower |
+| LogRecord.new with 1 attribute | 360,541.7 i/s | 2.77 μs/i | **Fastest** |
+| LogRecord.new with 3 attributes | 293,456.6 i/s | 3.41 μs/i | 1.23x slower |
+| LogRecord.new with 8 attributes | 206,304.9 i/s | 4.85 μs/i | 1.75x slower |
 
-**LogRecord Conversion:**
+**LogRecord Creation with Different Parameters:**
 
-| Operation | Throughput | Time/Op |
-| --- | --- | --- |
-| log_record#to_log_record_data | 636,621.0 i/s | 1.57 μs/i |
+| Operation | Throughput | Time/Op | Relative Performance |
+| --- | --- | --- | --- |
+| LogRecord.new (minimal) | 664,125.2 i/s | 1.51 μs/i | **Fastest** |
+| LogRecord.new with body | 553,839.4 i/s | 1.81 μs/i | 1.20x slower |
+| LogRecord.new with attributes | 361,550.8 i/s | 2.77 μs/i | 1.84x slower |
+| LogRecord.new with body and attributes | 357,268.8 i/s | 2.80 μs/i | 1.86x slower |
 
 #### Logger Operations
 
 `bundle exec ruby benchmarks/logger_bench.rb`
 
-**Logger Provider:**
-
-| Operation | Throughput | Time/Op |
-| --- | --- | --- |
-| sdk logger_provider#logger | 707,175.0 i/s | 1.41 μs/i |
-
 **Logger Emit:**
 
 | Operation | Throughput | Time/Op | Relative Performance |
 | --- | --- | --- | --- |
-| sdk logger#on_emit with trace context | 279,107.9 i/s | 3.58 μs/i | **Fastest** |
-| sdk logger#on_emit with body | 276,843.3 i/s | 3.61 μs/i | same-ish |
-| sdk logger#on_emit | 276,192.6 i/s | 3.62 μs/i | same-ish |
-| sdk logger#on_emit with attributes | 195,914.7 i/s | 5.10 μs/i | 1.42x slower |
-| sdk logger#on_emit with body and attributes | 195,574.2 i/s | 5.11 μs/i | 1.43x slower |
+| sdk logger#on_emit with trace context | 288,497.2 i/s | 3.47 μs/i | **Fastest** |
+| sdk logger#on_emit | 284,946.1 i/s | 3.51 μs/i | same-ish |
+| sdk logger#on_emit with body | 282,043.7 i/s | 3.55 μs/i | 1.02x slower |
+| sdk logger#on_emit with attributes | 201,052.2 i/s | 4.97 μs/i | 1.43x slower |
+| sdk logger#on_emit with body and attributes | 200,523.9 i/s | 4.99 μs/i | 1.44x slower |
