@@ -73,6 +73,14 @@
       matchFileNames: ["**/*.gemspec"],
       dependencyDashboardApproval: true,
     },
+    {
+      description: "Disable digest for ruby base image",
+      matchDepNames: ["Ruby"],
+      matchFileNames: ["Dockerfile"],
+      matchManagers: ["dockerfile"],
+      matchUpdateTypes: ["digest"],
+      enabled: false,
+    },
   ],
   customManagers: [
     {
