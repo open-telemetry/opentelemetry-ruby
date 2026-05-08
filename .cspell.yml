@@ -70,7 +70,9 @@ ignoreWords:
   - Dockerfiles
 words:
   - autocorrection
+  - bigdecimal
   - configurator
+  - confluentinc
   - linkspector
   - loggregator
   - LOGRECORD
@@ -78,12 +80,3 @@ words:
   - semconv
   - traceid
   - tracestate
-  - loggregator
-  - configurator
-
-  - autocorrection
-
-  - linkspector
-  - SARIF
-  - bigdecimal
-  - confluentinc
