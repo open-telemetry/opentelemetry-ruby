@@ -38,7 +38,7 @@ Gem::Specification.new do |spec|
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-propagator-jaeger/v#{OpenTelemetry::Propagator::Jaeger::VERSION}/file.CHANGELOG.html"
-    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/master/propagator/jaeger'
+    spec.metadata['source_code_uri'] = "https://github.com/open-telemetry/opentelemetry-ruby/tree/#{spec.name}/v#{spec.version}/propagator/jaeger"
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/issues'
     spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-propagator-jaeger/v#{OpenTelemetry::Propagator::Jaeger::VERSION}"
   end

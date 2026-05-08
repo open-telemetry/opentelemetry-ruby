@@ -1,21 +1,170 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
     "config:best-practices",
-    "helpers:pinGitHubActionDigestsToSemver"
+    "helpers:pinGitHubActionDigestsToSemver",
+    ":separateMultipleMajorReleases",
   ],
-  "packageRules": [
+  prConcurrentLimit: 12,
+  prHourlyLimit: 12,
+  packageRules: [
     {
-      "groupName": "all patch versions",
-      "matchUpdateTypes": ["patch"],
-      "schedule": ["before 8am every weekday"]
+      groupName: "all patch versions",
+      matchDepNames: ["!ruby"],
+      matchUpdateTypes: ["patch"],
+      schedule: ["before 6am every weekday"],
     },
     {
-      "matchUpdateTypes": ["minor", "major"],
-      "schedule": ["before 8am on Monday"]
-    }
+      groupName: "all digest versions",
+      matchDepNames: ["!ruby"],
+      matchUpdateTypes: ["digest"],
+      schedule: ["before 6am every weekday"],
+    },
+    {
+      matchDepNames: ["ruby"],
+      matchUpdateTypes: ["digest", "patch"],
+      schedule: ["before 6am every weekday"],
+    },
+    {
+      description: "Separate ruby updates so that patches can be installed after new minor has been released.",
+      matchDepNames: ["ruby"],
+      separateMultipleMinor: true,
+      separateMinorPatch: true,
+    },
+    {
+      description: "Group min ruby updates into a single update which needs to be approved via the dashboard.",
+      groupName: "Min-Ruby-sdk",
+      dependencyDashboardCategory: "Min Ruby Runtime",
+      matchDepNames: ["ruby"],
+      matchFileNames: [
+        "**/*.gemspec",
+        "Dockerfile",
+        "examples/**/Dockerfile",
+        "**/examples/Dockerfile",
+      ],
+      matchUpdateTypes: ["minor", "major"],
+      dependencyDashboardApproval: true,
+      minimumReleaseAge: "820 days",
+      prBodyNotes: [
+        ":exclamation: The old min version needs to be removed from the versions being tested in .github/actions/test_gem/action.yml.",
+      ],
+      draftPR: true,
+    },
+    {
+      matchUpdateTypes: ["minor"],
+      schedule: ["before 7am on Monday"],
+    },
+    {
+      matchUpdateTypes: ["major"],
+      schedule: ["before 8am on Monday"],
+    },
+    {
+      matchDepNames: ["actions/setup-node", "ruby/setup-ruby"],
+      schedule: ["before 6am every weekday"],
+      prConcurrentLimit: 0,
+      automerge: true,
+    },
+    {
+      description: "Require non-general dependencies in gemspec files to be approved",
+      dependencyDashboardCategory: "{{depType}} should be migrated to Gemfile",
+      matchCategories: ["custom"],
+      matchDepNames: ["!ruby"],
+      matchDepTypes: ["!dependency"],
+      matchFileNames: ["**/*.gemspec"],
+      dependencyDashboardApproval: true,
+    },
+    {
+      description: "Disable digest for ruby base image",
+      matchDepNames: ["Ruby"],
+      matchFileNames: ["Dockerfile"],
+      matchManagers: ["dockerfile"],
+      matchUpdateTypes: ["digest"],
+      enabled: false,
+    },
   ],
-  "labels": [
-    "dependencies"
-  ]
+  customManagers: [
+    {
+      customType: "regex",
+      description: "Update os version in Dockerfiles",
+      managerFilePatterns: [
+        "/(^|/|\\.)Dockerfile$/",
+        "/(^|/)Dockerfile\\.[^/]*$/",
+      ],
+      matchStrings: [
+        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)@(?<currentDigest>sha256:[a-f0-9]{40,64})\\s",
+        "FROM\\s+(?<packageName>.+):(?<depVersion>[0-9.]+)-alpine(?<alpineVersion>[0-9.]+)\\s",
+      ],
+      datasourceTemplate: "docker",
+      versioningTemplate: "docker",
+      currentValueTemplate: "{{alpineVersion}}",
+      extractVersionTemplate: "^{{depVersion}}-alpine(?<version>[0-9.]+)$",
+      depNameTemplate: "{{packageName}}-alpine",
+      depTypeTemplate: "final",
+    },
+    {
+      customType: "regex",
+      description: "Update dependencies in Appraisals",
+      managerFilePatterns: ["**/Appraisals"],
+      matchStrings: [
+        "gem\\s'(?<packageName>.+?)',\\s'(?<depVersion>.+\\s[0-9.]+)'",
+      ],
+      datasourceTemplate: "rubygems",
+      versioningTemplate: "ruby",
+      currentValueTemplate: "{{depVersion}}",
+      depTypeTemplate: "testDependency",
+    },
+    {
+      customType: "regex",
+      description: "Update dependencies in gemspecs",
+      managerFilePatterns: ["**/*.gemspec"],
+      matchStrings: [
+        ".add_(?<depType>.*dependency)\\s'(?<packageName>.+?)',\\s'(?<depVersion>.+\\s[0-9.]+)'",
+      ],
+      datasourceTemplate: "rubygems",
+      versioningTemplate: "ruby",
+      currentValueTemplate: "{{depVersion}}",
+    },
+    {
+      customType: "regex",
+      description: "Update min sdk in gemspec",
+      managerFilePatterns: ["**/*.gemspec"],
+      matchStrings: [
+        "required_ruby_version\\s=\\s\'.+\\s(?<depVersion>[0-9]+.[0-9]+)\'",
+      ],
+      datasourceTemplate: "ruby-version",
+      versioningTemplate: "ruby",
+      currentValueTemplate: "{{depVersion}}",
+      extractVersionTemplate: "^(?<version>[0-9]+.[0-9]+).0$",
+      depNameTemplate: "ruby",
+      depTypeTemplate: "gemspec.required_ruby_version",
+    },
+    {
+      customType: "regex",
+      description: "Update os matrix",
+      managerFilePatterns: [".github/**/**"],
+      matchStrings: [
+        "matrix:[\\s\\S]*os:[\\s\\S]*:",
+        "os:\\s*\\n(?:\\s+-\\s+[\\w.-]+\\n)+",
+        "- (?<packageName>.+?)-(?<depVersion>[0-9.]+)\\n",
+      ],
+      matchStringsStrategy: "recursive",
+      datasourceTemplate: "github-runners",
+      currentValueTemplate: "{{depVersion}}",
+      depTypeTemplate: "github-runner",
+    },
+  ],
+  lockFileMaintenance: {
+    enabled: true,
+    schedule: ["before 8am on Monday"],
+  },
+  labels: ["dependencies"],
+  ignoreDeps: [
+    "base64",
+    "bigdecimal",
+    "drb",
+    "logger",
+    "mutex_m",
+    "observer",
+    "ostruct",
+  ],
 }

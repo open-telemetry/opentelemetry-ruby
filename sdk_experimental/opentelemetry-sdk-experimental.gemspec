@@ -28,7 +28,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-api', '~> 1.1'
   spec.add_dependency 'opentelemetry-sdk', '~> 1.2'
 
-  spec.add_development_dependency 'benchmark-ipsa', '~> 0.2.0'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'opentelemetry-test-helpers'
   spec.add_development_dependency 'rake', '~> 13.3'
@@ -39,7 +38,7 @@ Gem::Specification.new do |spec|
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-sdk-experimental/v#{OpenTelemetry::SDK::Experimental::VERSION}/file.CHANGELOG.html"
-    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/sdk_experimental'
+    spec.metadata['source_code_uri'] = "https://github.com/open-telemetry/opentelemetry-ruby/tree/#{spec.name}/v#{spec.version}/sdk_experimental"
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/issues'
     spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-sdk-experimental/v#{OpenTelemetry::SDK::Experimental::VERSION}"
   end

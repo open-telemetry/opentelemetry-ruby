@@ -27,7 +27,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'opentelemetry-api', '~> 1.0'
 
-  spec.add_development_dependency 'kramdown', '~> 2.3'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'rake', '~> 13.3'
   spec.add_development_dependency 'rubocop', '~> 1.65'
@@ -37,7 +36,7 @@ Gem::Specification.new do |spec|
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-semantic_conventions/v#{OpenTelemetry::SemanticConventions::VERSION}/file.CHANGELOG.html"
-    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/semantic_conventions'
+    spec.metadata['source_code_uri'] = "https://github.com/open-telemetry/opentelemetry-ruby/tree/#{spec.name}/v#{spec.version}/semantic_conventions"
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/issues'
     spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-semantic_conventions/v#{OpenTelemetry::SemanticConventions::VERSION}"
   end

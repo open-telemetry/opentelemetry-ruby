@@ -13,13 +13,13 @@ jobs:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     permissions:
       pull-requests: write # required for posting review comments
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       # equivalent cli: linkspector check
       - name: Run linkspector
-        uses: umbrelladocs/action-linkspector@652f85bc57bb1e7d4327260decc10aa68f7694c3 # v1.4.0
+        uses: umbrelladocs/action-linkspector@963b6264d7de32c904942a70b488d3407453049e # v1.5.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review
