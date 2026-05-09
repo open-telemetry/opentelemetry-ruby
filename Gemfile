@@ -6,7 +6,7 @@
 
 source 'https://rubygems.org'
 
-gem 'rake', '~> 13.3'
+gem 'rake', '~> 13.3.0'
 gem 'rubocop', '~> 1.86.0'
 gem 'rubocop-rspec', '~> 3.5.0'
 gem 'rubocop-rake', '~> 0.7.1'
