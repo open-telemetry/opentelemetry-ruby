@@ -19,4 +19,5 @@ group :test, :development do
   gem 'simplecov', '~> 0.22.0'
   gem 'yard', '~> 0.9.0'
   gem 'yard-doctest', '~> 0.1.6'
+  gem 'opentelemetry-logs-sdk', path: '../logs_sdk', require: false
 end

@@ -130,19 +130,17 @@ module OpenTelemetry
         end
         alias register_asynchronous_instrument register_synchronous_instrument
 
-        # spec: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/configuration/sdk-environment-variables.md#exemplar
-        # this is one way to turn on the exemplar (exemplar should be turned off by default)
         def exemplar_filter_setup
           case ENV['OTEL_METRICS_EXEMPLAR_FILTER']
           when 'always_on'
             @exemplar_filter = Exemplar::AlwaysOnExemplarFilter
-          when 'trace_based'
+          when nil, '', 'trace_based'
             @exemplar_filter = Exemplar::TraceBasedExemplarFilter
           when 'always_off'
             @exemplar_filter = Exemplar::AlwaysOffExemplarFilter
           else
-            OpenTelemetry.logger.warn("OTEL_METRICS_EXEMPLAR_FILTER #{ENV['OTEL_METRICS_EXEMPLAR_FILTER']} is not part of the provided exemplar filters. Exemplar is off.")
-            @exemplar_filter = Exemplar::AlwaysOffExemplarFilter
+            OpenTelemetry.logger.warn("OTEL_METRICS_EXEMPLAR_FILTER #{ENV['OTEL_METRICS_EXEMPLAR_FILTER']} is not part of the provided exemplar filters. Using trace_based.")
+            @exemplar_filter = Exemplar::TraceBasedExemplarFilter
           end
         end
 

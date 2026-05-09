@@ -39,8 +39,8 @@ At this time, you should be able to:
 * Export metrics on a schedule using `PeriodicMetricReader` with any compatible push exporter (e.g. OTLP via `opentelemetry-exporter-otlp-metrics`)
 * Attach exemplars to metric data points for trace correlation:
   * `AlwaysOnExemplarFilter` — every measurement is eligible
-  * `AlwaysOffExemplarFilter` — no exemplars collected (default)
-  * `TraceBasedExemplarFilter` — only measurements inside a sampled trace
+  * `AlwaysOffExemplarFilter` — no exemplars collected
+  * `TraceBasedExemplarFilter` — only measurements inside a sampled trace (default)
 
 We do not yet have support for:
 
@@ -278,7 +278,7 @@ OpenTelemetry.meter_provider.shutdown
 
 Exemplars attach individual raw measurements — along with the trace context active at the time of the measurement — to an exported metric data point. This lets you jump from a metric spike directly to the trace that caused it.
 
-By default exemplars are **disabled** (`AlwaysOffExemplarFilter`). Enable them via an environment variable or programmatically.
+By default, exemplars use `TraceBasedExemplarFilter`, which records measurements only when they occur inside a sampled trace.
 
 #### Enable via environment variable
 
@@ -289,7 +289,7 @@ export OTEL_METRICS_EXEMPLAR_FILTER=trace_based
 # Eligible for every measurement regardless of trace context
 export OTEL_METRICS_EXEMPLAR_FILTER=always_on
 
-# Disabled (default)
+# Disabled
 export OTEL_METRICS_EXEMPLAR_FILTER=always_off
 ```
 

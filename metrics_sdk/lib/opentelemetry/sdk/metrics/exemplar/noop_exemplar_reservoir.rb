@@ -15,6 +15,10 @@ module OpenTelemetry
           def collect(attributes: nil, aggregation_temporality: :delta)
             []
           end
+
+          def noop?
+            true
+          end
         end
       end
     end
