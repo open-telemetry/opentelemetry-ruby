@@ -391,8 +391,6 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
     let(:metrics_reporter) { TestMetricsReporter.new }
 
     it 'reports consistent label keys' do
-      OpenTelemetry::SDK::Metrics::MeterProvider.reset
-
       exporter = TestExporter.new(status_codes: [FAILURE])
       bsp = BatchSpanProcessor.new(exporter,
                                    metrics_reporter: metrics_reporter,
