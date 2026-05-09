@@ -26,7 +26,6 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 3.3'
   spec.add_dependency 'logger'
 
-  spec.add_development_dependency 'benchmark-ips', '~> 2.14.0'
   spec.add_development_dependency 'concurrent-ruby', '~> 1.3'
 
   if spec.respond_to?(:metadata)
