@@ -1,5 +1,10 @@
 # Release History: opentelemetry-exporter-otlp-logs
 
+### v0.5.0 / 2026-05-12
+
+* ADDED: Add event_name field to Logs (#2077)
+* FIXED: Move the logs-sdk and metrics-sdk requires (#1956)
+
 ### v0.4.0 / 2026-04-07
 
 * ADDED: Min Ruby Version 3.3 (#2070)

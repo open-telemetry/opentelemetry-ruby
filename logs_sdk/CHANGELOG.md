@@ -1,5 +1,9 @@
 # Release History: opentelemetry-logs-sdk
 
+### v0.6.0 / 2026-05-12
+
+* ADDED: Add event_name field to Logs (#2077)
+
 ### v0.5.1 / 2026-04-15
 
 * FIXED: Move the logs-sdk requires to support "require 'opentelemetry/sdk/logs'" (#1956)
