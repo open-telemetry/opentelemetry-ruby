@@ -85,6 +85,7 @@ task generate_semconv: %i[check_out_semconv_version clean_generated_code] do
   puts "\n+++ Generating semantic conventions code.\n"
   sh <<~DOCKER_COMMAND
     docker run --rm \
+      -u $(id -u ${USER}):$(id -g ${USER}) \
       -v "#{semconv_source_dir}/model":/source \
       -v ./templates:/templates \
       -v ./:/output \
