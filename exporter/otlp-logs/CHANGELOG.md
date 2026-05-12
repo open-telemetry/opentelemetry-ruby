@@ -3,7 +3,7 @@
 ### v0.5.0 / 2026-05-12
 
 * ADDED: Add event_name field to Logs (#2077)
-* FIXED: Move the logs-sdk and metrics-sdk requires (#1956)
+* ADDED: Add git tag to source URI in gemspec (#2101)
 
 ### v0.4.0 / 2026-04-07
 

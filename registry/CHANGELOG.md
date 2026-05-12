@@ -1,8 +1,8 @@
 # Release History: opentelemetry-instrumentation-registry
 
-### v0.5.1 / 2026-05-12
+### v0.6.0 / 2026-05-12
 
-* FIXED: Move the logs-sdk and metrics-sdk requires (#1956)
+* ADDED: Add git tag to source URI in gemspec (#2101)
 
 ### v0.5.0 / 2026-04-07
 

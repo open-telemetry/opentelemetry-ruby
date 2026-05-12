@@ -4,6 +4,7 @@
 
 * BREAKING CHANGE: Use trace_based exemplar filter by default (#2112)
 * ADDED: Use trace_based exemplar filter by default (#2112)
+* ADDED: Add git tag to source URI in gemspec (#2101)
 * FIXED: Return false if it is noop_exemplar_reservoir (#2104)
 
 ### v0.13.1 / 2026-04-15
