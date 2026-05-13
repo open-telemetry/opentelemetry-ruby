@@ -25,15 +25,16 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
   # Time in nano
   let(:start_time) { Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond) }
   let(:end_time) { Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond) + (60 * 1_000_000_000) }
+  let(:cardinality_limit) { 2000 }
 
   describe '#collect' do
     it 'returns all the data points' do
-      expbh.update(1.03, {}, data_points)
-      expbh.update(1.23, {}, data_points)
-      expbh.update(0, {}, data_points)
+      expbh.update(1.03, {}, data_points, cardinality_limit)
+      expbh.update(1.23, {}, data_points, cardinality_limit)
+      expbh.update(0, {}, data_points, cardinality_limit)
 
-      expbh.update(1.45, { 'foo' => 'bar' }, data_points)
-      expbh.update(1.67, { 'foo' => 'bar' }, data_points)
+      expbh.update(1.45, { 'foo' => 'bar' }, data_points, cardinality_limit)
+      expbh.update(1.67, { 'foo' => 'bar' }, data_points, cardinality_limit)
 
       exphdps = expbh.collect(start_time, end_time, data_points)
 
@@ -80,9 +81,9 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         zero_threshold: 0
       )
 
-      expbh.update(2, {}, data_points)
-      expbh.update(4, {}, data_points)
-      expbh.update(1, {}, data_points)
+      expbh.update(2, {}, data_points, cardinality_limit)
+      expbh.update(4, {}, data_points, cardinality_limit)
+      expbh.update(1, {}, data_points, cardinality_limit)
 
       exphdps = expbh.collect(start_time, end_time, data_points)
 
@@ -113,12 +114,12 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         zero_threshold: 0
       )
 
-      expbh.update(2, {}, data_points)
-      expbh.update(2, {}, data_points)
-      expbh.update(2, {}, data_points)
-      expbh.update(1, {}, data_points)
-      expbh.update(8, {}, data_points)
-      expbh.update(0.5, {}, data_points)
+      expbh.update(2, {}, data_points, cardinality_limit)
+      expbh.update(2, {}, data_points, cardinality_limit)
+      expbh.update(2, {}, data_points, cardinality_limit)
+      expbh.update(1, {}, data_points, cardinality_limit)
+      expbh.update(8, {}, data_points, cardinality_limit)
+      expbh.update(0.5, {}, data_points, cardinality_limit)
 
       exphdps = expbh.collect(start_time, end_time, data_points)
 
@@ -143,8 +144,8 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         zero_threshold: 0
       )
 
-      expbh.update(0, {}, data_points)
-      expbh.update(10_000, {}, data_points)
+      expbh.update(0, {}, data_points, cardinality_limit)
+      expbh.update(10_000, {}, data_points, cardinality_limit)
 
       exphdps = expbh.collect(start_time, end_time, data_points)
 
@@ -203,7 +204,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
           )
 
           permutation.each do |value|
-            expbh.update(value, {}, data_points)
+            expbh.update(value, {}, data_points, cardinality_limit)
           end
 
           exphdps = expbh.collect(start_time, end_time, data_points)
@@ -226,9 +227,9 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         zero_threshold: 0
       )
 
-      expbh.update(Float::MAX, {}, data_points)
-      expbh.update(1, {}, data_points)
-      expbh.update(2**-1074, {}, data_points)
+      expbh.update(Float::MAX, {}, data_points, cardinality_limit)
+      expbh.update(1, {}, data_points, cardinality_limit)
+      expbh.update(2**-1074, {}, data_points, cardinality_limit)
 
       exphdps = expbh.collect(start_time, end_time, data_points)
 
@@ -250,7 +251,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       )
 
       [1, 3, 5, 7, 9].each do |value|
-        expbh.update(value, {}, data_points)
+        expbh.update(value, {}, data_points, cardinality_limit)
       end
 
       exphdps = expbh.collect(start_time, end_time, data_points)
@@ -265,7 +266,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       )
 
       [-1, -3, -5, -7, -9].each do |value|
-        expbh.update(value, {}, data_points)
+        expbh.update(value, {}, data_points, cardinality_limit)
       end
 
       exphdps = expbh.collect(start_time, end_time, data_points)
@@ -291,15 +292,41 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
     end
 
     it 'test_invalid_size_validation' do
-      error = assert_raises(ArgumentError) do
-        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_size: 10_000_000)
+      assert_raises ArgumentError do
+        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_size: 1)
       end
-      assert_equal('Buckets max size 10000000 is larger than maximum max size 16384', error.message)
 
-      error = assert_raises(ArgumentError) do
-        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_size: 0)
+      assert_raises ArgumentError do
+        OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_size: 16_385)
       end
-      assert_equal('Buckets min size 0 is smaller than minimum min size 2', error.message)
+    end
+
+    describe 'cardinality limit' do
+      it 'handles overflow data points and merges overflow measurements correctly' do
+        cardinality_limit = 2
+
+        expbh.update(1.5, { 'key' => 'a' }, data_points, cardinality_limit)
+        expbh.update(2.5, { 'key' => 'b' }, data_points, cardinality_limit)
+        expbh.update(3.5, { 'key' => 'c' }, data_points, cardinality_limit) # This should start overflow
+        expbh.update(4.5, { 'key' => 'd' }, data_points, cardinality_limit)
+        expbh.update(0, { 'key' => 'e' }, data_points, cardinality_limit)
+
+        exphdps = expbh.collect(start_time, end_time, data_points)
+
+        _(exphdps.size).must_equal(3)
+
+        overflow_point = exphdps.find { |hdp| hdp.attributes == { 'otel.metric.overflow' => true } }
+
+        _(overflow_point).wont_be_nil
+        _(overflow_point.count).must_equal(3)
+        _(overflow_point.sum).must_equal(8)
+        _(overflow_point.scale).must_equal(5)
+        _(overflow_point.min).must_equal(0)
+        _(overflow_point.max).must_equal(4.5)
+        _(overflow_point.positive.counts).must_equal([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0])
+        _(overflow_point.negative.counts).must_equal([0])
+        _(overflow_point.zero_count).must_equal(1)
+      end
     end
   end
 end

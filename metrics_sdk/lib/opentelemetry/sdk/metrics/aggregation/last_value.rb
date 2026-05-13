@@ -10,6 +10,7 @@ module OpenTelemetry
       module Aggregation
         # Contains the implementation of the LastValue aggregation
         class LastValue
+          OVERFLOW_ATTRIBUTE_SET = { 'otel.metric.overflow' => true }.freeze
           attr_reader :exemplar_reservoir
 
           # if no reservoir pass from instrument, then use this empty reservoir to avoid no method found error
@@ -33,7 +34,38 @@ module OpenTelemetry
             ndps
           end
 
-          def update(increment, attributes, data_points, exemplar_offer: false)
+          def update(increment, attributes, data_points, cardinality_limit, exemplar_offer: false)
+            # Check if we already have this attribute set
+            ndp = if data_points.key?(attributes)
+                    data_points[attributes]
+                  elsif data_points.size >= cardinality_limit
+                    data_points[OVERFLOW_ATTRIBUTE_SET] || create_new_data_point(OVERFLOW_ATTRIBUTE_SET, data_points)
+                  else
+                    create_new_data_point(attributes, data_points)
+                  end
+
+            update_number_data_point(ndp, increment, exemplar_offer: exemplar_offer)
+            nil
+          end
+
+          private
+
+          def create_new_data_point(attributes, data_points)
+            data_points[attributes] = NumberDataPoint.new(
+              attributes,
+              nil,
+              nil,
+              0,
+              nil
+            )
+          end
+
+          def update_number_data_point(ndp, increment, exemplar_offer: false)
+            ndp.value = increment
+            reservior_update(ndp.attributes, increment, exemplar_offer)
+          end
+
+          def reservior_update(attributes, increment, exemplar_offer)
             reservoir = @exemplar_reservoir_storage[attributes]
             unless reservoir
               reservoir = @exemplar_reservoir.dup
@@ -41,21 +73,12 @@ module OpenTelemetry
               @exemplar_reservoir_storage[attributes] = reservoir
             end
 
-            if exemplar_offer
-              reservoir.offer(value: increment,
-                              timestamp: OpenTelemetry::Common::Utilities.time_in_nanoseconds,
-                              attributes: attributes,
-                              context: OpenTelemetry::Context.current)
-            end
+            return unless exemplar_offer
 
-            data_points[attributes] = NumberDataPoint.new(
-              attributes,
-              nil,
-              nil,
-              increment,
-              nil
-            )
-            nil
+            reservoir.offer(value: increment,
+                            timestamp: OpenTelemetry::Common::Utilities.time_in_nanoseconds,
+                            attributes: attributes,
+                            context: OpenTelemetry::Context.current)
           end
         end
       end
