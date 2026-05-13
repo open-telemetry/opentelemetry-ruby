@@ -4,5 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'simplecov'
 require 'minitest/autorun'
 require 'opentelemetry-propagator-jaeger'
