@@ -45,6 +45,12 @@ templates:
     file_name: "incubating/{{ctx.root_namespace | snake_case}}/metrics.rb"
     params:
       incubating: true
+  - pattern: events.j2
+    application_mode: each
+    filter: '.groups | map(select(.type == "event")) | group_by(.name | split(".") | .[0]) | map({id: .[0].id | split(".") | .[1], groups: .})'
+    file_name: "incubating/{{ctx.id | snake_case}}/events.rb"
+    params:
+      incubating: true
 
 default_comment_format: yard_doc
 comment_formats:
