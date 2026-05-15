@@ -144,16 +144,12 @@ module OpenTelemetry
         # @note Stability Level: development
         RPC_MESSAGE_UNCOMPRESSED_SIZE = 'rpc.message.uncompressed_size'
 
-        # The name of the (logical) method being called, must be equal to the $method part in the span name.
-        #
-        # This is the logical name of the method from the RPC interface perspective, which can be different from the name of any implementing method/function. The `code.function.name` attribute may be used to store the latter (e.g., method actually executing the call on the server side, RPC client stub method on the client side).
+        # This is the logical name of the method from the RPC interface perspective.
         #
         # @note Stability Level: development
         RPC_METHOD = 'rpc.method'
 
         # The full (logical) name of the service being called, including its package name, if applicable.
-        #
-        # This is the logical name of the service from the RPC interface perspective, which can be different from the name of any implementing class. The `code.namespace` attribute may be used to store the latter (despite the attribute name, it may include a class name; e.g., class with method actually executing the call on the server side, RPC client stub class on the client side).
         #
         # @note Stability Level: development
         RPC_SERVICE = 'rpc.service'

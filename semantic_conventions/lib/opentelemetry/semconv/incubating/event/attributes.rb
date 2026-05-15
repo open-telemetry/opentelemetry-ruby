@@ -27,7 +27,7 @@ module OpenTelemetry
         # Identifies the class / type of event.
         #
         # @note Stability Level: development
-        # @deprecated Replaced by EventName top-level field on the LogRecord.
+        # @deprecated The value of this attribute MUST now be set as the value of the EventName field on the LogRecord to indicate that the LogRecord represents an Event.
         EVENT_NAME = 'event.name'
 
         # @!endgroup

@@ -48,6 +48,7 @@ module OpenTelemetry
         # **Streaming**: This metric is required for server and client streaming RPCs
         #
         # @note Stability Level: development
+        # @deprecated Removed, no replacement at this time.
         RPC_CLIENT_REQUESTS_PER_RPC = 'rpc.client.requests_per_rpc'
 
         # Measures the size of RPC response messages (uncompressed).
@@ -64,6 +65,7 @@ module OpenTelemetry
         # **Streaming**: This metric is required for server and client streaming RPCs
         #
         # @note Stability Level: development
+        # @deprecated Removed, no replacement at this time.
         RPC_CLIENT_RESPONSES_PER_RPC = 'rpc.client.responses_per_rpc'
 
         # Measures the duration of inbound RPC.
@@ -90,6 +92,7 @@ module OpenTelemetry
         # **Streaming** : This metric is required for server and client streaming RPCs
         #
         # @note Stability Level: development
+        # @deprecated Removed, no replacement at this time.
         RPC_SERVER_REQUESTS_PER_RPC = 'rpc.server.requests_per_rpc'
 
         # Measures the size of RPC response messages (uncompressed).
@@ -106,6 +109,7 @@ module OpenTelemetry
         # **Streaming**: This metric is required for server and client streaming RPCs
         #
         # @note Stability Level: development
+        # @deprecated Removed, no replacement at this time.
         RPC_SERVER_RESPONSES_PER_RPC = 'rpc.server.responses_per_rpc'
 
         # @!endgroup

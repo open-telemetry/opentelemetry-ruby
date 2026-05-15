@@ -31,18 +31,16 @@ module OpenTelemetry
         # @note Stability Level: development
         V8JS_GC_DURATION = 'v8js.gc.duration'
 
-        # Heap space available size.
-        #
-        # Value can be retrieved from value `space_available_size` of [`v8.getHeapSpaceStatistics()`](https://nodejs.org/api/v8.html#v8getheapspacestatistics)
+        # Deprecated, use `v8js.memory.heap.space.available_size` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `v8js.memory.heap.space.available_size`.
         V8JS_HEAP_SPACE_AVAILABLE_SIZE = 'v8js.heap.space.available_size'
 
-        # Committed size of a heap space.
-        #
-        # Value can be retrieved from value `physical_space_size` of [`v8.getHeapSpaceStatistics()`](https://nodejs.org/api/v8.html#v8getheapspacestatistics)
+        # Deprecated, use `v8js.memory.heap.space.physical_size` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `v8js.memory.heap.space.physical_size`.
         V8JS_HEAP_SPACE_PHYSICAL_SIZE = 'v8js.heap.space.physical_size'
 
         # Total heap memory size pre-allocated.
@@ -51,6 +49,20 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         V8JS_MEMORY_HEAP_LIMIT = 'v8js.memory.heap.limit'
+
+        # Heap space available size.
+        #
+        # Value can be retrieved from value `space_available_size` of [`v8.getHeapSpaceStatistics()`](https://nodejs.org/api/v8.html#v8getheapspacestatistics)
+        #
+        # @note Stability Level: development
+        V8JS_MEMORY_HEAP_SPACE_AVAILABLE_SIZE = 'v8js.memory.heap.space.available_size'
+
+        # Committed size of a heap space.
+        #
+        # Value can be retrieved from value `physical_space_size` of [`v8.getHeapSpaceStatistics()`](https://nodejs.org/api/v8.html#v8getheapspacestatistics)
+        #
+        # @note Stability Level: development
+        V8JS_MEMORY_HEAP_SPACE_PHYSICAL_SIZE = 'v8js.memory.heap.space.physical_size'
 
         # Heap Memory size allocated.
         #
