@@ -71,6 +71,7 @@ ignoreWords:
 words:
   - autocorrection
   - bigdecimal
+  - cadvisor
   - configurator
   - confluentinc
   - linkspector
