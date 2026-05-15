@@ -181,6 +181,11 @@ module OpenTelemetry
         # @deprecated Removed, no replacement at this time.
         GEN_AI_PROMPT = 'gen_ai.prompt'
 
+        # The name of the prompt that uniquely identifies it.
+        #
+        # @note Stability Level: development
+        GEN_AI_PROMPT_NAME = 'gen_ai.prompt.name'
+
         # The Generative AI provider as identified by the client or server instrumentation.
         #
         # The attribute SHOULD be set based on the instrumentation's best
