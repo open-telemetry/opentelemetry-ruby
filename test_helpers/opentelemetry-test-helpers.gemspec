@@ -25,9 +25,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 3.3'
 
-  spec.add_development_dependency 'pry'
-  spec.add_development_dependency 'pry-byebug' unless RUBY_ENGINE == 'jruby'
-
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-test-helpers/v#{OpenTelemetry::TestHelpers::VERSION}/file.CHANGELOG.html"
     spec.metadata['source_code_uri'] = "https://github.com/open-telemetry/opentelemetry-ruby/tree/#{spec.name}/v#{spec.version}/test_helpers"
