@@ -21,19 +21,30 @@
 module OpenTelemetry
   module SemConv
     module Incubating
-      module PEER
+      module MCP
         # @!group Attribute Names
 
-        # The [`service.name`](/docs/resource/README.md#service) of the remote service. SHOULD be equal to the actual `service.name` resource attribute of the remote service if any.
-        #
-        # Examples of `peer.service` that users may specify:
-        #
-        # - A Redis cache of auth tokens as `peer.service="AuthTokenCache"`.
-        # - A gRPC service `rpc.service="io.opentelemetry.AuthService"` may be hosted in both a gateway, `peer.service="ExternalApiService"` and a backend, `peer.service="AuthService"`.
+        # The name of the request or notification method.
         #
         # @note Stability Level: development
-        # @deprecated Replaced by `service.peer.name`.
-        PEER_SERVICE = 'peer.service'
+        MCP_METHOD_NAME = 'mcp.method.name'
+
+        # The [version](https://modelcontextprotocol.io/specification/versioning) of the Model Context Protocol used.
+        #
+        # @note Stability Level: development
+        MCP_PROTOCOL_VERSION = 'mcp.protocol.version'
+
+        # The value of the resource uri.
+        #
+        # This is a URI of the resource provided in the following requests or notifications: `resources/read`, `resources/subscribe`, `resources/unsubscribe`, or `notifications/resources/updated`.
+        #
+        # @note Stability Level: development
+        MCP_RESOURCE_URI = 'mcp.resource.uri'
+
+        # Identifies [MCP session](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports#session-management).
+        #
+        # @note Stability Level: development
+        MCP_SESSION_ID = 'mcp.session.id'
 
         # @!endgroup
       end
