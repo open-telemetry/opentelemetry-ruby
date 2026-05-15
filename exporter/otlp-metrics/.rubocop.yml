@@ -29,3 +29,11 @@ Metrics/BlockLength:
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-exporter-otlp-metrics.rb"
+Lint/DuplicateBranch:
+  Enabled: false
+Lint/SuppressedExceptionInNumberConversion:
+  Enabled: false
+Performance/MapCompact:
+  Enabled: false
+Performance/MethodObjectAsBlock:
+  Enabled: false

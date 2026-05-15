@@ -94,7 +94,7 @@ class FiberLocalVarContext
     FiberLocalVarContext.new(new_entries)
   end
 
-  def set_values(values) # rubocop:disable Naming/AccessorMethodName:
+  def set_values(values) # rubocop:disable Naming/AccessorMethodName
     FiberLocalVarContext.new(@entries.merge(values))
   end
 
@@ -188,7 +188,7 @@ class FiberAttributeContext
     FiberAttributeContext.new(new_entries)
   end
 
-  def set_values(values) # rubocop:disable Naming/AccessorMethodName:
+  def set_values(values) # rubocop:disable Naming/AccessorMethodName
     FiberAttributeContext.new(@entries.merge(values))
   end
 
@@ -287,7 +287,7 @@ class LinkedListContext
     LinkedListContext.new(new_entries)
   end
 
-  def set_values(values) # rubocop:disable Naming/AccessorMethodName:
+  def set_values(values) # rubocop:disable Naming/AccessorMethodName
     LinkedListContext.new(@entries.merge(values))
   end
 
@@ -379,7 +379,7 @@ class FiberLocalLinkedListContext < Hash
     new_entries
   end
 
-  def set_values(values) # rubocop:disable Naming/AccessorMethodName:
+  def set_values(values) # rubocop:disable Naming/AccessorMethodName
     merge(values)
   end
 
@@ -472,7 +472,7 @@ class ArrayContext
     ArrayContext.new(new_entries)
   end
 
-  def set_values(values) # rubocop:disable Naming/AccessorMethodName:
+  def set_values(values) # rubocop:disable Naming/AccessorMethodName
     ArrayContext.new(@entries.merge(values))
   end
 
@@ -591,7 +591,7 @@ class FiberLocalArrayContext
     FiberLocalArrayContext.new(new_entries)
   end
 
-  def set_values(values) # rubocop:disable Naming/AccessorMethodName:
+  def set_values(values) # rubocop:disable Naming/AccessorMethodName
     FiberLocalArrayContext.new(@entries.merge(values))
   end
 
@@ -684,7 +684,7 @@ class ImmutableArrayContext
     ImmutableArrayContext.new(new_entries)
   end
 
-  def set_values(values) # rubocop:disable Naming/AccessorMethodName:
+  def set_values(values) # rubocop:disable Naming/AccessorMethodName
     ImmutableArrayContext.new(@entries.merge(values))
   end
 
@@ -777,7 +777,7 @@ class FiberLocalImmutableArrayContext
     FiberLocalImmutableArrayContext.new(new_entries)
   end
 
-  def set_values(values) # rubocop:disable Naming/AccessorMethodName:
+  def set_values(values) # rubocop:disable Naming/AccessorMethodName
     FiberLocalImmutableArrayContext.new(@entries.merge(values))
   end
 

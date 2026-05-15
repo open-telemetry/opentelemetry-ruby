@@ -8,3 +8,23 @@ Naming/FileName:
 
 Style/ExplicitBlockArgument:
   Enabled: false
+Lint/AmbiguousOperatorPrecedence:
+  Enabled: false
+Lint/EmptyClass:
+  Enabled: false
+Minitest/UselessAssertion:
+  Enabled: false
+Naming/BlockForwarding:
+  Enabled: false
+Naming/PredicateMethod:
+  Enabled: false
+Style/ArgumentsForwarding:
+  Enabled: false
+Style/EmptyClassDefinition:
+  Enabled: false
+Style/HashConversion:
+  Enabled: false
+Style/NegatedIfElseCondition:
+  Enabled: false
+Style/PredicateWithKind:
+  Enabled: false

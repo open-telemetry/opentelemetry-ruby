@@ -10,3 +10,7 @@ Metrics/CyclomaticComplexity:
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-logs-api.rb"
+Lint/EmptyClass:
+  Enabled: false
+Style/ReduceToHash:
+  Enabled: false

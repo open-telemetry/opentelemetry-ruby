@@ -17,3 +17,11 @@ Style/FrozenStringLiteralComment:
     - gemfiles/**/*
 Metrics/BlockLength:
   Enabled: false
+Lint/DuplicateBranch:
+  Enabled: false
+Lint/SuppressedExceptionInNumberConversion:
+  Enabled: false
+Performance/MapCompact:
+  Enabled: false
+Performance/MethodObjectAsBlock:
+ Enabled: false

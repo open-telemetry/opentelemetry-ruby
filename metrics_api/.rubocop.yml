@@ -11,3 +11,7 @@ Metrics/CyclomaticComplexity:
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-metrics-api.rb"
+Minitest/AssertKindOf:
+  Enabled: false
+Style/EmptyClassDefinition:
+  Enabled: false

@@ -9,3 +9,13 @@ Metrics/BlockLength:
 Naming/FileName:
   Exclude:
     - 'lib/opentelemetry-propagator-jaeger.rb'
+
+Performance/RedundantSplitRegexpArgument:
+  Enabled: false
+
+Style/BitwisePredicate:
+  Enabled: false
+Style/NegatedIfElseCondition:
+  Enabled: false
+Style/RedundantRegexpArgument:
+  Enabled: false

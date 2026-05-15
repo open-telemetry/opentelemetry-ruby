@@ -20,3 +20,9 @@ Naming/FileName:
     - "lib/opentelemetry-exporter-zipkin.rb"
 Style/ExplicitBlockArgument:
   Enabled: false
+Lint/AmbiguousOperatorPrecedence:
+  Enabled: false
+Lint/SuppressedExceptionInNumberConversion:
+  Enabled: false
+Minitest/SkipEnsure:
+  Enabled: false

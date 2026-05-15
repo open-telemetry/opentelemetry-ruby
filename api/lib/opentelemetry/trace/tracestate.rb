@@ -18,7 +18,7 @@ module OpenTelemetry
         # @param [String] header Encoding of the tracestate header defined by
         #   the W3C Trace Context specification https://www.w3.org/TR/trace-context/
         # @return [Tracestate] A new Tracestate instance or DEFAULT
-        def from_string(header) # rubocop:disable Metrics/CyclomaticComplexity:
+        def from_string(header) # rubocop:disable Metrics/CyclomaticComplexity
           return DEFAULT if header.nil? || header.empty?
 
           hash = header.split(',').each_with_object({}) do |member, memo|

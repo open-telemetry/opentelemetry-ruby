@@ -5,7 +5,7 @@ require 'test_helper'
 describe OpenTelemetry::Trace::TraceFlags do
   describe '.new' do
     it 'is private' do
-      _(-> { OpenTelemetry::Trace::TraceFlags.new(0) })\
+      _(-> { OpenTelemetry::Trace::TraceFlags.new(0) })
         .must_raise(NoMethodError)
     end
   end

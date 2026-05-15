@@ -14,3 +14,11 @@ Naming/FileName:
     - "lib/opentelemetry-sdk-experimental.rb"
 Naming/MethodParameterName:
   Enabled: false
+Lint/AmbiguousOperatorPrecedence:
+  Enabled: false
+Lint/DuplicateBranch:
+  Enabled: false
+Naming/PredicateMethod:
+  Enabled: false
+Style/NegatedIfElseCondition:
+  Enabled: false

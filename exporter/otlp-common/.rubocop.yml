@@ -15,3 +15,5 @@ Metrics/PerceivedComplexity:
 Naming/FileName:
   Exclude:
     - "lib/opentelemetry-exporter-otlp-common.rb"
+Style/ObjectThen:
+  Enabled: false

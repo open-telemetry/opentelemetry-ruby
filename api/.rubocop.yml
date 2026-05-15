@@ -5,3 +5,21 @@ Naming/FileName:
     - "lib/opentelemetry-api.rb"
 Style/ExplicitBlockArgument:
   Enabled: false
+Lint/AmbiguousOperatorPrecedence:
+  Enabled: false
+Minitest/AssertPredicate:
+  Enabled: false
+Minitest/RefutePredicate:
+  Enabled: false
+Performance/MethodObjectAsBlock:
+  Enabled: false
+Style/BitwisePredicate:
+  Enabled: false
+Style/EmptyClassDefinition:
+  Enabled: false
+Style/HashConversion:
+  Enabled: false
+Style/NegatedIfElseCondition:
+  Enabled: false
+Style/OneClassPerFile:
+  Enabled: false
