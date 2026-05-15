@@ -21,32 +21,28 @@
 module OpenTelemetry
   module SemConv
     module Incubating
-      module MESSAGE
-        # @!group Attribute Names
+      module MCP
+        # @!group Metrics Names
 
-        # Deprecated, no replacement at this time.
+        # The duration of the MCP request or notification as observed on the sender from the time it was sent until the response or ack is received.
         #
         # @note Stability Level: development
-        # @deprecated Deprecated, no replacement at this time.
-        MESSAGE_COMPRESSED_SIZE = 'message.compressed_size'
+        MCP_CLIENT_OPERATION_DURATION = 'mcp.client.operation.duration'
 
-        # Deprecated, no replacement at this time.
+        # The duration of the MCP session as observed on the MCP client.
         #
         # @note Stability Level: development
-        # @deprecated Deprecated, no replacement at this time.
-        MESSAGE_ID = 'message.id'
+        MCP_CLIENT_SESSION_DURATION = 'mcp.client.session.duration'
 
-        # Deprecated, no replacement at this time.
+        # MCP request or notification duration as observed on the receiver from the time it was received until the result or ack is sent.
         #
         # @note Stability Level: development
-        # @deprecated Deprecated, no replacement at this time.
-        MESSAGE_TYPE = 'message.type'
+        MCP_SERVER_OPERATION_DURATION = 'mcp.server.operation.duration'
 
-        # Deprecated, no replacement at this time.
+        # The duration of the MCP session as observed on the MCP server.
         #
         # @note Stability Level: development
-        # @deprecated Deprecated, no replacement at this time.
-        MESSAGE_UNCOMPRESSED_SIZE = 'message.uncompressed_size'
+        MCP_SERVER_SESSION_DURATION = 'mcp.server.session.duration'
 
         # @!endgroup
       end

@@ -29,10 +29,15 @@ module OpenTelemetry
         # @note Stability Level: release_candidate
         FEATURE_FLAG_CONTEXT_ID = 'feature_flag.context.id'
 
-        # Deprecated, use `error.message` instead.
+        # A message providing more detail about an error that occurred during feature flag evaluation in human-readable form.
+        #
+        # @note Stability Level: release_candidate
+        FEATURE_FLAG_ERROR_MESSAGE = 'feature_flag.error.message'
+
+        # Deprecated, use `feature_flag.error.message` instead.
         #
         # @note Stability Level: development
-        # @deprecated Replaced by `error.message`.
+        # @deprecated Replaced by `feature_flag.error.message`.
         FEATURE_FLAG_EVALUATION_ERROR_MESSAGE = 'feature_flag.evaluation.error.message'
 
         # Deprecated, use `feature_flag.result.reason` instead.
