@@ -74,6 +74,7 @@ words:
   - cadvisor
   - configurator
   - confluentinc
+  - environtment # temporary, just to get through first renovate semconv release.
   - linkspector
   - loggregator
   - LOGRECORD
