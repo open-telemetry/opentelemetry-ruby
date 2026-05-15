@@ -26,49 +26,49 @@ module OpenTelemetry
 
         # Event loop maximum delay.
         #
-        # Value can be retrieved from value `histogram.max` of [`perf_hooks.monitorEventLoopDelay([options])`](https://nodejs.org/api/perf_hooks.html#perf_hooksmonitoreventloopdelayoptions)
+        # Value can be retrieved from value `histogram.max` of [`perf_hooks.monitorEventLoopDelay([options])`](https://nodejs.org/api/perf_hooks.html#perf-hooksmonitoreventloopdelayoptions)
         #
         # @note Stability Level: development
         NODEJS_EVENTLOOP_DELAY_MAX = 'nodejs.eventloop.delay.max'
 
         # Event loop mean delay.
         #
-        # Value can be retrieved from value `histogram.mean` of [`perf_hooks.monitorEventLoopDelay([options])`](https://nodejs.org/api/perf_hooks.html#perf_hooksmonitoreventloopdelayoptions)
+        # Value can be retrieved from value `histogram.mean` of [`perf_hooks.monitorEventLoopDelay([options])`](https://nodejs.org/api/perf_hooks.html#perf-hooksmonitoreventloopdelayoptions)
         #
         # @note Stability Level: development
         NODEJS_EVENTLOOP_DELAY_MEAN = 'nodejs.eventloop.delay.mean'
 
         # Event loop minimum delay.
         #
-        # Value can be retrieved from value `histogram.min` of [`perf_hooks.monitorEventLoopDelay([options])`](https://nodejs.org/api/perf_hooks.html#perf_hooksmonitoreventloopdelayoptions)
+        # Value can be retrieved from value `histogram.min` of [`perf_hooks.monitorEventLoopDelay([options])`](https://nodejs.org/api/perf_hooks.html#perf-hooksmonitoreventloopdelayoptions)
         #
         # @note Stability Level: development
         NODEJS_EVENTLOOP_DELAY_MIN = 'nodejs.eventloop.delay.min'
 
         # Event loop 50 percentile delay.
         #
-        # Value can be retrieved from value `histogram.percentile(50)` of [`perf_hooks.monitorEventLoopDelay([options])`](https://nodejs.org/api/perf_hooks.html#perf_hooksmonitoreventloopdelayoptions)
+        # Value can be retrieved from value `histogram.percentile(50)` of [`perf_hooks.monitorEventLoopDelay([options])`](https://nodejs.org/api/perf_hooks.html#perf-hooksmonitoreventloopdelayoptions)
         #
         # @note Stability Level: development
         NODEJS_EVENTLOOP_DELAY_P50 = 'nodejs.eventloop.delay.p50'
 
         # Event loop 90 percentile delay.
         #
-        # Value can be retrieved from value `histogram.percentile(90)` of [`perf_hooks.monitorEventLoopDelay([options])`](https://nodejs.org/api/perf_hooks.html#perf_hooksmonitoreventloopdelayoptions)
+        # Value can be retrieved from value `histogram.percentile(90)` of [`perf_hooks.monitorEventLoopDelay([options])`](https://nodejs.org/api/perf_hooks.html#perf-hooksmonitoreventloopdelayoptions)
         #
         # @note Stability Level: development
         NODEJS_EVENTLOOP_DELAY_P90 = 'nodejs.eventloop.delay.p90'
 
         # Event loop 99 percentile delay.
         #
-        # Value can be retrieved from value `histogram.percentile(99)` of [`perf_hooks.monitorEventLoopDelay([options])`](https://nodejs.org/api/perf_hooks.html#perf_hooksmonitoreventloopdelayoptions)
+        # Value can be retrieved from value `histogram.percentile(99)` of [`perf_hooks.monitorEventLoopDelay([options])`](https://nodejs.org/api/perf_hooks.html#perf-hooksmonitoreventloopdelayoptions)
         #
         # @note Stability Level: development
         NODEJS_EVENTLOOP_DELAY_P99 = 'nodejs.eventloop.delay.p99'
 
         # Event loop standard deviation delay.
         #
-        # Value can be retrieved from value `histogram.stddev` of [`perf_hooks.monitorEventLoopDelay([options])`](https://nodejs.org/api/perf_hooks.html#perf_hooksmonitoreventloopdelayoptions)
+        # Value can be retrieved from value `histogram.stddev` of [`perf_hooks.monitorEventLoopDelay([options])`](https://nodejs.org/api/perf_hooks.html#perf-hooksmonitoreventloopdelayoptions)
         #
         # @note Stability Level: development
         NODEJS_EVENTLOOP_DELAY_STDDEV = 'nodejs.eventloop.delay.stddev'

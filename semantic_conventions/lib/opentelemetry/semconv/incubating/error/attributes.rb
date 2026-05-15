@@ -33,6 +33,7 @@ module OpenTelemetry
         # `error.message` is NOT RECOMMENDED for metrics or spans due to its unbounded cardinality and overlap with span status.
         #
         # @note Stability Level: development
+        # @deprecated Use domain-specific error message attribute. For example, use `feature_flag.error.message` for feature flag errors.
         ERROR_MESSAGE = 'error.message'
 
         # Describes a class of error the operation ended with.
@@ -41,6 +42,12 @@ module OpenTelemetry
         #
         # When `error.type` is set to a type (e.g., an exception type), its
         # canonical class name identifying the type within the artifact SHOULD be used.
+        #
+        # If the recorded error type is a wrapper that is not meaningful for
+        # failure classification, instrumentation MAY use the type of the inner
+        # error instead. For example, in Go, errors created with `fmt.Errorf`
+        # using `%w` MAY be unwrapped when the wrapper type does not help
+        # classify the failure.
         #
         # Instrumentations SHOULD document the list of errors they report.
         #
@@ -51,7 +58,7 @@ module OpenTelemetry
         #
         # If the operation has completed successfully, instrumentations SHOULD NOT set `error.type`.
         #
-        # If a specific domain defines its own set of error identifiers (such as HTTP or gRPC status codes),
+        # If a specific domain defines its own set of error identifiers (such as HTTP or RPC status codes),
         # it's RECOMMENDED to:
         #
         # - Use a domain-specific attribute

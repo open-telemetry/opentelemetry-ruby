@@ -23,6 +23,13 @@ module OpenTelemetry
     module OTEL
       # @!group Attribute Names
 
+      # Identifies the class / type of event.
+      #
+      # This attribute SHOULD be used by non-OTLP exporters when destination does not support `EventName` or equivalent field. This attribute MAY be used by applications using existing logging libraries so that it can be used to set the `EventName` field by Collector or SDK components.
+      #
+      # @note Stability Level: stable
+      OTEL_EVENT_NAME = 'otel.event.name'
+
       # The name of the instrumentation scope - (`InstrumentationScope.Name` in OTLP).
       #
       # @note Stability Level: stable

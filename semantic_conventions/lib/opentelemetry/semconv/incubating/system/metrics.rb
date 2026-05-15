@@ -113,6 +113,23 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_FILESYSTEM_UTILIZATION = 'system.filesystem.utilization'
 
+        # The number of packets transferred.
+        #
+        # @note Stability Level: development
+        # @deprecated Replaced by `system.memory.linux.available`.
+        SYSTEM_LINUX_MEMORY_AVAILABLE = 'system.linux.memory.available'
+
+        # The number of packets transferred.
+        #
+        # @note Stability Level: development
+        # @deprecated Replaced by `system.memory.linux.slab.usage`.
+        SYSTEM_LINUX_MEMORY_SLAB_USAGE = 'system.linux.memory.slab.usage'
+
+        # Total virtual memory available in the system.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LIMIT = 'system.memory.limit'
+
         # An estimate of how much memory is available for starting new applications, without causing swapping.
         #
         # This is an alternative to `system.memory.usage` metric with `state=free`.
@@ -122,21 +139,45 @@ module OpenTelemetry
         # See also `MemAvailable` in [/proc/meminfo](https://man7.org/linux/man-pages/man5/proc.5.html).
         #
         # @note Stability Level: development
-        SYSTEM_LINUX_MEMORY_AVAILABLE = 'system.linux.memory.available'
+        SYSTEM_MEMORY_LINUX_AVAILABLE = 'system.memory.linux.available'
 
-        # Reports the memory used by the Linux kernel for managing caches of frequently used objects.
-        #
-        # The sum over the `reclaimable` and `unreclaimable` state values in `linux.memory.slab.usage` SHOULD be equal to the total slab memory available on the system.
-        # Note that the total slab memory is not constant and may vary over time.
-        # See also the [Slab allocator](https://blogs.oracle.com/linux/post/understanding-linux-kernel-memory-statistics) and `Slab` in [/proc/meminfo](https://man7.org/linux/man-pages/man5/proc.5.html).
+        # Total number of hugepages available.
         #
         # @note Stability Level: development
-        SYSTEM_LINUX_MEMORY_SLAB_USAGE = 'system.linux.memory.slab.usage'
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_LIMIT = 'system.memory.linux.hugepages.limit'
 
-        # Total virtual memory available in the system.
+        # System hugepage size in bytes.
         #
         # @note Stability Level: development
-        SYSTEM_MEMORY_LIMIT = 'system.memory.limit'
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_PAGE_SIZE = 'system.memory.linux.hugepages.page_size'
+
+        # Number of reserved hugepages.
+        #
+        # Hugepages for which a commitment to allocate has been made, but no allocation has yet been made.
+        # This is reported as a separate metric rather than a `usage` state because reserved pages are already counted in `free` pages.
+        # They represent a subset of free pages that cannot be used for non-reserved allocations.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_RESERVED = 'system.memory.linux.hugepages.reserved'
+
+        # Number of surplus hugepages.
+        #
+        # Overcommitted hugepages beyond the persistent pool.
+        # This is reported as a separate metric rather than a `usage` state because surplus pages can be in either `used` or `free` state.
+        # Including them in `usage` would break the convention that `usage` states sum to the `limit`.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_SURPLUS = 'system.memory.linux.hugepages.surplus'
+
+        # Number of hugepages in use by state.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_USAGE = 'system.memory.linux.hugepages.usage'
+
+        # Percentage of hugepages in use by state.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_UTILIZATION = 'system.memory.linux.hugepages.utilization'
 
         # Shared memory used (mostly by tmpfs).
         #
@@ -144,6 +185,21 @@ module OpenTelemetry
         # `Shmem` from [`/proc/meminfo`](https://man7.org/linux/man-pages/man5/proc.5.html)"
         #
         # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_SHARED = 'system.memory.linux.shared'
+
+        # Reports the memory used by the Linux kernel for managing caches of frequently used objects.
+        #
+        # The sum over the `reclaimable` and `unreclaimable` state values in `memory.linux.slab.usage` SHOULD be equal to the total slab memory available on the system.
+        # Note that the total slab memory is not constant and may vary over time.
+        # See also the [Slab allocator](https://blogs.oracle.com/linux/post/understanding-linux-kernel-memory-statistics) and `Slab` in [/proc/meminfo](https://man7.org/linux/man-pages/man5/proc.5.html).
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_SLAB_USAGE = 'system.memory.linux.slab.usage'
+
+        # Deprecated, use `system.memory.linux.shared` instead.
+        #
+        # @note Stability Level: development
+        # @deprecated Replaced by `system.memory.linux.shared`.
         SYSTEM_MEMORY_SHARED = 'system.memory.shared'
 
         # Reports memory in use by state.

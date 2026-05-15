@@ -26,7 +26,7 @@ module OpenTelemetry
 
         # The GraphQL document being executed.
         #
-        # The value may be sanitized to exclude sensitive information.
+        # If instrumentation can reliably identify and redact sensitive information it SHOULD do it.
         #
         # @note Stability Level: development
         GRAPHQL_DOCUMENT = 'graphql.document'

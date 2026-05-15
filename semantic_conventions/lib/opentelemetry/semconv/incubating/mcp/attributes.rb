@@ -21,32 +21,30 @@
 module OpenTelemetry
   module SemConv
     module Incubating
-      module GO
+      module MCP
         # @!group Attribute Names
 
-        # The detailed state of the CPU.
-        #
-        # Value SHOULD match the specific CPU class reported by the Go runtime under `/cpu/classes/...`. The list of possible values is subject to change with the Go version used.
+        # The name of the request or notification method.
         #
         # @note Stability Level: development
-        GO_CPU_DETAILED_STATE = 'go.cpu.detailed_state'
+        MCP_METHOD_NAME = 'mcp.method.name'
 
-        # The state of the CPU.
+        # The [version](https://modelcontextprotocol.io/specification/versioning) of the Model Context Protocol used.
         #
         # @note Stability Level: development
-        GO_CPU_STATE = 'go.cpu.state'
+        MCP_PROTOCOL_VERSION = 'mcp.protocol.version'
 
-        # The detailed type of memory.
+        # The value of the resource uri.
         #
-        # Value SHOULD match the specific memory class reported by the Go runtime under `/memory/classes/...`. The list of possible values is subject to change with the Go version used.
+        # This is a URI of the resource provided in the following requests or notifications: `resources/read`, `resources/subscribe`, `resources/unsubscribe`, or `notifications/resources/updated`.
         #
         # @note Stability Level: development
-        GO_MEMORY_DETAILED_TYPE = 'go.memory.detailed_type'
+        MCP_RESOURCE_URI = 'mcp.resource.uri'
 
-        # The type of memory.
+        # Identifies [MCP session](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports#session-management).
         #
         # @note Stability Level: development
-        GO_MEMORY_TYPE = 'go.memory.type'
+        MCP_SESSION_ID = 'mcp.session.id'
 
         # @!endgroup
       end

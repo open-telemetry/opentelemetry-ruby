@@ -24,7 +24,15 @@ module OpenTelemetry
       module RPC
         # @!group Metrics Names
 
-        # Measures the duration of outbound RPC.
+        # Measures the duration of an outgoing Remote Procedure Call (RPC).
+        #
+        # When this metric is reported alongside an RPC client span, the metric value
+        # SHOULD be the same as the RPC client span duration.
+        #
+        # @note Stability Level: release_candidate
+        RPC_CLIENT_CALL_DURATION = 'rpc.client.call.duration'
+
+        # Deprecated, use `rpc.client.call.duration` instead. Note: the unit also changed from `ms` to `s`.
         #
         # While streaming RPCs may record this metric as start-of-batch
         # to end-of-batch, it's hard to interpret in practice.
@@ -32,6 +40,7 @@ module OpenTelemetry
         # **Streaming**: N/A.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `rpc.client.call.duration` with unit `s`.
         RPC_CLIENT_DURATION = 'rpc.client.duration'
 
         # Measures the size of RPC request messages (uncompressed).
@@ -39,6 +48,7 @@ module OpenTelemetry
         # **Streaming**: Recorded per message in a streaming batch
         #
         # @note Stability Level: development
+        # @deprecated Removed, no replacement at this time.
         RPC_CLIENT_REQUEST_SIZE = 'rpc.client.request.size'
 
         # Measures the number of messages received per RPC.
@@ -56,6 +66,7 @@ module OpenTelemetry
         # **Streaming**: Recorded per response in a streaming batch
         #
         # @note Stability Level: development
+        # @deprecated Removed, no replacement at this time.
         RPC_CLIENT_RESPONSE_SIZE = 'rpc.client.response.size'
 
         # Measures the number of messages sent per RPC.
@@ -68,7 +79,15 @@ module OpenTelemetry
         # @deprecated Removed, no replacement at this time.
         RPC_CLIENT_RESPONSES_PER_RPC = 'rpc.client.responses_per_rpc'
 
-        # Measures the duration of inbound RPC.
+        # Measures the duration of an incoming Remote Procedure Call (RPC).
+        #
+        # When this metric is reported alongside an RPC server span, the metric value
+        # SHOULD be the same as the RPC server span duration.
+        #
+        # @note Stability Level: release_candidate
+        RPC_SERVER_CALL_DURATION = 'rpc.server.call.duration'
+
+        # Deprecated, use `rpc.server.call.duration` instead. Note: the unit also changed from `ms` to `s`.
         #
         # While streaming RPCs may record this metric as start-of-batch
         # to end-of-batch, it's hard to interpret in practice.
@@ -76,6 +95,7 @@ module OpenTelemetry
         # **Streaming**: N/A.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `rpc.server.call.duration` with unit `s`.
         RPC_SERVER_DURATION = 'rpc.server.duration'
 
         # Measures the size of RPC request messages (uncompressed).
@@ -83,6 +103,7 @@ module OpenTelemetry
         # **Streaming**: Recorded per message in a streaming batch
         #
         # @note Stability Level: development
+        # @deprecated Removed, no replacement at this time.
         RPC_SERVER_REQUEST_SIZE = 'rpc.server.request.size'
 
         # Measures the number of messages received per RPC.
@@ -100,6 +121,7 @@ module OpenTelemetry
         # **Streaming**: Recorded per response in a streaming batch
         #
         # @note Stability Level: development
+        # @deprecated Removed, no replacement at this time.
         RPC_SERVER_RESPONSE_SIZE = 'rpc.server.response.size'
 
         # Measures the number of messages sent per RPC.
