@@ -21,32 +21,21 @@
 module OpenTelemetry
   module SemConv
     module Incubating
-      module GO
+      module JSONRPC
         # @!group Attribute Names
 
-        # The detailed state of the CPU.
-        #
-        # Value SHOULD match the specific CPU class reported by the Go runtime under `/cpu/classes/...`. The list of possible values is subject to change with the Go version used.
+        # Protocol version, as specified in the `jsonrpc` property of the request and its corresponding response.
         #
         # @note Stability Level: development
-        GO_CPU_DETAILED_STATE = 'go.cpu.detailed_state'
+        JSONRPC_PROTOCOL_VERSION = 'jsonrpc.protocol.version'
 
-        # The state of the CPU.
+        # A string representation of the `id` property of the request and its corresponding response.
+        #
+        # Under the [JSON-RPC specification](https://www.jsonrpc.org/specification), the `id` property may be a string, number, null, or omitted entirely. When omitted, the request is treated as a notification. Using `null` is not equivalent to omitting the `id`, but it is discouraged.
+        # Instrumentations SHOULD NOT capture this attribute when the `id` is `null` or omitted.
         #
         # @note Stability Level: development
-        GO_CPU_STATE = 'go.cpu.state'
-
-        # The detailed type of memory.
-        #
-        # Value SHOULD match the specific memory class reported by the Go runtime under `/memory/classes/...`. The list of possible values is subject to change with the Go version used.
-        #
-        # @note Stability Level: development
-        GO_MEMORY_DETAILED_TYPE = 'go.memory.detailed_type'
-
-        # The type of memory.
-        #
-        # @note Stability Level: development
-        GO_MEMORY_TYPE = 'go.memory.type'
+        JSONRPC_REQUEST_ID = 'jsonrpc.request.id'
 
         # @!endgroup
       end

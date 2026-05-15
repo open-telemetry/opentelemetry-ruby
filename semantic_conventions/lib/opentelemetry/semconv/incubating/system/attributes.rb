@@ -61,6 +61,16 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_FILESYSTEM_TYPE = 'system.filesystem.type'
 
+        # The Linux HugePages memory state
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_STATE = 'system.memory.linux.hugepages.state'
+
+        # The Linux Slab memory state
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_SLAB_STATE = 'system.memory.linux.slab.state'
+
         # The memory state
         #
         # @note Stability Level: development

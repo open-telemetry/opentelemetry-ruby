@@ -21,32 +21,28 @@
 module OpenTelemetry
   module SemConv
     module Incubating
-      module GO
-        # @!group Attribute Names
+      module MCP
+        # @!group Metrics Names
 
-        # The detailed state of the CPU.
-        #
-        # Value SHOULD match the specific CPU class reported by the Go runtime under `/cpu/classes/...`. The list of possible values is subject to change with the Go version used.
+        # The duration of the MCP request or notification as observed on the sender from the time it was sent until the response or ack is received.
         #
         # @note Stability Level: development
-        GO_CPU_DETAILED_STATE = 'go.cpu.detailed_state'
+        MCP_CLIENT_OPERATION_DURATION = 'mcp.client.operation.duration'
 
-        # The state of the CPU.
+        # The duration of the MCP session as observed on the MCP client.
         #
         # @note Stability Level: development
-        GO_CPU_STATE = 'go.cpu.state'
+        MCP_CLIENT_SESSION_DURATION = 'mcp.client.session.duration'
 
-        # The detailed type of memory.
-        #
-        # Value SHOULD match the specific memory class reported by the Go runtime under `/memory/classes/...`. The list of possible values is subject to change with the Go version used.
+        # MCP request or notification duration as observed on the receiver from the time it was received until the result or ack is sent.
         #
         # @note Stability Level: development
-        GO_MEMORY_DETAILED_TYPE = 'go.memory.detailed_type'
+        MCP_SERVER_OPERATION_DURATION = 'mcp.server.operation.duration'
 
-        # The type of memory.
+        # The duration of the MCP session as observed on the MCP server.
         #
         # @note Stability Level: development
-        GO_MEMORY_TYPE = 'go.memory.type'
+        MCP_SERVER_SESSION_DURATION = 'mcp.server.session.duration'
 
         # @!endgroup
       end
