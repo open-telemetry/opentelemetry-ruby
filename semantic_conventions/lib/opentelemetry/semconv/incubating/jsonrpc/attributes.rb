@@ -21,32 +21,21 @@
 module OpenTelemetry
   module SemConv
     module Incubating
-      module MESSAGE
+      module JSONRPC
         # @!group Attribute Names
 
-        # Deprecated, no replacement at this time.
+        # Protocol version, as specified in the `jsonrpc` property of the request and its corresponding response.
         #
         # @note Stability Level: development
-        # @deprecated Deprecated, no replacement at this time.
-        MESSAGE_COMPRESSED_SIZE = 'message.compressed_size'
+        JSONRPC_PROTOCOL_VERSION = 'jsonrpc.protocol.version'
 
-        # Deprecated, no replacement at this time.
+        # A string representation of the `id` property of the request and its corresponding response.
+        #
+        # Under the [JSON-RPC specification](https://www.jsonrpc.org/specification), the `id` property may be a string, number, null, or omitted entirely. When omitted, the request is treated as a notification. Using `null` is not equivalent to omitting the `id`, but it is discouraged.
+        # Instrumentations SHOULD NOT capture this attribute when the `id` is `null` or omitted.
         #
         # @note Stability Level: development
-        # @deprecated Deprecated, no replacement at this time.
-        MESSAGE_ID = 'message.id'
-
-        # Deprecated, no replacement at this time.
-        #
-        # @note Stability Level: development
-        # @deprecated Deprecated, no replacement at this time.
-        MESSAGE_TYPE = 'message.type'
-
-        # Deprecated, no replacement at this time.
-        #
-        # @note Stability Level: development
-        # @deprecated Deprecated, no replacement at this time.
-        MESSAGE_UNCOMPRESSED_SIZE = 'message.uncompressed_size'
+        JSONRPC_REQUEST_ID = 'jsonrpc.request.id'
 
         # @!endgroup
       end

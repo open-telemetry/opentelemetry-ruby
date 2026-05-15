@@ -21,32 +21,30 @@
 module OpenTelemetry
   module SemConv
     module Incubating
-      module MESSAGE
+      module MCP
         # @!group Attribute Names
 
-        # Deprecated, no replacement at this time.
+        # The name of the request or notification method.
         #
         # @note Stability Level: development
-        # @deprecated Deprecated, no replacement at this time.
-        MESSAGE_COMPRESSED_SIZE = 'message.compressed_size'
+        MCP_METHOD_NAME = 'mcp.method.name'
 
-        # Deprecated, no replacement at this time.
+        # The [version](https://modelcontextprotocol.io/specification/versioning) of the Model Context Protocol used.
         #
         # @note Stability Level: development
-        # @deprecated Deprecated, no replacement at this time.
-        MESSAGE_ID = 'message.id'
+        MCP_PROTOCOL_VERSION = 'mcp.protocol.version'
 
-        # Deprecated, no replacement at this time.
+        # The value of the resource uri.
+        #
+        # This is a URI of the resource provided in the following requests or notifications: `resources/read`, `resources/subscribe`, `resources/unsubscribe`, or `notifications/resources/updated`.
         #
         # @note Stability Level: development
-        # @deprecated Deprecated, no replacement at this time.
-        MESSAGE_TYPE = 'message.type'
+        MCP_RESOURCE_URI = 'mcp.resource.uri'
 
-        # Deprecated, no replacement at this time.
+        # Identifies [MCP session](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports#session-management).
         #
         # @note Stability Level: development
-        # @deprecated Deprecated, no replacement at this time.
-        MESSAGE_UNCOMPRESSED_SIZE = 'message.uncompressed_size'
+        MCP_SESSION_ID = 'mcp.session.id'
 
         # @!endgroup
       end
