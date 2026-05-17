@@ -1,7 +1,8 @@
 name: Renovate Semantic Conventions Post-Update
 
 on:
-  pull_request:
+  pull_request_target:
+    types: [opened, synchronize, edited]
     paths:
       - 'semantic_conventions/Rakefile'
     branches:
