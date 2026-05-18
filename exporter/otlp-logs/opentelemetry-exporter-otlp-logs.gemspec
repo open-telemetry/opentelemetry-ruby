@@ -34,8 +34,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-sdk'
   spec.add_dependency 'opentelemetry-semantic_conventions'
 
-  spec.add_development_dependency 'pry-byebug' unless RUBY_ENGINE == 'jruby'
-
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-exporter-otlp-logs/v#{OpenTelemetry::Exporter::OTLP::Logs::VERSION}/file.CHANGELOG.html"
     spec.metadata['source_code_uri'] = "https://github.com/open-telemetry/opentelemetry-ruby/tree/#{spec.name}/v#{spec.version}/exporter/otlp-logs"

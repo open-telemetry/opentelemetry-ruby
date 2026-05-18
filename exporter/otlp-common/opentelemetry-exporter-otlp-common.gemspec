@@ -29,9 +29,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'google-protobuf', '~> 3.19'
   spec.add_dependency 'opentelemetry-api', '~> 1.1'
 
-  spec.add_development_dependency 'pry'
-  spec.add_development_dependency 'pry-byebug' unless RUBY_ENGINE == 'jruby'
-
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-exporter-otlp-common/v#{OpenTelemetry::Exporter::OTLP::Common::VERSION}/file.CHANGELOG.html"
     spec.metadata['source_code_uri'] = "https://github.com/open-telemetry/opentelemetry-ruby/tree/#{spec.name}/v#{spec.version}/exporter/otlp-common"
