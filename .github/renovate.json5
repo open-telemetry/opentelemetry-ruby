@@ -5,6 +5,10 @@
     "helpers:pinGitHubActionDigestsToSemver",
     ":separateMultipleMajorReleases",
   ],
+  gitignoredauthors: [
+    "107717825+opentelemetrybot@users.noreply.github.com",
+    "github-actions[bot]@users.noreply.github.com"
+  ],
   prConcurrentLimit: 12,
   prHourlyLimit: 12,
   packageRules: [
