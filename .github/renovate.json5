@@ -5,7 +5,7 @@
     "helpers:pinGitHubActionDigestsToSemver",
     ":separateMultipleMajorReleases",
   ],
-  gitignoredauthors: [
+  gitIgnoredAuthors: [
     "107717825+opentelemetrybot@users.noreply.github.com",
     "github-actions[bot]@users.noreply.github.com"
   ],
