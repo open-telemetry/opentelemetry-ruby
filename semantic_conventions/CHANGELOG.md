@@ -2,7 +2,7 @@
 
 ### v1.38.0 / 2026-05-21
 
-* ADDED: Update dependency open-telemetry/semantic-conventions to v1.38.0 (#2136)
+* ADDED: Update semantic conventions to v1.38.0 (#2136)
 
 ### v1.37.1 / 2026-05-12
 
