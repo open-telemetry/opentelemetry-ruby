@@ -1,5 +1,19 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.34.0 / 2026-05-12
+
+* ADDED: Add git tag to source URI in gemspec (#2101)
+
+### v0.33.0 / 2026-04-07
+
+* ADDED: Min Ruby Version 3.3 (#2070)
+* ADDED: Handle HTTP 2XX responses as successful in OTLP exporters (#2044)
+* FIXED: Issue with sending traces to IPv6 endpoints (#1935)
+
+### v0.32.0 / 2026-03-10
+
+* ADDED: Replace cgi with uri for encode and decode (#2028)
+
 ### v0.31.1 / 2025-10-21
 
 - FIXED: Requires minimum SDK support for new parent_span_is_remote attribute

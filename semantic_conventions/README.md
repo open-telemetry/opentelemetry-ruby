@@ -38,6 +38,7 @@ The gem's versions match the corresponding
 [OpenTelemetry Semantic Convention versions][semconv].
 
 In version 1.36.0, we established a new pattern for naming the constants:
+
 * `OpenTelemetry::SemConv::Incubating::#{CATEGORY_NAME}` is the prefix for
 experimental, development, or deprecated constants
 * `OpenTelemetry::SemConv::#{CATEGORY_NAME}` is the prefix for stable constants
@@ -63,6 +64,7 @@ require 'opentelemetry/semconv/http'
 ```
 
 If you want to require all of the 1.11.0 constants, you can use:
+
 ```rb
 require 'opentelemetry/semantic_conventions'
 
@@ -87,7 +89,10 @@ upstream [OpenTelemetry Semantic Conventions version][semconv].
 
 ## How do I rebuild the conventions?
 
-Bump the version number in the Rakefile, and then run `rake generate`.
+To build the library against a new version of the semantic conventions, update SPEC_VERSION in the Rakefile, and then run `rake generate`.
+
+Do not update the library's VERSION in version.rb.
+That will be handled by the automation for releasing the gem.
 
 ## How can I get involved?
 

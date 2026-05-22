@@ -23,28 +23,28 @@ module OpenTelemetry
     module Incubating
       module CPYTHON
         # @!group Metrics Names
-      
+
         # The total number of objects collected inside a generation since interpreter start.
         #
         # This metric reports data from [`gc.stats()`](https://docs.python.org/3/library/gc.html#gc.get_stats).
         #
         # @note Stability Level: development
         CPYTHON_GC_COLLECTED_OBJECTS = 'cpython.gc.collected_objects'
-    
+
         # The number of times a generation was collected since interpreter start.
         #
         # This metric reports data from [`gc.stats()`](https://docs.python.org/3/library/gc.html#gc.get_stats).
         #
         # @note Stability Level: development
         CPYTHON_GC_COLLECTIONS = 'cpython.gc.collections'
-    
+
         # The total number of objects which were found to be uncollectable inside a generation since interpreter start.
         #
         # This metric reports data from [`gc.stats()`](https://docs.python.org/3/library/gc.html#gc.get_stats).
         #
         # @note Stability Level: development
         CPYTHON_GC_UNCOLLECTABLE_OBJECTS = 'cpython.gc.uncollectable_objects'
-    
+
         # @!endgroup
       end
     end

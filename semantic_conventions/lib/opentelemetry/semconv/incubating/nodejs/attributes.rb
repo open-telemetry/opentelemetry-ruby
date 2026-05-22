@@ -23,12 +23,12 @@ module OpenTelemetry
     module Incubating
       module NODEJS
         # @!group Attribute Names
-      
+
         # The state of event loop time.
         #
         # @note Stability Level: development
         NODEJS_EVENTLOOP_STATE = 'nodejs.eventloop.state'
-    
+
         # @!endgroup
       end
     end

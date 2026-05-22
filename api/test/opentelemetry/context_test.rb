@@ -9,8 +9,6 @@ require 'logger'
 require 'stringio'
 
 describe OpenTelemetry::Context do
-  Context = OpenTelemetry::Context
-
   after { Context.clear }
 
   let(:foo_key) { Context.create_key('foo') }

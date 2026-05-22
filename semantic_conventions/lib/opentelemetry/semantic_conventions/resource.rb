@@ -548,7 +548,6 @@ module OpenTelemetry
       # @deprecated The \{OpenTelemetry::SemanticConventions::Resource\} module is deprecated.
       #   See {OpenTelemetry::SemConv::Incubating::WEBENGINE::WEBENGINE_DESCRIPTION} for its replacement.
       WEBENGINE_DESCRIPTION = 'webengine.description'
-
     end
   end
 end
