@@ -30,6 +30,7 @@ describe OpenTelemetry::Exporter::OTLP::Common do
           total_recorded_attributes: 1,
           attributes: { 'a' => (+"\xC2").force_encoding(::Encoding::ASCII_8BIT) }
         )
+
         result = common.as_encoded_etsr([span_data])
         _(log_stream.string).must_match(
           /ERROR -- : OpenTelemetry error: encoding error for key a/
@@ -131,7 +132,8 @@ describe OpenTelemetry::Exporter::OTLP::Common do
           server_span,
           consumer_span,
           span
-        ].map(&:to_span_data))
+        ].map(&:to_span_data)
+      )
 
       expected_encoded_etsr = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(
         Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
