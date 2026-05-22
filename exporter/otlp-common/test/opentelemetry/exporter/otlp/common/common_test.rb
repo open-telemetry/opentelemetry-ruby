@@ -31,7 +31,9 @@ describe OpenTelemetry::Exporter::OTLP::Common do
           attributes: { 'a' => (+"\xC2").force_encoding(::Encoding::ASCII_8BIT) }
         )
         result = common.as_encoded_etsr([span_data])
-        _(log_stream.string).must_match(/ERROR -- : OpenTelemetry error: encoding error for key a/)
+        _(log_stream.string).must_match(
+          /ERROR -- : OpenTelemetry error: encoding error for key a/
+        )
         _(result).wont_be_nil
 
         # StandardError during encoding
@@ -121,7 +123,15 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       consumer_span = OpenTelemetry::TestHelpers.with_ids(trace_id, consumer_span_id) { tracer.start_span('consumer', with_parent: child_ctx, kind: :consumer, start_timestamp: start_timestamp + 5).finish(end_timestamp: end_timestamp) }
       span.finish(end_timestamp: end_timestamp)
 
-      encoded_etsr = common.as_encoded_etsr([root, client, server_span, consumer_span, span].map(&:to_span_data))
+      # Ordered by first finished
+      encoded_etsr = common.as_encoded_etsr(
+        [
+          root,
+          client,
+          server_span,
+          consumer_span,
+          span
+        ].map(&:to_span_data))
 
       expected_encoded_etsr = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(
         Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
@@ -136,49 +146,52 @@ describe OpenTelemetry::Exporter::OTLP::Common do
               ),
               scope_spans: [
                 Opentelemetry::Proto::Trace::V1::ScopeSpans.new(
-                  scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(name: 'tracer', version: 'v0.0.1'),
+                  scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
+                    name: 'tracer',
+                    version: 'v0.0.1'
+                  ),
                   spans: [
                     Opentelemetry::Proto::Trace::V1::Span.new(
-                      trace_id: trace_id, span_id: root_span_id, parent_span_id: nil, name: 'root',
+                      trace_id: trace_id,
+                      span_id: root_span_id,
+                      parent_span_id: nil,
+                      name: 'root',
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_INTERNAL,
                       start_time_unix_nano: (start_timestamp.to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_OK
-                      ),
-                      flags: (
-                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
-                        1
                       )
                     ),
                     Opentelemetry::Proto::Trace::V1::Span.new(
-                      trace_id: trace_id, span_id: client_span_id, parent_span_id: child_span_id, name: 'client',
+                      trace_id: trace_id,
+                      span_id: client_span_id,
+                      parent_span_id: child_span_id,
+                      name: 'client',
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_CLIENT,
                       start_time_unix_nano: ((start_timestamp + 2).to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_UNSET
-                      ),
-                      flags: (
-                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
-                        1
                       )
                     ),
                     Opentelemetry::Proto::Trace::V1::Span.new(
-                      trace_id: trace_id, span_id: consumer_span_id, parent_span_id: child_span_id, name: 'consumer',
+                      trace_id: trace_id,
+                      span_id: consumer_span_id,
+                      parent_span_id: child_span_id,
+                      name: 'consumer',
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_CONSUMER,
                       start_time_unix_nano: ((start_timestamp + 5).to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_UNSET
-                      ),
-                      flags: (
-                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
-                        1
                       )
                     ),
                     Opentelemetry::Proto::Trace::V1::Span.new(
-                      trace_id: trace_id, span_id: child_span_id, parent_span_id: root_span_id, name: 'child',
+                      trace_id: trace_id,
+                      span_id: child_span_id,
+                      parent_span_id: root_span_id,
+                      name: 'child',
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_PRODUCER,
                       start_time_unix_nano: ((start_timestamp + 1).to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
@@ -203,7 +216,9 @@ describe OpenTelemetry::Exporter::OTLP::Common do
                         Opentelemetry::Proto::Trace::V1::Span::Event.new(
                           time_unix_nano: ((start_timestamp + 4).to_r * 1_000_000_000).to_i,
                           name: 'event',
-                          attributes: [Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'attr', value: Opentelemetry::Proto::Common::V1::AnyValue.new(int_value: 42))]
+                          attributes: [
+                            Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'attr', value: Opentelemetry::Proto::Common::V1::AnyValue.new(int_value: 42))
+                          ]
                         )
                       ],
                       links: [
@@ -212,37 +227,30 @@ describe OpenTelemetry::Exporter::OTLP::Common do
                           span_id: root_span_id,
                           attributes: [
                             Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'attr', value: Opentelemetry::Proto::Common::V1::AnyValue.new(int_value: 4))
-                          ],
-                          flags: (
-                            Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
-                            1
-                          )
+                          ]
                         )
                       ],
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_ERROR
-                      ),
-                      flags: (
-                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
-                        1
                       )
                     )
                   ]
                 ),
                 Opentelemetry::Proto::Trace::V1::ScopeSpans.new(
-                  scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(name: 'other_tracer'),
+                  scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
+                    name: 'other_tracer'
+                  ),
                   spans: [
                     Opentelemetry::Proto::Trace::V1::Span.new(
-                      trace_id: trace_id, span_id: server_span_id, parent_span_id: client_span_id, name: 'server',
+                      trace_id: trace_id,
+                      span_id: server_span_id,
+                      parent_span_id: client_span_id,
+                      name: 'server',
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_SERVER,
                       start_time_unix_nano: ((start_timestamp + 3).to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_UNSET
-                      ),
-                      flags: (
-                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
-                        1
                       )
                     )
                   ]
