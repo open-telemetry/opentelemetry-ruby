@@ -33,7 +33,7 @@ describe OpenTelemetry::Exporter::OTLP::Common do
 
         result = common.as_encoded_etsr([span_data])
         _(log_stream.string).must_match(
-          /ERROR -- : OpenTelemetry error: encoding error for key a/
+          /ERROR -- : OpenTelemetry error: encoding error for key a and value �/
         )
         _(result).wont_be_nil
 
