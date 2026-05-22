@@ -124,7 +124,7 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       consumer_span = OpenTelemetry::TestHelpers.with_ids(trace_id, consumer_span_id) { tracer.start_span('consumer', with_parent: child_ctx, kind: :consumer, start_timestamp: start_timestamp + 5).finish(end_timestamp: end_timestamp) }
       span.finish(end_timestamp: end_timestamp)
 
-      # Ordered by first finished
+      # Ordered by the first finished
       encoded_etsr = common.as_encoded_etsr(
         [
           root,
