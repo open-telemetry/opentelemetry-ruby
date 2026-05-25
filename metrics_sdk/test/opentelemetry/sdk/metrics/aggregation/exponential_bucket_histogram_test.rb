@@ -303,7 +303,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
 
     describe 'cardinality limit' do
       it 'handles overflow data points and merges overflow measurements correctly' do
-        cardinality_limit = 2
+        cardinality_limit = 3
 
         expbh.update(1.5, { 'key' => 'a' }, data_points, cardinality_limit)
         expbh.update(2.5, { 'key' => 'b' }, data_points, cardinality_limit)

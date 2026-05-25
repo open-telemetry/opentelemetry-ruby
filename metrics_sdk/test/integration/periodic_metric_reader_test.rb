@@ -247,7 +247,7 @@ describe OpenTelemetry::SDK do
         snapshot = metric_exporter.metric_snapshots
 
         _(snapshot).wont_be_empty
-        _(snapshot[0].data_points.size).must_equal(3) # Limited by cardinality
+        _(snapshot[0].data_points.size).must_equal(2) # Limited by cardinality
 
         # Find overflow data point
         overflow_point = snapshot[0].data_points.find do |dp|

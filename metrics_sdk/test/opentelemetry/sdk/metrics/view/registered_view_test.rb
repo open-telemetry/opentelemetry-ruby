@@ -308,7 +308,7 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
         OpenTelemetry.meter_provider.add_view(
           'test_counter',
           aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new,
-          aggregation_cardinality_limit: 2
+          aggregation_cardinality_limit: 3
         )
 
         counter = meter.create_counter('test_counter')
@@ -344,7 +344,7 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
         OpenTelemetry.meter_provider.add_view(
           'test_counter',
           aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new,
-          aggregation_cardinality_limit: 1
+          aggregation_cardinality_limit: 2
         )
 
         counter = meter.create_counter('test_counter')
@@ -406,7 +406,7 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
         OpenTelemetry.meter_provider.add_view(
           'test_histogram',
           aggregation: OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new,
-          aggregation_cardinality_limit: 1
+          aggregation_cardinality_limit: 2
         )
 
         histogram = meter.create_histogram('test_histogram')

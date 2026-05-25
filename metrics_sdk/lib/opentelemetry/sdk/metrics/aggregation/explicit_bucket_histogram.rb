@@ -63,7 +63,7 @@ module OpenTelemetry
           def update(amount, attributes, data_points, cardinality_limit, exemplar_offer: false)
             hdp = if data_points.key?(attributes)
                     data_points[attributes]
-                  elsif data_points.size >= cardinality_limit
+                  elsif data_points.size >= cardinality_limit - 1
                     data_points[OVERFLOW_ATTRIBUTE_SET] || create_new_data_point(OVERFLOW_ATTRIBUTE_SET, data_points)
                   else
                     create_new_data_point(attributes, data_points)

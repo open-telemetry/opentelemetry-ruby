@@ -47,10 +47,6 @@ module OpenTelemetry
             @mutex = Mutex.new
           end
 
-          # this cardinality_limit is from exporter.new(cardinality_limit: cardinality_limit)
-          #                                -> metric_reader.collect(...cardinality_limit)
-          #                                -> metric_store.collect(...cardinality_limit)
-          #                                -> metric_stream.collect(...cardinality_limit)
           def collect(start_time, end_time)
             @mutex.synchronize do
               metric_data = []

@@ -341,7 +341,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
 
   describe 'cardinality limit' do
     it 'handles overflow scenarios and merges measurements correctly' do
-      cardinality_limit = 2
+      cardinality_limit = 3
       # Test basic overflow behavior and multiple overflow merging in one flow
       ebh.update(1, { 'key' => 'a' }, data_points, cardinality_limit)
       ebh.update(5, { 'key' => 'b' }, data_points, cardinality_limit)
@@ -388,7 +388,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
         # Check bucket counts are properly merged
         _(overflow_point.bucket_counts).wont_be_nil
         _(overflow_point.bucket_counts.sum).must_equal(overflow_point.count)
-        _(overflow_point.min).must_equal(10)
+        _(overflow_point.min).must_equal(1)
         _(overflow_point.max).must_equal(100)
       end
 
@@ -402,10 +402,10 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
 
         hdps = ebh.collect(start_time, end_time, data_points)
 
-        _(hdps.size).must_equal(101) # 100 + 1
+        _(hdps.size).must_equal(100) # 100
         overflow_point = hdps.find { |hdp| hdp.attributes == { 'otel.metric.overflow' => true } }
         _(overflow_point).wont_be_nil
-        _(overflow_point.count).must_equal(50) # 150 - 100
+        _(overflow_point.count).must_equal(51) # 150 - 99
       end
     end
   end

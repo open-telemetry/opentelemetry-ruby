@@ -48,19 +48,20 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::LastValue do
 
       ndps = last_value_aggregation.collect(start_time, end_time, data_points)
 
-      _(ndps.size).must_equal(3)
+      _(ndps.size).must_equal(2)
 
       assert_equal(ndps[0].attributes, { 'key' => 'a' })
       _(ndps[0].value).must_equal 20
 
-      assert_equal(ndps[1].attributes, { 'key' => 'b' })
-      _(ndps[1].value).must_equal 20
+      assert_equal(ndps[1].attributes, { 'otel.metric.overflow' => true })
+      _(ndps[1].value).must_equal 40
 
       overflow_point = ndps.find { |ndp| ndp.attributes == { 'otel.metric.overflow' => true } }
       _(overflow_point.value).must_equal(40)
     end
 
     it 'updates existing attribute sets without triggering overflow' do
+      cardinality_limit = 3
       last_value_aggregation.update(10, { 'key' => 'a' }, data_points, cardinality_limit)
       last_value_aggregation.update(20, { 'key' => 'b' }, data_points, cardinality_limit)
       last_value_aggregation.update(15, { 'key' => 'a' }, data_points, cardinality_limit) # Update existing

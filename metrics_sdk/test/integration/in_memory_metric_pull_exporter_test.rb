@@ -83,14 +83,14 @@ describe OpenTelemetry::SDK do
         metric_exporter.pull
         last_snapshot = metric_exporter.metric_snapshots
 
-        _(last_snapshot[0].data_points.size).must_equal(3)
+        _(last_snapshot[0].data_points.size).must_equal(2)
 
         # Find overflow data point
         overflow_point = last_snapshot[0].data_points.find do |dp|
           dp.attributes == { 'otel.metric.overflow' => true }
         end
         _(overflow_point).wont_be_nil
-        _(overflow_point.value).must_equal(3)
+        _(overflow_point.value).must_equal(5)
       end
 
       it 'handles zero cardinality limit' do

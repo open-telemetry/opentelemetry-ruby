@@ -175,10 +175,10 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
         sum_aggregation.update(5, { 'key' => 'e' }, data_points, cardinality_limit)
         sum_aggregation.update(5, { 'key' => 'a' }, data_points, cardinality_limit)
 
-        _(data_points.size).must_equal(4) # 3 original + 1 overflow
+        _(data_points.size).must_equal(3) # 2 original + 1 overflow
         _(data_points[{ 'key' => 'a' }].value).must_equal(6) # 1 + 5
-        _(data_points[{ 'key' => 'b' }].value).must_equal(2) # 1 + 5
-        _(data_points[{ 'otel.metric.overflow' => true }].value).must_equal(9)
+        _(data_points[{ 'key' => 'b' }].value).must_equal(2)
+        _(data_points[{ 'otel.metric.overflow' => true }].value).must_equal(12)
         _(data_points[{ 'key' => 'd' }]).must_be_nil
         _(data_points[{ 'key' => 'e' }]).must_be_nil
       end
