@@ -48,6 +48,7 @@ end
 ## YAML configuration reference
 
 See full configuration reference in [declarative-configuration](https://opentelemetry.io/docs/languages/sdk-configuration/declarative-configuration/)
+
 ### Disabling the SDK
 
 Set `disabled: true` to keep all providers as no-ops without removing the config file. This is useful for running tests or CI pipelines without telemetry overhead.
@@ -74,7 +75,7 @@ resource:
 ### Samplers
 
 | Sampler | YAML key |
-|---|---|
+| ------- | -------- |
 | Always on | `always_on:` |
 | Always off | `always_off:` |
 | Trace-ID ratio | `trace_id_ratio_based: { ratio: 0.25 }` |
@@ -155,7 +156,6 @@ The `opentelemetry-otelconfig` gem is distributed under the Apache 2.0 license. 
 [bundler-home]: https://bundler.io
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
-[example-dir]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/otelconfig/example
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions

@@ -1,13 +1,13 @@
 # Declarative Configuration Example
 
-This example shows how to configure the OpenTelemetry SDK (tracing) from a YAML 
-file using the `opentelemetry-otelconfig` gem — no programmatic 
+This example shows how to configure the OpenTelemetry SDK (tracing) from a YAML
+file using the `opentelemetry-otelconfig` gem — no programmatic
 `OpenTelemetry::SDK.configure` block required.
 
 ## Files
 
 | File | Purpose |
-|------|---------|
+| ---- | ------- |
 | `app.rb` | Example application — emits spans |
 | `otel-config-console.yaml` | console-only exporter, works without a collector |
 | `otel-config.yaml` | Include otlp_http exporter, need working collector |
@@ -35,7 +35,7 @@ manually with a config hash, or configure programmatically using the SDK.
 ## YAML config key reference
 
 | Section | Description |
-|---------|-------------|
+| ------- | ----------- |
 | `resource.attributes` | Service name, version, environment, and any custom resource attributes |
 | `resource.attributes_list` | Comma-separated `key=value` pairs as an alternative to attributes array |
 | `tracer_provider.processors` | `batch` or `simple` span processors with `console` or `otlp_http` exporters |
