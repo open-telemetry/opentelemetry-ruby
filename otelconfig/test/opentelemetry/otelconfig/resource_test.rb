@@ -63,10 +63,6 @@ describe OpenTelemetry::OtelConfig do
       end
     end
 
-    # -------------------------------------------------------------------------
-    # attributes array — type: string
-    # -------------------------------------------------------------------------
-
     describe 'attributes array with type: string' do
       it 'converts an integer value to its string representation' do
         with_config(<<~YAML) do |path|

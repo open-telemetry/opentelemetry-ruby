@@ -101,10 +101,6 @@ describe OpenTelemetry::OtelConfig do
       end
     end
 
-    # -------------------------------------------------------------------------
-    # composite_list string format
-    # -------------------------------------------------------------------------
-
     describe 'composite_list string' do
       it 'configures tracecontext and baggage from a comma-separated list' do
         with_config(<<~YAML) do |path|
@@ -158,10 +154,6 @@ describe OpenTelemetry::OtelConfig do
       end
     end
 
-    # -------------------------------------------------------------------------
-    # composite array takes priority over composite_list
-    # -------------------------------------------------------------------------
-
     describe 'composite vs composite_list precedence' do
       it 'uses composite array and ignores composite_list when both are present' do
         with_config(<<~YAML) do |path|
@@ -181,13 +173,6 @@ describe OpenTelemetry::OtelConfig do
         end
       end
     end
-
-    # -------------------------------------------------------------------------
-    # optional gem propagators
-    # b3, b3multi, jaeger, ottrace, xray, google_cloud_trace_context
-    # Each may or may not have its gem installed; the test verifies no crash and
-    # that tracecontext (always available) is still applied.
-    # -------------------------------------------------------------------------
 
     describe 'optional gem propagators' do
       %w[b3 b3multi jaeger ottrace google_cloud_trace_context].each do |name|
@@ -251,10 +236,6 @@ describe OpenTelemetry::OtelConfig do
         end
       end
     end
-
-    # -------------------------------------------------------------------------
-    # no propagator section
-    # -------------------------------------------------------------------------
 
     describe 'when propagator section is absent' do
       it 'leaves propagation unconfigured' do
