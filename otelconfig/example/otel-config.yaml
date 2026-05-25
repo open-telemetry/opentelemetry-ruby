@@ -1,0 +1,64 @@
+file_format: "1.0"
+disabled: false
+log_level: info
+attribute_limits:
+  attribute_value_length_limit: 4096
+  attribute_count_limit: 128
+resource:
+  attributes:
+    - name: service.name
+      value: "test-ruby-declare-config"
+    - name: service.version
+      value: "1.0.0"
+    - name: deployment.environment
+      value: "staging"
+  attributes_list: "service.namespace=my-namespace,service.version=1.0.0"
+tracer_provider:
+  processors:
+    -
+      batch:
+        schedule_delay: 5000
+        export_timeout: 30000
+        max_queue_size: 2048
+        max_export_batch_size: 512
+        exporter:
+          otlp_http:
+            endpoint: http://host.docker.internal:4328/v1/traces
+            compression: gzip
+            timeout: 10000
+    -
+      simple:
+        exporter:
+          console:
+  limits:
+    attribute_value_length_limit: 4096
+    attribute_count_limit: 128
+    event_count_limit: 128
+    link_count_limit: 128
+    event_attribute_count_limit: 128
+    link_attribute_count_limit: 128
+  sampler:
+    parent_based:
+      root:
+        trace_id_ratio_based:
+          ratio: 0.0001
+      remote_parent_sampled:
+        always_on:
+      remote_parent_not_sampled:
+        always_off:
+      local_parent_sampled:
+        always_on:
+      local_parent_not_sampled:
+        always_off:
+propagator:
+  composite:
+    -
+      tracecontext:
+    -
+      baggage:
+  composite_list: "tracecontext,baggage"
+instrumentation/development:
+  general:
+    net_http:
+      untraced_hosts:
+        - google.ca
