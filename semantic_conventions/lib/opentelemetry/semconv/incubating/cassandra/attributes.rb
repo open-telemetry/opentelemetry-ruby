@@ -23,54 +23,37 @@ module OpenTelemetry
     module Incubating
       module CASSANDRA
         # @!group Attribute Names
-      
+
         # The consistency level of the query. Based on consistency values from [CQL](https://docs.datastax.com/en/cassandra-oss/3.0/cassandra/dml/dmlConfigConsistency.html).
         #
         # @note Stability Level: development
         CASSANDRA_CONSISTENCY_LEVEL = 'cassandra.consistency.level'
-    
+
         # The data center of the coordinating node for a query.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   us-west-2
-        #
         CASSANDRA_COORDINATOR_DC = 'cassandra.coordinator.dc'
-    
+
         # The ID of the coordinating node for a query.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   be13faa2-8574-4d71-926d-27f16cf8a7af
-        #
         CASSANDRA_COORDINATOR_ID = 'cassandra.coordinator.id'
-    
+
         # The fetch size used for paging, i.e. how many rows will be returned at once.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   5000
-        #
         CASSANDRA_PAGE_SIZE = 'cassandra.page.size'
-    
+
         # Whether or not the query is idempotent.
         #
         # @note Stability Level: development
         CASSANDRA_QUERY_IDEMPOTENT = 'cassandra.query.idempotent'
-    
+
         # The number of times a query was speculatively executed. Not set or `0` if the query was not executed speculatively.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   0
-        #   2
-        #
         CASSANDRA_SPECULATIVE_EXECUTION_COUNT = 'cassandra.speculative_execution.count'
-    
+
         # @!endgroup
       end
     end

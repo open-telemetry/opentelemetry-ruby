@@ -23,16 +23,12 @@ module OpenTelemetry
     module Incubating
       module MAINFRAME
         # @!group Attribute Names
-      
+
         # Name of the logical partition that hosts a systems with a mainframe operating system.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   LPAR01
-        #
         MAINFRAME_LPAR_NAME = 'mainframe.lpar.name'
-    
+
         # @!endgroup
       end
     end

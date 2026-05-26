@@ -23,12 +23,12 @@ module OpenTelemetry
     module Incubating
       module DNS
         # @!group Metrics Names
-      
+
         # Measures the time taken to perform a DNS lookup.
         #
         # @note Stability Level: development
         DNS_LOOKUP_DURATION = 'dns.lookup.duration'
-    
+
         # @!endgroup
       end
     end

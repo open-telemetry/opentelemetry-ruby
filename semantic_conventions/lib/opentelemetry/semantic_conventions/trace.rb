@@ -908,7 +908,6 @@ module OpenTelemetry
       # @deprecated The \{OpenTelemetry::SemanticConventions::Trace\} module is deprecated.
       #   See {OpenTelemetry::SemConv::Incubating::MESSAGE::MESSAGE_UNCOMPRESSED_SIZE} for its replacement.
       MESSAGE_UNCOMPRESSED_SIZE = 'message.uncompressed_size'
-
     end
   end
 end

@@ -22,14 +22,14 @@ module OpenTelemetry
   module SemConv
     module DB
       # @!group Metrics Names
-    
+
       # Duration of database client operations.
       #
       # Batch operations SHOULD be recorded as a single operation.
       #
       # @note Stability Level: stable
       DB_CLIENT_OPERATION_DURATION = 'db.client.operation.duration'
-  
+
       # @!endgroup
     end
   end

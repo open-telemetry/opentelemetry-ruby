@@ -22,39 +22,27 @@ module OpenTelemetry
   module SemConv
     module OTEL
       # @!group Attribute Names
-    
+
       # The name of the instrumentation scope - (`InstrumentationScope.Name` in OTLP).
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   io.opentelemetry.contrib.mongodb
-      #
       OTEL_SCOPE_NAME = 'otel.scope.name'
-  
+
       # The version of the instrumentation scope - (`InstrumentationScope.Version` in OTLP).
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   1.0.0
-      #
       OTEL_SCOPE_VERSION = 'otel.scope.version'
-  
+
       # Name of the code, either "OK" or "ERROR". MUST NOT be set if the status code is UNSET.
       #
       # @note Stability Level: stable
       OTEL_STATUS_CODE = 'otel.status_code'
-  
+
       # Description of the Status if it has a value, otherwise not set.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   resource not found
-      #
       OTEL_STATUS_DESCRIPTION = 'otel.status_description'
-  
+
       # @!endgroup
     end
   end

@@ -31,9 +31,12 @@ runs:
     - name: Setup
       id: setup
       shell: bash
+      env:
+        GEM: ${{ inputs.gem }}
+        RUBY_VERSION: ${{ inputs.ruby }}
       run: |
         # 🛠️ Setup 🛠️
-        dir=$(find . -iname '${{ inputs.gem }}.gemspec' -exec dirname {} \;)
+        dir=$(find . -iname "${GEM}.gemspec" -exec dirname {} \;)
         echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
 
         # We install multiple ruby versions here, and that makes for some
@@ -43,9 +46,9 @@ runs:
         rm -f "${dir}/Gemfile.lock"
 
         echo "cache_key=mri" >> $GITHUB_OUTPUT
-        if [[ "${{ inputs.ruby }}" == "jruby" ]]; then
+        if [[ "$RUBY_VERSION" == "jruby" ]]; then
           echo "cache_key=jruby" >> $GITHUB_OUTPUT
-        elif [[ "${{ inputs.ruby }}" == "truffleruby" ]]; then
+        elif [[ "$RUBY_VERSION" == "truffleruby" ]]; then
           echo "cache_key=truffleruby" >> $GITHUB_OUTPUT
         fi
 
@@ -58,7 +61,7 @@ runs:
     # ...but not for appraisals, sadly.
     - name: Install Ruby ${{ inputs.ruby }} with dependencies
       if: "${{ steps.setup.outputs.appraisals == 'false' }}"
-      uses: ruby/setup-ruby@8d27f39a5e7ad39aebbcbd1324f7af020229645c # v1.287.0
+      uses: ruby/setup-ruby@6aaa311d81eba98ae12eaffbcb63296ace0efcde # v1.307.0
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
@@ -69,7 +72,7 @@ runs:
     # If we're using appraisals, do it all manually.
     - name: Install Ruby ${{ inputs.ruby }} without dependencies
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
-      uses: ruby/setup-ruby@8d27f39a5e7ad39aebbcbd1324f7af020229645c # v1.287.0
+      uses: ruby/setup-ruby@6aaa311d81eba98ae12eaffbcb63296ace0efcde # v1.307.0
       with:
         ruby-version: "${{ inputs.ruby }}"
         bundler: "latest"
@@ -119,7 +122,9 @@ runs:
     - name: Build Gem
       shell: bash
       if: "${{ inputs.build == 'true' }}"
+      env:
+        GEM: ${{ inputs.gem }}
       run: |
         # 📦 Build Gem 📦
-        gem build ${{ inputs.gem }}.gemspec
+        gem build "${GEM}.gemspec"
       working-directory: "${{ steps.setup.outputs.gem_dir }}"

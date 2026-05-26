@@ -23,25 +23,38 @@ module OpenTelemetry
     module Incubating
       module THREAD
         # @!group Attribute Names
-      
+
         # Current "managed" thread ID (as opposed to OS thread ID).
         #
+        # Examples of where the value can be extracted from:
+        #
+        # | Language or platform  | Source |
+        # | --- | --- |
+        # | JVM | `Thread.currentThread().threadId()` |
+        # | .NET | `Thread.CurrentThread.ManagedThreadId` |
+        # | Python | `threading.current_thread().ident` |
+        # | Ruby | `Thread.current.object_id` |
+        # | C++ | `std::this_thread::get_id()` |
+        # | Erlang | `erlang:self()` |
+        #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   42
-        #
         THREAD_ID = 'thread.id'
-    
+
         # Current thread name.
         #
+        # Examples of where the value can be extracted from:
+        #
+        # | Language or platform  | Source |
+        # | --- | --- |
+        # | JVM | `Thread.currentThread().getName()` |
+        # | .NET | `Thread.CurrentThread.Name` |
+        # | Python | `threading.current_thread().name` |
+        # | Ruby | `Thread.current.name` |
+        # | Erlang | `erlang:process_info(self(), registered_name)` |
+        #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   main
-        #
         THREAD_NAME = 'thread.name'
-    
+
         # @!endgroup
       end
     end

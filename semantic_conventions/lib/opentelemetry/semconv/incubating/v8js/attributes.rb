@@ -23,19 +23,19 @@ module OpenTelemetry
     module Incubating
       module V8JS
         # @!group Attribute Names
-      
+
         # The type of garbage collection.
         #
         # @note Stability Level: development
         V8JS_GC_TYPE = 'v8js.gc.type'
-    
+
         # The name of the space type of heap memory.
         #
         # Value can be retrieved from value `space_name` of [`v8.getHeapSpaceStatistics()`](https://nodejs.org/api/v8.html#v8getheapspacestatistics)
         #
         # @note Stability Level: development
         V8JS_HEAP_SPACE_NAME = 'v8js.heap.space.name'
-    
+
         # @!endgroup
       end
     end

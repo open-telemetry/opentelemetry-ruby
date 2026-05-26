@@ -20,7 +20,7 @@ jobs:
   validate-commits:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     name: Conventional Commits Validation
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: dev-build-deploy/commit-me@27d14296ec218488c543616d9128d7e75ab7463a # v1.5.3
         env:

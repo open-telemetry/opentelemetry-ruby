@@ -8,21 +8,23 @@ module OpenTelemetry
   module Internal
     # @api private
     class ProxyInstrument
-      def initialize(kind, name, unit, desc, callable)
+      def initialize(kind, name, unit, desc, callable, exemplar_filter, exemplar_reservoir)
         @kind = kind
         @name = name
         @unit = unit
         @desc = desc
         @callable = callable
+        @exemplar_filter    = exemplar_filter
+        @exemplar_reservoir = exemplar_reservoir
         @delegate = nil
       end
 
       def upgrade_with(meter)
         @delegate = case @kind
-                    when :counter, :histogram, :up_down_counter, :gauge
-                      meter.send("create_#{@kind}", @name, unit: @unit, description: @desc)
+                    when :counter, :histogram, :up_down_counter
+                      meter.send("create_#{@kind}", @name, unit: @unit, description: @desc, exemplar_filter: @exemplar_filter, exemplar_reservoir: @exemplar_reservoir)
                     when :observable_counter, :observable_gauge, :observable_up_down_counter
-                      meter.send("create_#{@kind}", @name, unit: @unit, description: @desc, callback: @callback)
+                      meter.send("create_#{@kind}", @name, unit: @unit, description: @desc, exemplar_filter: @exemplar_filter, exemplar_reservoir: @exemplar_reservoir, callback: @callback)
                     end
       end
 

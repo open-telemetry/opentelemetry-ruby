@@ -197,6 +197,7 @@ describe OpenTelemetry::SDK::Logs::LoggerProvider do
         severity_number: 0,
         body: 'body',
         attributes: { 'a' => 'b' },
+        event_name: 'event_name',
         trace_id: span_context.trace_id,
         span_id: span_context.span_id,
         trace_flags: span_context.trace_flags,

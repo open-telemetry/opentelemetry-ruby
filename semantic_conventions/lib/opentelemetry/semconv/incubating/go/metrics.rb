@@ -23,70 +23,70 @@ module OpenTelemetry
     module Incubating
       module GO
         # @!group Metrics Names
-      
+
         # Heap size target percentage configured by the user, otherwise 100.
         #
         # The value range is [0.0,100.0]. Computed from `/gc/gogc:percent`.
         #
         # @note Stability Level: development
         GO_CONFIG_GOGC = 'go.config.gogc'
-    
+
         # Count of live goroutines.
         #
         # Computed from `/sched/goroutines:goroutines`.
         #
         # @note Stability Level: development
         GO_GOROUTINE_COUNT = 'go.goroutine.count'
-    
+
         # Memory allocated to the heap by the application.
         #
         # Computed from `/gc/heap/allocs:bytes`.
         #
         # @note Stability Level: development
         GO_MEMORY_ALLOCATED = 'go.memory.allocated'
-    
+
         # Count of allocations to the heap by the application.
         #
         # Computed from `/gc/heap/allocs:objects`.
         #
         # @note Stability Level: development
         GO_MEMORY_ALLOCATIONS = 'go.memory.allocations'
-    
+
         # Heap size target for the end of the GC cycle.
         #
         # Computed from `/gc/heap/goal:bytes`.
         #
         # @note Stability Level: development
         GO_MEMORY_GC_GOAL = 'go.memory.gc.goal'
-    
+
         # Go runtime memory limit configured by the user, if a limit exists.
         #
         # Computed from `/gc/gomemlimit:bytes`. This metric is excluded if the limit obtained from the Go runtime is math.MaxInt64.
         #
         # @note Stability Level: development
         GO_MEMORY_LIMIT = 'go.memory.limit'
-    
+
         # Memory used by the Go runtime.
         #
         # Computed from `(/memory/classes/total:bytes - /memory/classes/heap/released:bytes)`.
         #
         # @note Stability Level: development
         GO_MEMORY_USED = 'go.memory.used'
-    
+
         # The number of OS threads that can execute user-level Go code simultaneously.
         #
         # Computed from `/sched/gomaxprocs:threads`.
         #
         # @note Stability Level: development
         GO_PROCESSOR_LIMIT = 'go.processor.limit'
-    
+
         # The time goroutines have spent in the scheduler in a runnable state before actually running.
         #
         # Computed from `/sched/latencies:seconds`. Bucket boundaries are provided by the runtime, and are subject to change.
         #
         # @note Stability Level: development
         GO_SCHEDULE_DURATION = 'go.schedule.duration'
-    
+
         # @!endgroup
       end
     end

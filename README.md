@@ -43,6 +43,7 @@ For more information about the maintainer role, see the [community repository](h
 - [Eric Mustin](https://github.com/ericmustin)
 - [Robb Kidd](https://github.com/robbkidd), Honeycomb
 - [Sam Handler](https://github.com/plantfansam), Shopify
+- [Xuan Cao](https://github.com/xuan-cao-swi), Solarwinds
 
 For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).
 

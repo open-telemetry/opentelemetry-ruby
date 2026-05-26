@@ -46,6 +46,8 @@ module OpenTelemetry
         # @param [optional Hash{String => String, Numeric, Boolean,
         #   Array<String, Numeric, Boolean>}] attributes Additional information
         #   about the event.
+        # @param [optional String] event_name A name that identifies the class
+        #   or the type of the event.
         # @param [optional String (16-byte binary)] trace_id Request trace id as
         #   defined in {https://www.w3.org/TR/trace-context/#trace-id W3C Trace Context}.
         #   Can be set for logs that are part of request processing and have an
@@ -67,6 +69,7 @@ module OpenTelemetry
                     severity_number: nil,
                     body: nil,
                     attributes: nil,
+                    event_name: nil,
                     trace_id: nil,
                     span_id: nil,
                     trace_flags: nil,
@@ -80,6 +83,7 @@ module OpenTelemetry
                                    severity_number: severity_number,
                                    body: body,
                                    attributes: attributes,
+                                   event_name: event_name,
                                    trace_id: trace_id || span_context&.trace_id,
                                    span_id: span_id || span_context&.span_id,
                                    trace_flags: trace_flags || span_context&.trace_flags,

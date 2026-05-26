@@ -1,5 +1,14 @@
 # Release History: opentelemetry-sdk
 
+### v1.12.0 / 2026-05-12
+
+* ADDED: Add git tag to source URI in gemspec (#2101)
+* FIXED: Consistent labels for otel.bsp.dropped_spans metric (#2108)
+
+### v1.11.0 / 2026-04-07
+
+* ADDED: Min Ruby Version 3.3 (#2070)
+
 ### v1.10.0 / 2025-10-14
 
 - ADDED: Add span flags support for isRemote property
@@ -153,9 +162,6 @@
 ### v0.17.0 / 2021-04-22
 
 - BREAKING CHANGE: Replace TextMapInjector/TextMapExtractor pairs with a TextMapPropagator.
-
-  [Check the propagator documentation](https://open-telemetry.github.io/opentelemetry-ruby/) for the new usage.
-
 - ADDED: Add zipkin exporter
 - ADDED: Processors validate exporters on init.
 - ADDED: Add configurable truncation of span and event attribute values
