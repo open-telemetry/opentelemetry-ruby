@@ -20,11 +20,9 @@ module OpenTelemetry
         class TraceExporter # rubocop:disable Metrics/ClassLength
           SUCCESS = OpenTelemetry::SDK::Trace::Export::SUCCESS
           FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
-          private_constant(:SUCCESS, :FAILURE)
 
           # Default retry count for transient errors.
           RETRY_COUNT = 5
-          private_constant(:RETRY_COUNT)
 
           def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4317/v1/traces'),
                          timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
