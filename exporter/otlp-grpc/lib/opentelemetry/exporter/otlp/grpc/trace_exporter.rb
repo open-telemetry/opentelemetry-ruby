@@ -97,11 +97,12 @@ module OpenTelemetry
             timeout ||= @timeout
             start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
 
+            request = OpenTelemetry::Exporter::OTLP::Common.as_etsr(span_data)
+
             loop do
               remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
               return FAILURE if remaining_timeout.zero?
 
-              request = OpenTelemetry::Exporter::OTLP::Common.as_etsr(span_data)
               @client.export(request, deadline: Time.now + remaining_timeout)
               return SUCCESS
             rescue ::GRPC::DeadlineExceeded
