@@ -25,12 +25,10 @@ module OpenTelemetry
           # Default timeouts in seconds.
           KEEP_ALIVE_TIMEOUT = 30
           RETRY_COUNT = 5
-          private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT)
 
           ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
-          private_constant(:ERROR_MESSAGE_INVALID_HEADERS)
 
-          DEFAULT_USER_AGENT = "OTel-OTLP-Exporter-Ruby/#{OpenTelemetry::Exporter::OTLP::HTTP::VERSION} Ruby/#{RUBY_VERSION} (#{RUBY_PLATFORM}; #{RUBY_ENGINE}/#{RUBY_ENGINE_VERSION})".freeze
+          DEFAULT_USER_AGENT = "OTel-OTLP-Exporter-Ruby/#{OpenTelemetry::Exporter::OTLP::HTTP::VERSION}".freeze
 
           def initialize(endpoint: nil,
                          certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
@@ -39,8 +37,7 @@ module OpenTelemetry
                          ssl_verify_mode: fetch_ssl_verify_mode,
                          headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
-                         timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
-                         metrics_reporter: nil)
+                         timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10))
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
             @uri = prepare_endpoint(endpoint)
@@ -51,7 +48,6 @@ module OpenTelemetry
             @headers = prepare_headers(headers)
             @timeout = timeout.to_f
             @compression = compression
-            @metrics_reporter = metrics_reporter || OpenTelemetry::SDK::Trace::Export::MetricsReporter
             @shutdown = false
           end
 
@@ -125,20 +121,17 @@ module OpenTelemetry
           def send_bytes(bytes, timeout:) # rubocop:disable Metrics/MethodLength
             return FAILURE if bytes.nil?
 
-            @metrics_reporter.record_value('otel.otlp_exporter.message.uncompressed_size', value: bytes.bytesize)
-
             retry_count = 0
             timeout ||= @timeout
             start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
             around_request do # rubocop:disable Metrics/BlockLength
               request = Net::HTTP::Post.new(@path)
-              if @compression == 'gzip'
-                request.add_field('Content-Encoding', 'gzip')
-                body = Zlib.gzip(bytes)
-                @metrics_reporter.record_value('otel.otlp_exporter.message.compressed_size', value: body.bytesize)
-              else
-                body = bytes
-              end
+              body = if @compression == 'gzip'
+                       request.add_field('Content-Encoding', 'gzip')
+                       Zlib.gzip(bytes)
+                     else
+                       bytes
+                     end
               request.body = body
               request.add_field('Content-Type', 'application/x-protobuf')
               @headers.each { |key, value| request.add_field(key, value) }
@@ -150,7 +143,7 @@ module OpenTelemetry
               @http.read_timeout = remaining_timeout
               @http.write_timeout = remaining_timeout
               @http.start unless @http.started?
-              response = measure_request_duration { @http.request(request) }
+              response = @http.request(request)
 
               case response
               when Net::HTTPOK
@@ -169,7 +162,6 @@ module OpenTelemetry
                 FAILURE
               when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
                 log_status(response.body)
-                @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response.code })
                 FAILURE
               when Net::HTTPRedirection
                 @http.finish
@@ -200,7 +192,6 @@ module OpenTelemetry
               return FAILURE
             rescue StandardError => e
               OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#send_bytes')
-              @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => e.class.to_s })
               return FAILURE
             end
           ensure
@@ -227,24 +218,10 @@ module OpenTelemetry
 
           def log_request_failure(response_code)
             OpenTelemetry.handle_error(message: "OTLP exporter received http.code=#{response_code} for uri='#{@uri}' in OTLP::Exporter#send_bytes")
-            @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response_code })
-          end
-
-          def measure_request_duration
-            start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-            begin
-              response = yield
-            ensure
-              stop = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-              duration_ms = 1000.0 * (stop - start)
-              @metrics_reporter.record_value('otel.otlp_exporter.request_duration',
-                                             value: duration_ms,
-                                             labels: { 'status' => response&.code || 'unknown' })
-            end
           end
 
           def backoff?(retry_count:, reason:, retry_after: nil)
-            @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => reason })
+            OpenTelemetry.handle_error(message: "OTLP exporter backing off due to: #{reason}")
             return false if retry_count > RETRY_COUNT
 
             sleep_interval = nil

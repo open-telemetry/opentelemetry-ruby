@@ -33,10 +33,6 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
       version = OpenTelemetry::Exporter::OTLP::HTTP::VERSION
       # spec compliance: OTLP Exporter name and version
       _(DEFAULT_USER_AGENT).must_match("OTel-OTLP-Exporter-Ruby/#{version}")
-      # bonus: incredibly useful troubleshooting information
-      _(DEFAULT_USER_AGENT).must_match("Ruby/#{RUBY_VERSION}")
-      _(DEFAULT_USER_AGENT).must_match(RUBY_PLATFORM)
-      _(DEFAULT_USER_AGENT).must_match("#{RUBY_ENGINE}/#{RUBY_ENGINE_VERSION}")
     end
 
     it 'refuses invalid endpoint' do
@@ -142,7 +138,7 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
 
     it 'appends the correct path if OTEL_EXPORTER_OTLP_ENDPOINT does have a path without a trailing slash' do
       exp = OpenTelemetry::TestHelpers.with_env(
-        # simulate OTLP endpoints built on top of an exiting API
+        # simulate OTLP endpoints built on top of an existing API
         'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234/api/v2/otlp'
       ) do
         OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
@@ -374,16 +370,6 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
       exporter = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(endpoint: 'http://localhost:4318/v1/traces', compression: 'gzip')
       result = exporter.export([span_data])
       _(result).must_equal(success)
-    end
-
-    it 'records metrics' do
-      metrics_reporter = Minitest::Mock.new
-      exporter = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(metrics_reporter: metrics_reporter)
-      stub_request(:post, 'http://localhost:4318/v1/traces').to_timeout.then.to_return(status: 200)
-      metrics_reporter.expect(:record_value, nil) { |m, _, _| m == 'otel.otlp_exporter.message.uncompressed_size' }
-      metrics_reporter.expect(:record_value, nil) { |m, _, _| m == 'otel.otlp_exporter.message.compressed_size' }
-      metrics_reporter.expect(:add_to_counter, nil) { |m, _, _| m == 'otel.otlp_exporter.failure' }
-      exporter.export([OpenTelemetry::TestHelpers.create_span_data])
     end
 
     it 'retries on timeout' do
