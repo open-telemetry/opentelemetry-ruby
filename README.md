@@ -45,6 +45,14 @@ For more information about the maintainer role, see the [community repository](h
 
 For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).
 
+### Emeritus
+
+- [Andrew Hayworth](https://github.com/ahayworth), Approver
+- [Sam Handler](https://github.com/plantfansam), Approver
+
+For more information about the emeritus role, see the
+[community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#emeritus-maintainerapprovertriager).
+
 ## Contrib Repository
 
 The [opentelemetry-ruby-contrib repository][contrib-repo] contains instrumentation libraries for many popular Ruby gems, including Rails, Rack, Sinatra, and others, so you can start using OpenTelemetry with minimal changes to your application. See the [contrib README][contrib-repo] for more details.
@@ -63,15 +71,6 @@ the [Ruby language](https://www.ruby-lang.org/en/downloads/branches/).
 - For more information on OpenTelemetry, visit: <https://opentelemetry.io/>
 - For help or feedback on this project, join us in [GitHub Discussions][discussions-url].
 - For more examples, check [SDK example][examples-github].
-
-### Emeritus
-
-- [Andrew Hayworth](https://github.com/ahayworth), Approver
-- [Sam Handler](https://github.com/plantfansam), Approver
-
-For more information about the emeritus role, see the
-[community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#emeritus-maintainerapprovertriager).
-
 ## License
 
 Apache 2.0 - See [LICENSE][license-url] for more information.
