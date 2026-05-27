@@ -38,7 +38,6 @@ For more information about the maintainer role, see the [community repository](h
 
 ### Approvers
 
-- [Andrew Hayworth](https://github.com/ahayworth), Shopify
 - [Ariel Valentin](https://github.com/arielvalentin), GitHub
 - [Eric Mustin](https://github.com/ericmustin)
 - [Robb Kidd](https://github.com/robbkidd), Honeycomb
