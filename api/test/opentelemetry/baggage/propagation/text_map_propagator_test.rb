@@ -70,6 +70,41 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
         _(context.object_id).wont_equal(empty_context.object_id)
       end
     end
+
+    describe 'limits mirroring #inject' do
+      it 'returns the same context object when the header exceeds the total length of 8192 bytes' do
+        header = (['k=' + ('v' * 96)] * 100).join(',')
+        _(header.bytesize).must_be :>, 8192
+        carrier = { header_key => header }
+        empty_context = Context.empty
+        context = propagator.extract(carrier, context: empty_context)
+        _(context.object_id).must_equal(empty_context.object_id)
+      end
+
+      it 'enforces max of 180 entries on extract' do
+        header = (0..199).map { |i| "k#{i}=v#{i}" }.join(',')
+        carrier = { header_key => header }
+        context = propagator.extract(carrier, context: Context.empty)
+        entries = OpenTelemetry::Baggage.raw_entries(context: context)
+        _(entries.size).must_equal(180)
+        _(entries['k0']).wont_be_nil
+        _(entries['k179']).wont_be_nil
+        _(entries['k180']).must_be_nil
+        _(entries['k199']).must_be_nil
+      end
+
+      it 'skips entries whose size exceeds the max entry length of 4096 bytes' do
+        oversize_value = 'v' * 4096
+        header = "big=#{oversize_value},key2=val2"
+        _(header.bytesize).must_be :<=, 8192
+        carrier = { header_key => header }
+        context = propagator.extract(carrier, context: Context.empty)
+        entries = OpenTelemetry::Baggage.raw_entries(context: context)
+        _(entries['big']).must_be_nil
+        _(entries['key2']).wont_be_nil
+        _(entries['key2'].value).must_equal('val2')
+      end
+    end
   end
 
   describe '#inject' do

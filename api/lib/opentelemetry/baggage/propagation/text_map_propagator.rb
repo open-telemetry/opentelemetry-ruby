@@ -54,18 +54,12 @@ module OpenTelemetry
         def extract(carrier, context: Context.current, getter: Context::Propagation.text_map_getter)
           header = getter.get(carrier, BAGGAGE_KEY)
           return context if header.nil? || header.empty?
+          return context if header.bytesize > MAX_TOTAL_LENGTH
 
           entries = header.gsub(/\s/, '').split(',')
 
           OpenTelemetry::Baggage.build(context: context) do |builder|
-            entries.each do |entry|
-              # Note metadata is currently unused in OpenTelemetry, but is part
-              # the W3C spec where it's referred to as properties. We preserve
-              # the properties (as-is) so that they can be propagated elsewhere.
-              kv, meta = entry.split(';', 2)
-              k, v = kv.split('=').map!(&URI.method(:decode_uri_component))
-              builder.set_value(k, v, metadata: meta)
-            end
+            decode_entries(entries, builder)
           end
         rescue StandardError => e
           OpenTelemetry.logger.debug "Error extracting W3C baggage: #{e.message}"
@@ -81,6 +75,22 @@ module OpenTelemetry
         end
 
         private
+
+        def decode_entries(entries, builder)
+          decoded_count = 0
+          entries.each do |entry|
+            break if decoded_count >= MAX_ENTRIES
+            next if entry.bytesize > MAX_ENTRY_LENGTH
+
+            # Note metadata is currently unused in OpenTelemetry, but is part
+            # the W3C spec where it's referred to as properties. We preserve
+            # the properties (as-is) so that they can be propagated elsewhere.
+            kv, meta = entry.split(';', 2)
+            k, v = kv.split('=').map!(&URI.method(:decode_uri_component))
+            builder.set_value(k, v, metadata: meta)
+            decoded_count += 1
+          end
+        end
 
         def encode(baggage)
           result = +''
