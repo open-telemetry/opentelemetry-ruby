@@ -31,6 +31,7 @@ The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 - [Daniel Azuma](https://github.com/dazuma), Google
 - [Francis Bogsanyi](https://github.com/fbogsany), Shopify
 - [Kayla Reopelle](https://github.com/kaylareopelle), New Relic
+- [Matthew Wear](https://github.com/mwear), Lightstep
 - [Robert Laurin](https://github.com/robertlaurin), Shopify
 
 For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
@@ -67,7 +68,6 @@ the [Ruby language](https://www.ruby-lang.org/en/downloads/branches/).
 ### Emeritus
 
 - [Andrew Hayworth](https://github.com/ahayworth), Approver
-- [Matthew Wear](https://github.com/mwear), Maintainer
 - [Sam Handler](https://github.com/plantfansam), Approver
 
 For more information about the emeritus role, see the
