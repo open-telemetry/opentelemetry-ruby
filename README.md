@@ -39,7 +39,6 @@ For more information about the maintainer role, see the [community repository](h
 ### Approvers
 
 - [Ariel Valentin](https://github.com/arielvalentin), GitHub
-- [Eric Mustin](https://github.com/ericmustin)
 - [Robb Kidd](https://github.com/robbkidd), Honeycomb
 - [Xuan Cao](https://github.com/xuan-cao-swi), Solarwinds
 
@@ -48,6 +47,7 @@ For more information about the approver role, see the [community repository](htt
 ### Emeritus
 
 - [Andrew Hayworth](https://github.com/ahayworth), Approver
+- [Eric Mustin](https://github.com/ericmustin), Approver
 - [Sam Handler](https://github.com/plantfansam), Approver
 
 For more information about the emeritus role, see the
