@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp-logs
 
+### v0.5.1 / 2026-06-02
+
+* FIXED: `URI.join` dropping path prefix in logs and metrics exporters (#2158)
+
 ### v0.5.0 / 2026-05-12
 
 * ADDED: Add event_name field to Logs (#2077)
