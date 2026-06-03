@@ -113,6 +113,23 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_FILESYSTEM_UTILIZATION = 'system.filesystem.utilization'
 
+        # The number of packets transferred.
+        #
+        # @note Stability Level: development
+        # @deprecated Replaced by `system.memory.linux.available`.
+        SYSTEM_LINUX_MEMORY_AVAILABLE = 'system.linux.memory.available'
+
+        # The number of packets transferred.
+        #
+        # @note Stability Level: development
+        # @deprecated Replaced by `system.memory.linux.slab.usage`.
+        SYSTEM_LINUX_MEMORY_SLAB_USAGE = 'system.linux.memory.slab.usage'
+
+        # Total virtual memory available in the system.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LIMIT = 'system.memory.limit'
+
         # An estimate of how much memory is available for starting new applications, without causing swapping.
         #
         # This is an alternative to `system.memory.usage` metric with `state=free`.
@@ -122,21 +139,16 @@ module OpenTelemetry
         # See also `MemAvailable` in [/proc/meminfo](https://man7.org/linux/man-pages/man5/proc.5.html).
         #
         # @note Stability Level: development
-        SYSTEM_LINUX_MEMORY_AVAILABLE = 'system.linux.memory.available'
+        SYSTEM_MEMORY_LINUX_AVAILABLE = 'system.memory.linux.available'
 
         # Reports the memory used by the Linux kernel for managing caches of frequently used objects.
         #
-        # The sum over the `reclaimable` and `unreclaimable` state values in `linux.memory.slab.usage` SHOULD be equal to the total slab memory available on the system.
+        # The sum over the `reclaimable` and `unreclaimable` state values in `memory.linux.slab.usage` SHOULD be equal to the total slab memory available on the system.
         # Note that the total slab memory is not constant and may vary over time.
         # See also the [Slab allocator](https://blogs.oracle.com/linux/post/understanding-linux-kernel-memory-statistics) and `Slab` in [/proc/meminfo](https://man7.org/linux/man-pages/man5/proc.5.html).
         #
         # @note Stability Level: development
-        SYSTEM_LINUX_MEMORY_SLAB_USAGE = 'system.linux.memory.slab.usage'
-
-        # Total virtual memory available in the system.
-        #
-        # @note Stability Level: development
-        SYSTEM_MEMORY_LIMIT = 'system.memory.limit'
+        SYSTEM_MEMORY_LINUX_SLAB_USAGE = 'system.memory.linux.slab.usage'
 
         # Shared memory used (mostly by tmpfs).
         #
