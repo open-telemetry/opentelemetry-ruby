@@ -68,6 +68,8 @@ ignoreWords:
   - rolldice
   - codegen
   - Dockerfiles
+  - opentelemetrybot
+  - otelbot
 words:
   - autocorrection
   - bigdecimal
