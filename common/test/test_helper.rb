@@ -12,4 +12,3 @@ end
 require 'opentelemetry-test-helpers'
 require 'opentelemetry/common'
 require 'minitest/autorun'
-require 'pry'

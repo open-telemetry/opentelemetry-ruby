@@ -159,6 +159,24 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
       _(exp.instance_variable_get(:@path)).must_equal '/v1/logs'
     end
 
+    it 'appends the correct path if OTEL_EXPORTER_OTLP_ENDPOINT does have a path without a trailing slash' do
+      exp = OpenTelemetry::TestHelpers.with_env(
+        'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234/api/v2/otlp'
+      ) do
+        OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
+      end
+      _(exp.instance_variable_get(:@path)).must_equal '/api/v2/otlp/v1/logs'
+    end
+
+    it 'appends the correct path if OTEL_EXPORTER_OTLP_ENDPOINT does have a path with a trailing slash' do
+      exp = OpenTelemetry::TestHelpers.with_env(
+        'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234/api/v2/otlp/'
+      ) do
+        OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
+      end
+      _(exp.instance_variable_get(:@path)).must_equal '/api/v2/otlp/v1/logs'
+    end
+
     it 'restricts explicit headers to a String or Hash' do
       exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(headers: { 'token' => 'über' })
       _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über', 'User-Agent' => DEFAULT_USER_AGENT)
