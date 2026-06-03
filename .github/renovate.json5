@@ -7,6 +7,9 @@
   ],
   gitIgnoredAuthors: [
     "107717825+opentelemetrybot@users.noreply.github.com",
+    "107717825+opentelemetrybot[bot]@users.noreply.github.com",
+    "197425009+otelbot@users.noreply.github.com",
+    "197425009+otelbot[bot]@users.noreply.github.com",
     "github-actions[bot]@users.noreply.github.com"
   ],
   prConcurrentLimit: 12,
