@@ -71,6 +71,20 @@ module OpenTelemetry
         # @note Stability Level: development
         PPROF_PROFILE_KEEP_FRAMES = 'pprof.profile.keep_frames'
 
+        # Records the pprof's default_sample_type in the original profile. Not set if the default sample type was missing.
+        #
+        # This attribute, if present, MUST be set at the scope level (resource_profiles[].scope_profiles[].scope.attributes[]).
+        #
+        # @note Stability Level: development
+        PPROF_SCOPE_DEFAULT_SAMPLE_TYPE = 'pprof.scope.default_sample_type'
+
+        # Records the indexes of the sample types in the original profile.
+        #
+        # This attribute, if present, MUST be set at the scope level (resource_profiles[].scope_profiles[].scope.attributes[]).
+        #
+        # @note Stability Level: development
+        PPROF_SCOPE_SAMPLE_TYPE_ORDER = 'pprof.scope.sample_type_order'
+
         # @!endgroup
       end
     end

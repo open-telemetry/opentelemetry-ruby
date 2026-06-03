@@ -32,6 +32,8 @@ module OpenTelemetry
 
         # The exception message.
         #
+        # > [!WARNING]> This attribute may contain sensitive information.
+        #
         # @note Stability Level: stable
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::EXCEPTION::EXCEPTION_MESSAGE}.

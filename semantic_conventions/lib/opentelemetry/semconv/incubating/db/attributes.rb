@@ -331,6 +331,11 @@ module OpenTelemetry
         # [Generating query summary](/docs/db/database-spans.md#generating-a-summary-of-the-query)
         # section.
         #
+        # For batch operations, if the individual operations are known to have the same query summary
+        # then that query summary SHOULD be used prepended by `BATCH `,
+        # otherwise `db.query.summary` SHOULD be `BATCH` or some other database
+        # system specific term if more applicable.
+        #
         # @note Stability Level: stable
         #
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DB::DB_QUERY_SUMMARY}.
