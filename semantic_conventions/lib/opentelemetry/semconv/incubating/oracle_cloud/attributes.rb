@@ -21,32 +21,15 @@
 module OpenTelemetry
   module SemConv
     module Incubating
-      module MESSAGE
+      module ORACLE_CLOUD
         # @!group Attribute Names
 
-        # Deprecated, no replacement at this time.
+        # The OCI realm identifier that indicates the isolated partition in which the tenancy and its resources reside.
+        #
+        # See [OCI documentation on realms](https://docs.oracle.com/iaas/Content/General/Concepts/regions.htm)
         #
         # @note Stability Level: development
-        # @deprecated Deprecated, no replacement at this time.
-        MESSAGE_COMPRESSED_SIZE = 'message.compressed_size'
-
-        # Deprecated, no replacement at this time.
-        #
-        # @note Stability Level: development
-        # @deprecated Deprecated, no replacement at this time.
-        MESSAGE_ID = 'message.id'
-
-        # Deprecated, no replacement at this time.
-        #
-        # @note Stability Level: development
-        # @deprecated Deprecated, no replacement at this time.
-        MESSAGE_TYPE = 'message.type'
-
-        # Deprecated, no replacement at this time.
-        #
-        # @note Stability Level: development
-        # @deprecated Deprecated, no replacement at this time.
-        MESSAGE_UNCOMPRESSED_SIZE = 'message.uncompressed_size'
+        ORACLE_CLOUD_REALM = 'oracle_cloud.realm'
 
         # @!endgroup
       end

@@ -24,6 +24,13 @@ module OpenTelemetry
       module SERVICE
         # @!group Attribute Names
 
+        # The operational criticality of the service.
+        #
+        # Application developers are encouraged to set `service.criticality` to express the operational importance of their services. Telemetry consumers MAY use this attribute to optimize telemetry collection or improve user experience.
+        #
+        # @note Stability Level: development
+        SERVICE_CRITICALITY = 'service.criticality'
+
         # The string ID of the service instance.
         #
         # MUST be unique for each instance of the same `service.namespace,service.name` pair (in other words
@@ -53,7 +60,9 @@ module OpenTelemetry
         # for that telemetry. This is typically the case for scraping receivers, as they know the target address and
         # port.
         #
-        # @note Stability Level: development
+        # @note Stability Level: stable
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::SERVICE::SERVICE_INSTANCE_ID}.
         SERVICE_INSTANCE_ID = 'service.instance.id'
 
         # Logical name of the service.
@@ -69,7 +78,9 @@ module OpenTelemetry
         #
         # A string value having a meaning that helps to distinguish a group of services, for example the team name that owns a group of services. `service.name` is expected to be unique within the same namespace. If `service.namespace` is not specified in the Resource then `service.name` is expected to be unique for all services that have no explicit namespace defined (so the empty/unspecified namespace is simply one more valid namespace). Zero-length namespace string is assumed equal to unspecified namespace.
         #
-        # @note Stability Level: development
+        # @note Stability Level: stable
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::SERVICE::SERVICE_NAMESPACE}.
         SERVICE_NAMESPACE = 'service.namespace'
 
         # Logical name of the service on the other side of the connection. SHOULD be equal to the actual [`service.name`](/docs/resource/README.md#service) resource attribute of the remote service if any.

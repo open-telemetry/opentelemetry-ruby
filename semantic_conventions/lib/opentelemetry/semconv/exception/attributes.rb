@@ -31,6 +31,8 @@ module OpenTelemetry
 
       # The exception message.
       #
+      # > [!WARNING]> This attribute may contain sensitive information.
+      #
       # @note Stability Level: stable
       EXCEPTION_MESSAGE = 'exception.message'
 
