@@ -33,6 +33,7 @@ module OpenTelemetry
         # `error.message` is NOT RECOMMENDED for metrics or spans due to its unbounded cardinality and overlap with span status.
         #
         # @note Stability Level: development
+        # @deprecated Use domain-specific error message attribute. For example, use `feature_flag.error.message` for feature flag errors.
         ERROR_MESSAGE = 'error.message'
 
         # Describes a class of error the operation ended with.

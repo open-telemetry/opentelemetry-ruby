@@ -141,6 +141,14 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_MEMORY_LINUX_AVAILABLE = 'system.memory.linux.available'
 
+        # Shared memory used (mostly by tmpfs).
+        #
+        # Equivalent of `shared` from [`free` command](https://man7.org/linux/man-pages/man1/free.1.html) or
+        # `Shmem` from [`/proc/meminfo`](https://man7.org/linux/man-pages/man5/proc.5.html)"
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_SHARED = 'system.memory.linux.shared'
+
         # Reports the memory used by the Linux kernel for managing caches of frequently used objects.
         #
         # The sum over the `reclaimable` and `unreclaimable` state values in `memory.linux.slab.usage` SHOULD be equal to the total slab memory available on the system.
@@ -150,12 +158,10 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_MEMORY_LINUX_SLAB_USAGE = 'system.memory.linux.slab.usage'
 
-        # Shared memory used (mostly by tmpfs).
-        #
-        # Equivalent of `shared` from [`free` command](https://man7.org/linux/man-pages/man1/free.1.html) or
-        # `Shmem` from [`/proc/meminfo`](https://man7.org/linux/man-pages/man5/proc.5.html)"
+        # Deprecated, use `system.memory.linux.shared` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `system.memory.linux.shared`.
         SYSTEM_MEMORY_SHARED = 'system.memory.shared'
 
         # Reports memory in use by state.

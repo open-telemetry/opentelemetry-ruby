@@ -90,10 +90,10 @@ module OpenTelemetry
         # @deprecated Use string representation of the error code on the `rpc.response.status_code` attribute.
         RPC_JSONRPC_ERROR_CODE = 'rpc.jsonrpc.error_code'
 
-        # Deprecated, use span status description or `error.message` attribute on other signals.
+        # Deprecated, use the span status description when reporting JSON-RPC spans.
         #
         # @note Stability Level: development
-        # @deprecated Use the span status description or `error.message` attribute on other signals.
+        # @deprecated Use the span status description when reporting JSON-RPC spans.
         RPC_JSONRPC_ERROR_MESSAGE = 'rpc.jsonrpc.error_message'
 
         # Deprecated, use `jsonrpc.request.id` instead.
@@ -111,6 +111,7 @@ module OpenTelemetry
         # Compressed size of the message in bytes.
         #
         # @note Stability Level: development
+        # @deprecated Deprecated, no replacement at this time.
         RPC_MESSAGE_COMPRESSED_SIZE = 'rpc.message.compressed_size'
 
         # MUST be calculated as two different counters starting from `1` one for sent messages and one for received message.
@@ -118,16 +119,19 @@ module OpenTelemetry
         # This way we guarantee that the values will be consistent between different implementations.
         #
         # @note Stability Level: development
+        # @deprecated Deprecated, no replacement at this time.
         RPC_MESSAGE_ID = 'rpc.message.id'
 
         # Whether this is a received or sent message.
         #
         # @note Stability Level: development
+        # @deprecated Deprecated, no replacement at this time.
         RPC_MESSAGE_TYPE = 'rpc.message.type'
 
         # Uncompressed size of the message in bytes.
         #
         # @note Stability Level: development
+        # @deprecated Deprecated, no replacement at this time.
         RPC_MESSAGE_UNCOMPRESSED_SIZE = 'rpc.message.uncompressed_size'
 
         # The fully-qualified logical name of the method from the RPC interface perspective.
@@ -156,12 +160,12 @@ module OpenTelemetry
         # method actually executing the call on the server side, or the
         # RPC client stub method on the client side.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         RPC_METHOD = 'rpc.method'
 
         # The original name of the method used by the client.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         RPC_METHOD_ORIGINAL = 'rpc.method_original'
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -203,7 +207,7 @@ module OpenTelemetry
         # Usually it represents an error code, but may also represent partial success, warning, or differentiate between various types of successful outcomes.
         # Semantic conventions for individual RPC frameworks SHOULD document what `rpc.response.status_code` means in the context of that system and which values are considered to represent errors.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         RPC_RESPONSE_STATUS_CODE = 'rpc.response.status_code'
 
         # Deprecated, use fully-qualified `rpc.method` instead.
@@ -222,7 +226,7 @@ module OpenTelemetry
         #
         # The client and server RPC systems may differ for the same RPC interaction. For example, a client may use Apache Dubbo or Connect RPC to communicate with a server that uses gRPC since both protocols provide compatibility with gRPC.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         RPC_SYSTEM_NAME = 'rpc.system.name'
 
         # @!endgroup

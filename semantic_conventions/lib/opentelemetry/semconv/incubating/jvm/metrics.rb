@@ -94,6 +94,11 @@ module OpenTelemetry
         # @note Stability Level: development
         JVM_FILE_DESCRIPTOR_COUNT = 'jvm.file_descriptor.count'
 
+        # Measure of max open file descriptors as reported by the JVM.
+        #
+        # @note Stability Level: development
+        JVM_FILE_DESCRIPTOR_LIMIT = 'jvm.file_descriptor.limit'
+
         # Duration of JVM garbage collection actions.
         #
         # @note Stability Level: stable
