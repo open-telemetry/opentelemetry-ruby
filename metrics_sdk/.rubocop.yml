@@ -8,9 +8,6 @@ Metrics/PerceivedComplexity:
   Max: 30
 Metrics/CyclomaticComplexity:
   Max: 20
-Naming/FileName:
-  Exclude:
-    - "lib/opentelemetry-metrics-sdk.rb"
 Lint/AmbiguousOperatorPrecedence:
   Enabled: false
 Lint/AmbiguousRange:

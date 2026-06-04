@@ -820,7 +820,7 @@ Benchmark.ips do |x|
   x.compare!
 end
 
-Benchmark.ips do |x| # rubocop:disable Metrics/BlockLength
+Benchmark.ips do |x|
   x.report 'LinkedListContext.with_value recursive' do
     LinkedListContext.with_value('key', 'value') do
       LinkedListContext.with_value('key', 'value') do

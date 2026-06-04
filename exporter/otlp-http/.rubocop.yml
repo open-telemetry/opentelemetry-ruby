@@ -9,9 +9,6 @@ Metrics/CyclomaticComplexity:
   Enabled: false
 Metrics/PerceivedComplexity:
   Enabled: false
-Naming/FileName:
-  Exclude:
-    - "lib/opentelemetry-exporter-otlp-http.rb"
 Lint/DuplicateBranch:
   Enabled: false
 Lint/SuppressedExceptionInNumberConversion:

@@ -6,31 +6,8 @@ AllCops:
     - 'tmp/semconvrepo/**/*'
     - 'vendor/**/*'
 
-Bundler/OrderedGems:
-  Exclude:
-    - gemfiles/**/*
-
-Gemspec/DevelopmentDependencies:
-  Enabled: false
-Gemspec/RequireMFA:
-  Enabled: false
-
-Metrics/BlockLength:
-  Enabled: false
-Metrics/MethodLength:
-  Max: 20
 Metrics/ModuleLength:
   Enabled: false
 
 Naming/ClassAndModuleCamelCase: # because the source for generating module names isn't Rubyish enough
   Enabled: false
-Naming/FileName:
-  Exclude:
-    - lib/opentelemetry-semantic_conventions.rb
-
-Style/FrozenStringLiteralComment:
-  Exclude:
-    - gemfiles/**/*
-Style/StringLiterals:
-  Exclude:
-    - gemfiles/**/*

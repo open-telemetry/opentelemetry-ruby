@@ -13,22 +13,6 @@ Metrics/MethodLength:
   Enabled: false
 Metrics/ClassLength:
   Enabled: false
-Bundler/OrderedGems:
-  Exclude:
-    - gemfiles/**/*
-Style/FrozenStringLiteralComment:
-  Exclude:
-    - gemfiles/**/*
-Style/ModuleFunction:
-  Enabled: false
-Style/StringLiterals:
-  Exclude:
-    - gemfiles/**/*
-Metrics/BlockLength:
-  Enabled: false
-Naming/FileName:
-  Exclude:
-    - "lib/opentelemetry-exporter-otlp-metrics.rb"
 Lint/DuplicateBranch:
   Enabled: false
 Lint/SuppressedExceptionInNumberConversion:

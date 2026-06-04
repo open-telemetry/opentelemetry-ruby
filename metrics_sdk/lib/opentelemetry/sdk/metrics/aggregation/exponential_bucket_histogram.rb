@@ -94,7 +94,6 @@ module OpenTelemetry
 
               # this will slow down the operation especially if large amount of data_points present
               # but it should be fine since with cumulative, the data_points are merged into previous_* and not kept in data_points
-              # rubocop:disable Metrics/BlockLength
               data_points.each do |attributes, hdp|
                 # Store current values
                 current_positive = hdp.positive
@@ -181,7 +180,6 @@ module OpenTelemetry
                 merged_data_points[attributes] = merged_hdp
                 @previous_mappings[attributes] = @mappings[attributes] if @mappings[attributes] # Preserve mapping for next collection
               end
-              # rubocop:enable Metrics/BlockLength
 
               # when you have no local_data_points, the loop from cumulative aggregation will not run
               # so return last merged data points if exists
