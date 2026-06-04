@@ -4,8 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'simplecov'
 require 'opentelemetry-sdk'
 require 'opentelemetry-test-helpers'
 require 'minitest/autorun'
-require 'pry'
-require 'simplecov'
