@@ -20,7 +20,6 @@ end
 
 $LOAD_PATH.push(File.join(__dir__, '..', '..', '..', 'thrift', 'gen-rb'))
 
-
 require 'opentelemetry/sdk'
 require 'opentelemetry/common'
 require 'opentelemetry/exporter/zipkin/transformer'
