@@ -194,7 +194,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
       carrier = {}
       propagator.inject(carrier, context: context)
       trace_span_identity_value = carrier[identity_key]
-      trace_id, span_id, parent_span_id, flags = trace_span_identity_value.split(/:/)
+      trace_id, span_id, parent_span_id, flags = trace_span_identity_value.split(':')
       _(trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
       _(span_id).must_equal('e457b5a2e4d86bd1')
       _(parent_span_id).must_equal('0')
@@ -210,7 +210,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
       carrier = {}
       propagator.inject(carrier, context: context)
       trace_span_identity_value = carrier[identity_key]
-      trace_id, span_id, parent_span_id, flags = trace_span_identity_value.split(/:/)
+      trace_id, span_id, parent_span_id, flags = trace_span_identity_value.split(':')
       _(trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
       _(span_id).must_equal('e457b5a2e4d86bd1')
       _(parent_span_id).must_equal('0')
@@ -227,7 +227,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
       carrier = {}
       propagator.inject(carrier, context: context)
       trace_span_identity_value = carrier[identity_key]
-      trace_id, span_id, parent_span_id, flags = trace_span_identity_value.split(/:/)
+      trace_id, span_id, parent_span_id, flags = trace_span_identity_value.split(':')
       _(trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
       _(span_id).must_equal('e457b5a2e4d86bd1')
       _(parent_span_id).must_equal('0')
@@ -282,7 +282,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
       carrier = {}
       propagator.inject(carrier, context: context, setter: rack_env_setter)
       trace_span_identity_value = carrier['HTTP_UBER_TRACE_ID']
-      trace_id, span_id, parent_span_id, flags = trace_span_identity_value.split(/:/)
+      trace_id, span_id, parent_span_id, flags = trace_span_identity_value.split(':')
       _(trace_id).must_equal('80f198ee56343ba864fe8b2a57d3eff7')
       _(span_id).must_equal('e457b5a2e4d86bd1')
       _(parent_span_id).must_equal('0')
@@ -301,7 +301,7 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
       carrier = {}
       propagator.inject(carrier, context: context)
       trace_span_identity_value = carrier[identity_key]
-      _trace_id, _span_id, _parent_span_id, flags = trace_span_identity_value.split(/:/)
+      _trace_id, _span_id, _parent_span_id, flags = trace_span_identity_value.split(':')
       _(flags).must_equal('0')
     end
 
