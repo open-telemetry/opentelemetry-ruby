@@ -30,10 +30,16 @@ Lint/UnusedMethodArgument:
 
 Metrics/AbcSize:
   Enabled: false
+Metrics/BlockLength:
+  Enabled: false
 Metrics/MethodLength:
   Max: 21
 Metrics/ParameterLists:
   Enabled: false
+
+Naming/FileName:
+  Exclude:
+    - "**/opentelemetry-*"
 
 Style/Documentation:
   Exclude:
@@ -45,6 +51,9 @@ Style/DocumentationMethod:
   Exclude:
     - "**/test/**/*"
     - "**/*test*"
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - "**/gemfiles/*"
 Style/ModuleFunction:
   Enabled: false
 Style/NumericPredicate:
@@ -56,6 +65,9 @@ Style/RedundantRegexpEscape:
 Style/StringConcatenation:
   Exclude:
     - "test/**/*"
+Style/StringLiterals:
+  Exclude:
+    - "**/gemfiles/*"
 
 Gemspec/RequireMFA:
   # We probably want to figure out how to set this up for the organization
