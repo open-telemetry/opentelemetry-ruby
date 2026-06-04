@@ -37,6 +37,16 @@ Metrics/MethodLength:
 Metrics/ParameterLists:
   Enabled: false
 
+Style/Documentation:
+  Exclude:
+    - "**/test/**/*"
+    - "**/*test*"
+Style/DocumentationMethod:
+  Enabled: true
+  Severity: info
+  Exclude:
+    - "**/test/**/*"
+    - "**/*test*"
 Style/ModuleFunction:
   Enabled: false
 Style/NumericPredicate:

@@ -60,6 +60,7 @@ module OpenTelemetry
             super()
 
             @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
+                     endpoint += '/' unless endpoint.end_with?('/')
                      URI.join(endpoint, 'v1/metrics')
                    else
                      URI(endpoint)

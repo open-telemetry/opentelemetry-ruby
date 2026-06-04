@@ -24,28 +24,28 @@ module OpenTelemetry
       module MESSAGE
         # @!group Attribute Names
 
-        # Deprecated, use `rpc.message.compressed_size` instead.
+        # Deprecated, no replacement at this time.
         #
         # @note Stability Level: development
-        # @deprecated Replaced by `rpc.message.compressed_size`.
+        # @deprecated Deprecated, no replacement at this time.
         MESSAGE_COMPRESSED_SIZE = 'message.compressed_size'
 
-        # Deprecated, use `rpc.message.id` instead.
+        # Deprecated, no replacement at this time.
         #
         # @note Stability Level: development
-        # @deprecated Replaced by `rpc.message.id`.
+        # @deprecated Deprecated, no replacement at this time.
         MESSAGE_ID = 'message.id'
 
-        # Deprecated, use `rpc.message.type` instead.
+        # Deprecated, no replacement at this time.
         #
         # @note Stability Level: development
-        # @deprecated Replaced by `rpc.message.type`.
+        # @deprecated Deprecated, no replacement at this time.
         MESSAGE_TYPE = 'message.type'
 
-        # Deprecated, use `rpc.message.uncompressed_size` instead.
+        # Deprecated, no replacement at this time.
         #
         # @note Stability Level: development
-        # @deprecated Replaced by `rpc.message.uncompressed_size`.
+        # @deprecated Deprecated, no replacement at this time.
         MESSAGE_UNCOMPRESSED_SIZE = 'message.uncompressed_size'
 
         # @!endgroup

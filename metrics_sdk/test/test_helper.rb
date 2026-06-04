@@ -11,7 +11,6 @@
 require 'opentelemetry-metrics-sdk'
 require 'opentelemetry-test-helpers'
 require 'minitest/autorun'
-require 'pry'
 
 # reset_metrics_sdk is a test helper used to clear
 # SDK configuration state between calls

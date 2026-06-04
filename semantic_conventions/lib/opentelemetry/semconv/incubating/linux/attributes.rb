@@ -27,6 +27,7 @@ module OpenTelemetry
         # The Linux Slab memory state
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `system.memory.linux.slab.state`.
         LINUX_MEMORY_SLAB_STATE = 'linux.memory.slab.state'
 
         # @!endgroup

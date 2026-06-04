@@ -1,5 +1,13 @@
 # Release History: opentelemetry-semantic_conventions
 
+### v1.39.0 / 2026-06-03
+
+* ADDED: Update dependency open-telemetry/semantic-conventions to v1.39.0 (#2137)
+
+### v1.38.0 / 2026-05-21
+
+* ADDED: Update semantic conventions to v1.38.0 (#2136)
+
 ### v1.37.1 / 2026-05-12
 
 * ADDED: Add git tag to source URI in gemspec (#2101)

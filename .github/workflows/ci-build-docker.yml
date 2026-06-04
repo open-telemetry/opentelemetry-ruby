@@ -1,0 +1,28 @@
+name: Build / Docker
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths: &path_filters
+      - ".docker/**"
+      - "docker-compose.yml"
+      - ".github/workflows/ci-build-docker.yml"
+  pull_request:
+    branches:
+      - main
+    paths: *path_filters
+  merge_group:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    name: Combined Docker Compose
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Build Docker image
+        run: docker compose -f docker-compose.yml up -d

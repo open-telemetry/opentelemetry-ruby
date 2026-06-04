@@ -68,11 +68,15 @@ ignoreWords:
   - rolldice
   - codegen
   - Dockerfiles
+  - opentelemetrybot
+  - otelbot
 words:
   - autocorrection
   - bigdecimal
+  - cadvisor
   - configurator
   - confluentinc
+  - environtment # temporary, just to get through first renovate semconv release.
   - linkspector
   - loggregator
   - LOGRECORD

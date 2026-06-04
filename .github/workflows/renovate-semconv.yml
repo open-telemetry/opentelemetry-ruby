@@ -1,7 +1,8 @@
 name: Renovate Semantic Conventions Post-Update
 
 on:
-  pull_request:
+  pull_request_target:
+    types: [opened, synchronize, edited]
     paths:
       - 'semantic_conventions/Rakefile'
     branches:
@@ -15,17 +16,17 @@ jobs:
   regenerate-semconv:
     # Only run on Renovate PRs
     if: startsWith(github.head_ref, 'renovate/')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
         with:
-          ruby-version: '3.3'
+          ruby-version: '4.0.5'
           bundler-cache: true
           working-directory: semantic_conventions
 
