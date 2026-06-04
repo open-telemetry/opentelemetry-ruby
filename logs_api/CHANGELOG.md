@@ -1,5 +1,10 @@
 # Release History: opentelemetry-logs-api
 
+### v0.4.0 / 2026-05-12
+
+* ADDED: Add event_name field to Logs (#2077)
+* ADDED: Add git tag to source URI in gemspec (#2101)
+
 ### v0.3.0 / 2026-04-07
 
 * ADDED: Min Ruby Version 3.3 (#2070)

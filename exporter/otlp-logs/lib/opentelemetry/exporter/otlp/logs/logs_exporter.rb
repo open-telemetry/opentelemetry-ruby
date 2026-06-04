@@ -60,6 +60,7 @@ module OpenTelemetry
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
             @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
+                     endpoint += '/' unless endpoint.end_with?('/')
                      URI.join(endpoint, 'v1/logs')
                    else
                      URI(endpoint)
@@ -308,6 +309,7 @@ module OpenTelemetry
               body: as_otlp_any_value(log_record_data.body),
               attributes: log_record_data.attributes&.map { |k, v| as_otlp_key_value(k, v) },
               dropped_attributes_count: log_record_data.total_recorded_attributes - log_record_data.attributes&.size.to_i,
+              event_name: log_record_data.event_name,
               flags: log_record_data.trace_flags.instance_variable_get(:@flags),
               trace_id: log_record_data.trace_id,
               span_id: log_record_data.span_id

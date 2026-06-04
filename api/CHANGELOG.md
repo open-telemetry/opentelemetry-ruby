@@ -1,5 +1,9 @@
 # Release History: opentelemetry-api
 
+### v1.10.0 / 2026-05-12
+
+* ADDED: Add git tag to source URI in gemspec (#2101)
+
 ### v1.9.0 / 2026-04-07
 
 * ADDED: Min Ruby Version 3.3 (#2070)
@@ -122,9 +126,6 @@
 ### v0.17.0 / 2021-04-22
 
 - BREAKING CHANGE: Replace TextMapInjector/TextMapExtractor pairs with a TextMapPropagator.
-
-  [Check the propagator documentation](https://open-telemetry.github.io/opentelemetry-ruby/) for the new usage.
-
 - BREAKING CHANGE: Remove metrics API.
 
   `OpenTelemetry::Metrics` and all of its behavior removed until spec stabilizes.

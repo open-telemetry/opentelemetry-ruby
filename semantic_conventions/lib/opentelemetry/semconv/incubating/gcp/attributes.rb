@@ -77,6 +77,51 @@ module OpenTelemetry
         # @note Stability Level: development
         GCP_APPHUB_WORKLOAD_ID = 'gcp.apphub.workload.id'
 
+        # The container within GCP where the AppHub destination application is defined.
+        #
+        # @note Stability Level: development
+        GCP_APPHUB_DESTINATION_APPLICATION_CONTAINER = 'gcp.apphub_destination.application.container'
+
+        # The name of the destination application as configured in AppHub.
+        #
+        # @note Stability Level: development
+        GCP_APPHUB_DESTINATION_APPLICATION_ID = 'gcp.apphub_destination.application.id'
+
+        # The GCP zone or region where the destination application is defined.
+        #
+        # @note Stability Level: development
+        GCP_APPHUB_DESTINATION_APPLICATION_LOCATION = 'gcp.apphub_destination.application.location'
+
+        # Criticality of a destination workload indicates its importance to the business as specified in [AppHub type enum](https://cloud.google.com/app-hub/docs/reference/rest/v1/Attributes#type)
+        #
+        # @note Stability Level: development
+        GCP_APPHUB_DESTINATION_SERVICE_CRITICALITY_TYPE = 'gcp.apphub_destination.service.criticality_type'
+
+        # Software lifecycle stage of a destination service as defined [AppHub environment type](https://cloud.google.com/app-hub/docs/reference/rest/v1/Attributes#type_1)
+        #
+        # @note Stability Level: development
+        GCP_APPHUB_DESTINATION_SERVICE_ENVIRONMENT_TYPE = 'gcp.apphub_destination.service.environment_type'
+
+        # The name of the destination service as configured in AppHub.
+        #
+        # @note Stability Level: development
+        GCP_APPHUB_DESTINATION_SERVICE_ID = 'gcp.apphub_destination.service.id'
+
+        # Criticality of a destination workload indicates its importance to the business as specified in [AppHub type enum](https://cloud.google.com/app-hub/docs/reference/rest/v1/Attributes#type)
+        #
+        # @note Stability Level: development
+        GCP_APPHUB_DESTINATION_WORKLOAD_CRITICALITY_TYPE = 'gcp.apphub_destination.workload.criticality_type'
+
+        # Environment of a destination workload is the stage of a software lifecycle as provided in the [AppHub environment type](https://cloud.google.com/app-hub/docs/reference/rest/v1/Attributes#type_1)
+        #
+        # @note Stability Level: development
+        GCP_APPHUB_DESTINATION_WORKLOAD_ENVIRONMENT_TYPE = 'gcp.apphub_destination.workload.environment_type'
+
+        # The name of the destination workload as configured in AppHub.
+        #
+        # @note Stability Level: development
+        GCP_APPHUB_DESTINATION_WORKLOAD_ID = 'gcp.apphub_destination.workload.id'
+
         # Identifies the Google Cloud service for which the official client library is intended.
         #
         # Intended to be a stable identifier for Google Cloud client libraries that is uniform across implementation languages. The value should be derived from the canonical service domain for the service; for example, 'foo.googleapis.com' should result in a value of 'foo'.
@@ -103,6 +148,21 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         GCP_GCE_INSTANCE_NAME = 'gcp.gce.instance.name'
+
+        # The name of the Instance Group Manager (IGM) that manages this VM, if any.
+        #
+        # @note Stability Level: development
+        GCP_GCE_INSTANCE_GROUP_MANAGER_NAME = 'gcp.gce.instance_group_manager.name'
+
+        # The region of a **regional** Instance Group Manager (e.g., `us-central1`). Set this **only** when the IGM is regional.
+        #
+        # @note Stability Level: development
+        GCP_GCE_INSTANCE_GROUP_MANAGER_REGION = 'gcp.gce.instance_group_manager.region'
+
+        # The zone of a **zonal** Instance Group Manager (e.g., `us-central1-a`). Set this **only** when the IGM is zonal.
+        #
+        # @note Stability Level: development
+        GCP_GCE_INSTANCE_GROUP_MANAGER_ZONE = 'gcp.gce.instance_group_manager.zone'
 
         # @!endgroup
       end

@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'benchmark/ipsa'
+require 'benchmark/ips'
 require 'concurrent-ruby'
 require 'opentelemetry'
 
@@ -784,7 +784,7 @@ class FiberLocalImmutableArrayContext
   ROOT = empty.freeze
 end
 
-Benchmark.ipsa do |x|
+Benchmark.ips do |x|
   x.report 'FiberAttributeContext.with_value' do
     FiberAttributeContext.with_value('key', 'value') { |ctx, _| ctx }
   end
@@ -820,7 +820,7 @@ Benchmark.ipsa do |x|
   x.compare!
 end
 
-Benchmark.ipsa do |x| # rubocop:disable Metrics/BlockLength
+Benchmark.ips do |x| # rubocop:disable Metrics/BlockLength
   x.report 'LinkedListContext.with_value recursive' do
     LinkedListContext.with_value('key', 'value') do
       LinkedListContext.with_value('key', 'value') do

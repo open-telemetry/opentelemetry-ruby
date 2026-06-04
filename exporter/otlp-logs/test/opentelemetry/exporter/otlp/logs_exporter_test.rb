@@ -159,6 +159,24 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
       _(exp.instance_variable_get(:@path)).must_equal '/v1/logs'
     end
 
+    it 'appends the correct path if OTEL_EXPORTER_OTLP_ENDPOINT does have a path without a trailing slash' do
+      exp = OpenTelemetry::TestHelpers.with_env(
+        'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234/api/v2/otlp'
+      ) do
+        OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
+      end
+      _(exp.instance_variable_get(:@path)).must_equal '/api/v2/otlp/v1/logs'
+    end
+
+    it 'appends the correct path if OTEL_EXPORTER_OTLP_ENDPOINT does have a path with a trailing slash' do
+      exp = OpenTelemetry::TestHelpers.with_env(
+        'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234/api/v2/otlp/'
+      ) do
+        OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
+      end
+      _(exp.instance_variable_get(:@path)).must_equal '/api/v2/otlp/v1/logs'
+    end
+
     it 'restricts explicit headers to a String or Hash' do
       exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(headers: { 'token' => 'über' })
       _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über', 'User-Agent' => DEFAULT_USER_AGENT)
@@ -733,6 +751,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
         severity_number: 5,
         body: 'log_1',
         attributes: { 'b' => true },
+        event_name: 'Event',
         trace_id: OpenTelemetry::Trace.generate_trace_id,
         span_id: OpenTelemetry::Trace.generate_span_id,
         trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT,
@@ -746,6 +765,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
         severity_number: 13,
         body: 'log_1',
         attributes: { 'a' => false },
+        event_name: 'Event',
         trace_id: OpenTelemetry::Trace.generate_trace_id,
         span_id: OpenTelemetry::Trace.generate_span_id,
         trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT,
@@ -812,6 +832,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
                         Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'b', value: Opentelemetry::Proto::Common::V1::AnyValue.new(bool_value: true))
                       ],
                       dropped_attributes_count: 0,
+                      event_name: lr1[:event_name],
                       flags: lr1[:trace_flags].instance_variable_get(:@flags),
                       trace_id: lr1[:trace_id],
                       span_id: lr1[:span_id]
@@ -826,6 +847,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
                         Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'a', value: Opentelemetry::Proto::Common::V1::AnyValue.new(bool_value: false))
                       ],
                       dropped_attributes_count: 0,
+                      event_name: lr2[:event_name],
                       flags: lr2[:trace_flags].instance_variable_get(:@flags),
                       trace_id: lr2[:trace_id],
                       span_id: lr2[:span_id]

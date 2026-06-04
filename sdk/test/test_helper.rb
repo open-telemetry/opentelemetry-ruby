@@ -9,7 +9,6 @@ require 'opentelemetry-test-helpers'
 require 'opentelemetry-sdk'
 require 'opentelemetry-instrumentation-base'
 require 'minitest/autorun'
-require 'pry'
 
 OpenTelemetry.logger = Logger.new(File::NULL)
 

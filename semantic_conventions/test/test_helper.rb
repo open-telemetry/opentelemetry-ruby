@@ -6,6 +6,5 @@
 
 require 'simplecov'
 require 'minitest/autorun'
-require 'pry'
 
 Dir[File.join(File.dirname(__FILE__), '..', 'lib', 'opentelemetry', '**', '*.rb')].each { |file| require file }

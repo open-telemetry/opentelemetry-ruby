@@ -19,6 +19,7 @@ module OpenTelemetry
                       :severity_number,
                       :body,
                       :attributes,
+                      :event_name,
                       :trace_id,
                       :span_id,
                       :trace_flags,
@@ -43,6 +44,8 @@ module OpenTelemetry
         # @param [optional Hash{String => String, Numeric, Boolean,
         #   Array<String, Numeric, Boolean>}] attributes Attributes to associate
         #   with the {LogRecord}.
+        # @param [optional String] event_name A name that identifies the class
+        #   or the type of the event.
         # @param [optional String] trace_id The trace ID associated with the
         #   current context.
         # @param [optional String] span_id The span ID associated with the
@@ -65,6 +68,7 @@ module OpenTelemetry
           severity_number: nil,
           body: nil,
           attributes: nil,
+          event_name: nil,
           trace_id: nil,
           span_id: nil,
           trace_flags: nil,
@@ -78,6 +82,7 @@ module OpenTelemetry
           @severity_number = severity_number
           @body = body
           @attributes = attributes.nil? ? nil : Hash[attributes] # We need a mutable copy of attributes
+          @event_name = event_name
           @trace_id = trace_id
           @span_id = span_id
           @trace_flags = trace_flags
@@ -97,6 +102,7 @@ module OpenTelemetry
             @severity_number,
             @body,
             @attributes,
+            @event_name,
             @trace_id,
             @span_id,
             @trace_flags,

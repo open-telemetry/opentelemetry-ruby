@@ -141,8 +141,32 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
   describe 'exemplar' do
     describe '#exemplar_filter_setup' do
       it 'without OTEL_METRICS_EXEMPLAR_FILTER' do
-        meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
-        _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOffExemplarFilter
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXEMPLAR_FILTER' => nil) do
+            meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+            _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter
+          end
+
+          _(log_stream.string).wont_match(/OTEL_METRICS_EXEMPLAR_FILTER/)
+        end
+      end
+
+      it 'with OTEL_METRICS_EXEMPLAR_FILTER as empty string' do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXEMPLAR_FILTER' => '') do
+            meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+            _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter
+          end
+
+          _(log_stream.string).wont_match(/OTEL_METRICS_EXEMPLAR_FILTER/)
+        end
+      end
+
+      it 'with OTEL_METRICS_EXEMPLAR_FILTER as trace_based' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXEMPLAR_FILTER' => 'trace_based') do
+          meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+          _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter
+        end
       end
 
       it 'with OTEL_METRICS_EXEMPLAR_FILTER as always_on' do
@@ -152,10 +176,21 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
         end
       end
 
-      it 'with OTEL_METRICS_EXEMPLAR_FILTER as invalid option' do
-        OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXEMPLAR_FILTER' => 'better_on') do
+      it 'with OTEL_METRICS_EXEMPLAR_FILTER as always_off' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXEMPLAR_FILTER' => 'always_off') do
           meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
           _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOffExemplarFilter
+        end
+      end
+
+      it 'with OTEL_METRICS_EXEMPLAR_FILTER as invalid option' do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXEMPLAR_FILTER' => 'better_on') do
+            meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+            _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter
+          end
+
+          _(log_stream.string).must_match(/OTEL_METRICS_EXEMPLAR_FILTER better_on is not part of the provided exemplar filters. Using trace_based./)
         end
       end
     end
@@ -174,19 +209,23 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
 
     describe '#enable_exemplar_filter' do
       it 'will turn it on with default exemplar filter' do
-        meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
-        _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOffExemplarFilter
+        OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXEMPLAR_FILTER' => 'always_off') do
+          meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+          _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOffExemplarFilter
 
-        meter_provider.enable_exemplar_filter
-        _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter
+          meter_provider.enable_exemplar_filter
+          _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter
+        end
       end
 
       it 'will turn it on with customized always on' do
-        meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
-        _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOffExemplarFilter
+        OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXEMPLAR_FILTER' => 'always_off') do
+          meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+          _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOffExemplarFilter
 
-        meter_provider.enable_exemplar_filter(exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter)
-        _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter
+          meter_provider.enable_exemplar_filter(exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter)
+          _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter
+        end
       end
     end
   end
