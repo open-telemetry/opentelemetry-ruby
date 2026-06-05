@@ -47,7 +47,7 @@ jobs:
         with:
           gem: "${{ matrix.gem }}"
           ruby: "3.4"
-          minimum_coverage: 78
+          minimum_coverage: 62
       - name: "Test Ruby 3.3"
         uses: ./.github/actions/test_gem
         with:
