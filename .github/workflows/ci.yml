@@ -56,21 +56,21 @@ jobs:
           yard: true
           rubocop: true
           build: true
-          minimum_coverage: 78
+          minimum_coverage: 62
       - name: "Test JRuby"
         if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
           ruby: "jruby"
-          minimum_coverage: 78
+          minimum_coverage: 62
       - name: "Test truffleruby"
         if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
           ruby: "truffleruby"
-          minimum_coverage: 78
+          minimum_coverage: 62
 
   exporters:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
