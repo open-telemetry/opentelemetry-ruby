@@ -9,7 +9,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :test, :development do
-  gem 'minitest', '~> 5.27.0'
+  gem 'minitest', '~> 6.0.0'
   gem 'rake', '~> 13.4.0'
   gem 'rubocop', '~> 1.87.0'
   gem 'rubocop-minitest', '~> 0.39.0'
