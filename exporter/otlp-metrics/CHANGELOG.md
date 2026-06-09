@@ -1,5 +1,13 @@
 # Release History: opentelemetry-exporter-otlp-metrics
 
+### v0.9.1 / 2026-06-02
+
+* FIXED: `URI.join` dropping path prefix in logs and metrics exporters (#2158)
+
+### v0.9.0 / 2026-05-12
+
+* ADDED: Add git tag to source URI in gemspec (#2101)
+
 ### v0.8.0 / 2026-04-07
 
 * ADDED: Min Ruby Version 3.3 (#2070)
