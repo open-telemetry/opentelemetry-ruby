@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
                ::Dir.glob('*.md') +
                ['LICENSE', '.yardopts']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 3.1'
+  spec.required_ruby_version = '>= 3.3'
 
   spec.add_dependency 'logger'
   spec.add_dependency 'opentelemetry-api', '~> 1.1'
@@ -36,24 +36,10 @@ Gem::Specification.new do |spec|
   # initial release of opentelemetry-semantic_conventions, so we feel it is safe.
   spec.add_dependency 'opentelemetry-semantic_conventions'
 
-  spec.add_development_dependency 'faraday', '~> 0.13'
-  spec.add_development_dependency 'minitest', '~> 5.0'
-  spec.add_development_dependency 'opentelemetry-exporter-zipkin', '~> 0.19'
-  spec.add_development_dependency 'opentelemetry-instrumentation-base', '~> 0.20'
-  spec.add_development_dependency 'opentelemetry-test-helpers'
-  spec.add_development_dependency 'pry'
-  spec.add_development_dependency 'rake', '~> 12.0'
-  spec.add_development_dependency 'rubocop', '~> 1.65'
-  spec.add_development_dependency 'simplecov', '~> 0.17'
-  spec.add_development_dependency 'yard', '~> 0.9'
-  spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
-
-  spec.add_development_dependency 'pry-byebug' unless RUBY_ENGINE == 'jruby'
-
   if spec.respond_to?(:metadata)
-    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-sdk/v#{OpenTelemetry::SDK::VERSION}/file.CHANGELOG.html"
-    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/sdk'
+    spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
+    spec.metadata['source_code_uri'] = "https://github.com/open-telemetry/opentelemetry-ruby/tree/#{spec.name}/v#{spec.version}/sdk'"
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/issues'
-    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-sdk/v#{OpenTelemetry::SDK::VERSION}"
+    spec.metadata['documentation_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}"
   end
 end

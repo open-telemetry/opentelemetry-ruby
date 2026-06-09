@@ -22,7 +22,7 @@ module OpenTelemetry
   module SemConv
     module ERROR
       # @!group Attribute Names
-    
+
       # Describes a class of error the operation ended with.
       #
       # The `error.type` SHOULD be predictable, and SHOULD have low cardinality.
@@ -39,22 +39,15 @@ module OpenTelemetry
       #
       # If the operation has completed successfully, instrumentations SHOULD NOT set `error.type`.
       #
-      # If a specific domain defines its own set of error identifiers (such as HTTP or gRPC status codes),
+      # If a specific domain defines its own set of error identifiers (such as HTTP or RPC status codes),
       # it's RECOMMENDED to:
       #
       # - Use a domain-specific attribute
       # - Set `error.type` to capture all errors, regardless of whether they are defined within the domain-specific set or not.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   timeout
-      #   java.net.UnknownHostException
-      #   server_certificate_invalid
-      #   500
-      #
       ERROR_TYPE = 'error.type'
-  
+
       # @!endgroup
     end
   end

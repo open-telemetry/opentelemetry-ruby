@@ -22,16 +22,12 @@ module OpenTelemetry
   module SemConv
     module URL
       # @!group Attribute Names
-    
+
       # The [URI fragment](https://www.rfc-editor.org/rfc/rfc3986#section-3.5) component
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   SemConv
-      #
       URL_FRAGMENT = 'url.fragment'
-  
+
       # Absolute URL describing a network resource according to [RFC3986](https://www.rfc-editor.org/rfc/rfc3986)
       #
       # For network calls, URL usually has `scheme://host[:port][path][?query][#fragment]` format, where the fragment
@@ -55,28 +51,29 @@ module OpenTelemetry
       #
       # This list is subject to change over time.
       #
+      # Matching of query parameter keys against the sensitive list SHOULD be case-sensitive.
+      #
+      #
+      # Instrumentation MAY provide a way to override this list via declarative configuration.
+      # If so, it SHOULD use the `sensitive_query_parameters` property
+      # (an array of case-sensitive strings with minimum items 0) under
+      # `.instrumentation/development.general.sanitization.url`.
+      # This list is a full override of the default sensitive query parameter keys,
+      # it is not a list of keys in addition to the defaults.
+      #
       # When a query string value is redacted, the query string key SHOULD still be preserved, e.g.
       # `https://www.example.com/path?color=blue&sig=REDACTED`.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   https://www.foo.bar/search?q=OpenTelemetry#SemConv
-      #   //localhost
-      #
       URL_FULL = 'url.full'
-  
+
       # The [URI path](https://www.rfc-editor.org/rfc/rfc3986#section-3.3) component
       #
       # Sensitive content provided in `url.path` SHOULD be scrubbed when instrumentations can identify it.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   /search
-      #
       URL_PATH = 'url.path'
-  
+
       # The [URI query](https://www.rfc-editor.org/rfc/rfc3986#section-3.4) component
       #
       # Sensitive content provided in `url.query` SHOULD be scrubbed when instrumentations can identify it.
@@ -91,27 +88,26 @@ module OpenTelemetry
       #
       # This list is subject to change over time.
       #
+      # Matching of query parameter keys against the sensitive list SHOULD be case-sensitive.
+      #
+      # Instrumentation MAY provide a way to override this list via declarative configuration.
+      # If so, it SHOULD use the `sensitive_query_parameters` property
+      # (an array of case-sensitive strings with minimum items 0) under
+      # `.instrumentation/development.general.sanitization.url`.
+      # This list is a full override of the default sensitive query parameter keys,
+      # it is not a list of keys in addition to the defaults.
+      #
       # When a query string value is redacted, the query string key SHOULD still be preserved, e.g.
       # `q=OpenTelemetry&sig=REDACTED`.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   q=OpenTelemetry
-      #
       URL_QUERY = 'url.query'
-  
+
       # The [URI scheme](https://www.rfc-editor.org/rfc/rfc3986#section-3.1) component identifying the used protocol.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   https
-      #   ftp
-      #   telnet
-      #
       URL_SCHEME = 'url.scheme'
-  
+
       # @!endgroup
     end
   end

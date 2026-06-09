@@ -22,7 +22,7 @@ module OpenTelemetry
   module SemConv
     module HTTP
       # @!group Attribute Names
-    
+
       # Must be called with a key for the full attribute name. See notes below about the expectations
       # for the state of the key.
       #
@@ -49,61 +49,48 @@ module OpenTelemetry
       #   attribute with value `["1.2.3.4", "1.2.3.5"]` or `["1.2.3.4, 1.2.3.5"]` depending on the HTTP library.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   ["application/json"]
-      #   ["1.2.3.4", "1.2.3.5"]
-      #
       HTTP_REQUEST_HEADER_LAMBDA = ->(key) { "http.request.header.#{key}" }
-  
+
       # HTTP request method.
       #
       # HTTP request method value SHOULD be "known" to the instrumentation.
-      # By default, this convention defines "known" methods as the ones listed in [RFC9110](https://www.rfc-editor.org/rfc/rfc9110.html#name-methods)
-      # and the PATCH method defined in [RFC5789](https://www.rfc-editor.org/rfc/rfc5789.html).
+      # By default, this convention defines "known" methods as the ones listed in [RFC9110](https://www.rfc-editor.org/rfc/rfc9110.html#name-methods),
+      # the PATCH method defined in [RFC5789](https://www.rfc-editor.org/rfc/rfc5789.html)
+      # and the QUERY method defined in [httpbis-safe-method-w-body](https://datatracker.ietf.org/doc/draft-ietf-httpbis-safe-method-w-body/?include_text=1).
       #
       # If the HTTP request method is not known to instrumentation, it MUST set the `http.request.method` attribute to `_OTHER`.
       #
       # If the HTTP instrumentation could end up converting valid HTTP request methods to `_OTHER`, then it MUST provide a way to override
       # the list of known HTTP methods. If this override is done via environment variable, then the environment variable MUST be named
-      # OTEL_INSTRUMENTATION_HTTP_KNOWN_METHODS and support a comma-separated list of case-sensitive known HTTP methods
-      # (this list MUST be a full override of the default known method, it is not a list of known methods in addition to the defaults).
+      # OTEL_INSTRUMENTATION_HTTP_KNOWN_METHODS and support a comma-separated list of case-sensitive known HTTP methods.
+      #
+      #
+      # If this override is done via declarative configuration, then the list MUST be configurable via the `known_methods` property
+      # (an array of case-sensitive strings with minimum items 0) under `.instrumentation/development.general.http.client` and/or
+      # `.instrumentation/development.general.http.server`.
+      #
+      # In either case, this list MUST be a full override of the default known methods,
+      # it is not a list of known methods in addition to the defaults.
       #
       # HTTP method names are case-sensitive and `http.request.method` attribute value MUST match a known HTTP method name exactly.
       # Instrumentations for specific web frameworks that consider HTTP methods to be case insensitive, SHOULD populate a canonical equivalent.
       # Tracing instrumentations that do so, MUST also set `http.request.method_original` to the original value.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   GET
-      #   POST
-      #   HEAD
-      #
       HTTP_REQUEST_METHOD = 'http.request.method'
-  
+
       # Original HTTP method sent by the client in the request line.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   GeT
-      #   ACL
-      #   foo
-      #
       HTTP_REQUEST_METHOD_ORIGINAL = 'http.request.method_original'
-  
+
       # The ordinal number of request resending attempt (for any reason, including redirects).
       #
       # The resend count SHOULD be updated each time an HTTP request gets resent by the client, regardless of what was the cause of the resending (e.g. redirection, authorization failure, 503 Server Unavailable, network issues, or any other).
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   3
-      #
       HTTP_REQUEST_RESEND_COUNT = 'http.request.resend_count'
-  
+
       # Must be called with a key for the full attribute name. See notes below about the expectations
       # for the state of the key.
       #
@@ -129,35 +116,29 @@ module OpenTelemetry
       #   attribute with value `["abc", "def"]` or `["abc, def"]` depending on the HTTP library.
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   ["application/json"]
-      #   ["abc", "def"]
-      #
       HTTP_RESPONSE_HEADER_LAMBDA = ->(key) { "http.response.header.#{key}" }
-  
+
       # [HTTP response status code](https://tools.ietf.org/html/rfc7231#section-6).
       #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   200
-      #
       HTTP_RESPONSE_STATUS_CODE = 'http.response.status_code'
-  
-      # The matched route, that is, the path template in the format used by the respective server framework.
+
+      # The matched route template for the request. This MUST be low-cardinality and include all static path segments, with dynamic path segments represented with placeholders.
       #
       # MUST NOT be populated when this is not supported by the HTTP server framework as the route attribute should have low-cardinality and the URI path can NOT substitute it.
       # SHOULD include the [application root](/docs/http/http-spans.md#http-server-definitions) if there is one.
       #
+      # A static path segment is a part of the route template with a fixed, low-cardinality value. This includes literal strings like `/users/` and placeholders that
+      # are constrained to a finite, predefined set of values, e.g. `{controller}` or `{action}`.
+      #
+      # A dynamic path segment is a placeholder for a value that can have high cardinality and is not constrained to a predefined list like static path segments.
+      #
+      # Instrumentations SHOULD use routing information provided by the corresponding web framework. They SHOULD pick the most precise source of routing information and MAY
+      # support custom route formatting. Instrumentations SHOULD document the format and the API used to obtain the route string.
+      #
       # @note Stability Level: stable
-      #
-      # @example Sample Values
-      #   /users/:userID?
-      #   {controller}/{action}/{id?}
-      #
       HTTP_ROUTE = 'http.route'
-  
+
       # @!endgroup
     end
   end

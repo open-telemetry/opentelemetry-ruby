@@ -11,7 +11,6 @@
 require 'opentelemetry-metrics-sdk'
 require 'opentelemetry-test-helpers'
 require 'minitest/autorun'
-require 'pry'
 
 # reset_metrics_sdk is a test helper used to clear
 # SDK configuration state between calls
@@ -32,6 +31,15 @@ def with_test_logger
   yield log_stream
 ensure
   OpenTelemetry.logger = original_logger
+end
+
+def create_meter
+  ENV['OTEL_TRACES_EXPORTER'] = 'console'
+  ENV['OTEL_METRICS_EXPORTER'] = 'none'
+  OpenTelemetry::SDK.configure
+  OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+  OpenTelemetry.meter_provider.enable_exemplar_filter(exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter)
+  OpenTelemetry.meter_provider.meter('SAMPLE_METER_NAME')
 end
 
 # Suppress warn-level logs about a missing OTLP exporter for traces

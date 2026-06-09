@@ -31,20 +31,27 @@ The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 - [Daniel Azuma](https://github.com/dazuma), Google
 - [Francis Bogsanyi](https://github.com/fbogsany), Shopify
 - [Kayla Reopelle](https://github.com/kaylareopelle), New Relic
-- [Matthew Wear](https://github.com/mwear), Lightstep
+- [Matthew Wear](https://github.com/mwear), Dash0
 - [Robert Laurin](https://github.com/robertlaurin), Shopify
 
 For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
 
 ### Approvers
 
-- [Andrew Hayworth](https://github.com/ahayworth), Shopify
 - [Ariel Valentin](https://github.com/arielvalentin), GitHub
-- [Eric Mustin](https://github.com/ericmustin)
 - [Robb Kidd](https://github.com/robbkidd), Honeycomb
-- [Sam Handler](https://github.com/plantfansam), Shopify
+- [Xuan Cao](https://github.com/xuan-cao-swi), Solarwinds
 
 For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).
+
+### Emeritus
+
+- [Andrew Hayworth](https://github.com/ahayworth), Approver
+- [Eric Mustin](https://github.com/ericmustin), Approver
+- [Sam Handler](https://github.com/plantfansam), Approver
+
+For more information about the emeritus role, see the
+[community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#emeritus-maintainerapprovertriager).
 
 ## Contrib Repository
 

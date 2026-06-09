@@ -10,16 +10,13 @@ require 'yard'
 
 require 'rubocop/rake_task'
 RuboCop::RakeTask.new
+YARD::Rake::YardocTask.new
 
 Rake::TestTask.new :test do |t|
   t.libs << 'test'
   t.libs << 'lib'
   t.libs << '../api/lib'
   t.test_files = FileList['test/**/*_test.rb']
-end
-
-YARD::Rake::YardocTask.new do |t|
-  t.stats_options = ['--list-undoc']
 end
 
 default_tasks =

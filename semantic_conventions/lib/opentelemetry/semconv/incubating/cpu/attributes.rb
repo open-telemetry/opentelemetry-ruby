@@ -23,26 +23,17 @@ module OpenTelemetry
     module Incubating
       module CPU
         # @!group Attribute Names
-      
+
         # The logical CPU number [0..n-1]
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   1
-        #
         CPU_LOGICAL_NUMBER = 'cpu.logical_number'
-    
+
         # The mode of the CPU
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   user
-        #   system
-        #
         CPU_MODE = 'cpu.mode'
-    
+
         # @!endgroup
       end
     end

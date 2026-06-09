@@ -18,7 +18,9 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
       :counter,
       meter_provider,
       instrumentation_scope,
-      aggregation
+      aggregation,
+      nil,
+      nil
     )
   end
 
@@ -47,7 +49,9 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
         :counter,
         meter_provider,
         instrumentation_scope,
-        aggregation
+        aggregation,
+        nil,
+        nil
       )
 
       registered_views = stream.instance_variable_get(:@registered_views)
@@ -101,7 +105,9 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
         :counter,
         meter_provider,
         instrumentation_scope,
-        aggregation
+        aggregation,
+        nil,
+        nil
       )
 
       stream.update(10, { 'original' => 'value' })
@@ -160,7 +166,9 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
         :counter,
         meter_provider,
         instrumentation_scope,
-        aggregation
+        aggregation,
+        nil,
+        nil
       )
 
       stream.update(10, {})
@@ -223,7 +231,9 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
         :counter,
         meter_provider,
         instrumentation_scope,
-        aggregation
+        aggregation,
+        nil,
+        nil
       )
 
       registered_views = stream.instance_variable_get(:@registered_views)

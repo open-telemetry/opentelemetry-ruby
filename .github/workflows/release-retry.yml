@@ -21,23 +21,25 @@ jobs:
       contents: write # required for creating releases
       pull-requests: write # required for updating label on PR, posting comments
       issues: write # required for creating new issues on failed releases
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
     steps:
       - name: Checkout repo
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Install Ruby
-        uses: ruby/setup-ruby@8d27f39a5e7ad39aebbcbd1324f7af020229645c # v1.287.0
+        uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
         with:
-          ruby-version: "4.0"
+          ruby-version: "4.0.5"
           bundler-cache: true
       - name: Retry release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+          RELEASE_FLAGS: ${{ github.event.inputs.flags }}
+          RELEASE_PR: ${{ github.event.inputs.release_pr }}
         run: |
           bundle exec toys release retry --yes --verbose \
-            ${{ github.event.inputs.flags }} \
-            "${{ github.event.inputs.release_pr }}" \
+            $RELEASE_FLAGS \
+            "$RELEASE_PR" \
             < /dev/null

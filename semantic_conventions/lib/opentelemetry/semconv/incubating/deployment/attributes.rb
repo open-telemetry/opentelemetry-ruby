@@ -23,18 +23,13 @@ module OpenTelemetry
     module Incubating
       module DEPLOYMENT
         # @!group Attribute Names
-      
-        # 'Deprecated, use `deployment.environment.name` instead.'
+
+        # Deprecated, use `deployment.environment.name` instead.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   staging
-        #   production
-        #
-        # @deprecated {"note": "Replaced by `deployment.environment.name`.", "reason": "renamed", "renamed_to": "deployment.environment.name"}
+        # @deprecated Replaced by `deployment.environment.name`.
         DEPLOYMENT_ENVIRONMENT = 'deployment.environment'
-    
+
         # Name of the [deployment environment](https://wikipedia.org/wiki/Deployment_environment) (aka deployment tier).
         #
         # `deployment.environment.name` does not affect the uniqueness constraints defined through
@@ -46,37 +41,23 @@ module OpenTelemetry
         # - `service.name=frontend`, `deployment.environment.name=staging`.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   staging
-        #   production
-        #
         DEPLOYMENT_ENVIRONMENT_NAME = 'deployment.environment.name'
-    
+
         # The id of the deployment.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   1208
-        #
         DEPLOYMENT_ID = 'deployment.id'
-    
+
         # The name of the deployment.
         #
         # @note Stability Level: development
-        #
-        # @example Sample Values
-        #   deploy my app
-        #   deploy-frontend
-        #
         DEPLOYMENT_NAME = 'deployment.name'
-    
+
         # The status of the deployment.
         #
         # @note Stability Level: development
         DEPLOYMENT_STATUS = 'deployment.status'
-    
+
         # @!endgroup
       end
     end

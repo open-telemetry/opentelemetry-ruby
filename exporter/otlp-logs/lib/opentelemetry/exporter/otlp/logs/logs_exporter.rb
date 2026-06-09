@@ -60,6 +60,7 @@ module OpenTelemetry
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
             @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
+                     endpoint += '/' unless endpoint.end_with?('/')
                      URI.join(endpoint, 'v1/logs')
                    else
                      URI(endpoint)
@@ -115,7 +116,7 @@ module OpenTelemetry
           end
 
           def http_connection(uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
-            http = Net::HTTP.new(uri.host, uri.port)
+            http = Net::HTTP.new(uri.hostname, uri.port)
             http.use_ssl = uri.scheme == 'https'
             http.verify_mode = ssl_verify_mode
             http.ca_file = certificate_file unless certificate_file.nil?
@@ -166,7 +167,7 @@ module OpenTelemetry
               response = @http.request(request)
 
               case response
-              when Net::HTTPOK
+              when Net::HTTPSuccess
                 response.body # Read and discard body
                 SUCCESS
               when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
@@ -308,6 +309,7 @@ module OpenTelemetry
               body: as_otlp_any_value(log_record_data.body),
               attributes: log_record_data.attributes&.map { |k, v| as_otlp_key_value(k, v) },
               dropped_attributes_count: log_record_data.total_recorded_attributes - log_record_data.attributes&.size.to_i,
+              event_name: log_record_data.event_name,
               flags: log_record_data.trace_flags.instance_variable_get(:@flags),
               trace_id: log_record_data.trace_id,
               span_id: log_record_data.span_id
@@ -361,7 +363,7 @@ module OpenTelemetry
             raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if entries.empty?
 
             entries.each_with_object({}) do |entry, headers|
-              k, v = entry.split('=', 2).map(&CGI.method(:unescape))
+              k, v = entry.split('=', 2).map(&URI.method(:decode_uri_component))
               begin
                 k = k.to_s.strip
                 v = v.to_s.strip

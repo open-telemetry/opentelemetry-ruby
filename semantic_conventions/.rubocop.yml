@@ -2,6 +2,9 @@ inherit_from: ../contrib/rubocop.yml
 
 AllCops:
   NewCops: enable
+  Exclude:
+    - 'tmp/semconvrepo/**/*'
+    - 'vendor/**/*'
 
 Bundler/OrderedGems:
   Exclude:
@@ -10,13 +13,6 @@ Bundler/OrderedGems:
 Gemspec/DevelopmentDependencies:
   Enabled: false
 Gemspec/RequireMFA:
-  Enabled: false
-
-Layout/EmptyLinesAroundModuleBody:
-  Enabled: false
-Layout/TrailingEmptyLines:
-  Enabled: false
-Layout/TrailingWhitespace:
   Enabled: false
 
 Metrics/BlockLength:

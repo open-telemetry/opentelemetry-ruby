@@ -17,19 +17,19 @@ jobs:
     permissions:
       contents: write # required for pushing changes
       pull-requests: write # required for creating release PRs
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
     steps:
       - name: Checkout repo
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Install Ruby
-        uses: ruby/setup-ruby@8d27f39a5e7ad39aebbcbd1324f7af020229645c # v1.287.0
+        uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
         with:
-          ruby-version: "4.0"
+          ruby-version: "4.0.5"
           bundler-cache: true
       - name: Create otelbot app token
-        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         id: app-token
         with:
           app-id: ${{ vars.OTELBOT_RUBY_APP_ID }}
@@ -38,8 +38,10 @@ jobs:
         env:
           # Use an app token instead of GITHUB_TOKEN to trigger workflows
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          RELEASE_NAMES: ${{ github.event.inputs.names }}
+          TARGET_BRANCH: ${{ github.ref }}
         run: |
           bundle exec toys release request --yes --verbose \
-            "--target-branch=${{ github.ref }}" \
-            ${{ github.event.inputs.names }} \
+            "--target-branch=$TARGET_BRANCH" \
+            $RELEASE_NAMES \
             < /dev/null

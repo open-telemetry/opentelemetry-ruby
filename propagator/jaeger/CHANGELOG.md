@@ -1,5 +1,17 @@
 # Release History: opentelemetry-propagator-jaeger
 
+### v0.25.0 / 2026-05-12
+
+* ADDED: Add git tag to source URI in gemspec (#2101)
+
+### v0.24.0 / 2026-04-07
+
+* ADDED: Min Ruby Version 3.3 (#2070)
+
+### v0.23.0 / 2026-03-10
+
+* ADDED: Replace cgi with uri for encode and decode (#2028)
+
 ### v0.22.0 / 2025-02-25
 
 - ADDED: Support 3.1 Min Version
@@ -48,9 +60,6 @@
 ### v0.17.0 / 2021-04-22
 
 - BREAKING CHANGE: Replace TextMapInjector/TextMapExtractor pairs with a TextMapPropagator.
-
-  [Check the propagator documentation](https://open-telemetry.github.io/opentelemetry-ruby/) for the new usage.
-
 - FIXED: Refactor propagators to add #fields
 
 ### v0.16.0 / 2021-03-17

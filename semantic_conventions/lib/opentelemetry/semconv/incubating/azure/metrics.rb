@@ -23,17 +23,17 @@ module OpenTelemetry
     module Incubating
       module AZURE
         # @!group Metrics Names
-      
-        # Number of active client instances
+
+        # Number of active client instances.
         #
         # @note Stability Level: development
         AZURE_COSMOSDB_CLIENT_ACTIVE_INSTANCE_COUNT = 'azure.cosmosdb.client.active_instance.count'
-    
-        # [Request units](https://learn.microsoft.com/azure/cosmos-db/request-units) consumed by the operation
+
+        # [Request units](https://learn.microsoft.com/azure/cosmos-db/request-units) consumed by the operation.
         #
         # @note Stability Level: development
         AZURE_COSMOSDB_CLIENT_OPERATION_REQUEST_CHARGE = 'azure.cosmosdb.client.operation.request_charge'
-    
+
         # @!endgroup
       end
     end

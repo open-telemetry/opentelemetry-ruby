@@ -35,7 +35,9 @@ module OpenTelemetry
           private
 
           def default_aggregation
-            OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new
+            # TODO: at this point, histogram always take the default DEFAULT_BOUNDARIES. In future, the histogram should be able to
+            # define the custom boundaries so for exemplar_reservoir can also takes the bounaries as parameter
+            OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new(exemplar_reservoir: @exemplar_reservoir)
           end
         end
       end

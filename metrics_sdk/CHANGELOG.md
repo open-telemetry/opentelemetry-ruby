@@ -1,5 +1,21 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.14.0 / 2026-05-12
+
+* BREAKING CHANGE: Use trace_based exemplar filter by default (#2112)
+* ADDED: Use trace_based exemplar filter by default (#2112)
+* ADDED: Add git tag to source URI in gemspec (#2101)
+* FIXED: Return false if it is noop_exemplar_reservoir (#2104)
+
+### v0.13.1 / 2026-04-15
+
+* FIXED: Move the metrics-sdk requires to support "require 'opentelemetry/sdk/metrics'" (#1956)
+
+### v0.13.0 / 2026-04-07
+
+* ADDED: Min Ruby Version 3.3 (#2070)
+* ADDED: Add basic support for metrics exemplar (#1609)
+
 ### v0.12.0 / 2026-02-11
 
 * BREAKING CHANGE: Fix the issue of mixed scale with multiple attributes
