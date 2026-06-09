@@ -1,5 +1,9 @@
 # Release History: opentelemetry-semantic_conventions
 
+### v1.40.0 / 2026-06-09
+
+* ADDED: Update dependency open-telemetry/semantic-conventions to v1.40.0 (#2173)
+
 ### v1.39.0 / 2026-06-03
 
 * ADDED: Update dependency open-telemetry/semantic-conventions to v1.39.0 (#2137)
