@@ -1037,6 +1037,49 @@ module OpenTelemetry
         # @note Stability Level: development
         K8S_RESOURCEQUOTA_STORAGE_REQUEST_USED = 'k8s.resourcequota.storage.request.used'
 
+        # Number of endpoints for a service by condition and address type.
+        #
+        # This metric is derived from the Kubernetes [EndpointSlice API](https://kubernetes.io/docs/reference/kubernetes-api/service-resources/endpoint-slice-v1/).
+        # It reports the number of network endpoints backing a Service, broken down by their condition and address type.
+        #
+        # In dual-stack or multi-protocol clusters, separate counts are reported for each address family (`IPv4`, `IPv6`, `FQDN`).
+        #
+        # When the optional `zone` attribute is enabled, counts are further broken down by availability zone for zone-aware monitoring.
+        #
+        # An endpoint may be reported under multiple conditions simultaneously (e.g., both `serving` and `terminating` during a graceful shutdown).
+        # See [K8s EndpointConditions](https://kubernetes.io/docs/reference/kubernetes-api/service-resources/endpoint-slice-v1/) for more details.
+        #
+        # The conditions represent:
+        #
+        # - `ready`: Endpoints capable of receiving new connections.
+        # - `serving`: Endpoints currently handling traffic.
+        # - `terminating`: Endpoints that are being phased out but may still be handling existing connections.
+        #
+        # For Services with `publishNotReadyAddresses` enabled (common for headless StatefulSets),
+        # this metric will include endpoints that are published despite not being ready.
+        # The `k8s.service.publish_not_ready_addresses` resource attribute indicates this setting.
+        #
+        # @note Stability Level: development
+        K8S_SERVICE_ENDPOINT_COUNT = 'k8s.service.endpoint.count'
+
+        # Number of load balancer ingress points (external IPs/hostnames) assigned to the service.
+        #
+        # This metric reports the number of external ingress points (IP addresses or hostnames)
+        # assigned to a LoadBalancer Service.
+        #
+        # It is only emitted for Services of type `LoadBalancer` and reflects the assignments
+        # made by the underlying infrastructure's load balancer controller in the
+        # [.status.loadBalancer.ingress](https://kubernetes.io/docs/reference/kubernetes-api/service-resources/service-v1/#ServiceStatus) field.
+        #
+        # A value of `0` indicates that no ingress points have been assigned yet (e.g., during provisioning).
+        # A value greater than `1` may occur when multiple IPs or hostnames are assigned (e.g., dual-stack configurations).
+        #
+        # This metric signals that external endpoints have been assigned by the load balancer controller, but it does not
+        # guarantee that the load balancer is healthy.
+        #
+        # @note Stability Level: development
+        K8S_SERVICE_LOAD_BALANCER_INGRESS_COUNT = 'k8s.service.load_balancer.ingress.count'
+
         # Deprecated, use `k8s.statefulset.pod.current` instead.
         #
         # This metric aligns with the `currentReplicas` field of the

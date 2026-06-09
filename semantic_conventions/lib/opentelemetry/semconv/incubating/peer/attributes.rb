@@ -32,6 +32,7 @@ module OpenTelemetry
         # - A gRPC service `rpc.service="io.opentelemetry.AuthService"` may be hosted in both a gateway, `peer.service="ExternalApiService"` and a backend, `peer.service="AuthService"`.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `service.peer.name`.
         PEER_SERVICE = 'peer.service'
 
         # @!endgroup

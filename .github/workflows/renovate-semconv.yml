@@ -1,7 +1,7 @@
 name: Renovate Semantic Conventions Post-Update
 
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, synchronize, edited]
     paths:
       - 'semantic_conventions/Rakefile'
@@ -24,17 +24,19 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Ruby
-        uses: ruby/setup-ruby@6aaa311d81eba98ae12eaffbcb63296ace0efcde # v1.307.0
+        uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
         with:
-          ruby-version: '4.0.3'
+          ruby-version: '4.0.5'
           bundler-cache: true
           working-directory: semantic_conventions
 
       - name: Check if SPEC_VERSION changed
         id: check_changes
+        env:
+          BASE_REF: ${{ github.base_ref }}
         run: |
-          git fetch origin ${{ github.base_ref }}
-          if git diff origin/${{ github.base_ref }} HEAD -- semantic_conventions/Rakefile | grep -q "SPEC_VERSION"; then
+          git fetch origin "$BASE_REF"
+          if git diff "origin/$BASE_REF" HEAD -- semantic_conventions/Rakefile | grep -q "SPEC_VERSION"; then
             echo "changed=true" >> $GITHUB_OUTPUT
           else
             echo "changed=false" >> $GITHUB_OUTPUT
