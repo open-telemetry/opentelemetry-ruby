@@ -24,6 +24,11 @@ module OpenTelemetry
       module OPENAI
         # @!group Attribute Names
 
+        # The type of OpenAI API being used.
+        #
+        # @note Stability Level: development
+        OPENAI_API_TYPE = 'openai.api.type'
+
         # The service tier requested. May be a specific tier, default, or auto.
         #
         # @note Stability Level: development

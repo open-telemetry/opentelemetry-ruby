@@ -11,7 +11,6 @@
 require 'opentelemetry-sdk-experimental'
 require 'opentelemetry-test-helpers'
 require 'minitest/autorun'
-require 'pry'
 
 def call_sampler(sampler, trace_id: nil, parent_context: OpenTelemetry::Context.current, links: nil, name: nil, kind: nil, attributes: nil)
   sampler.should_sample?(
