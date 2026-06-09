@@ -1,7 +1,7 @@
 name: Renovate Semantic Conventions Post-Update
 
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, synchronize, edited]
     paths:
       - 'semantic_conventions/Rakefile'
@@ -32,9 +32,11 @@ jobs:
 
       - name: Check if SPEC_VERSION changed
         id: check_changes
+        env:
+          BASE_REF: ${{ github.base_ref }}
         run: |
-          git fetch origin ${{ github.base_ref }}
-          if git diff origin/${{ github.base_ref }} HEAD -- semantic_conventions/Rakefile | grep -q "SPEC_VERSION"; then
+          git fetch origin "$BASE_REF"
+          if git diff "origin/$BASE_REF" HEAD -- semantic_conventions/Rakefile | grep -q "SPEC_VERSION"; then
             echo "changed=true" >> $GITHUB_OUTPUT
           else
             echo "changed=false" >> $GITHUB_OUTPUT
