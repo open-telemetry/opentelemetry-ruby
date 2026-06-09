@@ -24,6 +24,25 @@ module OpenTelemetry
       module GO
         # @!group Attribute Names
 
+        # The detailed state of the CPU.
+        #
+        # Value SHOULD match the specific CPU class reported by the Go runtime under `/cpu/classes/...`. The list of possible values is subject to change with the Go version used.
+        #
+        # @note Stability Level: development
+        GO_CPU_DETAILED_STATE = 'go.cpu.detailed_state'
+
+        # The state of the CPU.
+        #
+        # @note Stability Level: development
+        GO_CPU_STATE = 'go.cpu.state'
+
+        # The detailed type of memory.
+        #
+        # Value SHOULD match the specific memory class reported by the Go runtime under `/memory/classes/...`. The list of possible values is subject to change with the Go version used.
+        #
+        # @note Stability Level: development
+        GO_MEMORY_DETAILED_TYPE = 'go.memory.detailed_type'
+
         # The type of memory.
         #
         # @note Stability Level: development
