@@ -6,14 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 4
-# Configuration parameters: AllowedMethods.
-# AllowedMethods: enums
-Lint/ConstantDefinitionInBlock:
-  Exclude:
-    - 'test/opentelemetry/exporters/zipkin/exporter_test.rb'
-    - 'test/opentelemetry/exporters/zipkin/transformer_test.rb'
-
 # Offense count: 1
 # Configuration parameters: AllowedMethods, AllowedPatterns.
 Metrics/CyclomaticComplexity:
@@ -23,13 +15,6 @@ Metrics/CyclomaticComplexity:
 # Configuration parameters: AllowedMethods, AllowedPatterns.
 Metrics/PerceivedComplexity:
   Max: 14
-
-# Offense count: 1
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: Mode.
-Style/StringConcatenation:
-  Exclude:
-    - 'lib/opentelemetry/exporter/zipkin.rb'
 
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).

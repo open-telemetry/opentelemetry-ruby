@@ -418,7 +418,7 @@ module OpenTelemetry
         end
 
         def prepare_endpoint(endpoint)
-          endpoint ||= ENV['OTEL_EXPORTER_OTLP_TRACES_ENDPOINT']
+          endpoint ||= ENV.fetch('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', nil)
           if endpoint.nil?
             endpoint = ENV['OTEL_EXPORTER_OTLP_ENDPOINT'] || 'http://localhost:4318'
             endpoint += '/' unless endpoint.end_with?('/')

@@ -162,7 +162,7 @@ module OpenTelemetry # rubocop:disable Style/Documentation
     #   entries.
     # @param [Object] value Object to be stored under key
     # @return [Context]
-    def set_values(values) # rubocop:disable Naming/AccessorMethodName:
+    def set_values(values) # rubocop:disable Naming/AccessorMethodName
       Context.new(@entries.merge(values))
     end
 

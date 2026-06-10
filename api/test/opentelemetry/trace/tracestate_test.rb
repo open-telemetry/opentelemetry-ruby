@@ -5,7 +5,7 @@ require 'test_helper'
 describe OpenTelemetry::Trace::Tracestate do
   describe '.new' do
     it 'is private' do
-      _(-> { OpenTelemetry::Trace::Tracestate.new({}) })\
+      _(-> { OpenTelemetry::Trace::Tracestate.new({}) })
         .must_raise(NoMethodError)
     end
   end

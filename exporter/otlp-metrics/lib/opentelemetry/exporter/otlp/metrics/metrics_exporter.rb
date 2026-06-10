@@ -19,7 +19,7 @@ require 'opentelemetry/proto/collector/metrics/v1/metrics_service_pb'
 require 'opentelemetry/metrics'
 require 'opentelemetry/sdk/metrics'
 
-require_relative './util'
+require_relative 'util'
 
 module OpenTelemetry
   module Exporter

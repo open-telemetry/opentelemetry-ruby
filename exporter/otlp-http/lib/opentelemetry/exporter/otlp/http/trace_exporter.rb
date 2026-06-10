@@ -124,7 +124,7 @@ module OpenTelemetry
             retry_count = 0
             timeout ||= @timeout
             start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
-            around_request do # rubocop:disable Metrics/BlockLength
+            around_request do
               request = Net::HTTP::Post.new(@path)
               body = if @compression == 'gzip'
                        request.add_field('Content-Encoding', 'gzip')
