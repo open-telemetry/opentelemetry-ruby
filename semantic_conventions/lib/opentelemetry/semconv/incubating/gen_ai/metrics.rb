@@ -29,6 +29,20 @@ module OpenTelemetry
         # @note Stability Level: development
         GEN_AI_CLIENT_OPERATION_DURATION = 'gen_ai.client.operation.duration'
 
+        # Time per output chunk, recorded for each chunk received after the first one, measured as the time elapsed from the end of the previous chunk to the end of the current chunk.
+        #
+        # This metrics SHOULD be reported for streaming calls and SHOULD NOT be reported otherwise.
+        #
+        # @note Stability Level: development
+        GEN_AI_CLIENT_OPERATION_TIME_PER_OUTPUT_CHUNK = 'gen_ai.client.operation.time_per_output_chunk'
+
+        # Time to receive the first chunk, measured from when the client issues the generation request to when the first chunk is received in the response stream.
+        #
+        # This metrics SHOULD be reported for streaming calls and SHOULD NOT be reported otherwise.
+        #
+        # @note Stability Level: development
+        GEN_AI_CLIENT_OPERATION_TIME_TO_FIRST_CHUNK = 'gen_ai.client.operation.time_to_first_chunk'
+
         # Number of input and output tokens used.
         #
         # @note Stability Level: development

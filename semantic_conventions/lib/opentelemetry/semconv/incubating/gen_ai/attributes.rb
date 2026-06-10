@@ -257,6 +257,11 @@ module OpenTelemetry
         # @note Stability Level: development
         GEN_AI_REQUEST_STOP_SEQUENCES = 'gen_ai.request.stop_sequences'
 
+        # Indicates whether the GenAI request was made in streaming mode.
+        #
+        # @note Stability Level: development
+        GEN_AI_REQUEST_STREAM = 'gen_ai.request.stream'
+
         # The temperature setting for the GenAI request.
         #
         # @note Stability Level: development
@@ -286,6 +291,11 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         GEN_AI_RESPONSE_MODEL = 'gen_ai.response.model'
+
+        # Time to first chunk in a streaming response, measured from request issuance, in seconds. The value is measured from when the client issues the generation request to when the first chunk is received in the response stream.
+        #
+        # @note Stability Level: development
+        GEN_AI_RESPONSE_TIME_TO_FIRST_CHUNK = 'gen_ai.response.time_to_first_chunk'
 
         # The documents retrieved.
         #
@@ -374,17 +384,17 @@ module OpenTelemetry
         # @note Stability Level: development
         GEN_AI_TOOL_CALL_RESULT = 'gen_ai.tool.call.result'
 
-        # The list of source system tool definitions available to the GenAI agent or model.
+        # The list of tool definitions available to the GenAI agent or model.
         #
-        # The value of this attribute matches source system tool definition format.
+        # Instrumentations MUST follow [Tool Definitions JSON Schema](/docs/gen-ai/gen-ai-tool-definitions.json).
         #
-        # It's expected to be an array of objects where each object represents a tool definition. In case a serialized string is available
-        # to the instrumentation, the instrumentation SHOULD do the best effort to
-        # deserialize it to an array. When recorded on spans, it MAY be recorded as a JSON string if structured format is not supported and SHOULD be recorded in structured form otherwise.
+        # When the attribute is recorded on events, it MUST be recorded in structured
+        # form. When recorded on spans, it MAY be recorded as a JSON string if structured
+        # format is not supported and SHOULD be recorded in structured form otherwise.
         #
         # Since this attribute could be large, it's NOT RECOMMENDED to populate
-        # it by default. Instrumentations MAY provide a way to enable
-        # populating this attribute.
+        # non-required properties by default. Instrumentations MAY provide a way
+        # to enable populating optional properties.
         #
         # @note Stability Level: development
         GEN_AI_TOOL_DEFINITIONS = 'gen_ai.tool.definitions'
@@ -450,6 +460,20 @@ module OpenTelemetry
         # @note Stability Level: development
         # @deprecated Replaced by `gen_ai.usage.input_tokens`.
         GEN_AI_USAGE_PROMPT_TOKENS = 'gen_ai.usage.prompt_tokens'
+
+        # The number of output tokens used for reasoning (e.g. chain-of-thought, extended thinking).
+        #
+        # The value SHOULD be included in `gen_ai.usage.output_tokens`.
+        #
+        # @note Stability Level: development
+        GEN_AI_USAGE_REASONING_OUTPUT_TOKENS = 'gen_ai.usage.reasoning.output_tokens'
+
+        # Human-readable name of the GenAI workflow provided by the application.
+        #
+        # This attribute can be populated in different frameworks eg: name of the first chain in LangChain OR name of the crew in CrewAI.
+        #
+        # @note Stability Level: development
+        GEN_AI_WORKFLOW_NAME = 'gen_ai.workflow.name'
 
         # @!endgroup
       end
