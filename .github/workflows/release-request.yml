@@ -7,6 +7,11 @@ on:
         description: Components to release (leave blank to release all components)
         required: false
         default: ""
+  push:
+    branches:
+      - main
+    paths:
+      - "semantic_conventions/semconv.yaml"
 
 permissions:
   contents: read
@@ -34,11 +39,16 @@ jobs:
         with:
           app-id: ${{ vars.OTELBOT_RUBY_APP_ID }}
           private-key: ${{ secrets.OTELBOT_RUBY_PRIVATE_KEY }}
+      - name: Determine releases
+        id: detect
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          echo "components=opentelemetry-semantic_conventions" >> $GITHUB_OUTPUT
       - name: Open release pull request
         env:
           # Use an app token instead of GITHUB_TOKEN to trigger workflows
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          RELEASE_NAMES: ${{ github.event.inputs.names }}
+          RELEASE_NAMES: ${{ github.event.inputs.names || steps.detect.outputs.components }}
           TARGET_BRANCH: ${{ github.ref }}
         run: |
           bundle exec toys release request --yes --verbose \
