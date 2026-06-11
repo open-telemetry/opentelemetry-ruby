@@ -407,7 +407,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       expbh.update(2**100, {}, data_points)
 
       hdp = data_points[{}]
-      expected_sum = (2**100) + (2**(-100))
+      expected_sum = (2**100) + (2**-100)
       _(hdp.sum).must_be_within_epsilon(expected_sum, 1e-5)
       _(hdp.count).must_equal(2)
       _(hdp.scale).must_equal(-7)

@@ -38,6 +38,7 @@ module OpenTelemetry
 
           DEFAULT_USER_AGENT = "OTel-OTLP-Exporter-Ruby/#{OpenTelemetry::Exporter::OTLP::Logs::VERSION} Ruby/#{RUBY_VERSION} (#{RUBY_PLATFORM}; #{RUBY_ENGINE}/#{RUBY_ENGINE_VERSION})".freeze
 
+          # rubocop:disable Lint/DuplicateBranch
           def self.ssl_verify_mode
             if ENV['OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER'] == 'true'
               OpenSSL::SSL::VERIFY_PEER
@@ -47,6 +48,7 @@ module OpenTelemetry
               OpenSSL::SSL::VERIFY_PEER
             end
           end
+          # rubocop:enable Lint/DuplicateBranch
 
           def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4318/v1/logs'),
                          certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
@@ -196,7 +198,6 @@ module OpenTelemetry
                 handle_http_error(response)
                 FAILURE
               end
-
             rescue Net::OpenTimeout, Net::ReadTimeout => e
               OpenTelemetry.handle_error(exception: e)
               retry if backoff?(retry_count: retry_count += 1)
@@ -225,7 +226,7 @@ module OpenTelemetry
               OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#send_bytes')
               return FAILURE
             end
-             # rubocop:enable Lint/DuplicateBranch
+            # rubocop:enable Lint/DuplicateBranch
           ensure
             # Reset timeouts to defaults for the next call.
             @http.open_timeout = @timeout
@@ -248,7 +249,7 @@ module OpenTelemetry
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
           end
 
-          def backoff?(retry_count:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+          def backoff?(retry_count:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity
             return false if retry_count > RETRY_COUNT
 
             sleep_interval = nil

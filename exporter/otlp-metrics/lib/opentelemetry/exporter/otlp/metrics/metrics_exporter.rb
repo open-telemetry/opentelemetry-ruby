@@ -35,7 +35,8 @@ module OpenTelemetry
           FAILURE = OpenTelemetry::SDK::Metrics::Export::FAILURE
           private_constant(:SUCCESS, :FAILURE)
 
-          def self.ssl_verify_mode # rubocop:disable Lint/DuplicateBranch
+          # rubocop:disable Lint/DuplicateBranch
+          def self.ssl_verify_mode
             if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
               OpenSSL::SSL::VERIFY_PEER
             elsif ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE')
@@ -43,7 +44,8 @@ module OpenTelemetry
             else
               OpenSSL::SSL::VERIFY_PEER
             end
-          end # rubocop:enable Lint/DuplicateBranch
+          end
+          # rubocop:enable Lint/DuplicateBranch
 
           def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4318/v1/metrics'),
                          certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),

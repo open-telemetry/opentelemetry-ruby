@@ -44,7 +44,7 @@ module OpenTelemetry
           else
             OpenSSL::SSL::VERIFY_PEER
           end
-        end 
+        end
         # rubocop:enable Lint/DuplicateBranch
 
         def initialize(endpoint: nil,
@@ -270,7 +270,7 @@ module OpenTelemetry
           end
         end
 
-        def backoff?(retry_count:, reason:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def backoff?(retry_count:, reason:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity
           @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => reason })
           return false if retry_count > RETRY_COUNT
 
