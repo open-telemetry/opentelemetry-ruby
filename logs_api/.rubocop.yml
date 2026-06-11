@@ -9,5 +9,3 @@ Metrics/CyclomaticComplexity:
 
 Lint/EmptyClass:
   Enabled: false
-Style/ReduceToHash:
-  Enabled: false
