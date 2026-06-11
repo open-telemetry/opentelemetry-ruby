@@ -117,7 +117,7 @@ describe OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased do
       p_ceil = sampler.instance_variable_get(:@p_ceil)
       # Verify that the sampling probability encoded in each `p` adds up to the probability
       # in the the initializer argument
-      _((2**-p_ceil * ceil_prob) + (2**-p_floor * floor_prob)).must_be_within_epsilon(0.1)
+      _((2**(-p_ceil) * ceil_prob) + (2**(-p_floor) * floor_prob)).must_be_within_epsilon(0.1)
     end
   end
 end

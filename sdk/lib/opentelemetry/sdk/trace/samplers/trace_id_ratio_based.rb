@@ -16,7 +16,7 @@ module OpenTelemetry
 
           def initialize(probability)
             @probability = probability
-            @id_upper_bound = (probability * (2**64 - 1)).ceil
+            @id_upper_bound = (probability * ((2**64) - 1)).ceil
             @description = format('TraceIdRatioBased{%.6f}', probability)
           end
 

@@ -407,7 +407,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       expbh.update(2**100, {}, data_points)
 
       hdp = data_points[{}]
-      expected_sum = 2**100 + 2**-100
+      expected_sum = 2**100 + 2**(-100)
       _(hdp.sum).must_be_within_epsilon(expected_sum, 1e-5)
       _(hdp.count).must_equal(2)
       _(hdp.scale).must_equal(-7)
@@ -994,9 +994,9 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
           metric_data = metrics_data[0]
 
           _(metric_data.start_time_unix_nano).must_equal(start_time_unix_nano)
-          _(metric_data.min).must_equal(TEST_VALUES[0..index + 1].min)
-          _(metric_data.max).must_equal(TEST_VALUES[0..index + 1].max)
-          _(metric_data.sum).must_be_within_epsilon(TEST_VALUES[0..index + 1].sum, 1e-10)
+          _(metric_data.min).must_equal(TEST_VALUES[0..(index + 1)].min)
+          _(metric_data.max).must_equal(TEST_VALUES[0..(index + 1)].max)
+          _(metric_data.sum).must_be_within_epsilon(TEST_VALUES[0..(index + 1)].sum, 1e-10)
         end
 
         expected_bucket_counts = [

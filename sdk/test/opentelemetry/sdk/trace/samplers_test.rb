@@ -173,7 +173,7 @@ describe OpenTelemetry::SDK::Trace::Samplers do
     end
 
     it 'samples the smallest ratio larger than the smallest trace_id' do
-      ratio = 2.0 / (2**64 - 1)
+      ratio = 2.0 / ((2**64) - 1)
       sampler = Samplers.trace_id_ratio_based(ratio)
       result = call_sampler(sampler, trace_id: trace_id(1))
       _(result).must_be :sampled?

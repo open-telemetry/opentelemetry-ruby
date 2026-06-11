@@ -109,7 +109,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         _(logarithm_mapping.map_to_index(MIN_NORMAL_VALUE / 100)).must_equal(correct_min_index)
         _(logarithm_mapping.map_to_index(2**-1050)).must_equal(correct_min_index)
         _(logarithm_mapping.map_to_index(2**-1073)).must_equal(correct_min_index)
-        _(logarithm_mapping.map_to_index(1.1 * 2**-1073)).must_equal(correct_min_index)
+        _(logarithm_mapping.map_to_index(1.1 * 2**(-1073))).must_equal(correct_min_index)
         _(logarithm_mapping.map_to_index(2**-1074)).must_equal(correct_min_index)
 
         mapped_lower = logarithm_mapping.get_lower_boundary(min_index)

@@ -4,6 +4,9 @@ inherit_from:
 
 Style/ExplicitBlockArgument:
   Enabled: false
+Lint/EmptyClass:
+  Exclude:
+    - 'test/opentelemetry/sdk/trace/export/batch_span_processor_test.rb'
 Minitest/UselessAssertion:
   Enabled: false
 Naming/BlockForwarding:

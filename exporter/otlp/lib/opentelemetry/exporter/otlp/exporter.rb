@@ -35,7 +35,7 @@ module OpenTelemetry
 
         DEFAULT_USER_AGENT = "OTel-OTLP-Exporter-Ruby/#{OpenTelemetry::Exporter::OTLP::VERSION} Ruby/#{RUBY_VERSION} (#{RUBY_PLATFORM}; #{RUBY_ENGINE}/#{RUBY_ENGINE_VERSION})".freeze
 
-        def self.ssl_verify_mode
+        def self.ssl_verify_mode # rubocop:disable Lint/DuplicateBranch
           if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
             OpenSSL::SSL::VERIFY_PEER
           elsif ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE')
@@ -43,7 +43,7 @@ module OpenTelemetry
           else
             OpenSSL::SSL::VERIFY_PEER
           end
-        end
+        end # rubocop:enable Lint/DuplicateBranch
 
         def initialize(endpoint: nil,
                        certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
@@ -275,11 +275,7 @@ module OpenTelemetry
           sleep_interval = nil
           unless retry_after.nil?
             sleep_interval =
-              begin
-                Integer(retry_after)
-              rescue ArgumentError
-                nil
-              end
+              Integer(retry_after, exception: false)
             sleep_interval ||=
               begin
                 Time.httpdate(retry_after) - Time.now
