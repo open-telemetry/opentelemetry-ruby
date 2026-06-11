@@ -50,10 +50,10 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::LastValue do
 
       _(ndps.size).must_equal(2)
 
-      assert_equal(ndps[0].attributes, { 'key' => 'a' })
+      assert_equal({ 'key' => 'a' }, ndps[0].attributes)
       _(ndps[0].value).must_equal 20
 
-      assert_equal(ndps[1].attributes, { 'otel.metric.overflow' => true })
+      assert_equal({ 'otel.metric.overflow' => true }, ndps[1].attributes)
       _(ndps[1].value).must_equal 40
 
       overflow_point = ndps.find { |ndp| ndp.attributes == { 'otel.metric.overflow' => true } }
