@@ -7,7 +7,5 @@ Metrics/PerceivedComplexity:
 Metrics/CyclomaticComplexity:
   Max: 20
 
-Lint/EmptyClass:
-  Enabled: false
 Style/ReduceToHash:
   Enabled: false

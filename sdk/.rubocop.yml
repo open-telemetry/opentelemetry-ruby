@@ -4,10 +4,6 @@ inherit_from:
 
 Style/ExplicitBlockArgument:
   Enabled: false
-Lint/AmbiguousOperatorPrecedence:
-  Enabled: false
-Lint/EmptyClass:
-  Enabled: false
 Minitest/UselessAssertion:
   Enabled: false
 Naming/BlockForwarding:
