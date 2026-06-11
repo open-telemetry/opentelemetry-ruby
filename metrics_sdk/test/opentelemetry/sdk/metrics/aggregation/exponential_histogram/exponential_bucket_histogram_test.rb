@@ -276,8 +276,8 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
     end
 
     it 'test_ascending_sequence' do
-      MAX_SIZES = [3, 4, 6, 9]
-      INIT_SCALES = [0, 4]
+      MAX_SIZES = [3, 4, 6, 9].freeze
+      INIT_SCALES = [0, 4].freeze
       MAX_SIZES.each do |max_size|
         (-5..5).each do |offset|
           INIT_SCALES.each do |init_scale|

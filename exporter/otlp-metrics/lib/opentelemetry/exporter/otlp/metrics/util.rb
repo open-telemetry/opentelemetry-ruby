@@ -119,7 +119,7 @@ module OpenTelemetry
             pool = ::Google::Protobuf::DescriptorPool.generated_pool
             details = status.details.filter_map do |detail|
               type_name = detail.type_url.to_s.split('/').last.to_s
-              klass = pool.generated_pool.lookup(type_name)&.msgclass
+              klass = pool.lookup(type_name)&.msgclass
               detail.unpack(klass) if klass
             end
             OpenTelemetry.handle_error(message: "OTLP metrics_exporter received rpc.Status{message=#{status.message}, details=#{details}}")
