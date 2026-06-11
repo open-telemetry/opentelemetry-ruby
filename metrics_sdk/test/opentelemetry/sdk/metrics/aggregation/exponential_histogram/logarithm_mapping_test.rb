@@ -42,10 +42,13 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
     end
 
     it 'test_logarithm_boundary' do
-      [1, 2, 3, 4, 10, 15].each do |scale|
+      SCALES = [1, 2, 3, 4, 10, 15].freeze
+      INDS_VALUES = [-100, -10, -1, 0, 1, 10, 100].freeze
+
+      SCALES.each do |scale|
         logarithm_mapping = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::LogarithmMapping.new(scale)
 
-        [-100, -10, -1, 0, 1, 10, 100].each do |inds|
+        INDS_VALUES.each do |inds|
           lower_boundary = logarithm_mapping.get_lower_boundary(inds)
           mapped_index = logarithm_mapping.map_to_index(lower_boundary)
 

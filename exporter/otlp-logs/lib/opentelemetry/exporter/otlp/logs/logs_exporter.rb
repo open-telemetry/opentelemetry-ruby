@@ -236,10 +236,11 @@ module OpenTelemetry
 
           def log_status(body)
             status = Google::Rpc::Status.decode(body)
-            details = status.details.map do |detail|
-              klass_or_nil = ::Google::Protobuf::DescriptorPool.generated_pool.lookup(detail.type_name).msgclass
-              detail.unpack(klass_or_nil) if klass_or_nil
-            end.compact
+            pool = ::Google::Protobuf::DescriptorPool.generated_pool
+            details = status.details.filter_map do |detail|
+              klass = pool.generated_pool.lookup(detail.type_name).msgclass
+              detail.unpack(klass) if klass
+            end
             OpenTelemetry.handle_error(message: "OTLP logs exporter received rpc.Status{message=#{status.message}, details=#{details}}")
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
@@ -363,7 +364,7 @@ module OpenTelemetry
             raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if entries.empty?
 
             entries.each_with_object({}) do |entry, headers|
-              k, v = entry.split('=', 2).map(&URI.method(:decode_uri_component))
+              k, v = entry.split('=', 2).map { |parts| URI.decode_uri_component parts }
               begin
                 k = k.to_s.strip
                 v = v.to_s.strip
