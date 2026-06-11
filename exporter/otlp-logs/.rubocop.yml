@@ -6,14 +6,11 @@ AllCops:
     - "lib/opentelemetry/proto/**/*"
     - "vendor/**/*"
 
-Naming/FileName:
-  Exclude:
-    - lib/opentelemetry-exporter-otlp-logs.rb
-Style/StringLiterals:
-  Exclude:
-    - gemfiles/**/*
-Style/FrozenStringLiteralComment:
-  Exclude:
-    - gemfiles/**/*
-Metrics/BlockLength:
+Lint/DuplicateBranch:
   Enabled: false
+Lint/SuppressedExceptionInNumberConversion:
+  Enabled: false
+Performance/MapCompact:
+  Enabled: false
+Performance/MethodObjectAsBlock:
+ Enabled: false

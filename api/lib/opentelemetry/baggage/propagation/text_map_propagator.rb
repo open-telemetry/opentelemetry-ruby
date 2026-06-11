@@ -99,7 +99,7 @@ module OpenTelemetry
         end
 
         def encode_value(key, entry)
-          result = +"#{URI.encode_uri_component(key.to_s)}=#{URI.encode_uri_component(entry.value.to_s)}"
+          result = "#{URI.encode_uri_component(key.to_s)}=#{URI.encode_uri_component(entry.value.to_s)}"
           # We preserve metadata received on extract and assume it's already formatted
           # for transport. It's sent as-is without further processing.
           result << ";#{entry.metadata}" if entry.metadata

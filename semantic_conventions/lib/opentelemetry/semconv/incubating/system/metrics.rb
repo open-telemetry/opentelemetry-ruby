@@ -141,6 +141,44 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_MEMORY_LINUX_AVAILABLE = 'system.memory.linux.available'
 
+        # Total number of hugepages available.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_LIMIT = 'system.memory.linux.hugepages.limit'
+
+        # System hugepage size in bytes.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_PAGE_SIZE = 'system.memory.linux.hugepages.page_size'
+
+        # Number of reserved hugepages.
+        #
+        # Hugepages for which a commitment to allocate has been made, but no allocation has yet been made.
+        # This is reported as a separate metric rather than a `usage` state because reserved pages are already counted in `free` pages.
+        # They represent a subset of free pages that cannot be used for non-reserved allocations.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_RESERVED = 'system.memory.linux.hugepages.reserved'
+
+        # Number of surplus hugepages.
+        #
+        # Overcommitted hugepages beyond the persistent pool.
+        # This is reported as a separate metric rather than a `usage` state because surplus pages can be in either `used` or `free` state.
+        # Including them in `usage` would break the convention that `usage` states sum to the `limit`.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_SURPLUS = 'system.memory.linux.hugepages.surplus'
+
+        # Number of hugepages in use by state.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_USAGE = 'system.memory.linux.hugepages.usage'
+
+        # Percentage of hugepages in use by state.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_UTILIZATION = 'system.memory.linux.hugepages.utilization'
+
         # Shared memory used (mostly by tmpfs).
         #
         # Equivalent of `shared` from [`free` command](https://man7.org/linux/man-pages/man1/free.1.html) or
