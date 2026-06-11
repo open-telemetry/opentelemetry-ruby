@@ -133,8 +133,8 @@ module OpenTelemetry
             OpenTelemetry.logger.debug 'Successfully exported metrics' if result_code == Export::SUCCESS
           end
 
-          def lock(&block)
-            @mutex.synchronize(&block)
+          def lock(&)
+            @mutex.synchronize(&)
           end
         end
       end

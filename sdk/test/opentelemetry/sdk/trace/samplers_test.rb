@@ -207,7 +207,7 @@ describe OpenTelemetry::SDK::Trace::Samplers do
     [first, second].pack('Q>Q>')
   end
 
-  def call_sampler(sampler, trace_id: nil, parent_context: OpenTelemetry::Context.current, links: nil, name: nil, kind: nil, attributes: nil)
+  def call_sampler?(sampler, trace_id: nil, parent_context: OpenTelemetry::Context.current, links: nil, name: nil, kind: nil, attributes: nil)
     sampler.should_sample?(
       trace_id: trace_id || OpenTelemetry::Trace.generate_trace_id,
       parent_context: parent_context,
