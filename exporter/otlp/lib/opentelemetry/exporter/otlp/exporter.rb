@@ -35,7 +35,8 @@ module OpenTelemetry
 
         DEFAULT_USER_AGENT = "OTel-OTLP-Exporter-Ruby/#{OpenTelemetry::Exporter::OTLP::VERSION} Ruby/#{RUBY_VERSION} (#{RUBY_PLATFORM}; #{RUBY_ENGINE}/#{RUBY_ENGINE_VERSION})".freeze
 
-        def self.ssl_verify_mode # rubocop:disable Lint/DuplicateBranch
+        # rubocop:disable Lint/DuplicateBranch
+        def self.ssl_verify_mode
           if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
             OpenSSL::SSL::VERIFY_PEER
           elsif ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE')
@@ -43,7 +44,8 @@ module OpenTelemetry
           else
             OpenSSL::SSL::VERIFY_PEER
           end
-        end # rubocop:enable Lint/DuplicateBranch
+        end 
+        # rubocop:enable Lint/DuplicateBranch
 
         def initialize(endpoint: nil,
                        certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),

@@ -137,7 +137,7 @@ module OpenTelemetry
             OpenTelemetry::Common::Utilities.untraced { yield } # rubocop:disable Style/ExplicitBlockArgument
           end
 
-          def send_bytes(bytes, timeout:) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity, Lint/DuplicateBranch
+          def send_bytes(bytes, timeout:) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
             return FAILURE if bytes.nil?
 
             request = Net::HTTP::Post.new(@path)
@@ -156,6 +156,7 @@ module OpenTelemetry
             timeout ||= @timeout
             start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
 
+            # rubocop:disable Lint/DuplicateBranch
             around_request do
               remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
               return FAILURE if remaining_timeout.zero?
@@ -195,6 +196,7 @@ module OpenTelemetry
                 handle_http_error(response)
                 FAILURE
               end
+
             rescue Net::OpenTimeout, Net::ReadTimeout => e
               OpenTelemetry.handle_error(exception: e)
               retry if backoff?(retry_count: retry_count += 1)
@@ -223,6 +225,7 @@ module OpenTelemetry
               OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#send_bytes')
               return FAILURE
             end
+             # rubocop:enable Lint/DuplicateBranch
           ensure
             # Reset timeouts to defaults for the next call.
             @http.open_timeout = @timeout
