@@ -101,7 +101,7 @@ module OpenTelemetry
         end
 
         def around_request(&block)
-          OpenTelemetry::Common::Utilities.untraced { block.call }
+          OpenTelemetry::Common::Utilities.untraced { yield }
         end
 
         def valid_headers?(headers)
