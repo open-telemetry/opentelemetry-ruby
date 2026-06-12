@@ -100,8 +100,8 @@ module OpenTelemetry
           span_data.map! { |span| Transformer.to_zipkin_span(span, span.resource) }
         end
 
-        def around_request(&)
-          OpenTelemetry::Common::Utilities.untraced { yield }
+        def around_request
+          OpenTelemetry::Common::Utilities.untraced { yield } # rubocop:disable Style/ExplicitBlockArgument
         end
 
         def valid_headers?(headers)
