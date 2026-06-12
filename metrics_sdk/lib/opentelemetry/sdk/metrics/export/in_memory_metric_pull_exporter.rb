@@ -13,8 +13,8 @@ module OpenTelemetry
         class InMemoryMetricPullExporter < MetricReader
           attr_reader :metric_snapshots
 
-          def initialize
-            super
+          def initialize(aggregation_cardinality_limit: nil)
+            super(aggregation_cardinality_limit: aggregation_cardinality_limit)
             @metric_snapshots = []
             @mutex = Mutex.new
           end
