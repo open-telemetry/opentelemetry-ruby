@@ -510,7 +510,7 @@ describe OpenTelemetry::Exporter::OTLP::Common do
 
       resource_attrs = etsr.resource_spans.first.resource.attributes
       _(resource_attrs.length).must_equal(3)
-      attr_map = resource_attrs.each_with_object({}) { |kv, hash| hash[kv.key] = kv.value.string_value }
+      attr_map = resource_attrs.to_h { |kv| [kv.key, kv.value.string_value] }
       _(attr_map['service.name']).must_equal('my-service')
       _(attr_map['service.version']).must_equal('1.2.3')
       _(attr_map['deployment.environment']).must_equal('production')
