@@ -12,11 +12,11 @@ describe OpenTelemetry::SDK do
     before do
       reset_metrics_sdk
       @original_temp = ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil)
-      ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil) = 'delta'
+      ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'] = 'delta'
     end
 
     after do
-      ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil) = @original_temp
+      ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'] = @original_temp
     end
 
     # OTLP cannot export a metric without data points

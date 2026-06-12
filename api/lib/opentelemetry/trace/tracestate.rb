@@ -105,7 +105,7 @@ module OpenTelemetry
           return self
         end
 
-        h = @hash.to_h
+        h = @hash.to_h.dup
         h[key] = value
         self.class.create(h)
       end
@@ -118,7 +118,7 @@ module OpenTelemetry
       def delete(key)
         return self unless @hash.key?(key)
 
-        h = @hash.to_h
+        h = @hash.to_h.dup
         h.delete(key)
         self.class.create(h)
       end
