@@ -1,4 +1,4 @@
-name: PR Title Validation
+name: PR Validation
 
 on:
   workflow_dispatch:
@@ -20,7 +20,7 @@ concurrency:
 jobs:
   validate-commits:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
-    name: Validate PR Title
+    name: PR Title
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
