@@ -22,7 +22,7 @@ module OpenTelemetry
             data_points.values.map!(&:dup)
           end
 
-          def update(increment, attributes, data_points, exemplar_offer: false)
+          def update(increment, attributes, data_points, cardinality_limit, exemplar_offer: false)
             data_points[attributes] = NumberDataPoint.new(
               {},
               0,

@@ -21,6 +21,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
   let(:record_min_max) { true }
   let(:max_size) { 20 }
   let(:max_scale) { 5 }
+  let(:cardinality_limit) { 2000 }
   # Time in nano
   let(:start_time) { Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond) }
   let(:end_time) { Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond) + (60 * 1_000_000_000) }
@@ -39,12 +40,12 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
 
   describe '#collect' do
     it 'returns all the data points' do
-      expbh.update(1.03, {}, data_points)
-      expbh.update(1.23, {}, data_points)
-      expbh.update(0, {}, data_points)
+      expbh.update(1.03, {}, data_points, cardinality_limit)
+      expbh.update(1.23, {}, data_points, cardinality_limit)
+      expbh.update(0, {}, data_points, cardinality_limit)
 
-      expbh.update(1.45, { 'foo' => 'bar' }, data_points)
-      expbh.update(1.67, { 'foo' => 'bar' }, data_points)
+      expbh.update(1.45, { 'foo' => 'bar' }, data_points, cardinality_limit)
+      expbh.update(1.67, { 'foo' => 'bar' }, data_points, cardinality_limit)
 
       exphdps = expbh.collect(start_time, end_time, data_points)
 
@@ -91,9 +92,9 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         zero_threshold: 0
       )
 
-      expbh.update(2, {}, data_points)
-      expbh.update(4, {}, data_points)
-      expbh.update(1, {}, data_points)
+      expbh.update(2, {}, data_points, cardinality_limit)
+      expbh.update(4, {}, data_points, cardinality_limit)
+      expbh.update(1, {}, data_points, cardinality_limit)
 
       exphdps = expbh.collect(start_time, end_time, data_points)
 
@@ -124,12 +125,12 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         zero_threshold: 0
       )
 
-      expbh.update(2, {}, data_points)
-      expbh.update(2, {}, data_points)
-      expbh.update(2, {}, data_points)
-      expbh.update(1, {}, data_points)
-      expbh.update(8, {}, data_points)
-      expbh.update(0.5, {}, data_points)
+      expbh.update(2, {}, data_points, cardinality_limit)
+      expbh.update(2, {}, data_points, cardinality_limit)
+      expbh.update(2, {}, data_points, cardinality_limit)
+      expbh.update(1, {}, data_points, cardinality_limit)
+      expbh.update(8, {}, data_points, cardinality_limit)
+      expbh.update(0.5, {}, data_points, cardinality_limit)
 
       exphdps = expbh.collect(start_time, end_time, data_points)
 
@@ -192,7 +193,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
           )
 
           permutation.each do |value|
-            expbh.update(value, {}, data_points)
+            expbh.update(value, {}, data_points, cardinality_limit)
           end
 
           exphdps = expbh.collect(start_time, end_time, data_points)
@@ -235,7 +236,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         sum_value = 0.0
         max_size.times do |index|
           value = center_val(mapping, offset + index)
-          expbh.update(value, {}, local_data_points)
+          expbh.update(value, {}, local_data_points, cardinality_limit)
           sum_value += value
         end
 
@@ -244,7 +245,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         _(hdp.positive.offset).must_equal(offset)
 
         # Add one more value to trigger potential downscaling
-        expbh.update(max_val, {}, local_data_points)
+        expbh.update(max_val, {}, local_data_points, cardinality_limit)
         sum_value += max_val
 
         _(hdp.positive.counts[0]).wont_equal(0)
@@ -308,7 +309,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
           expect += value * increment
 
           # Simulate the patched increment_bucket behavior
-          expbh.update(value, {}, local_data_points)
+          expbh.update(value, {}, local_data_points, cardinality_limit)
 
           # Manually adjust the counts to simulate the mocked increment
           next unless local_data_points[{}]
@@ -364,8 +365,8 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       expect = 0
       (2..256).each do |inds|
         expect += inds
-        expbh0.update(inds, {}, data_points0)
-        expbh0.update(0, {}, data_points0)
+        expbh0.update(inds, {}, data_points0, cardinality_limit)
+        expbh0.update(0, {}, data_points0, cardinality_limit)
       end
 
       swap(data_points0, data_points1)
@@ -405,8 +406,8 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         _(hdp.positive.counts[1]).must_equal(count)
       end
 
-      expbh.update(2**-100, {}, data_points)
-      expbh.update(2**100, {}, data_points)
+      expbh.update(2**-100, {}, data_points, cardinality_limit)
+      expbh.update(2**100, {}, data_points, cardinality_limit)
 
       hdp = data_points[{}]
       expected_sum = 2**100 + 2**-100
@@ -415,15 +416,15 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       _(hdp.scale).must_equal(-7)
       expect_balanced(hdp, 1)
 
-      expbh.update(2**-127, {}, data_points)
-      expbh.update(2**128, {}, data_points)
+      expbh.update(2**-127, {}, data_points, cardinality_limit)
+      expbh.update(2**128, {}, data_points, cardinality_limit)
 
       _(hdp.count).must_equal(4)
       _(hdp.scale).must_equal(-7)
       expect_balanced(hdp, 2)
 
-      expbh.update(2**-129, {}, data_points)
-      expbh.update(2**255, {}, data_points)
+      expbh.update(2**-129, {}, data_points, cardinality_limit)
+      expbh.update(2**255, {}, data_points, cardinality_limit)
 
       _(hdp.count).must_equal(6)
       _(hdp.scale).must_equal(-8)
@@ -439,9 +440,9 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         zero_threshold: 0
       )
 
-      expbh.update(Float::MAX, {}, data_points)
-      expbh.update(1, {}, data_points)
-      expbh.update(2**-1074, {}, data_points)
+      expbh.update(Float::MAX, {}, data_points, cardinality_limit)
+      expbh.update(1, {}, data_points, cardinality_limit)
+      expbh.update(2**-1074, {}, data_points, cardinality_limit)
 
       exphdps = expbh.collect(start_time, end_time, data_points)
 
@@ -463,7 +464,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       )
 
       [1, 3, 5, 7, 9].each do |value|
-        expbh.update(value, {}, data_points)
+        expbh.update(value, {}, data_points, cardinality_limit)
       end
 
       exphdps = expbh.collect(start_time, end_time, data_points)
@@ -478,7 +479,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       )
 
       [-1, -3, -5, -7, -9].each do |value|
-        expbh.update(value, {}, data_points)
+        expbh.update(value, {}, data_points, cardinality_limit)
       end
 
       exphdps = expbh.collect(start_time, end_time, data_points)
@@ -513,12 +514,12 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
 
       # Add data to first aggregator
       [1, 3, 5, 7, 9, -1, -3, -5].each do |value|
-        expbh0.update(value, {}, data_points0)
+        expbh0.update(value, {}, data_points0, cardinality_limit)
       end
 
       # Add data to second aggregator
       [5, 4, 3, 2].each do |value|
-        expbh1.update(value, {}, data_points1)
+        expbh1.update(value, {}, data_points1, cardinality_limit)
       end
 
       # Collect initial data to verify state
@@ -565,7 +566,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       data_points0 = {}
 
       increment.times do
-        expbh0.update(0, {}, data_points0)
+        expbh0.update(0, {}, data_points0, cardinality_limit)
       end
 
       expbh1 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
@@ -575,7 +576,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       )
 
       data_points1 = {}
-      expbh1.update(0, {}, data_points1)
+      expbh1.update(0, {}, data_points1, cardinality_limit)
 
       # Simulate increment behavior by manually adjusting counts
       hdp1 = data_points1[{}]
@@ -599,7 +600,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       data_points0 = {}
 
       increment.times do
-        expbh0.update(1, {}, data_points0)
+        expbh0.update(1, {}, data_points0, cardinality_limit)
       end
 
       expbh1 = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(
@@ -609,7 +610,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       )
 
       data_points1 = {}
-      expbh1.update(1, {}, data_points1)
+      expbh1.update(1, {}, data_points1, cardinality_limit)
 
       # Simulate increment behavior
       hdp1 = data_points1[{}]
@@ -673,8 +674,8 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       local_data_points = {}
 
       # Use minimum and maximum normal floating point values
-      expbh.update(Float::MIN, {}, local_data_points)
-      expbh.update(Float::MAX, {}, local_data_points)
+      expbh.update(Float::MIN, {}, local_data_points, cardinality_limit)
+      expbh.update(Float::MAX, {}, local_data_points, cardinality_limit)
 
       hdp = local_data_points[{}]
       _(hdp.positive.counts.size).must_equal(min_max_size)
@@ -688,13 +689,13 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         zero_threshold: 0
       )
 
-      expbh.update(2, {}, data_points)
+      expbh.update(2, {}, data_points, cardinality_limit)
       expbh.collect(start_time, end_time, data_points)
 
-      expbh.update(2, {}, data_points)
+      expbh.update(2, {}, data_points, cardinality_limit)
       expbh.collect(start_time, end_time, data_points)
 
-      expbh.update(2, {}, data_points)
+      expbh.update(2, {}, data_points, cardinality_limit)
       expbh.collect(start_time, end_time, data_points)
     end
 
@@ -707,13 +708,13 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
 
       _(expbh.instance_variable_get(:@scale)).must_equal(20)
 
-      expbh.update(2, {}, data_points)
+      expbh.update(2, {}, data_points, cardinality_limit)
       _(data_points[{}].scale).must_equal(20)
 
-      expbh.update(4, {}, data_points)
+      expbh.update(4, {}, data_points, cardinality_limit)
       _(data_points[{}].scale).must_equal(7)
 
-      expbh.update(1, {}, data_points)
+      expbh.update(1, {}, data_points, cardinality_limit)
       _(data_points[{}].scale).must_equal(6)
 
       collection0 = expbh.collect(start_time, end_time, data_points)
@@ -732,7 +733,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       _(result0.max).must_equal(4)
 
       [1, 8, 0.5, 0.1, 0.045].each do |value|
-        expbh.update(value, {}, data_points)
+        expbh.update(value, {}, data_points, cardinality_limit)
       end
 
       collection1 = expbh.collect(start_time, end_time, data_points)
@@ -774,7 +775,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       )
 
       [2, 4, 8, 16].each do |value|
-        expbh.update(value, {}, data_points)
+        expbh.update(value, {}, data_points, cardinality_limit)
       end
 
       hdp = data_points[{}]
@@ -786,7 +787,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       _(result0.first.scale).must_equal(0)
 
       [1, 2, 4, 8].each do |value|
-        expbh.update(1.0 / value, {}, data_points)
+        expbh.update(1.0 / value, {}, data_points, cardinality_limit)
       end
 
       hdp = data_points[{}]
@@ -810,7 +811,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       local_data_points = {}
 
       [2, 4, 8, 16].each do |value|
-        expbh.update(value, {}, local_data_points)
+        expbh.update(value, {}, local_data_points, cardinality_limit)
       end
 
       hdp = local_data_points[{}]
@@ -822,12 +823,12 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
 
       # python exponential_histogram_aggregation._mapping.scale will inherit from last scale
       # ruby will start from new scale (20) so it will be 20 after the data is cleared from delta temp operation
-      expbh.update(0, {}, local_data_points)
+      expbh.update(0, {}, local_data_points, cardinality_limit)
       hdp = local_data_points[{}]
       hdp.scale = 0
 
       [1, 2, 4, 8].each do |value|
-        expbh.update(1.0 / value, {}, local_data_points)
+        expbh.update(1.0 / value, {}, local_data_points, cardinality_limit)
       end
 
       hdp = local_data_points[{}]
@@ -888,7 +889,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         results = []
 
         TEST_VALUES.each do |test_value|
-          expbh.update(test_value, {}, data_points)
+          expbh.update(test_value, {}, data_points, cardinality_limit)
           results << expbh.collect(start_time, end_time, data_points)
         end
 
@@ -939,13 +940,13 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         # collect again.
         results = []
 
-        expbh.update(1, {}, data_points)
+        expbh.update(1, {}, data_points, cardinality_limit)
         results << expbh.collect(start_time, end_time, data_points)
 
         sleep(0.1)
         results << expbh.collect(start_time, end_time, data_points)
 
-        expbh.update(2, {}, data_points)
+        expbh.update(2, {}, data_points, cardinality_limit)
         results << expbh.collect(start_time, end_time, data_points)
 
         _(results[1]).must_be_empty
@@ -978,7 +979,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
         results = []
 
         TEST_VALUES.each do |test_value|
-          expbh_cumulative.update(test_value, {}, local_data_points)
+          expbh_cumulative.update(test_value, {}, local_data_points, cardinality_limit)
           results << expbh_cumulative.collect(start_time, end_time, local_data_points)
         end
 
