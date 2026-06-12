@@ -108,7 +108,7 @@ class FiberAttributeContext
   EMPTY_ENTRIES = {}.freeze
   private_constant :EMPTY_ENTRIES
 
-  DetachError = Class.new(StandardError)
+  DetachError = Class.new(StandardError) # rubocop:disable Style/EmptyClassDefinition
 
   class << self
     def current

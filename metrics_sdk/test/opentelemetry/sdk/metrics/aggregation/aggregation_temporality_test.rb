@@ -12,7 +12,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality do
       it 'returns cumulative for counter instrument' do
         result = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'cumulative') do
           OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality.determine_temporality(
-            aggregation_temporality: ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'],
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil),
             instrument_kind: :counter,
             default: :cumulative
           )
@@ -25,7 +25,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality do
       it 'returns cumulative for observable_counter instrument' do
         result = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'cumulative') do
           OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality.determine_temporality(
-            aggregation_temporality: ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'],
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil),
             instrument_kind: :observable_counter,
             default: :cumulative
           )
@@ -37,7 +37,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality do
       it 'returns cumulative for histogram instrument' do
         result = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'cumulative') do
           OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality.determine_temporality(
-            aggregation_temporality: ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'],
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil),
             instrument_kind: :histogram,
             default: :cumulative
           )
@@ -49,7 +49,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality do
       it 'returns cumulative for up_down_counter instrument' do
         result = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'cumulative') do
           OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality.determine_temporality(
-            aggregation_temporality: ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'],
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil),
             instrument_kind: :up_down_counter,
             default: :cumulative
           )
@@ -61,7 +61,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality do
       it 'returns cumulative for observable_up_down_counter instrument' do
         result = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'CUMULATIVE') do
           OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality.determine_temporality(
-            aggregation_temporality: ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'],
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil),
             instrument_kind: :observable_up_down_counter,
             default: :cumulative
           )
@@ -75,7 +75,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality do
       it 'returns delta for counter instrument' do
         result = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'delta') do
           OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality.determine_temporality(
-            aggregation_temporality: ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'],
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil),
             instrument_kind: :counter,
             default: :cumulative
           )
@@ -88,7 +88,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality do
       it 'returns delta for observable_counter instrument' do
         result = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'delta') do
           OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality.determine_temporality(
-            aggregation_temporality: ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'],
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil),
             instrument_kind: :observable_counter,
             default: :cumulative
           )
@@ -100,7 +100,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality do
       it 'returns delta for histogram instrument' do
         result = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'DELTA') do
           OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality.determine_temporality(
-            aggregation_temporality: ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'],
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil),
             instrument_kind: :histogram,
             default: :cumulative
           )
@@ -114,7 +114,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality do
       it 'returns delta for counter instrument' do
         result = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'lowmemory') do
           OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality.determine_temporality(
-            aggregation_temporality: ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'],
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil),
             instrument_kind: :counter,
             default: :cumulative
           )
@@ -126,7 +126,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality do
       it 'returns cumulative for observable_counter instrument' do
         result = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'lowmemory') do
           OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality.determine_temporality(
-            aggregation_temporality: ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'],
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil),
             instrument_kind: :observable_counter,
             default: :cumulative
           )
@@ -138,7 +138,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality do
       it 'returns delta for histogram instrument' do
         result = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'LOWMEMORY') do
           OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality.determine_temporality(
-            aggregation_temporality: ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'],
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil),
             instrument_kind: :histogram,
             default: :cumulative
           )
@@ -250,7 +250,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality do
       it 'respects OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE set to cumulative' do
         result = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'cumulative') do
           OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality.determine_temporality(
-            aggregation_temporality: ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'],
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'],
             instrument_kind: :counter,
             default: :delta
           )
@@ -261,7 +261,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality do
       it 'respects OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE set to delta' do
         result = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'delta') do
           OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality.determine_temporality(
-            aggregation_temporality: ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'],
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'],
             instrument_kind: :histogram,
             default: :cumulative
           )
@@ -272,7 +272,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality do
       it 'respects OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE set to lowmemory for non-observable counter' do
         result = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'lowmemory') do
           OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality.determine_temporality(
-            aggregation_temporality: ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'],
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'],
             instrument_kind: :counter,
             default: :cumulative
           )
@@ -283,7 +283,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality do
       it 'respects OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE set to lowmemory for observable counter' do
         result = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'lowmemory') do
           OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality.determine_temporality(
-            aggregation_temporality: ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'],
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'],
             instrument_kind: :observable_counter,
             default: :delta
           )

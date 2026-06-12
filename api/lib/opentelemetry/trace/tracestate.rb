@@ -75,7 +75,7 @@ module OpenTelemetry
       # @return [Tracestate]
       def initialize(hash)
         excess = hash.size - MAX_MEMBER_COUNT
-        hash = Hash[hash.drop(excess)] if excess.positive?
+        hash = hash.drop(excess).to_h if excess.positive?
         @hash = hash.freeze
       end
 
@@ -105,7 +105,7 @@ module OpenTelemetry
           return self
         end
 
-        h = Hash[@hash]
+        h = @hash.to_h
         h[key] = value
         self.class.create(h)
       end
@@ -118,7 +118,7 @@ module OpenTelemetry
       def delete(key)
         return self unless @hash.key?(key)
 
-        h = Hash[@hash]
+        h = @hash.to_h
         h.delete(key)
         self.class.create(h)
       end

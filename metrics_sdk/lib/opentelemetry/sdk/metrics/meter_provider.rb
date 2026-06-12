@@ -131,7 +131,7 @@ module OpenTelemetry
         alias register_asynchronous_instrument register_synchronous_instrument
 
         def exemplar_filter_setup
-          case ENV['OTEL_METRICS_EXEMPLAR_FILTER']
+          case ENV.fetch('OTEL_METRICS_EXEMPLAR_FILTER', nil)
           when 'always_on'
             @exemplar_filter = Exemplar::AlwaysOnExemplarFilter
           when nil, '', 'trace_based'
@@ -139,7 +139,7 @@ module OpenTelemetry
           when 'always_off'
             @exemplar_filter = Exemplar::AlwaysOffExemplarFilter
           else
-            OpenTelemetry.logger.warn("OTEL_METRICS_EXEMPLAR_FILTER #{ENV['OTEL_METRICS_EXEMPLAR_FILTER']} is not part of the provided exemplar filters. Using trace_based.")
+            OpenTelemetry.logger.warn("OTEL_METRICS_EXEMPLAR_FILTER #{ENV.fetch('OTEL_METRICS_EXEMPLAR_FILTER', nil)} is not part of the provided exemplar filters. Using trace_based.")
             @exemplar_filter = Exemplar::TraceBasedExemplarFilter
           end
         end

@@ -35,34 +35,34 @@ module OpenTelemetry
         end
       end
 
-      def add(severity, message = nil, progname = nil, &block)
+      def add(severity, message = nil, progname = nil, &)
         return true if severity < @level
 
-        @logger.add(severity, message, progname, &block)
+        @logger.add(severity, message, progname, &)
       end
 
-      def debug(progname = nil, &block)
-        add(Logger::DEBUG, nil, progname, &block)
+      def debug(progname = nil, &)
+        add(Logger::DEBUG, nil, progname, &)
       end
 
-      def info(progname = nil, &block)
-        add(Logger::INFO, nil, progname, &block)
+      def info(progname = nil, &)
+        add(Logger::INFO, nil, progname, &)
       end
 
-      def warn(progname = nil, &block)
-        add(Logger::WARN, nil, progname, &block)
+      def warn(progname = nil, &)
+        add(Logger::WARN, nil, progname, &)
       end
 
-      def error(progname = nil, &block)
-        add(Logger::ERROR, nil, progname, &block)
+      def error(progname = nil, &)
+        add(Logger::ERROR, nil, progname, &)
       end
 
-      def fatal(progname = nil, &block)
-        add(Logger::FATAL, nil, progname, &block)
+      def fatal(progname = nil, &)
+        add(Logger::FATAL, nil, progname, &)
       end
 
-      def unknown(progname = nil, &block)
-        add(Logger::UNKNOWN, nil, progname, &block)
+      def unknown(progname = nil, &)
+        add(Logger::UNKNOWN, nil, progname, &)
       end
     end
   end

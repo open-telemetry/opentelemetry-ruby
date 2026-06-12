@@ -63,12 +63,12 @@ describe OpenTelemetry::SDK::Metrics::Meter do
         OpenTelemetry::SDK.configure
         OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
 
-        @original_temp = ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE']
-        ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'] = 'delta'
+        @original_temp = ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil)
+        ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil) = 'delta'
       end
 
       after do
-        ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'] = @original_temp
+        ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil) = @original_temp
       end
 
       it 'create callback with multi asychronous instrument' do

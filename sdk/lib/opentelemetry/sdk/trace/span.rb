@@ -418,7 +418,7 @@ module OpenTelemetry
           excess_link_count = valid_links.size - link_count_limit
           valid_links.pop(excess_link_count) if excess_link_count.positive?
           valid_links.map! do |link|
-            attrs = Hash[link.attributes] # link.attributes is frozen, so we need an unfrozen copy to adjust.
+            attrs = link.attributes.to_h # link.attributes is frozen, so we need an unfrozen copy to adjust.
             attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
             excess = attrs.size - link_attribute_count_limit
             excess.times { attrs.shift } if excess.positive?
@@ -444,7 +444,7 @@ module OpenTelemetry
 
           excess = event.attributes.size - event_attribute_count_limit
           if excess.positive? || !valid_attributes
-            attrs = Hash[event.attributes] # event.attributes is frozen, so we need an unfrozen copy to adjust.
+            attrs = event.attributes.to_h # event.attributes is frozen, so we need an unfrozen copy to adjust.
             attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
             excess = attrs.size - event_attribute_count_limit
             excess.times { attrs.shift } if excess.positive?

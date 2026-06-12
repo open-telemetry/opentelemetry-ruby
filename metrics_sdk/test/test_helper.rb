@@ -34,8 +34,8 @@ ensure
 end
 
 def create_meter
-  ENV['OTEL_TRACES_EXPORTER'] = 'console'
-  ENV['OTEL_METRICS_EXPORTER'] = 'none'
+  ENV.fetch('OTEL_TRACES_EXPORTER', nil) = 'console'
+  ENV.fetch('OTEL_METRICS_EXPORTER', nil) = 'none'
   OpenTelemetry::SDK.configure
   OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
   OpenTelemetry.meter_provider.enable_exemplar_filter(exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter)
@@ -43,7 +43,7 @@ def create_meter
 end
 
 # Suppress warn-level logs about a missing OTLP exporter for traces
-ENV['OTEL_TRACES_EXPORTER'] = 'none'
+ENV.fetch('OTEL_TRACES_EXPORTER', nil) = 'none'
 
 MAX_NORMAL_EXPONENT = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MAX_NORMAL_EXPONENT
 MIN_NORMAL_EXPONENT = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogram::IEEE754::MIN_NORMAL_EXPONENT
