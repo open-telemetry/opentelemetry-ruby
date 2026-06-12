@@ -81,22 +81,22 @@ module OpenTelemetry
         # @note Stability Level: development
         CICD_PIPELINE_TASK_TYPE = 'cicd.pipeline.task.type'
 
-        # The name of a component of the CICD system.
+        # The name of a component of the CI/CD system.
         #
         # @note Stability Level: development
         CICD_SYSTEM_COMPONENT = 'cicd.system.component'
 
-        # The unique identifier of a worker within a CICD system.
+        # The unique identifier of a worker within a CI/CD system.
         #
         # @note Stability Level: development
         CICD_WORKER_ID = 'cicd.worker.id'
 
-        # The name of a worker within a CICD system.
+        # The name of a worker within a CI/CD system.
         #
         # @note Stability Level: development
         CICD_WORKER_NAME = 'cicd.worker.name'
 
-        # The state of a CICD worker / agent.
+        # The state of a CI/CD worker / agent.
         #
         # @note Stability Level: development
         CICD_WORKER_STATE = 'cicd.worker.state'
