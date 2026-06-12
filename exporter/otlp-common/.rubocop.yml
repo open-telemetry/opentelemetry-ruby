@@ -11,6 +11,3 @@ Metrics/MethodLength:
   Enabled: false
 Metrics/PerceivedComplexity:
   Enabled: false
-
-Style/ObjectThen:
-  Enabled: false

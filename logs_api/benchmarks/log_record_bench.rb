@@ -7,9 +7,9 @@
 require 'benchmark/ips'
 require 'opentelemetry-logs-sdk'
 
-small_attrs  = 1.upto(1).each_with_object({}) { |i, h| h["key.#{i}"] = "value_#{i}" }
-medium_attrs = 1.upto(3).each_with_object({}) { |i, h| h["key.#{i}"] = "value_#{i}" }
-large_attrs  = 1.upto(8).each_with_object({}) { |i, h| h["key.#{i}"] = "value_#{i}" }
+small_attrs  = 1.upto(1).to_h { |i| ["key.#{i}", "value_#{i}"] }
+medium_attrs = 1.upto(3).to_h { |i| ["key.#{i}", "value_#{i}"] }
+large_attrs  = 1.upto(8).to_h { |i| ["key.#{i}", "value_#{i}"] }
 
 Benchmark.ips do |x|
   x.report 'LogRecord.new with 1 attributes' do

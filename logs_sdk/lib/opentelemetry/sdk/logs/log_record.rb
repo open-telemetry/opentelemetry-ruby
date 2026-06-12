@@ -81,7 +81,7 @@ module OpenTelemetry
           @severity_text = severity_text
           @severity_number = severity_number
           @body = body
-          @attributes = attributes.nil? ? nil : Hash[attributes] # We need a mutable copy of attributes
+          @attributes = attributes&.to_h # We need a mutable copy of attributes
           @event_name = event_name
           @trace_id = trace_id
           @span_id = span_id

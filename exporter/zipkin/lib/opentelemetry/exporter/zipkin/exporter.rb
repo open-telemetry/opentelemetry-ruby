@@ -101,7 +101,7 @@ module OpenTelemetry
         end
 
         def around_request
-          OpenTelemetry::Common::Utilities.untraced { yield }
+          OpenTelemetry::Common::Utilities.untraced { yield } # rubocop:disable Style/ExplicitBlockArgument
         end
 
         def valid_headers?(headers)
