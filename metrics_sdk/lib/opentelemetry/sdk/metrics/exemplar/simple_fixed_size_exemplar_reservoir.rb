@@ -35,8 +35,7 @@ module OpenTelemetry
 
           # Reset measurement counter on collection for delta temporality
           def collect(attributes: nil, aggregation_temporality: nil)
-            exemplars = []
-            @exemplar_buckets.map { |bucket| bucket.collect(point_attributes: attributes) }
+            exemplars = @exemplar_buckets.map { |bucket| bucket.collect(point_attributes: attributes) }
             reset if aggregation_temporality == :delta
             exemplars.compact!
             exemplars
