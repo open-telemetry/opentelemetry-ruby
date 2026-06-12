@@ -16,8 +16,6 @@ Naming/BlockForwarding:
   Enabled: false
 Naming/PredicateMethod:
   Enabled: false
-Performance/CollectionLiteralInLoop:
-  Enabled: false
 Style/ArgumentsForwarding:
   Enabled: false
 Style/CollectionQuerying:
