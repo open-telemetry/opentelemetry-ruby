@@ -27,21 +27,25 @@ module OpenTelemetry
         # The type of OpenAI API being used.
         #
         # @note Stability Level: development
+        # @deprecated Moved to the [OpenTelemetry GenAI semantic conventions repository](https://github.com/open-telemetry/semantic-conventions-genai).
         OPENAI_API_TYPE = 'openai.api.type'
 
         # The service tier requested. May be a specific tier, default, or auto.
         #
         # @note Stability Level: development
+        # @deprecated Moved to the [OpenTelemetry GenAI semantic conventions repository](https://github.com/open-telemetry/semantic-conventions-genai).
         OPENAI_REQUEST_SERVICE_TIER = 'openai.request.service_tier'
 
         # The service tier used for the response.
         #
         # @note Stability Level: development
+        # @deprecated Moved to the [OpenTelemetry GenAI semantic conventions repository](https://github.com/open-telemetry/semantic-conventions-genai).
         OPENAI_RESPONSE_SERVICE_TIER = 'openai.response.service_tier'
 
         # A fingerprint to track any eventual change in the Generative AI environment.
         #
         # @note Stability Level: development
+        # @deprecated Moved to the [OpenTelemetry GenAI semantic conventions repository](https://github.com/open-telemetry/semantic-conventions-genai).
         OPENAI_RESPONSE_SYSTEM_FINGERPRINT = 'openai.response.system_fingerprint'
 
         # @!endgroup
