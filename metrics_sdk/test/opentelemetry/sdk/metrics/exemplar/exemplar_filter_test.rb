@@ -19,7 +19,7 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::ExemplarFilter do
     )
   end
   let(:timestamp) { 123_456_789 }
-  let(:attributes) { { 'test': 'test' } }
+  let(:attributes) { { test: 'test' } }
 
   it 'always true for always on exemplar filter' do
     result = OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter.should_sample?(1, timestamp, attributes, context)
