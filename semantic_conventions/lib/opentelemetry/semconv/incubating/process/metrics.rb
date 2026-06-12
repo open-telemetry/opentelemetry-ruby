@@ -29,7 +29,7 @@ module OpenTelemetry
         # @note Stability Level: development
         PROCESS_CONTEXT_SWITCHES = 'process.context_switches'
 
-        # Total CPU seconds broken down by different states.
+        # Total CPU seconds broken down by different CPU modes.
         #
         # @note Stability Level: development
         PROCESS_CPU_TIME = 'process.cpu.time'

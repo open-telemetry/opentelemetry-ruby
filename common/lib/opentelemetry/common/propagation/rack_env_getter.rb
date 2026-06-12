@@ -29,8 +29,7 @@ module OpenTelemetry
         private
 
         def to_rack_key(key)
-          # Use + for mutable string interpolation in pre-Ruby 3.0.
-          ret = +"HTTP_#{key}"
+          ret = "HTTP_#{key}"
           ret.tr!('-', '_')
           ret.upcase!
           ret

@@ -63,7 +63,7 @@ module OpenTelemetry
 
         # Container ID. Usually a UUID, as for example used to [identify Docker containers](https://docs.docker.com/engine/containers/run/#container-identification). The UUID might be abbreviated.
         #
-        # @note Stability Level: beta
+        # @note Stability Level: release_candidate
         CONTAINER_ID = 'container.id'
 
         # Runtime specific image identifier. Usually a hash algorithm followed by a UUID.
@@ -77,19 +77,19 @@ module OpenTelemetry
 
         # Name of the image the container was built on.
         #
-        # @note Stability Level: beta
+        # @note Stability Level: release_candidate
         CONTAINER_IMAGE_NAME = 'container.image.name'
 
         # Repo digests of the container image as provided by the container runtime.
         #
         # [Docker](https://docs.docker.com/reference/api/engine/version/v1.52/#tag/Image/operation/ImageInspect) and [CRI](https://github.com/kubernetes/cri-api/blob/c75ef5b473bbe2d0a4fc92f82235efd665ea8e9f/pkg/apis/runtime/v1/api.proto#L1237-L1238) report those under the `RepoDigests` field.
         #
-        # @note Stability Level: beta
+        # @note Stability Level: release_candidate
         CONTAINER_IMAGE_REPO_DIGESTS = 'container.image.repo_digests'
 
         # Container image tags. An example can be found in [Docker Image Inspect](https://docs.docker.com/reference/api/engine/version/v1.52/#tag/Image/operation/ImageInspect). Should be only the `<tag>` section of the full name for example from `registry.example.com/my-org/my-image:<tag>`.
         #
-        # @note Stability Level: beta
+        # @note Stability Level: release_candidate
         CONTAINER_IMAGE_TAGS = 'container.image.tags'
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -128,7 +128,7 @@ module OpenTelemetry
         # @deprecated Replaced by `container.runtime.name`.
         CONTAINER_RUNTIME = 'container.runtime'
 
-        # A description about the runtime which could include, for example details about the CRI/API version being used or other customisations.
+        # A description about the runtime which could include, for example details about the CRI/API version being used or other customizations.
         #
         # @note Stability Level: development
         CONTAINER_RUNTIME_DESCRIPTION = 'container.runtime.description'

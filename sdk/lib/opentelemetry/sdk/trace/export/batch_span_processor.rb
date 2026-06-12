@@ -49,7 +49,7 @@ module OpenTelemetry
                          schedule_delay: Float(ENV.fetch('OTEL_BSP_SCHEDULE_DELAY', 5_000)),
                          max_queue_size: Integer(ENV.fetch('OTEL_BSP_MAX_QUEUE_SIZE', 2048)),
                          max_export_batch_size: Integer(ENV.fetch('OTEL_BSP_MAX_EXPORT_BATCH_SIZE', 512)),
-                         start_thread_on_boot: String(ENV['OTEL_RUBY_BSP_START_THREAD_ON_BOOT']) !~ /false/i,
+                         start_thread_on_boot: String(ENV.fetch('OTEL_RUBY_BSP_START_THREAD_ON_BOOT', nil)) !~ /false/i,
                          metrics_reporter: nil)
             raise ArgumentError if max_export_batch_size > max_queue_size
             raise ArgumentError, "exporter #{exporter.inspect} does not appear to be a valid exporter" unless Common::Utilities.valid_exporter?(exporter)

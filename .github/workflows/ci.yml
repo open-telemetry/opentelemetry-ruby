@@ -36,7 +36,7 @@ jobs:
           - opentelemetry-test-helpers
         os:
           - ubuntu-24.04
-          - macos-15
+          - macos-26
           - windows-2025
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -87,7 +87,7 @@ jobs:
           - opentelemetry-exporter-otlp-metrics
         os:
           - ubuntu-24.04
-          - macos-15
+          - macos-26
           - windows-2025
         exclude:
          # Windows runs Ruby 3.4, which isn't compatible with this gem
@@ -145,7 +145,7 @@ jobs:
           - opentelemetry-propagator-jaeger
         os:
           - ubuntu-24.04
-          - macos-15
+          - macos-26
           - windows-2025
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}

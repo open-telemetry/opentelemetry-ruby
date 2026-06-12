@@ -71,6 +71,13 @@ module OpenTelemetry
         # @note Stability Level: development
         V8JS_MEMORY_HEAP_USED = 'v8js.memory.heap.used'
 
+        # Gauge of the active resources that are currently keeping the event loop alive.
+        #
+        # The values can be retrieved from [`process.getActiveResourcesInfo()`](https://nodejs.org/api/process.html#processgetactiveresourcesinfo)
+        #
+        # @note Stability Level: development
+        V8JS_RESOURCE_ACTIVE = 'v8js.resource.active'
+
         # @!endgroup
       end
     end
