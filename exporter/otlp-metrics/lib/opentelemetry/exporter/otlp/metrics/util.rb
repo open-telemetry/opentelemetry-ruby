@@ -74,7 +74,7 @@ module OpenTelemetry
             raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if entries.empty?
 
             entries.each_with_object({}) do |entry, headers|
-              k, v = entry.split('=', 2).map { |parts| URI.decode_uri_component parts }
+              k, v = entry.split('=', 2).map { |part| URI.decode_uri_component part }
               begin
                 k = k.to_s.strip
                 v = v.to_s.strip
