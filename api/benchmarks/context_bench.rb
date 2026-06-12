@@ -108,7 +108,7 @@ class FiberAttributeContext
   EMPTY_ENTRIES = {}.freeze
   private_constant :EMPTY_ENTRIES
 
-  DetachError = Class.new(StandardError) # rubocop:disable Style/EmptyClassDefinition
+  DetachError = Class.new(StandardError)
 
   class << self
     def current
@@ -498,10 +498,10 @@ class FiberLocalArrayContext
     end
 
     def correct_owner!
-      if @owner != Fiber.current
-        Fiber[STACK_KEY] = self.class.new.replace(self)
-      else
+      if @owner == Fiber.current
         self
+      else
+        Fiber[STACK_KEY] = self.class.new.replace(self)
       end
     end
   end

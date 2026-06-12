@@ -209,7 +209,7 @@ module OpenTelemetry
             @metrics_reporter.add_to_counter('otel.bsp.dropped_spans', increment: dropped_spans.size, labels: { 'reason' => reason, OpenTelemetry::SemanticConventions::Trace::CODE_FUNCTION => function })
           end
 
-          def lock
+          def lock(&)
             @mutex.synchronize do
               yield
             end

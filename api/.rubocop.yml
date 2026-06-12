@@ -10,6 +10,9 @@ Minitest/RefutePredicate:
   Enabled: false
 Performance/MethodObjectAsBlock:
   Enabled: false
+Style/EmptyClassDefinition:
+  Exclude:
+    - 'benchmarks/context_bench.rb'
 Style/OneClassPerFile:
   Exclude:
     - 'benchmarks/context_bench.rb'
