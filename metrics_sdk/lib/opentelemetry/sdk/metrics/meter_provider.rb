@@ -177,9 +177,9 @@ module OpenTelemetry
         #
         # @return [nil] returns nil
         #
-        def add_view(name, **options)
+        def add_view(name, **)
           # TODO: add schema_url as part of options
-          @registered_views << View::RegisteredView.new(name, **options)
+          @registered_views << View::RegisteredView.new(name, **)
           nil
         end
       end
