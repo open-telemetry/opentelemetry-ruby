@@ -7,7 +7,6 @@
 require 'test_helper'
 
 describe OpenTelemetry::Exporter::OTLP::Common do
-
   describe '#as_encoded_etsr' do
     it 'handles valid and empty span data' do
       # Valid span data
@@ -71,6 +70,7 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       span_data3 = OpenTelemetry::TestHelpers.create_span_data(resource: resource_two)
 
       etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data1, span_data2, span_data3])
+
       _(etsr.resource_spans.length).must_equal(2)
       _(etsr.resource_spans[0].scope_spans[0].spans.length).must_equal(1)
       _(etsr.resource_spans[1].scope_spans[0].spans.length).must_equal(2)
