@@ -32,11 +32,9 @@ module OpenTelemetry
             true
           end
 
-          # rubocop:disable Naming/PredicateMethod
-          def name_match(stream_name)
+          def name_match(stream_name) # rubocop:disable Naming/PredicateMethod
             !!@regex&.match(stream_name)
           end
-          # rubocop:enable Naming/PredicateMethod
 
           def valid_aggregation?
             @aggregation.class.name.rpartition('::')[0] == 'OpenTelemetry::SDK::Metrics::Aggregation'
