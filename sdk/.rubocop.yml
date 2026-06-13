@@ -10,10 +10,6 @@ Lint/EmptyClass:
   Enabled: false
 Minitest/UselessAssertion:
   Enabled: false
-Naming/BlockForwarding:
-  Enabled: false
-Naming/PredicateMethod:
-  Enabled: false
 Style/ArgumentsForwarding:
   Enabled: false
 Style/EmptyClassDefinition:
