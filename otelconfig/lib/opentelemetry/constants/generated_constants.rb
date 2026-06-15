@@ -263,6 +263,7 @@ ExperimentalComposableSampler = Struct.new(
   :parent_threshold,
   :probability,
   :rule_based,
+  :additional_properties,
   keyword_init: true
 ) do
   def self.from_hash(h)
@@ -273,7 +274,8 @@ ExperimentalComposableSampler = Struct.new(
       always_on: h.key?('always_on'),
       parent_threshold: ExperimentalComposableParentThresholdSampler.from_hash(h['parent_threshold']),
       probability: ExperimentalComposableProbabilitySampler.from_hash(h['probability']),
-      rule_based: ExperimentalComposableRuleBasedSampler.from_hash(h['rule_based'])
+      rule_based: ExperimentalComposableRuleBasedSampler.from_hash(h['rule_based']),
+      additional_properties: h.reject { |k, _| ['always_off', 'always_on', 'parent_threshold', 'probability', 'rule_based'].include?(k) }
     )
   end
 end
@@ -594,6 +596,7 @@ ExperimentalResourceDetector = Struct.new(
   :host,
   :process,
   :service,
+  :additional_properties,
   keyword_init: true
 ) do
   def self.from_hash(h)
@@ -603,7 +606,8 @@ ExperimentalResourceDetector = Struct.new(
       container: h.key?('container'),
       host: h.key?('host'),
       process: h.key?('process'),
-      service: h.key?('service')
+      service: h.key?('service'),
+      additional_properties: h.reject { |k, _| ['container', 'host', 'process', 'service'].include?(k) }
     )
   end
 end
@@ -722,6 +726,7 @@ LogRecordExporter = Struct.new(
   :otlp_grpc,
   :otlp_file_development,
   :console,
+  :additional_properties,
   keyword_init: true
 ) do
   def self.from_hash(h)
@@ -731,7 +736,8 @@ LogRecordExporter = Struct.new(
       otlp_http: OtlpHttpExporter.from_hash(h['otlp_http']),
       otlp_grpc: OtlpGrpcExporter.from_hash(h['otlp_grpc']),
       otlp_file_development: ExperimentalOtlpFileExporter.from_hash(h['otlp_file/development']),
-      console: h.key?('console')
+      console: h.key?('console'),
+      additional_properties: h.reject { |k, _| ['otlp_http', 'otlp_grpc', 'otlp_file/development', 'console'].include?(k) }
     )
   end
 end
@@ -754,6 +760,7 @@ end
 LogRecordProcessor = Struct.new(
   :batch,
   :simple,
+  :additional_properties,
   keyword_init: true
 ) do
   def self.from_hash(h)
@@ -761,7 +768,8 @@ LogRecordProcessor = Struct.new(
 
     new(
       batch: BatchLogRecordProcessor.from_hash(h['batch']),
-      simple: SimpleLogRecordProcessor.from_hash(h['simple'])
+      simple: SimpleLogRecordProcessor.from_hash(h['simple']),
+      additional_properties: h.reject { |k, _| ['batch', 'simple'].include?(k) }
     )
   end
 end
@@ -804,13 +812,15 @@ end
 
 MetricProducer = Struct.new(
   :opencensus,
+  :additional_properties,
   keyword_init: true
 ) do
   def self.from_hash(h)
     return nil unless h.is_a?(Hash)
 
     new(
-      opencensus: h.key?('opencensus')
+      opencensus: h.key?('opencensus'),
+      additional_properties: h.reject { |k, _| ['opencensus'].include?(k) }
     )
   end
 end
@@ -857,6 +867,7 @@ OpenTelemetryConfiguration = Struct.new(
   :resource,
   :instrumentation_development,
   :distribution,
+  :additional_properties,
   keyword_init: true
 ) do
   def self.from_hash(h)
@@ -873,7 +884,8 @@ OpenTelemetryConfiguration = Struct.new(
       tracer_provider: TracerProvider.from_hash(h['tracer_provider']),
       resource: Resource.from_hash(h['resource']),
       instrumentation_development: ExperimentalInstrumentation.from_hash(h['instrumentation/development']),
-      distribution: h['distribution']
+      distribution: h['distribution'],
+      additional_properties: h.reject { |k, _| ['file_format', 'disabled', 'log_level', 'attribute_limits', 'logger_provider', 'meter_provider', 'propagator', 'tracer_provider', 'resource', 'instrumentation/development', 'distribution'].include?(k) }
     )
   end
 end
@@ -1041,13 +1053,15 @@ end
 
 PullMetricExporter = Struct.new(
   :prometheus_development,
+  :additional_properties,
   keyword_init: true
 ) do
   def self.from_hash(h)
     return nil unless h.is_a?(Hash)
 
     new(
-      prometheus_development: ExperimentalPrometheusMetricExporter.from_hash(h['prometheus/development'])
+      prometheus_development: ExperimentalPrometheusMetricExporter.from_hash(h['prometheus/development']),
+      additional_properties: h.reject { |k, _| ['prometheus/development'].include?(k) }
     )
   end
 end
@@ -1074,6 +1088,7 @@ PushMetricExporter = Struct.new(
   :otlp_grpc,
   :otlp_file_development,
   :console,
+  :additional_properties,
   keyword_init: true
 ) do
   def self.from_hash(h)
@@ -1083,7 +1098,8 @@ PushMetricExporter = Struct.new(
       otlp_http: OtlpHttpMetricExporter.from_hash(h['otlp_http']),
       otlp_grpc: OtlpGrpcMetricExporter.from_hash(h['otlp_grpc']),
       otlp_file_development: ExperimentalOtlpFileMetricExporter.from_hash(h['otlp_file/development']),
-      console: ConsoleMetricExporter.from_hash(h['console'])
+      console: ConsoleMetricExporter.from_hash(h['console']),
+      additional_properties: h.reject { |k, _| ['otlp_http', 'otlp_grpc', 'otlp_file/development', 'console'].include?(k) }
     )
   end
 end
@@ -1115,6 +1131,7 @@ Sampler = Struct.new(
   :parent_based,
   :probability_development,
   :trace_id_ratio_based,
+  :additional_properties,
   keyword_init: true
 ) do
   def self.from_hash(h)
@@ -1127,7 +1144,8 @@ Sampler = Struct.new(
       jaeger_remote_development: ExperimentalJaegerRemoteSampler.from_hash(h['jaeger_remote/development']),
       parent_based: ParentBasedSampler.from_hash(h['parent_based']),
       probability_development: ExperimentalProbabilitySampler.from_hash(h['probability/development']),
-      trace_id_ratio_based: TraceIdRatioBasedSampler.from_hash(h['trace_id_ratio_based'])
+      trace_id_ratio_based: TraceIdRatioBasedSampler.from_hash(h['trace_id_ratio_based']),
+      additional_properties: h.reject { |k, _| ['always_off', 'always_on', 'composite/development', 'jaeger_remote/development', 'parent_based', 'probability/development', 'trace_id_ratio_based'].include?(k) }
     )
   end
 end
@@ -1163,6 +1181,7 @@ SpanExporter = Struct.new(
   :otlp_grpc,
   :otlp_file_development,
   :console,
+  :additional_properties,
   keyword_init: true
 ) do
   def self.from_hash(h)
@@ -1172,7 +1191,8 @@ SpanExporter = Struct.new(
       otlp_http: OtlpHttpExporter.from_hash(h['otlp_http']),
       otlp_grpc: OtlpGrpcExporter.from_hash(h['otlp_grpc']),
       otlp_file_development: ExperimentalOtlpFileExporter.from_hash(h['otlp_file/development']),
-      console: h.key?('console')
+      console: h.key?('console'),
+      additional_properties: h.reject { |k, _| ['otlp_http', 'otlp_grpc', 'otlp_file/development', 'console'].include?(k) }
     )
   end
 end
@@ -1203,6 +1223,7 @@ end
 SpanProcessor = Struct.new(
   :batch,
   :simple,
+  :additional_properties,
   keyword_init: true
 ) do
   def self.from_hash(h)
@@ -1210,7 +1231,8 @@ SpanProcessor = Struct.new(
 
     new(
       batch: BatchSpanProcessor.from_hash(h['batch']),
-      simple: SimpleSpanProcessor.from_hash(h['simple'])
+      simple: SimpleSpanProcessor.from_hash(h['simple']),
+      additional_properties: h.reject { |k, _| ['batch', 'simple'].include?(k) }
     )
   end
 end
@@ -1222,6 +1244,7 @@ TextMapPropagator = Struct.new(
   :b3multi,
   :jaeger,
   :ottrace,
+  :additional_properties,
   keyword_init: true
 ) do
   def self.from_hash(h)
@@ -1233,7 +1256,8 @@ TextMapPropagator = Struct.new(
       b3: h.key?('b3'),
       b3multi: h.key?('b3multi'),
       jaeger: h.key?('jaeger'),
-      ottrace: h.key?('ottrace')
+      ottrace: h.key?('ottrace'),
+      additional_properties: h.reject { |k, _| ['tracecontext', 'baggage', 'b3', 'b3multi', 'jaeger', 'ottrace'].include?(k) }
     )
   end
 end

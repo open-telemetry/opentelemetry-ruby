@@ -23,15 +23,17 @@ module OpenTelemetry
       # Extracts an ordered, deduplicated list of propagator name strings from
       # the config. Names from +composite+ come first, then any additional names
       # from +composite_list+ that were not already included.
-      #
-      # +composite+ is an array of TextMapPropagator structs whose set presence
-      # flags (e.g. tracecontext:, baggage:) identify each propagator.
       def extract_propagator_names(cfg)
         propagators = []
         Array(cfg.composite).each do |entry|
           next unless entry
 
-          entry.members.each { |m| propagators << m.to_s if entry[m] }
+          entry.members.each do |m|
+            next if m == :additional_properties
+
+            propagators << m.to_s if entry[m]
+          end
+          (entry.additional_properties || {}).each_key { |k| propagators << k.to_s }
         end
         propagators += cfg.composite_list.split(',').map(&:strip) if cfg.composite_list.is_a?(String)
         propagators.uniq

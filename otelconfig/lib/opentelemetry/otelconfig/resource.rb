@@ -73,8 +73,6 @@ module OpenTelemetry
           attrs.merge!(run_detector(name).attribute_enumerator.to_h)
         end
 
-        # File.fnmatch: * matches any chars except /, so "process.*" covers
-        # "process.pid", "process.runtime.name", etc.
         raw.select do |key, _|
           included = included_patterns.empty? || included_patterns.any? { |pat| File.fnmatch(pat, key) }
           excluded = excluded_patterns.any? { |pat| File.fnmatch(pat, key) }
@@ -88,7 +86,12 @@ module OpenTelemetry
         Array(detectors).flat_map do |detector|
           next [] unless detector
 
-          detector.members.select { |m| detector[m] }.map(&:to_s)
+          names = detector.members.filter_map do |m|
+            next if m == :additional_properties
+
+            m.to_s if detector[m]
+          end
+          names + Array(detector.additional_properties&.keys).map(&:to_s)
         end
       end
 

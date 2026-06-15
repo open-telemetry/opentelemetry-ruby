@@ -25,13 +25,8 @@ SCHEMA_VERSION = ENV.fetch('SCHEMA_VERSION', 'v1.0.0-rc.3')
 SCHEMA_TARBALL = "https://api.github.com/repos/open-telemetry/opentelemetry-configuration/tarball/#{SCHEMA_VERSION}"
 OUTPUT_FILE    = File.expand_path('../opentelemetry/constants/generated_constants.rb', __dir__)
 
-# ---------------------------------------------------------------------------
-# Pure-Ruby tarball downloader/extractor (no curl/wget/tar dependency)
-# ---------------------------------------------------------------------------
+# Ruby tarball downloader
 module SchemaDownloader
-  # Downloads the gzip tarball at +url+ and extracts every file under a
-  # top-level +schema/+ directory into +dest_dir+, flattening the leading
-  # "<repo>-<sha>/" path component that GitHub tarballs include.
   def self.fetch_schema(url, dest_dir)
     FileUtils.mkdir_p(dest_dir)
 
@@ -53,10 +48,8 @@ module SchemaDownloader
   end
 end
 
-# ---------------------------------------------------------------------------
-# Schema loader: merges the split schema files into one flat $defs table and
-# resolves the file-level $ref aliases (e.g. `Resource: { $ref: resource.yaml }`).
-# ---------------------------------------------------------------------------
+# merges the split schema files into one flat $defs table and
+# resolves the file-level $ref aliases
 module SchemaReader
   ROOT_FILE = 'opentelemetry_configuration.yaml'
 
@@ -95,20 +88,16 @@ module SchemaReader
   end
 end
 
-# ---------------------------------------------------------------------------
-# Code generator: schema $defs → Ruby Struct definitions (purely schema-driven)
-# ---------------------------------------------------------------------------
+# schema $defs → ruby struct definitions in constants/generated_constants.rb
 module ConstantsGenerator
   module_function
 
-  # Ruby Struct members must be valid identifiers. Schema keys like
   # "detection/development" become "detection_development".
   def field_name(key)
     key.gsub(%r{[/.\-]}, '_').gsub(/[^a-zA-Z0-9_]/, '_')
   end
 
-  # Extracts the definition name from a $ref string, or nil.
-  # Handles "#/$defs/Foo" and "common.yaml#/$defs/Foo".
+  # extracts the definition name from a $ref string
   def ref_name(schema)
     return nil unless schema.is_a?(Hash)
 
@@ -124,9 +113,6 @@ module ConstantsGenerator
     body.is_a?(Hash) && body['properties'].is_a?(Hash) && !body['properties'].empty?
   end
 
-  # A "marker" is an empty object (no properties, no enum, additionalProperties
-  # not a map) — its presence is meaningful, its value is nil/{} (e.g. console:,
-  # always_on:, tracecontext:). These map to a presence boolean.
   def marker?(defs, name)
     body = defs[name]
     return false unless body.is_a?(Hash)
@@ -142,7 +128,7 @@ module ConstantsGenerator
     Array(prop['type']).include?('array') || prop.key?('items')
   end
 
-  # Ruby expression that builds the value for one property given local var `h`.
+  # builds the value for one property given local var `h`.
   def value_expr(prop, defs, key)
     direct = ref_name(prop)
 
@@ -164,11 +150,21 @@ module ConstantsGenerator
 
   def render_struct(name, body, defs)
     props = body['properties']
-    members = props.keys.map { |k| ":#{field_name(k)}" }.join(",\n  ")
+    member_names = props.keys.map { |k| field_name(k) }
+
+    # capture them so non-schema plugins (e.g. additionalProperties)
+    capture_additional = body['additionalProperties'] != false
+    member_names << 'additional_properties' if capture_additional
+
+    members = member_names.map { |m| ":#{m}" }.join(",\n  ")
 
     assignments = props.map do |key, prop|
       "      #{field_name(key)}: #{value_expr(prop, defs, key)}"
-    end.join(",\n")
+    end
+    if capture_additional
+      known = props.keys.map { |k| "'#{k}'" }.join(', ')
+      assignments << "      additional_properties: h.reject { |k, _| [#{known}].include?(k) }"
+    end
 
     <<~RUBY
       #{name} = Struct.new(
@@ -179,7 +175,7 @@ module ConstantsGenerator
           return nil unless h.is_a?(Hash)
 
           new(
-      #{assignments}
+      #{assignments.join(",\n")}
           )
         end
       end
@@ -209,9 +205,6 @@ module ConstantsGenerator
   end
 end
 
-# ---------------------------------------------------------------------------
-# Rake tasks
-# ---------------------------------------------------------------------------
 namespace :generate do
   desc "Download OTel configuration schema (#{SCHEMA_VERSION}) and regenerate lib/opentelemetry/constants/generated_constants.rb"
   task :constants do
