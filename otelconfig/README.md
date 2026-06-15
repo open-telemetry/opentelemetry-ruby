@@ -30,19 +30,32 @@ Or, if you use [bundler][bundler-home], include `opentelemetry-otelconfig` in yo
 
 ### Automatic configuration via environment variable
 
-Set `OTEL_CONFIG_FILE` to the path of your YAML config file before requiring the gem. Configuration is applied automatically at require time.
+Set `OTEL_CONFIG_FILE` to the path of your YAML config file. Call `OpenTelemetry::OtelConfig.configure` early in your application; it returns a `RubySDK` value that you wire into the global OpenTelemetry state yourself.
 
 ```sh
 OTEL_CONFIG_FILE=/path/to/otel-config.yaml bundle exec ruby app.rb
 ```
 
 ```ruby
+require 'opentelemetry-sdk'
 require 'opentelemetry-otelconfig'
+
+sdk = OpenTelemetry::OtelConfig.configure
+OpenTelemetry.tracer_provider = sdk.tracer_provider
+OpenTelemetry.propagation = sdk.propagator if sdk&.propagator
 
 tracer = OpenTelemetry.tracer_provider.tracer('my_app', '1.0.0')
 tracer.in_span('my-operation') do |span|
   span.set_attribute('key', 'value')
 end
+```
+
+If you have a config file path at hand, call `configure_from_file` instead:
+
+```ruby
+sdk = OpenTelemetry::OtelConfig.configure_from_file('/path/to/otel-config.yaml')
+OpenTelemetry.tracer_provider = sdk.tracer_provider
+OpenTelemetry.propagation = sdk.propagator if sdk&.propagator
 ```
 
 ## YAML configuration reference
@@ -114,15 +127,15 @@ propagator:
   composite_list: "tracecontext,baggage"
 ```
 
-Supported propagator names: `tracecontext`, `baggage`, `b3`, `b3multi`, `jaeger`, `xray`.
+Supported propagator names: `tracecontext`, `baggage`, `b3`, `b3multi`, `jaeger`, `ottrace`, `xray`, `google_cloud_trace_context`.
 
 ### Auto-instrumentation
 
-The `instrumentation/development` key maps short library names to option hashes. An empty or omitted section installs all available instrumentation with default settings.
+The `instrumentation/development` key configures auto-instrumentation. The `ruby:` sub-key maps snake_case library names to option hashes.
 
 ```yaml
 instrumentation/development:
-  general:
+  ruby:
     net_http:
       untraced_hosts:
         - localhost
