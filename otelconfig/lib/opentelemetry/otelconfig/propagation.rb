@@ -11,26 +11,30 @@ module OpenTelemetry
       def configure_propagation(propagator_cfg)
         return unless propagator_cfg
 
-        names = extract_propagator_names(propagator_cfg)
-        return if names.empty?
-
-        propagators = names.filter_map { |name| resolve_propagator(name) }
+        propagators = extract_propagator_names(propagator_cfg)
         return if propagators.empty?
 
-        return OpenTelemetry::Context::Propagation::CompositeTextMapPropagator.compose_propagators(propagators)
+        composite_propagators = propagators.filter_map { |name| resolve_propagator(name) }
+        return if composite_propagators.empty?
+
+        return OpenTelemetry::Context::Propagation::CompositeTextMapPropagator.compose_propagators(composite_propagators)
       end
 
-      # Extracts an ordered list of propagator name strings from the config hash.
+      # Extracts an ordered, deduplicated list of propagator name strings from
+      # the config. Names from +composite+ come first, then any additional names
+      # from +composite_list+ that were not already included.
+      #
+      # +composite+ is an array of TextMapPropagator structs whose set presence
+      # flags (e.g. tracecontext:, baggage:) identify each propagator.
       def extract_propagator_names(cfg)
-        composite = cfg['composite']
-        if composite.is_a?(Array)
-          return composite.flat_map { |entry| entry.is_a?(Hash) ? entry.keys : entry.to_s }
+        propagators = []
+        Array(cfg.composite).each do |entry|
+          next unless entry
+
+          entry.members.each { |m| propagators << m.to_s if entry[m] }
         end
-
-        list = cfg['composite_list']
-        return list.split(',').map(&:strip) if list.is_a?(String)
-
-        []
+        propagators += cfg.composite_list.split(',').map(&:strip) if cfg.composite_list.is_a?(String)
+        propagators.uniq
       end
 
       # Returns a propagator instance for the given name, or nil with a warning.

@@ -13,23 +13,23 @@ module OpenTelemetry
 
         return base unless resource_cfg
 
-        detected = build_detected_attributes(resource_cfg['detection/development'])
+        detected = build_detected_attributes(resource_cfg.detection_development)
 
         explicit = {}
-        Array(resource_cfg['attributes']).each do |attr|
-          next unless attr.is_a?(Hash) && attr['name'] && !attr['value'].nil?
+        Array(resource_cfg.attributes).each do |attr|
+          next unless attr.name && !attr.value.nil?
 
-          explicit[attr['name']] = coerce_attribute_value(attr['value'], attr['type'])
+          explicit[attr.name] = coerce_attribute_value(attr.value, attr.type)
         end
 
-        if resource_cfg['attributes_list'].is_a?(String)
-          resource_cfg['attributes_list'].split(',').each do |pair|
+        if resource_cfg.attributes_list.is_a?(String)
+          resource_cfg.attributes_list.split(',').each do |pair|
             key, value = pair.strip.split('=', 2)
             explicit[key] ||= value if key && value
           end
         end
 
-        OpenTelemetry.logger.warn('OtelConfig: schema_url is supported; ignoring.') if resource_cfg['schema_url']
+        OpenTelemetry.logger.warn('OtelConfig: schema_url is supported; ignoring.') if resource_cfg.schema_url
 
         attrs = detected.merge(explicit)
         custom = OpenTelemetry::SDK::Resources::Resource.create(attrs)
@@ -61,14 +61,13 @@ module OpenTelemetry
         end
       end
 
-      # Extract the attributes from field 'detection/development'
+      # Extract the attributes from an ExperimentalResourceDetection struct.
       def build_detected_attributes(detection_cfg)
-        return {} unless detection_cfg.is_a?(Hash)
+        return {} unless detection_cfg
 
-        included_patterns = Array(detection_cfg.dig('attributes', 'included'))
-        excluded_patterns = Array(detection_cfg.dig('attributes', 'excluded'))
-        detector_names    = Array(detection_cfg['detectors'])
-                            .flat_map { |d| d.is_a?(Hash) ? d.keys : d.to_s }
+        included_patterns = Array(detection_cfg.attributes&.included)
+        excluded_patterns = Array(detection_cfg.attributes&.excluded)
+        detector_names    = detector_names_from(detection_cfg.detectors)
 
         raw = detector_names.each_with_object({}) do |name, attrs|
           attrs.merge!(run_detector(name).attribute_enumerator.to_h)
@@ -80,6 +79,16 @@ module OpenTelemetry
           included = included_patterns.empty? || included_patterns.any? { |pat| File.fnmatch(pat, key) }
           excluded = excluded_patterns.any? { |pat| File.fnmatch(pat, key) }
           included && !excluded
+        end
+      end
+
+      # Flattens an array of ExperimentalResourceDetector structs into the list
+      # of detector names whose presence flag is set (e.g. container, host).
+      def detector_names_from(detectors)
+        Array(detectors).flat_map do |detector|
+          next [] unless detector
+
+          detector.members.select { |m| detector[m] }.map(&:to_s)
         end
       end
 

@@ -170,24 +170,31 @@ describe OpenTelemetry::OtelConfig do
       end
     end
 
-    describe 'composite vs composite_list precedence' do
-      it 'uses composite array and ignores composite_list when both are present' do
+    describe 'composite and composite_list merging' do
+      it 'merges both sources and deduplicates — composite names come first' do
         with_config(<<~YAML) do |path|
           file_format: "1.0"
           #{TRACER_PROVIDER_YAML}
           propagator:
             composite:
               - tracecontext:
-            composite_list: "baggage"
+            composite_list: "baggage,tracecontext"
         YAML
           sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
           OpenTelemetry.tracer_provider = sdk.tracer_provider
           OpenTelemetry.propagation = sdk.propagator if sdk.propagator
 
           propagation = OpenTelemetry.propagation
-          _(propagation).must_be_instance_of OpenTelemetry::Trace::Propagation::TraceContext::TextMapPropagator
+          _(propagation).must_be_instance_of OpenTelemetry::Context::Propagation::CompositeTextMapPropagator
+
+          propagators = propagation.instance_variable_get(:@propagators)
+          # tracecontext first (from composite), baggage second (from composite_list), no duplicate tracecontext
+          _(propagators.size).must_equal 2
+          _(propagators[0]).must_be_instance_of OpenTelemetry::Trace::Propagation::TraceContext::TextMapPropagator
+          _(propagators[1]).must_be_instance_of OpenTelemetry::Baggage::Propagation::TextMapPropagator
+
           _(propagation.fields).must_include 'traceparent'
-          _(propagation.fields).wont_include 'baggage'
+          _(propagation.fields).must_include 'baggage'
         end
       end
     end

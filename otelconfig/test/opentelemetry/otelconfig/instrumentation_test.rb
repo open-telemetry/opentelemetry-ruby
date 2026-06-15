@@ -122,7 +122,7 @@ describe OpenTelemetry::OtelConfig do
         with_config(<<~YAML) do |path|
           file_format: "1.0"
           #{TRACER_PROVIDER_YAML}
-          instrumentation:
+          instrumentation/development:
             ruby:
               net_http:
                 untraced_hosts:
@@ -141,7 +141,7 @@ describe OpenTelemetry::OtelConfig do
         with_config(<<~YAML) do |path|
           file_format: "1.0"
           #{TRACER_PROVIDER_YAML}
-          instrumentation:
+          instrumentation/development:
             ruby:
               redis:
                 peer_service: "cache-cluster"

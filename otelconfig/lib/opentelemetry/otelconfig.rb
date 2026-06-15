@@ -10,7 +10,7 @@ require 'opentelemetry/components/trace'
 require_relative 'otelconfig/instrumentation'
 require_relative 'otelconfig/propagation'
 require_relative 'otelconfig/resource'
-require_relative 'otelconfig/constants'
+require_relative 'constants/constants'
 
 module OpenTelemetry
   # OtelConfig module handles declarative configuration of OpenTelemetry components
@@ -48,27 +48,27 @@ module OpenTelemetry
           return
         end
 
-        if config['disabled']
+        if config.disabled
           OpenTelemetry.logger.info('OpenTelemetry SDK disabled by configuration.')
         else
-          resource = build_resource(config['resource'])
-          tracer_provider = Trace.build_tracer_provider(config['tracer_provider'], resource)
+          resource = build_resource(config.resource)
+          tracer_provider = Trace.build_tracer_provider(config.tracer_provider, resource)
 
-          propagators = configure_propagation(config['propagator'])
+          propagators = configure_propagation(config.propagator)
 
-          configure_instrumentation(config['instrumentation/development'])
+          configure_instrumentation(config.instrumentation_development)
 
           RubySDK.new(
-            :tracer_provider => tracer_provider,
-            :propagator => propagators,
-            :resource => resource
+            tracer_provider: tracer_provider,
+            propagator: propagators,
+            resource: resource
           )
         end
       end
 
       def parse_config_file(path)
         content = File.read(path)
-        YAML.safe_load(content, permitted_classes: [Date, Time])
+        OpenTelemetryConfiguration.from_hash(YAML.safe_load(content, permitted_classes: [Date, Time]))
       rescue Errno::ENOENT => e
         OpenTelemetry.logger.error("Config file not found: #{e.message}")
         nil

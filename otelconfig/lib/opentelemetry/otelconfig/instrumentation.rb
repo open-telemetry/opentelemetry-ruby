@@ -18,10 +18,16 @@ module OpenTelemetry
 
       # Transforms the YAML instrumentation config into the flat hash that
       # install_all expects: { 'OpenTelemetry::Instrumentation::Foo' => { opt: val } }
+      #
+      # Accepts either the schema-generated ExperimentalInstrumentation struct
+      # (reading its +ruby+ language map) or a raw Hash with a 'ruby' key.
       def build_instrumentation_config_map(instrumentation_cfg)
-        return {} unless instrumentation_cfg.is_a?(Hash)
-
-        ruby_instrumentation = instrumentation_cfg['ruby']
+        ruby_instrumentation =
+          if instrumentation_cfg.is_a?(Hash)
+            instrumentation_cfg['ruby']
+          elsif instrumentation_cfg.respond_to?(:ruby)
+            instrumentation_cfg.ruby
+          end
         return {} unless ruby_instrumentation.is_a?(Hash)
 
         name_map = build_instrumentation_name_map

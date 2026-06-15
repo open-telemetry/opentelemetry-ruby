@@ -9,6 +9,8 @@ require 'rake/testtask'
 require 'yard'
 require 'rubocop/rake_task'
 
+Dir.glob(File.join(__dir__, 'lib/tasks/**/*.rake')).each { |f| load f }
+
 RuboCop::RakeTask.new
 YARD::Rake::YardocTask.new
 
